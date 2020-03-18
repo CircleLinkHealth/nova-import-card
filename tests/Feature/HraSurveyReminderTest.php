@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\NotifiableUser;
 use App\Notifications\SurveyInvitationLink;
 use App\Services\SurveyInvitationLinksService;
 use App\Survey;
@@ -79,10 +80,11 @@ class HraSurveyReminderTest extends TestCase
                 $practiceName     = optional($user->primaryPractice)->display_name;
                 $providerFullName = optional($user->billingProviderUser())->getFullName();
                 $appointment      = $user->latestAwvAppointment()->appointment;
-                $user->notify(new SurveyInvitationLink($url, Survey::HRA, null, $practiceName, $providerFullName,
+                $notifiableUser = new NotifiableUser($user);
+                $notifiableUser->notify(new SurveyInvitationLink($url, Survey::HRA, null, $practiceName, $providerFullName,
                     $appointment));
 
-                Notification::assertSentTo($user, SurveyInvitationLink::class,
+                Notification::assertSentTo($notifiableUser, SurveyInvitationLink::class,
                     function ($notification, $channels) {
                         //Twilio and Email
                         return sizeof($channels) === 2;

@@ -8,7 +8,7 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Notifications\AnonymousNotifiable;
 
 /**
  *
@@ -21,9 +21,8 @@ use Illuminate\Notifications\Notifiable;
  * @property string email
  * @property string phone_number
  */
-class NotifiableUser
+class NotifiableUser extends AnonymousNotifiable
 {
-    use Notifiable;
     /**
      * @var User
      */
@@ -50,4 +49,11 @@ class NotifiableUser
         $this->email        = $email ?? $user->email;
         $this->phone_number = $phoneNumber ?? $user->getPhone();
     }
+
+    public function getKey()
+    {
+        return $this->user->id ?? 0;
+    }
+
+
 }
