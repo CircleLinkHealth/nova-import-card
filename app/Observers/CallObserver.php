@@ -7,11 +7,13 @@
 namespace App\Observers;
 
 use App\Call;
+use App\Events\CarePlanWasApproved;
+use App\Note;
 use App\Notifications\CallCreated;
 use App\Services\ActivityService;
+use App\Services\Calls\SchedulerService;
 use App\Services\NotificationService;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Notification;
 
@@ -25,13 +27,13 @@ class CallObserver
      * @var NotificationService
      */
     private $notificationService;
-
+    
     public function __construct(ActivityService $activityService, NotificationService $notificationService)
     {
-        $this->activityService     = $activityService;
+        $this->activityService = $activityService;
         $this->notificationService = $notificationService;
     }
-
+    
     /**
      * @param $call
      */
@@ -41,23 +43,27 @@ class CallObserver
         if ( ! auth()->check()) {
             return;
         }
-
+        
         $notify = $call->outboundUser;
         Notification::send($notify, new CallCreated($call, auth()->user()));
     }
-
+    
     public function saved(Call $call)
     {
         if ($call->isDirty('status')) {
             $patient = User::ofType('participant')
-                ->where('id', $call->inbound_cpm_id)
-                ->orWhere('id', $call->outbound_cpm_id)
-                ->first();
-
+                           ->where('id', $call->inbound_cpm_id)
+                           ->orWhere('id', $call->outbound_cpm_id)
+                           ->first();
+            
+            if ($this->shouldApproveCarePlan($call)) {
+                $this->approveCarePlan($patient);
+            }
+            
             $date = Carbon::parse($call->updated_at);
-
+            
             $this->activityService->processMonthlyActivityTime($patient->id, $date);
-
+            
             /*
              * this is done in updateCallLogs, which is called on demand when needed
 
@@ -88,16 +94,35 @@ class CallObserver
                 ]);
             */
         }
-
+        
         if ('reached' === $call->status || 'done' === $call->status) {
             Call::where('id', $call->id)->update(['asap' => false]);
             $call->markAttachmentNotificationAsRead($call->outboundUser);
         }
-
+        
         //If sub_type = "addendum_response" means it has already been created by AddendumObserver
         //@todo:come up with a better solution for this
         if ($call->shouldSendLiveNotification()) {
             $this->createNotificationAndSendToPusher($call);
         }
+    }
+    
+    private function shouldApproveCarePlan(Call $call)
+    {
+        return SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE === $call->sub_type
+               && 'task' === $call->type
+               && $call->isDirty('status')
+               && 'done' === $call->status;
+    }
+    
+    private function approveCarePlan(User $patient)
+    {
+        $note = Note::wherePatientId($patient->id)->whereType(
+            SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE
+        )->first();
+        if ( ! $note) {
+            return;
+        }
+        event(new CarePlanWasApproved($patient, $note->author));
     }
 }

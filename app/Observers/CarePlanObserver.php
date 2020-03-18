@@ -6,6 +6,9 @@
 
 namespace App\Observers;
 
+use App\Events\CarePlanWasProviderApproved;
+use App\Events\CarePlanWasQAApproved;
+use App\Events\PdfableCreated;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
@@ -34,6 +37,17 @@ class CarePlanObserver
             $carePlan->load('patient');
             $this->addCarePlanPrintedNote($carePlan);
         }
+    
+        if ($carePlan->isDirty('status')) {
+            if (CarePlan::QA_APPROVED == $carePlan->status) {
+                event(new CarePlanWasQAApproved($carePlan->patient));
+            }
+    
+            if (CarePlan::PROVIDER_APPROVED == $carePlan->status) {
+                event(new CarePlanWasProviderApproved($carePlan->patient));
+                event(new PdfableCreated($carePlan));
+            }
+        }
     }
 
     /**
@@ -41,23 +55,26 @@ class CarePlanObserver
      */
     public function saving(CarePlan $carePlan)
     {
-        if (CarePlan::QA_APPROVED == $carePlan->status) {
+        if ($carePlan->isDirty('status') && CarePlan::QA_APPROVED == $carePlan->status) {
             $carePlan->provider_approver_id = null;
+            $carePlan->provider_date = null;
             /** @var SchedulerService $schedulerService */
             $schedulerService = app()->make(SchedulerService::class);
             $schedulerService->ensurePatientHasScheduledCall($carePlan->patient);
         }
-
+        
         if ( ! array_key_exists('care_plan_template_id', $carePlan->getAttributes())) {
             $carePlan->care_plan_template_id = getDefaultCarePlanTemplate()->id;
         }
-
+    }
+    
+    public function creating(CarePlan $carePlan) {
         if ($carePlan->patient->practice('upg')) {
             $cpmMisc = CpmMisc::whereName('Other')->first();
-
+        
             $instruction = CpmInstruction::updateOrCreate([
-                'is_default' => true,
-                'name'       => '- Take all of your medications as prescribed.
+                                                              'is_default' => true,
+                                                              'name'       => '- Take all of your medications as prescribed.
 
 - Exercise your heart and muscles regularly.
 
@@ -68,14 +85,14 @@ class CarePlanObserver
 - Please notify your care team if you are in the hospital by calling (844) 968-1800.
 
 - Get a flu shot every year but check with your provider first. Ask your provider if you should get a pneumococcal (pneumonia) vaccine, tetanus (Tdap) vaccine or a zoster (shingles) vaccine.',
-            ]);
-
+                                                          ]);
+        
             $patientMiscExists = $carePlan->patient->cpmMiscs()->where('cpm_misc_id', $cpmMisc->id)->first();
-
+        
             if ($patientMiscExists) {
                 $carePlan->patient->cpmMiscs()->detach($patientMiscExists);
             }
-
+        
             $patientMisc = $carePlan->patient->cpmMiscs()->attach($cpmMisc->id, [
                 'cpm_instruction_id' => $instruction->id,
             ]);

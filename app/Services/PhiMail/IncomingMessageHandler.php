@@ -31,6 +31,8 @@ class IncomingMessageHandler
                 'to'              => $message->recipient,
                 'body'            => $message->info,
                 'num_attachments' => $message->numAttachments,
+                'status'          => $message->statusCode ?? DirectMailMessage::STATUS_SUCCESS,
+                'direction'       => DirectMailMessage::DIRECTION_RECEIVED,
             ]
         );
     }

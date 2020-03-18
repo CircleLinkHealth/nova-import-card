@@ -121,7 +121,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
 
     public function call()
     {
-        return $this->hasOne('App\Call');
+        return $this->hasOne(Call::class);
     }
 
     public function editLink()

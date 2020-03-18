@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Traits\ValidatesDates;
@@ -13,12 +17,10 @@ class FixAthenaBatchAddLastEncounter extends Command
 {
     use ValidatesDates;
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
+     * @var AthenaApiImplementation
      */
-    protected $signature = 'batch:add-last-encounter {batch_id} {start_date?} {end_date?}';
-    
+    protected $api;
+
     /**
      * The console command description.
      *
@@ -26,21 +28,21 @@ class FixAthenaBatchAddLastEncounter extends Command
      */
     protected $description = 'Fetch last encounter from Athena for each record in this batch.';
     /**
-     * @var AthenaApiImplementation
+     * The name and signature of the console command.
+     *
+     * @var string
      */
-    protected $api;
-    
+    protected $signature = 'batch:add-last-encounter {batch_id} {start_date?} {end_date?}';
+
     /**
      * Create a new command instance.
-     *
-     * @param AthenaApiImplementation $api
      */
     public function __construct(AthenaApiImplementation $api)
     {
         parent::__construct();
         $this->api = $api;
     }
-    
+
     /**
      * Execute the console command.
      *
@@ -49,9 +51,9 @@ class FixAthenaBatchAddLastEncounter extends Command
     public function handle()
     {
         ini_set('memory_limit', '2000M');
-        
+
         $this->validateArguments();
-        
+
         TargetPatient::whereBatchId($this->argument('batch_id'))->with(['eligibilityJob', 'batch'])->has(
             'eligibilityJob'
         )->chunk(
@@ -65,13 +67,11 @@ class FixAthenaBatchAddLastEncounter extends Command
                 );
             }
         );
-        
+
         $this->line('batch finished');
     }
-    
+
     /**
-     * @param TargetPatient $targetPatient
-     *
      * @throws \Exception
      */
     private function processEncounters(TargetPatient $targetPatient)
@@ -86,7 +86,7 @@ class FixAthenaBatchAddLastEncounter extends Command
                 : null
         );
     }
-    
+
     private function validateArguments()
     {
         $validator = \Validator::make(
@@ -95,7 +95,7 @@ class FixAthenaBatchAddLastEncounter extends Command
                 'start_date' => $this->hasArgument('start_date')
                     ? $this->argument('start_date')
                     : null,
-                'end_date'   => $this->hasArgument('end_date')
+                'end_date' => $this->hasArgument('end_date')
                     ? $this->argument('end_date')
                     : null,
             ],
@@ -114,7 +114,7 @@ class FixAthenaBatchAddLastEncounter extends Command
                 ],
             ]
         );
-        
+
         if ($validator->fails()) {
             throw new \Exception(json_encode($validator->errors()->all()));
         }

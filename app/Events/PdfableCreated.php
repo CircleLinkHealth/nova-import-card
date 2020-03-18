@@ -20,14 +20,16 @@ class PdfableCreated extends Event
      *
      * @var PdfReport
      */
-    public $pdfReport;
-
+    public  $pdfReport;
+    /**
+     * @var bool|mixed
+     */
+    public $notifyPractice;
+    
     /**
      * Create a new event instance.
      *
-     * @param User  $patient
-     * @param User  $sender
-     * @param Note  $note
+     * @param PdfReport $pdfable
      * @param mixed $notifyPractice
      */
     public function __construct(
