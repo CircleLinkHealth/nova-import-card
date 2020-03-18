@@ -10,7 +10,7 @@ var debug = require('debug')('sockets-demo:server');
 var http = require('http');
 var https = require('https');
 var fs = require('fs');
-var raygunClient = require('../logger/raygun').getRaygun();
+var errorLogger = require('../logger').getErrorLogger();
 
 /**
  * Get port from environment and store in Express.
@@ -112,8 +112,8 @@ function onListening() {
 }
 
 process.on('uncaughtException', err => {
-    if (raygunClient) {
-        raygunClient.send(err, {}, function () {
+    if (errorLogger) {
+        errorLogger.report(err, {}, function () {
             process.exit(1);
         });
     }

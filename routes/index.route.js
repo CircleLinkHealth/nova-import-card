@@ -3,7 +3,7 @@ var router = express.Router();
 
 const parseBool = require("../time-tracker/utils.fn").parseBool;
 
-const raygunClient = require('../logger/raygun').getRaygun();
+const errorLogger = require('../logger');
 
 if (process.env.NODE_ENV !== 'production') {
     const swaggerSpec = require('../swagger')
@@ -19,26 +19,25 @@ if (process.env.NODE_ENV !== 'production') {
         swaggerUrl: '/swagger.json',  // this is the default value
         localPath: '/'       // this is the default value
     });
-}
-else {
+} else {
     router.get('/', (req, res) => {
         res.send({
             message: 'Time Tracker',
             uptime: Math.floor(process.uptime()),
-            raygun: raygunClient !== null
+            raygun: errorLogger.reportsToRaygun(),
+            sentry: errorLogger.reportsToSentry(),
         })
     });
 }
 
 if (parseBool(process.env.ENABLE_MONITORING_TEST_ROUTE)) {
     router.get('/report', (req, res) => {
-        if (raygunClient) {
-            raygunClient.send(new Error("test"), {}, function () {
+        if (errorLogger.getErrorLogger()) {
+            errorLogger.getErrorLogger().report(new Error("test"), {}, function () {
                 res.send({message: "done"});
             });
-        }
-        else {
-            res.send({message: "raygun client not found"});
+        } else {
+            res.send({message: "raygun or sentry client not found"});
         }
     });
 }

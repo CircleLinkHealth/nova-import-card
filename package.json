@@ -10,6 +10,7 @@
     "watch-coverage": "nodemon --exec npm run coverage"
   },
   "dependencies": {
+    "@sentry/node": "^5.13.2",
     "axios": "^0.17.0",
     "body-parser": "~1.18.2",
     "chai": "^4.1.2",
@@ -22,7 +23,6 @@
     "express-ws": "^3.0.0",
     "moment": "^2.19.2",
     "morgan": "~1.9.0",
-    "raygun": "^0.10.1",
     "serve-favicon": "~2.4.5",
     "ssl-root-cas": "^1.2.4"
   },
