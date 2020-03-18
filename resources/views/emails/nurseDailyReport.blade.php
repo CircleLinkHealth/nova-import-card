@@ -1,10 +1,10 @@
 <div class="container">
     <p>Dear {{ $name }},</p>
     <p>&nbsp;</p>
-    <p>Thanks for providing care on the CircleLink platform on {{$date->format('Y-m-d')}}</p>
+    <p>Thanks for providing care on the CircleLink platform on {{$date->format('m-d-Y')}}</p>
     <p>&nbsp;</p>
     <ol>
-        <li> Work Completed Yesterday {{$date->format('Y-m-d')}}</li>
+        <li> Work Completed Yesterday {{$date->format('m-d-Y')}}</li>
     </ol>
     <ul>
         <li>{{$actualHours}} Hours Worked out of {{$committedHours}} Hours Committed</li>
