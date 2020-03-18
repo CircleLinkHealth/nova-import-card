@@ -380,6 +380,44 @@ class PatientMonthlySummary extends BaseModel
         );
     }
 
+    /**
+     * @param $userId
+     * @param Carbon $month
+     */
+    public static function createFromPatient($userId, Carbon $month){
+        //just in case.
+        $month->startOfMonth();
+
+        $summary = PatientMonthlySummary::where('patient_id', '=', $userId)
+                                        ->orderBy('id', 'desc')->first();
+
+        //if we have already summary for this month, then we skip this
+        if ($summary && $month->isSameMonth($summary->month_year)) {
+            return;
+        }
+
+        if ($summary) {
+            //clone record
+            $newSummary = $summary->replicate();
+        } else {
+            $newSummary = new self();
+            $newSummary->patient_id = $userId;
+        }
+
+        $newSummary->month_year = $month;
+        $newSummary->total_time = 0;
+        $newSummary->ccm_time = 0;
+        $newSummary->bhi_time = 0;
+        $newSummary->no_of_calls = 0;
+        $newSummary->no_of_successful_calls = 0;
+        $newSummary->approved = 0;
+        $newSummary->rejected = 0;
+        $newSummary->actor_id = null;
+        $newSummary->needs_qa = null;
+        $newSummary->save();
+    }
+
+
     public function syncAttestedProblems(Array $attestedProblems)
     {
         //remove summary id without detaching. We may still need the association of the problem with the call
