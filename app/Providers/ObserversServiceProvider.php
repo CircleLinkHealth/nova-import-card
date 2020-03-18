@@ -65,7 +65,7 @@ class ObserversServiceProvider extends ServiceProvider
         NurseContactWindow::observe(NurseContactWindowObserver::class);
         Holiday::observe(HolidayObserver::class);
         Medication::observe(MedicationObserver::class);
-//        Note::observe(NoteObserver::class);
+        Note::observe(NoteObserver::class);
         NurseInvoiceExtra::observe(NurseInvoiceExtrasObserver::class);
         PageTimer::observe(PageTimerObserver::class);
         Patient::observe(PatientObserver::class);

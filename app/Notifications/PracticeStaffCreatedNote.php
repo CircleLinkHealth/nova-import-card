@@ -40,7 +40,7 @@ class PracticeStaffCreatedNote extends Notification implements LiveNotification,
      */
     public function via($notifiable)
     {
-        return ['database', 'mail', 'broadcast'];
+        return ['database', 'broadcast'];
     }
 
     /**
