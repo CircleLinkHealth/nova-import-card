@@ -35,8 +35,6 @@ class ActivityService
      * Get the CCM Time provided by a specific provider to a specific patient for a given month.
      *
      * @param $providerId
-     * @param array       $patientIds
-     * @param Carbon|null $monthYear
      *
      * @return mixed
      */
@@ -53,8 +51,7 @@ class ActivityService
     /**
      * Process activity time for month.
      *
-     * @param array|int   $userIds
-     * @param Carbon|null $monthYear
+     * @param array|int $userIds
      */
     public function processMonthlyActivityTime(
         $userIds,
@@ -135,7 +132,6 @@ class ActivityService
      * Get total CCM Time for a patient for a month. If no month is given, it defaults to the current month.
      *
      * @param $patientId
-     * @param Carbon|null $monthYear
      *
      * @return mixed
      */

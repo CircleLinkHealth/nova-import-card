@@ -22,29 +22,24 @@ class SendSignedUrlToDownloadPracticeReport extends Notification implements Shou
      * @var string
      */
     public $signedLink;
-    
-    /**
-     * @var int
-     */
-    protected $mediaId;
-    
-    /**
-     * @var int
-     */
-    protected $practiceId;
-    
+
     /**
      * @var string
      */
     protected $filename;
-    
+
+    /**
+     * @var int
+     */
+    protected $mediaId;
+
+    /**
+     * @var int
+     */
+    protected $practiceId;
+
     /**
      * Create a new notification instance.
-     *
-     * @param string $filename
-     * @param string $signedUrl
-     * @param int $practiceId
-     * @param int $mediaId
      */
     public function __construct(string $filename, string $signedUrl, int $practiceId, int $mediaId)
     {
@@ -53,13 +48,35 @@ class SendSignedUrlToDownloadPracticeReport extends Notification implements Shou
         $this->practiceId = $practiceId;
         $this->mediaId    = $mediaId;
     }
-    
+
+    /**
+     * {@inheritdoc}
+     */
+    public function description($notifiable): string
+    {
+        return 'For security, the link will expire in 48 hours. If you need a new link, please contact CircleLink Health.';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubject($notifiable): string
+    {
+        return 'Your report from CircleLink Health';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function redirectLink($notifiable): string
+    {
+        return url($this->signedLink);
+    }
+
     /**
      * Get the array representation of the notification.
      *
      * @param mixed $notifiable
-     *
-     * @return array
      */
     public function toArray($notifiable): array
     {
@@ -69,7 +86,15 @@ class SendSignedUrlToDownloadPracticeReport extends Notification implements Shou
             'media_id'    => $this->mediaId,
         ];
     }
-    
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toBroadcast($notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([]);
+    }
+
     /**
      * Get the mail representation of the notification.
      *
@@ -87,7 +112,7 @@ class SendSignedUrlToDownloadPracticeReport extends Notification implements Shou
             ->action('View Report', $this->redirectLink($notifiable))
             ->line('Thank you for choosing CircleLink Health!');
     }
-    
+
     /**
      * Get the notification's delivery channels.
      *
@@ -98,37 +123,5 @@ class SendSignedUrlToDownloadPracticeReport extends Notification implements Shou
     public function via($notifiable)
     {
         return ['database', 'mail', 'broadcast'];
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public function description($notifiable): string
-    {
-        return 'For security, the link will expire in 48 hours. If you need a new link, please contact CircleLink Health.';
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public function getSubject($notifiable): string
-    {
-        return 'Your report from CircleLink Health';
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public function redirectLink($notifiable): string
-    {
-        return url($this->signedLink);
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public function toBroadcast($notifiable): BroadcastMessage
-    {
-        return new BroadcastMessage([]);
     }
 }

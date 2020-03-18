@@ -39,6 +39,7 @@ class CustomerTestCase extends TestCase
      * @var array|User
      */
     private $superadmin;
+    private $medicalAssistant;
     
     /**
      * @return array|User
@@ -114,6 +115,15 @@ class CustomerTestCase extends TestCase
         }
 
         return $this->provider;
+    }
+    
+    protected function medicalAssistant(int $number = 1)
+    {
+        if ( ! $this->medicalAssistant) {
+            $this->medicalAssistant = $this->createUsersOfType('med_assistant', $number);
+        }
+        
+        return $this->medicalAssistant;
     }
 
     /**

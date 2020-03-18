@@ -23,11 +23,9 @@ class PatientNotReimportedNotification extends Notification implements ShouldBro
      * @var int
      */
     public $patientId;
-    
+
     /**
      * Create a new notification instance.
-     *
-     * @param int $patientId
      */
     public function __construct(int $patientId)
     {

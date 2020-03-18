@@ -50,8 +50,8 @@ class UPGPdfCarePlan
     {
         return [
             [
-                'search'   => [
-                    'First Name:'
+                'search' => [
+                    'First Name:',
                 ],
                 'key'      => 'first_name',
                 'callback' => function ($string) {
@@ -61,8 +61,8 @@ class UPGPdfCarePlan
                 },
             ],
             [
-                'search'   => [
-                    'Last Name:'
+                'search' => [
+                    'Last Name:',
                 ],
                 'key'      => 'last_name',
                 'callback' => function ($string) {
@@ -72,8 +72,8 @@ class UPGPdfCarePlan
                 },
             ],
             [
-                'search'   => [
-                    'Visit Date:'
+                'search' => [
+                    'Visit Date:',
                 ],
                 'key'      => 'visit_date',
                 'callback' => function ($string) {
@@ -83,8 +83,8 @@ class UPGPdfCarePlan
                 },
             ],
             [
-                'search'   => [
-                    'Medical Record #:'
+                'search' => [
+                    'Medical Record #:',
                 ],
                 'key'      => 'mrn',
                 'callback' => function ($string) {
@@ -95,13 +95,13 @@ class UPGPdfCarePlan
             ],
             [
                 'search' => [
-                    'Address:'
+                    'Address:',
                 ],
-                'key'    => 'address',
+                'key' => 'address',
             ],
             [
-                'search'   => [
-                    'Date of Birth:'
+                'search' => [
+                    'Date of Birth:',
                 ],
                 'key'      => 'dob',
                 'callback' => function ($string) {
@@ -111,8 +111,8 @@ class UPGPdfCarePlan
                 },
             ],
             [
-                'search'   => [
-                    'Sex:'
+                'search' => [
+                    'Sex:',
                 ],
                 'key'      => 'sex',
                 'callback' => function ($string) {
@@ -123,21 +123,21 @@ class UPGPdfCarePlan
             ],
             [
                 'search' => [
-                    'Phones:'
+                    'Phones:',
                 ],
-                'key'    => 'phones',
+                'key' => 'phones',
             ],
             [
                 'search' => [
-                    'Dx:'
+                    'Dx:',
                 ],
-                'key'    => 'problems',
+                'key' => 'problems',
             ],
             [
-                'search'   => [
+                'search' => [
                     'Active Problems:',
-                    'Plan:'
-                    ],
+                    'Plan:',
+                ],
                 'key'      => 'instructions',
                 'callback' => function ($string) {
                     //Usually actual instructions exist below a string containing recommendations and/or care plan, and the name of the condition is above that
@@ -161,9 +161,9 @@ class UPGPdfCarePlan
             ],
             [
                 'search' => [
-                    'Services Ordered:'
+                    'Services Ordered:',
                 ],
-                'key'    => 'chargeable_services',
+                'key' => 'chargeable_services',
             ],
         ];
     }
@@ -212,7 +212,7 @@ class UPGPdfCarePlan
             $string = $this->array[$this->count];
 
             //if the search term exists in the string remove it. If nothing is left after that, get next string
-            foreach ($searches as $search){
+            foreach ($searches as $search) {
                 if (str_contains($string, $search)) {
                     $string = trim(str_replace($search, ' ', $string));
                 }
@@ -230,7 +230,7 @@ class UPGPdfCarePlan
             //check next string, to see if we have reached the next checkpoint
             $nextCheckpoint = $this->currentCheckpoint + 1;
             if (isset($this->array[$this->count + 1], $this->checkpoints[$nextCheckpoint])) {
-                foreach ($this->checkpoints[$nextCheckpoint]['search'] as $search){
+                foreach ($this->checkpoints[$nextCheckpoint]['search'] as $search) {
                     if (str_contains($this->array[$this->count + 1], $search)) {
                         $this->currentCheckpoint = $nextCheckpoint;
                     }

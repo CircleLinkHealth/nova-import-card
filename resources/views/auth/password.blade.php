@@ -9,7 +9,7 @@
 			<div class="form-group">
 				<label class="col-md-12">Email Address</label>
 				<div class="col-md-12">
-					<input type="email" class="form-control" name="email" value="{{ old('email') }}" autocomplete="off" placeholder="someone@example.com">
+					<input type="email" class="form-control" name="email" value="{{ isset($email) && ! empty($email) ? $email : (old('email') ?: null) }}" autocomplete="off" placeholder="someone@example.com">
 				</div>
 			</div>
 

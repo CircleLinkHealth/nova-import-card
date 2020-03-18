@@ -19,6 +19,7 @@ use Illuminate\Support\Collection;
 class PatientSummaryEloquentRepository
 {
     const MINUTES_20 = 1200;
+    const MINUTES_30 = 1800;
     const MINUTES_40 = 2400;
     const MINUTES_60 = 3600;
 
@@ -33,7 +34,7 @@ class PatientSummaryEloquentRepository
 
     public function approveIfShouldApprove(User $patient, PatientMonthlySummary $summary)
     {
-        $isBHI = $summary->hasServiceCode('CPT 99484');
+        $isBHI = $summary->hasServiceCode(ChargeableService::BHI);
 
         if (( ! $this->lacksProblems($summary) && ! $isBHI) || ($isBHI && $summary->hasAtLeastOneBhiProblem())) {
             if ( ! $summary->approved && ! $summary->rejected && $this->shouldApprove($patient, $summary)) {
@@ -44,19 +45,19 @@ class PatientSummaryEloquentRepository
                         'id',
                         array_filter([$summary->problem_1, $summary->problem_2])
                     )
-                        ->update(
-                            [
-                                'billable' => false,
-                            ]
-                        );
+                           ->update(
+                               [
+                                   'billable' => false,
+                               ]
+                           );
                 }
 
                 Problem::whereIn('id', array_filter([$summary->problem_1, $summary->problem_2]))
-                    ->update(
-                        [
-                            'billable' => true,
-                        ]
-                    );
+                       ->update(
+                           [
+                               'billable' => true,
+                           ]
+                       );
             }
         } else {
             $summary->approved = false;
@@ -89,11 +90,11 @@ class PatientSummaryEloquentRepository
             return $this->determineStatusAndSave($summary);
         }
 
-        if ($this->lacksProblems($summary) && !$problemsDeleted) {
+        if ($this->lacksProblems($summary) && ! $problemsDeleted) {
             $this->fillProblemsUsingOlderSummary($summary);
         }
 
-        if ($summary->hasServiceCode('CPT 99484') && ! $summary->hasAtLeastOneBhiProblem()) {
+        if ($summary->hasServiceCode(ChargeableService::BHI) && ! $summary->hasAtLeastOneBhiProblem()) {
             $summary = $this->attachBhiProblem($summary);
         }
 
@@ -130,7 +131,7 @@ class PatientSummaryEloquentRepository
      *
      * @param $summary
      * @param array|ChargeableService|null $chargeableServiceId | The Chargeable Service Code to attach
-     * @param bool                         $detach              | Whether to detach existing chargeable services, when using the sync function
+     * @param bool $detach | Whether to detach existing chargeable services, when using the sync function
      *
      * @return mixed
      */
@@ -154,7 +155,7 @@ class PatientSummaryEloquentRepository
         }
 
         $sync = $summary->chargeableServices()
-            ->sync($chargeableServiceId, $detach);
+                        ->sync($chargeableServiceId, $detach);
 
         if ($sync['attached'] || $sync['detached'] || $sync['updated']) {
             $class = PatientMonthlySummary::class;
@@ -183,15 +184,33 @@ class PatientSummaryEloquentRepository
             }
         );
 
-        $attach = $chargeableServices
-            ->map(
-                function ($service) use ($summary) {
-                    if ($this->shouldAttachChargeableService($service, $summary)) {
-                        return $service->id;
-                    }
+        $hasCcm = false;
+        $hasPcm = false;
+
+        /** @var Collection $candidates */
+        $candidates = $chargeableServices
+            ->filter(function ($service) use ($summary) {
+                return $this->shouldAttachChargeableService($service, $summary);
+            })
+            ->each(function ($entry) use (&$hasCcm, &$hasPcm) {
+                if ($entry->code === ChargeableService::CCM) {
+                    $hasCcm = true;
                 }
-            )
-            ->filter()
+                if ($entry->code === ChargeableService::PCM) {
+                    $hasPcm = true;
+                }
+            });
+
+        if ($hasCcm && $hasPcm) {
+            $candidates = $candidates->filter(function ($service) {
+                return $service->code !== ChargeableService::PCM;
+            });
+        }
+
+        $attach = $candidates
+            ->map(function ($service) {
+                return $service->id;
+            })
             ->values()
             ->all();
 
@@ -201,7 +220,7 @@ class PatientSummaryEloquentRepository
     public function detachChargeableService($summary, $chargeableServiceId)
     {
         $detached = $summary->chargeableServices()
-            ->detach($chargeableServiceId);
+                            ->detach($chargeableServiceId);
 
         $summary->load('chargeableServices');
 
@@ -220,9 +239,9 @@ class PatientSummaryEloquentRepository
 
         $summary = $this->setApprovalStatusAndNeedsQA($summary);
 
-        if (($summary->approved && ! $summary->isDirty('approved')) || ($summary->rejected && ! $summary->isDirty(
-            'rejected'
-        )) || ($summary->needs_qa && ! $summary->isDirty('needs_qa'))) {
+        if (($summary->approved && ! $summary->isDirty('approved'))
+            || ($summary->rejected && ! $summary->isDirty('rejected'))
+            || ($summary->needs_qa && ! $summary->isDirty('needs_qa'))) {
             return $summary;
         }
 
@@ -234,21 +253,21 @@ class PatientSummaryEloquentRepository
 
         if ($summary->approved && ($summary->problem_1 || $summary->problem_2)) {
             Problem::whereIn('id', array_filter([$summary->problem_1, $summary->problem_2]))
-                ->update(
-                    [
-                        'billable' => true,
-                    ]
-                );
+                   ->update(
+                       [
+                           'billable' => true,
+                       ]
+                   );
 
             Problem::whereNotIn(
                 'id',
                 array_filter([$summary->problem_1, $summary->problem_2])
             )
-                ->update(
-                    [
-                        'billable' => false,
-                    ]
-                );
+                   ->update(
+                       [
+                           'billable' => false,
+                       ]
+                   );
         }
 
         return $summary;
@@ -318,24 +337,24 @@ class PatientSummaryEloquentRepository
     public function getValidCcdProblems(User $patient)
     {
         return $patient->ccdProblems->where('cpm_problem_id', '!=', 1)
-            ->where('is_monitored', '=', true)
-            ->reject(
-                function ($problem) {
-                    return ! validProblemName($problem->name);
-                }
-            )
-            ->reject(
-                function ($problem) {
-                    return ! $problem->icd10Code();
-                }
-            )
-            ->unique('cpm_problem_id')
-            ->sortByDesc(
-                function ($ccdProblem) {
-                    return optional($ccdProblem->cpmProblem)->weight;
-                }
-            )
-            ->values();
+                                    ->where('is_monitored', '=', true)
+                                    ->reject(
+                                        function ($problem) {
+                                            return ! validProblemName($problem->name);
+                                        }
+                                    )
+                                    ->reject(
+                                        function ($problem) {
+                                            return ! $problem->icd10Code();
+                                        }
+                                    )
+                                    ->unique('cpm_problem_id')
+                                    ->sortByDesc(
+                                        function ($ccdProblem) {
+                                            return optional($ccdProblem->cpmProblem)->weight;
+                                        }
+                                    )
+                                    ->values();
     }
 
     public function hasBillableProblemsNameAndCode(PatientMonthlySummary $summary)
@@ -354,10 +373,10 @@ class PatientSummaryEloquentRepository
     public function lacksProblemCodes(PatientMonthlySummary $summary)
     {
         return ! $summary->billable_problem1_code || ! $summary->billable_problem2_code || $summary->billableBhiProblems()->whereNull('icd_10_code')->where(
-            'icd_10_code',
-            '=',
-            ''
-        )->exists();
+                'icd_10_code',
+                '=',
+                ''
+            )->exists();
     }
 
     /**
@@ -385,9 +404,7 @@ class PatientSummaryEloquentRepository
                              || in_array($summary->patient->patientInfo->getCcmStatusForMonth($summary->month_year), [Patient::WITHDRAWN, Patient::PAUSED, Patient::WITHDRAWN_1ST_CALL])
                              || ! $summary->patient->billingProviderUser();
 
-        if (
-            ($summary->rejected || $summary->approved) && $summary->actor_id
-        ) {
+        if ($summary->actor_id && ($summary->rejected || $summary->approved)) {
             $summary->needs_qa = false;
         }
 
@@ -439,8 +456,8 @@ class PatientSummaryEloquentRepository
             ->map(
                 function ($problemId, $i) use ($user) {
                     $problem = $this->getValidCcdProblems($user)
-                        ->where('id', '=', $problemId)
-                        ->first();
+                                    ->where('id', '=', $problemId)
+                                    ->first();
 
                     if ( ! $problem) {
                         return false;
@@ -467,11 +484,11 @@ class PatientSummaryEloquentRepository
 
             if ( ! $isValid) {
                 Problem::where('id', $summary->{"problem_${problemNo}"})
-                    ->update(
-                        [
-                            'billable' => false,
-                        ]
-                    );
+                       ->update(
+                           [
+                               'billable' => false,
+                           ]
+                       );
                 $summary->{"problem_${problemNo}"} = null;
             }
         }
@@ -536,22 +553,62 @@ class PatientSummaryEloquentRepository
         return $summary;
     }
 
+    private function fillProblemsUsingOlderSummary(PatientMonthlySummary &$summary)
+    {
+        $olderSummary = PatientMonthlySummary::wherePatientId($summary->patient_id)
+            ->orderBy('month_year', 'desc')
+            ->where(
+                'month_year',
+                '<=',
+                $summary->month_year->copy()->subMonth()->startOfMonth()
+            )
+            ->whereApproved(true)
+            ->with(['billableProblem1', 'billableProblem2'])
+            ->first();
+
+        if ($olderSummary) {
+            if ($olderSummary->billableProblem1) {
+                $summary->problem_1              = $olderSummary->problem_1;
+                $summary->billable_problem1      = $olderSummary->billable_problem1;
+                $summary->billable_problem1_code = $olderSummary->billable_problem1_code;
+            } else {
+                $summary->problem_1              = null;
+                $summary->billable_problem1      = null;
+                $summary->billable_problem1_code = null;
+            }
+
+            if ($olderSummary->billableProblem2) {
+                $summary->problem_2              = $olderSummary->problem_2;
+                $summary->billable_problem2      = $olderSummary->billable_problem2;
+                $summary->billable_problem2_code = $olderSummary->billable_problem2_code;
+            } else {
+                $summary->problem_2              = null;
+                $summary->billable_problem2      = null;
+                $summary->billable_problem2_code = null;
+            }
+
+            if ($summary->problem_1 && $summary->problem_2) {
+                $skipValidation = true;
+            }
+        }
+    }
+
     private function removeDeletedConditions(PatientMonthlySummary &$summary)
     {
         $deleted = false;
-        
+
         if ( ! $summary->billableProblem1()->exists()) {
             $summary->problem_1              = null;
             $summary->billable_problem1      = null;
             $summary->billable_problem1_code = null;
-            $deleted = true;
+            $deleted                         = true;
         }
 
         if ( ! $summary->billableProblem2()->exists()) {
             $summary->problem_2              = null;
             $summary->billable_problem2      = null;
             $summary->billable_problem2_code = null;
-            $deleted = true;
+            $deleted                         = true;
         }
 
         return $deleted;
@@ -564,14 +621,29 @@ class PatientSummaryEloquentRepository
      */
     private function shouldAttachChargeableService(ChargeableService $service, PatientMonthlySummary $summary)
     {
-        //FIXME: this is confusing. Might need a few extra parenthesis.
-        return ChargeableService::BHI                        == $service->code && $summary->bhi_time >= self::MINUTES_20
-               || ChargeableService::CCM                     == $service->code && $summary->ccm_time >= self::MINUTES_20
-               || ChargeableService::GENERAL_CARE_MANAGEMENT == $service->code && $summary->ccm_time >= self::MINUTES_20
-               || ChargeableService::CCM_PLUS_40             == $service->code && $summary->ccm_time >= self::MINUTES_40 && $summary->patient->primaryPractice->hasServiceCode(ChargeableService::CCM_PLUS_40)
-               || ChargeableService::CCM_PLUS_60             == $service->code && $summary->ccm_time >= self::MINUTES_60 && $summary->patient->primaryPractice->hasServiceCode(ChargeableService::CCM_PLUS_60)
-               || (ChargeableService::SOFTWARE_ONLY == $service->code && $summary->patient->primaryPractice->hasServiceCode(ChargeableService::SOFTWARE_ONLY)
-                  && 0 == $summary->timeFromClhCareCoaches());
+        switch ($service->code) {
+            case ChargeableService::BHI:
+                return $summary->bhi_time >= self::MINUTES_20;
+
+            case ChargeableService::CCM:
+            case ChargeableService::GENERAL_CARE_MANAGEMENT:
+                return $summary->ccm_time >= self::MINUTES_20;
+
+            case ChargeableService::PCM:
+                return $summary->ccm_time >= self::MINUTES_30;
+
+            case ChargeableService::CCM_PLUS_40:
+                return $summary->ccm_time >= self::MINUTES_40;
+
+            case ChargeableService::CCM_PLUS_60:
+                return $summary->ccm_time >= self::MINUTES_60;
+
+            case ChargeableService::SOFTWARE_ONLY:
+                return 0 == $summary->timeFromClhCareCoaches();
+
+            default:
+                return false;
+        }
     }
 
     /**
@@ -579,15 +651,15 @@ class PatientSummaryEloquentRepository
      */
     private function shouldNotTouch(PatientMonthlySummary $summary): bool
     {
-        return (bool) $summary->actor_id;
+        return (bool)$summary->actor_id;
     }
 
     /**
      * Attempt to fill report from the patient's billable problems.
      *
      * @param Collection|Collection $billableProblems
-     * @param int                   $tryCount
-     * @param int                   $maxTries
+     * @param int $tryCount
+     * @param int $maxTries
      *
      * @return PatientMonthlySummary
      */
@@ -645,45 +717,5 @@ class PatientSummaryEloquentRepository
         }
 
         return $summary;
-    }
-    
-    private function fillProblemsUsingOlderSummary(PatientMonthlySummary &$summary)
-    {
-        $olderSummary = PatientMonthlySummary::wherePatientId($summary->patient_id)
-                                             ->orderBy('month_year', 'desc')
-                                             ->where(
-                                                 'month_year',
-                                                 '<=',
-                                                 $summary->month_year->copy()->subMonth()->startOfMonth()
-                                             )
-                                             ->whereApproved(true)
-                                             ->with(['billableProblem1', 'billableProblem2'])
-                                             ->first();
-    
-        if ($olderSummary) {
-            if ($olderSummary->billableProblem1) {
-                $summary->problem_1              = $olderSummary->problem_1;
-                $summary->billable_problem1      = $olderSummary->billable_problem1;
-                $summary->billable_problem1_code = $olderSummary->billable_problem1_code;
-            } else {
-                $summary->problem_1              = null;
-                $summary->billable_problem1      = null;
-                $summary->billable_problem1_code = null;
-            }
-        
-            if ($olderSummary->billableProblem2) {
-                $summary->problem_2              = $olderSummary->problem_2;
-                $summary->billable_problem2      = $olderSummary->billable_problem2;
-                $summary->billable_problem2_code = $olderSummary->billable_problem2_code;
-            } else {
-                $summary->problem_2              = null;
-                $summary->billable_problem2      = null;
-                $summary->billable_problem2_code = null;
-            }
-        
-            if ($summary->problem_1 && $summary->problem_2) {
-                $skipValidation = true;
-            }
-        }
     }
 }

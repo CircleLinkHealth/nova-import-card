@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
@@ -11,25 +15,25 @@ use Symfony\Component\Console\Input\InputArgument;
 class SetPatientMonthlySummaryClosedCcmStatusForMonth extends Command
 {
     use DryRunnable;
-    
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $name = 'pms:setClosedMonthStatus';
-    
+
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Set the CCM status of the patient for the given month.';
+
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $name = 'pms:setClosedMonthStatus';
     /**
      * @var int
      */
     private $changedCount = 0;
-    
+
     /**
      * Execute the console command.
      *
@@ -38,16 +42,16 @@ class SetPatientMonthlySummaryClosedCcmStatusForMonth extends Command
     public function handle()
     {
         $argument = $this->argument('month') ?? null;
-        
+
         $date = $argument
             ? Carbon::parse($argument)->startOfMonth()
             : Carbon::now()->subMonth()->startOfMonth();
-        
+
         PatientMonthlySummary::orderBy('id')
-                             ->whereMonthYear($date->toDateString())
-                             ->with('patient.patientInfo')
-                             ->has('patient.patientInfo')
-                             ->chunk(
+            ->whereMonthYear($date->toDateString())
+            ->with('patient.patientInfo')
+            ->has('patient.patientInfo')
+            ->chunk(
                                  500,
                                  function ($summaries) use ($date) {
                                      $summaries->each(
@@ -59,11 +63,11 @@ class SetPatientMonthlySummaryClosedCcmStatusForMonth extends Command
                                                  $this->warn(
                                                      "changing patient:{$summary->patient->id} summary:$summary->id"
                                                  );
-                            
+
                                                  if ( ! $this->isDryRun()) {
                                                      $summary->closed_ccm_status = $actualStatus;
                                                      $summary->save();
-                                                     $this->changedCount++;
+                                                     ++$this->changedCount;
                                                  }
                                              }
                                          }
@@ -72,7 +76,7 @@ class SetPatientMonthlySummaryClosedCcmStatusForMonth extends Command
                              );
         $this->info("{$this->changedCount} patient summaries changed.");
     }
-    
+
     protected function getArguments()
     {
         return [

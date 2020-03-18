@@ -12,8 +12,8 @@ use CircleLinkHealth\Customer\Entities\PatientNurse;
 class NoteObserver
 {
     public function created(Note $note) {
-        if ($note->author->hasRole(Constants::PRACTICE_STAFF_ROLE_NAMES)) {
-            PatientNurse::getPermanentNurse($note->patient->id)->notify(new PracticeStaffCreatedNote($note));
+        if ($note->author->hasRole(Constants::PRACTICE_STAFF_ROLE_NAMES) && $nurse = PatientNurse::getPermanentNurse($note->patient->id)) {
+            $nurse->notify(new PracticeStaffCreatedNote($note));
         }
     }
 }
