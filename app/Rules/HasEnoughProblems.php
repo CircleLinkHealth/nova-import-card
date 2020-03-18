@@ -51,10 +51,17 @@ class HasEnoughProblems implements Rule
         $cpmProblems = $value->count();
         $bhiProblems = $value->where('cpmProblem.is_behavioral', true)->count();
 
+        if ($bhiProblems >= 1) {
+            return true;
+        }
+
+        // if we reach here, it means that we have no $bhiProblems.
+        // so, if only one ccm problem, we check if PCM is enabled for the practice
+        // otherwise, we return true only if ccm problems are equal or more than two
         if ($cpmProblems === 1) {
             return $this->patient->primaryPractice->hasServiceCode(ChargeableService::PCM);
         }
 
-        return $cpmProblems >= 2 || $bhiProblems >= 1;
+        return $cpmProblems >= 2;
     }
 }
