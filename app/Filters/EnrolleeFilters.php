@@ -59,6 +59,7 @@ class EnrolleeFilters extends QueryFilters
         $decoded               = json_decode($query, true);
         $decoded['hideStatus'] = array_merge($decoded['hideStatus'], [
             Enrollee::LEGACY,
+            Enrollee::SOFT_REJECTED,
             Enrollee::REJECTED,
             Enrollee::ENROLLED,
         ]);
