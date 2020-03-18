@@ -1,10 +1,10 @@
 <div class="container">
     <p>Dear {{ $name }},</p>
     <p>&nbsp;</p>
-    <p>Thanks for providing care on the CircleLink platform on {{$date->format('Y-m-d')}}</p>
+    <p>Thanks for providing care on the CircleLink platform on {{$date->format('m-d-Y')}}</p>
     <p>&nbsp;</p>
     <ol>
-        <li> Work Completed Yesterday {{$date->format('Y-m-d')}}</li>
+        <li> Work Completed Yesterday {{$date->format('m-d-Y')}}</li>
     </ol>
     <ul>
         <li>{{$actualHours}} Hours Worked out of {{$committedHours}} Hours Committed</li>
@@ -14,10 +14,12 @@
     </ul>
     <p>&nbsp;</p>
     <ol start="2">
-        <li> Monthly Case Completion ({{$callsCompletionRate}})</li>
+
+        <li> Monthly Case Completion ({{$caseLoadComplete}}%)</li>
     </ol>
     <ul>
-        <li>Monthly caseload: {{$caseLoadComplete}}%</li>
+        <li>Monthly caseload: {{$totalPatientsInCaseLoad}} patients</li>
+
         {{--        <li>Patients completed for the month: {{$completedPatients}}</li>--}}
         {{--        <li>Patients remaining: {{$incompletePatients}}</li>--}}
     </ul>

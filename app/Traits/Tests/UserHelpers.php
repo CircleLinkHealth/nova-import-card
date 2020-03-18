@@ -141,9 +141,8 @@ trait UserHelpers
                 'date'              => $st->toDateString(),
                 'window_time_start' => $window['start'],
                 'window_time_end'   => $window['end'],
-
-                'day_of_week' => 5,
-
+                'repeat_frequency' => 'does_not_repeat',
+                'day_of_week' => Carbon::parse($st->toDateString())->dayOfWeek,
                 'nurse_info_id' => $nurse->id,
             ]
         );
