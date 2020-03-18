@@ -300,10 +300,10 @@ class BlueButtonMedicalRecord
                     'status'  => '',
                     'text'    => null,
                     'product' => [
-                        'name'        => $medication['name'],
+                        'name'        => $medication['name'] ?? null,
                         'code'        => '',
                         'code_system' => '',
-                        'text'        => $medication['sig'],
+                        'text'        => $medication['sig'] ?? null,
                         'translation' => [
                             'name'             => null,
                             'code'             => null,
