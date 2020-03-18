@@ -112,7 +112,7 @@ class PatientLoginTest extends CustomerTestCase
      */
     public function test_provider_cannot_go_to_patient_page()
     {
-        auth()->login($this->provider);
+        $this->actingAs($this->provider);
 
         $this->call('GET', route('patient-user.careplan'))
              ->assertStatus(302)
@@ -129,7 +129,7 @@ class PatientLoginTest extends CustomerTestCase
     {
         $this->disableFeatureForPatient();
 
-        auth()->login($this->patient);
+        $this->actingAs($this->patient);
 
         $this->assertFalse($this->featureIsEnabledForPatient());
         $this->assertFalse(patientLoginIsEnabledForPractice($this->patient->program_id));
@@ -146,7 +146,7 @@ class PatientLoginTest extends CustomerTestCase
      */
     public function test_patient_cannot_go_to_page_if_careplan_is_draft()
     {
-        auth()->login($this->patient);
+        $this->actingAs($this->patient);
 
         $this->enableFeatureForPatient();
 
@@ -167,7 +167,7 @@ class PatientLoginTest extends CustomerTestCase
     {
         $this->qaApproveCarePlan();
 
-        auth()->login($this->patient);
+        $this->actingAs($this->patient);
 
         $this->call('GET', route('home'))
              ->assertRedirect(route('patient-user.careplan'));
@@ -244,7 +244,7 @@ class PatientLoginTest extends CustomerTestCase
      */
     private function qaApproveCarePlan()
     {
-        auth()->login($this->nurse);
+        $this->actingAs($this->nurse);
 
         $this->assertEquals(CarePlan::DRAFT, $this->patient->carePlan->status);
 
@@ -268,7 +268,7 @@ class PatientLoginTest extends CustomerTestCase
      */
     private function providerApprovesCarePlan()
     {
-        auth()->login($this->provider);
+        $this->actingAs($this->provider);
 
         $this->call('POST', route('patient.careplan.approve', [
             'patientId' => $this->patient->id,
