@@ -1045,11 +1045,6 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'Billing\PracticeInvoiceController@counts',
                 ])->middleware('permission:patientSummary.read');
 
-                Route::post('/storeProblem', [
-                    'uses' => 'Billing\PracticeInvoiceController@storeProblem',
-                    'as'   => 'monthly.billing.store-problem',
-                ])->middleware('permission:patientSummary.update');
-
                 Route::post('/close', [
                     'uses' => 'Billing\PracticeInvoiceController@closeMonthlySummaryStatus',
                     'as'   => 'monthly.billing.close.month',
