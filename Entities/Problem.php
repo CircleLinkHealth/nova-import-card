@@ -142,7 +142,7 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
             return $icd10->code;
         }
 
-        return $this->cpmProblem->default_icd_10_code ?? null;
+        return $this->cpmProblem->default_icd_10_code ?? '';
     }
 
     public function isBehavioral(): bool
