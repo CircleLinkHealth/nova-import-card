@@ -106,6 +106,7 @@ class CpmEventServiceProvider extends ServiceProvider
         ],
         CarePlanWasProviderApproved::class => [
             ForwardApprovedCarePlanToPractice::class,
+            NotifyPatientOfCarePlanApproval::class,
         ],
     ];
 

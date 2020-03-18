@@ -112,8 +112,6 @@ class UpdateCarePlanStatus
         }
         
         $patient->save();
-    
-        $patient->carePlan->notifyPatientOfApproval();
     }
     
     private function carePlanIsAlreadyApproved(CarePlan $carePlan)

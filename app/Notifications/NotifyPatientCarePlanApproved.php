@@ -44,9 +44,12 @@ class NotifyPatientCarePlanApproved extends Notification
      * approved. The first case we send the patient a button link to the password reset page, while on the second we
      * send them a link to CPM, with a hyperlink of the reset page below.
      */
-
+    
     /**
      * Create a new notification instance.
+     *
+     * @param CarePlan $carePlan
+     * @param array $channels
      */
     public function __construct(CarePlan $carePlan, array $channels = ['mail'])
     {
