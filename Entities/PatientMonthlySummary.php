@@ -307,18 +307,14 @@ class PatientMonthlySummary extends BaseModel
         return $count;
     }
 
-    public function hasAtLeastOneBhiProblem()
+    public function bhiAttestedProblems()
     {
-        return $this->billableProblems()
-                    ->where('type', '=', 'bhi')
-                    ->exists();
+        return $this->attestedProblems->where('cpmProblem.is_behavioral', '=', true);
     }
 
-    public function hasAtLeastTwoCcmProblems()
+    public function ccmAttestedProblems()
     {
-        return $this->billableProblems()
-                    ->where('type', '=', 'ccm')
-                    ->count() >= 2;
+        return $this->attestedProblems->where('cpmProblem.is_behavioral', '=', false);
     }
 
     public function patient()
