@@ -144,7 +144,7 @@ class PatientCareDocumentsController extends Controller
             }
             $patient->addMedia($file)
                 ->withCustomProperties(['doc_type' => $request->doc_type])
-                ->toMediaCollection('patient-email-attachments');
+                ->toMediaCollection('patient-care-documents');
         }
 
         return response()->json([]);
