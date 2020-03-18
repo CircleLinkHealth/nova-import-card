@@ -119,11 +119,11 @@
                 if (self.isApproveBillablePage) {
                     probs = probs.filter(function (p) {
 
-                        if (! p.code){
+                        if (!p.code) {
                             return false;
                         }
 
-                        return  self.isBhi ? p.is_behavioral : !p.is_behavioral;
+                        return self.isBhi ? p.is_behavioral : !p.is_behavioral;
                     })
                 }
 
@@ -139,7 +139,8 @@
                         code: snomed.icd_10_code,
                         is_snomed: true,
                     })) : [])])
-                }, []).distinct(p => p.name)
+                }, [])
+                    .distinct(p => p.name)
                     .sort((a, b) => (+b.is_snomed) - (+a.is_snomed) || b.name.localeCompare(a.name));
             },
             isNotesPage() {
@@ -151,7 +152,7 @@
             addCcdProblem(e) {
                 e.preventDefault()
 
-                if (this.newProblem.name.length == 0){
+                if (this.newProblem.name.length == 0) {
                     this.showNoProblemSelected = true
                     return;
                 }
@@ -192,7 +193,7 @@
                 this.newProblem.icd10 = null
             },
         },
-        created(){
+        created() {
             self = this
         },
         mounted() {
