@@ -41,6 +41,8 @@ class PopulateNursePerformanceTable extends Seeder
     
     private function createFakePatients()
     {
+        $this->command->warn('Creating Fake Patients');
+        
         PageTimer::select('patient_id')
                  ->doesntHave('patient')
                  ->where('patient_id', '!=', 0)
@@ -58,6 +60,8 @@ class PopulateNursePerformanceTable extends Seeder
     
     private function createFakeProviders()
     {
+        $this->command->warn('Creating Fake Providers');
+    
         PageTimer::select('provider_id')
                  ->doesntHave('provider')
                  ->distinct()
