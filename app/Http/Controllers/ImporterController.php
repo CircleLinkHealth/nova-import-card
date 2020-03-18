@@ -40,6 +40,9 @@ class ImporterController extends Controller
             ->with('practice')
             ->with('location')
             ->with('billingProvider')
+            ->whereHas('practice', function ($q) {
+                $q->whereIn('id', auth()->user()->viewableProgramIds());
+            })
             ->get()
             //where not in UPG + G0506
             //where media. where id = upg, custom_properties->mrn = imr.mrn, finished_processing()
