@@ -2,6 +2,7 @@
 
 namespace CircleLinkHealth\Eligibility\Entities;
 
+use CircleLinkHealth\Core\Traits\MySQLSearchable;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
@@ -31,6 +32,7 @@ use Laravel\Scout\Searchable;
  */
 class PcmProblem extends Model
 {
+    use MySQLSearchable;
     use Searchable;
 
     protected $fillable = [
