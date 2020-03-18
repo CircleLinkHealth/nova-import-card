@@ -81,11 +81,6 @@ class ItemizedBillablePatientsReport
                                      $summaries->each(function (PatientMonthlySummary $summary) use (&$data, $repo) {
                                          $u = $summary->patient;
 
-                                         if ( ! $repo->hasBillableProblemsNameAndCode($summary)) {
-                                             $summary = $repo->fillBillableProblemsNameAndCode($summary);
-                                             $summary->save();
-                                         }
-
                                          $patientData = new PatientReportData();
                                          $patientData->setCcmTime(round($summary->ccm_time / 60, 2));
                                          $patientData->setBhiTime(round($summary->bhi_time / 60, 2));
@@ -167,7 +162,6 @@ class ItemizedBillablePatientsReport
 
     private function getCcmAttestedConditions(PatientMonthlySummary $summary, bool $shouldAttachDefaultProblems)
     {
-
         if ($shouldAttachDefaultProblems && $summary->attestedProblems->where('cpmProblem.is_behavioral', '=',
                 false)->count() == 0) {
             return $this->formatProblemCodesForReport(collect([
@@ -177,9 +171,6 @@ class ItemizedBillablePatientsReport
         } else {
             return $this->getProblemCodesForReport($summary->attestedProblems, false);
         }
-
-
-
     }
 
     private function getBhiAttestedConditions(PatientMonthlySummary $summary, bool $shouldAttachDefaultProblems)

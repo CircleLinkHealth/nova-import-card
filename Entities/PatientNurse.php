@@ -105,4 +105,15 @@ class PatientNurse extends BaseModel
 
         return $this->temporary_nurse_user_id && $now->isBetween($this->temporary_from, $this->temporary_to);
     }
+    
+    /**
+     * Get a patient's permanent nurse.
+     *
+     * @param int $patientUserId
+     *
+     * @return User|null
+     */
+    public static function getPermanentNurse(int $patientUserId): ?User {
+        return optional((new static())->where('patient_user_id', $patientUserId)->with('permanentNurse')->has('permanentNurse')->first())->permanentNurse;
+    }
 }
