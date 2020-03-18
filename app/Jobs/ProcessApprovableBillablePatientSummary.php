@@ -14,7 +14,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class AttachBillableProblemsToSummary implements ShouldQueue
+class ProcessApprovableBillablePatientSummary implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -39,11 +39,8 @@ class AttachBillableProblemsToSummary implements ShouldQueue
      */
     public function handle(PatientSummaryEloquentRepository $repo)
     {
-        $summary = $repo->attachBillableProblems($this->summary->patient, $this->summary);
-
-//        commented out on purpose. https://github.com/CircleLinkHealth/cpm-web/issues/1573
-//        $summary = $repo->attachChargeableService($summary, null, false);
-
+        $summary = $repo->setApprovalStatusAndNeedsQA($this->summary);
+        
         if (is_a($summary, PatientMonthlySummary::class)) {
             $summary->save();
         }
