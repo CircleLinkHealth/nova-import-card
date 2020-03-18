@@ -256,7 +256,7 @@ class VariablePayCalculator
             );
         }
 
-        $patient = User::with('primaryPractice.chargeableServices')->find($patientUserId);
+        $patient = User::withTrashed()->with('primaryPractice.chargeableServices')->find($patientUserId);
         if ( ! $patient) {
             throw new \Exception("Could not find user with id $patientUserId");
         }
