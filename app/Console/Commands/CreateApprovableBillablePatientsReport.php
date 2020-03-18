@@ -8,7 +8,7 @@ namespace App\Console\Commands;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
-use App\Jobs\ProcessLastMonthBillablePatients;
+use App\Jobs\ProcessBillablePatients;
 use Illuminate\Console\Command;
 
 class CreateApprovableBillablePatientsReport extends Command
@@ -59,7 +59,7 @@ class CreateApprovableBillablePatientsReport extends Command
                         foreach ($practices as $practice) {
                             $this->comment("BEGIN CreateApprovableBillablePatientsReport for $practice->display_name for {$month->toDateString()}");
                     
-                            ProcessLastMonthBillablePatients::dispatch($practice->id, $month, (bool) $this->option('from-scratch'), (bool) $this->option('reset-actor'));
+                            ProcessBillablePatients::dispatch($practice->id, $month, (bool) $this->option('from-scratch'), (bool) $this->option('reset-actor'));
                     
                             $this->output->success(
                                 "END CreateApprovableBillablePatientsReport for $practice->display_name for {$month->toDateString()}"
