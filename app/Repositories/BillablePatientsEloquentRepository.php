@@ -57,7 +57,7 @@ class BillablePatientsEloquentRepository
                     
                     return true;
                 }
-            )
+            )->all()
         )
             ->has('patientInfo')
             ->whereHas(
