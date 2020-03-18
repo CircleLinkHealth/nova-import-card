@@ -222,6 +222,21 @@ class NotesController extends Controller
         return redirect()->route('patient.note.index', ['patientId' => $patientId]);
     }
 
+    public function download(Request $request, $patientId, $noteId)
+    {
+        $format = $request->input('format');
+        $note   = Note::with('patient.ccdProblems')->wherePatientId($patientId)->findOrFail($noteId);
+
+        if ('pdf' === $format) {
+            return response()->download($note->toPdf(), "patient-$patientId-note-$noteId.pdf")->deleteFileAfterSend();
+        }
+        if ('html' === $format) {
+            return $note->toPdf(null, true);
+        }
+
+        return redirect()->back();
+    }
+
     /**
      * @param $noteId
      *

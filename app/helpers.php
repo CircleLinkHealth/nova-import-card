@@ -1711,3 +1711,20 @@ if ( ! function_exists('reimportingPatientsIsEnabledForUser')) {
         });
     }
 }
+
+if ( ! function_exists('isDownloadingNotesEnabledForUser')) {
+    /**
+     * @param $userId
+     */
+    function isDownloadingNotesEnabledForUser(int $userId): bool
+    {
+        $key = 'enable_downloading_notes_for_user';
+
+        return \Cache::remember(sha1("{$key}_{$userId}"), 2, function () use ($key, $userId) {
+            return AppConfig::where('config_key', $key)
+                ->where(function ($q) use ($userId) {
+                    $q->where('config_value', $userId)->orWhere('config_value', 'all');
+                })->exists();
+        });
+    }
+}

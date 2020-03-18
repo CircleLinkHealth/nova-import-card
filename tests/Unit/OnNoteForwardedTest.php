@@ -7,14 +7,16 @@
 namespace Tests\Unit;
 
 use App\Notifications\NoteForwarded;
+use App\Services\NoteService;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Notification;
+use Tests\CustomerTestCase;
 use Tests\TestCase;
 
-class OnNoteForwardedTest extends TestCase
+class OnNoteForwardedTest extends CustomerTestCase
 {
     use UserHelpers;
     use WithoutMiddleware;
@@ -28,22 +30,16 @@ class OnNoteForwardedTest extends TestCase
     {
         parent::setUp();
 
-        $this->practice = factory(Practice::class)->create();
-        $this->patient  = $this->createUser($this->practice->id, 'participant');
-        $this->admin    = $this->createUser($this->practice->id, 'administrator');
-
-        $this->nurse = $this->createUser($this->practice->id, 'care-center');
-
-        $carePerson = $this->patient->careTeamMembers()->create([
-            'member_user_id' => $this->nurse->id,
+        $carePerson = $this->patient()->careTeamMembers()->create([
+            'member_user_id' => $this->careCoach()->id,
             'type'           => 'member',
             'alert'          => 1,
         ]);
 
-        $this->patient->notes()->create([
-            'author_id'    => $this->nurse->id,
+        $this->patient()->notes()->create([
+            'author_id'    => $this->careCoach()->id,
             'body'         => 'test',
-            'logger_id'    => $this->nurse->id,
+            'logger_id'    => $this->careCoach()->id,
             'performed_at' => Carbon::now(),
             'type'         => 'Patient Consented',
         ]);
@@ -54,7 +50,7 @@ class OnNoteForwardedTest extends TestCase
      */
     public function test_it_sends_notifications()
     {
-        $practice                           = $this->practice;
+        $practice                           = $this->practice();
         $settings                           = $practice->cpmSettings();
         $settings->email_note_was_forwarded = true;
         $settings->efax_pdf_notes           = true;
@@ -62,11 +58,10 @@ class OnNoteForwardedTest extends TestCase
         $settings->save();
 
         //admin
-        $auth = $this->admin;
+        $auth = $this->superadmin();
         auth()->login($auth);
-
-        //participant
-        $note = $this->patient->notes()->first();
+        
+        $note = $this->patient()->notes()->first();
 
         Notification::fake();
 
@@ -75,7 +70,7 @@ class OnNoteForwardedTest extends TestCase
         $recipients = collect();
         $recipients = $note->patient->getCareTeamReceivesAlerts();
         //care center
-        $recipients->push($this->nurse);
+        $recipients->push($this->careCoach());
 
         $recipients->map(function ($user) {
             Notification::assertSentTo(
@@ -83,5 +78,34 @@ class OnNoteForwardedTest extends TestCase
                 NoteForwarded::class
             );
         });
+    }
+    
+    public function test_practice_has_notes_notifications_enabled_method() {
+        $service = app(NoteService::class);
+        
+        $settings                           = $this->practice()->cpmSettings();
+        $settings->email_note_was_forwarded = true;
+        $settings->efax_pdf_notes           = true;
+        $settings->dm_pdf_notes             = true;
+        $settings->save();
+    
+        $this->assertTrue($service->practiceHasNotesNotificationsEnabled($this->refreshSettings()));
+        
+        $settings->email_note_was_forwarded = false;
+        $settings->efax_pdf_notes           = false;
+        $settings->dm_pdf_notes             = false;
+        $settings->save();
+    
+        $this->assertFalse($service->practiceHasNotesNotificationsEnabled($this->refreshSettings()));
+    
+        $settings->dm_pdf_notes             = true;
+        $settings->save();
+    
+        $this->assertTrue($service->practiceHasNotesNotificationsEnabled($this->refreshSettings()));
+    }
+    
+    private function refreshSettings()
+    {
+        return $this->practice()->load('settings');
     }
 }
