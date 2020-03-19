@@ -32,8 +32,15 @@ class SubscribeToRedisAWVChannel extends Command
      */
     public function handle()
     {
-        Redis::subscribe(['awv-patient-report-created'], function ($patientReportdata) {
+        $channel = 'awv-patient-report-created';
+        $this->info("Listening on $channel");
+
+        Redis::subscribe([$channel], function ($patientReportdata) {
+            $this->info("Received event. Will dispatch for AwvPatientReportNotify.");
             AwvPatientReportNotify::dispatch($patientReportdata);
+
+            //this will stop the process from exiting and will re-subscribe to the channel
+            $this->handle();
         });
     }
 }
