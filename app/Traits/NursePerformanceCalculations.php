@@ -27,7 +27,7 @@ trait NursePerformanceCalculations
      */
     public function estAvgCCMTimePerMonth(Carbon $date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse)
     {
-        $totalCCMtimeOnCompletedPatients = $this->queryPatientMonthlySum($date, $patientsForMonth)->sum('ccm_time');
+        $totalCCMtimeOnCompletedPatients = $this->queryMonthlyCompletedPatient($date, $patientsForMonth)->sum('ccm_time');
 
         if (0 === $totalMonthlyCompletedPatientsOfNurse) {
             $totalMonthlyCompletedPatientsOfNurse = 1;
@@ -37,35 +37,22 @@ trait NursePerformanceCalculations
     }
 
     /**
+     * @param Carbon $date
      * @param $patientsForMonth
      *
      * @return \Illuminate\Support\Collection
      */
-    private function queryPatientMonthlySum(Carbon $date, $patientsForMonth)
+    private function queryMonthlyCompletedPatient(Carbon $date, $patientsForMonth)
     {
-        $results = [];
-        foreach ($patientsForMonth as $patient) {
-            if ($patient->successful_calls >= 1) {
-                $patientMonthlySum = PatientMonthlySummary::with('patient')
-                    ->where('patient_id', $patient->patient_id)
-                    ->where('ccm_time', '>=', OpsDashboardService::TWENTY_MINUTES) // should i use > or >=?
-//                    ->where('no_of_successful_calls', '>=', 1)
-                    ->where('month_year', $date->copy()->startOfMonth())
-                    ->first();
-
-                if (!empty($patientMonthlySum)) {
-                    $results[] = $patientMonthlySum;
-                }
-            }
-        }
-
-        return collect($results);
+        return collect($patientsForMonth)
+            ->where('patient_time', '>=', 20)
+            ->where('successful_calls', '>=', 1);
     }
 
     public function estHoursToCompleteCaseLoadMonth(User $nurse, Carbon $date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse, $successfulCalls)
     {
         $avgCompletionPerPatient = $this->getAvgCompletionTime($nurse, $date, $totalMonthlyCompletedPatientsOfNurse);
-        $incompletePatientsCount = $this->getIncompletePatientsCount($patientsForMonth, $totalMonthlyCompletedPatientsOfNurse);
+        $incompletePatientsCount = $this->getIncompletePatientsCount($patientsForMonth);
 
         return round(($avgCompletionPerPatient * $incompletePatientsCount) / 60, 1);
         //        This is the old calculation
@@ -96,15 +83,14 @@ trait NursePerformanceCalculations
 
     /**
      * @param object $caseLoad
-     * @param int $totalMonthlyCompletedPatientsOfNurse
-     * @return string
+     * @return int
      */
-    public function getIncompletePatientsCount(object $caseLoad, int $totalMonthlyCompletedPatientsOfNurse)
+    public function getIncompletePatientsCount(object $caseLoad)
     {
 //        $caseLoadComplete = % percentage.
         return collect($caseLoad)
             ->where('patient_time', '<=', 20)
-            ->where('no_of_successful_calls', '<', 1)
+            ->where('successful_calls', '<', 1)
             ->count();
 
         //        $incompletePatients = round((float)($caseLoad->count() - $totalMonthlyCompletedPatientsOfNurse));
@@ -456,15 +442,14 @@ AND patient_info.ccm_status = 'enrolled'"
      *
      * @param mixed $patients
      *
+     * @param $totalMonthlyCompletedPatientsOfNurse
      * @return false|float|int
      */
-    public function percentageCaseLoadComplete($patients)
+    public function percentageCaseLoadComplete($patients, $totalMonthlyCompletedPatientsOfNurse)
     {
         return 0 !== $patients->count()
             ? round(
-                ($patients->where('patient_time', '>=', 20)
-                    ->where('successful_calls', '>=', 1)
-                    ->count()) / $patients->count() * 100,
+                ($totalMonthlyCompletedPatientsOfNurse) / $patients->count() * 100,
                 2
             )
             : 0;
@@ -490,6 +475,6 @@ AND patient_info.ccm_status = 'enrolled'"
      */
     private function getTotalCompletedPatientsOfNurse($date, $patientsForMonth)
     {
-        return $this->queryPatientMonthlySum($date, $patientsForMonth)->count();
+        return $this->queryMonthlyCompletedPatient($date, $patientsForMonth)->count();
     }
 }

@@ -104,7 +104,7 @@ class NursesPerformanceReportService
         $patientsForMonth                     = $this->getUniquePatientsAssignedForNurseForMonth($nurse, $date);
         $totalMonthlyCompletedPatientsOfNurse = $this->getTotalCompletedPatientsOfNurse($date, $patientsForMonth);
         $successfulCallsDaily = $nurse->countSuccessfulCallsFor($date);
-        $caseLoadComplete = $this->percentageCaseLoadComplete($patientsForMonth);
+        $caseLoadComplete = $this->percentageCaseLoadComplete($patientsForMonth, $totalMonthlyCompletedPatientsOfNurse);
 
         $data = [
             'nurse_id'        => $nurse->id,
@@ -139,7 +139,7 @@ class NursesPerformanceReportService
         // V-3 metrics cpm-2085
         $data['avgCCMTimePerPatient'] = $this->estAvgCCMTimePerMonth($date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse);
         $data['avgCompletionTime']    = $this->getAvgCompletionTime($nurse, $date, $totalMonthlyCompletedPatientsOfNurse);
-        $data['incompletePatients']   = $this->getIncompletePatientsCount($patientsForMonth, $totalMonthlyCompletedPatientsOfNurse);
+        $data['incompletePatients']   = $this->getIncompletePatientsCount($patientsForMonth);
 
         //only for EmailRNDailyReport
         $nextUpcomingWindow = $nurse->nurseInfo->firstWindowAfter(Carbon::now());
