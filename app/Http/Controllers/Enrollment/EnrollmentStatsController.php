@@ -8,22 +8,19 @@ namespace App\Http\Controllers\Enrollment;
 
 use App\CareAmbassador;
 use App\CareAmbassadorLog;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Core\Exports\FromArray;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
 
 class EnrollmentStatsController extends Controller
 {
     /**
      * Render ambassador stats datatable.
-     *
-     * @param Request $request
      *
      * @return mixed
      */
@@ -34,8 +31,6 @@ class EnrollmentStatsController extends Controller
 
     /**
      * Get an excel representation of ambassador stats.
-     *
-     * @param Request $request
      *
      * @return mixed
      */
@@ -72,8 +67,6 @@ class EnrollmentStatsController extends Controller
     /**
      * Render practice stats datatable.
      *
-     * @param Request $request
-     *
      * @return mixed
      */
     public function practiceStats(Request $request)
@@ -84,8 +77,6 @@ class EnrollmentStatsController extends Controller
 
     /**
      * Get an excel representation of practice stats.
-     *
-     * @param Request $request
      *
      * @return mixed
      */
@@ -101,8 +92,6 @@ class EnrollmentStatsController extends Controller
 
     /**
      * Get Ambassador stats.
-     *
-     * @param Request $request
      *
      * @return array
      */
@@ -140,13 +129,13 @@ class EnrollmentStatsController extends Controller
 
             $data[$ambassador->id]['name'] = User::find($ambassadorUser)->getFullName();
 
-            $data[$ambassador->id]['total_hours'] = secondsToHMS($base->sum('total_time_in_system'));
+            $data[$ambassador->id]['total_hours'] = floatval(round($base->sum('total_time_in_system') / 3600, 2));
 
             $data[$ambassador->id]['no_enrolled']         = $base->sum('no_enrolled');
             $data[$ambassador->id]['mins_per_enrollment'] = (0 != $base->sum('no_enrolled'))
-                    ?
-                    number_format(($base->sum('total_time_in_system') / 60) / $base->sum('no_enrolled'), 2)
-                    : 0;
+                ?
+                number_format(($base->sum('total_time_in_system') / 60) / $base->sum('no_enrolled'), 2)
+                : 0;
 
             $data[$ambassador->id]['total_calls'] = $base->sum('total_calls');
 
@@ -154,7 +143,7 @@ class EnrollmentStatsController extends Controller
                 $data[$ambassador->id]['earnings'] = '$'.number_format(
                     $hourCost * ($base->sum('total_time_in_system') / 3600),
                     2
-                    );
+                );
 
                 $data[$ambassador->id]['calls_per_hour'] = number_format(
                     $base->sum('total_calls') / ($base->sum('total_time_in_system') / 3600),
@@ -164,12 +153,12 @@ class EnrollmentStatsController extends Controller
                 $data[$ambassador->id]['conversion'] = number_format(
                     ($base->sum('no_enrolled') / $base->sum('total_calls')) * 100,
                     2
-                                                       ).'%';
+                ).'%';
 
                 $data[$ambassador->id]['per_cost'] = '$'.number_format(
                     (($base->sum('total_time_in_system') / 3600) * $hourCost) / $base->sum('no_enrolled'),
                     2
-                    );
+                );
             } else {
                 $data[$ambassador->id]['earnings']       = 'N/A';
                 $data[$ambassador->id]['conversion']     = 'N/A';
@@ -183,8 +172,6 @@ class EnrollmentStatsController extends Controller
 
     /**
      * Get practice stats.
-     *
-     * @param Request $request
      *
      * @return array
      */
@@ -213,10 +200,10 @@ class EnrollmentStatsController extends Controller
                 ->where('last_attempt_at', '>=', $start)
                 ->where('last_attempt_at', '<=', $end)
                 ->where(function ($q) {
-                    $q->where('status', 'utc')
-                        ->orWhere('status', 'consented')
-                        ->orWhere('status', 'rejected');
-                })
+                                                                         $q->where('status', 'utc')
+                                                                             ->orWhere('status', 'consented')
+                                                                             ->orWhere('status', 'rejected');
+                                                                     })
                 ->count();
 
             $data[$practice->id]['consented'] = Enrollee
@@ -275,7 +262,7 @@ class EnrollmentStatsController extends Controller
                 $data[$practice->id]['conversion'] = number_format(
                     $data[$practice->id]['consented'] / $data[$practice->id]['unique_patients_called'] * 100,
                     2
-                    ).'%';
+                ).'%';
             } else {
                 $data[$practice->id]['conversion'] = 'N/A';
             }
@@ -293,7 +280,7 @@ class EnrollmentStatsController extends Controller
                 $data[$practice->id]['labor_rate'] = '$'.number_format(
                     $data[$practice->id]['total_cost'] / ($total_time / 3600),
                     2
-                    );
+                );
             } else {
                 $data[$practice->id]['labor_rate'] = 'N/A';
             }
