@@ -233,6 +233,7 @@
         <div class="call-assistance">
             <call-assistance v-if="/*practiceOutgoingPhoneNumber && */callAssistance"
                              :phone-number="practiceOutgoingPhoneNumber"
+                             :from-number="clhPhoneNumber"
                              :cpm-caller-token="cpmCallerToken"
                              :cpm-caller-url="cpmCallerUrl"
                              :debug="debug"
@@ -240,7 +241,8 @@
             </call-assistance>
         </div>
 
-        <div class="bottom-navbar container no-padding" :class="(stage === 'complete' || stage === 'welcome') ? 'hidden' : ''">
+        <div class="bottom-navbar container no-padding"
+             :class="(stage === 'complete' || stage === 'welcome') ? 'hidden' : ''">
             <!-- justify-content-end -->
             <div class="row no-gutters">
                 <div class="col-3 col-sm-4 col-md-3 col-lg-2 text-center">
@@ -316,7 +318,7 @@
     import $ from "jquery";
 
     export default {
-        props: ['surveyName', 'surveyData', 'adminMode', 'cpmCallerUrl', 'cpmCallerToken', 'debug'],
+        props: ['surveyName', 'surveyData', 'adminMode', 'cpmCallerUrl', 'cpmCallerToken', 'clhPhoneNumber', 'debug'],
 
         components: {
             mdbIcon,
@@ -637,8 +639,7 @@
                                     this.currentQuestionIndex = next.index;
                                 }
                             }
-                        }
-                        else if (nextQuestionId === null && this.progress !== this.totalQuestions) {
+                        } else if (nextQuestionId === null && this.progress !== this.totalQuestions) {
                             this.calculateSurveyProgress();
                         }
 
