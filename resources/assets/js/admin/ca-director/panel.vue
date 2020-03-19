@@ -65,6 +65,9 @@
                            :checked="selected(props.row.id)"
                            @change="toggleId(props.row.id)">
                 </template>
+                <template slot="total_time_spent" slot-scope="props">
+                    {{formatSecondsToHHMMSS(props.row.total_time_spent)}}
+                </template>
             </v-server-table>
         </div>
         <select-ca-modal ref="selectCaModal" :selected-enrollee-ids="selectedEnrolleeIds"></select-ca-modal>
@@ -144,6 +147,9 @@
             }
         },
         methods: {
+            formatSecondsToHHMMSS(seconds) {
+                return new Date(1000 * seconds).toISOString().substr(11, 8);
+            },
             allSelected() {
                 if (this.$refs.table) {
                     return this.selectedEnrolleeIds.length === this.$refs.table.data.length;
