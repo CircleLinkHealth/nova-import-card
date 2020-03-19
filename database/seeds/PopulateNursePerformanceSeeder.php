@@ -7,7 +7,9 @@
 use App\Call;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use Faker\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 use Tests\Helpers\CustomerTestCaseHelper;
@@ -39,6 +41,36 @@ class PopulateNursePerformanceSeeder extends Seeder
         $this->command->info('Done');
     }
 
+    private function importDBDumps()
+    {
+        $this->tables()->each(
+            function ($table) {
+                $this->command->warn("Importing $table");
+
+//                $this->importFromJson($table);
+                DB::table($table)->truncate();
+                DB::unprepared(file_get_contents($this->pathToFile($table)));
+            }
+        );
+    }
+
+    private function tables()
+    {
+        return collect(
+            [
+                (new Call())->getTable(),
+                (new PageTimer())->getTable(),
+                (new NurseContactWindow())->getTable(),
+                (new PatientMonthlySummary())->getTable(),
+            ]
+        );
+    }
+
+    private function pathToFile(string $filename)
+    {
+        return storage_path("testdata/$filename.sql");
+    }
+
     private function createFakePatients()
     {
         $this->command->warn('Creating Fake Patients');
@@ -62,9 +94,9 @@ class PopulateNursePerformanceSeeder extends Seeder
 
     private function createFakeProviders()
     {
-        $this->command->warn('Creating Fake Providers');
+        $this->command->warn('Creating Fake Nurses');
 
-        PageTimer::select('provider_id')
+        PageTimer::select(['provider_id', 'start_time'])
             ->whereDoesntHave('logger', function ($q) {
                 $q->withTrashed();
             })
@@ -72,24 +104,48 @@ class PopulateNursePerformanceSeeder extends Seeder
             ->get()
             ->unique('provider_id')
             ->each(
-                function ($id) {
-                    $fakeProvider = $this->provider();
-                    $fakeProvider->id = $id->provider_id;
-                    $fakeProvider->save();
+                function ($pageTimer) {
+                    $fakeUser = $this->careCoach();
+                    $fakeUser->id = $pageTimer->provider_id;
+                    $fakeUser->save();
+                    $this->command->warn('Updating WorkHours');
+                    $this->updateCreateWorkHours($fakeUser, $pageTimer->start_time);
                 }
             );
     }
 
-    private function importDBDumps()
+    /**
+     * @param User $fakeUser
+     * @param $pageTimerStartTime
+     */
+    private function updateCreateWorkHours(User $fakeUser, $pageTimerStartTime)
     {
-        $this->tables()->each(
-            function ($table) {
-                $this->command->warn("Importing $table");
+        $faker = Factory::create();
+        $date = \Carbon\Carbon::parse($pageTimerStartTime);
+        $workWeekStart = $date->copy()->startOfWeek()->toDateString();
+        $dayOfWeek = carbonToClhDayOfWeek($date->dayOfWeek);
+        $randomCommittedWorkHours = $faker->randomElements([2, 4, 5, 6]);
 
-//                $this->importFromJson($table);
-                DB::table($table)->truncate();
-                DB::unprepared(file_get_contents($this->pathToFile($table)));
-            }
+        NurseContactWindow::updateOrCreate(
+            [
+                'nurse_info_id' => $fakeUser->nurseInfo->id,
+                'date' => $date->toDateString(),
+            ],
+            [
+                'day_of_week' => $dayOfWeek,
+                'window_time_start' => '11:00',
+                'window_time_end' => '18:00',
+                'repeat_frequency' => 'does_not_repeat',
+            ]
+        );
+
+        $fakeUser->nurseInfo->workhourables()->updateOrCreate(
+            [
+                'work_week_start' => $workWeekStart,
+            ],
+            [
+                strtolower(clhDayOfWeekToDayName($dayOfWeek)) => $randomCommittedWorkHours[0]
+            ]
         );
     }
 
@@ -100,22 +156,5 @@ class PopulateNursePerformanceSeeder extends Seeder
 //            $this->command->warn("Creating $table:{$row['id']}");
             DB::table($table)->updateOrInsert(['id' => $row['id']], $row);
         }
-    }
-
-    private function pathToFile(string $filename)
-    {
-        return storage_path("testdata/$filename.sql");
-    }
-
-    private function tables()
-    {
-        return collect(
-            [
-                (new Call())->getTable(),
-                (new PageTimer())->getTable(),
-                (new NurseContactWindow())->getTable(),
-                (new PatientMonthlySummary())->getTable(),
-            ]
-        );
     }
 }
