@@ -102,8 +102,9 @@ class NursesPerformanceReportService
 //        "$patientsForMonth" returns ONLY status SCHEDULED patients...
 //        It's "Case Load" in UI.
         $patientsForMonth                     = $this->getUniquePatientsAssignedForNurseForMonth($nurse, $date);
-        $totalMonthlyCompletedPatientsOfNurse = $this->getTotalCompletedPatientsOfNurse($date, $patientsForMonth);
+        $totalMonthlyCompletedPatientsOfNurse = $this->getTotalCompletedPatientsOfNurse($patientsForMonth);
         $successfulCallsDaily = $nurse->countSuccessfulCallsFor($date);
+        //        "Case Completion" in view
         $caseLoadComplete = $this->percentageCaseLoadComplete($patientsForMonth, $totalMonthlyCompletedPatientsOfNurse);
 
         $data = [
@@ -137,7 +138,7 @@ class NursesPerformanceReportService
         );
 
         // V-3 metrics cpm-2085
-        $data['avgCCMTimePerPatient'] = $this->estAvgCCMTimePerMonth($date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse);
+        $data['avgCCMTimePerPatient'] = $this->estAvgCCMTimePerMonth($patientsForMonth, $totalMonthlyCompletedPatientsOfNurse);
         $data['avgCompletionTime']    = $this->getAvgCompletionTime($nurse, $date, $totalMonthlyCompletedPatientsOfNurse);
         $data['incompletePatients']   = $this->getIncompletePatientsCount($patientsForMonth);
 

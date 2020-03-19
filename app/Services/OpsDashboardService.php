@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 class OpsDashboardService
 {
     const TWENTY_MINUTES = 1200;
+    const MIN_CALL = 1;
 
     protected $timeGoal;
     private $repo;

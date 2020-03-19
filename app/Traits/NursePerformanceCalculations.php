@@ -10,7 +10,6 @@ use App\Services\NursesPerformanceReportService;
 use App\Services\OpsDashboardService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Support\Collection;
@@ -25,9 +24,9 @@ trait NursePerformanceCalculations
      *
      * @return float|int
      */
-    public function estAvgCCMTimePerMonth(Carbon $date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse)
+    public function estAvgCCMTimePerMonth($patientsForMonth, $totalMonthlyCompletedPatientsOfNurse)
     {
-        $totalCCMtimeOnCompletedPatients = $this->queryMonthlyCompletedPatient($date, $patientsForMonth)->sum('ccm_time');
+        $totalCCMtimeOnCompletedPatients = $this->queryMonthlyCompletedPatient($patientsForMonth)->sum('ccm_time');
 
         if (0 === $totalMonthlyCompletedPatientsOfNurse) {
             $totalMonthlyCompletedPatientsOfNurse = 1;
@@ -37,16 +36,16 @@ trait NursePerformanceCalculations
     }
 
     /**
-     * @param Carbon $date
-     * @param $patientsForMonth
-     *
-     * @return \Illuminate\Support\Collection
+     * @param object $patientsForMonth
+     * @return mixed
      */
-    private function queryMonthlyCompletedPatient(Carbon $date, $patientsForMonth)
+    private function queryMonthlyCompletedPatient(object $patientsForMonth)
     {
-        return collect($patientsForMonth)
-            ->where('patient_time', '>=', 20)
-            ->where('successful_calls', '>=', 1);
+        return $patientsForMonth
+            ->filter(function ($q) {
+                return $q->patient_time >= OpsDashboardService::TWENTY_MINUTES
+                    || $q->successful_calls >= OpsDashboardService::MIN_CALL;
+            });
     }
 
     public function estHoursToCompleteCaseLoadMonth(User $nurse, Carbon $date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse, $successfulCalls)
@@ -58,7 +57,6 @@ trait NursePerformanceCalculations
         //        This is the old calculation
 //        return round($patients->where('patient_time', '<', 20)->sum('patient_time_left') / 60, 1);
     }
-
 
 
     /**
@@ -89,8 +87,9 @@ trait NursePerformanceCalculations
     {
 //        $caseLoadComplete = % percentage.
         return $caseLoad
-            ->filter(function ($q){
-               return $q->patient_time <= 20 || $q->successful_calls < 1 ;
+            ->filter(function ($q) {
+                return $q->patient_time <= OpsDashboardService::TWENTY_MINUTES
+                    || $q->successful_calls < OpsDashboardService::MIN_CALL;
             })
             ->count();
         //        $incompletePatients = round((float)($caseLoad->count() - $totalMonthlyCompletedPatientsOfNurse));
@@ -468,13 +467,14 @@ AND patient_info.ccm_status = 'enrolled'"
     /**
      * Amount of completed patients for the month.
      *
-     * @param $date
+     *
      * @param $patientsForMonth
      *
      * @return int
      */
-    private function getTotalCompletedPatientsOfNurse($date, $patientsForMonth)
+    private function getTotalCompletedPatientsOfNurse($patientsForMonth)
     {
-        return $this->queryMonthlyCompletedPatient($date, $patientsForMonth)->count();
+        return $this->queryMonthlyCompletedPatient($patientsForMonth)->count();
     }
 }
+
