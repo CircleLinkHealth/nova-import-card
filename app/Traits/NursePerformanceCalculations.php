@@ -36,16 +36,14 @@ trait NursePerformanceCalculations
     }
 
     /**
-     * @param object $patientsForMonth
-     * @return mixed
+     * @param $patientsForMonth
+     * @return Collection
      */
-    private function queryMonthlyCompletedPatient(object $patientsForMonth)
+    private function queryMonthlyCompletedPatient($patientsForMonth)
     {
-        return $patientsForMonth
-            ->filter(function ($q) {
-                return $q->patient_time >= OpsDashboardService::TWENTY_MINUTES
-                    || $q->successful_calls >= OpsDashboardService::MIN_CALL;
-            });
+        return collect($patientsForMonth)
+            ->where('patient_time', '>=', 20)
+            ->where('successful_calls', '>=', 1);
     }
 
     public function estHoursToCompleteCaseLoadMonth(User $nurse, Carbon $date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse, $successfulCalls)
@@ -88,8 +86,8 @@ trait NursePerformanceCalculations
 //        $caseLoadComplete = % percentage.
         return $caseLoad
             ->filter(function ($q) {
-                return $q->patient_time <= OpsDashboardService::TWENTY_MINUTES
-                    || $q->successful_calls < OpsDashboardService::MIN_CALL;
+                return $q->patient_time <= 20
+                    || $q->successful_calls < 1;
             })
             ->count();
         //        $incompletePatients = round((float)($caseLoad->count() - $totalMonthlyCompletedPatientsOfNurse));
