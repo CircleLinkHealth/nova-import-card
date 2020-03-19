@@ -661,7 +661,6 @@
     import Loader from '../loader.vue';
     //Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
-    //for some reason i could not pass these as props from blade.php
     const hasTips = window.hasTips;
     const enrollee = window.enrollee;
     const userId = window.userId;
@@ -1277,6 +1276,12 @@
         height: calc(90% - 86px);
         width: 100%;
         overflow-y: auto;
+    }
+    ol li {
+        margin-left: 2%;
+    }
+    ul li {
+        margin-left: 2%;
     }
 
 </style>
