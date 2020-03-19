@@ -377,7 +377,9 @@
             },
 
             cancel(e) {
-                e.preventDefault();
+                if (e) {
+                    e.preventDefault();
+                }
                 this.options.onDone();
             },
 
