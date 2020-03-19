@@ -129,7 +129,17 @@ class PatientCareDocumentsController extends Controller
         $patient = User::findOrFail($patientId);
 
         foreach ($request->file()['file'] as $file) {
-            if ('application/pdf' !== $file->getMimeType()) {
+
+            try{
+                $mimeType = $file->getMimeType();
+            }catch(\Exception $exception){
+                return response()->json(
+                    'The file you are trying to upload has an invalid type.',
+                    400
+                );
+            }
+
+            if ('application/pdf' !== $mimeType) {
                 return response()->json(
                     'The file you are trying to upload is not a PDF.',
                     400
