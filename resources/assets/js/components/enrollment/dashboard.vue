@@ -341,7 +341,8 @@
                         </div>
                     </div>
                     <div v-if="preferred_phone == 'agent' " class="row">
-                        <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out alternative contact person's
+                        <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out alternative contact
+                            person's
                             details</b></blockquote>
                         <div class="col s6 m4">
                             <label for="agent_name" class="label">Alternative Contact Person's Name</label>
@@ -352,7 +353,8 @@
                             <input class="input-field" name="agent_email" id="agent_email" v-model="agent_email"/>
                         </div>
                         <div class="col s6 m4">
-                            <label for="agent_relationship" class="label">Alternative Contact Person's Relationship to the
+                            <label for="agent_relationship" class="label">Alternative Contact Person's Relationship to
+                                the
                                 Patient</label>
                             <input class="input-field" name="agent_relationship" id="agent_relationship"
                                    v-model="agent_relationship"/>
@@ -409,7 +411,7 @@
                         </div>
                         <div class="col s12 m3">
                             <label for="times[]" class="label">Times</label>
-                            <select v-model="times" class="do-not-close" name="times[]" id="times[]" multiple>
+                            <select v-model="times" class="do-not-close" name="times[]" id="times[]">
                                 <option disabled selected>Times:</option>
                                 <option value="10:00-12:00">10AM - Noon</option>
                                 <option value="12:00-15:00">Noon - 3PM</option>
@@ -433,12 +435,15 @@
                                 ¡Me alegro de haberme conectado! ¡Que tenga un muy buen día!
                             </template>
                             <template v-else>
-                                That’s all I need, a registered nurse will give you a call from this same number within the next week or so to introduce themselves.
-                                Do you want me to give you the number so you can be sure to save it on your phone or somewhere else?<br><br>
+                                That’s all I need, a registered nurse will give you a call from this same number within
+                                the next week or so to introduce themselves.
+                                Do you want me to give you the number so you can be sure to save it on your phone or
+                                somewhere else?<br><br>
 
                                 <strong>If yes:</strong> Alright, the number is <strong>{{practice_phone}}</strong>.<br><br>
 
-                                As a reminder, you can withdraw at anytime, but I think you will see a lot of benefits from this program. Thank you for your time and I hope you have a great rest of your day!
+                                As a reminder, you can withdraw at anytime, but I think you will see a lot of benefits
+                                from this program. Thank you for your time and I hope you have a great rest of your day!
                             </template>
                         </div>
                     </blockquote>
@@ -473,10 +478,14 @@
                     <h4 style="color: #47beab">Please provide some details:</h4>
                     <blockquote style="border-left: 5px solid #26a69a;">
                         <b>If Caller Reaches Machine, Leave Voice Message: </b><br>
-                        Hi {{name}}, this is {{userFullName}} calling on behalf of {{providerFullName}} at {{practice_name}}.
-                        The reason for my call is that {{providerFullName}} has a new benefit they are offering patients,
-                        to improve access to your care team. You should have already received information about it in the mail.
-                        If you'd be kind enough to call us back at {{practice_phone}} to walk you through it, that would be great.
+                        Hi {{name}}, this is {{userFullName}} calling on behalf of {{providerFullName}} at
+                        {{practice_name}}.
+                        The reason for my call is that {{providerFullName}} has a new benefit they are offering
+                        patients,
+                        to improve access to your care team. You should have already received information about it in
+                        the mail.
+                        If you'd be kind enough to call us back at {{practice_phone}} to walk you through it, that would
+                        be great.
                     </blockquote>
 
                     <div class="row">
@@ -801,16 +810,24 @@
             rejected_other() {
                 return this.reason === 'other';
             },
-            provider_name_for_side_bar(){
-                return provider.suffix + ' ' + provider.first_name + ' ' + provider.last_name;
+            dr_suffixes() {
+                return ['MD', 'PO'];
+            },
+            provider_name_for_side_bar() {
+                let suffix = provider.suffix;
+
+                if (this.dr_suffixes.includes(suffix)) {
+                    suffix = 'Dr.';
+                }
+                return suffix + ' ' + provider.first_name + ' ' + provider.last_name;
             },
             provider_name_for_enrollment_script() {
-                let providerName = provider.last_name;
+                let providerName;
 
-                if (provider.suffix == 'NP' || provider.suffix == 'PA'){
-                    providerName = provider.first_name + ' ' + providerName;
-                }else{
-                    providerName = provider.suffix + ' ' + providerName;
+                if (this.dr_suffixes.includes(provider.suffix)) {
+                    providerName = 'Dr.' + ' ' + provider.last_name;
+                } else {
+                    providerName = provider.first_name + ' ' + provider.last_name;
                 }
 
                 return providerName
@@ -866,10 +883,10 @@
             other_phone_exists() {
                 return !!enrollee.other_phone;
             },
-            preferred_phone_empty(){
-                return ! this.preferred_phone;
+            preferred_phone_empty() {
+                return !this.preferred_phone;
             },
-            contact_day_or_time_empty(){
+            contact_day_or_time_empty() {
                 return this.days.length <= 1 || this.times.length <= 1
             }
 
@@ -1031,7 +1048,7 @@
                     .then(response => {
                         this.family_loading = false;
                         this.suggested_family_members = response.data.suggested_family_members;
-                        this.confirmed_family_members = response.data.suggested_family_members.map(function (member){
+                        this.confirmed_family_members = response.data.suggested_family_members.map(function (member) {
                             return member.is_confirmed ? member.id : null;
                         }).filter(x => !!x);
                     })
@@ -1292,9 +1309,11 @@
         width: 100%;
         overflow-y: auto;
     }
+
     .enrollment-script ol li {
         margin-left: 2%;
     }
+
     .enrollment-script ul li {
         margin-left: 2%;
     }
