@@ -36,7 +36,7 @@ Route::group([
 
 Route::group([
     'prefix'     => 'manage-patients',
-    'middleware' => ['auth', 'permission:patient.read,patient.update'],
+    'middleware' => ['auth', 'permission:vitals-survey-complete'],
 ], function () {
 
     Route::get('', [
@@ -141,7 +141,7 @@ Route::group([
 
     Route::group([
         'prefix'     => 'vitals',
-        'middleware' => ['permission:patient.read,patient.update'],
+        'middleware' => ['auth', 'permission:vitals-survey-complete'],
     ], function () {
         Route::get('{patientId}', [
             'uses' => 'VitalsSurveyController@getCurrentSurvey',
