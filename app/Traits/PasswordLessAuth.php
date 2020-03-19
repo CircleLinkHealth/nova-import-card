@@ -42,9 +42,12 @@ trait PasswordLessAuth
      *
      * @param string $token
      *
+     * @param Request $request
+     *
      * @return bool
+     * @throws \Exception
      */
-    protected function attemptPasswordlessLogin($token, Request $request)
+    protected function attemptPasswordlessLogin($token):bool
     {
         $token = PasswordlessLoginToken::with('user')->has('user')->whereToken($token)->first();
         
@@ -55,7 +58,9 @@ trait PasswordLessAuth
         if ($token->user instanceof User) {
             $token->delete();
             
-            return $this->guard()->login($token->user);
+            $this->guard()->login($token->user);
+    
+            return true;
         }
         
         return false;
