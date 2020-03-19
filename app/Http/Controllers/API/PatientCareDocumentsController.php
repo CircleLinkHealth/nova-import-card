@@ -15,6 +15,7 @@ use CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\Mime\Exception\InvalidArgumentException;
 
 class PatientCareDocumentsController extends Controller
 {
@@ -132,7 +133,7 @@ class PatientCareDocumentsController extends Controller
 
             try{
                 $mimeType = $file->getMimeType();
-            }catch(\Exception $exception){
+            }catch(InvalidArgumentException $exception){
                 return response()->json(
                     'The file you are trying to upload has an invalid type.',
                     400
