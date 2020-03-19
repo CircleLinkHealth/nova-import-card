@@ -88,11 +88,11 @@ trait NursePerformanceCalculations
     public function getIncompletePatientsCount(object $caseLoad)
     {
 //        $caseLoadComplete = % percentage.
-        return collect($caseLoad)
-            ->where('patient_time', '<=', 20)
-            ->where('successful_calls', '<', 1)
+        return $caseLoad
+            ->filter(function ($q){
+               return $q->patient_time <= 20 || $q->successful_calls < 1 ;
+            })
             ->count();
-
         //        $incompletePatients = round((float)($caseLoad->count() - $totalMonthlyCompletedPatientsOfNurse));
         //        $incompletePatients3 = $caseLoad->count() * (100 - $caseLoadComplete) / 100;
     }
