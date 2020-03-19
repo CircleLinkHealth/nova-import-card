@@ -282,19 +282,27 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     }
 
     /**
+     * @param Carbon $date
      * @return int
      */
     public function getHoursCommittedForCarbonDate(Carbon $date)
     {
-        $workHours = $this->workhourables->first();
+        $dayInHumanLang = clhDayOfWeekToDayName(carbonToClhDayOfWeek($date->dayOfWeek));
+        $workWeekStart = $date->copy()->startOfWeek();
 
-        if (!is_null($workHours)) {
-            return (int)$workHours->{strtolower(
-                $date->format('l')
-            )};
-        }
+        $workHours = WorkHours::where(
+            [
+                ['workhourable_id', $this->id],
+                ['work_week_start', $workWeekStart],
+            ]
+        )->pluck($dayInHumanLang)->first();
 
-        return 0;
+        // WHY THEY DONT DO THE SAME ?
+        //        $workHours = $this->workhourables()->where('work_week_start', $workWeekStart)
+//            ->pluck($dayInHumanLang)
+//            ->first();
+
+        return !empty($workHours) ? $workHours : 0;
     }
 
     public function getUpcomingHolidayDatesAttribute()
