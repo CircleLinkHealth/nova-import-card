@@ -57,7 +57,7 @@
                                     </li>
                                     <li class="sidebar-demo-list"><span :title="practice_name"><b>Practice Name:</b> {{practice_name}}</span>
                                     </li>
-                                    <li class="sidebar-demo-list"><span :title="providerFullName"><b>Provider Name:</b> {{providerFullName}}</span>
+                                    <li class="sidebar-demo-list"><span :title="provider_name_for_side_bar"><b>Provider Name:</b> {{provider_name_for_side_bar}}</span>
                                     </li>
                                     <li v-if="provider_pronunciation_exists" class="sidebar-demo-list"><span
                                             :title="provider_pronunciation"><b>Provider Pronunciation:</b> {{provider_pronunciation}}</span>
@@ -259,7 +259,7 @@
                     </span>
                 </blockquote>
 
-                <div class="font-size-20">
+                <div class="enrollment-script font-size-20">
                     <p v-html="care_ambassador_script"></p>
                 </div>
             </div>
@@ -665,6 +665,7 @@
     const enrollee = window.enrollee;
     const userId = window.userId;
     const userFullName = window.userFullName;
+    const provider = window.provider;
     const providerFullName = window.providerFullName;
     const report = window.report;
     const providerInfo = window.providerInfo;
@@ -800,6 +801,20 @@
             rejected_other() {
                 return this.reason === 'other';
             },
+            provider_name_for_side_bar(){
+                return provider.suffix + ' ' + provider.first_name + ' ' + provider.last_name;
+            },
+            provider_name_for_enrollment_script() {
+                let providerName = provider.last_name;
+
+                if (provider.suffix == 'NP' || provider.suffix == 'PA'){
+                    providerName = provider.first_name + ' ' + providerName;
+                }else{
+                    providerName = provider.suffix + ' ' + providerName;
+                }
+
+                return providerName
+            },
             provider_pronunciation_exists() {
                 return providerInfo ? (!!providerInfo.pronunciation) : false;
             },
@@ -822,7 +837,7 @@
                 }
                 let ca_script = script.body;
 
-                let processed_script = ca_script.replace(/{doctor}/gi, providerFullName)
+                let processed_script = ca_script.replace(/{doctor}/gi, this.provider_name_for_enrollment_script)
                     .replace(/{patient}/gi, this.name)
                     .replace(/{practice}/gi, this.practice_name)
                     .replace(/{last visit}/gi, this.last_office_visit_at)
@@ -1277,10 +1292,10 @@
         width: 100%;
         overflow-y: auto;
     }
-    ol li {
+    .enrollment-script ol li {
         margin-left: 2%;
     }
-    ul li {
+    .enrollment-script ul li {
         margin-left: 2%;
     }
 
