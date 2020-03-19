@@ -690,7 +690,9 @@ class VariablePayCalculator
             return null;
         }
 
-        $logDate = optional($range[$nurseInfo->id])['last_log_date'];
+        $logDate = array_key_exists($nurseInfo->id, $range)
+            ? $range[$nurseInfo->id]['last_log_date']
+            : null;
 
         return [
             'last_log_date' => $logDate,
