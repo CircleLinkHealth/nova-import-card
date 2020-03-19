@@ -73,7 +73,6 @@ class NursesPerformanceReportService
                         });
                 }
             )
-            ->where('id', 1920)
             ->chunk(
                 35,
                 function ($nurses) use (&$data, $date) {
