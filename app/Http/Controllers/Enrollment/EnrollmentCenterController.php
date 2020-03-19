@@ -119,14 +119,14 @@ class EnrollmentCenterController extends Controller
             //no calls available
             return view('enrollment-ui.no-available-calls');
         }
-        //add check if provider exists?
+
+        //check if provider exists
 
         return view(
             'enrollment-ui.dashboard',
             [
                 'enrollee' => $enrollee,
                 'report'   => CareAmbassadorLog::createOrGetLogs($careAmbassador->id),
-                //default to english
                 'script'   => TrixField::careAmbassador($enrollee->lang)->first(),
                 'provider' => $enrollee->provider,
             ]

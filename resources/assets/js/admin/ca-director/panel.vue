@@ -18,21 +18,19 @@
                     <notifications ref="notificationsComponent" name="ca-panel"></notifications>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-12" style="margin-left: 20px; margin-top: 10px; margin-bottom: 10px">
-                    <p>Patients with <strong>ineligible</strong> or <strong>consented</strong> statuses and patients that are assigned to a Care Ambassador are omitted from the table. <br>
-                    Click on any of the buttons below to include assigned, consented or ineligible patients in the table results.</p>
-                </div>
+            <div class="col-sm-12 text-left" style="margin-bottom: 10px; margin-top: 20px">
+                <button class="btn btn-info btn-s" v-bind:class="{'btn-selected': !this.hideAssigned}"
+                        @click="showAssigned">{{this.showAssignedLabel}}
+                </button>
             </div>
             <div class="col-sm-5 text-left">
-                <button class="btn btn-info btn-xs" v-bind:class="{'btn-selected': !this.hideAssigned}"
-                        @click="showAssigned">Show Assigned
+                <button class="btn btn-info btn-xs"
+                        v-bind:class="{'btn-selected': !this.hideStatus.includes('consented')}"
+                        @click="showConsented">Include Consented
                 </button>
-                <button class="btn btn-info btn-xs" v-bind:class="{'btn-selected': !this.hideStatus.includes('consented')}"
-                        @click="showConsented">Show Consented
-                </button>
-                <button class="btn btn-info btn-xs" v-bind:class="{'btn-selected': !this.hideStatus.includes('ineligible')}"
-                        @click="showIneligible">Show Ineligible
+                <button class="btn btn-info btn-xs"
+                        v-bind:class="{'btn-selected': !this.hideStatus.includes('ineligible')}"
+                        @click="showIneligible">Include Ineligible
                 </button>
                 <button class="btn btn-primary btn-xs" @click="clearSelected">Clear Selected Patients</button>
             </div>
@@ -141,6 +139,9 @@
             enrolleesAreSelected() {
                 return this.selectedEnrolleeIds.length !== 0;
             },
+            showAssignedLabel() {
+                return this.hideAssigned ? 'Show Assigned Patients Only' : 'Show Unassigned Patients'
+            }
         },
         methods: {
             allSelected() {
@@ -150,10 +151,10 @@
                     return false;
                 }
             },
-            clearSelected(){
+            clearSelected() {
                 this.selectedEnrolleeIds = [];
             },
-            refreshTable(){
+            refreshTable() {
                 this.$refs.table.refresh();
             },
             getUrl() {
@@ -234,7 +235,7 @@
             showConsented() {
                 Event.$emit('notifications-ca-panel:dismissAll');
                 this.loading = true;
-                if (this.hideStatus.includes('consented')){
+                if (this.hideStatus.includes('consented')) {
                     this.hideStatus = this.hideStatus.filter(item => item !== 'consented');
                     this.hideAssigned = false;
                 }
@@ -316,7 +317,6 @@
         text-align: center;
     }
 
-
     th {
         min-width: 80px;
     }
@@ -326,7 +326,7 @@
 
     }
 
-    .table>tbody>tr td {
+    .table > tbody > tr td {
         white-space: nowrap;
         padding: 0px;
         line-height: 0.6;
