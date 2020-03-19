@@ -144,6 +144,9 @@
                 //if calling a practice, the fromNumber will be practice's phone number,
                 //the same as the 'to' number. so don't send From and will be decided on server
                 const to = number.startsWith('+') ? number : ('+1' + number);
+
+                // cpm caller has a bug and if we do not supply From, it returns validation error 422,
+                // even though field is supposed to be set on server
                 const from = this.fromNumber !== to ? this.fromNumber : undefined;
 
                 return {
