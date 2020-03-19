@@ -192,7 +192,11 @@ class EnrollmentStatsController extends Controller
         $data = [];
 
         foreach ($practices as $practiceId) {
-            $practice = Practice::findOrFail($practiceId);
+            $practice = Practice::active()->find($practiceId);
+
+            if ( ! $practice) {
+                continue;
+            }
 
             $data[$practice->id]['name'] = $practice->display_name;
 
@@ -200,34 +204,36 @@ class EnrollmentStatsController extends Controller
                 ->where('last_attempt_at', '>=', $start)
                 ->where('last_attempt_at', '<=', $end)
                 ->where(function ($q) {
-                                                                         $q->where('status', 'utc')
-                                                                             ->orWhere('status', 'consented')
-                                                                             ->orWhere('status', 'rejected');
+                                                                         $q->where('status', Enrollee::UNREACHABLE)
+                                                                             ->orWhere('status', Enrollee::CONSENTED)
+                                                                             ->orWhere('status', Enrollee::ENROLLED)
+                                                                             ->orWhere('status', Enrollee::REJECTED)
+                                                                             ->orWhere('status', Enrollee::SOFT_REJECTED);
                                                                      })
                 ->count();
 
             $data[$practice->id]['consented'] = Enrollee
                 ::where('practice_id', $practice->id)
                     ->where('last_attempt_at', '>=', $start)
-                    ->where('last_attempt_at', '<=', $end)->where('status', 'consented')->count();
+                    ->where('last_attempt_at', '<=', $end)->where('status', Enrollee::CONSENTED)->count();
 
             $data[$practice->id]['utc'] = Enrollee
                 ::where('practice_id', $practice->id)
                     ->where('last_attempt_at', '>=', $start)
-                    ->where('last_attempt_at', '<=', $end)->where('status', 'utc')->count();
+                    ->where('last_attempt_at', '<=', $end)->where('status', Enrollee::UNREACHABLE)->count();
 
             $data[$practice->id]['hard_declined'] = Enrollee
                 ::where('practice_id', $practice->id)
                     ->where('last_attempt_at', '>=', $start)
                     ->where('last_attempt_at', '<=', $end)
-                    ->where('status', 'rejected')
+                    ->where('status', Enrollee::REJECTED)
                     ->count();
 
             $data[$practice->id]['soft_declined'] = Enrollee
                 ::where('practice_id', $practice->id)
                     ->where('last_attempt_at', '>=', $start)
                     ->where('last_attempt_at', '<=', $end)
-                    ->where('status', 'soft_rejected')
+                    ->where('status', Enrollee::SOFT_REJECTED)
                     ->count();
 
             $total_time = Enrollee
@@ -237,6 +243,17 @@ class EnrollmentStatsController extends Controller
                     ->sum('total_time_spent');
 
             $data[$practice->id]['labor_hours'] = secondsToHMS($total_time);
+
+            $data[$practice->id]['+3_attempts'] = Enrollee
+                ::where('practice_id', $practice->id)
+                    ->where('last_attempt_at', '>=', $start)
+                    ->where('last_attempt_at', '<=', $end)
+                    ->where('attempt_count', '>=', 3)
+                    ->whereNotIn(
+                    'status',
+                    [Enrollee::ENROLLED, Enrollee::CONSENTED, Enrollee::SOFT_REJECTED, Enrollee::REJECTED]
+                )
+                    ->count();
 
             $enrollers = Enrollee::select(DB::raw('care_ambassador_user_id, sum(total_time_spent) as total'))
                 ->where('practice_id', $practice->id)
