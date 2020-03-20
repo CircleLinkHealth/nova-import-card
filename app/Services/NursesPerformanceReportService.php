@@ -72,10 +72,7 @@ class NursesPerformanceReportService
                             $info->where('is_demo', false);
                         });
                 }
-            )/*->where([
-                ['created_at', '>=', Carbon::parse(now())->startOfDay()],
-                ['created_at', '<=', Carbon::parse(now())->endOfDay()]
-            ])*/
+            )
             ->chunk(
                 35,
                 function ($nurses) use (&$data, $date) {
@@ -103,10 +100,12 @@ class NursesPerformanceReportService
     public function getDataForNurse(User $nurse, Carbon $date, int $totalSystemTime): Collection
     {
 //        "$patientsForMonth" returns ONLY status SCHEDULED patients...
+//        It's "Case Load" in UI.
         $patientsForMonth                     = $this->getUniquePatientsAssignedForNurseForMonth($nurse, $date);
-        $totalMonthlyCompletedPatientsOfNurse = $this->getTotalCompletedPatientsOfNurse($date, $patientsForMonth);
-
+        $totalMonthlyCompletedPatientsOfNurse = $this->getTotalCompletedPatientsOfNurse($patientsForMonth);
         $successfulCallsDaily = $nurse->countSuccessfulCallsFor($date);
+        //        "Case Completion" in view
+        $caseLoadComplete = $this->percentageCaseLoadComplete($patientsForMonth, $totalMonthlyCompletedPatientsOfNurse);
 
         $data = [
             'nurse_id'        => $nurse->id,
@@ -128,7 +127,8 @@ class NursesPerformanceReportService
         //new metrics
         $data['completionRate']   = $this->getCompletionRate($data);
         $data['efficiencyIndex']  = $this->getEfficiencyIndex($data);
-        $data['caseLoadComplete'] = $this->percentageCaseLoadComplete($patientsForMonth);
+//        "Case Completion" in view
+        $data['caseLoadComplete'] = $caseLoadComplete;
 //        $data['caseLoadNeededToComplete']  = $this->estHoursToCompleteCaseLoadMonth($patientsForMonth);
         $data['caseLoadNeededToComplete']  = $this->estHoursToCompleteCaseLoadMonth($nurse, $date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse, $successfulCallsDaily);
         $data['hoursCommittedRestOfMonth'] = $this->getHoursCommittedRestOfMonth(
@@ -138,9 +138,9 @@ class NursesPerformanceReportService
         );
 
         // V-3 metrics cpm-2085
-        $data['avgCCMTimePerPatient'] = $this->estAvgCCMTimePerMonth($date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse);
+        $data['avgCCMTimePerPatient'] = $this->estAvgCCMTimePerMonth($patientsForMonth, $totalMonthlyCompletedPatientsOfNurse);
         $data['avgCompletionTime']    = $this->getAvgCompletionTime($nurse, $date, $totalMonthlyCompletedPatientsOfNurse);
-        $data['incompletePatients']   = $this->getIncompletePatientsCount($patientsForMonth, $successfulCallsDaily);
+        $data['incompletePatients']   = $this->getIncompletePatientsCount($patientsForMonth);
 
         //only for EmailRNDailyReport
         $nextUpcomingWindow = $nurse->nurseInfo->firstWindowAfter(Carbon::now());
