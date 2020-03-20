@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b20220100ba68e620171cc19d09bfd77",
+    "content-hash": "ec21a692a1f8d8b588e389533f6b8ca1",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -975,11 +975,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.0.1",
+            "version": "v2.0.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "4f5d4a4cfc8f534469211f9538ee68ef9eef1e6e"
+                "reference": "7146abd029a631852d20ee62f600fb0ae4c6a419"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1013,7 +1013,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-20T00:18:48+00:00"
+            "time": "2020-03-20T08:16:16+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1150,11 +1150,11 @@
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "v1.1",
+            "version": "v1.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "de0d742f7031349890b29020ad6b65720ebf4820"
+                "reference": "8bfbfedf7accde9c897d3b7bb2735821b82010f1"
             },
             "type": "laravel-module",
             "extra": {
@@ -1176,7 +1176,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-04T15:35:11+00:00"
+            "time": "2020-03-20T08:14:34+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
