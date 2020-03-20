@@ -19,11 +19,11 @@
 
         <v-client-table ref="ccdRecords" :data="tableData" :columns="columns" :options="options">
             <template slot="selected" slot-scope="props">
-                <input class="row-select" v-model="props.row.selected" @input="select($event, props.row.id)"
+                <input class="row-select" v-model="props.row.selected" @change="select($event, props.row.id)"
                        type="checkbox"/>
             </template>
             <template slot="h__selected">
-                <input class="row-select" v-model="selected" @input="toggleAllSelect" type="checkbox"/>
+                <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox"/>
             </template>
             <template slot="Practice" slot-scope="props">
                 <v-select
