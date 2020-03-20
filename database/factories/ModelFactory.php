@@ -5,6 +5,7 @@
  */
 
 use App\Call;
+use App\DirectMailMessage;
 use App\Models\CCD\CcdVendor;
 use App\Services\PdfReports\Handlers\AthenaApiPdfHandler;
 use Carbon\Carbon;
@@ -317,5 +318,19 @@ $factory->define(CcdVendor::class, function (Faker\Generator $faker) {
         'id'          => 1,
         'program_id'  => $practice->id,
         'vendor_name' => 'TEST',
+    ];
+});
+
+$factory->define(DirectMailMessage::class, function (Faker\Generator $faker) {
+    return [
+        'message_id'      => $faker->uuid,
+        'from'            => $faker->safeEmail,
+        'to'              => $faker->safeEmail,
+        'subject'         => $faker->title,
+        'body'            => $faker->paragraph,
+        'num_attachments' => 0,
+        'error_text'      => null,
+        'status'          => 'success',
+        'direction'       => 'received',
     ];
 });

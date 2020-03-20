@@ -81,13 +81,11 @@ class PatientLoginTest extends CustomerTestCase
      *
      */
     public function test_notification_is_sent_after_cp_provider_approval(){
-        Notification::fake();
-
         $this->patient->carePlan->status = CarePlan::QA_APPROVED;
         $this->patient->carePlan->save();
-
-        $this->patient->load('carePlan');
-
+    
+        Notification::fake();
+    
         //Provider approves patient Care pLAN
         $this->providerApprovesCarePlan();
 
@@ -100,7 +98,7 @@ class PatientLoginTest extends CustomerTestCase
 
                 $mailData = $notification->toMail($this->patient)->toArray();
 
-                $this->assertEquals('Your CarePlan has just been approved', $mailData['subject']);
+                $this->assertTrue('Your CarePlan has just been approved' === $mailData['subject']);
 
                 return true;
             }
@@ -268,12 +266,14 @@ class PatientLoginTest extends CustomerTestCase
      */
     private function providerApprovesCarePlan()
     {
-        $this->actingAs($this->provider);
-
-        $this->call('POST', route('patient.careplan.approve', [
+        $this->actingAs($this->provider)->call('POST', route('patient.careplan.approve', [
             'patientId' => $this->patient->id,
         ]))
-             ->assertSessionHasNoErrors();
+             ->assertSessionHasNoErrors()
+             ->assertRedirect(route('patient.careplan.print', [
+            'patientId'    => $this->patient->id,
+            'clearSession' => false,
+        ]));
 
         auth()->logout();
 

@@ -10,9 +10,12 @@ use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 
 class AttachAttestedProblemsToCall implements ShouldQueue
 {
+    use InteractsWithQueue;
+
     /**
      * The time (seconds) before the job should be processed.
      *
@@ -23,7 +26,6 @@ class AttachAttestedProblemsToCall implements ShouldQueue
     /**
      * Handle a job failure.
      *
-     * @param CallIsReadyForAttestedProblemsAttachment $event
      * @param \Exception $exception
      *
      * @return void
@@ -43,8 +45,6 @@ class AttachAttestedProblemsToCall implements ShouldQueue
     /**
      * Handle the event.
      *
-     * @param CallIsReadyForAttestedProblemsAttachment $event
-     *
      * @return void
      */
     public function handle(CallIsReadyForAttestedProblemsAttachment $event)
@@ -53,7 +53,7 @@ class AttachAttestedProblemsToCall implements ShouldQueue
         $attestedProblems = $event->getProblems();
 
         //We should not have problems attested only on call and not on PMS
-        if(! $this->summaryExistsForCurrentMonthForPatient($call->inbound_cpm_id)){
+        if ( ! $this->summaryExistsForCurrentMonthForPatient($call->inbound_cpm_id)) {
             PatientMonthlySummary::createFromPatient($call->inbound_cpm_id, Carbon::now()->startOfMonth());
         }
 
@@ -65,7 +65,8 @@ class AttachAttestedProblemsToCall implements ShouldQueue
      *
      * @return bool
      */
-    private function summaryExistsForCurrentMonthForPatient($patientId){
+    private function summaryExistsForCurrentMonthForPatient($patientId)
+    {
         return PatientMonthlySummary::where('patient_id', $patientId)
             ->where('month_year', Carbon::now()->startOfMonth())
             ->exists();
