@@ -74,15 +74,12 @@
                                 </mdb-col>
                             </mdb-row>
 
-                            <mdb-row>
+                            <mdb-row class="provider-container">
                                 <mdb-col md="6">
                                     <mdb-date-picker label="Appointment Date"
                                                      disable-input
                                                      icon="calendar"
                                                      ref="appointmentDatePicker"
-                                                     invalidFeedback="Please select both date and time or none."
-                                                     :customValidation="validation.appointment.validated"
-                                                     :isValid="validation.appointment.valid"
                                                      @change="validate('appointmentDate', $event)"
                                                      v-model="patient.appointmentDate"/>
                                 </mdb-col>
@@ -92,6 +89,11 @@
                                                      icon="clock"
                                                      ref="appointmentTimePicker"
                                                      v-model="patient.appointmentTime"/>
+                                </mdb-col>
+                                <mdb-col md="12">
+                                    <span class="md-label">
+                                        Optional: Please select both date and time or none.
+                                    </span>
                                 </mdb-col>
                             </mdb-row>
 
@@ -267,10 +269,12 @@
                     case "lastName":
                         this.validation[key].valid = value.length > 0;
                         break;
+
                     case "phoneNumber":
                         const phoneRe = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
                         this.validation[key].valid = phoneRe.test(value);
                         break;
+
                     case "email":
                         if (!value || !value.length) {
                             //optional
@@ -280,6 +284,7 @@
                             this.validation[key].valid = re.test(value);
                         }
                         break;
+
                     case "appointmentDate":
                     case "appointmentTime":
                         const dtStr = this.getDateTimeFromPickers(value, key === "appointmentDate" ? 'date' : 'time');
@@ -295,6 +300,7 @@
                             }
                         }
                         break;
+
                     default:
                         this.validation[key].valid = true;
                         break;
@@ -302,8 +308,7 @@
 
                 if (key === "appointmentDate" || key === "appointmentTime") {
                     this.validation["appointment"].validated = true;
-                }
-                else {
+                } else {
                     this.validation[key].validated = true;
                 }
             },
@@ -377,7 +382,7 @@
             },
 
             cancel(e) {
-                if (e) {
+                if (e && e.preventDefault) {
                     e.preventDefault();
                 }
                 this.options.onDone();
@@ -422,6 +427,11 @@
 
 <style scoped>
 
+    .md-label {
+        color: #757575;
+        font-size: 0.8rem;
+    }
+
     .container {
         position: relative;
     }
@@ -430,6 +440,7 @@
         padding-top: 10px;
         padding-bottom: 10px;
         border: 1px solid #dee2e6;
+        margin-bottom: 5px;
     }
 
 </style>
