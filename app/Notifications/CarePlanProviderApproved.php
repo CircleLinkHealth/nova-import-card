@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\Contracts\DirectMailableNotification;
 use App\Contracts\FaxableNotification;
 use App\Note;
 use App\ValueObjects\SimpleNotification;
@@ -15,7 +16,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CarePlanProviderApproved extends Notification implements FaxableNotification
+class CarePlanProviderApproved extends Notification implements FaxableNotification, DirectMailableNotification
 {
     use Queueable;
     public $attachment;
@@ -41,6 +42,16 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
         $this->attachment = $this->carePlan = $carePlan;
 
         $this->channels = array_unique(array_merge($this->channels, $channels));
+    }
+
+    public function directMailBody($notifiable): string
+    {
+        return $this->getBody();
+    }
+
+    public function directMailSubject($notifiable): string
+    {
+        return $this->getSubject();
     }
 
     /**
@@ -134,15 +145,15 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
      *
      * @return bool|string
      */
-    public function toDirectMail($notifiable)
+    public function toDirectMail($notifiable): SimpleNotification
     {
         if ( ! $notifiable || ! $notifiable->emr_direct_address) {
             return false;
         }
 
         return (new SimpleNotification())
-            ->setBody($this->getBody())
-            ->setSubject($this->getSubject())
+            ->setBody($this->directMailBody($notifiable))
+            ->setSubject($this->directMailSubject($notifiable))
             ->setFilePath($this->toPdf());
     }
 

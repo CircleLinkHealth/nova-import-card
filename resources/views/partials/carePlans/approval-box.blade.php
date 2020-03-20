@@ -12,6 +12,7 @@
                 on {{$patient->carePlan->provider_date->format('m/d/Y')}}
                 at {{$patient->carePlan->provider_date->setTimezone($patient->timezone ?? 'America/New_York')->format('g:i A T')}}
                 by {{ $patient->getCcmStatus() == 'patient_rejected' ? \CircleLinkHealth\Customer\Entities\User::withTrashed()->find($patient->carePlan->user_id)->display_name : \CircleLinkHealth\Customer\Entities\User::withTrashed()->find($patient->carePlan->provider_approver_id)->display_name}}
+                @if($patient->carePlan->wasApprovedViaNurse()) via {{$patient->carePlan->getNurseApproverName()}} @endif
             </div>
         </div>
     @endif

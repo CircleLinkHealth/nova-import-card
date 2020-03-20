@@ -14,8 +14,10 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class UPG0506CcdaImporterListener
+class UPG0506CcdaImporterListener implements ShouldQueue
 {
+    use InteractsWithQueue;
+
     const UPG_NAME = 'UPG';
     
     /**

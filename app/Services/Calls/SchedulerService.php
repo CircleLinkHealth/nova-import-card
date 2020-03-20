@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Auth;
 class SchedulerService
 {
     const CALL_BACK_TYPE = 'Call Back';
-    
+    const PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE = 'Provider Request For Care Plan Approval';
     const CALL_TYPE = 'call';
     
     /**

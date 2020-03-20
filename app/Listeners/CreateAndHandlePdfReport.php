@@ -7,9 +7,13 @@
 namespace App\Listeners;
 
 use App\Events\PdfableCreated;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 
-class CreateAndHandlePdfReport
+class CreateAndHandlePdfReport implements ShouldQueue
 {
+    use InteractsWithQueue;
+    
     /**
      * Create the event listener.
      */

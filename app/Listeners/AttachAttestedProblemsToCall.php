@@ -8,19 +8,23 @@ namespace App\Listeners;
 
 use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 
 class AttachAttestedProblemsToCall implements ShouldQueue
 {
+    use InteractsWithQueue;
+    
     /**
      * The time (seconds) before the job should be processed.
      *
      * @var int
      */
     public $delay = 10;
-
+    
     /**
      * Handle a job failure.
      *
+     * @param CallIsReadyForAttestedProblemsAttachment $event
      * @param \Exception $exception
      *
      * @return void
@@ -36,9 +40,11 @@ class AttachAttestedProblemsToCall implements ShouldQueue
             'exception_message'    => $exception->getMessage(),
         ]);
     }
-
+    
     /**
      * Handle the event.
+     *
+     * @param CallIsReadyForAttestedProblemsAttachment $event
      *
      * @return void
      */
