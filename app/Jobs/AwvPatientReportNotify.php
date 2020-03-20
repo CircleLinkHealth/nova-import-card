@@ -39,7 +39,7 @@ class AwvPatientReportNotify implements ShouldQueue
      */
     public function __construct($patientReportdata)
     {
-        $this->patientReportData = (array)json_decode($patientReportdata);
+        $this->patientReportData = (array) json_decode($patientReportdata);
     }
 
     /**
@@ -60,13 +60,13 @@ class AwvPatientReportNotify implements ShouldQueue
         }
 
         $patient = User::ofType('participant')
-                       ->with('primaryPractice.settings')
-                       ->findOrFail($this->patientReportData['patient_id']);
+            ->with('primaryPractice.settings')
+            ->findOrFail($this->patientReportData['patient_id']);
 
         $media = Media::where('collection_name', 'patient-care-documents')
-                      ->where('model_id', $patient->id)
-                      ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
-                      ->find($this->patientReportData['report_media_id']);
+            ->where('model_id', $patient->id)
+            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
+            ->find($this->patientReportData['report_media_id']);
 
         if ( ! $media) {
             \Log::error("Media with id: {$this->patientReportData['report_media_id']} not found for patient with id: {$patient->id}");
@@ -120,8 +120,8 @@ class AwvPatientReportNotify implements ShouldQueue
     {
         return [
             AwvPatientReportNotify::class,
-            'patient_id:' . $this->patientReportData['patient_id'],
-            'report_media_id:' . $this->patientReportData['report_media_id'],
+            'patient_id:'.$this->patientReportData['patient_id'],
+            'report_media_id:'.$this->patientReportData['report_media_id'],
         ];
     }
 }

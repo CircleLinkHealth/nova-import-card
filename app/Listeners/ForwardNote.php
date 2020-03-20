@@ -14,7 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 class ForwardNote implements ShouldQueue
 {
     use InteractsWithQueue;
-    
+
     /**
      * @var NoteService
      */
@@ -22,8 +22,6 @@ class ForwardNote implements ShouldQueue
 
     /**
      * Create the event listener.
-     *
-     * @param NoteService $noteService
      */
     public function __construct(NoteService $noteService)
     {

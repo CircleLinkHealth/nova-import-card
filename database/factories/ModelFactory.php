@@ -323,14 +323,14 @@ $factory->define(CcdVendor::class, function (Faker\Generator $faker) {
 
 $factory->define(DirectMailMessage::class, function (Faker\Generator $faker) {
     return [
-        'message_id' => $faker->uuid,
-        'from' => $faker->safeEmail,
-        'to' => $faker->safeEmail,
-        'subject' => $faker->title,
-        'body' => $faker->paragraph,
+        'message_id'      => $faker->uuid,
+        'from'            => $faker->safeEmail,
+        'to'              => $faker->safeEmail,
+        'subject'         => $faker->title,
+        'body'            => $faker->paragraph,
         'num_attachments' => 0,
-        'error_text' => null,
-        'status' => 'success',
-        'direction' => 'received',
+        'error_text'      => null,
+        'status'          => 'success',
+        'direction'       => 'received',
     ];
 });

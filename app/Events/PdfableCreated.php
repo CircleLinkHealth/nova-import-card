@@ -14,22 +14,21 @@ use Illuminate\Queue\SerializesModels;
 class PdfableCreated extends Event
 {
     use SerializesModels;
+    /**
+     * @var bool|mixed
+     */
+    public $notifyPractice;
 
     /**
      * An entity implementing App\Contracts\PdfReport.
      *
      * @var PdfReport
      */
-    public  $pdfReport;
-    /**
-     * @var bool|mixed
-     */
-    public $notifyPractice;
-    
+    public $pdfReport;
+
     /**
      * Create a new event instance.
      *
-     * @param PdfReport $pdfable
      * @param mixed $notifyPractice
      */
     public function __construct(

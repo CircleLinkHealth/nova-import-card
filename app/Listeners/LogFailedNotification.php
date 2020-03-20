@@ -13,6 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 class LogFailedNotification implements ShouldQueue
 {
     use InteractsWithQueue;
+
     /**
      * Create the event listener.
      */

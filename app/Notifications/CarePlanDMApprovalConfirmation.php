@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Notifications;
 
 use App\Contracts\DirectMailableNotification;
@@ -17,11 +21,9 @@ class CarePlanDMApprovalConfirmation extends Notification implements DirectMaila
      * @var User
      */
     protected $patientUser;
-    
+
     /**
      * Create a new notification instance.
-     *
-     * @param User $patientUser
      */
     public function __construct(User $patientUser)
     {
@@ -29,49 +31,39 @@ class CarePlanDMApprovalConfirmation extends Notification implements DirectMaila
     }
 
     /**
-     * Get the notification's delivery channels.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function via($notifiable)
-    {
-        return ['database', DirectMailChannel::class];
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function toArray($notifiable)
-    {
-        return [
-            'body' => $this->directMailBody($notifiable),
-            'subject' => $this->directMailSubject($notifiable),
-            'patient_id' => $this->patientUser->id,
-        ];
-    }
-    
-    /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function directMailBody($notifiable): string
     {
         return "Thanks for approving {$this->patientUser->getFullName()}}'s Care Plan! Have a great day - CircleLink Team";
     }
-    
+
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function directMailSubject($notifiable): string
     {
         return 'Care Plan Approved';
     }
-    
+
     /**
-     * @inheritDoc
+     * Get the array representation of the notification.
+     *
+     * @param mixed $notifiable
+     *
+     * @return array
+     */
+    public function toArray($notifiable)
+    {
+        return [
+            'body'       => $this->directMailBody($notifiable),
+            'subject'    => $this->directMailSubject($notifiable),
+            'patient_id' => $this->patientUser->id,
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function toDirectMail($notifiable): SimpleNotification
     {
@@ -79,5 +71,17 @@ class CarePlanDMApprovalConfirmation extends Notification implements DirectMaila
             ->setSubject($this->directMailSubject($notifiable))
             ->setBody($this->directMailBody($notifiable))
             ->setPatient($this->patientUser);
+    }
+
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @param mixed $notifiable
+     *
+     * @return array
+     */
+    public function via($notifiable)
+    {
+        return ['database', DirectMailChannel::class];
     }
 }

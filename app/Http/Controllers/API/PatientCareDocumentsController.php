@@ -49,30 +49,30 @@ class PatientCareDocumentsController extends Controller
     public function getCareDocuments(Request $request, $patientId, $showPast = false)
     {
         $patientAWVStatuses = PatientAWVSurveyInstanceStatus::where('patient_id', $patientId)
-                                                            ->when(! $showPast, function ($query) {
+            ->when( ! $showPast, function ($query) {
                                                                 $query->where('year', Carbon::now()->year);
                                                             })
-                                                            ->get();
+            ->get();
 
         $files = Media::where('collection_name', 'patient-care-documents')
-                      ->where('model_id', $patientId)
-                      ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
-                      ->get()
-                      ->sortByDesc('created_at')
-                      ->mapToGroups(function ($item, $key) {
+            ->where('model_id', $patientId)
+            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
+            ->get()
+            ->sortByDesc('created_at')
+            ->mapToGroups(function ($item, $key) {
                           $docType = $item->getCustomProperty('doc_type');
 
                           return [$docType => $item];
                       })
-                      ->reject(function ($value, $key) {
+            ->reject(function ($value, $key) {
                           return ! $key;
                       })
             //get the latest file from each category
-                      ->unless('true' == $showPast, function ($files) {
-                return $files->map(function ($typeGroup) {
-                    return collect([$typeGroup->first()]);
-                });
-            });
+            ->unless('true' == $showPast, function ($files) {
+                          return $files->map(function ($typeGroup) {
+                              return collect([$typeGroup->first()]);
+                          });
+                      });
 
         return response()->json([
             'files'              => $files->toArray(),
@@ -131,11 +131,9 @@ class PatientCareDocumentsController extends Controller
         $patient = User::findOrFail($patientId);
 
         foreach ($request->file()['file'] as $file) {
-
             try {
                 $mimeType = $file->getMimeType();
             } catch (InvalidArgumentException $exception) {
-
                 Log::error($exception);
 
                 return response()->json(
@@ -158,8 +156,8 @@ class PatientCareDocumentsController extends Controller
                 );
             }
             $patient->addMedia($file)
-                    ->withCustomProperties(['doc_type' => $request->doc_type])
-                    ->toMediaCollection('patient-care-documents');
+                ->withCustomProperties(['doc_type' => $request->doc_type])
+                ->toMediaCollection('patient-care-documents');
         }
 
         return response()->json([]);
@@ -175,16 +173,16 @@ class PatientCareDocumentsController extends Controller
 
         return response($mediaItem->getFile(), 200, [
             'Content-Type'        => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $mediaItem->name . '"',
+            'Content-Disposition' => 'inline; filename="'.$mediaItem->name.'"',
         ]);
     }
 
     private function getMediaItemById($modelId, $mediaId)
     {
         return Media::where('collection_name', 'patient-care-documents')
-                    ->where('model_id', $modelId)
-                    ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
-                    ->find($mediaId);
+            ->where('model_id', $modelId)
+            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
+            ->find($mediaId);
     }
 
     private function validateInput($channel, $input)

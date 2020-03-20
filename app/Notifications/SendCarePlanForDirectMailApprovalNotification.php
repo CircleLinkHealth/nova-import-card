@@ -23,24 +23,22 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
      */
     protected $patientUser;
     /**
-     * @var PasswordlessLoginToken|\Illuminate\Database\Eloquent\Model
+     * @var \Illuminate\Database\Eloquent\Model|PasswordlessLoginToken
      */
     private $passwordlessLoginToken;
-    
+
     /**
      * Create a new notification instance.
-     *
-     * @param User $patientUser
      */
     public function __construct(User $patientUser)
     {
         $this->patientUser = $patientUser;
     }
-    
+
     public function directMailBody($notifiable): string
     {
         $identifier = $this->patientUser->carePlan->id;
-        
+
         return "Dear {$notifiable->getFullName()},
             \n
             Please review attached Care Plan for {$this->patientUser->getFullName()}.
@@ -54,12 +52,22 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
             CircleLink Team
 ";
     }
-    
+
     public function directMailSubject($notifiable): string
     {
         return "{$this->patientUser->getFullName()}'s CCM Care Plan to approve!";
     }
-    
+
+    /**
+     * @param $notifiable
+     *
+     * @return string
+     */
+    public function passwordlessLoginLink($notifiable)
+    {
+        return URL::route('login.token.validate', [$this->token($notifiable)->token]);
+    }
+
     /**
      * Get the array representation of the notification.
      *
@@ -76,13 +84,12 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
             ],
         ];
     }
-    
+
     /**
      * Get the mail representation of the notification.
      *
      * @param mixed $notifiable
      *
-     * @return SimpleNotification
      * @throws \Exception
      */
     public function toDirectMail($notifiable): SimpleNotification
@@ -94,7 +101,30 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
             ->setFilePath($this->patientUser->carePlan->toPdf())
             ->setFileName("{$this->patientUser->getFullName()}'s CCM Care Plan.pdf");
     }
-    
+
+    public function token($notifiable)
+    {
+        if ( ! $this->passwordlessLoginToken) {
+            do {
+                $saved = false;
+                $token = str_random(6);
+
+                if ( ! PasswordlessLoginToken::where('token', $token)->exists()) {
+                    $this->passwordlessLoginToken = PasswordlessLoginToken::create(
+                        [
+                            'user_id' => $notifiable->id,
+                            'token'   => $token,
+                        ]
+                    );
+
+                    $saved = true;
+                }
+            } while ( ! $saved);
+        }
+
+        return $this->passwordlessLoginToken;
+    }
+
     /**
      * Get the notification's delivery channels.
      *
@@ -105,38 +135,5 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
     public function via($notifiable)
     {
         return ['database', DirectMailChannel::class];
-    }
-    
-    /**
-     * @param $notifiable
-     *
-     * @return string
-     */
-    public function passwordlessLoginLink($notifiable)
-    {
-        return URL::route('login.token.validate', [$this->token($notifiable)->token]);
-    }
-    
-    public function token($notifiable)
-    {
-        if ( ! $this->passwordlessLoginToken) {
-            do {
-                $saved = false;
-                $token = str_random(6);
-                
-                if ( ! PasswordlessLoginToken::where('token', $token)->exists()) {
-                    $this->passwordlessLoginToken = PasswordlessLoginToken::create(
-                        [
-                            'user_id'   => $notifiable->id,
-                            'token'     => $token,
-                        ]
-                    );
-                    
-                    $saved = true;
-                }
-            } while ( ! $saved);
-        }
-        
-        return $this->passwordlessLoginToken;
     }
 }

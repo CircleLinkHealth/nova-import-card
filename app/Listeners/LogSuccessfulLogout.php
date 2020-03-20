@@ -15,10 +15,7 @@ use Illuminate\Queue\InteractsWithQueue;
 class LogSuccessfulLogout implements ShouldQueue
 {
     use InteractsWithQueue;
-    
-    /**
-     * @param Logout $event
-     */
+
     public function handle(Logout $event)
     {
         LogSuccessfulLogoutToDB::dispatch($event)->onQueue('low');

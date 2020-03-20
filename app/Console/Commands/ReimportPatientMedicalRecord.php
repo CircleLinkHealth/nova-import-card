@@ -123,7 +123,7 @@ class ReimportPatientMedicalRecord extends Command
     {
         if ($mr = MedicalRecordFactory::create($user, $ccda)) {
             $this->warn("Running '{$user->primaryPractice->name}' decorator");
-        
+
             return $mr;
         }
 
@@ -135,7 +135,7 @@ class ReimportPatientMedicalRecord extends Command
         if ($ccda = $this->getUser()->latestCcda()) {
             return $ccda;
         }
-        
+
         $this->correctMrnIfWrong($user);
 
         if ($ccda = $this->getCcdaFromMrn($user->patientInfo->mrn_number, $user->program_id)) {
@@ -227,6 +227,25 @@ class ReimportPatientMedicalRecord extends Command
 
         CcdInsurancePolicy::where('patient_id', '=', $userId)
             ->delete();
+    }
+
+    private function correctMrnIfWrong(User $user)
+    {
+        if (empty($user->patientInfo->mrn_number) && ! empty($this->getEnrollee($user)->mrn)) {
+            $user->patientInfo->mrn_number = $this->getEnrollee($user)->mrn;
+            $user->patientInfo->save();
+        }
+
+        if ($user->patientInfo->mrn_number !== $this->getEnrollee($user)->mrn) {
+            if (
+                ($this->getEnrollee($user)->first_name == $user->first_name)
+                && ($this->getEnrollee($user)->last_name == $user->last_name)
+                && ($this->getEnrollee($user)->dob->isSameAs($user->patientInfo->birth_date))
+            ) {
+                $user->patientInfo->mrn_number = $this->getEnrollee($user)->mrn;
+                $user->patientInfo->save();
+            }
+        }
     }
 
     /**
@@ -327,25 +346,6 @@ class ReimportPatientMedicalRecord extends Command
         if ($initiatorId = $this->argument('initiatorUserId')) {
             $this->warn("Notifying user:$initiatorId");
             User::findOrFail($initiatorId)->notify(new PatientReimportedNotification($user->id));
-        }
-    }
-    
-    private function correctMrnIfWrong(User $user)
-    {
-        if (empty($user->patientInfo->mrn_number) && !empty($this->getEnrollee($user)->mrn)) {
-            $user->patientInfo->mrn_number = $this->getEnrollee($user)->mrn;
-            $user->patientInfo->save();
-        }
-    
-        if ($user->patientInfo->mrn_number !== $this->getEnrollee($user)->mrn) {
-            if (
-                ($this->getEnrollee($user)->first_name == $user->first_name)
-                && ($this->getEnrollee($user)->last_name == $user->last_name)
-                && ($this->getEnrollee($user)->dob->isSameAs($user->patientInfo->birth_date))
-            ) {
-                $user->patientInfo->mrn_number = $this->getEnrollee($user)->mrn;
-                $user->patientInfo->save();
-            }
         }
     }
 }

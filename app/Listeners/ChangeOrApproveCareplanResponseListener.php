@@ -1,7 +1,12 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Listeners;
 
+use App\AppConfig\DMDomainForAutoApproval;
 use App\Call;
 use App\DirectMailMessage;
 use App\Events\CarePlanWasApproved;
@@ -9,81 +14,17 @@ use App\Note;
 use App\Notifications\CarePlanDMApprovalConfirmation;
 use App\Services\Calls\SchedulerService;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
-use App\AppConfig\DMDomainForAutoApproval;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 
 class ChangeOrApproveCareplanResponseListener implements ShouldQueue
 {
     use InteractsWithQueue;
-    
+
     /**
-     * Handle the event.
-     *
-     * @param object $event
-     *
-     * @return void
-     */
-    public function handle(DirectMailMessageReceived $event)
-    {
-        if ($this->shouldBail($event->directMailMessage->from)) {
-            return;
-        }
-        
-        if ( ! $this->attemptChange($event->directMailMessage)) {
-            $this->attemptApproval($event->directMailMessage);
-        }
-    }
-    
-    /**
-     * Returns true if this listener should not run, and fals if it should run.
-     *
-     * @param string $sender
-     *
-     * @return bool
-     */
-    private function shouldBail(string $sender): bool
-    {
-        return ! DMDomainForAutoApproval::isEnabledForDomain($sender);
-    }
-    
-    /**
-     * Returns the CarePlan ID the provider requested changes for, or null if the provider did not request changes, or
-     * the CarePlan ID was not found.
-     *
-     * @param string $body
-     *
-     * @return int|null
-     */
-    public function getCareplanIdToChange(string $body)
-    {
-        return $this->extractCarePlanId($body, 'change');
-    }
-    
-    
-    public function getCareplanIdToApprove(string $body)
-    {
-        return $this->extractCarePlanId($body, 'approve');
-    }
-    
-    private function extractCarePlanId(string $body, string $key): ?int
-    {
-        preg_match("/#\s*$key\s*([\d]+)/", $body, $matches);
-        
-        if (array_key_exists(1, $matches)) {
-            return (int) $matches[1];
-        }
-        
-        return null;
-    }
-    
-    /**
-     * @param string $from
-     * @param int $careplanId
-     *
      * @return bool
      */
     public function actionIsAuthorized(string $from, int $careplanId)
@@ -101,14 +42,61 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
             User::class
         )->exists();
     }
-    
+
+    public function getCareplanIdToApprove(string $body)
+    {
+        return $this->extractCarePlanId($body, 'approve');
+    }
+
+    /**
+     * Returns the CarePlan ID the provider requested changes for, or null if the provider did not request changes, or
+     * the CarePlan ID was not found.
+     *
+     * @return int|null
+     */
+    public function getCareplanIdToChange(string $body)
+    {
+        return $this->extractCarePlanId($body, 'change');
+    }
+
+    /**
+     * Handle the event.
+     *
+     * @param object $event
+     *
+     * @return void
+     */
+    public function handle(DirectMailMessageReceived $event)
+    {
+        if ($this->shouldBail($event->directMailMessage->from)) {
+            return;
+        }
+
+        if ( ! $this->attemptChange($event->directMailMessage)) {
+            $this->attemptApproval($event->directMailMessage);
+        }
+    }
+
+    /**
+     * Approve the CarePlan, if the message contains code #approve.
+     */
+    private function attemptApproval(DirectMailMessage $directMailMessage): bool
+    {
+        $careplanId = $this->getCareplanIdToApprove($directMailMessage->body);
+        if ($careplanId && $this->actionIsAuthorized($directMailMessage->from, $careplanId)) {
+            $cp = $this->getCarePlan($careplanId);
+            event(new CarePlanWasApproved($cp->patient, $cp->patient->billingProviderUser()));
+            $cp->patient->billingProviderUser()->notify(new CarePlanDMApprovalConfirmation($cp->patient));
+
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Create a Task(Call) with the body of the DM for Nurse to make changes to the CarePlan, if the message contains
      * code #change.
-     *
-     * @param DirectMailMessage $directMailMessage
-     *
-     * @return bool
      */
     private function attemptChange(DirectMailMessage $directMailMessage): bool
     {
@@ -123,7 +111,7 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
                     'body'       => $directMailMessage->body,
                 ]
             );
-            
+
             $task = Call::create(
                 [
                     'note_id'         => $note->id,
@@ -138,17 +126,26 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
                     'outbound_cpm_id' => $cp->patient->patientInfo->getNurse(),
                 ]
             );
-            
+
             return true;
         }
-        
+
         return false;
     }
-    
+
+    private function extractCarePlanId(string $body, string $key): ?int
+    {
+        preg_match("/#\s*$key\s*([\d]+)/", $body, $matches);
+
+        if (array_key_exists(1, $matches)) {
+            return (int) $matches[1];
+        }
+
+        return null;
+    }
+
     /**
      * Fetch the CarePlan with relations from the DB.
-     *
-     * @param int $careplanId
      *
      * @return CarePlan|CarePlan[]|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
@@ -158,25 +155,12 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
             ['patient.billingProvider', 'patient.patientInfo']
         )->findOrFail($careplanId);
     }
-    
+
     /**
-     * Approve the CarePlan, if the message contains code #approve.
-     *
-     * @param DirectMailMessage $directMailMessage
-     *
-     * @return bool
+     * Returns true if this listener should not run, and fals if it should run.
      */
-    private function attemptApproval(DirectMailMessage $directMailMessage): bool
+    private function shouldBail(string $sender): bool
     {
-        $careplanId = $this->getCareplanIdToApprove($directMailMessage->body);
-        if ($careplanId && $this->actionIsAuthorized($directMailMessage->from, $careplanId)) {
-            $cp = $this->getCarePlan($careplanId);
-            event(new CarePlanWasApproved($cp->patient, $cp->patient->billingProviderUser()));
-            $cp->patient->billingProviderUser()->notify(new CarePlanDMApprovalConfirmation($cp->patient));
-            
-            return true;
-        }
-        
-        return false;
+        return ! DMDomainForAutoApproval::isEnabledForDomain($sender);
     }
 }
