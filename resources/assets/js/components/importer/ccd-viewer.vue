@@ -149,7 +149,7 @@
             return {
                 url: rootUrl('api/ccd-importer/imported-medical-records'),
                 selected: false,
-                columns: null,
+                columns: ['selected', 'Name', 'DOB', 'Practice', 'Location', 'Billing Provider', 'duplicate', '2+ CCM Cond', '1+ BHI Cond', 'Medicare', 'Submit', 'Remove'],
                 tableData: [],
                 options: {
                     sortable: ['Name', 'DOB']
@@ -475,8 +475,6 @@
 
             if (true === this.isAdmin()) {
                 this.columns = ['selected', 'Name', 'DOB', 'Practice', 'Location', 'Billing Provider', 'Care Coach', 'duplicate', '2+ CCM Cond', '1+ BHI Cond', 'Medicare', 'Submit', 'Remove']
-            } else {
-                this.columns = ['selected', 'Name', 'DOB', 'Practice', 'Location', 'Billing Provider', 'duplicate', '2+ CCM Cond', '1+ BHI Cond', 'Medicare', 'Submit', 'Remove']
             }
         },
         mounted() {
