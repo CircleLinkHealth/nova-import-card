@@ -39,10 +39,10 @@
             <template slot="Location" slot-scope="props">
                 <v-select
                         v-model="props.row.Location"
-                        @input="props.row.changeLocation((props.row.Location || {}).id)"
+                        @input="props.row.changeLocation(props.row.Location)"
                         :options="props.row.locations"
                         :disabled="! props.row.Practice"
-                        class="form-control" >
+                        class="form-control">
                 </v-select>
 
                 <div v-if="props.row.loaders.locations">
@@ -51,11 +51,11 @@
             </template>
             <template slot="Billing Provider" slot-scope="props">
                 <v-select
-                        v-model="props.row.billingProvider"
-                        @input="props.row.changeLocation((props.row.billingProvider || {}).id)"
+                        v-model="props.row['Billing Provider']"
+                        @input="props.row.changeProvider(props.row['Billing Provider'])"
                         :options="props.row.providers"
                         :disabled="! props.row.Location"
-                        class="form-control" >
+                        class="form-control">
                 </v-select>
 
                 <div v-if="props.row.loaders.providers">
@@ -68,7 +68,7 @@
                         @input="props.row.changeLocation((props.row.provider || {}).id)"
                         :options="props.row.providers"
                         :disabled="! props.row.Practice"
-                        class="form-control" >
+                        class="form-control">
                 </v-select>
 
                 <div v-if="props.row.loaders.providers">
@@ -126,8 +126,8 @@
     import ErrorModalButton from '../../admin/billing/comps/error-modal-button'
     import NotificationComponent from '../notifications'
     import VueCache from '../../util/vue-cache'
-    import {mapGetters, mapActions} from 'vuex'
-    import {getCurrentUser, setOpenModal} from "../../store/actions";
+    import {mapActions, mapGetters} from 'vuex'
+    import {getCurrentUser} from "../../store/actions";
     import {currentUser} from '../../store/getters';
     import VueSelect from "vue-select";
 
@@ -190,16 +190,29 @@
                         record.demographics.display_name = record.demographics.first_name + ' ' + record.demographics.last_name
                     }
                     const self = this;
+                    const practice = {
+                        label: (record.practice || {}).display_name,
+                        value: (record.practice || {}).id
+                    };
+                    const location = {
+                        label: (record.location || {}).display_name,
+                        value: (record.location || {}).id
+                    };
+                    const billingProvider = {
+                        label: null,
+                        value: record.billing_provider_id
+                    };
                     return {
                         id: record.id,
                         selected: false,
                         Name: (record.demographics || {}).display_name,
                         DOB: (record.demographics || {}).dob,
-                        Practice: ((record.practice || {}).id || null),
-                        practice_name: ((record.practice || {}).display_name || null),
-                        Location: ((record.location || {}).id || null),
-                        location_name: ((record.location || {}).display_name || null),
-                        'Billing Provider': record.billing_provider_id,
+                        Practice: practice,
+                        practice_id: practice.value,
+                        Location: location,
+                        location_id: location.value,
+                        'Billing Provider': billingProvider,
+                        billing_provider_id: record.billing_provider_id,
                         '2+ CCM Cond': (record.validation_checks || {}).has_at_least_2_ccm_conditions,
                         '1+ BHI Cond': (record.validation_checks || {}).has_at_least_1_bhi_condition,
                         Medicare: (record.validation_checks || {}).has_medicare,
@@ -222,85 +235,87 @@
                         practices: () => self.practices,
                         locations: [],
                         providers: [],
-                        changePractice(id) {
-                            self.changePractice(record.id, id)
+                        changePractice(selectedOption) {
+                            self.changePractice(record.id, selectedOption);
                         },
-                        changeLocation(id) {
-                            self.changeLocation(record.id, id)
+                        changeLocation(selectedOption) {
+                            self.changeLocation(record.id, selectedOption);
                         },
-                        changeProvider(id) {
-                            self.changeProvider(record.id, id)
-                            self.updateRecord(record.id)
+                        changeProvider(selectedOption) {
+                            self.changeProvider(record.id, selectedOption);
+                            self.updateRecord(record.id);
                         },
                         validate() {
                             const record = this
-                            return (!!record.Practice && !!record.billingProvider && !!record.Location)
+                            return (!!record.Practice.value && !!record['Billing Provider'].value && !!record.Location.value)
                         }
                     }
                 },
-                changePractice(recordId, practiceId) {
-                    const record = this.tableData.find(row => row.id === recordId)
-                    if (record) {
-                        const practice = this.practices.find(practice => practice.id === practiceId)
-                        if (practice) {
-                            record.Practice = practice.id;
-                            record.practice_name = practice.display_name
-                            record.Location = null
-                            record.locations = []
-                            record.loaders.locations = true
-                            record.providers = []
-                            this.getLocations(practiceId).then(locations => {
-                                //console.log('get-practice-locations', practiceId, locations)
-                                record.locations = locations
-                                record.loaders.locations = false
-                                this.changeLocation(recordId, record.Location)
-                            }).catch(err => {
-                                record.loaders.locations = false
-                                record.errors.locations = err.message
-                                console.error('get-practice-locations', err)
-                            })
-                        }
+                changePractice(recordId, selectedPractice) {
+                    const record = this.tableData.find(row => row.id === recordId);
+                    if (!record) {
+                        return;
                     }
+                    record.Practice = selectedPractice;
+                    record.practice_id = selectedPractice.value;
+                    record.Location = {label:null, value:null};
+                    record.location_id = null;
+                    record.locations = [];
+                    record.loaders.locations = true;
+                    record.providers = [];
+                    this.getLocations(selectedPractice.value).then(locations => {
+                        //console.log('get-practice-locations', practiceId, locations)
+                        record.locations = locations
+                        record.loaders.locations = false
+                        this.changeLocation(recordId, record.Location)
+                    }).catch(err => {
+                        record.loaders.locations = false
+                        record.errors.locations = err.message
+                        console.error('get-practice-locations', err)
+                    })
                 },
-                changeLocation(recordId, locationId) {
-                    const record = this.tableData.find(row => row.id === recordId)
-                    if (record) {
-                        const location = record.locations.find(l => l.id === locationId)
-                        if (location) {
-                            record.Location = location.id;
-                            record.location_name = location.name
-                            record.providers = []
-                            record.loaders.providers = true
-                            this.getProviders(record.Practice, locationId).then(providers => {
-                                record.providers = providers
-                                record.loaders.providers = false
-                                if (!record.providers.find(provider => provider.id == record.billingProvider)) {
-                                    record.billingProvider = null
-                                }
-                                console.log('get-practice-location-providers', providers)
-                            }).catch(err => {
-                                record.loaders.providers = false
-                                record.errors.providers = err.message
-                                console.error('get-practice-location-providers', err)
-                            })
-                        }
+                changeLocation(recordId, selectedLocation) {
+                    const record = this.tableData.find(row => row.id === recordId);
+                    if (!record) {
+                        return;
                     }
+                    record.Location = selectedLocation;
+                    record.location_id = selectedLocation.value;
+
+                    if (!selectedLocation.value) {
+                        return;
+                    }
+                    record.providers = [];
+                    record.loaders.providers = true;
+                    this.getProviders(record.Practice.value, selectedLocation.value).then(providers => {
+                        record.providers = providers
+                        record.loaders.providers = false
+                        if (!record.providers.find(provider => provider.id == record.billing_provider_id)) {
+                            record.billing_provider_id = null
+                        }
+                        console.log('get-practice-location-providers', providers)
+                    }).catch(err => {
+                        record.loaders.providers = false
+                        record.errors.providers = err.message
+                        console.error('get-practice-location-providers', err)
+                    });
                 },
-                changeProvider(recordId, providerId) {
-                    const record = this.tableData.find(row => row.id === recordId)
+                changeProvider(recordId, selectedProvider) {
+                    const record = this.tableData.find(row => row.id === recordId);
                     if (record) {
-                        const provider = record.providers.find(p => p.id === providerId)
+                        const provider = record.providers.find(p => p.id === selectedProvider.value);
                         if (provider) {
-                            record.billingProvider = provider.id
+                            record['Billing Provider'] = selectedProvider;
+                            record.billing_provider_id = provider.id
                         }
                     }
                 },
                 updateRecord(recordId) {
-                    const record = this.tableData.find(row => row.id === recordId)
-                    if (record && record.Practice && record.Location && record.billingProvider) {
-                        const practiceId = record.Practice
-                        const locationId = record.Location
-                        const billingProviderId = record.billingProvider
+                    const record = this.tableData.find(row => row.id === recordId);
+                    if (record && record.practice_id && record.location_id && record.billing_provider_id) {
+                        const practiceId = record.practice_id;
+                        const locationId = record.location_id;
+                        const billingProviderId = record.billing_provider_id;
 
                         record.loaders.update = true
                         this.axios.post(rootUrl('importer/train/store?json'), {
@@ -386,7 +401,7 @@
                 submitOne(id) {
                     const record = this.tableData.find(r => r.id === id)
                     if (record) {
-                        if (!!record.Practice && !!record.billingProvider && !!record.Location) {
+                        if (!!record.practice_id && !!record.billing_provider_id && !!record.location_id) {
                             if (!record.duplicate_id || (record.duplicate_id && confirm(`This patient may be a duplicate of ${record.duplicate_id}. Are you sure you want to proceed with creating a careplan?`))) {
                                 record.loaders.confirm = true
                                 return this.axios.post(rootUrl('api/ccd-importer/records/confirm'), [record]).then((response) => {
@@ -473,7 +488,7 @@
         created() {
             this.getCurrentUser()
 
-            if (true === this.isAdmin()) {
+            if (this.isAdmin) {
                 this.columns = ['selected', 'Name', 'DOB', 'Practice', 'Location', 'Billing Provider', 'Care Coach', 'duplicate', '2+ CCM Cond', '1+ BHI Cond', 'Medicare', 'Submit', 'Remove']
             }
         },
