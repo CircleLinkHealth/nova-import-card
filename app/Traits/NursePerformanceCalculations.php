@@ -50,7 +50,6 @@ trait NursePerformanceCalculations
     {
         $avgCompletionPerPatient = $this->getAvgCompletionTime($nurse, $date, $totalMonthlyCompletedPatientsOfNurse);
         $incompletePatientsCount = $this->getIncompletePatientsCount($patientsForMonth);
-
         return round(($avgCompletionPerPatient * $incompletePatientsCount) / 60, 1);
         //        This is the old calculation
 //        return round($patients->where('patient_time', '<', 20)->sum('patient_time_left') / 60, 1);
@@ -58,6 +57,9 @@ trait NursePerformanceCalculations
 
 
     /**
+     * @param User $nurse
+     * @param Carbon $date
+     * @param int $totalMonthlyCompletedPatientsOfNurse
      * @return float|int
      */
     public function getAvgCompletionTime(User $nurse, Carbon $date, int $totalMonthlyCompletedPatientsOfNurse)
@@ -84,14 +86,13 @@ trait NursePerformanceCalculations
     public function getIncompletePatientsCount(object $caseLoad)
     {
 //        $caseLoadComplete = % percentage.
-        $x =  $caseLoad
+        return $caseLoad
             ->filter(function ($q) {
                 return $q->patient_time <= 20
                     || $q->successful_calls < OpsDashboardService::MIN_CALL;
             })
             ->count();
 
-        $r=1;
         //        $incompletePatients = round((float)($caseLoad->count() - $totalMonthlyCompletedPatientsOfNurse));
         //        $incompletePatients3 = $caseLoad->count() * (100 - $caseLoadComplete) / 100;
     }
