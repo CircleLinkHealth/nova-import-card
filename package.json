@@ -21,7 +21,7 @@
         "jquery.scrollto": "^2.1.2",
         "mdbvue": "./mdb/mdbvue/mdbvue-v6.0.1.tgz",
         "moment": "^2.24.0",
-        "twilio-client": "^1.7.5",
+        "twilio-client": "^1.10.0",
         "typeface-poppins": "0.0.72",
         "vue-progressbar": "^0.7.5",
         "vue-select": "^3.1.0",
