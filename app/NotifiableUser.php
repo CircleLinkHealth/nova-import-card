@@ -48,6 +48,14 @@ class NotifiableUser extends AnonymousNotifiable
         $this->user         = $user;
         $this->email        = $email ?? $user->email;
         $this->phone_number = $phoneNumber ?? $user->getPhone();
+
+        if ($this->email) {
+            $this->route('mail', $this->email);
+        }
+
+        if ($this->phone_number) {
+            $this->route('twilio', $this->phone_number);
+        }
     }
 
     public function getKey()
