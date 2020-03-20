@@ -10,7 +10,6 @@ use App\Services\NursesPerformanceReportService;
 use App\Services\OpsDashboardService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Support\Collection;
@@ -25,73 +24,38 @@ trait NursePerformanceCalculations
      *
      * @return float|int
      */
-    public function estAvgCCMTimePerMonth(Carbon $date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse)
+    public function estAvgCCMTimePerMonth($patientsForMonth, $totalMonthlyCompletedPatientsOfNurse)
     {
-        $totalCCMtimeOnCompletedPatients = $this->queryPatientMonthlySum($date, $patientsForMonth)->sum('ccm_time');
+        $totalCCMtimeOnCompletedPatients = $this->queryMonthlyCompletedPatient($patientsForMonth)->sum('ccm_time');
 
         if (0 === $totalMonthlyCompletedPatientsOfNurse) {
             $totalMonthlyCompletedPatientsOfNurse = 1;
         }
 
-        return round((float) ($totalCCMtimeOnCompletedPatients / $totalMonthlyCompletedPatientsOfNurse) / 60, '2');
+        return round((float)($totalCCMtimeOnCompletedPatients / $totalMonthlyCompletedPatientsOfNurse) / 60, '2');
+    }
+
+    /**
+     * @param $patientsForMonth
+     * @return Collection
+     */
+    private function queryMonthlyCompletedPatient($patientsForMonth)
+    {
+        return collect($patientsForMonth)
+            ->where('patient_time', '>=', 20)
+            ->where('successful_calls', '>=', 1);
     }
 
     public function estHoursToCompleteCaseLoadMonth(User $nurse, Carbon $date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse, $successfulCalls)
     {
         $avgCompletionPerPatient = $this->getAvgCompletionTime($nurse, $date, $totalMonthlyCompletedPatientsOfNurse);
-        $incompletePatientsCount = $this->getIncompletePatientsCount($patientsForMonth, $successfulCalls);
+        $incompletePatientsCount = $this->getIncompletePatientsCount($patientsForMonth);
 
         return round(($avgCompletionPerPatient * $incompletePatientsCount) / 60, 1);
         //        This is the old calculation
 //        return round($patients->where('patient_time', '<', 20)->sum('patient_time_left') / 60, 1);
     }
 
-    /**
-     * @return int|mixed
-     */
-    public function extrapolateData(Carbon $emptyWindowDate, object $weeks)
-    {
-        $dayOfWeek             = $emptyWindowDate->dayOfWeek;
-        $extrapolatedWindowHrs = 0;
-        foreach ($weeks as $week) {
-            foreach ($week as $day) {
-//                note:if day is holiday then 'hours' will be zero
-                if ($day['dayOfWeek'] === $dayOfWeek && $day['hours'] > 0) {
-                    $extrapolatedWindowHrs = $day['hours'];
-//                    find the first day with data and then exit loop
-                    break 2;
-                }
-            }
-        }
-
-        return $extrapolatedWindowHrs;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function extrapolateMissingWindows(object $hoursGroupedByWeek)
-    {
-        return $hoursGroupedByWeek->transform(function ($week) use ($hoursGroupedByWeek) {
-            $results = [];
-            foreach ($week as $day => $data) {
-                $emptyWindowDate = Carbon::parse($data['date']);
-                if (empty($data['hours'])) {
-                    $results[] = [
-                        'hours' => $this->extrapolateData($emptyWindowDate, $hoursGroupedByWeek),
-                        'date'  => $emptyWindowDate->toDateString(),
-                    ];
-                } else {
-                    $results[] = [
-                        'hours' => $data['hours'],
-                        'date'  => $emptyWindowDate->toDateString(),
-                    ];
-                }
-            }
-
-            return $results;
-        });
-    }
 
     /**
      * @return float|int
@@ -99,7 +63,7 @@ trait NursePerformanceCalculations
     public function getAvgCompletionTime(User $nurse, Carbon $date, int $totalMonthlyCompletedPatientsOfNurse)
     {
         $start = $date->copy()->startOfMonth()->toDateString();
-        $end   = $date->copy()->endOfMonth()->toDateString();
+        $end = $date->copy()->endOfMonth()->toDateString();
 
         $totalCPMtimeForMonth = $nurse->pageTimersAsProvider()
             ->where('start_time', '>=', $start)
@@ -111,6 +75,23 @@ trait NursePerformanceCalculations
         }
 
         return round(($totalCPMtimeForMonth / 60) / $totalMonthlyCompletedPatientsOfNurse, 2);
+    }
+
+    /**
+     * @param object $caseLoad
+     * @return int
+     */
+    public function getIncompletePatientsCount(object $caseLoad)
+    {
+//        $caseLoadComplete = % percentage.
+        return $caseLoad
+            ->filter(function ($q) {
+                return $q->patient_time <= 20
+                    || $q->successful_calls < 1;
+            })
+            ->count();
+        //        $incompletePatients = round((float)($caseLoad->count() - $totalMonthlyCompletedPatientsOfNurse));
+        //        $incompletePatients3 = $caseLoad->count() * (100 - $caseLoadComplete) / 100;
     }
 
     /**
@@ -127,10 +108,10 @@ trait NursePerformanceCalculations
     public function getCompletionRate($data)
     {
         $callRate = 0 != $data['scheduledCalls']
-            ? round((float) (($data['actualCalls'] / $data['scheduledCalls']) * 100), 2)
+            ? round((float)(($data['actualCalls'] / $data['scheduledCalls']) * 100), 2)
             : 0;
         $hourRate = 0 != $data['committedHours']
-            ? round((float) (($data['actualHours'] / $data['committedHours']) * 100), 2)
+            ? round((float)(($data['actualHours'] / $data['committedHours']) * 100), 2)
             : 0;
 
         return max(
@@ -155,17 +136,21 @@ trait NursePerformanceCalculations
         return 0 != $data['actualHours']
             ? intval(
                 round(
-                    (float) (100 * (
-                        (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
-                            $this->unsuccessfulCallsMultiplier
-                        ) * $data['unsuccessful'])
-                    ) / $data['actualHours'])
+                    (float)(100 * (
+                            (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
+                                    $this->unsuccessfulCallsMultiplier
+                                ) * $data['unsuccessful'])
+                        ) / $data['actualHours'])
                 )
             )
             : 0;
     }
 
     /**
+     *
+     * If an RN committed to work only the Tuesday of the 2nd week, then we assume they worked every Tuesday for the rest of the month
+     * If a week does not have any windows then will copy the first data of previous week or first of the next week.
+     *
      * @param Collection $upcomingHolidays
      *
      * @return int
@@ -173,10 +158,10 @@ trait NursePerformanceCalculations
     public function getHoursCommittedRestOfMonth(User $nurse, $upcomingHolidays, Carbon $date)
     {
 //        Doing this cause date is mutating later.
-        $givenDate      = $date->copy();
-        $startOfMonth   = $date->startOfMonth();
+        $givenDate = $date->copy();
+        $startOfMonth = $date->startOfMonth();
         $fullMonthRange = $startOfMonth->diffInDays($startOfMonth->copy()->endOfMonth());
-        $mutableDate    = $date->copy()->addDay()->startOfDay();
+        $mutableDate = $date->copy()->addDay()->startOfDay();
 
         $hours = [];
         for ($i = $fullMonthRange; $i > 0; --$i) {
@@ -185,127 +170,68 @@ trait NursePerformanceCalculations
                 ->isNotEmpty();
 
             //we count the hours only if the nurse has not scheduled a holiday for that day.
-            if ( ! $isHolidayForDate) {
+            if (!$isHolidayForDate) {
                 $hours[] = [
-                    'hours'     => $nurse->nurseInfo->getHoursCommittedForCarbonDate($mutableDate),
-                    'date'      => $mutableDate->toDateString(),
-                    'dayOfWeek' => $mutableDate->dayOfWeek,
+                    'hours' => $nurse->nurseInfo->getHoursCommittedForCarbonDate($mutableDate),
+                    'date' => $mutableDate->toDateString(),
+                    'dayOfWeek' => carbonToClhDayOfWeek($mutableDate->dayOfWeek),
                 ];
             }
 
             $mutableDate->addDay()->startOfDay();
         }
 
-        $hoursGroupedByWeek = $this->groupCommittedHoursByWeek($hours);
         //        If whole month is not entered, extrapolate based off of entered hours for the current week
-        $extrapolatedHours = $this->extrapolateMissingWindows($hoursGroupedByWeek);
-        //        Return only the data after the given date here
-        $committedHoursForRestOfMonth = $extrapolatedHours->map(function ($week) use ($givenDate) {
-            $data = [];
-            foreach ($week as $day) {
-                if ($day['date'] > $givenDate->toDateString()) {
-                    $data[] = $day['hours'];
-                }
-            }
+        $committedHoursExtrapolated = $this->extrapolateMissingWindows($hours, $givenDate);
 
-            return $data;
-        });
-
-        return round(array_sum($committedHoursForRestOfMonth->flatten()->toArray()), 1);
+        /** @var Collection $committedHoursForRestOfMonth */
+        return round($committedHoursExtrapolated->flatten(1)->sum('hours'), 1);
     }
 
-    public function getIncompletePatientsCount($patientsForMonth, $successfulCallsDaily)
+    /**
+     * @param $monthlyHours
+     * @param Carbon $givenDate
+     * @return mixed
+     */
+    public function extrapolateMissingWindows($monthlyHours, Carbon $givenDate)
     {
-//        $incompletePatients = [];
-//        foreach ($patientsForMonth as $patient) {
-//            $successfulCalls = $patient->successful_calls;
-//            if (0 === $successfulCalls) {
-//                $incompletePatients[] = $patient->patient_id;
-//            }
-//        }
-//
-//        $incompletePatients0 = collect($incompletePatients)->count();
-        $incompletePatients = collect($patientsForMonth)->count();
-
-        return  $incompletePatients - $successfulCallsDaily;
+        return collect($monthlyHours)->transform(function ($week) use ($monthlyHours, $givenDate) {
+            $results = [];
+            $emptyWindowDate = Carbon::parse($week['date']);
+            //        Return only the data after the given date here
+            if ($week['date'] > $givenDate->toDateString() && empty($week['hours'])) {
+                $results[] = [
+                    'hours' => $this->extrapolateData($emptyWindowDate, $monthlyHours),
+                    'date' => $emptyWindowDate->toDateString(),
+                ];
+            } else if ($week['date'] > $givenDate->toDateString()) {
+                $results[] = [
+                    'hours' => $week['hours'],
+                    'date' => $emptyWindowDate->toDateString(),
+                ];
+            }
+            return $results;
+        });
     }
 
     /**
-     * Get last X committed days of a nurse
-     * excluding holidays (nurse and/or public).
-     *
-     * @param $nurseInfo Nurse
-     * @param $nurseWindows Collection
-     * @param Carbon $date Usually a date in the past, so included in calculations
-     * @param $numberOfDays int Number of last days
-     *
-     * @throws \Exception
-     *
-     * @return Collection of Carbon dates
+     * @param Carbon $emptyWindowDate
+     * @param $monthlyHours
+     * @return int|mixed
      */
-    public function getLastCommittedDays(
-        Nurse $nurseInfo,
-        Collection $nurseWindows,
-        Carbon $date,
-        $numberOfDays = self::LAST_COMMITTED_DAYS_TO_GO_BACK
-    ) {
-        if ($numberOfDays > NursesPerformanceReportService::MAX_COMMITTED_DAYS_TO_GO_BACK) {
-            throw new \Exception('numberOfDays must not exceed MAX_COMMITTED_DAYS_TO_GO_BACK');
-        }
-
-        //start going back, day by day
-        //and figure out if each day is in nurse contact window and is not a holiday
-        $committedDays = collect();
-        $mutableDate   = $date->copy();
-        $loopCount     = 0;
-        while ($committedDays->count() < $numberOfDays && $loopCount < NursesPerformanceReportService::MAX_COMMITTED_DAYS_TO_GO_BACK) {
-            // @var NurseContactWindow
-            $window = $nurseWindows
-                ->where('day_of_week', carbonToClhDayOfWeek($mutableDate->dayOfWeek))
-                ->first();
-
-            if ($window && ! $nurseInfo->isOnHoliday($mutableDate, $this->companyHolidays)) {
-                //pushing date as a string, because if we leave it as carbon, it gets mutated within the collection, resulting in all entries to be the same date.
-                $committedDays->push($mutableDate->toDateTimeString());
+    public function extrapolateData(Carbon $emptyWindowDate, $monthlyHours)
+    {
+        $dayOfWeek = carbonToClhDayOfWeek($emptyWindowDate->dayOfWeek);
+        $extrapolatedWindowHrs = 0;
+        foreach ($monthlyHours as $day) {
+//                note:if day is holiday then 'hours' will be zero
+            if ($day['dayOfWeek'] === $dayOfWeek && $day['hours'] > 0) {
+                // find the first day (same dayOfWeek) which has data and then exit loop
+                $extrapolatedWindowHrs = $day['hours'];
+                break;
             }
-
-            ++$loopCount;
-            $mutableDate->subDay();
         }
-
-        return $committedDays;
-    }
-
-    /**
-     * @return int
-     */
-    public function getNumberOfDaysCommittedRestOfMonth(
-        Collection $nurseWindows,
-        Collection $upcomingHolidays,
-        Carbon $date
-    ) {
-        $diff = $date->diffInDays($date->copy()->endOfMonth());
-
-        $mutableDate = $date->copy()->addDay();
-        $noOfDays    = 0;
-        for ($i = $diff; $i > 0; --$i) {
-            $isHolidayForDate = $upcomingHolidays
-                ->where('date', $mutableDate->copy()->startOfDay())
-                ->isNotEmpty();
-
-            if ( ! $isHolidayForDate) {
-                $isInWindow = $nurseWindows
-                    ->where('day_of_week', carbonToClhDayOfWeek($mutableDate->dayOfWeek))
-                    ->isNotEmpty();
-
-                if ($isInWindow) {
-                    ++$noOfDays;
-                }
-            }
-            $mutableDate->addDay();
-        }
-
-        return $noOfDays;
+        return $extrapolatedWindowHrs;
     }
 
     /**
@@ -316,7 +242,7 @@ trait NursePerformanceCalculations
      */
     public function getProjectedHoursLeftInMonth(User $nurse, Carbon $date)
     {
-        $nurseInfo    = $nurse->nurseInfo;
+        $nurseInfo = $nurse->nurseInfo;
         $nurseWindows = $nurseInfo->windows;
 
         $committedDays = collect();
@@ -338,9 +264,9 @@ trait NursePerformanceCalculations
             return null;
         }
 
-        $first                              = $committedDays->first();
-        $totalSeconds                       = $this->getTotalSecondsInSystemSince($nurse, Carbon::parse($first));
-        $avgSeconds                         = $totalSeconds / $committedDays->count();
+        $first = $committedDays->first();
+        $totalSeconds = $this->getTotalSecondsInSystemSince($nurse, Carbon::parse($first));
+        $avgSeconds = $totalSeconds / $committedDays->count();
         $this->avgHoursWorkedLast10Sessions = $avgSeconds / 3600;
 
         $noOfDays = $this->getNumberOfDaysCommittedRestOfMonth(
@@ -349,20 +275,54 @@ trait NursePerformanceCalculations
             $date
         );
 
-        return round((float) ($noOfDays * $this->avgHoursWorkedLast10Sessions), 2);
+        return round((float)($noOfDays * $this->avgHoursWorkedLast10Sessions), 2);
     }
 
     /**
-     * @param $nurse
-     * @param $date
+     * Get last X committed days of a nurse
+     * excluding holidays (nurse and/or public).
      *
-     * @return mixed
+     * @param $nurseInfo Nurse
+     * @param $nurseWindows Collection
+     * @param Carbon $date Usually a date in the past, so included in calculations
+     * @param $numberOfDays int Number of last days
+     *
+     * @return Collection of Carbon dates
+     * @throws \Exception
+     *
      */
-    public function getTotalMonthSystemTimeSeconds($nurse, $date)
+    public function getLastCommittedDays(
+        Nurse $nurseInfo,
+        Collection $nurseWindows,
+        Carbon $date,
+        $numberOfDays = self::LAST_COMMITTED_DAYS_TO_GO_BACK
+    )
     {
-        return PageTimer::where('provider_id', $nurse->id)
-            ->createdInMonth($date, 'start_time')
-            ->sum('billable_duration');
+        if ($numberOfDays > NursesPerformanceReportService::MAX_COMMITTED_DAYS_TO_GO_BACK) {
+            throw new \Exception('numberOfDays must not exceed MAX_COMMITTED_DAYS_TO_GO_BACK');
+        }
+
+        //start going back, day by day
+        //and figure out if each day is in nurse contact window and is not a holiday
+        $committedDays = collect();
+        $mutableDate = $date->copy();
+        $loopCount = 0;
+        while ($committedDays->count() < $numberOfDays && $loopCount < NursesPerformanceReportService::MAX_COMMITTED_DAYS_TO_GO_BACK) {
+            // @var NurseContactWindow
+            $window = $nurseWindows
+                ->where('day_of_week', carbonToClhDayOfWeek($mutableDate->dayOfWeek))
+                ->first();
+
+            if ($window && !$nurseInfo->isOnHoliday($mutableDate, $this->companyHolidays)) {
+                //pushing date as a string, because if we leave it as carbon, it gets mutated within the collection, resulting in all entries to be the same date.
+                $committedDays->push($mutableDate->toDateTimeString());
+            }
+
+            ++$loopCount;
+            $mutableDate->subDay();
+        }
+
+        return $committedDays;
     }
 
     /**
@@ -379,6 +339,52 @@ trait NursePerformanceCalculations
             '>=',
             $date->toDateTimeString()
         )->sum('billable_duration');
+    }
+
+    /**
+     * @return int
+     */
+    public function getNumberOfDaysCommittedRestOfMonth(
+        Collection $nurseWindows,
+        Collection $upcomingHolidays,
+        Carbon $date
+    )
+    {
+        $diff = $date->diffInDays($date->copy()->endOfMonth());
+
+        $mutableDate = $date->copy()->addDay();
+        $noOfDays = 0;
+        for ($i = $diff; $i > 0; --$i) {
+            $isHolidayForDate = $upcomingHolidays
+                ->where('date', $mutableDate->copy()->startOfDay())
+                ->isNotEmpty();
+
+            if (!$isHolidayForDate) {
+                $isInWindow = $nurseWindows
+                    ->where('day_of_week', carbonToClhDayOfWeek($mutableDate->dayOfWeek))
+                    ->isNotEmpty();
+
+                if ($isInWindow) {
+                    ++$noOfDays;
+                }
+            }
+            $mutableDate->addDay();
+        }
+
+        return $noOfDays;
+    }
+
+    /**
+     * @param $nurse
+     * @param $date
+     *
+     * @return mixed
+     */
+    public function getTotalMonthSystemTimeSeconds($nurse, $date)
+    {
+        return PageTimer::where('provider_id', $nurse->id)
+            ->createdInMonth($date, 'start_time')
+            ->sum('billable_duration');
     }
 
     /**
@@ -428,30 +434,19 @@ AND patient_info.ccm_status = 'enrolled'"
     }
 
     /**
-     * @return Collection
-     */
-    public function groupCommittedHoursByWeek(array $hours)
-    {
-        return collect($hours)->groupBy(function ($hour) {
-            return Carbon::parse($hour['date'])->format('W');
-        });
-    }
-
-    /**
      *(# of patients assigned to care coach with > 20mins CCM time AND with 1 or more successful call)
      * / total # of patients assigned to Care Coach.
      *
      * @param mixed $patients
      *
+     * @param $totalMonthlyCompletedPatientsOfNurse
      * @return false|float|int
      */
-    public function percentageCaseLoadComplete($patients)
+    public function percentageCaseLoadComplete($patients, $totalMonthlyCompletedPatientsOfNurse)
     {
         return 0 !== $patients->count()
             ? round(
-                ($patients->where('patient_time', '>=', 20)
-                    ->where('successful_calls', '>=', 1)
-                    ->count()) / $patients->count() * 100,
+                ($totalMonthlyCompletedPatientsOfNurse) / $patients->count() * 100,
                 2
             )
             : 0;
@@ -464,45 +459,20 @@ AND patient_info.ccm_status = 'enrolled'"
      */
     public function surplusShortfallHours($data)
     {
-        return round((float) ($data['hoursCommittedRestOfMonth'] - $data['caseLoadNeededToComplete']), 2);
+        return round((float)($data['hoursCommittedRestOfMonth'] - $data['caseLoadNeededToComplete']), 2);
     }
 
     /**
      * Amount of completed patients for the month.
      *
-     * @param $date
+     *
      * @param $patientsForMonth
      *
      * @return int
      */
-    private function getTotalCompletedPatientsOfNurse($date, $patientsForMonth)
+    private function getTotalCompletedPatientsOfNurse($patientsForMonth)
     {
-        return $this->queryPatientMonthlySum($date, $patientsForMonth)->count();
-    }
-
-    /**
-     * @param $patientsForMonth
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    private function queryPatientMonthlySum(Carbon $date, $patientsForMonth)
-    {
-        $results = [];
-        foreach ($patientsForMonth as $patient) {
-            if ($patient->successful_calls >= 1) {
-                $patientMonthlySum = PatientMonthlySummary::with('patient')
-                    ->where('patient_id', $patient->patient_id)
-                    ->where('ccm_time', '>=', OpsDashboardService::TWENTY_MINUTES) // should i use > or >=?
-//                    ->where('no_of_successful_calls', '>=', 1)
-                    ->where('month_year', $date->copy()->startOfMonth())
-                    ->first();
-
-                if ( ! empty($patientMonthlySum)) {
-                    $results[] = $patientMonthlySum;
-                }
-            }
-        }
-
-        return collect($results);
+        return $this->queryMonthlyCompletedPatient($patientsForMonth)->count();
     }
 }
+
