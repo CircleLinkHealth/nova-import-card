@@ -296,6 +296,9 @@ class CarePlanHelper
 
     public function storeImportedValues()
     {
+        $this->handleEnrollees()
+             ->updateTrainingFeatures();
+
         $this->createNewCarePlan()
              ->storeAllergies()
              ->storeProblemsList()
@@ -313,9 +316,6 @@ class CarePlanHelper
         $this->user->display_name = "{$this->user->first_name} {$this->user->last_name}";
         $this->user->program_id   = $this->imr->practice_id ?? null;
         $this->user->save();
-
-        $this->handleEnrollees()
-             ->updateTrainingFeatures();
 
         event(new PatientUserCreated($this->user));
 
@@ -527,6 +527,12 @@ class CarePlanHelper
 
         if ( ! $this->patientInfo->registration_date) {
             $this->patientInfo->registration_date = $args['registration_date'];
+        }
+
+        if ( ! $this->patientInfo->general_comment) {
+            $this->patientInfo->general_comment = $this->enrollee
+                ? $this->enrollee->last_call_outcome_reason
+                : null;
         }
 
 
@@ -999,3 +1005,4 @@ class CarePlanHelper
         return $user->cpmMiscs()->where('cpm_miscs.id', optional($misc)->id)->exists();
     }
 }
+
