@@ -290,17 +290,9 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         $dayInHumanLang = clhDayOfWeekToDayName(carbonToClhDayOfWeek($date->dayOfWeek));
         $workWeekStart = $date->copy()->startOfWeek();
 
-        $workHours = WorkHours::where(
-            [
-                ['workhourable_id', $this->id],
-                ['work_week_start', $workWeekStart],
-            ]
-        )->pluck($dayInHumanLang)->first();
-
-        // WHY THEY DONT DO THE SAME ?
-        //        $workHours = $this->workhourables()->where('work_week_start', $workWeekStart)
-//            ->pluck($dayInHumanLang)
-//            ->first();
+        $workHours = $this->workhourables()->where('work_week_start', $workWeekStart)
+            ->pluck($dayInHumanLang)
+            ->first();
 
         return !empty($workHours) ? $workHours : 0;
     }
