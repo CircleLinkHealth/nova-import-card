@@ -164,14 +164,25 @@ $factory->define(Invite::class, function (Faker\Generator $faker) {
 });
 
 $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factory) {
-    $practice = Practice::first();
+    if (isProductionEnv()) {
+        $practice = Practice::whereName('demo')->firstOrFail();
+        $provider = \CircleLinkHealth\Customer\Entities\User::ofType('provider')->scopeOfPractice($practice->id)->firstOrFail();
+    } else {
+        $practice = Practice::first();
 
-    if ( ! $practice) {
-        $practice = factory(\CircleLinkHealth\Customer\Entities\Practice::class)->create();
+        if ( ! $practice) {
+            $practice = factory(\CircleLinkHealth\Customer\Entities\Practice::class)->create();
+        }
+
+        $provider = \CircleLinkHealth\Customer\Entities\User::ofType('provider')->first();
+
+        if ( ! $provider) {
+            $provider = factory(\CircleLinkHealth\Customer\Entities\User::class)->create();
+        }
     }
 
     return [
-        'provider_id' => factory(\CircleLinkHealth\Customer\Entities\User::class)->create()->id,
+        'provider_id' => $provider->id,
         'practice_id' => $practice->id,
         'mrn'         => $faker->randomNumber(6),
         'dob'         => $faker->date('Y-m-d'),
@@ -198,7 +209,7 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factor
         'has_copay'           => $faker->boolean(),
 
         'email'                   => $faker->email,
-        'referring_provider_name' => 'Dr. Demo',
+        'referring_provider_name' => $provider->getFullName(),
         'problems'                => 'Hypertension, High Cholesterol',
         'cpm_problem_1'           => 1,
         'cpm_problem_2'           => 2,
@@ -292,8 +303,15 @@ $factory->define(TargetPatient::class, function (Faker\Generator $faker) {
 
 $factory->define(Call::class, function (Faker\Generator $faker) {
     return [
-        'type'            => $faker->randomElement(['call', 'task']),
-        'sub_type'        => $faker->randomElement(['Call Back', 'CP Review', 'Get Appt.', 'Other Task', 'Refill', 'Send Info']),
+        'type'     => $faker->randomElement(['call', 'task']),
+        'sub_type' => $faker->randomElement([
+            'Call Back',
+            'CP Review',
+            'Get Appt.',
+            'Other Task',
+            'Refill',
+            'Send Info',
+        ]),
         'inbound_cpm_id'  => null, // to be filled in during test
         'outbound_cpm_id' => null, // to be filled in during test
         'scheduled_date'  => $faker->date(),

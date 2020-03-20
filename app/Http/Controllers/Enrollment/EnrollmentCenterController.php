@@ -75,10 +75,8 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->attempt_count = $enrollee->attempt_count + 1;
 
-
         //we are adding this as Other Note on patient chart. Therefore, even if it's empty, save it to potentially overwrite previous outcome reasons e.g. when unreachable
         $enrollee->last_call_outcome_reason = $request->input('extra');
-
 
         if (is_array($request->input('days'))) {
             $enrollee->preferred_days = implode(', ', $request->input('days'));
@@ -120,8 +118,6 @@ class EnrollmentCenterController extends Controller
             //no calls available
             return view('enrollment-ui.no-available-calls');
         }
-
-        //check if provider exists
 
         return view(
             'enrollment-ui.dashboard',

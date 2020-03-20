@@ -309,7 +309,10 @@ Route::group(['middleware' => 'auth'], function () {
             });
 
             Route::group(['prefix' => 'instructions'], function () {
-                Route::get('{instructionId}', 'ProblemInstructionController@instruction')->middleware('permission:instruction.read');
+                Route::get(
+                    '{instructionId}',
+                    'ProblemInstructionController@instruction'
+                )->middleware('permission:instruction.read');
                 Route::put('{id}', 'ProblemInstructionController@edit')->middleware('permission:instruction.update');
                 Route::get('', 'ProblemInstructionController@index')->middleware('permission:instruction.read');
                 Route::post('', 'ProblemInstructionController@store')->middleware('permission:instruction.create');
@@ -433,7 +436,10 @@ Route::group(['middleware' => 'auth'], function () {
         });
     });
 
-    Route::get('user/{patientId}/care-plan', 'API\PatientCarePlanController@index')->middleware(['permission:careplan.read', 'cacheResponse']);
+    Route::get(
+        'user/{patientId}/care-plan',
+        'API\PatientCarePlanController@index'
+    )->middleware(['permission:careplan.read', 'cacheResponse']);
 
     Route::get('user/{user}/care-team', [
         'uses' => 'API\CareTeamController@index',
@@ -825,7 +831,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('summary', [
             'uses' => 'Patient\PatientController@showPatientSummary',
             'as'   => 'patient.summary',
-        ])->middleware(['permission:patient.read,patientProblem.read,misc.read,observation.read,patientSummary.read', 'cacheResponse']);
+        ])->middleware([
+            'permission:patient.read,patientProblem.read,misc.read,observation.read,patientSummary.read',
+            'cacheResponse',
+        ]);
         Route::get('summary-biochart', [
             'uses' => 'ReportsController@biometricsCharts',
             'as'   => 'patient.charts',
@@ -941,7 +950,10 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('{showAll?}', [
                 'uses' => 'NotesController@index',
                 'as'   => 'patient.note.index',
-            ])->middleware(['permission:patient.read,provider.read,note.read,appointment.read,activity.read', 'cacheResponse']);
+            ])->middleware([
+                'permission:patient.read,provider.read,note.read,appointment.read,activity.read',
+                'cacheResponse',
+            ]);
             Route::get('view/{noteId}', [
                 'uses' => 'NotesController@show',
                 'as'   => 'patient.note.view',
@@ -1165,13 +1177,16 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'ca-director.add-enrollee-custom-filter',
             ]);
 
-            Route::get('/create-test-enrollees', [
+            Route::get('/test-enrollees', [
                 'uses' => 'EnrollmentDirectorController@runCreateEnrolleesSeeder',
-                'as'   => 'ca-director.create-test-enrollees',
+                'as'   => 'ca-director.test-enrollees',
             ]);
         });
 
-        Route::get('saas-accounts/create', 'Admin\CRUD\SaasAccountController@create')->middleware('permission:saas.create');
+        Route::get(
+            'saas-accounts/create',
+            'Admin\CRUD\SaasAccountController@create'
+        )->middleware('permission:saas.create');
         Route::post('saas-accounts', 'Admin\CRUD\SaasAccountController@store')->middleware('permission:saas.create');
 
         Route::view('api-clients', 'admin.manage-api-clients');

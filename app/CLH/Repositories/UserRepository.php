@@ -21,9 +21,6 @@ use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
 use CircleLinkHealth\Customer\Tasks\ClearUserCache;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
-use Config;
-use Illuminate\Cache\TaggableStore;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Storage;
@@ -252,7 +249,7 @@ class UserRepository
         $permission = new \Google_Service_Drive_Permission();
         $permission->setRole('writer');
         $permission->setType('user');
-        $permission->setEmailAddress('joe@circlelinkhealth.com');
+        $permission->setEmailAddress('haziq@circlelinkhealth.com');
 
         $service->permissions->create(
             $writerFolder['basename'],
