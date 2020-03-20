@@ -55,7 +55,7 @@ trait HasCpmRoles
     }
     
     /**
-     * Returns whether the user is an administrator.
+     * Returns whether the user is a participant.
      *
      * @return bool
      */
