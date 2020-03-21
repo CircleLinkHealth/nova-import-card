@@ -143,6 +143,11 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
     {
         return $this->belongsTo(User::class, 'billing_provider_id', 'id');
     }
+    
+    public function nurseUser()
+    {
+        return $this->belongsTo(User::class, 'nurse_user_id', 'id');
+    }
 
     /**
      * @todo: duplicate of Importer/MedicalRecordEloquent.php @ raiseConcerns()
