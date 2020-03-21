@@ -2,8 +2,8 @@
     <div>
         <notifications>
             <template slot-scope="props">
-               <a :href="props.note.href" target="_blank" v-if="props.note.href">{{props.note.message}}</a>
-               <span v-if="!props.note.href">
+                <a :href="props.note.href" target="_blank" v-if="props.note.href">{{props.note.message}}</a>
+                <span v-if="!props.note.href">
                    {{props.note.message}}
                    <a :href="props.note.link.href" target="_blank" v-if="props.note.link">{{props.note.link.text}}</a>
                </span>
@@ -145,8 +145,8 @@
                 const newRecord = {
                     id: record.id,
                     selected: false,
-                    Name: (record.demographics || {}).display_name,
-                    DOB: (record.demographics || {}).dob,
+                    Name: record.demographics.display_name,
+                    DOB: record.demographics.dob,
                     Practice: ((record.practice || {}).id || null),
                     practice_name: ((record.practice || {}).display_name || null),
                     Location: ((record.location || {}).id || null),

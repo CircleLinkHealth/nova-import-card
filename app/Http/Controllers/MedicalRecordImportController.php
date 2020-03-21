@@ -65,9 +65,10 @@ class MedicalRecordImportController extends Controller
                         continue;
                     }
                     try {
-                        $imr['location_id']         = $record['Location'];
-                        $imr['practice_id']         = $record['Practice'];
-                        $imr['billing_provider_id'] = $record['Billing Provider'];
+                        $imr['location_id']         = $record['location_id'];
+                        $imr['practice_id']         = $record['practice_id'];
+                        $imr['billing_provider_id'] = $record['billing_provider_id'];
+                        $imr['nurse_user_id']       = $record['nurse_user_id'];
                         $carePlan                   = $imr->updateOrCreateCarePlan();
                         array_push(
                             $importedRecords,
