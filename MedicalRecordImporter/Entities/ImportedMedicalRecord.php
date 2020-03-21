@@ -122,6 +122,7 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
         'medical_record_type',
         'medical_record_id',
         'billing_provider_id',
+        'nurse_user_id',
         'location_id',
         'practice_id',
         'duplicate_id',
