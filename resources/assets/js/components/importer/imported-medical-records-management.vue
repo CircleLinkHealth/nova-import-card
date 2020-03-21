@@ -228,6 +228,7 @@
                         'Care Coach': careCoach,
                         billing_provider_id: billingProvider.value,
                         nurse_user_id: careCoach.value,
+                        nurse_user: record.nurse_user,
                         '2+ CCM Cond': (record.validation_checks || {}).has_at_least_2_ccm_conditions,
                         '1+ BHI Cond': (record.validation_checks || {}).has_at_least_1_bhi_condition,
                         Medicare: (record.validation_checks || {}).has_medicare,
@@ -258,7 +259,6 @@
                         },
                         changeProvider(selectedOption) {
                             self.changeProvider(record.id, selectedOption);
-                            self.updateRecord(record.id);
                         },
                         changeNurse(selectedOption) {
                             self.changeNurse(record.id, selectedOption);
@@ -285,6 +285,11 @@
                         //console.log('get-practice-locations', practiceId, locations)
                         record.locations = locations
                         record.loaders.locations = false
+
+                        if (_.isNull(record.Location.value) && 1 === parseInt(record.locations.length)) {
+                            record.Location = {label: record.locations[0].name, value: record.locations[0].id};
+                        }
+
                         this.changeLocation(recordId, record.Location)
                     }).catch(err => {
                         record.loaders.locations = false
@@ -313,6 +318,10 @@
                         if (!(record.providers || []).find(provider => parseInt(provider.id) === parseInt(record.billing_provider_id))) {
                             record.billing_provider_id = null
                         }
+                        if (_.isNull(record.billing_provider_id) && 1 === parseInt(record.providers.length)) {
+                            record['Billing Provider'] = {label: record.providers[0].display_name, value: record.providers[0].id};
+                            record.billing_provider_id = record.providers[0].id;
+                        }
                         console.log('get-practice-location-providers', providers)
                     }).catch(err => {
                         record.loaders.providers = false
@@ -330,13 +339,13 @@
                         }
                     }
                 },
-                changeNurse(recordId, selectedProvider) {
+                changeNurse(recordId, selectedNurse) {
                     const record = this.tableData.find(row => row.id === recordId);
                     if (record) {
-                        const nurse = record.nurse.find(p => p.id === selectedProvider.value);
+                        const nurse = record.nurse_user.find(p => p.id === selectedNurse.value);
                         if (provider) {
-                            record['Billing Provider'] = selectedProvider;
-                            record.billing_provider_id = provider.id
+                            record['Care Coach'] = selectedNurse;
+                            record.nurse_user_id = nurse.id
                         }
                     }
                 },
