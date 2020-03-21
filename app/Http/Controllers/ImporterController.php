@@ -46,7 +46,8 @@ class ImporterController extends Controller
                                             'name',
                                         ]);
                                     }])
-            ->with(['billingProvider' => function ($q) {
+            ->with([
+                'billingProvider' => function ($q) {
                                         $q->select([
                                             'id',
                                             'saas_account_id',
@@ -56,7 +57,18 @@ class ImporterController extends Controller
                                             'last_name',
                                             'suffix',
                                         ]);
-                                    }])
+                                    },
+                'nurseUser' => function ($q) {
+                    $q->select([
+                                   'id',
+                                   'saas_account_id',
+                                   'program_id',
+                                   'display_name',
+                                   'first_name',
+                                   'last_name',
+                                   'suffix',
+                               ]);
+                }])
             ->when(
                                         ! auth()->user()->isAdmin(),
                                         function ($q) {

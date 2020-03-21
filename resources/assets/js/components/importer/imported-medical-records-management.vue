@@ -133,7 +133,7 @@
     import GetsNurses from '../../mixins/gets-nurses'
 
     export default {
-        name: 'ccd-viewer',
+        name: 'imported-medical-records-management',
         mixins: [
             GetsNurses,
             VueCache,
@@ -198,37 +198,22 @@
                     }
                     const self = this;
                     const practice = {
-                        label: (record.practice || {}).display_name,
+                        label: (record.practice || {display_name: ''}).display_name,
                         value: record.practice_id
                     };
-                    record.Practice = practice;
                     const location = {
-                        label: (record.location || {}).name,
-                        value: record.location_id
+                        label: (record.location || {name: ''}).name,
+                        value: (record.location || {}).id
                     };
-                    record.Location = location;
                     const billingProvider = {
-                        label: (record.billing_provider || {}).display_name + ' ' + (record.billing_provider || {}).suffix,
-                        value: record.billing_provider_id
+                        label: (record.billing_provider || {display_name: ''}).display_name + ' ' + (record.billing_provider || {suffix: ''}).suffix,
+                        value: (record.billing_provider || {}).id
                     };
-                    record['Billing Provider'] = billingProvider;
                     const careCoach = {
-                        label: null,
+                        label: (record.nurse_user || {display_name: ''}).display_name + ' ' + (record.nurse_user || {suffix: ''}).suffix,
                         value: record.nurse_user_id
                     };
-                    record['Care Coach'] = careCoach;
-                    if (practice.value) {
-                        self.changePractice(record.id, practice.value)
-                    }
-                    if (location.value) {
-                        self.changeLocation(record.id, location.value)
-                    }
-                    if (billingProvider.value) {
-                        self.changeProvider(record.id, billingProvider.value)
-                    }
-                    if (careCoach.value) {
-                        self.changeNurse(record.id, careCoach.value)
-                    }
+
                     return {
                         id: record.id,
                         selected: false,
@@ -236,12 +221,14 @@
                         DOB: (record.demographics || {}).dob,
                         Practice: practice,
                         practice_id: practice.value,
+                        location: record.location,
                         Location: location,
                         location_id: location.value,
                         'Billing Provider': billingProvider,
                         'Care Coach': careCoach,
                         billing_provider_id: billingProvider.value,
                         nurse_user_id: careCoach.value,
+                        nurse_user: record.nurse_user,
                         '2+ CCM Cond': (record.validation_checks || {}).has_at_least_2_ccm_conditions,
                         '1+ BHI Cond': (record.validation_checks || {}).has_at_least_1_bhi_condition,
                         Medicare: (record.validation_checks || {}).has_medicare,
@@ -272,7 +259,6 @@
                         },
                         changeProvider(selectedOption) {
                             self.changeProvider(record.id, selectedOption);
-                            self.updateRecord(record.id);
                         },
                         changeNurse(selectedOption) {
                             self.changeNurse(record.id, selectedOption);
@@ -299,6 +285,11 @@
                         //console.log('get-practice-locations', practiceId, locations)
                         record.locations = locations
                         record.loaders.locations = false
+
+                        if (_.isNull(record.Location.value) && 1 === parseInt(record.locations.length)) {
+                            record.Location = {label: record.locations[0].name, value: record.locations[0].id};
+                        }
+
                         this.changeLocation(recordId, record.Location)
                     }).catch(err => {
                         record.loaders.locations = false
@@ -327,6 +318,10 @@
                         if (!(record.providers || []).find(provider => parseInt(provider.id) === parseInt(record.billing_provider_id))) {
                             record.billing_provider_id = null
                         }
+                        if (_.isNull(record.billing_provider_id) && 1 === parseInt(record.providers.length)) {
+                            record['Billing Provider'] = {label: record.providers[0].display_name, value: record.providers[0].id};
+                            record.billing_provider_id = record.providers[0].id;
+                        }
                         console.log('get-practice-location-providers', providers)
                     }).catch(err => {
                         record.loaders.providers = false
@@ -344,13 +339,13 @@
                         }
                     }
                 },
-                changeNurse(recordId, selectedProvider) {
+                changeNurse(recordId, selectedNurse) {
                     const record = this.tableData.find(row => row.id === recordId);
                     if (record) {
-                        const nurse = record.nurse.find(p => p.id === selectedProvider.value);
+                        const nurse = record.nurse_user.find(p => p.id === selectedNurse.value);
                         if (provider) {
-                            record['Billing Provider'] = selectedProvider;
-                            record.billing_provider_id = provider.id
+                            record['Care Coach'] = selectedNurse;
+                            record.nurse_user_id = nurse.id
                         }
                     }
                 },
@@ -382,10 +377,6 @@
                     return this.axios.get(this.url).then((response) => {
                         const records = response.data || []
                         this.tableData = records.map(this.setupRecord)
-                        console.log('get-records', this.tableData)
-                        this.tableData.forEach(row => {
-                            row.changePractice(row.Practice)
-                        })
                         this.loaders.records = false
                         return this.tableData
                     }).catch(err => {
