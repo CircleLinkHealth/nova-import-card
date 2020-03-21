@@ -6,12 +6,13 @@ export default {
             loaders: {
                 nurses: false,
             },
+            nurses: [],
         }
     },
     methods: {
-        getNurses() {
+        getNurses(cache = false) {
             this.loaders.nurses = true
-            return this.axios.get(rootUrl('api/nurses?compressed')).then(response => {
+            return (cache ? this.cache().get(rootUrl('api/nurses?compressed')) : this.axios.get(rootUrl('api/nurses?compressed'))).then(response => {
                 const pagination = (response || {}).data
                 this.nurses = ((pagination || {}).data || []).filter(nurse => nurse.practices).map(nurse => {
 

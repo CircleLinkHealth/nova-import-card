@@ -19,58 +19,31 @@
 
         <v-client-table ref="ccdRecords" :data="tableData" :columns="columns" :options="options">
             <template slot="selected" slot-scope="props">
-                <input class="row-select" v-model="props.row.selected" @change="select($event, props.row.id)"
-                       type="checkbox"/>
+                <input class="row-select" v-model="props.row.selected" @change="select($event, props.row.id)" type="checkbox" />
             </template>
             <template slot="h__selected">
-                <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox"/>
+                <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
             </template>
             <template slot="Practice" slot-scope="props">
-                <v-select
-                        v-model="props.row.Practice"
-                        @input="props.row.changePractice(props.row.Practice)"
-                        :options="props.row.practices()"
-                        class="form-control"
-                        required
-                >
-                </v-select>
-
+                <select class="form-control" v-model="props.row.Practice" @change="props.row.changePractice(props.row.Practice)">
+                    <option value="">Select Practice</option>
+                    <option v-for="practice in props.row.practices()" :key="practice.id" :value="practice.id">{{practice.display_name}}</option>
+                </select>
             </template>
             <template slot="Location" slot-scope="props">
-                <v-select
-                        v-model="props.row.Location"
-                        @input="props.row.changeLocation(props.row.Location)"
-                        :options="props.row.locations"
-                        :disabled="! props.row.Practice"
-                        class="form-control">
-                </v-select>
-
+                <select class="form-control" v-model="props.row.Location" @change="props.row.changeLocation(props.row.Location)">
+                    <option :value="null">Select Location</option>
+                    <option v-for="location in props.row.locations" :key="location.id" :value="location.id">{{location.name}}</option>
+                </select>
                 <div v-if="props.row.loaders.locations">
                     <loader></loader>
                 </div>
             </template>
             <template slot="Billing Provider" slot-scope="props">
-                <v-select
-                        v-model="props.row['Billing Provider']"
-                        @input="props.row.changeProvider(props.row['Billing Provider'])"
-                        :options="props.row.providers"
-                        :disabled="! props.row.Location"
-                        class="form-control">
-                </v-select>
-
-                <div v-if="props.row.loaders.providers">
-                    <loader></loader>
-                </div>
-            </template>
-            <template v-if="isAdmin()" slot="Care Coach" slot-scope="props">
-                <v-select
-                        v-model="props.row.careCoach"
-                        @input="props.row.changeLocation((props.row.provider || {}).id)"
-                        :options="props.row.providers"
-                        :disabled="! props.row.Practice"
-                        class="form-control">
-                </v-select>
-
+                <select class="form-control" v-model="props.row['Billing Provider']" @change="props.row.changeProvider(props.row['Billing Provider'])">
+                    <option :value="null">Select Billing Provider</option>
+                    <option v-for="provider in props.row.providers" :key="provider.id" :value="provider.id">{{provider.display_name}}</option>
+                </select>
                 <div v-if="props.row.loaders.providers">
                     <loader></loader>
                 </div>
@@ -85,28 +58,22 @@
                 <input class="row-select" v-model="props.row.Medicare" type="checkbox" disabled/>
             </template>
             <template slot="duplicate" slot-scope="props">
-                <a :href="rootUrl(`manage-patients/${props.row.duplicate_id}/view-careplan`)" target="_blank"
-                   v-if="props.row.duplicate_id">View</a>
+                <a :href="rootUrl(`manage-patients/${props.row.duplicate_id}/view-careplan`)" target="_blank" v-if="props.row.duplicate_id">View</a>
             </template>
             <template slot="h__Remove">
-                <input class="btn btn-danger btn-round" v-if="multipleSelected" @click="deleteMultiple" type="button"
-                       value="x"/>
+                <input class="btn btn-danger btn-round" v-if="multipleSelected" @click="deleteMultiple" type="button" value="x" />
             </template>
             <template slot="Remove" slot-scope="props">
-                <input class="btn btn-danger btn-round" :class="{ 'btn-gray': multipleSelected }" type="button"
-                       @click="deleteOne(props.row.id)" value="x"/>
+                <input class="btn btn-danger btn-round" :class="{ 'btn-gray': multipleSelected }" type="button" @click="deleteOne(props.row.id)" value="x" />
                 <div v-if="props.row.loaders.delete">
                     <loader></loader>
                 </div>
             </template>
             <template slot="h__Submit">
-                <input class="btn btn-success btn-round" type="button" v-if="multipleSelected" @click="submitMultiple"
-                       value="✔"/>
+                <input class="btn btn-success btn-round" type="button" v-if="multipleSelected" @click="submitMultiple" value="✔" />
             </template>
             <template slot="Submit" slot-scope="props">
-                <input class="btn btn-default btn-round" v-if="!props.row.loaders.confirm"
-                       :class="{ 'btn-gray': multipleSelected }" type="button" @click="submitOne(props.row.id)"
-                       value="✔" :disabled="!props.row.validate()"/>
+                <input class="btn btn-default btn-round" v-if="!props.row.loaders.confirm" :class="{ 'btn-gray': multipleSelected }" type="button" @click="submitOne(props.row.id)" value="✔" :disabled="!props.row.validate()" />
                 <div v-if="props.row.loaders.confirm">
                     <loader></loader>
                 </div>
@@ -118,7 +85,7 @@
 </template>
 
 <script>
-    import {rootUrl} from '../../app.config'
+    import { rootUrl } from '../../app.config'
     import TextEditable from '../../admin/calls/comps/text-editable'
     import EventBus from '../../admin/time-tracker/comps/event-bus'
     import LoaderComponent from '../loader'
@@ -126,11 +93,6 @@
     import ErrorModalButton from '../../admin/billing/comps/error-modal-button'
     import NotificationComponent from '../notifications'
     import VueCache from '../../util/vue-cache'
-    import {mapActions, mapGetters} from 'vuex'
-    import {getCurrentUser} from "../../store/actions";
-    import {currentUser} from '../../store/getters';
-    import VueSelect from "vue-select";
-
 
     export default {
         name: 'ccd-viewer',
@@ -138,7 +100,6 @@
             VueCache
         ],
         components: {
-            'v-select': VueSelect,
             'text-editable': TextEditable,
             'loader': LoaderComponent,
             'error-modal': ErrorModal,
@@ -166,330 +127,305 @@
                 }
             }
         },
-        computed: Object.assign(
-            mapGetters({
-                authUser: 'currentUser'
-            }), {
-                multipleSelected() {
-                    return this.tableData.filter(row => !!row.selected).length > 1
-                },
-                isAdmin() {
-                    return this.authUser.role.name === 'administrator'
-                }
+        computed: {
+            multipleSelected() {
+                return this.tableData.filter(row => !!row.selected).length > 1
             }
-        ),
-        methods: Object.assign(
-            mapActions(['getCurrentUser']),
-            {
-                rootUrl,
-                getRowErrors(id) {
-                    return () => this.tableData.find(record => record.id === id).errors
-                },
-                setupRecord(record) {
-                    if (record.demographics) {
-                        record.demographics.display_name = record.demographics.first_name + ' ' + record.demographics.last_name
+        },
+        methods: {
+            rootUrl,
+            getRowErrors(id) {
+                return () => this.tableData.find(record => record.id === id).errors
+            },
+            setupRecord(record) {
+                if (record.demographics) {
+                    record.demographics.display_name = record.demographics.first_name + ' ' + record.demographics.last_name
+                }
+                const self = this;
+                const newRecord = {
+                    id: record.id,
+                    selected: false,
+                    Name: record.demographics.display_name,
+                    DOB: record.demographics.dob,
+                    Practice: ((record.practice || {}).id || null),
+                    practice_name: ((record.practice || {}).display_name || null),
+                    Location: ((record.location || {}).id || null),
+                    location_name: ((record.location || {}).display_name || null),
+                    'Billing Provider': record.billing_provider_id,
+                    '2+ CCM Cond': (record.validation_checks || {}).has_at_least_2_ccm_conditions,
+                    '1+ BHI Cond': (record.validation_checks || {}).has_at_least_1_bhi_condition,
+                    Medicare: (record.validation_checks || {}).has_medicare,
+                    duplicate_id: record.duplicate_id,
+                    errors: {
+                        delete: null,
+                        confirm: null,
+                        practices: null,
+                        locations: null,
+                        providers: null
+                    },
+                    loaders: {
+                        delete: false,
+                        confirm: false,
+                        practices: false,
+                        locations: false,
+                        providers: false,
+                        update: false
+                    },
+                    practices: () => self.practices,
+                    locations: [],
+                    providers: [],
+                    changePractice(id) {
+                        self.changePractice(record.id, id)
+                    },
+                    changeLocation(id) {
+                        self.changeLocation(record.id, id)
+                    },
+                    changeProvider(id) {
+                        self.changeProvider(record.id, id)
+                        self.updateRecord(record.id)
+                    },
+                    validate () {
+                        const record = this
+                        return (!!record.Practice && !!record['Billing Provider'] && !!record.Location)
                     }
-                    const self = this;
-                    const practice = {
-                        label: (record.practice || {}).display_name,
-                        value: (record.practice || {}).id
-                    };
-                    const location = {
-                        label: (record.location || {}).display_name,
-                        value: (record.location || {}).id
-                    };
-                    const billingProvider = {
-                        label: null,
-                        value: record.billing_provider_id
-                    };
-                    return {
-                        id: record.id,
-                        selected: false,
-                        Name: (record.demographics || {}).display_name,
-                        DOB: (record.demographics || {}).dob,
-                        Practice: practice,
-                        practice_id: practice.value,
-                        Location: location,
-                        location_id: location.value,
-                        'Billing Provider': billingProvider,
-                        billing_provider_id: record.billing_provider_id,
-                        '2+ CCM Cond': (record.validation_checks || {}).has_at_least_2_ccm_conditions,
-                        '1+ BHI Cond': (record.validation_checks || {}).has_at_least_1_bhi_condition,
-                        Medicare: (record.validation_checks || {}).has_medicare,
-                        duplicate_id: record.duplicate_id,
-                        errors: {
-                            delete: null,
-                            confirm: null,
-                            practices: null,
-                            locations: null,
-                            providers: null
-                        },
-                        loaders: {
-                            delete: false,
-                            confirm: false,
-                            practices: false,
-                            locations: false,
-                            providers: false,
-                            update: false
-                        },
-                        practices: () => self.practices,
-                        locations: [],
-                        providers: [],
-                        changePractice(selectedOption) {
-                            self.changePractice(record.id, selectedOption);
-                        },
-                        changeLocation(selectedOption) {
-                            self.changeLocation(record.id, selectedOption);
-                        },
-                        changeProvider(selectedOption) {
-                            self.changeProvider(record.id, selectedOption);
-                            self.updateRecord(record.id);
-                        },
-                        validate() {
-                            const record = this
-                            return (!!record.Practice.value && !!record['Billing Provider'].value && !!record.Location.value)
-                        }
-                    }
-                },
-                changePractice(recordId, selectedPractice) {
-                    const record = this.tableData.find(row => row.id === recordId);
-                    if (!record) {
-                        return;
-                    }
-                    record.Practice = selectedPractice;
-                    record.practice_id = selectedPractice.value;
-                    record.Location = {label:null, value:null};
-                    record.location_id = null;
-                    record.locations = [];
-                    record.loaders.locations = true;
-                    record.providers = [];
-                    this.getLocations(selectedPractice.value).then(locations => {
-                        //console.log('get-practice-locations', practiceId, locations)
-                        record.locations = locations
-                        record.loaders.locations = false
-                        this.changeLocation(recordId, record.Location)
-                    }).catch(err => {
-                        record.loaders.locations = false
-                        record.errors.locations = err.message
-                        console.error('get-practice-locations', err)
-                    })
-                },
-                changeLocation(recordId, selectedLocation) {
-                    const record = this.tableData.find(row => row.id === recordId);
-                    if (!record) {
-                        return;
-                    }
-                    record.Location = selectedLocation;
-                    record.location_id = selectedLocation.value;
-
-                    if (!selectedLocation.value) {
-                        return;
-                    }
-                    record.providers = [];
-                    record.loaders.providers = true;
-                    this.getProviders(record.Practice.value, selectedLocation.value).then(providers => {
-                        record.providers = providers
-                        record.loaders.providers = false
-                        if (!record.providers.find(provider => provider.id == record.billing_provider_id)) {
-                            record.billing_provider_id = null
-                        }
-                        console.log('get-practice-location-providers', providers)
-                    }).catch(err => {
-                        record.loaders.providers = false
-                        record.errors.providers = err.message
-                        console.error('get-practice-location-providers', err)
-                    });
-                },
-                changeProvider(recordId, selectedProvider) {
-                    const record = this.tableData.find(row => row.id === recordId);
-                    if (record) {
-                        const provider = record.providers.find(p => p.id === selectedProvider.value);
-                        if (provider) {
-                            record['Billing Provider'] = selectedProvider;
-                            record.billing_provider_id = provider.id
-                        }
-                    }
-                },
-                updateRecord(recordId) {
-                    const record = this.tableData.find(row => row.id === recordId);
-                    if (record && record.practice_id && record.location_id && record.billing_provider_id) {
-                        const practiceId = record.practice_id;
-                        const locationId = record.location_id;
-                        const billingProviderId = record.billing_provider_id;
-
-                        record.loaders.update = true
-                        this.axios.post(rootUrl('importer/train/store?json'), {
-                            imported_medical_record_id: recordId,
-                            practiceId,
-                            locationId,
-                            billingProviderId
-                        }).then(response => {
-                            record.loaders.update = false
-                            console.log('ccd-viewer:update-record', response)
+                }
+                return newRecord
+            },
+            changePractice(recordId, practiceId) {
+                const record = this.tableData.find(row => row.id === recordId)
+                if (record) {
+                    const practice = this.practices.find(practice => practice.id === practiceId)
+                    if (practice) {
+                        record.Practice = practice.id;
+                        record.practice_name = practice.display_name
+                        //record.Location = null
+                        record.locations = []
+                        record.loaders.locations = true
+                        record.providers = []
+                        this.getLocations(practiceId).then(locations => {
+                            //console.log('get-practice-locations', practiceId, locations)
+                            record.locations = locations
+                            record.loaders.locations = false
+                            this.changeLocation(recordId, record.Location)
                         }).catch(err => {
-                            record.loaders.update = false
-                            console.error('ccd-viewer:update-record')
+                            record.loaders.locations = false
+                            record.errors.locations = err.message
+                            console.error('get-practice-locations', err)
                         })
                     }
-                    console.log('update-record', record)
-                },
-                getRecords() {
-                    this.loaders.records = true
-                    return this.axios.get(this.url).then((response) => {
-                        const records = response.data || []
-                        this.tableData = records.map(this.setupRecord)
-                        console.log('get-records', this.tableData)
-                        this.tableData.forEach(row => {
-                            row.changePractice(row.Practice)
-                        })
-                        this.loaders.records = false
-                        return this.tableData
-                    }).catch(err => {
-                        console.error(err)
-                        this.loaders.records = false
-                    })
-                },
-                select(e, id) {
-                    const row = this.tableData.find(row => row.id === id)
-                    if (row) {
-                        row.selected = e.target.checked
-                    }
-                },
-                deleteOne(id, force) {
-                    if (force || confirm('Are you sure you want to delete this record?')) {
-                        const record = this.tableData.find(item => item.id === id)
-                        record.loaders.delete = true
-                        return this.axios.get(rootUrl('api/ccd-importer/records/delete?records=' + id)).then((response) => {
-                            record.loaders.delete = false
-                            if (Array.isArray(response.data.deleted)) {
-                                if (response.data.deleted.some(item => item == id)) {
-                                    this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
-                                } else {
-                                    record.errors.delete = 'not found'
-                                }
-                            } else {
-                                record.errors.delete = 'unknown response'
+                }
+            },
+            changeLocation(recordId, locationId) {
+                const record = this.tableData.find(row => row.id === recordId)
+                if (record) {
+                    const location = record.locations.find(l => l.id === locationId)
+                    if (location) {
+                        record.Location = location.id;
+                        record.location_name = location.name
+                        record.providers = []
+                        record.loaders.providers = true
+                        this.getProviders(record.Practice, locationId).then(providers => {
+                            record.providers = providers
+                            record.loaders.providers = false
+                            if (!record.providers.find(provider => provider.id == record['Billing Provider'])) {
+                                record['Billing Provider'] = null
                             }
-                            console.log('ccd-viewer:delete-one', id, response.data)
-                            return response
-                        }).catch((err) => {
-                            record.errors.delete = err
-                            record.loaders.delete = false
-                            console.error('ccd-viewer:delete-one', err)
+                            console.log('get-practice-location-providers', providers)
+                        }).catch(err => {
+                            record.loaders.providers = false
+                            record.errors.providers = err.message
+                            console.error('get-practice-location-providers', err)
                         })
                     }
-                },
-                deleteMultiple() {
-                    if (confirm('Multiple: Are you sure you want to delete these records?')) {
-                        return Promise.all(this.tableData.filter(record => record.selected).map(record => this.deleteOne(record.id, true))).then(responses => {
-                            console.log('ccd-viewer:delete-multiple', responses)
-                        }).catch(errors => {
-                            console.error('ccd-viewer:delete-multiple', errors)
-                        })
+                }
+            },
+            changeProvider(recordId, providerId) {
+                const record = this.tableData.find(row => row.id === recordId)
+                if (record) {
+                    const provider = record.providers.find(p => p.id === providerId)
+                    if (provider) {
+                        record['Billing Provider'] = provider.id
                     }
-                },
-                submitMultiple() {
-                    this.errors.confirm = true
-                    return Promise.all(this.tableData.filter(record => record.selected).map(record => this.submitOne(record.id))).then(responses => {
-                        console.log('ccd-viewer:submit-multiple', responses)
-                        this.errors.confirm = false
-                    }).catch(errors => {
-                        console.error('ccd-viewer:submit-multiple', errors)
-                        this.errors.confirm = false
-                    })
-                },
-                submitOne(id) {
-                    const record = this.tableData.find(r => r.id === id)
-                    if (record) {
-                        if (!!record.practice_id && !!record.billing_provider_id && !!record.location_id) {
-                            if (!record.duplicate_id || (record.duplicate_id && confirm(`This patient may be a duplicate of ${record.duplicate_id}. Are you sure you want to proceed with creating a careplan?`))) {
-                                record.loaders.confirm = true
-                                return this.axios.post(rootUrl('api/ccd-importer/records/confirm'), [record]).then((response) => {
-                                    record.loaders.confirm = false
-                                    if ((response.data || []).some(item => item.id === id && item.completed)) {
-                                        this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
-                                    }
-                                    console.log('submit-one', record, response.data)
-                                    if (((response.data || [])[0] || {}).completed) {
-                                        const patient = (((response.data || [])[0] || {}).patient || {})
-                                        EventBus.$emit('notifications:create', {
-                                            message: `Patient Created (${patient.id}): ${patient.display_name}`,
-                                            href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
-                                            noTimeout: true
-                                        })
-                                    } else {
-                                        EventBus.$emit('notifications:create', {
-                                            message: `Error when creating patient ${record.Name}`,
-                                            type: 'warning',
-                                            noTimeout: true
-                                        })
-                                    }
-                                    return this.getRecords()
-                                }).catch((err) => {
-                                    record.loaders.confirm = false
-                                    record.errors.confirm = err.message
-                                    console.error('submit-one', record, err)
-                                })
-                            }
-                        } else {
-                            record.errors.confirm = 'select a practice, location and provider'
-                        }
-                    } else {
-                        record.errors.confirm = 'record not found'
-                    }
-                },
-                toggleAllSelect(e) {
-                    this.tableData = this.tableData.map(row => {
-                        row.selected = this.selected;
-                        return row;
-                    })
-                },
-                showErrorModal(id, name) {
-                    const errors = (this.tableData.find(row => row.id === id) || {}).errors
-                    console.log(errors)
-                    Event.$emit('modal-error:show', {body: errors[name]}, () => {
-                        errors[name] = null
-                        console.log(errors)
-                    })
-                },
-                getPractices() {
-                    this.loaders.practices = true
-                    return this.axios.get(rootUrl('api/practices')).then(response => {
-                        this.loaders.practices = false
-                        this.practices = (response.data || []).map(item => Object.assign(item, {
-                            value: item.id,
-                            label: item.display_name
-                        }))
-                        console.log('get-practices', response.data)
+                }
+            },
+            updateRecord(recordId) {
+                const record = this.tableData.find(row => row.id === recordId)
+                if (record && record.Practice && record.Location && record['Billing Provider']) {
+                    const practiceId = record.Practice
+                    const locationId = record.Location
+                    const billingProviderId = record['Billing Provider']
+
+                    record.loaders.update = true
+                    this.axios.post(rootUrl('importer/train/store?json'), {
+                        imported_medical_record_id: recordId,
+                        practiceId,
+                        locationId,
+                        billingProviderId
+                    }).then(response => {
+                        record.loaders.update = false
+                        console.log('ccd-viewer:update-record', response)
                     }).catch(err => {
-                        this.loaders.practices = false
-                        this.errors.practices = err.message
-                        console.error('get-practices', err)
-                    })
-                },
-                getLocations(practiceId) {
-                    return this.cache().get(rootUrl(`api/practices/${practiceId}/locations`)).then(response => {
-                        console.log(response)
-                        return (response || []).map(item => Object.assign(item, {
-                            value: item.id,
-                            label: item.name
-                        }))
-                    })
-                },
-                getProviders(practiceId, locationId) {
-                    return this.cache().get(rootUrl(`api/practices/${practiceId}/locations/${locationId}/providers`)).then(response => {
-                        return (response || []).map(item => Object.assign(item, {
-                            value: item.id,
-                            label: item.display_name
-                        }))
+                        record.loaders.update = false
+                        console.error('ccd-viewer:update-record')
                     })
                 }
-            }),
-        created() {
-            this.getCurrentUser()
-
-            if (this.isAdmin) {
-                this.columns = ['selected', 'Name', 'DOB', 'Practice', 'Location', 'Billing Provider', 'Care Coach', 'duplicate', '2+ CCM Cond', '1+ BHI Cond', 'Medicare', 'Submit', 'Remove']
+                console.log('update-record', record)
+            },
+            getRecords() {
+                this.loaders.records = true
+                return this.axios.get(this.url).then((response) => {
+                    const records = response.data || []
+                    this.tableData = records.map(this.setupRecord)
+                    console.log('get-records', this.tableData)
+                    this.tableData.forEach(row => {
+                        row.changePractice(row.Practice)
+                    })
+                    this.loaders.records = false
+                    return this.tableData
+                }).catch(err => {
+                    console.error(err)
+                    this.loaders.records = false
+                })
+            },
+            select(e, id) {
+                const row = this.tableData.find(row => row.id === id)
+                if (row) {
+                    row.selected = e.target.checked
+                }
+            },
+            deleteOne(id, force) {
+                if (force || confirm('Are you sure you want to delete this record?')) {
+                    const record = this.tableData.find(item => item.id === id)
+                    record.loaders.delete = true
+                    return this.axios.get(rootUrl('api/ccd-importer/records/delete?records=' + id)).then((response) => {
+                        record.loaders.delete = false
+                        if (Array.isArray(response.data.deleted)) {
+                            if (response.data.deleted.some(item => item == id)) {
+                                this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
+                            }
+                            else {
+                                record.errors.delete = 'not found'
+                            }
+                        }
+                        else {
+                            record.errors.delete = 'unknown response'
+                        }
+                        console.log('ccd-viewer:delete-one', id, response.data)
+                        return response
+                    }).catch((err) => {
+                        record.errors.delete = err
+                        record.loaders.delete = false
+                        console.error('ccd-viewer:delete-one', err)
+                    })
+                }
+            },
+            deleteMultiple() {
+                if (confirm('Multiple: Are you sure you want to delete these records?')) {
+                    return Promise.all(this.tableData.filter(record => record.selected).map(record => this.deleteOne(record.id, true))).then(responses => {
+                        console.log('ccd-viewer:delete-multiple', responses)
+                    }).catch(errors => {
+                        console.error('ccd-viewer:delete-multiple', errors)
+                    })
+                }
+            },
+            submitMultiple() {
+                this.errors.confirm = true
+                return Promise.all(this.tableData.filter(record => record.selected).map(record => this.submitOne(record.id))).then(responses => {
+                    console.log('ccd-viewer:submit-multiple', responses)
+                    this.errors.confirm = false
+                }).catch(errors => {
+                    console.error('ccd-viewer:submit-multiple', errors)
+                    this.errors.confirm = false
+                })
+            },
+            submitOne(id) {
+                const record = this.tableData.find(r => r.id === id)
+                if (record) {
+                    if (!!record.Practice && !!record['Billing Provider'] && !!record.Location) {
+                        if (!record.duplicate_id || (record.duplicate_id && confirm(`This patient may be a duplicate of ${record.duplicate_id}. Are you sure you want to proceed with creating a careplan?`))) {
+                            record.loaders.confirm = true
+                            return this.axios.post(rootUrl('api/ccd-importer/records/confirm'), [record]).then((response) => {
+                                record.loaders.confirm = false
+                                if ((response.data || []).some(item => item.id === id && item.completed)) {
+                                    this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
+                                }
+                                console.log('submit-one', record, response.data)
+                                if (((response.data || [])[0] || {}).completed) {
+                                    const patient = (((response.data || [])[0] || {}).patient || {})
+                                    EventBus.$emit('notifications:create', {
+                                        message: `Patient Created (${patient.id}): ${patient.display_name}`,
+                                        href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
+                                        noTimeout: true
+                                    })
+                                }
+                                else {
+                                    EventBus.$emit('notifications:create', {
+                                        message: `Error when creating patient ${record.Name}`,
+                                        type: 'warning',
+                                        noTimeout: true
+                                    })
+                                }
+                                return this.getRecords()
+                            }).catch((err) => {
+                                record.loaders.confirm = false
+                                record.errors.confirm = err.message
+                                console.error('submit-one', record, err)
+                            })
+                        }
+                    }
+                    else {
+                        record.errors.confirm = 'select a practice, location and provider'
+                    }
+                }
+                else {
+                    record.errors.confirm = 'record not found'
+                }
+            },
+            toggleAllSelect(e) {
+                this.tableData = this.tableData.map(row => {
+                    row.selected = this.selected;
+                    return row;
+                })
+            },
+            showErrorModal(id, name) {
+                const errors = (this.tableData.find(row => row.id === id) || {}).errors
+                console.log(errors)
+                Event.$emit('modal-error:show', { body: errors[name] }, () => {
+                    errors[name] = null
+                    console.log(errors)
+                })
+            },
+            getPractices() {
+                this.loaders.practices = true
+                return this.axios.get(rootUrl('api/practices')).then(response => {
+                    this.loaders.practices = false
+                    this.practices = (response.data || []).map(item => Object.assign(item, {
+                        value: item.id,
+                        text: item.display_name
+                    }))
+                    console.log('get-practices', response.data)
+                }).catch(err => {
+                    this.loaders.practices = false
+                    this.errors.practices = err.message
+                    console.error('get-practices', err)
+                })
+            },
+            getLocations(practiceId) {
+                return this.cache().get(rootUrl(`api/practices/${practiceId}/locations`)).then(response => {
+                    console.log(response)
+                    return (response || []).map(item => Object.assign(item, {
+                        value: item.id,
+                        text: item.name
+                    }))
+                })
+            },
+            getProviders(practiceId, locationId) {
+                return this.cache().get(rootUrl(`api/practices/${practiceId}/locations/${locationId}/providers`)).then(response => {
+                    return (response || []).map(item => Object.assign(item, {
+                        value: item.id,
+                        text: item.display_name
+                    }))
+                })
             }
         },
         mounted() {
@@ -538,10 +474,5 @@
 
     .row-select {
         display: inline-block !important;
-    }
-
-    .dropdown.v-select.form-control {
-        height: auto;
-        padding: 0;
     }
 </style>

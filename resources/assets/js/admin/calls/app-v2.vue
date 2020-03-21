@@ -155,6 +155,7 @@
     import * as callUpdateFunctions from './utils/call-update.fn'
     import timeDisplay from '../../util/time-display'
 
+
     import {library} from '@fortawesome/fontawesome-svg-core'
     import {faHandPointUp, faCalendarCheck, faPhone} from '@fortawesome/free-solid-svg-icons'
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
@@ -196,7 +197,6 @@
                 selected: false,
                 columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler', 'Patient\'s Care Coach'],
                 tableData: [],
-                nurses: [],
                 loaders: {
                     calls: false
                 },
