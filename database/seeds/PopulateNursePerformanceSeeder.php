@@ -108,8 +108,8 @@ class PopulateNursePerformanceSeeder extends Seeder
                     $fakeUser = $this->careCoach();
                     $fakeUser->id = $pageTimer->provider_id;
                     $fakeUser->save();
-                    $this->command->warn('Updating WorkHours');
                     $this->updateCreateWorkHours($fakeUser, $pageTimer->start_time);
+                    $this->command->warn('Updating WorkHours');
                 }
             );
     }
@@ -126,9 +126,8 @@ class PopulateNursePerformanceSeeder extends Seeder
         $dayOfWeek = carbonToClhDayOfWeek($date->dayOfWeek);
         $randomCommittedWorkHours = $faker->randomElements([2, 4, 5, 6]);
 
-        NurseContactWindow::updateOrCreate(
+        $fakeUser->nurseInfo->windows()->updateOrCreate(
             [
-                'nurse_info_id' => $fakeUser->nurseInfo->id,
                 'date' => $date->toDateString(),
             ],
             [

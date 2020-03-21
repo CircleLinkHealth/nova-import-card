@@ -107,6 +107,7 @@ class SendDailyReportToRN implements ShouldQueue
             : 'Surplus';
 
         $data = [
+            'nurseUserId'                  => $this->nurseUser->id,
             'name'                         => $this->nurseUser->getFullName(),
             'actualHours'                  => $this->reportDataForNurse['actualHours'],
             'committedHours'               => $this->reportDataForNurse['committedHours'],
