@@ -1075,11 +1075,11 @@ if ( ! function_exists('validProblemName')) {
                 'check',
             ]
         ) && ! in_array(
-            strtolower($name),
-            [
-                'fu',
-            ]
-        );
+                strtolower($name),
+                [
+                    'fu',
+                ]
+            );
     }
 }
 
@@ -1724,5 +1724,24 @@ if ( ! function_exists('isDownloadingNotesEnabledForUser')) {
                     $q->where('config_value', $userId)->orWhere('config_value', 'all');
                 })->exists();
         });
+    }
+}
+
+if ( ! function_exists('showNurseMetricsInDailyEmailReport')) {
+    /**
+     * @param $metric
+     */
+    function showNurseMetricsInDailyEmailReport(int $userId, $metric): bool
+    {
+        $options = [
+            'enable_daily_report_metrics', // all metrics for all nurses if 'config_value' = 'all'
+            "enable_daily_report_metrics:$metric",
+        ];
+
+        return AppConfig::whereIn('config_key', $options)
+            ->where(function ($q) use ($userId) {
+                    $q->where('config_value', $userId)
+                        ->orWhere('config_value', 'all_nurses');
+                })->exists();
     }
 }
