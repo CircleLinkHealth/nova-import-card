@@ -153,8 +153,8 @@
                 </template>
                 <template slot="BHI Problem Code(s)" slot-scope="props">
                     <div class="ccm-problem-codes">
-                        <span style="overflow-wrap: break-word"
-                              >{{attestedBhiProblemCodes(props.row) || 'N/A'}}</span>
+                        <span class="blue pointer" style="overflow-wrap: break-word"
+                              @click="showBhiModal(props.row)">{{attestedBhiProblemCodes(props.row) || 'N/A'}}</span>
                     </div>
                 </template>
                 <template slot="chargeable_services" slot-scope="props">
@@ -480,7 +480,7 @@
                 })
             },
 
-            showBhiModal(patient, type) {
+            showBhiModal(patient) {
                 if (!patient.isBhiEligible()) {
                     Event.$emit('notifications-billing:create', {
                         text: `Cannot edit BHI Problem. Check that both Practice and Patient are chargeable for ${SERVICES.CPT_99484}.`,
@@ -499,7 +499,7 @@
                     return;
                 }
 
-                this.showProblemsModal(patient, type);
+                this.showProblemsModal(patient, true);
             },
 
             showCcmModal(patient) {
@@ -521,12 +521,14 @@
                     return;
                 }
 
-                this.showProblemsModal(patient);
+                this.showProblemsModal(patient, false);
             },
 
-            showProblemsModal(patient) {
-                const self = this;
-                Event.$emit('modal-attest-call-conditions:show', patient);
+            showProblemsModal(patient, isBhi) {
+                Event.$emit('modal-attest-call-conditions:show', {
+                    'patient': patient,
+                    'is_bhi': isBhi
+                });
             },
 
             showErrorModal(id, name) {
@@ -582,7 +584,7 @@
             },
             attestedCcmProblemCodes(patient) {
                 return patient.problems.filter(function (p) {
-                    return patient.attested_ccm_problems.includes(p.id) && !!p.code;
+                    return (patient.attested_ccm_problems || []).includes(p.id) && !!p.code;
                 })
                     .map(function (p) {
                         return p.code;
@@ -656,11 +658,19 @@
             App.$on('call-conditions-attested', (data) => {
                 this.$http.post(rootUrl(`api/patients/${data.patient_id}/problems/attest-summary-problems`), {
                     attested_problems: data.attested_problems,
-                    date: this.selectedMonth
+                    date: this.selectedMonth,
+                    is_bhi: data.is_bhi
                 }).then(response => {
-                    this.tableData.filter(function (p) {
-                        return String(p.id) === String(data.patient_id);
-                    })[0].attested_ccm_problems = response.data.attested_problems;
+                    if (data.is_bhi){
+                        this.tableData.filter(function (p) {
+                            return String(p.id) === String(data.patient_id);
+                        })[0].attested_bhi_problems = response.data.attested_problems;
+                    }else{
+                        this.tableData.filter(function (p) {
+                            return String(p.id) === String(data.patient_id);
+                        })[0].attested_ccm_problems = response.data.attested_problems;
+                    }
+
                     App.$emit('modal-attest-call-conditions:hide');
                 }).catch(err => {
                     console.error(err)
@@ -669,12 +679,22 @@
 
             Event.$on('full-conditions:add', (ccdProblem) => {
                 //if another condition is created and is attested for the patient, add it to the patient's existing problems
+
+                let is_behavioral = false
+
+                if (ccdProblem.cpm_id){
+                    is_behavioral = !! this.cpmProblems.filter(function(cpmProblem){
+                        return cpmProblem.id == ccdProblem.cpm_id;
+                    })[0].is_behavioral;
+                }
+
+
                 this.tableData.filter(function (p) {
                     return String(p.id) === String(ccdProblem.patient_id);
                 })[0].problems.push({
                     id: ccdProblem.id,
                     name: ccdProblem.name,
-                    is_behavioral: false,
+                    is_behavioral: is_behavioral,
                     code: ccdProblem.codes[0].code
                 });
             })

@@ -123,7 +123,7 @@ class ReimportPatientMedicalRecord extends Command
     {
         if ($mr = MedicalRecordFactory::create($user, $ccda)) {
             $this->warn("Running '{$user->primaryPractice->name}' decorator");
-        
+
             return $mr;
         }
 
@@ -136,7 +136,9 @@ class ReimportPatientMedicalRecord extends Command
             return $ccda;
         }
 
-        if ($ccda = $this->getCcdaFromMrn($user->getMRN(), $user->program_id)) {
+        $this->correctMrnIfWrong($user);
+
+        if ($ccda = $this->getCcdaFromMrn($user->patientInfo->mrn_number, $user->program_id)) {
             return $ccda;
         }
 
@@ -154,7 +156,7 @@ class ReimportPatientMedicalRecord extends Command
                 $this->getEnrollee($user)->eligibilityJob->data
             );
 
-            $ccda = $this->getCcdaFromMrn($user->getMRN(), $user->program_id);
+            $ccda = $this->getCcdaFromMrn($user->patientInfo->mrn_number, $user->program_id);
 
             if ( ! $ccda) {
                 $ccda = Ccda::create(
@@ -163,7 +165,7 @@ class ReimportPatientMedicalRecord extends Command
                         'json'        => $mr->toJson(),
                         'practice_id' => (int) $user->program_id,
                         'patient_id'  => $user->id,
-                        'mrn'         => $user->getMRN(),
+                        'mrn'         => $user->patientInfo->mrn_number,
                     ]
                 );
             }
@@ -225,6 +227,25 @@ class ReimportPatientMedicalRecord extends Command
 
         CcdInsurancePolicy::where('patient_id', '=', $userId)
             ->delete();
+    }
+
+    private function correctMrnIfWrong(User $user)
+    {
+        if (empty($user->patientInfo->mrn_number) && ! empty($this->getEnrollee($user)->mrn)) {
+            $user->patientInfo->mrn_number = $this->getEnrollee($user)->mrn;
+            $user->patientInfo->save();
+        }
+
+        if ($user->patientInfo->mrn_number !== $this->getEnrollee($user)->mrn) {
+            if (
+                ($this->getEnrollee($user)->first_name == $user->first_name)
+                && ($this->getEnrollee($user)->last_name == $user->last_name)
+                && ($this->getEnrollee($user)->dob->isSameAs($user->patientInfo->birth_date))
+            ) {
+                $user->patientInfo->mrn_number = $this->getEnrollee($user)->mrn;
+                $user->patientInfo->save();
+            }
+        }
     }
 
     /**

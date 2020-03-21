@@ -1,0 +1,128 @@
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace Tests\Feature;
+
+use App\Constants;
+use App\Models\CCD\CcdVendor;
+use App\Traits\Tests\PracticeHelpers;
+use App\Traits\Tests\UserHelpers;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\PcmProblem;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use Illuminate\Support\Facades\Config;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Tests\TestCase;
+
+class ImportPcmCcd extends TestCase
+{
+    use UserHelpers;
+    use PracticeHelpers;
+
+    /**
+     * Import ccd with only one problem from practice that has PCM enabled.
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function test_import_pcm_ccd()
+    {
+        User::where('display_name', '=', 'Myra Jones')->delete();
+
+        $practice = $this->getPractice(true, false, false, true);
+
+        $problems = ['Asthma', 'Pneumonia'];
+        foreach ($problems as $problemName) {
+            /** @var CpmProblem $problem */
+            $problem = CpmProblem::whereName($problemName)->first();
+
+            if ( ! $problem) {
+                continue;
+            }
+
+            PcmProblem::firstOrCreate([
+                'description' => $problem->name,
+            ], [
+                'code_type'   => Constants::ICD10_NAME,
+                'code'        => $problem->default_icd_10_code,
+                'description' => $problem->name,
+                'practice_id' => $practice->id,
+            ]);
+        }
+
+        $xmlName = 'demo.xml';
+        $xmlPath = storage_path('ccdas/Samples/demo.xml');
+
+        $patient = $this->importPcmPatientFromXml($xmlName, $xmlPath, $practice->id);
+
+        // should have one problem only
+        // should be PCM even if practice has ccm
+        $this->assertTrue($patient->isPcm());
+    }
+
+    private function importPcmPatientFromXml($xmlName, $xmlPath, $practiceId): User
+    {
+        Config::set('ccda-parser.store_results_in_db', false);
+
+        $admin = $this->createUser($practiceId, 'administrator');
+        $this->be($admin);
+
+        $uploadCcdResponse = $this->json('POST', 'api/ccd-importer/imported-medical-records?json', [
+            'file' => [new UploadedFile($xmlPath, $xmlName, 'text/xml', null, true)],
+        ]);
+
+        self::assertEquals(200, $uploadCcdResponse->status());
+
+        $result = $uploadCcdResponse->json();
+        self::assertNotEmpty($result);
+
+        $ccdaId = $result['ccdas'][0];
+
+        /** @var ImportedMedicalRecord $imr */
+        $imr = ImportedMedicalRecord::where('medical_record_id', '=', $ccdaId)
+                                    ->where('medical_record_type', '=', Ccda::class)
+                                    ->first();
+        $this->assertNotNull($imr);;
+
+        $confirmCcdResponse = $this->json('POST', 'api/ccd-importer/records/confirm', [
+            [
+                'id'               => $imr->id,
+                'Location'         => $imr->location_id ?? null,
+                'Practice'         => $practiceId,
+                'Billing Provider' => $imr->billing_provider_id ?? null,
+            ],
+        ]);
+        self::assertTrue(200 === $confirmCcdResponse->status());
+        self::assertNotEmpty($confirmCcdResponse->json());
+        self::assertArrayHasKey('patient', $confirmCcdResponse->json()[0]);
+        $patientId = $confirmCcdResponse->json()[0]['patient']['id'];
+        $patient   = User::with('patientInfo')->find($patientId);
+        self::assertNotNull($patient);
+
+        return $patient;
+    }
+
+    private function getPractice(
+        bool $addCcmService = false,
+        bool $addCcmPlusServices = false,
+        bool $addBhiService = false,
+        bool $addPcmService = false
+    ): Practice {
+        /** @var CcdVendor $ccdVendor */
+        $ccdVendor = CcdVendor::first();
+        if ( ! $ccdVendor) {
+            $ccdVendor = factory(CcdVendor::class)->create();
+        }
+
+        $practice = Practice::find($ccdVendor->program_id);
+        $practice = $this->setupExistingPractice($practice, true, false, true, true);
+
+        return $practice;
+    }
+}

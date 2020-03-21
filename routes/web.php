@@ -7,6 +7,9 @@
 Route::get('/debug-sentry', 'DemoController@sentry');
 Route::get('/debug-sentry-log', 'DemoController@sentryLog');
 
+Route::get('passwordless-login/{token}', 'Auth\LoginController@login')
+    ->name('login.token.validate');
+
 Route::post('webhooks/on-sent-fax', [
     'uses' => 'PhaxioWebhookController@onFaxSent',
     'as'   => 'webhook.on-fax-sent',
@@ -1044,11 +1047,6 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::get('/counts', [
                     'uses' => 'Billing\PracticeInvoiceController@counts',
                 ])->middleware('permission:patientSummary.read');
-
-                Route::post('/storeProblem', [
-                    'uses' => 'Billing\PracticeInvoiceController@storeProblem',
-                    'as'   => 'monthly.billing.store-problem',
-                ])->middleware('permission:patientSummary.update');
 
                 Route::post('/close', [
                     'uses' => 'Billing\PracticeInvoiceController@closeMonthlySummaryStatus',

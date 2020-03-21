@@ -15,6 +15,7 @@
     </ul>
     <p>&nbsp;</p>
     <ol start="2">
+
         <li> Monthly Case Completion ({{$caseLoadComplete}}%)</li>
     </ol>
     <ul>
@@ -23,7 +24,6 @@
             <li>Patients completed for the month: {{$completedPatients}}</li>
             <li>Patients remaining: {{$incompletePatients}}</li>
         @endif
-
     </ul>
     <br>
     @if(showNurseMetricsInDailyEmailReport($nurseUserId, 'efficiency_metrics'))

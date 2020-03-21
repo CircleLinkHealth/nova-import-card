@@ -226,66 +226,10 @@
                 <span class="sometimes-hidden" style="font-size:15px"></span>
 
                 <div id="header-perform-status-select" class="ccm-status col-xs-offset-3">
-                    @if(Route::is('patient.note.create') || Route::is('patient.note.edit'))
-                        <li class="inline-block">
-                            <select id="ccm_status" name="ccm_status" class="selectpickerX dropdownValid form-control"
-                                    data-size="2"
-                                    style="width: 135px">
-                                <option value="{{CircleLinkHealth\Customer\Entities\Patient::ENROLLED}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::ENROLLED ? 'selected' : ''}}>
-                                    Enrolled
-                                </option>
-                                @if($patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL)
-                                    <option class="withdrawn_1st_call"
-                                            value="{{CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL ? 'selected' : ''}}>
-                                        Wthdrn 1st Call
-                                    </option>
-                                @else
-                                    <option
-                                            class="withdrawn"
-                                            value="{{CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN ? 'selected' : ''}}>
-                                        Withdrawn
-                                    </option>
-                                @endif
-                                <option class="paused"
-                                        value="{{CircleLinkHealth\Customer\Entities\Patient::PAUSED}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::PAUSED ? 'selected' : ''}}>
-                                    Paused
-                                </option>
-                            </select>
-                        </li>
-                    @else
-                        <li style="font-size: 18px"
-                            class="inline-block col-xs-pull-1 {{$patient->getCcmStatus()}}"><?= (empty($patient->getCcmStatus()))
-                                ? 'N/A'
-                                : (CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL === $patient->getCcmStatus()
-                                    ? 'Withdrawn 1st Call'
-                                    : ucwords($patient->getCcmStatus())); ?></li>
-                    @endif
+                    @include('partials.patient.ccm-status')
                     <br/>
                 </div>
-                @if(Route::is('patient.note.create') || Route::is('patient.note.edit'))
-                    <div id="header-withdrawn-reason" class="hidden" style="padding-top: 10px;">
-
-                        <div class="col-md-12"
-                             style="padding-right: 0 !important;">{!! Form::label('withdrawn_reason', 'Withdrawn Reason: ') !!}</div>
-                        <div class="col-sm-12" style="padding-right: 0 !important;">
-                            <div id="header-perform-reason-select">
-
-                                {!! Form::select('withdrawn_reason', $withdrawnReasons, ! array_key_exists($patientWithdrawnReason, $withdrawnReasons) && $patientWithdrawnReason != null ? 'Other' : $patientWithdrawnReason, ['class' => 'selectpickerX dropdownValid form-control', 'style' => 'width:100%;']) !!}
-
-                            </div>
-                        </div>
-                    </div>
-                    <div id="header-withdrawn-reason-other" class="form-group hidden">
-                        <div class="col-md-12" style="padding-right: 0 !important;">
-                            <div>
-                                <textarea id="withdrawn_reason_other" rows="1" cols="100" style="resize: none;"
-                                          placeholder="Enter Reason..." name="withdrawn_reason_other"
-                                          required="required"
-                                          class="form-control">{{! array_key_exists($patientWithdrawnReason, $withdrawnReasons) ? $patientWithdrawnReason : null}}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                @endif
+                @include('partials.patient.withdrawn-reason')
 
                 @if(auth()->user()->isAdmin())
                     @include('partials.viewCcdaButton')

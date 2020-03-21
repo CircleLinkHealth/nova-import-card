@@ -6,23 +6,38 @@
 
 namespace App\Notifications;
 
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
-use Illuminate\Auth\Passwords\PasswordBrokerManager;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Password;
 
 class NotifyPatientCarePlanApproved extends Notification
 {
     use Queueable;
 
+    /**
+     * @var CarePlan
+     */
     private $carePlan;
 
+    /**
+     * @var array
+     */
     private $channels = ['database'];
 
-    private $patient;
+    /**
+     * Only sent to patients (Users).
+     *
+     * @var User
+     */
+    private $notifiable;
 
-    private $practice;
+    /**
+     * @var
+     */
+    private $token;
 
     /**
      * This notification is sent to the patient both when Careplan is QA approved by CLH, and when it's Provider
@@ -37,8 +52,15 @@ class NotifyPatientCarePlanApproved extends Notification
     {
         $this->channels = array_merge($channels, $this->channels);
         $this->carePlan = $carePlan;
+        $this->token    = Password::broker('patient_users')->createToken($carePlan->patient);
     }
 
+    /**
+     * If Careplan QA approved, prompt patient to setup password
+     * If Careplan Provider approved, prompt them to login, while still displaying url to setup password in the email.
+     *
+     * @return string
+     */
     public function getActionText()
     {
         return CarePlan::PROVIDER_APPROVED != $this->carePlan->status
@@ -46,14 +68,17 @@ class NotifyPatientCarePlanApproved extends Notification
             : 'Login to View Care Plan';
     }
 
-    public function getActionUrl()
+    /**
+     * @param mixed $notifiable
+     *
+     * @return string
+     */
+    public function getActionUrl($notifiable)
     {
-        $patient = $this->carePlan->patient;
-
         return CarePlan::PROVIDER_APPROVED != $this->carePlan->status
-            ? $this->resetUrl()
+            ? $this->resetUrl($notifiable)
             : route('home', [
-                'practice_id' => $patient->program_id,
+                'practice_id' => $notifiable->program_id,
             ]);
     }
 
@@ -86,6 +111,23 @@ class NotifyPatientCarePlanApproved extends Notification
     }
 
     /**
+     * Send practice id so we can replace CLH logo with practice name
+     * Send email, so we can prefill and lock email input.
+     *
+     * @param mixed $notifiable
+     *
+     * @return string
+     */
+    public function resetUrl($notifiable)
+    {
+        return route('password.reset', [
+            'token'       => $this->token,
+            'practice_id' => $notifiable->getPrimaryPracticeId(),
+            'email'       => $notifiable->email,
+        ]);
+    }
+
+    /**
      * Get the array representation of the notification.
      *
      * @param mixed $notifiable
@@ -100,6 +142,8 @@ class NotifyPatientCarePlanApproved extends Notification
 
             'body'    => $this->getBody(),
             'subject' => $this->getSubject(),
+
+            'reset_url' => $this->resetUrl($notifiable),
 
             'careplan_id' => $this->carePlan->id,
         ];
@@ -116,26 +160,14 @@ class NotifyPatientCarePlanApproved extends Notification
      */
     public function toMail($notifiable)
     {
-        $this->patient = $this->carePlan->patient;
-
-        if ( ! $this->patient) {
-            throw new \Exception("Care Plan with id {$this->carePlan->id}, does not belong to patient user.");
-        }
-
-        $this->practice = $this->patient->primaryPractice;
-
-        if ( ! $this->practice) {
-            throw new \Exception("Patient with id {$this->patient}, does not belong to a practice.");
-        }
-
         return (new MailMessage())
-            ->from('noreply@circlelinkhealth.com', $this->practice->display_name)
+            ->from('noreply@circlelinkhealth.com', $notifiable->getPrimaryPracticeName())
             ->subject($this->getSubject())
             ->markdown('emails.patientCarePlanApproved', [
-                'action_url'    => $this->getActionUrl(),
+                'action_url'    => $this->getActionUrl($notifiable),
                 'action_text'   => $this->getActionText(),
-                'practice_name' => $this->practice->display_name,
-                'reset_url'     => $this->resetUrl(),
+                'practice_name' => $notifiable->getPrimaryPracticeName(),
+                'reset_url'     => $this->resetUrl($notifiable),
                 'body'          => $this->getBody(),
                 'is_followup'   => CarePlan::PROVIDER_APPROVED === $this->carePlan->status,
             ]);
@@ -151,12 +183,5 @@ class NotifyPatientCarePlanApproved extends Notification
     public function via($notifiable)
     {
         return $this->channels;
-    }
-
-    private function resetUrl()
-    {
-        return route('password.request', [
-            'practice_id' => $this->practice->id,
-        ]);
     }
 }

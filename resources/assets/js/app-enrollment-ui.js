@@ -30,6 +30,7 @@ const App = new Vue({
 });
 
 if (window) {
+    window.App = App;
     window.Vue = Vue;
 }
 

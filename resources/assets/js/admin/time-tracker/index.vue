@@ -57,6 +57,8 @@
     import BhiComponent from './comps/bhi-switch'
     import Notifications from '../../components/notifications';
 
+    import {registerHandler, sendRequest} from "../../components/bc-job-manager";
+
     export default {
         name: 'time-tracker',
         props: {
@@ -126,8 +128,7 @@
                     if (!this.connectedOnce) {
                         this.connectedOnce = true;
                         this.info.initSeconds = Math.round(startupTime() / 1000);
-                    }
-                    else if (this.connectionLossTimestamp != null) {
+                    } else if (this.connectionLossTimestamp != null) {
                         this.info.initSeconds = this.timeSinceLastConnection();
                     }
 
@@ -172,26 +173,19 @@
                                     self.seconds = self.info.isManualBehavioral ? data.bhiSeconds : data.ccmSeconds
                                     self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
                                     self.showLoader = false;
-                                }
-                                else if (data.message === 'server:modal') {
+                                } else if (data.message === 'server:modal') {
                                     EventBus.$emit('away:trigger-modal')
-                                }
-                                else if (data.message === 'server:logout') {
-                                    EventBus.$emit("tracker:stop")
-                                    location.href = rootUrl('auth/logout')
-                                }
-                                else if (data.message === 'server:call-mode:enter') {
+                                } else if (data.message === 'server:logout') {
+                                    EventBus.$emit("tracker:stop", true);
+                                } else if (data.message === 'server:call-mode:enter') {
                                     self.callMode = true
                                     EventBus.$emit('server:call-mode', self.callMode)
-                                }
-                                else if (data.message === 'server:call-mode:exit') {
+                                } else if (data.message === 'server:call-mode:exit') {
                                     self.callMode = false
                                     EventBus.$emit('server:call-mode', self.callMode)
-                                }
-                                else if (data.message === 'server:inactive-modal:close') {
+                                } else if (data.message === 'server:inactive-modal:close') {
                                     EventBus.$emit('modal-inactivity:reset', true)
-                                }
-                                else if (data.message === 'server:bhi:switch') {
+                                } else if (data.message === 'server:bhi:switch') {
                                     EventBus.$emit('tracker:bhi:switch', data.mode)
                                     self.info.isCcm = data.hasOwnProperty('isCcm') ? data.isCcm : self.info.isCcm
                                     self.info.isBehavioral = data.hasOwnProperty('isBehavioral') ? data.isBehavioral : self.info.isBehavioral
@@ -207,8 +201,7 @@
                             if (EventBus.isInFocus) {
                                 self.updateTime()
                                 self.callMode = false
-                            }
-                            else {
+                            } else {
                                 self.startCount = 0;
                             }
                             // console.log("socket connection opened", ev, self.startCount, EventBus.isInFocus)
@@ -253,11 +246,16 @@
 
                         return socket;
                     })()
-                }
-                catch (ex) {
+                } catch (ex) {
                     console.error(ex);
                 }
             }
+        },
+        created() {
+            registerHandler("logout_event", () => {
+                EventBus.$emit("tracker:stop", true, true);
+                return Promise.resolve({});
+            });
         },
         mounted() {
 
@@ -274,8 +272,7 @@
 
             if (this.info.disabled || !this.info.wsUrl) {
                 this.visible = false;
-            }
-            else {
+            } else {
 
                 EventBus.isInFocus = !document.hidden;
                 console.log('document is ', EventBus.isInFocus ? 'focused' : 'not focused');
@@ -311,8 +308,7 @@
                     }
                 })
 
-                EventBus.$on('tracker:stop', () => {
-
+                EventBus.$on('tracker:stop', (isLoggingOut, isFromLogoutEvent) => {
                     EventBus.$emit("inactivity:stop");
 
                     if (this.state !== STATE.SHOW_INACTIVE_MODAL) {
@@ -325,7 +321,16 @@
 
                         // this.showLoader = true
                     }
-                })
+
+                    if (isLoggingOut) {
+                        //if we reached here from a logout_event, no need to broadcast again
+                        isFromLogoutEvent = !!isFromLogoutEvent;
+                        if (!isFromLogoutEvent) {
+                            sendRequest("logout_event", {}, 1000);
+                        }
+                        location.href = rootUrl('auth/logout');
+                    }
+                });
 
                 EventBus.$on('tracker:hide-inactive-modal', () => {
                     /** does the same as tracker:start without the conditional */
@@ -390,8 +395,7 @@
                     if (this.info.isBehavioral && this.info.isCcm) {
                         shouldUpdateNetwork = (this.info.isManualBehavioral !== mode)
                         this.info.isManualBehavioral = mode
-                    }
-                    else {
+                    } else {
                         shouldUpdateNetwork = (this.info.isManualBehavioral !== mode)
                         this.info.isManualBehavioral = (this.info.isBehavioral && !this.info.isCcm) || false
                     }
