@@ -43,14 +43,13 @@ trait NursePerformanceCalculations
     {
         return collect($patientsForMonth)
             ->where('patient_time', '>=', 20)
-            ->where('successful_calls', '>=', 1);
+            ->where('successful_calls', '>=', OpsDashboardService::MIN_CALL);
     }
 
     public function estHoursToCompleteCaseLoadMonth(User $nurse, Carbon $date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse, $successfulCalls)
     {
         $avgCompletionPerPatient = $this->getAvgCompletionTime($nurse, $date, $totalMonthlyCompletedPatientsOfNurse);
         $incompletePatientsCount = $this->getIncompletePatientsCount($patientsForMonth);
-
         return round(($avgCompletionPerPatient * $incompletePatientsCount) / 60, 1);
         //        This is the old calculation
 //        return round($patients->where('patient_time', '<', 20)->sum('patient_time_left') / 60, 1);
@@ -58,6 +57,9 @@ trait NursePerformanceCalculations
 
 
     /**
+     * @param User $nurse
+     * @param Carbon $date
+     * @param int $totalMonthlyCompletedPatientsOfNurse
      * @return float|int
      */
     public function getAvgCompletionTime(User $nurse, Carbon $date, int $totalMonthlyCompletedPatientsOfNurse)
@@ -87,9 +89,10 @@ trait NursePerformanceCalculations
         return $caseLoad
             ->filter(function ($q) {
                 return $q->patient_time <= 20
-                    || $q->successful_calls < 1;
+                    || $q->successful_calls < OpsDashboardService::MIN_CALL;
             })
             ->count();
+
         //        $incompletePatients = round((float)($caseLoad->count() - $totalMonthlyCompletedPatientsOfNurse));
         //        $incompletePatients3 = $caseLoad->count() * (100 - $caseLoadComplete) / 100;
     }

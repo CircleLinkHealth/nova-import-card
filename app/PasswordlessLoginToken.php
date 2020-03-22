@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon|null          $created_at
  * @property \Illuminate\Support\Carbon|null          $updated_at
  * @property \CircleLinkHealth\Customer\Entities\User $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PasswordlessLoginToken newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PasswordlessLoginToken newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PasswordlessLoginToken query()
