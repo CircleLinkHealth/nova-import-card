@@ -32,19 +32,16 @@ class EditEnrolleeData extends FormRequest
     {
         return [
             'id'         => 'required',
-            'first_name' => 'required|alpha_num',
-            'last_name'  => 'required|alpha_num',
-            'lang'       => [
-                'required',
-                Rule::in(['EN', 'ES']),
-            ],
+            'first_name' => 'required',
+            'last_name'  => 'required',
+            'lang'       => 'required',
             'status'              => 'required',
             'phones'              => ['required', new EligibilityPhones()],
             'address'             => 'required',
             'address_2'           => 'nullable',
             'state'               => 'required',
             'city'                => 'required',
-            'zip'                 => 'required|digits:5',
+            'zip'                 => 'required',
             'primary_insurance'   => 'required',
             'secondary_insurance' => 'nullable',
             'tertiary_insurance'  => 'nullable',
