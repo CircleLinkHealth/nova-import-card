@@ -8,6 +8,7 @@ namespace App\CLH\Repositories;
 
 use App\CareAmbassador;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -48,7 +49,7 @@ class UserRepository
         }
 
         $program_name  = $program->display_name;
-        $email_subject = '['.$program_name.'] New User Registration!';
+        $email_subject = '[' . $program_name . '] New User Registration!';
         $data          = [
             'patient_name'  => $user->getFullName(),
             'patient_id'    => $user->id,
@@ -226,11 +227,11 @@ class UserRepository
         }
 
         $writerFolder = $ehr->where('type', '=', 'dir')
-            ->where('filename', '=', "report-writer-{$user->id}")
-            ->first();
+                            ->where('filename', '=', "report-writer-{$user->id}")
+                            ->first();
 
         if ( ! $writerFolder) {
-            $cloudDisk->makeDirectory($ehrPath."/report-writer-{$user->id}");
+            $cloudDisk->makeDirectory($ehrPath . "/report-writer-{$user->id}");
 
             return $this->saveEhrReportWriterFolder($user);
         }
@@ -249,7 +250,9 @@ class UserRepository
         $permission = new \Google_Service_Drive_Permission();
         $permission->setRole('writer');
         $permission->setType('user');
-        $permission->setEmailAddress('haziq@circlelinkhealth.com');
+
+        $permission->setEmailAddress(AppConfig::pull('ehr_report_writer_folder_director',
+            'ethan@circlelinkhealth.com'));
 
         $service->permissions->create(
             $writerFolder['basename'],
@@ -291,7 +294,7 @@ class UserRepository
         CareAmbassador::updateOrCreate(
             ['user_id' => $user->id],
             [
-                'hourly_rate' => $params->get('hourly_rate')
+                'hourly_rate'    => $params->get('hourly_rate')
                     ?: null,
                 'speaks_spanish' => 'on' == $params->get('speaks_spanish')
                     ? 1
@@ -370,7 +373,7 @@ class UserRepository
             for ($i = 0; $i < count($contactDays); ++$i) {
                 $contactDaysDelmited .= (count($contactDays) == $i + 1)
                     ? $contactDays[$i]
-                    : $contactDays[$i].', ';
+                    : $contactDays[$i] . ', ';
             }
             $params->add(['preferred_cc_contact_days' => $contactDaysDelmited]);
         }
@@ -512,9 +515,9 @@ class UserRepository
         }
 
         DB::table('practice_role_user')
-            ->where('user_id', $user->id)
-            ->whereNotIn('program_id', $practices)
-            ->delete();
+          ->where('user_id', $user->id)
+          ->whereNotIn('program_id', $practices)
+          ->delete();
 
         $this->clearRolesCache($user);
 
