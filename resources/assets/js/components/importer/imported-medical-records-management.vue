@@ -65,8 +65,8 @@
             <template v-if="isAdmin" slot="Care Coach" slot-scope="props">
                 <v-select
                         v-model="props.row.careCoach"
-                        @input="props.row.changeLocation((props.row.provider || {}).id)"
-                        :options="props.row.providers"
+                        @input="props.row.changeNurse((props.row['Care Coach'] || {}).id)"
+                        :options="props.row.nurses"
                         :disabled="! props.row.Practice"
                         class="form-control">
                 </v-select>
@@ -225,8 +225,8 @@
                         Location: location,
                         location_id: location.value,
                         'Billing Provider': billingProvider,
-                        'Care Coach': careCoach,
                         billing_provider_id: billingProvider.value,
+                        'Care Coach': careCoach,
                         nurse_user_id: careCoach.value,
                         nurse_user: record.nurse_user,
                         '2+ CCM Cond': (record.validation_checks || {}).has_at_least_2_ccm_conditions,
@@ -343,7 +343,7 @@
                     const record = this.tableData.find(row => row.id === recordId);
                     if (record) {
                         const nurse = record.nurse_user.find(p => p.id === selectedNurse.value);
-                        if (provider) {
+                        if (nurse) {
                             record['Care Coach'] = selectedNurse;
                             record.nurse_user_id = nurse.id
                         }
@@ -532,6 +532,7 @@
         },
         mounted() {
             this.getPractices()
+            this.getNurses(true)
             this.getRecords()
 
             EventBus.$on('vdropzone:success', () => {
