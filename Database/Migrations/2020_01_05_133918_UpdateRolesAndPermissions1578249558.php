@@ -1,26 +1,16 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class UpdateRolesAndPermissions1578249558 extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        if (!isUnitTestingEnv()) {
-            Artisan::call('db:seed', [
-                '--class' => \CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder::class,
-            ]);
-        }
-    }
-
     /**
      * Reverse the migrations.
      *
@@ -28,8 +18,19 @@ class UpdateRolesAndPermissions1578249558 extends Migration
      */
     public function down()
     {
-        //
+    }
+
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        if ( ! isUnitTestingEnv()) {
+            Artisan::call('db:seed', [
+                '--class' => \CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder::class,
+            ]);
+        }
     }
 }
-
-

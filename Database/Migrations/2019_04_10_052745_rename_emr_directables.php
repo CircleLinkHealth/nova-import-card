@@ -22,10 +22,10 @@ class RenameEmrDirectables extends Migration
                     \DB::table('emr_direct_addresses')
                         ->where('emrDirectable_type', $type)
                         ->update(
-                           [
-                               'emrDirectable_type' => str_replace('CircleLinkHealth\Customer\Entities', 'App', $type),
-                           ]
-                       );
+                            [
+                                'emrDirectable_type' => str_replace('CircleLinkHealth\Customer\Entities', 'App', $type),
+                            ]
+                        );
                 }
             );
     }
@@ -44,10 +44,10 @@ class RenameEmrDirectables extends Migration
                     \DB::table('emr_direct_addresses')
                         ->where('emrDirectable_type', $type)
                         ->update(
-                           [
-                               'emrDirectable_type' => str_replace('App', 'CircleLinkHealth\Customer\Entities', $type),
-                           ]
-                       );
+                            [
+                                'emrDirectable_type' => str_replace('App', 'CircleLinkHealth\Customer\Entities', $type),
+                            ]
+                        );
                 }
             );
     }

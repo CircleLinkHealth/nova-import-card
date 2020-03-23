@@ -19,8 +19,8 @@ class AddsDirectionAndStatusToDirectMail extends Migration
     public function down()
     {
         $tblName = (new DirectMailMessage())->getTable();
-    
-        Schema::table($tblName, function (Blueprint $table){
+
+        Schema::table($tblName, function (Blueprint $table) {
             $table->dropColumn('direction');
             $table->dropColumn('error_text');
             $table->dropColumn('status');
@@ -42,7 +42,7 @@ class AddsDirectionAndStatusToDirectMail extends Migration
                 $table->enum('status', [DirectMailMessage::STATUS_SUCCESS, DirectMailMessage::STATUS_FAIL])->after('id');
                 $table->enum('direction', [DirectMailMessage::DIRECTION_SENT, DirectMailMessage::DIRECTION_RECEIVED])->after('id');
             });
-            
+
             DB::table($tblName)->update(['direction' => 'received', 'status' => 'success']);
         }
     }

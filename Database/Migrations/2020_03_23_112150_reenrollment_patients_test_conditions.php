@@ -8,7 +8,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class MakeCallIdNullableInCallProblemsTable extends Migration
+class ReenrollmentPatientsTestConditions extends Migration
 {
     /**
      * Reverse the migrations.
@@ -17,9 +17,6 @@ class MakeCallIdNullableInCallProblemsTable extends Migration
      */
     public function down()
     {
-        Schema::table('call_problems', function (Blueprint $table) {
-            $table->unsignedInteger('call_id')->change();
-        });
     }
 
     /**
@@ -29,8 +26,7 @@ class MakeCallIdNullableInCallProblemsTable extends Migration
      */
     public function up()
     {
-        Schema::table('call_problems', function (Blueprint $table) {
-            $table->unsignedInteger('call_id')->nullable()->change();
-        });
+        $seeder = new PrepareDataForReEnrollmentTestSeeder();
+        $seeder->run();
     }
 }

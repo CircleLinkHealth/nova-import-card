@@ -22,10 +22,10 @@ class RenameNotificationsNotifiable extends Migration
                     \DB::table('notifications')
                         ->where('notifiable_type', $type)
                         ->update(
-                           [
-                               'notifiable_type' => str_replace('CircleLinkHealth\Customer\Entities', 'App', $type),
-                           ]
-                       );
+                            [
+                                'notifiable_type' => str_replace('CircleLinkHealth\Customer\Entities', 'App', $type),
+                            ]
+                        );
                 }
             );
     }
@@ -44,10 +44,10 @@ class RenameNotificationsNotifiable extends Migration
                     \DB::table('notifications')
                         ->where('notifiable_type', $type)
                         ->update(
-                           [
-                               'notifiable_type' => str_replace('App', 'CircleLinkHealth\Customer\Entities', $type),
-                           ]
-                       );
+                            [
+                                'notifiable_type' => str_replace('App', 'CircleLinkHealth\Customer\Entities', $type),
+                            ]
+                        );
                 }
             );
     }

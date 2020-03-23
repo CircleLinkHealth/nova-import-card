@@ -19,9 +19,9 @@ class AwvVitalsQuestion5AllowHtml extends Migration
 
         DB::table($table)
             ->where(
-              'body',
-              'Based off of the <a href="http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf">Mini-Cog(c) assessment</a>, how did your patient score?'
-          )
+                'body',
+                'Based off of the <a href="http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf">Mini-Cog(c) assessment</a>, how did your patient score?'
+            )
             ->update(['body' => 'Based off of the Mini-Cog(c) assessment, how did your patient score? http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf']);
     }
 
@@ -36,9 +36,9 @@ class AwvVitalsQuestion5AllowHtml extends Migration
 
         DB::table($table)
             ->where(
-              'body',
-              'Based off of the Mini-Cog(c) assessment, how did your patient score? http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf'
-          )
+                'body',
+                'Based off of the Mini-Cog(c) assessment, how did your patient score? http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf'
+            )
             ->update(['body' => 'Based off of the <a target="_blank" href="http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf">Mini-Cog(c) assessment</a>, how did your patient score?']);
     }
 }
