@@ -167,7 +167,7 @@ $factory->define(Invite::class, function (Faker\Generator $faker) {
 $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factory) {
     if (isProductionEnv()) {
         $practice = Practice::whereName('demo')->firstOrFail();
-        $provider = \CircleLinkHealth\Customer\Entities\User::ofType('provider')->scopeOfPractice($practice->id)->firstOrFail();
+        $provider = \CircleLinkHealth\Customer\Entities\User::ofType('provider')->ofPractice($practice->id)->firstOrFail();
     } else {
         $practice = Practice::first();
 
