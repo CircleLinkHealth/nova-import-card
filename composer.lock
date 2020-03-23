@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3485737fba37fb683e2df84ecee0bb86",
+    "content-hash": "45e79a61a815ab64d19fe8add95af978",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1350,11 +1350,11 @@
         },
         {
             "name": "circlelinkhealth/twofa-module",
-            "version": "v1.1.6",
+            "version": "dev-CPM-2167_two_fa_per_practice",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "5a89a1464360e225f8976c125012892b632976e6"
+                "reference": "82177f971e83ecb8767f1c8a7d28fa8c3c081c62"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -1381,7 +1381,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T05:27:54+00:00"
+            "time": "2020-03-23T09:22:56+00:00"
         },
         {
             "name": "clue/stream-filter",
@@ -14970,6 +14970,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/twofa-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
