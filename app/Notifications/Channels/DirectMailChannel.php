@@ -7,11 +7,11 @@
 namespace App\Notifications\Channels;
 
 use App\Contracts\DirectMail;
-use CircleLinkHealth\Core\Exceptions\InvalidTypeException;
 use App\Contracts\DirectMailableNotification;
 use App\DirectMailMessage;
 use App\Services\PhiMail\SendResult;
 use App\ValueObjects\SimpleNotification;
+use CircleLinkHealth\Core\Exceptions\InvalidTypeException;
 
 class DirectMailChannel
 {

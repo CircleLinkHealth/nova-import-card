@@ -14,7 +14,7 @@ class PatientCareplanRelations
             'appointments' => function ($q) {
                 $q->orderBy('id', 'desc')->with('provider')->paginate();
             },
-            'carePlan' => function($q) {
+            'carePlan' => function ($q) {
                 return $q->withNurseApprovedVia();
             },
             'carePlanAssessment' => function ($q) {

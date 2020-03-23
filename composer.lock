@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8dccfaf304e8448a2313e08f611cc8fd",
+    "content-hash": "45e79a61a815ab64d19fe8add95af978",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.133.39",
+            "version": "3.133.41",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "0e3b9e497bd39063cb504115c726d369d8f4d455"
+                "reference": "9b4a110de75631339329a4ca45ebbaf7ddd1f7f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0e3b9e497bd39063cb504115c726d369d8f4d455",
-                "reference": "0e3b9e497bd39063cb504115c726d369d8f4d455",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9b4a110de75631339329a4ca45ebbaf7ddd1f7f9",
+                "reference": "9b4a110de75631339329a4ca45ebbaf7ddd1f7f9",
                 "shasum": ""
             },
             "require": {
@@ -496,7 +496,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-03-18T18:13:04+00:00"
+            "time": "2020-03-20T18:10:54+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -878,7 +878,8 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
-                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8"
+                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8",
+                "shasum": null
             },
             "require": {
                 "php": ">=7.1.0"
@@ -944,11 +945,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.4.7",
+            "version": "v1.4.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "e34cef592b7fdea7829384c5a822b24c0a6beed2"
+                "reference": "bbaa4c7a2d170b054b20d86cff61d8afe9cc5340"
             },
             "type": "laravel-module",
             "extra": {
@@ -970,15 +971,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-17T07:14:47+00:00"
+            "time": "2020-03-21T04:36:00+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.0.0",
+            "version": "v2.0.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "4350657627eb88dd120f6983538e85a0f22e449b"
+                "reference": "61e774bfe6ca0b73394aad25cdb71fc761b18cbb"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1012,15 +1013,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-18T06:46:11+00:00"
+            "time": "2020-03-21T04:39:09+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v1.9.5",
+            "version": "v1.9.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "22d5ee854a2c538b7d0f322e75605755f9374bc9"
+                "reference": "483d5c76c74beaa13a3dda6fd05f36ed2292a5c5"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1045,7 +1046,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-18T14:28:07+00:00"
+            "time": "2020-03-21T18:39:20+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1053,7 +1054,8 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
-                "reference": "8b21629514943da628f3f5acb602c7610c2d9167"
+                "reference": "8b21629514943da628f3f5acb602c7610c2d9167",
+                "shasum": null
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1086,7 +1088,8 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "376c054cfcdb0c0bdd432a8fcac7db79ba6747e5"
+                "reference": "376c054cfcdb0c0bdd432a8fcac7db79ba6747e5",
+                "shasum": null
             },
             "require": {
                 "php": ">=7.1.0",
@@ -1116,11 +1119,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.3.4",
+            "version": "v1.3.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "b998c4e8bd4d58eb27b2b2a5c52ff953ed1a7b2f"
+                "reference": "e2b4cb042b0442e1e5c369f5de19723d8427d817"
             },
             "type": "laravel-module",
             "extra": {
@@ -1143,15 +1146,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-18T08:11:22+00:00"
+            "time": "2020-03-19T07:29:01+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "v1.1",
+            "version": "v1.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "de0d742f7031349890b29020ad6b65720ebf4820"
+                "reference": "8bfbfedf7accde9c897d3b7bb2735821b82010f1"
             },
             "type": "laravel-module",
             "extra": {
@@ -1173,7 +1176,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-04T15:35:11+00:00"
+            "time": "2020-03-20T08:14:34+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -1347,11 +1350,11 @@
         },
         {
             "name": "circlelinkhealth/twofa-module",
-            "version": "v1.1.6",
+            "version": "dev-CPM-2167_two_fa_per_practice",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "5a89a1464360e225f8976c125012892b632976e6"
+                "reference": "82177f971e83ecb8767f1c8a7d28fa8c3c081c62"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -1378,7 +1381,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T05:27:54+00:00"
+            "time": "2020-03-23T09:22:56+00:00"
         },
         {
             "name": "clue/stream-filter",
@@ -6339,16 +6342,16 @@
         },
         {
             "name": "paragonie/sodium_compat",
-            "version": "v1.12.2",
+            "version": "v1.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/sodium_compat.git",
-                "reference": "3b953109fdfc821c1979bc829c8b7421721fef82"
+                "reference": "bbade402cbe84c69b718120911506a3aa2bae653"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/sodium_compat/zipball/3b953109fdfc821c1979bc829c8b7421721fef82",
-                "reference": "3b953109fdfc821c1979bc829c8b7421721fef82",
+                "url": "https://api.github.com/repos/paragonie/sodium_compat/zipball/bbade402cbe84c69b718120911506a3aa2bae653",
+                "reference": "bbade402cbe84c69b718120911506a3aa2bae653",
                 "shasum": ""
             },
             "require": {
@@ -6417,7 +6420,7 @@
                 "secret-key cryptography",
                 "side-channel resistant"
             ],
-            "time": "2019-12-30T03:11:08+00:00"
+            "time": "2020-03-20T21:48:09+00:00"
         },
         {
             "name": "phaxio/phaxio",
@@ -14967,6 +14970,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/twofa-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,

@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 1/10/20
- * Time: 7:10 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\AppConfig;
@@ -13,38 +11,40 @@ use CircleLinkHealth\Core\Entities\AppConfig;
 class DMDomainForAutoApproval
 {
     const FLAG_NAME = 'enable_dm_auto_approval_for_dm_with_domain';
-    
+
     public static function domains()
     {
         return (new static())->getAndCacheDomains();
     }
-    
-    public static function isEnabledForPractice($practiceId): bool {
-        foreach ((new static())->getAndCacheDomains() as $str) {
-            if (starts_with($str, "$practiceId@")) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-    public static function isEnabledForDomain($domain): bool {
+
+    public static function isEnabledForDomain($domain): bool
+    {
         foreach ((new static())->getAndCacheDomains() as $str) {
             if (str_contains($domain, str_after($str, '@'))) {
                 return true;
             }
         }
-    
+
         return false;
     }
-    
+
+    public static function isEnabledForPractice($practiceId): bool
+    {
+        foreach ((new static())->getAndCacheDomains() as $str) {
+            if (starts_with($str, "$practiceId@")) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private function getAndCacheDomains()
     {
         return \Cache::remember(self::FLAG_NAME, 2, function () {
             return AppConfig::where('config_key', '=', self::FLAG_NAME)
-                            ->get()
-                            ->map(
+                ->get()
+                ->map(
                                 function ($config) {
                                     return $config->config_value;
                                 }

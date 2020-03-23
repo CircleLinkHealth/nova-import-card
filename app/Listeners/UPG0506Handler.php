@@ -1,14 +1,19 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Listeners;
 
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 
 class UPG0506Handler implements ShouldQueue
 {
     use InteractsWithQueue;
+
     /**
      * Create the event listener.
      *
@@ -16,20 +21,21 @@ class UPG0506Handler implements ShouldQueue
      */
     public function __construct()
     {
-        //
     }
 
     /**
      * Handle the event.
      *
-     * @param  object  $event
+     * @param object $event
+     *
      * @return void
      */
     public function handle($event)
     {
-        if (!$event->patient->hasCcda()) return;
-        
-        if (! $event->patient->latestCcda()->hasUPG0506PdfCareplanMedia()->exists()) {
+        if ( ! $event->patient->hasCcda()) {
+            return;
+        }
+        if ( ! $event->patient->latestCcda()->hasUPG0506PdfCareplanMedia()->exists()) {
             return;
         }
         $event->patient->carePlan->status               = CarePlan::PROVIDER_APPROVED;

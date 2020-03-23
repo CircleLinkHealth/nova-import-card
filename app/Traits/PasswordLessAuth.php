@@ -40,18 +40,27 @@ trait PasswordLessAuth
     /**
      * Attempt to log the user into the application.
      *
-     * @param string $token
+     * @param string  $token
+     * @param Request $request
      *
-     * @return bool
+     * @throws \Exception
      */
-    protected function attemptPasswordlessLogin($token, Request $request)
+    protected function attemptPasswordlessLogin($token): bool
     {
-        $token = PasswordlessLoginToken::with('user')->whereToken($token)->first();
+        $token = PasswordlessLoginToken::with('user')->has('user')->whereToken($token)->first();
+
+        if ( ! $token) {
+            return false;
+        }
+
         if ($token->user instanceof User) {
             $token->delete();
-            return $this->guard()->login($token->user);
+
+            $this->guard()->login($token->user);
+
+            return true;
         }
-        
+
         return false;
     }
 }

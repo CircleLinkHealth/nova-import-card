@@ -44,7 +44,7 @@ class QueueSendAuditReports extends Command
         $date = $this->hasArgument('month') ? Carbon::createFromFormat('Y-m-d', $this->argument('month'))->firstOfMonth() : Carbon::now()->subMonth()->firstOfMonth();
 
         $this->warn("Creating report for {$date->toDateString()}");
-        
+
         User::ofType('participant')
             ->with('patientInfo')
             ->with('patientSummaries')
@@ -73,7 +73,7 @@ class QueueSendAuditReports extends Command
                     ++$delay;
                 }
             });
-        
+
         $this->line('Command Finished');
     }
 }

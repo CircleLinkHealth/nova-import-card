@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Listeners;
 
 use App\Events\CarePlanWasQAApproved;
@@ -10,11 +14,12 @@ use Illuminate\Queue\InteractsWithQueue;
 class AddPatientConsentNote implements ShouldQueue
 {
     use InteractsWithQueue;
-    
+
     /**
      * Handle the event.
      *
-     * @param  object  $event
+     * @param object $event
+     *
      * @return void
      */
     public function handle(CarePlanWasQAApproved $event)
@@ -22,7 +27,7 @@ class AddPatientConsentNote implements ShouldQueue
         if ($event->patient->notes->isNotEmpty()) {
             return;
         }
-    
+
         (new PatientObserver())->sendPatientConsentedNote($event->patient->patientInfo);
     }
 }

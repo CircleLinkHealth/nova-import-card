@@ -13,7 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 class CreateAndHandlePdfReport implements ShouldQueue
 {
     use InteractsWithQueue;
-    
+
     /**
      * Create the event listener.
      */
@@ -23,8 +23,6 @@ class CreateAndHandlePdfReport implements ShouldQueue
 
     /**
      * Handle the event.
-     *
-     * @param PdfableCreated $event
      */
     public function handle(PdfableCreated $event)
     {

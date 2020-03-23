@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Listeners;
 
 use App\AppConfig\DMDomainForAutoApproval;
@@ -8,13 +12,13 @@ use App\Notifications\SendCarePlanForDirectMailApprovalNotification;
 use App\Services\CarePlanApprovalRequestsReceivers;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 
 class SendCarePlanForDMProviderApproval implements ShouldQueue
 {
     use InteractsWithQueue;
-    
+
     /**
      * Create the event listener.
      *
@@ -22,9 +26,8 @@ class SendCarePlanForDMProviderApproval implements ShouldQueue
      */
     public function __construct()
     {
-        //
     }
-    
+
     /**
      * Handle the event.
      *
@@ -37,9 +40,9 @@ class SendCarePlanForDMProviderApproval implements ShouldQueue
         if ($this->shouldBail($event)) {
             return;
         }
-        
+
         $notification = new SendCarePlanForDirectMailApprovalNotification($event->patient);
-        
+
         if ($billingProvider = $event->patient->billingProviderUser()) {
             CarePlanApprovalRequestsReceivers::forProvider($billingProvider)->each(
                 function (User $provider) use ($notification) {
@@ -48,17 +51,17 @@ class SendCarePlanForDMProviderApproval implements ShouldQueue
             );
         }
     }
-    
+
     private function shouldBail($event): bool
     {
         if (CarePlan::QA_APPROVED !== $event->patient->carePlan->status) {
             return true;
         }
-        
-        if (! DMDomainForAutoApproval::isEnabledForPractice($event->patient->program_id)) {
+
+        if ( ! DMDomainForAutoApproval::isEnabledForPractice($event->patient->program_id)) {
             return true;
         }
-        
+
         return false;
     }
 }

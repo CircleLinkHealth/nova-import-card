@@ -18,9 +18,7 @@ use Illuminate\Support\Facades\Log;
 class LogSuccessfulLogin implements ShouldQueue
 {
     use InteractsWithQueue;
-    /**
-     * @param Login $event
-     */
+
     public function handle(Login $event)
     {
         LogSuccessfulLoginToDB::dispatch($event)->onQueue('low');
