@@ -27,6 +27,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Rules\HasValidNbiMrn;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Log;
 use Validator;
 
@@ -84,6 +85,7 @@ use Validator;
  */
 class CarePlan extends BaseModel implements PdfReport
 {
+    use SoftDeletes;
     use PdfReportTrait;
     
     // status options
