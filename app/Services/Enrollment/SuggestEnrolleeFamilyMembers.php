@@ -51,6 +51,6 @@ class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
         $query = $this->constructQuery();
 
         return $this->formatForView($query->take(10)
-            ->get());
+            ->get()->unique('id'));
     }
 }

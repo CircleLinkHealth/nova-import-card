@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use App\CareAmbassadorLog;
 use App\EnrolleeCustomFilter;
 use App\EnrolleeView;
 use App\Filters\EnrolleeFilters;
@@ -15,6 +15,7 @@ use App\Http\Requests\EditEnrolleeData;
 use App\Http\Requests\UpdateMultipleEnrollees;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 
@@ -140,8 +141,16 @@ END ASC, attempt_count ASC");
 
     public function runCreateEnrolleesSeeder(Request $request)
     {
-        if ( ! isProductionEnv()) {
+        if ($request->input('erase')) {
+            $this->eraseTestEnrollees();
+            $message = 'All demo patients erased. CareAmbassador Logs related to these patients have been reset.';
+        } else {
             Artisan::call('db:seed', ['--class' => 'EnrolleesSeeder']);
+            $message = 'Created 10 Demo Patients. Please refresh the page.';
+        }
+
+        if ($request->input('redirect')) {
+            return redirect()->back()->withErrors(['messages' => [$message]]);
         }
 
         return 'Test Patients have been created. Please close this window.';
@@ -152,5 +161,53 @@ END ASC, attempt_count ASC");
         Enrollee::whereIn('id', $request->input('enrolleeIds'))->update(['care_ambassador_user_id' => null]);
 
         return response()->json([], 200);
+    }
+
+    /**
+     * Erase test enrollees (created by seeder - having is_demo set as true in eligibilityJob->data)
+     * And all potential related data that might be generated during the testing phase, including users created.
+     * Also, reset CareAmbassador Logs for CA's that have called these patients.
+     */
+    private function eraseTestEnrollees()
+    {
+        $enrollees = Enrollee::whereHas('eligibilityJob', function ($j) {
+            //only check for this. These are only seeder enrollees.
+            $j->where('data->is_demo', 'true');
+        })
+            ->get();
+
+        foreach ($enrollees as $enrollee) {
+            //erase eligibility job
+            $enrollee->eligibilityJob()->delete();
+
+            //erase ccda data
+            $imr = $enrollee->getImportedMedicalRecord();
+            if ($imr) {
+                $ccda = $imr->medicalRecord();
+                if ($ccda) {
+                    $ccda->forceDelete();
+                }
+                $imr->forceDelete();
+            }
+
+            //erase user and data
+            $user = $enrollee->user()->first();
+
+            if ($user) {
+                $user->patientSummaries()->delete();
+                $user->forceDelete();
+            }
+
+            $careAmbassador = $enrollee->careAmbassador()->first();
+
+            if ($careAmbassador) {
+                $date = $enrollee->updated_at->format('Y-m-d');
+                CareAmbassadorLog::where('enroller_id', $careAmbassador->careAmbassador->id)
+                    ->where('day', $date)
+                    ->delete();
+            }
+
+            $enrollee->delete();
+        }
     }
 }
