@@ -443,11 +443,9 @@
                     return;
                 }
 
-                this.actionsDisabled = true;
-
                 this.error = null;
-
                 const prevQuestionIndex = this.getPreviousQuestionIndex(this.currentQuestionIndex);
+                this.actionsDisabled = true;
                 this.scrollToQuestion(this.questions[prevQuestionIndex].id)
                     .then(() => {
                         this.currentQuestionIndex = prevQuestionIndex;
@@ -460,17 +458,15 @@
                     return;
                 }
 
-                this.actionsDisabled = true;
-
                 this.error = null;
-
                 const nextQuestionIndex = this.getNextQuestionIndex(this.currentQuestionIndex);
+                this.currentQuestionIndex = nextQuestionIndex;
+                this.actionsDisabled = true;
                 this.scrollToQuestion(this.questions[nextQuestionIndex].id)
                     .then(() => {
                         this.currentQuestionIndex = nextQuestionIndex;
                         this.actionsDisabled = false;
                     });
-
             },
 
             isSubQuestion(question) {
@@ -930,7 +926,13 @@
             },
 
             scrollToQuestion(questionId) {
-                return new Promise((resolve) => {
+                return new Promise(resolve => {
+                    setTimeout(() => this.setQuestionScrollVisibility(), 200);
+                    resolve();
+                });
+
+                //FIXME: animated scroll has issues on mobile devices
+                /*return new Promise((resolve) => {
                     const topButtonsOffset = $('.top-buttons').height() || 0;
                     const surveyContainer = $('.survey-container');
                     const currentQuestionOffset = $(`#${questionId}`).offset().top;
@@ -951,7 +953,7 @@
                                 resolve();
                             }
                         });
-                });
+                });*/
             },
 
             goToNextQuestion(incrementProgress) {
