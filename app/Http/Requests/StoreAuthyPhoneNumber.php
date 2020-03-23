@@ -37,7 +37,8 @@ class StoreAuthyPhoneNumber extends FormRequest
             'phone_number' => [
                 'required',
                 Rule::phone()->country(['US', 'CY', 'FR']),
-                Rule::unique((new AuthyUser())->getTable(), 'phone_number'),
+                //is this necessary?
+                //Rule::unique((new AuthyUser())->getTable(), 'phone_number'),
             ],
             'method' => [
                 'required',
