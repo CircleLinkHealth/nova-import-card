@@ -10,6 +10,7 @@ use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use Tests\Helpers\CustomerTestCaseHelper;
 
 class CustomerTestCase extends TestCase
 {
@@ -35,7 +36,12 @@ class CustomerTestCase extends TestCase
      * @var array|User
      */
     private $provider;
-
+    /**
+     * @var array|User
+     */
+    private $superadmin;
+    private $medicalAssistant;
+    
     /**
      * @return array|User
      */
@@ -46,6 +52,18 @@ class CustomerTestCase extends TestCase
         }
 
         return $this->careCoach;
+    }
+    
+    /**
+     * @return array|User
+     */
+    protected function superadmin(int $number = 1)
+    {
+        if ( ! $this->superadmin) {
+            $this->superadmin = $this->createUsersOfType('administrator', $number);
+        }
+        
+        return $this->superadmin;
     }
 
     /**
@@ -98,6 +116,15 @@ class CustomerTestCase extends TestCase
         }
 
         return $this->provider;
+    }
+    
+    protected function medicalAssistant(int $number = 1)
+    {
+        if ( ! $this->medicalAssistant) {
+            $this->medicalAssistant = $this->createUsersOfType('med_assistant', $number);
+        }
+        
+        return $this->medicalAssistant;
     }
 
     /**

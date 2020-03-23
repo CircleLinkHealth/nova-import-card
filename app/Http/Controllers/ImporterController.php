@@ -38,70 +38,129 @@ class ImporterController extends Controller
         return ImportedMedicalRecord::whereNull('patient_id')
             ->with('demographics')
             ->with('practice')
-            ->with('location')
-            ->with('billingProvider')
+            ->with(['location' => function ($q) {
+                                        $q->select([
+                                            'id',
+                                            'practice_id',
+                                            'is_primary',
+                                            'name',
+                                        ]);
+                                    }])
+            ->with([
+                'billingProvider' => function ($q) {
+                                        $q->select([
+                                            'id',
+                                            'saas_account_id',
+                                            'program_id',
+                                            'display_name',
+                                            'first_name',
+                                            'last_name',
+                                            'suffix',
+                                        ]);
+                                    },
+                'nurseUser' => function ($q) {
+                    $q->select([
+                                   'id',
+                                   'saas_account_id',
+                                   'program_id',
+                                   'display_name',
+                                   'first_name',
+                                   'last_name',
+                                   'suffix',
+                               ]);
+                }])
+            ->when(
+                                        ! auth()->user()->isAdmin(),
+                                        function ($q) {
+                                            $q->whereHas(
+                                                'practice',
+                                                function ($q) {
+                                                    $q->whereIn('id', auth()->user()->viewableProgramIds());
+                                                }
+                                            );
+                                        }
+                                    )
             ->get()
             //where not in UPG + G0506
             //where media. where id = upg, custom_properties->mrn = imr.mrn, finished_processing()
-            ->transform(function (ImportedMedicalRecord $summary) {
-                $mr = $summary->medicalRecord();
+            ->transform(
+                                        function (ImportedMedicalRecord $summary) {
+                                            $mr = $summary->medicalRecord();
 
-                if ( ! $mr) {
-                    return false;
-                }
+                                            if ( ! $mr) {
+                                                return false;
+                                            }
 
-                if (upg0506IsEnabled()) {
-                    $isUpg0506Incomplete = false;
+                                            if (upg0506IsEnabled()) {
+                                                $isUpg0506Incomplete = false;
 
-                    if ($mr instanceof Ccda) {
-                        $isUpg0506Incomplete = Ccda::whereHas('media', function ($q) {
-                            $q->where('custom_properties->is_upg0506_complete', '!=', 'true');
-                        })->whereHas('directMessage', function ($q) {
-                            $q->where('from', 'like', '%@upg.ssdirect.aprima.com');
-                        })->where('id', $mr->id)->exists();
-                    }
+                                                if ($mr instanceof Ccda) {
+                                                    $isUpg0506Incomplete = Ccda::whereHas(
+                                'media',
+                                function ($q) {
+                                    $q->where('custom_properties->is_upg0506_complete', '!=', 'true');
+                                }
+                            )->whereHas(
+                                'directMessage',
+                                function ($q) {
+                                    $q->where('from', 'like', '%@upg.ssdirect.aprima.com');
+                                }
+                            )->where('id', $mr->id)->exists();
+                                                }
 
-                    if ($isUpg0506Incomplete) {
-                        return false;
-                    }
-                }
+                                                if ($isUpg0506Incomplete) {
+                                                    return false;
+                                                }
+                                            }
 
-                if ( ! $summary->billing_provider_id) {
-                    $mr = $mr->guessPracticeLocationProvider();
+                                            if ( ! $summary->billing_provider_id) {
+                                                $mr = $mr->guessPracticeLocationProvider();
 
-                    $summary->billing_provider_id = $mr->getBillingProviderId();
+                                                $summary->billing_provider_id = $mr->getBillingProviderId();
 
-                    if ( ! $summary->location_id) {
-                        $summary->location_id = $mr->getLocationId();
-                    }
+                                                if ($summary->isDirty('billing_provider_id')) {
+                                                    $summary->load('billingProvider');
+                                                }
 
-                    if ( ! $summary->practice_id) {
-                        $summary->practice_id = $mr->getPracticeId();
-                    }
+                                                if ( ! $summary->location_id) {
+                                                    $summary->location_id = $mr->getLocationId();
+                                                    $summary->load('location');
+                                                }
 
-                    if ($summary->isDirty()) {
-                        $summary->save();
-                    }
-                }
+                                                if ( ! $summary->practice_id) {
+                                                    $summary->practice_id = $mr->getPracticeId();
+                                                    $summary->load('practice');
+                                                }
 
-                $providers = $mr->providers()->where([
-                    ['first_name', '!=', null],
-                    ['last_name', '!=', null],
-                    ['ml_ignore', '=', false],
-                ])->get()->unique(function ($m) {
-                    return $m->first_name.$m->last_name;
-                });
+                                                if ($summary->isDirty()) {
+                                                    $summary->save();
+                                                }
+                                            }
 
-                $summary['flag'] = false;
+                                            $providers = $mr->providers()->where(
+                        [
+                            ['first_name', '!=', null],
+                            ['last_name', '!=', null],
+                            ['ml_ignore', '=', false],
+                        ]
+                    )->get()->unique(
+                        function ($m) {
+                            return $m->first_name.$m->last_name;
+                        }
+                    );
 
-                if ($providers->count() > 1 || ! $mr->location_id || ! $mr->location_id || ! $mr->billing_provider_id) {
-                    $summary['flag'] = true;
-                }
+                                            $summary['flag'] = false;
 
-                $summary->checkDuplicity();
+                                            if ($providers->count(
+                        ) > 1 || ! $mr->location_id || ! $mr->location_id || ! $mr->billing_provider_id) {
+                                                $summary['flag'] = true;
+                                            }
 
-                return $summary;
-            })->filter()
+                                            $summary->checkDuplicity();
+
+                                            return $summary;
+                                        }
+                                    )->filter()
             ->values();
     }
 
@@ -114,19 +173,25 @@ class ImporterController extends Controller
         //example: http://cpm.clh.test/ccd-importer?source=importer_awv
         $source = $this->getSource($request);
 
+        $ccdas = [];
         foreach ($request->file('file') as $file) {
             \Log::channel('logdna')->warning("reading file $file");
 
             $xml = file_get_contents($file);
 
-            $ccda = Ccda::create([
-                'user_id' => auth()->user()->id,
-                'xml'     => $xml,
-                'source'  => $source ?? Ccda::IMPORTER,
-            ]);
+            $ccda = Ccda::create(
+                [
+                    'user_id' => auth()->user()->id,
+                    'xml'     => $xml,
+                    'source'  => $source ?? Ccda::IMPORTER,
+                ]
+            );
 
             ImportCcda::dispatch($ccda, true);
+            $ccdas[] = $ccda->id;
         }
+
+        return $ccdas;
     }
 
     /**
@@ -139,9 +204,11 @@ class ImporterController extends Controller
 
         $importedRecords = $this::getImportedRecords();
 
-        JavaScript::put([
-            'importedMedicalRecords' => $importedRecords,
-        ]);
+        JavaScript::put(
+            [
+                'importedMedicalRecords' => $importedRecords,
+            ]
+        );
 
         return view('CCDUploader.uploadedSummary');
     }
@@ -156,9 +223,9 @@ class ImporterController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function remix()
+    public function remix(Request $request)
     {
-        return view('CCDUploader.uploader-remix');
+        return view('CCDUploader.uploader-remix')->with('shouldUseNewVersion', $request->has('v3'));
     }
 
     /**
@@ -186,13 +253,13 @@ class ImporterController extends Controller
      */
     public function uploadRecords(Request $request)
     {
-        $this::handleCcdFilesUpload($request);
+        $ccdas = $this::handleCcdFilesUpload($request);
 
         if ( ! $request->has('json')) {
             return redirect()->route('import.ccd.remix');
         }
 
-        return response()->json([]);
+        return response()->json(['ccdas' => $ccdas]);
     }
 
     /**

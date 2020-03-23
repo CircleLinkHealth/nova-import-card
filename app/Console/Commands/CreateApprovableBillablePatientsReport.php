@@ -8,10 +8,10 @@ namespace App\Console\Commands;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
-use App\Jobs\ProcessLastMonthBillablePatients;
+use App\Jobs\ProcessBillablePatients;
 use Illuminate\Console\Command;
 
-class CreateLastMonthBillablePatientsReport extends Command
+class CreateApprovableBillablePatientsReport extends Command
 {
     /**
      * The console command description.
@@ -25,7 +25,7 @@ class CreateLastMonthBillablePatientsReport extends Command
      *
      * @var string
      */
-    protected $signature = 'summaries:attach-problems-to-last-month
+    protected $signature = 'generate:abp
                                 {date? : the month we are calculating for in YYYY-MM-DD}
                                 {practiceIds? : comma separated. leave empty to recalculate for all}
                                 {--reset-actor : delete actor id}
@@ -43,7 +43,7 @@ class CreateLastMonthBillablePatientsReport extends Command
         
         $datePassed = $this->argument('date');
         $month      = $datePassed
-            ? Carbon::parse($datePassed)->startOfMonth()
+            ? Carbon::createFromFormat('Y-m-d', $datePassed)->startOfMonth()
             : Carbon::now()->subMonth()->startOfMonth();
         
         Practice::active()
@@ -57,12 +57,12 @@ class CreateLastMonthBillablePatientsReport extends Command
                     1,
                     function ($practices) use ($month) {
                         foreach ($practices as $practice) {
-                            $this->comment("BEGIN CreateLastMonthBillablePatientsReport for $practice->display_name for {$month->toDateString()}");
+                            $this->comment("BEGIN CreateApprovableBillablePatientsReport for $practice->display_name for {$month->toDateString()}");
                     
-                            ProcessLastMonthBillablePatients::dispatch($practice->id, $month, (bool) $this->option('from-scratch'), (bool) $this->option('reset-actor'));
+                            ProcessBillablePatients::dispatch($practice->id, $month, (bool) $this->option('from-scratch'), (bool) $this->option('reset-actor'));
                     
                             $this->output->success(
-                                "END CreateLastMonthBillablePatientsReport for $practice->display_name for {$month->toDateString()}"
+                                "END CreateApprovableBillablePatientsReport for $practice->display_name for {$month->toDateString()}"
                             );
                         }
                     }

@@ -6,6 +6,9 @@
 
 namespace App\Observers;
 
+use App\Events\CarePlanWasProviderApproved;
+use App\Events\CarePlanWasQAApproved;
+use App\Events\PdfableCreated;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
@@ -28,30 +31,8 @@ class CarePlanObserver
         ]);
     }
 
-    public function saved(CarePlan $carePlan)
+    public function creating(CarePlan $carePlan)
     {
-        if ($carePlan->isDirty('first_printed')) {
-            $carePlan->load('patient');
-            $this->addCarePlanPrintedNote($carePlan);
-        }
-    }
-
-    /**
-     * Listen to the CarePlan saving event.
-     */
-    public function saving(CarePlan $carePlan)
-    {
-        if (CarePlan::QA_APPROVED == $carePlan->status) {
-            $carePlan->provider_approver_id = null;
-            /** @var SchedulerService $schedulerService */
-            $schedulerService = app()->make(SchedulerService::class);
-            $schedulerService->ensurePatientHasScheduledCall($carePlan->patient);
-        }
-
-        if ( ! array_key_exists('care_plan_template_id', $carePlan->getAttributes())) {
-            $carePlan->care_plan_template_id = getDefaultCarePlanTemplate()->id;
-        }
-
         if ($carePlan->patient->practice('upg')) {
             $cpmMisc = CpmMisc::whereName('Other')->first();
 
@@ -79,6 +60,43 @@ class CarePlanObserver
             $patientMisc = $carePlan->patient->cpmMiscs()->attach($cpmMisc->id, [
                 'cpm_instruction_id' => $instruction->id,
             ]);
+        }
+    }
+
+    public function saved(CarePlan $carePlan)
+    {
+        if ($carePlan->isDirty('first_printed')) {
+            $carePlan->load('patient');
+            $this->addCarePlanPrintedNote($carePlan);
+        }
+
+        if ($carePlan->isDirty('status')) {
+            if (CarePlan::QA_APPROVED == $carePlan->status) {
+                event(new CarePlanWasQAApproved($carePlan->patient));
+            }
+
+            if (CarePlan::PROVIDER_APPROVED == $carePlan->status) {
+                event(new CarePlanWasProviderApproved($carePlan->patient));
+                event(new PdfableCreated($carePlan));
+            }
+        }
+    }
+
+    /**
+     * Listen to the CarePlan saving event.
+     */
+    public function saving(CarePlan $carePlan)
+    {
+        if ($carePlan->isDirty('status') && CarePlan::QA_APPROVED == $carePlan->status) {
+            $carePlan->provider_approver_id = null;
+            $carePlan->provider_date        = null;
+            /** @var SchedulerService $schedulerService */
+            $schedulerService = app()->make(SchedulerService::class);
+            $schedulerService->ensurePatientHasScheduledCall($carePlan->patient);
+        }
+
+        if ( ! array_key_exists('care_plan_template_id', $carePlan->getAttributes())) {
+            $carePlan->care_plan_template_id = getDefaultCarePlanTemplate()->id;
         }
     }
 }

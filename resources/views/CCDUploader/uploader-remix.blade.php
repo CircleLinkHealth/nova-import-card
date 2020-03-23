@@ -4,7 +4,7 @@
 @section('activity', 'CCD Uploader')
 
 @section('content')
-    <div class="container" style="padding-top: 3%;">
+    <div class="container-fluid" style="padding-top: 3%;">
 
         <div style="display: none">
             <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"
@@ -15,13 +15,18 @@
         </div>
 
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6 col-md-offset-3">
                 <ccd-upload ref="ccdUpload"></ccd-upload>
             </div>
         </div>
+        <br>
         <div class="row">
             <div class="col-md-12">
-                <ccd-viewer ref="ccdViewer"></ccd-viewer>
+                @if ($shouldUseNewVersion)
+                    <imported-medical-records-management ref="importedMedicalRecordsManagement"></imported-medical-records-management>
+                @else
+                    <ccd-viewer ref="ccdViewer"></ccd-viewer>
+                @endif
             </div>
         </div>
     </div>

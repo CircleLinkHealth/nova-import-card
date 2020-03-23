@@ -14,8 +14,10 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class UPG0506CcdaImporterListener
+class UPG0506CcdaImporterListener implements ShouldQueue
 {
+    use InteractsWithQueue;
+
     const UPG_NAME = 'UPG';
 
     /**
@@ -36,8 +38,8 @@ class UPG0506CcdaImporterListener
      */
     public function handle(CcdaImported $event)
     {
-        $ccda = Ccda::findOrFail($event->ccdaId);
-        if ($this->shouldBail($ccda)) {
+        $ccda = Ccda::find($event->ccdaId);
+        if ( ! $ccda || $this->shouldBail($ccda)) {
             return;
         }
 
@@ -58,7 +60,7 @@ class UPG0506CcdaImporterListener
         );
     }
 
-    private function shouldBail(Ccda $ccda)
+    private function shouldBail(Ccda $ccda): bool
     {
         return ! (str_contains(
             optional(DirectMailMessage::find($ccda->direct_mail_message_id))->from,

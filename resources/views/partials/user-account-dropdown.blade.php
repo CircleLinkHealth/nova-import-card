@@ -57,7 +57,7 @@
                 </a>
             </li>
         @endif
-        <li><a href="{{ route('user.logout') }}">
+        <li><a href="{{ route('user.logout') }}" onclick="App.EventBus.$emit('tracker:stop', true)">
                 Logout
             </a>
         </li>

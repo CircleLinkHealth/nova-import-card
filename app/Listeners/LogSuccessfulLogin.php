@@ -10,14 +10,15 @@ use App\Jobs\LogSuccessfulLoginToDB;
 use App\LoginLogout;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Login;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Http\Request;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 
-class LogSuccessfulLogin
+class LogSuccessfulLogin implements ShouldQueue
 {
-    /**
-     * @param Login $event
-     */
+    use InteractsWithQueue;
+
     public function handle(Login $event)
     {
         LogSuccessfulLoginToDB::dispatch($event)->onQueue('low');

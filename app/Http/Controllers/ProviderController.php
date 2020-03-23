@@ -35,7 +35,7 @@ class ProviderController extends Controller
             }
         }
 
-        event(new CarePlanWasApproved(User::find($patientId)));
+        event(new CarePlanWasApproved(User::find($patientId), auth()->user()));
         $viewNext = (bool) $viewNext;
 
         if ($viewNext) {

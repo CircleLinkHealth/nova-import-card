@@ -24,7 +24,7 @@ class QueueSendAuditReports extends Command
      *
      * @var string
      */
-    protected $signature = 'send:audit-reports {practiceId?}';
+    protected $signature = 'send:audit-reports {practiceId?} {month?}';
 
     /**
      * Create a new command instance.
@@ -41,7 +41,9 @@ class QueueSendAuditReports extends Command
      */
     public function handle()
     {
-        $date = Carbon::now()->subMonth()->firstOfMonth();
+        $date = $this->hasArgument('month') ? Carbon::createFromFormat('Y-m-d', $this->argument('month'))->firstOfMonth() : Carbon::now()->subMonth()->firstOfMonth();
+
+        $this->warn("Creating report for {$date->toDateString()}");
 
         User::ofType('participant')
             ->with('patientInfo')
@@ -61,14 +63,17 @@ class QueueSendAuditReports extends Command
                 $query->where('total_time', '>', 0)
                     ->where('month_year', $date->toDateString());
             })
-            ->chunkById(20, function ($patients) use ($date) {
+            ->chunkById(100, function ($patients) use ($date) {
                 $delay = 2;
 
                 foreach ($patients as $patient) {
+                    $this->warn("Creating audit report for $patient->id");
                     MakeAndDispatchAuditReports::dispatch($patient, $date)
                         ->onQueue('high')->delay(now()->addSeconds($delay));
                     ++$delay;
                 }
             });
+
+        $this->line('Command Finished');
     }
 }

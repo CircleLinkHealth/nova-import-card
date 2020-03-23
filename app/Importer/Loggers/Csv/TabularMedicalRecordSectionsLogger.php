@@ -42,7 +42,6 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
         $this->practice      = $practice;
 
         $this->foreignKeys = [
-            'vendor_id'           => '1',
             'medical_record_type' => TabularMedicalRecord::class,
             'medical_record_id'   => $tmr->id,
         ];
@@ -71,7 +70,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
         }
 
         foreach ($allergiesToImport as $allergy) {
-            $allergy = AllergyLog::create(
+            $allergy = AllergyLog::updateOrCreate(
                 array_merge([
                     'allergen_name' => trim($allergy),
                 ], $this->foreignKeys)
@@ -101,13 +100,11 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logDemographicsSection(): MedicalRecordLogger
     {
-        $saved = DemographicsLog::create(
+        $saved = DemographicsLog::updateOrCreate(
             array_merge([
                 'first_name'    => $this->medicalRecord->first_name,
                 'last_name'     => $this->medicalRecord->last_name,
                 'dob'           => $this->medicalRecord->dob,
-                'provider_name' => $this->medicalRecord->provider_name,
-                'phone'         => $this->medicalRecord->phone,
                 'mrn_number'    => $this->medicalRecord->mrn,
                 'gender'        => $this->medicalRecord->gender,
                 'language'      => $this->medicalRecord->language ?? 'EN',
@@ -162,9 +159,8 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
         }
 
         foreach ($insurances as $insurance) {
-            $insurance = InsuranceLog::create(array_merge([
+            $insurance = InsuranceLog::updateOrCreate(array_merge([
                 'name'     => $insurance,
-                'approved' => false,
                 'import'   => true,
             ], $this->foreignKeys));
         }
@@ -195,7 +191,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
         }
 
         foreach ($medicationsToImport as $medication) {
-            $medication = MedicationLog::create(
+            $medication = MedicationLog::updateOrCreate(
                 array_merge($medication, $this->foreignKeys)
             );
         }
@@ -230,7 +226,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
                 $problem = $problem->toArray();
             }
 
-            $problemLog = ProblemLog::create(
+            $problemLog = ProblemLog::updateOrCreate(
                 array_merge([
                     'name'   => $problem['name'],
                     'start'  => $problem['start'],
@@ -240,7 +236,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
             );
 
             try {
-                $problemCodeLog = ProblemCodeLog::create([
+                $problemCodeLog = ProblemCodeLog::updateOrCreate([
                     'code'                   => $problem['code'],
                     'code_system_name'       => $problem['code_system_name'],
                     'problem_code_system_id' => $problem['problem_code_system_id'],
@@ -294,7 +290,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
             ->first();
 
         if ($matchProvider) {
-            $provider = ProviderLog::create(array_merge([
+            $provider = ProviderLog::updateOrCreate(array_merge([
                 'first_name'          => trim($name[1] ?? ''),
                 'last_name'           => trim($name[0] ?? ''),
                 'billing_provider_id' => $matchProvider->id,
@@ -311,7 +307,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
             ->first();
 
         if ($matchProvider) {
-            $provider = ProviderLog::create(array_merge([
+            $provider = ProviderLog::updateOrCreate(array_merge([
                 'first_name'          => trim($name[0] ?? ''),
                 'last_name'           => trim($name[1] ?? ''),
                 'billing_provider_id' => $matchProvider->id,
@@ -321,7 +317,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
             return $this;
         }
 
-        $provider = ProviderLog::create(array_merge([
+        $provider = ProviderLog::updateOrCreate(array_merge([
             'first_name'  => trim($name[0] ?? ''),
             'last_name'   => trim($name[1] ?? ''),
             'location_id' => $this->practice->primary_location_id ?? optional(optional($this->practice)->locations)->first()->id ?? null,

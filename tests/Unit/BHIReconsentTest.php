@@ -15,12 +15,11 @@ use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
-use Tests\TestCase;
+use Tests\CustomerTestCase;
 
-class BHIReconsentTest extends TestCase
+class BHIReconsentTest extends CustomerTestCase
 {
     use UserHelpers;
 
@@ -28,32 +27,31 @@ class BHIReconsentTest extends TestCase
     {
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, true);
-        $provider    = $this->createUser($bhiPractice->id, 'provider');
-        $nurse       = $this->createUser($bhiPractice->id, 'care-center');
+        
         //Create 2 calls for today
-        $c1 = $this->createCall($nurse, $bhiPatient, Carbon::now());
-        $c2 = $this->createCall($nurse, $bhiPatient, Carbon::now());
+        $c1 = $this->createCall($this->careCoach(), $bhiPatient, Carbon::now());
+        $c2 = $this->createCall($this->careCoach(), $bhiPatient, Carbon::now());
 
         //Add billing provider
         $billing = CarePerson::create(
             [
                 'alert'          => true,
                 'user_id'        => $bhiPatient->id,
-                'member_user_id' => $provider->id,
+                'member_user_id' => $this->provider()->id,
                 'type'           => CarePerson::BILLING_PROVIDER,
             ]
         );
 
         $this->assertTrue($bhiPatient->isLegacyBhiEligible());
-        $this->assertTrue($nurse->fresh()->shouldShowBhiFlagFor($bhiPatient->fresh()));
+        $this->assertTrue($this->careCoach()->shouldShowBhiFlagFor($bhiPatient));
 
         //store not now response as a nurse
-        $response = $this->actingAs($nurse)->call('POST', route('legacy-bhi.store', [$bhiPatient->program_id, $bhiPatient->id]), [
+        $response = $this->actingAs($this->careCoach())->call('POST', route('legacy-bhi.store', [$bhiPatient->program_id, $bhiPatient->id]), [
             //"Not Now" response
             'decision' => 2,
         ])->assertStatus(302);
 
-        $cacheKey = $nurse->getLegacyBhiNursePatientCacheKey($bhiPatient->id);
+        $cacheKey = $this->careCoach()->getLegacyBhiNursePatientCacheKey($bhiPatient->id);
         $this->assertTrue(\Cache::has($cacheKey));
 
         $timeTillShowAgain = \Cache::get($cacheKey);
@@ -252,13 +250,11 @@ class BHIReconsentTest extends TestCase
 
     private function createPractice($bhi = false)
     {
-        $practice = factory(Practice::class)->create([]);
-
         if ($bhi) {
-            $practice->chargeableServices()
+            $this->practice()->chargeableServices()
                 ->attach(ChargeableService::whereCode('CPT 99484')->firstOrFail()->id);
         }
 
-        return $practice;
+        return $this->practice();
     }
 }

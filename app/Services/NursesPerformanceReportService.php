@@ -13,6 +13,7 @@ use CircleLinkHealth\Customer\Entities\CompanyHoliday;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\AggregatedTotalTimePerNurse;
+use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -116,12 +117,16 @@ class NursesPerformanceReportService
      * @param $date
      *
      * Sets up data needed by both Nurse and States Dashboard and EmailRNDailyReport
-     * @return Collection
      */
     public function getDataForNurse(User $nurse, Carbon $date, int $totalSystemTime): Collection
     {
+//        "$patientsForMonth" returns ONLY status SCHEDULED patients...
+//        It's "Case Load" in UI.
         $patientsForMonth = $this->getUniquePatientsAssignedForNurseForMonth($nurse, $date);
-        $totalMonthlyCompletedPatientsOfNurse = $this->getTotalCompletedPatientsOfNurse($date, $patientsForMonth);
+        $totalMonthlyCompletedPatientsOfNurse = $this->getTotalCompletedPatientsOfNurse($patientsForMonth);
+        $successfulCallsDaily = $nurse->countSuccessfulCallsFor($date);
+        //        "Case Completion" in view
+        $caseLoadComplete = $this->percentageCaseLoadComplete($patientsForMonth, $totalMonthlyCompletedPatientsOfNurse);
 
         $data = [
             'nurse_id' => $nurse->id,
@@ -132,8 +137,9 @@ class NursesPerformanceReportService
                 ? 0
                 : $nurse->nurseInfo->getHoursCommittedForCarbonDate($date),
             'scheduledCalls' => $nurse->countScheduledCallsFor($date),
+            //            "completed calls" in UI
             'actualCalls' => $nurse->countCompletedCallsFor($date),
-            'successful' => $nurse->countSuccessfulCallsFor($date),
+            'successful' => $successfulCallsDaily,
             'unsuccessful' => $nurse->countUnsuccessfulCallsFor($date),
             'totalMonthSystemTimeSeconds' => $this->getTotalMonthSystemTimeSeconds($nurse, $date),
             'uniquePatientsAssignedForMonth' => $patientsForMonth->count(),
@@ -142,9 +148,10 @@ class NursesPerformanceReportService
         //new metrics
         $data['completionRate'] = $this->getCompletionRate($data);
         $data['efficiencyIndex'] = $this->getEfficiencyIndex($data);
-        $data['caseLoadComplete'] = $this->percentageCaseLoadComplete($patientsForMonth);
+//        "Case Completion" in view
+        $data['caseLoadComplete'] = $caseLoadComplete;
 //        $data['caseLoadNeededToComplete']  = $this->estHoursToCompleteCaseLoadMonth($patientsForMonth);
-        $data['caseLoadNeededToComplete'] = $this->estHoursToCompleteCaseLoadMonth($nurse, $date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse);
+        $data['caseLoadNeededToComplete'] = $this->estHoursToCompleteCaseLoadMonth($nurse, $date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse, $successfulCallsDaily);
         $data['hoursCommittedRestOfMonth'] = $this->getHoursCommittedRestOfMonth(
             $nurse,
             $nurse->nurseInfo->upcomingHolidaysFrom($date),
@@ -152,7 +159,7 @@ class NursesPerformanceReportService
         );
 
         // V-3 metrics cpm-2085
-        $data['avgCCMTimePerPatient'] = $this->estAvgCCMTimePerMonth($date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse);
+        $data['avgCCMTimePerPatient'] = $this->estAvgCCMTimePerMonth($patientsForMonth, $totalMonthlyCompletedPatientsOfNurse);
         $data['avgCompletionTime'] = $this->getAvgCompletionTime($nurse, $date, $totalMonthlyCompletedPatientsOfNurse);
         $data['incompletePatients'] = $this->getIncompletePatientsCount($patientsForMonth);
 
@@ -160,6 +167,7 @@ class NursesPerformanceReportService
         $nextUpcomingWindow = $nurse->nurseInfo->firstWindowAfter(Carbon::now());
         //only for EmailRNDailyReport v 2
         $data['completedPatients'] = $totalMonthlyCompletedPatientsOfNurse;
+        $data['totalPatientsInCaseLoad'] = $patientsForMonth->count();
 
         if ($nextUpcomingWindow) {
             $carbonDate = Carbon::parse($nextUpcomingWindow->date);
@@ -192,7 +200,7 @@ class NursesPerformanceReportService
      * @param $days
      *
      * @return Collection
-     * @throws \Exception
+     * @throws Exception
      *
      */
     public function manipulateData($days)
@@ -287,12 +295,9 @@ class NursesPerformanceReportService
     }
 
     /**
-     * @param $day
+     * @return Collection
+     * @throws FileNotFoundException
      *
-     * @return mixed
-     * @throws \CircleLinkHealth\Core\Exceptions\FileNotFoundException
-     *
-     * @throws \Exception
      */
     public function showDataFromS3(Carbon $day)
     {
