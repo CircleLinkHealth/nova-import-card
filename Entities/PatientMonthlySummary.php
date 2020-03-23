@@ -118,8 +118,6 @@ class PatientMonthlySummary extends BaseModel
 {
     use HasChargeableServices;
 
-    const DATE_ATTESTED_CONDITIONS_ENABLED = '2020-02-01';
-
     protected $dates = [
         'month_year',
     ];
@@ -152,21 +150,6 @@ class PatientMonthlySummary extends BaseModel
     public function attestedProblems()
     {
         return $this->belongsToMany(Problem::class, 'call_problems', 'patient_monthly_summary_id', 'ccd_problem_id');
-    }
-
-    public function getAttestedProblemsForReport()
-    {
-        if (Carbon::parse($this->month_year)->lt(Carbon::parse(PatientMonthlySummary::DATE_ATTESTED_CONDITIONS_ENABLED))) {
-            $problems = collect([$this->billableProblem1, $this->billableProblem2])->filter();
-        } else {
-            $problems = $this->attestedProblems;
-        }
-
-        return ! $problems->isEmpty()
-            ? $problems->transform(function (Problem $problem) {
-                return $problem->icd10Code();
-            })->filter()->implode(', ')
-            : 'N/A';
     }
 
     public function attachBillableProblem($problemId, $name, $icd10Code, $type = 'ccm')
