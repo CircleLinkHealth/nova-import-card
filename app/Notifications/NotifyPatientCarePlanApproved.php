@@ -69,6 +69,8 @@ class NotifyPatientCarePlanApproved extends Notification
     }
 
     /**
+     * @param mixed $notifiable
+     *
      * @return string
      */
     public function getActionUrl($notifiable)
@@ -106,6 +108,23 @@ class NotifyPatientCarePlanApproved extends Notification
         }
 
         return 'Your Care Plan has been sent to your doctor for approval';
+    }
+
+    /**
+     * Send practice id so we can replace CLH logo with practice name
+     * Send email, so we can prefill and lock email input.
+     *
+     * @param mixed $notifiable
+     *
+     * @return string
+     */
+    public function resetUrl($notifiable)
+    {
+        return route('password.reset', [
+            'token'       => $this->token,
+            'practice_id' => $notifiable->getPrimaryPracticeId(),
+            'email'       => $notifiable->email,
+        ]);
     }
 
     /**
@@ -164,20 +183,5 @@ class NotifyPatientCarePlanApproved extends Notification
     public function via($notifiable)
     {
         return $this->channels;
-    }
-
-    /**
-     * Send practice id so we can replace CLH logo with practice name
-     * Send email, so we can prefill and lock email input.
-     *
-     * @return string
-     */
-    public function resetUrl($notifiable)
-    {
-        return route('password.reset', [
-            'token'       => $this->token,
-            'practice_id' => $notifiable->getPrimaryPracticeId(),
-            'email'       => $notifiable->email,
-        ]);
     }
 }

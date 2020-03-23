@@ -110,4 +110,18 @@ class AwvPatientReportNotify implements ShouldQueue
 
         $billingProvider->notify(new SendCareDocument($media, $patient, $channels));
     }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array
+     */
+    public function tags()
+    {
+        return [
+            AwvPatientReportNotify::class,
+            'patient_id:'.$this->patientReportData['patient_id'],
+            'report_media_id:'.$this->patientReportData['report_media_id'],
+        ];
+    }
 }

@@ -121,7 +121,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
 
     public function call()
     {
-        return $this->hasOne('App\Call');
+        return $this->hasOne(Call::class);
     }
 
     public function editLink()
@@ -153,7 +153,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         $recipients = collect();
 
         $cpmSettings = $this->patient->primaryPractice->cpmSettings();
-        
+
         $patientBillingProviderUser = $this->patient->billingProviderUser();
 
         if ($notifyCareteam) {
@@ -198,7 +198,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
             ->map(function ($carePersonUser) use ($channelsForUsers) {
                 optional($carePersonUser)->notify(new NoteForwarded($this, $channelsForUsers));
             });
-    
+
         if ($force && empty($channelsForLocation)) {
             $channelsForLocation = [
                 DirectMailChannel::class,

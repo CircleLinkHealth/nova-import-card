@@ -18,7 +18,7 @@
         <th>Surplus or Deficit</th>
         <th>Case Load</th>
         <th>Incomplete Patients</th>
-        <th>Case Completion</th>
+        <th>Case Completion%</th>
 </tr>
 
 

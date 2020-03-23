@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\Notifications\NurseDailyReport;
@@ -13,26 +17,25 @@ use Illuminate\Queue\SerializesModels;
 
 class SendDailyReportToRN implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     /**
      * @var Carbon
      */
     public $date;
     /**
-     * @var array
-     */
-    public $reportDataForNurse;
-    /**
      * @var User
      */
     public $nurseUser;
-    
+    /**
+     * @var array
+     */
+    public $reportDataForNurse;
+
     /**
      * Create a new job instance.
-     *
-     * @param User $nurseUser
-     * @param Carbon $date
-     * @param array $reportDataForNurse
      */
     public function __construct(User $nurseUser, Carbon $date, array $reportDataForNurse)
     {
@@ -40,7 +43,7 @@ class SendDailyReportToRN implements ShouldQueue
         $this->reportDataForNurse = $reportDataForNurse;
         $this->nurseUser          = $nurseUser;
     }
-    
+
     /**
      * Execute the job.
      *
@@ -53,30 +56,29 @@ class SendDailyReportToRN implements ShouldQueue
             \Log::error(
                 "Invalid report for nurse with id: {$this->nurseUser->id} and date {$this->date->toDateString()}"
             );
-            
+
             return;
         }
-        
+
         $systemTime = $this->reportDataForNurse['systemTime'];
-        
+
         $totalMonthSystemTimeSeconds = $this->reportDataForNurse['totalMonthSystemTimeSeconds'];
-        
+
         if (0 == $systemTime) {
             return;
         }
-        
+
         if ($this->nurseUser->nurseInfo->hourly_rate < 1) {
             return;
         }
-        
-        
+
         $attendanceRate = 0 != $this->reportDataForNurse['committedHours']
             ? (round(
                 (float) (($this->reportDataForNurse['actualHours'] / $this->reportDataForNurse['committedHours']) * 100),
                 2
             ))
             : 'N/A';
-        
+
         $callsCompletionRate = 0 != $this->reportDataForNurse['scheduledCalls']
             ? (0 == $this->reportDataForNurse['committedHours']
                 ? 'N/A'
@@ -85,26 +87,27 @@ class SendDailyReportToRN implements ShouldQueue
                     2
                 ))
             : 0;
-        
+
         $totalTimeInSystemOnGivenDate = secondsToHMS($systemTime);
-        
+
         $totalTimeInSystemThisMonth = secondsToHMS($totalMonthSystemTimeSeconds);
-        
+
         $totalEarningsThisMonth = round(
             (float) ($totalMonthSystemTimeSeconds * $this->nurseUser->nurseInfo->hourly_rate / 60 / 60),
             2
         );
-        
+
         $nextUpcomingWindow    = $this->reportDataForNurse['nextUpcomingWindow'];
         $surplusShortfallHours = $this->reportDataForNurse['surplusShortfallHours'];
         $deficitTextColor      = $surplusShortfallHours < 0
             ? '#f44336'
             : '#009688';
-        $deficitOrSurplusText  = $surplusShortfallHours < 0
+        $deficitOrSurplusText = $surplusShortfallHours < 0
             ? 'Deficit'
             : 'Surplus';
-        
+
         $data = [
+            'nurseUserId'                  => $this->nurseUser->id,
             'name'                         => $this->nurseUser->getFullName(),
             'actualHours'                  => $this->reportDataForNurse['actualHours'],
             'committedHours'               => $this->reportDataForNurse['committedHours'],
@@ -126,35 +129,31 @@ class SendDailyReportToRN implements ShouldQueue
             'windowStart'                  => $nextUpcomingWindow
                 ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A')
                 : null,
-            'windowEnd'                    => $nextUpcomingWindow
+            'windowEnd' => $nextUpcomingWindow
                 ? Carbon::parse($nextUpcomingWindow['window_time_end'])->format('g:i A')
                 : null,
-            
+
             //                            For new daily Report mail
-            'callsCompleted'               => $this->reportDataForNurse['actualCalls'],
-            'successfulCalls'              => $this->reportDataForNurse['successful'],
-            'completedPatients'            => $this->reportDataForNurse['completedPatients'],
-            'incompletePatients'           => $this->reportDataForNurse['incompletePatients'],
-            'avgCCMTimePerPatient'         => $this->reportDataForNurse['avgCCMTimePerPatient'],
-            'avgCompletionTime'            => $this->reportDataForNurse['avgCompletionTime'],
-            'nextUpcomingWindowDay'        => $nextUpcomingWindow
+            'callsCompleted'          => $this->reportDataForNurse['actualCalls'],
+            'successfulCalls'         => $this->reportDataForNurse['successful'],
+            'completedPatients'       => $this->reportDataForNurse['completedPatients'],
+            'incompletePatients'      => $this->reportDataForNurse['incompletePatients'],
+            'avgCCMTimePerPatient'    => $this->reportDataForNurse['avgCCMTimePerPatient'],
+            'avgCompletionTime'       => $this->reportDataForNurse['avgCompletionTime'],
+            'totalPatientsInCaseLoad' => $this->reportDataForNurse['totalPatientsInCaseLoad'],
+            'nextUpcomingWindowDay'   => $nextUpcomingWindow
                 ? Carbon::parse($nextUpcomingWindow['date'])->format('l')
                 : null,
-            'nextUpcomingWindowMonth'      => $nextUpcomingWindow
+            'nextUpcomingWindowMonth' => $nextUpcomingWindow
                 ? Carbon::parse($nextUpcomingWindow['date'])->format('F d')
                 : null,
-            'deficitTextColor'             => $deficitTextColor,
-            'deficitOrSurplusText'         => $deficitOrSurplusText,
+            'deficitTextColor'     => $deficitTextColor,
+            'deficitOrSurplusText' => $deficitOrSurplusText,
         ];
-        
+
         $this->nurseUser->notify(new NurseDailyReport($data, $this->date));
     }
-    
-    /**
-     * @param array $report
-     *
-     * @return bool
-     */
+
     private function validateReportData(array $report): bool
     {
         return array_keys_exist(

@@ -7,6 +7,9 @@
 Route::get('/debug-sentry', 'DemoController@sentry');
 Route::get('/debug-sentry-log', 'DemoController@sentryLog');
 
+Route::get('passwordless-login/{token}', 'Auth\LoginController@login')
+    ->name('login.token.validate');
+
 Route::post('webhooks/on-sent-fax', [
     'uses' => 'PhaxioWebhookController@onFaxSent',
     'as'   => 'webhook.on-fax-sent',

@@ -16,6 +16,7 @@
             <nav class="pagination">
                 <ul class="pagination">
                     <button type="button"
+                            data-cy="paginatorPrevPage"
                             class="btn btn-primary"
                             :disabled="disablePrevButton"
                             :class="{disable: disablePrevButton}"
@@ -24,7 +25,10 @@
                     </button>
 
                     <li v-for="(page, index) in paginationTriggers">
-                        <button style="padding: 10px; margin:5px;" type="button"
+                        <button v-if="hidePagesIfOneLeft()"
+                                style="padding: 10px; margin:5px;"
+                                type="button"
+                                data-cy="pages"
                                 class="btn btn-light"
                                 :class="{'pages': roundUp(page) === currentPage}"
                                 @click="goToPage(page)">
@@ -32,7 +36,9 @@
                         </button>
                     </li>
 
+
                     <button type="button"
+                            data-cy="paginatorNextPage"
                             class="btn btn-primary"
                             :disabled="disableNextButton"
                             :class="{disable: disableNextButton}"
@@ -165,6 +171,9 @@
         },
 
         methods: {
+            hidePagesIfOneLeft() {
+                return this.currentPage !== 1 && this.totalPages !== 1;
+            },
             submitDropdownValue(value) {
                 const page = 1;
                 this.currentPage = page;

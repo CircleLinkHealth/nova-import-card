@@ -141,10 +141,9 @@ trait UserHelpers
                 'date'              => $st->toDateString(),
                 'window_time_start' => $window['start'],
                 'window_time_end'   => $window['end'],
-
-                'day_of_week' => 5,
-
-                'nurse_info_id' => $nurse->id,
+                'repeat_frequency'  => 'does_not_repeat',
+                'day_of_week'       => Carbon::parse($st->toDateString())->dayOfWeek,
+                'nurse_info_id'     => $nurse->id,
             ]
         );
     }
@@ -273,9 +272,9 @@ trait UserHelpers
                     'config_key' => NurseCcmPlusConfig::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_USER_IDS,
                 ],
                 [
-                    'config_value' => $current . (empty($current)
+                    'config_value' => $current.(empty($current)
                             ? ''
-                            : ',') . $nurse->id,
+                            : ',').$nurse->id,
                 ]
             );
 
@@ -303,19 +302,18 @@ trait UserHelpers
         //$pcmOnly means one ccm condition only
         if ($pcmOnly) {
             $ccdProblems = $patient->ccdProblems()->createMany([
-                ['name' => 'test' . str_random(5)],
+                ['name' => 'test'.str_random(5)],
             ]);
-        }
-        else {
+        } else {
             $ccdProblems = $patient->ccdProblems()->createMany([
-                ['name' => 'test' . str_random(5), 'is_monitored' => 1],
-                ['name' => 'test' . str_random(5)],
-                ['name' => 'test' . str_random(5)],
+                ['name' => 'test'.str_random(5), 'is_monitored' => 1],
+                ['name' => 'test'.str_random(5)],
+                ['name' => 'test'.str_random(5)],
             ]);
         }
 
         $len = $ccdProblems->count();
-        for ($i = 0; $i < $len; $i++) {
+        for ($i = 0; $i < $len; ++$i) {
             $problem = $ccdProblems->get($i);
             $isLast  = $i === $len - 1;
             if ($isLast && $isBhi) {
