@@ -704,6 +704,15 @@ Route::group(['middleware' => 'auth'], function () {
     //CCD Parser Demo Route
     Route::get('ccd-parser-demo', 'CCDParserDemoController@index');
 
+    //CPM-2167 - moved outside of manage-patients, because
+    //           AuthyMiddleware was interfering with PatientProgramSecurity
+    Route::group(['prefix' => 'settings'], function () {
+        Route::get('', [
+            'uses' => 'UserSettingsController@show',
+            'as'   => 'user.settings.manage',
+        ]);
+    });
+
     //
     // PROVIDER UI (/manage-patients, /reports, ect)
     //
@@ -729,13 +738,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'Patient\PatientCareplanController@storePatientDemographics',
             'as'   => 'patient.demographics.store',
         ])->middleware('permission:patient.create,patient.update,careplan.update');
-
-        Route::group(['prefix' => 'settings'], function () {
-            Route::get('', [
-                'uses' => 'UserSettingsController@show',
-                'as'   => 'user.settings.manage',
-            ]);
-        });
 
         Route::get('dashboard', [
             'uses' => 'Patient\PatientController@showDashboard',
