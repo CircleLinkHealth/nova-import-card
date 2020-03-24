@@ -8,6 +8,7 @@ use App\Repositories\BillablePatientsEloquentRepository;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\ValueObjects\PatientReportData;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -16,9 +17,6 @@ use Illuminate\Support\Collection;
 
 class ItemizedBillablePatientsReport
 {
-    const ATTACH_DEFAULT_PROBLEMS_FOR_MONTH = '2020-02-01';
-    const BHI_SERVICE_CODE = 'CPT 99484';
-
     /**
      * @var int
      */
@@ -90,14 +88,9 @@ class ItemizedBillablePatientsReport
                                          $patientData->setProvider($u->getBillingProviderName());
                                          $patientData->setBillingCodes($u->billingCodes($this->month));
 
-                                         $shouldAttachDefaultProblems = $summary->month_year->lte(Carbon::parse(self::ATTACH_DEFAULT_PROBLEMS_FOR_MONTH));
+                                         $patientData->setCcmProblemCodes($this->getCcmAttestedConditions($summary));
 
-                                         $patientData->setCcmProblemCodes($this->getCcmAttestedConditions($summary,
-                                             $shouldAttachDefaultProblems));
-
-                                         $patientData->setBhiCodes(
-                                             $this->getBhiAttestedConditions($summary, $shouldAttachDefaultProblems)
-                                         );
+                                         $patientData->setBhiCodes($this->getBhiAttestedConditions($summary));
 
                                          $patientData->setLocationName($u->getPreferredLocationName());
 
@@ -160,51 +153,26 @@ class ItemizedBillablePatientsReport
         return $data;
     }
 
-    private function getCcmAttestedConditions(PatientMonthlySummary $summary, bool $shouldAttachDefaultProblems)
+    private function getCcmAttestedConditions(PatientMonthlySummary $summary)
     {
-        if ($shouldAttachDefaultProblems && $summary->attestedProblems->where('cpmProblem.is_behavioral', '=',
-                false)->count() == 0) {
-            return $this->formatProblemCodesForReport(collect([
-                $summary->billableProblem1,
-                $summary->billableProblem2,
-            ])->filter());
-        } else {
-            return $this->getProblemCodesForReport($summary->attestedProblems, false);
-        }
+        return $this->formatProblemCodesForReport($summary->ccmAttestedProblems()->filter());
     }
 
-    private function getBhiAttestedConditions(PatientMonthlySummary $summary, bool $shouldAttachDefaultProblems)
+    private function getBhiAttestedConditions(PatientMonthlySummary $summary)
     {
-        if (! $summary->hasServiceCode(self::BHI_SERVICE_CODE)) {
+        if ( ! $summary->hasServiceCode(ChargeableService::BHI)) {
             return 'N/A';
         }
 
-        if ($shouldAttachDefaultProblems && $summary->attestedProblems->where('cpmProblem.is_behavioral',
-                '=',
-                true)->count() == 0) {
-            $bhiProblem = $summary->billableBhiProblems()->first();
-
-            return $this->formatProblemCodesForReport(collect([
-                $bhiProblem
-                    ?: null,
-            ])->filter());
-        } else {
-            return $this->getProblemCodesForReport($summary->attestedProblems, true);
-        }
-
-
+        return $this->formatProblemCodesForReport($this->bhiAttestedProblems()->filter());
     }
 
-    private function formatProblemCodesForReport(Collection $problems){
+    private function formatProblemCodesForReport(Collection $problems)
+    {
         return $problems->isNotEmpty()
             ? $problems->unique()->transform(function (Problem $problem) {
                 return $problem->icd10Code();
             })->filter()->implode(', ')
             : 'N/A';
-    }
-
-    private function getProblemCodesForReport(Collection $problems, $isBhi){
-        return $this->formatProblemCodesForReport($problems->where('cpmProblem.is_behavioral',
-            '=', $isBhi));
     }
 }
