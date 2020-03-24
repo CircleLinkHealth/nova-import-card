@@ -64,11 +64,16 @@
                             <label for="is_2fa_enabled">Enable 2FA</label>
 
                             <span v-if="isAdmin" class="info minimum-padding"
-                                  data-tooltip="Administrators are required have 2FA enabled.">
-                                            <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-                                        </span>
+                                  data-tooltip="Administrators are required to have 2FA enabled.">
+                                <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                            </span>
+                            <span v-else class="info minimum-padding"
+                                  data-tooltip="You are required to have 2FA enabled.">
+                                <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                            </span>
 
-                            <input type="checkbox" v-model="is_2fa_enabled" id="is_2fa_enabled" :disabled="is_loading || isAdmin"
+                            <input type="checkbox" v-model="is_2fa_enabled" id="is_2fa_enabled"
+                                   :disabled="is_loading || isAdmin || forceEnable"
                                    class="form-control input-sm" style="display: inline-block;">
                             <span class="help-block">{{errors.get('is_2fa_enabled')}}</span>
                         </div>
@@ -93,7 +98,7 @@
         props: {
             authyUser: {
                 type: Object,
-                default: () => {
+                default: function () {
                     //setting defaults like this does not always work. @todo: investigate at some point
                     return {
                         country_code: 1,
@@ -105,7 +110,7 @@
             },
             globalRole: {
                 type: Object,
-                default: () => {
+                default: function () {
                     //setting defaults like this does not always work. @todo: investigate at some point
                     return {
                         id: null,
@@ -113,6 +118,10 @@
                         display_name: null,
                     }
                 }
+            },
+            forceEnable: {
+                type: Boolean,
+                default: false
             }
         },
         components: {
@@ -188,7 +197,7 @@
             }
         },
         mounted() {
-            if (this.isAdmin) {
+            if (this.isAdmin || this.forceEnable) {
                 this.is_2fa_enabled = true;
             }
         }
