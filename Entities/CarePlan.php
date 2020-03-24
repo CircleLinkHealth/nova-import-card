@@ -51,33 +51,31 @@ use Validator;
  * @property \App\CareplanAssessment $assessment
  * @property \CircleLinkHealth\Customer\Entities\User $patient
  * @property \CircleLinkHealth\SharedModels\Entities\Pdf[]|\Illuminate\Database\Eloquent\Collection $pdfs
- * @property \CircleLinkHealth\Customer\Entities\User|null $providerApproverUser
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereCarePlanTemplateId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereLastPrinted($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereMode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereProviderApproverId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereProviderDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereQaApproverId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereQaDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereUserId($value)
+ * @property \CircleLinkHealth\Customer\Entities\User|null              $providerApproverUser
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereCarePlanTemplateId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereLastPrinted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereMode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereProviderApproverId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereProviderDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereQaApproverId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereQaDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereUserId($value)
  * @mixin \Eloquent
- * @property int|null $first_printed_by
- * @property \Illuminate\Support\Carbon|null $first_printed
- * @property string $provider_approver_name
- * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection
- *     $notifications
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]
- *     $revisionHistory
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereFirstPrinted($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereFirstPrintedBy($value)
+ * @property int|null                                                                                                        $first_printed_by
+ * @property \Illuminate\Support\Carbon|null                                                                                 $first_printed
+ * @property string                                                                                                          $provider_approver_name
+ * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]                                  $revisionHistory
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereFirstPrinted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereFirstPrintedBy($value)
  * @property int|null $notifications_count
  * @property int|null $pdfs_count
  * @property int|null $revision_history_count
