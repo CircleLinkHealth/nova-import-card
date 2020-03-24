@@ -72,6 +72,9 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null $medications_count
  * @property int|null $problems_count
  * @property int|null $revision_history_count
+ * @property-read \CircleLinkHealth\Customer\Entities\User|null $patient
+ * @property int|null $nurse_user_id
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord whereNurseUserId($value)
  */
 class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel implements ImportedMedicalRecordInterface
 {
@@ -252,5 +255,10 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
     public function reimport(): ImportedMedicalRecordInterface
     {
         // TODO: Implement reimport() method.
+    }
+    
+    public function updateOrCreateCarePlan(): CarePlan
+    {
+        // TODO: Implement updateOrCreateCarePlan() method.
     }
 }
