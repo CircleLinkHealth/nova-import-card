@@ -7,29 +7,53 @@
 namespace Tests\Unit;
 
 use App\Call;
-
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;
+use Illuminate\Support\Facades\Artisan;
 use Tests\DuskTestCase;
 use Tests\Helpers\CarePlanHelpers;
 
-class NurseAttestsConditionsTest extends DuskTestCase
+class PatientAttestedConditionsTest extends DuskTestCase
 {
     use CarePlanHelpers;
     use UserHelpers;
 
+    /**
+     * @var Factory
+     */
     protected $faker;
+    /**
+     * @var Location
+     */
     protected $location;
+    /**
+     * @var User
+     */
     protected $nurse;
+    /**
+     * @var User
+     */
     protected $patient;
 
+    /**
+     * @var Practice
+     */
     protected $practice;
+    /**
+     * @var User
+     */
     protected $provider;
 
+    /**
+     *
+     */
     protected function setUp()
     {
         parent::setUp();
@@ -54,7 +78,7 @@ class NurseAttestsConditionsTest extends DuskTestCase
      */
     public function test_asserted_problems_are_attached_to_scheduled_call()
     {
-        auth()->login($this->nurse);
+        $this->actingAs($this->nurse);
 
         $call            = $this->patient->inboundCalls()->first();
         $pms             = $this->patient->patientSummaryForMonth();
@@ -71,23 +95,64 @@ class NurseAttestsConditionsTest extends DuskTestCase
 
         //assert that asserted attached to calls exist on the summary
         $this->assertEquals($pms->attestedProblems()->count(), $patientProblems->count());
+
+
     }
 
-    public function test_modal_pops_up()
+    /**
+     *
+     */
+    public function test_problems_are_automatically_attested_to_pms_if_they_should_pcm()
     {
-        //todo: fix dusk
-//        $this->browse(function ($browser) {
-//            $browser->loginAs($this->nurse)
-//                    ->visit(route('patient.note.create', [
-//                        'patientId' => $this->patient->id,
-//                    ]))
-//                    ->select('type', 'Review Patient Progress')
-//                    ->value('call_status', 'reached')
-//                    ->value('phone', 'outbound')
-//                    ->press('Save Note')
-//                    ->assertSee('Please select all conditions addressed in this call');
-//        });
+        $pms           = $this->setupPms([ChargeableService::pcm()->first()->id]);
+        $pms->ccm_time = 1440;
+        $pms->save();
+
+
+        $this->assertTrue($pms->hasServiceCode(ChargeableService::PCM));
+        $this->assertEquals($pms->ccmAttestedProblems()->count(), 0);
+
+        $this->runCommandToAutoAssign();
+
+        $pms->load('attestedProblems');
+
+        $this->assertTrue($pms->ccmAttestedProblems()->count() == 4);
     }
+
+    public function test_problems_are_automatically_attested_to_pms_if_they_should_bhi()
+    {
+        $pms           = $this->setupPms([ChargeableService::bhi()->first()->id]);
+        $pms->bhi_time = 1440;
+        $pms->save();
+
+
+        $this->assertTrue($pms->hasServiceCode(ChargeableService::BHI));
+        $this->assertEquals($pms->bhiAttestedProblems()->count(), 0);
+
+        $this->runCommandToAutoAssign();
+
+        $pms->load('attestedProblems');
+
+        $this->assertTrue($pms->bhiAttestedProblems()->count() == 1);
+    }
+
+    public function test_problems_are_automatically_attested_to_pms_if_they_should_ccm()
+    {
+        $pms           = $this->setupPms([ChargeableService::ccm()->first()->id]);
+        $pms->ccm_time = 1440;
+        $pms->save();
+
+
+        $this->assertTrue($pms->hasServiceCode(ChargeableService::CCM));
+        $this->assertEquals($pms->ccmAttestedProblems()->count(), 0);
+
+        $this->runCommandToAutoAssign();
+
+        $pms->load('attestedProblems');
+
+        $this->assertTrue($pms->ccmAttestedProblems()->count() == 4);
+    }
+
 
     /**
      * Meant to be needed to call NotesController->store
@@ -119,22 +184,52 @@ class NurseAttestsConditionsTest extends DuskTestCase
         ];
     }
 
+    private function setupPms(array $chargeableServiceIds)
+    {
+        $pms = PatientMonthlySummary::updateOrCreate([
+            'patient_id'             => $this->patient->id,
+            'month_year'             => Carbon::now()->startOfMonth()->toDateString(),
+        ],[
+            'total_time'             => 3000,
+            'no_of_successful_calls' => 1,
+        ]);
+
+        $pms->chargeableServices()->sync($chargeableServiceIds);
+
+        return $pms;
+    }
+
+    private function runCommandToAutoAssign()
+    {
+        Artisan::call(
+            'generate:abp', [
+            '--reset-actor' => true,
+            '--auto-attest' => true,
+            'date'          => Carbon::now()->startOfMonth()->toDateString(),
+            'practiceIds'   => "{$this->patient->program_id}",
+        ]);
+    }
+
+    /**
+     *
+     */
     private function setupPatient()
     {
         $this->patient = $this->createUser($this->practice->id, 'participant');
         $this->patient->setPreferredContactLocation($this->location->id);
         $this->patient->patientInfo->save();
 
-        $cpmProblems = CpmProblem::get();
-        $ccdProblems = $this->patient->ccdProblems()->createMany([
-            ['name' => 'test'.str_random(5)],
-            ['name' => 'test'.str_random(5)],
-            ['name' => 'test'.str_random(5)],
-        ]);
+        list($bhi, $ccm) = CpmProblem::get()->partition(function ($p) {
+            return $p->is_behavioral;
+        });;
 
-        foreach ($ccdProblems as $problem) {
-            $problem->cpmProblem()->associate($cpmProblems->random());
-            $problem->save();
+        $problemsForPatient = $bhi->take(2)->merge($ccm->take(8));
+
+        foreach ($problemsForPatient as $bhiProblem) {
+            $this->patient->ccdProblems()->create([
+                'name'           => $bhiProblem->name,
+                'cpm_problem_id' => $bhiProblem->id,
+            ]);
         }
 
         //setup call

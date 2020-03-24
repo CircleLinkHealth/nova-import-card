@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Repositories\BillablePatientsEloquentRepository;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -34,7 +33,7 @@ class ProcessBillablePatients implements ShouldQueue
      * @var bool
      */
     protected $autoAttest;
-    
+
     /**
      * Create a new job instance.
      *
@@ -45,13 +44,13 @@ class ProcessBillablePatients implements ShouldQueue
      */
     public function __construct(int $practiceId, Carbon $date, bool $fromScratch, bool $resetActor, bool $autoAttest)
     {
-        $this->practiceId = $practiceId;
-        $this->date       = $date;
+        $this->practiceId  = $practiceId;
+        $this->date        = $date;
         $this->fromScratch = $fromScratch;
-        $this->resetActor = $resetActor;
-        $this->autoAttest = $autoAttest;
+        $this->resetActor  = $resetActor;
+        $this->autoAttest  = $autoAttest;
     }
-    
+
     /**
      * Execute the job.
      *
@@ -67,12 +66,12 @@ class ProcessBillablePatients implements ShouldQueue
                                  function ($users) {
                                      foreach ($users as $user) {
                                          $pms = $user->patientSummaries->first();
-                    
+
                                          if ($this->fromScratch) {
                                              $pms->reset();
                                              $pms->save();
                                          }
-                    
+
                                          if ($this->resetActor) {
                                              $pms->actor_id = null;
                                              $pms->save();
@@ -81,7 +80,7 @@ class ProcessBillablePatients implements ShouldQueue
                                          if ($this->autoAttest) {
                                              $pms->autoAttestConditionsIfYouShould();
                                          }
-                    
+
                                          ProcessApprovableBillablePatientSummary::dispatch(
                                              $pms
                                          );
