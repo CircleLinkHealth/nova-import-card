@@ -13,7 +13,7 @@ class RenameSoftRejectedCallbackToRequestedCallback extends Migration
     public function up()
     {
         if (Schema::hasColumn('enrollees', 'soft_rejected_callback')) {
-            Schema::table('enrollees', function (Blueprint $table) {
+            Schema::table('enrollees', function (\Illuminate\Database\Schema\Blueprint $table) {
                 $table->renameColumn('soft_rejected_callback', 'requested_callback');
             });
         }
