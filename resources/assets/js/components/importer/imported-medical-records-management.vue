@@ -315,7 +315,7 @@
                     this.getNurses(true)
                         .then(nurses => {
                             record.loaders.nurses = false;
-                            record.nurses = nurses.filter(nurse => parseInt(nurse.practiceId) === parseInt(selectedPractice.value))
+                            record.nurses = nurses.filter(nurse => (nurse.practices || []).includes(parseInt(selectedPractice.value)))
                                 .map(nurse => {
                                     return {
                                         label: nurse.display_name,
@@ -381,6 +381,8 @@
                     }
                 },
                 changeNurse(recordId, selectedNurse) {
+                    if (_.isNull(selectedNurse)) return;
+
                     const record = this.tableData.find(row => row.id === recordId);
                     if (_.isNull(record.nurse_user_id) && 1 === record.nurses.length) {
                         record['Care Coach'] = {label: record.nurses[0].display_name, value: record.nurses[0].id};
