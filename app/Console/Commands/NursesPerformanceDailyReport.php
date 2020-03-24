@@ -24,7 +24,7 @@ class NursesPerformanceDailyReport extends Command
      *
      * @var string
      */
-    protected $signature = 'report:nursesAndStatesDaily {forDate?}';
+    protected $signature = 'report:nursesAndStatesDaily {forDate?} {--notify}';
     private $service;
 
     /**
@@ -64,7 +64,7 @@ class NursesPerformanceDailyReport extends Command
         $saved    = file_put_contents($path, json_encode($data));
 
         if ( ! $saved) {
-            if (isProductionEnv()) {
+            if (isProductionEnv() && $this->option('notify')) {
                 sendSlackMessage(
                     '#carecoach_ops',
                     "Nurses And States dashboard report {$date->toDateString()} could not be created. \n"

@@ -181,7 +181,7 @@ class Kernel extends ConsoleKernel
 //                 ->everyThirtyMinutes()
 //                 ->withoutOverlapping()->onOneServer();
 
-        $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:03')->onOneServer();
+        $schedule->command(NursesPerformanceDailyReport::class, ['--notify'])->dailyAt('00:03')->onOneServer();
 
         $schedule->command(CheckForMissingLogoutsAndInsert::class)->dailyAt('04:00')->onOneServer();
 
