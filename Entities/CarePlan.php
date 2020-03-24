@@ -82,6 +82,8 @@ use Validator;
  * @property int|null $pdfs_count
  * @property int|null $revision_history_count
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withNurseApprovedVia()
+ * @property string|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereDeletedAt($value)
  */
 class CarePlan extends BaseModel implements PdfReport
 {

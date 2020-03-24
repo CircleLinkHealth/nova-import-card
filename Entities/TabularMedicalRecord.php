@@ -115,6 +115,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $problems_count
  * @property int|null $providers_count
  * @property int|null $revision_history_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicalRecordEloquent hasUPG0506PdfCareplanMedia()
  */
 class TabularMedicalRecord extends MedicalRecordEloquent
 {
