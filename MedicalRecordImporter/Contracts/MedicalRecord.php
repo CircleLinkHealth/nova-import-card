@@ -93,7 +93,7 @@ interface MedicalRecord
     /**
      * Get the User to whom this record belongs to, if one exists.
      */
-    public function getPatient():? User;
+    public function getPatient(): ?User;
 
     public function getPracticeId(): ?int;
 

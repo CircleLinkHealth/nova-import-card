@@ -74,6 +74,7 @@ class FixBatch235 extends Command
 
                         $data = $eligibilityJob->data;
                         $data['last_encounter'] = $lastEncounterCarbon->toDateTimeString();
+                        $eligibilityJob->last_encounter = $lastEncounterCarbon;
                         $eligibilityJob->data = $data;
                         $eligibilityJob->save();
                     }

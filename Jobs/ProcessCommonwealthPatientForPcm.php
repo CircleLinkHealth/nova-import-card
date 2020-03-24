@@ -2,16 +2,13 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
-use CircleLinkHealth\Eligibility\Decorators\AddCareTeamFromAthenaToEligibilityJob;
-use CircleLinkHealth\Eligibility\Decorators\AddDemographicsFromAthenaToEligibilityJob;
-use CircleLinkHealth\Eligibility\Decorators\AddInsuranceFromAthenaToEligibilityJob;
-use CircleLinkHealth\Eligibility\Decorators\AddPcmChargeableServices;
+use CircleLinkHealth\Eligibility\Decorators\PcmChargeableServices;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class ProcessCommonwealthPatientForPcm implements ShouldQueue
 {
@@ -34,34 +31,13 @@ class ProcessCommonwealthPatientForPcm implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @param AddDemographicsFromAthenaToEligibilityJob $addDemographicsFromAthenaToEligibilityJob
-     * @param AddCareTeamFromAthenaToEligibilityJob $addCareTeamFromAthenaToEligibilityJob
-     * @param AddInsuranceFromAthenaToEligibilityJob $addInsuranceFromAthenaToEligibilityJob
-     * @param AddPcmChargeableServices $addPcmChargeableServices
+     * @param PcmChargeableServices $addPcmChargeableServices
      *
      * @return void
-     * @throws \Exception
      */
     public function handle(
-        AddDemographicsFromAthenaToEligibilityJob $addDemographicsFromAthenaToEligibilityJob,
-        AddCareTeamFromAthenaToEligibilityJob $addCareTeamFromAthenaToEligibilityJob,
-        AddInsuranceFromAthenaToEligibilityJob $addInsuranceFromAthenaToEligibilityJob,
-        AddPcmChargeableServices $addPcmChargeableServices
+        PcmChargeableServices $addPcmChargeableServices
     ) {
-        $addPcmChargeableServices->addPcm(
-            $addInsuranceFromAthenaToEligibilityJob->addInsurancesFromAthena(
-                $addDemographicsFromAthenaToEligibilityJob->addDemographicsFromAthena(
-                    $addCareTeamFromAthenaToEligibilityJob->addCareTeamFromAthena(
-                        $this->eligibilityJob,
-                        $this->eligibilityJob->targetPatient,
-                        $this->eligibilityJob->targetPatient->ccda
-                    ),
-                    $this->eligibilityJob->targetPatient,
-                    $this->eligibilityJob->targetPatient->ccda
-                ),
-                $this->eligibilityJob->targetPatient,
-                $this->eligibilityJob->targetPatient->ccda
-            )
-        )->save();
+        $addPcmChargeableServices->decorate($this->eligibilityJob)->save();
     }
 }

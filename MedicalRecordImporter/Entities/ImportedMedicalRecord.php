@@ -75,6 +75,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property-read \CircleLinkHealth\Customer\Entities\User|null $patient
  * @property int|null $nurse_user_id
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord whereNurseUserId($value)
+ * @property-read \CircleLinkHealth\Customer\Entities\User|null $patient
  */
 class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel implements ImportedMedicalRecordInterface
 {
@@ -94,6 +95,10 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
     /**
      * An option in validation_checks.
      */
+    const CHECK_HAS_AT_LEAST_1_CCM_CONDITION = 'has_at_least_1_ccm_condition';
+    /**
+     * An option in validation_checks.
+     */
     const CHECK_HAS_AT_LEAST_2_CCM_CONDITIONS = 'has_at_least_2_ccm_conditions';
     /**
      * An option in validation_checks.
@@ -105,6 +110,11 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
      * Currently this only applies to NBI.
      */
     const WAS_NBI_OVERWRITTEN = 'was_nbi_overwritten';
+    /**
+     * An option in validation_checks.
+     * Indicates whether CLH can offer PCM service to the patient, if practice has PCM enabled.
+     */
+    const CHECK_PRACTICE_HAS_PCM = 'practice_has_pcm';
 
     protected $casts = [
         'validation_checks' => 'array',
@@ -115,11 +125,17 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
         'medical_record_type',
         'medical_record_id',
         'billing_provider_id',
+        'nurse_user_id',
         'location_id',
         'practice_id',
         'duplicate_id',
         'validation_checks',
     ];
+    
+    public function patient()
+    {
+        return $this->belongsTo(User::class, 'patient_id');
+    }
 
     public function allergies()
     {
@@ -129,6 +145,11 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
     public function billingProvider()
     {
         return $this->belongsTo(User::class, 'billing_provider_id', 'id');
+    }
+    
+    public function nurseUser()
+    {
+        return $this->belongsTo(User::class, 'nurse_user_id', 'id');
     }
 
     /**
@@ -174,16 +195,16 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
         }
     }
 
-    public function createCarePlan(): CarePlan
+    public function updateOrCreateCarePlan(): CarePlan
     {
-        $user = (new CCDImporterRepository())->createRandomUser($this->demographics, $this);
+        if (! $this->patient_id) {
+            $user = (new CCDImporterRepository())->createRandomUser($this->demographics, $this);
 
-        $this->patient_id = $user->id;
-        $this->save();
+            $this->patient_id = $user->id;
+            $this->save();
+        }
 
-        $helper = new CarePlanHelper($user, $this);
-
-        return $helper->storeImportedValues();
+        return (new CarePlanHelper($user ?? $this->patient, $this))->storeImportedValues();
     }
 
     /**
@@ -257,8 +278,8 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
         // TODO: Implement reimport() method.
     }
     
-    public function updateOrCreateCarePlan(): CarePlan
+    public function createCarePlan(): CarePlan
     {
-        // TODO: Implement updateOrCreateCarePlan() method.
+        // TODO: Implement createCarePlan() method.
     }
 }

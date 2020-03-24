@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Adapters;
 
 use CircleLinkHealth\Eligibility\Contracts\EligibilityCheckAdapter;
-use CircleLinkHealth\Eligibility\Decorators\AddDemographicsFromAthenaToEligibilityJob;
+use CircleLinkHealth\Eligibility\Decorators\DemographicsFromAthena;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
@@ -47,8 +47,8 @@ class AddDemographicsFromAthena implements EligibilityCheckAdapter
      */
     public function adaptToEligibilityJob(): EligibilityJob
     {
-        return app(AddDemographicsFromAthenaToEligibilityJob::class)->addDemographicsFromAthena(
-            $this->adapter->adaptToEligibilityJob(), $this->targetPatient, $this->ccda
+        return app(DemographicsFromAthena::class)->decorate(
+            $this->adapter->adaptToEligibilityJob()
         );
     }
     

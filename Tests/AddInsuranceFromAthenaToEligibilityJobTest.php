@@ -32,7 +32,7 @@ class AddInsuranceFromAthenaToEligibilityJobTest extends TestCase
             ->once()
             ->andReturn($successfulApiResponse);
         //I will inject my mock in my class using DependencyInjection (DI)
-        $decorator = new \CircleLinkHealth\Eligibility\Decorators\AddInsuranceFromAthenaToEligibilityJob($athena);
+        $decorator = new \CircleLinkHealth\Eligibility\Decorators\InsuranceFromAthena($athena);
 
         //Setup
         $eligibilityJobInitialState = factory(EligibilityJob::class)->create();
@@ -40,7 +40,7 @@ class AddInsuranceFromAthenaToEligibilityJobTest extends TestCase
         $ccda                       = new Ccda();
 
         //Conduct Test
-        $eligibilityJob = $decorator->addInsurancesFromAthena($eligibilityJobInitialState, $targetPatient, $ccda);
+        $eligibilityJob = $decorator->decorate($eligibilityJobInitialState, $targetPatient, $ccda);
 
         //Assert
         $this->assertInstanceOf(EligibilityJob::class, $eligibilityJob);

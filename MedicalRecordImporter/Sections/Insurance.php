@@ -25,17 +25,20 @@ class Insurance extends BaseImporter
             ->get();
 
         foreach ($itemLogs as $itemLog) {
-            $insurance = CcdInsurancePolicy::create([
-                'medical_record_id'   => $medicalRecordId,
-                'medical_record_type' => $medicalRecordType,
-                'name'                => $itemLog->name,
-                'type'                => $itemLog->type,
-                'policy_id'           => $itemLog->policy_id,
-                'relation'            => $itemLog->relation,
-                'subscriber'          => $itemLog->subscriber,
-                'approved'            => false,
-                'import'              => true,
-            ]);
+            $insurance = CcdInsurancePolicy::updateOrCreate([
+                                                                'medical_record_id'   => $medicalRecordId,
+                                                                'medical_record_type' => $medicalRecordType,
+                                                                'name'                => $itemLog->name,
+                                                                'type'                => $itemLog->type,
+                                                                'policy_id'           => $itemLog->policy_id,
+                                                                'relation'            => $itemLog->relation,
+                                                                'subscriber'          => $itemLog->subscriber,
+                                                            ]);
+            
+            if ($insurance->wasRecentlyCreated) {
+                $insurance->approved = false;
+                $insurance->save();
+            }
 
             $insurances->push($insurance);
         }

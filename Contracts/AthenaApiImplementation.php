@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Contracts;
 
+use App\Services\AthenaAPI\Calls;
 use App\Services\AthenaAPI\Connection;
 use App\ValueObjects\Athena\Patient;
 use App\ValueObjects\Athena\Problem;
@@ -155,7 +156,7 @@ interface AthenaApiImplementation
     public function getDemographics($patientId, $practiceId);
 
     /**
-     * Get all department ids for a practice.
+     * Get all departments for a practice.
      *
      * @param $practiceId
      * @param bool $showAllDepartments
@@ -164,7 +165,7 @@ interface AthenaApiImplementation
      *
      * @return mixed
      */
-    public function getDepartmentIds($practiceId, $showAllDepartments = true);
+    public function getDepartments($practiceId, $showAllDepartments = true);
 
     public function getDepartmentInfo($practiceId, $departmentId, $providerList = false);
 
@@ -246,7 +247,7 @@ interface AthenaApiImplementation
         $workphone = null,
         $departmentId = null
     );
-
+    
     /**
      * Get problems for a patient.
      *
@@ -255,9 +256,11 @@ interface AthenaApiImplementation
      * @param $departmentId
      * @param bool $showDiagnosisInfo
      *
+     * @param bool $showinactive
+     *
      * @return mixed
      */
-    public function getPatientProblems($patientId, $practiceId, $departmentId, $showDiagnosisInfo = true);
+    public function getPatientProblems($patientId, $practiceId, $departmentId, $showDiagnosisInfo = true, $showinactive = false);
 
     /**
      * Get the practice's custom fields.
@@ -314,4 +317,37 @@ interface AthenaApiImplementation
      * @return mixed
      */
     public function getProvider($practiceId, $providerId);
+    
+    /**
+     * Get a patient's medical history
+     *
+     * @param int $patientId
+     * @param int $practiceId
+     * @param int $departmentId
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getMedicalHistory(int $patientId, int $practiceId, int $departmentId);
+    
+    /**
+     * Get a patient's medical history
+     *
+     * @param int $patientId
+     * @param int $practiceId
+     * @param int $departmentId
+     *
+     * @param string $startDate
+     * @param string $endDate
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getEncounters(
+        int $patientId,
+        int $practiceId,
+        int $departmentId,
+        string $startDate = null,
+        string $endDate = null
+    );
 }
