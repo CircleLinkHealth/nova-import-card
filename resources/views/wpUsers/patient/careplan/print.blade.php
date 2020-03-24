@@ -181,7 +181,7 @@ if (isset($patient) && ! empty($patient)) {
                                                 @endif
                                             </template>
 
-                                            @if ($patient->carePlan->shouldShowApprovalButton())
+                                            @if (optional($patientCarePlan)->shouldShowApprovalButton())
                                                 <form id="form-approve"
                                                       action="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}"
                                                       method="POST" style="display: inline">
