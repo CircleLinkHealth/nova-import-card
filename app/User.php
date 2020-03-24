@@ -213,6 +213,8 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofPracticeRequiringSpecialBhiConsent()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isNotDemo()
  * @property string $name
+ * @property-read \App\EnrollableInvitationLink $enrollmentInvitationLink
+ * @property-read \App\EnrollableRequestInfo $statusRequestsInfo
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {

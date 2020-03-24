@@ -289,35 +289,39 @@ class EnrollmentCenterController extends Controller
 
         $enrollableId = $request->input('enrollable_id');
         $isSurveyOnlyUser = $request->input('is_survey_only');
-        $userFromEnrollee = User::whereId($enrollableId)->first();
+//        This can be either "user created from enrolle" or user (unreachable patient)
+//        Seperation is done by $isSurveyOnly - "enrollees that became users ar survey onlys"
+        $userEnrollee = User::whereId($enrollableId)->first();
         /** @var Enrollee $enrollee */
         $enrollee = Enrollee::whereUserId($enrollableId)->first();
 
+
+        // If enrollable is not survey only then create link AND redirect to survey
+        if (!$isSurveyOnlyUser) {
+            $this->expirePastInvitationLink($userEnrollee);
+
+            return $this->createUrlAndRedirectToSurvey($enrollableId);
+        }
+
         // IF $userForEnrollment is empty means that ENROLLEE has already enrolled and his user model is deleted
-        if (empty($userFromEnrollee) && $isSurveyOnlyUser && !$enrollee->statusRequestsInfo()->exists()) {
+        if (empty($userEnrollee) && $isSurveyOnlyUser && !$enrollee->statusRequestsInfo()->exists()) {
             return 'This enrollment invitation link has expired';
         }
 
+        //Enrolle requested info before, so just taking him to the info
         if ($enrollee->getLastEnrollmentInvitationLink()->manually_expired
             && $enrollee->statusRequestsInfo()->exists()) {
             return $this->returnEnrolleeRequestedInfoMessage($enrollee);
         }
 
-        // If enrollable is not survey only then create link AND redirect to survey
-        if (!$isSurveyOnlyUser) {
-            $this->expirePastInvitationLink($enrollee);
-
-            return $this->createUrlAndRedirectToSurvey($enrollableId);
-        }
-
-        $enrollablePrimaryPractice = $userFromEnrollee->primaryPractice;
-        $provider = $this->getEnrollableProvider($isSurveyOnlyUser, $userFromEnrollee);
-        $letterPages = $this->getEnrollmentLetter($userFromEnrollee, $enrollablePrimaryPractice, $isSurveyOnlyUser, $provider);
+        $enrollablePrimaryPractice = $userEnrollee->primaryPractice;
+        $provider = $this->getEnrollableProvider($isSurveyOnlyUser, $userEnrollee);
+        $letterPages = $this->getEnrollmentLetter($userEnrollee, $enrollablePrimaryPractice, $isSurveyOnlyUser, $provider);
         $practiceName = $enrollablePrimaryPractice->name;
         $signatoryNameForHeader = $provider->display_name;
         $dateLetterSent = Carbon::parse($enrollee->getLastEnrollmentInvitationLink()->updated_at)->toDateString();
 
-        return view('enrollment-consent.enrollmentInvitation', compact('userFromEnrollee', 'isSurveyOnlyUser', 'letterPages', 'practiceName', 'signatoryNameForHeader', 'dateLetterSent'));
+        return view('enrollment-consent.enrollmentInvitation', compact('userEnrollee', 'isSurveyOnlyUser', 'letterPages', 'practiceName', 'signatoryNameForHeader', 'dateLetterSent'));
     }
 
     /**
