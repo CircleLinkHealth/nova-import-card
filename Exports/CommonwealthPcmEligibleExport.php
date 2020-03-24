@@ -12,7 +12,6 @@ use App\Exports\PracticeReports\BasePracticeReport;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use Illuminate\Database\Eloquent\Builder;
-use Maatwebsite\Excel\Concerns\WithCustomQuerySize;
 
 class CommonwealthPcmEligibleExport extends BasePracticeReport
 {
