@@ -132,7 +132,7 @@ class Kernel extends ConsoleKernel
             ->cron('1 0 1 * *')->onOneServer();
 
         //Run at 12:45am every 1st of month
-        $schedule->command(CreateApprovableBillablePatientsReport::class, ['--reset-actor', now()->subMonth()->startOfMonth()->toDateString()])
+        $schedule->command(CreateApprovableBillablePatientsReport::class, ['--reset-actor', '--auto-attest', now()->subMonth()->startOfMonth()->toDateString()])
             ->cron('45 0 1 * *')->onOneServer();
 
         $schedule->command(CreateApprovableBillablePatientsReport::class, ['--reset-actor', now()->startOfMonth()->toDateString()])
