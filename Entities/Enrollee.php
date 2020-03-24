@@ -6,13 +6,14 @@
 
 namespace CircleLinkHealth\Eligibility\Entities;
 
-
 use App\Contracts\Services\TwilioClientable;
+use App\Traits\HasEnrollableInvitation;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Core\Traits\MySQLSearchable;
+use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
@@ -163,11 +164,17 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalR
  *     searchPhones($term)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
  *     shouldSuggestAsFamilyForEnrollee($enrolleeId)
+ * @property-read \App\EnrollableInvitationLink $enrollmentInvitationLink
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\CircleLinkHealth\Core\Entities\DatabaseNotification[] $notifications
+ * @property-read int|null $notifications_count
+ * @property-read \App\EnrollableRequestInfo $statusRequestsInfo
  */
 class Enrollee extends BaseModel
 {
     use Filterable;
+    use HasEnrollableInvitation;
     use MySQLSearchable;
+    use Notifiable;
 
     // Agent array keys
     const AGENT_EMAIL_KEY = 'email';
