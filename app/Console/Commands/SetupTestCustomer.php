@@ -7,11 +7,11 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Tests\Helpers\SetupTestCustomerTrait;
+//use Tests\Helpers\SetupTestCustomerTrait;
 
 class SetupTestCustomer extends Command
 {
-    use SetupTestCustomerTrait;
+    //use SetupTestCustomerTrait;
 
     /**
      * The console command description.
@@ -42,8 +42,8 @@ class SetupTestCustomer extends Command
      */
     public function handle()
     {
-        $count = $this->argument('count');
-
-        $this->createTestCustomerData($count);
+        $this->error('not working. fix me!');
+        //$count = $this->argument('count');
+        //$this->createTestCustomerData($count);
     }
 }
