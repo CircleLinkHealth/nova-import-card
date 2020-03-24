@@ -520,6 +520,7 @@
                 </div>
                 <div class="modal-footer">
                     <button name="btnSubmit" type="submit"
+                            :disabled="utc_reason_empty"
                             class="modal-action waves-effect waves-light btn">Call Next Patient
                     </button>
                     <div v-if="onCall === true" style="text-align: center">
@@ -574,6 +575,7 @@
                 </div>
                 <div class="modal-footer" style="padding-right: 60px">
                     <button name="btnSubmit" type="submit"
+                            :disabled="reason_empty"
                             class="modal-action waves-effect waves-light btn">Call Next Patient
                     </button>
                     <div v-if="onCall === true" style="text-align: center">
@@ -888,6 +890,12 @@
             },
             contact_day_or_time_empty() {
                 return this.days.length <= 1 || this.times.length <= 1
+            },
+            utc_reason_empty(){
+                return this.utc_reason.length <= 1;
+            },
+            reason_empty(){
+                return this.reason.length <= 1;
             }
 
         },
