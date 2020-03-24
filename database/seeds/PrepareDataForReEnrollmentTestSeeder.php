@@ -43,10 +43,10 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                     'birth_date' => $faker->date(),
                 ]);
                 ++$n;
-                $this->command->info("$n Patients");
+//                $this->command->info("$n Patients");
             }
         }
 
-        $this->command->info('Finished but no patients needed to be create');
+//        $this->command->info('Finished but no patients needed to be create');
     }
 }
