@@ -435,6 +435,8 @@
             },
 
             showQuestions() {
+                //CPM-2176 make sure we are on top of page
+                $('.survey-container').scrollTop(0);
                 this.stage = "survey";
             },
 
