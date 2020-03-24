@@ -80,11 +80,11 @@ class PdfCarePlan
                 ],
                 1 => [
                     'type'   => 'primary_phone',
-                    'number' => $this->data['phones']['primary_phone'] ?: (collect($this->data['phones'])->filter()->first() ?: ''),
+                    'number' => isset($this->data['phones']['primary_phone']) ? $this->data['phones']['primary_phone'] : (collect($this->data['phones'])->filter()->first() ?: ''),
                 ],
                 2 => [
                     'type'   => 'mobile',
-                    'number' => $this->data['phones']['cell_phone'] ?? '',
+                    'number' => isset($this->data['phones']['cell_phone'] ) ? $this->data['phones']['cell_phone'] : '',
                 ],
             ],
             'email'      => null,
