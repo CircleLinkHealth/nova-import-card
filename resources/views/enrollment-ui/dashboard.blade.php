@@ -10,6 +10,7 @@
         window['userFullName'] = @json(auth()->user()->getFullName());
         window['hasTips'] = @json((!!$enrollee->practice->enrollmentTips));
         window['enrollee'] = @json($enrollee);
+        window['provider'] = @json($provider);
         window['providerFullName'] = @json($provider ? $provider->getFullName() : 'N/A');
         window['providerPhone'] = @json($provider ? $provider->getPhone() : 'N/A');
         window['providerInfo'] = @json($enrollee->getProviderInfo());
