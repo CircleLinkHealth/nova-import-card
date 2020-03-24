@@ -93,4 +93,33 @@ class ChargeableService extends BaseModel
         return $this->morphedByMany(User::class, 'chargeable')
                     ->withTimestamps();
     }
+
+    public function scopePcm($query){
+        return $query->where('code', self::PCM);
+    }
+
+    public function scopeCcm($query){
+        return $query->where('code', self::CCM);
+    }
+
+    public function scopeBhi($query){
+        return $query->where('code', self::BHI);
+    }
+
+    public function scopeAwvInitial($query){
+        return $query->where('code', self::AWV_INITIAL);
+    }
+
+    public function scopeAwvSubsequent($query){
+        return $query->where('code', self::AWV_SUBSEQUENT);
+    }
+
+    public function scopeGeneralCareManagement($query){
+        return $query->where('code', self::GENERAL_CARE_MANAGEMENT);
+    }
+
+    public function scopeSoftwareOnly($query){
+        return $query->where('code', self::SOFTWARE_ONLY);
+    }
 }
+

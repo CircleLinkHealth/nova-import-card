@@ -479,16 +479,12 @@ class PatientMonthlySummary extends BaseModel
 
     private function getBhiProblemsForAutoAttestation()
     {
-        $patientProblems = $this->patientProblemsSortedByWeight();
-
-        return $this->bhiAttestedProblems()
-                    ->merge(
-                        $patientProblems->filter(function (Problem $p) {
-                            return ! $this->ccmAttestedProblems()->contains('id', $p->id) && $p->isBehavioral();
-                        }))
-                    ->take(4)
-                    ->pluck('id')
-                    ->toArray();
+        return [
+            optional($this->patientProblemsSortedByWeight()
+                          ->first())
+                ->id
+        ];
     }
 }
+
 
