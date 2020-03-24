@@ -7,12 +7,12 @@
 namespace Tests\Unit;
 
 use App\Exports\PracticeReports\PatientProblemsReportBase;
-use App\Exports\PracticeReports\BasePracticeCallsReport;
+use App\Exports\PracticeReports\PracticeCallsReport;
 use App\Notifications\SendSignedUrlToDownloadPracticeReport;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Notification;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Tests\Helpers\SetupTestCustomerTrait;
+use App\Traits\SetupTestCustomerTrait;
 use Tests\TestCase;
 
 class PracticeReportTest extends TestCase
@@ -26,7 +26,7 @@ class PracticeReportTest extends TestCase
     /**
      * We want to test that given the correct input, the command will produce the report.
      *
-     * @see BasePracticeCallsReport
+     * @see PracticeCallsReport
      */
     public function consoleCommandSendsNotification()
     {

@@ -11,7 +11,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 
-class BasePracticeCallsReport extends BasePracticeReport
+class PracticeCallsReport extends BasePracticeReport
 {
     public function filename(): string
     {
