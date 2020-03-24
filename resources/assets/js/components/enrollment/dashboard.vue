@@ -1311,11 +1311,34 @@
     }
 
     .enrollment-script ol li {
-        margin-left: 2%;
+        margin-left: 3%;
+    }
+
+    .enrollment-script ul {
+        margin-top: 1%;
     }
 
     .enrollment-script ul li {
-        margin-left: 2%;
+        margin-left: 3%;
+        list-style-type: disc !important;
+    }
+
+    .enrollment-script ul li ul{
+        margin-top: 0%;
+    }
+
+    .enrollment-script ul li ul li ul{
+        margin-top: 0%;
+    }
+
+    .enrollment-script ul li ul li {
+        margin-left: 4%;
+        list-style-type: circle !important;
+    }
+
+    .enrollment-script ul li ul li ul li {
+        margin-left: 4%;
+        list-style-type: square !important;
     }
 
 </style>
