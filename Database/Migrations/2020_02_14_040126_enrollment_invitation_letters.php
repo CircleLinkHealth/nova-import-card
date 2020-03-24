@@ -22,9 +22,9 @@ class EnrollmentInvitationLetters extends Migration
             $table->json('letter');
             $table->timestamps();
 
-            $table->foreign('practice_id')
-                ->references('id')
-                ->on('practices');
+//            $table->foreign('practice_id')
+//                ->references('id')
+//                ->on('practices');
         });
     }
 
