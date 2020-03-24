@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Tests\Helpers;
+namespace App\Traits;
 
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
@@ -19,7 +19,7 @@ use Faker\Factory;
 
 trait SetupTestCustomerTrait
 {
-    use \App\Traits\Tests\UserHelpers;
+    use UserHelpers;
 
     /**
      * @return \CircleLinkHealth\Customer\Entities\User

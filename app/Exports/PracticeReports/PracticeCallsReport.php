@@ -7,12 +7,11 @@
 namespace App\Exports\PracticeReports;
 
 use App\Call;
-use App\Contracts\Reports\PracticeDataExportInterface;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 
-class PracticeCallsReport extends PracticeReportInterface
+class PracticeCallsReport extends BasePracticeReport
 {
     public function filename(): string
     {

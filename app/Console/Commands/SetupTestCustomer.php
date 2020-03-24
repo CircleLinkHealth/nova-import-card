@@ -4,10 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Console\DevCommands;
+namespace App\Console\Commands;
 
+use App\Traits\SetupTestCustomerTrait;
 use Illuminate\Console\Command;
-use Tests\Helpers\SetupTestCustomerTrait;
 
 class SetupTestCustomer extends Command
 {
