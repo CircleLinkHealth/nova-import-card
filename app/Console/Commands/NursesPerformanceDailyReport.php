@@ -79,7 +79,7 @@ class NursesPerformanceDailyReport extends Command
             ->addMedia($path)
             ->toMediaCollection($fileName);
 
-        if (isProductionEnv()) {
+        if (isProductionEnv() && notifyCareCoachOpsAboutNursePerformance('--notify')) {
             sendSlackMessage(
                 '#carecoach_ops',
                 "Nurses weekly calls and work hours report {$date->toDateString()} created. \n"

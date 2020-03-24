@@ -1747,3 +1747,14 @@ if ( ! function_exists('showNurseMetricsInDailyEmailReport')) {
                 })->exists();
     }
 }
+
+if ( ! function_exists('notifyCareCoachOpsAboutNursePerformance')) {
+    /**
+     * @param $param
+     * @return bool
+     */
+    function notifyCareCoachOpsAboutNursePerformance($param): bool
+    {
+        return AppConfig::where('config_key', $param)->exists();
+    }
+}
