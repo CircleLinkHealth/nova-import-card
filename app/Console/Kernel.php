@@ -62,11 +62,7 @@ class Kernel extends ConsoleKernel
     protected function commands()
     {
         $this->load(__DIR__.'/Commands');
-
-        if ('local' == $this->app->environment()) {
-            $this->load(__DIR__.'/DevCommands');
-        }
-
+        
         require base_path('routes/console.php');
     }
 

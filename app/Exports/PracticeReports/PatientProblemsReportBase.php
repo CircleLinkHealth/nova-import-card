@@ -10,7 +10,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Database\Eloquent\Builder;
 
-class PatientProblemsReport extends PracticeReportInterface
+class PatientProblemsReportBase extends BasePracticeReport
 {
     public function filename(): string
     {
