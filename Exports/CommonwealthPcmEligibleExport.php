@@ -8,12 +8,12 @@
 
 namespace CircleLinkHealth\Eligibility\Exports;
 
-use App\Exports\PracticeReports\PracticeCallsReport;
+use App\Exports\PracticeReports\BasePracticeReport;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use Illuminate\Database\Eloquent\Builder;
 
-class CommonwealthPcmEligibleExport extends PracticeCallsReport
+class CommonwealthPcmEligibleExport extends BasePracticeReport
 {
     /**
      * @return string
