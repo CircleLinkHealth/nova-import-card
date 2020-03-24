@@ -23,7 +23,7 @@ use Illuminate\Queue\InteractsWithQueue;
 class ChangeOrApproveCareplanResponseListener implements ShouldQueue
 {
     use InteractsWithQueue;
-
+    
     /**
      * @return bool
      */
@@ -42,12 +42,12 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
             User::class
         )->exists();
     }
-
+    
     public function getCareplanIdToApprove(string $body)
     {
         return $this->extractCarePlanId($body, 'approve');
     }
-
+    
     /**
      * Returns the CarePlan ID the provider requested changes for, or null if the provider did not request changes, or
      * the CarePlan ID was not found.
@@ -58,7 +58,7 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
     {
         return $this->extractCarePlanId($body, 'change');
     }
-
+    
     /**
      * Handle the event.
      *
@@ -68,17 +68,21 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
      */
     public function handle(DirectMailMessageReceived $event)
     {
-        if ($this->shouldBail($event->directMailMessage->from)) {
+        if ($this->shouldBail($event->directMailMessage)) {
             return;
         }
-
+        
         if ( ! $this->attemptChange($event->directMailMessage)) {
             $this->attemptApproval($event->directMailMessage);
         }
     }
-
+    
     /**
      * Approve the CarePlan, if the message contains code #approve.
+     *
+     * @param DirectMailMessage $directMailMessage
+     *
+     * @return bool
      */
     private function attemptApproval(DirectMailMessage $directMailMessage): bool
     {
@@ -87,16 +91,20 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
             $cp = $this->getCarePlan($careplanId);
             event(new CarePlanWasApproved($cp->patient, $cp->patient->billingProviderUser()));
             $cp->patient->billingProviderUser()->notify(new CarePlanDMApprovalConfirmation($cp->patient));
-
+            
             return true;
         }
-
+        
         return false;
     }
-
+    
     /**
      * Create a Task(Call) with the body of the DM for Nurse to make changes to the CarePlan, if the message contains
      * code #change.
+     *
+     * @param DirectMailMessage $directMailMessage
+     *
+     * @return bool
      */
     private function attemptChange(DirectMailMessage $directMailMessage): bool
     {
@@ -111,7 +119,7 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
                     'body'       => $directMailMessage->body,
                 ]
             );
-
+            
             $task = Call::create(
                 [
                     'note_id'         => $note->id,
@@ -126,24 +134,24 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
                     'outbound_cpm_id' => $cp->patient->patientInfo->getNurse(),
                 ]
             );
-
+            
             return true;
         }
-
+        
         return false;
     }
-
+    
     private function extractCarePlanId(string $body, string $key): ?int
     {
         preg_match("/#\s*$key\s*([\d]+)/", $body, $matches);
-
+        
         if (array_key_exists(1, $matches)) {
             return (int) $matches[1];
         }
-
+        
         return null;
     }
-
+    
     /**
      * Fetch the CarePlan with relations from the DB.
      *
@@ -155,12 +163,24 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
             ['patient.billingProvider', 'patient.patientInfo']
         )->findOrFail($careplanId);
     }
-
+    
     /**
      * Returns true if this listener should not run, and fals if it should run.
+     *
+     * @param DirectMailMessage $dm
+     *
+     * @return bool
      */
-    private function shouldBail(string $sender): bool
+    private function shouldBail(DirectMailMessage $dm): bool
     {
-        return ! DMDomainForAutoApproval::isEnabledForDomain($sender);
+        if (DirectMailMessage::DIRECTION_SENT === $dm->direction) {
+            return true;
+        }
+        
+        if ( ! DMDomainForAutoApproval::isEnabledForDomain($dm->from)) {
+            return true;
+        }
+        
+        return false;
     }
 }

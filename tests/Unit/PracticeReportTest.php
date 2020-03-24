@@ -6,13 +6,13 @@
 
 namespace Tests\Unit;
 
-use App\Exports\PracticeReports\PatientProblemsReport;
+use App\Exports\PracticeReports\PatientProblemsReportBase;
 use App\Exports\PracticeReports\PracticeCallsReport;
 use App\Notifications\SendSignedUrlToDownloadPracticeReport;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Notification;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Tests\Helpers\SetupTestCustomerTrait;
+use App\Traits\SetupTestCustomerTrait;
 use Tests\TestCase;
 
 class PracticeReportTest extends TestCase

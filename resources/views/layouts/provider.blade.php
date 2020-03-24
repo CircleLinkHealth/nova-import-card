@@ -36,8 +36,6 @@
         <link rel="stylesheet" type="text/css"
               href="//cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
 
-        <link rel="stylesheet" href="{{ mix('/webix/codebase/webix.css') }}" type="text/css">
-
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
     @endif
     <style>
