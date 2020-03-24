@@ -95,8 +95,6 @@ class PatientAttestedConditionsTest extends DuskTestCase
 
         //assert that asserted attached to calls exist on the summary
         $this->assertEquals($pms->attestedProblems()->count(), $patientProblems->count());
-
-
     }
 
     /**
@@ -107,7 +105,6 @@ class PatientAttestedConditionsTest extends DuskTestCase
         $pms           = $this->setupPms([ChargeableService::pcm()->first()->id]);
         $pms->ccm_time = 1440;
         $pms->save();
-
 
         $this->assertTrue($pms->hasServiceCode(ChargeableService::PCM));
         $this->assertEquals($pms->ccmAttestedProblems()->count(), 0);
@@ -125,7 +122,6 @@ class PatientAttestedConditionsTest extends DuskTestCase
         $pms->bhi_time = 1440;
         $pms->save();
 
-
         $this->assertTrue($pms->hasServiceCode(ChargeableService::BHI));
         $this->assertEquals($pms->bhiAttestedProblems()->count(), 0);
 
@@ -141,7 +137,6 @@ class PatientAttestedConditionsTest extends DuskTestCase
         $pms           = $this->setupPms([ChargeableService::ccm()->first()->id]);
         $pms->ccm_time = 1440;
         $pms->save();
-
 
         $this->assertTrue($pms->hasServiceCode(ChargeableService::CCM));
         $this->assertEquals($pms->ccmAttestedProblems()->count(), 0);
