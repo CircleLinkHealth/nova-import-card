@@ -85,7 +85,7 @@ class PatientEmailDoesNotContainPhi implements Rule
             foreach ($relation->phi as $phi) {
                 $string = $this->getSanitizedAndTransformedAttribute($relation, $phi);
                 if ($string) {
-                    $this->phiFound[] = preg_match("/\b{$string}\b/", $value)
+                    $this->phiFound[] = preg_match("/\b".preg_quote($string, '/')."\b/", $value)
                         ? $phi
                         : null;
                 }
