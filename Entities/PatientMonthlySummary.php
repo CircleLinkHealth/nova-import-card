@@ -11,6 +11,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -367,7 +368,8 @@ class PatientMonthlySummary extends BaseModel
      * @param $userId
      * @param Carbon $month
      */
-    public static function createFromPatient($userId, Carbon $month){
+    public static function createFromPatient($userId, Carbon $month)
+    {
         //just in case.
         $month->startOfMonth();
 
@@ -383,20 +385,20 @@ class PatientMonthlySummary extends BaseModel
             //clone record
             $newSummary = $summary->replicate();
         } else {
-            $newSummary = new self();
+            $newSummary             = new self();
             $newSummary->patient_id = $userId;
         }
 
-        $newSummary->month_year = $month;
-        $newSummary->total_time = 0;
-        $newSummary->ccm_time = 0;
-        $newSummary->bhi_time = 0;
-        $newSummary->no_of_calls = 0;
+        $newSummary->month_year             = $month;
+        $newSummary->total_time             = 0;
+        $newSummary->ccm_time               = 0;
+        $newSummary->bhi_time               = 0;
+        $newSummary->no_of_calls            = 0;
         $newSummary->no_of_successful_calls = 0;
-        $newSummary->approved = 0;
-        $newSummary->rejected = 0;
-        $newSummary->actor_id = null;
-        $newSummary->needs_qa = null;
+        $newSummary->approved               = 0;
+        $newSummary->rejected               = 0;
+        $newSummary->actor_id               = null;
+        $newSummary->needs_qa               = null;
         $newSummary->save();
     }
 
@@ -412,6 +414,81 @@ class PatientMonthlySummary extends BaseModel
           ->delete();
 
         $this->attestedProblems()->attach($attestedProblems);
+    }
+
+    public function autoAttestConditionsIfYouShould()
+    {
+        $this->loadMissing('attestedProblems');
+
+        if ($this->unAttestedPcm() || $this->unAttestedCcm()) {
+            $this->syncAttestedProblems($this->getCcmProblemsForAutoAttestation());
+        }
+
+        if ($this->unAttestedBhi()) {
+            $this->syncAttestedProblems($this->getBhiProblemsForAutoAttestation());
+        }
+
+    }
+
+    private function unAttestedPcm(): bool
+    {
+        return $this->hasServiceCode(ChargeableService::PCM) && $this->ccmAttestedProblems()->count() < 1;
+    }
+
+    private function unAttestedCcm(): bool
+    {
+        return $this->hasServiceCode(ChargeableService::CCM) && $this->ccmAttestedProblems()->count() < 2;
+    }
+
+    private function unAttestedBhi(): bool
+    {
+        return $this->hasServiceCode(ChargeableService::BHI) && $this->bhiAttestedProblems()->count() < 1;
+    }
+
+    private function patientProblemsSortedByWeight(): Collection
+    {
+        $this->loadMissing([
+            'patient.ccdProblems' => function ($problems) {
+                $problems->with(['icd10codes', 'cpmProblem']);
+            },
+        ]);
+
+        return $this->patient->ccdProblems->sortByDesc(function ($problem) {
+
+            if ( ! $problem->cpmProblem) {
+                return null;
+            }
+
+            return $problem->cpmProblem->weight;
+        });
+    }
+
+    private function getCcmProblemsForAutoAttestation()
+    {
+        $patientProblems = $this->patientProblemsSortedByWeight();
+
+        return $this->ccmAttestedProblems()
+                    ->merge(
+                        $patientProblems->filter(function (Problem $p) {
+                            return ! $this->ccmAttestedProblems()->contains('id', $p->id) && !$p->isBehavioral();
+                        }))
+                    ->take(4)
+                    ->pluck('id')
+                    ->toArray();
+    }
+
+    private function getBhiProblemsForAutoAttestation()
+    {
+        $patientProblems = $this->patientProblemsSortedByWeight();
+
+        return $this->bhiAttestedProblems()
+                    ->merge(
+                        $patientProblems->filter(function (Problem $p) {
+                            return ! $this->ccmAttestedProblems()->contains('id', $p->id) && $p->isBehavioral();
+                        }))
+                    ->take(4)
+                    ->pluck('id')
+                    ->toArray();
     }
 }
 
