@@ -64,14 +64,14 @@
             </template>
             <template v-if="isAdmin" slot="Care Coach" slot-scope="props">
                 <v-select
-                        v-model="props.row.careCoach"
-                        @input="props.row.changeNurse((props.row['Care Coach'] || {}).id)"
+                        v-model="props.row['Care Coach']"
+                        @input="props.row.changeNurse(props.row['Care Coach'])"
                         :options="props.row.nurses"
                         :disabled="! props.row.Practice"
                         class="form-control">
                 </v-select>
 
-                <div v-if="props.row.loaders.providers">
+                <div v-if="props.row.loaders.nurses">
                     <loader></loader>
                 </div>
             </template>
@@ -214,6 +214,10 @@
                         value: record.nurse_user_id
                     };
 
+                    if (practice.value) {
+                        self.changePractice(record.id, practice);
+                    }
+
                     return {
                         id: record.id,
                         selected: false,
@@ -238,6 +242,7 @@
                             confirm: null,
                             practices: null,
                             locations: null,
+                            nurses: null,
                             providers: null
                         },
                         loaders: {
@@ -246,6 +251,7 @@
                             practices: false,
                             locations: false,
                             providers: false,
+                            nurses: false,
                             update: false
                         },
                         practices: () => self.practices,
@@ -277,28 +283,59 @@
                     }
                     record.Practice = selectedPractice;
                     record.practice_id = selectedPractice.value;
+
+                    record.providers = [];
+
                     record.Location = {label: null, value: null};
                     record.location_id = null;
                     record.locations = [];
                     record.loaders.locations = true;
-                    record.providers = [];
-                    this.getLocations(selectedPractice.value).then(locations => {
-                        //console.log('get-practice-locations', practiceId, locations)
-                        record.locations = locations
-                        record.loaders.locations = false
+                    this.getLocations(selectedPractice.value)
+                        .then(locations => {
+                            //console.log('get-practice-locations', practiceId, locations)
+                            record.locations = locations;
+                            record.loaders.locations = false;
 
-                        if (_.isNull(record.Location.value) && 1 === parseInt(record.locations.length)) {
-                            record.Location = {label: record.locations[0].name, value: record.locations[0].id};
-                        }
+                            if (_.isNull(record.Location.value) && 1 === record.locations.length) {
+                                record.Location = {label: record.locations[0].name, value: record.locations[0].id};
+                            }
 
-                        this.changeLocation(recordId, record.Location)
-                    }).catch(err => {
-                        record.loaders.locations = false
-                        record.errors.locations = err.message
-                        console.error('get-practice-locations', err)
-                    })
-                    this.getNurseUsers(selectedPractice.value)
+                            this.changeLocation(recordId, record.Location)
+                        })
+                        .catch(err => {
+                            record.loaders.locations = false;
+                            record.errors.locations = err.message;
+                            console.error('get-practice-locations', err)
+                        });
 
+                    record['Care Coach'] = {label: null, value: null};
+                    record.nurse_user_id = null;
+                    record.nurses = [];
+                    record.loaders.nurses = true;
+                    this.getNurses(true)
+                        .then(nurses => {
+                            record.loaders.nurses = false;
+                            record.nurses = nurses.filter(nurse => parseInt(nurse.practiceId) === parseInt(selectedPractice.value))
+                                .map(nurse => {
+                                    return {
+                                        label: nurse.display_name,
+                                        value: nurse.id
+                                    };
+                                });
+
+                            if (_.isNull(record['Care Coach'].value) && 1 === record.nurses.length) {
+                                record['Care Coach'] = {
+                                    label: record.nurses[0].label,
+                                    value: record.nurses[0].value
+                                };
+                            }
+                            this.changeNurse(recordId, record['Care Coach']);
+                        })
+                        .catch(err => {
+                            record.loaders.nurses = false;
+                            record.errors.nurses = err.message;
+                            console.error('get-nurses', err);
+                        });
                 },
                 changeLocation(recordId, selectedLocation) {
                     const record = this.tableData.find(row => row.id === recordId);
@@ -319,7 +356,7 @@
                         if (!(record.providers || []).find(provider => parseInt(provider.id) === parseInt(record.billing_provider_id))) {
                             record.billing_provider_id = null
                         }
-                        if (_.isNull(record.billing_provider_id) && 1 === parseInt(record.providers.length)) {
+                        if (_.isNull(record.billing_provider_id) && 1 === record.providers.length) {
                             record['Billing Provider'] = {
                                 label: record.providers[0].display_name,
                                 value: record.providers[0].id
@@ -345,7 +382,7 @@
                 },
                 changeNurse(recordId, selectedNurse) {
                     const record = this.tableData.find(row => row.id === recordId);
-                    if (_.isNull(record.nurse_user_id) && 1 === parseInt(record.nurses.length)) {
+                    if (_.isNull(record.nurse_user_id) && 1 === record.nurses.length) {
                         record['Care Coach'] = {label: record.nurses[0].display_name, value: record.nurses[0].id};
                         record.nurse_user_id = record.nurses[0].id
                     }
@@ -353,7 +390,7 @@
                         const nurse = this.nurses.find(nurseUser => nurseUser.id === selectedNurse.value);
                         if (nurse) {
                             record['Care Coach'] = {label: nurse.display_name, value: nurse.id};
-                            record.nurse_user_id = nurse.id
+                            record.nurse_user_id = nurse.id;
                         }
                     }
                 },
@@ -522,13 +559,6 @@
                         }))
                     })
                 },
-                getNurseUsers(selectedPracticeId) {
-                    if (_.isEmpty(this.nurses)) {
-                        this.getNurses(true)
-                    }
-
-                    return this.nurses.filter(nurse => (nurse.practices || []).find(practiceId => practiceId === selectedPracticeId))
-                },
                 getProviders(practiceId, locationId) {
                     return this.cache().get(rootUrl(`api/practices/${practiceId}/locations/${locationId}/providers`)).then(response => {
                         return (response || []).map(item => Object.assign(item, {
@@ -539,12 +569,11 @@
                 }
             }),
         created() {
-            this.getCurrentUser()
+            this.getCurrentUser();
         },
         mounted() {
-            this.getPractices()
-            this.getNurses()
-            this.getRecords()
+            this.getPractices();
+            this.getRecords();
 
             EventBus.$on('vdropzone:success', () => {
                 const oldRecords = this.tableData.slice(0)
