@@ -12,7 +12,8 @@ export default {
     methods: {
         getNurses(cache = false) {
             this.loaders.nurses = true
-            return (cache ? this.cache().get(rootUrl('api/nurses?compressed')) : this.axios.get(rootUrl('api/nurses?compressed'))).then(response => {
+            const url = rootUrl('api/nurses?compressed');
+            return (cache ? this.cache().get(url) : this.axios.get(url)).then(response => {
                 const pagination = (response || {}).data
                 this.nurses = ((pagination || {}).data || []).filter(nurse => nurse.practices).map(nurse => {
 

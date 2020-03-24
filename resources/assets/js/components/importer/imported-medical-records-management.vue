@@ -65,8 +65,8 @@
             <template v-if="isAdmin" slot="Care Coach" slot-scope="props">
                 <v-select
                         v-model="props.row.careCoach"
-                        @input="props.row.changeLocation((props.row.provider || {}).id)"
-                        :options="props.row.providers"
+                        @input="props.row.changeNurse((props.row['Care Coach'] || {}).id)"
+                        :options="props.row.nurses"
                         :disabled="! props.row.Practice"
                         class="form-control">
                 </v-select>
@@ -225,8 +225,8 @@
                         Location: location,
                         location_id: location.value,
                         'Billing Provider': billingProvider,
-                        'Care Coach': careCoach,
                         billing_provider_id: billingProvider.value,
+                        'Care Coach': careCoach,
                         nurse_user_id: careCoach.value,
                         nurse_user: record.nurse_user,
                         '2+ CCM Cond': (record.validation_checks || {}).has_at_least_2_ccm_conditions,
@@ -251,6 +251,7 @@
                         practices: () => self.practices,
                         locations: [],
                         providers: [],
+                        nurses: [],
                         changePractice(selectedOption) {
                             self.changePractice(record.id, selectedOption);
                         },
@@ -319,7 +320,10 @@
                             record.billing_provider_id = null
                         }
                         if (_.isNull(record.billing_provider_id) && 1 === parseInt(record.providers.length)) {
-                            record['Billing Provider'] = {label: record.providers[0].display_name, value: record.providers[0].id};
+                            record['Billing Provider'] = {
+                                label: record.providers[0].display_name,
+                                value: record.providers[0].id
+                            };
                             record.billing_provider_id = record.providers[0].id;
                         }
                         console.log('get-practice-location-providers', providers)
@@ -341,10 +345,14 @@
                 },
                 changeNurse(recordId, selectedNurse) {
                     const record = this.tableData.find(row => row.id === recordId);
+                    if (_.isNull(record.nurse_user_id) && 1 === parseInt(record.nurses.length)) {
+                        record['Care Coach'] = {label: record.nurses[0].display_name, value: record.nurses[0].id};
+                        record.nurse_user_id = record.nurses[0].id
+                    }
                     if (record) {
-                        const nurse = record.nurse_user.find(p => p.id === selectedNurse.value);
-                        if (provider) {
-                            record['Care Coach'] = selectedNurse;
+                        const nurse = this.nurses.find(nurseUser => nurseUser.id === selectedNurse.value);
+                        if (nurse) {
+                            record['Care Coach'] = {label: nurse.display_name, value: nurse.id};
                             record.nurse_user_id = nurse.id
                         }
                     }
@@ -377,6 +385,9 @@
                     return this.axios.get(this.url).then((response) => {
                         const records = response.data || []
                         this.tableData = records.map(this.setupRecord)
+                        this.tableData.forEach(row => {
+                            row.changePractice(row.Practice)
+                        })
                         this.loaders.records = false
                         return this.tableData
                     }).catch(err => {
@@ -532,6 +543,7 @@
         },
         mounted() {
             this.getPractices()
+            this.getNurses()
             this.getRecords()
 
             EventBus.$on('vdropzone:success', () => {
