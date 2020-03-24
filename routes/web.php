@@ -2338,6 +2338,59 @@ Route::prefix('admin')->group(
     }
 );
 
+// TESTING ROUTES - DELETE AFTER TEST
+Route::get('/send-enrollment-reminder-test', [
+    'uses' => 'Enrollment\EnrollmentCenterController@sendEnrollmentReminderQaMethod',
+    'as'   => 'send.reminder.qa',
+])->middleware('auth');
+
+Route::get('/final-action-unreachables-test', [
+    'uses' => 'Enrollment\EnrollmentCenterController@finalActionTest',
+    'as'   => 'final.action.qa',
+])->middleware('auth');
+
+Route::get('/evaluate-enrolled-from-survey', [
+    'uses' => 'Enrollment\EnrollmentCenterController@evaluateEnrolledForSurveyTest',
+    'as'   => 'evaluate.survey.completed',
+])->middleware('auth');
+
+Route::get('/reset-enrollment-test', [
+    'uses' => 'Enrollment\EnrollmentCenterController@resetEnrollmentTest',
+    'as'   => 'reset.test.qa',
+])->middleware('auth');
+//---------------------------------------
+Route::get('/send-enrollment-invites', [
+    'uses' => 'Enrollment\EnrollmentCenterController@inviteUnreachablesToEnroll',
+    'as'   => 'send.enrollment.invitations',
+])->middleware('auth');
+
+Route::get('/invite-unreachable', [
+    'uses' => 'Enrollment\EnrollmentCenterController@sendInvitesPanel',
+    'as'   => 'send.invitates.panel',
+])->middleware('auth');
+
+// TEMPORARY SIGNED ROUTE
+Route::get('/patient-self-enrollment', [
+    'uses' => 'Enrollment\EnrollmentCenterController@enrolleesInvitationLetterBoard',
+    'as'   => 'invitation.enrollment',
+])->middleware('auth');
+
+Route::get('/enrollment-survey', [
+    'uses' => 'Enrollment\EnrollmentCenterController@enrollNow',
+    'as'   => 'patient.self.enroll.now',
+]);
+
+Route::get('/enrollment-info', [
+    'uses' => 'Enrollment\EnrollmentCenterController@enrolleeRequestsInfo',
+    'as'   => 'patient.requests.enroll.info',
+]);
+
+// Redirects to view with enrollees details to contact.
+Route::get('/enrollee-contact-details', [
+    'uses' => 'Enrollment\EnrollmentCenterController@enrolleeContactDetails',
+    'as'   => 'enrollee.to.call.details',
+])->middleware('auth');
+
 Route::get('/notification-unsubscribe', [
     'uses' => 'NotificationsMailSubscriptionController@unsubscribe',
     'as'   => 'unsubscribe.notifications.mail',
@@ -2357,6 +2410,10 @@ Route::post('nurses/nurse-calendar-data', [
     'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
     'as'   => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');
+
+Route::get('login-enrollees-survey/{user}/{survey}', 'EnrollmentCenterController@sendToSurvey')
+    ->name('enrollee.login.signed')
+    ->middleware('signed');
 
 //Route::get('get-calendar-data', [
 //    'uses' => 'CareCenter\WorkScheduleController@calendarEvents',
