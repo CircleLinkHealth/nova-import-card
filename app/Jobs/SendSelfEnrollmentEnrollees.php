@@ -36,7 +36,7 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
      */
     public function handle()
     {
-        if (App::environment(['local', 'staging'])) {
+        if (App::environment(['local', 'review'])) {
             $enrollees = $this->getEnrollees()->get()
                 ->take(SendEnrollmentNotifications::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING)
                 ->all();

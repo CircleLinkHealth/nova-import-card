@@ -6,6 +6,7 @@ namespace App\Jobs;
  */
 
 
+use App\Notifications\SendEnrollementSms;
 use App\Notifications\SendEnrollmentEmail;
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
@@ -44,8 +45,9 @@ class SendEnrollmentPatientsReminder implements ShouldQueue
     {
         $twoDaysAgo = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
+        $testingMode = App::environment(['review', 'local']);
 
-        if (App::environment(['staging', 'local'])) {
+        if ($testingMode) {
             $twoDaysAgo = Carbon::parse(now())->startOfMonth()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfMonth()->toDateTimeString();
         }
@@ -75,7 +77,7 @@ class SendEnrollmentPatientsReminder implements ShouldQueue
                 // patient requested info or completed survey the user model would be deleted, hence it will never be collected
                 if (!$hasRequestedInfoOnInvitation || !$this->hasSurveyInProgress($enrollable) || $this->hasSurveyCompleted($enrollable)) {
                     $enrollable->notify(new SendEnrollmentEmail($enrollable, true));
-//            $enrollable->notify(new SendEnrollementSms($enrollable, true));
+//                    $enrollable->notify(new SendEnrollementSms($enrollable, true));
                 }
             });
     }
