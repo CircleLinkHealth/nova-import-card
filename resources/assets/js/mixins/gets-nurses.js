@@ -15,7 +15,10 @@ export default {
             const url = rootUrl('api/nurses?compressed');
             return (cache ? this.cache().get(url) : this.axios.get(url))
                 .then(response => {
-                    const data = (response || {}).data;
+                    let data = (response || {}).data;
+                    if (!Array.isArray(data)) {
+                        data = data.data;
+                    }
                     this.nurses = (data || []).filter(nurse => nurse.practices).map(nurse => {
 
                         const roles = nurse.user.roles.map(r => r.name);
