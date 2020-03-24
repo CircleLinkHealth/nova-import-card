@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Repositories\BillablePatientsEloquentRepository;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -29,6 +30,10 @@ class ProcessBillablePatients implements ShouldQueue
      * @var bool
      */
     protected $resetActor;
+    /**
+     * @var bool
+     */
+    protected $autoAttest;
     
     /**
      * Create a new job instance.
@@ -38,12 +43,13 @@ class ProcessBillablePatients implements ShouldQueue
      * @param bool $fromScratch
      * @param bool $resetActor
      */
-    public function __construct(int $practiceId, Carbon $date, bool $fromScratch, bool $resetActor)
+    public function __construct(int $practiceId, Carbon $date, bool $fromScratch, bool $resetActor, bool $autoAttest)
     {
         $this->practiceId = $practiceId;
         $this->date       = $date;
         $this->fromScratch = $fromScratch;
         $this->resetActor = $resetActor;
+        $this->autoAttest = $autoAttest;
     }
     
     /**
@@ -70,6 +76,10 @@ class ProcessBillablePatients implements ShouldQueue
                                          if ($this->resetActor) {
                                              $pms->actor_id = null;
                                              $pms->save();
+                                         }
+
+                                         if ($this->autoAttest) {
+                                             $pms->autoAttestConditionsIfYouShould();
                                          }
                     
                                          ProcessApprovableBillablePatientSummary::dispatch(

@@ -49,7 +49,6 @@ class ApprovableBillablePatient extends Resource
             $status = $this->patient->patientInfo->getCcmStatusForMonth(Carbon::parse($this->month_year));
         }
 
-
         return [
             'id'                     => $this->patient->id,
             'mrn'                    => $this->patient->getMRN(),
