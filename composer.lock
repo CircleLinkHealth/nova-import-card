@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5538bb3940927f377abed7c3a49aa55a",
+    "content-hash": "084d8bdcbb294fc469efc5372997ad2e",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -945,11 +945,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.4.9",
+            "version": "dev-CPM-2155-enrollees-requested-callback",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "8a586da82b3eaa26a2472f098599112e798b83b3"
+                "reference": "1e9667b1590ee17d3fdfd720efe2d096f48d3c05"
             },
             "type": "laravel-module",
             "extra": {
@@ -971,7 +971,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-23T16:26:55+00:00"
+            "time": "2020-03-24T23:01:52+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -8713,24 +8713,24 @@
         },
         {
             "name": "spatie/pdf-to-image",
-            "version": "1.2.2",
+            "version": "1.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/pdf-to-image.git",
-                "reference": "9a5cb264a99e87e010c65d4ece03b51f821d55bd"
+                "reference": "22a580e03550c95ce810ad430e3c44d2f7a1c75a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/pdf-to-image/zipball/9a5cb264a99e87e010c65d4ece03b51f821d55bd",
-                "reference": "9a5cb264a99e87e010c65d4ece03b51f821d55bd",
+                "url": "https://api.github.com/repos/spatie/pdf-to-image/zipball/22a580e03550c95ce810ad430e3c44d2f7a1c75a",
+                "reference": "22a580e03550c95ce810ad430e3c44d2f7a1c75a",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.0"
+                "ext-imagick": "*",
+                "php": "^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.*",
-                "scrutinizer/ocular": "~1.1"
+                "phpunit/phpunit": "^6.2"
             },
             "type": "library",
             "autoload": {
@@ -8759,7 +8759,7 @@
                 "pdf-to-image",
                 "spatie"
             ],
-            "time": "2016-12-14T15:37:00+00:00"
+            "time": "2019-07-31T06:46:19+00:00"
         },
         {
             "name": "spatie/pdf-to-text",
@@ -14967,6 +14967,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
