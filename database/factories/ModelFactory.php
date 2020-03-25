@@ -82,8 +82,8 @@ $factory->define(
         return [
             'monitor_changes_for_chf' => $faker->boolean(),
             //        'patient_id' => '', this has to be passed in when calling the factory
-            'starting' => $starting,
-            'target'   => $starting - rand(100, 150),
+            'starting'                => $starting,
+            'target'                  => $starting - rand(100, 150),
         ];
     }
 );
@@ -91,10 +91,10 @@ $factory->define(
 $factory->define(
     \CircleLinkHealth\SharedModels\Entities\CpmBloodPressure::class,
     function (Faker\Generator $faker) {
-        $systolicStarting = rand(110, 140);
+        $systolicStarting  = rand(110, 140);
         $diastolicStarting = rand(60, 70);
 
-        $systolicTarget = $systolicStarting - rand(10, 20);
+        $systolicTarget  = $systolicStarting - rand(10, 20);
         $diastolicTarget = $diastolicStarting - rand(15, 20);
 
         return [
@@ -167,7 +167,9 @@ $factory->define(Invite::class, function (Faker\Generator $faker) {
 $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factory) {
     if (isProductionEnv()) {
         $practice = Practice::whereName('demo')->firstOrFail();
-        $provider = \CircleLinkHealth\Customer\Entities\User::ofType('provider')->offPractice($practice->id)->firstOrFail();
+        $provider = \CircleLinkHealth\Customer\Entities\User::ofType('provider')
+                                                            ->ofPractice($practice->id)
+                                                            ->firstOrFail();
     } else {
         $practice = Practice::first();
 
@@ -175,7 +177,8 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factor
             $practice = factory(\CircleLinkHealth\Customer\Entities\Practice::class)->create();
         }
 
-        $provider = \CircleLinkHealth\Customer\Entities\User::ofType('provider')->first();
+        $provider = \CircleLinkHealth\Customer\Entities\User::ofType('provider')
+                                                            ->first();
 
         if ( ! $provider) {
             $provider = factory(\CircleLinkHealth\Customer\Entities\User::class)->create();
@@ -228,22 +231,22 @@ $factory->define(Practice::class, function (Faker\Generator $faker) {
     }
 
     return [
-        'name'           => $name,
-        'display_name'   => $name,
-        'active'         => true,
-        'federal_tax_id' => $faker->randomNumber(5),
+        'name'                     => $name,
+        'display_name'             => $name,
+        'active'                   => true,
+        'federal_tax_id'           => $faker->randomNumber(5),
         //        'user_id',
         //        'same_clinical_contact',
-        'clh_pppm' => 0,
+        'clh_pppm'                 => 0,
         //        'same_ehr_login',
         //        'sms_marketing_number',
         'weekly_report_recipients' => 'mantoniou@circlelinkhealth.com',
         'invoice_recipients'       => 'mantoniou@circlelinkhealth.com',
         'bill_to_name'             => $name,
         //        'auto_approve_careplans',
-        'send_alerts'           => 1,
-        'outgoing_phone_number' => $faker->phoneNumber,
-        'term_days'             => 30,
+        'send_alerts'              => 1,
+        'outgoing_phone_number'    => $faker->phoneNumber,
+        'term_days'                => 30,
     ];
 });
 
@@ -290,7 +293,7 @@ $factory->define(Ehr::class, function (Faker\Generator $faker) {
 
 $factory->define(TargetPatient::class, function (Faker\Generator $faker) {
     $batch = factory(EligibilityBatch::class)->create();
-    $ehr = factory(Ehr::class)->create();
+    $ehr   = factory(Ehr::class)->create();
 
     return [
         'batch_id'          => $batch->id,
@@ -304,8 +307,8 @@ $factory->define(TargetPatient::class, function (Faker\Generator $faker) {
 
 $factory->define(Call::class, function (Faker\Generator $faker) {
     return [
-        'type'     => $faker->randomElement(['call', 'task']),
-        'sub_type' => $faker->randomElement([
+        'type'            => $faker->randomElement(['call', 'task']),
+        'sub_type'        => $faker->randomElement([
             'Call Back',
             'CP Review',
             'Get Appt.',
