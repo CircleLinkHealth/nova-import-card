@@ -20,6 +20,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 
 class EnrollableSurveyCompleted implements ShouldQueue
@@ -163,7 +164,9 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 'status'           => Enrollee::ENROLLED,
             ]);
 
-            $this->importEnrolleeSurveyOnly($enrollee, $user);
+           if (App::environment(['local', 'review'])){
+               $this->importEnrolleeSurveyOnly($enrollee, $user);
+           }
             $patientType = 'Initial';
             $id          = $enrollee->id;
         } else {
@@ -251,7 +254,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
         return EligibilityBatch::updateOrCreate(
             [
                 'practice_id' => $practice->id,
-                'type'        => EligibilityBatch::SURVEY_ONLY_USER,
+                'type'        => 'survey_only',
             ],
             [
                 'status' => EligibilityBatch::STATUSES['complete'],
