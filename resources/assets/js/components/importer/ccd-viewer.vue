@@ -25,13 +25,13 @@
                 <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
             </template>
             <template slot="Practice" slot-scope="props">
-                <select class="form-control" v-model="props.row.Practice" @change="props.row.changePractice(props.row.Practice)">
+                <select class="form-control" v-model="props.row.practice_id" @change="props.row.changePractice(props.row.practice_id)">
                     <option value="">Select Practice</option>
                     <option v-for="practice in props.row.practices()" :key="practice.id" :value="practice.id">{{practice.display_name}}</option>
                 </select>
             </template>
             <template slot="Location" slot-scope="props">
-                <select class="form-control" v-model="props.row.Location" @change="props.row.changeLocation(props.row.Location)">
+                <select class="form-control" v-model="props.row.location_id" @change="props.row.changeLocation(props.row.location_id)">
                     <option :value="null">Select Location</option>
                     <option v-for="location in props.row.locations" :key="location.id" :value="location.id">{{location.name}}</option>
                 </select>
@@ -40,7 +40,7 @@
                 </div>
             </template>
             <template slot="Billing Provider" slot-scope="props">
-                <select class="form-control" v-model="props.row['Billing Provider']" @change="props.row.changeProvider(props.row['Billing Provider'])">
+                <select class="form-control" v-model="props.row.billing_provider_id" @change="props.row.changeProvider(props.row.billing_provider_id)">
                     <option :value="null">Select Billing Provider</option>
                     <option v-for="provider in props.row.providers" :key="provider.id" :value="provider.id">{{provider.display_name}}</option>
                 </select>
@@ -147,11 +147,11 @@
                     selected: false,
                     Name: record.demographics.display_name,
                     DOB: record.demographics.dob,
-                    Practice: ((record.practice || {}).id || null),
+                    practice_id: ((record.practice || {}).id || null),
                     practice_name: ((record.practice || {}).display_name || null),
-                    Location: ((record.location || {}).id || null),
+                    location_id: ((record.location || {}).id || null),
                     location_name: ((record.location || {}).display_name || null),
-                    'Billing Provider': record.billing_provider_id,
+                    billing_provider_id: record.billing_provider_id,
                     '2+ CCM Cond': (record.validation_checks || {}).has_at_least_2_ccm_conditions,
                     '1+ BHI Cond': (record.validation_checks || {}).has_at_least_1_bhi_condition,
                     Medicare: (record.validation_checks || {}).has_medicare,
@@ -186,7 +186,7 @@
                     },
                     validate () {
                         const record = this
-                        return (!!record.Practice && !!record['Billing Provider'] && !!record.Location)
+                        return (!!record.practice_id && !!record.billing_provider_id && !!record.location_id)
                     }
                 }
                 return newRecord
@@ -196,9 +196,9 @@
                 if (record) {
                     const practice = this.practices.find(practice => practice.id === practiceId)
                     if (practice) {
-                        record.Practice = practice.id;
+                        record.practice_id = practice.id;
                         record.practice_name = practice.display_name
-                        //record.Location = null
+                        //record.location_id = null
                         record.locations = []
                         record.loaders.locations = true
                         record.providers = []
@@ -206,7 +206,7 @@
                             //console.log('get-practice-locations', practiceId, locations)
                             record.locations = locations
                             record.loaders.locations = false
-                            this.changeLocation(recordId, record.Location)
+                            this.changeLocation(recordId, record.location_id)
                         }).catch(err => {
                             record.loaders.locations = false
                             record.errors.locations = err.message
@@ -220,15 +220,15 @@
                 if (record) {
                     const location = record.locations.find(l => l.id === locationId)
                     if (location) {
-                        record.Location = location.id;
+                        record.location_id = location.id;
                         record.location_name = location.name
                         record.providers = []
                         record.loaders.providers = true
-                        this.getProviders(record.Practice, locationId).then(providers => {
+                        this.getProviders(record.practice_id, locationId).then(providers => {
                             record.providers = providers
                             record.loaders.providers = false
-                            if (!record.providers.find(provider => provider.id == record['Billing Provider'])) {
-                                record['Billing Provider'] = null
+                            if (!record.providers.find(provider => provider.id == record.billing_provider_id)) {
+                                record.billing_provider_id = null
                             }
                             console.log('get-practice-location-providers', providers)
                         }).catch(err => {
@@ -244,16 +244,16 @@
                 if (record) {
                     const provider = record.providers.find(p => p.id === providerId)
                     if (provider) {
-                        record['Billing Provider'] = provider.id
+                        record.billing_provider_id = provider.id
                     }
                 }
             },
             updateRecord(recordId) {
                 const record = this.tableData.find(row => row.id === recordId)
-                if (record && record.Practice && record.Location && record['Billing Provider']) {
-                    const practiceId = record.Practice
-                    const locationId = record.Location
-                    const billingProviderId = record['Billing Provider']
+                if (record && record.practice_id && record.location_id && record.billing_provider_id) {
+                    const practiceId = record.practice_id
+                    const locationId = record.location_id
+                    const billingProviderId = record.billing_provider_id
 
                     record.loaders.update = true
                     this.axios.post(rootUrl('importer/train/store?json'), {
@@ -278,7 +278,7 @@
                     this.tableData = records.map(this.setupRecord)
                     console.log('get-records', this.tableData)
                     this.tableData.forEach(row => {
-                        row.changePractice(row.Practice)
+                        row.changePractice(row.practice_id)
                     })
                     this.loaders.records = false
                     return this.tableData
@@ -341,7 +341,7 @@
             submitOne(id) {
                 const record = this.tableData.find(r => r.id === id)
                 if (record) {
-                    if (!!record.Practice && !!record['Billing Provider'] && !!record.Location) {
+                    if (!!record.practice_id && !!record.billing_provider_id && !!record.location_id) {
                         if (!record.duplicate_id || (record.duplicate_id && confirm(`This patient may be a duplicate of ${record.duplicate_id}. Are you sure you want to proceed with creating a careplan?`))) {
                             record.loaders.confirm = true
                             return this.axios.post(rootUrl('api/ccd-importer/records/confirm'), [record]).then((response) => {

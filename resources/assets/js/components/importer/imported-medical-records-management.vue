@@ -38,7 +38,9 @@
             </template>
             <template slot="Location" slot-scope="props">
                 <div v-if="props.row.loaders.locations">
-                    <div class="placeholder-dropdown"><loader></loader></div>
+                    <div class="placeholder-dropdown">
+                        <loader></loader>
+                    </div>
                 </div>
 
                 <v-select v-else
@@ -51,7 +53,9 @@
             </template>
             <template slot="Billing Provider" slot-scope="props">
                 <div v-if="props.row.loaders.providers">
-                    <div class="placeholder-dropdown"><loader></loader></div>
+                    <div class="placeholder-dropdown">
+                        <loader></loader>
+                    </div>
                 </div>
 
                 <v-select v-else
@@ -64,7 +68,9 @@
             </template>
             <template v-if="isAdmin" slot="Care Coach" slot-scope="props">
                 <div v-if="props.row.loaders.nurses">
-                    <div class="placeholder-dropdown"><loader></loader></div>
+                    <div class="placeholder-dropdown">
+                        <loader></loader>
+                    </div>
                 </div>
 
                 <v-select v-else
@@ -354,6 +360,7 @@
                         record.providers = providers
                         record.loaders.providers = false
                         if (!(record.providers || []).find(provider => parseInt(provider.id) === parseInt(record.billing_provider_id))) {
+                            record['Billing Provider'] = {label: '', value:''};
                             record.billing_provider_id = null
                         }
                         if (_.isNull(record.billing_provider_id) && 1 === record.providers.length) {
@@ -372,13 +379,21 @@
                 },
                 changeProvider(recordId, selectedProvider) {
                     const record = this.tableData.find(row => row.id === recordId);
-                    if (record) {
-                        const provider = record.providers.find(p => p.id === selectedProvider.value);
-                        if (provider) {
-                            record['Billing Provider'] = selectedProvider;
-                            record.billing_provider_id = provider.id
-                        }
+
+                    if (!record) {
+                        return
                     }
+
+                    const provider = record.providers.find(p => p.id === selectedProvider.value);
+
+                    if (provider) {
+                        record['Billing Provider'] = selectedProvider;
+                        record.billing_provider_id = provider.id
+                        return;
+                    }
+
+                    record['Billing Provider'] = {label: '', value:''};
+                    record.billing_provider_id = null
                 },
                 changeNurse(recordId, selectedNurse) {
                     if (_.isNull(selectedNurse)) return;
@@ -485,42 +500,46 @@
                 },
                 submitOne(id) {
                     const record = this.tableData.find(r => r.id === id)
-                    if (record) {
-                        if (!!record.practice_id && !!record.billing_provider_id && !!record.location_id) {
-                            if (!record.duplicate_id || (record.duplicate_id && confirm(`This patient may be a duplicate of ${record.duplicate_id}. Are you sure you want to proceed with creating a careplan?`))) {
-                                record.loaders.confirm = true
-                                return this.axios.post(rootUrl('api/ccd-importer/records/confirm'), [record]).then((response) => {
-                                    record.loaders.confirm = false
-                                    if ((response.data || []).some(item => item.id === id && item.completed)) {
-                                        this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
-                                    }
-                                    console.log('submit-one', record, response.data)
-                                    if (((response.data || [])[0] || {}).completed) {
-                                        const patient = (((response.data || [])[0] || {}).patient || {})
-                                        EventBus.$emit('notifications:create', {
-                                            message: `Patient Created (${patient.id}): ${patient.display_name}`,
-                                            href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
-                                            noTimeout: true
-                                        })
-                                    } else {
-                                        EventBus.$emit('notifications:create', {
-                                            message: `Error when creating patient ${record.Name}`,
-                                            type: 'warning',
-                                            noTimeout: true
-                                        })
-                                    }
-                                    return this.getRecords()
-                                }).catch((err) => {
-                                    record.loaders.confirm = false
-                                    record.errors.confirm = err.message
-                                    console.error('submit-one', record, err)
+
+                    if (!record) {
+                        record.errors.confirm = 'record not found'
+                        return;
+                    }
+
+                    if (!(!!record.practice_id && !!record.billing_provider_id && !!record.location_id)) {
+                        record.errors.confirm = 'select a practice, location and provider'
+                        return;
+                    }
+
+
+                    if (!record.duplicate_id || (record.duplicate_id && confirm(`This patient may be a duplicate of ${record.duplicate_id}. Are you sure you want to proceed with creating a careplan?`))) {
+                        record.loaders.confirm = true
+                        return this.axios.post(rootUrl('api/ccd-importer/records/confirm'), [record]).then((response) => {
+                            record.loaders.confirm = false
+                            if ((response.data || []).some(item => item.id === id && item.completed)) {
+                                this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
+                            }
+                            console.log('submit-one', record, response.data)
+                            if (((response.data || [])[0] || {}).completed) {
+                                const patient = (((response.data || [])[0] || {}).patient || {})
+                                EventBus.$emit('notifications:create', {
+                                    message: `Patient Created (${patient.id}): ${patient.display_name}`,
+                                    href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
+                                    noTimeout: true
+                                })
+                            } else {
+                                EventBus.$emit('notifications:create', {
+                                    message: `Error when creating patient ${record.Name}`,
+                                    type: 'warning',
+                                    noTimeout: true
                                 })
                             }
-                        } else {
-                            record.errors.confirm = 'select a practice, location and provider'
-                        }
-                    } else {
-                        record.errors.confirm = 'record not found'
+                            return this.getRecords()
+                        }).catch((err) => {
+                            record.loaders.confirm = false
+                            record.errors.confirm = err.message
+                            console.error('submit-one', record, err)
+                        })
                     }
                 },
                 toggleAllSelect(e) {
@@ -622,7 +641,8 @@
     }
 
     .dropdown.v-select.form-control {
-        height: auto;
+        width: 200px;
+        height: 40px;
         padding: 0;
     }
 
