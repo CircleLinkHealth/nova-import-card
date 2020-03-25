@@ -27,10 +27,6 @@ Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
 
 Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
 
-//Patient Landing Pages
-Route::resource('sign-up', 'PatientSignupController');
-Route::get('talk-to-us', 'PatientSignupController@talkToUs');
-
 Route::get('care/enroll/{enrollUserId}', 'CareController@enroll');
 Route::post('care/enroll/{enrollUserId}', 'CareController@store');
 
