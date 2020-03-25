@@ -1643,17 +1643,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\CPRItemController@destroy',
                 'as'   => 'admin.items.destroy',
             ]);
-
-            // ucp
-            Route::resource('ucp', 'Admin\CPRUCPController');
-            Route::post('ucp/{id}/edit', [
-                'uses' => 'Admin\CPRUCPController@update',
-                'as'   => 'admin.ucp.update',
-            ]);
-            Route::get('ucp/{id}/destroy', [
-                'uses' => 'Admin\CPRUCPController@destroy',
-                'as'   => 'admin.ucp.destroy',
-            ]);
         });
 
         // observations
