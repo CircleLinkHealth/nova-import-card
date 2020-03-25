@@ -742,7 +742,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 $user->patientInfo()->delete();
                 $user->carePlan()->delete();
                 $user->careTeamMembers()->delete();
-                $user->inboundCalls()->delete();
+                if ($user->isParticipant()) {
+                    $user->inboundScheduledCalls()->delete();
+                }
             }
         );
 
