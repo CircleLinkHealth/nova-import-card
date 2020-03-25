@@ -1271,17 +1271,7 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'Enrollment\EnrollmentStatsController@practiceStats',
             'as'   => 'enrollment.practice.stats.data',
         ])->middleware('permission:ambassador.read,practice.read');
-
-        Route::get('invites/create', [
-            'uses' => 'InviteController@create',
-            'as'   => 'invite.create',
-        ]);
-
-        Route::post('invites/store', [
-            'uses' => 'InviteController@store',
-            'as'   => 'invite.store',
-        ])->middleware('permission:invite.create');
-
+        
         Route::patch('nurses/window/{id}', [
             'uses' => 'CareCenter\WorkScheduleController@patchAdminEditWindow',
             'as'   => 'patch.admin.edit.nurse.schedules',

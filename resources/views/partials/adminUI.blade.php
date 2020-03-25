@@ -214,10 +214,6 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ route('saas-admin.practices.create')}}">Add New</a></li>
                                 <li><a href="{{ route('saas-admin.practices.index')}}">Manage</a></li>
-                                <li><a href="{{ route('invite.create', []) }}">Send Onboarding Invite</a>
-                                <li>
-                                    <a href="{{ route('get.onboarding.create.program.lead.user', []) }}">Onboarding</a>
-                                </li>
                                 <li><a href="{{ route('practice.billing.create', []) }}">Invoice/Billable
                                         Patient Report</a></li>
                             </ul>
