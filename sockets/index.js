@@ -1,5 +1,6 @@
 const colors = require('../logger/colors')
 const {setResultsCallback, syncPatientTimeWithCPM, ignorePatientTimeSync} = require('./sync.with.cpm');
+const errorLogger = require('../logger').getErrorLogger();
 const storeTime = require("../cache/user-time").storeTime;
 
 module.exports = app => {
@@ -295,6 +296,7 @@ module.exports = app => {
             axios.post(url, requestData).then((response) => {
                 console.log(response.status, response.data, requestData.patientId, requestData.activities.map(activity => activity.duration).join(', '))
             }).catch((err) => {
+                errorLogger.report(err);
                 console.error(err)
             })
 
