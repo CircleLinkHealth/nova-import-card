@@ -26,7 +26,8 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
 //    This is the final (out of 3) action taken on NON-RESPONSIVE enrolees OR patients.
 //    If User has role "survey-only" then enrollment letter will be send with enrollment call on delivery.
 //    If User is not "survey-only" then patients will be put into queue for enrollment calls.
-//    Even if patient ha survey in progress, will get a call
+//    Even if patient has survey in progress, will get a call
+//    ONLY NON "survey-only" (meaning. enrollees) will get a physical mail.
 
     use Dispatchable;
     use EnrollableManagement;
@@ -64,11 +65,11 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
     public function handle()
     {
         //        Two days after the last reminder - (the "SendEnrollmentNotificationsReminder")
-        $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
+        $twoDaysAgo = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
 
         if (App::environment(['local', 'review'])) {
-            $twoDaysAgo    = Carbon::parse(now())->startOfMonth()->toDateTimeString();
+            $twoDaysAgo = Carbon::parse(now())->startOfMonth()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfMonth()->toDateTimeString();
         }
 
@@ -87,17 +88,23 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
         })->get()
             ->each(function (User $noResponsivePatient) {
                 $isSurveyOnlyUser = $noResponsivePatient->hasRole('survey-only');
+//                Notice: Getting the Enrollee model from $noResponsivePatient User
+                /** @var Enrollee $enrollee */
+//                Does unreachable patient always has an enrollee model?
                 $enrollee = Enrollee::whereUserId($noResponsivePatient->id)->firstOrFail();
                 if ($isSurveyOnlyUser) {
-                    $practice = $noResponsivePatient->primaryPractice;
-                    $provider = $this->getEnrollableProvider($isSurveyOnlyUser, $noResponsivePatient);
-                    $careAmbassadorPhoneNumber = $practice->outgoing_phone_number;
-                    $practiceName = $practice->name;
 
-                    $letter = $this->getPracticeEnrollmentLetter($practice->id);
-                    $pages = $this->enrollmentInvitationService->createLetter($practiceName, $letter, $careAmbassadorPhoneNumber, $provider, false);
+//                    Keeping this maybe we need the letter to be printed from nova?
 
-                    $this->sendLetterWithRegularMail($noResponsivePatient, $pages);
+//                    $practice = $noResponsivePatient->primaryPractice;
+//                    $provider = $this->getEnrollableProvider($isSurveyOnlyUser, $noResponsivePatient);
+//                    $careAmbassadorPhoneNumber = $practice->outgoing_phone_number;
+//                    $practiceName = $practice->name;
+//                    $letter = $this->getPracticeEnrollmentLetter($practice->id);
+//                    $pages = $this->enrollmentInvitationService->createLetter($practiceName, $letter, $careAmbassadorPhoneNumber, $provider, false);
+//                    $this->sendLetterWithRegularMail($noResponsivePatient, $pages);
+
+                    $this->enrollmentInvitationService->markAsNonResponsive($enrollee);
                     $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
                 } else {
                     $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
@@ -111,6 +118,6 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
      */
     public function sendLetterWithRegularMail($noResponsivePatient, $pages)
     {
-        $noResponsivePatient->notify(new SendEnrollmentLetterToNonResponsivePatients($noResponsivePatient, $pages));
+//        $noResponsivePatient->notify(new SendEnrollmentLetterToNonResponsivePatients($noResponsivePatient, $pages));
     }
 }

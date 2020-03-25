@@ -8,6 +8,7 @@ namespace App\Services\Enrollment;
 
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 
 class EnrollmentInvitationService
@@ -58,9 +59,9 @@ class EnrollmentInvitationService
     }
 
     /**
-     * @param $enrollee
+     * @param Enrollee $enrollee
      */
-    public function putIntoCallQueue($enrollee)
+    public function putIntoCallQueue(Enrollee $enrollee)
     {
         $enrollee->update(
             [
@@ -86,9 +87,9 @@ class EnrollmentInvitationService
     }
 
     /**
-     * @param $enrollee
+     * @param Enrollee $enrollee
      */
-    public function setEnrollmentCallOnDelivery($enrollee)
+    public function setEnrollmentCallOnDelivery(Enrollee $enrollee)
     {
         $enrollee->update(
             [
@@ -96,5 +97,16 @@ class EnrollmentInvitationService
                 'requested_callback' => Carbon::parse(now())->toDate(),
             ]
         );
+    }
+
+    /**
+     * @param Enrollee $enrollee
+     */
+    public function markAsNonResponsive(Enrollee $enrollee)
+    {
+        $enrollee->update([
+            'enrollment_non_responsive' => true
+        ]);
+
     }
 }

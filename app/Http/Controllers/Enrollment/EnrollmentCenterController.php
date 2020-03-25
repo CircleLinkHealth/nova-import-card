@@ -188,7 +188,8 @@ class EnrollmentCenterController extends Controller
         $enrollee = Enrollee::whereUserId($enrollableId)->first();
         $userModelEnrollee = User::whereId($enrollableId)->first();
 
-        if ($enrollee->statusRequestsInfo()->exists() && $enrollee->getLastEnrollmentInvitationLink()->manually_expired) {
+        if ($enrollee->statusRequestsInfo()->exists()
+            && $enrollee->getLastEnrollmentInvitationLink()->manually_expired) {
             return $this->returnEnrolleeRequestedInfoMessage($enrollee);
         }
 
@@ -196,7 +197,7 @@ class EnrollmentCenterController extends Controller
             $careAmbassador = $this->getCareAmbassador($userModelEnrollee, $isSurveyOnly);
             $shouldNotifyCareAmbassador = $this->enrollableHasRequestedInfo($userModelEnrollee);
             $this->expirePastInvitationLink($enrollee);
-
+//            Currently ONLY Enrollee model have the option to request info.
             if (empty($careAmbassador)) {
                 $message = "Enrollee $enrollee->id has NO ASSIGNED CARE AMBASSADOR 
             and requested a call to enquire information about the enrollment process LINK HERE";
