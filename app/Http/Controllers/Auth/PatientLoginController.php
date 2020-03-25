@@ -49,8 +49,22 @@ class PatientLoginController extends Controller
         $practiceName = $loginFormData['practiceName'];
         $doctorsLastName = $loginFormData['doctorsLastName'];
 
+        $user = \CircleLinkHealth\Customer\Entities\User::whereId($userId)->first();
+
+        $isEnrolleSurvey = false;
+
+        if (!empty($user)) {
+            $isEnrolleSurvey = $user->hasRole('survey-only');
+        }
+        // This supposed to add a <br> but it does not
+        $loginScreenTitle = $isEnrolleSurvey
+            ? wordwrap("Annual Wellness Survey Login", 8, "\n", true)
+            : 'Almost done! Just need some information';
+
+
+
         return view('surveyUrlAuth.surveyLoginForm',
-            compact('userId', 'urlWithToken', 'practiceName', 'doctorsLastName'));
+            compact('userId', 'urlWithToken', 'practiceName', 'doctorsLastName', "loginScreenTitle"));
     }
 
     /**

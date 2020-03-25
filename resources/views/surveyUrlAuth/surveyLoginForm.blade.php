@@ -12,7 +12,7 @@
             <div class="card-body">
                 <div class="survey-main-title">
                     <div id="sub-title">
-                        Annual Wellness <br> Survey Login
+                        {{"$loginScreenTitle\n"}}
                     </div>
                 </div>
                 <div class="survey-sub-welcome-text">
