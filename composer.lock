@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9ee7574916ccc6fe524bd4a0099d6a20",
+    "content-hash": "5173ec947ef9e05fa4617e1d6c183b68",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -6123,34 +6123,35 @@
         },
         {
             "name": "ocramius/package-versions",
-            "version": "1.4.2",
+            "version": "1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ocramius/PackageVersions.git",
-                "reference": "44af6f3a2e2e04f2af46bcb302ad9600cba41c7d"
+                "reference": "1d32342b8c1eb27353c8887c366147b4c2da673c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ocramius/PackageVersions/zipball/44af6f3a2e2e04f2af46bcb302ad9600cba41c7d",
-                "reference": "44af6f3a2e2e04f2af46bcb302ad9600cba41c7d",
+                "url": "https://api.github.com/repos/Ocramius/PackageVersions/zipball/1d32342b8c1eb27353c8887c366147b4c2da673c",
+                "reference": "1d32342b8c1eb27353c8887c366147b4c2da673c",
                 "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^1.0.0",
-                "php": "^7.1.0"
+                "php": "^7.3.0"
             },
             "require-dev": {
-                "composer/composer": "^1.6.3",
-                "doctrine/coding-standard": "^5.0.1",
+                "composer/composer": "^1.8.6",
+                "doctrine/coding-standard": "^6.0.0",
                 "ext-zip": "*",
-                "infection/infection": "^0.7.1",
-                "phpunit/phpunit": "^7.5.17"
+                "infection/infection": "^0.13.4",
+                "phpunit/phpunit": "^8.2.5",
+                "vimeo/psalm": "^3.4.9"
             },
             "type": "composer-plugin",
             "extra": {
                 "class": "PackageVersions\\Installer",
                 "branch-alias": {
-                    "dev-master": "2.0.x-dev"
+                    "dev-master": "1.6.x-dev"
                 }
             },
             "autoload": {
@@ -6169,7 +6170,7 @@
                 }
             ],
             "description": "Composer plugin that provides efficient querying for installed package versions (no runtime IO)",
-            "time": "2019-11-15T16:17:10+00:00"
+            "time": "2019-07-17T15:49:50+00:00"
         },
         {
             "name": "opis/closure",
@@ -8700,24 +8701,24 @@
         },
         {
             "name": "spatie/pdf-to-text",
-            "version": "1.2.0",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/pdf-to-text.git",
-                "reference": "53b43c592c0a3f2df7bc0ceb48c6ce8bd51bb7e5"
+                "reference": "9c11b44c6469f6e1d9b097e30f0f1d44aa65a8e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/pdf-to-text/zipball/53b43c592c0a3f2df7bc0ceb48c6ce8bd51bb7e5",
-                "reference": "53b43c592c0a3f2df7bc0ceb48c6ce8bd51bb7e5",
+                "url": "https://api.github.com/repos/spatie/pdf-to-text/zipball/9c11b44c6469f6e1d9b097e30f0f1d44aa65a8e8",
+                "reference": "9c11b44c6469f6e1d9b097e30f0f1d44aa65a8e8",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.0",
-                "symfony/process": "^3.3|^4.0"
+                "php": "^7.3",
+                "symfony/process": "^4.0|^5.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.4|^7.0"
+                "phpunit/phpunit": "^8.0|^9.0"
             },
             "type": "library",
             "autoload": {
@@ -8743,7 +8744,7 @@
                 "pdf-to-text",
                 "spatie"
             ],
-            "time": "2019-05-15T06:12:04+00:00"
+            "time": "2020-03-11T17:11:25+00:00"
         },
         {
             "name": "spatie/temporary-directory",
@@ -14912,7 +14913,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "~7.2.11",
+        "php": "~7.3",
         "ext-bcmath": "*",
         "ext-dom": "*",
         "ext-json": "*",

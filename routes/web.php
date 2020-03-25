@@ -1271,7 +1271,7 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'Enrollment\EnrollmentStatsController@practiceStats',
             'as'   => 'enrollment.practice.stats.data',
         ])->middleware('permission:ambassador.read,practice.read');
-        
+
         Route::patch('nurses/window/{id}', [
             'uses' => 'CareCenter\WorkScheduleController@patchAdminEditWindow',
             'as'   => 'patch.admin.edit.nurse.schedules',
@@ -1392,11 +1392,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'EthnicityReportController.getReport',
             ])->middleware('permission:ethnicityReport.create');
 
-            Route::get('call', [
-                'uses' => 'Admin\Reports\CallReportController@exportxls',
-                'as'   => 'CallReportController.exportxls',
-            ])->middleware('permission:call.read,note.read,patient.read,patientSummary.read');
-
             Route::get('call-v2', [
                 'uses' => 'Admin\Reports\CallReportController@exportxlsV2',
                 'as'   => 'CallReportController.exportxlsv2',
@@ -1488,19 +1483,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Billing\PracticeInvoiceController@makeInvoices',
                 'as'   => 'practice.billing.make',
             ])->middleware('permission:practiceInvoice.create');
-        });
-
-        //Algo Mocker
-        Route::group(['prefix' => 'algo'], function () {
-            Route::get('mock', [
-                'uses' => 'AlgoController@createMock',
-                'as'   => 'algo.mock.create',
-            ]);
-
-            Route::post('compute', [
-                'uses' => 'AlgoController@computeMock',
-                'as'   => 'algo.mock.compute',
-            ]);
         });
 
         // excel reports

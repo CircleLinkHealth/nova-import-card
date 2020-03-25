@@ -108,11 +108,6 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ route('admin.patientCallManagement.v2.index') }}">Manage (V2)</a></li>
                                 <li><a href="{{ route('admin.families.index') }}">Families</a></li>
-                                <li><a href="{{ route('algo.mock.create') }}">
-                                        Algo v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}} Simulator</a>
-                                </li>
-                                <li><a href="{{ route('CallReportController.exportxls') }}">Export
-                                        Calls</a></li>
                                 <li><a href="{{ route('CallsDashboard.index') }}">Edit Call Status</a></li>
                             </ul>
                         </li>
