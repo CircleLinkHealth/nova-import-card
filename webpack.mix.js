@@ -50,10 +50,6 @@ mix.webpackConfig(webpackConfig);
  * CSS
  *
  */
-mix.combine([
-        'bower_components/webix/codebase/webix.css',
-    ], 'public/compiled/css/stylesheet.css');
-
 mix.sass('resources/assets/sass/css/provider/dashboard.scss', 'public/compiled/css/provider-dashboard.css');
 
 mix.combine([
