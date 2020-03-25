@@ -164,7 +164,6 @@
     "laravel/tinker": "^1.0",
     "laravelcollective/html": "5.7.*",
     "league/flysystem-aws-s3-v3": "~1.0",
-    "league/fractal": "0.12.*",
     "maatwebsite/excel": "^3.1",
     "nao-pon/flysystem-google-drive": "~1.1",
     "nvanheuverzwijn/monolog-logdna": "^2.1",
