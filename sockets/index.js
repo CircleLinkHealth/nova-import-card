@@ -1,5 +1,6 @@
 const colors = require('../logger/colors')
 const {setResultsCallback, syncPatientTimeWithCPM, ignorePatientTimeSync} = require('./sync.with.cpm');
+const errorLogger = require('../logger').getErrorLogger();
 const storeTime = require("../cache/user-time").storeTime;
 
 module.exports = app => {
@@ -9,6 +10,8 @@ module.exports = app => {
     const TimeTrackerUser = TimeTracker.TimeTrackerUser
 
     const axios = require('axios')
+    const axiosRetry = require('axios-retry');
+    axiosRetry(axios, {retries: 3, retryDelay: axiosRetry.exponentialDelay});
 
     const $emitter = require('./sockets.events')
 
@@ -285,8 +288,7 @@ module.exports = app => {
 
             if (user.totalCcmSeconds === 0 && user.totalBhiSeconds === 0) {
                 console.log('will not cache ccc because time is 0');
-            }
-            else {
+            } else {
                 console.log('caching ccm', user.totalCcmSeconds);
                 storeTime(requestData.patientId, user.totalCcmSeconds, user.totalBhiSeconds, true);
             }
@@ -294,6 +296,7 @@ module.exports = app => {
             axios.post(url, requestData).then((response) => {
                 console.log(response.status, response.data, requestData.patientId, requestData.activities.map(activity => activity.duration).join(', '))
             }).catch((err) => {
+                errorLogger.report(err);
                 console.error(err)
             })
 
