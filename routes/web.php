@@ -1943,66 +1943,6 @@ Route::group([
     ])->middleware('permission:enrollee.read,enrollee.update');
 });
 
-Route::group([
-    'prefix' => 'onboarding',
-], function () {
-    Route::get('create-invited-user/{code?}', [
-        'middleware' => 'verify.invite',
-        'uses'       => 'Provider\OnboardingController@getCreateInvitedUser',
-        'as'         => 'get.onboarding.create.invited.user',
-    ]);
-
-    Route::get('create-practice-lead-user/{code?}', [
-        'middleware' => 'verify.invite',
-        'uses'       => 'Provider\OnboardingController@getCreatePracticeLeadUser',
-        'as'         => 'get.onboarding.create.program.lead.user',
-    ])->middleware('permission:provider.read,invite.read,invite.create');
-
-    Route::post('store-invited-user', [
-        'uses' => 'Provider\OnboardingController@postStoreInvitedUser',
-        'as'   => 'get.onboarding.store.invited.user',
-    ]);
-
-    Route::post('store-practice-lead-user', [
-        'uses' => 'Provider\OnboardingController@postStorePracticeLeadUser',
-        'as'   => 'post.onboarding.store.program.lead.user',
-    ])->middleware('permission:provider.create');
-
-    Route::group([
-        'middleware' => 'auth',
-    ], function () {
-        Route::post('store-locations/{lead_id}', [
-            'uses' => 'Provider\OnboardingController@postStoreLocations',
-            'as'   => 'post.onboarding.store.locations',
-        ])->middleware('permission:location.update');
-
-        Route::post('store-practice/{lead_id}', [
-            'uses' => 'Provider\OnboardingController@postStorePractice',
-            'as'   => 'post.onboarding.store.practice',
-        ])->middleware('permission:practice.create,provider.update');
-
-        Route::get('{practiceSlug}/locations/create/{lead_id}', [
-            'uses' => 'Provider\OnboardingController@getCreateLocations',
-            'as'   => 'get.onboarding.create.locations',
-        ])->middleware('permission:practice.read');
-
-        Route::get('create-practice/{lead_id}', [
-            'uses' => 'Provider\OnboardingController@getCreatePractice',
-            'as'   => 'get.onboarding.create.practice',
-        ]);
-
-        Route::get('{practiceSlug}/staff/create', [
-            'uses' => 'Provider\OnboardingController@getCreateStaff',
-            'as'   => 'get.onboarding.create.staff',
-        ])->middleware('permission:practice.read');
-
-        Route::post('{practiceSlug}/store-staff', [
-            'uses' => 'Provider\OnboardingController@postStoreStaff',
-            'as'   => 'post.onboarding.store.staff',
-        ])->middleware('permission:provider.create,provider.update,practiceSetting.update');
-    });
-});
-
 //This route was replaced by route with url '/downloadInvoice/{practice}/{name}', and name 'monthly.billing.download'.
 //We keep it here to support Report links mailed before 5/12/17.
 Route::get('/admin/reports/monthly-billing/v2/downloadInvoice/{practice}/{name}', [
