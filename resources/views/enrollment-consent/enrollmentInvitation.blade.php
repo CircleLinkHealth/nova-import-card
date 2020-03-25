@@ -8,34 +8,30 @@
             <div class="headers">
                 @include('enrollment-consent.practiceLogo')
                 <br>
-                {{--                <div class="headers-text">--}}
-                {{--                    <p>Dear {{$enrollable['last_name']}}</p>--}}
-                {{--                    <p>You are invited to the new Personalized Care Management Program!</p>--}}
-                {{--                </div>--}}
-            </div>
-            <hr>
-            <div class="letter">
-                <div class="header">
-                    {{$signatoryNameForHeader}}
-                    <br>
-                    {{$practiceName}}
-                </div>
-
-                <div class="letter-sent">
-                    {{$dateLetterSent}}
-                </div>
-                <div class="letter-head">
-                    Dear {{$userEnrollee->first_name}},
-                </div>
-                <div class="letter-body">
-                    <div class="body">
-                        @include('enrollment-consent.enrollmentLetter')
+                <hr>
+                <div class="letter">
+                    <div class="header">
+                        {{$signatoryNameForHeader}}
+                        <br>
+                        {{$practiceName}}
                     </div>
-                    <footer>
-                        @include('enrollment-consent.practiceLogo')
-                    </footer>
+
+                    <div class="letter-sent">
+                        {{$dateLetterSent}}
+                    </div>
+                    <div class="letter-head">
+                        Dear {{$userEnrollee->first_name}},
+                    </div>
+                    <div class="letter-body">
+                        <div class="body">
+                            @include('enrollment-consent.enrollmentLetter')
+                        </div>
+                        <footer>
+                            @include('enrollment-consent.practiceLogo')
+                        </footer>
+                    </div>
+                    @include('enrollment-consent.enrollableInvitationButtons')
                 </div>
-                @include('enrollment-consent.enrollableInvitationButtons')
             </div>
         </div>
     </div>
