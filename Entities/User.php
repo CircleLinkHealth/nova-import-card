@@ -828,18 +828,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasOne(CareAmbassador::class);
     }
 
-    // CPM Biometrics
-
-    public function careItems()
-    {
-        return $this->belongsToMany(
-            \App\CareItem::class,
-            'care_item_user_values',
-            'user_id',
-            'care_item_id'
-        )->withPivot('value');
-    }
-
     public function carePlan()
     {
         return $this->hasOne(CarePlan::class, 'user_id', 'id');
