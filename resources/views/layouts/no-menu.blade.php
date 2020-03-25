@@ -7,7 +7,6 @@
 	<title>CPM API</title>
 
 	<link href="{{ mix('/css/app.css') }}" rel="stylesheet">
-	<link href="{{ mix('/css/lavish.css') }}" rel="stylesheet">
 	<link href="{{ mix('/img/favicon.png') }}" rel="icon">
 
 	<!-- Fonts -->
