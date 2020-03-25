@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "084d8bdcbb294fc469efc5372997ad2e",
+    "content-hash": "bf7020bd27570fe0158b8c5b4c764a5d",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -945,11 +945,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-CPM-2155-enrollees-requested-callback",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "da235942fb7645afc554782c1dd877309121b4c2"
+                "reference": "918dbbefc6b6cc4d26657c18760cbebe16d6ca54"
             },
             "type": "laravel-module",
             "extra": {
@@ -971,7 +971,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-24T23:41:11+00:00"
+            "time": "2020-03-25T06:24:58+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -14967,7 +14967,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/cpm-migrations-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
