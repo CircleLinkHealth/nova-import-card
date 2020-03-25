@@ -164,6 +164,8 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalR
  *     searchPhones($term)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
  *     shouldSuggestAsFamilyForEnrollee($enrolleeId)
+ * @property int|null $enrollment_non_responsive
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee whereEnrollmentNonResponsive($value)
  * @property-read \App\EnrollableInvitationLink $enrollmentInvitationLink
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\CircleLinkHealth\Core\Entities\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
