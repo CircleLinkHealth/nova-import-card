@@ -122,7 +122,7 @@
     "amnuts/opcache-gui": "dev-master",
     "appstract/laravel-opcache": "~2.0.5",
     "barryvdh/laravel-snappy": "0.4.4",
-    "circlelinkhealth/ccda-parser-processor-php-module": "1.0",
+    "circlelinkhealth/ccda-parser-processor-php-module": "1.1",
     "circlelinkhealth/cerberus-gatekeeper-module": "3.0.6",
     "circlelinkhealth/clh-import-card-extended": "*",
     "circlelinkhealth/core-module": "1.5.0",

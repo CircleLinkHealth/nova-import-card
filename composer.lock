@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5538bb3940927f377abed7c3a49aa55a",
+    "content-hash": "a4133c1d823eed562b1109465c8850cd",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -751,11 +751,11 @@
         },
         {
             "name": "circlelinkhealth/ccda-parser-processor-php-module",
-            "version": "v1.0",
+            "version": "v1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccda-parser-module.git",
-                "reference": "b869a76f4dc2990e9d7cb28f44bf4b8aeaffa3e8"
+                "reference": "00a7aa19a2b47336150d3fefaf5f923c7e530acf"
             },
             "type": "laravel-module",
             "extra": {
@@ -787,7 +787,7 @@
                 }
             ],
             "description": "PHP wrapper for bluebutton nodejs",
-            "time": "2020-01-15T00:05:43+00:00"
+            "time": "2020-03-25T03:04:07+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
