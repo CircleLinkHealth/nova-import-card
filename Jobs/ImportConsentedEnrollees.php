@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
+use App\Console\Commands\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
@@ -18,6 +19,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Artisan;
 
 class ImportConsentedEnrollees implements ShouldQueue
 {
@@ -65,10 +67,13 @@ class ImportConsentedEnrollees implements ShouldQueue
                         $enrollees->each(
                             function ($enrollee) use ($importService) {
                                 //verify it wasn't already imported
-                                if ($enrollee->user_id && User::whereId($enrollee->user_id)->exists()) {
-                                    $this->enrolleeAlreadyImported($enrollee);
-
-                                    return null;
+                                if ($enrollee->user_id) {
+                                    /** @var User|null $handled */
+                                    $handled = $this->handleExistingUser($enrollee);
+                                    
+                                    if (!is_null($handled)) {
+                                        return $handled;
+                                    }
                                 }
 
                                 //verify it wasn't already imported
@@ -271,6 +276,40 @@ class ImportConsentedEnrollees implements ShouldQueue
         $enrollee->save();
 
         return app(ImportService::class)->importExistingCcda($ccda->id);
+    }
+    
+    private function handleExistingUser(Enrollee $enrollee):?User
+    {
+        if (!$enrollee->user_id) return null;
+        
+        $user = User::withTrashed()->find($enrollee->user_id);
+        
+        if (!$user) {
+            $enrollee->user_id = null;
+            $enrollee->save();
+            return null;
+        };
+        
+        if (is_null($user->deleted_at)) {
+            $this->enrolleeAlreadyImported($enrollee);
+            
+            return $user;
+        }
+        
+        if ($user->restore()) {
+            Artisan::call(
+                ReimportPatientMedicalRecord::class,
+                [
+                    'patientUserId'   => $user->id,
+                    'initiatorUserId' => auth()->id(),
+                    '--flush-ccd' => true
+                ]
+            );
+            
+            $this->enrolleeMedicalRecordImported($enrollee);
+            
+            return $user;
+        }
     }
 }
 
