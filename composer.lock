@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "0e563d90a6b0f213a48296261358870d",
+    "content-hash": "90485a6c0b4147b0f3c5acc2346feb4b",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1017,11 +1017,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-CPM-2155-get-enrollee-phones",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "3bff31c7368fff9d9d0dfdf02d223879c04f8ca6"
+                "reference": "ede27e704a7eb0cb7c5c78728f76d7de7ef82010"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1046,7 +1046,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-25T16:13:37+00:00"
+            "time": "2020-03-25T16:23:39+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -14967,7 +14967,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/eligibility-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
