@@ -52,7 +52,6 @@ mix.webpackConfig(webpackConfig);
  */
 mix.combine([
         'resources/assets/less/css/animate.min.css',
-        'bower_components/webix/codebase/webix.css',
     ], 'public/compiled/css/stylesheet.css');
 
 mix.sass('resources/assets/sass/css/provider/dashboard.scss', 'public/compiled/css/provider-dashboard.css');
