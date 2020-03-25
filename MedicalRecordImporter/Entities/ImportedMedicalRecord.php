@@ -76,6 +76,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null $nurse_user_id
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord whereNurseUserId($value)
  * @property-read \CircleLinkHealth\Customer\Entities\User|null $patient
+ * @property-read \CircleLinkHealth\Customer\Entities\User|null $nurseUser
  */
 class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel implements ImportedMedicalRecordInterface
 {
