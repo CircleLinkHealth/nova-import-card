@@ -37,43 +37,43 @@
 
             </template>
             <template slot="Location" slot-scope="props">
-                <v-select
-                        v-model="props.row.Location"
-                        @input="props.row.changeLocation(props.row.Location)"
-                        :options="props.row.locations"
-                        :disabled="! props.row.Practice"
-                        class="form-control">
-                </v-select>
-
                 <div v-if="props.row.loaders.locations">
-                    <loader></loader>
+                    <div class="placeholder-dropdown"><loader></loader></div>
                 </div>
+
+                <v-select v-else
+                          v-model="props.row.Location"
+                          @input="props.row.changeLocation(props.row.Location)"
+                          :options="props.row.locations"
+                          :disabled="! props.row.Practice"
+                          class="form-control">
+                </v-select>
             </template>
             <template slot="Billing Provider" slot-scope="props">
-                <v-select
-                        v-model="props.row['Billing Provider']"
-                        @input="props.row.changeProvider(props.row['Billing Provider'])"
-                        :options="props.row.providers"
-                        :disabled="! props.row.Location"
-                        class="form-control">
-                </v-select>
-
                 <div v-if="props.row.loaders.providers">
-                    <loader></loader>
+                    <div class="placeholder-dropdown"><loader></loader></div>
                 </div>
+
+                <v-select v-else
+                          v-model="props.row['Billing Provider']"
+                          @input="props.row.changeProvider(props.row['Billing Provider'])"
+                          :options="props.row.providers"
+                          :disabled="! props.row.Location"
+                          class="form-control">
+                </v-select>
             </template>
             <template v-if="isAdmin" slot="Care Coach" slot-scope="props">
-                <v-select
-                        v-model="props.row['Care Coach']"
-                        @input="props.row.changeNurse(props.row['Care Coach'])"
-                        :options="props.row.nurses"
-                        :disabled="! props.row.Practice"
-                        class="form-control">
-                </v-select>
-
                 <div v-if="props.row.loaders.nurses">
-                    <loader></loader>
+                    <div class="placeholder-dropdown"><loader></loader></div>
                 </div>
+
+                <v-select v-else
+                          v-model="props.row['Care Coach']"
+                          @input="props.row.changeNurse(props.row['Care Coach'])"
+                          :options="props.row.nurses"
+                          :disabled="! props.row.Practice"
+                          class="form-control">
+                </v-select>
             </template>
             <template slot="2+ CCM Cond" slot-scope="props">
                 <input class="row-select" v-model="props.row['2+ CCM Cond']" type="checkbox" disabled/>
@@ -629,5 +629,32 @@
     .table-responsive {
         overflow-x: visible;
         min-height: .01%;
+    }
+
+    .v-select .dropdown-toggle {
+        width: 200px;
+        height: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .placeholder-dropdown {
+        background-color: #eee;
+        border: none !important;
+        width: 200px;
+        height: 40px;
+    }
+
+    .placeholder-dropdown .loader {
+        width: 15px;
+        height: 15px;
+        position: relative;
+        left: 175px;
+        top: 12px;
+        border: 3px solid #31C6F9;
+        -webkit-animation: spin 1s linear infinite;
+        animation: spin 1s linear infinite;
+        border-top: 4px solid #555;
+        border-radius: 50%;
     }
 </style>
