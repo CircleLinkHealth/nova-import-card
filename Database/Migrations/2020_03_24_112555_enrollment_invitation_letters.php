@@ -15,7 +15,7 @@ class EnrollmentInvitationLetters extends Migration
     {
         Schema::create('enrollment_invitation_letters', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedBigInteger('practice_id');
+            $table->unsignedInteger('practice_id');
             $table->string('practice_logo_src');
             $table->string('customer_signature_src');
             $table->string('signatory_name');
