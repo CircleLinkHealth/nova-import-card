@@ -8,13 +8,12 @@
 
 namespace CircleLinkHealth\Eligibility\Exports;
 
-use App\Exports\PracticeReports\PracticeReportInterface;
+use App\Exports\PracticeReports\BasePracticeReport;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use Illuminate\Database\Eloquent\Builder;
-use Maatwebsite\Excel\Concerns\WithCustomQuerySize;
 
-class CommonwealthPcmEligibleExport extends PracticeReportInterface
+class CommonwealthPcmEligibleExport extends BasePracticeReport
 {
     /**
      * @return string
