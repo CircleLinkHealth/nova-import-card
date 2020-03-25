@@ -240,6 +240,12 @@ class Enrollee extends BaseModel
     const UNREACHABLE = 'utc';
 
     /**
+     * Enrollees who did not respond to any of our notifications to enroll.
+     */
+
+    const NON_RESPONSIVE = 'non_responsive';
+
+    /**
      * For mySql full-text search
      *
      * @var array
@@ -356,6 +362,8 @@ class Enrollee extends BaseModel
 
         //contains array of agent details, similar to patient_info fields
         'agent_details',
+//
+        'enrollment_non_responsive'
     ];
 
     protected $table = 'enrollees';
@@ -379,7 +387,7 @@ class Enrollee extends BaseModel
             return null;
         }
 
-        if ( ! array_key_exists($key, $this->agent_details)) {
+        if (!array_key_exists($key, $this->agent_details)) {
             return null;
         }
 
@@ -433,8 +441,8 @@ class Enrollee extends BaseModel
     public function getImportedMedicalRecord()
     {
         return ImportedMedicalRecord::whereMedicalRecordId($this->medical_record_id)
-                                    ->whereMedicalRecordType($this->medical_record_type)
-                                    ->first();
+            ->whereMedicalRecordType($this->medical_record_type)
+            ->first();
     }
 
     public function getLastEncounterAttribute($lastEncounter)
@@ -500,21 +508,21 @@ class Enrollee extends BaseModel
 
     public function getProviderInfo()
     {
-        if ( ! $this->provider) {
+        if (!$this->provider) {
             return null;
         }
 
         return $this->provider->providerInfo;
     }
 
-    public function name()
-    {
-        return "{$this->first_name} {$this->last_name}";
-    }
-
     public function nameAndDob()
     {
         return $this->name() . ', ' . $this->dob->toDateString();
+    }
+
+    public function name()
+    {
+        return "{$this->first_name} {$this->last_name}";
     }
 
     public function practice()
@@ -546,16 +554,16 @@ class Enrollee extends BaseModel
     public function scopeShouldSuggestAsFamilyForEnrollee($query, $enrolleeId)
     {
         return $query->where('id', '!=', $enrolleeId)
-                     ->whereNotIn('status', [
-                         self::CONSENTED,
-                         self::ENROLLED,
-                         self::INELIGIBLE,
-                         self::LEGACY,
-                     ])
-                     ->where(function ($q) {
-                         $q->whereDate('last_attempt_at', '<', Carbon::now()->startOfDay())
-                           ->orWhereNull('last_attempt_at');
-                     });
+            ->whereNotIn('status', [
+                self::CONSENTED,
+                self::ENROLLED,
+                self::INELIGIBLE,
+                self::LEGACY,
+            ])
+            ->where(function ($q) {
+                $q->whereDate('last_attempt_at', '<', Carbon::now()->startOfDay())
+                    ->orWhereNull('last_attempt_at');
+            });
     }
 
     public function scopeToCall($query)
@@ -591,7 +599,7 @@ class Enrollee extends BaseModel
     {
         $twilio = app(TwilioClientable::class);
 
-        $link          = url("join/{$this->invite_code}");
+        $link = url("join/{$this->invite_code}");
         $provider_name = User::find($this->provider_id)->getFullName();
 
         $twilio->message(
@@ -692,26 +700,26 @@ class Enrollee extends BaseModel
         return collect($addresses)->filter()->implode(', ');
     }
 
-    public function confirmedFamilyMembers()
-    {
-        return $this->belongsToMany(Enrollee::class, 'enrollee_family_members', 'enrollee_id',
-            'family_member_enrollee_id');
-    }
-
     public function attachFamilyMembers($input)
     {
         if (empty($input)) {
             return false;
         }
-        if ( ! is_array($input)) {
+        if (!is_array($input)) {
             $input = explode(',', $input);
         }
         foreach ($input as $id) {
             //todo: try/change to syncWithoutDetaching
-            if ( ! $this->confirmedFamilyMembers()->where('id', $id)->exists()) {
+            if (!$this->confirmedFamilyMembers()->where('id', $id)->exists()) {
                 $this->confirmedFamilyMembers()->attach($input);
             }
         }
+    }
+
+    public function confirmedFamilyMembers()
+    {
+        return $this->belongsToMany(Enrollee::class, 'enrollee_family_members', 'enrollee_id',
+            'family_member_enrollee_id');
     }
 }
 
