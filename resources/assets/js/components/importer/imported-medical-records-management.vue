@@ -625,4 +625,9 @@
         height: auto;
         padding: 0;
     }
+
+    .table-responsive {
+        overflow-x: visible;
+        min-height: .01%;
+    }
 </style>
