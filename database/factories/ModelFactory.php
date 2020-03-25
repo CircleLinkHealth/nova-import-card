@@ -185,6 +185,16 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factor
         }
     }
 
+    $phones = collect([]);
+    while ($phones->count() < 4){
+        $number = $faker->phoneNumber;
+        if (validateUsPhoneNumber($number)){
+            $phones->push($number);
+        }
+    }
+
+    $str = new \CircleLinkHealth\Core\StringManipulation();
+
     return [
         'provider_id' => $provider->id,
         'practice_id' => $practice->id,
@@ -200,10 +210,10 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factor
 
         'lang' => 'EN',
 
-        'primary_phone' => $faker->phoneNumber,
-        'cell_phone'    => $faker->phoneNumber,
-        'home_phone'    => $faker->phoneNumber,
-        'other_phone'   => $faker->phoneNumber,
+        'primary_phone' => $str->formatPhoneNumberE164($phones->random()),
+        'cell_phone'    => $str->formatPhoneNumberE164($phones->random()),
+        'home_phone'    => $str->formatPhoneNumberE164($phones->random()),
+        'other_phone'   => $str->formatPhoneNumberE164($phones->random()),
 
         'status' => Enrollee::TO_CALL,
 

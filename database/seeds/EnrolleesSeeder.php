@@ -14,7 +14,7 @@ class EnrolleesSeeder extends Seeder
      */
     public function run()
     {
-        ini_set('max_execution_time', 150);
+        ini_set('max_execution_time', 300);
 
         $this->command->info('Seeding Enrollees.');
 

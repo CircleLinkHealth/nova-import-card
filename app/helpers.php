@@ -1784,3 +1784,22 @@ if ( ! function_exists('showNurseMetricsInDailyEmailReport')) {
                         })->exists();
     }
 }
+
+if ( ! function_exists('validateUsPhoneNumber')) {
+    /**
+     * @param bool
+     */
+    function validateUsPhoneNumber($phoneNumber): bool
+    {
+        $validator = \Validator::make(
+            [
+                'number' => (new \CircleLinkHealth\Core\StringManipulation())->formatPhoneNumberE164($phoneNumber),
+            ],
+            [
+                'number' => ['required', \Illuminate\Validation\Rule::phone()->country(['US'])],
+            ]
+        );
+
+        return $validator->passes();
+    }
+}
