@@ -41,6 +41,7 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      *
+     * @param User $enrollable
      * @param bool $isReminder
      */
     public function __construct(User $enrollable, $isReminder = false)
