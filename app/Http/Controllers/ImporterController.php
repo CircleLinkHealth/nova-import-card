@@ -194,25 +194,6 @@ class ImporterController extends Controller
         return $ccdas;
     }
 
-    /**
-     * Show all QASummaries that are related to a CCDA.
-     */
-    public function index()
-    {
-        //get rid of orphans
-        $delete = ImportedMedicalRecord::whereNull('medical_record_id')->delete();
-
-        $importedRecords = $this::getImportedRecords();
-
-        JavaScript::put(
-            [
-                'importedMedicalRecords' => $importedRecords,
-            ]
-        );
-
-        return view('CCDUploader.uploadedSummary');
-    }
-
     public function records()
     {
         return $this::getImportedRecords();

@@ -27,10 +27,6 @@ Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
 
 Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
 
-//Patient Landing Pages
-Route::resource('sign-up', 'PatientSignupController');
-Route::get('talk-to-us', 'PatientSignupController@talkToUs');
-
 Route::get('care/enroll/{enrollUserId}', 'CareController@enroll');
 Route::post('care/enroll/{enrollUserId}', 'CareController@store');
 
@@ -1276,16 +1272,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'enrollment.practice.stats.data',
         ])->middleware('permission:ambassador.read,practice.read');
 
-        Route::get('invites/create', [
-            'uses' => 'InviteController@create',
-            'as'   => 'invite.create',
-        ]);
-
-        Route::post('invites/store', [
-            'uses' => 'InviteController@store',
-            'as'   => 'invite.store',
-        ])->middleware('permission:invite.create');
-
         Route::patch('nurses/window/{id}', [
             'uses' => 'CareCenter\WorkScheduleController@patchAdminEditWindow',
             'as'   => 'patch.admin.edit.nurse.schedules',
@@ -1406,11 +1392,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'EthnicityReportController.getReport',
             ])->middleware('permission:ethnicityReport.create');
 
-            Route::get('call', [
-                'uses' => 'Admin\Reports\CallReportController@exportxls',
-                'as'   => 'CallReportController.exportxls',
-            ])->middleware('permission:call.read,note.read,patient.read,patientSummary.read');
-
             Route::get('call-v2', [
                 'uses' => 'Admin\Reports\CallReportController@exportxlsV2',
                 'as'   => 'CallReportController.exportxlsv2',
@@ -1504,19 +1485,6 @@ Route::group(['middleware' => 'auth'], function () {
             ])->middleware('permission:practiceInvoice.create');
         });
 
-        //Algo Mocker
-        Route::group(['prefix' => 'algo'], function () {
-            Route::get('mock', [
-                'uses' => 'AlgoController@createMock',
-                'as'   => 'algo.mock.create',
-            ]);
-
-            Route::post('compute', [
-                'uses' => 'AlgoController@computeMock',
-                'as'   => 'algo.mock.compute',
-            ]);
-        });
-
         // excel reports
         Route::get('excelReportUnreachablePatients', [
             'uses' => 'ReportsController@excelReportUnreachablePatients',
@@ -1606,106 +1574,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'NurseController@makeHourlyStatistics',
             'as'   => 'stats.nurse.info',
         ]);
-
-        // questions TODO: review permissions for this group
-        Route::group([
-            'middleware' => [
-                'permission:practice.read',
-            ],
-        ], function () {
-            Route::resource('questions', 'Admin\CPRQuestionController');
-            Route::post('questions/{id}/edit', [
-                'uses' => 'Admin\CPRQuestionController@update',
-                'as'   => 'admin.questions.update',
-            ]);
-            Route::get('questions/{id}/destroy', [
-                'uses' => 'Admin\CPRQuestionController@destroy',
-                'as'   => 'admin.questions.destroy',
-            ]);
-
-            Route::resource('questionSets', 'Admin\CPRQuestionSetController');
-            Route::post('questionSets', [
-                'uses' => 'Admin\CPRQuestionSetController@index',
-                'as'   => 'admin.questionSets',
-            ]);
-            Route::post('questionSets/{id}/edit', [
-                'uses' => 'Admin\CPRQuestionSetController@update',
-                'as'   => 'admin.questionSets.update',
-            ]);
-            Route::get('questionSets/{id}/destroy', [
-                'uses' => 'Admin\CPRQuestionSetController@destroy',
-                'as'   => 'admin.questionSets.destroy',
-            ]);
-
-            // items
-            Route::resource('items', 'Admin\CPRItemController');
-            Route::post('items/{id}/edit', [
-                'uses' => 'Admin\CPRItemController@update',
-                'as'   => 'admin.items.update',
-            ]);
-            Route::get('items/{id}/destroy', [
-                'uses' => 'Admin\CPRItemController@destroy',
-                'as'   => 'admin.items.destroy',
-            ]);
-
-            // ucp
-            Route::resource('ucp', 'Admin\CPRUCPController');
-            Route::post('ucp/{id}/edit', [
-                'uses' => 'Admin\CPRUCPController@update',
-                'as'   => 'admin.ucp.update',
-            ]);
-            Route::get('ucp/{id}/destroy', [
-                'uses' => 'Admin\CPRUCPController@destroy',
-                'as'   => 'admin.ucp.destroy',
-            ]);
-        });
-
-        // observations
-        Route::group([
-        ], function () {
-            Route::resource(
-                'comments',
-                'Admin\CommentController'
-            )->middleware('permission:comment.create,comment.read,comment.update,comment.delete');
-            Route::resource(
-                'observations',
-                'Admin\ObservationController'
-            )->middleware('permission:observation.create,observation.read,observation.update,observation.delete');
-        });
-
-        Route::group([
-        ], function () {
-            Route::get('observations/{id}/destroy', [
-                'uses' => 'Admin\ObservationController@destroy',
-                'as'   => 'admin.observations.destroy',
-            ])->middleware('permission:observation.delete');
-            Route::post('observations/{id}/edit', [
-                'uses' => 'Admin\ObservationController@update',
-                'as'   => 'admin.observations.update',
-            ])->middleware('permission:observation.update');
-
-            Route::post('comments/{id}/edit', [
-                'uses' => 'Admin\CommentController@update',
-                'as'   => 'admin.comments.update',
-            ])->middleware('permission:comment.update');
-            Route::get('comments/{id}/destroy', [
-                'uses' => 'Admin\CommentController@destroy',
-                'as'   => 'admin.comments.destroy',
-            ])->middleware('permission:comment.delete');
-        });
-
-        Route::group([
-            'middleware' => [
-                'permission:observation.read',
-            ],
-        ], function () {
-            Route::post('observations', [
-                'uses' => 'Admin\ObservationController@index',
-                'as'   => 'admin.observations.index',
-            ]);
-        });
-
-        //observations dashboard
 
         Route::group([
             'prefix' => 'observations-dashboard',
@@ -2045,66 +1913,6 @@ Route::group([
         'uses' => 'Enrollment\EnrollmentConsentController@update',
         'as'   => 'patient.enroll.update',
     ])->middleware('permission:enrollee.read,enrollee.update');
-});
-
-Route::group([
-    'prefix' => 'onboarding',
-], function () {
-    Route::get('create-invited-user/{code?}', [
-        'middleware' => 'verify.invite',
-        'uses'       => 'Provider\OnboardingController@getCreateInvitedUser',
-        'as'         => 'get.onboarding.create.invited.user',
-    ]);
-
-    Route::get('create-practice-lead-user/{code?}', [
-        'middleware' => 'verify.invite',
-        'uses'       => 'Provider\OnboardingController@getCreatePracticeLeadUser',
-        'as'         => 'get.onboarding.create.program.lead.user',
-    ])->middleware('permission:provider.read,invite.read,invite.create');
-
-    Route::post('store-invited-user', [
-        'uses' => 'Provider\OnboardingController@postStoreInvitedUser',
-        'as'   => 'get.onboarding.store.invited.user',
-    ]);
-
-    Route::post('store-practice-lead-user', [
-        'uses' => 'Provider\OnboardingController@postStorePracticeLeadUser',
-        'as'   => 'post.onboarding.store.program.lead.user',
-    ])->middleware('permission:provider.create');
-
-    Route::group([
-        'middleware' => 'auth',
-    ], function () {
-        Route::post('store-locations/{lead_id}', [
-            'uses' => 'Provider\OnboardingController@postStoreLocations',
-            'as'   => 'post.onboarding.store.locations',
-        ])->middleware('permission:location.update');
-
-        Route::post('store-practice/{lead_id}', [
-            'uses' => 'Provider\OnboardingController@postStorePractice',
-            'as'   => 'post.onboarding.store.practice',
-        ])->middleware('permission:practice.create,provider.update');
-
-        Route::get('{practiceSlug}/locations/create/{lead_id}', [
-            'uses' => 'Provider\OnboardingController@getCreateLocations',
-            'as'   => 'get.onboarding.create.locations',
-        ])->middleware('permission:practice.read');
-
-        Route::get('create-practice/{lead_id}', [
-            'uses' => 'Provider\OnboardingController@getCreatePractice',
-            'as'   => 'get.onboarding.create.practice',
-        ]);
-
-        Route::get('{practiceSlug}/staff/create', [
-            'uses' => 'Provider\OnboardingController@getCreateStaff',
-            'as'   => 'get.onboarding.create.staff',
-        ])->middleware('permission:practice.read');
-
-        Route::post('{practiceSlug}/store-staff', [
-            'uses' => 'Provider\OnboardingController@postStoreStaff',
-            'as'   => 'post.onboarding.store.staff',
-        ])->middleware('permission:provider.create,provider.update,practiceSetting.update');
-    });
 });
 
 //This route was replaced by route with url '/downloadInvoice/{practice}/{name}', and name 'monthly.billing.download'.
