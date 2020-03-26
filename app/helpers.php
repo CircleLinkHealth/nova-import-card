@@ -1784,3 +1784,17 @@ if ( ! function_exists('showNurseMetricsInDailyEmailReport')) {
                         })->exists();
     }
 }
+
+if ( ! function_exists('sanitizeString')) {
+    /**
+     * @param $string
+     *
+     * @return string
+     */
+    function sanitizeString($string)
+    {
+        return filter_var($string, FILTER_SANITIZE_STRING);
+    }
+}
+
+

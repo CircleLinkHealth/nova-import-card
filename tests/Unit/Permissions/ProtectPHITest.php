@@ -165,7 +165,7 @@ class ProtectPHITest extends TestCase
             ])) {
                 continue;
             }
-            $response->assertDontSee($this->sanitizeString($phi));
+            $response->assertDontSee(sanitizeString($phi));
         }
     }
 
