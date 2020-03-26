@@ -413,7 +413,7 @@
                             <label for="times[]" class="label">Times</label>
                             <select v-model="times" class="do-not-close" name="times[]" id="times[]">
                                 <option disabled selected>Times:</option>
-                                <option value="10:00-12:00">10AM - Noon</option>
+                                <option value="09:00-12:00">9AM - Noon</option>
                                 <option value="12:00-15:00">Noon - 3PM</option>
                                 <option value="15:00-18:00">3PM - 6PM</option>
                             </select>
