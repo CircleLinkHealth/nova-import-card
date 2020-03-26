@@ -48,20 +48,7 @@ class PatientLoginController extends Controller
         $urlWithToken = $loginFormData['urlWithToken'];
         $practiceName = $loginFormData['practiceName'];
         $doctorsLastName = $loginFormData['doctorsLastName'];
-
-        $user = \CircleLinkHealth\Customer\Entities\User::whereId($userId)->first();
-
-        $isEnrolleSurvey = false;
-
-        if (!empty($user)) {
-            $isEnrolleSurvey = $user->hasRole('survey-only');
-        }
-        // This supposed to add a <br> but it does not
-        $loginScreenTitle = $isEnrolleSurvey
-            ? wordwrap("Annual Wellness Survey Login", 8, "\n", true)
-            : 'Almost done! Just need some information';
-
-
+        $loginScreenTitle = $this->loginFormTitle($userId);
 
         return view('surveyUrlAuth.surveyLoginForm',
             compact('userId', 'urlWithToken', 'practiceName', 'doctorsLastName', "loginScreenTitle"));
@@ -88,6 +75,23 @@ class PatientLoginController extends Controller
             'doctor' => $doctor,
             'doctorsLastName' => $doctorsLastName,
         ];
+    }
+
+    /**
+     * @param $userId
+     * @return string
+     */
+    public function loginFormTitle($userId)
+    {
+        $survey = Survey::whereName('Enrollees')->select('id')->first();
+        $isEnrolleSurvey = false;
+        if (!empty($survey)) {
+            $isEnrolleSurvey = $survey->users()->where('user_id', $userId)->wherePivot('survey_id', $survey->id)->exists();
+        }
+        // This supposed to add a <br> but it does not
+        return $isEnrolleSurvey
+            ? 'Almost done! Just need some information'
+            : wordwrap("Annual Wellness Survey Login", 8, "\n", true);
     }
 
     /**
