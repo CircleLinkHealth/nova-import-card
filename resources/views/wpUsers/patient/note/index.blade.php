@@ -197,9 +197,6 @@
                                         //CPM-725: Maximum Call Stack Size exceeded error on low-end machines
                                         this.config.autoheight = false;
                                     },
-                                    /*ready:function(){
-                                     this.adjustRowHeight("obs_value");
-                                     },*/
                                     pager: {
                                         animate: true,
                                         container: "paging_container",// the container where the pager controls will be placed into
@@ -219,11 +216,11 @@
                                         group: 5   // the number of pages in the pager
                                     },
                                     data: activityJson
-                                })
-                                ;
-                                webix.event(window, "resize", function () {
+                                });
+                                const debounced = _.debounce(() => {
                                     obs_alerts_dtable.adjust();
-                                })
+                                }, 1000);
+                                webix.event(window, "resize", debounced);
                             </script>
                         @endpush
 
