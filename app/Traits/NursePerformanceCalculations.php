@@ -30,7 +30,7 @@ trait NursePerformanceCalculations
 
         return 0 === $totalMonthlyCompletedPatientsOfNurse
             ? 0
-            : round((float)($totalCCMtimeOnCompletedPatients / $totalMonthlyCompletedPatientsOfNurse), '2');
+            : round((float)($totalCCMtimeOnCompletedPatients / $totalMonthlyCompletedPatientsOfNurse), 2);
 
     }
 
