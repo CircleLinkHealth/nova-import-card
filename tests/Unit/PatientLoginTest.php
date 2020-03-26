@@ -9,7 +9,6 @@ use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Notification;
 use Tests\CustomerTestCase;
 
@@ -80,12 +79,13 @@ class PatientLoginTest extends CustomerTestCase
     /**
      *
      */
-    public function test_notification_is_sent_after_cp_provider_approval(){
+    public function test_notification_is_sent_after_cp_provider_approval()
+    {
         $this->patient->carePlan->status = CarePlan::QA_APPROVED;
         $this->patient->carePlan->save();
-    
+
         Notification::fake();
-    
+
         //Provider approves patient Care pLAN
         $this->providerApprovesCarePlan();
 
@@ -271,9 +271,9 @@ class PatientLoginTest extends CustomerTestCase
         ]))
              ->assertSessionHasNoErrors()
              ->assertRedirect(route('patient.careplan.print', [
-            'patientId'    => $this->patient->id,
-            'clearSession' => false,
-        ]));
+                 'patientId'    => $this->patient->id,
+                 'clearSession' => false,
+             ]));
 
         auth()->logout();
 

@@ -193,7 +193,7 @@ class ProtectPHITest extends TestCase
     private function disablePHIForUser(User $user)
     {
         $user->setCanSeePhi(false);
-        $this->assertTrue( ! $user->hasPermission('phi.read'));
+        $this->assertTrue(! $user->hasPermission('phi.read'));
     }
 
     private function getExpectedValueForKey($model, $phiField)

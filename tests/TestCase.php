@@ -14,7 +14,8 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
     use DatabaseTransactions;
 
-    protected function sanitizeString($string){
+    protected function sanitizeString($string)
+    {
         return filter_var($string, FILTER_SANITIZE_STRING);
     }
 }
