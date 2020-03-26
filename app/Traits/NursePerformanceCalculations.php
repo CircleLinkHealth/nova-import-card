@@ -28,11 +28,10 @@ trait NursePerformanceCalculations
     {
         $totalCCMtimeOnCompletedPatients = $this->queryMonthlyCompletedPatient($patientsForMonth)->sum('patient_time');
 
-        if (0 === $totalMonthlyCompletedPatientsOfNurse) {
-            $totalMonthlyCompletedPatientsOfNurse = 1;
-        }
+        return 0 === $totalMonthlyCompletedPatientsOfNurse
+            ? 0
+            : round((float)($totalCCMtimeOnCompletedPatients / $totalMonthlyCompletedPatientsOfNurse), '2');
 
-        return round((float)($totalCCMtimeOnCompletedPatients / $totalMonthlyCompletedPatientsOfNurse), '2');
     }
 
     /**
