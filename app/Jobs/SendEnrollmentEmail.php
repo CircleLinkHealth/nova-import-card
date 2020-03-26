@@ -120,6 +120,6 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['database', 'broadcast', 'mail'];
+        return ['database', 'mail'];
     }
 }
