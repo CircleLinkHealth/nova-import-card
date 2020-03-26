@@ -716,7 +716,7 @@ Route::group(['middleware' => 'auth'], function () {
     //
     // PROVIDER UI (/manage-patients, /reports, ect)
     //
-    Route::get('reports/audit/monthly', 'DownloadController@downloadAuditReportsForMonth')->middleware('patientProgramSecurity');
+    Route::get('reports/audit/monthly', 'DownloadController@downloadAuditReportsForMonth')->middleware('adminOrPracticeStaff');
 
     // **** PATIENTS (/manage-patients/
     Route::group([

@@ -7,6 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DownloadMediaWithSignedRequest;
+use App\Http\Requests\DownloadPracticeAuditReports;
 use App\Http\Requests\DownloadZippedMediaWithSignedRequest;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\GoogleDrive;
@@ -177,25 +178,10 @@ class DownloadController extends Controller
         return auth()->user()->practice((int) $practiceId) || auth()->user()->isAdmin();
     }
     
-    public function downloadAuditReportsForMonth(Request $request)
+    public function downloadAuditReportsForMonth(DownloadPracticeAuditReports $request)
     {
         $practiceId = $request->input('practice_id');
         $monthInput = $request->input('month');
-        
-        try {
-            $this->validate(
-                $request,
-                [
-                    'practice_id' => [
-                        'required',
-                        Rule::exists('practices', 'id'),
-                    ],
-                    'month'       => 'required|date',
-                ]
-            );
-        } catch (ValidationException $e) {
-            return abort(422, $e->getMessage());
-        }
         
         $date = Carbon::createFromFormat('Y-m', $monthInput);
         
