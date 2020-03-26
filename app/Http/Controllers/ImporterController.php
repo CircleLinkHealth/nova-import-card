@@ -166,6 +166,11 @@ class ImporterController extends Controller
 
     public function handleCcdFilesUpload(Request $request)
     {
+        ini_set('upload_max_filesize', '50M');
+        ini_set('post_max_size', '50M');
+        ini_set('max_input_time', 300);
+        ini_set('max_execution_time', 300);
+        
         if ( ! $request->hasFile('file')) {
             return response()->json('No file found', 400);
         }
@@ -178,7 +183,9 @@ class ImporterController extends Controller
             \Log::channel('logdna')->warning("reading file $file");
 
             $xml = file_get_contents($file);
-
+    
+            \Log::channel('logdna')->info("finished reading file $file");
+    
             $ccda = Ccda::create(
                 [
                     'user_id' => auth()->user()->id,
