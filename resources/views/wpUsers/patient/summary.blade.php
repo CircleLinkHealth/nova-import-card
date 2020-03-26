@@ -196,9 +196,11 @@
                                  data:[{ obs_key:'Cigarettes', description:'Smoking (# per day)', obs_value:'8', dm_alert_level:'default', obs_unit:'', obs_message_id:'CF_RPT_50', comment_date:'09-04-15 06:43:56 PM', }, { obs_key:'Weight', description:'Weight', obs_value:'80', dm_alert_level:'default', obs_unit:'', obs_message_id:'CF_RPT_40', comment_date:'09-04-15 06:43:44 PM', }, { obs_key:'Weight', description:'Weight', obs_value:'80', dm_alert_level:'default', obs_unit:'', obs_message_id:'CF_RPT_40', comment_date:'09-02-15 09:11:14 PM', }, ],
                                  */
                             });
-                            webix.event(window, "resize", function () { <?php echo $section['id']; ?>.
-                                adjust();
-                            })
+
+                            const debounced = _.debounce(() => {
+                                <?php echo $section['id']; ?>.adjust();
+                            }, 1000);
+                            webix.event(window, "resize", debounced);
                         </script>
                     @endpush
                     <?php
