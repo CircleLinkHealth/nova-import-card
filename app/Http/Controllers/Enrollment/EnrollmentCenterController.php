@@ -11,7 +11,6 @@ use App\Http\Controllers\Controller;
 use App\Jobs\EnrollableSurveyCompleted;
 use App\Jobs\FinalActionOnNonResponsivePatients;
 use App\Jobs\SendEnrollmentPatientsReminder;
-use App\Notifications\NotifyCareAmbassadorEnrolleeRequestsInfo;
 use App\Notifications\SendEnrollmentEmail;
 use App\Services\Enrollment\AttachEnrolleeFamilyMembers;
 use App\Services\Enrollment\EnrolleeCallQueue;
@@ -194,25 +193,9 @@ class EnrollmentCenterController extends Controller
         }
 
         if ($this->activeEnrollmentInvitationsExists($enrollee)) {
-            $careAmbassador = $this->getCareAmbassador($userModelEnrollee, $isSurveyOnly);
-            $shouldNotifyCareAmbassador = $this->enrollableHasRequestedInfo($userModelEnrollee);
             $this->expirePastInvitationLink($enrollee);
-//            Currently ONLY Enrollee model have the option to request info.
-            if (empty($careAmbassador)) {
-                $message = "Enrollee $enrollee->id has NO ASSIGNED CARE AMBASSADOR 
-            and requested a call to enquire information about the enrollment process LINK HERE";
-                //@todo: send to ethan and a CA director. ASK!!! ***
-                sendSlackMessage('#testing-purposes', $message);
-                $this->createEnrollStatusRequestsInfo($enrollee);
-                $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
-            } else {
-                if ($shouldNotifyCareAmbassador) {
-                    $this->createEnrollStatusRequestsInfo($enrollee);
-                    $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
-                    $careAmbassador->notify(new NotifyCareAmbassadorEnrolleeRequestsInfo($enrollee));
-                }
-            }
-
+            $this->createEnrollStatusRequestsInfo($enrollee);
+            $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
             $this->expirePastInvitationLink($enrollee);
             //            Delete User Created from Enrollee
             if ($isSurveyOnly) {
@@ -238,6 +221,17 @@ class EnrollmentCenterController extends Controller
 
     /**
      * @param $enrollable
+     * @param $responseStatus
+     *
+     * @return mixed
+     */
+    public function createEnrollStatusRequestsInfo($enrollable)
+    {
+        return $enrollable->statusRequestsInfo()->create();
+    }
+
+    /**
+     * @param $enrollable
      * @param $isSurveyOnly
      *
      * @return \App\User|array|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
@@ -254,27 +248,6 @@ class EnrollmentCenterController extends Controller
         }
 
         return $enrollable->careAmbassador;
-    }
-
-    /**
-     * @param $enrollable
-     *
-     * @return bool
-     */
-    public function enrollableHasRequestedInfo($enrollable)
-    {
-        return !$enrollable->statusRequestsInfo()->exists();
-    }
-
-    /**
-     * @param $enrollable
-     * @param $responseStatus
-     *
-     * @return mixed
-     */
-    public function createEnrollStatusRequestsInfo($enrollable)
-    {
-        return $enrollable->statusRequestsInfo()->create();
     }
 
     /**
@@ -372,6 +345,16 @@ class EnrollmentCenterController extends Controller
         }
 
         return redirect($pastActiveSurveyLink->url);
+    }
+
+    /**
+     * @param $enrollable
+     *
+     * @return bool
+     */
+    public function enrollableHasRequestedInfo($enrollable)
+    {
+        return !$enrollable->statusRequestsInfo()->exists();
     }
 
     public function evaluateEnrolledForSurveyTest(Request $request)
