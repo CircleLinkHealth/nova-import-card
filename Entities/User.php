@@ -753,7 +753,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 $user->providerInfo()->restore();
                 $user->patientInfo()->restore();
                 $user->carePlan()->restore();
-                $user->careTeamMembers()->restore();
+                $user->careTeamMembers()->get()->each(function ($ctm) {$ctm->restore();});
             }
         );
 
