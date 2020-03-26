@@ -30,7 +30,7 @@ class DownloadPracticeAuditReports extends FormRequest
             'practice_id' => [
                 'required',
                 'numeric',
-                Rule::exists('practice_role_user')->where(
+                Rule::exists('practice_role_user', 'program_id')->where(
                     function ($query) {
                         $query->where('user_id', auth()->id())
                               ->where('program_id', $this->input('practice_id'))
