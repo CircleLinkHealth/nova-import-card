@@ -181,7 +181,7 @@ class DownloadController extends Controller
     {
         $practiceId = $request->input('practice_id');
         $monthInput = $request->input('month');
-    
+        
         try {
             $this->validate(
                 $request,
@@ -196,7 +196,7 @@ class DownloadController extends Controller
         } catch (ValidationException $e) {
             return abort(422, $e->getMessage());
         }
-    
+        
         $date = Carbon::createFromFormat('Y-m', $monthInput);
         
         $mediaExport = Media::whereIn(
@@ -212,7 +212,8 @@ class DownloadController extends Controller
                       ->from((new User())->getTable())
                       ->whereProgramId($practiceId);
             }
-        )->where('collection_name', 'audit_report_'.$date->format('F, Y'))->get();
+        )->where('collection_name', 'audit_report_'.$date->format('F, Y'))
+                            ->groupBy('model_id')->get();
         
         if ($mediaExport->isNotEmpty()) {
             return MediaStream::create("Audit Reports for {$date->format('F, Y')}.zip")->addMedia($mediaExport);
