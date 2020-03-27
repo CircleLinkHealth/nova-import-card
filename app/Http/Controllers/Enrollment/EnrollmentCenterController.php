@@ -334,7 +334,7 @@ class EnrollmentCenterController extends Controller
         $enrollable = $isSurveyOnly ? Enrollee::whereUserId($enrollableId)->first() : $userForEnrollment;
 
         //      This can happen only on the first redirect and if page is refreshed
-        if (!$this->enrollableHasRequestedInfo($enrollable)) {
+        if ($this->enrollableHasRequestedInfo($enrollable)) {
             return 'Action Not Allowed';
         }
 
@@ -354,7 +354,7 @@ class EnrollmentCenterController extends Controller
      */
     public function enrollableHasRequestedInfo($enrollable)
     {
-        return !$enrollable->statusRequestsInfo()->exists();
+        return $enrollable->statusRequestsInfo()->exists();
     }
 
     public function evaluateEnrolledForSurveyTest(Request $request)
