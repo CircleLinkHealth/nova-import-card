@@ -2403,7 +2403,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         return User::intersectPracticesWith($this)
                    ->ofType('participant')
-                   ->whereHas('patientInfo')
+                   ->whereHas('patientInfo', function ($q){
+                       $q->enrolled();
+                   })
                    ->whereHas(
                        'carePlan',
                        function ($q) {
