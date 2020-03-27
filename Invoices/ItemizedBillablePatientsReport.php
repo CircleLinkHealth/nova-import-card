@@ -164,7 +164,7 @@ class ItemizedBillablePatientsReport
             return 'N/A';
         }
 
-        return $this->formatProblemCodesForReport($this->bhiAttestedProblems()->filter());
+        return $this->formatProblemCodesForReport($summary->bhiAttestedProblems()->filter());
     }
 
     private function formatProblemCodesForReport(Collection $problems)
