@@ -583,7 +583,7 @@ class ProcessEligibilityService
         }
         
         try {
-            \Log::channel('logdna')->info(
+            \Log::info(
                 "BEGIN creating eligibility jobs from csv file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]"
             );
             
@@ -634,8 +634,11 @@ class ProcessEligibilityService
                 //we do this to use the data transformation the method performs
                 $validator = $this->validateRow($patient);
                 
-                $mrn = $patient['mrn'] ?? $patient['mrn_number'] ?? $patient['patient_id'] ?? $patient['dob'] ?? '##timestamp##'.Carbon::now(
-                    )->timestamp.'##endtimestamp##';
+                if (1 == $i) {
+                    $this->throwExceptionIfStructureErrors($patient, $batch);
+                }
+                
+                $mrn = $patient['mrn'] ?? $patient['mrn_number'] ?? $patient['patient_id'] ?? $patient['dob'];
                 
                 $hash = $batch->practice->name.$patient['first_name'].$patient['last_name'].$mrn;
                 
@@ -651,19 +654,6 @@ class ProcessEligibilityService
                             : null,
                     ]
                 );
-                
-                if (1 == $i) {
-                    $errors = $this->getCsvStructureErrors($job);
-                    
-                    if ( ! empty($errors)) {
-                        $options                        = $batch->options;
-                        $options['errorsReadingSource'] = $errors;
-                        $batch->options                 = $options;
-                        $batch->save();
-                        
-                        throw new CsvEligibilityListStructureValidationException($batch, $errors);
-                    }
-                }
                 
                 ProcessSinglePatientEligibility::dispatch($job, $batch, $batch->practice);
             }
@@ -743,5 +733,26 @@ class ProcessEligibilityService
         }
         
         return $patient;
+    }
+    
+    private function throwExceptionIfStructureErrors(array $patient, EligibilityBatch $batch)
+    {
+        $errors = $this->getCsvStructureErrors(
+            new EligibilityJob(
+                [
+                    'batch_id' => $batch->id,
+                    'data'     => $patient,
+                ]
+            )
+        );
+    
+        if ( ! empty($errors)) {
+            $options                        = $batch->options;
+            $options['errorsReadingSource'] = $errors;
+            $batch->options                 = $options;
+            $batch->save();
+        
+            throw new CsvEligibilityListStructureValidationException($batch, $errors);
+        }
     }
 }
