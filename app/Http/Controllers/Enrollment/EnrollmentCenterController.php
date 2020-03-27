@@ -446,6 +446,7 @@ class EnrollmentCenterController extends Controller
                 $this->getAwvUserSurvey($user, $surveyInstance)->delete();
                 $user->notifications()->delete();
                 $enrollee->enrollmentInvitationLink()->delete();
+                $enrollee->statusRequestsInfo()->delete();
 
                 DB::table('invitation_links')
                     ->where('patient_info_id', $user->patientInfo()->withTrashed()->first()->id)
@@ -461,6 +462,7 @@ class EnrollmentCenterController extends Controller
                 $this->getAwvUserSurvey($user, $surveyInstance)->delete();
                 $user->notifications()->delete();
                 $user->enrollmentInvitationLink()->delete();
+                $user->statusRequestsInfo()->delete();
                 $user->patientInfo()->update(
                     [
                         'ccm_status' => \CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE,
