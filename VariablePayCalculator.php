@@ -249,16 +249,21 @@ class VariablePayCalculator
         bool $ccmPlusAlgoEnabled,
         bool $visitFeeBased
     ) {
+        $patient = User::withTrashed()->with('primaryPractice.chargeableServices')->find($patientUserId);
+        if ( ! $patient) {
+            throw new \Exception("Could not find user with id $patientUserId");
+        }
+
+        //if patient belongs to a demo practice, we just exit
+        if ($patient->primaryPractice->is_demo) {
+            return PatientPayCalculationResult::withVisits(collect(), collect(), collect());
+        }
+
         if ( ! $ccmPlusAlgoEnabled) {
             return $this->getPayForPatientWithDefaultAlgo(
                 $nurseInfo,
                 $patientCareRateLogs
             );
-        }
-
-        $patient = User::withTrashed()->with('primaryPractice.chargeableServices')->find($patientUserId);
-        if ( ! $patient) {
-            throw new \Exception("Could not find user with id $patientUserId");
         }
 
         /** @var PatientMonthlySummary $patientSummary */
