@@ -613,7 +613,7 @@ class ProcessEligibilityService
                             $row[$headerName] = $field;
                         }
                     } catch (\Exception $exception) {
-                        \Log::channel('logdna')->channel('logdna')->error(
+                        \Log::error(
                             $exception->getMessage(),
                             [
                                 'trace'        => $exception->getTrace(),
@@ -655,17 +655,17 @@ class ProcessEligibilityService
                 ProcessSinglePatientEligibility::dispatch($job, $batch, $batch->practice);
             }
             
-            \Log::channel('logdna')->info(
+            \Log::info(
                 "FINISH creating eligibility jobs from csv file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]"
             );
             
             $mem = format_bytes(memory_get_peak_usage());
             
-            \Log::channel('logdna')->info("BEGIN deleting `${fileName}`");
+            \Log::info("BEGIN deleting `${fileName}`");
             $deleted = $localDisk->delete($fileName);
-            \Log::channel('logdna')->info("FINISH deleting `${fileName}`");
+            \Log::info("FINISH deleting `${fileName}`");
             
-            \Log::channel('logdna')->info("memory_get_peak_usage: ${mem}");
+            \Log::info("memory_get_peak_usage: ${mem}");
             
             $options                        = $batch->options;
             $options['finishedReadingFile'] = true;
@@ -677,11 +677,11 @@ class ProcessEligibilityService
                 Storage::drive('google')->move($driveFilePath, "{$driveFolder}/processed_{$driveFileName}");
             }
         } catch (\Exception $e) {
-            \Log::channel('logdna')->info("EXCEPTION `{$e->getMessage()}`");
+            \Log::info("EXCEPTION `{$e->getMessage()}`");
             
-            \Log::channel('logdna')->info("BEGIN deleting `${fileName}`");
+            \Log::info("BEGIN deleting `${fileName}`");
             $deleted = $localDisk->delete($fileName);
-            \Log::channel('logdna')->info("FINISH deleting `${fileName}`");
+            \Log::info("FINISH deleting `${fileName}`");
             
             throw $e;
         }

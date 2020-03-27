@@ -116,7 +116,7 @@ class ProcessEligibilityBatch implements ShouldQueue
             $stream = $driveHandler
                 ->getFileStream($driveFileName, $driveFolder);
         } catch (\Exception $e) {
-            \Log::channel('logdna')->debug("EXCEPTION `{$e->getMessage()}`");
+            \Log::debug("EXCEPTION `{$e->getMessage()}`");
             $batch->status = EligibilityBatch::STATUSES['error'];
             $batch->save();
 
