@@ -734,14 +734,15 @@ class ProcessEligibilityService
     
     private function throwExceptionIfStructureErrors(array $headings, EligibilityBatch $batch)
     {
-        $errors = $this->getCsvStructureErrors(
-            new EligibilityJob(
-                [
-                    'batch_id' => $batch->id,
-                    'data'     => array_flip($headings),
-                ]
-            )
-        );
+        $patient = array_flip($headings);
+        
+        $csvPatientList = new CsvPatientList(collect([$patient]));
+        $isValid        = $csvPatientList->guessValidatorAndValidate() ?? null;
+    
+        $errors = [];
+        if ( ! $isValid) {
+            $errors[]         = $this->validateRow($patient)->errors()->keys();
+        }
     
         if ( ! empty($errors)) {
             $options                        = $batch->options;
