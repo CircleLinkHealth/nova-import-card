@@ -7,15 +7,17 @@
                    :disabled="readOnly"/>
         </div>
         <div v-else>
-            <div v-for="(item, index) in physicalAddress[0]"
+            <div v-for="(item, index) in physicalAddress"
                  class="col-md-12 active">
                 <br>
                 <label class="label">{{index}}</label>
                 <br>
+                <!--       Dont really understand why i should do this in v-model to work         -->
                 <input type="text"
                        class="address-field"
-                       v-model="item"
+                       v-model="physicalAddress[index]"
                        :disabled="readOnly"/>
+
             </div>
         </div>
 
@@ -59,10 +61,19 @@
         },
         methods: {
             handleAnswer() {
-                const answer = {
-                    value: this.singleInputHasText
-                };
-
+                let answer = [];
+                if (this.isMultiInput) {
+                    Object.entries(this.physicalAddress).forEach(p => {
+                        const values = {};
+                        values[p[0]] = p[1];
+                        answer.push(values);
+                    });
+                } else {
+                    debugger;
+                    answer = {
+                        value: this.singleInputHasText
+                    }
+                }
                 this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer, this.isLastQuestion);
             },
         },
@@ -72,7 +83,8 @@
                 return input.length !== 0;
             },
             hasTypedInAllInputs() {
-                return Object.keys(this.physicalAddress).every(key => key.length > 0);
+                const data = Object.values(this.physicalAddress);
+                return data.every(key => key.length > 0);
             },
         },
 
@@ -84,17 +96,14 @@
 
             if (this.question.identifier === 'Q_CONFIRM_ADDRESS') {
                 this.isMultiInput = true;
-                const x = Object.assign({}, {
+                this.physicalAddress = {
                     address: this.nonAwvPatients.address,
                     city: this.nonAwvPatients.city,
                     state: this.nonAwvPatients.state,
                     zip: this.nonAwvPatients.zip,
-                });
-                this.physicalAddress.push(x);
-                // this.physicalAddress.address = this.nonAwvPatients.address;
-                // this.physicalAddress.city = this.nonAwvPatients.city;
-                // this.physicalAddress.state = this.nonAwvPatients.state;
-                // this.physicalAddress.zip = this.nonAwvPatients.zip;
+                };
+
+
             }
         }
     }
