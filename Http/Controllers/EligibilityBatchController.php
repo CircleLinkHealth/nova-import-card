@@ -646,7 +646,7 @@ class EligibilityBatchController extends Controller
         }
         
         return view(
-            'eligibilityBatch.show',
+            'eligibility::batch.show',
             compact(
                 [
                     'batch',
