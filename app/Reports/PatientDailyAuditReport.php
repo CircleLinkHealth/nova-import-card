@@ -106,7 +106,7 @@ class PatientDailyAuditReport
         try {
             $pdf = $pdfService->createPdfFromView('wpUsers.patient.audit', ['data' => $this->data], $path);
         } catch (FileNotFoundException $e) {
-            \Log::channel('logdna')->error($e->getMessage());
+            \Log::error($e->getMessage());
 
             return false;
         }

@@ -180,11 +180,11 @@ class ImporterController extends Controller
 
         $ccdas = [];
         foreach ($request->file('file') as $file) {
-            \Log::channel('logdna')->warning("reading file $file");
+            \Log::warning("reading file $file");
 
             $xml = file_get_contents($file);
     
-            \Log::channel('logdna')->info("finished reading file $file");
+            \Log::info("finished reading file $file");
     
             $ccda = Ccda::create(
                 [
