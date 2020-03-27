@@ -12,10 +12,10 @@ use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
+use App\Relationships\PatientCareplanRelations;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanService;
 use App\Services\PatientService;
-use App\ValueObjects\PatientCareplanRelations;
 use Auth;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\PdfService;
@@ -175,7 +175,7 @@ class PatientCareplanController extends Controller
         $pageFileNames    = [];
 
         $fileNameWithPathBlankPage = $this->pdfService->blankPage();
-        
+
         $users = User::with(PatientCareplanRelations::get())->has('patientInfo')->has('billingProvider.user')->findMany($userIds);
 
         // create pdf for each user
