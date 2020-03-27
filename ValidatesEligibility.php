@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility;
 
+use CircleLinkHealth\Eligibility\Entities\CsvPatientList;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Rules\EligibilityPhones;
 use CircleLinkHealth\Eligibility\Rules\EligibilityProblems;
@@ -147,5 +148,24 @@ trait ValidatesEligibility
         }
 
         return $row;
+    }
+    
+    /**
+     * @param EligibilityJob $job
+     *
+     * @return array
+     */
+    public function getCsvStructureErrors(EligibilityJob $job) {
+        $csvPatientList = new CsvPatientList(collect([$job->data]));
+        $isValid        = $csvPatientList->guessValidatorAndValidate() ?? null;
+    
+        $errors = [];
+        if ( ! $isValid) {
+            $errors[]         = 'structure';
+        }
+        $errors = array_merge($this->validateRow($job->data)->errors()->keys(), $errors);
+        $this->saveErrorsOnEligibilityJob($job, collect($errors));
+        
+        return $errors;
     }
 }
