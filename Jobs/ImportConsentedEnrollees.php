@@ -246,7 +246,7 @@ class ImportConsentedEnrollees implements ShouldQueue
 
     private function log($message)
     {
-        \Log::channel('logdna')->warning($message);
+        \Log::warning($message);
 
         sendSlackMessage('#parse_enroll_import', $message);
     }
