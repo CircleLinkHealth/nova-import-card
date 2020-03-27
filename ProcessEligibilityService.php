@@ -583,7 +583,7 @@ class ProcessEligibilityService
         }
         
         try {
-            \Log::channel('logdna')->info(
+            \Log::info(
                 "BEGIN creating eligibility jobs from csv file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]"
             );
             
