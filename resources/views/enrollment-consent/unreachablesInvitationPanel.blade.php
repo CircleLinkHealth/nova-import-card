@@ -8,24 +8,28 @@
 
             <li>
                 To re-create the process first:
-                Click <strong>"Invite Patients to Enroll"</strong>. Will invite Initial AND Unreachable Patients for testing
+                Click <strong>"Invite Patients to Enroll"</strong>. Will invite Initial AND Unreachable Patients for
+                testing
             </li>
             <li>
                 Check you email. You should have received all the invitations 2 initial plus 2 unreachable patients.
                 I have setup the app to send everything to your email account.
             </li>
             <li>
-                Same goes for the SMS....but i ll keep them disabled for first round of QA. Nothing changes in terms of wokflow
+                Same goes for the SMS....but i ll keep them disabled for first round of QA. Nothing changes in terms of
+                wokflow
             </li>
         </ol>
         <ul>
             <li>
-                Note: if you click <strong>"Invite Patients to Enroll"</strong> and take no action (enroll now or request info), then you can
+                Note: if you click <strong>"Invite Patients to Enroll"</strong> and take no action (enroll now or
+                request info), then you can
                 fast forward 2 days after the first invitation to send the FIRST reminder to non responsive patients.
             </li>
             <li>
-                Only AFTER you clicked the <strong>"Send Reminder to non responding patients (2 days after first invite)"</strong>, then you can fast forward 4 days to
-                    test the button "Final Action on Non..."
+                Only AFTER you clicked the <strong>"Send Reminder to non responding patients (2 days after first
+                    invite)"</strong>, then you can fast forward 4 days to
+                test the button "Final Action on Non..."
             </li>
             <li>
                 You can reset and recreate the test unlimited times
@@ -81,4 +85,20 @@
             </div>
         </div>
     </div>
+
+    <div>
+        @foreach($invitedPatientsUrls as $url)
+            @if($url['invitationable_type'] === $enrolleeClass)
+                <ul>
+                    <a href="{{$url['url']}}">Invitation for Enrollee</a>
+                </ul>
+            @else
+                <ul>
+                    <a href="{{$url['url']}}">Invitation for Unreachable Patient</a>
+                </ul>
+            @endif
+
+        @endforeach
+    </div>
+
 </div>
