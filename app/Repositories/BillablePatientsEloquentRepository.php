@@ -8,6 +8,7 @@ namespace App\Repositories;
 
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Constants;
+use App\Relationships\BillableCPMPatientRelations;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
@@ -17,44 +18,12 @@ class BillablePatientsEloquentRepository
     public function billablePatients(
         $practiceId,
         Carbon $date,
-        array $with = [
-            'careTeamMembers',
-            'patientInfo',
-            'primaryPractice',
-            'patientSummaries',
-        ]
+        array $relations = null
     ) {
         $month = $date->startOfMonth();
 
-        $result = User::with(
-            collect(
-                [
-                    'patientSummaries' => function ($query) use ($month) {
-                        $query->where('month_year', $month)
-                              ->where('total_time', '>=', AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS)
-                              ->where('no_of_successful_calls', '>=', 1)
-                              ->with('chargeableServices')
-                              ->with('attestedProblems.cpmProblem')
-                              ->with('attestedProblems.icd10Codes');
-                    },
-                    'patientInfo',
-                    'primaryPractice',
-                    'careTeamMembers'  => function ($q) {
-                        $q->where('type', '=', 'billing_provider');
-                    },
-                ]
-            )->reject(
-                function ($item, $key) use ($with) {
-                    if (in_array($key, $with)) {
-                        return false;
-                    }
-                    if (in_array($item, $with)) {
-                        return false;
-                    }
-                    
-                    return true;
-                }
-            )->all()
+        return User::with(
+            $relations ? $relations : BillableCPMPatientRelations::getDefaultWith($date)
         )
             ->has('patientInfo')
             ->whereHas(
@@ -66,9 +35,7 @@ class BillablePatientsEloquentRepository
                           }
                       )
             ->ofType('participant')
-            ->where('program_id', '=', $practiceId);
-
-        return $result;
+            ->ofPractice($practiceId);
     }
 
     public function billablePatientSummaries($practiceId, Carbon $date, $ignoreWith = false)

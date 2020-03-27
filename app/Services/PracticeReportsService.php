@@ -57,9 +57,7 @@ class PracticeReportsService
         
         $saasAccount = null;
 
-        foreach ($practices as $practiceId) {
-            $practice = Practice::with(['settings', 'chargeableServices', 'saasAccount'])->find($practiceId);
-            
+        foreach (Practice::with(['settings', 'chargeableServices', 'saasAccount'])->whereIn('id', $practices)->get() as $practice) {
             if (!$saasAccount) {
                 $saasAccount = $practice->saasAccount;
             }
@@ -146,7 +144,7 @@ class PracticeReportsService
 
         $reportName = $practice->name.'-'.$date->format('Y-m').'-patients';
 
-        $patientReport = $generator->makePatientReportPdf($reportName);
+        $patientReport = $generator->makePatientReportCsv($reportName);
 
         $link = shortenUrl($patientReport->getUrl());
 
