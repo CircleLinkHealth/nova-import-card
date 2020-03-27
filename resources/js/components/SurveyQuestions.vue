@@ -488,7 +488,10 @@
                 //    RE-ENROLLMENT USERS DATA
                 nonAwvPatients: {
                     dob: [],
-                    address: `${this.surveyData.address}, ${this.surveyData.city}, ${this.surveyData.zip}`,
+                    address: this.surveyData.address,
+                    city: this.surveyData.city,
+                    zip: this.surveyData.zip,
+                    state: this.surveyData.state,
                     patientEmail: this.surveyData.email,
                     preferredContactNumber: [],
                     isSurveyOnlyRole: false,

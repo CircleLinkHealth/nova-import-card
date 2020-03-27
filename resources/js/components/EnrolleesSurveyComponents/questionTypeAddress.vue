@@ -1,10 +1,22 @@
 <template>
     <div class="scroll-container">
-        <div class="col-md-12 active">
+        <div v-if="!isMultiInput" class="col-md-12 active">
             <input type="text"
                    class="address-field"
-                   v-model="inputHasText"
+                   v-model="singleInputHasText"
                    :disabled="readOnly"/>
+        </div>
+        <div v-else>
+            <div v-for="(item, index) in physicalAddress[0]"
+                 class="col-md-12 active">
+                <br>
+                <label class="label">{{index}}</label>
+                <br>
+                <input type="text"
+                       class="address-field"
+                       v-model="item"
+                       :disabled="readOnly"/>
+            </div>
         </div>
 
         <br>
@@ -15,7 +27,7 @@
                     class="next-btn"
                     name="number"
                     id="number"
-                    :disabled="!(isOptional || inputHasValue)"
+                    :disabled="!(isOptional || singeInputHasValue || hasTypedInAllInputs)"
                     @click="handleAnswer()">
                 {{isLastQuestion ? 'Complete' : 'Next'}}
                 <mdb-icon v-show="waiting" icon="spinner" :spin="true"/>
@@ -34,7 +46,9 @@
 
         data() {
             return {
-                inputHasText: '',
+                isMultiInput: false,
+                singleInputHasText: '',
+                physicalAddress: [],
                 questionOptions: [],
                 subParts: [],
                 showNextButton: false,
@@ -46,27 +60,41 @@
         methods: {
             handleAnswer() {
                 const answer = {
-                    value: this.inputHasText
+                    value: this.singleInputHasText
                 };
 
                 this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer, this.isLastQuestion);
             },
         },
         computed: {
-            inputHasValue() {
-                const input = this.inputHasText;
+            singeInputHasValue() {
+                const input = this.singleInputHasText;
                 return input.length !== 0;
-            }
+            },
+            hasTypedInAllInputs() {
+                return Object.keys(this.physicalAddress).every(key => key.length > 0);
+            },
         },
 
 
         created() {
             if (this.question.identifier === 'Q_CONFIRM_EMAIL') {
-                this.inputHasText = this.nonAwvPatients.patientEmail;
+                this.singleInputHasText = this.nonAwvPatients.patientEmail;
             }
 
             if (this.question.identifier === 'Q_CONFIRM_ADDRESS') {
-                this.inputHasText = this.nonAwvPatients.address;
+                this.isMultiInput = true;
+                const x = Object.assign({}, {
+                    address: this.nonAwvPatients.address,
+                    city: this.nonAwvPatients.city,
+                    state: this.nonAwvPatients.state,
+                    zip: this.nonAwvPatients.zip,
+                });
+                this.physicalAddress.push(x);
+                // this.physicalAddress.address = this.nonAwvPatients.address;
+                // this.physicalAddress.city = this.nonAwvPatients.city;
+                // this.physicalAddress.state = this.nonAwvPatients.state;
+                // this.physicalAddress.zip = this.nonAwvPatients.zip;
             }
         }
     }
