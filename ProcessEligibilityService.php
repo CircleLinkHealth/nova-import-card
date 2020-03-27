@@ -598,6 +598,7 @@ class ProcessEligibilityService
                 }
                 if (1 == $i) {
                     $headers = str_getcsv($iteration, ',');
+                    $this->throwExceptionIfStructureErrors($headers, $batch);
                     ++$i;
                     continue;
                 }
@@ -633,11 +634,6 @@ class ProcessEligibilityService
                 
                 //we do this to use the data transformation the method performs
                 $validator = $this->validateRow($patient);
-                
-                //the first row containing patient data (ie. the first row after column headings)
-                if (2 == $i) {
-                    $this->throwExceptionIfStructureErrors($patient, $batch);
-                }
                 
                 $mrn = $patient['mrn'] ?? $patient['mrn_number'] ?? $patient['patient_id'] ?? $patient['dob'];
                 
@@ -736,13 +732,13 @@ class ProcessEligibilityService
         return $patient;
     }
     
-    private function throwExceptionIfStructureErrors(array $patient, EligibilityBatch $batch)
+    private function throwExceptionIfStructureErrors(array $headings, EligibilityBatch $batch)
     {
         $errors = $this->getCsvStructureErrors(
             new EligibilityJob(
                 [
                     'batch_id' => $batch->id,
-                    'data'     => $patient,
+                    'data'     => array_flip($headings),
                 ]
             )
         );
