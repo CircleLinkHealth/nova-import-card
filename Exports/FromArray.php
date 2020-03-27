@@ -83,12 +83,12 @@ class FromArray implements FromCollection, Responsable, WithHeadings
         return $this;
     }
 
-    public function storeAndAttachMediaTo($model, $title)
+    public function storeAndAttachMediaTo($model, $mediaCollection)
     {
         $filepath = 'exports/'.$this->getFilename();
         $stored   = $this->store($filepath, 'storage');
 
-        return $this->attachMediaTo($model, storage_path($filepath), $title);
+        return $this->attachMediaTo($model, storage_path($filepath), $mediaCollection);
     }
 
     private function headingsFromReportData()
