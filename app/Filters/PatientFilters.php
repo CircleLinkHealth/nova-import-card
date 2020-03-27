@@ -43,7 +43,7 @@ class PatientFilters extends QueryFilters
     public function careplanStatus($status)
     {
         return $this->builder->whereHas('carePlan', function ($query) use ($status) {
-            $query->where('status', $status)->orWhere('status', 'LIKE', '%\"status\":\"'.$status.'\"%');
+            $query->where('status', $status)->orWhere('status', 'LIKE', '%'.$status.'%');
         });
     }
 
