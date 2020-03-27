@@ -197,10 +197,10 @@
                                  */
                             });
 
-                            const debounced = _.debounce(() => {
+                            const <?php echo $section['id']; ?>Debounced = _.debounce(() => {
                                 <?php echo $section['id']; ?>.adjust();
                             }, 1000);
-                            webix.event(window, "resize", debounced);
+                            webix.event(window, "resize", <?php echo $section['id']; ?>Debounced);
                         </script>
                     @endpush
                     <?php
