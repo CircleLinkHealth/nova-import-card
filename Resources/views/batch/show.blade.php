@@ -18,15 +18,15 @@
                 <div class="col-md-12">
                     @if(Session::get('type') == 'success')
                         <div class="alert alert-success">
-                            {!!Session::get('message')!!}
+                            {!!Session::pull('message')!!}
                         </div>
                     @elseif(Session::get('type') == 'error')
                         <div class="alert alert-danger">
-                            {!!Session::get('message')!!}
+                            {!!Session::pull('message')!!}
                         </div>
                     @else
                         <div class="alert alert-info">
-                            {!!Session::get('message')!!}
+                            {!!Session::pull('message')!!}
                         </div>
                     @endif
                 </div>
@@ -38,10 +38,20 @@
                         <b>{{ $batch->practice->display_name }}</b> | Batch #{{$batch->id}} | Type: {{$batch->getType()}}
                         | Started: <em>{{ $batch->created_at->format('m-d-Y h:mA') }}</em> | Last Update:
                         <em>{{ $batch->updated_at->format('m-d-Y h:mA')}}</em>
+
+                        <a href="{{ route('eligibility.batch.show', [$batch->id, 'reprocess']) }}"
+                           class="btn btn-default btn-xs tooltip-bottom"
+                           onclick="return confirm('This will resume processing of records in case it got stuck. Would you like to proceed?')"
+                           data-tooltip="Reimport (beta)"
+                        >
+                            <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                        </a>
+
                         <div class="pull-right" style="color: {{$batch->getStatusFontColor()}};">
                             @if ($batch->status != 0)
-                                <b>{{ strtoupper($batch->getStatus()) }}</b></div>
-                        @endif
+                                <b>{{ strtoupper($batch->getStatus()) }}</b>
+                            @endif
+                        </div>
                     </div>
 
                     <div class="panel-body">

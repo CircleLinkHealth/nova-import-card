@@ -95,7 +95,7 @@ class ProcessEligibilityBatch implements ShouldQueue
     {
         if ($batch->isCompleted() && $batch->hasJobs()) {
             $this->processEligibilityService
-                ->notifySlack($batch);
+                ->notify($batch);
         }
     }
     

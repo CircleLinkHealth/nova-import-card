@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility;
 
+use CircleLinkHealth\Eligibility\Notifications\EligibilityBatchProcessed;
 use CircleLinkHealth\Eligibility\Exceptions\CsvEligibilityListStructureValidationException;
 use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedAllergyFields;
@@ -432,7 +433,7 @@ class ProcessEligibilityService
         return true;
     }
     
-    public function notifySlack($batch)
+    public function notify(EligibilityBatch $batch)
     {
         if (isProductionEnv()) {
             sendSlackMessage(
@@ -440,6 +441,8 @@ class ProcessEligibilityService
                 "Hey I just processed this list, it's crazy. Here's some patients, call them maybe? {$batch->linkToView()}"
             );
         }
+        
+        optional($batch->initiatorUser)->notify(new EligibilityBatchProcessed($batch));
     }
     
     /**
