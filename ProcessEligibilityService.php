@@ -634,7 +634,8 @@ class ProcessEligibilityService
                 //we do this to use the data transformation the method performs
                 $validator = $this->validateRow($patient);
                 
-                if (1 == $i) {
+                //the first row containing patient data (ie. the first row after column headings)
+                if (2 == $i) {
                     $this->throwExceptionIfStructureErrors($patient, $batch);
                 }
                 
