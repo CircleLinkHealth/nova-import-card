@@ -565,7 +565,7 @@ class ProcessEligibilityService
             $stream = $driveHandler
                 ->getFileStream($driveFileName, $driveFolder);
         } catch (\Exception $e) {
-            \Log::channel('logdna')->info("EXCEPTION `{$e->getMessage()}`");
+            \Log::error("EXCEPTION `{$e->getMessage()}`");
             $batch->status = EligibilityBatch::STATUSES['error'];
             $batch->save();
             

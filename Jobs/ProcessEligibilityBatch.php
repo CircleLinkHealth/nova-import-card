@@ -306,7 +306,6 @@ class ProcessEligibilityBatch implements ShouldQueue
 
     private function queueSingleCsvJobs(EligibilityBatch $batch): EligibilityBatch
     {
-
         if (array_keys_exist(['folder', 'fileName'], $batch->options) && !! $batch->options['finishedReadingFile'] !== true) {
             $result = $this->processEligibilityService->processGoogleDriveCsvForEligibility($batch);
             
