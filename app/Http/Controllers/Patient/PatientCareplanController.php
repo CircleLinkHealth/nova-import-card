@@ -15,7 +15,7 @@ use App\Http\Requests\CreateNewPatientRequest;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanService;
 use App\Services\PatientService;
-use App\ValueObjects\PatientCareplanRelations;
+use App\Relationships\PatientCareplanRelations;
 use Auth;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\PdfService;

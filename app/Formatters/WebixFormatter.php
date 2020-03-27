@@ -11,7 +11,7 @@ use App\Note;
 use App\Services\CPM\CpmMiscService;
 use App\Services\NoteService;
 use App\Services\ReportsService;
-use App\ValueObjects\PatientCareplanRelations;
+use App\Relationships\PatientCareplanRelations;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
