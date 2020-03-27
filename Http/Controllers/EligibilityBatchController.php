@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Eligibility\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use CircleLinkHealth\Core\Exports\FromArray;
+use CircleLinkHealth\Eligibility\Jobs\ProcessEligibilityBatch;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordEligibilityJobToCsvAdapter;
@@ -621,8 +622,13 @@ class EligibilityBatchController extends Controller
         return redirect()->route('eligibility.batch.show', [$updatedBatch->id]);
     }
     
-    public function show(EligibilityBatch $batch)
+    public function show(Request $request, EligibilityBatch $batch)
     {
+        if ($request->has('reprocess')) {
+            ProcessEligibilityBatch::dispatch($batch);
+            \Session::put('message', 'The batch will resume processing. If there are more patients to process the counts will update. Otherwise, nothing will happen.');
+        }
+        
         $batch->load('practice');
         
         $initiatorUser   = $batch->initiatorUser;
@@ -646,7 +652,7 @@ class EligibilityBatchController extends Controller
         }
         
         return view(
-            'eligibilityBatch.show',
+            'eligibility::batch.show',
             compact(
                 [
                     'batch',
