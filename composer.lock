@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e12a1d5b01ec6cc47e13de23ef402221",
+    "content-hash": "68a32b497c35abdb4f175b36280072cf",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -975,11 +975,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.0.7",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f411901051189abcc01bb56219f9a054acd45e26"
+                "reference": "d5ba14731cd1f8e3c0923fa1b4600d0e8d8b6add"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1013,7 +1013,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-27T04:29:05+00:00"
+            "time": "2020-03-27T06:53:15+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1021,7 +1021,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "7dcfcb3e096725f75ebecaff6d394ae493d46e43"
+                "reference": "44172aed9ab747a9ff3f7f3fe069a24943a3f437"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1046,7 +1046,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-27T05:14:13+00:00"
+            "time": "2020-03-27T05:53:02+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -14976,6 +14976,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
