@@ -1568,7 +1568,7 @@ class SurveySeeder extends Seeder
         ]);
     }
 
-    private function createQuestions($instance, $questionsData)
+    public function createQuestions($instance, $questionsData)
     {
         foreach ($questionsData as $questionData) {
 
@@ -1824,7 +1824,7 @@ class SurveySeeder extends Seeder
         $this->createQuestions($currentInstance, $questionsData);
     }
 
-    private function enrolleesQuestionData()
+    public function enrolleesQuestionData()
     {
         return collect([
             [
