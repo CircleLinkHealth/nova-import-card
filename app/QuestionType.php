@@ -20,6 +20,11 @@ class QuestionType extends BaseModel
 
     const MULTI_SELECT = 'multi_select';
 
+    const DOB = 'dob';
+    const PHONE = 'phone';
+    const ADDRESS = 'address';
+    const TIME = 'time';
+
     /**
      * The attributes that are mass assignable.
      *

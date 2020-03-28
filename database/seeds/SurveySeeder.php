@@ -1831,7 +1831,7 @@ class SurveySeeder extends Seeder
                 'identifier' => EnrolleesSurveyIdentifier::DOB,
                 'order' => 1,
                 'question_body' => 'Please update or confirm your date of birth',
-                'question_type' => QuestionType::DATE,
+                'question_type' => QuestionType::DOB,
                 'conditions' => [
                     'is_auto_generated' => true,
                     'generated_from' => [
@@ -1845,7 +1845,7 @@ class SurveySeeder extends Seeder
                 'identifier' => EnrolleesSurveyIdentifier::PREFERRED_NUMBER,
                 'order' => 2,
                 'question_body' => 'Preferred phone number for nurse to call',
-                'question_type' => QuestionType::NUMBER,
+                'question_type' => QuestionType::PHONE,
                 'question_type_answers' => [
                     [
                         'options' => [
@@ -1875,7 +1875,7 @@ class SurveySeeder extends Seeder
                 'sub_order' => 'b',
                 'question_group' => 'Please choose preferred days and time to contact:',
                 'question_body' => 'Choose preferred contact time:',
-                'question_type' => QuestionType::TEXT,
+                'question_type' => QuestionType::TIME,
                 'conditions' => [
                     'required_regex' => 'time'
                 ],
@@ -1919,7 +1919,7 @@ class SurveySeeder extends Seeder
                 'identifier' => EnrolleesSurveyIdentifier::CONFIRM_ADDRESS,
                 'order' => 5,
                 'question_body' => 'Please confirm or update your address:',
-                'question_type' => QuestionType::TEXT,
+                'question_type' => QuestionType::ADDRESS,
                 'question_type_answers' => [
                     [
                         'options' => [
@@ -1933,7 +1933,7 @@ class SurveySeeder extends Seeder
                 'identifier' => EnrolleesSurveyIdentifier::CONFIRM_EMAIL,
                 'order' => 6,
                 'question_body' => 'Please confirm or update your email address:',
-                'question_type' => QuestionType::TEXT,
+                'question_type' => QuestionType::ADDRESS,
                 'question_type_answers' => [
                     [
                         'options' => [
@@ -1946,7 +1946,7 @@ class SurveySeeder extends Seeder
             [
                 'identifier' => EnrolleesSurveyIdentifier::CONFIRM_LETTER,
                 'order' => 7,
-                'question_body' => 'Please confirm you have read the <a target="_blank" href="#">letter</a>,',
+                'question_body' => 'Please confirm you have read the letter',
                 'question_type' => QuestionType::CHECKBOX,
                 'question_type_answers' => [
                     [
