@@ -87,14 +87,22 @@
     </div>
 
     <div>
-        @foreach($invitedPatientsUrls as $url)
-            @if($url['invitationable_type'] === $enrolleeClass)
+        @foreach($invitationData as $data)
+            @if($data['isEnrolleeClass'])
                 <ul>
-                    <a href="{{$url['url']}}">Invitation for Enrollee</a>
+                    Invited Name: {{$data['name']}}
+                    <br>
+                    DOB: {{$data['dob']}}
+                    <br>
+                    <a href="{{$data['invitationUrl']}}">Invitation for Enrollee</a>
                 </ul>
             @else
                 <ul>
-                    <a href="{{$url['url']}}">Invitation for Unreachable Patient</a>
+                    Invited Name: {{$data['name']}}
+                    <br>
+                    DOB: {{$data['dob']}}
+                    <br>
+                    <a href="{{$data['invitationUrl']}}">Invitation for Unreachable Patient</a>
                 </ul>
             @endif
 

@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\DB;
 class EnrollmentCenterController extends Controller
 {
     use EnrollableManagement;
+    const ENROLLEES = 'Enrollees';
 
     /**
      * @var EnrollmentInvitationService
@@ -302,7 +303,7 @@ class EnrollmentCenterController extends Controller
     public function evaluateEnrolledForSurveyTest(Request $request)
     {
         $data = [
-            'enrollable_id' => $request->input('enrolleeId'), 'survey_instance_id' => 26,
+            'enrollable_id' => $request->input('enrolleeId'), 'survey_instance_id' => $this->getEnrolleesSurveyInstance()->id,
         ];
 
         EnrollableSurveyCompleted::dispatch($data);
@@ -422,9 +423,11 @@ class EnrollmentCenterController extends Controller
             ->whereHas('patientInfo')
             ->get();
 
+        $survey = $this->getEnrolleeSurvey();
+
         foreach ($users as $user) {
             $surveyInstance = DB::table('survey_instances')
-                ->where('survey_id', '=', 26)
+                ->where('survey_id', '=', $survey->id)
                 ->first();
 
             if ($user->checkForSurveyOnlyRole()) {
@@ -478,9 +481,24 @@ class EnrollmentCenterController extends Controller
     public function sendInvitesPanel()
     {
         $invitedPatientsUrls = EnrollableInvitationLink::select(['url', 'invitationable_id', 'invitationable_type'])->get();
-        $enrolleeClass       = Enrollee::class;
 
-        return view('enrollment-consent.unreachablesInvitationPanel', compact('invitedPatientsUrls', 'enrolleeClass'));
+        $invitationData = $invitedPatientsUrls->transform(function ($url) {
+            $isEnrolleeClass = Enrollee::class === $url->invitationable_type;
+            $invitationable = $url->invitationable()->firstOrFail();
+
+            $patientInfo = $isEnrolleeClass
+                ? $invitationable->user->patientInfo()->withTrashed()->first()
+                : $invitationable->patientInfo()->withTrashed()->first();
+
+            return [
+                'invitationUrl'   => $url->url,
+                'isEnrolleeClass' => $isEnrolleeClass,
+                'name'            => $invitationable->display_name,
+                'dob'             => Carbon::parse($patientInfo->birth_date)->toDateString(),
+            ];
+        });
+
+        return view('enrollment-consent.unreachablesInvitationPanel', compact('invitedPatientsUrls', 'invitationData'));
     }
 
     public function training()
