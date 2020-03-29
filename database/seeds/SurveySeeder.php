@@ -1947,7 +1947,7 @@ class SurveySeeder extends Seeder
                 'identifier' => EnrolleesSurveyIdentifier::CONFIRM_LETTER,
                 'order' => 7,
                 'question_body' => 'Please confirm you have read the letter',
-                'question_type' => QuestionType::CHECKBOX,
+                'question_type' => QuestionType::CONFIRMATION,
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'Confirm'

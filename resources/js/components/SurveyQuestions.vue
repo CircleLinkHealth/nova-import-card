@@ -240,6 +240,19 @@
                                 :read-only="readOnlyMode"
                                 v-if="question.type.type === 'address'">
                             </question-type-address>
+
+                           <question-type-confirmation
+                               :question="question"
+                               :non-awv-patients="nonAwvPatients"
+                               :is-active="currentQuestionIndex === index"
+                               :style-horizontal="false"
+                               :get-all-questions-func="getAllQuestions"
+                               :on-done-func="postAnswerAndGoToNext"
+                               :is-last-question="isLastQuestion(question)"
+                               :waiting="waiting"
+                               :read-only="readOnlyMode"
+                               v-if="question.type.type === 'confirmation'">
+                           </question-type-confirmation>
                             <!-- ENROLLEES SURVEY END-->
                         </div>
                     </div>
@@ -421,6 +434,7 @@
     import questionTypePhoneNumber from "./EnrolleesSurveyComponents/questionTypePhoneNumber";
     import questionTypeTime from "./EnrolleesSurveyComponents/questionTypeTime";
     import questionTypeAddress from "./EnrolleesSurveyComponents/questionTypeAddress";
+    import questionTypeConfirmation from "./EnrolleesSurveyComponents/questionTypeConfirmation";
 
     import $ from "jquery";
 
@@ -428,6 +442,7 @@
         props: ['surveyName', 'surveyData', 'adminMode', 'cpmCallerUrl', 'cpmCallerToken', 'debug'],
 
         components: {
+            QuestionTypeConfirmation,
             mdbIcon,
             mdbRow,
             mdbCol,
@@ -445,6 +460,7 @@
             'question-type-phone-number': questionTypePhoneNumber,
             'question-type-time': questionTypeTime,
             'question-type-address': questionTypeAddress,
+            'question-type-confirmation': questionTypeConfirmation,
         },
 
         data() {
