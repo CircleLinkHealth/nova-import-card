@@ -231,6 +231,7 @@ class EnrollmentCenterController extends Controller
     }
 
     /**
+     * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      */
     public function enrolleesInvitationLetterBoard(Request $request)
@@ -459,8 +460,9 @@ class EnrollmentCenterController extends Controller
                     ]
                 );
 
+                $patientInfo = $user->patientInfo()->withTrashed()->first();
                 DB::table('invitation_links')
-                    ->where('patient_info_id', $user->patientInfo()->withTrashed()->first()->id)
+                    ->where('patient_info_id', $patientInfo->id)
                     ->delete();
 
                 DB::table('answers')
@@ -490,10 +492,13 @@ class EnrollmentCenterController extends Controller
                 ? $invitationable->user->patientInfo()->withTrashed()->first()
                 : $invitationable->patientInfo()->withTrashed()->first();
 
+            $name = $isEnrolleeClass
+                ? $invitationable->user->display_name
+                : $invitationable->display_name;
             return [
                 'invitationUrl'   => $url->url,
                 'isEnrolleeClass' => $isEnrolleeClass,
-                'name'            => $invitationable->display_name,
+                'name'            => $name,
                 'dob'             => Carbon::parse($patientInfo->birth_date)->toDateString(),
             ];
         });
