@@ -442,7 +442,6 @@
         props: ['surveyName', 'surveyData', 'adminMode', 'cpmCallerUrl', 'cpmCallerToken', 'debug'],
 
         components: {
-            QuestionTypeConfirmation,
             mdbIcon,
             mdbRow,
             mdbCol,
