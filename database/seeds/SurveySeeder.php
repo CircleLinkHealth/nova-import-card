@@ -1946,8 +1946,14 @@ class SurveySeeder extends Seeder
             [
                 'identifier' => EnrolleesSurveyIdentifier::CONFIRM_LETTER,
                 'order' => 7,
+                'optional' => true,
                 'question_body' => 'Please confirm you have read the letter',
                 'question_type' => QuestionType::CONFIRMATION,
+                'conditions' => [
+                    [
+                        "nonAwvCheck" => "isSurveyOnlyUser"
+                    ]
+                ],
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'Confirm'

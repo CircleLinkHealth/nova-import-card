@@ -69,7 +69,6 @@
                         answer.push(values);
                     });
                 } else {
-                    debugger;
                     answer = {
                         value: this.singleInputHasText
                     }

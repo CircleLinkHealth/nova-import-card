@@ -9,6 +9,7 @@ use Auth;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SurveyController extends Controller
 {
@@ -86,21 +87,36 @@ class SurveyController extends Controller
     public function getEnrollableQuestionsData(Request $request)
     {
         $userId = $request->input('user_id');
-        $surveyInstanceId = $request->input('survey_instance_id');
         $user = User::with('patientInfo')
             ->where('id', $userId)
             ->firstOrFail();
 
         $birthDate = !empty($user->patientInfo->birth_date) ? Carbon::parse($user->patientInfo->birth_date)->toDateString() : '';
         // It can be empty. Its ok.
-        $primaryPhoneNumber = $user->phoneNumbers->where('is_primary','=' ,true)->first()->number;
+        $primaryPhoneNumber = $user->phoneNumbers->where('is_primary', '=', true)->first()->number;
+        $isSurveyOnly = $user->hasRole('survey-only');
+
+        $letterLink = '';
+
+        if ($isSurveyOnly) {
+            $id = DB::table('enrollees')->where('user_id', $userId)->select('id')->first()->id;
+
+            $letter = DB::table('enrollables_invitation_links')
+                ->where('invitationable_id', $id)
+                ->select('url')
+                ->first();
+
+            $letterLink = $letter->url;
+        }
+
 
         $data = [
             'dob' => $birthDate,
             'address' => $user->address,
             'patientEmail' => $user->email,
             'preferredContactNumber' => !empty($primaryPhoneNumber) ? $primaryPhoneNumber : [],
-            'isSurveyOnlyRole' => $user->hasRole('survey-only'),
+            'isSurveyOnlyRole' => $isSurveyOnly,
+            'letterLink' => $letterLink
         ];
 
         return response()->json([

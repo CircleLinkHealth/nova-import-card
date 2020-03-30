@@ -241,18 +241,19 @@
                                 v-if="question.type.type === 'address'">
                             </question-type-address>
 
-                           <question-type-confirmation
-                               :question="question"
-                               :non-awv-patients="nonAwvPatients"
-                               :is-active="currentQuestionIndex === index"
-                               :style-horizontal="false"
-                               :get-all-questions-func="getAllQuestions"
-                               :on-done-func="postAnswerAndGoToNext"
-                               :is-last-question="isLastQuestion(question)"
-                               :waiting="waiting"
-                               :read-only="readOnlyMode"
-                               v-if="question.type.type === 'confirmation'">
-                           </question-type-confirmation>
+                            <question-type-confirmation
+                                :question="question"
+                                :non-awv-patients="nonAwvPatients"
+                                :is-active="currentQuestionIndex === index"
+                                :style-horizontal="false"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                :read-only="readOnlyMode"
+                                v-if="question.type.type === 'confirmation'">
+                            </question-type-confirmation>
+
                             <!-- ENROLLEES SURVEY END-->
                         </div>
                     </div>
@@ -510,6 +511,7 @@
                     patientEmail: this.surveyData.email,
                     preferredContactNumber: [],
                     isSurveyOnlyRole: false,
+                    letterLink: '',
                 }
                 //
             }
@@ -809,6 +811,20 @@
 
                         //we are evaluating only the first condition.related_question_order_number
                         //For now is OK since we are depending only on ONE related Question
+                        //
+                        // if (this.surveyName === 'enrollees') {
+                        //     if (prevQuestConditions
+                        //         && prevQuestConditions.hasOwnProperty('nonAwvCheck')
+                        //         && prevQuestConditions.nonAwvCheck === 'isSurveyOnlyUser') {
+                        //         if (!this.isSurveyOnlyRole) {
+                        //             shouldDisable = true;
+                        //             break;
+                        //         } else {
+                        //             shouldDisable = false;
+                        //             break;
+                        //         }
+                        //     }
+                        // }
                         const questions = this.getQuestionsOfOrder(prevQuestConditions.related_question_order_number);
                         const firstQuestion = questions[0];
                         if (!firstQuestion.answer || !firstQuestion.answer.value) {
@@ -880,6 +896,20 @@
                         const nextQuestConditions = q[i];
                         //we are evaluating only the first condition.related_question_order_number
                         //For now is OK since we are depending only on ONE related Question
+
+                        if (this.surveyName === 'enrollees') {
+                            if (nextQuestConditions
+                                && nextQuestConditions.hasOwnProperty('nonAwvCheck')
+                                && nextQuestConditions.nonAwvCheck === 'isSurveyOnlyUser') {
+                                if (this.nonAwvPatients.isSurveyOnlyRole === true) {
+                                    canGoToNext = true;
+                                    break;
+                                } else {
+                                    canGoToNext = false;
+                                    break;
+                                }
+                            }
+                        }
                         const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
                         const firstQuestion = questions[0];
                         if (!firstQuestion.answer || !firstQuestion.answer.value) {
@@ -941,15 +971,30 @@
                     return null;
                 }
 
+
                 //need to check if there are certain conditions that have to be met before showing this question
                 if (nextQuestion.conditions && nextQuestion.conditions.length) {
                     let shouldDisable = false;
                     for (let i = 0; i < nextQuestion.conditions.length; i++) {
                         const q = nextQuestion.conditions;
                         const nextQuestConditions = q[i];
-
                         //we are evaluating only the first condition.related_question_order_number
                         //For now is OK since we are depending only on ONE related Question
+
+                        if (this.surveyName === 'enrollees') {
+                            if (nextQuestConditions
+                                && nextQuestConditions.hasOwnProperty('nonAwvCheck')
+                                && nextQuestConditions.nonAwvCheck === 'isSurveyOnlyUser') {
+                                if (this.nonAwvPatients.isSurveyOnlyRole === false) {
+                                    shouldDisable = true;
+                                    break;
+                                } else {
+                                    shouldDisable = false;
+                                    break;
+                                }
+                            }
+                        }
+
                         const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
                         const firstQuestion = questions[0];
                         if (!firstQuestion.answer || !firstQuestion.answer.value) {
@@ -1230,18 +1275,14 @@
                 })
                     .then((response) => {
                         const data = response.data.data;
-
                         const dob = data.dob;
-                        // const address = data.address;
-                        // const patientEmail = data.patientEmail;
                         const preferredContactNumber = data.preferredContactNumber;
                         const isSurveyOnlyRole = data.isSurveyOnlyRole;
-
                         this.nonAwvPatients.dob.push(dob);
-                        // this.nonAwvPatients.address.push(address);
-                        // this.nonAwvPatients.patientEmail.push(patientEmail);
                         this.nonAwvPatients.preferredContactNumber.push(preferredContactNumber);
                         this.nonAwvPatients.isSurveyOnlyRole = isSurveyOnlyRole;
+                        this.nonAwvPatients.letterLink = data.letterLink;
+
 
                     })
                     .catch((error) => {
