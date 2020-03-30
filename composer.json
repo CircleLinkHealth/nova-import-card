@@ -110,6 +110,7 @@
   "require": {
     "php": "~7.3.16",
     "ext-bcmath": "*",
+    "ext-curl": "*",
     "ext-dom": "*",
     "ext-json": "*",
     "ext-libxml": "*",
