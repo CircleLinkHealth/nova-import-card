@@ -291,14 +291,31 @@ class PatientMonthlySummary extends BaseModel
         return $count;
     }
 
+    /**
+     * @return Collection|static
+     */
     public function bhiAttestedProblems()
     {
+        if ( ! $this->practiceHasServiceCode(ChargeableService::BHI) || ! $this->hasServiceCode(ChargeableService::BHI)) {
+            return collect([]);
+        }
+
         return $this->attestedProblems->where('cpmProblem.is_behavioral', '=', true);
     }
 
+    /**
+     * @return \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection|static
+     */
     public function ccmAttestedProblems()
     {
-        return $this->attestedProblems->where('cpmProblem.is_behavioral', '=', false);
+        return ! $this->practiceHasServiceCode(ChargeableService::BHI)
+            ? $this->attestedProblems
+            : $this->attestedProblems->where('cpmProblem.is_behavioral', '=', false);
+    }
+
+    public function practiceHasServiceCode($code) : bool
+    {
+        return (bool)optional($this->patient->primaryPractice)->hasServiceCode($code);
     }
 
     public function patient()
@@ -470,7 +487,7 @@ class PatientMonthlySummary extends BaseModel
         return $this->ccmAttestedProblems()
                     ->merge(
                         $patientProblems->filter(function (Problem $p) {
-                            return ! $this->ccmAttestedProblems()->contains('id', $p->id) && !$p->isBehavioral();
+                            return ! $this->ccmAttestedProblems()->contains('id', $p->id) && ! $p->isBehavioral();
                         }))
                     ->take(4)
                     ->pluck('id')
@@ -482,7 +499,7 @@ class PatientMonthlySummary extends BaseModel
         return [
             optional($this->patientProblemsSortedByWeight()
                           ->first())
-                ->id
+                ->id,
         ];
     }
 }

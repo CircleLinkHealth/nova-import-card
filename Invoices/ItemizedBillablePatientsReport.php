@@ -175,10 +175,10 @@ class ItemizedBillablePatientsReport
                                              $patientData->setBillingCodes($u->billingCodes($this->month));
                         
                                              $patientData->setCcmProblemCodes(
-                                                 $this->getCcmAttestedConditions($summary)
+                                                 $this->formatProblemCodesForReport($summary->ccmAttestedProblems()->filter())
                                              );
                         
-                                             $patientData->setBhiCodes($this->getBhiAttestedConditions($summary));
+                                             $patientData->setBhiCodes($this->formatProblemCodesForReport($summary->bhiAttestedProblems()->filter()));
                         
                                              $patientData->setLocationName($u->getPreferredLocationName());
                         
@@ -242,21 +242,7 @@ class ItemizedBillablePatientsReport
         
         return $data;
     }
-    
-    private function getCcmAttestedConditions(PatientMonthlySummary $summary)
-    {
-        return $this->formatProblemCodesForReport($summary->ccmAttestedProblems()->filter());
-    }
-    
-    private function getBhiAttestedConditions(PatientMonthlySummary $summary)
-    {
-        if ( ! $summary->hasServiceCode(ChargeableService::BHI)) {
-            return 'N/A';
-        }
-        
-        return $this->formatProblemCodesForReport($summary->bhiAttestedProblems()->filter());
-    }
-    
+
     private function formatProblemCodesForReport(Collection $problems)
     {
         return $problems->isNotEmpty()
