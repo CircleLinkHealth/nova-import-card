@@ -527,6 +527,7 @@
             showProblemsModal(patient, isBhi) {
                 Event.$emit('modal-attest-call-conditions:show', {
                     'patient': patient,
+                    'practice_has_bhi': this.selectedPracticeChargeableServices.find(service => service.code === SERVICES.CPT_99484),
                     'is_bhi': isBhi
                 });
             },

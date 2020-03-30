@@ -113,6 +113,7 @@
                 this.attestedProblems = data.is_bhi ? data.patient.attested_bhi_problems : data.patient.attested_ccm_problems;
                 this.problems = data.patient.problems
                 this.isBhi = data.is_bhi
+                this.practiceBhiDisabled = data.practice_has_bhi
             })
         },
         data() {
@@ -123,6 +124,7 @@
                 addCondition: false,
                 error: null,
                 isBhi: false,
+                practiceBhiDisabled: false
             }
         },
         computed: {
@@ -149,7 +151,7 @@
                 });
                 //if in notes page, show all problems
                 //if in approve billable patients page, show ccm or bhi, depending on the modal
-                return self.isNotesPage ? problemsToAttest : (problemsToAttest || []).filter(function (p) {
+                return self.isNotesPage || self.practiceBhiDisabled ? problemsToAttest : (problemsToAttest || []).filter(function (p) {
                     return self.isBhi ? p.is_behavioral : !p.is_behavioral;
                 });
             },
