@@ -146,7 +146,7 @@ class CallController extends Controller
         ]);
 
         if ($validation->fails()) {
-            \Log::channel('logdna')->error('Could not schedule call for patient:'.$patientId);
+            \Log::error('Could not schedule call for patient:'.$patientId);
 
             return redirect()
                 ->route('patient.note.index', [

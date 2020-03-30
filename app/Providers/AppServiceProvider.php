@@ -13,6 +13,7 @@ use App\Services\AWV\DirectPatientDocument;
 use App\Services\AWV\EmailPatientDocument;
 use App\Services\AWV\FaxPatientDocument;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Providers\GoogleDriveServiceProvider;
 use DB;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;

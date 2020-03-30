@@ -150,7 +150,7 @@ class Call extends BaseModel implements AttachableToNotification
             ->first();
 
         if ( ! $summary) {
-            \Log::channel('logdna')->info('Patient monthly summary not found.', [
+            \Log::info('Patient monthly summary not found.', [
                 'patient_id' => $this->inbound_cpm_id,
                 'month'      => Carbon::now()->startOfMonth()->toDateString(),
             ]);

@@ -153,7 +153,7 @@ class UPG0506Demo extends Command
                         $u->forceDelete();
                     });
             } catch (\Exception $exception) {
-                \Log::channel('logdna')->info('UPG0506 demo error on deleting test data', [
+                \Log::info('UPG0506 demo error on deleting test data', [
                     'exception' => $exception->getMessage(),
                 ]);
             }
