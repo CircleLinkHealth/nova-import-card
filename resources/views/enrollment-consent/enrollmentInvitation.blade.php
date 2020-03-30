@@ -4,7 +4,9 @@
 @section('content')
     <div class="container">
         <div class="letter-view">
-            @include('enrollment-consent.enrollableInvitationButtons')
+            @if(!$hideButtons)
+                @include('enrollment-consent.enrollableInvitationButtons')
+            @endif
             <div class="headers">
                 @include('enrollment-consent.practiceLogo')
                 <br>
@@ -30,7 +32,9 @@
                             @include('enrollment-consent.practiceLogo')
                         </footer>
                     </div>
-                    @include('enrollment-consent.enrollableInvitationButtons')
+                    @if(!$hideButtons)
+                        @include('enrollment-consent.enrollableInvitationButtons')
+                    @endif
                 </div>
             </div>
         </div>
