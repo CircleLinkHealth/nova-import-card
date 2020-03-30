@@ -24,10 +24,10 @@ class Zip extends BaseProcessable
      */
     public function processEligibility()
     {
-        foreach (\Storage::disk('cloud')->files($this->relativeDirectory) as $filePath) {
+        foreach (\Storage::disk('google')->files($this->relativeDirectory) as $filePath) {
             $ccda = Ccda::create([
                 'source'   => 'uploaded',
-                'xml'      => \Storage::disk('cloud')->get($filePath),
+                'xml'      => \Storage::disk('google')->get($filePath),
                 'status'   => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
                 'imported' => false,
             ]);
@@ -36,7 +36,7 @@ class Zip extends BaseProcessable
             $ccda->practice_id = (int) $this->practice->id;
             $ccda->save();
 
-            $deleted = \Storage::disk('cloud')->delete($filePath);
+            $deleted = \Storage::disk('google')->delete($filePath);
 
             ProcessCcda::withChain([
                 new CheckCcdaEnrollmentEligibility(
@@ -83,7 +83,7 @@ class Zip extends BaseProcessable
     public function unzip()
     {
         $disk      = \Storage::disk('local');
-        $cloudDisk = \Storage::disk('cloud');
+        $cloudDisk = \Storage::disk('google');
         $prefix    = $disk->getAdapter()->getPathPrefix();
 
         $path            = $this->getFilePath();

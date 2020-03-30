@@ -7,7 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
-use App\Console\Commands\ReimportPatientMedicalRecord;
+use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;

@@ -51,7 +51,7 @@ class NurseDailyReport implements FromCollection, Responsable, WithHeadings
                     ->find($nurseReport['id']);
 
                 if ( ! $nurse) {
-                    \Log::channel('logdna')->error("User not found: {$nurseReport['name']}");
+                    \Log::error("User not found: {$nurseReport['name']}");
 
                     return [];
                 }
