@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\Notifications;
 
-use App\Contracts\HasAttachment;
 use App\Contracts\LiveNotification;
 use App\Traits\ArrayableNotification;
 use Illuminate\Bus\Queueable;
