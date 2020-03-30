@@ -57,7 +57,7 @@
                                 <option value="app" selected>Authy App (recommended)</option>
                                 <option value="sms">SMS</option>
                                 <option value="phone">Phone Call</option>
-                                <option value="qr_code">QR Code</option>
+                                <option value="qr_code">Other Authenticator App</option>
                             </select>
                             <span class="help-block">{{errors.get('method')}}</span>
                         </div>
