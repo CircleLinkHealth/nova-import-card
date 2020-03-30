@@ -10,7 +10,7 @@ class MarillacMedicalRecord extends BaseMedicalRecordTemplate
     /**
      * @var array
      */
-    private $data;
+    protected $data;
     
     public function __construct(array $medicalRecord)
     {
@@ -409,7 +409,7 @@ class MarillacMedicalRecord extends BaseMedicalRecordTemplate
     
     private function getAddressLine2(): string
     {
-        return $this->data['street2'];
+        return $this->data['street2'] ?? '';
     }
     
     private function getZipCode(): string

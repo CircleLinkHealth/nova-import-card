@@ -20,6 +20,7 @@ use CircleLinkHealth\Eligibility\Console\Athena\UpdatePracticeAppointments;
 use CircleLinkHealth\Eligibility\Console\CreatePCMListForCommonWealth;
 use CircleLinkHealth\Eligibility\Console\Make65PlusPatientsEligible;
 use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
+use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Console\ResetAthenaEligibilityBatch;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
@@ -55,6 +56,7 @@ class EligibilityServiceProvider extends ServiceProvider
             GetPatientIdFromAppointments::class,
             GetPatientIdFromLastYearAppointments::class,
             PostPatientCarePlanAsAppointmentNote::class,
+            ReimportPatientMedicalRecord::class,
             ResetAthenaEligibilityBatch::class,
             UpdatePracticeAppointments::class,
             Make65PlusPatientsEligible::class,

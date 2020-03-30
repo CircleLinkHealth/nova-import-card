@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
-use App\Console\Commands\ReimportPatientMedicalRecord;
+use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
