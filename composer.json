@@ -139,7 +139,7 @@
     "circlelinkhealth/shared-models-module": "1.2.7",
     "circlelinkhealth/sqlviews-module": "1.1.0",
     "circlelinkhealth/timetracking-module": "1.1.8",
-    "circlelinkhealth/twofa-module": "1.1.7",
+    "circlelinkhealth/twofa-module": "dev-CPM-2198_authy_qr_code",
     "consoletvs/charts": "^6.5",
     "daltcore/lara-pdf-merger": "dev-master",
     "dillingham/nova-button": "^1.0",

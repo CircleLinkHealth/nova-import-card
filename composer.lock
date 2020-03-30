@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dfba12531f2a8e43b9b51023e6df7b40",
+    "content-hash": "79dfb9563166fc7f9ec7ad0d7e5feb09",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -366,6 +366,7 @@
                 "lush-http",
                 "php"
             ],
+            "abandoned": true,
             "time": "2019-05-28T15:08:43+00:00"
         },
         {
@@ -1350,11 +1351,11 @@
         },
         {
             "name": "circlelinkhealth/twofa-module",
-            "version": "v1.1.7",
+            "version": "dev-CPM-2198_authy_qr_code",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "a327f4c58a3490ab774792826b0b98a30b7215a1"
+                "reference": "5a89ccc77044b294691cda4cfa3cc1df954eed37"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -1381,7 +1382,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-24T07:21:31+00:00"
+            "time": "2020-03-30T14:36:28+00:00"
         },
         {
             "name": "clue/stream-filter",
@@ -14915,6 +14916,7 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/twofa-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
@@ -14925,6 +14927,7 @@
     "platform": {
         "php": "~7.3.16",
         "ext-bcmath": "*",
+        "ext-curl": "*",
         "ext-dom": "*",
         "ext-json": "*",
         "ext-libxml": "*",
