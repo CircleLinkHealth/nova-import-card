@@ -62,7 +62,7 @@ class AttestedConditionsController extends Controller
 
         return response()->json([
             'status'            => 200,
-            'attested_problems' => $summary->attestedProblems()->get()->where('cpmProblem.is_behavioral', '=', $request->input('is_bhi'))->pluck('id')->toArray(),
+            'attested_problems' => $attestedProblems,
         ]);
     }
 }
