@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Console;
 
-use App\Notifications\PatientNotReimportedNotification;
-use App\Notifications\PatientReimportedNotification;
+use CircleLinkHealth\Eligibility\Notifications\PatientNotReimportedNotification;
+use CircleLinkHealth\Eligibility\Notifications\PatientReimportedNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Decorators\DemographicsFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\InsuranceFromAthena;
