@@ -22,6 +22,7 @@ class AuthyMiddleware
         'user.2fa.store',
         'user.2fa.token.sms',
         'user.2fa.token.voice',
+        'user.2fa.token.qr-code',
         'user.2fa.token.verify',
         'user.inactivity-logout',
         'user.logout',

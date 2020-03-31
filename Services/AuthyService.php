@@ -41,7 +41,7 @@ class AuthyService
             ->getApprovalRequest($approvalRequestUuid);
 
         if ($response->ok()) {
-            $approval_request = (array) $response->bodyvar('approval_request');
+            $approval_request = (array)$response->bodyvar('approval_request');
             $this->on2FASuccess($approval_request['status']);
         }
 
@@ -52,7 +52,7 @@ class AuthyService
      * Create approval request.
      *
      * @param \CircleLinkHealth\TwoFA\Entities\AuthyUser $authyUser
-     * @param User                                       $user
+     * @param User $user
      *
      * @return \Authy\AuthyResponse
      */
@@ -73,7 +73,7 @@ class AuthyService
             );
 
         if ($response->ok()) {
-            $approval_request = (array) $response->bodyvar('approval_request');
+            $approval_request = (array)$response->bodyvar('approval_request');
             session(['approval_request_uuid' => $approval_request['uuid']]);
         }
 
@@ -84,14 +84,15 @@ class AuthyService
      * Register a User with Authy.
      *
      * @param \CircleLinkHealth\TwoFA\Entities\AuthyUser $authyUser
-     * @param \CircleLinkHealth\Customer\Entities\User   $user
+     * @param \CircleLinkHealth\Customer\Entities\User $user
      *
      * @return AuthyApiUser
      */
     public function register(AuthyUser $authyUser, User $user)
     {
         $response = $this->api
-            ->registerUser($user->email, $authyUser->phone_number, $authyUser->country_code, 'app' == $authyUser->authy_method);
+            ->registerUser($user->email, $authyUser->phone_number, $authyUser->country_code,
+                'app' == $authyUser->authy_method);
 
         if ($response->ok()) {
             $authyUser->authy_id = $response->id();
@@ -113,12 +114,23 @@ class AuthyService
             ->phoneCall($authyId, ['force' => 'true']);
     }
 
-    public function verifyToken($authyId, $token)
+    public function generateQrCode($authyId, User $user)
+    {
+        $appName = config('app.name');
+        $opts    = [
+            'label'   => "$appName($user->email)",
+            'qr_size' => AuthyApiable::QR_DEFAULT_SIZE,
+        ];
+
+        return $this->api->requestQrCode($authyId, $opts);
+    }
+
+    public function verifyToken($authyId, $token, $addToSession = true)
     {
         $response = $this->api
             ->verifyToken($authyId, $token);
 
-        if ($response->ok()) {
+        if ($response->ok() && $addToSession) {
             $this->on2FASuccess('approved');
         }
 

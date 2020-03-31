@@ -109,6 +109,31 @@ class AuthyController extends Controller
         return response()->json($response->errors(), 500);
     }
 
+    public function generateQrCode()
+    {
+        $user      = auth()->user();
+        $authyUser = $user->authyUser()->first();
+        if ( ! $authyUser) {
+            $authyUser = $user->authyUser()->firstOrNew([]);
+            $authyUser = $this->service
+                ->register($authyUser, $user);
+        }
+
+        $response = $this->service
+            ->generateQrCode($authyUser->authy_id, $user);
+
+        if ($response->ok()) {
+            return $this->ok([
+                'message' => 'Verification Code sent via SMS succesfully.',
+                'qr_code' => $response->bodyvar('qr_code'),
+            ]);
+        }
+
+        return response()->json([
+            'errors' => $response->errors(),
+        ], 500);
+    }
+
     public function showVerificationTokenForm()
     {
         return view('twofa::authy');
@@ -126,14 +151,21 @@ class AuthyController extends Controller
         $user      = auth()->user();
         $authyUser = $user->authyUser()->firstOrNew([]);
 
-        $authyUser->phone_number     = $request->input('phone_number');
-        $authyUser->country_code     = $request->input('country_code');
-        $authyUser->authy_method     = $request->input('method');
-        $authyUser->is_authy_enabled = $request->input('is_2fa_enabled');
-        $authyUser->save();
+        $authyUser->phone_number = $request->input('phone_number');
+        $authyUser->country_code = $request->input('country_code');
 
-        $authyUser = $this->service
-            ->register($authyUser, $user);
+        $method = $request->input('method', null);
+        if ($method) {
+            $authyUser->authy_method = $method;
+        }
+
+        $isAuthyEnabled = $request->input('is_2fa_enabled', null);
+        if ($isAuthyEnabled !== null) {
+            $authyUser->is_authy_enabled = $isAuthyEnabled;
+        }
+
+        $authyUser->save();
+        $authyUser = $this->service->register($authyUser, $user);
 
         if ( ! $authyUser->ok()) {
             return response()
@@ -148,16 +180,16 @@ class AuthyController extends Controller
 
     public function verifyToken(VerifyAuthyTokenRequest $request)
     {
-        $data    = $request->all();
-        $token   = $data['token'];
+        $token   = $request->input('token', null);
+        $isSetup = $request->input('is_setup', false);
         $authyId = auth()->user()->authyUser->authy_id;
 
-        $response = $this->service->verifyToken($authyId, $token);
+        $response = $this->service->verifyToken($authyId, $token, !$isSetup);
 
         if ($response->ok()) {
             return $this->ok(['message' => 'Token verified successfully.']);
         }
 
-        return response()->json($response->errors(), 500);
+        return response()->json($response->errors(), 400);
     }
 }

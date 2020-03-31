@@ -44,6 +44,12 @@ Route::middleware('auth')->group(function () {
 
     Route::group(['prefix' => 'api/account-settings'], function () {
         Route::group(['prefix' => '2fa'], function () {
+
+            Route::post('qr-code', [
+                'uses' => 'AuthyController@generateQrCode',
+                'as'   => 'user.2fa.token.qr-code',
+            ]);
+
             Route::post('', [
                 'uses' => 'AuthyController@store',
                 'as'   => 'user.2fa.store',
