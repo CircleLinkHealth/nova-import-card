@@ -119,7 +119,7 @@ class ResetPasswordController extends Controller
 
         $email = $request->input('email');
 
-        $shouldLockEmailInput = false;
+        $userIsPatient = false;
 
         //If a patient tries to reset their password, pre-fill email input and disable it,
         //to prevent unnecessary confusion for the patient
@@ -127,14 +127,14 @@ class ResetPasswordController extends Controller
             $user = User::whereEmail($email)->first();
 
             if ($user) {
-                $shouldLockEmailInput = $user->isParticipant();
+                $userIsPatient = $user->isParticipant();
                 if ( ! $user->isParticipant()) {
                     $this->forgetCookie();
                 }
             }
         }
 
-        if ($shouldLockEmailInput) {
+        if ($userIsPatient) {
             $request->session()->flash('messages',
                 ['Please enter your password below, which must contain an uppercase letter, number and a special character (!,$,#,%,@,&,*)']);
         }
@@ -142,7 +142,7 @@ class ResetPasswordController extends Controller
         return response()->view('auth.passwords.reset', [
             'token'      => $token,
             'email'      => $email,
-            'lock_email' => $shouldLockEmailInput,
+            'lock_email' => $userIsPatient,
         ]);
     }
 
