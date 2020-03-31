@@ -43,6 +43,8 @@ class CustomerTestCase extends TestCase
     private $medicalAssistant;
     
     /**
+     * @param int $number
+     *
      * @return array|User
      */
     protected function careCoach(int $number = 1)
@@ -55,6 +57,8 @@ class CustomerTestCase extends TestCase
     }
     
     /**
+     * @param int $number
+     *
      * @return array|User
      */
     protected function superadmin(int $number = 1)
@@ -81,8 +85,10 @@ class CustomerTestCase extends TestCase
 
         return $this->location;
     }
-
+    
     /**
+     * @param int $number
+     *
      * @return array|User
      */
     protected function patient(int $number = 1)
@@ -105,8 +111,10 @@ class CustomerTestCase extends TestCase
 
         return $this->practice;
     }
-
+    
     /**
+     * @param int $number
+     *
      * @return array|User
      */
     protected function provider(int $number = 1)
