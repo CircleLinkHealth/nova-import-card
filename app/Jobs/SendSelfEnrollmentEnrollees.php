@@ -114,7 +114,7 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
 
             $enrollee->update(['user_id' => $userCreatedFromEnrollee->id]);
             $this->sendEmail($userCreatedFromEnrollee);
-//            $this->sendSms($userCreatedFromEnrollee);
+            $this->sendSms($userCreatedFromEnrollee);
         }
     }
 

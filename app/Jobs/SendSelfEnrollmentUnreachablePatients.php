@@ -52,7 +52,7 @@ class SendSelfEnrollmentUnreachablePatients implements ShouldQueue
             foreach ($patients->all() as $patient) {
                 if ( ! $patient->checkForSurveyOnlyRole()) {
                     $patient->notify(new SendEnrollmentEmail($patient));
-//                    $patient->notify(new SendEnrollementSms($patient));
+                    $patient->notify(new SendEnrollementSms($patient));
                 }
             }
         } else {
@@ -60,7 +60,7 @@ class SendSelfEnrollmentUnreachablePatients implements ShouldQueue
                 foreach ($patients as $patient) {
                     if ( ! $patient->checkForSurveyOnlyRole()) {
                         $patient->notify(new SendEnrollmentEmail($patient));
-//                        $patient->notify(new SendEnrollementSms($patient));
+                        $patient->notify(new SendEnrollementSms($patient));
                     }
                 }
             });
