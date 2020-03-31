@@ -171,7 +171,9 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factor
                                                             ->ofPractice($practice->id)
                                                             ->firstOrFail();
     } else {
-        $practice = Practice::first();
+        $practice = Practice::where('is_demo', true)
+                            ->orWhere('name', 'demo')
+                            ->first();
 
         if ( ! $practice) {
             $practice = factory(\CircleLinkHealth\Customer\Entities\Practice::class)->create();
