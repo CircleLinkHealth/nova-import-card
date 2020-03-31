@@ -12,6 +12,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
+use Waavi\UrlShortener\Facades\UrlShortener;
 
 trait EnrollableManagement
 {
