@@ -63,8 +63,8 @@ class EnrollableSurveyCompleted implements ShouldQueue
      */
     public function handle()
     {
-        $enrollableId = $this->data['enrollable_id'];
-        $surveyInstanceId = $this->data['survey_instance_id'];
+        $enrollableId = json_decode($this->data)->enrollable_id;
+        $surveyInstanceId = json_decode($this->data)->survey_instance_id;
 
         $surveyAnswers = $this->getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId);
         $user = User::withTrashed()->whereId($enrollableId)->firstOrFail();
@@ -128,7 +128,9 @@ class EnrollableSurveyCompleted implements ShouldQueue
             'requests_info' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_REQUESTS_INFO')[4][0],
             'address' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_ADDRESS')[5],
             'email' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_EMAIL')[6],
-            'confirm_letter_read' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER')[7][0],
+            'confirm_letter_read' => !empty($this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER')[7])
+                ? $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER')[7][0]
+                : '',
         ];
     }
 
@@ -151,7 +153,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
         return collect($enrolleesQuestions)->where('identifier', '=', $identifier)
             ->transform(function ($question) use ($enrollableSurveyData) {
                 $answer = collect($enrollableSurveyData)->where('question_id', $question->id)->first();
-
                 return $this->sanitizedValue($answer);
             })->toArray();
     }
@@ -167,8 +168,10 @@ class EnrollableSurveyCompleted implements ShouldQueue
         if (!$answer) {
             return $default;
         }
+
         $answerVal = json_decode($answer->value);
         $answers = [];
+
         if (is_string($answerVal)) {
             return $answerVal;
         }
@@ -348,16 +351,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
         ]);
     }
 
-    /**
-     * @param User $user
-     */
-    public function reEnrollUnreachablePatient(User $user)
-    {
-        $user->patientInfo->update([
-            'ccm_status' => Patient::ENROLLED,
-        ]);
-    }
-
     private function updatePatientContactWindow(User $user, $preferredContactDaysToArray, $patientContactTimeStart, $patientContactTimeEnd)
     {
         foreach ($preferredContactDaysToArray as $dayOfWeek) {
@@ -367,5 +360,15 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 'window_time_end' => $patientContactTimeEnd,
             ]);
         }
+    }
+
+    /**
+     * @param User $user
+     */
+    public function reEnrollUnreachablePatient(User $user)
+    {
+        $user->patientInfo->update([
+            'ccm_status' => Patient::ENROLLED,
+        ]);
     }
 }
