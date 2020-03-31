@@ -34,9 +34,9 @@ class SubscribeToRedisAWVChannel extends Command
     {
 
         $this->info("Listening...");
-        Redis::psubscribe(['*'], function ($message, $channel) {
+        Redis::psubscribe(['*'], function ($data, $channel) {
             $this->info("Listening on $channel");
-            ListenToAwvChannel::dispatch($message, $channel);
+            ListenToAwvChannel::dispatch($data, $channel);
         });
     }
 }
