@@ -14,6 +14,7 @@ class AddEnrolleeSurveyQuestions extends Migration
      */
     public function up()
     {
+//        @todo: fix these tekeros
 //        $time = Carbon::now();
 //        $enrolleesSurvey = Survey::firstOrCreate([
 //            'name' => Survey::ENROLLEES,

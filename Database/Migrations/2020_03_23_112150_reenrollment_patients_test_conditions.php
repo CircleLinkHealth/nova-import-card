@@ -26,7 +26,7 @@ class ReenrollmentPatientsTestConditions extends Migration
      */
     public function up()
     {
-//        $seeder = new PrepareDataForReEnrollmentTestSeeder();
-//        $seeder->run();
+        $seeder = new PrepareDataForReEnrollmentTestSeeder();
+        $seeder->run();
     }
 }
