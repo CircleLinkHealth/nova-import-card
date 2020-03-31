@@ -163,6 +163,8 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalR
  *     searchPhones($term)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
  *     shouldSuggestAsFamilyForEnrollee($enrolleeId)
+ * @property int|null $enrollment_non_responsive
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee whereEnrollmentNonResponsive($value)
  */
 class Enrollee extends BaseModel
 {
