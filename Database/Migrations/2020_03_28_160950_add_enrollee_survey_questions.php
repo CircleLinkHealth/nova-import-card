@@ -14,19 +14,19 @@ class AddEnrolleeSurveyQuestions extends Migration
      */
     public function up()
     {
-        $time = Carbon::now();
-        $enrolleesSurvey = Survey::firstOrCreate([
-            'name' => Survey::ENROLLEES,
-            'description' => 'Enrollees Survey',
-        ]);
-        $currentInstance = SurveyInstance::firstOrCreate([
-            'survey_id' => $enrolleesSurvey->id,
-            'year' => $time->year,
-        ]);
-
-        $seed = app(SurveySeeder::class);
-        $questionsData = $seed->enrolleesQuestionData();
-        $seed->createQuestions($currentInstance,$questionsData);
+//        $time = Carbon::now();
+//        $enrolleesSurvey = Survey::firstOrCreate([
+//            'name' => Survey::ENROLLEES,
+//            'description' => 'Enrollees Survey',
+//        ]);
+//        $currentInstance = SurveyInstance::firstOrCreate([
+//            'survey_id' => $enrolleesSurvey->id,
+//            'year' => $time->year,
+//        ]);
+//
+//        $seed = app(SurveySeeder::class);
+//        $questionsData = $seed->enrolleesQuestionData();
+//        $seed->createQuestions($currentInstance,$questionsData);
     }
 
     /**
