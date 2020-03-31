@@ -1731,7 +1731,12 @@ if ( ! function_exists('patientLoginIsEnabledForPractice')) {
 
         return \Cache::remember(sha1("{$key}_{$practiceId}"), 2, function () use ($key, $practiceId) {
             return AppConfig::where('config_key', $key)
-                ->where('config_value', $practiceId)->exists();
+                //give the ability to enable for all practices at once
+                ->whereIn('config_value', [
+                    $practiceId,
+                    'all',
+                ])
+                ->exists();
         });
     }
 }
@@ -1790,8 +1795,7 @@ if ( ! function_exists('showNurseMetricsInDailyEmailReport')) {
 if ( ! function_exists('validateUsPhoneNumber')) {
     /**
      * @param string
-     *
-     * @return bool
+     * @param mixed $phoneNumber
      */
     function validateUsPhoneNumber($phoneNumber): bool
     {
@@ -1809,9 +1813,6 @@ if ( ! function_exists('validateUsPhoneNumber')) {
 }
 
 if ( ! function_exists('usStatesArrayForDropdown')) {
-    /**
-     * @return array
-     */
     function usStatesArrayForDropdown(): array
     {
         return [
@@ -1869,8 +1870,6 @@ if ( ! function_exists('usStatesArrayForDropdown')) {
         ];
     }
 }
-
-
 
 if ( ! function_exists('sanitizeString')) {
     /**
