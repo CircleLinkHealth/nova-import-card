@@ -171,8 +171,8 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factor
                                                             ->ofPractice($practice->id)
                                                             ->firstOrFail();
     } else {
-        $practice = Practice::where('is_demo', true)
-                            ->orWhere('name', 'demo')
+        $practice = Practice::where('name', 'demo')
+                            ->orWhere('is_demo', true)
                             ->first();
 
         if ( ! $practice) {
