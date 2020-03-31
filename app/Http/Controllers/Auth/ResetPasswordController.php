@@ -70,19 +70,19 @@ class ResetPasswordController extends Controller
             $this->userToReset = $this->getUserToReset($email);
             if ( ! $this->userToReset) {
                 return redirect()->back()
-                    ->withErrors([
-                        'email' => 'No user found with the supplied email address.',
-                    ]);
+                                 ->withErrors([
+                                     'email' => 'No user found with the supplied email address.',
+                                 ]);
             }
 
             $current_password = $this->userToReset->password;
 
             if ( ! $this->validateNewPasswordUsingPasswordsHistory($current_password, $new_password)) {
                 return redirect()->back()
-                    ->withInput($request->only('email'))
-                    ->withErrors([
-                        'email' => 'You have used this password again in the past. Please choose a different one.',
-                    ]);
+                                 ->withInput($request->only('email'))
+                                 ->withErrors([
+                                     'email' => 'You have used this password again in the past. Please choose a different one.',
+                                 ]);
             }
         }
 
@@ -132,6 +132,11 @@ class ResetPasswordController extends Controller
                     $this->forgetCookie();
                 }
             }
+        }
+
+        if ($shouldLockEmailInput) {
+            $request->session()->flash('messages',
+                ['Please enter your password below, which must contain an uppercase letter, number and a special character (!,$,#,%,@,&,*)']);
         }
 
         return response()->view('auth.passwords.reset', [
@@ -190,8 +195,8 @@ class ResetPasswordController extends Controller
     private function getUserToReset(string $email)
     {
         return User::where('email', '=', $email)
-            ->with('passwordsHistory')
-            ->first();
+                   ->with('passwordsHistory')
+                   ->first();
     }
 
     private function saveOldPasswordInHistory($old_password)
