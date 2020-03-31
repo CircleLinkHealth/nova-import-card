@@ -11,7 +11,6 @@
     <meta name="viewport" content="width=device-width">
 
     <!-- Injected styles -->
-    <link href="/compiled/css/stylesheet.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/ccd-template.css" type="text/css" media="screen, projection"/>
 
     <!-- Injected scripts -->

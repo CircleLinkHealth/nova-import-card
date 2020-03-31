@@ -23,7 +23,7 @@
                         <div class="form-group margin-top-10" :class="{'has-error':errors.has('token')}"
                              :disabled="isLoading">
                             <input type="text" v-model="token" id="token" class="form-control input-sm"
-                                   placeholder="Token via App, Chrome Extension, SMS, or Voice.">
+                                   placeholder="Token via App, Chrome Extension, SMS, Voice or Authenticator app.">
                             <span class="help-block">{{errors.get('token')}}</span>
                         </div>
 
@@ -44,15 +44,20 @@
                         </div>
 
                         <div v-if="!authyMethod || showOtherMethods" class="margin-top-10">
-                            <a v-if="!isApp" class="block clickable" href="https://authy.com/download/" target="_blank">Download
-                                the app
-                                (recommended)</a>
-                            <br><a class="block clickable" @click="sendSms">
-                            Send SMS token
-                        </a>
-                            <br><a class="block clickable" @click="voiceCall">
-                            Receive a call and listen to the token.
-                        </a>
+                            <a v-if="!isApp" class="block clickable" href="https://authy.com/download/" target="_blank">
+                                Download the app (recommended)</a>
+                            <br>
+                            <a class="block clickable" @click="sendSms">
+                                Send SMS token
+                            </a>
+                            <br>
+                            <a class="block clickable" @click="voiceCall">
+                                Receive a call and listen to the token.
+                            </a>
+                            <br>
+                            <a class="block clickable" @click="requestQrCode">
+                                Generate QR code.
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -68,6 +73,10 @@
                         <div v-if="isApp && showSendAgain" class="btn btn-submit btn-block"
                              @click="sendOneTouchRequest">
                             Re-send OneTouch Request
+                        </div>
+                        <div v-if="isQrCode && showSendAgain" class="btn btn-submit btn-block"
+                             @click="requestQrCode">
+                            Generate new QR code
                         </div>
                     </div>
                 </div>
@@ -90,13 +99,16 @@
         },
         computed: {
             isSms() {
-                return this.authyMethod === 'sms'
+                return this.authyMethod === 'sms';
             },
             isVoice() {
-                return this.authyMethod === 'phone'
+                return this.authyMethod === 'phone';
             },
             isApp() {
-                return this.authyMethod === 'app'
+                return this.authyMethod === 'app';
+            },
+            isQrCode() {
+                return this.authyMethod === 'qr_code';
             },
             bannerClass() {
                 return 'alert alert-' + this.bannerType;
@@ -132,7 +144,8 @@
 
                             this.success()
                         }
-                    }).catch(err => {
+                    })
+                    .catch(err => {
                         this.stopLoader();
 
                         console.error("VerifyToken error: ", err);
@@ -167,7 +180,8 @@
                             self.bannerType = 'info';
                             self.showBanner = true;
                         }
-                    }).catch(err => {
+                    })
+                    .catch(err => {
                         this.stopLoader();
 
                         console.error("Sms error: ", err);
@@ -190,13 +204,14 @@
                         if (response) {
                             this.stopLoader();
 
-                            console.log(response)
+                            console.log(response);
 
                             self.bannerText = 'We are calling you to tell you your token!!';
                             self.bannerType = 'info';
                             self.showBanner = true;
                         }
-                    }).catch(err => {
+                    })
+                    .catch(err => {
                         this.stopLoader();
 
                         console.error("Voice error: ", err);
@@ -318,9 +333,17 @@
                     self.sendSms();
                 }
 
-                setTimeout(function () {
-                    self.showSendAgain = true;
-                }, 10000);
+                if (self.isQrCode) {
+                    self.bannerText = 'Please type here the code from your Authenticator app';
+                    self.bannerType = 'info';
+                    self.showBanner = true;
+                }
+
+                if (!self.isQrCode) {
+                    setTimeout(function () {
+                        self.showSendAgain = true;
+                    }, 10000);
+                }
             }
 
             //otherwise default to app

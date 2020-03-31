@@ -413,7 +413,7 @@
                             <label for="times[]" class="label">Times</label>
                             <select v-model="times" class="do-not-close" name="times[]" id="times[]">
                                 <option disabled selected>Times:</option>
-                                <option value="10:00-12:00">10AM - Noon</option>
+                                <option value="09:00-12:00">9AM - Noon</option>
                                 <option value="12:00-15:00">Noon - 3PM</option>
                                 <option value="15:00-18:00">3PM - 6PM</option>
                             </select>
@@ -520,6 +520,7 @@
                 </div>
                 <div class="modal-footer">
                     <button name="btnSubmit" type="submit"
+                            :disabled="utc_reason_empty"
                             class="modal-action waves-effect waves-light btn">Call Next Patient
                     </button>
                     <div v-if="onCall === true" style="text-align: center">
@@ -574,6 +575,7 @@
                 </div>
                 <div class="modal-footer" style="padding-right: 60px">
                     <button name="btnSubmit" type="submit"
+                            :disabled="reason_empty"
                             class="modal-action waves-effect waves-light btn">Call Next Patient
                     </button>
                     <div v-if="onCall === true" style="text-align: center">
@@ -888,6 +890,12 @@
             },
             contact_day_or_time_empty() {
                 return this.days.length <= 1 || this.times.length <= 1
+            },
+            utc_reason_empty(){
+                return this.utc_reason.length <= 1;
+            },
+            reason_empty(){
+                return this.reason.length <= 1;
             }
 
         },
@@ -1311,11 +1319,34 @@
     }
 
     .enrollment-script ol li {
-        margin-left: 2%;
+        margin-left: 3%;
+    }
+
+    .enrollment-script ul {
+        margin-top: 1%;
     }
 
     .enrollment-script ul li {
-        margin-left: 2%;
+        margin-left: 3%;
+        list-style-type: disc !important;
+    }
+
+    .enrollment-script ul li ul{
+        margin-top: 0%;
+    }
+
+    .enrollment-script ul li ul li ul{
+        margin-top: 0%;
+    }
+
+    .enrollment-script ul li ul li {
+        margin-left: 4%;
+        list-style-type: circle !important;
+    }
+
+    .enrollment-script ul li ul li ul li {
+        margin-left: 4%;
+        list-style-type: square !important;
     }
 
 </style>

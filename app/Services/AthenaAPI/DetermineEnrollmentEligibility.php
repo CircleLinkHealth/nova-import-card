@@ -65,7 +65,7 @@ class DetermineEnrollmentEligibility
         if ( ! is_countable($departments)) {
             $message = 'Departments is not countable. Possibly unauthorized AthenaAPI action. response:'.json_encode($departments);
 
-            \Log::channel('logdna')->error($message, [
+            \Log::error($message, [
                 'batch_id'        => $batchId,
                 'ehr_practice_id' => $ehrPracticeId,
             ]);
@@ -75,7 +75,7 @@ class DetermineEnrollmentEligibility
 
         $count = count($departments);
 
-        \Log::channel('logdna')->info("Found $count departments", [
+        \Log::info("Found $count departments", [
             'batch_id'        => $batchId,
             'ehr_practice_id' => $ehrPracticeId,
         ]);

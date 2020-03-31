@@ -79,8 +79,8 @@
                                     <div class="col-md-6">
                                         <select class="col-md-3 practices dropdown Valid form-control reloader"
                                                 name="format" required>
-                                            <option value="pdf" selected>PDF</option>
-                                            <option value="csv">QuickBooks CSV</option>
+                                            <option value="pdf">PDF</option>
+                                            <option value="csv" selected>QuickBooks CSV</option>
                                             <option value="xls">QuickBooks Excel</option>
                                         </select>
                                     </div>

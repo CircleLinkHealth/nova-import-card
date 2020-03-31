@@ -7,7 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
-use App\Console\Commands\ReimportPatientMedicalRecord;
+use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -68,7 +68,7 @@ class MedicalRecordImportController extends Controller
                         $imr['location_id']         = $record['location_id'];
                         $imr['practice_id']         = $record['practice_id'];
                         $imr['billing_provider_id'] = $record['billing_provider_id'];
-                        $imr['nurse_user_id']       = $record['nurse_user_id'];
+                        $imr['nurse_user_id']       = $record['nurse_user_id'] ?? null;
                         $carePlan                   = $imr->updateOrCreateCarePlan();
                         array_push(
                             $importedRecords,

@@ -44,7 +44,7 @@ trait CcdImporterHelpers
         $summary = ImportedMedicalRecord::all()->last();
 
         $this->assertTrue( ! empty($summary->name));
-        $response->assertSee($summary->name);
+        $response->assertSee(sanitizeString($summary->name));
 
         $this->assertGreaterThan(0, $summary->medications);
         $this->assertGreaterThan(0, $summary->problems);

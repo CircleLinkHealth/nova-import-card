@@ -166,6 +166,11 @@ class ImporterController extends Controller
 
     public function handleCcdFilesUpload(Request $request)
     {
+        ini_set('upload_max_filesize', '50M');
+        ini_set('post_max_size', '50M');
+        ini_set('max_input_time', 300);
+        ini_set('max_execution_time', 300);
+        
         if ( ! $request->hasFile('file')) {
             return response()->json('No file found', 400);
         }
@@ -175,10 +180,12 @@ class ImporterController extends Controller
 
         $ccdas = [];
         foreach ($request->file('file') as $file) {
-            \Log::channel('logdna')->warning("reading file $file");
+            \Log::warning("reading file $file");
 
             $xml = file_get_contents($file);
-
+    
+            \Log::info("finished reading file $file");
+    
             $ccda = Ccda::create(
                 [
                     'user_id' => auth()->user()->id,
@@ -192,25 +199,6 @@ class ImporterController extends Controller
         }
 
         return $ccdas;
-    }
-
-    /**
-     * Show all QASummaries that are related to a CCDA.
-     */
-    public function index()
-    {
-        //get rid of orphans
-        $delete = ImportedMedicalRecord::whereNull('medical_record_id')->delete();
-
-        $importedRecords = $this::getImportedRecords();
-
-        JavaScript::put(
-            [
-                'importedMedicalRecords' => $importedRecords,
-            ]
-        );
-
-        return view('CCDUploader.uploadedSummary');
     }
 
     public function records()

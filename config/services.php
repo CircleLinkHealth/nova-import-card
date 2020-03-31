@@ -56,6 +56,7 @@ return [
     ],
 
     'authy' => [
+        'api_url' => env('AUTHY_API_URL', 'https://api.authy.com'),
         'api_key' => env('AUTHY_API_KEY'),
     ],
 
@@ -108,5 +109,5 @@ return [
 
         'key' => env('PHAXIO_KEY', null),
         'secret' => env('PHAXIO_SECRET', null),
-    ]
+    ],
 ];

@@ -169,10 +169,11 @@
                                     },
                                     data: {!! $patients !!}
                                 });
-                                webix.event(window, "resize", function () {
+                                const debounced = _.debounce(() => {
                                     paused_patients_letters_table.adjust();
-                                }),
-                                    paused_patients_letters_table.sort("#patient_name#");
+                                }, 1000);
+                                webix.event(window, "resize", debounced);
+                                paused_patients_letters_table.sort("#patient_name#");
                                 paused_patients_letters_table.hideColumn("last_name");
                             </script>
                             @endpush
@@ -191,7 +192,7 @@
                                        style='margin:15px;'
                                        onclick="toExcel()">
                             @endif
-                            
+
                             <span id="print_selected_btn_container"></span>
                         @else
                             <div style="text-align:center;margin:50px;">There are no patients to display</div>
