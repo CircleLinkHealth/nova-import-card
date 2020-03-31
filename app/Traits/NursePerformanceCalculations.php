@@ -87,7 +87,7 @@ trait NursePerformanceCalculations
 //        $caseLoadComplete = % percentage.
         return $caseLoad
             ->filter(function ($q) {
-                return $q->patient_time <= 20
+                return $q->patient_time < 20
                     || $q->successful_calls < OpsDashboardService::MIN_CALL;
             })
             ->count();

@@ -135,6 +135,8 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereFamilyEnrolleeId($value)
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
+ * @property int|null $enrollment_non_responsive
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereEnrollmentNonResponsive($value)
  */
 class EnrolleeView extends SqlViewModel
 {
