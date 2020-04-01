@@ -172,6 +172,7 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factor
                                                             ->firstOrFail();
     } else {
         $practice = Practice::where('name', 'demo')
+                            ->where('is_demo', true)
                             ->first();
 
         if ( ! $practice) {
@@ -187,9 +188,9 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factor
     }
 
     $phones = collect([]);
-    while ($phones->count() < 4){
+    while ($phones->count() < 4) {
         $number = $faker->phoneNumber;
-        if (validateUsPhoneNumber($number)){
+        if (validateUsPhoneNumber($number)) {
             $phones->push($number);
         }
     }
