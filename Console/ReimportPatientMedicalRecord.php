@@ -149,7 +149,7 @@ class ReimportPatientMedicalRecord extends Command
     
     private function attemptTemplate(User $user)
     {
-        if ('marillac-clinic-inc' === $user->primaryPractice->name) {
+        if (in_array($user->primaryPractice->name, ['marillac-clinic-inc', 'calvary-medical-clinic'])) {
             $this->warn("Running 'marillac-clinic-inc' decorator");
             
             $mr = new MarillacMedicalRecord(
@@ -306,6 +306,7 @@ class ReimportPatientMedicalRecord extends Command
         return User::with(
             [
                 'patientInfo',
+                'primaryPractice',
             ]
         )->find($this->argument('patientUserId'));
     }
