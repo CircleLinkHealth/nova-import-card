@@ -8,7 +8,9 @@
                 @include('enrollment-consent.enrollableInvitationButtons')
             @endif
             <div class="headers">
-                @include('enrollment-consent.practiceLogo')
+                <div class="logo">
+                    @include('enrollment-consent.practiceLogo')
+                </div>
                 <br>
                 <hr>
                 <div class="letter">
@@ -28,9 +30,9 @@
                         <div class="body">
                             @include('enrollment-consent.enrollmentLetter')
                         </div>
-                        <footer>
-                            @include('enrollment-consent.practiceLogo')
-                        </footer>
+                    </div>
+                    <div class="logo">
+                        @include('enrollment-consent.practiceLogo')
                     </div>
                     @if(!$hideButtons)
                         @include('enrollment-consent.enrollableInvitationButtons')
@@ -44,6 +46,9 @@
 @endsection
 
 <style>
+    .logo {
+        margin-left: 33em;
+    }
     .enroll-now-href {
         padding: 4px;
         margin-left: 420px;
@@ -124,12 +129,16 @@
 
         .letter {
             width: fit-content;
-            max-height: 560px;
+            min-height: 1073px;
             overflow-y: scroll;
         }
 
         .letter-sent {
             margin-right: 2em;
+        }
+
+        .logo {
+            margin-left: 14em;
         }
     }
 

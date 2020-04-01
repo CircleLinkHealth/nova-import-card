@@ -5,7 +5,9 @@
     <div class="container">
         <div class="letter-view">
             <div class="practice-logo">
-                @include('enrollment-consent.practiceLogo')
+                <div class="logo">
+                    @include('enrollment-consent.practiceLogo')
+                </div>
             </div>
             <div style="">
                 <hr>
@@ -29,5 +31,15 @@
     .letter-view {
         padding-top: 20px;
         padding-bottom: 20px;
+    }
+
+    .logo {
+        margin-left: 35em;
+    }
+
+    @media (max-width: 490px) {
+        .logo {
+            margin-left: 10em;
+        }
     }
 </style>
