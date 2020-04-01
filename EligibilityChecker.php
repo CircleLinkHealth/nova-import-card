@@ -387,9 +387,9 @@ class EligibilityChecker
                 return $cpmProblems->where('is_behavioral', '=', true)->pluck('id');
             }
         );
-    
+        
         $eligibilityJobData = $this->eligibilityJob->data;
-    
+        
         $eligibilityJobData['ccm_condition_1'] = '';
         $eligibilityJobData['ccm_condition_2'] = '';
         $eligibilityJobData['cpm_problem_1']   = '';
@@ -405,7 +405,7 @@ class EligibilityChecker
                 'problems'
             );
         }
-    
+        
         $qualifyingCcmProblems = $qualifyingCcmProblemsCpmIdStack = $pcmProblems = $eligibleBhiProblemIds = [];
         
         if ( ! (is_array($problems) || is_a($problems, Collection::class))) {
@@ -594,7 +594,9 @@ class EligibilityChecker
         }
         
         if ($ccmProbCount < 2 && $bhiProbCount > 0) {
-            if ( ! $this->practice->hasServiceCode('CPT 99484') && (0 === $pcmProbCount || ! $this->practice->hasServiceCode('G2065'))) {
+            if ( ! $this->practice->hasServiceCode(
+                    'CPT 99484'
+                ) && (0 === $pcmProbCount || ! $this->practice->hasServiceCode('G2065'))) {
                 $this->setEligibilityJobStatus(
                     3,
                     ['problems' => 'Patient is BHI eligible, but practice does not support BHI. Patient has less than 2 ccm conditions.'],
@@ -605,8 +607,10 @@ class EligibilityChecker
                 return false;
             }
         }
-    
-        if ($ccmProbCount < 2 && ($bhiProbCount === 0 || ! $this->practice->hasServiceCode('CPT 99484')) && (0 === $pcmProbCount || ! $this->practice->hasServiceCode('G2065'))) {
+        
+        if ($ccmProbCount < 2 && ($bhiProbCount === 0 || ! $this->practice->hasServiceCode(
+                    'CPT 99484'
+                )) && (0 === $pcmProbCount || ! $this->practice->hasServiceCode('G2065'))) {
             return false;
         }
         
@@ -622,9 +626,9 @@ class EligibilityChecker
     }
     
     /**
+     * @return $this
      * @throws \Exception
      *
-     * @return $this
      */
     protected function validateStructureAndData()
     {
@@ -632,17 +636,11 @@ class EligibilityChecker
         $jsonErrors       = '';
         
         if (EligibilityBatch::TYPE_ONE_CSV == $this->batch->type && $this->eligibilityJob) {
-            $csvPatientList = new CsvPatientList(collect([$this->eligibilityJob->data]));
-            $isValid        = $csvPatientList->guessValidatorAndValidate() ?? null;
-            
-            $errors = [];
-            if ( ! $isValid) {
-                $errors[]         = 'structure';
+            $structureErrors = $this->getCsvStructureErrors($this->eligibilityJob);
+            if ( ! empty($structureErrors)) {
                 $invalidStructure = true;
+                $errors = json_encode($structureErrors);
             }
-            $errors = array_merge($this->validateRow($this->eligibilityJob->data)->errors()->keys(), $errors);
-            $this->saveErrorsOnEligibilityJob($this->eligibilityJob, collect($errors));
-            $jsonErrors = json_encode($errors);
         }
         
         if ((EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE == $this->batch->type) && $this->eligibilityJob) {

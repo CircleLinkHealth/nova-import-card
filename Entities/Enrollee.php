@@ -647,7 +647,7 @@ class Enrollee extends BaseModel
      */
     public function setPrimaryPhoneNumberAttribute($primaryPhone)
     {
-        $this->attributes['primary_phone'] = (new StringManipulation())->formatPhoneNumber($primaryPhone);
+        $this->attributes['primary_phone'] = (new StringManipulation())->formatPhoneNumberE164($primaryPhone);
     }
 
     public function targetPatient()

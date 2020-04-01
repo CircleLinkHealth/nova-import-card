@@ -551,7 +551,7 @@ class CarePlanHelper
      */
     public function storePhones()
     {
-        $pPhone      = $this->str->extractNumbers($this->dem->primary_phone);
+        $pPhone      = optional($this->enrollee)->primary_phone ?? $this->str->extractNumbers($this->dem->primary_phone);
         $homePhone   = null;
         $mobilePhone = null;
         $workPhone   = null;
@@ -561,9 +561,7 @@ class CarePlanHelper
             ? $this->str->formatPhoneNumberE164($pPhone)
             : $this->dem->primary_phone;
 
-        $homeNumber = $this->dem->home_phone
-            ? $this->dem->home_phone
-            : $primaryPhone;
+        $homeNumber = optional($this->enrollee)->home_phone ?? $this->dem->home_phone ?? $primaryPhone;
 
         if ( ! empty($homeNumber)) {
             if ($this->validatePhoneNumber($homeNumber)) {
@@ -596,7 +594,7 @@ class CarePlanHelper
             }
         }
 
-        $mobileNumber = $this->dem->cell_phone;
+        $mobileNumber = optional($this->enrollee)->cell_phone ?? $this->dem->cell_phone;
         if ( ! empty($mobileNumber)) {
             if ($this->validatePhoneNumber($mobileNumber)) {
                 $number = $this->str->formatPhoneNumberE164($mobileNumber);

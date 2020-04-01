@@ -95,7 +95,7 @@ class ProcessEligibilityBatch implements ShouldQueue
     {
         if ($batch->isCompleted() && $batch->hasJobs()) {
             $this->processEligibilityService
-                ->notifySlack($batch);
+                ->notify($batch);
         }
     }
     
@@ -116,7 +116,7 @@ class ProcessEligibilityBatch implements ShouldQueue
             $stream = $driveHandler
                 ->getFileStream($driveFileName, $driveFolder);
         } catch (\Exception $e) {
-            \Log::channel('logdna')->debug("EXCEPTION `{$e->getMessage()}`");
+            \Log::debug("EXCEPTION `{$e->getMessage()}`");
             $batch->status = EligibilityBatch::STATUSES['error'];
             $batch->save();
 
@@ -306,7 +306,6 @@ class ProcessEligibilityBatch implements ShouldQueue
 
     private function queueSingleCsvJobs(EligibilityBatch $batch): EligibilityBatch
     {
-
         if (array_keys_exist(['folder', 'fileName'], $batch->options) && !! $batch->options['finishedReadingFile'] !== true) {
             $result = $this->processEligibilityService->processGoogleDriveCsvForEligibility($batch);
             
