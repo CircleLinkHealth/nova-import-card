@@ -35,22 +35,6 @@ class ImporterController extends Controller
     public function getImportedRecords()
     {
         return ImportedMedicalRecord::whereNull('imported')
-                                    ->with('demographics')
-                                    ->with('practice')
-                                    ->with(
-                                        [
-                                            'location' => function ($q) {
-                                                $q->select(
-                                                    [
-                                                        'id',
-                                                        'practice_id',
-                                                        'is_primary',
-                                                        'name',
-                                                    ]
-                                                );
-                                            },
-                                        ]
-                                    )
                                     ->with(
                                         [
                                             'billingProvider' => function ($q) {
@@ -79,22 +63,22 @@ class ImporterController extends Controller
                                                     ]
                                                 );
                                             },
+                                            'location'        => function ($q) {
+                                                $q->select(
+                                                    [
+                                                        'id',
+                                                        'practice_id',
+                                                        'is_primary',
+                                                        'name',
+                                                    ]
+                                                );
+                                            },
+                                            'demographics',
+                                            'practice',
                                         ]
                                     )
-                                    ->when(
-                                        ! auth()->user()->isAdmin(),
-                                        function ($q) {
-                                            $q->whereHas(
-                                                'practice',
-                                                function ($q) {
-                                                    $q->whereIn('id', auth()->user()->viewableProgramIds());
-                                                }
-                                            );
-                                        }
-                                    )
+                                    ->whereIn('practice_id', auth()->user()->viewableProgramIds())
                                     ->get()
-            //where not in UPG + G0506
-            //where media. where id = upg, custom_properties->mrn = imr.mrn, finished_processing()
                                     ->transform(
                 function (ImportedMedicalRecord $summary) {
                     $mr = $summary->medicalRecord();
