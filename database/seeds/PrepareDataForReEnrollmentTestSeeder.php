@@ -41,6 +41,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 $user = $this->createUser(8, 'participant', self::CCM_STATUS_UNREACHABLE);
                 $user->patientInfo()->update([
                     'birth_date' => $faker->date(),
+                    'date_unreachable' => now()
                 ]);
                 ++$n;
 //                $this->command->info("$n Patients");
