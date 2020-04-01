@@ -35,7 +35,7 @@ class CpmBiometricsTableSeeder extends Seeder
             );
 
             $carePlanTemplates->each(function (CarePlanTemplate $cpt) use ($b) {
-                $cpt->cpmBiometrics()->syncWithoutDetaching([$b]);
+                $cpt->cpmBiometrics()->syncWithoutDetaching([$b->id]);
             });
         }
     }
