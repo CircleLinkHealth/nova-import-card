@@ -34,15 +34,17 @@ trait EnrollableManagement
     public function createInvitationLink($notifiable, $data)
     {
         $url = URL::temporarySignedRoute('invitation.enrollment', now()->addHours(48), $data);
-//        try {
-//            $shortUrl = shortenUrl($url);
-//        } catch (\Exception $e) {
-//            \Log::warning($e->getMessage());
-//        }
+
+        try {
+            $shortUrl = shortenUrl($url);
+        } catch (\Exception $e) {
+            \Log::warning($e->getMessage());
+        }
+
         $urlToken = $this->parseUrl($url);
         $this->saveTemporaryInvitationLink($notifiable, $urlToken, $url);
 
-        return $url;
+        return $shortUrl ?? $url;
     }
 
     /**
