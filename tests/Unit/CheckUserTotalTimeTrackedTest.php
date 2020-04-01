@@ -41,7 +41,7 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $hoursPerDay = 4;
 
         //33.6
-        $maxAllowed  = 7 * $hoursPerDay * UserTotalTimeChecker::ALLOWED_THRESHOLD_FOR_WEEK;
+        $maxAllowed  = 7 * $hoursPerDay * UserTotalTimeChecker::getThresholdForWeek();
 
         $start = now()->subDay(7);
         $sub6  = now()->subDay(6);
@@ -104,7 +104,7 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $hoursPerDay = 4;
 
         //33.6
-        $maxAllowed  = 7 * $hoursPerDay * UserTotalTimeChecker::ALLOWED_THRESHOLD_FOR_WEEK;
+        $maxAllowed  = 7 * $hoursPerDay * UserTotalTimeChecker::getThresholdForWeek();
 
         $start = now()->subDay(7);
         $sub6  = now()->subDay(6);

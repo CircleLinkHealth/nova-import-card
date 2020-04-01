@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\UserTotalTimeChecker;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class CheckUserTotalTimeTracked extends Command
 {
@@ -56,9 +57,42 @@ class CheckUserTotalTimeTracked extends Command
 
         $userId = $this->argument('userId');
 
-        $alerts = (new UserTotalTimeChecker($weekAgoFromYesterday, $yesterday, $checkAccumulatedTime, $userId))->check();
-        //TODO: go through alerts and send to slack
+        $alerts = (new UserTotalTimeChecker($weekAgoFromYesterday, $yesterday, $checkAccumulatedTime,
+            $userId))->check();
+        $msg    = $this->buildSlackMessage($alerts);
+        if ( ! empty($msg)) {
+            sendSlackMessage('#carecoach_ops', $msg);
+        }
 
         $this->info('Done!');
+    }
+
+    /**
+     * @param Collection $alerts
+     *
+     * @return string
+     */
+    private function buildSlackMessage(Collection $alerts)
+    {
+        $result = '';
+        /** @var Collection $daily */
+        $daily = $alerts->get('daily');
+        if ($daily) {
+            $maxHours = UserTotalTimeChecker::getMaxHoursForDay();
+            $result   .= "Warning: The following nurses have exceeded the daily maximum of $maxHours hours:";
+            $daily->each(function ($time, $id) use (&$result) {
+                $result .= "Nurse[$id]: $time hours";
+            });
+        }
+        $weekly = $alerts->get('weekly');
+        if ($weekly) {
+            $timesMore = UserTotalTimeChecker::getThresholdForWeek();
+            $result    = "Warning: The following nurses have exceeded their committed hours for the last 7 days by more than {$timesMore}x:";
+            $weekly->each(function ($time, $id) use (&$result) {
+                $result .= "Nurse[$id]: $time hours";
+            });
+        }
+
+        return $result;
     }
 }

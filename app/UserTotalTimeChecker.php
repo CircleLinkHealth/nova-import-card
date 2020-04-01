@@ -4,6 +4,7 @@
 namespace App;
 
 
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Support\Carbon;
@@ -12,8 +13,11 @@ use Illuminate\Support\Facades\DB;
 
 class UserTotalTimeChecker
 {
-    const MAX_HOURS_ALLOWED_IN_DAY = 8;
-    const ALLOWED_THRESHOLD_FOR_WEEK = 1.2;
+    const MAX_HOURS_ALLOWED_IN_DAY_KEY = 'user_total_time_checker_max_hours_in_day';
+    const ALLOWED_THRESHOLD_FOR_WEEK_KEY = 'user_total_time_checker_threshold_for_week_key';
+
+    private const MAX_HOURS_ALLOWED_IN_DAY_DEFAULT = 8;
+    private const ALLOWED_THRESHOLD_FOR_WEEK_DEFAULT = 1.2;
 
     /**
      * @var Carbon
@@ -103,9 +107,13 @@ class UserTotalTimeChecker
     private function checkTime(Collection $timePerUser)
     {
         $alerts = collect();
-        $timePerUser->each(function ($item, $key) use ($alerts) {
+
+        $maxHoursForDay = self::getMaxHoursForDay();
+        $thresholdForWeek = self::getThresholdForWeek();
+
+        $timePerUser->each(function ($item, $key) use ($alerts, $maxHoursForDay, $thresholdForWeek) {
             /** @var Collection $result */
-            $result = $this->checkTimeForUser($key, $item);
+            $result = $this->checkTimeForUser($key, $item, $maxHoursForDay, $thresholdForWeek);
             $daily  = $result->get('daily', null);
             if ($daily) {
                 $current = $alerts->get('daily');
@@ -137,11 +145,13 @@ class UserTotalTimeChecker
      *
      * @param int $userId
      * @param Collection $coll
+     * @param int $maxHoursForDay
+     * @param float $thresholdForWeek
      *
      * @return Collection 'daily' if time has exceeded max for last day,
      *                    'weekly' if time has exceeded max for last 7 days
      */
-    private function checkTimeForUser(int $userId, Collection $coll)
+    private function checkTimeForUser(int $userId, Collection $coll, int $maxHoursForDay, float $thresholdForWeek)
     {
         $result = collect();
         if ($coll->isEmpty()) {
@@ -149,7 +159,7 @@ class UserTotalTimeChecker
         }
         $lastEntry      = $coll->last();
         $lastEntryHours = $this->secondsToHours($lastEntry->duration);
-        if ($lastEntryHours > self::MAX_HOURS_ALLOWED_IN_DAY) {
+        if ($lastEntryHours > $maxHoursForDay) {
             $result->put('daily', $lastEntryHours);
         }
 
@@ -169,12 +179,12 @@ class UserTotalTimeChecker
             $totalCommittedHours += $nurse->getHoursCommittedForCarbonDate($date);
         });
 
-        $maxHoursAllowed = $totalCommittedHours * self::ALLOWED_THRESHOLD_FOR_WEEK;
+        $maxHoursAllowed = $totalCommittedHours * $thresholdForWeek;
 
         $totalDurationOfWeekSeconds = $coll->sum(function ($item) {
             return $item->duration;
         });
-        $totalDurationOfWeekHours   = $totalDurationOfWeekSeconds / 60 / 60;
+        $totalDurationOfWeekHours   = $this->secondsToHours($totalDurationOfWeekSeconds);
 
         if ($totalDurationOfWeekHours > $maxHoursAllowed) {
             $result->put('weekly', $totalDurationOfWeekHours);
@@ -186,6 +196,26 @@ class UserTotalTimeChecker
     private function secondsToHours(int $seconds)
     {
         return $seconds / 60 / 60;
+    }
+
+    public static function getMaxHoursForDay(): int
+    {
+        $val = AppConfig::pull(self::MAX_HOURS_ALLOWED_IN_DAY_KEY, null);
+        if (null === $val) {
+            return setAppConfig(self::MAX_HOURS_ALLOWED_IN_DAY_KEY, self::MAX_HOURS_ALLOWED_IN_DAY_DEFAULT);
+        }
+
+        return intval($val);
+    }
+
+    public static function getThresholdForWeek(): float
+    {
+        $val = AppConfig::pull(self::ALLOWED_THRESHOLD_FOR_WEEK_KEY, null);
+        if (null === $val) {
+            return setAppConfig(self::ALLOWED_THRESHOLD_FOR_WEEK_KEY, self::ALLOWED_THRESHOLD_FOR_WEEK_DEFAULT);
+        }
+
+        return floatval($val);
     }
 
 
