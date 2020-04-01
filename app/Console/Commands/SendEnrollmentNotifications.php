@@ -48,8 +48,6 @@ class SendEnrollmentNotifications extends Command
         SendSelfEnrollmentUnreachablePatients::withChain([
             new SendSelfEnrollmentEnrollees(),
         ])->dispatch();
-
-        return info('');
     }
 }
 

@@ -243,4 +243,33 @@ trait EnrollableManagement
             ]
         );
     }
+
+    /**
+     * @param string $enrollableId
+     * @return Enrollee|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
+     */
+    public function getEnrollee(string $enrollableId)
+    {
+        return Enrollee::whereUserId($enrollableId)->first();
+    }
+
+    /**
+     * @param string $enrollableId
+     * @return \App\User|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
+     */
+    public function getUserModelEnrollee(string $enrollableId)
+    {
+        return User::whereId($enrollableId)->first();
+    }
+
+    /**
+     * @param User $user
+     * @return \App\User|Enrollee|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
+     */
+    public function getEnrollableModelType(User $user)
+    {
+        return $user->checkForSurveyOnlyRole()
+            ? $this->getEnrollee($user->id)
+            : $this->getUserModelEnrollee($user->id);
+    }
 }

@@ -248,7 +248,7 @@ class EnrollmentCenterController extends Controller
         /** @var Enrollee $enrollee */
         $enrollee = $this->getEnrollee($enrollableId);
 
-        // This is when user requests to rebiew the letter agin while survey is in progrees.
+        // This is when user requests to review the letter again while survey is in progrees.
         // Im using the second conditional also cause it sets survey to completed on pre - last question.
         if ($this->hasSurveyInProgress($userEnrollee)
             || $this->hasSurveyCompleted($userEnrollee)) {
@@ -284,9 +284,8 @@ class EnrollmentCenterController extends Controller
     public function enrollNow(Request $request)
     {
         $enrollableId      = $request->input('enrollable_id');
-        $isSurveyOnly      = $request->input('is_survey_only');
         $userForEnrollment = $this->getUserModelEnrollee($enrollableId);
-        $enrollable        = $isSurveyOnly ? $this->getEnrollee($enrollableId) : $userForEnrollment;
+        $enrollable        = $this->getEnrollableModelType($userForEnrollment);
 
         //      This can happen only on the first redirect and if page is refreshed
         if ($this->enrollableHasRequestedInfo($enrollable)) {
@@ -434,7 +433,7 @@ class EnrollmentCenterController extends Controller
 
             if ($user->checkForSurveyOnlyRole()) {
                 /** @var Enrollee $enrollee */
-                $enrollee = Enrollee::whereUserId($user->id)->firstOrFail();
+                $enrollee = $this->getEnrollee($user->id);
                 $this->getAwvUserSurvey($user, $surveyInstance)->delete();
                 $user->notifications()->delete();
                 $enrollee->enrollmentInvitationLink()->delete();
@@ -571,22 +570,6 @@ class EnrollmentCenterController extends Controller
         $dateLetterSent            = Carbon::parse($enrollee->getLastEnrollmentInvitationLink()->updated_at)->toDateString();
 
         return view('enrollment-consent.enrollmentInvitation', compact('userEnrollee', 'isSurveyOnlyUser', 'letterPages', 'practiceName', 'signatoryNameForHeader', 'dateLetterSent', 'hideButtons'));
-    }
-
-    /**
-     * @return Enrollee|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
-     */
-    private function getEnrollee(string $enrollableId)
-    {
-        return Enrollee::whereUserId($enrollableId)->first();
-    }
-
-    /**
-     * @return \App\User|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
-     */
-    private function getUserModelEnrollee(string $enrollableId)
-    {
-        return User::whereId($enrollableId)->first();
     }
 
     /**
