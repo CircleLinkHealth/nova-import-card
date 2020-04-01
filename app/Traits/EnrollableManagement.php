@@ -35,7 +35,7 @@ trait EnrollableManagement
     {
         $url = URL::temporarySignedRoute('invitation.enrollment', now()->addHours(48), $data);
 //        try {
-//            $shortUrl = UrlShortener::shorten($url);
+//            $shortUrl = shortenUrl($url);
 //        } catch (\Exception $e) {
 //            \Log::warning($e->getMessage());
 //        }
