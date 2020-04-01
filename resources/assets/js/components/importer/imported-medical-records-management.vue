@@ -234,6 +234,7 @@
 
                     return {
                         id: record.id,
+                        patient: record.patient,
                         patient_id: record.patient_id,
                         selected: false,
                         Name: (record.patient || {}).display_name,

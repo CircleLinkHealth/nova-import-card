@@ -5,15 +5,6 @@
 
 @section('content')
     <div class="{{$shouldUseNewVersion ? 'container-fluid' : 'container'}}" style="padding-top: 3%;">
-
-        @if (auth()->user()->isAdmin())
-            @if ($shouldUseNewVersion)
-                <a class="btn btn-success pull-right" href="{{route('import.ccd.remix')}}">Back to Importer v2</a>
-            @else
-                <a class="btn btn-success pull-right" href="{{route('import.ccd.remix', ['v3'])}}">Try Importer v3 (beta)</a>
-            @endif
-        @endif
-
         <div style="display: none">
             <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"
                           :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
