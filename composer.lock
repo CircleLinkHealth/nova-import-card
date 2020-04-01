@@ -1152,7 +1152,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "fba38ecae0de45957af499fa8f7123eee6a01990"
+                "reference": "712d26907b0b5045ae8f7b32e43140127a1d46cc"
             },
             "type": "laravel-module",
             "extra": {
@@ -1174,7 +1174,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-30T23:43:52+00:00"
+            "time": "2020-04-01T22:46:43+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
