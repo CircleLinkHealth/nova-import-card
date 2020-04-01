@@ -681,11 +681,6 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix' => 'ccd-importer',
     ], function () {
-        Route::get('create', [
-            'uses' => 'ImporterController@create',
-            'as'   => 'import.ccd',
-        ]);
-
         Route::get('', [
             'uses' => 'ImporterController@remix',
             'as'   => 'import.ccd.remix',

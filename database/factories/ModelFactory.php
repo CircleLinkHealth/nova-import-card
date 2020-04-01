@@ -171,10 +171,12 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factor
                                                             ->ofPractice($practice->id)
                                                             ->firstOrFail();
     } else {
-        $practice = Practice::first();
+        $practice = Practice::where('name', 'demo')
+                            ->where('is_demo', true)
+                            ->first();
 
         if ( ! $practice) {
-            $practice = factory(\CircleLinkHealth\Customer\Entities\Practice::class)->create();
+            $practice = factory(\CircleLinkHealth\Customer\Entities\Practice::class)->create(['is_demo' => true]);
         }
 
         $provider = \CircleLinkHealth\Customer\Entities\User::ofType('provider')
@@ -186,9 +188,9 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factor
     }
 
     $phones = collect([]);
-    while ($phones->count() < 4){
+    while ($phones->count() < 4) {
         $number = $faker->phoneNumber;
-        if (validateUsPhoneNumber($number)){
+        if (validateUsPhoneNumber($number)) {
             $phones->push($number);
         }
     }

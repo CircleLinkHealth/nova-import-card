@@ -19,6 +19,9 @@
     },
     {
       "url": "https://github.com/carwow/heroku-buildpack-pdftotext.git"
+    },
+    {
+      "url": "https://github.com/stevo550/buildpack-slug-cleaner.git"
     }
   ],
   "environments": {

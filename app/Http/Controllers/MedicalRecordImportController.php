@@ -78,6 +78,8 @@ class MedicalRecordImportController extends Controller
                                 'patient'   => $carePlan->patient()->first(),
                             ]
                         );
+                        $imr->imported = true;
+                        $imr->save();
                     } catch (\Exception $ex) {
                         //throwing Exceptions to help debug importing issues
                         throw $ex;
