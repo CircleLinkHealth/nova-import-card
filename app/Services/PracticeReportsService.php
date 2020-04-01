@@ -54,7 +54,7 @@ class PracticeReportsService
     public function getQuickbooksReport($practices, $format, Carbon $date)
     {
         $data = [];
-        
+
         $saasAccount = null;
 
         foreach (Practice::with(['settings', 'chargeableServices', 'saasAccount'])->whereIn('id', $practices)->get() as $practice) {
@@ -192,23 +192,10 @@ class PracticeReportsService
                 ? 'Software-Only Platform Fee'
                 : $chargeableService->description,
             'LineUnitPrice' => (string) '$'.' '.$lineUnitPrice,
-            'Msg'           => 'Send Check Payments to:
-CircleLink Health Inc.
-1178 Broadway
-3rd floor #1265
-New York, NY 10001
-
-ACH Payments: JPMorgan Chase Bank 
-Routing Number (ABA): 02110361 
-Account Number: 693139136 
-Account Name: CircleLink Health Account 
-Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902 
-
-Wire Payments: JPMorgan Chase Bank 
-Routing Number (ABA): 021000021 
-Account Number: 693139136 
-Account Name: Circle Link Health Account 
-Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902
+            'Msg'           => 'ACH Payments: Silicon Valley Bank
+Routing Number (ABA): 121140399
+Account Number: 3302397258
+Account Name: CIRCLELINK HEALTH INC.
 ',
         ];
 
