@@ -35,8 +35,7 @@ class ImporterController extends Controller
 
     public function getImportedRecords()
     {
-        return ImportedMedicalRecord::whereNull('patient_id')
-            ->with('demographics')
+        return ImportedMedicalRecord::where('imported', false)->with('demographics')
             ->with('practice')
             ->with(['location' => function ($q) {
                                         $q->select([

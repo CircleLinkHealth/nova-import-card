@@ -25,6 +25,12 @@
             <template slot="h__selected">
                 <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox"/>
             </template>
+            <template slot="Name" slot-scope="props">
+                <a v-if="props.row.patient_id" :href="linkToCarePlan(props.row.patient_id)" target="_blank">
+                    {{props.row.Name}}
+                </a>
+                <p v-else>{{props.row.Name}}</p>
+            </template>
             <template slot="Practice" slot-scope="props">
                 <v-select
                         v-model="props.row.Practice"
@@ -226,6 +232,7 @@
 
                     return {
                         id: record.id,
+                        patient_id: record.patient_id,
                         selected: false,
                         Name: (record.demographics || {}).display_name,
                         DOB: (record.demographics || {}).dob,
@@ -587,6 +594,9 @@
                             label: item.display_name
                         }))
                     })
+                },
+                linkToCarePlan(patientId) {
+                    return rootUrl('manage-patients/'+patientId+'/view-careplan')
                 }
             }),
         created() {
