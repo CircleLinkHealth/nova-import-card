@@ -19,7 +19,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Circlelinkealth\\ImportPracticeStaffCsv\\CardServiceProvider"
+                "CircleLinkHealth\\ImportPracticeStaffCsv\\CardServiceProvider"
             ]
         }
     },
