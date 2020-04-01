@@ -311,7 +311,7 @@ class ReimportPatientMedicalRecord extends Command
         )->find($this->argument('patientUserId'));
     }
     
-    private function importCcdaAndFillCarePlan($ccda, User $user)
+    private function importCcdaAndFillCarePlan(Ccda $ccda, User $user)
     {
         $this->warn("Importing CCDA:$ccda->id");
         $ccda->import();

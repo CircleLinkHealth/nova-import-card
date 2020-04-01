@@ -188,6 +188,8 @@ class ImportConsentedEnrollees implements ShouldQueue
                 ImportedMedicalRecord::firstOrNew([
                     'patient_id' => $enrollee->user_id,
                     'practice_id' => $enrollee->practice_id,
+                    'medical_record_id' => $enrollee->medical_record_id,
+                    'medical_record_type' => $enrollee->medical_record_type,
                                                   ])
             );
             
