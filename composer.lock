@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "91346a1b770b02679f6bf75148a301c4",
+    "content-hash": "31013295f87bda0928a10222ef5778ce",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -417,16 +417,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.133.47",
+            "version": "3.134.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "706082d6a0e53c7656eca61866b456178112daf6"
+                "reference": "aefab57896b558634d24342bdc3c6814e8e533f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/706082d6a0e53c7656eca61866b456178112daf6",
-                "reference": "706082d6a0e53c7656eca61866b456178112daf6",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/aefab57896b558634d24342bdc3c6814e8e533f6",
+                "reference": "aefab57896b558634d24342bdc3c6814e8e533f6",
                 "shasum": ""
             },
             "require": {
@@ -497,7 +497,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-03-30T18:15:57+00:00"
+            "time": "2020-04-01T18:14:23+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -879,8 +879,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
-                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8",
-                "shasum": null
+                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -946,11 +945,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.5.1",
+            "version": "v1.5.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "0fd93be6fe2ef6ee37bcb8d6b8f130e7ed270844"
+                "reference": "c34cfd0287f726c3218db95dc6b26ed19b01cc78"
             },
             "type": "laravel-module",
             "extra": {
@@ -972,7 +971,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-25T18:27:31+00:00"
+            "time": "2020-04-01T18:37:42+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1018,11 +1017,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.0.7",
+            "version": "v2.0.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "39f994d408b60f1ba1002ea8a84d5d4fb5e7d012"
+                "reference": "9a2324d94e203c7e49bca4c95477630a18d2bc1b"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1047,7 +1046,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-30T16:14:59+00:00"
+            "time": "2020-04-01T18:41:56+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1055,8 +1054,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
-                "reference": "8b21629514943da628f3f5acb602c7610c2d9167",
-                "shasum": null
+                "reference": "8b21629514943da628f3f5acb602c7610c2d9167"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1089,8 +1087,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "376c054cfcdb0c0bdd432a8fcac7db79ba6747e5",
-                "shasum": null
+                "reference": "376c054cfcdb0c0bdd432a8fcac7db79ba6747e5"
             },
             "require": {
                 "php": ">=7.1.0",
@@ -1263,11 +1260,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.2.7",
+            "version": "v1.2.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "ae3d466e21b0660c25beae77bbc87b0fd1d03980"
+                "reference": "42a2e977487eba307cab67522f6e46f89c0cbfd3"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1281,7 +1278,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-23T17:33:34+00:00"
+            "time": "2020-04-01T20:01:18+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -2736,16 +2733,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.127",
+            "version": "v0.128",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "19eacad739807e522891bf3f911ffab4a4c29869"
+                "reference": "d6425891e72439bbec9d9dcb0c8b9fca49ca017e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/19eacad739807e522891bf3f911ffab4a4c29869",
-                "reference": "19eacad739807e522891bf3f911ffab4a4c29869",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/d6425891e72439bbec9d9dcb0c8b9fca49ca017e",
+                "reference": "d6425891e72439bbec9d9dcb0c8b9fca49ca017e",
                 "shasum": ""
             },
             "require": {
@@ -2769,7 +2766,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-02-17T00:24:19+00:00"
+            "time": "2020-04-01T00:24:15+00:00"
         },
         {
             "name": "google/auth",
@@ -7724,16 +7721,16 @@
         },
         {
             "name": "pusher/pusher-php-server",
-            "version": "v4.1.1",
+            "version": "v4.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pusher/pusher-http-php.git",
-                "reference": "3c05ef64839845b6114396ff8406712cba052750"
+                "reference": "c010de563b18c9aa7dd6cd4468ea539a838c263c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/3c05ef64839845b6114396ff8406712cba052750",
-                "reference": "3c05ef64839845b6114396ff8406712cba052750",
+                "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/c010de563b18c9aa7dd6cd4468ea539a838c263c",
+                "reference": "c010de563b18c9aa7dd6cd4468ea539a838c263c",
                 "shasum": ""
             },
             "require": {
@@ -7774,7 +7771,7 @@
                 "rest",
                 "trigger"
             ],
-            "time": "2019-12-03T13:29:13+00:00"
+            "time": "2020-04-01T14:30:45+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -8168,16 +8165,16 @@
         },
         {
             "name": "sentry/sentry-laravel",
-            "version": "1.7.0",
+            "version": "1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-laravel.git",
-                "reference": "72684758f15aae4562149460b70fea81e9a06a25"
+                "reference": "8ec4695c5c6fa28d952c0f361e02997e84920354"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/72684758f15aae4562149460b70fea81e9a06a25",
-                "reference": "72684758f15aae4562149460b70fea81e9a06a25",
+                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/8ec4695c5c6fa28d952c0f361e02997e84920354",
+                "reference": "8ec4695c5c6fa28d952c0f361e02997e84920354",
                 "shasum": ""
             },
             "require": {
@@ -8233,7 +8230,17 @@
                 "logging",
                 "sentry"
             ],
-            "time": "2020-02-26T09:01:08+00:00"
+            "funding": [
+                {
+                    "url": "https://sentry.io/",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://sentry.io/pricing/",
+                    "type": "custom"
+                }
+            ],
+            "time": "2020-04-01T10:30:44+00:00"
         },
         {
             "name": "setasign/fpdf",
@@ -10911,16 +10918,16 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:subzero10/url-shortener.git",
-                "reference": "b3f9c6a6569a479982a58be6cdf9d039ea1f0149"
+                "reference": "567de152f322e0d5349ada89cd1070bddd07819e"
             },
             "require": {
-                "illuminate/config": "5.1.x|5.2.x|5.3.*|5.4.*|5.5.*|5.6.*|5.7.*",
-                "illuminate/support": "5.1.x|5.2.x|5.3.*|5.4.*|5.5.*|5.6.*|5.7.*",
-                "mremi/url-shortener": "^2.0"
+                "illuminate/config": "*",
+                "illuminate/support": "*",
+                "mremi/url-shortener": "2.3"
             },
             "require-dev": {
                 "mockery/mockery": "^0.9.4",
-                "orchestra/testbench": "3.1.x|3.2.x|3.3.x|3.4.x|3.5.x",
+                "orchestra/testbench": "*",
                 "phpunit/phpunit": "^6"
             },
             "type": "library",
@@ -10958,7 +10965,7 @@
                 "url shortener",
                 "waavi"
             ],
-            "time": "2019-01-28T16:48:46+00:00"
+            "time": "2020-04-01T08:49:12+00:00"
         },
         {
             "name": "waynestate/nova-ckeditor4-field",
@@ -15002,5 +15009,6 @@
         "ext-redis": "*",
         "ext-simplexml": "*"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }
