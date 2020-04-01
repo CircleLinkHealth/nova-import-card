@@ -13,15 +13,15 @@ class EnrollablesInvitationLinks extends Migration
      */
     public function up()
     {
-//        Schema::create('enrollables_invitation_links', function (Blueprint $table) {
-//            $table->increments('id');
-//            $table->unsignedBigInteger('invitationable_id');
-//            $table->string('invitationable_type');
-//            $table->string('link_token');
-//            $table->boolean('manually_expired');
-//            $table->string('url');
-//            $table->timestamps();
-//        });
+        Schema::create('enrollables_invitation_links', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedBigInteger('invitationable_id');
+            $table->string('invitationable_type');
+            $table->string('link_token');
+            $table->boolean('manually_expired');
+            $table->string('url');
+            $table->timestamps();
+        });
     }
 
     /**
