@@ -92,35 +92,32 @@ class ModifyTimeTracker extends Action implements ShouldQueue
      */
     private function modifyRecords(PageTimer $timeRecord, int $duration)
     {
+        $entriesToSave = collect();
+
         //lv_page_timer table
         $timeRecord->duration = $duration;
-
-        //if there is no activity associate, there is nothing else to do
-        if ( ! $timeRecord->activity) {
-            $timeRecord->save();
-
-            return;
-        }
-
-        $entriesToSave = collect();
         $entriesToSave->push($timeRecord);
 
-        //lv_activities table
-        $timeRecord->activity->duration = $duration;
-        $entriesToSave->push($timeRecord->activity);
+        $hasBillableActivity = false;
+        if ($timeRecord->activity) {
+            $hasBillableActivity = true;
+            //lv_activities table
+            $timeRecord->activity->duration = $duration;
+            $entriesToSave->push($timeRecord->activity);
 
-        /** @var NurseCareRateLog $careRateLog */
-        $careRateLog = NurseCareRateLog::whereActivityId($timeRecord->activity->id)
-                                       ->where('ccm_type', '=', 'accrued_after_ccm')
-                                       ->first();
+            /** @var NurseCareRateLog $careRateLog */
+            $careRateLog = NurseCareRateLog::whereActivityId($timeRecord->activity->id)
+                                           ->where('ccm_type', '=', 'accrued_after_ccm')
+                                           ->first();
 
-        //some more validation here, simply because the current implementation supports simple use cases
-        if ( ! $careRateLog) {
-            throw new Exception("Cannot modify activity. Please choose a different one. [no accrued_after_ccm]");
-        }
+            //some more validation here, simply because the current implementation supports simple use cases
+            if ( ! $careRateLog) {
+                throw new Exception("Cannot modify activity. Please choose a different one. [no accrued_after_ccm]");
+            }
 
-        if ($duration > $careRateLog->increment) {
-            throw new Exception("Cannot modify activity. Please lower duration to at least $careRateLog->increment. [duration > care rate log]");
+            if ($duration > $careRateLog->increment) {
+                throw new Exception("Cannot modify activity. Please lower duration to at least $careRateLog->increment. [duration > care rate log]");
+            }
         }
 
         //now, that all validation passes, save pending entries
@@ -128,20 +125,23 @@ class ModifyTimeTracker extends Action implements ShouldQueue
             $item->save();
         });
 
-        //adjust nurse care rate logs
-        \Artisan::call('nursecareratelogs:remove-time', [
-            'fromId'      => $careRateLog->id,
-            'newDuration' => $duration,
-        ]);
-
-        //recalculate ccm/bhi time for patient (patient_monthly_summaries table)
         $startTime = Carbon::parse($timeRecord->start_time);
-        \Artisan::call('ccm_time:recalculate', [
-            'dateString' => $startTime->toDateString(),
-            'userIds'    => $timeRecord->patient_id,
-        ]);
+        if ($hasBillableActivity) {
+            //adjust nurse care rate logs
+            \Artisan::call('nursecareratelogs:remove-time', [
+                'fromId'      => $careRateLog->id,
+                'newDuration' => $duration,
+            ]);
 
-        //re-generate invoice for nurse
+            //if this was a billable activity, we have to
+            //recalculate ccm/bhi time for patient (patient_monthly_summaries table)
+            \Artisan::call('ccm_time:recalculate', [
+                'dateString' => $startTime->toDateString(),
+                'userIds'    => $timeRecord->patient_id,
+            ]);
+        }
+
+        //always re-generate invoice for nurse
         \Artisan::call('nurseinvoices:create', [
             'month'   => $startTime->copy()->startOfMonth()->toDateString(),
             'userIds' => $timeRecord->provider_id,
