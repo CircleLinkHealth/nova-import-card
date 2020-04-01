@@ -207,8 +207,8 @@
                 setupRecord(record) {
                     record.dob = '';
 
-                    if((record.patient || {}).patientInfo) {
-                        record.dob = (record.patient || {}).patientInfo.birth_date;
+                    if((record.patient || {}).patient_info) {
+                        record.dob = (record.patient || {}).patient_info.birth_date;
                     }
                     const self = this;
                     const practice = {
