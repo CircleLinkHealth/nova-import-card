@@ -772,7 +772,8 @@ class EligibilityChecker
         $args['provider_id'] = $this->practice->user_id;
         
         if (empty($args['email'])) {
-            $args['email'] = 'noEmail@noEmail.com';
+            $timestamp = now()->timestamp;
+            $args['email'] = "eJ_{$this->eligibilityJob->id}_$timestamp@cpm.com";
         }
         
         $args['address']   = $args['street'] ?? $args['address_line_1'] ?? '';
