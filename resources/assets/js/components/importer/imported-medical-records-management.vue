@@ -205,8 +205,10 @@
                     return () => this.tableData.find(record => record.id === id).errors
                 },
                 setupRecord(record) {
-                    if (record.demographics) {
-                        record.demographics.display_name = record.demographics.first_name + ' ' + record.demographics.last_name
+                    record.dob = '';
+
+                    if((record.patient || {}).patientInfo) {
+                        record.dob = (record.patient || {}).patientInfo.birth_date;
                     }
                     const self = this;
                     const practice = {
@@ -234,8 +236,8 @@
                         id: record.id,
                         patient_id: record.patient_id,
                         selected: false,
-                        Name: (record.demographics || {}).display_name,
-                        DOB: (record.demographics || {}).dob,
+                        Name: (record.patient || {}).display_name,
+                        DOB: record.dob,
                         Practice: practice,
                         practice_id: practice.value,
                         location: record.location,

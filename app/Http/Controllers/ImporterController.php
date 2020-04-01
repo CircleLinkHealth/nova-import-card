@@ -73,7 +73,7 @@ class ImporterController extends Controller
                                                     ]
                                                 );
                                             },
-                                            'demographics',
+                                            'patient.patientInfo',
                                             'practice',
                                         ]
                                     )
@@ -209,7 +209,7 @@ class ImporterController extends Controller
      */
     public function remix(Request $request)
     {
-        return view('CCDUploader.uploader-remix')->with('shouldUseNewVersion', $request->has('v3'));
+        return view('CCDUploader.uploader-remix')->with('shouldUseNewVersion', true);
     }
     
     /**
