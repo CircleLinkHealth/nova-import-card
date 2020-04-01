@@ -98,7 +98,7 @@ class PatientLoginTest extends CustomerTestCase
 
                 $mailData = $notification->toMail($this->patient)->toArray();
 
-                $this->assertTrue('Your CarePlan has just been approved' === $mailData['subject']);
+                $this->assertTrue('Your Care Plan has just been approved' === $mailData['subject']);
 
                 return true;
             }
