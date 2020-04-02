@@ -47,9 +47,10 @@ class SendSelfEnrollmentUnreachablePatients implements ShouldQueue
         $monthEnd  = Carbon::parse($mothStart)->copy()->endOfMonth()->toDateTimeString();
 
         //    Just for testing
-        if (App::environment(['local', 'review'])) {
+        if (App::environment(['local', 'review', 'staging'])) {
             $patients = $this->getUnreachablePatients($mothStart, $monthEnd)->get()->take(SendEnrollmentNotifications::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING);
             foreach ($patients->all() as $patient) {
+                /** @var User $patient */
                 if ( ! $patient->checkForSurveyOnlyRole()) {
                     $patient->notify(new SendEnrollmentEmail($patient));
                     $patient->notify(new SendEnrollementSms($patient));
@@ -58,6 +59,7 @@ class SendSelfEnrollmentUnreachablePatients implements ShouldQueue
         } else {
             $this->getUnreachablePatients($mothStart, $monthEnd)->chunk(50, function ($patients) {
                 foreach ($patients as $patient) {
+                    /** @var User $patient */
                     if ( ! $patient->checkForSurveyOnlyRole()) {
                         $patient->notify(new SendEnrollmentEmail($patient));
                         $patient->notify(new SendEnrollementSms($patient));
