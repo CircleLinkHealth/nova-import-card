@@ -40,7 +40,9 @@ class EraseTestEnrollees implements ShouldQueue
 
         foreach ($enrollees as $enrollee) {
             //erase eligibility job
-            $enrollee->eligibilityJob()->delete();
+            $eligibilityJob = $enrollee->eligibilityJob;
+            $eligibilityJob->batch->delete();
+            $eligibilityJob->delete();
 
             //erase ccda data
             $imr = $enrollee->getImportedMedicalRecord();
