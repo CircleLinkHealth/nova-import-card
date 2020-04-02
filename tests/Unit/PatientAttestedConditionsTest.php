@@ -102,9 +102,13 @@ class PatientAttestedConditionsTest extends DuskTestCase
      */
     public function test_problems_are_automatically_attested_to_pms_if_they_should_pcm()
     {
-        $pms           = $this->setupPms([ChargeableService::pcm()->first()->id]);
+        $pcmCsId = ChargeableService::pcm()->first()->id;
+
+        $pms           = $this->setupPms([$pcmCsId]);
         $pms->ccm_time = 1440;
         $pms->save();
+
+        $this->setupPracticeServices([$pcmCsId]);
 
         $this->assertTrue($pms->hasServiceCode(ChargeableService::PCM));
         $this->assertEquals($pms->ccmAttestedProblems()->count(), 0);
@@ -118,9 +122,12 @@ class PatientAttestedConditionsTest extends DuskTestCase
 
     public function test_problems_are_automatically_attested_to_pms_if_they_should_bhi()
     {
-        $pms           = $this->setupPms([ChargeableService::bhi()->first()->id]);
+        $bhiCsId = ChargeableService::bhi()->first()->id;
+        $pms           = $this->setupPms([$bhiCsId]);
         $pms->bhi_time = 1440;
         $pms->save();
+
+        $this->setupPracticeServices([$bhiCsId]);
 
         $this->assertTrue($pms->hasServiceCode(ChargeableService::BHI));
         $this->assertEquals($pms->bhiAttestedProblems()->count(), 0);
@@ -146,6 +153,28 @@ class PatientAttestedConditionsTest extends DuskTestCase
         $pms->load('attestedProblems');
 
         $this->assertTrue($pms->ccmAttestedProblems()->count() == 4);
+    }
+
+    public function test_attest_bhi_problems_exist_in_ccm_column_if_practice_does_not_have_bhi_enabled()
+    {
+        $ccmCsId       = ChargeableService::ccm()->first()->id;
+        $pms           = $this->setupPms([$ccmCsId]);
+        $pms->ccm_time = 1440;
+        $pms->save();
+
+        $this->setupPracticeServices([
+            $ccmCsId,
+        ]);
+
+        $this->assertTrue($pms->hasServiceCode(ChargeableService::CCM));
+        $this->assertEquals($pms->ccmAttestedProblems()->count(), 0);
+        $this->assertEquals($pms->ccmAttestedProblems()->count(), 0);
+
+        $pms->syncAttestedProblems($this->patient->ccdProblems->pluck('id')->toArray());
+
+        $pms->load('attestedProblems');
+
+        $this->assertTrue($pms->ccmAttestedProblems()->count() == 10);
     }
 
 
@@ -182,9 +211,9 @@ class PatientAttestedConditionsTest extends DuskTestCase
     private function setupPms(array $chargeableServiceIds)
     {
         $pms = PatientMonthlySummary::updateOrCreate([
-            'patient_id'             => $this->patient->id,
-            'month_year'             => Carbon::now()->startOfMonth()->toDateString(),
-        ],[
+            'patient_id' => $this->patient->id,
+            'month_year' => Carbon::now()->startOfMonth()->toDateString(),
+        ], [
             'total_time'             => 3000,
             'no_of_successful_calls' => 1,
         ]);
@@ -192,6 +221,11 @@ class PatientAttestedConditionsTest extends DuskTestCase
         $pms->chargeableServices()->sync($chargeableServiceIds);
 
         return $pms;
+    }
+
+    private function setupPracticeServices(array $chargeableServiceIds)
+    {
+        $this->practice->chargeableServices()->sync($chargeableServiceIds);
     }
 
     private function runCommandToAutoAssign()
@@ -220,10 +254,10 @@ class PatientAttestedConditionsTest extends DuskTestCase
 
         $problemsForPatient = $bhi->take(2)->merge($ccm->take(8));
 
-        foreach ($problemsForPatient as $bhiProblem) {
+        foreach ($problemsForPatient as $problem) {
             $this->patient->ccdProblems()->create([
-                'name'           => $bhiProblem->name,
-                'cpm_problem_id' => $bhiProblem->id,
+                'name'           => $problem->name,
+                'cpm_problem_id' => $problem->id,
             ]);
         }
 
