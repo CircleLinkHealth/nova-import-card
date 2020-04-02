@@ -53,7 +53,7 @@ class DepartmentFromAthena implements MedicalRecordDecorator
         $eligibilityJob->loadMissing('targetPatient');
     
         /** @var Collection $departments */
-        $departments = \Cache::remember("athena:practice_id:{$eligibilityJob->targetPatient->ehr_practice_id}:departments", 60, function() use ($eligibilityJob){
+        $departments = \Cache::remember("athena:practice_id:{$eligibilityJob->targetPatient->ehr_practice_id}:departments", 2, function() use ($eligibilityJob){
             $response = $this->api->getDepartments($eligibilityJob->targetPatient->ehr_practice_id);
             
             return array_key_exists('departments', $response) ? collect($response['departments']) : collect();
