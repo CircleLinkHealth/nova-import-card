@@ -28,11 +28,16 @@ class CcdaSectionsLogger implements MedicalRecordLogger
     
     protected $transformer;
     protected $vendorId;
-    private   $problemLogs;
+    protected   $problemLogs;
+    /**
+     * @var Ccda
+     */
+    protected $mr;
     
     public function __construct(Ccda $ccd)
     {
         $this->ccd = $ccd->bluebuttonJson();
+        $this->mr = $ccd;
         
         $this->ccdaId   = $ccd->id;
         $this->vendorId = $ccd->vendor_id;
@@ -221,15 +226,15 @@ class CcdaSectionsLogger implements MedicalRecordLogger
             }
             
             if ( ! $data['practice_id']) {
-                $data['practice_id'] = $this->ccd->practice_id;
+                $data['practice_id'] = $this->mr->practice_id;
             }
             
             if ( ! $data['location_id']) {
-                $data['location_id'] = $this->ccd->location_id;
+                $data['location_id'] = $this->mr->location_id;
             }
             
             if ( ! $data['billing_provider_id']) {
-                $data['billing_provider_id'] = $this->ccd->billing_provider_id;
+                $data['billing_provider_id'] = $this->mr->billing_provider_id;
             }
             
             if ($data['practice_id']) {
