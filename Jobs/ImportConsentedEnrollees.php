@@ -7,17 +7,14 @@
 namespace CircleLinkHealth\Eligibility\Jobs;
 
 use App\CLH\Repositories\CCDImporterRepository;
-use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord;
-use CircleLinkHealth\Eligibility\MedicalRecord\Templates\MarillacMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
-use CircleLinkHealth\Eligibility\ValueObjects\BlueButtonMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
