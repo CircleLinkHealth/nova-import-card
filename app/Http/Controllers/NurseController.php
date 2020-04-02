@@ -88,7 +88,6 @@ class NurseController extends Controller
             $dayCounter = $dayCounter->addDays(1);
         }
 
-//        dd($data);
         return view(
             'admin.reports.allocation',
             [
