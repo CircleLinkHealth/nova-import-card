@@ -17,7 +17,7 @@ class MarillacMedicalRecordTest extends TestCase
     public function expectedResult()
     {
         return [
-            'type'     => 'marillac-clinic-inc',
+            'type'     => 'csv-with-json',
             'document'     =>
                 (object)
                 [
