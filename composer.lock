@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d5f930e94d478935ba89a32981d6e6e5",
+    "content-hash": "35376cd7e8b0572c8e8ec887291e20dc",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -417,16 +417,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.134.1",
+            "version": "3.134.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "aefab57896b558634d24342bdc3c6814e8e533f6"
+                "reference": "4fe0b03a2eefb677ce4ca47b7e3c3705f04516c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/aefab57896b558634d24342bdc3c6814e8e533f6",
-                "reference": "aefab57896b558634d24342bdc3c6814e8e533f6",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4fe0b03a2eefb677ce4ca47b7e3c3705f04516c8",
+                "reference": "4fe0b03a2eefb677ce4ca47b7e3c3705f04516c8",
                 "shasum": ""
             },
             "require": {
@@ -497,7 +497,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-04-01T18:14:23+00:00"
+            "time": "2020-04-02T18:13:41+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1263,11 +1263,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.2.9",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "42a2e977487eba307cab67522f6e46f89c0cbfd3"
+                "reference": "a7b0883362ee2479a77d2a3bc5463a9211dd5902"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1281,7 +1281,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-01T20:01:18+00:00"
+            "time": "2020-04-02T20:49:24+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
