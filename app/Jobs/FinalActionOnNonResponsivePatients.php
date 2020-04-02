@@ -94,7 +94,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
                 $enrollee = Enrollee::whereUserId($noResponsivePatient->id)->firstOrFail();
                 if ($isSurveyOnlyUser) {
 
-//                    Keeping this maybe we need the letter to be printed from nova?
+//                    Keeping this maybe we need the letter to be printed from nova
 
 //                    $practice = $noResponsivePatient->primaryPractice;
 //                    $provider = $this->getEnrollableProvider($isSurveyOnlyUser, $noResponsivePatient);
