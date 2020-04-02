@@ -246,6 +246,11 @@ class CarePlan extends BaseModel implements PdfReport
         return CarePlan::PROVIDER_APPROVED == $this->status;
     }
     
+    public function isClhAdminApproved():bool
+    {
+        return CarePlan::QA_APPROVED == $this->status;
+    }
+    
     /**
      * Get the URL to view the CarePlan.
      *
