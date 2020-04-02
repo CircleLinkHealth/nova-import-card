@@ -64,9 +64,9 @@ class NurseController extends Controller
                     continue;
                 }
 
-                $countScheduled = $nurse->nurseInfo->countScheduledCallsFor($dayCounter);
+                $countScheduled = $nurse->countScheduledCallsFor($dayCounter);
 
-                $countMade = $nurse->nurseInfo->countCompletedCallsFor($dayCounter);
+                $countMade = $nurse->countCompletedCallsFor($dayCounter);
 
                 $formattedDate = $dayCounter->format('m/d Y');
 
