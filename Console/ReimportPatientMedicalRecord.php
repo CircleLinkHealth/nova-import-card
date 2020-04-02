@@ -161,17 +161,23 @@ class ReimportPatientMedicalRecord extends Command
                     }
                 )
             );
+    
+            $mrn = $user->patientInfo->mrn_number ?? $this->getEnrollee(
+                    $user
+                )->eligibilityJob->data['mrn'] ?? null;
             
-            $ccda = $this->getCcdaFromMrn($user->patientInfo->mrn_number, $user->program_id);
+            if ($mrn) {
+                $ccda = $this->getCcdaFromMrn($user->patientInfo->mrn_number, $user->program_id);
+            }
             
-            if ( ! $ccda) {
+            if (empty($ccda ?? null)) {
                 $ccda = Ccda::create(
                     [
                         'source'      => $mr->getType(),
                         'json'        => $mr->toJson(),
                         'practice_id' => (int) $user->program_id,
                         'patient_id'  => $user->id,
-                        'mrn'         => $user->patientInfo->mrn_number ?? $this->getEnrollee($user)->eligibilityJob->data['mrn'] ?? null,
+                        'mrn'         => $mrn,
                     ]
                 );
             }
