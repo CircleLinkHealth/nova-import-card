@@ -57,26 +57,18 @@ class AttestedConditionsController extends Controller
         }
 
         //if practice does not have BHI all codes will be included in request from the CCM, no need to merge.
-        if ( ! $summary->practiceHasServiceCode(ChargeableService::BHI)) {
-            $summary->syncAttestedProblems($attestedProblems);
-
-            return response()->json([
-                'status'            => 200,
-                'attested_problems' => $attestedProblems,
-            ]);
+        //else merge and attest, but return only the ones actually used by modal
+        if ($summary->practiceHasServiceCode(ChargeableService::BHI)) {
+            $attestedProblems = array_merge($attestedProblems,
+                $summary->attestedProblems->where('cpmProblem.is_behavioral', '=',
+                    ! $request->input('is_bhi'))->pluck('id')->toArray());
         }
 
-        //else merge and attest, but return only the ones actually used by modal
-        $mergedAttestedProblems = array_merge($attestedProblems,
-            $summary->attestedProblems->where('cpmProblem.is_behavioral', '=',
-                ! $request->input('is_bhi'))->pluck('id')->toArray());
-        $summary->syncAttestedProblems($mergedAttestedProblems);
+        $summary->syncAttestedProblems($attestedProblems);
 
         return response()->json([
             'status'            => 200,
-            'attested_problems' => $attestedProblems,
+            'attested_problems' => $request->input('attested_problems'),
         ]);
-
-
     }
 }
