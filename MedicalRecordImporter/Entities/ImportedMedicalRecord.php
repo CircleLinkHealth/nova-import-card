@@ -109,12 +109,14 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
         $newUser = User::ofType('participant')->find($this->patient_id);
 
         if ($newUser) {
+            $this->duplicate_id = null;
+            
             $practiceId = $this->practice_id;
 
             $query = User::whereFirstName($newUser->first_name)
                 ->whereLastName($newUser->last_name)
                 ->whereHas('patientInfo', function ($q) use ($newUser) {
-                    $q->where('birth_date', $newUser->dob);
+                    $q->where('birth_date', $newUser->getBirthDate());
                 })->where('id','!=', $newUser->id);
             if ($practiceId) {
                 $query = $query->where('program_id', $practiceId);
