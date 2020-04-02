@@ -121,29 +121,30 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 class Ccda extends MedicalRecordEloquent implements HasMedia
 {
     const CCD_MEDIA_COLLECTION_NAME = 'ccd';
-    
+
     use BelongsToPatientUser;
     use HasMediaTrait;
     use SoftDeletes;
     const API = 'api';
-    
+
     //define sources here
     const ATHENA_API = 'athena_api';
-    
+
     const EMR_DIRECT   = 'emr_direct';
     const GOOGLE_DRIVE = 'google_drive';
     const IMPORTER     = 'importer';
+    const IMPORTER_AWV = 'importer_awv';
     const SFTP_DROPBOX = 'sftp_dropbox';
     const UPLOADED     = 'uploaded';
-    
+
     protected $attributes = [
         'imported' => false,
     ];
-    
+
     protected $dates = [
         'date',
     ];
-    
+
     protected $fillable = [
         'direct_mail_message_id',
         'batch_id',
@@ -161,22 +162,22 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         'xml',
         'status',
     ];
-    
+
     public function batch()
     {
         return $this->belongsTo(EligibilityBatch::class);
     }
-    
+
     public function bluebuttonJson()
     {
         if ($this->json) {
             return json_decode($this->json);
         }
-        
+
         if ( ! $this->id || ! $this->hasMedia(self::CCD_MEDIA_COLLECTION_NAME)) {
             return false;
         }
-        
+
         if ( ! $this->json) {
             if ($parsedJson = $this->getParsedJson()) {
                 $this->json = $parsedJson;
@@ -185,15 +186,15 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
                 $this->parseToJson();
             }
         }
-        
+
         return json_decode($this->json);
     }
-    
+
     public function ccdaRequest()
     {
         return $this->hasOne(CcdaRequest::class);
     }
-    
+
     /**
      * Store Ccda and store xml as Media.
      *
@@ -206,52 +207,52 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         if ( ! array_key_exists('xml', $attributes)) {
             return static::query()->create($attributes);
         }
-        
+
         $xml = $attributes['xml'];
         unset($attributes['xml']);
-        
+
         $ccda = static::query()->create($attributes);
-        
+
         $filename = null;
         if (array_key_exists('filename', $attributes)) {
             $filename = $attributes['filename'];
             unset($attributes['filename']);
         }
-        
+
         if ( ! $filename) {
             $filename = "ccda-{$ccda->id}.xml";
         }
-        
+
         \Storage::disk('storage')->put($filename, $xml);
         $ccda->addMedia(storage_path($filename))->toMediaCollection(self::CCD_MEDIA_COLLECTION_NAME);
-        
+
         return $ccda;
     }
-    
+
     /**
      * @throws \Exception
      */
     public function createEligibilityJobFromMedicalRecord(): ?EligibilityJob
     {
         $adapter = new CcdaToEligibilityJobAdapter($this, $this->practice, $this->batch);
-        
+
         return $adapter->adaptToEligibilityJob();
     }
-    
+
     public function directMessage()
     {
         return $this->belongsTo(DirectMailMessage::class, 'direct_mail_message_id');
     }
-    
+
     public function getDocumentCustodian(): string
     {
         if ($this->document->first()) {
             return $this->document->first()->custodian;
         }
-        
+
         return '';
     }
-    
+
     /**
      * Get the Logger.
      */
@@ -259,7 +260,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
     {
         return new CcdaSectionsLogger($this);
     }
-    
+
     /**
      * Get the User to whom this record belongs to, if one exists.
      */
@@ -267,36 +268,36 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
     {
         return $this->patient;
     }
-    
+
     public function getReferringProviderName()
     {
         return $this->referring_provider_name;
     }
-    
+
     public function importedMedicalRecord(): ?ImportedMedicalRecord
     {
         return ImportedMedicalRecord::where('medical_record_type', '=', Ccda::class)
                                     ->where('medical_record_id', '=', $this->id)
                                     ->first();
     }
-    
+
     public function practice()
     {
         return $this->belongsTo(Practice::class);
     }
-    
+
     public function qaSummary()
     {
         return $this->hasOne(ImportedMedicalRecord::class);
     }
-    
+
     public function scopeExclude($query, $value = [])
     {
         $defaultColumns = ['id', 'created_at', 'updated_at'];
-        
+
         return $query->select(array_diff(array_merge($defaultColumns, $this->fillable), (array) $value));
     }
-    
+
     public function scopeHasUPG0506Media($query)
     {
         return $query->whereHas(
@@ -306,7 +307,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
             }
         );
     }
-    
+
     public function getUPG0506PdfCareplanMedia()
     {
         return \DB::table('media')
@@ -315,19 +316,19 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
                   ->where('custom_properties->care_plan->demographics->mrn_number', (string) $this->mrn)
                   ->first();
     }
-    
+
     public function storeCcd($xml)
     {
         if ( ! $this->id) {
             throw new \Exception('CCD does not have an id.');
         }
-        
+
         \Storage::disk('storage')->put("ccda-{$this->id}.xml", $xml);
         $this->addMedia(storage_path("ccda-{$this->id}.xml"))->toMediaCollection(self::CCD_MEDIA_COLLECTION_NAME);
-        
+
         return $this;
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
@@ -335,7 +336,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
     {
         return $this->hasOne(TargetPatient::class);
     }
-    
+
     protected function parseToJson()
     {
         $xmlMedia = $this->getMedia(self::CCD_MEDIA_COLLECTION_NAME)->first();
@@ -346,12 +347,12 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
             $this->save();
             throw new InvalidCcdaException($this->id);
         }
-        
+
         $xmlPath = storage_path("ccdas/import/media_{$xmlMedia->id}.xml");
         file_put_contents($xmlPath, $xml);
-        
+
         $jsonPath = storage_path("ccdas/import/ccda_{$this->id}.json");
-        
+
         Artisan::call(
             'ccd:parse',
             [
@@ -360,28 +361,28 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
                 'outputPath' => $jsonPath,
             ]
         );
-        
+
         if (file_exists($xmlPath)) {
             \Storage::delete($xmlPath);
         }
-        
+
         if (file_exists($jsonPath)) {
             $this->json = file_get_contents($jsonPath);
             $this->save();
             \Storage::delete($jsonPath);
-            
+
             return;
         }
-        
+
         $json = $this->getParsedJson();
-        
+
         $decoded = json_decode($json);
-        
+
         $this->json = $json;
         $this->mrn  = optional($decoded->demographics)->mrn_number;
         $this->save();
     }
-    
+
     /**
      * Gets the parsed json from the parser's table, if it was already parsed.
      *
@@ -391,7 +392,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
     {
         return optional(DB::table(config('ccda-parser.db_table'))->where('ccda_id', '=', $this->id)->first())->result;
     }
-    
+
     /**
      * Checks the procedues section of the CCDA for codes
      *
@@ -405,19 +406,19 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
             $this->bluebuttonJson()->procedures
         )->pluck('code')->contains($code);
     }
-    
+
     public function import()
     {
         $imported = parent::import();
-        
+
         if ($imported instanceof ImportedMedicalRecord) {
             $this->imported = true;
             $this->status = Ccda::QA;
             $this->save();
-            
+
             event(new CcdaImported($this->getId()));
         }
-        
+
         return $imported;
     }
 }
