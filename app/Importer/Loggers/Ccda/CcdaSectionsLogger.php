@@ -219,6 +219,13 @@ class CcdaSectionsLogger implements MedicalRecordLogger
             
             $searchProvider = ProviderByName::first("{$data['first_name']} {$data['last_name']}");
             
+            $data = [
+                'billing_provider_id',
+                'provider_id',
+                'practice_id',
+                'location_id',
+            ];
+            
             if ($searchProvider) {
                 $data['provider_id'] = $data['billing_provider_id'] = $searchProvider->id;
                 $data['practice_id'] = $searchProvider->program_id;
@@ -234,7 +241,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
             }
             
             if ( ! $data['billing_provider_id']) {
-                $data['billing_provider_id'] = $this->mr->billing_provider_id;
+                $data['provider_id'] = $data['billing_provider_id'] = $this->mr->billing_provider_id;
             }
             
             if ($data['practice_id']) {
