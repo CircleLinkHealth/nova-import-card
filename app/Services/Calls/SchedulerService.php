@@ -52,8 +52,16 @@ class SchedulerService
 
         $now = Carbon::now();
 
-        $patient->loadMissing('patientInfo');
+        $patient->loadMissing(['patientInfo', 'carePlan']);
 
+        if (Patient::ENROLLED != $patient->patientInfo->ccm_status) {
+            return;
+        }
+        
+        if (!($patient->carePlan->isClhAdminApproved() || $patient->carePlan->isProviderApproved())) {
+            return;
+        }
+        
         $next_predicted_contact_window = (new PatientContactWindow())->getEarliestWindowForPatientFromDate(
             $patient->patientInfo,
             $now
