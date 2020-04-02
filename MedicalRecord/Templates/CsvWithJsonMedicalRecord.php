@@ -5,7 +5,7 @@ namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem;
 
-class MarillacMedicalRecord extends BaseMedicalRecordTemplate
+class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 {
     /**
      * @var array
@@ -428,6 +428,6 @@ class MarillacMedicalRecord extends BaseMedicalRecordTemplate
     
     public function getType(): string
     {
-        return 'marillac-clinic-inc';
+        return 'csv-with-json';
     }
 }

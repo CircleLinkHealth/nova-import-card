@@ -18,7 +18,7 @@ use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
 use CircleLinkHealth\Eligibility\MedicalRecord\MedicalRecordFactory;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CommonwealthMedicalRecord;
-use CircleLinkHealth\Eligibility\MedicalRecord\Templates\MarillacMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\AllergyImport;
@@ -152,7 +152,7 @@ class ReimportPatientMedicalRecord extends Command
         if (in_array($user->primaryPractice->name, ['marillac-clinic-inc', 'calvary-medical-clinic'])) {
             $this->warn("Running 'marillac-clinic-inc' decorator");
             
-            $mr = new MarillacMedicalRecord(
+            $mr = new CsvWithJsonMedicalRecord(
                 tap(
                     sanitize_array_keys($this->getEnrollee($user)->eligibilityJob->data),
                     function ($data) use ($user) {
