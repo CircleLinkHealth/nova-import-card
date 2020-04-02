@@ -19,6 +19,10 @@ class MarillacMedicalRecord extends BaseMedicalRecordTemplate
     
     public function fillAllergiesSection(): array
     {
+        if ( ! array_key_exists('allergies_string', $this->data)) {
+            return [];
+        }
+        
         return collect(collect(json_decode($this->data['allergies_string']))->first())
             ->map(
                 function ($allergy) {
