@@ -143,6 +143,7 @@
     import {currentUser} from '../../store/getters';
     import VueSelect from "vue-select";
     import GetsNurses from '../../mixins/gets-nurses'
+    import moment from "moment";
 
     export default {
         name: 'imported-medical-records-management',
@@ -207,8 +208,8 @@
                 setupRecord(record) {
                     record.dob = '';
 
-                    if((record.patient || {}).patient_info) {
-                        record.dob = (record.patient || {}).patient_info.birth_date;
+                    if((record.patient || {}).patient_info && (record.patient || {}).patient_info.birth_date) {
+                        record.dob = moment((record.patient || {}).patient_info.birth_date).format('MM-DD-YYYY');
                     }
                     const self = this;
                     const practice = {

@@ -156,7 +156,7 @@ class ImporterController extends Controller
                     
                     return $summary;
                 }
-            )->filter()
+            )->filter()->unique('patient_id')
                                     ->values();
     }
     
