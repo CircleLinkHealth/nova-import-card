@@ -57,9 +57,18 @@
                 </a>
             </li>
         @endif
-        <li><a href="{{ route('user.logout') }}" onclick="App.EventBus.$emit('tracker:stop', true)">
+        <li><a href="{{ route('user.logout') }}" onclick="emitLogout()">
                 Logout
             </a>
         </li>
     </ul>
 </li>
+@push('scripts')
+    <script>
+        function emitLogout() {
+            if (typeof App !== 'undefined' && App.EventBus) {
+                App.EventBus.$emit('tracker:stop', true);
+            }
+        }
+    </script>
+@endpush
