@@ -45,7 +45,8 @@
 
                         <div v-if="!authyMethod || showOtherMethods" class="margin-top-10">
                             <a v-if="!isApp" class="block clickable" href="https://authy.com/download/" target="_blank">
-                                Download the app (recommended)</a>
+                                Download Authy app (recommended)
+                            </a>
                             <br>
                             <a class="block clickable" @click="sendSms">
                                 Send SMS token
@@ -55,8 +56,8 @@
                                 Receive a call and listen to the token.
                             </a>
                             <br>
-                            <a class="block clickable" @click="requestQrCode">
-                                Generate QR code.
+                            <a class="block clickable" href="/settings">
+                                Setup Other Authenticator App
                             </a>
                         </div>
                     </div>
@@ -73,10 +74,6 @@
                         <div v-if="isApp && showSendAgain" class="btn btn-submit btn-block"
                              @click="sendOneTouchRequest">
                             Re-send OneTouch Request
-                        </div>
-                        <div v-if="isQrCode && showSendAgain" class="btn btn-submit btn-block"
-                             @click="requestQrCode">
-                            Generate new QR code
                         </div>
                     </div>
                 </div>
