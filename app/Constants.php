@@ -73,7 +73,7 @@ class Constants
 
     public static function athenaEhrId()
     {
-        return \Cache::remember('athena_ehr_id_in_cpm', 5, function () {
+        return \Cache::remember('athena_ehr_id_in_cpm', 2, function () {
             return optional(Ehr::whereName('Athena')->firstOrFail())->id;
         });
     }
