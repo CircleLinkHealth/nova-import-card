@@ -23,6 +23,62 @@ use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
+/**
+ * CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord
+ *
+ * @property int $id
+ * @property int|null $imported
+ * @property int|null $patient_id
+ * @property string $medical_record_type
+ * @property int $medical_record_id
+ * @property int|null $billing_provider_id
+ * @property int|null $nurse_user_id
+ * @property int|null $location_id
+ * @property int|null $practice_id
+ * @property int|null $duplicate_id
+ * @property array|null $validation_checks
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\AllergyImport[] $allergies
+ * @property-read int|null $allergies_count
+ * @property-read \CircleLinkHealth\Customer\Entities\User|null $billingProvider
+ * @property-read \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport $demographics
+ * @property-read \CircleLinkHealth\Customer\Entities\Location|null $location
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationImport[] $medications
+ * @property-read int|null $medications_count
+ * @property-read \CircleLinkHealth\Customer\Entities\User|null $nurseUser
+ * @property-read \CircleLinkHealth\Customer\Entities\User|null $patient
+ * @property-read \CircleLinkHealth\Customer\Entities\Practice|null $practice
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport[] $problems
+ * @property-read int|null $problems_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
+ * @property-read int|null $revision_history_count
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord newQuery()
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord whereBillingProviderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord whereDuplicateId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord whereImported($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord whereLocationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord whereMedicalRecordId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord whereMedicalRecordType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord whereNurseUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord wherePracticeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord whereValidationChecks($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord withMedicalRecord($id, $type = 'CircleLinkHealth\SharedModels\Entities\Ccda')
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord withoutTrashed()
+ * @mixin \Eloquent
+ */
 class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel implements ImportedMedicalRecordInterface
 {
     use MedicalRecordIdAndTypeTrait;
