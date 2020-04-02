@@ -150,11 +150,11 @@ class PatientObserver
             return false;
         }
         
-        if ($patient->user->carePlan->isClhAdminApproved()) {
+        if (optional($patient->user->carePlan)->isClhAdminApproved()) {
             return true;
         }
     
-        if ($patient->user->carePlan->isProviderApproved()) {
+        if (optional($patient->user->carePlan)->isProviderApproved()) {
             return true;
         }
     }
