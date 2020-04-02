@@ -52,7 +52,10 @@ class NurseController extends Controller
             $last       = Carbon::now()->lastOfMonth()->endOfDay();
         }
 
-        $nurses = User::ofType('care-center')->where('access_disabled', 0)->get();
+        $nurses = User::with('nurseInfo')
+                      ->ofType('care-center')
+                      ->where('access_disabled', 0)
+                      ->get();
         $data   = [];
 
         while ($dayCounter->lte($last)) {
@@ -61,9 +64,9 @@ class NurseController extends Controller
                     continue;
                 }
 
-                $countScheduled = $nurse->nurseInfo->countScheduledCallsFor($dayCounter);
+                $countScheduled = $nurse->countScheduledCallsFor($dayCounter);
 
-                $countMade = $nurse->nurseInfo->countCompletedCallsFor($dayCounter);
+                $countMade = $nurse->countCompletedCallsFor($dayCounter);
 
                 $formattedDate = $dayCounter->format('m/d Y');
 
