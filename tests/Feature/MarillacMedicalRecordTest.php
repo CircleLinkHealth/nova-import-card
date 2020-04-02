@@ -6,7 +6,7 @@
 
 namespace Tests\Feature;
 
-use CircleLinkHealth\Eligibility\MedicalRecord\Templates\MarillacMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use \stdClass;
@@ -1762,7 +1762,7 @@ class MarillacMedicalRecordTest extends TestCase
     
     public function test_it_creates_medical_record_from_array()
     {
-        $mr = new MarillacMedicalRecord($this->getFakeMedicalRecord());
+        $mr = new CsvWithJsonMedicalRecord($this->getFakeMedicalRecord());
         
         $this->assertEquals($this->expectedResult(), $mr->toArray());
     }
