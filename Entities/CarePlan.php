@@ -10,14 +10,13 @@ use App\Constants;
 use App\Contracts\PdfReport;
 use App\Contracts\ReportFormatter;
 use App\Note;
-use App\Rules\DoesNotHaveBothTypesOfDiabetes;
-use App\Services\Calls\SchedulerService;
-use CircleLinkHealth\SharedModels\Entities\Pdf;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NotifyPatientCarePlanApproved;
+use App\Rules\DoesNotHaveBothTypesOfDiabetes;
 use App\Rules\HasEnoughProblems;
+use App\Services\Calls\SchedulerService;
 use App\Services\CareplanService;
 use App\Traits\PdfReportTrait;
 use CircleLinkHealth\Core\Entities\BaseModel;
@@ -51,62 +50,77 @@ use Validator;
  * @property \App\CareplanAssessment $assessment
  * @property \CircleLinkHealth\Customer\Entities\User $patient
  * @property \CircleLinkHealth\SharedModels\Entities\Pdf[]|\Illuminate\Database\Eloquent\Collection $pdfs
- * @property \CircleLinkHealth\Customer\Entities\User|null              $providerApproverUser
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereCarePlanTemplateId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereLastPrinted($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereMode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereProviderApproverId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereProviderDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereQaApproverId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereQaDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereUserId($value)
+ * @property \CircleLinkHealth\Customer\Entities\User|null $providerApproverUser
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
+ *     whereCarePlanTemplateId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
+ *     whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
+ *     whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
+ *     whereLastPrinted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
+ *     whereMode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
+ *     whereProviderApproverId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
+ *     whereProviderDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
+ *     whereQaApproverId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
+ *     whereQaDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
+ *     whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
+ *     whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
+ *     whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
+ *     whereUserId($value)
  * @mixin \Eloquent
- * @property int|null                                                                                                        $first_printed_by
- * @property \Illuminate\Support\Carbon|null                                                                                 $first_printed
- * @property string                                                                                                          $provider_approver_name
- * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]                                  $revisionHistory
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan newModelQuery()
+ * @property int|null $first_printed_by
+ * @property \Illuminate\Support\Carbon|null $first_printed
+ * @property string $provider_approver_name
+ * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection
+ *     $notifications
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]
+ *     $revisionHistory
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
+ *     newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan query()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereFirstPrinted($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereFirstPrintedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
+ *     whereFirstPrinted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
+ *     whereFirstPrintedBy($value)
  * @property int|null $notifications_count
  * @property int|null $pdfs_count
  * @property int|null $revision_history_count
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withNurseApprovedVia()
- * @property string|null $deleted_at
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereDeletedAt($value)
  */
 class CarePlan extends BaseModel implements PdfReport
 {
     use SoftDeletes;
     use PdfReportTrait;
-    
+
     // status options
     const DRAFT = 'draft';
     const PDF = 'pdf';
     const PROVIDER_APPROVED = 'provider_approved';
-    const QA_APPROVED       = 'qa_approved';
+    const QA_APPROVED = 'qa_approved';
 
     // mode options
     const WEB = 'web';
-    
+
     protected $attributes = [
         'mode' => self::WEB,
     ];
-    
+
     protected $dates = [
         'qa_date',
         'provider_date',
         'first_printed',
     ];
-    
+
     protected $fillable = [
         'user_id',
         'mode',
@@ -123,62 +137,64 @@ class CarePlan extends BaseModel implements PdfReport
         'created_at',
         'updated_at',
     ];
-    
+
     public function notifyPatientOfApproval()
     {
-        if (! patientLoginIsEnabledForPractice($this->patient->program_id)) return;
-        
+        if ( ! patientLoginIsEnabledForPractice($this->patient->program_id)) {
+            return;
+        }
+
         $this->patient->notify(new NotifyPatientCarePlanApproved($this));
     }
-    
+
     public function carePlanTemplate()
     {
         return $this->belongsTo(CarePlanTemplate::class);
     }
-    
+
     /**
      * Forwards CarePlan to CareTeam and/or Support.
      */
     public function forward()
     {
         Log::debug('CarePlan: Ready to forward');
-        
+
         $this->load(
             [
                 'patient.primaryPractice.settings',
                 'patient.patientInfo.location',
             ]
         );
-        
+
         $channels = $this->notificationChannels();
-        
+
         if (empty($channels)) {
             $patientId = $this->patient->id;
             $practice  = $this->patient->primaryPractice->name;
             Log::error(
                 "CarePlan: Will not be forwarded because primary practice[${practice}] for patient[${patientId}] does not have any enabled channels."
             );
-            
+
             return;
         }
-        
+
         $location = $this->patient->patientInfo->location;
         if (null == $location) {
             $patientId = $this->patient->id;
             Log::error(
                 "CarePlan: Will not be forwarded because patient[${patientId}] does not have a preferred contact location."
             );
-            
+
             return;
         }
-        
+
         $location->notify(new CarePlanProviderApproved($this, $channels));
     }
-    
+
     public static function getNumberOfCareplansPendingApproval(User $user)
     {
         $pendingApprovals = 0;
-        
+
         if ($user->hasRole(
             [
                 'administrator',
@@ -223,10 +239,10 @@ class CarePlan extends BaseModel implements PdfReport
                                         ->count();
             }
         }
-        
+
         return $pendingApprovals;
     }
-    
+
     /**
      * Get the name of the provider who approved this care plan.
      *
@@ -235,17 +251,17 @@ class CarePlan extends BaseModel implements PdfReport
     public function getProviderApproverNameAttribute()
     {
         $approver = $this->providerApproverUser;
-        
+
         return $approver
             ? $approver->getFullName()
             : '';
     }
-    
+
     public function isProviderApproved()
     {
         return CarePlan::PROVIDER_APPROVED == $this->status;
     }
-    
+
     /**
      * Get the URL to view the CarePlan.
      *
@@ -260,27 +276,27 @@ class CarePlan extends BaseModel implements PdfReport
             ]
         );
     }
-    
+
     /**
      * @return array
      */
     public function notificationChannels()
     {
         $channels = ['database'];
-        
+
         $cpmSettings = $this->patient->primaryPractice->cpmSettings();
-        
+
         if ($cpmSettings->efax_pdf_careplan) {
             $channels[] = FaxChannel::class;
         }
-        
+
         if ($cpmSettings->dm_pdf_careplan) {
             $channels[] = DirectMailChannel::class;
         }
-        
+
         return $channels;
     }
-    
+
     /**
      * Returns the notifications that included this resource as an attachment.
      *
@@ -291,12 +307,12 @@ class CarePlan extends BaseModel implements PdfReport
         return $this->morphMany(\CircleLinkHealth\Core\Entities\DatabaseNotification::class, 'attachment')
                     ->orderBy('created_at', 'desc');
     }
-    
+
     public function patient()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-    
+
     /**
      * Get all the PDF CarePlans attached to this CarePlan.
      */
@@ -304,12 +320,12 @@ class CarePlan extends BaseModel implements PdfReport
     {
         return $this->morphMany(Pdf::class, 'pdfable');
     }
-    
+
     public function providerApproverUser()
     {
         return $this->belongsTo(User::class, 'provider_approver_id', 'id');
     }
-    
+
     public function safe()
     {
         return [
@@ -320,7 +336,7 @@ class CarePlan extends BaseModel implements PdfReport
             'type'    => $this->type,
         ];
     }
-    
+
     /**
      * Create a PDF of this resource and return the path to it.
      *
@@ -337,18 +353,18 @@ class CarePlan extends BaseModel implements PdfReport
         if (isUnitTestingEnv()) {
             return public_path('assets/pdf/sample-note.pdf');
         }
-        
+
         $pdfService      = app(PdfService::class);
         $reportFormatter = app(ReportFormatter::class);
         $careplanService = app(CareplanService::class);
-        
+
         $careplan = $reportFormatter->formatDataForViewPrintCareplanReport($this->patient);
         $careplan = $careplan[$this->patient->id];
-        
+
         if (empty($careplan)) {
             throw new \Exception("Could not get CarePlan info for CarePlan with ID: {$this->id}");
         }
-        
+
         return $pdfService->createPdfFromView(
             'wpUsers.patient.multiview',
             [
@@ -363,7 +379,7 @@ class CarePlan extends BaseModel implements PdfReport
             Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
         );
     }
-    
+
     /**
      * Validate that the recently created CarePlan has all the data CLH needs to provide services to a patient.
      *
@@ -384,7 +400,7 @@ class CarePlan extends BaseModel implements PdfReport
                 //            'ccdInsurancePolicies',
             ]
         );
-        
+
         $data = [
             'conditions'      => $patient->ccdProblems,
             //before enabling insurance validation, we have to store all insurance info in CPM
@@ -395,7 +411,7 @@ class CarePlan extends BaseModel implements PdfReport
             'name'            => $patient->getFullName(),
             'billingProvider' => optional($patient->billingProviderUser())->id,
         ];
-        
+
         return Validator::make(
             $data,
             [
@@ -418,7 +434,7 @@ class CarePlan extends BaseModel implements PdfReport
             ]
         );
     }
-    
+
     public function wasApprovedViaNurse()
     {
         return Note::where('patient_id', $this->user_id)->where(
@@ -426,7 +442,7 @@ class CarePlan extends BaseModel implements PdfReport
             SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE
         )->exists();
     }
-    
+
     public function scopeWithNurseApprovedVia($query)
     {
         $query->with(
@@ -439,31 +455,49 @@ class CarePlan extends BaseModel implements PdfReport
             ]
         );
     }
-    
+
     public function getNurseApproverName()
     {
-        return optional($this->patient->notes->firstWhere(
+        $note = $this->patient->notes->firstWhere(
             'type',
             '=',
-            SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE
-        )->call->outboundUser)->getFullName();
+            SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE);
+
+        if (! $note){
+            return null;
+        }
+
+        $call = $note->call;
+
+        if (! $call){
+            return null;
+        }
+
+        $outboundUser = $call->outboundUser;
+
+        if (! $outboundUser){
+            return null;
+        }
+
+        return $outboundUser->getFullName();
     }
-    
+
     /**
      * Should "Approve" button be shown on "View CarePlan" page?
      *
      * @return bool
      */
-    public function shouldShowApprovalButton():bool
+    public function shouldShowApprovalButton(): bool
     {
         if ($this->status === self::QA_APPROVED && auth()->user()->canApproveCarePlans()) {
             return true;
         }
-        
+
         if ($this->status === self::DRAFT && auth()->user()->canQAApproveCarePlans()) {
             return true;
         }
-        
+
         return false;
     }
 }
+
