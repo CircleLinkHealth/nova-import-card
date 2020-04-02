@@ -278,7 +278,13 @@ $factory->define(Location::class, function (Faker\Generator $faker) {
 });
 
 $factory->define(EligibilityBatch::class, function (Faker\Generator $faker) {
-    $practice = factory(Practice::class)->create();
+
+    $practice = Practice::where('name','demo')
+                        ->where('is_demo', true)
+                        ->first();
+    if ( ! $practice) {
+        $practice = factory(\CircleLinkHealth\Customer\Entities\Practice::class)->create(['is_demo' => true]);
+    }
 
     return [
         'practice_id' => $practice->id,
