@@ -121,13 +121,41 @@ class PatientObserver
                 if (Patient::UNREACHABLE == $oldValue) {
                     $patient->no_call_attempts_since_last_success = 0;
                 }
-
-                if (Patient::ENROLLED != $oldValue) {
+                
+                if ($this->shouldScheduleCall($patient, $oldValue, $newValue)) {
                     /** @var SchedulerService $schedulerService */
                     $schedulerService = app()->make(SchedulerService::class);
                     $schedulerService->ensurePatientHasScheduledCall($patient->user);
                 }
             }
+        }
+    }
+    
+    /**
+     * @param Patient $patient
+     * @param $oldValue
+     * @param $newValue
+     *
+     * @return bool
+     */
+    private function shouldScheduleCall(Patient $patient, $oldValue, $newValue):bool
+    {
+        $patient->loadMissing('user.carePlan');
+    
+        if (Patient::ENROLLED != $newValue) {
+            return false;
+        }
+        
+        if (Patient::ENROLLED == $oldValue) {
+            return false;
+        }
+        
+        if ($patient->user->carePlan->isClhAdminApproved()) {
+            return true;
+        }
+    
+        if ($patient->user->carePlan->isProviderApproved()) {
+            return true;
         }
     }
 }
