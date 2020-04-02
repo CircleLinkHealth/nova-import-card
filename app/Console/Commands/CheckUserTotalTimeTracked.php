@@ -61,7 +61,12 @@ class CheckUserTotalTimeTracked extends Command
             $userId))->check();
         $msg    = $this->buildSlackMessage($alerts);
         if ( ! empty($msg)) {
-            sendSlackMessage('#carecoach_ops', $msg);
+            // for testing
+            $force = config('app.env') === 'review';
+            if ($force) {
+                $msg .= "\n[test]\n";
+            }
+            sendSlackMessage('#carecoach_ops', $msg, $force);
         }
 
         $this->info('Done!');
@@ -79,17 +84,20 @@ class CheckUserTotalTimeTracked extends Command
         $daily = $alerts->get('daily');
         if ($daily) {
             $maxHours = UserTotalTimeChecker::getMaxHoursForDay();
-            $result   .= "Warning: The following nurses have exceeded the daily maximum of $maxHours hours:";
+            $result   .= "Warning: The following nurses have exceeded the daily maximum of $maxHours hours:\n";
             $daily->each(function ($time, $id) use (&$result) {
-                $result .= "Nurse[$id]: $time hours";
+                $result .= "Nurse[$id]: $time hours\n";
             });
         }
         $weekly = $alerts->get('weekly');
         if ($weekly) {
             $timesMore = UserTotalTimeChecker::getThresholdForWeek();
-            $result    = "Warning: The following nurses have exceeded their committed hours for the last 7 days by more than {$timesMore}x:";
+            if ( ! empty($result)) {
+                $result .= "\n\n";
+            }
+            $result = "Warning: The following nurses have exceeded their committed hours for the last 7 days by more than {$timesMore}x:\n";
             $weekly->each(function ($time, $id) use (&$result) {
-                $result .= "Nurse[$id]: $time hours";
+                $result .= "Nurse[$id]: $time hours\n";
             });
         }
 
