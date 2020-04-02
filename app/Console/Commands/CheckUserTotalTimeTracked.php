@@ -51,7 +51,9 @@ class CheckUserTotalTimeTracked extends Command
             $refDate = now();
         }
 
-        $checkAccumulatedTime = true;//$refDate->isTuesday() || $refDate->isFriday();
+        // for testing
+        $isReviewApp          = config('app.env') === 'review';
+        $checkAccumulatedTime = $isReviewApp || $refDate->isTuesday() || $refDate->isFriday();
         $weekAgoFromYesterday = $refDate->copy()->addWeek(-1)->startOfDay();
         $yesterday            = $refDate->copy()->subDay()->endOfDay();
 
@@ -61,12 +63,10 @@ class CheckUserTotalTimeTracked extends Command
             $userId))->check();
         $msg    = $this->buildSlackMessage($alerts);
         if ( ! empty($msg)) {
-            // for testing
-            $force = config('app.env') === 'review';
-            if ($force) {
+            if ($isReviewApp) {
                 $msg .= "\n[test]\n";
             }
-            sendSlackMessage('#carecoach_ops', $msg, $force);
+            sendSlackMessage('#carecoach_ops', $msg, $isReviewApp);
         }
 
         $this->info('Done!');
