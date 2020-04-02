@@ -2443,13 +2443,22 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                                          }
                                                      );
                                                  }
-                                             );
+                                             )
+                                             ->when($this->canApproveCarePlans(),function ($q) {
+                                                 $q->orWhereHas(
+                                                     'user',
+                                                     function ($q) {
+                                                         $q->intersectPracticesWith($this);
+                                                     }
+                                                 );
+                                             })
+                                             ;
+                                         }
+                                     );
                                          }
                                      );
                                  }
-                             );
-                       }
-                   )
+                             )
                    ->with(
                        [
                            'observations' => function ($query) {
@@ -2996,7 +3005,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             function ($q) use ($practiceId) {
                 $q->whereIn('practices.id', $practiceId);
             }
-        )->orWhere('program_id', $practiceId);
+        )->orWhereIn('program_id', $practiceId);
     }
 
     /**
