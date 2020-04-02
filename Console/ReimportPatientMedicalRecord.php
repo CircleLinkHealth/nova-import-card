@@ -171,7 +171,7 @@ class ReimportPatientMedicalRecord extends Command
                         'json'        => $mr->toJson(),
                         'practice_id' => (int) $user->program_id,
                         'patient_id'  => $user->id,
-                        'mrn'         => $user->patientInfo->mrn_number,
+                        'mrn'         => $user->patientInfo->mrn_number ?? $this->getEnrollee($user)->eligibilityJob->data['mrn'] ?? null,
                     ]
                 );
             }
