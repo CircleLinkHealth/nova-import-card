@@ -6,6 +6,7 @@ use App\NotifiableUser;
 use App\Notifications\SurveyInvitationLink;
 use App\Services\SurveyInvitationLinksService;
 use App\Survey;
+use App\SurveyInstance;
 use App\User;
 use Illuminate\Console\Command;
 
@@ -62,6 +63,12 @@ class SendHraSurveyReminder extends Command
             ])
             ->get()
             ->each(function (User $user) use ($service) {
+
+                if ($user->surveyInstances->isNotEmpty() &&
+                    $user->surveyInstances->first()->pivot->status === SurveyInstance::COMPLETED) {
+                    return;
+                }
+
                 try {
                     $url = $service->createAndSaveUrl($user, Survey::HRA, true);
                 } catch (\Exception $e) {
@@ -71,8 +78,9 @@ class SendHraSurveyReminder extends Command
                 $practiceName     = optional($user->primaryPractice)->display_name;
                 $providerFullName = optional($user->billingProviderUser())->getFullName();
                 $appointment      = $user->latestAwvAppointment()->appointment;
-                $notifiableUser = new NotifiableUser($user);
-                $notifiableUser->notify(new SurveyInvitationLink($url, Survey::HRA, null, $practiceName, $providerFullName,
+                $notifiableUser   = new NotifiableUser($user);
+                $notifiableUser->notify(new SurveyInvitationLink($url, Survey::HRA, null, $practiceName,
+                    $providerFullName,
                     $appointment));
             });
 

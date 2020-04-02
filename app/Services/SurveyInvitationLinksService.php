@@ -47,7 +47,7 @@ class SurveyInvitationLinksService
             $hraSurveyInstance = $user->surveyInstances->first();
 
             if ($hraSurveyInstance->pivot->status === SurveyInstance::COMPLETED) {
-//                throw new \Exception("cannot create invitation link for a completed survey");
+                throw new \Exception("cannot create invitation link for a completed survey");
             }
 
             $surveyId = $hraSurveyInstance->survey_id;
