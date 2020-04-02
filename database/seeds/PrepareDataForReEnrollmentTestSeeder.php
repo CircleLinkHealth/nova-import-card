@@ -25,7 +25,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         $faker = Factory::create();
         $mothStart = Carbon::parse(now())->copy()->startOfMonth()->toDateTimeString();
         $monthEnd = Carbon::parse($mothStart)->copy()->endOfMonth()->toDateTimeString();
-        $practice = Practice::where('name', '=', 'demo')->first();
+//        $practice = Practice::where('name', '=', 'demo')->first();
 
         $unreachablePatients = User::with('patientInfo')
             ->whereDoesntHave('enrollmentInvitationLink')
