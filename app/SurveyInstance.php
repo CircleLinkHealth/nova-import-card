@@ -197,9 +197,7 @@ class SurveyInstance extends BaseModel
                 if (isset($condition['operator'])) {
 
                     $valueToCheck = $firstQuestionAnswer->value['value'];
-                    if (is_array($valueToCheck)) {
-                        $valueToCheck = $valueToCheck[0];
-                    }
+                    $valueToCheck = $this->getValue($valueToCheck);
 
                     if ($condition['operator'] === 'greater_or_equal_than') {
                         //Again we use only the first Question of the related Questions, which is OK for now.
@@ -249,6 +247,13 @@ class SurveyInstance extends BaseModel
         return $isDisabled
             ? $this->getNextUnansweredQuestion($user, $newIndex, $skipOptionals)
             : $nextQuestion;
+    }
+
+    private function getValue($val) {
+        if (is_array($val)) {
+            return $this->getValue(reset($val));
+        }
+        return $val;
     }
 
     private function getQuestionsOfOrder($order): Collection
