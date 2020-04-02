@@ -75,7 +75,8 @@ class NurseController extends Controller
                     continue;
                 }
 
-                $countScheduled = $calls->filter(function (Call $c) use ($dayCounter) {
+                $nurseCalls = $calls->where('outbound_cpm_id', $nurse->id);
+                $countScheduled = $nurseCalls->filter(function (Call $c) use ($dayCounter) {
                     if ($c->scheduled_date !== $dayCounter->toDateString()) {
                         return false;
                     }
@@ -105,7 +106,7 @@ class NurseController extends Controller
                 })
                 ->count();
 
-                $countMade = $calls->filter(function (Call $c) use ($dayCounter) {
+                $countMade = $nurseCalls->filter(function (Call $c) use ($dayCounter) {
                     if (! in_array($c->status, ['reached', 'not reached'])){
                         return false;
                     }
