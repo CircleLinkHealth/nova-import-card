@@ -1,0 +1,13 @@
+{
+    "name": "$STUDLY_NAME$",
+    "alias": "$LOWER_NAME$",
+    "description": "",
+    "keywords": [],
+    "order": 0,
+    "providers": [
+        "Michalisantoniou6\\Cerberus\\CerberusServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
