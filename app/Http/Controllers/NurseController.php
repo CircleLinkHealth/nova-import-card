@@ -52,7 +52,10 @@ class NurseController extends Controller
             $last       = Carbon::now()->lastOfMonth()->endOfDay();
         }
 
-        $nurses = User::ofType('care-center')->where('access_disabled', 0)->get();
+        $nurses = User::with('nurseInfo')
+                      ->ofType('care-center')
+                      ->where('access_disabled', 0)
+                      ->get();
         $data   = [];
 
         while ($dayCounter->lte($last)) {
@@ -85,6 +88,7 @@ class NurseController extends Controller
             $dayCounter = $dayCounter->addDays(1);
         }
 
+//        dd($data);
         return view(
             'admin.reports.allocation',
             [
