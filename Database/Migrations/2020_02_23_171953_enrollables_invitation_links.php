@@ -15,7 +15,7 @@ class EnrollablesInvitationLinks extends Migration
     {
         Schema::create('enrollables_invitation_links', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedBigInteger('invitationable_id');
+            $table->unsignedInteger('invitationable_id');
             $table->string('invitationable_type');
             $table->string('link_token');
             $table->boolean('manually_expired');
