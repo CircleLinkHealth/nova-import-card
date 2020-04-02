@@ -141,21 +141,11 @@ class PatientObserver
     private function shouldScheduleCall(Patient $patient, $oldValue, $newValue):bool
     {
         $patient->loadMissing('user.carePlan');
-    
-        if (Patient::ENROLLED != $newValue) {
-            return false;
-        }
         
         if (Patient::ENROLLED == $oldValue) {
             return false;
         }
         
-        if (optional($patient->user->carePlan)->isClhAdminApproved()) {
-            return true;
-        }
-    
-        if (optional($patient->user->carePlan)->isProviderApproved()) {
-            return true;
-        }
+        return true;
     }
 }

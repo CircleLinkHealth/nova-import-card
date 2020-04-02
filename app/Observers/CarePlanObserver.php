@@ -126,11 +126,5 @@ class CarePlanObserver
         if (CarePlan::QA_APPROVED != $carePlan->status) {
             return false;
         }
-        
-        $carePlan->loadMissing('patient.patientInfo');
-        
-        if (Patient::ENROLLED == $carePlan->patient->patientInfo->ccm_status) {
-            return true;
-        }
     }
 }
