@@ -33,7 +33,7 @@ class EnrollableRequestInfo extends Model
         'enrollable_id',
         'enrollable_type',
     ];
-// create this migration is gone
+
     protected $table = 'enrollees_request_info';
 
     /**
