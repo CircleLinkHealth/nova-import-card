@@ -39,7 +39,7 @@ trait ManagesPatientCookies
             $practice = Practice::find($request->input('practice_id'));
 
             if ( ! $practice) {
-                \Log::channel('logdna')->info("Invalid Practice ID for cookie: {$this->practiceNameCookieKey()}.", [
+                \Log::info("Invalid Practice ID for cookie: {$this->practiceNameCookieKey()}.", [
                     'practice_id' => $request->input('practice_id'),
                 ]);
 

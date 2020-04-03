@@ -34,7 +34,7 @@ class AttachAttestedProblemsToCall implements ShouldQueue
     {
         $call = $event->getCall();
 
-        \Log::channel('logdna')->info('Failed to attach attested conditions to call/summary.', [
+        \Log::info('Failed to attach attested conditions to call/summary.', [
             'patient_id'           => $call->inbound_cpm_id,
             'call_id'              => $call->id,
             'attested_problem_ids' => $event->getProblems(),

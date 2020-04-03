@@ -26,6 +26,7 @@
                             <add-condition :cpm-problems="cpmProblems" :patient-id="patient_id"
                                            :problems="problems" :code-is-required="true"
                                            :is-approve-billable-page="!isNotesPage"
+                                           :practice-has-bhi="practiceHasBhi"
                             :is-bhi="isBhi"></add-condition>
                         </div>
                     </div>
@@ -113,6 +114,7 @@
                 this.attestedProblems = data.is_bhi ? data.patient.attested_bhi_problems : data.patient.attested_ccm_problems;
                 this.problems = data.patient.problems
                 this.isBhi = data.is_bhi
+                this.practiceHasBhi = data.practice_has_bhi
             })
         },
         data() {
@@ -123,6 +125,7 @@
                 addCondition: false,
                 error: null,
                 isBhi: false,
+                practiceHasBhi: false
             }
         },
         computed: {
@@ -149,7 +152,7 @@
                 });
                 //if in notes page, show all problems
                 //if in approve billable patients page, show ccm or bhi, depending on the modal
-                return self.isNotesPage ? problemsToAttest : (problemsToAttest || []).filter(function (p) {
+                return self.isNotesPage || !self.practiceHasBhi ? problemsToAttest : (problemsToAttest || []).filter(function (p) {
                     return self.isBhi ? p.is_behavioral : !p.is_behavioral;
                 });
             },

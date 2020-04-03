@@ -6,9 +6,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Call;
 use App\Exports\CareCoachMonthlyReport;
-use App\Jobs\CreateNurseInvoices;
-use App\Notifications\NurseInvoiceCreated;
 use App\Reports\NurseDailyReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
@@ -52,8 +51,23 @@ class NurseController extends Controller
             $last       = Carbon::now()->lastOfMonth()->endOfDay();
         }
 
-        $nurses = User::ofType('care-center')->where('access_disabled', 0)->get();
-        $data   = [];
+        $nurses = User::with('nurseInfo')
+                      ->ofType('care-center')
+                      ->where('access_disabled', 0)
+                      ->get();
+
+        $calls = Call::whereIn('outbound_cpm_id', $nurses->pluck('id')->toArray())
+                     ->where([
+                         ['called_date', '>=', $dayCounter->toDateTimeString()],
+                         ['called_date', '<=', $last->toDateTimeString()],
+                     ])
+                     ->orWhere([
+                         ['scheduled_date', '>=', $dayCounter->toDateString()],
+                         ['scheduled_date', '<=', $last->toDateString()],
+                     ])
+                     ->get();
+
+        $data = [];
 
         while ($dayCounter->lte($last)) {
             foreach ($nurses as $nurse) {
@@ -61,13 +75,56 @@ class NurseController extends Controller
                     continue;
                 }
 
-                $countScheduled = $nurse->nurseInfo->countScheduledCallsFor($dayCounter);
+                $nurseCalls = $calls->where('outbound_cpm_id', $nurse->id);
+                $countScheduled = $nurseCalls->filter(function (Call $c) use ($dayCounter) {
+                    if ($c->scheduled_date !== $dayCounter->toDateString()) {
+                        return false;
+                    }
 
-                $countMade = $nurse->nurseInfo->countCompletedCallsFor($dayCounter);
+                    if (
+                        Carbon::parse($c->called_date)->gte($dayCounter->copy()->startOfDay()) &&
+                        Carbon::parse($c->called_date)->lte($dayCounter->copy()->endOfDay()->toDateTimeString())
+                    ) {
+                        return true;
+                    }
+
+                    if (
+                        $c->called_date == null &&
+                        $c->status == 'scheduled'
+                    ) {
+                        return true;
+                    }
+
+                    if (
+                        $c->called_date == null &&
+                        $c->status == 'dropped'
+                    ) {
+                        return true;
+                    }
+
+                    return false;
+                })
+                ->count();
+
+                $countMade = $nurseCalls->filter(function (Call $c) use ($dayCounter) {
+                    if (! in_array($c->status, ['reached', 'not reached'])){
+                        return false;
+                    }
+
+                    if (
+                        Carbon::parse($c->called_date)->lte($dayCounter->copy()->startOfDay()) ||
+                        Carbon::parse($c->called_date)->gte($dayCounter->copy()->endOfDay())
+                    ){
+                        return false;
+                    }
+
+                    return true;
+                })
+                ->count();
 
                 $formattedDate = $dayCounter->format('m/d Y');
 
-                $name = $nurse->first_name[0].'. '.$nurse->getLastName();
+                $name = $nurse->first_name[0] . '. ' . $nurse->getLastName();
 
                 if ($countScheduled > 0) {
                     $data[$formattedDate][$name]['Scheduled'] = $countScheduled;
@@ -119,4 +176,5 @@ class NurseController extends Controller
 
         return view('admin.nurse.monthly-report', compact(['date', 'rows']));
     }
+
 }

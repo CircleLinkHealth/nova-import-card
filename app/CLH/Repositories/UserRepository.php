@@ -8,6 +8,7 @@ namespace App\CLH\Repositories;
 
 use App\CareAmbassador;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -21,9 +22,6 @@ use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
 use CircleLinkHealth\Customer\Tasks\ClearUserCache;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
-use Config;
-use Illuminate\Cache\TaggableStore;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Storage;
@@ -51,7 +49,7 @@ class UserRepository
         }
 
         $program_name  = $program->display_name;
-        $email_subject = '['.$program_name.'] New User Registration!';
+        $email_subject = '[' . $program_name . '] New User Registration!';
         $data          = [
             'patient_name'  => $user->getFullName(),
             'patient_id'    => $user->id,
@@ -75,7 +73,7 @@ class UserRepository
         $user = $user->createNewUser($params->get('email'), $params->get('password'));
 
         if ( ! $user || is_null($user->id)) {
-            \Log::channel('logdna')->error('User has not been created.', [
+            \Log::error('User has not been created.', [
                 'email_exists_in_parameters' => ! is_null($params->get('email')),
             ]);
         }
@@ -92,7 +90,7 @@ class UserRepository
         $this->saveOrUpdateRoles($user, $params);
 
         if ( ! empty($params->get('roles')) && 0 == $user->roles()->count()) {
-            \Log::channel('logdna')->error('User roles have not been attached.', [
+            \Log::error('User roles have not been attached.', [
                 'user_id' => $user->id,
             ]);
         }
@@ -229,11 +227,11 @@ class UserRepository
         }
 
         $writerFolder = $ehr->where('type', '=', 'dir')
-            ->where('filename', '=', "report-writer-{$user->id}")
-            ->first();
+                            ->where('filename', '=', "report-writer-{$user->id}")
+                            ->first();
 
         if ( ! $writerFolder) {
-            $cloudDisk->makeDirectory($ehrPath."/report-writer-{$user->id}");
+            $cloudDisk->makeDirectory($ehrPath . "/report-writer-{$user->id}");
 
             return $this->saveEhrReportWriterFolder($user);
         }
@@ -252,7 +250,9 @@ class UserRepository
         $permission = new \Google_Service_Drive_Permission();
         $permission->setRole('writer');
         $permission->setType('user');
-        $permission->setEmailAddress('joe@circlelinkhealth.com');
+
+        $permission->setEmailAddress(AppConfig::pull('ehr_report_writer_folder_director',
+            'ethan@circlelinkhealth.com'));
 
         $service->permissions->create(
             $writerFolder['basename'],
@@ -294,7 +294,7 @@ class UserRepository
         CareAmbassador::updateOrCreate(
             ['user_id' => $user->id],
             [
-                'hourly_rate' => $params->get('hourly_rate')
+                'hourly_rate'    => $params->get('hourly_rate')
                     ?: null,
                 'speaks_spanish' => 'on' == $params->get('speaks_spanish')
                     ? 1
@@ -373,7 +373,7 @@ class UserRepository
             for ($i = 0; $i < count($contactDays); ++$i) {
                 $contactDaysDelmited .= (count($contactDays) == $i + 1)
                     ? $contactDays[$i]
-                    : $contactDays[$i].', ';
+                    : $contactDays[$i] . ', ';
             }
             $params->add(['preferred_cc_contact_days' => $contactDaysDelmited]);
         }
@@ -515,9 +515,9 @@ class UserRepository
         }
 
         DB::table('practice_role_user')
-            ->where('user_id', $user->id)
-            ->whereNotIn('program_id', $practices)
-            ->delete();
+          ->where('user_id', $user->id)
+          ->whereNotIn('program_id', $practices)
+          ->delete();
 
         $this->clearRolesCache($user);
 

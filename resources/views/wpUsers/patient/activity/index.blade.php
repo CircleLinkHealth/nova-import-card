@@ -251,9 +251,11 @@
                                         group: 5   // the number of pages in the pager
                                     },
                                     {!! $activity_json !!}                         });
-                                webix.event(window, "resize", function () {
+
+                                const debounced = _.debounce(() => {
                                     obs_alerts_dtable.adjust();
-                                })
+                                }, 1000);
+                                webix.event(window, "resize", debounced);
 
                                 $('#refresh-activity').click(function () {
 

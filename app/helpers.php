@@ -176,17 +176,17 @@ if ( ! function_exists('activeNurseNames')) {
     {
         return User::ofType('care-center')
             ->with(
-                [
-                    'nurseInfo' => function ($q) {
-                        $q->where('is_demo', '!=', true);
-                    },
-                ]
-            )->whereHas(
-                'nurseInfo',
-                function ($q) {
-                    $q->where('is_demo', '!=', true);
-                }
-            )->where('user_status', 1)
+                       [
+                           'nurseInfo' => function ($q) {
+                               $q->where('is_demo', '!=', true);
+                           },
+                       ]
+                   )->whereHas(
+                       'nurseInfo',
+                       function ($q) {
+                           $q->where('is_demo', '!=', true);
+                       }
+                   )->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -1340,7 +1340,46 @@ if ( ! function_exists('is_falsey')) {
 if ( ! function_exists('isAllowedToSee2FA')) {
     function isAllowedToSee2FA(User $user = null)
     {
-        return (bool) config('auth.two_fa_enabled') && optional($user ?? auth()->user())->isAdmin();
+        $twoFaEnabled = (bool) config('auth.two_fa_enabled');
+        if ( ! $twoFaEnabled) {
+            return false;
+        }
+
+        if ( ! $user) {
+            $user = auth()->user();
+        }
+
+        if ( ! $user || $user->isParticipant()) {
+            return false;
+        }
+
+        return $user->isAdmin() || isTwoFaEnabledForPractice($user->program_id);
+    }
+}
+
+if ( ! function_exists('isTwoFaEnabledForPractice')) {
+    /**
+     * Key: two_fa_enabled_practices
+     * Default: false.
+     *
+     * @param mixed $practiceId
+     */
+    function isTwoFaEnabledForPractice($practiceId): bool
+    {
+        $key = 'two_fa_enabled_practices';
+
+        $twoFaEnabledPractices = \Cache::remember($key, 2, function () use ($key) {
+            $val = AppConfig::pull($key, null);
+            if (null === $val) {
+                setAppConfig($key, '');
+
+                return [];
+            }
+
+            return explode(',', $val);
+        });
+
+        return in_array($practiceId, $twoFaEnabledPractices);
     }
 }
 
@@ -1692,7 +1731,12 @@ if ( ! function_exists('patientLoginIsEnabledForPractice')) {
 
         return \Cache::remember(sha1("{$key}_{$practiceId}"), 2, function () use ($key, $practiceId) {
             return AppConfig::where('config_key', $key)
-                ->where('config_value', $practiceId)->exists();
+                //give the ability to enable for all practices at once
+                ->whereIn('config_value', [
+                    $practiceId,
+                    'all',
+                ])
+                ->exists();
         });
     }
 }
@@ -1723,8 +1767,8 @@ if ( ! function_exists('isDownloadingNotesEnabledForUser')) {
         return \Cache::remember(sha1("{$key}_{$userId}"), 2, function () use ($key, $userId) {
             return AppConfig::where('config_key', $key)
                 ->where(function ($q) use ($userId) {
-                    $q->where('config_value', $userId)->orWhere('config_value', 'all');
-                })->exists();
+                                $q->where('config_value', $userId)->orWhere('config_value', 'all');
+                            })->exists();
         });
     }
 }
@@ -1742,8 +1786,99 @@ if ( ! function_exists('showNurseMetricsInDailyEmailReport')) {
 
         return AppConfig::whereIn('config_key', $options)
             ->where(function ($q) use ($userId) {
-                    $q->where('config_value', $userId)
-                        ->orWhere('config_value', 'all_nurses');
-                })->exists();
+                            $q->where('config_value', $userId)
+                                ->orWhere('config_value', 'all_nurses');
+                        })->exists();
+    }
+}
+
+if ( ! function_exists('validateUsPhoneNumber')) {
+    /**
+     * @param string
+     * @param mixed $phoneNumber
+     */
+    function validateUsPhoneNumber($phoneNumber): bool
+    {
+        $validator = \Validator::make(
+            [
+                'number' => (new \CircleLinkHealth\Core\StringManipulation())->formatPhoneNumberE164($phoneNumber),
+            ],
+            [
+                'number' => ['required', \Illuminate\Validation\Rule::phone()->country(['US'])],
+            ]
+        );
+
+        return $validator->passes();
+    }
+}
+
+if ( ! function_exists('usStatesArrayForDropdown')) {
+    function usStatesArrayForDropdown(): array
+    {
+        return [
+            'AL' => 'Alabama',
+            'AK' => 'Alaska',
+            'AZ' => 'Arizona',
+            'AR' => 'Arkansas',
+            'CA' => 'California',
+            'CO' => 'Colorado',
+            'CT' => 'Connecticut',
+            'DE' => 'Delaware',
+            'DC' => 'District Of Columbia',
+            'FL' => 'Florida',
+            'GA' => 'Georgia',
+            'HI' => 'Hawaii',
+            'ID' => 'Idaho',
+            'IL' => 'Illinois',
+            'IN' => 'Indiana',
+            'IA' => 'Iowa',
+            'KS' => 'Kansas',
+            'KY' => 'Kentucky',
+            'LA' => 'Louisiana',
+            'ME' => 'Maine',
+            'MD' => 'Maryland',
+            'MA' => 'Massachusetts',
+            'MI' => 'Michigan',
+            'MN' => 'Minnesota',
+            'MS' => 'Mississippi',
+            'MO' => 'Missouri',
+            'MT' => 'Montana',
+            'NE' => 'Nebraska',
+            'NV' => 'Nevada',
+            'NH' => 'New Hampshire',
+            'NJ' => 'New Jersey',
+            'NM' => 'New Mexico',
+            'NY' => 'New York',
+            'NC' => 'North Carolina',
+            'ND' => 'North Dakota',
+            'OH' => 'Ohio',
+            'OK' => 'Oklahoma',
+            'OR' => 'Oregon',
+            'PA' => 'Pennsylvania',
+            'RI' => 'Rhode Island',
+            'SC' => 'South Carolina',
+            'SD' => 'South Dakota',
+            'TN' => 'Tennessee',
+            'TX' => 'Texas',
+            'UT' => 'Utah',
+            'VT' => 'Vermont',
+            'VA' => 'Virginia',
+            'WA' => 'Washington',
+            'WV' => 'West Virginia',
+            'WI' => 'Wisconsin',
+            'WY' => 'Wyoming',
+        ];
+    }
+}
+
+if ( ! function_exists('sanitizeString')) {
+    /**
+     * @param $string
+     *
+     * @return string
+     */
+    function sanitizeString($string)
+    {
+        return filter_var($string, FILTER_SANITIZE_STRING);
     }
 }

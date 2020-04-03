@@ -21,7 +21,7 @@ class AttachUPG0506CarePlanToPatientUser
     {
         $user = $event->getUser();
 
-        \Log::channel('logdna')->info('Failed to attach G0506 Care Plan to patient user.', [
+        \Log::info('Failed to attach G0506 Care Plan to patient user.', [
             'patient_id'        => $user->id,
             'exception_message' => $exception->getMessage(),
         ]);

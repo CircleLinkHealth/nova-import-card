@@ -8,6 +8,7 @@ namespace App\Http;
 
 use App\Http\Middleware\ACL\ProviderDashboardACL;
 use App\Http\Middleware\AddResponseOriginal;
+use App\Http\Middleware\AdminOrPracticeStaff;
 use App\Http\Middleware\CheckCarePlanMode;
 use App\Http\Middleware\CheckForMaintenanceMode;
 use App\Http\Middleware\CheckOnboardingInvite;
@@ -51,14 +52,14 @@ class Kernel extends HttpKernel
         FrameGuard::class,
         SentryContext::class,
     ];
-
+    
     /**
      * The application's route middleware groups.
      *
      * @var array
      */
     protected $middlewareGroups = [
-        'web' => [
+        'web'      => [
             //NOTE: This makes LaravelCaffeineDripMiddleware compatible with CacheResponse
             AddResponseOriginal::class,
             EncryptCookies::class,
@@ -74,12 +75,12 @@ class Kernel extends HttpKernel
         'sessions' => [
             StartSession::class,
         ],
-        'api' => [
+        'api'      => [
             'throttle:60,1',
             'bindings',
         ],
     ];
-
+    
     /**
      * The application's route middleware.
      *
@@ -87,14 +88,14 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         //Laravel Middleware
-        'auth'       => Authenticate::class,
-        'auth.basic' => AuthenticateWithBasicAuth::class,
-        'bindings'   => SubstituteBindings::class,
-        'can'        => Authorize::class,
-        'guest'      => RedirectIfAuthenticated::class,
-        'signed'     => \Illuminate\Routing\Middleware\ValidateSignature::class,
-        'throttle'   => ThrottleRequests::class,
-
+        'auth'                   => Authenticate::class,
+        'auth.basic'             => AuthenticateWithBasicAuth::class,
+        'bindings'               => SubstituteBindings::class,
+        'can'                    => Authorize::class,
+        'guest'                  => RedirectIfAuthenticated::class,
+        'signed'                 => \Illuminate\Routing\Middleware\ValidateSignature::class,
+        'throttle'               => ThrottleRequests::class,
+        
         //CLH Middleware
         'ability'                => CerberusAbility::class,
         'permission'             => CerberusPermission::class,
@@ -108,5 +109,6 @@ class Kernel extends HttpKernel
         'cacheResponse'          => DummyPlaceholder::class,
         'checkPatientUserData'   => CheckPatientUserData::class,
         'enrollmentCenter'       => EnrollmentCenter::class,
+        'adminOrPracticeStaff'   => AdminOrPracticeStaff::class,
     ];
 }

@@ -7,7 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
-use App\Console\Commands\ReimportPatientMedicalRecord;
+use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -68,7 +68,7 @@ class MedicalRecordImportController extends Controller
                         $imr['location_id']         = $record['location_id'];
                         $imr['practice_id']         = $record['practice_id'];
                         $imr['billing_provider_id'] = $record['billing_provider_id'];
-                        $imr['nurse_user_id']       = $record['nurse_user_id'];
+                        $imr['nurse_user_id']       = $record['nurse_user_id'] ?? null;
                         $carePlan                   = $imr->updateOrCreateCarePlan();
                         array_push(
                             $importedRecords,
@@ -78,6 +78,8 @@ class MedicalRecordImportController extends Controller
                                 'patient'   => $carePlan->patient()->first(),
                             ]
                         );
+                        $imr->imported = true;
+                        $imr->save();
                     } catch (\Exception $ex) {
                         //throwing Exceptions to help debug importing issues
                         throw $ex;
@@ -100,103 +102,7 @@ class MedicalRecordImportController extends Controller
             400
         );
     }
-
-    public function importDEPRECATED(Request $request)
-    {
-        $import = $request->input('medicalRecordsToImport');
-        $delete = $request->input('medicalRecordsToDelete');
-
-        if ( ! empty($import)) {
-            foreach ($import as $id) {
-                $imr = ImportedMedicalRecord::find($id);
-
-                if (empty($imr)) {
-                    continue;
-                }
-
-                $carePlan = $imr->updateOrCreateCarePlan();
-
-                $imported[] = [
-                    'importedMedicalRecordId' => $id,
-                    'userId'                  => $carePlan->user_id,
-                ];
-            }
-        }
-
-        if ( ! empty($delete)) {
-            $deleted = [];
-
-            foreach ($delete as $id) {
-                if (empty($id)) {
-                    continue;
-                }
-
-                $imr = ImportedMedicalRecord::find($id);
-
-                $medicalRecord = app($imr->medical_record_type)->find($imr->medical_record_id);
-                $medicalRecord->update(
-                    [
-                        'imported' => false,
-                    ]
-                );
-
-                $imr->delete();
-
-                $deleted[] = $id;
-            }
-        }
-
-        return response()->json(compact('imported', 'deleted'), 200);
-    }
-
-    public function importOld(Request $request)
-    {
-        $import = $request->input('medicalRecordsToImport');
-        $delete = $request->input('medicalRecordsToDelete');
-
-        if ( ! empty($import)) {
-            foreach ($import as $id) {
-                $imr = ImportedMedicalRecord::find($id);
-
-                if (empty($imr)) {
-                    continue;
-                }
-
-                $carePlan = $imr->updateOrCreateCarePlan();
-
-                $imported[] = [
-                    'importedMedicalRecordId' => $id,
-                    'userId'                  => $carePlan->user_id,
-                ];
-            }
-        }
-
-        if ( ! empty($delete)) {
-            $deleted = [];
-
-            foreach ($delete as $id) {
-                if (empty($id)) {
-                    continue;
-                }
-
-                $imr = ImportedMedicalRecord::find($id);
-
-                $medicalRecord = app($imr->medical_record_type)->find($imr->medical_record_id);
-                $medicalRecord->update(
-                    [
-                        'imported' => false,
-                    ]
-                );
-
-                $imr->delete();
-
-                $deleted[] = $id;
-            }
-        }
-
-        return response()->json(compact('imported', 'deleted'), 200);
-    }
-
+    
     public function reImportPatient(Request $request, $userId)
     {
         $args = [

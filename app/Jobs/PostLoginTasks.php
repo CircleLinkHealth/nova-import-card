@@ -45,7 +45,7 @@ class PostLoginTasks implements ShouldQueue
 
         $authyUser = optional($this->event->user->authyUser);
 
-        if ($this->event->user->isAdmin() && (bool) config('auth.two_fa_enabled') && $authyUser->authy_id && ! $authyUser->is_authy_enabled) {
+        if (isAllowedToSee2FA($this->event->user) && (bool) config('auth.two_fa_enabled') && $authyUser->authy_id && ! $authyUser->is_authy_enabled) {
             $authyUser->is_authy_enabled = true;
             $authyUser->save();
         }

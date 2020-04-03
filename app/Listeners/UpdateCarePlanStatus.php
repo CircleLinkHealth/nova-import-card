@@ -12,6 +12,7 @@ use App\Events\CarePlanWasQAApproved;
 use App\Events\PdfableCreated;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Log;
 
@@ -74,6 +75,10 @@ class UpdateCarePlanStatus
         $patient->carePlan->qa_approver_id = $approver->id;
         $patient->carePlan->qa_date        = now()->toDateTimeString();
         $patient->carePlan->save();
+        
+        ImportedMedicalRecord::where('patient_id', $patient->id)->whereNull('imported')->update([
+            'imported' => true,
+                                                                                                         ]);
     }
 
     /**

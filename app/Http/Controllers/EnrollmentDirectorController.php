@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use App\CareAmbassadorLog;
 use App\EnrolleeCustomFilter;
 use App\EnrolleeView;
 use App\Filters\EnrolleeFilters;
@@ -15,6 +15,7 @@ use App\Http\Requests\EditEnrolleeData;
 use App\Http\Requests\UpdateMultipleEnrollees;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 
@@ -140,8 +141,16 @@ END ASC, attempt_count ASC");
 
     public function runCreateEnrolleesSeeder(Request $request)
     {
-        if ( ! isProductionEnv()) {
+        if ($request->input('erase')) {
+            Artisan::call('enrollees:erase-test');
+            $message = 'Queued job to erase all demo patients. CareAmbassador Logs related to these patients will be reset. This may take a minute. Please refresh the page.';
+        } else {
             Artisan::call('db:seed', ['--class' => 'EnrolleesSeeder']);
+            $message = 'Created 10 Demo Patients. Please refresh the page.';
+        }
+
+        if ($request->input('redirect')) {
+            return redirect()->back()->withErrors(['messages' => [$message]]);
         }
 
         return 'Test Patients have been created. Please close this window.';

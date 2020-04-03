@@ -12,10 +12,10 @@ use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
+use App\Relationships\PatientCareplanRelations;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanService;
 use App\Services\PatientService;
-use App\ValueObjects\PatientCareplanRelations;
 use Auth;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\PdfService;
@@ -175,7 +175,7 @@ class PatientCareplanController extends Controller
         $pageFileNames    = [];
 
         $fileNameWithPathBlankPage = $this->pdfService->blankPage();
-        
+
         $users = User::with(PatientCareplanRelations::get())->has('patientInfo')->has('billingProvider.user')->findMany($userIds);
 
         // create pdf for each user
@@ -371,59 +371,7 @@ class PatientCareplanController extends Controller
         $patientWithdrawnReason = $patient->getWithdrawnReason();
 
         // States (for dropdown)
-        $states = [
-            'AL' => 'Alabama',
-            'AK' => 'Alaska',
-            'AZ' => 'Arizona',
-            'AR' => 'Arkansas',
-            'CA' => 'California',
-            'CO' => 'Colorado',
-            'CT' => 'Connecticut',
-            'DE' => 'Delaware',
-            'DC' => 'District Of Columbia',
-            'FL' => 'Florida',
-            'GA' => 'Georgia',
-            'HI' => 'Hawaii',
-            'ID' => 'Idaho',
-            'IL' => 'Illinois',
-            'IN' => 'Indiana',
-            'IA' => 'Iowa',
-            'KS' => 'Kansas',
-            'KY' => 'Kentucky',
-            'LA' => 'Louisiana',
-            'ME' => 'Maine',
-            'MD' => 'Maryland',
-            'MA' => 'Massachusetts',
-            'MI' => 'Michigan',
-            'MN' => 'Minnesota',
-            'MS' => 'Mississippi',
-            'MO' => 'Missouri',
-            'MT' => 'Montana',
-            'NE' => 'Nebraska',
-            'NV' => 'Nevada',
-            'NH' => 'New Hampshire',
-            'NJ' => 'New Jersey',
-            'NM' => 'New Mexico',
-            'NY' => 'New York',
-            'NC' => 'North Carolina',
-            'ND' => 'North Dakota',
-            'OH' => 'Ohio',
-            'OK' => 'Oklahoma',
-            'OR' => 'Oregon',
-            'PA' => 'Pennsylvania',
-            'RI' => 'Rhode Island',
-            'SC' => 'South Carolina',
-            'SD' => 'South Dakota',
-            'TN' => 'Tennessee',
-            'TX' => 'Texas',
-            'UT' => 'Utah',
-            'VT' => 'Vermont',
-            'VA' => 'Virginia',
-            'WA' => 'Washington',
-            'WV' => 'West Virginia',
-            'WI' => 'Wisconsin',
-            'WY' => 'Wyoming',
-        ];
+        $states = usStatesArrayForDropdown();
 
         // timezones for dd
         $timezones_raw = DateTimeZone::listIdentifiers(DateTimeZone::ALL);

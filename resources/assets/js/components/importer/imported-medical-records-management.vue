@@ -25,6 +25,12 @@
             <template slot="h__selected">
                 <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox"/>
             </template>
+            <template slot="Name" slot-scope="props">
+                <a v-if="props.row.patient_id" :href="linkToCarePlan(props.row.patient_id)" target="_blank">
+                    {{props.row.Name}}
+                </a>
+                <p v-else>{{props.row.Name}}</p>
+            </template>
             <template slot="Practice" slot-scope="props">
                 <v-select
                         v-model="props.row.Practice"
@@ -37,43 +43,49 @@
 
             </template>
             <template slot="Location" slot-scope="props">
-                <v-select
-                        v-model="props.row.Location"
-                        @input="props.row.changeLocation(props.row.Location)"
-                        :options="props.row.locations"
-                        :disabled="! props.row.Practice"
-                        class="form-control">
-                </v-select>
-
                 <div v-if="props.row.loaders.locations">
-                    <loader></loader>
+                    <div class="placeholder-dropdown">
+                        <loader></loader>
+                    </div>
                 </div>
+
+                <v-select v-else
+                          v-model="props.row.Location"
+                          @input="props.row.changeLocation(props.row.Location)"
+                          :options="props.row.locations"
+                          :disabled="! props.row.Practice"
+                          class="form-control">
+                </v-select>
             </template>
             <template slot="Billing Provider" slot-scope="props">
-                <v-select
-                        v-model="props.row['Billing Provider']"
-                        @input="props.row.changeProvider(props.row['Billing Provider'])"
-                        :options="props.row.providers"
-                        :disabled="! props.row.Location"
-                        class="form-control">
-                </v-select>
-
                 <div v-if="props.row.loaders.providers">
-                    <loader></loader>
+                    <div class="placeholder-dropdown">
+                        <loader></loader>
+                    </div>
                 </div>
+
+                <v-select v-else
+                          v-model="props.row['Billing Provider']"
+                          @input="props.row.changeProvider(props.row['Billing Provider'])"
+                          :options="props.row.providers"
+                          :disabled="! props.row.Location"
+                          class="form-control">
+                </v-select>
             </template>
             <template v-if="isAdmin" slot="Care Coach" slot-scope="props">
-                <v-select
-                        v-model="props.row.careCoach"
-                        @input="props.row.changeLocation((props.row.provider || {}).id)"
-                        :options="props.row.providers"
-                        :disabled="! props.row.Practice"
-                        class="form-control">
-                </v-select>
-
-                <div v-if="props.row.loaders.providers">
-                    <loader></loader>
+                <div v-if="props.row.loaders.nurses">
+                    <div class="placeholder-dropdown">
+                        <loader></loader>
+                    </div>
                 </div>
+
+                <v-select v-else
+                          v-model="props.row['Care Coach']"
+                          @input="props.row.changeNurse(props.row['Care Coach'])"
+                          :options="props.row.nurses"
+                          :disabled="! props.row.Practice"
+                          class="form-control">
+                </v-select>
             </template>
             <template slot="2+ CCM Cond" slot-scope="props">
                 <input class="row-select" v-model="props.row['2+ CCM Cond']" type="checkbox" disabled/>
@@ -131,6 +143,7 @@
     import {currentUser} from '../../store/getters';
     import VueSelect from "vue-select";
     import GetsNurses from '../../mixins/gets-nurses'
+    import moment from "moment";
 
     export default {
         name: 'imported-medical-records-management',
@@ -193,8 +206,10 @@
                     return () => this.tableData.find(record => record.id === id).errors
                 },
                 setupRecord(record) {
-                    if (record.demographics) {
-                        record.demographics.display_name = record.demographics.first_name + ' ' + record.demographics.last_name
+                    record.dob = '';
+
+                    if((record.patient || {}).patient_info && (record.patient || {}).patient_info.birth_date) {
+                        record.dob = moment((record.patient || {}).patient_info.birth_date).format('MM-DD-YYYY');
                     }
                     const self = this;
                     const practice = {
@@ -214,19 +229,25 @@
                         value: record.nurse_user_id
                     };
 
+                    if (practice.value) {
+                        self.changePractice(record.id, practice);
+                    }
+
                     return {
                         id: record.id,
+                        patient: record.patient,
+                        patient_id: record.patient_id,
                         selected: false,
-                        Name: (record.demographics || {}).display_name,
-                        DOB: (record.demographics || {}).dob,
+                        Name: (record.patient || {}).display_name,
+                        DOB: record.dob,
                         Practice: practice,
                         practice_id: practice.value,
                         location: record.location,
                         Location: location,
                         location_id: location.value,
                         'Billing Provider': billingProvider,
-                        'Care Coach': careCoach,
                         billing_provider_id: billingProvider.value,
+                        'Care Coach': careCoach,
                         nurse_user_id: careCoach.value,
                         nurse_user: record.nurse_user,
                         '2+ CCM Cond': (record.validation_checks || {}).has_at_least_2_ccm_conditions,
@@ -238,6 +259,7 @@
                             confirm: null,
                             practices: null,
                             locations: null,
+                            nurses: null,
                             providers: null
                         },
                         loaders: {
@@ -246,11 +268,13 @@
                             practices: false,
                             locations: false,
                             providers: false,
+                            nurses: false,
                             update: false
                         },
                         practices: () => self.practices,
                         locations: [],
                         providers: [],
+                        nurses: [],
                         changePractice(selectedOption) {
                             self.changePractice(record.id, selectedOption);
                         },
@@ -276,28 +300,59 @@
                     }
                     record.Practice = selectedPractice;
                     record.practice_id = selectedPractice.value;
+
+                    record.providers = [];
+
                     record.Location = {label: null, value: null};
                     record.location_id = null;
                     record.locations = [];
                     record.loaders.locations = true;
-                    record.providers = [];
-                    this.getLocations(selectedPractice.value).then(locations => {
-                        //console.log('get-practice-locations', practiceId, locations)
-                        record.locations = locations
-                        record.loaders.locations = false
+                    this.getLocations(selectedPractice.value)
+                        .then(locations => {
+                            //console.log('get-practice-locations', practiceId, locations)
+                            record.locations = locations;
+                            record.loaders.locations = false;
 
-                        if (_.isNull(record.Location.value) && 1 === parseInt(record.locations.length)) {
-                            record.Location = {label: record.locations[0].name, value: record.locations[0].id};
-                        }
+                            if (_.isNull(record.Location.value) && 1 === record.locations.length) {
+                                record.Location = {label: record.locations[0].name, value: record.locations[0].id};
+                            }
 
-                        this.changeLocation(recordId, record.Location)
-                    }).catch(err => {
-                        record.loaders.locations = false
-                        record.errors.locations = err.message
-                        console.error('get-practice-locations', err)
-                    })
-                    this.getNurseUsers(selectedPractice.value)
+                            this.changeLocation(recordId, record.Location)
+                        })
+                        .catch(err => {
+                            record.loaders.locations = false;
+                            record.errors.locations = err.message;
+                            console.error('get-practice-locations', err)
+                        });
 
+                    record['Care Coach'] = {label: null, value: null};
+                    record.nurse_user_id = null;
+                    record.nurses = [];
+                    record.loaders.nurses = true;
+                    this.getNurses(true)
+                        .then(nurses => {
+                            record.loaders.nurses = false;
+                            record.nurses = nurses.filter(nurse => (nurse.practices || []).includes(parseInt(selectedPractice.value)))
+                                .map(nurse => {
+                                    return {
+                                        label: nurse.display_name,
+                                        value: nurse.id
+                                    };
+                                });
+
+                            if (_.isNull(record['Care Coach'].value) && 1 === record.nurses.length) {
+                                record['Care Coach'] = {
+                                    label: record.nurses[0].label,
+                                    value: record.nurses[0].value
+                                };
+                            }
+                            this.changeNurse(recordId, record['Care Coach']);
+                        })
+                        .catch(err => {
+                            record.loaders.nurses = false;
+                            record.errors.nurses = err.message;
+                            console.error('get-nurses', err);
+                        });
                 },
                 changeLocation(recordId, selectedLocation) {
                     const record = this.tableData.find(row => row.id === recordId);
@@ -316,10 +371,14 @@
                         record.providers = providers
                         record.loaders.providers = false
                         if (!(record.providers || []).find(provider => parseInt(provider.id) === parseInt(record.billing_provider_id))) {
+                            record['Billing Provider'] = {label: '', value:''};
                             record.billing_provider_id = null
                         }
-                        if (_.isNull(record.billing_provider_id) && 1 === parseInt(record.providers.length)) {
-                            record['Billing Provider'] = {label: record.providers[0].display_name, value: record.providers[0].id};
+                        if (_.isNull(record.billing_provider_id) && 1 === record.providers.length) {
+                            record['Billing Provider'] = {
+                                label: record.providers[0].display_name,
+                                value: record.providers[0].id
+                            };
                             record.billing_provider_id = record.providers[0].id;
                         }
                         console.log('get-practice-location-providers', providers)
@@ -331,21 +390,35 @@
                 },
                 changeProvider(recordId, selectedProvider) {
                     const record = this.tableData.find(row => row.id === recordId);
-                    if (record) {
-                        const provider = record.providers.find(p => p.id === selectedProvider.value);
-                        if (provider) {
-                            record['Billing Provider'] = selectedProvider;
-                            record.billing_provider_id = provider.id
-                        }
+
+                    if (!record) {
+                        return
                     }
+
+                    const provider = record.providers.find(p => p.id === selectedProvider.value);
+
+                    if (provider) {
+                        record['Billing Provider'] = selectedProvider;
+                        record.billing_provider_id = provider.id
+                        return;
+                    }
+
+                    record['Billing Provider'] = {label: '', value:''};
+                    record.billing_provider_id = null
                 },
                 changeNurse(recordId, selectedNurse) {
+                    if (_.isNull(selectedNurse)) return;
+
                     const record = this.tableData.find(row => row.id === recordId);
+                    if (_.isNull(record.nurse_user_id) && 1 === record.nurses.length) {
+                        record['Care Coach'] = {label: record.nurses[0].display_name, value: record.nurses[0].id};
+                        record.nurse_user_id = record.nurses[0].id
+                    }
                     if (record) {
-                        const nurse = record.nurse_user.find(p => p.id === selectedNurse.value);
-                        if (provider) {
-                            record['Care Coach'] = selectedNurse;
-                            record.nurse_user_id = nurse.id
+                        const nurse = this.nurses.find(nurseUser => nurseUser.id === selectedNurse.value);
+                        if (nurse) {
+                            record['Care Coach'] = {label: nurse.display_name, value: nurse.id};
+                            record.nurse_user_id = nurse.id;
                         }
                     }
                 },
@@ -377,6 +450,9 @@
                     return this.axios.get(this.url).then((response) => {
                         const records = response.data || []
                         this.tableData = records.map(this.setupRecord)
+                        this.tableData.forEach(row => {
+                            row.changePractice(row.Practice)
+                        })
                         this.loaders.records = false
                         return this.tableData
                     }).catch(err => {
@@ -435,42 +511,46 @@
                 },
                 submitOne(id) {
                     const record = this.tableData.find(r => r.id === id)
-                    if (record) {
-                        if (!!record.practice_id && !!record.billing_provider_id && !!record.location_id) {
-                            if (!record.duplicate_id || (record.duplicate_id && confirm(`This patient may be a duplicate of ${record.duplicate_id}. Are you sure you want to proceed with creating a careplan?`))) {
-                                record.loaders.confirm = true
-                                return this.axios.post(rootUrl('api/ccd-importer/records/confirm'), [record]).then((response) => {
-                                    record.loaders.confirm = false
-                                    if ((response.data || []).some(item => item.id === id && item.completed)) {
-                                        this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
-                                    }
-                                    console.log('submit-one', record, response.data)
-                                    if (((response.data || [])[0] || {}).completed) {
-                                        const patient = (((response.data || [])[0] || {}).patient || {})
-                                        EventBus.$emit('notifications:create', {
-                                            message: `Patient Created (${patient.id}): ${patient.display_name}`,
-                                            href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
-                                            noTimeout: true
-                                        })
-                                    } else {
-                                        EventBus.$emit('notifications:create', {
-                                            message: `Error when creating patient ${record.Name}`,
-                                            type: 'warning',
-                                            noTimeout: true
-                                        })
-                                    }
-                                    return this.getRecords()
-                                }).catch((err) => {
-                                    record.loaders.confirm = false
-                                    record.errors.confirm = err.message
-                                    console.error('submit-one', record, err)
+
+                    if (!record) {
+                        record.errors.confirm = 'record not found'
+                        return;
+                    }
+
+                    if (!(!!record.practice_id && !!record.billing_provider_id && !!record.location_id)) {
+                        record.errors.confirm = 'select a practice, location and provider'
+                        return;
+                    }
+
+
+                    if (!record.duplicate_id || (record.duplicate_id && confirm(`This patient may be a duplicate of ${record.duplicate_id}. Are you sure you want to proceed with creating a careplan?`))) {
+                        record.loaders.confirm = true
+                        return this.axios.post(rootUrl('api/ccd-importer/records/confirm'), [record]).then((response) => {
+                            record.loaders.confirm = false
+                            if ((response.data || []).some(item => item.id === id && item.completed)) {
+                                this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
+                            }
+                            console.log('submit-one', record, response.data)
+                            if (((response.data || [])[0] || {}).completed) {
+                                const patient = (((response.data || [])[0] || {}).patient || {})
+                                EventBus.$emit('notifications:create', {
+                                    message: `Patient Created (${patient.id}): ${patient.display_name}`,
+                                    href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
+                                    noTimeout: true
+                                })
+                            } else {
+                                EventBus.$emit('notifications:create', {
+                                    message: `Error when creating patient ${record.Name}`,
+                                    type: 'warning',
+                                    noTimeout: true
                                 })
                             }
-                        } else {
-                            record.errors.confirm = 'select a practice, location and provider'
-                        }
-                    } else {
-                        record.errors.confirm = 'record not found'
+                            return this.getRecords()
+                        }).catch((err) => {
+                            record.loaders.confirm = false
+                            record.errors.confirm = err.message
+                            console.error('submit-one', record, err)
+                        })
                     }
                 },
                 toggleAllSelect(e) {
@@ -511,13 +591,6 @@
                         }))
                     })
                 },
-                getNurseUsers(selectedPracticeId) {
-                    if (_.isEmpty(this.nurses)) {
-                        this.getNurses(true)
-                    }
-
-                    return this.nurses.filter(nurse => (nurse.practices || []).find(practiceId => practiceId === selectedPracticeId))
-                },
                 getProviders(practiceId, locationId) {
                     return this.cache().get(rootUrl(`api/practices/${practiceId}/locations/${locationId}/providers`)).then(response => {
                         return (response || []).map(item => Object.assign(item, {
@@ -525,14 +598,17 @@
                             label: item.display_name
                         }))
                     })
+                },
+                linkToCarePlan(patientId) {
+                    return rootUrl('manage-patients/'+patientId+'/view-careplan')
                 }
             }),
         created() {
-            this.getCurrentUser()
+            this.getCurrentUser();
         },
         mounted() {
-            this.getPractices()
-            this.getRecords()
+            this.getPractices();
+            this.getRecords();
 
             EventBus.$on('vdropzone:success', () => {
                 const oldRecords = this.tableData.slice(0)
@@ -579,7 +655,40 @@
     }
 
     .dropdown.v-select.form-control {
-        height: auto;
+        width: 200px;
+        height: 40px;
         padding: 0;
+    }
+
+    .table-responsive {
+        overflow-x: visible;
+        min-height: .01%;
+    }
+
+    .v-select .dropdown-toggle {
+        width: 200px;
+        height: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .placeholder-dropdown {
+        background-color: #eee;
+        border: none !important;
+        width: 200px;
+        height: 40px;
+    }
+
+    .placeholder-dropdown .loader {
+        width: 15px;
+        height: 15px;
+        position: relative;
+        left: 175px;
+        top: 12px;
+        border: 3px solid #31C6F9;
+        -webkit-animation: spin 1s linear infinite;
+        animation: spin 1s linear infinite;
+        border-top: 4px solid #555;
+        border-radius: 50%;
     }
 </style>

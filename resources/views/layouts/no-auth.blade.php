@@ -10,7 +10,6 @@
     @include('cpm-module-raygun::partials.real-user-monitoring')
 
     <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
-    <link href="{{ mix('/compiled/css/stylesheet.css') }}" rel="stylesheet">
     <link href="{{ mix('/img/favicon.png') }}" rel="icon">
     <style type="text/css">
         input[type=text], input[type=password] {

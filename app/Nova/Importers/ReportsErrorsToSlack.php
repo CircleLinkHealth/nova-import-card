@@ -46,7 +46,7 @@ abstract class ReportsErrorsToSlack
     {
         $validator = Validator::make(
             $row,
-            $this->importingRules
+            $this->getImportingRules()
         );
 
         if ($validator->fails()) {
