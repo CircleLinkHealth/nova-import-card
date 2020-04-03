@@ -146,7 +146,7 @@
             "php artisan --env=testing test:prepare-test_suite-db",
             "php artisan --env=testing migrate:fresh",
             "php artisan --env=testing migrate:views",
-            "./vendor/phpunit/phpunit/phpunit --testsuite=Feature,Unit --stop-on-failure --colors --testdox"
+            "./vendor/phpunit/phpunit/phpunit --testsuite=Feature,Unit --colors --testdox"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
