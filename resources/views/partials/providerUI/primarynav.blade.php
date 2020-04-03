@@ -11,7 +11,7 @@ if (isset($patient)) {
     $monthlyTime = '';
 }
 $user                = auth()->user();
-$patientListDropdown = $user->getPatientListDropdown();
+$patientListDropdown = getPatientListDropdown($user);
 $isTwoFaRoute = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
 ?>
 @push('styles')

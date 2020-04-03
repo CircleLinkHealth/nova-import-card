@@ -4,7 +4,7 @@
 @section('activity', 'Dashboard')
 
 <?php
-$patientListDropdown = auth()->user()->getPatientListDropdown();
+$patientListDropdown = getPatientListDropdown(auth()->user());
 $hasAwv              = in_array('awv', $patientListDropdown);
 ?>
 

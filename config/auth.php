@@ -4,6 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\Customer\Entities\User;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -70,7 +72,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model'  => \App\User::class,
+            'model'  => User::class,
         ],
 
         // 'users' => [
@@ -80,7 +82,7 @@ return [
     ],
 
     //entrust needs this
-    'model' => \App\User::class,
+    'model' => User::class,
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords
