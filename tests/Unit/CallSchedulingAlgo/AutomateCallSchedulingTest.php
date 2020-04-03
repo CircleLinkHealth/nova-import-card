@@ -155,6 +155,9 @@ class AutomateCallSchedulingTest extends TestCase
     {
         $practice   = $this->createPractice(false);
         $patient    = $this->createPatient($practice->id, false, false, false, false);
+        $updated = CarePlan::where('user_id', $patient->id)->update([
+                                                                        'status' => CarePlan::QA_APPROVED
+                                                                    ]);
         $callsCount = $patient->inboundScheduledCalls->count();
         $this->assertTrue(0 == $callsCount);
         $patient->patientInfo->ccm_status = Patient::ENROLLED;

@@ -100,6 +100,16 @@ class PatientObserver
         if ($patient->isDirty('consent_date')) {
             $this->sendPatientConsentedNote($patient);
         }
+    
+        if ($patient->isDirty('ccm_status')) {
+            $oldValue = $patient->getOriginal('ccm_status');
+            $newValue = $patient->ccm_status;
+            if ($this->shouldScheduleCall($patient, $oldValue, $newValue)) {
+                /** @var SchedulerService $schedulerService */
+                $schedulerService = app()->make(SchedulerService::class);
+                $schedulerService->ensurePatientHasScheduledCall($patient->user);
+            }
+        }
     }
 
     /**
@@ -121,12 +131,6 @@ class PatientObserver
                 if (Patient::UNREACHABLE == $oldValue) {
                     $patient->no_call_attempts_since_last_success = 0;
                 }
-                
-                if ($this->shouldScheduleCall($patient, $oldValue, $newValue)) {
-                    /** @var SchedulerService $schedulerService */
-                    $schedulerService = app()->make(SchedulerService::class);
-                    $schedulerService->ensurePatientHasScheduledCall($patient->user);
-                }
             }
         }
     }
@@ -141,6 +145,10 @@ class PatientObserver
     private function shouldScheduleCall(Patient $patient, $oldValue, $newValue):bool
     {
         $patient->loadMissing('user.carePlan');
+    
+        if (Patient::ENROLLED != $newValue) {
+            return false;
+        }
         
         if (Patient::ENROLLED == $oldValue) {
             return false;
