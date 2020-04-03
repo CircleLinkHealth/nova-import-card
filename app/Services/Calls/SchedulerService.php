@@ -55,12 +55,16 @@ class SchedulerService
         if (Patient::ENROLLED != $patient->patientInfo->ccm_status) {
             return false;
         }
+        
+        if (! $patient->carePlan) {
+            return false;
+        }
     
-        if (optional($patient->carePlan)->isClhAdminApproved()) {
+        if ($patient->carePlan->isClhAdminApproved()) {
             return true;
         }
         
-        if(optional($patient->carePlan)->isProviderApproved()) {
+        if($patient->carePlan->isProviderApproved()) {
             return true;
         }
         
@@ -76,7 +80,9 @@ class SchedulerService
 
         $now = Carbon::now();
 
-        $patient->loadMissing(['patientInfo', 'carePlan']);
+        // Always load the carePlan because Observers don't work with update queries,
+        // and we want to make sure we are using the most up-to-date CP.
+        $patient->load(['patientInfo', 'carePlan']);
 
        if (! $this->shouldScheduleCall($patient)) {
            return;

@@ -77,6 +77,14 @@ class CarePlanObserver
     
     public function saved(CarePlan $carePlan)
     {
+        if ($this->shouldScheduleCall($carePlan)) {
+            $carePlan->provider_approver_id = null;
+            $carePlan->provider_date        = null;
+            /** @var SchedulerService $schedulerService */
+            $schedulerService = app()->make(SchedulerService::class);
+            $schedulerService->ensurePatientHasScheduledCall($carePlan->patient);
+        }
+        
         if ($carePlan->isDirty('first_printed')) {
             $carePlan->load('patient');
             $this->addCarePlanPrintedNote($carePlan);
@@ -99,14 +107,6 @@ class CarePlanObserver
      */
     public function saving(CarePlan $carePlan)
     {
-        if ($this->shouldScheduleCall($carePlan)) {
-            $carePlan->provider_approver_id = null;
-            $carePlan->provider_date        = null;
-            /** @var SchedulerService $schedulerService */
-            $schedulerService = app()->make(SchedulerService::class);
-            $schedulerService->ensurePatientHasScheduledCall($carePlan->patient);
-        }
-        
         if ( ! array_key_exists('care_plan_template_id', $carePlan->getAttributes())) {
             $carePlan->care_plan_template_id = getDefaultCarePlanTemplate()->id;
         }
@@ -123,8 +123,10 @@ class CarePlanObserver
             return false;
         }
         
-        if (CarePlan::QA_APPROVED != $carePlan->status) {
-            return false;
+        if (CarePlan::QA_APPROVED == $carePlan->status) {
+            return true;
         }
+        
+        return false;
     }
 }
