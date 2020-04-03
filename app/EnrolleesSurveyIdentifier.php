@@ -8,7 +8,6 @@ class EnrolleesSurveyIdentifier
 {
     const DOB = 'Q_DOB';
     const PREFERRED_NUMBER = 'Q_PREFERRED_NUMBER';
-    const PREFERRED_DAYS_TIME = 'Q_PREFERRED_DAYS_TIME';
     const PREFERRED_DAYS = 'Q_PREFERRED_DAYS';
     const PREFERRED_TIME = 'Q_PREFERRED_TIME';
     const REQUESTS_INFO = 'Q_REQUESTS_INFO';
