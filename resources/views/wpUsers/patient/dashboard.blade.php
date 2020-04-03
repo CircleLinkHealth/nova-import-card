@@ -3,6 +3,10 @@
 @section('title', 'Dashboard')
 @section('activity', 'Dashboard')
 
+<?php
+$patientListDropdown = getPatientListDropdown(auth()->user());
+$hasAwv              = in_array('awv', $patientListDropdown);
+?>
 
 @section('content')
     <div class="container container--menu">
@@ -21,7 +25,7 @@
                     {{--</a>--}}
                     {{--</li>--}}
 
-                    @if (config('services.awv.url', null))
+                    @if (config('services.awv.url', null) && $hasAwv)
                         <li class="menu-item">
                             <a href="{{ config('services.awv.url') . '/manage-patients' }}">
                                 <div class="icon-container column-centered">
