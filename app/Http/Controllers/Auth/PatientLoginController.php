@@ -48,10 +48,10 @@ class PatientLoginController extends Controller
         $urlWithToken = $loginFormData['urlWithToken'];
         $practiceName = $loginFormData['practiceName'];
         $doctorsLastName = $loginFormData['doctorsLastName'];
-        $loginScreenTitle = $this->loginFormTitle($userId);
+        $isEnrolleeSurvey = $this->checkIfEnrolleeSurvey($userId);
 
         return view('surveyUrlAuth.surveyLoginForm',
-            compact('userId', 'urlWithToken', 'practiceName', 'doctorsLastName', "loginScreenTitle"));
+            compact('userId', 'urlWithToken', 'practiceName', 'doctorsLastName', 'isEnrolleeSurvey'));
     }
 
     /**
@@ -81,17 +81,17 @@ class PatientLoginController extends Controller
      * @param $userId
      * @return string
      */
-    public function loginFormTitle($userId)
+    public function checkIfEnrolleeSurvey($userId)
     {
-        $survey = Survey::whereName('Enrollees')->select('id')->first();
+        $survey = Survey::whereName(Survey::ENROLLEES)->select('id')->first();
         $isEnrolleSurvey = false;
         if (!empty($survey)) {
-            $isEnrolleSurvey = $survey->users()->where('user_id', $userId)->wherePivot('survey_id', $survey->id)->exists();
+            $isEnrolleSurvey = $survey->users()
+                ->where('user_id', $userId)
+                ->wherePivot('survey_id', $survey->id
+                )->exists();
         }
-        // This supposed to add a <br> but it does not
-        return $isEnrolleSurvey
-            ? 'Almost done! Just need some information'
-            : wordwrap("Annual Wellness Survey Login", 8, "\n", true);
+        return $isEnrolleSurvey;
     }
 
     /**
@@ -165,7 +165,7 @@ class PatientLoginController extends Controller
         $user = auth()->user();
 
         $prevUrl = Session::previousUrl();
-        if ((empty($prevUrl) || !$user->hasRole('participant')) && !$user->hasRole('survey-only')) {
+        if (empty($prevUrl) || !$user->hasRole(['participant', 'survey-only'])) {
             return route('home');
         }
 

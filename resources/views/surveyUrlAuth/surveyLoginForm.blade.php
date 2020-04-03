@@ -12,7 +12,12 @@
             <div class="card-body">
                 <div class="survey-main-title">
                     <div id="sub-title">
-                        {{"$loginScreenTitle\n"}}
+                        @if($isEnrolleeSurvey)
+                            Almost done! <br> Just need some information
+                        @else
+                            Annual Wellness <br> Survey Login
+                        @endif
+
                     </div>
                 </div>
                 <div class="survey-sub-welcome-text">
@@ -137,35 +142,37 @@
                 font-weight: 400;
                 margin-bottom: 20px;
             }
-            .survey-sub-welcome-text{
+
+            .survey-sub-welcome-text {
                 font-size: 14px;
                 word-break: 87px;
                 display: contents;
             }
-            .login-inputs{
+
+            .login-inputs {
                 height: 39px;
                 font-size: 13px;
             }
 
-            .birth-date{
+            .birth-date {
                 font-size: 12px;
             }
 
-            .full-name{
+            .full-name {
                 font-size: 12px;
             }
 
-            .form-group{
+            .form-group {
                 margin-bottom: -5px;
                 margin-top: -3px;
             }
 
-            .btn-primary{
+            .btn-primary {
                 height: 42px;
                 padding-top: 12px
             }
 
-            .by-circlelink{
+            .by-circlelink {
                 margin-top: -15px;
                 font-size: 12px;
                 margin-left: 19px;

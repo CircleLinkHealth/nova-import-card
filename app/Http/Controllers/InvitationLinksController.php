@@ -205,7 +205,7 @@ class InvitationLinksController extends Controller
         $survey = Survey::whereId($surveyId)->firstOrFail();
         $url = $this->service->createAndSaveUrl($user, $survey->name, true);
 
-        $user->notify(new SendSurveyLinkToEnrollable($url));
+//        $user->notify(new SendSurveyLinkToEnrollable($url));
 
         return redirect($url);
     }

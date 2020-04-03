@@ -91,7 +91,11 @@ class SurveyController extends Controller
             ->where('id', $userId)
             ->firstOrFail();
 
-        $birthDate = !empty($user->patientInfo->birth_date) ? Carbon::parse($user->patientInfo->birth_date)->toDateString() : '';
+        $birthDate = '';
+        if (optional($user->patientInfo)->birth_date) {
+            $birthDate = Carbon::parse($user->patientInfo->birth_date)->toDateString();
+        }
+
         // It can be empty. Its ok.
         $primaryPhoneNumber = $user->phoneNumbers->where('is_primary', '=', true)->first()->number;
         $isSurveyOnly = $user->hasRole('survey-only');

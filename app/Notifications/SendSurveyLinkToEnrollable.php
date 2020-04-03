@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notification;
 
 class SendSurveyLinkToEnrollable extends Notification
 {
+//    **NOTE** This disabled till decide if necessary.
     use Queueable;
     private $url;
 

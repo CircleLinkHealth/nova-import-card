@@ -1,15 +1,15 @@
 <template>
+<!-- @todo:   Phone input needs some tweaks.. Will do later-->
     <div class="scroll-container">
         <div class="scrollable">
             <div class="col-md-12 active">
-                <input type="text"
-                       class="phone-field"
-                       v-model="formattedPhoneValue"
-                       @keyup="checkNumber"
-                       :disabled="readOnly"/>
+                <VuePhoneNumberInput
+                    v-model="formattedPhoneValue"/>
             </div>
 
             <br>
+
+
 
             <!--next button-->
             <div :class="isLastQuestion ? 'text-center' : 'text-left'">
@@ -30,11 +30,13 @@
 
 <script>
     import {mdbBtn, mdbIcon} from "mdbvue";
+    import VuePhoneNumberInput from 'vue-phone-number-input';
+    import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 
     export default {
         name: "questionTypePhoneNumber",
         props: ['question', 'nonAwvPatients', 'isActive', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
-        components: {mdbBtn, mdbIcon},
+        components: {mdbBtn, mdbIcon, VuePhoneNumberInput},
 
         data() {
             return {
@@ -61,19 +63,19 @@
                 this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer, this.isLastQuestion);
             },
 
-            checkNumber(event) {
-                if (this.formattedPhoneValue !== ''
-                    && ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'].includes(event.key)) {
-                    this.phoneValue = this.formattedPhoneValue.replace(/-/g, '').match(/(\d{1,10})/g)[0];
-                    this.formattedPhoneValue = this.phoneValue.replace(/(\d{1,3})(\d{1,3})(\d{1,4})/g, '$1-$2-$3');
-                } else {
-                    this.formattedPhoneValue = '';
-                }
-            }
+            // checkNumber(event) {
+            //     if (this.formattedPhoneValue !== ''
+            //         && ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'].includes(event.key)) {
+            //         this.phoneValue = this.formattedPhoneValue.replace(/-/g, '').match(/(\d{1,10})/g)[0];
+            //         this.formattedPhoneValue = this.phoneValue.replace(/(\d{1,3})(\d{1,3})(\d{1,4})/g, '$1-$2-$3');
+            //     } else {
+            //         this.formattedPhoneValue = '';
+            //     }
+            // }
         },
 
         created() {
-            if(this.nonAwvPatients.preferredContactNumber !== []){
+            if (this.nonAwvPatients.preferredContactNumber !== []) {
                 this.formattedPhoneValue = this.nonAwvPatients.preferredContactNumber[0];
             }
         }
