@@ -41,7 +41,7 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $hoursPerDay = 4;
 
         //33.6
-        $maxAllowed  = 7 * $hoursPerDay * UserTotalTimeChecker::getThresholdForWeek();
+        $maxAllowed = 7 * $hoursPerDay * UserTotalTimeChecker::getThresholdForWeek();
 
         $start = now()->subDay(7);
         $sub6  = now()->subDay(6);
@@ -78,6 +78,25 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $this->assertTrue($time > $maxAllowed);
     }
 
+    public function test_it_raises_alert_for_total_time_over_8_hours_and_spanning_in_2_days()
+    {
+        $practice = factory(Practice::class)->create();
+        $nurse    = $this->createUser($practice->id, 'care-center');
+
+        $twelveHoursInMinutes = 12 * 60;
+        $startTime            = now()->subDay()->endOfDay()->subHours(6);
+
+        $this->addTime($nurse, null, $twelveHoursInMinutes, false, false, false, $startTime);
+
+        $start = now()->startOfDay();
+        $end   = now()->endOfDay();
+
+        $checker = new UserTotalTimeChecker($start, $end, false, $nurse->id);
+        $alerts  = $checker->check();
+        $this->assertTrue($alerts->has('daily'));
+        $this->assertTrue($alerts->get('daily')->has($nurse->id));
+    }
+
     public function test_it_does_not_raise_alert_for_total_time_less_than_8_hours_in_a_day()
     {
         $practice = factory(Practice::class)->create();
@@ -104,7 +123,7 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $hoursPerDay = 4;
 
         //33.6
-        $maxAllowed  = 7 * $hoursPerDay * UserTotalTimeChecker::getThresholdForWeek();
+        $maxAllowed = 7 * $hoursPerDay * UserTotalTimeChecker::getThresholdForWeek();
 
         $start = now()->subDay(7);
         $sub6  = now()->subDay(6);
