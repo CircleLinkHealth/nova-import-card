@@ -53,14 +53,8 @@ class ItemizedBillablePatientsReport
         $billablePatientsRepo = app(BillablePatientsEloquentRepository::class);
         
         $data = [];
-        
-        $billablePatientsRepo->billablePatients($this->practiceId, $this->month)
-                             ->whereHas(
-                                 'patientSummaries',
-                                 function ($query) {
-                                     $query->where('approved', 1);
-                                 }
-                             )
+
+        $billablePatientsRepo->billablePatients($this->practiceId, $this->month, null, true)
                              ->with(
                                  [
                                      'billingProvider.user',
@@ -79,7 +73,11 @@ class ItemizedBillablePatientsReport
                                      $summaries->each(
                                          function (User $patientUser) use (&$data) {
                                              $summary = $patientUser->patientSummaries->sortByDesc('id')->first();
-                        
+                                             
+                                             if (! $summary->approved) {
+                                                 return;
+                                             }
+
                                              $patientData = new PatientReportData();
                                              $patientData->setCcmTime(
                                                  round($summary->ccm_time / 60, 2)
@@ -149,7 +147,10 @@ class ItemizedBillablePatientsReport
         $billablePatientsRepo = app(BillablePatientsEloquentRepository::class);
         
         $billablePatientsRepo->billablePatientSummaries($this->practiceId, $this->month, true)
-                             ->where('approved', '=', true)
+                             ->where([
+                                 ['approved', '=', true],
+                                 ['rejected', '=', false],
+                                     ])
                              ->with(
                                  [
                                      'patient.billingProvider.user',
