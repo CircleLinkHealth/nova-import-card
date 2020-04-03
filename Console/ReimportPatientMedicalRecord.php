@@ -150,7 +150,7 @@ class ReimportPatientMedicalRecord extends Command
     private function attemptTemplate(User $user)
     {
         if (in_array($user->primaryPractice->name, ['marillac-clinic-inc', 'calvary-medical-clinic'])) {
-            $this->warn("Running 'marillac-clinic-inc' decorator");
+            $this->warn("Running 'csv-with-json' decorator");
             
             $mr = new CsvWithJsonMedicalRecord(
                 tap(
