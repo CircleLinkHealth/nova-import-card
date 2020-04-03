@@ -42,6 +42,34 @@ class SchedulerService
         $this->patientWriteRepository = $patientWriteRepository;
         $this->noteService            = $noteService;
     }
+    
+    /**
+     * @param Patient $patient
+     * @param $oldValue
+     * @param $newValue
+     *
+     * @return bool
+     */
+    private function shouldScheduleCall(User $patient):bool
+    {
+        if (Patient::ENROLLED != $patient->patientInfo->ccm_status) {
+            return false;
+        }
+        
+        if (! $patient->carePlan) {
+            return false;
+        }
+    
+        if ($patient->carePlan->isClhAdminApproved()) {
+            return true;
+        }
+        
+        if($patient->carePlan->isProviderApproved()) {
+            return true;
+        }
+        
+        return false;
+    }
 
     public function ensurePatientHasScheduledCall(User $patient)
     {
@@ -52,8 +80,14 @@ class SchedulerService
 
         $now = Carbon::now();
 
-        $patient->loadMissing('patientInfo');
+        // Always load the carePlan because Observers don't work with update queries,
+        // and we want to make sure we are using the most up-to-date CP.
+        $patient->load(['patientInfo', 'carePlan']);
 
+       if (! $this->shouldScheduleCall($patient)) {
+           return;
+       }
+        
         $next_predicted_contact_window = (new PatientContactWindow())->getEarliestWindowForPatientFromDate(
             $patient->patientInfo,
             $now

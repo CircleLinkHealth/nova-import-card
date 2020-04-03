@@ -24,7 +24,7 @@ class CountPatientMonthlySummaryCalls extends Command
      *
      * @var string
      */
-    protected $signature = 'count:calls {date? : the month we are counting for in format YYYY-MM-DD}';
+    protected $signature = 'count:calls {date? : the month we are counting for in format YYYY-MM-DD} {userIds? : comma separated. leave empty to check for all}';
     /**
      * @var CallRepository
      */
@@ -36,9 +36,11 @@ class CountPatientMonthlySummaryCalls extends Command
      * @var int
      */
     private $changedCount = 0;
-
+    
     /**
      * Create a new command instance.
+     *
+     * @param CallRepository $callRepository
      */
     public function __construct(CallRepository $callRepository)
     {
@@ -58,10 +60,21 @@ class CountPatientMonthlySummaryCalls extends Command
         $date = $argument
             ? Carbon::parse($argument)->startOfMonth()
             : Carbon::now()->startOfMonth();
+    
+        $userIds = $this->argument('userIds') ?? null;
+        if (null != $userIds) {
+            $userIds = explode(',', $userIds);
+        }
 
         PatientMonthlySummary::orderBy('id')
             ->whereMonthYear($date->toDateString())
-            ->chunk(500, function ($summaries) use ($date) {
+            ->when(
+                ! empty($userIds),
+                function ($q) use ($userIds) {
+                    $q->whereIn('patient_id', $userIds);
+                }
+            )
+            ->chunkById(500, function ($summaries) use ($date) {
                 foreach ($summaries as $pms) {
                     $save = false;
 
@@ -71,7 +84,7 @@ class CountPatientMonthlySummaryCalls extends Command
                     );
 
                     if ($noOfSuccessfulCalls != $pms->no_of_successful_calls) {
-                        $this->comment("user_id:{$pms->patient_id} no_of_successful_calls changing from {$pms->no_of_successful_calls} to ${noOfSuccessfulCalls}");
+                        $this->comment("user_id:{$pms->patient_id}:pms_id:{$pms->id} no_of_successful_calls changing from {$pms->no_of_successful_calls} to ${noOfSuccessfulCalls}");
                         $pms->no_of_successful_calls = $noOfSuccessfulCalls;
                         $save = true;
                     }
@@ -79,7 +92,7 @@ class CountPatientMonthlySummaryCalls extends Command
                     $noOfCalls = $this->callRepository->numberOfCalls($pms->patient_id, $date);
 
                     if ($noOfCalls != $pms->no_of_calls) {
-                        $this->comment("user_id:{$pms->patient_id} no_of_calls changing from {$pms->no_of_calls} to ${noOfCalls}");
+                        $this->comment("user_id:{$pms->patient_id}:pms_id:{$pms->id} no_of_calls changing from {$pms->no_of_calls} to ${noOfCalls}");
                         $pms->no_of_calls = $noOfCalls;
                         $save = true;
                     }

@@ -41,7 +41,8 @@ class AutomateCallSchedulingTest extends TestCase
     public function test_system_does_not_schedule_call_for_careplan_qaapproved_with_existing_call()
     {
         $practice = $this->createPractice(false);
-        $patient  = $this->createPatient($practice->id, false, false, false, false);
+        $patient  = $this->createPatient($practice->id, true, false, false, false);
+        $this->schedulerService->storeScheduledCall($patient->id, '09:00', '12:00', now()->addDay(), 'test');
         $this->schedulerService->ensurePatientHasScheduledCall($patient);
         $callsCount = $patient->inboundScheduledCalls->count();
         $callId     = $patient->inboundScheduledCalls->first()->id;
@@ -65,6 +66,7 @@ class AutomateCallSchedulingTest extends TestCase
     {
         $practice = $this->createPractice(false);
         $patient  = $this->createPatient($practice->id, false, false, false, false);
+        $this->schedulerService->storeScheduledCall($patient->id, '09:00', '12:00', now()->addDay(), 'test');
         $this->schedulerService->ensurePatientHasScheduledCall($patient);
         $callsCount = $patient->inboundScheduledCalls->count();
         $callId     = $patient->inboundScheduledCalls->first()->id;
@@ -87,6 +89,7 @@ class AutomateCallSchedulingTest extends TestCase
     {
         $practice = $this->createPractice(false);
         $patient  = $this->createPatient($practice->id, false, false, false, false);
+        $this->schedulerService->storeScheduledCall($patient->id, '09:00', '12:00', now()->addDay(), 'test');
         $this->schedulerService->ensurePatientHasScheduledCall($patient);
         $callsCount = $patient->inboundScheduledCalls->count();
         $callId     = $patient->inboundScheduledCalls->first()->id;
@@ -113,7 +116,7 @@ class AutomateCallSchedulingTest extends TestCase
     public function test_system_schedules_call_for_careplan_qaapproved()
     {
         $practice   = $this->createPractice(false);
-        $patient    = $this->createPatient($practice->id, false, false, false, false);
+        $patient    = $this->createPatient($practice->id, true, false, false, false);
         $callsCount = $patient->inboundScheduledCalls->count();
         $this->assertTrue(0 == $callsCount);
         $patient->carePlan->status = CarePlan::QA_APPROVED;
@@ -134,6 +137,10 @@ class AutomateCallSchedulingTest extends TestCase
     {
         $practice   = $this->createPractice(false);
         $patient    = $this->createPatient($practice->id, true, false, false, false);
+        $updated = CarePlan::where('user_id', $patient->id)->update([
+            'status' => CarePlan::QA_APPROVED
+                                     ]);
+        $this->schedulerService->ensurePatientHasScheduledCall($patient);
         $callsCount = $patient->inboundScheduledCalls->count();
         $this->assertTrue(1 == $callsCount);
     }
@@ -148,6 +155,9 @@ class AutomateCallSchedulingTest extends TestCase
     {
         $practice   = $this->createPractice(false);
         $patient    = $this->createPatient($practice->id, false, false, false, false);
+        $updated = CarePlan::where('user_id', $patient->id)->update([
+                                                                        'status' => CarePlan::QA_APPROVED
+                                                                    ]);
         $callsCount = $patient->inboundScheduledCalls->count();
         $this->assertTrue(0 == $callsCount);
         $patient->patientInfo->ccm_status = Patient::ENROLLED;
@@ -177,6 +187,8 @@ class AutomateCallSchedulingTest extends TestCase
                     ? Carbon::parse(Patient::DATE_CONSENT_INCLUDES_BHI)->subWeek()
                     : Carbon::parse(Patient::DATE_CONSENT_INCLUDES_BHI),
             ]);
+        
+        $patient->load('patientInfo');
 
         if ($hasBhiConsentNote) {
             $now = Carbon::now();
