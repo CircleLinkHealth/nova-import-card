@@ -2184,7 +2184,7 @@ Route::get('/invite-unreachable', [
 Route::get('/patient-self-enrollment', [
     'uses' => 'Enrollment\EnrollmentCenterController@enrolleesInvitationLetterBoard',
     'as'   => 'invitation.enrollment',
-])->middleware('auth');
+]);
 
 Route::get('/enrollment-survey', [
     'uses' => 'Enrollment\EnrollmentCenterController@enrollNow',
