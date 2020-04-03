@@ -6,6 +6,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\CountPatientMonthlySummaryCalls;
 use App\Console\Commands\CreateApprovableBillablePatientsReport;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
@@ -133,6 +134,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(CreateApprovableBillablePatientsReport::class, ['--reset-actor', now()->startOfMonth()->toDateString()])
             ->everyThirtyMinutes()->onOneServer();
+    
+        $schedule->command(CountPatientMonthlySummaryCalls::class, [now()->startOfMonth()->toDateString()])
+                 ->everyThirtyMinutes()->onOneServer();
 
 //        $schedule->command(
 //            SendCareCoachInvoices::class,
