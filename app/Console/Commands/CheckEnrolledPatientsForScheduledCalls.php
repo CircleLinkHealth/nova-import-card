@@ -25,7 +25,7 @@ class CheckEnrolledPatientsForScheduledCalls extends Command
      * @var string
      */
     protected $signature = 'calls:check {userIds? : comma separated. leave empty to check for all}';
-    
+
     /**
      * Create a new command instance.
      *
@@ -35,7 +35,7 @@ class CheckEnrolledPatientsForScheduledCalls extends Command
     {
         parent::__construct();
     }
-    
+
     /**
      * Make sure all enrolled patients have scheduled calls.
      */
@@ -45,7 +45,7 @@ class CheckEnrolledPatientsForScheduledCalls extends Command
         if (null != $userIds) {
             $userIds = explode(',', $userIds);
         }
-        
+
         $loop  = 0;
         $fixed = 0;
         User::ofType('participant')
@@ -68,18 +68,18 @@ class CheckEnrolledPatientsForScheduledCalls extends Command
                     if ($patient->inboundScheduledCalls->isNotEmpty()) {
                         return;
                     }
-                
+
                     ++$fixed;
-                    
+
                     if ($this->shouldScheduleCall($patient)) {
                         $schedulerService->ensurePatientHasScheduledCall($patient);
                     }
                 }
             );
-        
+
         $this->info("Went through $loop patients. Scheduled $fixed call(s). Done.");
     }
-    
+
     /**
      * @param User $patient
      *
@@ -88,17 +88,19 @@ class CheckEnrolledPatientsForScheduledCalls extends Command
     private function shouldScheduleCall(User $patient):bool
     {
         $patient->loadMissing(['carePlan', 'patientInfo']);
-        
+
         if (Patient::ENROLLED != $patient->patientInfo->ccm_status) {
             return false;
         }
-        
+
         if ($patient->carePlan->isClhAdminApproved()) {
             return true;
         }
-        
+
         if ($patient->carePlan->isProviderApproved()) {
             return true;
         }
+
+        return false;
     }
 }
