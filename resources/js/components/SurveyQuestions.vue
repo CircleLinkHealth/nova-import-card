@@ -1269,7 +1269,7 @@
             }
 
             if (this.isEnrollees) {
-                axios.post('/get-enrollable-data', {
+                axios.post(`/survey/${this.surveyName}/get-enrollable-data`, {
                     user_id: this.userId,
                     survey_instance_id: this.surveyInstanceId
                 })
