@@ -55,12 +55,6 @@ class SurveyController extends Controller
             throw new \Error("Survey not found for patient " . $patientId);
         }
 
-        if ($surveyData->surveyInstances[0]->survey->name === 'Enrollees') {
-            return view('survey.Enrollees.index', [
-                'data' => $surveyData->toArray(),
-            ]);
-        }
-
         return view('survey.hra.index', [
             'data' => $surveyData->toArray(),
         ]);
@@ -82,50 +76,5 @@ class SurveyController extends Controller
             'survey_status' => $answer,
         ], 200);
 
-    }
-
-    public function getEnrollableQuestionsData(Request $request)
-    {
-        $userId = $request->input('user_id');
-        $user = User::with('patientInfo')
-            ->where('id', $userId)
-            ->firstOrFail();
-
-        $birthDate = '';
-        if (optional($user->patientInfo)->birth_date) {
-            $birthDate = Carbon::parse($user->patientInfo->birth_date)->toDateString();
-        }
-
-        // It can be empty. Its ok.
-        $primaryPhoneNumber = $user->phoneNumbers->where('is_primary', '=', true)->first()->number;
-        $isSurveyOnly = $user->hasRole('survey-only');
-
-        $letterLink = '';
-
-        if ($isSurveyOnly) {
-            $id = DB::table('enrollees')->where('user_id', $userId)->select('id')->first()->id;
-
-            $letter = DB::table('enrollables_invitation_links')
-                ->where('invitationable_id', $id)
-                ->select('url')
-                ->first();
-
-            $letterLink = $letter->url;
-        }
-
-
-        $data = [
-            'dob' => $birthDate,
-            'address' => $user->address,
-            'patientEmail' => $user->email,
-            'preferredContactNumber' => !empty($primaryPhoneNumber) ? $primaryPhoneNumber : [],
-            'isSurveyOnlyRole' => $isSurveyOnly,
-            'letterLink' => $letterLink
-        ];
-
-        return response()->json([
-            'success' => true,
-            'data' => $data,
-        ], 200);
     }
 }

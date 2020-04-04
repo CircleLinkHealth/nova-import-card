@@ -207,12 +207,12 @@ Route::group([
         ]);
 
         Route::get('{patientId}/{surveyId}', [
-            'uses' => 'SurveyController@getSurvey',
+            'uses' => 'EnrolleeSurveyController@getSurvey',
             'as'   => 'survey.enrollees',
         ]);
 
         Route::post('{patientId}/save-answer', [
-            'uses' => 'SurveyController@storeAnswer',
+            'uses' => 'EnrolleeSurveyController@storeAnswer',
             'as'   => 'survey.enrollees.store.answer',
         ]);
 
@@ -224,7 +224,7 @@ Route::post('twilio/sms/status', 'TwilioController@smsStatusCallback')
      ->name('twilio.sms.status');
 
 Route::post('get-enrollable-data', [
-    'uses' => 'SurveyController@getEnrollableQuestionsData',
+    'uses' => 'EnrolleeSurveyController@getEnrollableQuestionsData',
     'as'   => 'get.enrollable.data',
 ]);
 
