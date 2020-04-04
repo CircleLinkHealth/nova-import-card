@@ -22,9 +22,10 @@ class EnrolleesSurveyService
      */
     public function enrolleesQuestionsData(User $user)
     {
-        $birthDate = '';
-        if ($user->has('patientInfo')) {
-            $birthDate = Carbon::parse($user->patientInfo->birth_date)->toDateString();
+        $birthDate = $user->patientInfo->birth_date;
+        if (!empty($birthDate)) {
+            /** @var Carbon $birthDate */
+            $birthDate = $birthDate->toDateString();
         }
 
         // It can be empty. Its ok.
