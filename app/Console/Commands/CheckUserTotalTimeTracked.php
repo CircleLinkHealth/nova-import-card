@@ -51,7 +51,7 @@ class CheckUserTotalTimeTracked extends Command
             $refDate = now();
         }
 
-        $isTesting            = config('app.env') === 'review' || config('app.env') === 'staging';
+        $isTesting            = in_array(config('app.env'), ['review', 'local', 'staging']);
         $checkAccumulatedTime = $isTesting || $refDate->isTuesday() || $refDate->isFriday();
         $weekAgoFromYesterday = $refDate->copy()->addWeek(-1)->startOfDay();
         $yesterday            = $refDate->copy()->subDay()->endOfDay();
@@ -85,7 +85,8 @@ class CheckUserTotalTimeTracked extends Command
             $maxHours = UserTotalTimeChecker::getMaxHoursForDay();
             $result   .= "Warning: The following nurses have exceeded the daily maximum of $maxHours hours:\n";
             $daily->each(function ($time, $id) use (&$result) {
-                $result .= "Nurse[$id]: $time hours\n";
+                $rounded = round($time, 2);
+                $result .= "Nurse[$id]: $rounded hours\n";
             });
         }
         $weekly = $alerts->get('weekly');
@@ -96,7 +97,8 @@ class CheckUserTotalTimeTracked extends Command
             }
             $result = "Warning: The following nurses have exceeded their committed hours for the last 7 days by more than {$timesMore}x:\n";
             $weekly->each(function ($time, $id) use (&$result) {
-                $result .= "Nurse[$id]: $time hours\n";
+                $rounded = round($time, 2);
+                $result .= "Nurse[$id]: $rounded hours\n";
             });
         }
 

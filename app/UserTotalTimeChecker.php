@@ -91,9 +91,12 @@ class UserTotalTimeChecker
                     ->select(DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(start_time)) as date, sum(duration) as duration'))
                     ->where('provider_id', '=', $userId)
                     ->whereBetween('start_time', [$start, $end])
-                    ->groupBy(DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(start_time))'))
+                    ->groupBy(DB::raw('date'))
                     ->get();
 
+        return $result;
+
+        //FIXME:
         // also go back one day and fetch time tracked that spans over 2 days
         // for example:
         // - routine runs at 00:10 am on April 4th.
@@ -101,17 +104,16 @@ class UserTotalTimeChecker
         // - so it won't be tracked by the query above on April 4th that has $start and $end for April 3rd
         // - in order to catch it on April 5th, $start and $end is for April 4th. We have to go one day behind and
         //   check where start_time is April 3rd and end_time is April 4th
-        $newStart    = $start->copy()->subDay();
-        $newStartEnd = $end->copy()->subDay();
-        $result2     = DB::table((new PageTimer())->getTable())
-                         ->select(DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(start_time)) as date, sum(duration) as duration'))
-                         ->where('provider_id', '=', $userId)
-                         ->whereBetween('start_time', [$newStart, $newStartEnd])
-                         ->whereBetween('end_time', [$start, $end])
-                         ->groupBy(DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(start_time))'))
-                         ->get();
-
-        return $result->merge($result2);
+//        $newStart = $start->copy()->subDay();
+//        $result2  = DB::table((new PageTimer())->getTable())
+//                      ->select(DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(start_time)) as date, sum(duration) as duration'))
+//                      ->where('provider_id', '=', $userId)
+//                      ->whereBetween('start_time', [$newStart, $end])
+//                      ->where(DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(start_time)) != MAKEDATE(YEAR(end_time),DAYOFYEAR(end_time))'))
+//                      ->groupBy(DB::raw('date'))
+//                      ->get();
+//
+//        return $result->merge($result2);
 
     }
 
