@@ -41,9 +41,9 @@ class SurveyController extends Controller
     public function getSurvey($patientId, $surveyId)
     {
         //no need to have this check here
-//        if ( ! Auth::check()) {
-//            return redirect()->route('survey.vitals.welcome', ['patientId' => $patientId]);
-//        }
+        if ( ! Auth::check()) {
+            return redirect()->route('survey.vitals.welcome', ['patientId' => $patientId]);
+        }
 
 //        if (!Auth::user()->hasPermissionForSite('vitals-survey-complete', $practiceId)) {
 //            return redirect()->route('survey.vitals.not.authorized', ['practiceId' => $practiceId, 'patientId' => $patientId]);
