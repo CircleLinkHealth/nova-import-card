@@ -78,7 +78,7 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $this->assertTrue($time > $maxAllowed);
     }
 
-    public function test_it_raises_alert_for_total_time_over_8_hours_and_spanning_in_2_days()
+    /*public function test_it_raises_alert_for_total_time_over_8_hours_and_spanning_in_2_days()
     {
         $practice = factory(Practice::class)->create();
         $nurse    = $this->createUser($practice->id, 'care-center');
@@ -95,7 +95,7 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $alerts  = $checker->check();
         $this->assertTrue($alerts->has('daily'));
         $this->assertTrue($alerts->get('daily')->has($nurse->id));
-    }
+    }*/
 
     public function test_it_does_not_raise_alert_for_total_time_less_than_8_hours_in_a_day()
     {
