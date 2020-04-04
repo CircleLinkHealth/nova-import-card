@@ -12,6 +12,7 @@ use App\Filters\PatientListFilters;
 use App\Http\Requests\StorePatientRequest;
 use App\Patient;
 use App\PatientAwvSurveyInstanceStatusView;
+use App\Services\SurveyInvitationLinksService;
 use App\User;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
@@ -33,16 +34,19 @@ class PatientController extends Controller
     }
 
     /**
-     * Create a patient manually, while creating a provider, if needed
+     * Create a patient manually, while creating a provider, if needed.
+     * Update: Auto enroll into AWV.
      *
      * @param StorePatientRequest $request
+     * @param SurveyInvitationLinksService $service
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(StorePatientRequest $request)
+    public function store(StorePatientRequest $request, SurveyInvitationLinksService $service)
     {
         $providerUserId = $this->getPatientProvider($request);
-        $patientUserId  = $this->createPatient($request);
+        $result         = $this->createPatient($request, $service);
+        $patientUserId  = $result['user_id'];
 
         CarePerson::updateOrCreate([
             'user_id'        => $patientUserId,
@@ -52,9 +56,7 @@ class PatientController extends Controller
             'type'  => CarePerson::BILLING_PROVIDER,
         ]);
 
-        return response()->json([
-            'user_id' => $patientUserId,
-        ]);
+        return response()->json($result);
     }
 
     /**
@@ -82,16 +84,29 @@ class PatientController extends Controller
      * Create an AWV patient.
      *
      * @param StorePatientRequest $request
+     * @param SurveyInvitationLinksService $service
      *
      * @return int|mixed
      */
-    private function createPatient(StorePatientRequest $request)
+    private function createPatient(StorePatientRequest $request, SurveyInvitationLinksService $service)
     {
         $patientInput      = $request->input('patient');
         $primaryPracticeId = $request->input('provider')['primaryPracticeId'];
         $user              = $this->createUser($patientInput, 'participant', $primaryPracticeId);
 
-        return $user->id;
+        $enrollSuccess = true;
+        try {
+            $service->enrolUserId($user->id);
+        } catch (\Exception $e) {
+            $enrollSuccess = false;
+            $msg           = $e->getMessage();
+            \Log::error("Patient created successfully, but there was an error enrolling user[$user->id] to AWV. ERROR: $msg");
+        }
+
+        return [
+            'user_id'       => $user->id,
+            'enrol_success' => $enrollSuccess,
+        ];
     }
 
     /**
@@ -176,6 +191,12 @@ class PatientController extends Controller
                 'birth_date'      => Carbon::parse($input['dob']),
                 'is_awv'          => true,
             ]);
+
+            if ( ! empty($input['appointment'])) {
+                $appointment = Carbon::parse($input['appointment']);
+                $user->addAppointment($appointment);
+            }
+
         } else {
             $isClinical = $input['suffix'] === 'non-clinical';
             ProviderInfo::updateOrCreate([

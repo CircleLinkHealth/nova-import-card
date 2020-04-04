@@ -16,6 +16,8 @@ $image-path: '~@/../../mdb/mdbvue/img';
 
 @import "~vue-select/dist/vue-select.css";
 
+@import "~daterangepicker/daterangepicker.css";
+
 /**
 Add global CSS here
  */
@@ -545,7 +547,7 @@ a.navbar-title:hover {
 // Samsung Galax 6/7/8/plus
 @media (min-width: 414px) {
     .survey-container {
-        margin-left: 1em;
+        //margin-left: 1em;
     }
 }
 
@@ -655,6 +657,15 @@ a.navbar-title:hover {
         overflow: hidden;
     }
 
+    .main-container.welcome {
+        overflow: auto;
+    }
+
+    .main-container.welcome .survey-container {
+        overflow-y: auto;
+        height: 100%;
+    }
+
     .question-answer-type {
         width: 330px;
     }
@@ -689,7 +700,7 @@ a.navbar-title:hover {
     }
 
     .by-circlelink {
-        margin-right: 28px;
+        //margin-right: 28px;
         font-size: 14px;
     }
 

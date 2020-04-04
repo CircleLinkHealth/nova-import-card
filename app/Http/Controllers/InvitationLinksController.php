@@ -11,7 +11,6 @@ use App\Services\SurveyService;
 use App\Services\TwilioClientService;
 use App\Survey;
 use App\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class InvitationLinksController extends Controller
@@ -85,21 +84,10 @@ class InvitationLinksController extends Controller
         ]);
     }
 
-
     public function enrollUser(Request $request, $userId)
     {
         try {
-            $user = User
-                ::with([
-                    'patientInfo',
-                    'surveyInstances' => function ($query) {
-                        $query->mostRecent();
-                    },
-                ])
-                ->where('id', '=', $userId)
-                ->firstOrFail();
-
-            $this->service->enrolUser($user);
+            $this->service->enrolUserId($userId);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
@@ -136,6 +124,7 @@ class InvitationLinksController extends Controller
 
         $user = User
             ::with([
+                'awvAppointments',
                 'phoneNumbers',
                 'patientInfo',
                 'primaryPractice',
@@ -147,7 +136,8 @@ class InvitationLinksController extends Controller
             ->where('id', '=', $target_user_id)
             ->firstOrFail();
 
-        $url = $this->service->createAndSaveUrl($user, $surveyName, true);
+        $appointment = optional($user->latestAwvAppointment())->appointment;
+        $url         = $this->service->createAndSaveUrl($user, $surveyName, true);
 
         /** @var User $targetNotifiable */
         $targetNotifiable = null;
@@ -162,8 +152,15 @@ class InvitationLinksController extends Controller
             $targetNotifiable = User::whereEmail($channelValue)->first();
         }
 
-        if ( ! $targetNotifiable) {
+        // we do not allow sending Vitals survey to channels not registered in the system
+        if ($surveyName === Survey::VITALS && ! $targetNotifiable) {
             throw new \Exception("Could not find user[$channelValue] in the system.");
+        }
+
+        if ( ! $targetNotifiable) {
+            //just mock it
+            $targetNotifiable     = new User();
+            $targetNotifiable->id = 999;
         }
 
         //in case notifiable user is not the patient
@@ -175,11 +172,11 @@ class InvitationLinksController extends Controller
             $providerFullName = optional($targetNotifiable->billingProviderUser())->getFullName();
         }
 
-        if (!$practiceName) {
+        if ( ! $practiceName) {
             $practiceName = "your physician's office";
         }
 
-        if (!$providerFullName) {
+        if ( ! $providerFullName) {
             $providerFullName = "provider";
         }
 
@@ -188,7 +185,7 @@ class InvitationLinksController extends Controller
             : null, $channel === 'sms'
             ? $channelValue
             : null))
-            ->notify(new SurveyInvitationLink($url, $surveyName, $channel, $practiceName, $providerFullName));
+            ->notify(new SurveyInvitationLink($url, $surveyName, $channel, $practiceName, $providerFullName, $appointment));
 
         return true;
     }

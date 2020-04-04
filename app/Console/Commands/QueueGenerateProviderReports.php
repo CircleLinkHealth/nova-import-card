@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Jobs\GeneratePatientReportsJob;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -17,18 +16,18 @@ class QueueGenerateProviderReports extends Command
     protected $patientIds;
 
     /**
-     * Date to specify for which survey instances to generate Provider Reports for.
+     * Year to specify for which survey instances to generate Provider Reports for.
      *
-     * @var Carbon
+     * @var int
      */
-    protected $date;
+    protected $year;
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'reports:providerReport {patientIds : comma separated.} {date? : in format YYYY-MM-DD} {--debug}';
+    protected $signature = 'generate:reports {patientIds : comma separated.} {year?} {--debug}';
 
     /**
      * The console command description.
@@ -54,7 +53,6 @@ class QueueGenerateProviderReports extends Command
      */
     public function handle()
     {
-
         $patientIds = $this->argument('patientIds') ?? null;
         if ($patientIds) {
             $patientIds = explode(',', $patientIds);
@@ -63,13 +61,17 @@ class QueueGenerateProviderReports extends Command
         }
 
         $this->patientIds = $patientIds;
-//        $this->date       = $this->argument('date')
-//            ? Carbon::parse($this->argument('date'))
-//            : Carbon::now();
+        $this->year       = $this->argument('year')
+            ? intval($this->argument('year'))
+            : Carbon::now()->year;
 
         $debug = $this->option('debug');
-        foreach ($this->patientIds as $patientId){
-            GeneratePatientReportsJob::dispatch($patientId, $this->date, $debug)->onQueue('high');
+
+        $this->info("Ready to start generating reports [year=$this->year, debug=$debug] ");
+
+        foreach ($this->patientIds as $patientId) {
+            $this->info("Generating reports for $patientId");
+            GeneratePatientReportsJob::dispatch($patientId, $this->year, $debug)->onQueue('awv-high');
         }
     }
 }

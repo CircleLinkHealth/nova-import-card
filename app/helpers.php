@@ -76,3 +76,54 @@ if ( ! function_exists('getCpmCallerToken')) {
     }
 
 }
+
+if ( ! function_exists('getStringValueFromAnswer')) {
+    function getStringValueFromAnswer($val, $default = '')
+    {
+        if (empty($val)) {
+            return $default;
+        }
+
+        if (is_string($val)) {
+            return $val;
+        }
+
+        if (is_array($val)) {
+
+            if (array_key_exists('name', $val)) {
+                return getStringValueFromAnswer($val['name']);
+            }
+
+            if (array_key_exists('value', $val)) {
+                return getStringValueFromAnswer($val['value']);
+            }
+
+            return getStringValueFromAnswer($val[0]);
+        }
+
+        return $val;
+    }
+}
+
+if ( ! function_exists('sendSlackMessage')) {
+    /**
+     * Sends a message to Slack.
+     *
+     * @param Illuminate\Notifications\Notification $notification - must have a toSlack method
+     * @param bool $force - in case you really want the message to go to slack (testing | debugging)
+     */
+    function sendSlackMessage(Illuminate\Notifications\Notification  $notification, $force = false)
+    {
+        $isProduction = config('app.env') === 'production';
+        if ( ! $force && ! $isProduction) {
+            return;
+        }
+        $endpoint = env('SLACK_DEFAULT_ENDPOINT', null);
+        if ( ! $endpoint) {
+            return;
+        }
+        $notifiable = new \Illuminate\Notifications\AnonymousNotifiable();
+        $notifiable->route('slack', $endpoint);
+        $notifiable->notify($notification);
+    }
+}

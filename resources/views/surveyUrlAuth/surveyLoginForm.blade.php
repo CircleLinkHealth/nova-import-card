@@ -1,7 +1,7 @@
 @extends('layouts.surveysMaster')
 @section('content')
-    <div class="container main-container">
-        <div class="survey-container">
+    <div class="container main-container login">
+        <div class="survey-container login">
             <div class="practice-title">
                 <div id="title">
                     <strong>{{$practiceName}}</strong>
@@ -38,7 +38,7 @@
                         </div>
                         <br>
                         <div class="form-group form-group-input">
-                            <label for="birth-date" class="birth-date">Date of Birth</label>
+                            <label for="birth-date" class="birth-date">Date of Birth (DOB)</label>
                             <br>
                             <input type="date" name="birth_date"
                                    class="login-inputs"
@@ -74,6 +74,14 @@
 
 @push('styles')
     <style>
+
+        .main-container.login {
+            height: initial;
+        }
+
+        .survey-container.login {
+            height: initial;
+        }
 
         .form-group-input {
             text-align: left;
@@ -112,8 +120,8 @@
         @media (max-width: 490px) {
             .main-container {
                 height: 560px;
-                margin-top: 125px;
-                margin-left: 7px;
+                /*margin-top: 125px;*/
+                /*margin-left: 7px;*/
             }
 
             .survey-container {

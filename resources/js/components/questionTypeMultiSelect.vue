@@ -12,6 +12,7 @@
                                 :value="select.selected"
                                 :close-on-select="false"
                                 :options="select.options"
+                                :searchable="false"
                                 :disabled="readOnly"
                                 :placeholder="select.placeholder"/>
                 </div>

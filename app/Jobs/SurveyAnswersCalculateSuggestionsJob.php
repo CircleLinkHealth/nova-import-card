@@ -49,4 +49,14 @@ class SurveyAnswersCalculateSuggestionsJob implements ShouldQueue
             $userWithVitalsSurvey->surveyInstances->first());
         $calculator->calculate();
     }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array
+     */
+    public function tags()
+    {
+        return ['Survey Answers Calculate Suggestions', $this->patientId];
+    }
 }

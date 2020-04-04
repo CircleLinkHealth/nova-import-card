@@ -141,31 +141,34 @@ return [
 
     'environments' => [
         'production' => [
-            'supervisor-1' => [
+            'awv-supervisor-1' => [
                 'connection' => 'redis',
-                'queue' => ['default'],
+                'queue' => ['awv-default', 'awv-high'],
                 'balance' => 'simple',
-                'processes' => 10,
+                'minProcesses' => 1,
+                'maxProcesses' => 5,
                 'tries' => 1,
             ],
         ],
 
         'staging' => [
-            'supervisor-1' => [
+            'awv-supervisor-1' => [
                 'connection' => 'redis',
-                'queue' => ['default'],
+                'queue' => ['awv-default', 'awv-high'],
                 'balance' => 'simple',
-                'processes' => 10,
+                'minProcesses' => 1,
+                'maxProcesses' => 2,
                 'tries' => 1,
             ],
         ],
 
         'local' => [
-            'supervisor-1' => [
+            'awv-supervisor-1' => [
                 'connection' => 'redis',
-                'queue' => ['default'],
+                'queue' => ['awv-default', 'awv-high'],
                 'balance' => 'simple',
-                'processes' => 3,
+                'minProcesses' => 1,
+                'maxProcesses' => 2,
                 'tries' => 1,
             ],
         ],

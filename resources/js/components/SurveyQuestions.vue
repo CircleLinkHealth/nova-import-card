@@ -1,5 +1,5 @@
 <template>
-    <div class="container main-container">
+    <div class="container main-container" :class="stage">
 
         <div class="top-buttons" v-if="adminMode">
             <mdb-row class="no-gutters">
@@ -33,7 +33,7 @@
 
         <!--Survey welcome note-->
         <div class="survey-container"
-             :class="{ max: stage === 'complete', 'read-only': readOnlyMode, 'with-top-buttons': stage !== 'welcome' }">
+             :class="{ max: stage === 'complete', 'read-only': readOnlyMode, 'with-top-buttons': adminMode && stage !== 'welcome' }">
             <template v-if="stage === 'welcome'">
                 <div v-show="isHra" class="practice-title">
                     <label id="title">
@@ -351,6 +351,7 @@
         <div class="call-assistance">
             <call-assistance v-if="/*practiceOutgoingPhoneNumber && */callAssistance"
                              :phone-number="practiceOutgoingPhoneNumber"
+                             :from-number="clhPhoneNumber"
                              :cpm-caller-token="cpmCallerToken"
                              :cpm-caller-url="cpmCallerUrl"
                              :debug="debug"
@@ -358,7 +359,8 @@
             </call-assistance>
         </div>
 
-        <div class="bottom-navbar container no-padding" :class="stage === 'complete' ? 'hidden' : ''">
+        <div class="bottom-navbar container no-padding"
+             :class="(stage === 'complete' || stage === 'welcome') ? 'hidden' : ''">
             <!-- justify-content-end -->
             <div class="row no-gutters">
                 <div class="col-3 col-sm-4 col-md-3 col-lg-2 text-center">
@@ -440,7 +442,7 @@
     import $ from "jquery";
 
     export default {
-        props: ['surveyName', 'surveyData', 'adminMode', 'cpmCallerUrl', 'cpmCallerToken', 'debug'],
+        props: ['surveyName', 'surveyData', 'adminMode', 'cpmCallerUrl', 'cpmCallerToken', 'clhPhoneNumber', 'debug'],
 
         components: {
             mdbIcon,
@@ -579,6 +581,8 @@
             },
 
             showQuestions() {
+                //CPM-2176 make sure we are on top of page
+                $('.survey-container').scrollTop(0);
                 this.stage = "survey";
             },
 
@@ -587,11 +591,9 @@
                     return;
                 }
 
-                this.actionsDisabled = true;
-
                 this.error = null;
-
                 const prevQuestionIndex = this.getPreviousQuestionIndex(this.currentQuestionIndex);
+                this.actionsDisabled = true;
                 this.scrollToQuestion(this.questions[prevQuestionIndex].id)
                     .then(() => {
                         this.currentQuestionIndex = prevQuestionIndex;
@@ -604,17 +606,15 @@
                     return;
                 }
 
-                this.actionsDisabled = true;
-
                 this.error = null;
-
                 const nextQuestionIndex = this.getNextQuestionIndex(this.currentQuestionIndex);
+                this.currentQuestionIndex = nextQuestionIndex;
+                this.actionsDisabled = true;
                 this.scrollToQuestion(this.questions[nextQuestionIndex].id)
                     .then(() => {
                         this.currentQuestionIndex = nextQuestionIndex;
                         this.actionsDisabled = false;
                     });
-
             },
 
             isSubQuestion(question) {
@@ -736,6 +736,10 @@
                     survey_complete: isLastQuestion
                 })
                     .then((response) => {
+
+                        const surveyStatus = response.data ? response.data.survey_status : "in_progress";
+                        const nextQuestionId = response.data ? response.data.next_question_id : null;
+
                         this.waiting = false;
                         //save the answer in state
                         const q = this.questions.find(x => x.id === questionId);
@@ -743,10 +747,44 @@
                         //increment progress only if question was not answered before
                         const incrementProgress = typeof q.answer === "undefined" || (typeof q.answer.value === "undefined" || q.answer.value === null);
                         q.answer = {value: answer};
+                        if (!this.surveyData.answers) {
+                            this.surveyData.answers = [];
+                        }
+                        const currentAnswer = this.surveyData.answers.find(a => a.question_id === questionId);
+                        if (currentAnswer) {
+                            currentAnswer.value = answer;
+                        } else {
+                            this.surveyData.answers.push({question_id: questionId, value: {value: answer}});
+                        }
 
-                        if (this.isHra && isLastQuestion) {
+                        if (this.isHra && isLastQuestion && surveyStatus === "completed") {
                             window.location.href = this.getVitalsWelcomeUrl();
                             return;
+                        }
+
+                        //cover the case where survey was completed, but an answer was changed
+                        //and now a question that was not shown before needs to be answered
+                        //or the opposite
+                        if (nextQuestionId && this.progress === this.totalQuestions) {
+                            this.calculateSurveyProgress();
+                            if (this.progress !== this.totalQuestions) {
+                                let nextQuestionIndex = -1;
+                                const nextQuestion = this.questions.find((q, index) => {
+                                    if (q.id === nextQuestionId) {
+                                        nextQuestionIndex = index;
+                                        return true;
+                                    }
+                                    return false;
+                                });
+                                nextQuestion.disabled = false;
+
+                                const next = this.getNextQuestion(nextQuestionIndex - 1);
+                                if (next) {
+                                    this.currentQuestionIndex = next.index;
+                                }
+                            }
+                        } else if (nextQuestionId === null && this.progress !== this.totalQuestions) {
+                            this.calculateSurveyProgress();
                         }
 
                         this.goToNextQuestion(incrementProgress)
@@ -879,6 +917,43 @@
                 return canGoToPrev ? newIndex : this.getPreviousQuestionIndex(index - 1);
             },
 
+            hasAnswerAheadOfQuestion(index) {
+                const next = this.getNextQuestion(index);
+                if (!next) {
+                    return false;
+                }
+                const answers = this.surveyData.answers;
+                const a = answers.find(a => a.question_id === next.question.id);
+                return a && a.value;
+            },
+
+            /**
+             * Check if a question has been answered from another question's conditions
+             * i.e. q32 -> conditions -> q2 => return true if q2 has been answered
+             * Will be used to check whether a question (q32)
+             * has not been answered because its not shown
+             * or whether user hasn't reached there.
+             * Needed for the survey progress bar.
+             *
+             * @param index
+             * @return boolean
+             */
+            isQuestionAnsweredFromQuestionConditions(index) {
+                const q = this.questions[index];
+                const conditions = q.conditions;
+                if (!conditions || conditions.length === 0) {
+                    return true;
+                }
+
+                // we are evaluating only the first condition.related_question_order_number
+                const condition = conditions[0];
+
+                //For now is OK since we are depending only on ONE related Question
+                const questions = this.getQuestionsOfOrder(condition.related_question_order_number);
+                const question = questions[0];
+                return !!question.answer;
+            },
+
             getNextQuestionIndex(index) {
                 const newIndex = index + 1;
                 const nextQuestion = this.questions[newIndex];
@@ -890,10 +965,9 @@
                 //it might still be disabled though -> think completing questions then refreshing the page
                 //need to check if there are certain conditions that have to be met before showing this question
                 let canGoToNext = true;
-                if (nextQuestion.conditions && nextQuestion.conditions.length) {
-                    for (let i = 0; i < nextQuestion.conditions.length; i++) {
-                        const q = nextQuestion.conditions;
-                        const nextQuestConditions = q[i];
+                const allQuestionConditions = nextQuestion.conditions || [];
+                for (let i = 0; i < allQuestionConditions.length; i++) {
+                    const nextQuestConditions = allQuestionConditions[i];
                         //we are evaluating only the first condition.related_question_order_number
                         //For now is OK since we are depending only on ONE related Question
 
@@ -917,50 +991,44 @@
                             break;
                         }
 
-                        //If conditions needs to be compared against to "gte" or "lte"
-                        if (nextQuestConditions.hasOwnProperty('operator')) {
-                            if (nextQuestConditions.operator === 'greater_or_equal_than') {
-                                //Again we use only the first Question of the related Questions, which is OK for now.
-                                if (firstQuestion.answer.value.value >= nextQuestConditions.related_question_expected_answer) {
-                                    canGoToNext = false;
-                                    break;
-                                }
-                                canGoToNext = true;
-                                break;
-                            }
+                    //If conditions needs to be compared against to "gte" or "lte"
+                    if (nextQuestConditions.hasOwnProperty('operator')) {
+                        const answerValue = Array.isArray(firstQuestion.answer.value.value) ? firstQuestion.answer.value.value[0] : firstQuestion.answer.value.value;
 
-                            if (nextQuestConditions.operator === 'less_or_equal_than') {
-                                if (firstQuestion.answer.value.value <= nextQuestConditions.related_question_expected_answer) {
-                                    canGoToNext = false;
-                                    break;
-                                }
-                                canGoToNext = true;
-                                break;
-                            }
-                        }
-                        //default comparison
-                        const expectedAnswersEqualsValue = q.map(q => q.related_question_expected_answer === firstQuestion.answer.value.value);
-
-                        if (!expectedAnswersEqualsValue.includes(true)) {
-                            canGoToNext = false;
+                        if (nextQuestConditions.operator === 'greater_or_equal_than') {
+                            //Again we use only the first Question of the related Questions, which is OK for now.
+                            canGoToNext = answerValue >= nextQuestConditions.related_question_expected_answer;
                             break;
                         }
-                        //if no expected answer, we look for any answer, if any
-                        else if (typeof q.related_question_expected_answer === "undefined") {
-                            if (Array.isArray(firstQuestion.answer.value) && firstQuestion.answer.value.length === 0) {
-                                canGoToNext = false;
-                            } else if (typeof firstQuestion.answer.value === "string" && firstQuestion.answer.value.length === 0) {
-                                canGoToNext = false;
-                            } else if (firstQuestion.answer.value.value && firstQuestion.answer.value.value.length === 0) {
-                                canGoToNext = false;
-                            }
 
-                            if (!canGoToNext) {
-                                break;
-                            }
+                        if (nextQuestConditions.operator === 'less_or_equal_than') {
+                            canGoToNext = answerValue <= nextQuestConditions.related_question_expected_answer;
+                            break;
+                        }
+                    }
+                    //default comparison
+                    const expectedAnswersEqualsValue = allQuestionConditions.map(q => q.related_question_expected_answer === firstQuestion.answer.value.value);
+
+                    if (!expectedAnswersEqualsValue.includes(true)) {
+                        canGoToNext = false;
+                        break;
+                    }
+                    //if no expected answer, we look for any answer, if any
+                    else if (typeof nextQuestConditions.related_question_expected_answer === "undefined") {
+                        if (Array.isArray(firstQuestion.answer.value) && firstQuestion.answer.value.length === 0) {
+                            canGoToNext = false;
+                        } else if (typeof firstQuestion.answer.value === "string" && firstQuestion.answer.value.length === 0) {
+                            canGoToNext = false;
+                        } else if (firstQuestion.answer.value.value && firstQuestion.answer.value.value.length === 0) {
+                            canGoToNext = false;
+                        }
+
+                        if (!canGoToNext) {
+                            break;
                         }
                     }
                 }
+
                 return canGoToNext ? newIndex : this.getNextQuestionIndex(index + 1);
             },
 
@@ -1004,22 +1072,16 @@
 
                         //If conditions needs to be compared against to "gte" or "lte"
                         if (nextQuestConditions.hasOwnProperty('operator')) {
+                            const answerValue = Array.isArray(firstQuestion.answer.value.value) ? firstQuestion.answer.value.value[0] : firstQuestion.answer.value.value;
+
                             if (nextQuestConditions.operator === 'greater_or_equal_than') {
                                 //Again we use only the first Question of the related Questions, which is OK for now.
-                                if (!(firstQuestion.answer.value.value >= nextQuestConditions.related_question_expected_answer)) {
-                                    shouldDisable = true;
-                                    break;
-                                }
-                                shouldDisable = false;
+                                shouldDisable = !(answerValue >= nextQuestConditions.related_question_expected_answer);
                                 break;
                             }
 
                             if (nextQuestConditions.operator === 'less_or_equal_than') {
-                                if (!(firstQuestion.answer.value.value <= nextQuestConditions.related_question_expected_answer)) {
-                                    shouldDisable = true;
-                                    break;
-                                }
-                                shouldDisable = false;
+                                shouldDisable = !(answerValue <= nextQuestConditions.related_question_expected_answer);
                                 break;
                             }
                         }
@@ -1055,7 +1117,13 @@
             },
 
             scrollToQuestion(questionId) {
-                return new Promise((resolve) => {
+                return new Promise(resolve => {
+                    setTimeout(() => this.setQuestionScrollVisibility(), 200);
+                    resolve();
+                });
+
+                //FIXME: animated scroll has issues on mobile devices
+                /*return new Promise((resolve) => {
                     const topButtonsOffset = $('.top-buttons').height() || 0;
                     const surveyContainer = $('.survey-container');
                     const currentQuestionOffset = $(`#${questionId}`).offset().top;
@@ -1076,7 +1144,7 @@
                                 resolve();
                             }
                         });
-                });
+                });*/
             },
 
             goToNextQuestion(incrementProgress) {
@@ -1113,6 +1181,59 @@
 
             getQuestionsOfOrder(order) {
                 return this.questions.filter(q => q.pivot.order === order);
+            },
+
+            calculateSurveyProgress() {
+                const answers = this.surveyData.answers;
+                if (!answers || !answers.length) {
+                    this.progress = 0;
+                    return;
+                }
+
+                let progress = 0;
+                let lastOrder = -1;
+                this.questions.forEach((q, index) => {
+
+                    const a = answers.find(a => a.question_id === q.id);
+                    if (a) {
+                        q.answer = a;
+                    }
+
+                    if (lastOrder === q.pivot.order) {
+                        return;
+                    }
+
+                    let increment = false;
+
+                    if (a && a.value) {
+                        //check if answer is actually answered and not just a suggested answer
+                        increment = true;
+                    } else {
+                        // now figure out if an answer is expected from this question
+                        // i.e. q32 might not be shown to the user because of its conditions
+                        //      still, progress should be incremented
+                        //      so:
+                        //      - check if conditions of question have been answered
+                        //        -> to make sure question is not shown because of answer value (not because answer does not exist)
+                        //      - check if this question should be shown (this.getNextQuestion(index - 1))
+                        //        -> to know whether an answer is expected for this question
+                        //      - check if we have answers ahead of this question
+                        //        -> if the two previous checks fail, it might be because user has not reached to that part of the survey yet
+                        //           so, we check if there are answers ahead
+                        const conditionsAnswered = this.isQuestionAnsweredFromQuestionConditions(index);
+                        const isThisQuestionShownToUser = this.getNextQuestionIndex(index - 1) === index;
+                        const hasAnswerAhead = this.hasAnswerAheadOfQuestion(index);
+                        if (conditionsAnswered && !isThisQuestionShownToUser && hasAnswerAhead) {
+                            increment = true;
+                        }
+                    }
+
+                    if (increment) {
+                        progress += 1;
+                    }
+                    lastOrder = q.pivot.order;
+                });
+                this.progress = progress;
             },
 
             toggleReadOnlyMode() {
@@ -1226,21 +1347,6 @@
             this.questions.push(...questionsData);
             this.subQuestions.push(...subQuestions);
 
-            if (this.surveyData.answers && this.surveyData.answers.length) {
-                let lastOrder = -1;
-                this.questions.forEach(q => {
-                    const a = this.surveyData.answers.find(a => a.question_id === q.id);
-                    if (a) {
-                        q.answer = a;
-                        //check if answer is actually answered and not just a suggested answer
-                        if (a.value && lastOrder !== q.pivot.order) {
-                            this.progress = this.progress + 1;
-                        }
-                    }
-                    lastOrder = q.pivot.order;
-                });
-            }
-
             if (typeof this.surveyData.survey_instances[0].pivot.last_question_answered_id !== "undefined") {
                 const lastQuestionAnsweredId = this.surveyData.survey_instances[0].pivot.last_question_answered_id;
                 const index = this.questions.findIndex(q => q.id === lastQuestionAnsweredId);
@@ -1250,6 +1356,8 @@
                     this.currentQuestionIndex = next.index;
                 }
             }
+
+            this.calculateSurveyProgress();
 
             this.totalQuestionWithSubQuestions = this.questions.length;
             this.totalQuestions = _.uniqBy(this.questions, (elem) => {

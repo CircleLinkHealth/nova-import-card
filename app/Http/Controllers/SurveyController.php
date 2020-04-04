@@ -65,15 +65,16 @@ class SurveyController extends Controller
         $input = $request->all();
         $input['user_id'] = $input['patient_id'];
 
-        $answer = $this->service->updateOrCreateAnswer($input);
+        $result = $this->service->updateOrCreateAnswer($input);
 
-        if (!$answer) {
+        if (!$result) {
             return response()->json(['errors' => 'Answer was not created'], 400);
         }
 
         return response()->json([
             'created' => true,
-            'survey_status' => $answer,
+            'survey_status' => $result['status'],
+            'next_question_id' => $result['next_question_id'],
         ], 200);
 
     }

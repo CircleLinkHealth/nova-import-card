@@ -75,6 +75,29 @@
                             </mdb-row>
 
                             <mdb-row class="provider-container">
+                                <mdb-col md="6">
+                                    <mdb-date-picker label="Appointment Date"
+                                                     disable-input
+                                                     icon="calendar"
+                                                     ref="appointmentDatePicker"
+                                                     @change="validate('appointmentDate', $event)"
+                                                     v-model="patient.appointmentDate"/>
+                                </mdb-col>
+                                <mdb-col md="6">
+                                    <mdb-time-picker label="Appointment Time"
+                                                     disable-input
+                                                     icon="clock"
+                                                     ref="appointmentTimePicker"
+                                                     v-model="patient.appointmentTime"/>
+                                </mdb-col>
+                                <mdb-col md="12">
+                                    <span class="md-label">
+                                        Optional: Please select both date and time or none.
+                                    </span>
+                                </mdb-col>
+                            </mdb-row>
+
+                            <mdb-row class="provider-container">
                                 <mdb-col>
                                     <add-patient-provider ref="providerComponent"></add-patient-provider>
                                 </mdb-col>
@@ -130,6 +153,7 @@
         mdbBtn,
         mdbCol,
         mdbContainer,
+        mdbDatePicker,
         mdbIcon,
         mdbInput,
         mdbModalBody,
@@ -137,7 +161,8 @@
         mdbModalHeader,
         mdbModalTitle,
         mdbRow,
-        mdbTabs
+        mdbTabs,
+        mdbTimePicker
     } from 'mdbvue';
     import mdbModal from 'mdbvue/lib/components/mdbModal';
 
@@ -159,6 +184,8 @@
             mdbCol,
             mdbRow,
             mdbTabs,
+            mdbTimePicker,
+            mdbDatePicker,
             'add-patient-provider': AddPatientProvider
         },
         props: ['options'],
@@ -169,7 +196,10 @@
                     lastName: null,
                     dob: null,
                     email: null,
-                    phoneNumber: null
+                    phoneNumber: null,
+                    appointmentDate: null,
+                    appointmentTime: null,
+                    appointment: null
                 },
                 validation: {
                     firstName: {
@@ -196,7 +226,12 @@
                     provider: {
                         valid: false,
                         validated: false
-                    }
+                    },
+                    appointment: {
+                        //optional
+                        valid: true,
+                        validated: false
+                    },
                 },
                 waiting: false,
                 error: null,
@@ -207,6 +242,11 @@
         },
         mounted() {
             this.resetForm();
+
+            //custom validation does not work on time picker
+            this.$watch(() => this.$refs.appointmentTimePicker.value, (value) => {
+                this.validate('appointmentTime', value);
+            });
 
             this.$watch(() => this.$refs.providerComponent.isFormValid, (value) => {
                 this.validation['provider'].valid = value;
@@ -229,10 +269,12 @@
                     case "lastName":
                         this.validation[key].valid = value.length > 0;
                         break;
+
                     case "phoneNumber":
                         const phoneRe = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
                         this.validation[key].valid = phoneRe.test(value);
                         break;
+
                     case "email":
                         if (!value || !value.length) {
                             //optional
@@ -242,11 +284,66 @@
                             this.validation[key].valid = re.test(value);
                         }
                         break;
+
+                    case "appointmentDate":
+                    case "appointmentTime":
+                        const dtStr = this.getDateTimeFromPickers(value, key === "appointmentDate" ? 'date' : 'time');
+                        if (!dtStr || !dtStr.length) {
+                            //optional
+                            this.validation["appointment"].valid = true;
+                        } else {
+                            const date = new Date(dtStr);
+                            const isValid = date instanceof Date && !isNaN(date);
+                            this.validation["appointment"].valid = isValid;
+                            if (isValid) {
+                                this.patient.appointment = dtStr;
+                            }
+                        }
+                        break;
+
                     default:
                         this.validation[key].valid = true;
                         break;
                 }
-                this.validation[key].validated = true;
+
+                if (key === "appointmentDate" || key === "appointmentTime") {
+                    this.validation["appointment"].validated = true;
+                } else {
+                    this.validation[key].validated = true;
+                }
+            },
+
+            getDateTimeFromPickers(value, picker) {
+                let dateVal = this.$refs.appointmentDatePicker.value;
+                let timeVal = this.$refs.appointmentTimePicker.value;
+                if (picker === 'date') {
+                    dateVal = value;
+                } else {
+                    timeVal = value;
+                }
+
+                const hasTimeVal = timeVal ? timeVal.length > 0 : false;
+
+                if (!dateVal && !hasTimeVal) {
+                    return null;
+                }
+
+                if ((dateVal && !hasTimeVal) || (!dateVal && hasTimeVal)) {
+                    return 'invalid';
+                }
+
+                let hours = this.$refs.appointmentTimePicker.computedHours;
+                if (this.$refs.appointmentTimePicker.dayTime === 'pm') {
+                    hours = +hours; //transform to number
+                    hours += 12;
+                }
+
+                if (hours === 24) {
+                    hours = '00';
+                }
+
+                const minutes = this.$refs.appointmentTimePicker.computedMinutes;
+                return `${dateVal} ${hours}:${minutes}`;
             },
 
             resetForm() {
@@ -284,7 +381,10 @@
                     })
             },
 
-            cancel() {
+            cancel(e) {
+                if (e && e.preventDefault) {
+                    e.preventDefault();
+                }
                 this.options.onDone();
             },
 
@@ -327,6 +427,11 @@
 
 <style scoped>
 
+    .md-label {
+        color: #757575;
+        font-size: 0.8rem;
+    }
+
     .container {
         position: relative;
     }
@@ -335,6 +440,7 @@
         padding-top: 10px;
         padding-bottom: 10px;
         border: 1px solid #dee2e6;
+        margin-bottom: 5px;
     }
 
 </style>

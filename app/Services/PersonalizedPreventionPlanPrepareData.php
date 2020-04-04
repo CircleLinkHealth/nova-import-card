@@ -79,6 +79,7 @@ class PersonalizedPreventionPlanPrepareData
      * Return ordered checkList Data
      *
      * @param $personalizedHealthAdvices
+     *
      * @return array
      */
     public static function getOrderedSuggestedChecklist($personalizedHealthAdvices)
@@ -88,7 +89,7 @@ class PersonalizedPreventionPlanPrepareData
             $suggestedChecklistData[] = $tasks['table_data'];
         }
 
-       return $suggestedChecklistData->sortBy(function ($collections) {
+        return $suggestedChecklistData->sortBy(function ($collections) {
             foreach ($collections as $collection => $arrays) {
                 return $arrays[0]['emphasize_code'];
             }
@@ -101,6 +102,7 @@ class PersonalizedPreventionPlanPrepareData
 
     /**
      * @param $patientPppData
+     *
      * @return \Illuminate\Support\Collection
      * @throws \Exception
      */
@@ -138,8 +140,9 @@ class PersonalizedPreventionPlanPrepareData
         $physicalActivity = [
             $title = PersonalizedPreventionPlanPrepareData::PHYSICAL_TITLE,
             $image = 'dumbell',
-            $physicalActivityYounger = $this->physicalActivityYounger($patientPppData, $title, self::LESS_THREE_WEEK_YOUNG),
-            $physicalActivityOlder = $this->physicalActivityOlder($patientPppData, $title, self::LESS_THREE_WEEK_OLDER)
+            $physicalActivityYounger = $this->physicalActivityYounger($patientPppData, $title,
+                self::LESS_THREE_WEEK_YOUNG),
+            $physicalActivityOlder = $this->physicalActivityOlder($patientPppData, $title, self::LESS_THREE_WEEK_OLDER),
         ];
 
         $weightBmi = [
@@ -177,8 +180,10 @@ class PersonalizedPreventionPlanPrepareData
         $cognitiveImpairment = [
             $title = PersonalizedPreventionPlanPrepareData::COGNITIVE_TITLE,
             $image = 'thought-bubble',
-            $mildCognitiveImpairment = $this->mildCognitiveImpairment($patientPppData, $title, self::MILD_COGNITIVE_IMPAIRMENT),
-            $modToSevNeurocognitiveImpairment = $this->modToSevNeurocognitiveImpairment($patientPppData, $title, self::MODERATE_COGNITIVE_IMPAIRMENT),
+            $mildCognitiveImpairment = $this->mildCognitiveImpairment($patientPppData, $title,
+                self::MILD_COGNITIVE_IMPAIRMENT),
+            $modToSevNeurocognitiveImpairment = $this->modToSevNeurocognitiveImpairment($patientPppData, $title,
+                self::MODERATE_COGNITIVE_IMPAIRMENT),
         ];
 
         $adl = [
@@ -224,21 +229,21 @@ class PersonalizedPreventionPlanPrepareData
 
         $recommendationsData = collect([
             'recommendation_tasks' => [
-                'nutrition_recommendations' => $nutritionRecommendations,
+                'nutrition_recommendations'       => $nutritionRecommendations,
                 'tobacco_smoking_recommendations' => $smokingRecommendations,
-                'alcohol_recommendations' => $alcoholRecommendations,
-                'recreational_drugs' => $recreationalDrugsRecommendations,
-                'physical_activity' => $physicalActivity,
-                'weightBmi' => $weightBmi,
-                'sexual_practices' => $sexualPractices,
-                'emotional_health' => $emotionalHealth,
-                'fall_risk' => $fallRisk,
-                'hearing_impairment' => $hearingImpairment,
-                'cognitive_impairment' => $cognitiveImpairment,
-                'adl' => $adl,
-                'immunizations_vaccines' => $immunizationsVaccines,
-                'screenings' => $screenings,
-                'other_misc' => $otherMisc,
+                'alcohol_recommendations'         => $alcoholRecommendations,
+                'recreational_drugs'              => $recreationalDrugsRecommendations,
+                'physical_activity'               => $physicalActivity,
+                'weightBmi'                       => $weightBmi,
+                'sexual_practices'                => $sexualPractices,
+                'emotional_health'                => $emotionalHealth,
+                'fall_risk'                       => $fallRisk,
+                'hearing_impairment'              => $hearingImpairment,
+                'cognitive_impairment'            => $cognitiveImpairment,
+                'adl'                             => $adl,
+                'immunizations_vaccines'          => $immunizationsVaccines,
+                'screenings'                      => $screenings,
+                'other_misc'                      => $otherMisc,
             ],
         ]);
 
@@ -248,50 +253,54 @@ class PersonalizedPreventionPlanPrepareData
 
         }
 
-        $personalizedHealthAdvices = $recommendationTasks->map(function ($recommendation) {
+        $personalizedHealthAdvices = $recommendationTasks
+            ->map(function ($recommendation) {
 
-            $tasks = array_slice($recommendation, 2);
-            $tableData = [];
-            foreach ($tasks as $task) {
-                if (!array_key_exists('report_table_data', $task)) {
-                    continue;
-                }
-
-                $tableData[] = collect($task['report_table_data'])->transform(function ($table) {
-                    $codeWithText = '99498 (if same day as AWV, bill w/ mod. 33 on same claim and Dr. as AWV)';
-                    $emphasisedBody = '(NOTE: $0 co-pay if done during AWV)';
-
-                    $emphasizeCode = false;
-                    $body = $table['body'];
-                    $code = $table['code'];
-
-                    if (strpos($table['code'], $codeWithText) !== false) {
-                        $emphasizeCode = true;
-                        $body = (str_ireplace($emphasisedBody,
-                            "<class style='background-color: #cfe7f3;'>{$emphasisedBody}</class>",
-                            $table['body']));
-                        $code = (str_ireplace($codeWithText,
-                            "<class style='background-color: #cfe7f3;'>{$codeWithText}</class>",
-                            $table['code']));
+                $tasks     = array_slice($recommendation, 2);
+                $tableData = [];
+                foreach ($tasks as $task) {
+                    if ( ! array_key_exists('report_table_data', $task)) {
+                        continue;
                     }
 
-                    return [
-                        'body' => $body,
-                        'code' => $code,
-                        'time_frame' => $table['time_frame'],
-                        'emphasize_code' => $emphasizeCode,
-                    ];
+                    $tableData[] = collect($task['report_table_data'])->transform(function ($table) {
+                        $codeWithText   = '99498 (if same day as AWV, bill w/ mod. 33 on same claim and Dr. as AWV)';
+                        $emphasisedBody = '(NOTE: $0 co-pay if done during AWV)';
 
-                });
-            }
+                        $emphasizeCode = false;
+                        $body          = $table['body'];
+                        $code          = $table['code'];
 
-            return [
-                'title' => $recommendation[0],
-                'image' => $recommendation[1],
-                'tasks' => $tasks,
-                'table_data' => $tableData, // i can't order them here cause they re not all collected yet.
-            ];
-        });
+                        if (strpos($table['code'], $codeWithText) !== false) {
+                            $emphasizeCode = true;
+                            $body          = (str_ireplace($emphasisedBody,
+                                "<class style='background-color: #cfe7f3;'>{$emphasisedBody}</class>",
+                                $table['body']));
+                            $code          = (str_ireplace($codeWithText,
+                                "<class style='background-color: #cfe7f3;'>{$codeWithText}</class>",
+                                $table['code']));
+                        }
+
+                        return [
+                            'body'           => $body,
+                            'code'           => $code,
+                            'time_frame'     => $table['time_frame'],
+                            'emphasize_code' => $emphasizeCode,
+                        ];
+
+                    });
+                }
+
+                return [
+                    'title'      => $recommendation[0],
+                    'image'      => $recommendation[1],
+                    'tasks'      => $tasks,
+                    'table_data' => $tableData, // i can't order them here cause they re not all collected yet.
+                ];
+            })
+            ->filter(function ($item) {
+                return ! empty($item['tasks']);
+            });
 
         return $personalizedHealthAdvices;
     }
@@ -300,6 +309,7 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array
      */
     public function fruitVeggies($patientPppData, $title, $index)
@@ -316,30 +326,32 @@ class PersonalizedPreventionPlanPrepareData
      * @param $coll
      * @param $key
      * @param string $default
+     *
      * @return string
      */
     private function getStringValue($coll, $key, $default = 'N/A')
     {
-        if (!$coll || ProviderReportService::filterAnswer($coll)) {
+        if ( ! $coll || ProviderReportService::filterAnswer($coll)) {
             return $default;
         }
 
-        if (!isset($coll[$key])) {
+        if ( ! isset($coll[$key])) {
             return $default;
         }
 
-        return ProviderReportService::getStringValue($coll[$key], $default);
+        return getStringValueFromAnswer($coll[$key], $default);
     }
 
     /**
      * @param $title
      * @param $index
+     *
      * @return string
      */
     public function getTaskRecommendations($title, $index)
     {
         $taskRecommendation = TaskRecommendations::where('title', '=', $title)->first();
-        $taskRec = isset($taskRecommendation->data[$index])
+        $taskRec            = isset($taskRecommendation->data[$index])
             ? $taskRecommendation->data[$index]
             : '';
 
@@ -350,12 +362,13 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function wholeGrain($patientPppData, $title, $index)
     {
-        $nutritionData['whole_grain'] = $this->getStringValue($patientPppData->answers_for_eval, 'whole_grain');
-        $nutritionData['multipleQuestion16'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['multipleQuestion16'])
+        $nutritionData['whole_grain']        = $this->getStringValue($patientPppData->answers_for_eval, 'whole_grain');
+        $nutritionData['multipleQuestion16'] = ! ProviderReportService::filterAnswer($patientPppData->answers_for_eval['multipleQuestion16'])
             ? $patientPppData->answers_for_eval['multipleQuestion16']
             : 'N/A';
 
@@ -381,7 +394,7 @@ class PersonalizedPreventionPlanPrepareData
      */
     public function checkForConditionSelected($screenings, $condition, $checkInCategory): bool
     {
-        $answers = [];
+        $answers        = [];
         $checkInAnswers = $screenings;
         if (is_array($checkInAnswers[$checkInCategory])) {
             $arr = $checkInAnswers[$checkInCategory];
@@ -389,6 +402,7 @@ class PersonalizedPreventionPlanPrepareData
                 $answers[] = $data['name'];
             }
         }
+
         return in_array($condition, $answers);
     }
 
@@ -396,6 +410,7 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function fattyFriedFoods($patientPppData, $title, $index)
@@ -414,6 +429,7 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function candySugaryBeverages($patientPppData, $title, $index)
@@ -432,11 +448,12 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function currentSmoker($patientPppData, $title, $index)
     {
-        $smokingData['current_smoker'] = $this->getStringValue($patientPppData->answers_for_eval,
+        $smokingData['current_smoker']             = $this->getStringValue($patientPppData->answers_for_eval,
             'current_smoker');
         $smokingData['smoker_interested_quitting'] = $this->getStringValue($patientPppData->answers_for_eval,
             'smoker_interested_quitting');
@@ -452,13 +469,14 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function currentSmokerMale($patientPppData, $title, $index)
     {
         $smokingData['current_smoker'] = $this->getStringValue($patientPppData->answers_for_eval, 'current_smoker');
-        $smokingData['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
-        $smokingData['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
+        $smokingData['age']            = $this->getStringValue($patientPppData->answers_for_eval, 'age');
+        $smokingData['sex']            = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
 
         if ($smokingData['current_smoker'] === 'Yes' && $smokingData['sex'] === 'Male' && $smokingData['age'] <= '75' && $smokingData['age'] >= '65') {
             return $this->getTaskRecommendations($title, $index);
@@ -471,11 +489,13 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function formerSmoker($patientPppData, $title, $index)
     {
-        $smokingData['current_smoker'] = $this->getStringValue($patientPppData->answers_for_eval, 'current_smoker');
+        $smokingData['current_smoker']             = $this->getStringValue($patientPppData->answers_for_eval,
+            'current_smoker');
         $smokingData['smoker_interested_quitting'] = $this->getStringValue($patientPppData->answers_for_eval,
             'smoker_interested_quitting');
 
@@ -490,12 +510,13 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function alcoholUse($patientPppData, $title, $index)
     {
         $alcoholData['alcohol_use'] = $this->getStringValue($patientPppData->answers_for_eval, 'alcohol_use');
-        $alcoholData['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
+        $alcoholData['sex']         = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
 
         if (($alcoholData['sex'] === 'Male' && $alcoholData['alcohol_use'] === '14+ drinks per week')
             || ($alcoholData['sex'] === 'Female' && $alcoholData['alcohol_use'] === '7-10 drinks per week')
@@ -511,6 +532,7 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function recreationalDrugs($patientPppData, $title, $index)
@@ -529,6 +551,7 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function physicalActivityYounger($patientPppData, $title, $index)
@@ -539,7 +562,7 @@ class PersonalizedPreventionPlanPrepareData
         $physicalActivity['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
 
         if ($physicalActivity['age'] < '65' && ($physicalActivity['physical_activity'] === 'Never'
-                || $physicalActivity['physical_activity'] === '<3 times a week')) {
+                                                || $physicalActivity['physical_activity'] === '<3 times a week')) {
 
             return $this->getTaskRecommendations($title, $index);
         };
@@ -551,6 +574,7 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function physicalActivityOlder($patientPppData, $title, $index)
@@ -561,7 +585,7 @@ class PersonalizedPreventionPlanPrepareData
         $physicalActivity['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
 
         if ($physicalActivity['age'] >= '65' && ($physicalActivity['physical_activity'] === 'Never'
-                || $physicalActivity['physical_activity'] === '<3 times a week')) {
+                                                 || $physicalActivity['physical_activity'] === '<3 times a week')) {
 
             return $this->getTaskRecommendations($title, $index);
         };
@@ -573,6 +597,7 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function weightBmiUnderweight($patientPppData, $title, $index)
@@ -590,6 +615,7 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function weightBmiOverweight($patientPppData, $title, $index)
@@ -607,22 +633,23 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function unprotectedSex($patientPppData, $title, $index)
     {
-        $sexualLife['sexually_active'] = $this->getStringValue($patientPppData->answers_for_eval, 'sexually_active');
+        $sexualLife['sexually_active']   = $this->getStringValue($patientPppData->answers_for_eval, 'sexually_active');
         $sexualLife['multiple_partners'] = $this->getStringValue($patientPppData->answers_for_eval,
             'multiple_partners');
-        $sexualLife['safe_sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'safe_sex');
+        $sexualLife['safe_sex']          = $this->getStringValue($patientPppData->answers_for_eval, 'safe_sex');
 
         if ($sexualLife['sexually_active'] === 'Yes'
             && $sexualLife['multiple_partners'] === 'Yes'
             && $sexualLife['safe_sex'] === 'Never') {
             return $this->getTaskRecommendations($title, $index);
         } elseif ($sexualLife['sexually_active'] === 'Yes'
-            && $sexualLife['multiple_partners'] === 'Yes'
-            && $sexualLife['safe_sex'] === 'Sometimes') {
+                  && $sexualLife['multiple_partners'] === 'Yes'
+                  && $sexualLife['safe_sex'] === 'Sometimes') {
             return $this->getTaskRecommendations($title, $index);
         }
 
@@ -634,17 +661,18 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function womanOfReproductiveAge($patientPppData, $title, $index)
     {
-        $sexualLife['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
-        $sexualLife['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
+        $sexualLife['sex']                      = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
+        $sexualLife['age']                      = $this->getStringValue($patientPppData->answers_for_eval, 'age');
         $sexualLife['domestic_violence_screen'] = $this->getStringValue($patientPppData->answers_for_eval,
             'domestic_violence_screen');
 
         if ($sexualLife['sex'] === 'Female'
-            && $sexualLife['domestic_violence_screen'] === 'Never/10+ years ago'
+            && $sexualLife['domestic_violence_screen'] === '10+ years ago/Never/Unsure'
             && '15' <= $sexualLife['age']
             && $sexualLife['age'] <= '44') {
             return $this->getTaskRecommendations($title, $index);
@@ -657,23 +685,29 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      * @throws \Exception
      */
     public function depression($patientPppData, $title, $index)
     {
-        $emotional['emotional_little_interest'] = $this->getStringValue($patientPppData->answers_for_eval, 'emotional_little_interest');
-        $emotional['emotional_depressed'] = $this->getStringValue($patientPppData->answers_for_eval, 'emotional_depressed');
-        $depressionScoresArray = ProviderReportService::depressionScoreArray();
+        $emotional['emotional_little_interest'] = $this->getStringValue($patientPppData->answers_for_eval,
+            'emotional_little_interest');
+        $emotional['emotional_depressed']       = $this->getStringValue($patientPppData->answers_for_eval,
+            'emotional_depressed');
+        $depressionScoresArray                  = ProviderReportService::depressionScoreArray();
 
         $depressionScore = $this->getDepressionScore($depressionScoresArray, $emotional);
 
-        return $depressionScore >= 5 ? $this->getTaskRecommendations($title, $index) : [];
+        return $depressionScore >= 5
+            ? $this->getTaskRecommendations($title, $index)
+            : [];
     }
 
     /**
      * @param $depressionScoresArray
      * @param $emotional
+     *
      * @return mixed
      * @throws \Exception
      */
@@ -681,7 +715,7 @@ class PersonalizedPreventionPlanPrepareData
     {
         $littleInterestScore = $depressionScoresArray[strtolower(ProviderReportService::checkInputValueIsNotEmpty($emotional['emotional_little_interest'],
             '22.1', []))];
-        $depressionScore = $depressionScoresArray[strtolower(ProviderReportService::checkInputValueIsNotEmpty($emotional['emotional_depressed'],
+        $depressionScore     = $depressionScoresArray[strtolower(ProviderReportService::checkInputValueIsNotEmpty($emotional['emotional_depressed'],
             '22.2', []))];
 
         return $littleInterestScore + $depressionScore;
@@ -691,18 +725,23 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function patientHasFallen($patientPppData, $title, $index)
     {
         $fallRisk['fall_risk'] = $this->getStringValue($patientPppData->answers_for_eval, 'fall_risk');
-        return $fallRisk['fall_risk'] !== 'No' ? $this->getTaskRecommendations($title, $index) : [];
+
+        return $fallRisk['fall_risk'] !== 'No'
+            ? $this->getTaskRecommendations($title, $index)
+            : [];
     }
 
     /**
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function hearingImpairment($patientPppData, $title, $index)
@@ -723,6 +762,7 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function mildCognitiveImpairment($patientPppData, $title, $index)
@@ -741,6 +781,7 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function modToSevNeurocognitiveImpairment($patientPppData, $title, $index)
@@ -759,31 +800,32 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function adlWithNoHelp($patientPppData, $title, $index)
     {
-        $adl['adl'] = collect($patientPppData->answers_for_eval['adl'])->flatten()->toArray();
+        $adl['adl']                            = collect($patientPppData->answers_for_eval['adl'])->flatten()->toArray();
         $adl['assistance_in_daily_activities'] = $this->getStringValue($patientPppData->answers_for_eval,
             'assistance_in_daily_activities');
 
-        if (!empty($adl['adl'])
-            && $adl['assistance_in_daily_activities'] !== 'Yes') {
+        if ( ! empty($adl['adl'])
+             && $adl['assistance_in_daily_activities'] !== 'Yes') {
 
             $getAdlRecommendations = $this->getTaskRecommendations($title, $index);
-            $textToReplace = '{insert all selected tasks in Q26}'; //todo:rename this in seeder and DB
-            $adlAnswers = $adl['adl'];
-            $answersUnCapitalized = collect($adlAnswers)->map(function ($answer) {
+            $textToReplace         = '{insert all selected tasks in Q26}'; //todo:rename this in seeder and DB
+            $adlAnswers            = $adl['adl'];
+            $answersUnCapitalized  = collect($adlAnswers)->map(function ($answer) {
                 return lcfirst($answer);
             })->toArray();
 
-            $replacementText = implode(", ", $answersUnCapitalized);
-            $adlRecommendationBody = $getAdlRecommendations['task_body'];
+            $replacementText          = implode(", ", $answersUnCapitalized);
+            $adlRecommendationBody    = $getAdlRecommendations['task_body'];
             $newAdlRecommendationBody = str_replace($textToReplace, $replacementText, $adlRecommendationBody);
 
             return [
-                'task_body' => $newAdlRecommendationBody,
-                'report_table_data' => $getAdlRecommendations['report_table_data'],
+                'task_body'           => $newAdlRecommendationBody,
+                'report_table_data'   => $getAdlRecommendations['report_table_data'],
                 'qualitative_trigger' => $getAdlRecommendations['qualitative_trigger'],
                 'recommendation_body' => $getAdlRecommendations['recommendation_body'],
             ];
@@ -796,6 +838,7 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function fluInfluenza($patientPppData, $title, $index)
@@ -815,13 +858,14 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function tetanusDiphtheria($patientPppData, $title, $index)
     {
         $vaccines['tetanus_diphtheria'] = $this->getStringValue($patientPppData->answers_for_eval,
             'tetanus_diphtheria');
-        $vaccines['rubella'] = $this->getStringValue($patientPppData->answers_for_eval, 'rubella');
+        $vaccines['rubella']            = $this->getStringValue($patientPppData->answers_for_eval, 'rubella');
         if ($vaccines['tetanus_diphtheria'] === 'No'
             || $vaccines['tetanus_diphtheria'] === 'Unsure'
             || $vaccines['rubella'] === 'No'
@@ -836,6 +880,7 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function chickenPoxVaricella($patientPppData, $title, $index)
@@ -853,6 +898,7 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function hepatitisB($patientPppData, $title, $index)
@@ -871,14 +917,15 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function measlesMumpsRubella($patientPppData, $title, $index)
     {
-        $vaccines['measles_mumps_rubella'] = $this->getStringValue($patientPppData->answers_for_eval,
-            'measles_mumps_rubella');
-        if ($vaccines['measles_mumps_rubella'] === 'No'
-            || $vaccines['measles_mumps_rubella'] === 'Unsure') {
+        $vaccines['rubella'] = $this->getStringValue($patientPppData->answers_for_eval,
+            'rubella');
+        if ($vaccines['rubella'] === 'No'
+            || $vaccines['rubella'] === 'Unsure') {
             return $this->getTaskRecommendations($title, $index);
         }
 
@@ -889,14 +936,14 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function humanPapillomavirus($patientPppData, $title, $index)
-
     {
         $vaccines['human_papillomavirus'] = $this->getStringValue($patientPppData->answers_for_eval,
             'human_papillomavirus');
-        $vaccines['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
+        $vaccines['age']                  = $this->getStringValue($patientPppData->answers_for_eval, 'age');
 
         if ($vaccines['age'] <= '26'
             && ($vaccines['human_papillomavirus'] === 'No' || $vaccines['human_papillomavirus'] === 'Unsure')) {
@@ -910,12 +957,13 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function shingles($patientPppData, $title, $index)
     {
         $vaccines['shingles'] = $this->getStringValue($patientPppData->answers_for_eval, 'shingles');
-        $vaccines['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
+        $vaccines['age']      = $this->getStringValue($patientPppData->answers_for_eval, 'age');
 
         if ($vaccines['age'] > '50' && ($vaccines['shingles'] === 'No' || $vaccines['shingles'] === 'Unsure')) {
             return $this->getTaskRecommendations($title, $index);
@@ -928,6 +976,7 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function pneumococcalVaccine($patientPppData, $title, $index)
@@ -946,35 +995,38 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function breastCancerMammogram($patientPppData, $title, $index)
     {
-        $screenings['breast_cancer_screening'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['breast_cancer_screening'])
+        $screenings['breast_cancer_screening'] = ! ProviderReportService::filterAnswer($patientPppData->answers_for_eval['breast_cancer_screening'])
             ? $patientPppData->answers_for_eval['breast_cancer_screening']
             : 'N/A';
-        $screenings['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
-        $screenings['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
-        $screenings['family_conditions'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['family_conditions'])
+        $screenings['sex']                     = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
+        $screenings['age']                     = $this->getStringValue($patientPppData->answers_for_eval, 'age');
+        $screenings['family_conditions']       = ! ProviderReportService::filterAnswer($patientPppData->answers_for_eval['family_conditions'])
             ? $patientPppData->answers_for_eval['family_conditions']
             : 'N/A';
-        $breastCancerSelected = $this->checkForConditionSelected($screenings, $condition = 'Breast Cancer',
+        $breastCancerSelected                  = $this->checkForConditionSelected($screenings,
+            $condition = 'Breast Cancer',
             $checkInCategory = 'family_conditions');
 //@todo:also add if other or trans waiting answer from raph
         if ($screenings['sex'] !== 'Male' && '50' < $screenings['age'] && $screenings['age'] < '74') {
             return $this->getTaskRecommendations($title, $index);
 
-        } elseIf (!($screenings['breast_cancer_screening'] === 'In the last 2-3 years'
-                || $screenings['breast_cancer_screening'] === 'In the last year')
-            && $screenings['sex'] !== 'Male'
-            && $breastCancerSelected === true) {
+        } elseIf ( ! ($screenings['breast_cancer_screening'] === 'In the last 2-3 years'
+                      || $screenings['breast_cancer_screening'] === 'In the last year')
+                   && $screenings['sex'] !== 'Male'
+                   && $breastCancerSelected === true) {
             return $this->getTaskRecommendations($title, $index);
 
         } elseIf ($screenings['breast_cancer_screening'] !== 'In the last year'
-            && $screenings['sex'] !== 'Male'
-            && $breastCancerSelected === true) {
+                  && $screenings['sex'] !== 'Male'
+                  && $breastCancerSelected === true) {
             return $this->getTaskRecommendations($title, $index);
         }
+
         return [];
     }
 
@@ -982,13 +1034,14 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function cervicalCancerYoung($patientPppData, $title, $index)
     {
-        $screenings['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
-        $screenings['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
-        $screenings['cervical_cancer_screening'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['cervical_cancer_screening'])
+        $screenings['sex']                       = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
+        $screenings['age']                       = $this->getStringValue($patientPppData->answers_for_eval, 'age');
+        $screenings['cervical_cancer_screening'] = ! ProviderReportService::filterAnswer($patientPppData->answers_for_eval['cervical_cancer_screening'])
             ? $patientPppData->answers_for_eval['cervical_cancer_screening']
             : 'N/A';
 
@@ -998,9 +1051,9 @@ class PersonalizedPreventionPlanPrepareData
             && $screenings['cervical_cancer_screening'] !== 'In the last 2-3 years') {
             return $this->getTaskRecommendations($title, $index);
         } elseif ($screenings['sex'] !== 'Male'
-            && '21' <= $screenings['age']
-            && $screenings['age'] <= '29'
-            && $screenings['cervical_cancer_screening'] !== 'In the last year') {
+                  && '21' <= $screenings['age']
+                  && $screenings['age'] <= '29'
+                  && $screenings['cervical_cancer_screening'] !== 'In the last year') {
             return $this->getTaskRecommendations($title, $index);
         }
 
@@ -1011,13 +1064,14 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function cervicalCancerElder($patientPppData, $title, $index)
     {
-        $screenings['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
-        $screenings['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
-        $screenings['cervical_cancer_screening'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['cervical_cancer_screening'])
+        $screenings['sex']                       = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
+        $screenings['age']                       = $this->getStringValue($patientPppData->answers_for_eval, 'age');
+        $screenings['cervical_cancer_screening'] = ! ProviderReportService::filterAnswer($patientPppData->answers_for_eval['cervical_cancer_screening'])
             ? $patientPppData->answers_for_eval['cervical_cancer_screening']
             : 'N/A';
 
@@ -1027,9 +1081,9 @@ class PersonalizedPreventionPlanPrepareData
             && $screenings['cervical_cancer_screening'] === 'In the last 6-10 years') {
             return $this->getTaskRecommendations($title, $index);
         } elseif ($screenings['sex'] === 'Female'
-            && '30' <= $screenings['age']
-            && $screenings['age'] <= '65'
-            && $screenings['cervical_cancer_screening'] === '10+ years ago/Never/Unsure') {
+                  && '30' <= $screenings['age']
+                  && $screenings['age'] <= '65'
+                  && $screenings['cervical_cancer_screening'] === '10+ years ago/Never/Unsure') {
             return $this->getTaskRecommendations($title, $index);
         }
 
@@ -1040,17 +1094,18 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function prostateCancer($patientPppData, $title, $index)
     {
-        $screenings['race'] = $this->getStringValue($patientPppData->answers_for_eval, 'race');
-        $screenings['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
-        $screenings['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
-        $screenings['prostate_cancer_screening'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['prostate_cancer_screening'])
+        $screenings['race']                      = $this->getStringValue($patientPppData->answers_for_eval, 'race');
+        $screenings['sex']                       = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
+        $screenings['age']                       = $this->getStringValue($patientPppData->answers_for_eval, 'age');
+        $screenings['prostate_cancer_screening'] = ! ProviderReportService::filterAnswer($patientPppData->answers_for_eval['prostate_cancer_screening'])
             ? $patientPppData->answers_for_eval['prostate_cancer_screening']
             : 'N/A';
-        $screenings['multipleQuestion16'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['multipleQuestion16'])
+        $screenings['multipleQuestion16']        = ! ProviderReportService::filterAnswer($patientPppData->answers_for_eval['multipleQuestion16'])
             ? $patientPppData->answers_for_eval['multipleQuestion16']
             : 'N/A';
 
@@ -1063,8 +1118,8 @@ class PersonalizedPreventionPlanPrepareData
             && $screenings['prostate_cancer_screening'] === '10+ years ago/Never/Unsure') {
             return $this->getTaskRecommendations($title, $index);
         } elseif ($screenings['sex'] !== 'Female'
-            && $screenings['race'] === 'Black/African-Ameri.'
-            && $screenings['prostate_cancer_screening'] === '10+ years ago/Never/Unsure') {
+                  && $screenings['race'] === 'Black/African-Ameri.'
+                  && $screenings['prostate_cancer_screening'] === '10+ years ago/Never/Unsure') {
             return $this->getTaskRecommendations($title, $index);
         } elseif ($screenings['sex'] !== 'Female' && $prostateCancerSelected === true) {
             return $this->getTaskRecommendations($title, $index);
@@ -1077,15 +1132,16 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function colorectalCancer($patientPppData, $title, $index)
     {
-        $screenings['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
-        $screenings['colorectal_cancer_screening'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['colorectal_cancer_screening'])
+        $screenings['age']                         = $this->getStringValue($patientPppData->answers_for_eval, 'age');
+        $screenings['colorectal_cancer_screening'] = ! ProviderReportService::filterAnswer($patientPppData->answers_for_eval['colorectal_cancer_screening'])
             ? $patientPppData->answers_for_eval['colorectal_cancer_screening']
             : 'N/A';
-        $screenings['family_conditions'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['family_conditions'])
+        $screenings['family_conditions']           = ! ProviderReportService::filterAnswer($patientPppData->answers_for_eval['family_conditions'])
             ? $patientPppData->answers_for_eval['family_conditions']
             : 'N/A';
 
@@ -1107,19 +1163,20 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function skinCancer($patientPppData, $title, $index)
     {
-        $screenings['multipleQuestion16'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['multipleQuestion16'])
+        $screenings['multipleQuestion16'] = ! ProviderReportService::filterAnswer($patientPppData->answers_for_eval['multipleQuestion16'])
             ? $patientPppData->answers_for_eval['multipleQuestion16']
             : 'N/A';
 
-        $screenings['family_conditions'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['family_conditions'])
+        $screenings['family_conditions'] = ! ProviderReportService::filterAnswer($patientPppData->answers_for_eval['family_conditions'])
             ? $patientPppData->answers_for_eval['family_conditions']
             : 'N/A';
 
-        $screenings['family_members_with_condition'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['family_members_with_condition'])
+        $screenings['family_members_with_condition'] = ! ProviderReportService::filterAnswer($patientPppData->answers_for_eval['family_members_with_condition'])
             ? $patientPppData->answers_for_eval['family_members_with_condition']
             : 'N/A';
 
@@ -1131,7 +1188,8 @@ class PersonalizedPreventionPlanPrepareData
             'Cancer',
             'skin');
 
-        $countFamilyMembersWithSkinCancerFromQ18 = $this->countFamilyMembersWithSkinCancer($screenings, $condition = 'Skin Cancer');
+        $countFamilyMembersWithSkinCancerFromQ18 = $this->countFamilyMembersWithSkinCancer($screenings,
+            $condition = 'Skin Cancer');
 
         if (($hasSkinCancerSelectedInQ18 === true && $countFamilyMembersWithSkinCancerFromQ18 >= '2') || $skinCancerIsSelectedInQ16 === true) {
             return $this->getTaskRecommendations($title, $index);
@@ -1154,8 +1212,7 @@ class PersonalizedPreventionPlanPrepareData
         string $checkInCategory,
         string $conditionName,
         string $conditionType
-    )
-    {
+    ) {
         $checkInAnswers = $screenings;
         if (is_array($checkInAnswers[$checkInCategory])) {
             $arr = $checkInAnswers[$checkInCategory];
@@ -1169,19 +1226,21 @@ class PersonalizedPreventionPlanPrepareData
                 }
             }
         }
+
         return false;
     }
 
     /**
      * @param $screenings
      * @param string $condition
+     *
      * @return int
      */
     public function countFamilyMembersWithSkinCancer($screenings, $condition): int
     {
-        $answers = [];
+        $answers         = [];
         $checkInCategory = 'family_members_with_condition';
-        $checkInAnswers = $screenings;
+        $checkInAnswers  = $screenings;
         if (is_array($checkInAnswers[$checkInCategory])) {
             foreach ($checkInAnswers[$checkInCategory] as $data) {
                 if ($data['name'] === $condition) {
@@ -1210,11 +1269,11 @@ class PersonalizedPreventionPlanPrepareData
             && $screenings['osteoporosis_screening'] !== 'In the last year') {
             return $this->getTaskRecommendations($title, $index);
         } elseif ($screenings['sex'] === 'Male'
-            && $screenings['age'] >= '70'
-            && $screenings['osteoporosis_screening'] !== 'In the last year') {
+                  && $screenings['age'] >= '70'
+                  && $screenings['osteoporosis_screening'] !== 'In the last year') {
             return $this->getTaskRecommendations($title, $index);
         } elseif ($screenings['fall_risk'] === 'Yes'
-            && $screenings['osteoporosis_screening'] !== 'In the last year') {
+                  && $screenings['osteoporosis_screening'] !== 'In the last year') {
             return $this->getTaskRecommendations($title, $index);
         }
 
@@ -1246,17 +1305,17 @@ class PersonalizedPreventionPlanPrepareData
 
     public function cholesterolDyslipidemia($patientPppData, $title, $index)
     {
-        $screenings['blood_pressure'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['blood_pressure'])
+        $screenings['blood_pressure']     = ! ProviderReportService::filterAnswer($patientPppData->answers_for_eval['blood_pressure'])
             ? $patientPppData->answers_for_eval['blood_pressure']
             : 'N/A';
-        $screenings['bmi'] = $this->getStringValue($patientPppData->answers_for_eval, 'bmi');
-        $screenings['multipleQuestion16'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['multipleQuestion16'])
+        $screenings['bmi']                = $this->getStringValue($patientPppData->answers_for_eval, 'bmi');
+        $screenings['multipleQuestion16'] = ! ProviderReportService::filterAnswer($patientPppData->answers_for_eval['multipleQuestion16'])
             ? $patientPppData->answers_for_eval['multipleQuestion16']
             : 'N/A';
-        $screenings['current_smoker'] = $this->getStringValue($patientPppData->answers_for_eval, 'current_smoker');
-        $screenings['physical_activity'] = $this->getStringValue($patientPppData->answers_for_eval,
+        $screenings['current_smoker']     = $this->getStringValue($patientPppData->answers_for_eval, 'current_smoker');
+        $screenings['physical_activity']  = $this->getStringValue($patientPppData->answers_for_eval,
             'physical_activity');
-        $screenings['fatty_fried_foods'] = $this->getStringValue($patientPppData->answers_for_eval,
+        $screenings['fatty_fried_foods']  = $this->getStringValue($patientPppData->answers_for_eval,
             'fatty_fried_foods');
 
         $diabetesSelected = $this->checkForConditionSelected($screenings,
@@ -1296,15 +1355,15 @@ class PersonalizedPreventionPlanPrepareData
         string $checkInCategory,
         string $conditionFirstMetric,
         string $conditionSecondMetric
-    )
-    {
+    ) {
 
         $checkInAnswers = $screenings;
-        $data = $checkInAnswers[$checkInCategory];
+        $data           = $checkInAnswers[$checkInCategory];
         if ($data['first_metric'] >= $conditionFirstMetric
             && $data['second_metric'] >= $conditionSecondMetric) {
             return true;
         }
+
         return false;
 
     }
@@ -1313,6 +1372,7 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function noMedicalPowerOfAttorney($patientPppData, $title, $index)
@@ -1330,6 +1390,7 @@ class PersonalizedPreventionPlanPrepareData
      * @param $patientPppData
      * @param $title
      * @param $index
+     *
      * @return array|string
      */
     public function noLivingWillAdvanceDirective($patientPppData, $title, $index)

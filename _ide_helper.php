@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.7.28 on 2020-03-25 15:45:30.
+ * Generated for Laravel 5.7.28 on 2020-03-05 16:59:00.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -14588,6 +14588,148 @@ namespace Illuminate\Support\Facades {
 
 }
 
+namespace GrofGraf\LaravelPDFMerger\Facades {
+
+    /**
+     *
+     *
+     */
+    class PDFMergerFacade {
+
+        /**
+         * Initialize a new internal instance of FPDI in order to prevent any problems with shared resources
+         * Please visit https://www.setasign.com/products/fpdi/manual/#p-159 for more information on this issue
+         *
+         * @return self
+         * @static
+         */
+        public static function init()
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        return $instance->init();
+        }
+
+        /**
+         * Stream the merged PDF content
+         *
+         * @return string
+         * @static
+         */
+        public static function inline()
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        return $instance->inline();
+        }
+
+        /**
+         * Download the merged PDF content
+         *
+         * @return string
+         * @static
+         */
+        public static function download()
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        return $instance->download();
+        }
+
+        /**
+         * Save the merged PDF content to the filesystem
+         *
+         * @return string
+         * @static
+         */
+        public static function save($filePath = null)
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        return $instance->save($filePath);
+        }
+
+        /**
+         * Get the merged PDF content as binary string
+         *
+         * @return string
+         * @static
+         */
+        public static function string()
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        return $instance->string();
+        }
+
+        /**
+         * Set the generated PDF fileName
+         *
+         * @param string $fileName
+         * @return string
+         * @static
+         */
+        public static function setFileName($fileName)
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        return $instance->setFileName($fileName);
+        }
+
+        /**
+         * Add a PDF for inclusion in the merge with a binary string. Pages should be formatted: 1,3,6, 12-16.
+         *
+         * @param string $string
+         * @param mixed $pages
+         * @param mixed $orientation
+         * @return void
+         * @static
+         */
+        public static function addPDFString($string, $pages = 'all', $orientation = null)
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        $instance->addPDFString($string, $pages, $orientation);
+        }
+
+        /**
+         * Add a PDF for inclusion in the merge with a valid file path. Pages should be formatted: 1,3,6, 12-16.
+         *
+         * @param string $filePath
+         * @param string $pages
+         * @param string $orientation
+         * @return self
+         * @throws \Exception if the given pages aren't correct
+         * @static
+         */
+        public static function addPathToPDF($filePath, $pages = 'all', $orientation = null)
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        return $instance->addPathToPDF($filePath, $pages, $orientation);
+        }
+
+        /**
+         * Merges your provided PDFs and outputs to specified location.
+         *
+         * @param string $orientation
+         * @return void
+         * @throws \Exception if there are now PDFs to merge
+         * @static
+         */
+        public static function duplexMerge($orientation = 'P')
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        $instance->duplexMerge($orientation);
+        }
+
+        /**
+         *
+         *
+         * @static
+         */
+        public static function merge($orientation = 'P', $duplex = false)
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        return $instance->merge($orientation, $duplex);
+        }
+
+    }
+
+}
+
 namespace Waavi\UrlShortener\Facades {
 
     /**
@@ -14652,6 +14794,108 @@ namespace Waavi\UrlShortener\Facades {
         {
                         /** @var \Waavi\UrlShortener\UrlShortener $instance */
                         return $instance->expand($url);
+        }
+
+    }
+
+}
+
+namespace Appstract\LushHttp {
+
+    /**
+     *
+     *
+     * @see \Appstract\LushHttp\Lush
+     */
+    class LushFacade {
+
+        /**
+         * Set the url with parameters.
+         *
+         * @param $url
+         * @param array|object $parameters
+         * @return \Appstract\LushHttp\Lush
+         * @static
+         */
+        public static function url($url, $parameters = [])
+        {
+                        /** @var \Appstract\LushHttp\Lush $instance */
+                        return $instance->url($url, $parameters);
+        }
+
+        /**
+         * Set headers.
+         *
+         * @param array $headers
+         * @return \Appstract\LushHttp\Lush
+         * @static
+         */
+        public static function headers($headers)
+        {
+                        /** @var \Appstract\LushHttp\Lush $instance */
+                        return $instance->headers($headers);
+        }
+
+        /**
+         * Set options.
+         *
+         * @param array $options
+         * @return \Appstract\LushHttp\Lush
+         * @static
+         */
+        public static function options($options)
+        {
+                        /** @var \Appstract\LushHttp\Lush $instance */
+                        return $instance->options($options);
+        }
+
+        /**
+         * Reset all request options.
+         *
+         * @return \Appstract\LushHttp\Lush
+         * @static
+         */
+        public static function reset()
+        {
+                        /** @var \Appstract\LushHttp\Lush $instance */
+                        return $instance->reset();
+        }
+
+        /**
+         * Post as Json.
+         *
+         * @return \Appstract\LushHttp\Lush
+         * @static
+         */
+        public static function asJson()
+        {
+                        /** @var \Appstract\LushHttp\Lush $instance */
+                        return $instance->asJson();
+        }
+
+        /**
+         * Post as form params.
+         *
+         * @return \Appstract\LushHttp\Lush
+         * @static
+         */
+        public static function asFormParams()
+        {
+                        /** @var \Appstract\LushHttp\Lush $instance */
+                        return $instance->asFormParams();
+        }
+
+        /**
+         * Create a request.
+         *
+         * @param $method
+         * @return \Appstract\LushHttp\Response\LushResponse
+         * @static
+         */
+        public static function request($method)
+        {
+                        /** @var \Appstract\LushHttp\Lush $instance */
+                        return $instance->request($method);
         }
 
     }
@@ -15256,83 +15500,6 @@ namespace Michalisantoniou6\Cerberus {
 
 }
 
-namespace LynX39\LaraPdfMerger\Facades {
-
-    /**
-     *
-     *
-     */
-    class PdfMerger {
-
-        /**
-         *
-         *
-         * @static
-         */
-        public static function init()
-        {
-                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
-                        return $instance->init();
-        }
-
-        /**
-         * Add a PDF for inclusion in the merge with a valid file path. Pages should be formatted: 1,3,6, 12-16.
-         *
-         * @param $filepath
-         * @param $pages
-         * @return \LynX39\LaraPdfMerger\PdfManage
-         * @throws Exception
-         * @static
-         */
-        public static function addPDF($filepath, $pages = 'all', $orientation = null)
-        {
-                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
-                        return $instance->addPDF($filepath, $pages, $orientation);
-        }
-
-        /**
-         * Merges your provided PDFs and outputs to specified location.
-         *
-         * @param string $orientation
-         * @return void
-         * @throws \Exception if there are no PDFs to merge
-         * @static
-         */
-        public static function merge($orientation = null, $meta = [])
-        {
-                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
-                        $instance->merge($orientation, $meta);
-        }
-
-        /**
-         * Merges your provided PDFs and adds blank pages between documents as needed to allow duplex printing
-         *
-         * @param string $orientation
-         * @return void
-         * @throws \Exception if there are no PDFs to merge
-         * @static
-         */
-        public static function duplexMerge($orientation = null, $meta = [])
-        {
-                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
-                        $instance->duplexMerge($orientation, $meta);
-        }
-
-        /**
-         *
-         *
-         * @static
-         */
-        public static function save($outputpath = 'newfile.pdf', $outputmode = 'file')
-        {
-                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
-                        return $instance->save($outputpath, $outputmode);
-        }
-
-    }
-
-}
-
 namespace Intervention\Image\Facades {
 
     /**
@@ -15409,6 +15576,18 @@ namespace Laravel\Horizon {
      *
      */
     class Horizon {
+
+    }
+
+}
+
+namespace Laravel\Nova {
+
+    /**
+     *
+     *
+     */
+    class Nova {
 
     }
 
@@ -16239,6 +16418,209 @@ namespace Nwidart\Modules\Facades {
         {
             //Method inherited from \Nwidart\Modules\FileRepository
                         return \Nwidart\Modules\Laravel\LaravelFileRepository::hasMacro($name);
+        }
+
+    }
+
+}
+
+namespace Sentry\Laravel {
+
+    /**
+     *
+     *
+     */
+    class Facade {
+
+        /**
+         * Gets the client bound to the top of the stack.
+         *
+         * @static
+         */
+        public static function getClient()
+        {
+                        /** @var \Sentry\State\Hub $instance */
+                        return $instance->getClient();
+        }
+
+        /**
+         * Gets the ID of the last captured event.
+         *
+         * @static
+         */
+        public static function getLastEventId()
+        {
+                        /** @var \Sentry\State\Hub $instance */
+                        return $instance->getLastEventId();
+        }
+
+        /**
+         * Creates a new scope to store context information that will be layered on
+         * top of the current one. It is isolated, i.e. all breadcrumbs and context
+         * information added to this scope will be removed once the scope ends. Be
+         * sure to always remove this scope with {@see Hub::popScope} when the
+         * operation finishes or throws.
+         *
+         * @static
+         */
+        public static function pushScope()
+        {
+                        /** @var \Sentry\State\Hub $instance */
+                        return $instance->pushScope();
+        }
+
+        /**
+         * Removes a previously pushed scope from the stack. This restores the state
+         * before the scope was pushed. All breadcrumbs and context information added
+         * since the last call to {@see Hub::pushScope} are discarded.
+         *
+         * @static
+         */
+        public static function popScope()
+        {
+                        /** @var \Sentry\State\Hub $instance */
+                        return $instance->popScope();
+        }
+
+        /**
+         * Creates a new scope with and executes the given operation within. The scope
+         * is automatically removed once the operation finishes or throws.
+         *
+         * @param callable $callback The callback to be executed
+         * @static
+         */
+        public static function withScope($callback)
+        {
+                        /** @var \Sentry\State\Hub $instance */
+                        return $instance->withScope($callback);
+        }
+
+        /**
+         * Calls the given callback passing to it the current scope so that any
+         * operation can be run within its context.
+         *
+         * @param callable $callback The callback to be executed
+         * @static
+         */
+        public static function configureScope($callback)
+        {
+                        /** @var \Sentry\State\Hub $instance */
+                        return $instance->configureScope($callback);
+        }
+
+        /**
+         * Binds the given client to the current scope.
+         *
+         * @param \Sentry\State\ClientInterface $client The client
+         * @static
+         */
+        public static function bindClient($client)
+        {
+                        /** @var \Sentry\State\Hub $instance */
+                        return $instance->bindClient($client);
+        }
+
+        /**
+         * Captures a message event and sends it to Sentry.
+         *
+         * @param string $message The message
+         * @param \Sentry\State\Severity $level The severity level of the message
+         * @static
+         */
+        public static function captureMessage($message, $level = null)
+        {
+                        /** @var \Sentry\State\Hub $instance */
+                        return $instance->captureMessage($message, $level);
+        }
+
+        /**
+         * Captures an exception event and sends it to Sentry.
+         *
+         * @param \Throwable $exception The exception
+         * @static
+         */
+        public static function captureException($exception)
+        {
+                        /** @var \Sentry\State\Hub $instance */
+                        return $instance->captureException($exception);
+        }
+
+        /**
+         * Captures a new event using the provided data.
+         *
+         * @param array $payload The data of the event being captured
+         * @static
+         */
+        public static function captureEvent($payload)
+        {
+                        /** @var \Sentry\State\Hub $instance */
+                        return $instance->captureEvent($payload);
+        }
+
+        /**
+         * Captures an event that logs the last occurred error.
+         *
+         * @static
+         */
+        public static function captureLastError()
+        {
+                        /** @var \Sentry\State\Hub $instance */
+                        return $instance->captureLastError();
+        }
+
+        /**
+         * Records a new breadcrumb which will be attached to future events. They
+         * will be added to subsequent events to provide more context on user's
+         * actions prior to an error or crash.
+         *
+         * @param \Sentry\State\Breadcrumb $breadcrumb The breadcrumb to record
+         * @return bool Whether the breadcrumb was actually added to the current scope
+         * @static
+         */
+        public static function addBreadcrumb($breadcrumb)
+        {
+                        /** @var \Sentry\State\Hub $instance */
+                        return $instance->addBreadcrumb($breadcrumb);
+        }
+
+        /**
+         * Returns the current global Hub.
+         *
+         * @return \Sentry\State\HubInterface
+         * @deprecated since version 2.2, to be removed in 3.0
+         * @static
+         */
+        public static function getCurrent()
+        {
+                        return \Sentry\State\Hub::getCurrent();
+        }
+
+        /**
+         * Sets the Hub as the current.
+         *
+         * @param \Sentry\State\HubInterface $hub The Hub that will become the current one
+         * @return \Sentry\State\HubInterface
+         * @deprecated since version 2.2, to be removed in 3.0
+         * @static
+         */
+        public static function setCurrent($hub)
+        {
+                        return \Sentry\State\Hub::setCurrent($hub);
+        }
+
+        /**
+         * Gets the integration whose FQCN matches the given one if it's available on the current client.
+         *
+         * @param string $className The FQCN of the integration
+         * @psalm-template T of IntegrationInterface
+         * @psalm-param class-string<T> $className
+         * @psalm-return T|null
+         * @static
+         */
+        public static function getIntegration($className)
+        {
+                        /** @var \Sentry\State\Hub $instance */
+                        return $instance->getIntegration($className);
         }
 
     }
@@ -18831,6 +19213,8 @@ namespace  {
 
     class Password extends \Illuminate\Support\Facades\Password {}
 
+    class PDFMerger extends \GrofGraf\LaravelPDFMerger\Facades\PDFMergerFacade {}
+
     class Queue extends \Illuminate\Support\Facades\Queue {}
 
     class Redirect extends \Illuminate\Support\Facades\Redirect {}
@@ -18857,21 +19241,25 @@ namespace  {
 
     class UrlShortener extends \Waavi\UrlShortener\Facades\UrlShortener {}
 
+    class Lush extends \Appstract\LushHttp\LushFacade {}
+
     class PDF extends \Barryvdh\Snappy\Facades\SnappyPdf {}
 
     class SnappyImage extends \Barryvdh\Snappy\Facades\SnappyImage {}
 
     class Cerberus extends \Michalisantoniou6\Cerberus\CerberusFacade {}
 
-    class PdfMerger extends \LynX39\LaraPdfMerger\Facades\PdfMerger {}
-
     class Image extends \Intervention\Image\Facades\Image {}
 
     class Horizon extends \Laravel\Horizon\Horizon {}
 
+    class Nova extends \Laravel\Nova\Nova {}
+
     class Excel extends \Maatwebsite\Excel\Facades\Excel {}
 
     class Module extends \Nwidart\Modules\Facades\Module {}
+
+    class Sentry extends \Sentry\Laravel\Facade {}
 
 }
 

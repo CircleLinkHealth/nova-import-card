@@ -33,6 +33,7 @@ class StorePatientRequest extends FormRequest
             'patient.dob'                => 'required|date',
             'patient.phoneNumber'        => 'required|string',
             'patient.email'              => 'sometimes|unique:users,email',
+            'patient.appointment'        => 'sometimes|date',
             'provider.id'                => 'nullable',
             'provider.firstName'         => 'nullable|string',
             'provider.lastName'          => 'nullable|string',

@@ -81,9 +81,8 @@ class LoginController extends Controller
 
         $route = $redirectTo ?? '/manage-patients';
 
-        //fixme: don't know why I had to do this
-        //without it, it would redirect to home page '/'
-        Session::put('url.intended', $route);
+        //make sure url.intended is not set
+        Session::pull('url.intended');
 
         Log::debug("Route => $route");
 

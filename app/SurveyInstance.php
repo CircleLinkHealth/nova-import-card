@@ -74,17 +74,17 @@ class SurveyInstance extends BaseModel
     {
         /**
          * The raw query:
-        SELECT survey_instances.*
-        FROM survey_instances INNER JOIN (
-            # this inner join creates a table with a field of the survey id and another field of the list of years
-            # the list of years is ordered by most recent year (i.e. 2019, 2018, 2017)
-            SELECT survey_id, GROUP_CONCAT(year order by year desc) grouped_year
-            FROM survey_instances
-            GROUP BY survey_id) group_max
-        ON survey_instances.survey_id = group_max.survey_id
-        # FIND_IN_SET is called to find the year in first of position of the list of years (which means the most recent)
-        AND FIND_IN_SET(year, grouped_year) = 1
-        ORDER BY survey_instances.year DESC;
+         * SELECT survey_instances.*
+         * FROM survey_instances INNER JOIN (
+         * # this inner join creates a table with a field of the survey id and another field of the list of years
+         * # the list of years is ordered by most recent year (i.e. 2019, 2018, 2017)
+         * SELECT survey_id, GROUP_CONCAT(year order by year desc) grouped_year
+         * FROM survey_instances
+         * GROUP BY survey_id) group_max
+         * ON survey_instances.survey_id = group_max.survey_id
+         * # FIND_IN_SET is called to find the year in first of position of the list of years (which means the most recent)
+         * AND FIND_IN_SET(year, grouped_year) = 1
+         * ORDER BY survey_instances.year DESC;
          */
 
         $table = $this->getTable();
@@ -143,8 +143,8 @@ class SurveyInstance extends BaseModel
         $next = $this->getNextUnansweredQuestion($user);
 
         return $next
-            ? SurveyInstance::IN_PROGRESS
-            : SurveyInstance::COMPLETED;
+            ? ['status' => SurveyInstance::IN_PROGRESS, 'next_question_id' => $next->id]
+            : ['status' => SurveyInstance::COMPLETED, 'next_question_id' => null];
     }
 
     public function getNextUnansweredQuestion(User $user, $currentIndex = -1, $skipOptionals = true)
@@ -197,9 +197,7 @@ class SurveyInstance extends BaseModel
                 if (isset($condition['operator'])) {
 
                     $valueToCheck = $firstQuestionAnswer->value['value'];
-                    if (is_array($valueToCheck)) {
-                        $valueToCheck = $valueToCheck[0];
-                    }
+                    $valueToCheck = $this->getValue($valueToCheck);
 
                     if ($condition['operator'] === 'greater_or_equal_than') {
                         //Again we use only the first Question of the related Questions, which is OK for now.
@@ -249,6 +247,13 @@ class SurveyInstance extends BaseModel
         return $isDisabled
             ? $this->getNextUnansweredQuestion($user, $newIndex, $skipOptionals)
             : $nextQuestion;
+    }
+
+    private function getValue($val) {
+        if (is_array($val)) {
+            return $this->getValue(reset($val));
+        }
+        return $val;
     }
 
     private function getQuestionsOfOrder($order): Collection

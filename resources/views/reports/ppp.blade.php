@@ -1,31 +1,4 @@
 @extends('layouts.surveysMaster')
-<?php
-function getStringValue($val, $default = '')
-{
-    if (empty($val)) {
-        return $default;
-    }
-
-    if (is_string($val)) {
-        return $val;
-    }
-
-    if (is_array($val)) {
-
-        if (array_key_exists('name', $val)) {
-            return getStringValue($val['name']);
-        }
-
-        if (array_key_exists('value', $val)) {
-            return getStringValue($val['value']);
-        }
-
-        return getStringValue($val[0]);
-    }
-
-    return $val;
-}
-?>
 @section('content')
 
     @if (isset($isPdf) && $isPdf)
@@ -53,7 +26,8 @@ function getStringValue($val, $default = '')
         <div class="report-data">
             Patient Name: <strong><span style="color: #50b2e2">{{$patient->display_name}}</span></strong> <br>
             Date of Birth (records): <strong>{{$patient->patientInfo->dob()}}</strong><br>
-            Age (self-reported): <strong>{{getStringValue($patientPppData->answers_for_eval['age'])}}</strong> <br>
+            Age (self-reported): <strong>{{getStringValueFromAnswer($patientPppData->answers_for_eval['age'])}}</strong>
+            <br>
             Address: <strong>{{$patient->address}}</strong> <br>
             City, State, Zip: <strong>{{$patient->city}}, {{$patient->state}}, {{$patient->zip}}</strong> <br>
             Provider: <strong>{{$patient->getBillingProviderName()}}</strong>
@@ -64,15 +38,16 @@ function getStringValue($val, $default = '')
             <hr/>
         </div>
         <div class="report-data">
-            Weight: <strong>{{getStringValue($patientPppData->answers_for_eval['weight'])}} </strong><br>
-            Height: <strong>{{getStringValue($patientPppData->answers_for_eval['height']['feet'])}}
-                ' {{getStringValue($patientPppData->answers_for_eval['height']['inches'])}}" </strong><br>
-            Body Mass Index (BMI): <strong>{{getStringValue($patientPppData->answers_for_eval['bmi'])}}</strong> <br>
+            Weight: <strong>{{getStringValueFromAnswer($patientPppData->answers_for_eval['weight'])}} </strong><br>
+            Height: <strong>{{getStringValueFromAnswer($patientPppData->answers_for_eval['height']['feet'])}}
+                ' {{getStringValueFromAnswer($patientPppData->answers_for_eval['height']['inches'])}}" </strong><br>
+            Body Mass Index (BMI):
+            <strong>{{getStringValueFromAnswer($patientPppData->answers_for_eval['bmi'])}}</strong> <br>
             Blood Pressure:
             <strong>
-                {{getStringValue($patientPppData->answers_for_eval['blood_pressure']['first_metric'])}}
+                {{getStringValueFromAnswer($patientPppData->answers_for_eval['blood_pressure']['first_metric'])}}
                 &nbsp;/&nbsp;
-                {{getStringValue($patientPppData->answers_for_eval['blood_pressure']['second_metric'])}}
+                {{getStringValueFromAnswer($patientPppData->answers_for_eval['blood_pressure']['second_metric'])}}
             </strong><br>
         </div>
 
@@ -104,15 +79,20 @@ function getStringValue($val, $default = '')
                         <td class="suggested-list-body">
                             <strong>{!!$recommendation[0]['body']!!}</strong>
                         </td>
-                        <td>{!!$recommendation[0]['time_frame']!!}</td>
-                        <td style="font-weight: 500">{!!$recommendation[0]['code']!!}</td>
-
+                        <td>
+                            {!!$recommendation[0]['time_frame']!!}
+                        </td>
+                        <td>
+                            <strong>{!!$recommendation[0]['code']!!}</strong>
+                        </td>
                     </tr>
                 @endforeach
             @endforeach
             </tbody>
         </table>
-        <br>
+        @if (!isset($isPdf) || !$isPdf)
+            <br>
+        @endif
         <div class="row">
             <div class="col">
 
@@ -127,7 +107,7 @@ function getStringValue($val, $default = '')
                     @empty(array_filter($tasks['tasks']))
                         @continue
                     @else
-                        <div class="avoid-page-break">
+                        <div @if($loop->last) class="avoid-page-break" @endif>
                             <div class="recommendation-title avoid-page-break">
                                 <div class="image {{$tasks['image']}}"></div>
                                 <strong>
@@ -212,12 +192,12 @@ function getStringValue($val, $default = '')
     }
 
     .image.volume-half {
-        background: url({{asset('/images/volume-half@3x.png')}}) no-repeat;
+        background: url({{asset('/images/volume-half.svg')}}) no-repeat;
         margin-top: 4px;
     }
 
     .image.thought-bubble {
-        background: url({{asset('/images/thought-bubble@3x.png')}}) no-repeat;
+        background: url({{asset('/images/thought-bubble.svg')}}) no-repeat;
     }
 
     .image.raised-hand {

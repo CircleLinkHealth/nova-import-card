@@ -117,8 +117,27 @@ class SurveyInvitationLinksService
     }
 
     /**
+     * @param $userId
+     *
+     * @throws \Exception
+     */
+    public function enrolUserId($userId)
+    {
+        $user = User
+            ::with([
+                'patientInfo',
+                'surveyInstances' => function ($query) {
+                    $query->mostRecent();
+                },
+            ])
+            ->where('id', '=', $userId)
+            ->firstOrFail();
+
+        $this->enrolUser($user);
+    }
+
+    /**
      * @param User $user
-     * @param string|null $forYear
      *
      * @return array
      * @throws \Exception
@@ -162,7 +181,7 @@ class SurveyInvitationLinksService
 
         //in case job runs synchronously
         try {
-            SurveyAnswersCalculateSuggestionsJob::dispatch($user->id)->onQueue('high');
+            SurveyAnswersCalculateSuggestionsJob::dispatch($user->id)->onQueue('awv-high');
         } catch (\Exception $exception) {
             \Log::error($exception->getMessage());
         }

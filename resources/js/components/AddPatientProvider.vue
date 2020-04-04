@@ -369,7 +369,12 @@
                 this.provider = this.getNewProvider();
             },
 
-            toggleCreateNew() {
+            toggleCreateNew(event) {
+                if (event && event.x === 0) {
+                    // this is an Enter press, and Vue simulates a mouse event because we are inside an input
+                    event.preventDefault();
+                    return;
+                }
                 this.isCreatingNew = !this.isCreatingNew;
 
                 if (this.isCreatingNew) {

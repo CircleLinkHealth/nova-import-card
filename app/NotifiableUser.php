@@ -8,7 +8,7 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Notifications\AnonymousNotifiable;
 
 /**
  *
@@ -21,9 +21,8 @@ use Illuminate\Notifications\Notifiable;
  * @property string email
  * @property string phone_number
  */
-class NotifiableUser
+class NotifiableUser extends AnonymousNotifiable
 {
-    use Notifiable;
     /**
      * @var User
      */
@@ -47,7 +46,22 @@ class NotifiableUser
     public function __construct(User $user, string $email = null, string $phoneNumber = null)
     {
         $this->user         = $user;
-        $this->email        = $email;
-        $this->phone_number = $phoneNumber;
+        $this->email        = $email ?? $user->email;
+        $this->phone_number = $phoneNumber ?? $user->getPhone();
+
+        if ($this->email) {
+            $this->route('mail', $this->email);
+        }
+
+        if ($this->phone_number) {
+            $this->route('twilio', $this->phone_number);
+        }
     }
+
+    public function getKey()
+    {
+        return $this->user->id ?? 0;
+    }
+
+
 }

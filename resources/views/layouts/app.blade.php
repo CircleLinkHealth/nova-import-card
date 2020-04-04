@@ -32,6 +32,7 @@
 <script src="{{ mix('js/app.js') }}" defer></script>
 
 @stack('scripts')
+@include('partials.sentry-js')
 
 </body>
 </html>

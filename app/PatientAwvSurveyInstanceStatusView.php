@@ -17,6 +17,8 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * @property-read string hra_status
  * @property-read string vitals_status
  * @property-read string year
+ * @property-read Carbon appointment
+ * @property-read string mrn
  *
  * @package App
  */

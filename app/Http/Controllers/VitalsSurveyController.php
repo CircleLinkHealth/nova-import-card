@@ -88,15 +88,16 @@ class VitalsSurveyController extends Controller
      */
     public function storeAnswer(StoreVitalsAnswer $request)
     {
-        $answer = $this->service->updateOrCreateAnswer($request);
+        $result = $this->service->updateOrCreateAnswer($request);
 
-        if ( ! $answer) {
+        if ( ! $result) {
             return response()->json(['errors' => 'Answer was not created'], 400);
         }
 
         return response()->json([
             'created'       => true,
-            'survey_status' => $answer,
+            'survey_status' => $result['status'],
+            'next_question_id' => $result['next_question_id'],
         ], 200);
 
     }

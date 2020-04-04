@@ -1,5 +1,34 @@
 <?php
 
+$pdfBinary           = null;
+$pdfBinaryCandidates = [
+    '/app/bin/wkhtmltopdf',
+    '/usr/local/bin/wkhtmltopdf',
+];
+foreach ($pdfBinaryCandidates as $pdfPath) {
+    if (file_exists($pdfPath)) {
+        $pdfBinary = $pdfPath;
+        break;
+    }
+}
+//if ( ! $pdfBinary) {
+//    throw new \Exception('wkhtmltopdf binary was not found.', 500);
+//}
+$imgBinary           = null;
+$imgBinaryCandidates = [
+    '/app/bin/wkhtmltoimage',
+    '/usr/local/bin/wkhtmltoimage',
+];
+foreach ($imgBinaryCandidates as $imgPath) {
+    if (file_exists($imgPath)) {
+        $imgBinary = $imgPath;
+        break;
+    }
+}
+//if ( ! $imgBinary) {
+//    throw new \Exception('wkhtmltoimage binary was not found.', 500);
+//}
+
 return [
 
     /*
@@ -10,15 +39,15 @@ return [
     | This option contains settings for PDF generation.
     |
     | Enabled:
-    |    
+    |
     |    Whether to load PDF / Image generation.
     |
     | Binary:
-    |    
+    |
     |    The file path of the wkhtmltopdf / wkhtmltoimage executable.
     |
     | Timout:
-    |    
+    |
     |    The amount of time to wait (in seconds) before PDF / Image generation is stopped.
     |    Setting this to false disables the timeout (unlimited processing time).
     |
@@ -32,18 +61,18 @@ return [
     |    The environment variables to set while running the wkhtmltopdf process.
     |
     */
-    
+
     'pdf' => [
         'enabled' => true,
-        'binary'  => '/usr/local/bin/wkhtmltopdf',
+        'binary'  => $pdfBinary,
         'timeout' => false,
         'options' => [],
         'env'     => [],
     ],
-    
+
     'image' => [
         'enabled' => true,
-        'binary'  => '/usr/local/bin/wkhtmltoimage',
+        'binary'  => $imgBinary,
         'timeout' => false,
         'options' => [],
         'env'     => [],

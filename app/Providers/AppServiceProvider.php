@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Console\Commands\MakeMigrationInModulesFolder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 

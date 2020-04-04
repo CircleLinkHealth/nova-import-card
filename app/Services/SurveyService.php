@@ -66,7 +66,7 @@ class SurveyService
      *
      * @param $input
      *
-     * @return bool|string false if could not create/update answer, string for new survey status
+     * @return bool|array false if could not create/update answer, array for new survey status
      */
     public static function updateOrCreateAnswer($input)
     {
@@ -96,7 +96,7 @@ class SurveyService
      *
      * @param $isComplete
      *
-     * @return string Status of survey
+     * @return array ['status' => Status of survey, 'next_question_id' => id of next question, if any]
      */
     public static function updateSurveyInstanceStatus($input)
     {
@@ -125,7 +125,8 @@ class SurveyService
             $instance->pivot->start_date = Carbon::now();
         }
 
-        $surveyStatus = $instance->calculateCurrentStatusForUser($user);
+        $surveyStatusResult = $instance->calculateCurrentStatusForUser($user);
+        $surveyStatus = $surveyStatusResult['status'];
 
         //change status only if not completed
         if ($instance->pivot->status !== $surveyStatus) {
@@ -144,7 +145,7 @@ class SurveyService
             event(new SurveyInstancePivotSaved($instance));
         }
 
-        return $instance->pivot->status;
+        return $surveyStatusResult;
     }
 
     private static function updateOrCreatePatientAWVSummary(User $patient)
