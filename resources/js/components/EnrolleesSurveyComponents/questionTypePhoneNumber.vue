@@ -1,14 +1,16 @@
 <template>
-<!-- @todo:   Phone input needs some tweaks.. Will do later-->
+    <!-- @todo:   Phone input needs some tweaks.. Will do later-->
     <div class="scroll-container">
         <div class="scrollable">
             <div class="col-md-12 active">
                 <VuePhoneNumberInput
-                    v-model="formattedPhoneValue"/>
+                    no-country-selector
+                    :only-coubtires="onlyCountries"
+                    no-example
+                    v-model="inputPhoneNumber"/>
             </div>
 
             <br>
-
 
 
             <!--next button-->
@@ -40,8 +42,9 @@
 
         data() {
             return {
+                onlyCountries: ['US'],
                 phoneValue: '',
-                formattedPhoneValue: '',
+                inputPhoneNumber: '',
                 phoneNumberIsUsValid: false,
                 preventNextIteration: false,
                 showNextButton: false,
@@ -53,30 +56,21 @@
 
         computed: {
             hasTypedInNumber() {
-                return this.formattedPhoneValue.length === 12;
+                return this.inputPhoneNumber.length > 0;
             },
         },
 
         methods: {
             handleAnswer() {
-                const answer = this.phoneValue !== '' ? this.phoneValue : this.formattedPhoneValue;
+                const answer = this.phoneValue !== '' ? this.phoneValue : this.inputPhoneNumber;
                 this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer, this.isLastQuestion);
             },
 
-            // checkNumber(event) {
-            //     if (this.formattedPhoneValue !== ''
-            //         && ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'].includes(event.key)) {
-            //         this.phoneValue = this.formattedPhoneValue.replace(/-/g, '').match(/(\d{1,10})/g)[0];
-            //         this.formattedPhoneValue = this.phoneValue.replace(/(\d{1,3})(\d{1,3})(\d{1,4})/g, '$1-$2-$3');
-            //     } else {
-            //         this.formattedPhoneValue = '';
-            //     }
-            // }
         },
 
         created() {
-            if (this.nonAwvPatients.preferredContactNumber !== []) {
-                this.formattedPhoneValue = this.nonAwvPatients.preferredContactNumber[0];
+            if (this.nonAwvPatients.preferredContactNumber.length > 0) {
+                this.inputPhoneNumber = this.nonAwvPatients.preferredContactNumber[0];
             }
         }
     }
