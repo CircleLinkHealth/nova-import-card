@@ -33,7 +33,7 @@ class VerifyAuthyTokenRequest extends FormRequest
         return [
             //we don't know what the token is, it depends on the authenticator:
             //authy -> 7 numeric digits, google authenticator: 6 numeric digits
-            'token'    => 'required',
+            'token'    => 'required|digits',
             'is_setup' => 'sometimes|boolean',
         ];
     }
