@@ -23,7 +23,7 @@ class EnrolleesSurveyService
     public function enrolleesQuestionsData(User $user)
     {
         $birthDate = '';
-        if (optional($user->patientInfo)->birth_date) {
+        if ($user->has('patientInfo')) {
             $birthDate = Carbon::parse($user->patientInfo->birth_date)->toDateString();
         }
 
