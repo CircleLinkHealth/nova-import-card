@@ -255,6 +255,13 @@
                                 </li>
 
                                 <li>
+                                    <div class="label label-warning" style="margin-right: 4px; text-align: right; background-color: #9865f2">
+                                        <span class="glyphicon glyphicon-thumbs-up"></span>
+                                    </div>
+                                    Success Story
+                                </li>
+
+                                <li>
                                     <div class="label label-success" style="margin-right: 4px; text-align: right;">
                                         <span class="glyphicon glyphicon-eye-open"></span>
                                     </div>
