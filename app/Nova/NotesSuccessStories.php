@@ -7,6 +7,7 @@
 namespace App\Nova;
 
 use App\Note;
+use Circlelinkhealth\GenerateSuccessStoriesReport\GenerateSuccessStoriesReport;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 
@@ -41,6 +42,30 @@ class NotesSuccessStories extends Resource
     public static $title = 'id';
 
     /**
+     * @return bool
+     */
+    public static function authorizedToCreate(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function authorizedToDelete(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function authorizedToUpdate(Request $request)
+    {
+        return false;
+    }
+
+    /**
      * Get the actions available for the resource.
      *
      * @return array
@@ -57,7 +82,9 @@ class NotesSuccessStories extends Resource
      */
     public function cards(Request $request)
     {
-        return [];
+        return [
+            new GenerateSuccessStoriesReport()
+        ];
     }
 
     /**

@@ -20,7 +20,9 @@
         "build-generate-patient-call-data-csv": "cd nova-components/GeneratePatientCallDataCsv && npm run dev",
         "build-generate-patient-call-data-csv-prod": "cd nova-components/GeneratePatientCallDataCsv && npm run prod",
         "build-clhImportCardExtended": "cd nova-components/ClhImportCardExtended && npm run dev",
-        "build-clhImportCardExtended-prod": "cd nova-components/ClhImportCardExtended && npm run prod"
+        "build-clhImportCardExtended-prod": "cd nova-components/ClhImportCardExtended && npm run prod",
+        "build-generate-success-stories-report": "cd nova-components/GenerateSuccessStoriesReport && npm run dev",
+        "build-generate-success-stories-report-prod": "cd nova-components/GenerateSuccessStoriesReport && npm run prod"
     },
     "jest": {
         "verbose": true,
