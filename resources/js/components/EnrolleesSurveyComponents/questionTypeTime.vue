@@ -59,7 +59,7 @@
 
     export default {
         name: "questionTypeTime",
-        props: ['question', 'nonAwvPatients', 'isActive', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
+        props: ['question', 'enrollmentSurveyPatients', 'isActive', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
         components: {mdbBtn, mdbIcon},
 
         data() {

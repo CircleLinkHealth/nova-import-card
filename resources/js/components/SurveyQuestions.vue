@@ -190,7 +190,7 @@
                             <!--ENROLLEES SURVEY-->
                             <question-type-dob
                                 :question="question"
-                                :non-awv-patients="nonAwvPatients"
+                                :non-awv-patients="enrollmentSurveyPatients"
                                 :is-active="currentQuestionIndex === index"
                                 :is-subquestion="isSubQuestion(question)"
                                 :style-horizontal="false"
@@ -204,7 +204,7 @@
 
                             <question-type-phone-number
                                 :question="question"
-                                :non-awv-patients="nonAwvPatients"
+                                :non-awv-patients="enrollmentSurveyPatients"
                                 :is-active="currentQuestionIndex === index"
                                 :style-horizontal="false"
                                 :get-all-questions-func="getAllQuestions"
@@ -217,7 +217,7 @@
 
                             <question-type-time
                                 :question="question"
-                                :non-awv-patients="nonAwvPatients"
+                                :non-awv-patients="enrollmentSurveyPatients"
                                 :is-active="currentQuestionIndex === index"
                                 :style-horizontal="false"
                                 :get-all-questions-func="getAllQuestions"
@@ -230,7 +230,7 @@
 
                             <question-type-address
                                 :question="question"
-                                :non-awv-patients="nonAwvPatients"
+                                :non-awv-patients="enrollmentSurveyPatients"
                                 :is-active="currentQuestionIndex === index"
                                 :style-horizontal="false"
                                 :get-all-questions-func="getAllQuestions"
@@ -243,7 +243,7 @@
 
                             <question-type-confirmation
                                 :question="question"
-                                :non-awv-patients="nonAwvPatients"
+                                :non-awv-patients="enrollmentSurveyPatients"
                                 :is-active="currentQuestionIndex === index"
                                 :style-horizontal="false"
                                 :get-all-questions-func="getAllQuestions"
@@ -504,7 +504,7 @@
                 readOnlyMode: false,
 
                 //    RE-ENROLLMENT USERS DATA
-                nonAwvPatients: {
+                enrollmentSurveyPatients: {
                     dob: [],
                     address: this.surveyData.address,
                     city: this.surveyData.city,
@@ -975,7 +975,7 @@
                             if (nextQuestConditions
                                 && nextQuestConditions.hasOwnProperty('nonAwvCheck')
                                 && nextQuestConditions.nonAwvCheck === 'isSurveyOnlyUser') {
-                                if (this.nonAwvPatients.isSurveyOnlyRole === true) {
+                                if (this.enrollmentSurveyPatients.isSurveyOnlyRole === true) {
                                     canGoToNext = true;
                                     break;
                                 } else {
@@ -1053,7 +1053,7 @@
                             if (nextQuestConditions
                                 && nextQuestConditions.hasOwnProperty('nonAwvCheck')
                                 && nextQuestConditions.nonAwvCheck === 'isSurveyOnlyUser') {
-                                if (this.nonAwvPatients.isSurveyOnlyRole === false) {
+                                if (this.enrollmentSurveyPatients.isSurveyOnlyRole === false) {
                                     shouldDisable = true;
                                     break;
                                 } else {
@@ -1386,10 +1386,10 @@
                         const dob = data.dob;
                         const preferredContactNumber = data.preferredContactNumber;
                         const isSurveyOnlyRole = data.isSurveyOnlyRole;
-                        this.nonAwvPatients.dob.push(dob);
-                        this.nonAwvPatients.preferredContactNumber.push(preferredContactNumber);
-                        this.nonAwvPatients.isSurveyOnlyRole = isSurveyOnlyRole;
-                        this.nonAwvPatients.letterLink = data.letterLink;
+                        this.enrollmentSurveyPatients.dob.push(dob);
+                        this.enrollmentSurveyPatients.preferredContactNumber.push(preferredContactNumber);
+                        this.enrollmentSurveyPatients.isSurveyOnlyRole = isSurveyOnlyRole;
+                        this.enrollmentSurveyPatients.letterLink = data.letterLink;
 
 
                     })

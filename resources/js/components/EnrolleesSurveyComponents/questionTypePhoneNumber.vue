@@ -37,7 +37,7 @@
 
     export default {
         name: "questionTypePhoneNumber",
-        props: ['question', 'nonAwvPatients', 'isActive', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
+        props: ['question', 'enrollmentSurveyPatients', 'isActive', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
         components: {mdbBtn, mdbIcon, VuePhoneNumberInput},
 
         data() {
@@ -69,8 +69,8 @@
         },
 
         created() {
-            if (this.nonAwvPatients.preferredContactNumber.length > 0) {
-                this.inputPhoneNumber = this.nonAwvPatients.preferredContactNumber[0];
+            if (this.enrollmentSurveyPatients.preferredContactNumber.length > 0) {
+                this.inputPhoneNumber = this.enrollmentSurveyPatients.preferredContactNumber[0];
             }
         }
     }

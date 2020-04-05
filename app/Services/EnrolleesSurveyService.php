@@ -29,7 +29,7 @@ class EnrolleesSurveyService
         }
 
         // It can be empty. Its ok.
-        $primaryPhoneNumber = $user->phoneNumbers->where('is_primary', '=', true)->first()->number;
+        $primaryPhoneNumber = $user->getPhone();
         $isSurveyOnly = $user->hasRole('survey-only');
 
         $letterLink = '';

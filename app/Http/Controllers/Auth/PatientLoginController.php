@@ -89,8 +89,8 @@ class PatientLoginController extends Controller
         if (!empty($survey)) {
             $isEnrolleSurvey = $survey->users()
                 ->where('user_id', $userId)
-                ->wherePivot('survey_id', $survey->id
-                )->exists();
+                ->wherePivot('survey_id', $survey->id)
+                ->exists();
         }
         return $isEnrolleSurvey;
     }

@@ -43,7 +43,7 @@
 
     export default {
         name: "questionTypeAddress",
-        props: ['question', 'nonAwvPatients', 'isActive', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
+        props: ['question', 'enrollmentSurveyPatients', 'isActive', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
         components: {mdbBtn, mdbIcon},
 
         data() {
@@ -90,16 +90,16 @@
 
         created() {
             if (this.question.identifier === 'Q_CONFIRM_EMAIL') {
-                this.singleInputHasText = this.nonAwvPatients.patientEmail;
+                this.singleInputHasText = this.enrollmentSurveyPatients.patientEmail;
             }
 
             if (this.question.identifier === 'Q_CONFIRM_ADDRESS') {
                 this.isMultiInput = true;
                 this.physicalAddress = {
-                    address: this.nonAwvPatients.address,
-                    city: this.nonAwvPatients.city,
-                    state: this.nonAwvPatients.state,
-                    zip: this.nonAwvPatients.zip,
+                    address: this.enrollmentSurveyPatients.address,
+                    city: this.enrollmentSurveyPatients.city,
+                    state: this.enrollmentSurveyPatients.state,
+                    zip: this.enrollmentSurveyPatients.zip,
                 };
 
 

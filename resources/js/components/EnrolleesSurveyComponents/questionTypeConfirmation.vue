@@ -37,7 +37,7 @@
 
     export default {
         name: "questionTypeConfirmation",
-        props: ['question', 'nonAwvPatients', 'isActive', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
+        props: ['question', 'enrollmentSurveyPatients', 'isActive', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
         components: {mdbBtn, mdbIcon},
 
         data() {
@@ -60,7 +60,7 @@
         },
 
         created() {
-            this.letterLink = this.nonAwvPatients.letterLink;
+            this.letterLink = this.enrollmentSurveyPatients.letterLink;
         }
     }
 
