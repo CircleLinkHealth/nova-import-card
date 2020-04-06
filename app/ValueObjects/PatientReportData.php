@@ -12,6 +12,9 @@ namespace App\ValueObjects;
  */
 class PatientReportData
 {
+    protected $allBhiCodes;
+
+    protected $allCcmProblemCodes;
     protected $awvDate;
 
     protected $bhiCodes;
@@ -33,6 +36,22 @@ class PatientReportData
     protected $practice;
 
     protected $provider;
+
+    /**
+     * @return mixed
+     */
+    public function getAllBhiCodes()
+    {
+        return $this->allBhiCodes;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAllCcmProblemCodes()
+    {
+        return $this->allCcmProblemCodes;
+    }
 
     /**
      * @return mixed
@@ -120,6 +139,22 @@ class PatientReportData
     public function getProvider()
     {
         return $this->provider;
+    }
+
+    /**
+     * @param mixed $allBhiCodes
+     */
+    public function setAllBhiCodes($allBhiCodes): void
+    {
+        $this->allBhiCodes = $allBhiCodes;
+    }
+
+    /**
+     * @param mixed $allCcmProblemCodes
+     */
+    public function setAllCcmProblemCodes($allCcmProblemCodes): void
+    {
+        $this->allCcmProblemCodes = $allCcmProblemCodes;
     }
 
     /**

@@ -113,9 +113,7 @@ class CcdProblemService
         $user->loadMissing(['ccdProblems.cpmInstruction', 'ccdProblems.codes']);
 
         //exclude generic diabetes type
-        $diabetes = \Cache::remember('cpm_problem_diabetes', 2, function () {
-            return CpmProblem::where('name', 'Diabetes')->first();
-        });
+        $diabetes = genericDiabetes();
 
         //If patient has been imported via UPG0506 using instructions from the PDF, we need to show ONLY those instructions, avoiding default instructions attached to CPM Problems
         //Check will happen in the front-end
