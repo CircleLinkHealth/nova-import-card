@@ -113,29 +113,29 @@ class ItemizedBillablePatientsReport
                                              // doing like this to get right order of columns.
                                              if ( ! empty($this->requestedByUserId) && enableAllPatientProblemCodesInvoiceForUser($this->requestedByUserId)) {
                                                  $newRow = [
-                                                     'Provider Name'       => $patientData->getProvider(),
-                                                     'Location'            => $patientData->getLocationName(),
-                                                     'Patient Name'        => $patientData->getName(),
-                                                     'DOB'                 => $patientData->getDob(),
-                                                     'Billing Code(s)'     => $patientData->getBillingCodes(),
-                                                     'CCM Mins'            => $patientData->getCcmTime(),
-                                                     'BHI Mins'            => $patientData->getBhiTime(),
-                                                     'CCM Problem Code(s)' => $patientData->getCcmProblemCodes(),
-                                                     'All CCM Conditions'  => $patientData->getAllCcmProblemCodes(),
-                                                     'BHI Code(s)'         => $patientData->getBhiCodes(),
-                                                     'All BHI Conditions'  => $patientData->getAllBhiCodes(),
+                                                     'Provider Name'        => $patientData->getProvider(),
+                                                     'Location'             => $patientData->getLocationName(),
+                                                     'Patient Name'         => $patientData->getName(),
+                                                     'DOB'                  => $patientData->getDob(),
+                                                     'Billing Code(s)'      => $patientData->getBillingCodes(),
+                                                     'CCM Mins'             => $patientData->getCcmTime(),
+                                                     'BHI Mins'             => $patientData->getBhiTime(),
+                                                     'CCM Issue(s) Treated' => $patientData->getCcmProblemCodes(),
+                                                     'All CCM Conditions'   => $patientData->getAllCcmProblemCodes(),
+                                                     'BHI Issue(s) Treated' => $patientData->getBhiCodes(),
+                                                     'All BHI Conditions'   => $patientData->getAllBhiCodes(),
                                                  ];
                                              } else {
                                                  $newRow = [
-                                                     'Provider Name'       => $patientData->getProvider(),
-                                                     'Location'            => $patientData->getLocationName(),
-                                                     'Patient Name'        => $patientData->getName(),
-                                                     'DOB'                 => $patientData->getDob(),
-                                                     'Billing Code(s)'     => $patientData->getBillingCodes(),
-                                                     'CCM Mins'            => $patientData->getCcmTime(),
-                                                     'BHI Mins'            => $patientData->getBhiTime(),
-                                                     'CCM Problem Code(s)' => $patientData->getCcmProblemCodes(),
-                                                     'BHI Code(s)'         => $patientData->getBhiCodes(),
+                                                     'Provider Name'        => $patientData->getProvider(),
+                                                     'Location'             => $patientData->getLocationName(),
+                                                     'Patient Name'         => $patientData->getName(),
+                                                     'DOB'                  => $patientData->getDob(),
+                                                     'Billing Code(s)'      => $patientData->getBillingCodes(),
+                                                     'CCM Mins'             => $patientData->getCcmTime(),
+                                                     'BHI Mins'             => $patientData->getBhiTime(),
+                                                     'CCM Issue(s) Treated' => $patientData->getCcmProblemCodes(),
+                                                     'BHI Issue(s) Treated' => $patientData->getBhiCodes(),
                                                  ];
                                              }
 
