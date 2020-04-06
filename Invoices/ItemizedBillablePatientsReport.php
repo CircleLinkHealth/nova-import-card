@@ -306,14 +306,13 @@ class ItemizedBillablePatientsReport
     {
         return $problems->isNotEmpty()
             ?
-            //Casting Eloquent Collection to Array then creating Custom Collection because calling ->unique() on Eloquent Collection that contains array with strings of codes fails.
-            collect(
-                $problems->unique()->transform(
-                    function (Problem $problem) {
-                        return $problem->icd10Code();
-                    }
-                )->filter()->toArray()
-            )->unique()->implode(', ')
+            $problems->map(
+                function (Problem $problem) {
+                    return $problem->icd10Code();
+                }
+            )->filter()
+             ->unique()
+             ->implode(', ')
             : 'N/A';
     }
 }
