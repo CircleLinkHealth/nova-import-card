@@ -105,7 +105,7 @@ class ItemizedBillablePatientsReport
 
                                              $patientData->setBhiCodes($this->getBhiAttestedConditions($summary));
 
-                                             $patientData->setAllBhiCodes($this->getAllBhiConditions($patientUser));
+                                             $patientData->setAllBhiCodes($this->getAllBhiConditions($patientUser, $summary));
 
                                              $patientData->setEnableAllProblemCodesColumnns(! empty($this->requestedByUserId) && enableAllPatientProblemCodesInvoiceForUser($this->requestedByUserId));
 
@@ -201,7 +201,7 @@ class ItemizedBillablePatientsReport
 
                                              $patientData->setAllCcmProblemCodes($this->getAllCcmConditions($u));
 
-                                             $patientData->setAllBhiCodes($this->getAllBhiConditions($u));
+                                             $patientData->setAllBhiCodes($this->getAllBhiConditions($u, $summary));
 
                                              $patientData->setLocationName($u->getPreferredLocationName());
 
@@ -291,8 +291,12 @@ class ItemizedBillablePatientsReport
         );
     }
 
-    private function getAllBhiConditions(User $patient)
+    private function getAllBhiConditions(User $patient, PatientMonthlySummary $summary)
     {
+        if ( ! $summary->hasServiceCode(ChargeableService::BHI)) {
+            return 'N/A';
+        }
+
         return $this->formatProblemCodesForReport(
             $patient->ccdProblems->where('cpmProblem.is_behavioral', '=',
                 true)
