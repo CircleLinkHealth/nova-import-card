@@ -107,8 +107,6 @@ class ItemizedBillablePatientsReport
 
                                              $patientData->setAllBhiCodes($this->getAllBhiConditions($patientUser, $summary));
 
-                                             $patientData->setEnableAllProblemCodesColumnns(! empty($this->requestedByUserId) && enableAllPatientProblemCodesInvoiceForUser($this->requestedByUserId));
-
                                              $patientData->setLocationName($patientUser->getPreferredLocationName());
 
                                              $newRow = [
@@ -120,10 +118,13 @@ class ItemizedBillablePatientsReport
                                                  'CCM Mins'            => $patientData->getCcmTime(),
                                                  'BHI Mins'            => $patientData->getBhiTime(),
                                                  'CCM Problem Code(s)' => $patientData->getCcmProblemCodes(),
-                                                 'All CCM Conditions'  => $patientData->getAllCcmProblemCodes(),
                                                  'BHI Code(s)'         => $patientData->getBhiCodes(),
-                                                 'All BHI Conditions'  => $patientData->getAllBhiCodes(),
                                              ];
+
+                                             if(! empty($this->requestedByUserId) && enableAllPatientProblemCodesInvoiceForUser($this->requestedByUserId)){
+                                                 $newRow['All CCM Conditions'] = $patientData->getAllCcmProblemCodes();
+                                                 $newRow['All BHI Conditions' ] = $patientData->getAllBhiCodes();
+                                             }
 
                                              if ($patientUser->primaryPractice->hasAWVServiceCode() && $awvSummary = $patientUser->patientAWVSummaries->sortByDesc(
                                                      'id'
