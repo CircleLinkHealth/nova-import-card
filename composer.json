@@ -127,7 +127,7 @@
     "circlelinkhealth/clh-import-card-extended": "*",
     "circlelinkhealth/core-module": "1.5.1",
     "circlelinkhealth/cpm-migrations-module": "1.5.2",
-    "circlelinkhealth/customer-module": "dev-billing-add-all-problem-codes",
+    "circlelinkhealth/customer-module": "2.1.7",
     "circlelinkhealth/eligibility-module": "dev-importer-v3",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
