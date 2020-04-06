@@ -190,7 +190,7 @@
                             <!--ENROLLEES SURVEY-->
                             <question-type-dob
                                 :question="question"
-                                :non-awv-patients="enrollmentSurveyPatients"
+                                :enrollment-survey-patients="enrollmentSurveyPatients"
                                 :is-active="currentQuestionIndex === index"
                                 :is-subquestion="isSubQuestion(question)"
                                 :style-horizontal="false"
@@ -204,7 +204,7 @@
 
                             <question-type-phone-number
                                 :question="question"
-                                :non-awv-patients="enrollmentSurveyPatients"
+                                :enrollment-survey-patients="enrollmentSurveyPatients"
                                 :is-active="currentQuestionIndex === index"
                                 :style-horizontal="false"
                                 :get-all-questions-func="getAllQuestions"
@@ -217,7 +217,7 @@
 
                             <question-type-time
                                 :question="question"
-                                :non-awv-patients="enrollmentSurveyPatients"
+                                :enrollment-survey-patients="enrollmentSurveyPatients"
                                 :is-active="currentQuestionIndex === index"
                                 :style-horizontal="false"
                                 :get-all-questions-func="getAllQuestions"
@@ -230,7 +230,7 @@
 
                             <question-type-address
                                 :question="question"
-                                :non-awv-patients="enrollmentSurveyPatients"
+                                :enrollment-survey-patients="enrollmentSurveyPatients"
                                 :is-active="currentQuestionIndex === index"
                                 :style-horizontal="false"
                                 :get-all-questions-func="getAllQuestions"
@@ -243,7 +243,7 @@
 
                             <question-type-confirmation
                                 :question="question"
-                                :non-awv-patients="enrollmentSurveyPatients"
+                                :enrollment-survey-patients="enrollmentSurveyPatients"
                                 :is-active="currentQuestionIndex === index"
                                 :style-horizontal="false"
                                 :get-all-questions-func="getAllQuestions"
@@ -717,7 +717,6 @@
 
 
             postAnswerAndGoToNext(questionId, questionTypeAnswerId, answer, isLastQuestion) {
-
                 if (this.actionsDisabled) {
                     return;
                 }
@@ -947,11 +946,14 @@
 
                 // we are evaluating only the first condition.related_question_order_number
                 const condition = conditions[0];
+                if (!this.isEnrollees) {
+                    //For now is OK since we are depending only on ONE related Question
+                    const questions = this.getQuestionsOfOrder(condition.related_question_order_number);
+                    const question = questions[0];
+                    return !!question.answer;
+                }
 
-                //For now is OK since we are depending only on ONE related Question
-                const questions = this.getQuestionsOfOrder(condition.related_question_order_number);
-                const question = questions[0];
-                return !!question.answer;
+                return !!q.answer;
             },
 
             getNextQuestionIndex(index) {
@@ -968,28 +970,28 @@
                 const allQuestionConditions = nextQuestion.conditions || [];
                 for (let i = 0; i < allQuestionConditions.length; i++) {
                     const nextQuestConditions = allQuestionConditions[i];
-                        //we are evaluating only the first condition.related_question_order_number
-                        //For now is OK since we are depending only on ONE related Question
+                    //we are evaluating only the first condition.related_question_order_number
+                    //For now is OK since we are depending only on ONE related Question
 
-                        if (this.surveyName === 'enrollees') {
-                            if (nextQuestConditions
-                                && nextQuestConditions.hasOwnProperty('nonAwvCheck')
-                                && nextQuestConditions.nonAwvCheck === 'isSurveyOnlyUser') {
-                                if (this.enrollmentSurveyPatients.isSurveyOnlyRole === true) {
-                                    canGoToNext = true;
-                                    break;
-                                } else {
-                                    canGoToNext = false;
-                                    break;
-                                }
+                    if (this.surveyName === 'enrollees') {
+                        if (nextQuestConditions
+                            && nextQuestConditions.hasOwnProperty('nonAwvCheck')
+                            && nextQuestConditions.nonAwvCheck === 'isSurveyOnlyUser') {
+                            if (this.enrollmentSurveyPatients.isSurveyOnlyRole === true) {
+                                canGoToNext = true;
+                                break;
+                            } else {
+                                canGoToNext = false;
+                                break;
                             }
                         }
-                        const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
-                        const firstQuestion = questions[0];
-                        if (!firstQuestion.answer || !firstQuestion.answer.value) {
-                            canGoToNext = false;
-                            break;
-                        }
+                    }
+                    const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
+                    const firstQuestion = questions[0];
+                    if (!firstQuestion.answer || !firstQuestion.answer.value) {
+                        canGoToNext = false;
+                        break;
+                    }
 
                     //If conditions needs to be compared against to "gte" or "lte"
                     if (nextQuestConditions.hasOwnProperty('operator')) {
