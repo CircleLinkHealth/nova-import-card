@@ -105,25 +105,38 @@ class ItemizedBillablePatientsReport
 
                                              $patientData->setBhiCodes($this->getBhiAttestedConditions($summary));
 
-                                             $patientData->setAllBhiCodes($this->getAllBhiConditions($patientUser, $summary));
+                                             $patientData->setAllBhiCodes($this->getAllBhiConditions($patientUser,
+                                                 $summary));
 
                                              $patientData->setLocationName($patientUser->getPreferredLocationName());
 
-                                             $newRow = [
-                                                 'Provider Name'       => $patientData->getProvider(),
-                                                 'Location'            => $patientData->getLocationName(),
-                                                 'Patient Name'        => $patientData->getName(),
-                                                 'DOB'                 => $patientData->getDob(),
-                                                 'Billing Code(s)'     => $patientData->getBillingCodes(),
-                                                 'CCM Mins'            => $patientData->getCcmTime(),
-                                                 'BHI Mins'            => $patientData->getBhiTime(),
-                                                 'CCM Problem Code(s)' => $patientData->getCcmProblemCodes(),
-                                                 'BHI Code(s)'         => $patientData->getBhiCodes(),
-                                             ];
-
-                                             if(! empty($this->requestedByUserId) && enableAllPatientProblemCodesInvoiceForUser($this->requestedByUserId)){
-                                                 $newRow['All CCM Conditions'] = $patientData->getAllCcmProblemCodes();
-                                                 $newRow['All BHI Conditions' ] = $patientData->getAllBhiCodes();
+                                             // doing like this to get right order of columns.
+                                             if ( ! empty($this->requestedByUserId) && enableAllPatientProblemCodesInvoiceForUser($this->requestedByUserId)) {
+                                                 $newRow = [
+                                                     'Provider Name'       => $patientData->getProvider(),
+                                                     'Location'            => $patientData->getLocationName(),
+                                                     'Patient Name'        => $patientData->getName(),
+                                                     'DOB'                 => $patientData->getDob(),
+                                                     'Billing Code(s)'     => $patientData->getBillingCodes(),
+                                                     'CCM Mins'            => $patientData->getCcmTime(),
+                                                     'BHI Mins'            => $patientData->getBhiTime(),
+                                                     'CCM Problem Code(s)' => $patientData->getCcmProblemCodes(),
+                                                     'All CCM Conditions'  => $patientData->getAllCcmProblemCodes(),
+                                                     'BHI Code(s)'         => $patientData->getBhiCodes(),
+                                                     'All BHI Conditions'  => $patientData->getAllBhiCodes(),
+                                                 ];
+                                             } else {
+                                                 $newRow = [
+                                                     'Provider Name'       => $patientData->getProvider(),
+                                                     'Location'            => $patientData->getLocationName(),
+                                                     'Patient Name'        => $patientData->getName(),
+                                                     'DOB'                 => $patientData->getDob(),
+                                                     'Billing Code(s)'     => $patientData->getBillingCodes(),
+                                                     'CCM Mins'            => $patientData->getCcmTime(),
+                                                     'BHI Mins'            => $patientData->getBhiTime(),
+                                                     'CCM Problem Code(s)' => $patientData->getCcmProblemCodes(),
+                                                     'BHI Code(s)'         => $patientData->getBhiCodes(),
+                                                 ];
                                              }
 
                                              if ($patientUser->primaryPractice->hasAWVServiceCode() && $awvSummary = $patientUser->patientAWVSummaries->sortByDesc(
