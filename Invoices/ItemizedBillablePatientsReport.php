@@ -304,7 +304,7 @@ class ItemizedBillablePatientsReport
                 function (Problem $problem) {
                     return $problem->icd10Code();
                 }
-            )->filter()->implode(', ')
+            )->filter()->unique()->implode(', ')
             : 'N/A';
     }
 }
