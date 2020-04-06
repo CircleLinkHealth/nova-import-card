@@ -17,11 +17,11 @@
             <th>Billing Code</th>
             <th>CCM Mins</th>
             <th>BHI Mins</th>
-            <th>CCM Problem Code(s)</th>
+            <th>CCM Issue(s) Treated</th>
             @if($data->getEnableAllProblemCodesColumnns())
                 <th>All CCM Conditions</th>
             @endif
-            <th>BHI Code(s)</th>
+            <th>BHI Issue(s) Treated</th>
             @if($data->getEnableAllProblemCodesColumnns())
                 <th>All BHI Conditions</th>
             @endif
