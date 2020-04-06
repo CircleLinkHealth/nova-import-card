@@ -45,8 +45,9 @@
                 <div class="card-body">
                     <img :src="welcomeIcon"
                          class="welcome-icon" alt="welcome icon">
-                    <div class="survey-main-title">
-                        <label id="sub-title">{{welcomeTitle}}</label>
+                    <div class="survey-main-title"> <!--Should move the if isEnrollees to function-->
+                        <label v-if="!isEnrollees" id="sub-title">{{welcomeTitle}}</label>
+                        <label v-else>Enrollment Survey</label>
                     </div>
                     <div v-if="isHra" class="survey-sub-welcome-text">Welcome to your
                         Annual Wellness Visit (AWV) Questionnaire! Understanding your health is of upmost importance to
@@ -59,6 +60,12 @@
                         left and a representative will help when you call the number. If you skip any questions, our
                         reps
                         will also reach out shortly. Thanks!
+                    </div>
+                    <div v-else-if="isEnrollees"
+                         class="survey-sub-welcome-text"
+                         style="text-align: center;">
+                        Dear {{this.surveyData.last_name}},<br>
+                        Almost done! Just need some information.
                     </div>
                     <div v-else class="survey-sub-welcome-text">
                         Here is the form to fill out {{patientName}}'s Vitals. Once completed, a PPP will be
@@ -168,9 +175,86 @@
                             </question-type-radio>
 
                             <question-type-date
+                                :question="question"
+                                :is-active="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
+                                :style-horizontal="false"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
                                 :read-only="readOnlyMode"
                                 v-if="question.type.type === 'date'">
                             </question-type-date>
+
+                            <!--ENROLLEES SURVEY-->
+                            <question-type-dob
+                                :question="question"
+                                :non-awv-patients="enrollmentSurveyPatients"
+                                :is-active="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
+                                :style-horizontal="false"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                :read-only="readOnlyMode"
+                                v-if="question.type.type === 'dob'">
+                            </question-type-dob>
+
+                            <question-type-phone-number
+                                :question="question"
+                                :non-awv-patients="enrollmentSurveyPatients"
+                                :is-active="currentQuestionIndex === index"
+                                :style-horizontal="false"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                :read-only="readOnlyMode"
+                                v-if="question.type.type === 'phone'">
+                            </question-type-phone-number>
+
+                            <question-type-time
+                                :question="question"
+                                :non-awv-patients="enrollmentSurveyPatients"
+                                :is-active="currentQuestionIndex === index"
+                                :style-horizontal="false"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                :read-only="readOnlyMode"
+                                v-if="question.type.type === 'time'">
+                            </question-type-time>
+
+                            <question-type-address
+                                :question="question"
+                                :non-awv-patients="enrollmentSurveyPatients"
+                                :is-active="currentQuestionIndex === index"
+                                :style-horizontal="false"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                :read-only="readOnlyMode"
+                                v-if="question.type.type === 'address'">
+                            </question-type-address>
+
+                            <question-type-confirmation
+                                :question="question"
+                                :non-awv-patients="enrollmentSurveyPatients"
+                                :is-active="currentQuestionIndex === index"
+                                :style-horizontal="false"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                :read-only="readOnlyMode"
+                                v-if="question.type.type === 'confirmation'">
+                            </question-type-confirmation>
+
+                            <!-- ENROLLEES SURVEY END-->
                         </div>
                     </div>
                     <div class="error" v-if="error">
@@ -189,7 +273,41 @@
                 <!-- add an empty div, so we can animate scroll up even if we are on last question -->
                 <div v-if="!readOnlyMode" style="height: 600px"></div>
             </template>
+            <template v-else-if="isEnrollees">
+                <div class="card-body">
+                    <div class="welcome-icon-container">
+                        <img src="../../images/doctors.png"
+                             class="welcome-icon" alt="welcome icon">
+                    </div>
 
+                    <div class="survey-main-title">
+                        <label>Thank for signing up!</label>
+                    </div>
+                    <div class="survey-sub-welcome-text" style="text-align: center;">
+                        Your care coach will contact you in the next few days from {{this.practiceOutgoingPhoneNumber}}.<br>
+                        Please save this number to your phone ASAP.
+                        <br>
+                        <br>
+                        <div style="font-weight: bold">
+                            Dr's. {{this.doctorsLastName}}'s care team.
+                        </div>
+                    </div>
+                    <br/>
+
+                    <div class="btn-start-container">
+                        <mdb-btn color="primary" class="btn-start" @click="logout">
+                            Logout
+                        </mdb-btn>
+
+                        <form id="logout-form" action="/logout" method="POST" style="display: none;">
+                        </form>
+                    </div>
+
+                    <div class="by-circlelink">
+                        ⚡️ by CircleLink Health
+                    </div>
+                </div>
+            </template>
             <!-- Survey Completed - should only be shown in Vitals Survey -->
             <template v-else>
                 <div class="card-body">
@@ -315,6 +433,12 @@
     import questionTypeDate from "./questionTypeDate";
     import callAssistance from "./callAssistance";
     import questionTypeMultiSelect from "./questionTypeMultiSelect";
+    import questionTypeDob from "./EnrolleesSurveyComponents/questionTypeDob";
+    import questionTypePhoneNumber from "./EnrolleesSurveyComponents/questionTypePhoneNumber";
+    import questionTypeTime from "./EnrolleesSurveyComponents/questionTypeTime";
+    import questionTypeAddress from "./EnrolleesSurveyComponents/questionTypeAddress";
+    import questionTypeConfirmation from "./EnrolleesSurveyComponents/questionTypeConfirmation";
+
     import $ from "jquery";
 
     export default {
@@ -334,6 +458,11 @@
             'question-type-date': questionTypeDate,
             'call-assistance': callAssistance,
             'question-type-muti-select': questionTypeMultiSelect,
+            'question-type-dob': questionTypeDob,
+            'question-type-phone-number': questionTypePhoneNumber,
+            'question-type-time': questionTypeTime,
+            'question-type-address': questionTypeAddress,
+            'question-type-confirmation': questionTypeConfirmation,
         },
 
         data() {
@@ -373,13 +502,30 @@
                 totalQuestions: 0,
                 totalQuestionWithSubQuestions: 0,
                 readOnlyMode: false,
+
+                //    RE-ENROLLMENT USERS DATA
+                enrollmentSurveyPatients: {
+                    dob: [],
+                    address: this.surveyData.address,
+                    city: this.surveyData.city,
+                    zip: this.surveyData.zip,
+                    state: this.surveyData.state,
+                    patientEmail: this.surveyData.email,
+                    preferredContactNumber: [],
+                    isSurveyOnlyRole: false,
+                    letterLink: '',
+                }
+                //
             }
         },
 
         computed: {
-
             isHra() {
                 return this.surveyName === 'hra';
+            },
+
+            isEnrollees() {
+                return this.surveyName === 'enrollees';
             },
 
             subQuestionsConditions() {
@@ -703,6 +849,20 @@
 
                         //we are evaluating only the first condition.related_question_order_number
                         //For now is OK since we are depending only on ONE related Question
+                        //
+                        // if (this.surveyName === 'enrollees') {
+                        //     if (prevQuestConditions
+                        //         && prevQuestConditions.hasOwnProperty('nonAwvCheck')
+                        //         && prevQuestConditions.nonAwvCheck === 'isSurveyOnlyUser') {
+                        //         if (!this.isSurveyOnlyRole) {
+                        //             shouldDisable = true;
+                        //             break;
+                        //         } else {
+                        //             shouldDisable = false;
+                        //             break;
+                        //         }
+                        //     }
+                        // }
                         const questions = this.getQuestionsOfOrder(prevQuestConditions.related_question_order_number);
                         const firstQuestion = questions[0];
                         if (!firstQuestion.answer || !firstQuestion.answer.value) {
@@ -808,14 +968,28 @@
                 const allQuestionConditions = nextQuestion.conditions || [];
                 for (let i = 0; i < allQuestionConditions.length; i++) {
                     const nextQuestConditions = allQuestionConditions[i];
-                    //we are evaluating only the first condition.related_question_order_number
-                    //For now is OK since we are depending only on ONE related Question
-                    const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
-                    const firstQuestion = questions[0];
-                    if (!firstQuestion.answer || !firstQuestion.answer.value) {
-                        canGoToNext = false;
-                        break;
-                    }
+                        //we are evaluating only the first condition.related_question_order_number
+                        //For now is OK since we are depending only on ONE related Question
+
+                        if (this.surveyName === 'enrollees') {
+                            if (nextQuestConditions
+                                && nextQuestConditions.hasOwnProperty('nonAwvCheck')
+                                && nextQuestConditions.nonAwvCheck === 'isSurveyOnlyUser') {
+                                if (this.enrollmentSurveyPatients.isSurveyOnlyRole === true) {
+                                    canGoToNext = true;
+                                    break;
+                                } else {
+                                    canGoToNext = false;
+                                    break;
+                                }
+                            }
+                        }
+                        const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
+                        const firstQuestion = questions[0];
+                        if (!firstQuestion.answer || !firstQuestion.answer.value) {
+                            canGoToNext = false;
+                            break;
+                        }
 
                     //If conditions needs to be compared against to "gte" or "lte"
                     if (nextQuestConditions.hasOwnProperty('operator')) {
@@ -865,15 +1039,30 @@
                     return null;
                 }
 
+
                 //need to check if there are certain conditions that have to be met before showing this question
                 if (nextQuestion.conditions && nextQuestion.conditions.length) {
                     let shouldDisable = false;
                     for (let i = 0; i < nextQuestion.conditions.length; i++) {
                         const q = nextQuestion.conditions;
                         const nextQuestConditions = q[i];
-
                         //we are evaluating only the first condition.related_question_order_number
                         //For now is OK since we are depending only on ONE related Question
+
+                        if (this.surveyName === 'enrollees') {
+                            if (nextQuestConditions
+                                && nextQuestConditions.hasOwnProperty('nonAwvCheck')
+                                && nextQuestConditions.nonAwvCheck === 'isSurveyOnlyUser') {
+                                if (this.enrollmentSurveyPatients.isSurveyOnlyRole === false) {
+                                    shouldDisable = true;
+                                    break;
+                                } else {
+                                    shouldDisable = false;
+                                    break;
+                                }
+                            }
+                        }
+
                         const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
                         const firstQuestion = questions[0];
                         if (!firstQuestion.answer || !firstQuestion.answer.value) {
@@ -1185,6 +1374,29 @@
             if (this.adminMode) {
                 this.stage = "survey";
                 this.readOnlyMode = true;
+            }
+
+            if (this.isEnrollees) {
+                axios.post(`/survey/${this.surveyName}/get-enrollable-data`, {
+                    user_id: this.userId,
+                    survey_instance_id: this.surveyInstanceId
+                })
+                    .then((response) => {
+                        const data = response.data.data;
+                        const dob = data.dob;
+                        const preferredContactNumber = data.preferredContactNumber;
+                        const isSurveyOnlyRole = data.isSurveyOnlyRole;
+                        this.enrollmentSurveyPatients.dob.push(dob);
+                        this.enrollmentSurveyPatients.preferredContactNumber.push(preferredContactNumber);
+                        this.enrollmentSurveyPatients.isSurveyOnlyRole = isSurveyOnlyRole;
+                        this.enrollmentSurveyPatients.letterLink = data.letterLink;
+
+
+                    })
+                    .catch((error) => {
+                        console.log(error);
+
+                    });
             }
         },
 

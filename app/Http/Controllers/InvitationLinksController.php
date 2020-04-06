@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SendSurveyLinkRequest;
 use App\NotifiableUser;
+use App\Notifications\SendSurveyLinkToEnrollable;
 use App\Notifications\SurveyInvitationLink;
 use App\Services\SurveyInvitationLinksService;
 use App\Services\SurveyService;
@@ -187,5 +188,22 @@ class InvitationLinksController extends Controller
             ->notify(new SurveyInvitationLink($url, $surveyName, $channel, $practiceName, $providerFullName, $appointment));
 
         return true;
+    }
+
+    /**
+     * @param $userId
+     * @param $surveyId
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Exception
+     */
+    public function createEnrolleesSurveyUrl($userId, $surveyId)
+    {
+        $user = User::whereId($userId)->firstOrFail();
+        $survey = Survey::whereId($surveyId)->firstOrFail();
+        $url = $this->service->createAndSaveUrl($user, $survey->name, true);
+
+//        $user->notify(new SendSurveyLinkToEnrollable($url));
+
+        return redirect($url);
     }
 }

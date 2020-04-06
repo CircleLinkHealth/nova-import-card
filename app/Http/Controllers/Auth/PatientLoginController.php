@@ -39,34 +39,66 @@ class PatientLoginController extends Controller
     }
 
     /**
-     * Show the login form for patients.
-     *
      * @param Request $request
      * @param $userId
-     *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function showLoginForm(Request $request, $userId)
     {
-        $urlWithToken = $request->getRequestUri();
+        $loginFormData = $this->getLoginData($request, $userId);
+        $urlWithToken = $loginFormData['urlWithToken'];
+        $practiceName = $loginFormData['practiceName'];
+        $doctorsLastName = $loginFormData['doctorsLastName'];
+        $isEnrolleeSurvey = $this->checkIfEnrolleeSurvey($userId);
 
-        $user         = User::with(['primaryPractice', 'billingProvider'])->where('id', '=', $userId)->firstOrFail();
-        $practiceName = $user->getPrimaryPracticeName();
+        return view('surveyUrlAuth.surveyLoginForm',
+            compact('userId', 'urlWithToken', 'practiceName', 'doctorsLastName', 'isEnrolleeSurvey'));
+    }
 
-        $doctor          = $user->billingProviderUser();
+    /**
+     * @param $request
+     * @param $userId
+     * @return array
+     */
+    public function getLoginData($request, $userId)
+    {
+        $user = User::with(['primaryPractice', 'billingProvider'])->where('id', '=', $userId)->firstOrFail();
+        $doctor = $user->billingProviderUser();
         $doctorsLastName = "???";
         if ($doctor) {
             $doctorsLastName = $doctor->display_name;
         }
 
-        return view('surveyUrlAuth.surveyLoginForm',
-            compact('userId', 'urlWithToken', 'practiceName', 'doctorsLastName'));
+        return [
+            'urlWithToken' => $request->getRequestUri(),
+            'user' => $user,
+            'practiceName' => $user->getPrimaryPracticeName(),
+            'doctor' => $doctor,
+            'doctorsLastName' => $doctorsLastName,
+        ];
+    }
+
+    /**
+     * @param $userId
+     * @return string
+     */
+    public function checkIfEnrolleeSurvey($userId)
+    {
+        $survey = Survey::whereName(Survey::ENROLLEES)->select('id')->first();
+        $isEnrolleSurvey = false;
+        if (!empty($survey)) {
+            $isEnrolleSurvey = $survey->users()
+                ->where('user_id', $userId)
+                ->wherePivot('survey_id', $survey->id)
+                ->exists();
+        }
+        return $isEnrolleSurvey;
     }
 
     /**
      * Validate the user login request.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
      *
      * @return void
      *
@@ -76,15 +108,20 @@ class PatientLoginController extends Controller
     {
         $request->validate([
             $this->username() => 'required|string',
-            'birth_date'      => 'required|date',
-            'url'             => 'required|string',
+            'birth_date' => 'required|date',
+            'url' => 'required|string',
         ]);
+    }
+
+    protected function username()
+    {
+        return 'name';
     }
 
     /**
      * Attempt to log the user into the application.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
      *
      * @return bool
      */
@@ -96,9 +133,19 @@ class PatientLoginController extends Controller
     }
 
     /**
+     * Get the guard to be used during authentication.
+     *
+     * @return \Illuminate\Contracts\Auth\StatefulGuard
+     */
+    protected function guard()
+    {
+        return Auth::guard();
+    }
+
+    /**
      * Get the needed authorization credentials from the request.
      *
-     * @param  Request $request
+     * @param Request $request
      *
      * @return array
      */
@@ -107,21 +154,10 @@ class PatientLoginController extends Controller
         $input = $request->only($this->username(), 'birth_date', 'url');
 
         return [
-            'name'         => $input[$this->username()],
+            'name' => $input[$this->username()],
             'signed_token' => $this->service->parseUrl($input['url']),
-            'dob'          => Carbon::parse($input['birth_date'])->startOfDay(),
+            'dob' => Carbon::parse($input['birth_date'])->startOfDay(),
         ];
-    }
-
-
-    /**
-     * Get the guard to be used during authentication.
-     *
-     * @return \Illuminate\Contracts\Auth\StatefulGuard
-     */
-    protected function guard()
-    {
-        return Auth::guard();
     }
 
     protected function redirectTo()
@@ -132,22 +168,33 @@ class PatientLoginController extends Controller
         $user = auth()->user();
 
         $prevUrl = Session::previousUrl();
-        if (empty($prevUrl) || ! $user->hasRole('participant')) {
+        if (empty($prevUrl) || !$user->hasRole(['participant', 'survey-only'])) {
             Log::debug("PatientLoginController: no prevUrl or no participant [$user->id]. Going `home`");
             return route('home');
         }
 
         $surveyId = $this->service->getSurveyIdFromSignedUrl($prevUrl);
-        $name     = Survey::find($surveyId, ['name'])->name;
+        $name = Survey::find($surveyId, ['name'])->name;
+
+
+        if (Survey::ENROLLEES === $name) {
+            $route = route('survey.enrollees',
+                [
+                    'patientId' => $user->id,
+                    'surveyId' => $surveyId,
+                ]);
+        }
 
         if (Survey::HRA === $name) {
             Log::debug('PatientLoginController: should redirect to HRA');
             $route = route('survey.hra',
                 [
                     'patientId' => $user->id,
-                    'surveyId'  => $surveyId,
+                    'surveyId' => $surveyId,
                 ]);
-        } else {
+        }
+
+        if (Survey::VITALS === $name) {
             Log::debug('PatientLoginController: should redirect to Vitals - Not Authorized');
             $route = route('survey.vitals.not.authorized',
                 [
@@ -160,10 +207,4 @@ class PatientLoginController extends Controller
 
         return $route;
     }
-
-    protected function username()
-    {
-        return 'name';
-    }
-
 }
