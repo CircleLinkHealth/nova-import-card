@@ -13,13 +13,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Circlelinkhealth\\ImportPracticeStaffCsv\\": "src/"
+            "CircleLinkHealth\\ImportPracticeStaffCsv\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Circlelinkhealth\\ImportPracticeStaffCsv\\CardServiceProvider"
+                "CircleLinkHealth\\ImportPracticeStaffCsv\\CardServiceProvider"
             ]
         }
     },

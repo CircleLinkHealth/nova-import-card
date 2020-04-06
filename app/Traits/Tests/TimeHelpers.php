@@ -8,9 +8,7 @@ use App\Call;
 use App\Jobs\StoreTimeTracking;
 use App\Note;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 trait TimeHelpers
@@ -19,19 +17,21 @@ trait TimeHelpers
      * Add billable or not to a patient and credit nurse.
      *
      * @param User $nurse
-     * @param User $patient
+     * @param User|null $patient
      * @param int $minutes
      * @param bool $billable
      * @param bool $withSuccessfulCall
      * @param bool $bhiTime
+     * @param Carbon|null $startTime
      */
     private function addTime(
         User $nurse,
-        User $patient,
+        $patient,
         int $minutes,
         bool $billable,
         bool $withSuccessfulCall = false,
-        bool $bhiTime = false
+        bool $bhiTime = false,
+        Carbon $startTime = null
     ) {
         if ($withSuccessfulCall) {
             /** @var Note $fakeNote */
@@ -61,7 +61,7 @@ trait TimeHelpers
                 [
                     'is_behavioral' => $bhiTime,
                     'duration'      => $seconds,
-                    'start_time'    => Carbon::now(),
+                    'start_time'    => $startTime ?? Carbon::now(),
                     'name'          => $withSuccessfulCall
                         ? 'Patient Note Creation'
                         : 'test',

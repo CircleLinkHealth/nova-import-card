@@ -25,6 +25,12 @@
             <template slot="h__selected">
                 <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox"/>
             </template>
+            <template slot="Name" slot-scope="props">
+                <a v-if="props.row.patient_id" :href="linkToCarePlan(props.row.patient_id)" target="_blank">
+                    {{props.row.Name}}
+                </a>
+                <p v-else>{{props.row.Name}}</p>
+            </template>
             <template slot="Practice" slot-scope="props">
                 <v-select
                         v-model="props.row.Practice"
@@ -137,6 +143,7 @@
     import {currentUser} from '../../store/getters';
     import VueSelect from "vue-select";
     import GetsNurses from '../../mixins/gets-nurses'
+    import moment from "moment";
 
     export default {
         name: 'imported-medical-records-management',
@@ -199,8 +206,10 @@
                     return () => this.tableData.find(record => record.id === id).errors
                 },
                 setupRecord(record) {
-                    if (record.demographics) {
-                        record.demographics.display_name = record.demographics.first_name + ' ' + record.demographics.last_name
+                    record.dob = '';
+
+                    if((record.patient || {}).patient_info && (record.patient || {}).patient_info.birth_date) {
+                        record.dob = moment((record.patient || {}).patient_info.birth_date).format('MM-DD-YYYY');
                     }
                     const self = this;
                     const practice = {
@@ -226,9 +235,11 @@
 
                     return {
                         id: record.id,
+                        patient: record.patient,
+                        patient_id: record.patient_id,
                         selected: false,
-                        Name: (record.demographics || {}).display_name,
-                        DOB: (record.demographics || {}).dob,
+                        Name: (record.patient || {}).display_name,
+                        DOB: record.dob,
                         Practice: practice,
                         practice_id: practice.value,
                         location: record.location,
@@ -587,6 +598,9 @@
                             label: item.display_name
                         }))
                     })
+                },
+                linkToCarePlan(patientId) {
+                    return rootUrl('manage-patients/'+patientId+'/view-careplan')
                 }
             }),
         created() {

@@ -10,6 +10,7 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImpo
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -19,7 +20,11 @@ class CCDImporterRepository
      * Creates a user with random credentials
      * Used to attach XML CCDs to a Patient.
      *
+     * @param DemographicsImport $demographics
+     * @param ImportedMedicalRecord $imr
+     *
      * @return \CircleLinkHealth\Customer\Entities\User
+     * @throws \Exception
      */
     public function createRandomUser(
         DemographicsImport $demographics,
@@ -31,7 +36,7 @@ class CCDImporterRepository
             throw new \Exception('User role not found.', 500);
         }
 
-        $newUserId = str_random(20);
+        $newUserId = str_random(25);
 
         $email = empty($email = $demographics->email)
             ? $newUserId.'@careplanmanager.com'

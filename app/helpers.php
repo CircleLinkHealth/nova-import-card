@@ -9,6 +9,7 @@ use App\Jobs\SendSlackMessage;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Exceptions\CsvFieldNotFoundException;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -117,7 +118,7 @@ if ( ! function_exists('parseIds')) {
             return explode(',', $value);
         }
 
-        return array_filter((array) $value);
+        return array_filter((array)$value);
     }
 }
 
@@ -175,19 +176,19 @@ if ( ! function_exists('activeNurseNames')) {
     function activeNurseNames()
     {
         return User::ofType('care-center')
-            ->with(
+                   ->with(
                        [
                            'nurseInfo' => function ($q) {
                                $q->where('is_demo', '!=', true);
                            },
                        ]
                    )->whereHas(
-                       'nurseInfo',
-                       function ($q) {
-                           $q->where('is_demo', '!=', true);
-                       }
-                   )->where('user_status', 1)
-            ->pluck('display_name', 'id');
+                'nurseInfo',
+                function ($q) {
+                    $q->where('is_demo', '!=', true);
+                }
+            )->where('user_status', 1)
+                   ->pluck('display_name', 'id');
     }
 }
 
@@ -195,9 +196,9 @@ if ( ! function_exists('sendSlackMessage')) {
     /**
      * Sends a message to Slack.
      *
-     * @param string $to      - slack channel (should start with '#')
+     * @param string $to - slack channel (should start with '#')
      * @param string $message
-     * @param bool   $force   - in case you really want the message to go to slack (testing | debugging)
+     * @param bool $force - in case you really want the message to go to slack (testing | debugging)
      */
     function sendSlackMessage($to, $message, $force = false)
     {
@@ -230,7 +231,7 @@ if ( ! function_exists('formatPhoneNumber')) {
         }
 
         if (10 === strlen($sanitized)) {
-            return substr($sanitized, 0, 3).'-'.substr($sanitized, 3, 3).'-'.substr($sanitized, 6, 4);
+            return substr($sanitized, 0, 3) . '-' . substr($sanitized, 3, 3) . '-' . substr($sanitized, 6, 4);
         }
 
         return null;
@@ -260,7 +261,7 @@ if ( ! function_exists('formatPhoneNumberE164')) {
             $sanitized = substr($sanitized, -10);
         }
 
-        return '+'.$countryCode.$sanitized;
+        return '+' . $countryCode . $sanitized;
     }
 }
 
@@ -283,7 +284,7 @@ if ( ! function_exists('extractNumbers')) {
 if ( ! function_exists('detectDelimiter')) {
     /**
      * @param bool|resource $csvFileHandle The handle of a file opened with fopen
-     * @param int           $length
+     * @param int $length
      *
      * @return false|int|string
      */
@@ -311,12 +312,12 @@ if ( ! function_exists('parseCsvToArray')) {
      * Parses a CSV file into an array.
      *
      * @param $file
-     * @param int  $length
+     * @param int $length
      * @param null $delimiter
      *
+     * @return array
      * @throws CsvFieldNotFoundException
      *
-     * @return array
      */
     function parseCsvToArray($file, $length = 0, $delimiter = null)
     {
@@ -366,10 +367,10 @@ if ( ! function_exists('iterateCsv')) {
      * Parses a CSV file into an array.
      *
      * @param $file
-     * @param int   $length
-     * @param null  $delimiter
-     * @param null  $callback
-     * @param bool  $firstRowContainsColumnHeaders
+     * @param int $length
+     * @param null $delimiter
+     * @param null $callback
+     * @param bool $firstRowContainsColumnHeaders
      * @param mixed $logAndReturnAllActivity
      *
      * @return array
@@ -446,7 +447,7 @@ if ( ! function_exists('secondsToHHMM')) {
         $getHours = sprintf('%02d', floor($seconds / 3600));
         $getMins  = sprintf('%02d', floor(($seconds - ($getHours * 3600)) / 60));
 
-        return $getHours.':'.$getMins;
+        return $getHours . ':' . $getMins;
     }
 }
 
@@ -454,9 +455,9 @@ if ( ! function_exists('secondsToMMSS')) {
     function secondsToMMSS($seconds)
     {
         $minutes = sprintf('%02d', floor($seconds / 60));
-        $seconds = sprintf(':%02d', (int) $seconds % 60);
+        $seconds = sprintf(':%02d', (int)$seconds % 60);
 
-        return $minutes.$seconds;
+        return $minutes . $seconds;
     }
 }
 
@@ -710,9 +711,9 @@ if ( ! function_exists('windowToTimestamps')) {
      * @param $startTimestamp
      * @param $endTimestamp
      * @param string $timezone
-     * @param mixed  $date
-     * @param mixed  $start
-     * @param mixed  $end
+     * @param mixed $date
+     * @param mixed $start
+     * @param mixed $end
      *
      * @return array
      */
@@ -829,7 +830,7 @@ if ( ! function_exists('authUserCanSendPatientEmail')) {
 
         return \Cache::remember($key, 2, function () use ($key) {
             return AppConfig::where('config_key', $key)
-                ->where('config_value', auth()->user()->id)->exists();
+                            ->where('config_value', auth()->user()->id)->exists();
         });
     }
 }
@@ -879,10 +880,10 @@ if ( ! function_exists('linkToDownloadFile')) {
      * @param $path
      * @param mixed $absolute
      *
-     * @throws Exception
+     * @return string
      * @throws Exception
      *
-     * @return string
+     * @throws Exception
      */
     function linkToDownloadFile($path, $absolute = false)
     {
@@ -907,9 +908,9 @@ if ( ! function_exists('linkToCachedView')) {
      * @param $viewHashKey
      * @param mixed $absolute
      *
+     * @return string
      * @throws Exception
      *
-     * @return string
      */
     function linkToCachedView($viewHashKey, $absolute = false)
     {
@@ -1046,35 +1047,35 @@ if ( ! function_exists('validProblemName')) {
     function validProblemName($name)
     {
         return ! str_contains(
-            strtolower($name),
-            [
-                'screening',
-                'history',
-                'scan',
-                'immunization',
-                'immunisation',
-                'injection',
-                'vaccine',
-                'vaccination',
-                'vaccin',
-                'screen',
-                'follow up',
-                'followup',
-                'labs',
-                'f/u',
-                'mo fu',
-                'fu on',
-                'fu from',
-                'm fu',
-                'counsel',
-                'adverse effect drug',
-                'counseling',
-                'new pt',
-                'hx',
-                'prediabetes',
-                'check',
-            ]
-        ) && ! in_array(
+                strtolower($name),
+                [
+                    'screening',
+                    'history',
+                    'scan',
+                    'immunization',
+                    'immunisation',
+                    'injection',
+                    'vaccine',
+                    'vaccination',
+                    'vaccin',
+                    'screen',
+                    'follow up',
+                    'followup',
+                    'labs',
+                    'f/u',
+                    'mo fu',
+                    'fu on',
+                    'fu from',
+                    'm fu',
+                    'counsel',
+                    'adverse effect drug',
+                    'counseling',
+                    'new pt',
+                    'hx',
+                    'prediabetes',
+                    'check',
+                ]
+            ) && ! in_array(
                 strtolower($name),
                 [
                     'fu',
@@ -1126,9 +1127,9 @@ if ( ! function_exists('shortenUrl')) {
      *
      * @param $url
      *
+     * @return string
      * @throws \Waavi\UrlShortener\InvalidResponseException
      *
-     * @return string
      */
     function shortenUrl($url)
     {
@@ -1143,14 +1144,14 @@ if ( ! function_exists('validateYYYYMMDDDateString')) {
      * @param $date
      * @param mixed $throwException
      *
-     * @throws Exception
+     * @return bool
      * @throws Exception
      *
-     * @return bool
+     * @throws Exception
      */
     function validateYYYYMMDDDateString($date, $throwException = true)
     {
-        $isValid = (bool) preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/', $date);
+        $isValid = (bool)preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/', $date);
 
         if ( ! $isValid && $throwException) {
             throw new \Exception('Invalid Date');
@@ -1172,7 +1173,7 @@ if ( ! function_exists('cast')) {
      * incompatable classes.
      *
      * @param object $object the object to cast
-     * @param string $class  the class to cast the object into
+     * @param string $class the class to cast the object into
      *
      * @return object
      */
@@ -1275,8 +1276,8 @@ if ( ! function_exists('getGoogleDirectoryByName')) {
         $clh = collect(Storage::drive('google')->listContents('/', true));
 
         $directory = $clh->where('type', '=', 'dir')
-            ->where('filename', '=', $name)
-            ->first();
+                         ->where('filename', '=', $name)
+                         ->first();
         if ( ! $directory) {
             return null;
         }
@@ -1296,11 +1297,11 @@ if ( ! function_exists('format_bytes')) {
                 ? log($bytes)
                 : 0) / log(1024)
         );
-        $pow = min($pow, count($units) - 1);
+        $pow   = min($pow, count($units) - 1);
 
         $bytes /= (1 << (10 * $pow));
 
-        return round($bytes, $precision).' '.$units[$pow];
+        return round($bytes, $precision) . ' ' . $units[$pow];
     }
 }
 
@@ -1308,9 +1309,9 @@ if ( ! function_exists('array_keys_exist')) {
     /**
      * Returns TRUE if the given keys are all set in the array. Each key can be any value possible for an array index.
      *
-     * @param string[] $keys    keys to check
-     * @param array    $array   an array with keys to check
-     * @param mixed    $missing reference to a variable that that contains the missing keys
+     * @param string[] $keys keys to check
+     * @param array $array an array with keys to check
+     * @param mixed $missing reference to a variable that that contains the missing keys
      *
      * @return bool true if all given keys exist in the given array, false if not
      *
@@ -1340,7 +1341,7 @@ if ( ! function_exists('is_falsey')) {
 if ( ! function_exists('isAllowedToSee2FA')) {
     function isAllowedToSee2FA(User $user = null)
     {
-        $twoFaEnabled = (bool) config('auth.two_fa_enabled');
+        $twoFaEnabled = (bool)config('auth.two_fa_enabled');
         if ( ! $twoFaEnabled) {
             return false;
         }
@@ -1419,7 +1420,7 @@ if ( ! function_exists('tryDropForeignKey')) {
 
             $errorCode = $e->errorInfo[1];
             if (1091 == $errorCode) {
-                Log::debug("Key `${key}` does not exist. Nothing to delete.".__FILE__);
+                Log::debug("Key `${key}` does not exist. Nothing to delete." . __FILE__);
             }
 
             return false;
@@ -1669,7 +1670,7 @@ if ( ! function_exists('convertValidatorMessagesToString')) {
             collect($validator->getMessageBag()->toArray())->transform(
                 function ($item, $key) {
                     $errors = implode(', ', $item);
-                    $key = ucfirst($key);
+                    $key    = ucfirst($key);
 
                     return "{$key}: $errors";
                 }
@@ -1731,7 +1732,12 @@ if ( ! function_exists('patientLoginIsEnabledForPractice')) {
 
         return \Cache::remember(sha1("{$key}_{$practiceId}"), 2, function () use ($key, $practiceId) {
             return AppConfig::where('config_key', $key)
-                ->where('config_value', $practiceId)->exists();
+                //give the ability to enable for all practices at once
+                            ->whereIn('config_value', [
+                    $practiceId,
+                    'all',
+                ])
+                            ->exists();
         });
     }
 }
@@ -1746,7 +1752,7 @@ if ( ! function_exists('reimportingPatientsIsEnabledForUser')) {
 
         return \Cache::remember(sha1("{$key}_{$userId}"), 2, function () use ($key, $userId) {
             return AppConfig::where('config_key', $key)
-                ->where('config_value', $userId)->exists();
+                            ->where('config_value', $userId)->exists();
         });
     }
 }
@@ -1761,7 +1767,7 @@ if ( ! function_exists('isDownloadingNotesEnabledForUser')) {
 
         return \Cache::remember(sha1("{$key}_{$userId}"), 2, function () use ($key, $userId) {
             return AppConfig::where('config_key', $key)
-                ->where(function ($q) use ($userId) {
+                            ->where(function ($q) use ($userId) {
                                 $q->where('config_value', $userId)->orWhere('config_value', 'all');
                             })->exists();
         });
@@ -1780,9 +1786,9 @@ if ( ! function_exists('showNurseMetricsInDailyEmailReport')) {
         ];
 
         return AppConfig::whereIn('config_key', $options)
-            ->where(function ($q) use ($userId) {
+                        ->where(function ($q) use ($userId) {
                             $q->where('config_value', $userId)
-                                ->orWhere('config_value', 'all_nurses');
+                              ->orWhere('config_value', 'all_nurses');
                         })->exists();
     }
 }
@@ -1790,8 +1796,7 @@ if ( ! function_exists('showNurseMetricsInDailyEmailReport')) {
 if ( ! function_exists('validateUsPhoneNumber')) {
     /**
      * @param string
-     *
-     * @return bool
+     * @param mixed $phoneNumber
      */
     function validateUsPhoneNumber($phoneNumber): bool
     {
@@ -1809,9 +1814,6 @@ if ( ! function_exists('validateUsPhoneNumber')) {
 }
 
 if ( ! function_exists('usStatesArrayForDropdown')) {
-    /**
-     * @return array
-     */
     function usStatesArrayForDropdown(): array
     {
         return [
@@ -1870,8 +1872,6 @@ if ( ! function_exists('usStatesArrayForDropdown')) {
     }
 }
 
-
-
 if ( ! function_exists('sanitizeString')) {
     /**
      * @param $string
@@ -1881,5 +1881,41 @@ if ( ! function_exists('sanitizeString')) {
     function sanitizeString($string)
     {
         return filter_var($string, FILTER_SANITIZE_STRING);
+    }
+}
+
+if ( ! function_exists('getPatientListDropdown')) {
+    function getPatientListDropdown(User $user)
+    {
+        if ($user->isAdmin()) {
+            return ['ccm', 'awv'];
+        }
+
+        return Cache::remember("patient_list_dropdown:$user->id", 20, function () use ($user) {
+            $result = [];
+            $user->practices(true)
+                 ->get()
+                 ->each(function ($p) use (&$result) {
+                     /** @var Collection $services */
+                     $services         = $p->chargeableServices()->get();
+                     $count            = $services->count();
+                     $hasAwvInitial    = $services->where('code', '=', ChargeableService::AWV_INITIAL)->isNotEmpty();
+                     $hasAwvSubsequent = $services->where('code', '=', ChargeableService::AWV_SUBSEQUENT)->isNotEmpty();
+
+                     if ($hasAwvInitial || $hasAwvSubsequent) {
+                         $result[] = 'awv';
+                     }
+
+                     if ((1 === $count && $hasAwvInitial) ||
+                         (1 === $count && $hasAwvSubsequent) ||
+                         (2 === $count && $hasAwvInitial && $hasAwvSubsequent)) {
+                         return;
+                     }
+
+                     $result[] = 'ccm';
+                 });
+
+            return collect($result)->unique()->toArray();
+        });
     }
 }
