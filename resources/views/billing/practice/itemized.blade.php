@@ -18,13 +18,14 @@
             <th>CCM Mins</th>
             <th>BHI Mins</th>
             <th>CCM Problem Code(s)</th>
+            <th>All CCM Conditions</th>
             <th>BHI Code(s)</th>
+            <th>All BHI Conditions</th>
 
         </tr>
 
         @if(isset($patientData))
             @foreach($patientData as $data)
-
                 <tr>
                     <td>{{$data->getProvider()}}</td>
                     <td>{{$data->getLocationName()}}</td>
@@ -34,7 +35,9 @@
                     <td>{{$data->getCcmTime()}}</td>
                     <td>{{$data->getBhiTime()}}</td>
                     <td>{{$data->getCcmProblemCodes()}}</td>
+                    <td>{{$data->getAllCcmProblemCodes()}}</td>
                     <td>{{$data->getBhiCodes()}}</td>
+                    <td>{{$data->getAllBhiCodes()}}</td>
                 </tr>
             @endforeach
         @endif
