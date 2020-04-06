@@ -284,7 +284,7 @@ class ItemizedBillablePatientsReport
             genericDiabetes()->id);
 
         if ($summary->hasServiceCode(ChargeableService::BHI)) {
-            $problems = $problems > where('cpmProblem.is_behavioral', '=', false);
+            $problems = $problems->where('cpmProblem.is_behavioral', '=', false);
         }
 
         return $this->formatProblemCodesForReport($problems);
@@ -311,8 +311,8 @@ class ItemizedBillablePatientsReport
                     return $problem->icd10Code();
                 }
             )->filter()
-             ->unique()
-             ->implode(', ')
+                     ->unique()
+                     ->implode(', ')
             : 'N/A';
     }
 }
