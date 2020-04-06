@@ -182,11 +182,11 @@ if ( ! function_exists('activeNurseNames')) {
                     },
                 ]
             )->whereHas(
-                       'nurseInfo',
-                       function ($q) {
-                           $q->where('is_demo', '!=', true);
-                       }
-                   )->where('user_status', 1)
+                'nurseInfo',
+                function ($q) {
+                    $q->where('is_demo', '!=', true);
+                }
+            )->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -1871,24 +1871,6 @@ if ( ! function_exists('genericDiabetes')) {
     {
         return \Cache::remember('cpm_problem_diabetes', 2, function () {
             return  \CircleLinkHealth\SharedModels\Entities\CpmProblem::where('name', 'Diabetes')->first();
-        });
-    }
-}
-
-if ( ! function_exists('enableAllPatientProblemCodesInvoiceForUser')) {
-    /**
-     * @param $userId
-     */
-    function enableAllPatientProblemCodesInvoiceForUser(int $userId): bool
-    {
-        $key = 'enable_all_patient_problem_codes_invoice_for_user';
-
-        return \Cache::remember(sha1("{$key}_{$userId}"), 2, function () use ($key, $userId) {
-            return AppConfig::where('config_key', $key)
-                ->where(function ($q) use ($userId) {
-                                $q->where('config_value', $userId)
-                                    ->orWhere('config_value', 'all');
-                            })->exists();
         });
     }
 }

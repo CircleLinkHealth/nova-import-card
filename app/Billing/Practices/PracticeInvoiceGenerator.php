@@ -19,21 +19,15 @@ class PracticeInvoiceGenerator
 
     private $practice;
 
-    private $requestedByUserId;
-
     /**
      * PracticeInvoiceGenerator constructor.
-     *
-     * @param mixed|null $requestedByUserId
      */
     public function __construct(
         Practice $practice,
-        Carbon $month,
-        $requestedByUserId = null
+        Carbon $month
     ) {
-        $this->practice          = $practice;
-        $this->month             = $month->firstOfMonth();
-        $this->requestedByUserId = $requestedByUserId;
+        $this->practice = $practice;
+        $this->month    = $month->firstOfMonth();
     }
 
     /**
@@ -106,8 +100,7 @@ class PracticeInvoiceGenerator
             (new ItemizedBillablePatientsReport(
                 $this->practice->id,
                 $this->practice->display_name,
-                $this->month,
-                $this->requestedByUserId
+                $this->month
             ))->toArrayForCsv(),
             [
             ]
@@ -135,8 +128,7 @@ class PracticeInvoiceGenerator
             (new ItemizedBillablePatientsReport(
                 $this->practice->id,
                 $this->practice->display_name,
-                $this->month,
-                $this->requestedByUserId
+                $this->month
             ))->toArray(),
             $path
         );
