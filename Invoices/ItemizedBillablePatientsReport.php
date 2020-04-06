@@ -43,9 +43,9 @@ class ItemizedBillablePatientsReport
      */
     public function __construct(int $practiceId, string $practiceName, Carbon $month)
     {
-        $this->practiceId        = $practiceId;
-        $this->month             = $month;
-        $this->practiceName      = $practiceName;
+        $this->practiceId   = $practiceId;
+        $this->month        = $month;
+        $this->practiceName = $practiceName;
     }
 
     public function toArrayForCsv(): array
@@ -98,7 +98,8 @@ class ItemizedBillablePatientsReport
                                              );
                                              $patientData->setCcmProblemCodes($this->getCcmAttestedConditions($summary));
 
-                                             $patientData->setAllCcmProblemCodes($this->getAllCcmConditions($patientUser));
+                                             $patientData->setAllCcmProblemCodes($this->getAllCcmConditions($patientUser,
+                                                 $summary));
 
                                              $patientData->setBhiCodes($this->getBhiAttestedConditions($summary));
 
@@ -195,7 +196,8 @@ class ItemizedBillablePatientsReport
 
                                              $patientData->setBhiCodes($this->getBhiAttestedConditions($summary));
 
-                                             $patientData->setAllCcmProblemCodes($this->getAllCcmConditions($u));
+                                             $patientData->setAllCcmProblemCodes($this->getAllCcmConditions($u,
+                                                 $summary));
 
                                              $patientData->setAllBhiCodes($this->getAllBhiConditions($u, $summary));
 
@@ -276,13 +278,16 @@ class ItemizedBillablePatientsReport
         return $this->formatProblemCodesForReport($summary->bhiAttestedProblems()->filter());
     }
 
-    private function getAllCcmConditions(User $patient)
+    private function getAllCcmConditions(User $patient, PatientMonthlySummary $summary)
     {
-        return $this->formatProblemCodesForReport(
-            $patient->ccdProblems->where('cpm_problem_id', '!=',
-                genericDiabetes()->id)->where('cpmProblem.is_behavioral', '=',
-                false)
-        );
+        $problems = $patient->ccdProblems->where('cpm_problem_id', '!=',
+            genericDiabetes()->id);
+
+        if ($summary->hasServiceCode(ChargeableService::BHI)) {
+            $problems = $problems->where('cpmProblem.is_behavioral', '=', false);
+        }
+
+        return $this->formatProblemCodesForReport($problems);
     }
 
     private function getAllBhiConditions(User $patient, PatientMonthlySummary $summary)
@@ -300,11 +305,14 @@ class ItemizedBillablePatientsReport
     private function formatProblemCodesForReport(Collection $problems)
     {
         return $problems->isNotEmpty()
-            ? $problems->unique()->transform(
+            ?
+            $problems->map(
                 function (Problem $problem) {
                     return $problem->icd10Code();
                 }
-            )->filter()->implode(', ')
+            )->filter()
+                     ->unique()
+                     ->implode(', ')
             : 'N/A';
     }
 }
