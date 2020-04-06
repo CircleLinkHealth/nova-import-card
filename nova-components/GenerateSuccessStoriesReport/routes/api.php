@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use Circlelinkhealth\GenerateSuccessStoriesReport\GenerateSuccessStoriesReportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +14,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/endpoint', function (Request $request) {
-//     //
-// });
+Route::get('/generate-success-stories-report/{monthYear}', GenerateSuccessStoriesReportController::class . '@handle');

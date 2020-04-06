@@ -9,7 +9,9 @@ namespace App\Nova;
 use App\Note;
 use Circlelinkhealth\GenerateSuccessStoriesReport\GenerateSuccessStoriesReport;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Text;
 
 class NotesSuccessStories extends Resource
 {
@@ -96,6 +98,18 @@ class NotesSuccessStories extends Resource
     {
         return [
             ID::make()->sortable(),
+
+//            Text::make('Note', 'user.display_name')
+//                ->hideFromIndex()
+//                ->hideFromDetail()
+//                ->hideWhenCreating()
+//                ->readonly(true),
+
+            BelongsTo::make('Patient', 'patient', User::class)
+                ->sortable()
+                ->searchable()
+                ->hideWhenUpdating()
+                ->readonly(true),
         ];
     }
 
@@ -106,7 +120,9 @@ class NotesSuccessStories extends Resource
      */
     public function filters(Request $request)
     {
-        return [];
+        return [
+            new \App\Nova\Filters\NotesSuccessStories()
+        ];
     }
 
     /**
