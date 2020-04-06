@@ -86,7 +86,7 @@ class CheckUserTotalTimeTracked extends Command
             $result   .= "Warning: The following nurses have exceeded the daily maximum of $maxHours hours:\n";
             $daily->each(function ($time, $id) use (&$result) {
                 $rounded = round($time, 2);
-                $result .= "Nurse[$id]: $rounded hours\n";
+                $result .= "Nurse[$id]: $rounded hrs spent in CPM yesterday\n";
             });
         }
         $weekly = $alerts->get('weekly');
@@ -98,7 +98,7 @@ class CheckUserTotalTimeTracked extends Command
             $result = "Warning: The following nurses have exceeded their committed hours for the last 7 days by more than {$timesMore}x:\n";
             $weekly->each(function ($time, $id) use (&$result) {
                 $rounded = round($time, 2);
-                $result .= "Nurse[$id]: $rounded hours\n";
+                $result .= "Nurse[$id]: $rounded hrs spent in CPM last 7 days\n";
             });
         }
 
