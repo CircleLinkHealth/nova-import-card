@@ -34,6 +34,8 @@ class ItemizedBillablePatientsReport
      */
     protected $practiceName;
 
+    protected $requestedByUserId;
+
     /**
      * ItemizedBillablePatientsReport constructor.
      *
@@ -41,11 +43,12 @@ class ItemizedBillablePatientsReport
      * @param string $practiceName
      * @param Carbon $month
      */
-    public function __construct(int $practiceId, string $practiceName, Carbon $month)
+    public function __construct(int $practiceId, string $practiceName, Carbon $month, $requestedByUserId)
     {
-        $this->practiceId   = $practiceId;
-        $this->month        = $month;
-        $this->practiceName = $practiceName;
+        $this->practiceId        = $practiceId;
+        $this->month             = $month;
+        $this->practiceName      = $practiceName;
+        $this->requestedByUserId = $requestedByUserId;
     }
 
     public function toArrayForCsv(): array
@@ -103,6 +106,8 @@ class ItemizedBillablePatientsReport
                                              $patientData->setBhiCodes($this->getBhiAttestedConditions($summary));
 
                                              $patientData->setAllBhiCodes($this->getAllBhiConditions($patientUser));
+
+                                             $patientData->setEnableAllProblemCodesColumnns(! empty($this->requestedByUserId) && enableAllPatientProblemCodesInvoiceForUser($this->requestedByUserId));
 
                                              $patientData->setLocationName($patientUser->getPreferredLocationName());
 
@@ -199,6 +204,8 @@ class ItemizedBillablePatientsReport
                                              $patientData->setAllBhiCodes($this->getAllBhiConditions($u));
 
                                              $patientData->setLocationName($u->getPreferredLocationName());
+
+                                             $patientData->setEnableAllProblemCodesColumnns(! empty($this->requestedByUserId) && enableAllPatientProblemCodesInvoiceForUser($this->requestedByUserId));
 
                                              $data['patientData'][$u->id] = $patientData;
                                          }
