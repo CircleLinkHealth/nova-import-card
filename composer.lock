@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "62b83ae08923a9fc41e3f2ab26b93b89",
+    "content-hash": "e9055c5b5e2edacdf64f3c24a686ed77",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1263,11 +1263,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.2.9",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "42a2e977487eba307cab67522f6e46f89c0cbfd3"
+                "reference": "a7b0883362ee2479a77d2a3bc5463a9211dd5902"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1281,7 +1281,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-01T20:01:18+00:00"
+            "time": "2020-04-02T20:49:24+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -3213,6 +3213,7 @@
                     "email": "jakub.onderka@gmail.com"
                 }
             ],
+            "abandoned": "php-parallel-lint/php-console-color",
             "time": "2018-09-29T17:23:10+00:00"
         },
         {
@@ -3259,6 +3260,7 @@
                 }
             ],
             "description": "Highlight PHP code in terminal",
+            "abandoned": "php-parallel-lint/php-console-highlighter",
             "time": "2018-09-29T18:48:56+00:00"
         },
         {
