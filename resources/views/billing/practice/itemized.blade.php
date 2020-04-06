@@ -18,14 +18,9 @@
             <th>CCM Mins</th>
             <th>BHI Mins</th>
             <th>CCM Issue(s) Treated</th>
-            @if($data->getEnableAllProblemCodesColumnns())
-                <th>All CCM Conditions</th>
-            @endif
+            <th>All CCM Conditions</th>
             <th>BHI Issue(s) Treated</th>
-            @if($data->getEnableAllProblemCodesColumnns())
-                <th>All BHI Conditions</th>
-            @endif
-
+            <th>All BHI Conditions</th>
         </tr>
 
         @if(isset($patientData))
@@ -39,13 +34,9 @@
                     <td>{{$data->getCcmTime()}}</td>
                     <td>{{$data->getBhiTime()}}</td>
                     <td>{{$data->getCcmProblemCodes()}}</td>
-                    @if($data->getEnableAllProblemCodesColumnns())
-                        <td>{{$data->getAllCcmProblemCodes()}}</td>
-                    @endif
+                    <td>{{$data->getAllCcmProblemCodes()}}</td>
                     <td>{{$data->getBhiCodes()}}</td>
-                    @if($data->getEnableAllProblemCodesColumnns())
-                        <td>{{$data->getAllBhiCodes()}}</td>
-                    @endif
+                    <td>{{$data->getAllBhiCodes()}}</td>
                 </tr>
             @endforeach
         @endif

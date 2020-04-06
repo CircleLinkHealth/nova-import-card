@@ -71,7 +71,7 @@ class CreatePracticeInvoice implements ShouldQueue
         $user = User::findOrFail($this->requestedByUserId);
 
         if ('pdf' == $this->format) {
-            $invoices = $practiceReportsService->getPdfInvoiceAndPatientReport($this->practices, $this->date, $this->requestedByUserId);
+            $invoices = $practiceReportsService->getPdfInvoiceAndPatientReport($this->practices, $this->date);
 
             $user->notify(new InvoicesCreatedNotification(collect($invoices)->pluck('mediaIds')->flatten()->all(), $this->date, $this->practices));
 
@@ -81,8 +81,7 @@ class CreatePracticeInvoice implements ShouldQueue
             $report = $practiceReportsService->getQuickbooksReport(
                 $this->practices,
                 $this->format,
-                $this->date,
-                $this->requestedByUserId
+                $this->date
             );
 
             if (false === $report) {

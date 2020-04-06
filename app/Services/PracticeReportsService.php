@@ -19,14 +19,12 @@ use Spatie\MediaLibrary\Exceptions\InvalidConversion;
 class PracticeReportsService
 {
     /**
-     * @param null $requestedByUserId
-     *
      * @throws FileCannotBeAdded
      * @throws InvalidConversion
      *
      * @return array
      */
-    public function getPdfInvoiceAndPatientReport(array $practices, Carbon $date, $requestedByUserId = null)
+    public function getPdfInvoiceAndPatientReport(array $practices, Carbon $date)
     {
         $invoices = [];
 
@@ -34,7 +32,7 @@ class PracticeReportsService
             $practice = Practice::find($practiceId);
 
             try {
-                $data = (new PracticeInvoiceGenerator($practice, $date, $requestedByUserId))->generatePdf();
+                $data = (new PracticeInvoiceGenerator($practice, $date))->generatePdf();
             } catch (FileCannotBeAdded $e) {
                 throw $e;
             } catch (InvalidConversion $e) {
@@ -50,11 +48,10 @@ class PracticeReportsService
     /**
      * @param $practices
      * @param $format
-     * @param mixed|null $requestedByUserId
      *
      * @return mixed
      */
-    public function getQuickbooksReport($practices, $format, Carbon $date, $requestedByUserId = null)
+    public function getQuickbooksReport($practices, $format, Carbon $date)
     {
         $data = [];
 
@@ -74,7 +71,7 @@ class PracticeReportsService
                 $chargeableServices = $this->getChargeableServices($practice);
 
                 foreach ($chargeableServices as $service) {
-                    $row = $this->makeRow($practice, $date, $service, null, $requestedByUserId);
+                    $row = $this->makeRow($practice, $date, $service);
 
                     if (null == ! $row) {
                         $data[] = $row->toArray();
@@ -87,7 +84,7 @@ class PracticeReportsService
                     $chargeableServices = $this->getChargeableServices($provider);
 
                     foreach ($chargeableServices as $service) {
-                        $row = $this->makeRow($practice, $date, $service, $provider, $requestedByUserId);
+                        $row = $this->makeRow($practice, $date, $service, $provider);
                         if (null == ! $row) {
                             $data[] = $row->toArray();
                         }
@@ -149,10 +146,9 @@ class PracticeReportsService
         Practice $practice,
         Carbon $date,
         ChargeableService $chargeableService,
-        User $provider = null,
-        $requestedByUserId = null
+        User $provider = null
     ) {
-        $generator = new PracticeInvoiceGenerator($practice, $date, $requestedByUserId);
+        $generator = new PracticeInvoiceGenerator($practice, $date);
 
         $reportName = $practice->name.'-'.$date->format('Y-m').'-patients';
 
