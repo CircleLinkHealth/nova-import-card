@@ -33,10 +33,12 @@ class SuccessStoriesExport implements FromCollection, WithHeadings
             ->where('performed_at', '>=', $this->month->startOfMonth()->toDateString())
             ->where('performed_at', '<=', $this->month->endOfMonth()->toDateString())
             ->get()->map(function ($note) {
+                /** @var Note $note */
                 return [
                     $note->patient->display_name,
                     $note->author->display_name,
-                    $note->type
+                    $note->type,
+                    $note->link(),
                 ];
             });
     }
@@ -49,7 +51,8 @@ class SuccessStoriesExport implements FromCollection, WithHeadings
         return [
             'Patient Name',
             'Author Name',
-            'Note Type'
+            'Note Type',
+            'Note Link'
         ];
     }
 }
