@@ -425,7 +425,7 @@ class WorkScheduleController extends Controller
         $authData = $this->fullCalendarService->getAuthData();
         $today    = Carbon::parse(now())->toDateString();
 
-        return view('admin.nurse.schedules.index', compact('authData', 'authUserId', 'today'));
+        return view('admin.nurse.schedules.index', compact('authData', 'today'));
     }
 
     /**

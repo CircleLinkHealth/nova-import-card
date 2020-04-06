@@ -87,6 +87,7 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $startTime            = now()->subDay()->endOfDay()->subHours(6);
 
         $this->addTime($nurse, null, $twelveHoursInMinutes, false, false, false, $startTime);
+        $this->addTime($nurse, null, 60, false, false, false);
 
         $start = now()->startOfDay();
         $end   = now()->endOfDay();

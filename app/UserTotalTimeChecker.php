@@ -6,6 +6,7 @@ namespace App;
 
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -48,8 +49,11 @@ class UserTotalTimeChecker
     public function check()
     {
         $timePerUser = $this->getTimePerUser();
+        $filtered    = $timePerUser->filter(function (Collection $item) {
+            return $item->isNotEmpty();
+        });
 
-        return $this->checkTime($timePerUser);
+        return $this->checkTime($filtered);
     }
 
 
@@ -66,10 +70,14 @@ class UserTotalTimeChecker
             $coll = $this->getTimePerDay($this->userId, $this->start, $this->end);
             $result->put($this->userId, $coll);
         } else {
-            User::careCoaches()->each(function ($user) use ($result) {
-                $coll = $this->getTimePerDay($user->id, $this->start, $this->end);
-                $result->put($user->id, $coll);
-            });
+            User::ofType('care-center')
+                ->whereHas('nurseInfo', function ($q) {
+                    $q->where('status', 'active');
+                })
+                ->each(function ($user) use ($result) {
+                    $coll = $this->getTimePerDay($user->id, $this->start, $this->end);
+                    $result->put($user->id, $coll);
+                });
         }
 
         return $result;
@@ -90,8 +98,9 @@ class UserTotalTimeChecker
                     ->select(DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(start_time)) as date, sum(duration) as duration'))
                     ->where('provider_id', '=', $userId)
                     ->whereBetween('start_time', [$start, $end])
-                    ->groupBy(DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(start_time))'))
-                    ->get();
+                    ->groupBy(DB::raw('date'))
+                    ->get()
+                    ->keyBy('date');
 
         // also go back one day and fetch time tracked that spans over 2 days
         // for example:
@@ -100,18 +109,27 @@ class UserTotalTimeChecker
         // - so it won't be tracked by the query above on April 4th that has $start and $end for April 3rd
         // - in order to catch it on April 5th, $start and $end is for April 4th. We have to go one day behind and
         //   check where start_time is April 3rd and end_time is April 4th
-        $newStart    = $start->copy()->subDay();
-        $newStartEnd = $end->copy()->subDay();
-        $result2     = DB::table((new PageTimer())->getTable())
-                         ->select(DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(start_time)) as date, sum(duration) as duration'))
-                         ->where('provider_id', '=', $userId)
-                         ->whereBetween('start_time', [$newStart, $newStartEnd])
-                         ->whereBetween('end_time', [$start, $end])
-                         ->groupBy(DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(start_time))'))
-                         ->get();
+        // NOTE: 'date' here is end_time, so even if we are checking days back, it will end up in the daily warning as well.
+        $newStart = $start->copy()->subDay();
+        $result2  = DB::table((new PageTimer())->getTable())
+                      ->select(DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(end_time)) as date, sum(duration) as duration'))
+                      ->where('provider_id', '=', $userId)
+                      ->whereBetween('start_time', [$newStart, $end])
+                      ->where(DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(start_time))'), '!=',
+                          DB::raw('MAKEDATE(YEAR(end_time),DAYOFYEAR(end_time))'))
+                      ->groupBy(DB::raw('date'))
+                      ->get()
+                      ->keyBy('date');
 
-        return $result->merge($result2);
+        $result2->each(function ($item2, $date) use ($result) {
+            $current         = $result->has($date)
+                ? intval($result->get($date)->duration)
+                : 0;
+            $item2->duration = $current + intval($item2->duration);
+            $result->put($date, $item2);
+        });
 
+        return $result->sortBy('date');
     }
 
     /**
@@ -179,7 +197,7 @@ class UserTotalTimeChecker
         }
         $lastEntry      = $coll->last();
         $lastEntryHours = $this->secondsToHours($lastEntry->duration);
-        if ($lastEntryHours > $maxHoursForDay) {
+        if ($lastEntryHours > 0 && $lastEntryHours > $maxHoursForDay) {
             $result->put('daily', $lastEntryHours);
         }
 
@@ -206,7 +224,7 @@ class UserTotalTimeChecker
         });
         $totalDurationOfWeekHours   = $this->secondsToHours($totalDurationOfWeekSeconds);
 
-        if ($totalDurationOfWeekHours > $maxHoursAllowed) {
+        if ($maxHoursAllowed > 0 && $totalDurationOfWeekHours > $maxHoursAllowed) {
             $result->put('weekly', $totalDurationOfWeekHours);
         }
 
@@ -225,7 +243,7 @@ class UserTotalTimeChecker
             return setAppConfig(self::MAX_HOURS_ALLOWED_IN_DAY_KEY, self::MAX_HOURS_ALLOWED_IN_DAY_DEFAULT);
         }
 
-        return intval($val);
+        return floatval($val);
     }
 
     public static function getThresholdForWeek(): float

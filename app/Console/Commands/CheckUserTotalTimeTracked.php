@@ -51,9 +51,8 @@ class CheckUserTotalTimeTracked extends Command
             $refDate = now();
         }
 
-        // for testing
-        $isReviewApp          = config('app.env') === 'review';
-        $checkAccumulatedTime = $isReviewApp || $refDate->isTuesday() || $refDate->isFriday();
+        $isTesting            = in_array(config('app.env'), ['review', 'local', 'staging']);
+        $checkAccumulatedTime = $isTesting || $refDate->isTuesday() || $refDate->isFriday();
         $weekAgoFromYesterday = $refDate->copy()->addWeek(-1)->startOfDay();
         $yesterday            = $refDate->copy()->subDay()->endOfDay();
 
@@ -63,10 +62,10 @@ class CheckUserTotalTimeTracked extends Command
             $userId))->check();
         $msg    = $this->buildSlackMessage($alerts);
         if ( ! empty($msg)) {
-            if ($isReviewApp) {
+            if ($isTesting) {
                 $msg .= "\n[test]\n";
             }
-            sendSlackMessage('#carecoach_ops', $msg, $isReviewApp);
+            sendSlackMessage('#carecoach_ops', $msg, $isTesting);
         }
 
         $this->info('Done!');
@@ -86,7 +85,8 @@ class CheckUserTotalTimeTracked extends Command
             $maxHours = UserTotalTimeChecker::getMaxHoursForDay();
             $result   .= "Warning: The following nurses have exceeded the daily maximum of $maxHours hours:\n";
             $daily->each(function ($time, $id) use (&$result) {
-                $result .= "Nurse[$id]: $time hours\n";
+                $rounded = round($time, 2);
+                $result .= "Nurse[$id]: $rounded hrs spent in CPM yesterday\n";
             });
         }
         $weekly = $alerts->get('weekly');
@@ -97,7 +97,8 @@ class CheckUserTotalTimeTracked extends Command
             }
             $result = "Warning: The following nurses have exceeded their committed hours for the last 7 days by more than {$timesMore}x:\n";
             $weekly->each(function ($time, $id) use (&$result) {
-                $result .= "Nurse[$id]: $time hours\n";
+                $rounded = round($time, 2);
+                $result .= "Nurse[$id]: $rounded hrs spent in CPM last 7 days\n";
             });
         }
 
