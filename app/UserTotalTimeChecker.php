@@ -243,7 +243,7 @@ class UserTotalTimeChecker
             return setAppConfig(self::MAX_HOURS_ALLOWED_IN_DAY_KEY, self::MAX_HOURS_ALLOWED_IN_DAY_DEFAULT);
         }
 
-        return intval($val);
+        return floatval($val);
     }
 
     public static function getThresholdForWeek(): float
