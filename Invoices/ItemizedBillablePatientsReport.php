@@ -34,6 +34,8 @@ class ItemizedBillablePatientsReport
      */
     protected $practiceName;
 
+    protected $requestedByUserId;
+
     /**
      * ItemizedBillablePatientsReport constructor.
      *
@@ -41,11 +43,12 @@ class ItemizedBillablePatientsReport
      * @param string $practiceName
      * @param Carbon $month
      */
-    public function __construct(int $practiceId, string $practiceName, Carbon $month)
+    public function __construct(int $practiceId, string $practiceName, Carbon $month, $requestedByUserId)
     {
-        $this->practiceId   = $practiceId;
-        $this->month        = $month;
-        $this->practiceName = $practiceName;
+        $this->practiceId        = $practiceId;
+        $this->month             = $month;
+        $this->practiceName      = $practiceName;
+        $this->requestedByUserId = $requestedByUserId;
     }
 
     public function toArrayForCsv(): array
@@ -102,7 +105,9 @@ class ItemizedBillablePatientsReport
 
                                              $patientData->setBhiCodes($this->getBhiAttestedConditions($summary));
 
-                                             $patientData->setAllBhiCodes($this->getAllBhiConditions($patientUser));
+                                             $patientData->setAllBhiCodes($this->getAllBhiConditions($patientUser, $summary));
+
+                                             $patientData->setEnableAllProblemCodesColumnns(! empty($this->requestedByUserId) && enableAllPatientProblemCodesInvoiceForUser($this->requestedByUserId));
 
                                              $patientData->setLocationName($patientUser->getPreferredLocationName());
 
@@ -196,9 +201,11 @@ class ItemizedBillablePatientsReport
 
                                              $patientData->setAllCcmProblemCodes($this->getAllCcmConditions($u));
 
-                                             $patientData->setAllBhiCodes($this->getAllBhiConditions($u));
+                                             $patientData->setAllBhiCodes($this->getAllBhiConditions($u, $summary));
 
                                              $patientData->setLocationName($u->getPreferredLocationName());
+
+                                             $patientData->setEnableAllProblemCodesColumnns(! empty($this->requestedByUserId) && enableAllPatientProblemCodesInvoiceForUser($this->requestedByUserId));
 
                                              $data['patientData'][$u->id] = $patientData;
                                          }
@@ -284,8 +291,12 @@ class ItemizedBillablePatientsReport
         );
     }
 
-    private function getAllBhiConditions(User $patient)
+    private function getAllBhiConditions(User $patient, PatientMonthlySummary $summary)
     {
+        if ( ! $summary->hasServiceCode(ChargeableService::BHI)) {
+            return 'N/A';
+        }
+
         return $this->formatProblemCodesForReport(
             $patient->ccdProblems->where('cpmProblem.is_behavioral', '=',
                 true)
