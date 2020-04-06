@@ -22,7 +22,8 @@
                 <div v-if="errors">
                     <p class="text-danger mb-1" v-for="error in errors">{{error}}</p>
                 </div>
-                <a class="btn btn-default btn-primary ml-auto mt-auto" style="cursor: pointer;" @click="generateCsv">Generate Sheet</a>
+                <a class="btn btn-default btn-primary ml-auto mt-auto" style="cursor: pointer;" @click="generateCsv">Generate
+                    Sheet</a>
             </div>
         </div>
     </card>
@@ -31,6 +32,7 @@
 <script>
     import moment from "moment";
     import {rootUrl} from "../../../../GeneratePatientCallDataCsv/resources/js/rootUrl";
+    const startLimitDate = new Date('2020-04-01');
 
     export default {
         props: [
@@ -52,7 +54,7 @@
 
         methods: {
             setMonthsForDropdown() {
-                let dateStart = moment().subtract(10, 'months');
+                let dateStart = moment(startLimitDate);
                 let dateEnd = moment();
 
                 while (dateEnd.diff(dateStart) >= 0) {
@@ -62,7 +64,7 @@
             },
 
             generateCsv() {
-                if (! this.month){
+                if (!this.month) {
                     this.errors = ['Please select a month'];
                     return;
                 }

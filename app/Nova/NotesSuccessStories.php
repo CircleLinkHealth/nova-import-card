@@ -12,12 +12,13 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Date;
-use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
+use Titasgailius\SearchRelations\SearchesRelations;
 
 class NotesSuccessStories extends Resource
 {
+    use SearchesRelations;
     /**
      * The logical group associated with the resource.
      *
@@ -37,7 +38,16 @@ class NotesSuccessStories extends Resource
      * @var array
      */
     public static $search = [
-        'id',
+        'type',
+    ];
+
+    /**
+     * The relationship columns that should be searched.
+     *
+     * @var array
+     */
+    public static $searchRelations = [
+        'patient' => ['id', 'display_name', 'first_name', 'last_name'],
     ];
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -100,7 +110,12 @@ class NotesSuccessStories extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make()->sortable(),
+            ID::make()
+                ->hideFromIndex()
+                ->hideFromDetail()
+                ->hideWhenCreating()
+                ->hideWhenUpdating()
+                ->sortable(),
 
             Text::make('Note Type', 'type')
                 ->hideWhenCreating()
@@ -109,6 +124,12 @@ class NotesSuccessStories extends Resource
             Date::make('Date', 'performed_at')
                 ->hideWhenCreating()
                 ->readonly(true),
+
+//            Text::make('Patient', 'patient.display_name')
+//                ->hideFromIndex()
+//                ->hideFromDetail()
+//                ->hideWhenCreating()
+//                ->readonly(true),
 
             BelongsTo::make('Patient', 'patient', User::class)
                 ->sortable()

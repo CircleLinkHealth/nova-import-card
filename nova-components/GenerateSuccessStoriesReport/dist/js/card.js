@@ -17766,8 +17766,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
+var startLimitDate = new Date('2020-04-01');
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['card' // The following props are only available on resource detail cards...
   // 'resource',
@@ -17783,7 +17785,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     setMonthsForDropdown: function setMonthsForDropdown() {
-      var dateStart = moment__WEBPACK_IMPORTED_MODULE_0___default()().subtract(10, 'months');
+      var dateStart = moment__WEBPACK_IMPORTED_MODULE_0___default()(startLimitDate);
       var dateEnd = moment__WEBPACK_IMPORTED_MODULE_0___default()();
 
       while (dateEnd.diff(dateStart) >= 0) {
@@ -17905,7 +17907,7 @@ var render = function() {
               staticStyle: { cursor: "pointer" },
               on: { click: _vm.generateCsv }
             },
-            [_vm._v("Generate Sheet")]
+            [_vm._v("Generate\n                Sheet")]
           )
         ])
       ])
