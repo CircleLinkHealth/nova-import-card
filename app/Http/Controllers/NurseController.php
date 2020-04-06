@@ -160,10 +160,11 @@ class NurseController extends Controller
         }
 
         return view(
-            'admin.reports.allocation-v2',
+            'admin.reports.allocation',
             [
                 'data'  => $data,
                 'month' => Carbon::parse($last),
+                'v2' => true
             ]
         );
     }
