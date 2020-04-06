@@ -19,12 +19,14 @@ use Spatie\MediaLibrary\Exceptions\InvalidConversion;
 class PracticeReportsService
 {
     /**
-     * @throws InvalidConversion
+     * @param null $requestedByUserId
+     *
      * @throws FileCannotBeAdded
+     * @throws InvalidConversion
      *
      * @return array
      */
-    public function getPdfInvoiceAndPatientReport(array $practices, Carbon $date)
+    public function getPdfInvoiceAndPatientReport(array $practices, Carbon $date, $requestedByUserId = null)
     {
         $invoices = [];
 
@@ -32,7 +34,7 @@ class PracticeReportsService
             $practice = Practice::find($practiceId);
 
             try {
-                $data = (new PracticeInvoiceGenerator($practice, $date))->generatePdf();
+                $data = (new PracticeInvoiceGenerator($practice, $date, $requestedByUserId))->generatePdf();
             } catch (FileCannotBeAdded $e) {
                 throw $e;
             } catch (InvalidConversion $e) {
@@ -48,17 +50,23 @@ class PracticeReportsService
     /**
      * @param $practices
      * @param $format
+     * @param mixed|null $requestedByUserId
      *
      * @return mixed
      */
-    public function getQuickbooksReport($practices, $format, Carbon $date)
+    public function getQuickbooksReport($practices, $format, Carbon $date, $requestedByUserId = null)
     {
         $data = [];
 
         $saasAccount = null;
 
-        foreach (Practice::with(['settings', 'chargeableServices', 'saasAccount'])->whereIn('id', $practices)->get() as $practice) {
-            if (!$saasAccount) {
+        foreach (
+            Practice::with(['settings', 'chargeableServices', 'saasAccount'])->whereIn(
+                'id',
+                $practices
+            )->get() as $practice
+        ) {
+            if ( ! $saasAccount) {
                 $saasAccount = $practice->saasAccount;
             }
 
@@ -66,7 +74,7 @@ class PracticeReportsService
                 $chargeableServices = $this->getChargeableServices($practice);
 
                 foreach ($chargeableServices as $service) {
-                    $row = $this->makeRow($practice, $date, $service);
+                    $row = $this->makeRow($practice, $date, $service, $requestedByUserId);
 
                     if (null == ! $row) {
                         $data[] = $row->toArray();
@@ -79,7 +87,7 @@ class PracticeReportsService
                     $chargeableServices = $this->getChargeableServices($provider);
 
                     foreach ($chargeableServices as $service) {
-                        $row = $this->makeRow($practice, $date, $service, $provider);
+                        $row = $this->makeRow($practice, $date, $service, $provider, $requestedByUserId);
                         if (null == ! $row) {
                             $data[] = $row->toArray();
                         }
@@ -117,6 +125,7 @@ class PracticeReportsService
     /**
      * @param $rows
      * @param $format
+     * @param mixed $saasAccount
      *
      * @return mixed
      */
@@ -129,6 +138,8 @@ class PracticeReportsService
     }
 
     /**
+     * @param mixed|null $requestedByUserId
+     *
      * @throws \Exception
      * @throws \Waavi\UrlShortener\InvalidResponseException
      *
@@ -138,9 +149,10 @@ class PracticeReportsService
         Practice $practice,
         Carbon $date,
         ChargeableService $chargeableService,
-        User $provider = null
+        User $provider = null,
+        $requestedByUserId = null
     ) {
-        $generator = new PracticeInvoiceGenerator($practice, $date);
+        $generator = new PracticeInvoiceGenerator($practice, $date, $requestedByUserId);
 
         $reportName = $practice->name.'-'.$date->format('Y-m').'-patients';
 
