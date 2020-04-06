@@ -417,16 +417,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.134.3",
+            "version": "3.134.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "3de2711a47e7c3f5e93a5c83f019188fd23f852f"
+                "reference": "74dc1df2cb5ee7ebbcf3203fda9c24ce7134e952"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3de2711a47e7c3f5e93a5c83f019188fd23f852f",
-                "reference": "3de2711a47e7c3f5e93a5c83f019188fd23f852f",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/74dc1df2cb5ee7ebbcf3203fda9c24ce7134e952",
+                "reference": "74dc1df2cb5ee7ebbcf3203fda9c24ce7134e952",
                 "shasum": ""
             },
             "require": {
@@ -497,7 +497,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-04-03T18:11:51+00:00"
+            "time": "2020-04-06T18:14:00+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -2766,16 +2766,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.128",
+            "version": "v0.129",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "d6425891e72439bbec9d9dcb0c8b9fca49ca017e"
+                "reference": "1b7d3bcd683603bcd42ea588923775a85a89222e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/d6425891e72439bbec9d9dcb0c8b9fca49ca017e",
-                "reference": "d6425891e72439bbec9d9dcb0c8b9fca49ca017e",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/1b7d3bcd683603bcd42ea588923775a85a89222e",
+                "reference": "1b7d3bcd683603bcd42ea588923775a85a89222e",
                 "shasum": ""
             },
             "require": {
@@ -2799,7 +2799,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-04-01T00:24:15+00:00"
+            "time": "2020-04-04T00:24:12+00:00"
         },
         {
             "name": "google/auth",
@@ -7001,16 +7001,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "2.0.26",
+            "version": "2.0.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "09655fcc1f8bab65727be036b28f6f20311c126c"
+                "reference": "34620af4df7d1988d8f0d7e91f6c8a3bf931d8dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/09655fcc1f8bab65727be036b28f6f20311c126c",
-                "reference": "09655fcc1f8bab65727be036b28f6f20311c126c",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/34620af4df7d1988d8f0d7e91f6c8a3bf931d8dc",
+                "reference": "34620af4df7d1988d8f0d7e91f6c8a3bf931d8dc",
                 "shasum": ""
             },
             "require": {
@@ -7089,7 +7089,7 @@
                 "x.509",
                 "x509"
             ],
-            "time": "2020-03-13T04:15:39+00:00"
+            "time": "2020-04-04T23:17:33+00:00"
         },
         {
             "name": "pragmarx/version",
@@ -12215,16 +12215,16 @@
         },
         {
             "name": "itsgoingd/clockwork",
-            "version": "v4.0.17",
+            "version": "v4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/itsgoingd/clockwork.git",
-                "reference": "30d54ecbf0cd424594b2ae5f94a9e3d4a7c3e961"
+                "reference": "74f1b4d2d06ce39c333388cb5b1379e1abc66a32"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/itsgoingd/clockwork/zipball/30d54ecbf0cd424594b2ae5f94a9e3d4a7c3e961",
-                "reference": "30d54ecbf0cd424594b2ae5f94a9e3d4a7c3e961",
+                "url": "https://api.github.com/repos/itsgoingd/clockwork/zipball/74f1b4d2d06ce39c333388cb5b1379e1abc66a32",
+                "reference": "74f1b4d2d06ce39c333388cb5b1379e1abc66a32",
                 "shasum": ""
             },
             "require": {
@@ -12269,7 +12269,7 @@
                 "profiling",
                 "slim"
             ],
-            "time": "2020-02-04T22:56:50+00:00"
+            "time": "2020-04-06T19:13:31+00:00"
         },
         {
             "name": "jkocik/laravel-profiler",
