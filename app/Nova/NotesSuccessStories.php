@@ -10,6 +10,9 @@ use App\Note;
 use Circlelinkhealth\GenerateSuccessStoriesReport\GenerateSuccessStoriesReport;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Date;
+use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 
@@ -99,16 +102,22 @@ class NotesSuccessStories extends Resource
         return [
             ID::make()->sortable(),
 
-//            Text::make('Note', 'user.display_name')
-//                ->hideFromIndex()
-//                ->hideFromDetail()
-//                ->hideWhenCreating()
-//                ->readonly(true),
+            Text::make('Note Type', 'type')
+                ->hideWhenCreating()
+                ->readonly(true),
+
+            Date::make('Date', 'performed_at')
+                ->hideWhenCreating()
+                ->readonly(true),
 
             BelongsTo::make('Patient', 'patient', User::class)
                 ->sortable()
                 ->searchable()
                 ->hideWhenUpdating()
+                ->readonly(true),
+
+            Boolean::make('Success Story', 'success_story')
+                ->hideWhenCreating()
                 ->readonly(true),
         ];
     }
