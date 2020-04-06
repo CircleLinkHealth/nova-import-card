@@ -29,6 +29,8 @@ class PatientReportData
 
     protected $dob;
 
+    protected $enableAllProblemCodesColumnns;
+
     protected $locationName;
 
     protected $name;
@@ -107,6 +109,14 @@ class PatientReportData
     public function getDob()
     {
         return $this->dob;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEnableAllProblemCodesColumnns()
+    {
+        return $this->enableAllProblemCodesColumnns;
     }
 
     /**
@@ -211,6 +221,14 @@ class PatientReportData
     public function setDob($dob): void
     {
         $this->dob = $dob;
+    }
+
+    /**
+     * @param mixed $enableAllProblemCodesColumnns
+     */
+    public function setEnableAllProblemCodesColumnns($enableAllProblemCodesColumnns): void
+    {
+        $this->enableAllProblemCodesColumnns = $enableAllProblemCodesColumnns;
     }
 
     /**

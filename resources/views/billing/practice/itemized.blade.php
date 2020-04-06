@@ -18,9 +18,13 @@
             <th>CCM Mins</th>
             <th>BHI Mins</th>
             <th>CCM Problem Code(s)</th>
-            <th>All CCM Conditions</th>
+            @if($data->getEnableAllProblemCodesColumnns())
+                <th>All CCM Conditions</th>
+            @endif
             <th>BHI Code(s)</th>
-            <th>All BHI Conditions</th>
+            @if($data->getEnableAllProblemCodesColumnns())
+                <th>All BHI Conditions</th>
+            @endif
 
         </tr>
 
@@ -35,9 +39,13 @@
                     <td>{{$data->getCcmTime()}}</td>
                     <td>{{$data->getBhiTime()}}</td>
                     <td>{{$data->getCcmProblemCodes()}}</td>
-                    <td>{{$data->getAllCcmProblemCodes()}}</td>
+                    @if($data->getEnableAllProblemCodesColumnns())
+                        <td>{{$data->getAllCcmProblemCodes()}}</td>
+                    @endif
                     <td>{{$data->getBhiCodes()}}</td>
-                    <td>{{$data->getAllBhiCodes()}}</td>
+                    @if($data->getEnableAllProblemCodesColumnns())
+                        <td>{{$data->getAllBhiCodes()}}</td>
+                    @endif
                 </tr>
             @endforeach
         @endif
@@ -45,14 +53,14 @@
     </table>
     <br>
     @if(isset($awvPatientData))
-    <table class="table table-bordered">
-        <tr>
-            <th>Provider Name</th>
-            <th>Patient Name</th>
-            <th>DOB</th>
-            <th>AWV Date</th>
+        <table class="table table-bordered">
+            <tr>
+                <th>Provider Name</th>
+                <th>Patient Name</th>
+                <th>DOB</th>
+                <th>AWV Date</th>
 
-        </tr>
+            </tr>
             @foreach($awvPatientData as $data)
                 <tr>
                     <td>{{$data->getProvider()}}</td>
@@ -61,6 +69,6 @@
                     <td>{{$data->getAwvDate()}}</td>
                 </tr>
             @endforeach
-    </table>
+        </table>
     @endif
 </div>
