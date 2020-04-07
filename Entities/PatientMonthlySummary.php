@@ -296,7 +296,7 @@ class PatientMonthlySummary extends BaseModel
      */
     public function bhiAttestedProblems()
     {
-        if ( ! $this->practiceHasServiceCode(ChargeableService::BHI) || ! $this->hasServiceCode(ChargeableService::BHI)) {
+        if ( ! $this->hasServiceCode(ChargeableService::BHI)) {
             return collect([]);
         }
 
@@ -308,7 +308,7 @@ class PatientMonthlySummary extends BaseModel
      */
     public function ccmAttestedProblems()
     {
-        return ! $this->practiceHasServiceCode(ChargeableService::BHI)
+        return ! $this->hasServiceCode(ChargeableService::BHI)
             ? $this->attestedProblems
             : $this->attestedProblems->where('cpmProblem.is_behavioral', '=', false);
     }
