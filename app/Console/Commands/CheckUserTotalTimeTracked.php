@@ -95,7 +95,7 @@ class CheckUserTotalTimeTracked extends Command
             if ( ! empty($result)) {
                 $result .= "\n\n";
             }
-            $result = "Warning: The following nurses have exceeded their committed hours for the last 7 days by more than {$timesMore}x:\n";
+            $result .= "Warning: The following nurses have exceeded their committed hours for the last 7 days by more than {$timesMore}x:\n";
             $weekly->each(function ($time, $id) use (&$result) {
                 $rounded = round($time, 2);
                 $result .= "Nurse[$id]: $rounded hrs spent in CPM last 7 days\n";
