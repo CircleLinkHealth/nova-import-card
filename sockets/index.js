@@ -290,6 +290,8 @@ module.exports = app => {
                 console.log('will not cache ccc because time is 0');
             } else {
                 console.log('caching ccm', user.totalCcmSeconds);
+                storeTime(null, requestData.patientId, user.totalCcmSeconds, user.totalBhiSeconds, true);
+                /*
                 requestData.activities.forEach((activity) => {
                     storeTime(activity.title,
                         requestData.patientId,
@@ -297,6 +299,7 @@ module.exports = app => {
                         activity.is_behavioral ? activity.duration : 0,
                         false);
                 });
+                 */
             }
 
             axios.post(url, requestData).then((response) => {
