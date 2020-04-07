@@ -256,6 +256,10 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
     
     public function fillMedicationsSection(): array
     {
+        if ( ! array_key_exists('medications_string', $this->data)) {
+            return [];
+        }
+    
         return collect(collect(json_decode($this->data['medications_string']))->first())
             ->map(
                 function ($medication) {
@@ -336,6 +340,10 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
     
     public function fillProblemsSection(): array
     {
+        if ( ! array_key_exists('problems_string', $this->data)) {
+            return [];
+        }
+    
         return collect(collect(json_decode($this->data['problems_string']))->first())
             ->map(
                 function ($problem) {
