@@ -499,7 +499,7 @@
                     return;
                 }
 
-                this.showProblemsModal(patient, true);
+                this.showProblemsModal(patient, true, patient.isBhiEligible());
             },
 
             showCcmModal(patient) {
@@ -521,13 +521,13 @@
                     return;
                 }
 
-                this.showProblemsModal(patient, false);
+                this.showProblemsModal(patient, false, patient.isBhiEligible());
             },
 
-            showProblemsModal(patient, isBhi) {
+            showProblemsModal(patient, isBhi, patientHasBhi) {
                 Event.$emit('modal-attest-call-conditions:show', {
                     'patient': patient,
-                    'practice_has_bhi': this.selectedPracticeChargeableServices.find(service => service.code === SERVICES.CPT_99484),
+                    'patient_has_bhi': patientHasBhi,
                     'is_bhi': isBhi
                 });
             },
