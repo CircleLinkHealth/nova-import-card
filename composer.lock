@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "abac2a0cac806e0dae92a3141737ef9e",
+    "content-hash": "9da2a53a9b9dab32c8be1b386b2a3f21",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -975,11 +975,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-billing-add-all-problem-codes",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f236530c1c88f7a4c1cce00e85c12cebfe105768"
+                "reference": "414da4a849af274f459625390c13ef0c111cf6c4"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1013,7 +1013,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-07T13:38:13+00:00"
+            "time": "2020-04-07T14:12:18+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1148,11 +1148,11 @@
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "dev-billing-march-fixes",
+            "version": "v1.3.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "a2c2ca553cbe40ef7a75a588c1b672016a39431a"
+                "reference": "f94240f2301665283f728626004983089fbcdc7d"
             },
             "type": "laravel-module",
             "extra": {
@@ -1174,7 +1174,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-07T13:02:47+00:00"
+            "time": "2020-04-07T14:10:55+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -14997,9 +14997,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
-        "circlelinkhealth/patientapi-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
