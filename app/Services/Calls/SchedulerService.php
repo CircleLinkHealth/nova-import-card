@@ -52,7 +52,13 @@ class SchedulerService
 
         $now = Carbon::now();
 
-        $patient->loadMissing('patientInfo');
+        // Always load the carePlan because Observers don't work with update queries,
+        // and we want to make sure we are using the most up-to-date CP.
+        $patient->load(['patientInfo', 'carePlan']);
+
+        if ( ! $this->shouldScheduleCall($patient)) {
+            return;
+        }
 
         $next_predicted_contact_window = (new PatientContactWindow())->getEarliestWindowForPatientFromDate(
             $patient->patientInfo,
@@ -105,14 +111,14 @@ class SchedulerService
             ->where('inbound_cpm_id', $patientId)
             ->where('status', '=', 'scheduled')
             ->when(
-                       $excludeToday,
-                       function ($query) {
-                           $query->where('scheduled_date', '>', Carbon::today()->format('Y-m-d'));
-                       },
-                       function ($query) {
-                           $query->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
-                       }
-                   )
+                $excludeToday,
+                function ($query) {
+                    $query->where('scheduled_date', '>', Carbon::today()->format('Y-m-d'));
+                },
+                function ($query) {
+                    $query->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
+                }
+            )
             ->orderBy('scheduled_date', 'desc')
             ->first();
     }
@@ -176,13 +182,13 @@ class SchedulerService
             }
         )
             ->where(
-                        function ($q) use (
+                function ($q) use (
                             $patient
                         ) {
-                            $q->where('outbound_cpm_id', $patient->id)
-                                ->orWhere('inbound_cpm_id', $patient->id);
-                        }
-                    )
+                    $q->where('outbound_cpm_id', $patient->id)
+                        ->orWhere('inbound_cpm_id', $patient->id);
+                }
+            )
             ->where('status', '=', 'scheduled')
             ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
             ->first();
@@ -234,16 +240,16 @@ class SchedulerService
             $patient = User::where('first_name', $row['Patient First Name'])
                 ->where('last_name', $row['Patient Last Name'])
                 ->whereHas(
-                               'patientInfo',
-                               function ($q) use (
+                    'patientInfo',
+                    function ($q) use (
                                    $row
                                ) {
-                                   $q->where(
+                        $q->where(
                                        'birth_date',
                                        Carbon::parse($row['DOB'])->toDateString()
                                    );
-                               }
-                           )
+                    }
+                )
                 ->first();
 
             if ( ! $patient) {
@@ -411,11 +417,11 @@ class SchedulerService
     {
         $nurseIds = User::select('id')
             ->whereHas(
-                            'roles',
-                            function ($q) {
-                                $q->where('name', '=', 'care-center');
-                            }
-                        )
+                'roles',
+                function ($q) {
+                    $q->where('name', '=', 'care-center');
+                }
+            )
             ->pluck('id')
             ->all();
 
@@ -718,5 +724,31 @@ class SchedulerService
         $prediction['successful'] = Call::REACHED == $callStatus;
 
         return $prediction;
+    }
+
+    /**
+     * @param Patient $patient
+     * @param $oldValue
+     * @param $newValue
+     */
+    private function shouldScheduleCall(User $patient): bool
+    {
+        if (Patient::ENROLLED != $patient->patientInfo->ccm_status) {
+            return false;
+        }
+
+        if ( ! $patient->carePlan) {
+            return false;
+        }
+
+        if ($patient->carePlan->isClhAdminApproved()) {
+            return true;
+        }
+
+        if ($patient->carePlan->isProviderApproved()) {
+            return true;
+        }
+
+        return false;
     }
 }

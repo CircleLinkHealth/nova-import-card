@@ -7,7 +7,8 @@
 namespace App\Console\Commands;
 
 use App\Services\Calls\SchedulerService;
-use CircleLinkHealth\Customer\Entities\User;
+use App\User;
+use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Console\Command;
 
 class CheckEnrolledPatientsForScheduledCalls extends Command
@@ -48,23 +49,53 @@ class CheckEnrolledPatientsForScheduledCalls extends Command
         $loop  = 0;
         $fixed = 0;
         User::ofType('participant')
-            ->when( ! empty($userIds), function ($q) use ($userIds) {
-                $q->whereIn('id', $userIds);
-            })
-            ->whereHas('patientInfo', function ($q) {
-                $q->enrolled();
-            })
-            ->with(['inboundScheduledCalls'])
-            ->each(function (User $patient) use ($schedulerService, &$fixed, &$loop) {
-                ++$loop;
-                if ($patient->inboundScheduledCalls->isNotEmpty()) {
-                    return;
+            ->when(
+                ! empty($userIds),
+                function ($q) use ($userIds) {
+                    $q->whereIn('id', $userIds);
                 }
+            )
+            ->whereHas(
+                'patientInfo',
+                function ($q) {
+                    $q->enrolled();
+                }
+            )
+            ->with(['inboundScheduledCalls'])
+            ->each(
+                function (User $patient) use ($schedulerService, &$fixed, &$loop) {
+                    ++$loop;
+                    if ($patient->inboundScheduledCalls->isNotEmpty()) {
+                        return;
+                    }
 
-                ++$fixed;
-                $schedulerService->ensurePatientHasScheduledCall($patient);
-            });
+                    ++$fixed;
+
+                    if ($this->shouldScheduleCall($patient)) {
+                        $schedulerService->ensurePatientHasScheduledCall($patient);
+                    }
+                }
+            );
 
         $this->info("Went through $loop patients. Scheduled $fixed call(s). Done.");
+    }
+
+    private function shouldScheduleCall(User $patient): bool
+    {
+        $patient->loadMissing(['carePlan', 'patientInfo']);
+
+        if (Patient::ENROLLED != $patient->patientInfo->ccm_status) {
+            return false;
+        }
+
+        if ($patient->carePlan->isClhAdminApproved()) {
+            return true;
+        }
+
+        if ($patient->carePlan->isProviderApproved()) {
+            return true;
+        }
+
+        return false;
     }
 }
