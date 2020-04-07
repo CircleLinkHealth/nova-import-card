@@ -50,17 +50,18 @@ trait HasChargeableServices
 
     public function hasServiceCode($code)
     {
-        $class = get_called_class();
+        return $this->byCode()->has($code);
+    }
 
-        $chargeableServices = Cache::remember(
-            "${class}:{$this->id}:chargeableServices",
-            2,
-            function () {
-                return $this->chargeableServices->keyBy('code');
-            }
-        );
+    private $byCode = null;
 
-        return $chargeableServices->has($code);
+    private function byCode()
+    {
+        if ( ! $this->byCode) {
+            $this->byCode = $this->chargeableServices->keyBy('code');
+        }
+
+        return $this->byCode;
     }
 
     public function scopeHasServiceCode($builder, $code)
