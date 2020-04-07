@@ -290,7 +290,7 @@ module.exports = app => {
                 console.log('will not cache ccc because time is 0');
             } else {
                 console.log('caching ccm', user.totalCcmSeconds);
-                storeTime(requestData.patientId, user.totalCcmSeconds, user.totalBhiSeconds, true);
+                storeTime(requestData.patientId, requestData.activities, user.totalCcmSeconds, user.totalBhiSeconds);
             }
 
             axios.post(url, requestData).then((response) => {
