@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c6fbbc9f4395cd23f7921a975c7fc748",
+    "content-hash": "ce211ffd694672bfe93750f45bf8233a",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -976,11 +976,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.1.7",
+            "version": "dev-CPM-1841_abp_optimizations",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "d1f9ab709f0cdfcce6e713ba13d1dd14559eddf0"
+                "reference": "5df3ce6994605e495e98c68160854559e537d34f"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1014,7 +1014,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-06T21:26:34+00:00"
+            "time": "2020-04-07T09:28:20+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1089,7 +1089,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "f0df8eb877194dea1489f870e9d57de695feff3b",
+                "reference": "376c054cfcdb0c0bdd432a8fcac7db79ba6747e5",
                 "shasum": null
             },
             "require": {
@@ -1100,13 +1100,13 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CircleLinkHealth\\ImportPracticeStaffCsv\\CardServiceProvider"
+                        "Circlelinkhealth\\ImportPracticeStaffCsv\\CardServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "CircleLinkHealth\\ImportPracticeStaffCsv\\": "src/"
+                    "Circlelinkhealth\\ImportPracticeStaffCsv\\": "src/"
                 }
             },
             "license": [
@@ -1263,11 +1263,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.3.0",
+            "version": "dev-CPM-1841_abp_optimizations",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "a7b0883362ee2479a77d2a3bc5463a9211dd5902"
+                "reference": "8b76b9f568cb3858e1f1edc6937e6b5c55027326"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1281,7 +1281,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-02T20:49:24+00:00"
+            "time": "2020-04-07T09:28:20+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -14924,6 +14924,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/shared-models-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
