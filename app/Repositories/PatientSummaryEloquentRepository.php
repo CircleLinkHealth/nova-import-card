@@ -10,7 +10,6 @@ use Cache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
-use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Support\Collection;
 
 class PatientSummaryEloquentRepository
@@ -19,7 +18,7 @@ class PatientSummaryEloquentRepository
     const MINUTES_30 = 1800;
     const MINUTES_40 = 2400;
     const MINUTES_60 = 3600;
-    
+
     /**
      * @var CallRepository
      */
@@ -28,7 +27,7 @@ class PatientSummaryEloquentRepository
      * @var PatientWriteRepository
      */
     public $patientRepo;
-    
+
     /**
      * PatientSummaryEloquentRepository constructor.
      *
@@ -40,7 +39,7 @@ class PatientSummaryEloquentRepository
         $this->patientRepo = $patientRepo;
         $this->callRepo    = $callRepo;
     }
-    
+
     /**
      * Attach the practice's default chargeable service to the given patient summary.
      *
@@ -55,27 +54,27 @@ class PatientSummaryEloquentRepository
         if ( ! $chargeableServiceId) {
             return $summary;
         }
-        
+
         if (is_a($chargeableServiceId, ChargeableService::class)) {
             $chargeableServiceId = $chargeableServiceId->id;
         }
-        
+
         if ( ! is_array($chargeableServiceId)) {
             $chargeableServiceId = [$chargeableServiceId];
         }
-        
+
         $sync = $summary->chargeableServices()
                         ->sync($chargeableServiceId, $detach);
-        
+
         if ($sync['attached'] || $sync['detached'] || $sync['updated']) {
             $class = PatientMonthlySummary::class;
             Cache::tags(['practice.chargeable.services'])->forget("${class}:{$summary->id}:chargeableServices");
             $summary->load('chargeableServices');
         }
-        
+
         return $summary;
     }
-    
+
     /**
      * @param PatientMonthlySummary $summary
      *
@@ -83,25 +82,15 @@ class PatientSummaryEloquentRepository
      */
     public function attachChargeableServices(PatientMonthlySummary $summary)
     {
-        $patient = $summary->patient;
-        
         if ($this->shouldNotTouch($summary) && $summary->chargeableServices->isNotEmpty()) {
             return $summary;
         }
-        
-        $class = Practice::class;
-        
-        $chargeableServices = Cache::tags(['practice.chargeable.services'])->remember(
-            "${class}:{$patient->primaryPractice->id}:chargeableServices",
-            2,
-            function () use ($patient) {
-                return $patient->primaryPractice->chargeableServices->keyBy('code');
-            }
-        );
-        
+
+        $chargeableServices = $this->chargeableServicesByCode($summary);
+
         $hasCcm = false;
         $hasPcm = false;
-        
+
         /** @var Collection $candidates */
         $candidates = $chargeableServices
             ->filter(
@@ -119,7 +108,7 @@ class PatientSummaryEloquentRepository
                     }
                 }
             );
-        
+
         if ($hasCcm && $hasPcm) {
             $candidates = $candidates->filter(
                 function ($service) {
@@ -127,7 +116,7 @@ class PatientSummaryEloquentRepository
                 }
             );
         }
-        
+
         $attach = $candidates
             ->map(
                 function ($service) {
@@ -136,20 +125,20 @@ class PatientSummaryEloquentRepository
             )
             ->values()
             ->all();
-        
+
         return $this->attachChargeableService($summary, $attach);
     }
-    
+
     public function detachChargeableService($summary, $chargeableServiceId)
     {
         $detached = $summary->chargeableServices()
                             ->detach($chargeableServiceId);
-        
+
         $summary->load('chargeableServices');
-        
+
         return $summary;
     }
-    
+
     /**
      * This function will set field `needs_qa` on the $summary.
      * If the $summary needs to be QA'ed by a human, approved and rejected will be set to false.
@@ -163,50 +152,51 @@ class PatientSummaryEloquentRepository
         if ($this->shouldNotTouch($summary)) {
             return $summary;
         }
-        
+
         $needsQA = [];
-    
-        if ($summary->hasServiceCode(ChargeableService::BHI) && $summary->bhiAttestedProblems()->isEmpty()) {
+        $hasBhi  = $summary->hasServiceCode(ChargeableService::BHI);
+        if ($hasBhi && $summary->bhiAttestedProblems()->isEmpty()) {
             $needsQA[] = 'Patient has BHI service but 0 BHI attested conditions.';
         }
-    
-        if ($summary->hasServiceCode(ChargeableService::CCM) && $summary->ccmAttestedProblems()->isEmpty()) {
+
+        $hasCcm = $summary->hasServiceCode(ChargeableService::CCM);
+        if ($hasCcm && $summary->ccmAttestedProblems()->isEmpty()) {
             $needsQA[] = 'Patient has CCM service but 0 CCM attested condition';
         }
-    
+
         if ($summary->approved && $summary->rejected) {
             $needsQA[] = 'Summary was both approved and rejected.';
         }
-    
+
         if (0 == $summary->no_of_successful_calls) {
             $needsQA[] = '0 successful calls';
         }
-        
-        if (! $summary->patient->billingProviderUser()) {
+
+        if ( ! $summary->patient->billingProviderUser()) {
             $needsQA[] = 'No billing provider';
         }
-        
+
         if (in_array(
             $summary->patient->patientInfo->getCcmStatusForMonth($summary->month_year),
             [Patient::WITHDRAWN, Patient::PAUSED, Patient::WITHDRAWN_1ST_CALL]
         )) {
             $needsQA[] = 'Patient not enrolled.';
         }
-    
+
         if ( ! empty($needsQA)) {
             $summary->needs_qa = true;
         } else {
             $summary->approved = true;
             $summary->needs_qa = $summary->rejected = false;
         }
-    
+
         if ($summary->isDirty()) {
             $summary->save();
         }
-        
+
         return $summary;
     }
-    
+
     /**
      * Save the most updated sum of calls and sum of successful calls to the given PatientMonthlySummary.
      *
@@ -221,11 +211,11 @@ class PatientSummaryEloquentRepository
             $summary->patient_id,
             $summary->month_year
         );
-        
+
         return $summary;
     }
-    
-    
+
+
     /**
      * Decide whether or not to attach a chargeable service to a patient summary.
      *
@@ -239,28 +229,28 @@ class PatientSummaryEloquentRepository
         switch ($service->code) {
             case ChargeableService::BHI:
                 return $summary->bhi_time >= self::MINUTES_20;
-            
+
             case ChargeableService::CCM:
             case ChargeableService::GENERAL_CARE_MANAGEMENT:
                 return $summary->ccm_time >= self::MINUTES_20;
-            
+
             case ChargeableService::PCM:
                 return $summary->ccm_time >= self::MINUTES_30;
-            
+
             case ChargeableService::CCM_PLUS_40:
                 return $summary->ccm_time >= self::MINUTES_40;
-            
+
             case ChargeableService::CCM_PLUS_60:
                 return $summary->ccm_time >= self::MINUTES_60;
-            
+
             case ChargeableService::SOFTWARE_ONLY:
                 return 0 == $summary->timeFromClhCareCoaches();
-            
+
             default:
                 return false;
         }
     }
-    
+
     /**
      * Is it ok for the system to process this record?
      *
@@ -270,6 +260,22 @@ class PatientSummaryEloquentRepository
      */
     private function shouldNotTouch(PatientMonthlySummary $summary): bool
     {
-        return (bool) $summary->actor_id;
+        return (bool)$summary->actor_id;
+    }
+
+    private $chargeableServicesByCode = [];
+
+    private function chargeableServicesByCode(PatientMonthlySummary $summary)
+    {
+        if ( ! $summary->patient || ! $summary->patient->primaryPractice) {
+            return collect();
+        }
+        $practiceId = $summary->patient->primaryPractice->id;
+
+        if ( ! isset($this->chargeableServicesByCode[$practiceId])) {
+            $this->chargeableServicesByCode[$practiceId] = $summary->patient->primaryPractice->chargeableServices->keyBy('code');
+        }
+
+        return $this->chargeableServicesByCode[$practiceId];
     }
 }
