@@ -2395,7 +2395,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                    ->get();
     }
 
-    public function patientsPendingApproval()
+    public function patientsPendingProviderApproval()
     {
         $approveOwnCarePlans = $this->providerInfo
             ? $this->providerInfo->approve_own_care_plans
