@@ -116,17 +116,12 @@ class CarePlanHelper
     
     public function handleEnrollees()
     {
-        $enrollee = Enrollee::when(
-            $this->imr->medical_record_id,
+        $enrollee = Enrollee::where(
             function ($q) {
-                $q->where(
-                    function ($q) {
-                        $q
-                            ->where('medical_record_type', $this->imr->medical_record_type)
-                            ->whereMedicalRecordId($this->imr->medical_record_id)
-                            ->whereNull('user_id');
-                    }
-                );
+                $q
+                    ->where('medical_record_type', $this->imr->medical_record_type)
+                    ->whereMedicalRecordId($this->imr->medical_record_id)
+                    ->whereNull('user_id');
             }
         )->orWhere(
             [
@@ -151,41 +146,24 @@ class CarePlanHelper
                     $this->dem->dob,
                 ],
             ]
-        )->when(
-            ! empty($this->dem->mrn_number) && ! empty($this->user->program_id),
-            function ($q) {
-                return $q->orWhere(
-                    [
-                        [
-                            'practice_id',
-                            '=',
-                            $this->user->program_id,
-                        ],
-                        [
-                            'mrn',
-                            '=',
-                            $this->dem->mrn_number,
-                        ],
-                        [
-                            'mrn',
-                            'is not',
-                            null,
-                        ],
-                        [
-                            'practice_id',
-                            'is not',
-                            null,
-                        ],
-                    ]
-                );
-            }
+        )->orWhere(
+            [
+                [
+                    'practice_id',
+                    '=',
+                    $this->user->program_id,
+                ],
+                [
+                    'mrn',
+                    '=',
+                    $this->dem->mrn_number,
+                ],
+            ]
         )->first();
         
         if ($enrollee) {
             if (strtolower($this->user->first_name) != strtolower($enrollee->first_name)) {
-                throw new \Exception(
-                    "Something fishy is going on. enrollee:{$enrollee->id} and user:{$this->user->id} do not match"
-                );
+                throw new \Exception("Something fishy is going on. enrollee:{$enrollee->id} and user:{$this->user->id} do not match");
             }
             $this->enrollee        = $enrollee;
             $enrollee->user_id     = $this->user->id;
@@ -289,9 +267,7 @@ class CarePlanHelper
         }
         
         $preferredCallDays  = $this->getEnrolleePreferredCallDays() ?? parseCallDays($this->dem->preferred_call_days);
-        $preferredCallTimes = $this->getEnrolleePreferredCallTimes() ?? parseCallTimes(
-                $this->dem->preferred_call_times
-            );
+        $preferredCallTimes = $this->getEnrolleePreferredCallTimes() ?? parseCallTimes($this->dem->preferred_call_times);
         
         if ( ! $preferredCallDays && ! $preferredCallTimes) {
             PatientContactWindow::sync(
@@ -575,9 +551,7 @@ class CarePlanHelper
      */
     public function storePhones()
     {
-        $pPhone      = optional($this->enrollee)->primary_phone ?? $this->str->extractNumbers(
-                $this->dem->primary_phone
-            );
+        $pPhone      = optional($this->enrollee)->primary_phone ?? $this->str->extractNumbers($this->dem->primary_phone);
         $homePhone   = null;
         $mobilePhone = null;
         $workPhone   = null;
@@ -760,7 +734,7 @@ class CarePlanHelper
                 ],
                 [
                     'problem_import_id'  => $problem->id,
-                    'is_monitored'       => (bool) $problem->cpm_problem_id,
+                    'is_monitored'       => (bool)$problem->cpm_problem_id,
                     'ccd_problem_log_id' => $problem->ccd_problem_log_id,
                     'cpm_instruction_id' => optional($instruction)->id ?? null,
                 ]

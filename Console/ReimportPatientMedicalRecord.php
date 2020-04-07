@@ -227,6 +227,10 @@ class ReimportPatientMedicalRecord extends Command
                 CcdInsurancePolicy::where('medical_record_id', '=', $ccda->id)
                                   ->where('medical_record_type', '=', $class)
                                   ->delete();
+    
+                ImportedMedicalRecord::where('medical_record_id', '=', $ccda->id)
+                                  ->where('medical_record_type', '=', $class)
+                                  ->delete();
             }
         );
         
@@ -241,6 +245,9 @@ class ReimportPatientMedicalRecord extends Command
         
         CcdInsurancePolicy::where('patient_id', '=', $userId)
                           ->delete();
+    
+        ImportedMedicalRecord::where('patient_id', '=', $userId)
+                             ->delete();
     }
     
     private function correctMrnIfWrong(User $user)
