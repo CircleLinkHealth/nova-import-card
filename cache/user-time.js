@@ -1,8 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+//copied from StoreTimeTracking.php
+var UNTRACKED_ROUTES = [
+    'patient.activity.create',
+    'patient.activity.providerUIIndex',
+    'patient.reports.progress',
+];
 var _usersTime = {};
-function storeTime(userId, ccmTime, bhiTime, replace) {
+function storeTime(activity, userId, ccmTime, bhiTime, replace) {
     if (replace === void 0) { replace = false; }
+    if (UNTRACKED_ROUTES.indexOf(activity) > -1) {
+        return;
+    }
     if (replace) {
         _usersTime[userId] = { ccm: ccmTime, bhi: bhiTime };
         return;
