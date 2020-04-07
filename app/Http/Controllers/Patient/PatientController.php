@@ -82,19 +82,19 @@ class PatientController extends Controller
         $searchTerms = explode(' ', $input['users']);
 
         $query = User::intersectPracticesWith(auth()->user())
-                     ->ofType('participant')
-                     ->with(['primaryPractice', 'patientInfo', 'phoneNumbers']);
+            ->ofType('participant')
+            ->with(['primaryPractice', 'patientInfo', 'phoneNumbers']);
 
         foreach ($searchTerms as $term) {
             $query->where(function ($q) use ($term) {
                 $q->where('first_name', 'like', "%${term}%")
-                  ->orWhere('last_name', 'like', "%${term}%")
-                  ->orWhere('id', 'like', "%${term}%")
-                  ->orWhereHas('patientInfo', function ($query) use ($term) {
+                    ->orWhere('last_name', 'like', "%${term}%")
+                    ->orWhere('id', 'like', "%${term}%")
+                    ->orWhereHas('patientInfo', function ($query) use ($term) {
                       $query->where('mrn_number', 'like', "%${term}%")
-                            ->orWhere('birth_date', 'like', "%${term}%");
+                          ->orWhere('birth_date', 'like', "%${term}%");
                   })
-                  ->orWhereHas('phoneNumbers', function ($query) use ($term) {
+                    ->orWhereHas('phoneNumbers', function ($query) use ($term) {
                       $query->where('number', 'like', "%${term}%");
                   });
             });
@@ -113,7 +113,7 @@ class PatientController extends Controller
             $programObj = Practice::find($d->program_id);
 
             $patients[$i]['program'] = $programObj->display_name ?? '';
-            $patients[$i]['hint']    = $patients[$i]['name'] . ' DOB:' . $patients[$i]['dob'] . ' [' . $patients[$i]['program'] . "] MRN: {$patients[$i]['mrn']} ID: {$d->id} PRIMARY PHONE: {$d->getPrimaryPhone()}";
+            $patients[$i]['hint']    = $patients[$i]['name'].' DOB:'.$patients[$i]['dob'].' ['.$patients[$i]['program']."] MRN: {$patients[$i]['mrn']} ID: {$d->id} PRIMARY PHONE: {$d->getPrimaryPhone()}";
             ++$i;
         }
 
@@ -123,10 +123,10 @@ class PatientController extends Controller
     public function showCallPatientPage(Request $request, $patientId)
     {
         $user = User::with('phoneNumbers')
-                    ->with('patientInfo.location')
-                    ->with('primaryPractice.locations')
-                    ->where('id', $patientId)
-                    ->firstOrFail();
+            ->with('patientInfo.location')
+            ->with('primaryPractice.locations')
+            ->where('id', $patientId)
+            ->firstOrFail();
 
         $phoneNumbers = $user->phoneNumbers
             ->filter(function ($p) {
@@ -149,7 +149,7 @@ class PatientController extends Controller
         }
 
         //naive authentication for the CPM Caller Service
-        $cpmToken = \Hash::make(config('app.key') . Carbon::today()->toDateString());
+        $cpmToken = \Hash::make(config('app.key').Carbon::today()->toDateString());
 
         return view('wpUsers.patient.calls.index')
             ->with([
@@ -185,7 +185,13 @@ class PatientController extends Controller
             $patients                       = $user->patientsPendingProviderApproval()->get();
             $patientsPendingApproval        = $this->formatter->patientListing($patients);
             $pendingApprovals               = $patients->count();
+        } elseif ($user->isAdmin() && $user->canQAApproveCarePlans()) {
+            $showPatientsPendingApprovalBox = true;
+            $patients                       = $user->patientsPendingCLHApproval()->get();
+            $patientsPendingApproval        = $this->formatter->patientListing($patients);
+            $pendingApprovals               = $patients->count();
         }
+
         $noLiveCountTimeTracking = true;
         $authData                = $this->fullCalendarService->getAuthData();
 
@@ -240,7 +246,7 @@ class PatientController extends Controller
     {
         $storageDirectory = 'storage/pdfs/patients/';
         $datetimePrefix   = date('Y-m-dH:i:s');
-        $fileName         = $storageDirectory . $datetimePrefix . '-patient-list.pdf';
+        $fileName         = $storageDirectory.$datetimePrefix.'-patient-list.pdf';
         $file             = $pdfService->createPdfFromView('wpUsers.patient.listing-pdf', [
             'patients' => $this->formatter->patients(),
         ], null, [
@@ -319,9 +325,9 @@ class PatientController extends Controller
     {
         // get number of approvals
         $patients = User::intersectPracticesWith(auth()->user())
-                        ->with('phoneNumbers', 'patientInfo', 'careTeamMembers')->whereHas('roles', function ($q) {
-                $q->where('name', '=', 'participant');
-            })->get()->pluck('fullNameWithId', 'id')->all();
+            ->with('phoneNumbers', 'patientInfo', 'careTeamMembers')->whereHas('roles', function ($q) {
+                            $q->where('name', '=', 'participant');
+                        })->get()->pluck('fullNameWithId', 'id')->all();
 
         return view('wpUsers.patient.select', compact(['patients']));
     }
@@ -342,24 +348,24 @@ class PatientController extends Controller
 
         $wpUser = User::with([
             'primaryPractice',
-            'ccdProblems'  => function ($q) {
+            'ccdProblems' => function ($q) {
                 $q->with('cpmProblem.cpmInstructions')
-                  ->whereNotNull('cpm_problem_id');
+                    ->whereNotNull('cpm_problem_id');
             },
             'observations' => function ($q) {
                 $q->where('obs_unit', '!=', 'invalid')
-                  ->where('obs_unit', '!=', 'scheduled')
-                  ->with([
-                      'meta',
-                      'question.careItems',
-                  ])
-                  ->orderBy('obs_date', 'desc')
-                  ->take(100);
+                    ->where('obs_unit', '!=', 'scheduled')
+                    ->with([
+                        'meta',
+                        'question.careItems',
+                    ])
+                    ->orderBy('obs_date', 'desc')
+                    ->take(100);
             },
             'patientSummaries',
         ])
-                      ->where('id', $patientId)
-                      ->first();
+            ->where('id', $patientId)
+            ->first();
 
         if ( ! $wpUser) {
             return response('User not found', 401);
@@ -502,17 +508,17 @@ class PatientController extends Controller
                     $alertLevel = $observation->alert_level;
                 }
                 // lastly format json
-                $observation_json[$section] .= "{ obs_key:'" . $observation->obs_key . "', " .
-                                               "description:'" . str_replace(
+                $observation_json[$section] .= "{ obs_key:'".$observation->obs_key."', ".
+                                               "description:'".str_replace(
                                                    '_',
                                                    ' ',
                                                    $observation->description
-                                               ) . "', " .
-                                               "obs_value:'" . $observation->obs_value . "', " .
-                                               "dm_alert_level:'" . $alertLevel . "', " .
-                                               "obs_unit:'" . $observation->obs_unit . "', " .
-                                               "obs_message_id:'" . $observation->obs_message_id . "', " .
-                                               "comment_date:'" . Carbon::parse($observation->obs_date)->format('m-d-y h:i:s A') . "', " . '},';
+                                               )."', ".
+                                               "obs_value:'".$observation->obs_value."', ".
+                                               "dm_alert_level:'".$alertLevel."', ".
+                                               "obs_unit:'".$observation->obs_unit."', ".
+                                               "obs_message_id:'".$observation->obs_message_id."', ".
+                                               "comment_date:'".Carbon::parse($observation->obs_date)->format('m-d-y h:i:s A')."', ".'},';
                 ++$o;
             }
             $observation_json[$section] .= '],';
@@ -569,7 +575,7 @@ class PatientController extends Controller
             return back();
         }
 
-        (new TestPatients)->create();
+        (new TestPatients())->create();
 
         return redirect()->back();
     }

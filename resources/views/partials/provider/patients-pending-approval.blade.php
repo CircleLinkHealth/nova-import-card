@@ -2,7 +2,11 @@
     <div class="main-form-container col-lg-10 col-lg-offset-1">
         <div class="row">
             <div class="main-form-title col-lg-12">
-                Pending Care Plans: Click "Approve Now" to Review
+                @if(auth()->user()->isAdmin())
+                    Care Plans Pending CLH Approval: Click "CLH Approve" to Review
+                @else
+                    Pending Care Plans: Click "Approve Now" to Review
+                @endif
             </div>
             <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
                 @if(auth()->user()->providerInfo)

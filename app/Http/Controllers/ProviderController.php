@@ -38,10 +38,12 @@ class ProviderController extends Controller
         event(new CarePlanWasApproved(User::find($patientId), auth()->user()));
         $viewNext = (bool) $viewNext;
 
-        if ($viewNext) {
-            $nextPatient = auth()->user()->patientsPendingProviderApproval()->get()->filter(function ($user) {
-                return CarePlan::QA_APPROVED == $user->getCarePlanStatus();
-            })->first();
+        if ($viewNext && auth()->user()->hasRole(['administrator', 'provider'])) {
+            if (auth()->user()->isProvider()) {
+                $nextPatient = auth()->user()->patientsPendingProviderApproval()->first();
+            } elseif (auth()->user()->isAdmin()) {
+                $nextPatient = auth()->user()->patientsPendingCLHApproval()->first();
+            }
 
             if ( ! $nextPatient) {
                 return redirect()->to('/');
