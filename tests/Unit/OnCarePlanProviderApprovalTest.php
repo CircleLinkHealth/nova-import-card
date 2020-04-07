@@ -302,8 +302,8 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
         
         $this->assertNotEquals($this->provider(2)[0]->id, $this->provider(2)[1]->id);
     
-        $this->assertTrue(1 === $this->provider(2)[0]->patientsPendingApproval()->count());
-        $this->assertTrue(1 === $this->provider(2)[1]->patientsPendingApproval()->count());
+        $this->assertTrue(1 === $this->provider(2)[0]->patientsPendingProviderApproval()->count());
+        $this->assertTrue(1 === $this->provider(2)[1]->patientsPendingProviderApproval()->count());
         
         $response = $this->actingAs($this->provider(2)[1])->get(route('patient.careplan.print', [
             'patientId' => $this->patient()->id,
