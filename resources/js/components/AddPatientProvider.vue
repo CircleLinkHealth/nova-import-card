@@ -40,7 +40,7 @@
                     {{result.display_name}}
                 </mdb-list-group-item>
             </mdb-list-group>
-            <p v-show="searchResults.length === 0 && searchValue.length > MIN_SEARCH_VALUE">
+            <p v-show="searchFinished && searchResults.length === 0">
                 Cannot find provider.
             </p>
         </div>
@@ -202,6 +202,8 @@
                 error: null,
                 searchValue: '',
                 searchResults: [],
+                //needed because we are de-bouncing search, so the waiting flag is not enough
+                searchFinished: false,
                 isCreatingNew: false,
                 practices: [],
                 specialties: specialties.map(s => {
@@ -355,6 +357,7 @@
                             }
                             return p;
                         });
+                        this.searchFinished = true;
                     })
                     .catch(error => {
                         this.waiting = false;
@@ -366,6 +369,7 @@
                 this.isCreatingNew = false;
                 this.searchValue = "";
                 this.searchResults = [];
+                this.searchFinished = false;
                 this.provider = this.getNewProvider();
             },
 
@@ -385,6 +389,7 @@
             },
 
             onSearchValueChanged: _.debounce((val) => {
+                self.searchFinished = false;
                 self.searchValue = val;
                 if (self.searchValue.length > self.MIN_SEARCH_VALUE) {
                     self.getProviders(self.searchValue);
