@@ -7,23 +7,20 @@ const UNTRACKED_ROUTES = [
 
 const _usersTime: UsersTimeCollection = {};
 
-export function storeTime(activity: string, userId: number, ccmTime: number, bhiTime: number, replace: boolean = false) {
-
-    /*if (UNTRACKED_ROUTES.indexOf(activity) > -1) {
-        return;
-    }*/
-
-    if (replace) {
-        _usersTime[userId] = {ccm: ccmTime, bhi: bhiTime};
-        return;
-    }
-
-    if (!_usersTime[userId]) {
-        _usersTime[userId] = {ccm: 0, bhi: 0};
-    }
-
-    _usersTime[userId].ccm += ccmTime;
-    _usersTime[userId].bhi += bhiTime;
+export function storeTime(userId: number, activities: { title: string, is_behavioral: boolean; duration: number }[], totalCcm: number, totalBhi: number) {
+    let finalCcm = totalCcm;
+    let finalBhi = totalBhi;
+    activities.forEach(a => {
+        if (UNTRACKED_ROUTES.indexOf(a.title) === -1) {
+            return;
+        }
+        if (a.is_behavioral) {
+            finalBhi -= a.duration;
+        } else {
+            finalCcm -= a.duration;
+        }
+    });
+    _usersTime[userId] = {ccm: finalCcm, bhi: finalBhi};
 }
 
 export function getTime(userId: number): TimeEntity {
