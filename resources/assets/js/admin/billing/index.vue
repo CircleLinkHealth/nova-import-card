@@ -499,7 +499,7 @@
                     return;
                 }
 
-                this.showProblemsModal(patient, true, patient.isBhiEligible());
+                this.showProblemsModal(patient, true);
             },
 
             showCcmModal(patient) {
@@ -521,13 +521,13 @@
                     return;
                 }
 
-                this.showProblemsModal(patient, false, patient.isBhiEligible());
+                this.showProblemsModal(patient, false);
             },
 
-            showProblemsModal(patient, isBhi, patientHasBhi) {
+            showProblemsModal(patient, isBhi) {
                 Event.$emit('modal-attest-call-conditions:show', {
                     'patient': patient,
-                    'patient_has_bhi': patientHasBhi,
+                    'patient_has_bhi': patient.isBhiEligible(),
                     'is_bhi': isBhi
                 });
             },
