@@ -2394,7 +2394,37 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                    )
                    ->get();
     }
-
+    
+    public function patientsPendingCLHApproval()
+    {
+        return User::intersectPracticesWith($this, false)
+                   ->ofType('participant')
+                   ->whereHas('patientInfo', function ($q){
+                       $q->enrolled();
+                   })
+                   ->whereHas(
+                       'carePlan',
+                       function ($q) {
+                           $q->whereIn('status', [CarePlan::DRAFT]);
+                       }
+                   )
+                   ->with(
+                       [
+                           'observations' => function ($query) {
+                               $query->where('obs_key', '!=', 'Outbound');
+                               $query->orderBy('obs_date', 'DESC');
+                               $query->first();
+                           },
+                           'phoneNumbers' => function ($q) {
+                               $q->where('type', '=', PhoneNumber::HOME);
+                           },
+                           'patientInfo.location',
+                           'primaryPractice',
+                           'carePlan',
+                       ]
+                   );
+    }
+    
     public function patientsPendingProviderApproval()
     {
         $approveOwnCarePlans = $this->providerInfo
@@ -2471,6 +2501,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                            },
                            'patientInfo.location',
                            'primaryPractice',
+                           'carePlan',
                        ]
                    );
     }
@@ -2812,18 +2843,22 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             }
         );
     }
-
+    
     /**
      * Scope a query to intersect practices with the given user.
      *
      * @param $query
      * @param $user
+     * @param bool $withDemo
+     *
+     * @return
      */
     public function scopeIntersectPracticesWith(
         $query,
-        $user
+        User $user,
+        bool $withDemo = true
     ) {
-        $viewablePractices = $user->viewableProgramIds();
+        $viewablePractices = $user->viewableProgramIds($withDemo);
 
         return $query->whereHas(
             'practices',
@@ -3861,9 +3896,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                    ->all();
     }
 
-    public function viewableProgramIds(): array
+    public function viewableProgramIds(bool $withDemo = true): array
     {
         return $this->practices
+            ->when(false === $withDemo, function ($q) {
+                return $q->where('is_demo', false);
+            })
             ->pluck('id')
             ->all();
     }
