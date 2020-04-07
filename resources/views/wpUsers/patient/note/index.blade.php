@@ -143,7 +143,14 @@
                                         {
                                             id: "tags",
                                             css: {'text-align': 'left', 'top': 0, 'left': 0, 'bottom': 0, 'right': 0},
-                                            header: ["Status"],
+                                            header: ["Status", {content: "textFilter", placeholder: "Filter"}],
+                                            // template: function (obj) {
+                                            //     debugger;
+                                            //     if (obj.success_story === true) {
+                                            //         return obj.tags;
+                                            //     }
+                                            //     return obj.tags;
+                                            // },
                                             width: 110,
                                             sort: 'string'
                                         },

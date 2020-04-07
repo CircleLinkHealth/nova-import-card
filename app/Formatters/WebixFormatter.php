@@ -16,7 +16,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Database\Eloquent\Collection;
 
 class WebixFormatter implements ReportFormatter
@@ -46,6 +45,7 @@ class WebixFormatter implements ReportFormatter
                     'provider_name'    => $billingProvider,
                     'tags'             => '',
                     'status'           => $note->status,
+                    'success_story'    => $note->success_story,
                 ];
 
                 if (empty($result['type_name'])) {
