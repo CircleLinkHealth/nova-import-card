@@ -321,6 +321,8 @@ class ReimportPatientMedicalRecord extends Command
     private function getEnrollee(User $user): Enrollee
     {
         if ( ! $this->enrollee) {
+            \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Fetching enrollee ln:".__LINE__);
+    
             $this->enrollee = Enrollee::where([
                 ['user_id', '=', $user->id],
                 ['practice_id', '=', $user->program_id],
