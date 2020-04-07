@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aaa1c16980115beba7e8b9a7f44d2f8f",
+    "content-hash": "9da2a53a9b9dab32c8be1b386b2a3f21",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -976,11 +976,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.1.8",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "62d0b09a8aab3719effe8d3a9d7825ea224e51a1"
+                "reference": "414da4a849af274f459625390c13ef0c111cf6c4"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1014,7 +1014,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-07T12:09:18+00:00"
+            "time": "2020-04-07T14:12:18+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1151,11 +1151,11 @@
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "v1.3",
+            "version": "v1.3.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "8ae5c626c9feac48b7e838773c4538042be153f3"
+                "reference": "f94240f2301665283f728626004983089fbcdc7d"
             },
             "type": "laravel-module",
             "extra": {
@@ -1177,7 +1177,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-02T14:27:46+00:00"
+            "time": "2020-04-07T14:10:55+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
