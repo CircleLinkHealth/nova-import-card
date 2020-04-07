@@ -283,7 +283,7 @@ class ItemizedBillablePatientsReport
         $problems = $patient->ccdProblems->where('cpm_problem_id', '!=',
             genericDiabetes()->id);
 
-        if ($summary->hasServiceCode(ChargeableService::BHI)) {
+        if ($summary->practiceHasServiceCode(ChargeableService::BHI)) {
             $problems = $problems->where('cpmProblem.is_behavioral', '=', false);
         }
 
