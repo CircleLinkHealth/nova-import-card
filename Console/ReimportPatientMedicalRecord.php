@@ -325,6 +325,7 @@ class ReimportPatientMedicalRecord extends Command
             $this->enrollee = Enrollee::whereUserId($user->id)->wherePracticeId($user->program_id)->with(
                 'eligibilityJob'
             )->has('eligibilityJob')->orderByDesc('id')->first();
+            \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Fetched enrollee_id:{$this->enrollee->id}:ln:".__LINE__);
         }
         
         return $this->enrollee;
