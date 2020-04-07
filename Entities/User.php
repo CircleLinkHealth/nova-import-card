@@ -2503,21 +2503,23 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function practice($practice)
     {
-        if (is_string($practice) && ! is_int($practice)) {
+        return Cache::remember("{$this->id}_practice", 1, function () use ($practice) {
+            if (is_string($practice) && ! is_int($practice)) {
+                return $this->practices()
+                            ->where('name', '=', $practice)
+                            ->first();
+            }
+
+            $practiceId = parseIds($practice);
+
+            if ( ! $practiceId) {
+                return null;
+            }
+
             return $this->practices()
-                        ->where('name', '=', $practice)
+                        ->where('program_id', '=', $practiceId[0])
                         ->first();
-        }
-
-        $practiceId = parseIds($practice);
-
-        if ( ! $practiceId) {
-            return null;
-        }
-
-        return $this->practices()
-                    ->where('program_id', '=', $practiceId[0])
-                    ->first();
+        });
     }
 
     /**
