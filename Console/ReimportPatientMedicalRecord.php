@@ -157,7 +157,7 @@ class ReimportPatientMedicalRecord extends Command
     {
         if (in_array($user->primaryPractice->name, ['marillac-clinic-inc', 'calvary-medical-clinic'])) {
             $this->warn("Running 'csv-with-json' decorator");
-            \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Running 'csv-with-json' decorator:ln:".__LINE__);
+            \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id}:enrollee_id:{$this->getEnrollee($user)->id} Running 'csv-with-json' decorator:ln:".__LINE__);
     
     
             $mr = new CsvWithJsonMedicalRecord(
