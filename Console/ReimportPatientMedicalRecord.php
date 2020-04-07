@@ -343,6 +343,8 @@ class ReimportPatientMedicalRecord extends Command
     private function importCcdaAndFillCarePlan(Ccda $ccda, User $user)
     {
         $this->warn("Importing CCDA:$ccda->id");
+        \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Importing CCDA:{$ccda->id}:ln:".__LINE__);
+    
         $ccda->import();
         
         /**
@@ -353,18 +355,27 @@ class ReimportPatientMedicalRecord extends Command
         
         if ( ! $imr) {
             $this->warn("Creating IMR for CCDA:$ccda->id");
+            \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Creating IMR for CCDA:{$ccda->id}:ln:".__LINE__);
+    
             $imr = $ccda->createImportedMedicalRecord()->importedMedicalRecord();
         }
-        
+    
+        \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} ImportedMedicalRecord_id:{$imr->id}:{$ccda->id}:ln:".__LINE__);
+    
+    
         $imr->patient_id = $user->id;
         $imr->save();
         
         $this->warn("Creating CarePlan from CCDA:$ccda->id");
-        
+        \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Creating CarePlan for CCDA:{$ccda->id}:ln:".__LINE__);
+    
+    
         $imr->updateOrCreateCarePlan();
         
         $this->line("Patient $user->id reimported from CCDA $ccda->id");
-        
+        \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Created CarePlan for CCDA:{$ccda->id}:ln:".__LINE__);
+    
+    
         $this->getEnrollee($user)->medical_record_id   = $ccda->id;
         $this->getEnrollee($user)->medical_record_type = get_class($ccda);
         $this->getEnrollee($user)->save();
