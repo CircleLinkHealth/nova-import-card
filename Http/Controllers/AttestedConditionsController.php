@@ -56,7 +56,7 @@ class AttestedConditionsController extends Controller
             throw new \Exception("Patient {$patient->id} does not have a summary for month {$date->toDateString()->startOfMonth()}.");
         }
 
-        //if summarydoes not have BHI all codes will be included in request from the CCM, no need to merge.
+        //if summary does not have BHI all codes will be included in request from the CCM, no need to merge.
         //else merge and attest, but return only the ones actually used by modal
         if ($summary->hasServiceCode(ChargeableService::BHI)) {
             $attestedProblems = array_merge($attestedProblems,
