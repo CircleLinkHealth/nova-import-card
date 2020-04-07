@@ -218,6 +218,10 @@ class WebixFormatter implements ReportFormatter
                 $formatted_notes[$count]['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
             }
 
+            if ($note->success_story) {
+                $formatted_notes[$count]['tags'] .= '<div class="label label-warning" style="top: -2px; position: relative; background-color: #9865f2" ><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></div>';
+            }
+
             ++$count;
         }
 
