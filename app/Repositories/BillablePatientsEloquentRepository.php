@@ -18,7 +18,8 @@ class BillablePatientsEloquentRepository
     public function billablePatients(
         $practiceId,
         Carbon $date,
-        array $relations = null
+        array $relations = null,
+        bool $showApprovedOnly = false
     ) {
         $month = $date->startOfMonth();
 
@@ -28,10 +29,18 @@ class BillablePatientsEloquentRepository
             ->has('patientInfo')
             ->whereHas(
                 'patientSummaries',
-                function ($query) use ($month) {
-                    $query->where('month_year', $month)
-                        ->where('total_time', '>=', AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS)
-                        ->where('no_of_successful_calls', '>=', 1);
+                function ($query) use ($month, $showApprovedOnly) {
+                    $wheres = [
+                        ['month_year', '=', $month],
+                        ['total_time', '>=', AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS],
+                        ['no_of_successful_calls', '>=', 1],
+                    ];
+
+                    if (true === $showApprovedOnly) {
+                        $wheres[] = ['approved', '=', true];
+                    }
+
+                    $query->where($wheres);
                 }
             )
             ->ofType('participant')
@@ -50,6 +59,8 @@ class BillablePatientsEloquentRepository
             ]
         )
             ->orderBy('needs_qa', 'desc')
+            ->orderBy('no_of_successful_calls', 'asc')
+            ->orderBy('rejected', 'asc')
             ->where('month_year', $month)
             ->where(
                 function ($q) {
