@@ -9,9 +9,9 @@ const _usersTime: UsersTimeCollection = {};
 
 export function storeTime(activity: string, userId: number, ccmTime: number, bhiTime: number, replace: boolean = false) {
 
-    if (UNTRACKED_ROUTES.indexOf(activity) > -1) {
+    /*if (UNTRACKED_ROUTES.indexOf(activity) > -1) {
         return;
-    }
+    }*/
 
     if (replace) {
         _usersTime[userId] = {ccm: ccmTime, bhi: bhiTime};

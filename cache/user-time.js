@@ -8,10 +8,10 @@ var UNTRACKED_ROUTES = [
 ];
 var _usersTime = {};
 function storeTime(activity, userId, ccmTime, bhiTime, replace) {
-    if (replace === void 0) { replace = false; }
-    if (UNTRACKED_ROUTES.indexOf(activity) > -1) {
+    /*if (UNTRACKED_ROUTES.indexOf(activity) > -1) {
         return;
-    }
+    }*/
+    if (replace === void 0) { replace = false; }
     if (replace) {
         _usersTime[userId] = { ccm: ccmTime, bhi: bhiTime };
         return;
