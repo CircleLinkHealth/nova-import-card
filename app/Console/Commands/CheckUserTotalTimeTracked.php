@@ -14,7 +14,7 @@ class CheckUserTotalTimeTracked extends Command
      *
      * @var string
      */
-    protected $signature = 'check:time-tracked {userId?} {refDate?}';
+    protected $signature = 'check:time-tracked {userId?} {refDate?} {--force-to-slack}';
 
     /**
      * - Daily: For the current day, send slack alert if total CPM time of care coach has exceeded 8 hours.
@@ -51,7 +51,7 @@ class CheckUserTotalTimeTracked extends Command
             $refDate = now();
         }
 
-        $isTesting            = in_array(config('app.env'), ['review', 'local', 'staging']);
+        $isTesting            = $this->option('force-to-slack');
         $checkAccumulatedTime = $isTesting || $refDate->isTuesday() || $refDate->isFriday();
         $weekAgoFromYesterday = $refDate->copy()->addWeek(-1)->startOfDay();
         $yesterday            = $refDate->copy()->subDay()->endOfDay();
@@ -86,7 +86,7 @@ class CheckUserTotalTimeTracked extends Command
             $result   .= "Warning: The following nurses have exceeded the daily maximum of $maxHours hours:\n";
             $daily->each(function ($time, $id) use (&$result) {
                 $rounded = round($time, 2);
-                $result .= "Nurse[$id]: $rounded hrs spent in CPM yesterday\n";
+                $result  .= "Nurse[$id]: $rounded hrs spent in CPM yesterday\n";
             });
         }
         $weekly = $alerts->get('weekly');
@@ -98,7 +98,7 @@ class CheckUserTotalTimeTracked extends Command
             $result .= "Warning: The following nurses have exceeded their committed hours for the last 7 days by more than {$timesMore}x:\n";
             $weekly->each(function ($time, $id) use (&$result) {
                 $rounded = round($time, 2);
-                $result .= "Nurse[$id]: $rounded hrs spent in CPM last 7 days\n";
+                $result  .= "Nurse[$id]: $rounded hrs spent in CPM last 7 days\n";
             });
         }
 
