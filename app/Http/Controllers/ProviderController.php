@@ -39,7 +39,7 @@ class ProviderController extends Controller
         $viewNext = (bool) $viewNext;
 
         if ($viewNext) {
-            $nextPatient = auth()->user()->patientsPendingApproval()->get()->filter(function ($user) {
+            $nextPatient = auth()->user()->patientsPendingProviderApproval()->get()->filter(function ($user) {
                 return CarePlan::QA_APPROVED == $user->getCarePlanStatus();
             })->first();
 
@@ -81,7 +81,7 @@ class ProviderController extends Controller
         }
 
         if ($viewNext) {
-            $nextPatient = auth()->user()->patientsPendingApproval()->get()->filter(function ($user) {
+            $nextPatient = auth()->user()->patientsPendingProviderApproval()->get()->filter(function ($user) {
                 return CarePlan::QA_APPROVED == $user->getCarePlanStatus();
             })->first();
 

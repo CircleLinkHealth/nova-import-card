@@ -182,7 +182,7 @@ class PatientController extends Controller
 
         if ($user->canApproveCarePlans()) {
             $showPatientsPendingApprovalBox = true;
-            $patients                       = $user->patientsPendingApproval()->get();
+            $patients                       = $user->patientsPendingProviderApproval()->get();
             $patientsPendingApproval        = $this->formatter->patientListing($patients);
             $pendingApprovals               = $patients->count();
         }
