@@ -7,8 +7,6 @@
 namespace App\Http\Controllers;
 
 use App\Exports\CareCoachMonthlyReport;
-use App\Jobs\CreateNurseInvoices;
-use App\Notifications\NurseInvoiceCreated;
 use App\Reports\NurseDailyReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
@@ -52,34 +50,22 @@ class NurseController extends Controller
             $last       = Carbon::now()->lastOfMonth()->endOfDay();
         }
 
-        $nurses = User::ofType('care-center')->where('access_disabled', 0)->get();
+        $nurses = User::select(['id', 'first_name', 'last_name'])
+                      ->has('nurseInfo')
+                      ->ofType('care-center')
+                      ->where('access_disabled', 0)
+                      ->get();
         $data   = [];
 
         while ($dayCounter->lte($last)) {
             foreach ($nurses as $nurse) {
-                if ( ! $nurse->nurseInfo) {
-                    continue;
-                }
-
-                $countScheduled = $nurse->nurseInfo->countScheduledCallsFor($dayCounter);
-
-                $countMade = $nurse->nurseInfo->countCompletedCallsFor($dayCounter);
-
                 $formattedDate = $dayCounter->format('m/d Y');
 
-                $name = $nurse->first_name[0].'. '.$nurse->getLastName();
+                $name = $nurse->first_name[0] . '. ' . $nurse->getLastName();
 
-                if ($countScheduled > 0) {
-                    $data[$formattedDate][$name]['Scheduled'] = $countScheduled;
-                } else {
-                    $data[$formattedDate][$name]['Scheduled'] = 0;
-                }
+                $data[$formattedDate][$name]['Scheduled'] = $nurse->nurseInfo->countScheduledCallsFor($dayCounter);
 
-                if ($countMade > 0) {
-                    $data[$formattedDate][$name]['Actual Made'] = $countMade;
-                } else {
-                    $data[$formattedDate][$name]['Actual Made'] = 0;
-                }
+                $data[$formattedDate][$name]['Actual Made'] = $nurse->nurseInfo->countCompletedCallsFor($dayCounter);
             }
 
             $dayCounter = $dayCounter->addDays(1);
@@ -119,4 +105,5 @@ class NurseController extends Controller
 
         return view('admin.nurse.monthly-report', compact(['date', 'rows']));
     }
+
 }

@@ -100,7 +100,7 @@ class PatientObserver
         if ($patient->isDirty('consent_date')) {
             $this->sendPatientConsentedNote($patient);
         }
-    
+
         if ($patient->isDirty('ccm_status')) {
             $oldValue = $patient->getOriginal('ccm_status');
             $newValue = $patient->ccm_status;
@@ -134,26 +134,23 @@ class PatientObserver
             }
         }
     }
-    
+
     /**
-     * @param Patient $patient
      * @param $oldValue
      * @param $newValue
-     *
-     * @return bool
      */
-    private function shouldScheduleCall(Patient $patient, $oldValue, $newValue):bool
+    private function shouldScheduleCall(Patient $patient, $oldValue, $newValue): bool
     {
         $patient->loadMissing('user.carePlan');
-    
+
         if (Patient::ENROLLED != $newValue) {
             return false;
         }
-        
+
         if (Patient::ENROLLED == $oldValue) {
             return false;
         }
-        
+
         return true;
     }
 }

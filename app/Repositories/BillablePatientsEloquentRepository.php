@@ -28,21 +28,21 @@ class BillablePatientsEloquentRepository
         )
             ->has('patientInfo')
             ->whereHas(
-                          'patientSummaries',
-                          function ($query) use ($month, $showApprovedOnly) {
-                              $wheres = [
-                                  ['month_year', '=', $month],
-                                  ['total_time', '>=', AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS],
-                                  ['no_of_successful_calls', '>=', 1],
-                              ];
-                              
-                              if (true === $showApprovedOnly) {
-                                  $wheres[] = ['approved', '=', true];
-                              }
-                              
-                              $query->where($wheres);
-                          }
-                      )
+                'patientSummaries',
+                function ($query) use ($month, $showApprovedOnly) {
+                    $wheres = [
+                        ['month_year', '=', $month],
+                        ['total_time', '>=', AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS],
+                        ['no_of_successful_calls', '>=', 1],
+                    ];
+
+                    if (true === $showApprovedOnly) {
+                        $wheres[] = ['approved', '=', true];
+                    }
+
+                    $query->where($wheres);
+                }
+            )
             ->ofType('participant')
             ->ofPractice($practiceId);
     }
@@ -63,22 +63,22 @@ class BillablePatientsEloquentRepository
             ->orderBy('rejected', 'asc')
             ->where('month_year', $month)
             ->where(
-                                           function ($q) {
-                                               $q->where('ccm_time', '>=', AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS)
-                                                   ->orWhere('bhi_time', '>=', AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS);
-                                           }
-                                       )
+                function ($q) {
+                    $q->where('ccm_time', '>=', AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS)
+                        ->orWhere('bhi_time', '>=', AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS);
+                }
+            )
             ->when(
-                                           false === $ignoreWith,
-                                           function ($q) use ($month, $practiceId) {
-                                               return $q->with(
+                false === $ignoreWith,
+                function ($q) use ($month, $practiceId) {
+                    return $q->with(
                                                    [
                                                        'patient' => function ($q) use ($month, $practiceId) {
                                                            $q->with(
                                                                [
                                                                    'patientInfo',
                                                                    'primaryPractice',
-                                                                   'careTeamMembers'  => function ($q) {
+                                                                   'careTeamMembers' => function ($q) {
                                                                        $q->where('type', '=', 'billing_provider');
                                                                    },
                                                                ]
@@ -87,12 +87,12 @@ class BillablePatientsEloquentRepository
                                                        'chargeableServices',
                                                    ]
                                                );
-                                           }
-                                       )
+                }
+            )
             ->whereHas(
-                                           'patient',
-                                           function ($q) use ($practiceId) {
-                                               $q->whereHas(
+                'patient',
+                function ($q) use ($practiceId) {
+                    $q->whereHas(
                                                    'practices',
                                                    function ($q) use ($practiceId) {
                                                        $q->where('id', '=', $practiceId);
@@ -103,8 +103,8 @@ class BillablePatientsEloquentRepository
                                                        $q->where('id', '=', $practiceId);
                                                    }
                                                );
-                                           }
-                                       );
+                }
+            );
 
         return $result;
     }

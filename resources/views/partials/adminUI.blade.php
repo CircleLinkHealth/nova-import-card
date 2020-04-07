@@ -26,7 +26,7 @@
     <![endif]-->
 
     <!-- JQuery -->
-    <link rel="stylesheet" href="{{mix('/css/smoothness-jquery-ui-1.11.4.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css" integrity="sha256-iWTx/iC9IoKaoSKD5+WVFef8ZYNIgQ4AxVpMbBw2hig=" crossorigin="anonymous" />
 
     <!-- http://trentrichardson.com/examples/timepicker/ -->
     <link rel="stylesheet"
@@ -108,11 +108,6 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ route('admin.patientCallManagement.v2.index') }}">Manage (V2)</a></li>
                                 <li><a href="{{ route('admin.families.index') }}">Families</a></li>
-                                <li><a href="{{ route('algo.mock.create') }}">
-                                        Algo v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}} Simulator</a>
-                                </li>
-                                <li><a href="{{ route('CallReportController.exportxls') }}">Export
-                                        Calls</a></li>
                                 <li><a href="{{ route('CallsDashboard.index') }}">Edit Call Status</a></li>
                             </ul>
                         </li>
@@ -214,10 +209,6 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ route('saas-admin.practices.create')}}">Add New</a></li>
                                 <li><a href="{{ route('saas-admin.practices.index')}}">Manage</a></li>
-                                <li><a href="{{ route('invite.create', []) }}">Send Onboarding Invite</a>
-                                <li>
-                                    <a href="{{ route('get.onboarding.create.program.lead.user', []) }}">Onboarding</a>
-                                </li>
                                 <li><a href="{{ route('practice.billing.create', []) }}">Invoice/Billable
                                         Patient Report</a></li>
                             </ul>

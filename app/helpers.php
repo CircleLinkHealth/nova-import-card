@@ -9,6 +9,7 @@ use App\Jobs\SendSlackMessage;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Exceptions\CsvFieldNotFoundException;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -1349,7 +1350,7 @@ if ( ! function_exists('isAllowedToSee2FA')) {
             $user = auth()->user();
         }
 
-        if ( ! $user) {
+        if ( ! $user || $user->isParticipant()) {
             return false;
         }
 
@@ -1731,7 +1732,12 @@ if ( ! function_exists('patientLoginIsEnabledForPractice')) {
 
         return \Cache::remember(sha1("{$key}_{$practiceId}"), 2, function () use ($key, $practiceId) {
             return AppConfig::where('config_key', $key)
-                ->where('config_value', $practiceId)->exists();
+                //give the ability to enable for all practices at once
+                ->whereIn('config_value', [
+                    $practiceId,
+                    'all',
+                ])
+                ->exists();
         });
     }
 }
@@ -1871,6 +1877,53 @@ if ( ! function_exists('genericDiabetes')) {
     {
         return \Cache::remember('cpm_problem_diabetes', 2, function () {
             return  \CircleLinkHealth\SharedModels\Entities\CpmProblem::where('name', 'Diabetes')->first();
+        });
+    }
+}
+if ( ! function_exists('sanitizeString')) {
+    /**
+     * @param $string
+     *
+     * @return string
+     */
+    function sanitizeString($string)
+    {
+        return filter_var($string, FILTER_SANITIZE_STRING);
+    }
+}
+
+if ( ! function_exists('getPatientListDropdown')) {
+    function getPatientListDropdown(User $user)
+    {
+        if ($user->isAdmin()) {
+            return ['ccm', 'awv'];
+        }
+
+        return Cache::remember("patient_list_dropdown:$user->id", 20, function () use ($user) {
+            $result = [];
+            $user->practices(true)
+                ->get()
+                ->each(function ($p) use (&$result) {
+                     /** @var Collection $services */
+                     $services = $p->chargeableServices()->get();
+                     $count = $services->count();
+                     $hasAwvInitial = $services->where('code', '=', ChargeableService::AWV_INITIAL)->isNotEmpty();
+                     $hasAwvSubsequent = $services->where('code', '=', ChargeableService::AWV_SUBSEQUENT)->isNotEmpty();
+
+                     if ($hasAwvInitial || $hasAwvSubsequent) {
+                         $result[] = 'awv';
+                     }
+
+                     if ((1 === $count && $hasAwvInitial) ||
+                         (1 === $count && $hasAwvSubsequent) ||
+                         (2 === $count && $hasAwvInitial && $hasAwvSubsequent)) {
+                         return;
+                     }
+
+                     $result[] = 'ccm';
+                 });
+
+            return collect($result)->unique()->toArray();
         });
     }
 }

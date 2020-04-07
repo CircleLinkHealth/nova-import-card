@@ -36,11 +36,9 @@ class CountPatientMonthlySummaryCalls extends Command
      * @var int
      */
     private $changedCount = 0;
-    
+
     /**
      * Create a new command instance.
-     *
-     * @param CallRepository $callRepository
      */
     public function __construct(CallRepository $callRepository)
     {
@@ -60,7 +58,7 @@ class CountPatientMonthlySummaryCalls extends Command
         $date = $argument
             ? Carbon::parse($argument)->startOfMonth()
             : Carbon::now()->startOfMonth();
-    
+
         $userIds = $this->argument('userIds') ?? null;
         if (null != $userIds) {
             $userIds = explode(',', $userIds);

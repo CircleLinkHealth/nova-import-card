@@ -320,9 +320,10 @@
                             obs_alerts_dtable.sort('#patient_name#');
                             obs_alerts_dtable.hideColumn("site");
 
-                            webix.event(window, "resize", function () {
+                            const debounced = _.debounce(() => {
                                 obs_alerts_dtable.adjust();
-                            })
+                            }, 1000);
+                            webix.event(window, "resize", debounced);
                         </script>
                         @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
                             <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'

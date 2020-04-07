@@ -80,12 +80,7 @@ class CheckEnrolledPatientsForScheduledCalls extends Command
         $this->info("Went through $loop patients. Scheduled $fixed call(s). Done.");
     }
 
-    /**
-     * @param User $patient
-     *
-     * @return bool
-     */
-    private function shouldScheduleCall(User $patient):bool
+    private function shouldScheduleCall(User $patient): bool
     {
         $patient->loadMissing(['carePlan', 'patientInfo']);
 

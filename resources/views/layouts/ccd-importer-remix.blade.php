@@ -8,7 +8,7 @@
     <title>CCD Importer</title>
     <link href="{{mix('/css/bootstrap.min.css')}}" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ mix('/compiled/css/stylesheet.css') }}"/>
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link href="{{mix('/img/favicon.png')}}" rel="icon">
 </head>

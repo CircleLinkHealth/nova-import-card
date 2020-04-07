@@ -6,13 +6,14 @@
 
 namespace App\Console;
 
-use App\Console\Commands\CountPatientMonthlySummaryCalls;
-use App\Console\Commands\CreateApprovableBillablePatientsReport;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\CheckEnrolledPatientsForScheduledCalls;
 use App\Console\Commands\CheckForMissingLogoutsAndInsert;
 use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
+use App\Console\Commands\CheckUserTotalTimeTracked;
+use App\Console\Commands\CountPatientMonthlySummaryCalls;
+use App\Console\Commands\CreateApprovableBillablePatientsReport;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesPerformanceDailyReport;
@@ -63,7 +64,7 @@ class Kernel extends ConsoleKernel
     protected function commands()
     {
         $this->load(__DIR__.'/Commands');
-        
+
         require base_path('routes/console.php');
     }
 
@@ -112,11 +113,15 @@ class Kernel extends ConsoleKernel
             ->dailyAt('03:00')->onOneServer();
 
         $schedule->command(EmailRNDailyReport::class)
-            ->dailyAt('07:05')->onOneServer()->after(function (){
-                if (! DatabaseNotification::where('type', NurseDailyReport::class)->where('created_at', '>=', now()->setTime(7,4))->exists()) {
-                    Artisan::queue(EmailRNDailyReport::class);
-                }
-            });
+            ->dailyAt('07:05')->onOneServer()->after(function () {
+                     if ( ! DatabaseNotification::where('type', NurseDailyReport::class)->where(
+                    'created_at',
+                    '>=',
+                    now()->setTime(7, 4)
+                )->exists()) {
+                         Artisan::queue(EmailRNDailyReport::class);
+                     }
+                 });
 
         $schedule->command(QueueSendApprovedCareplanSlackNotification::class)
             ->dailyAt('23:40')->onOneServer();
@@ -129,14 +134,17 @@ class Kernel extends ConsoleKernel
             ->cron('1 0 1 * *')->onOneServer();
 
         //Run at 12:45am every 1st of month
-        $schedule->command(CreateApprovableBillablePatientsReport::class, ['--reset-actor', '--auto-attest', now()->subMonth()->startOfMonth()->toDateString()])
+        $schedule->command(
+            CreateApprovableBillablePatientsReport::class,
+            ['--reset-actor', '--auto-attest', now()->subMonth()->startOfMonth()->toDateString()]
+        )
             ->cron('45 0 1 * *')->onOneServer();
 
         $schedule->command(CreateApprovableBillablePatientsReport::class, ['--reset-actor', now()->startOfMonth()->toDateString()])
             ->everyThirtyMinutes()->onOneServer();
-    
+
         $schedule->command(CountPatientMonthlySummaryCalls::class, [now()->startOfMonth()->toDateString()])
-                 ->everyThirtyMinutes()->onOneServer();
+            ->everyThirtyMinutes()->onOneServer();
 
 //        $schedule->command(
 //            SendCareCoachInvoices::class,
@@ -181,7 +189,10 @@ class Kernel extends ConsoleKernel
 //                 ->everyThirtyMinutes()
 //                 ->withoutOverlapping()->onOneServer();
 
-        $schedule->command(NursesPerformanceDailyReport::class, [now()->yesterday()->startOfDay()->toDateString(), '--notify'])->dailyAt('00:03')->onOneServer();
+        $schedule->command(
+            NursesPerformanceDailyReport::class,
+            [now()->yesterday()->startOfDay()->toDateString(), '--notify']
+        )->dailyAt('00:03')->onOneServer();
 
         $schedule->command(CheckForMissingLogoutsAndInsert::class)->dailyAt('04:00')->onOneServer();
 
@@ -199,17 +210,21 @@ class Kernel extends ConsoleKernel
         })->onOneServer();
         //        $schedule->command(SendCareCoachApprovedMonthlyInvoices::class)->dailyAt('8:30')->onOneServer();
         $schedule->command(CheckForYesterdaysActivitiesAndUpdateContactWindows::class)->dailyAt('00:10')->onOneServer();
-        
+
         $schedule->command(ImportCommand::class, [
-            User::class
+            User::class,
         ])->dailyAt('03:05');
-    
+
         $schedule->command(ImportCommand::class, [
-            Practice::class
+            Practice::class,
         ])->dailyAt('03:10');
-        
+
         $schedule->command(ImportCommand::class, [
-            Location::class
+            Location::class,
         ])->dailyAt('03:15');
+
+        $schedule->command(CheckUserTotalTimeTracked::class)
+            ->dailyAt('01:10')
+            ->onOneServer();
     }
 }

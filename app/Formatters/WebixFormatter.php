@@ -8,10 +8,10 @@ namespace App\Formatters;
 
 use App\Contracts\ReportFormatter;
 use App\Note;
+use App\Relationships\PatientCareplanRelations;
 use App\Services\CPM\CpmMiscService;
 use App\Services\NoteService;
 use App\Services\ReportsService;
-use App\Relationships\PatientCareplanRelations;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmBiometric;

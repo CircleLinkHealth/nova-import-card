@@ -104,7 +104,7 @@ class NotifyPatientCarePlanApproved extends Notification
     public function getSubject()
     {
         if (CarePlan::PROVIDER_APPROVED === $this->carePlan->status) {
-            return 'Your CarePlan has just been approved';
+            return 'Your Care Plan has just been approved';
         }
 
         return 'Your Care Plan has been sent to your doctor for approval';

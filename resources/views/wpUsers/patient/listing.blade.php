@@ -35,7 +35,11 @@
                     Patient List
                 </div>
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 overflow-scroll">
-                    <patient-list :show-provider-patients-button="@json(auth()->user()->isProvider())"ref="patientList"></patient-list>
+                    <patient-list :show-provider-patients-button="{{json_encode(auth()->user()->isProvider())}}"
+                                  :is-admin="{{json_encode(auth()->user()->isAdmin())}}"
+                                  ref="patientList">
+
+                    </patient-list>
                 </div>
             </div>
         </div>

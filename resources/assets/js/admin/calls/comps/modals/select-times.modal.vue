@@ -12,7 +12,7 @@
                             <h4>Change Activity Date to:</h4>
                             <div class="row">
                                 <div class="col-lg-6 col-sm-6 col-xs-4">
-                                    <datepicker class="form-control" :disabled="{ to: today }"
+                                    <datepicker class="form-control"
                                                 v-model="props.info.nextCall"></datepicker>
                                 </div>
                                 <div class="col-sm-4 hidden">
@@ -105,7 +105,7 @@
                         const callTimeStart = this.callTimeStart;
                         const callTimeEnd = this.callTimeEnd;
 
-                        if (typeof($vm.onChange) == 'function') {
+                        if (typeof ($vm.onChange) == 'function') {
                             $vm.onChange.call($vm, data)
                         }
 
@@ -158,8 +158,7 @@
                                             type: 'error',
                                             noTimeout: true
                                         });
-                                    }
-                                    else {
+                                    } else {
                                         successIds.push($vm.calls[i].patient.id);
                                         $vm.calls[i].disabled = true;
                                     }
@@ -189,13 +188,11 @@
                                         const errors = err.response.data.errors;
                                         if (Array.isArray(errors)) {
                                             msg += `: ${errors.join(', ')}`;
-                                        }
-                                        else {
+                                        } else {
                                             const errorsMessages = Object.values(errors).map(x => x[0]).join(', ');
                                             msg += `: ${errorsMessages}`;
                                         }
-                                    }
-                                    else if (err.response.data.message) {
+                                    } else if (err.response.data.message) {
                                         msg += `: ${err.response.data.message}`;
                                     }
 
