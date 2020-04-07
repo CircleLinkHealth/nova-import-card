@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aaa1c16980115beba7e8b9a7f44d2f8f",
+    "content-hash": "abac2a0cac806e0dae92a3141737ef9e",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -975,11 +975,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.1.8",
+            "version": "dev-billing-add-all-problem-codes",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "62d0b09a8aab3719effe8d3a9d7825ea224e51a1"
+                "reference": "d43d15ad5ff6c0e3634fca50cc56436cb1197f9a"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1013,7 +1013,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-07T12:09:18+00:00"
+            "time": "2020-04-07T12:59:36+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1021,7 +1021,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "f8ee632af67e132c2f6d9797d60f4f4fb200b7e8"
+                "reference": "d7913fb50cba9954ae1b88d63a20a627d2fa9f75"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1046,7 +1046,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-07T05:39:16+00:00"
+            "time": "2020-04-07T12:41:12+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1148,11 +1148,11 @@
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "v1.3",
+            "version": "dev-billing-march-fixes",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "8ae5c626c9feac48b7e838773c4538042be153f3"
+                "reference": "a2c2ca553cbe40ef7a75a588c1b672016a39431a"
             },
             "type": "laravel-module",
             "extra": {
@@ -1174,7 +1174,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-02T14:27:46+00:00"
+            "time": "2020-04-07T13:02:47+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -14997,7 +14997,9 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
+        "circlelinkhealth/patientapi-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
