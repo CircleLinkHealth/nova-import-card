@@ -143,6 +143,7 @@
     "daltcore/lara-pdf-merger": "dev-master",
     "dillingham/nova-button": "^1.0",
     "doctrine/dbal": "2.9.2",
+    "epartment/nova-dependency-container": "^1.2",
     "fideloper/proxy": "^4.0",
     "fourstacks/nova-checkboxes": "^0.1.5",
     "fzaninotto/faker": "~1.4",
