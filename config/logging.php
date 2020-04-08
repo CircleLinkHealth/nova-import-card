@@ -48,13 +48,13 @@ return [
         'single' => [
             'driver' => 'single',
             'path'   => storage_path('logs/laravel-'.php_sapi_name().'.log'),
-            'level'  => 'debug',
+            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
         ],
 
         'daily' => [
             'driver' => 'daily',
             'path'   => storage_path('logs/laravel-'.php_sapi_name().'.log'),
-            'level'  => 'debug',
+            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
             'days'   => 14,
         ],
 
@@ -68,7 +68,7 @@ return [
 
         'papertrail' => [
             'driver'       => 'monolog',
-            'level'        => 'debug',
+            'level'        => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
             'handler'      => SyslogUdpHandler::class,
             'handler_with' => [
                 'host' => env('PAPERTRAIL_URL'),
@@ -78,12 +78,12 @@ return [
 
         'logdna' => [
             'driver'       => 'monolog',
-            'level'        => env('LOG_DNA_LEVEl', \Monolog\Logger::DEBUG),
+            'level'        => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
             'handler'      => LogdnaHandler::class,
             'handler_with' => [
                 'ingestion_key' => env('LOG_DNA_INGESTION_KEY'),
                 'hostname'      => env('APP_URL'),
-                'level'         => env('LOG_DNA_LEVEl', \Monolog\Logger::DEBUG),
+                'level'         => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
             ],
             'formatter' => LogdnaFormatter::class,
         ],
@@ -99,12 +99,12 @@ return [
 
         'syslog' => [
             'driver' => 'syslog',
-            'level'  => 'debug',
+            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
         ],
 
         'errorlog' => [
             'driver' => 'errorlog',
-            'level'  => 'debug',
+            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
         ],
 
         'sentry' => [

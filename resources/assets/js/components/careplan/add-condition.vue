@@ -80,7 +80,7 @@
             'cpmProblems': Array,
             'codeIsRequired': Boolean,
             'isApproveBillablePage': Boolean,
-            'practiceHasBhi': Boolean,
+            'patientHasBhi': Boolean,
             'isBhi': Boolean
         },
         mixins: [
@@ -107,7 +107,7 @@
                 },
                 patient_id: null,
                 is_approve_billable_page: false,
-                practice_has_bhi: true,
+                patient_has_bhi: true,
                 is_bhi: false,
             }
         },
@@ -118,7 +118,7 @@
             cpmProblemsForAutoComplete() {
                 let probs = self.cpm_problems;
 
-                if (self.isApproveBillablePage && self.practice_has_bhi) {
+                if (self.isApproveBillablePage && self.patient_has_bhi) {
                     probs = probs.filter(function (p) {
 
                         if (!p.code) {
@@ -200,7 +200,7 @@
             self = this
         },
         mounted() {
-            this.practice_has_bhi = this.practiceHasBhi
+            this.patient_has_bhi = this.patientHasBhi
 
             Event.$on('modal-attest-call-conditions:show', (data) => {
                 this.patient_id = String(data.patient.id)

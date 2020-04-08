@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f23d430c9a70d336ba527318231f40db",
+    "content-hash": "87e9187ba093377172b7e4c753a0f04a",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -975,11 +975,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.1.0",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "6dc0f6a7d6d9b76fe4246d742a4d3432e78a2a79"
+                "reference": "414da4a849af274f459625390c13ef0c111cf6c4"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1013,15 +1013,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-02T15:03:45+00:00"
+            "time": "2020-04-07T14:12:18+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.1.5",
+            "version": "v2.1.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "10fc50a7ccde6ab9e75a05585d5be8a91956b937"
+                "reference": "34be255ccb1747b80d94b64f132a745b25b5ead8"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1046,7 +1046,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-02T15:15:07+00:00"
+            "time": "2020-04-07T01:52:04+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1120,7 +1120,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "376c054cfcdb0c0bdd432a8fcac7db79ba6747e5"
+                "reference": "f0df8eb877194dea1489f870e9d57de695feff3b"
             },
             "require": {
                 "php": ">=7.1.0",
@@ -1130,13 +1130,13 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Circlelinkhealth\\ImportPracticeStaffCsv\\CardServiceProvider"
+                        "CircleLinkHealth\\ImportPracticeStaffCsv\\CardServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Circlelinkhealth\\ImportPracticeStaffCsv\\": "src/"
+                    "CircleLinkHealth\\ImportPracticeStaffCsv\\": "src/"
                 }
             },
             "license": [
@@ -1181,11 +1181,11 @@
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "v1.3",
+            "version": "v1.3.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "8ae5c626c9feac48b7e838773c4538042be153f3"
+                "reference": "f94240f2301665283f728626004983089fbcdc7d"
             },
             "type": "laravel-module",
             "extra": {
@@ -1207,7 +1207,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-02T14:27:46+00:00"
+            "time": "2020-04-07T14:10:55+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -1293,11 +1293,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.2.9",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "42a2e977487eba307cab67522f6e46f89c0cbfd3"
+                "reference": "a7b0883362ee2479a77d2a3bc5463a9211dd5902"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1311,7 +1311,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-01T20:01:18+00:00"
+            "time": "2020-04-02T20:49:24+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -5003,6 +5003,69 @@
             "time": "2018-07-09T20:51:04+00:00"
         },
         {
+            "name": "league/fractal",
+            "version": "0.12.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/fractal.git",
+                "reference": "0a51dcb6398dc2377d086210d0624996a1df8322"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/fractal/zipball/0a51dcb6398dc2377d086210d0624996a1df8322",
+                "reference": "0a51dcb6398dc2377d086210d0624996a1df8322",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "illuminate/contracts": "~5.0",
+                "mockery/mockery": "~0.9",
+                "pagerfanta/pagerfanta": "~1.0.0",
+                "phpunit/phpunit": "~4.0",
+                "squizlabs/php_codesniffer": "~1.5",
+                "zendframework/zend-paginator": "~2.3"
+            },
+            "suggest": {
+                "illuminate/pagination": "The Illuminate Pagination component.",
+                "pagerfanta/pagerfanta": "Pagerfanta Paginator",
+                "zendframework/zend-paginator": "Zend Framework Paginator"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.13-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "League\\Fractal\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Phil Sturgeon",
+                    "email": "me@philsturgeon.uk",
+                    "homepage": "http://philsturgeon.uk/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Handle the output of complex data structures ready for API output.",
+            "homepage": "http://fractal.thephpleague.com/",
+            "keywords": [
+                "api",
+                "json",
+                "league",
+                "rest"
+            ],
+            "time": "2015-03-19T15:16:43+00:00"
+        },
+        {
             "name": "league/glide",
             "version": "1.5.0",
             "source": {
@@ -7089,6 +7152,20 @@
                 "x.509",
                 "x509"
             ],
+            "funding": [
+                {
+                    "url": "https://github.com/terrafrost",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/phpseclib",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/phpseclib/phpseclib",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-04-04T23:17:33+00:00"
         },
         {
@@ -8785,6 +8862,12 @@
             "keywords": [
                 "pdf-to-text",
                 "spatie"
+            ],
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                }
             ],
             "time": "2020-03-11T17:11:25+00:00"
         },
@@ -14964,7 +15047,6 @@
     "platform": {
         "php": "~7.3.16",
         "ext-bcmath": "*",
-        "ext-curl": "*",
         "ext-dom": "*",
         "ext-json": "*",
         "ext-libxml": "*",
@@ -14972,5 +15054,6 @@
         "ext-redis": "*",
         "ext-simplexml": "*"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }

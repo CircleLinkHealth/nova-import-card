@@ -247,16 +247,16 @@ class WorkScheduleController extends Controller
             ->get()
             ->sum(function ($window) {
                 return Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_end
-                    )->diffInHours(Carbon::createFromFormat(
+                    'H:i:s',
+                    $window->window_time_end
+                )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
             }) + Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_end']
-                )->diffInHours(Carbon::createFromFormat(
+                'H:i',
+                $workScheduleData['window_time_end']
+            )->diffInHours(Carbon::createFromFormat(
                     'H:i',
                     $workScheduleData['window_time_start']
                 ));
@@ -425,7 +425,7 @@ class WorkScheduleController extends Controller
         $authData = $this->fullCalendarService->getAuthData();
         $today    = Carbon::parse(now())->toDateString();
 
-        return view('admin.nurse.schedules.index', compact('authData', 'authUserId', 'today'));
+        return view('admin.nurse.schedules.index', compact('authData', 'today'));
     }
 
     /**
