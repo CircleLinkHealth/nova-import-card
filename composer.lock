@@ -417,16 +417,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.134.4",
+            "version": "3.134.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "74dc1df2cb5ee7ebbcf3203fda9c24ce7134e952"
+                "reference": "f5a2d82660e73ed613643a5e7ad833d2569d5fdf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/74dc1df2cb5ee7ebbcf3203fda9c24ce7134e952",
-                "reference": "74dc1df2cb5ee7ebbcf3203fda9c24ce7134e952",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f5a2d82660e73ed613643a5e7ad833d2569d5fdf",
+                "reference": "f5a2d82660e73ed613643a5e7ad833d2569d5fdf",
                 "shasum": ""
             },
             "require": {
@@ -497,7 +497,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-04-06T18:14:00+00:00"
+            "time": "2020-04-07T18:11:11+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1438,16 +1438,16 @@
         },
         {
             "name": "composer/ca-bundle",
-            "version": "1.2.6",
+            "version": "1.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "47fe531de31fca4a1b997f87308e7d7804348f7e"
+                "reference": "95c63ab2117a72f48f5a55da9740a3273d45b7fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/47fe531de31fca4a1b997f87308e7d7804348f7e",
-                "reference": "47fe531de31fca4a1b997f87308e7d7804348f7e",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/95c63ab2117a72f48f5a55da9740a3273d45b7fd",
+                "reference": "95c63ab2117a72f48f5a55da9740a3273d45b7fd",
                 "shasum": ""
             },
             "require": {
@@ -1490,7 +1490,7 @@
                 "ssl",
                 "tls"
             ],
-            "time": "2020-01-13T10:02:55+00:00"
+            "time": "2020-04-08T08:27:21+00:00"
         },
         {
             "name": "consoletvs/charts",
@@ -3916,16 +3916,16 @@
         },
         {
             "name": "kylekatarnls/update-helper",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kylekatarnls/update-helper.git",
-                "reference": "5786fa188e0361b9adf9e8199d7280d1b2db165e"
+                "reference": "429be50660ed8a196e0798e5939760f168ec8ce9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kylekatarnls/update-helper/zipball/5786fa188e0361b9adf9e8199d7280d1b2db165e",
-                "reference": "5786fa188e0361b9adf9e8199d7280d1b2db165e",
+                "url": "https://api.github.com/repos/kylekatarnls/update-helper/zipball/429be50660ed8a196e0798e5939760f168ec8ce9",
+                "reference": "429be50660ed8a196e0798e5939760f168ec8ce9",
                 "shasum": ""
             },
             "require": {
@@ -3957,7 +3957,7 @@
                 }
             ],
             "description": "Update helper",
-            "time": "2019-07-29T11:03:54+00:00"
+            "time": "2020-04-07T20:44:10+00:00"
         },
         {
             "name": "lab404/laravel-impersonate",
@@ -5012,69 +5012,6 @@
             ],
             "description": "An adapter decorator to enable meta-data caching.",
             "time": "2018-07-09T20:51:04+00:00"
-        },
-        {
-            "name": "league/fractal",
-            "version": "0.12.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/thephpleague/fractal.git",
-                "reference": "0a51dcb6398dc2377d086210d0624996a1df8322"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/fractal/zipball/0a51dcb6398dc2377d086210d0624996a1df8322",
-                "reference": "0a51dcb6398dc2377d086210d0624996a1df8322",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4"
-            },
-            "require-dev": {
-                "illuminate/contracts": "~5.0",
-                "mockery/mockery": "~0.9",
-                "pagerfanta/pagerfanta": "~1.0.0",
-                "phpunit/phpunit": "~4.0",
-                "squizlabs/php_codesniffer": "~1.5",
-                "zendframework/zend-paginator": "~2.3"
-            },
-            "suggest": {
-                "illuminate/pagination": "The Illuminate Pagination component.",
-                "pagerfanta/pagerfanta": "Pagerfanta Paginator",
-                "zendframework/zend-paginator": "Zend Framework Paginator"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "0.13-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "League\\Fractal\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Phil Sturgeon",
-                    "email": "me@philsturgeon.uk",
-                    "homepage": "http://philsturgeon.uk/",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Handle the output of complex data structures ready for API output.",
-            "homepage": "http://fractal.thephpleague.com/",
-            "keywords": [
-                "api",
-                "json",
-                "league",
-                "rest"
-            ],
-            "time": "2015-03-19T15:16:43+00:00"
         },
         {
             "name": "league/glide",
@@ -15038,6 +14975,7 @@
     "platform": {
         "php": "~7.3.16",
         "ext-bcmath": "*",
+        "ext-curl": "*",
         "ext-dom": "*",
         "ext-json": "*",
         "ext-libxml": "*",

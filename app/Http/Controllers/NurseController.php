@@ -164,7 +164,7 @@ class NurseController extends Controller
             [
                 'data'  => $data,
                 'month' => Carbon::parse($last),
-                'v2' => true
+                'v2'    => true,
             ]
         );
     }
