@@ -158,26 +158,6 @@ class WorkScheduleController extends Controller
         $window = $this->nurseContactWindows
             ->find($windowId);
 
-        $windowDate = Carbon::parse($window->date);
-//         Delete Work Hours
-
-//        This also soft deletes the model...why???
-
-//        $workHoursForDate = $window->nurse->getWorkourablesForCarbonDate($windowDate);
-//        $workHoursForDate->update(
-//            [
-//                strtolower(clhDayOfWeekToDayName($window->day_of_week)) => 0
-//            ]
-//        );
-
-        WorkHours::where('workhourable_id', $window->nurse_info_id)
-            ->where('work_week_start', $windowDate->copy()->startOfWeek())
-            ->update(
-                [
-                    strtolower(clhDayOfWeekToDayName($window->day_of_week)) => 0
-                ]
-            );
-
         $this->destroyWindowValidation($window);
         //  Delete
         $deleteRecurringEvents ? $this->multipleDelete($window) : $this->singleDelete($window);
@@ -219,10 +199,41 @@ class WorkScheduleController extends Controller
 
     public function multipleDelete(NurseContactWindow $window)
     {
-        $this->nurseContactWindows
+        $windowDate = Carbon::parse($window->date);
+        $windows = $this->nurseContactWindows
             ->where('nurse_info_id', $window->nurse_info_id)
+            ->where('date', '>', now()->startOfDay()) // Dont collect events lt today.
+            ->where('date', '>=', $windowDate)
             ->where('repeat_start', $window->repeat_start)
-            ->forceDelete();
+            ->get();
+
+        foreach ($windows as $workWindow) {
+            // Update Work Hours
+            $today = now()->startOfDay();
+            $tomorrow = $today->addDay(1);
+            $this->workHours->where('workhourable_id', $workWindow->nurse_info_id)
+                ->where('work_week_start', '>=', $windowDate->copy()->startOfWeek())
+                ->where('work_week_start', '<=', $workWindow->until)
+                ->get()
+                ->map(function ($week) use ($workWindow, $today, $tomorrow) {
+                    /** @var WorkHours $week */
+                    $dates = createWeekMap($week->work_week_start);
+                    foreach ($dates as $date) {
+                        $carbonDate = Carbon::parse($date);
+                        if ($carbonDate->eq(Carbon::parse($workWindow->date))
+                            && $carbonDate->gt($today)
+                            && $carbonDate->gt($tomorrow)) {
+                            $week->update(
+                                [
+                                    strtolower(clhDayOfWeekToDayName($carbonDate->dayOfWeek)) => 0
+                                ]);
+                        }
+                    }
+                });
+
+            // Delete Window
+            $workWindow->forceDelete();
+        }
 
         $this->informSlackNurseSide($window);
     }
@@ -245,6 +256,16 @@ class WorkScheduleController extends Controller
      */
     public function singleDelete(NurseContactWindow $window)
     {
+        $windowDate = Carbon::parse($window->date);
+//         Delete Work Hours
+        $this->workHours->where('workhourable_id', $window->nurse_info_id)
+            ->where('work_week_start', $windowDate->copy()->startOfWeek())
+            ->update(
+                [
+                    strtolower(clhDayOfWeekToDayName($window->day_of_week)) => 0
+                ]
+            );
+
         if ('does_not_repeat' !== $window->repeat_frequency) {
             $windowsCount = $this->nurseContactWindows
                 ->where('nurse_info_id', $window->nurse_info_id)
