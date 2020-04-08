@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Entities;
 
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -56,4 +57,8 @@ class SupplementalPatientData extends Model
         'location',
     ];
     protected $table = 'supplemental_patient_data';
+    
+    public function practice() {
+        return $this->belongsTo(Practice::class);
+    }
 }
