@@ -35,24 +35,35 @@ trait HasProblemCodes
     public function icd10Codes()
     {
         return $this->codes()
-            ->where('problem_code_system_id', '=', $this->getProblemCodeTypeId(ProblemCodeSystem::ICD10_NAME));
+                    ->where('problem_code_system_id', '=', $this->getProblemCodeTypeId(ProblemCodeSystem::ICD10_NAME));
     }
 
     public function icd9Codes()
     {
         return $this->codes()
-            ->where('problem_code_system_id', '=', $this->getProblemCodeTypeId(ProblemCodeSystem::ICD9_NAME));
+                    ->where('problem_code_system_id', '=', $this->getProblemCodeTypeId(ProblemCodeSystem::ICD9_NAME));
     }
 
     public function snomedCodes()
     {
         return $this->codes()
-            ->where('problem_code_system_id', '=', $this->getProblemCodeTypeId(ProblemCodeSystem::SNOMED_NAME));
+                    ->where('problem_code_system_id', '=', $this->getProblemCodeTypeId(ProblemCodeSystem::SNOMED_NAME));
     }
-    
-    public function getProblemCodeTypeId(string $codeType) {
-        return \Cache::remember(sha1("HasProblemCodes:$codeType"), 2, function () use ($codeType){
-            return optional(ProblemCodeSystem::whereName($codeType)->first())->id;
-        });
+
+    private $problemCodeTypes = [];
+
+    public function getProblemCodeTypeId(string $codeType)
+    {
+        if (empty($this->problemCodeTypes)) {
+            $this->problemCodeTypes = ProblemCodeSystem::all(['id', 'name'])->keyBy('name')->toArray();
+        }
+
+        if ( ! isset($this->problemCodeTypes[$codeType])) {
+            return null;
+        }
+
+        return $this->problemCodeTypes[$codeType]['id'];
     }
+
+
 }
