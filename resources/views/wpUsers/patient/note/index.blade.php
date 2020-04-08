@@ -143,6 +143,7 @@
                                         {
                                             id: "tags",
                                             css: {'text-align': 'left', 'top': 0, 'left': 0, 'bottom': 0, 'right': 0},
+                                            header: ["Status",],
                                             width: 110,
                                             sort: 'string'
                                         },
