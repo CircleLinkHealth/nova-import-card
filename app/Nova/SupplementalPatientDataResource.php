@@ -20,6 +20,8 @@ class SupplementalPatientDataResource extends Resource
     public static $group = \App\Constants::NOVA_GROUP_ENROLLMENT;
 
     public static $importer = SupplementalPatientDataImporter::class;
+    
+    public static $with = ['practice'];
 
     /**
      * The model the resource corresponds to.
@@ -82,6 +84,9 @@ class SupplementalPatientDataResource extends Resource
     public function fields(Request $request)
     {
         return [
+            Text::make('Practice', 'practice.display_name')
+                ->sortable()
+                ->onlyOnIndex(),
             Text::make('first_name')
                 ->sortable()
                 ->creationRules('required', 'string')

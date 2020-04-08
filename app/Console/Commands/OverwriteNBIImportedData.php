@@ -68,12 +68,13 @@ class OverwriteNBIImportedData extends Command
     {
         $mr    = $imr->medicalRecord();
         $dem   = $imr->demographics()->first();
+        $nbiPractice = Practice::whereName(CarePlanHelper::NBI_PRACTICE_NAME)->with('locations')->firstOrFail();
         $datas = \CircleLinkHealth\Eligibility\Entities\SupplementalPatientData::where(
             'first_name',
             'like',
             "{$dem->first_name}%"
         )
-            ->where('practice_id', Practice::whereName(CarePlanHelper::NBI_PRACTICE_NAME)->value('id'))
+            ->where('practice_id', $nbiPractice->id)
             ->where(
             'last_name',
             $dem->last_name
@@ -96,8 +97,8 @@ class OverwriteNBIImportedData extends Command
                 $imr->billing_provider_id = $map[$term] ?? optional(ProviderByName::first($term))->id;
             }
 
-            $imr->practice_id = 201;
-            $imr->location_id = 971;
+            $imr->practice_id = $nbiPractice->id;
+            $imr->location_id = $nbiPractice->primaryLocation()->id;
             $imr->save();
             $dem->mrn_number = $datas->mrn;
             $dem->save();
