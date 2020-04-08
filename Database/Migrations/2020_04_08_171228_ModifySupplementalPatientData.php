@@ -2,6 +2,7 @@
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -26,7 +27,7 @@ class ModifySupplementalPatientData extends Migration
         
         if (config('database.connections.mysql.database') === 'cpm_production') {
             SupplementalPatientData::where('id', '>', 0)->update([
-                'practice_id' => Practice::whereName('bethcare-newark-beth-israel')->value('id')
+                'practice_id' => Practice::whereName(CarePlanHelper::NBI_PRACTICE_NAME)->value('id')
                                             ]);
         } else {
             SupplementalPatientData::where('id', '>', 0)->update([
