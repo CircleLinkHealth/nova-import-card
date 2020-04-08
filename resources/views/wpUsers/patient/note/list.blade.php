@@ -214,7 +214,7 @@
                                                     'bottom': 0,
                                                     'right': 0
                                                 },
-                                                header: ["Status", {content: "textFilter", placeholder: "Filter"}],
+                                                header: ["Status"],
                                                 width: 110,
                                                 sort: 'string'
                                             },
