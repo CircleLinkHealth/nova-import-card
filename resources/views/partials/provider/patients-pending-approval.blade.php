@@ -9,7 +9,7 @@
                 @endif
             </div>
             <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                @if(auth()->user()->providerInfo)
+                @if(auth()->user()->isProvider() && auth()->user()->providerInfo)
                     <form action="{{route('provider.update-approve-own')}}"
                           method="POST">
                         {{csrf_field()}}
