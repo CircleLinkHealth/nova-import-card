@@ -13,10 +13,11 @@ use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Entities\PatientData as NbiPatientData;
+use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\BloodPressure;
@@ -417,9 +418,10 @@ class CarePlanHelper
         $primaryPractice = $this->user->primaryPractice;
         
         if (self::NBI_PRACTICE_NAME == $primaryPractice->name) {
-            $dataFromPractice = NbiPatientData::where('first_name', 'like', "{$this->user->first_name}%")
+            $dataFromPractice = SupplementalPatientData::where('first_name', 'like', "{$this->user->first_name}%")
                                               ->where('last_name', $this->user->last_name)
                                               ->where('dob', $this->dem->dob)
+                                              ->where('practice_id', Practice::whereName(self::NBI_PRACTICE_NAME)->value('id'))
                                               ->first();
             
             if ( ! $dataFromPractice) {
