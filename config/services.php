@@ -100,10 +100,6 @@ return [
         'report_url' => env('AWV_URL', '') . env('AWV_REPORT_URI', ''),
     ],
 
-    'enrollees-survey' => [
-        'url' => env('ENROLLEES_SURVEY', ''),
-    ],
-
     'phaxio' => [
         'host' => 'https://api.phaxio.com/v2.1/',
 

@@ -57,7 +57,7 @@ trait EnrollableManagement
         $enrolleesSurveyInstance = $this->getEnrolleesSurveyInstance();
         $surveyId                = $enrolleesSurveyInstance->survey_id;
         $this->updateAwvUsersSurvey($enrollableId, $enrolleesSurveyInstance, $surveyId);
-        $enrolleesSurveyUrl = url(config('services.enrollees-survey.url')."/survey/enrollees/create-url/{$enrollableId}/{$surveyId}");
+        $enrolleesSurveyUrl = url(config('services.awv.url')."/survey/enrollees/create-url/{$enrollableId}/{$surveyId}");
 
         return redirect($enrolleesSurveyUrl);
     }
