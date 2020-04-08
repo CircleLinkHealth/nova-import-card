@@ -12,6 +12,9 @@ namespace App\ValueObjects;
  */
 class PatientReportData
 {
+    protected $allBhiCodes;
+
+    protected $allCcmProblemCodes;
     protected $awvDate;
 
     protected $bhiCodes;
@@ -26,6 +29,8 @@ class PatientReportData
 
     protected $dob;
 
+    protected $enableAllProblemCodesColumnns;
+
     protected $locationName;
 
     protected $name;
@@ -33,6 +38,22 @@ class PatientReportData
     protected $practice;
 
     protected $provider;
+
+    /**
+     * @return mixed
+     */
+    public function getAllBhiCodes()
+    {
+        return $this->allBhiCodes;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAllCcmProblemCodes()
+    {
+        return $this->allCcmProblemCodes;
+    }
 
     /**
      * @return mixed
@@ -93,6 +114,14 @@ class PatientReportData
     /**
      * @return mixed
      */
+    public function getEnableAllProblemCodesColumnns()
+    {
+        return $this->enableAllProblemCodesColumnns;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getLocationName()
     {
         return $this->locationName;
@@ -120,6 +149,22 @@ class PatientReportData
     public function getProvider()
     {
         return $this->provider;
+    }
+
+    /**
+     * @param mixed $allBhiCodes
+     */
+    public function setAllBhiCodes($allBhiCodes): void
+    {
+        $this->allBhiCodes = $allBhiCodes;
+    }
+
+    /**
+     * @param mixed $allCcmProblemCodes
+     */
+    public function setAllCcmProblemCodes($allCcmProblemCodes): void
+    {
+        $this->allCcmProblemCodes = $allCcmProblemCodes;
     }
 
     /**
@@ -176,6 +221,14 @@ class PatientReportData
     public function setDob($dob): void
     {
         $this->dob = $dob;
+    }
+
+    /**
+     * @param mixed $enableAllProblemCodesColumnns
+     */
+    public function setEnableAllProblemCodesColumnns($enableAllProblemCodesColumnns): void
+    {
+        $this->enableAllProblemCodesColumnns = $enableAllProblemCodesColumnns;
     }
 
     /**

@@ -19,8 +19,8 @@ use Spatie\MediaLibrary\Exceptions\InvalidConversion;
 class PracticeReportsService
 {
     /**
-     * @throws InvalidConversion
      * @throws FileCannotBeAdded
+     * @throws InvalidConversion
      *
      * @return array
      */
@@ -130,6 +130,8 @@ class PracticeReportsService
     }
 
     /**
+     * @param mixed|null $requestedByUserId
+     *
      * @throws \Exception
      * @throws \Waavi\UrlShortener\InvalidResponseException
      *

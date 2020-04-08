@@ -125,7 +125,8 @@
                                         Report</a></li>
                                 <li><a href="{{ route('admin.reports.nurse.allocation') }}">
                                         Allocation</a></li>
-
+                                <li><a href="{{ route('admin.reports.nurse.allocation', ['v2']) }}">
+                                        Allocation (V2)</a></li>
                             </ul>
                         </li>
 

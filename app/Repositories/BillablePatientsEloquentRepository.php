@@ -18,7 +18,8 @@ class BillablePatientsEloquentRepository
     public function billablePatients(
         $practiceId,
         Carbon $date,
-        array $relations = null
+        array $relations = null,
+        bool $showApprovedOnly = false
     ) {
         $month = $date->startOfMonth();
 
@@ -28,10 +29,18 @@ class BillablePatientsEloquentRepository
             ->has('patientInfo')
             ->whereHas(
                 'patientSummaries',
-                function ($query) use ($month) {
-                    $query->where('month_year', $month)
-                        ->where('total_time', '>=', AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS)
-                        ->where('no_of_successful_calls', '>=', 1);
+                function ($query) use ($month, $showApprovedOnly) {
+                    $wheres = [
+                        ['month_year', '=', $month],
+                        ['total_time', '>=', AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS],
+                        ['no_of_successful_calls', '>=', 1],
+                    ];
+
+                    if (true === $showApprovedOnly) {
+                        $wheres[] = ['approved', '=', true];
+                    }
+
+                    $query->where($wheres);
                 }
             )
             ->ofType('participant')
@@ -50,6 +59,8 @@ class BillablePatientsEloquentRepository
             ]
         )
             ->orderBy('needs_qa', 'desc')
+            ->orderBy('no_of_successful_calls', 'asc')
+            ->orderBy('rejected', 'asc')
             ->where('month_year', $month)
             ->where(
                 function ($q) {
@@ -61,32 +72,32 @@ class BillablePatientsEloquentRepository
                 false === $ignoreWith,
                 function ($q) use ($month, $practiceId) {
                     return $q->with(
-                                                   [
-                                                       'patient' => function ($q) use ($month, $practiceId) {
-                                                           $q->with(
-                                                               [
-                                                                   'patientInfo',
-                                                                   'primaryPractice',
-                                                                   'careTeamMembers' => function ($q) {
-                                                                       $q->where('type', '=', 'billing_provider');
-                                                                   },
-                                                               ]
-                                                           );
-                                                       },
-                                                       'chargeableServices',
-                                                   ]
-                                               );
+                        [
+                            'patient' => function ($q) use ($month, $practiceId) {
+                                $q->with(
+                                    [
+                                        'patientInfo',
+                                        'primaryPractice',
+                                        'careTeamMembers' => function ($q) {
+                                            $q->where('type', '=', 'billing_provider');
+                                        },
+                                    ]
+                                );
+                            },
+                            'chargeableServices',
+                        ]
+                    );
                 }
             )
             ->whereHas(
                 'patient',
                 function ($q) use ($practiceId) {
                     $q->whereHas(
-                                                   'practices',
-                                                   function ($q) use ($practiceId) {
-                                                       $q->where('id', '=', $practiceId);
-                                                   }
-                                               )->orWhereHas(
+                        'practices',
+                        function ($q) use ($practiceId) {
+                            $q->where('id', '=', $practiceId);
+                        }
+                    )->orWhereHas(
                                                    'primaryPractice',
                                                    function ($q) use ($practiceId) {
                                                        $q->where('id', '=', $practiceId);

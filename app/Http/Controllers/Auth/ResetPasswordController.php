@@ -137,14 +137,14 @@ class ResetPasswordController extends Controller
         if ($userIsPatient) {
             $request->session()->flash(
                 'messages',
-                ['patient-user' => 'Please enter your password below, which must contain an uppercase letter, number and a special character (!,$,#,%,@,&,*)']
+                ['patient-user' => 'Please enter your new password below, which must contain an uppercase letter, number and a special character (!,$,#,%,@,&,*)']
             );
         }
 
         return response()->view('auth.passwords.reset', [
-            'token'      => $token,
-            'email'      => $email,
-            'lock_email' => $userIsPatient,
+            'token'           => $token,
+            'email'           => $email,
+            'user_is_patient' => $userIsPatient,
         ]);
     }
 
