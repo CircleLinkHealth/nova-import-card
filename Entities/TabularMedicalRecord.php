@@ -6,12 +6,10 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordLogger;
-use App\Importer\Loggers\Csv\PhoenixHeartSectionsLogger;
-use App\Importer\Loggers\Csv\RappaSectionsLogger;
 use App\Importer\Loggers\Csv\TabularMedicalRecordSectionsLogger;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordLogger;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicalRecordEloquent;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -180,18 +178,6 @@ class TabularMedicalRecord extends MedicalRecordEloquent
      */
     public function getLogger(): MedicalRecordLogger
     {
-        $phoenixHeart = Practice::whereDisplayName('Phoenix Heart')->first();
-
-        if ($phoenixHeart && $this->practice_id == $phoenixHeart->id) {
-            return new PhoenixHeartSectionsLogger($this, $phoenixHeart);
-        }
-
-        $rappahannock = Practice::whereDisplayName('Rappahannock Family Physicians')->first();
-
-        if ($rappahannock && $this->practice_id == $rappahannock->id) {
-            return new RappaSectionsLogger($this, $rappahannock);
-        }
-
         return new TabularMedicalRecordSectionsLogger($this, Practice::find($this->practice_id));
     }
 
