@@ -105,9 +105,6 @@ class Kernel extends ConsoleKernel
         $schedule->command(GetAppointments::class)
             ->dailyAt('22:30')->onOneServer();
 
-        $schedule->command(QueueResetAssignedCareAmbassadorsFromEnrollees::class)
-            ->dailyAt('00:40')->onOneServer();
-
         $schedule->command(GetCcds::class)
             ->dailyAt('03:00')->onOneServer();
 
