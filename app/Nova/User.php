@@ -6,20 +6,36 @@
 
 namespace App\Nova;
 
+use App\Nova\Actions\UserEnroll;
+use App\Nova\Actions\UserUnreachable;
+use App\Nova\Actions\UserWithdraw;
+use App\Nova\Filters\UserPracticeFilter;
+use App\Nova\Filters\UserRoleFilter;
 use CircleLinkHealth\Customer\Entities\User as CpmUser;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 class User extends Resource
 {
     /**
-     * Indicates if the resource should be displayed in the sidebar.
+     * The logical group associated with the resource.
      *
-     * @var bool
+     * @var string
      */
-    public static $displayInNavigation = false;
+    public static $group = \App\Constants::NOVA_GROUP_ADMIN;
+
+    public static function label()
+    {
+        return "All Users";
+    }
+
+    public static function availableForNavigation(Request $request)
+    {
+        return auth()->user()->isAdmin();
+    }
 
     /**
      * The model the resource corresponds to.
@@ -34,7 +50,11 @@ class User extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'display_name', 'email', 'first_name', 'last_name',
+        'id',
+        'display_name',
+        'email',
+        'first_name',
+        'last_name',
     ];
 
     /**
@@ -53,7 +73,11 @@ class User extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            new UserUnreachable(),
+            new UserEnroll(),
+            new UserWithdraw(),
+        ];
     }
 
     public static function authorizedToCreate(Request $request)
@@ -63,12 +87,12 @@ class User extends Resource
 
     public function authorizedToDelete(Request $request)
     {
-        return false;
+        return true;
     }
 
     public function authorizedToUpdate(Request $request)
     {
-        return false;
+        return true;
     }
 
     /**
@@ -118,9 +142,24 @@ class User extends Resource
                 ->updateRules('unique:users,email,{{resourceId}}'),
 
             Password::make('Password')
-                ->onlyOnForms()
-                ->creationRules('required', 'string', 'min:6')
-                ->updateRules('nullable', 'string', 'min:6'),
+                    ->onlyOnForms()
+                    ->creationRules('required', 'string', 'min:6')
+                    ->updateRules('nullable', 'string', 'min:6'),
+
+            Text::make('Role', function () {
+                $role = $this->practiceOrGlobalRole();
+                if ( ! $role) {
+                    return 'n/a';
+                }
+
+                return $role->name;
+            })->onlyOnIndex(),
+
+            Text::make('Edit', function () {
+                $url = route('admin.users.edit', ['id' => $this->id]);
+
+                return $this->getEditButton($url);
+            })->onlyOnIndex()->asHtml(),
         ];
     }
 
@@ -133,7 +172,10 @@ class User extends Resource
      */
     public function filters(Request $request)
     {
-        return [];
+        return [
+            new UserRoleFilter(),
+            new UserPracticeFilter(),
+        ];
     }
 
     /**
@@ -156,5 +198,39 @@ class User extends Resource
     public static function usesScout()
     {
         return false;
+    }
+
+    /**
+     * Build an "index" query for the given resource.
+     *
+     * @param \Laravel\Nova\Http\Requests\NovaRequest $request
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        /** @var \CircleLinkHealth\Customer\Entities\User $user */
+        $user = auth()->user();
+        if ($user->isAdmin()) {
+            return $query;
+        }
+
+        $programIds = $user->viewableProgramIds();
+
+        return $query->whereHas('practices',
+            function ($q) use ($programIds) {
+                $q->whereIn('practice_role_user.program_id', $programIds);
+            });
+    }
+
+    private function getEditButton($url)
+    {
+        //this is a hack to hide the edit button of the resource, so that only the custom one below will be visible
+        $styleHack = "<style> a[dusk='{$this->id}-edit-button'] {display: none} </style>";
+
+        return $styleHack . '<a target="_blank" href="' . $url . '" class="inline-flex cursor-pointer text-70 hover:text-primary mr-3 has-tooltip">
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" aria-labelledby="edit" role="presentation" class="fill-current"><path d="M4.3 10.3l10-10a1 1 0 0 1 1.4 0l4 4a1 1 0 0 1 0 1.4l-10 10a1 1 0 0 1-.7.3H5a1 1 0 0 1-1-1v-4a1 1 0 0 1 .3-.7zM6 14h2.59l9-9L15 2.41l-9 9V14zm10-2a1 1 0 0 1 2 0v6a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4c0-1.1.9-2 2-2h6a1 1 0 1 1 0 2H2v14h14v-6z"></path></svg>
+</a>';
     }
 }

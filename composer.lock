@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2d07edda3365276b5883bd6ab5ad7d74",
+    "content-hash": "ea292cd59f633232d8429599dbd4ddee",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -976,11 +976,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.2.1",
+            "version": "v2.2.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "d22fc773ff7bd9552c2022242b687cb8ebcca47b"
+                "reference": "3f1c1a86d56d4a2428c568baf693fe37f5dc153d"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1014,7 +1014,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-07T16:52:54+00:00"
+            "time": "2020-04-08T15:41:30+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -2203,6 +2203,47 @@
                 "validator"
             ],
             "time": "2020-02-13T22:36:52+00:00"
+        },
+        {
+            "name": "epartment/nova-dependency-container",
+            "version": "1.2.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/epartment/nova-dependency-container.git",
+                "reference": "d4081499c45b86111d5d95ef3c4457db4dd4bbdf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/epartment/nova-dependency-container/zipball/d4081499c45b86111d5d95ef3c4457db4dd4bbdf",
+                "reference": "d4081499c45b86111d5d95ef3c4457db4dd4bbdf",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Epartment\\NovaDependencyContainer\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Epartment\\NovaDependencyContainer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova field container allowing to depend on other fields values",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "time": "2019-12-01T02:45:45+00:00"
         },
         {
             "name": "erusev/parsedown",
