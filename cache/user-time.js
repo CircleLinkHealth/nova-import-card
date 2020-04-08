@@ -1,17 +1,27 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+//copied from StoreTimeTracking.php
+var UNTRACKED_ROUTES = [
+    'patient.activity.create',
+    'patient.activity.providerUIIndex',
+    'patient.reports.progress',
+];
 var _usersTime = {};
-function storeTime(userId, ccmTime, bhiTime, replace) {
-    if (replace === void 0) { replace = false; }
-    if (replace) {
-        _usersTime[userId] = { ccm: ccmTime, bhi: bhiTime };
-        return;
-    }
-    if (!_usersTime[userId]) {
-        _usersTime[userId] = { ccm: 0, bhi: 0 };
-    }
-    _usersTime[userId].ccm += ccmTime;
-    _usersTime[userId].bhi += bhiTime;
+function storeTime(userId, activities, totalCcm, totalBhi) {
+    var finalCcm = totalCcm;
+    var finalBhi = totalBhi;
+    activities.forEach(function (a) {
+        if (UNTRACKED_ROUTES.indexOf(a.title) === -1) {
+            return;
+        }
+        if (a.is_behavioral) {
+            finalBhi -= a.duration;
+        }
+        else {
+            finalCcm -= a.duration;
+        }
+    });
+    _usersTime[userId] = { ccm: finalCcm, bhi: finalBhi };
 }
 exports.storeTime = storeTime;
 function getTime(userId) {
