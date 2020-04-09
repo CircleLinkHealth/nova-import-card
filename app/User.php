@@ -215,6 +215,8 @@ namespace App;
  * @property string $name
  * @property-read \App\EnrollableInvitationLink $enrollmentInvitationLink
  * @property-read \App\EnrollableRequestInfo $statusRequestsInfo
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Nova\Actions\ActionEvent[] $actions
+ * @property-read int|null $actions_count
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {
