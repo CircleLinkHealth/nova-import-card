@@ -11,6 +11,7 @@ use App\CareAmbassador;
 use App\CareplanAssessment;
 use App\Constants;
 use App\ForeignId;
+use App\Jobs\SendSelfEnrollmentEnrollees;
 use App\Message;
 use App\Models\EmailSettings;
 use App\Notifications\CarePlanApprovalReminder;
@@ -18,6 +19,7 @@ use App\Notifications\ResetPassword;
 use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
+use App\Traits\HasEnrollableInvitation;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
@@ -64,6 +66,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 use Lab404\Impersonate\Models\Impersonate;
@@ -387,6 +390,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use HasEmrDirectAddress;
     use HasMediaTrait;
     use Impersonate;
+    use HasEnrollableInvitation;
     use MakesOrReceivesCalls;
     use Notifiable;
     use SaasAccountable;
@@ -3958,5 +3962,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 }
             );
         });
+    }
+    /**
+     * If user has "survey-only" Role, returns true.
+     * note: hasRole() doesnt always produce correct results in this case.
+     *
+     * @return mixed
+     */
+    public function checkForSurveyOnlyRole()
+    {
+        return $this->roles()->where('name', SendSelfEnrollmentEnrollees::SURVEY_ONLY)->exists();
     }
 }
