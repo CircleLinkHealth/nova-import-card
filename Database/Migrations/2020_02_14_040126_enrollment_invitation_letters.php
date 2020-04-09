@@ -24,7 +24,9 @@ class EnrollmentInvitationLetters extends Migration
 
             $table->foreign('practice_id')
                 ->references('id')
-                ->on('practices');
+                ->on('practices')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
     }
 
