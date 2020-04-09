@@ -72,15 +72,8 @@ class PracticeStaff extends Resource
      */
     public function cards(Request $request)
     {
-        $practices = Practice::whereIn('id', auth()->user()->viewableProgramIds())
-            ->activeBillable()
-            ->pluck('display_name', 'id')
-            ->toArray();
-
         return [
-            new ClhImportCardExtended(self::class, [
-                Select::make('practice')->options($practices)->withModel(Practice::class),
-            ]),
+            ClhImportCardExtended::forUser(auth()->user(), self::class),
         ];
     }
 

@@ -7,7 +7,9 @@
 namespace App\Console\Commands;
 
 use App\Search\ProviderByName;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
 use Illuminate\Console\Command;
 
 /**
@@ -66,11 +68,14 @@ class OverwriteNBIImportedData extends Command
     {
         $mr    = $imr->medicalRecord();
         $dem   = $imr->demographics()->first();
-        $datas = \CircleLinkHealth\Eligibility\Entities\PatientData::where(
+        $nbiPractice = Practice::whereName(CarePlanHelper::NBI_PRACTICE_NAME)->with('locations')->firstOrFail();
+        $datas = \CircleLinkHealth\Eligibility\Entities\SupplementalPatientData::where(
             'first_name',
             'like',
             "{$dem->first_name}%"
-        )->where(
+        )
+            ->where('practice_id', $nbiPractice->id)
+            ->where(
             'last_name',
             $dem->last_name
         )->where('dob', $dem->dob)->first();
@@ -92,8 +97,8 @@ class OverwriteNBIImportedData extends Command
                 $imr->billing_provider_id = $map[$term] ?? optional(ProviderByName::first($term))->id;
             }
 
-            $imr->practice_id = 201;
-            $imr->location_id = 971;
+            $imr->practice_id = $nbiPractice->id;
+            $imr->location_id = $nbiPractice->primaryLocation()->id;
             $imr->save();
             $dem->mrn_number = $datas->mrn;
             $dem->save();
