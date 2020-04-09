@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Nova\Actions;
 
 use App\Note;
@@ -20,29 +24,58 @@ use Laravel\Nova\Fields\Textarea;
 
 class UserWithdraw extends Action implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
     use HasDependencies;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public $name = 'Withdraw';
 
     /**
-     * Perform the action on the given models.
+     * Get the fields available on the action.
      *
-     * @param \Laravel\Nova\Fields\ActionFields $fields
-     * @param \Illuminate\Support\Collection $models
+     * @return array
+     */
+    public function fields()
+    {
+        return [
+            Select::make('Reason', 'reason')
+                ->options([
+                    'No Longer Interested'               => 'No Longer Interested',
+                    'Moving out of Area'                 => 'Moving out of Area',
+                    'New Physician'                      => 'New Physician',
+                    'Cost / Co-Pay'                      => 'Cost / Co-Pay',
+                    'Changed Insurance'                  => 'Changed Insurance',
+                    'Dialysis / End-Stage Renal Disease' => 'Dialysis / End-Stage Renal Disease',
+                    'Expired'                            => 'Expired',
+                    'Patient in Hospice'                 => 'Patient in Hospice',
+                    'Other'                              => 'Other',
+                ])
+                ->required(),
+
+            NovaDependencyContainer::make([
+                Textarea::make('Other Reason', 'reason_other')
+                    ->rows(5)
+                    ->required(),
+            ])->dependsOn('reason', 'Other'),
+        ];
+    }
+
+    /**
+     * Perform the action on the given models.
      *
      * @return mixed
      */
     public function handle(ActionFields $fields, Collection $models)
     {
         $reason = $fields->get('reason');
-        if ($reason === 'Other') {
+        if ('Other' === $reason) {
             $reason = $fields->get('reason_other');
         }
 
         if (empty($reason)) {
             $models->each(function ($model) {
-                $this->markAsFailed($model, "Need to supply a reason");
+                $this->markAsFailed($model, 'Need to supply a reason');
             });
 
             return;
@@ -54,85 +87,6 @@ class UserWithdraw extends Action implements ShouldQueue
         $models->each(function ($model) {
             $this->markAsFinished($model);
         });
-    }
-
-    /**
-     * Get the fields available on the action.
-     *
-     * @return array
-     */
-    public function fields()
-    {
-        return [
-
-            Select::make('Reason', 'reason')
-                  ->options([
-                      'No Longer Interested'               => 'No Longer Interested',
-                      'Moving out of Area'                 => 'Moving out of Area',
-                      'New Physician'                      => 'New Physician',
-                      'Cost / Co-Pay'                      => 'Cost / Co-Pay',
-                      'Changed Insurance'                  => 'Changed Insurance',
-                      'Dialysis / End-Stage Renal Disease' => 'Dialysis / End-Stage Renal Disease',
-                      'Expired'                            => 'Expired',
-                      'Patient in Hospice'                 => 'Patient in Hospice',
-                      'Other'                              => 'Other',
-                  ])
-                  ->required(),
-
-            NovaDependencyContainer::make([
-                Textarea::make('Other Reason', 'reason_other')
-                        ->rows(5)
-                        ->required(),
-            ])->dependsOn('reason', 'Other'),
-
-        ];
-    }
-
-    private function withdrawUsers($userIds, string $withdrawnReason)
-    {
-        //need to make sure that we are creating notes for participants
-        //and withdrawn patients that are not already withdrawn
-        $participantIds = User::ofType('participant')
-                              ->select('id')
-                              ->withCount(['inboundCalls'])
-                              ->whereHas(
-                                  'patientInfo',
-                                  function ($query) {
-                                      $query->whereNotIn(
-                                          'ccm_status',
-                                          [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL]
-                                      );
-                                  }
-                              )
-                              ->whereIn('id', $userIds)
-                              ->pluck('id', 'inbound_calls_count');
-
-        //See which patients are on first call to update statuses accordingly
-        [$withdrawn1stCall, $withdrawn] = $participantIds->partition(
-            function ($value, $key) {
-                return $key <= 1;
-            }
-        );
-
-        Patient::whereIn('user_id', $withdrawn)
-               ->update(
-                   [
-                       'ccm_status'       => Patient::WITHDRAWN,
-                       'withdrawn_reason' => $withdrawnReason,
-                       'date_withdrawn'   => Carbon::now()->toDateTimeString(),
-                   ]
-               );
-
-        Patient::whereIn('user_id', $withdrawn1stCall)
-               ->update(
-                   [
-                       'ccm_status'       => Patient::WITHDRAWN_1ST_CALL,
-                       'withdrawn_reason' => $withdrawnReason,
-                       'date_withdrawn'   => Carbon::now()->toDateTimeString(),
-                   ]
-               );
-
-        $this->createWithdrawNotes($participantIds, $withdrawnReason);
     }
 
     private function createWithdrawNotes($patientIds, $withdrawReason)
@@ -153,5 +107,52 @@ class UserWithdraw extends Action implements ShouldQueue
         }
 
         Note::insert($notes);
+    }
+
+    private function withdrawUsers($userIds, string $withdrawnReason)
+    {
+        //need to make sure that we are creating notes for participants
+        //and withdrawn patients that are not already withdrawn
+        $participantIds = User::ofType('participant')
+            ->select('id')
+            ->withCount(['inboundCalls'])
+            ->whereHas(
+                                  'patientInfo',
+                                  function ($query) {
+                                      $query->whereNotIn(
+                                          'ccm_status',
+                                          [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL]
+                                      );
+                                  }
+                              )
+            ->whereIn('id', $userIds)
+            ->pluck('id', 'inbound_calls_count');
+
+        //See which patients are on first call to update statuses accordingly
+        [$withdrawn1stCall, $withdrawn] = $participantIds->partition(
+            function ($value, $key) {
+                return $key <= 1;
+            }
+        );
+
+        Patient::whereIn('user_id', $withdrawn)
+            ->update(
+                   [
+                       'ccm_status'       => Patient::WITHDRAWN,
+                       'withdrawn_reason' => $withdrawnReason,
+                       'date_withdrawn'   => Carbon::now()->toDateTimeString(),
+                   ]
+               );
+
+        Patient::whereIn('user_id', $withdrawn1stCall)
+            ->update(
+                   [
+                       'ccm_status'       => Patient::WITHDRAWN_1ST_CALL,
+                       'withdrawn_reason' => $withdrawnReason,
+                       'date_withdrawn'   => Carbon::now()->toDateTimeString(),
+                   ]
+               );
+
+        $this->createWithdrawNotes($participantIds, $withdrawnReason);
     }
 }

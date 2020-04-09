@@ -17,7 +17,7 @@ class Constants
      */
     const CACHED_USER_NOTIFICATIONS = 'user:{$userId}:notifications';
 
-    const CLH_INTERNAL_USER_ROLE_NAMES = ['saas-admin', 'care-center', 'administrator'];
+    const CLH_INTERNAL_USER_ROLE_NAMES         = ['saas-admin', 'care-center', 'administrator'];
     const CLOUD_CCDAS_PROCESS_ELIGIBILITY_PATH = '/eligibility/ccdas';
 
     /**
@@ -30,7 +30,7 @@ class Constants
         Constants::ICD10_NAME  => 2,
         Constants::SNOMED_NAME => 3,
     ];
-    const ICD10 = ProblemCodeSystem::ICD10;
+    const ICD10      = ProblemCodeSystem::ICD10;
     const ICD10_NAME = ProblemCodeSystem::ICD10_NAME;
 
     /**
@@ -43,15 +43,15 @@ class Constants
     const MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS = 1200;
 
     //Groups for Nova Resources
-    const NOVA_GROUP_ADMIN = 'Admin';
+    const NOVA_GROUP_ADMIN        = 'Admin';
     const NOVA_GROUP_CARE_COACHES = 'Care Coaches';
-    const NOVA_GROUP_ENROLLMENT = 'Enrollment';
-    const NOVA_GROUP_NBI = 'NBI';
-    const NOVA_GROUP_PRACTICES = 'Practices';
+    const NOVA_GROUP_ENROLLMENT   = 'Enrollment';
+    const NOVA_GROUP_NBI          = 'NBI';
+    const NOVA_GROUP_PRACTICES    = 'Practices';
 
     const PATIENT_PHI_RELATIONSHIPS = ['patientInfo'];
 
-    const PRACTICE_STAFF_ROLE_NAMES = ['provider', 'office_admin', 'med_assistant', 'registered-nurse', 'specialist'];
+    const PRACTICE_STAFF_ROLE_NAMES     = ['provider', 'office_admin', 'med_assistant', 'registered-nurse', 'specialist'];
     const SAAS_INTERNAL_USER_ROLE_NAMES = ['saas-admin', 'care-center'];
 
     /**
@@ -64,13 +64,13 @@ class Constants
         'margin-bottom'      => '15',
         'margin-right'       => '0.75',
     ];
-    const SNOMED = ProblemCodeSystem::SNOMED;
+    const SNOMED      = ProblemCodeSystem::SNOMED;
     const SNOMED_NAME = ProblemCodeSystem::SNOMED_NAME;
-    const TRIX_ALLOWABLE_TAGS_STRING = '<div><strong><h1><em><del><blockquote><pre><br><ul><ol><li><span><a>';
-    const TRIX_FIELDS = ['patient-email-body'];
-    const VIEWING_PATIENT = 'viewing-patient';
 
-    const THIRTY_DAYS_IN_MINUTES = 43200;
+    const THIRTY_DAYS_IN_MINUTES     = 43200;
+    const TRIX_ALLOWABLE_TAGS_STRING = '<div><strong><h1><em><del><blockquote><pre><br><ul><ol><li><span><a>';
+    const TRIX_FIELDS                = ['patient-email-body'];
+    const VIEWING_PATIENT            = 'viewing-patient';
 
     public static function athenaEhrId()
     {

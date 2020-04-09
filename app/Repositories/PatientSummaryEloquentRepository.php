@@ -28,11 +28,10 @@ class PatientSummaryEloquentRepository
      */
     public $patientRepo;
 
+    private $chargeableServicesByCode = [];
+
     /**
      * PatientSummaryEloquentRepository constructor.
-     *
-     * @param PatientWriteRepository $patientRepo
-     * @param CallRepository $callRepo
      */
     public function __construct(PatientWriteRepository $patientRepo, CallRepository $callRepo)
     {
@@ -45,7 +44,7 @@ class PatientSummaryEloquentRepository
      *
      * @param $summary
      * @param array|ChargeableService|null $chargeableServiceId | The Chargeable Service Code to attach
-     * @param bool $detach | Whether to detach existing chargeable services, when using the sync function
+     * @param bool                         $detach              | Whether to detach existing chargeable services, when using the sync function
      *
      * @return mixed
      */
@@ -64,7 +63,7 @@ class PatientSummaryEloquentRepository
         }
 
         $sync = $summary->chargeableServices()
-                        ->sync($chargeableServiceId, $detach);
+            ->sync($chargeableServiceId, $detach);
 
         if ($sync['attached'] || $sync['detached'] || $sync['updated']) {
             $class = PatientMonthlySummary::class;
@@ -76,9 +75,7 @@ class PatientSummaryEloquentRepository
     }
 
     /**
-     * @param PatientMonthlySummary $summary
-     *
-     * @return PatientMonthlySummary|mixed
+     * @return mixed|PatientMonthlySummary
      */
     public function attachChargeableServices(PatientMonthlySummary $summary)
     {
@@ -100,10 +97,10 @@ class PatientSummaryEloquentRepository
             )
             ->each(
                 function ($entry) use (&$hasCcm, &$hasPcm) {
-                    if ($entry->code === ChargeableService::CCM) {
+                    if (ChargeableService::CCM === $entry->code) {
                         $hasCcm = true;
                     }
-                    if ($entry->code === ChargeableService::PCM) {
+                    if (ChargeableService::PCM === $entry->code) {
                         $hasPcm = true;
                     }
                 }
@@ -112,7 +109,7 @@ class PatientSummaryEloquentRepository
         if ($hasCcm && $hasPcm) {
             $candidates = $candidates->filter(
                 function ($service) {
-                    return $service->code !== ChargeableService::PCM;
+                    return ChargeableService::PCM !== $service->code;
                 }
             );
         }
@@ -132,7 +129,7 @@ class PatientSummaryEloquentRepository
     public function detachChargeableService($summary, $chargeableServiceId)
     {
         $detached = $summary->chargeableServices()
-                            ->detach($chargeableServiceId);
+            ->detach($chargeableServiceId);
 
         $summary->load('chargeableServices');
 
@@ -142,8 +139,6 @@ class PatientSummaryEloquentRepository
     /**
      * This function will set field `needs_qa` on the $summary.
      * If the $summary needs to be QA'ed by a human, approved and rejected will be set to false.
-     *
-     * @param PatientMonthlySummary $summary
      *
      * @return PatientMonthlySummary
      */
@@ -200,8 +195,6 @@ class PatientSummaryEloquentRepository
     /**
      * Save the most updated sum of calls and sum of successful calls to the given PatientMonthlySummary.
      *
-     * @param PatientMonthlySummary $summary
-     *
      * @return PatientMonthlySummary
      */
     public function syncCallCounts(PatientMonthlySummary $summary)
@@ -215,56 +208,6 @@ class PatientSummaryEloquentRepository
         return $summary;
     }
 
-
-    /**
-     * Decide whether or not to attach a chargeable service to a patient summary.
-     *
-     * @param ChargeableService $service
-     * @param PatientMonthlySummary $summary
-     *
-     * @return bool
-     */
-    private function shouldAttachChargeableService(ChargeableService $service, PatientMonthlySummary $summary)
-    {
-        switch ($service->code) {
-            case ChargeableService::BHI:
-                return $summary->bhi_time >= self::MINUTES_20;
-
-            case ChargeableService::CCM:
-            case ChargeableService::GENERAL_CARE_MANAGEMENT:
-                return $summary->ccm_time >= self::MINUTES_20;
-
-            case ChargeableService::PCM:
-                return $summary->ccm_time >= self::MINUTES_30;
-
-            case ChargeableService::CCM_PLUS_40:
-                return $summary->ccm_time >= self::MINUTES_40;
-
-            case ChargeableService::CCM_PLUS_60:
-                return $summary->ccm_time >= self::MINUTES_60;
-
-            case ChargeableService::SOFTWARE_ONLY:
-                return 0 == $summary->timeFromClhCareCoaches();
-
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Is it ok for the system to process this record?
-     *
-     * @param PatientMonthlySummary $summary
-     *
-     * @return bool
-     */
-    private function shouldNotTouch(PatientMonthlySummary $summary): bool
-    {
-        return (bool)$summary->actor_id;
-    }
-
-    private $chargeableServicesByCode = [];
-
     private function chargeableServicesByCode(PatientMonthlySummary $summary)
     {
         if ( ! $summary->patient || ! $summary->patient->primaryPractice) {
@@ -277,5 +220,39 @@ class PatientSummaryEloquentRepository
         }
 
         return $this->chargeableServicesByCode[$practiceId];
+    }
+
+    /**
+     * Decide whether or not to attach a chargeable service to a patient summary.
+     *
+     * @return bool
+     */
+    private function shouldAttachChargeableService(ChargeableService $service, PatientMonthlySummary $summary)
+    {
+        switch ($service->code) {
+            case ChargeableService::BHI:
+                return $summary->bhi_time >= self::MINUTES_20;
+            case ChargeableService::CCM:
+            case ChargeableService::GENERAL_CARE_MANAGEMENT:
+                return $summary->ccm_time >= self::MINUTES_20;
+            case ChargeableService::PCM:
+                return $summary->ccm_time >= self::MINUTES_30;
+            case ChargeableService::CCM_PLUS_40:
+                return $summary->ccm_time >= self::MINUTES_40;
+            case ChargeableService::CCM_PLUS_60:
+                return $summary->ccm_time >= self::MINUTES_60;
+            case ChargeableService::SOFTWARE_ONLY:
+                return 0 == $summary->timeFromClhCareCoaches();
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Is it ok for the system to process this record?
+     */
+    private function shouldNotTouch(PatientMonthlySummary $summary): bool
+    {
+        return (bool) $summary->actor_id;
     }
 }

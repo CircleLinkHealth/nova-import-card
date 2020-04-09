@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Nova\Actions;
 
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -13,15 +17,24 @@ use Laravel\Nova\Fields\ActionFields;
 
 class UserUnreachable extends Action implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public $name = 'Mark as unreachable';
 
     /**
-     * Perform the action on the given models.
+     * Get the fields available on the action.
      *
-     * @param \Laravel\Nova\Fields\ActionFields $fields
-     * @param \Illuminate\Support\Collection $models
+     * @return array
+     */
+    public function fields()
+    {
+        return [];
+    }
+
+    /**
+     * Perform the action on the given models.
      *
      * @return void
      */
@@ -32,15 +45,5 @@ class UserUnreachable extends Action implements ShouldQueue
         $models->each(function ($model) {
             $this->markAsFinished($model);
         });
-    }
-
-    /**
-     * Get the fields available on the action.
-     *
-     * @return array
-     */
-    public function fields()
-    {
-        return [];
     }
 }

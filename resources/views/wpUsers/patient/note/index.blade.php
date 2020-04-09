@@ -143,7 +143,7 @@
                                         {
                                             id: "tags",
                                             css: {'text-align': 'left', 'top': 0, 'left': 0, 'bottom': 0, 'right': 0},
-                                            header: ["Status"],
+                                            header: ["Status",],
                                             width: 110,
                                             sort: 'string'
                                         },
@@ -252,6 +252,13 @@
                                         <span class="glyphicon glyphicon-envelope"></span>
                                     </div>
                                     Forwarded To Provider
+                                </li>
+
+                                <li>
+                                    <div class="label label-warning" style="margin-right: 4px; text-align: right; background-color: #9865f2">
+                                        <span class="glyphicon glyphicon-thumbs-up"></span>
+                                    </div>
+                                    Success Story
                                 </li>
 
                                 <li>

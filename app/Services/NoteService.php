@@ -123,6 +123,9 @@ class NoteService
         $note->did_medication_recon = isset($requestInput['medication_recon'])
             ? 'true' === $requestInput['medication_recon']
             : 0;
+        $note->success_story = isset($requestInput['success_story'])
+            ? 'true' === $requestInput['success_story']
+            : 0;
 
         if ($note->isDirty()) {
             $note->save();
@@ -169,13 +172,12 @@ class NoteService
 
         return $this->createNoteFromAssessment($this->assessmentRepo->editKeyTreatment($userId, $authorId, $body));
     }
-    
+
     /**
      * Forward the note.
      *
      * Force forwards to CareTeam if the patient's in the hospital, ie `if(true === note->isTCM)`
      *
-     * @param Note $note
      * @param bool $notifyCareTeam
      * @param bool $notifyCLH
      * @param bool $forceNotify
@@ -425,6 +427,13 @@ class NoteService
         return $this->noteRepo->patientNotes($userId, $filters);
     }
 
+    public function practiceHasNotesNotificationsEnabled(Practice $practice): bool
+    {
+        return with($practice->cpmSettings(), function ($settings) {
+            return $settings->email_note_was_forwarded || $settings->efax_pdf_notes || $settings->dm_pdf_notes;
+        });
+    }
+
     public function storeCallForNote(
         $note,
         $status,
@@ -525,17 +534,5 @@ class NoteService
                 ->whereNotNull('read_at')
                 ->exists()
             : null;
-    }
-    
-    /**
-     * @param Practice $practice
-     *
-     * @return bool
-     */
-    public function practiceHasNotesNotificationsEnabled(Practice $practice) : bool
-    {
-        return with($practice->cpmSettings(), function ($settings) {
-            return $settings->email_note_was_forwarded || $settings->efax_pdf_notes || $settings->dm_pdf_notes;
-        });
     }
 }

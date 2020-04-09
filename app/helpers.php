@@ -1904,24 +1904,24 @@ if ( ! function_exists('getPatientListDropdown')) {
             $user->practices(true)
                 ->get()
                 ->each(function ($p) use (&$result) {
-                     /** @var Collection $services */
-                     $services = $p->chargeableServices()->get();
-                     $count = $services->count();
-                     $hasAwvInitial = $services->where('code', '=', ChargeableService::AWV_INITIAL)->isNotEmpty();
-                     $hasAwvSubsequent = $services->where('code', '=', ChargeableService::AWV_SUBSEQUENT)->isNotEmpty();
+                    /** @var Collection $services */
+                    $services = $p->chargeableServices()->get();
+                    $count = $services->count();
+                    $hasAwvInitial = $services->where('code', '=', ChargeableService::AWV_INITIAL)->isNotEmpty();
+                    $hasAwvSubsequent = $services->where('code', '=', ChargeableService::AWV_SUBSEQUENT)->isNotEmpty();
 
-                     if ($hasAwvInitial || $hasAwvSubsequent) {
-                         $result[] = 'awv';
-                     }
+                    if ($hasAwvInitial || $hasAwvSubsequent) {
+                        $result[] = 'awv';
+                    }
 
-                     if ((1 === $count && $hasAwvInitial) ||
+                    if ((1 === $count && $hasAwvInitial) ||
                          (1 === $count && $hasAwvSubsequent) ||
                          (2 === $count && $hasAwvInitial && $hasAwvSubsequent)) {
-                         return;
-                     }
+                        return;
+                    }
 
-                     $result[] = 'ccm';
-                 });
+                    $result[] = 'ccm';
+                });
 
             return collect($result)->unique()->toArray();
         });

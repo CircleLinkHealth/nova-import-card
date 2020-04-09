@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Services\ApproveBillablePatientsService;
@@ -10,18 +14,17 @@ use Illuminate\Support\Collection;
 class CountBillablePatientsForMonth extends Command
 {
     /**
+     * This command takes 4-7 seconds on my local machine, with xdebug enabled. Around 1000 patients (paginated).
+     *
+     * @var string
+     */
+    protected $description = 'Returns a count for the billable patients for a month';
+    /**
      * The name and signature of the console command.
      *
      * @var string
      */
     protected $signature = 'count:billable-patients';
-
-    /**
-     * This command takes 4-7 seconds on my local machine, with xdebug enabled. Around 1000 patients (paginated)
-     *
-     * @var string
-     */
-    protected $description = 'Returns a count for the billable patients for a month';
 
     /**
      * @var ApproveBillablePatientsService
@@ -30,8 +33,6 @@ class CountBillablePatientsForMonth extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param ApproveBillablePatientsService $service
      */
     public function __construct(ApproveBillablePatientsService $service)
     {
@@ -47,7 +48,7 @@ class CountBillablePatientsForMonth extends Command
     public function handle()
     {
         $start      = microtime(true);
-        $practiceId = "8";
+        $practiceId = '8';
         $month      = now()->startOfMonth();
 
         /** @var Collection $result */

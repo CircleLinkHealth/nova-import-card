@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Nova\Filters;
 
 use Illuminate\Http\Request;
@@ -8,6 +12,12 @@ use Laravel\Nova\Filters\Filter;
 class UserRoleFilter extends Filter
 {
     /**
+     * The filter's component.
+     *
+     * @var string
+     */
+    public $component = 'select-filter';
+    /**
      * The displayable name of the filter.
      *
      * @var string
@@ -15,18 +25,10 @@ class UserRoleFilter extends Filter
     public $name = 'Role';
 
     /**
-     * The filter's component.
-     *
-     * @var string
-     */
-    public $component = 'select-filter';
-
-    /**
      * Apply the filter to the given query.
      *
-     * @param \Illuminate\Http\Request $request
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param mixed $value
+     * @param mixed                                 $value
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -37,8 +39,6 @@ class UserRoleFilter extends Filter
 
     /**
      * Get the filter's available options.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Call;
 use App\Traits\Tests\UserHelpers;
@@ -21,44 +25,24 @@ class PatientMonthlySummarySeeder extends Seeder
     public function run()
     {
         $practice = Practice::whereName('demo')
-                            ->where('is_demo', true)
-                            ->first();
+            ->where('is_demo', true)
+            ->first();
 
         $nurse = $this->createUser($practice->id, 'care-center');
 
-        for ($i = 0; $i < 1000; $i++) {
-
+        for ($i = 0; $i < 1000; ++$i) {
             /** @var User $user */
             $user = $this->createPatientWithProblems($practice->id);
 
             /** @var Call $call */
             $call = $this->createCallForPatient($nurse->id, $user->id);
 
-            /** @var PatientMonthlySummary $pms */
+            // @var PatientMonthlySummary $pms
             $this->createPatientMonthlySummaryForPatient($user->id);
 
             $patientProblems = $user->ccdProblems()->get();
             $call->attachAttestedProblems($patientProblems->pluck('id')->toArray());
         }
-    }
-
-    private function createPatientWithProblems($practiceId)
-    {
-        $user = $this->createUser($practiceId, 'participant', 'enrolled');
-        [$bhi, $ccm] = CpmProblem::get()->partition(function ($p) {
-            return $p->is_behavioral;
-        });;
-
-        $problemsForPatient = $bhi->take(2)->merge($ccm->take(8));
-
-        foreach ($problemsForPatient as $problem) {
-            $user->ccdProblems()->create([
-                'name'           => $problem->name,
-                'cpm_problem_id' => $problem->id,
-            ]);
-        }
-
-        return $user;
     }
 
     private function createCallForPatient($nurseUserId, $patientUserId)
@@ -95,6 +79,26 @@ class PatientMonthlySummarySeeder extends Seeder
                 'rejected'               => 0,
                 'needs_qa'               => 1,
                 'actor_id'               => null,
+            ]
+        );
+    }
+
+    private function createPatientWithProblems($practiceId)
+    {
+        $user        = $this->createUser($practiceId, 'participant', 'enrolled');
+        [$bhi, $ccm] = CpmProblem::get()->partition(function ($p) {
+            return $p->is_behavioral;
+        });
+
+        $problemsForPatient = $bhi->take(2)->merge($ccm->take(8));
+
+        foreach ($problemsForPatient as $problem) {
+            $user->ccdProblems()->create([
+                'name'           => $problem->name,
+                'cpm_problem_id' => $problem->id,
             ]);
+        }
+
+        return $user;
     }
 }

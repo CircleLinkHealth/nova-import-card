@@ -6,7 +6,10 @@
 
 namespace CircleLinkHealth\ClhImportCardExtended;
 
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Laravel\Nova\Card;
+use Laravel\Nova\Fields\Select;
 
 class ClhImportCardExtended extends Card
 {
@@ -36,5 +39,16 @@ class ClhImportCardExtended extends Card
     public function component()
     {
         return 'clh-import-card-extended';
+    }
+    
+    public static function forUser(User $user, string $resource) {
+        $practices = Practice::whereIn('id', auth()->user()->viewableProgramIds())
+                             ->activeBillable()
+                             ->pluck('display_name', 'id')
+                             ->toArray();
+        
+        return new ClhImportCardExtended($resource, [
+            Select::make('practice')->options($practices)->withModel(Practice::class),
+        ]);
     }
 }

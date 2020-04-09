@@ -1,8 +1,10 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 namespace App;
-
 
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -14,16 +16,14 @@ use Illuminate\Support\Facades\DB;
 
 class UserTotalTimeChecker
 {
-    const MAX_HOURS_ALLOWED_IN_DAY_KEY = 'user_total_time_checker_max_hours_in_day';
-    const ALLOWED_THRESHOLD_FOR_WEEK_KEY = 'user_total_time_checker_threshold_for_week_key';
-
-    private const MAX_HOURS_ALLOWED_IN_DAY_DEFAULT = 8;
+    const ALLOWED_THRESHOLD_FOR_WEEK_KEY             = 'user_total_time_checker_threshold_for_week_key';
+    const MAX_HOURS_ALLOWED_IN_DAY_KEY               = 'user_total_time_checker_max_hours_in_day';
     private const ALLOWED_THRESHOLD_FOR_WEEK_DEFAULT = 1.2;
 
-    /**
-     * @var Carbon
-     */
-    private $start;
+    private const MAX_HOURS_ALLOWED_IN_DAY_DEFAULT = 8;
+
+    /** @var bool */
+    private $checkAccumulatedTime;
 
     /**
      * @var Carbon
@@ -31,12 +31,14 @@ class UserTotalTimeChecker
     private $end;
 
     /**
+     * @var Carbon
+     */
+    private $start;
+
+    /**
      * @var int
      */
     private $userId;
-
-    /** @var bool */
-    private $checkAccumulatedTime;
 
     public function __construct(Carbon $start, Carbon $end, bool $checkAccumulatedTime, $userId = null)
     {
@@ -56,89 +58,31 @@ class UserTotalTimeChecker
         return $this->checkTime($filtered);
     }
 
-
-    /**
-     * Get time tracked per user from $start to $end,
-     * grouped by date
-     *
-     * @return Collection of date -> duration
-     */
-    private function getTimePerUser()
+    public static function getMaxHoursForDay(): int
     {
-        $result = collect();
-        if ($this->userId) {
-            $coll = $this->getTimePerDay($this->userId, $this->start, $this->end);
-            $result->put($this->userId, $coll);
-        } else {
-            User::ofType('care-center')
-                ->whereHas('nurseInfo', function ($q) {
-                    $q->where('status', 'active');
-                })
-                ->each(function ($user) use ($result) {
-                    $coll = $this->getTimePerDay($user->id, $this->start, $this->end);
-                    $result->put($user->id, $coll);
-                });
+        $val = AppConfig::pull(self::MAX_HOURS_ALLOWED_IN_DAY_KEY, null);
+        if (null === $val) {
+            return setAppConfig(self::MAX_HOURS_ALLOWED_IN_DAY_KEY, self::MAX_HOURS_ALLOWED_IN_DAY_DEFAULT);
         }
 
-        return $result;
+        return floatval($val);
     }
 
-    /**
-     * Get time tracked per day (seconds) of a user
-     *
-     * @param int $userId
-     * @param Carbon $start
-     * @param Carbon $end
-     *
-     * @return Collection of stdClass(es) of `date` and `duration`
-     */
-    private function getTimePerDay(int $userId, Carbon $start, Carbon $end)
+    public static function getThresholdForWeek(): float
     {
-        $result = DB::table((new PageTimer())->getTable())
-                    ->select(DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(start_time)) as date, sum(duration) as duration'))
-                    ->where('provider_id', '=', $userId)
-                    ->whereBetween('start_time', [$start, $end])
-                    ->groupBy(DB::raw('date'))
-                    ->get()
-                    ->keyBy('date');
+        $val = AppConfig::pull(self::ALLOWED_THRESHOLD_FOR_WEEK_KEY, null);
+        if (null === $val) {
+            return setAppConfig(self::ALLOWED_THRESHOLD_FOR_WEEK_KEY, self::ALLOWED_THRESHOLD_FOR_WEEK_DEFAULT);
+        }
 
-        // also go back one day and fetch time tracked that spans over 2 days
-        // for example:
-        // - routine runs at 00:10 am on April 4th.
-        // - an erroneous user has time tracking from 18:00 pm on April 3rd and still tracking at 00:10 am on April 4th
-        // - so it won't be tracked by the query above on April 4th that has $start and $end for April 3rd
-        // - in order to catch it on April 5th, $start and $end is for April 4th. We have to go one day behind and
-        //   check where start_time is April 3rd and end_time is April 4th
-        // NOTE: 'date' here is end_time, so even if we are checking days back, it will end up in the daily warning as well.
-        $newStart = $start->copy()->subDay();
-        $result2  = DB::table((new PageTimer())->getTable())
-                      ->select(DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(end_time)) as date, sum(duration) as duration'))
-                      ->where('provider_id', '=', $userId)
-                      ->whereBetween('start_time', [$newStart, $end])
-                      ->where(DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(start_time))'), '!=',
-                          DB::raw('MAKEDATE(YEAR(end_time),DAYOFYEAR(end_time))'))
-                      ->groupBy(DB::raw('date'))
-                      ->get()
-                      ->keyBy('date');
-
-        $result2->each(function ($item2, $date) use ($result) {
-            $current         = $result->has($date)
-                ? intval($result->get($date)->duration)
-                : 0;
-            $item2->duration = $current + intval($item2->duration);
-            $result->put($date, $item2);
-        });
-
-        return $result->sortBy('date');
+        return floatval($val);
     }
 
     /**
      * Check time track for each user
      * Will return a collection of two entries:
      * - 'daily': For users that went over the maximum allowed time for one day
-     * - 'weekly': For users that went over the maximum committed time for the last 7 days
-     *
-     * @param Collection $timePerUser
+     * - 'weekly': For users that went over the maximum committed time for the last 7 days.
      *
      * @return Collection 'daily' and 'weekly'
      */
@@ -152,7 +96,7 @@ class UserTotalTimeChecker
         $timePerUser->each(function ($item, $key) use ($alerts, $maxHoursForDay, $thresholdForWeek) {
             /** @var Collection $result */
             $result = $this->checkTimeForUser($key, $item, $maxHoursForDay, $thresholdForWeek);
-            $daily  = $result->get('daily', null);
+            $daily = $result->get('daily', null);
             if ($daily) {
                 $current = $alerts->get('daily');
                 if ( ! $current) {
@@ -179,12 +123,7 @@ class UserTotalTimeChecker
 
     /**
      * Check time tracked for user in last day from $coll
-     * and check accumulated time (sum duration in $coll) if flag is set
-     *
-     * @param int $userId
-     * @param Collection $coll
-     * @param int $maxHoursForDay
-     * @param float $thresholdForWeek
+     * and check accumulated time (sum duration in $coll) if flag is set.
      *
      * @return Collection 'daily' if time has exceeded max for last day,
      *                    'weekly' if time has exceeded max for last 7 days
@@ -213,7 +152,7 @@ class UserTotalTimeChecker
 
         $totalCommittedHours = 0;
         $coll->each(function ($item) use ($nurse, &$totalCommittedHours) {
-            $date                = Carbon::parse($item->date);
+            $date = Carbon::parse($item->date);
             $totalCommittedHours += $nurse->getHoursCommittedForCarbonDate($date);
         });
 
@@ -222,10 +161,84 @@ class UserTotalTimeChecker
         $totalDurationOfWeekSeconds = $coll->sum(function ($item) {
             return $item->duration;
         });
-        $totalDurationOfWeekHours   = $this->secondsToHours($totalDurationOfWeekSeconds);
+        $totalDurationOfWeekHours = $this->secondsToHours($totalDurationOfWeekSeconds);
 
         if ($maxHoursAllowed > 0 && $totalDurationOfWeekHours > $maxHoursAllowed) {
             $result->put('weekly', $totalDurationOfWeekHours);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get time tracked per day (seconds) of a user.
+     *
+     * @return Collection of stdClass(es) of `date` and `duration`
+     */
+    private function getTimePerDay(int $userId, Carbon $start, Carbon $end)
+    {
+        $result = DB::table((new PageTimer())->getTable())
+            ->select(DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(start_time)) as date, sum(duration) as duration'))
+            ->where('provider_id', '=', $userId)
+            ->whereBetween('start_time', [$start, $end])
+            ->groupBy(DB::raw('date'))
+            ->get()
+            ->keyBy('date');
+
+        // also go back one day and fetch time tracked that spans over 2 days
+        // for example:
+        // - routine runs at 00:10 am on April 4th.
+        // - an erroneous user has time tracking from 18:00 pm on April 3rd and still tracking at 00:10 am on April 4th
+        // - so it won't be tracked by the query above on April 4th that has $start and $end for April 3rd
+        // - in order to catch it on April 5th, $start and $end is for April 4th. We have to go one day behind and
+        //   check where start_time is April 3rd and end_time is April 4th
+        // NOTE: 'date' here is end_time, so even if we are checking days back, it will end up in the daily warning as well.
+        $newStart = $start->copy()->subDay();
+        $result2  = DB::table((new PageTimer())->getTable())
+            ->select(DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(end_time)) as date, sum(duration) as duration'))
+            ->where('provider_id', '=', $userId)
+            ->whereBetween('start_time', [$newStart, $end])
+            ->where(
+                          DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(start_time))'),
+                          '!=',
+                          DB::raw('MAKEDATE(YEAR(end_time),DAYOFYEAR(end_time))')
+                      )
+            ->groupBy(DB::raw('date'))
+            ->get()
+            ->keyBy('date');
+
+        $result2->each(function ($item2, $date) use ($result) {
+            $current = $result->has($date)
+                ? intval($result->get($date)->duration)
+                : 0;
+            $item2->duration = $current + intval($item2->duration);
+            $result->put($date, $item2);
+        });
+
+        return $result->sortBy('date');
+    }
+
+    /**
+     * Get time tracked per user from $start to $end,
+     * grouped by date.
+     *
+     * @return Collection of date -> duration
+     */
+    private function getTimePerUser()
+    {
+        $result = collect();
+        if ($this->userId) {
+            $coll = $this->getTimePerDay($this->userId, $this->start, $this->end);
+            $result->put($this->userId, $coll);
+        } else {
+            User::ofType('care-center')
+                ->whereHas('nurseInfo', function ($q) {
+                    $q->where('status', 'active');
+                })
+                ->each(function ($user) use ($result) {
+                    $coll = $this->getTimePerDay($user->id, $this->start, $this->end);
+                    $result->put($user->id, $coll);
+                });
         }
 
         return $result;
@@ -235,26 +248,4 @@ class UserTotalTimeChecker
     {
         return $seconds / 60 / 60;
     }
-
-    public static function getMaxHoursForDay(): int
-    {
-        $val = AppConfig::pull(self::MAX_HOURS_ALLOWED_IN_DAY_KEY, null);
-        if (null === $val) {
-            return setAppConfig(self::MAX_HOURS_ALLOWED_IN_DAY_KEY, self::MAX_HOURS_ALLOWED_IN_DAY_DEFAULT);
-        }
-
-        return floatval($val);
-    }
-
-    public static function getThresholdForWeek(): float
-    {
-        $val = AppConfig::pull(self::ALLOWED_THRESHOLD_FOR_WEEK_KEY, null);
-        if (null === $val) {
-            return setAppConfig(self::ALLOWED_THRESHOLD_FOR_WEEK_KEY, self::ALLOWED_THRESHOLD_FOR_WEEK_DEFAULT);
-        }
-
-        return floatval($val);
-    }
-
-
 }
