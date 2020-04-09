@@ -238,8 +238,8 @@ class ProcessEligibilityService
                 'folder'              => $folder,
                 'fileName'            => $fileName,
                 'filePath'            => $filePath,
-                'finishedReadingFile' => false,
                 //did the system read all lines from the file and create eligibility jobs?
+                'finishedReadingFile' => false,
                 'filterLastEncounter' => (bool) $filterLastEncounter,
                 'filterInsurance'     => (bool) $filterInsurance,
                 'filterProblems'      => (bool) $filterProblems,
