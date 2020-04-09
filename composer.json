@@ -104,6 +104,10 @@
       "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git"
     },
     {
+      "type": "git",
+      "url": "git@github.com:subzero10/condition-code-lookup-module.git"
+    },
+    {
       "type": "vcs",
       "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git"
     },
@@ -186,6 +190,7 @@
     "spatie/laravel-medialibrary": "^7.0.0",
     "spatie/laravel-view-models": "^1.1",
     "spatie/pdf-to-text": "^1.2",
+    "subzero10/condition-code-lookup-module": "1.0",
     "titasgailius/search-relations": "^1.0",
     "twilio/sdk": "5.7",
     "vink/nova-cache-card": "^1.0",

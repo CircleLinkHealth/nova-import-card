@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "932303bcd9b18812444421e760a5d084",
+    "content-hash": "5bcc16948e9ea7ce9654850a16782147",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -8941,6 +8941,42 @@
                 "temporary-directory"
             ],
             "time": "2019-12-15T18:52:09+00:00"
+        },
+        {
+            "name": "subzero10/condition-code-lookup-module",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:subzero10/condition-code-lookup-module.git",
+                "reference": "4b69f500f67f08744c09bc2a724d8e1774d276ed"
+            },
+            "require": {
+                "ext-curl": "*",
+                "laravel/framework": "*",
+                "php": "*"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "subzero10\\ConditionCodeLookup\\Providers\\ConditionCodeLookupServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "subzero10\\ConditionCodeLookup\\": ""
+                },
+                "files": []
+            },
+            "authors": [
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pagcosma@gmail.com"
+                }
+            ],
+            "time": "2020-04-09T12:44:04+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
