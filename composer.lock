@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bd3be5672c140453785894dadd4bc3d8",
+    "content-hash": "932303bcd9b18812444421e760a5d084",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1046,7 +1046,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-02T17:20:05+00:00"
+            "time": "2020-04-09T00:38:16+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1070,6 +1070,40 @@
             "autoload": {
                 "psr-4": {
                     "CircleLinkHealth\\GeneratePatientCallDataCsv\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova card.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ]
+        },
+        {
+            "name": "circlelinkhealth/generate-success-stories-report",
+            "version": "dev-cpm-1417_V3",
+            "dist": {
+                "type": "path",
+                "url": "./nova-components/GenerateSuccessStoriesReport",
+                "reference": "647bc07cacc81615878d4210f947957280127fdc",
+                "shasum": null
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Circlelinkhealth\\GenerateSuccessStoriesReport\\CardServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Circlelinkhealth\\GenerateSuccessStoriesReport\\": "src/"
                 }
             },
             "license": [
@@ -1260,11 +1294,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.3.1",
+            "version": "1.3.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "713111d2916137fc8abc1d4887ae871cd16d1faf"
+                "reference": "908261f67fdb472428c2a5daf4ea9d3a9a288d7e"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1278,7 +1312,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-08T18:40:02+00:00"
+            "time": "2020-04-08T23:01:20+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",

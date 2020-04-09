@@ -6,50 +6,54 @@
 
 namespace App\Nova;
 
-use App\Nova\Importers\NBIPatientData as NBIPatientDataImporter;
-use App\Rules\NBIPatientDobRule;
-use CircleLinkHealth\Eligibility\Entities\PatientData;
+use App\Nova\Importers\SupplementalPatientDataImporter;
+use CircleLinkHealth\ClhImportCardExtended\ClhImportCardExtended;
+use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Sparclex\NovaImportCard\NovaImportCard;
 
-class NBIPatientData extends Resource
+class SupplementalPatientDataResource extends Resource
 {
-    public static $group = \App\Constants::NOVA_GROUP_NBI;
+    public static $group = \App\Constants::NOVA_GROUP_ENROLLMENT;
 
-    public static $importer = NBIPatientDataImporter::class;
+    public static $importer = SupplementalPatientDataImporter::class;
+    
+    public static $with = ['practice'];
 
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = PatientData::class;
-
+    public static $model = SupplementalPatientData::class;
+    
     /**
      * The columns that should be searched.
      *
      * @var array
      */
     public static $search = [
+        'practice_id',
         'dob',
         'first_name',
         'last_name',
         'mrn',
         'primary_insurance',
         'provider',
+        'location',
         'secondary_insurance',
     ];
-
+    
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
     public static $title = 'mrn';
-
+    
     /**
      * Get the actions available for the resource.
      *
@@ -68,7 +72,7 @@ class NBIPatientData extends Resource
     public function cards(Request $request)
     {
         return [
-            new NovaImportCard(self::class),
+            ClhImportCardExtended::forUser(auth()->user(), self::class)
         ];
     }
 
@@ -80,6 +84,9 @@ class NBIPatientData extends Resource
     public function fields(Request $request)
     {
         return [
+            Text::make('Practice', 'practice.display_name')
+                ->sortable()
+                ->onlyOnIndex(),
             Text::make('first_name')
                 ->sortable()
                 ->creationRules('required', 'string')

@@ -110,6 +110,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         'did_medication_recon',
         'performed_at',
         'status',
+        'success_story',
     ];
 
     protected $table = 'notes';
