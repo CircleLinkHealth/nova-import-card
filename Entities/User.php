@@ -371,6 +371,10 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *     ofPracticeRequiringSpecialBhiConsent()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isNotDemo()
  * @property-read string $name
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Nova\Actions\ActionEvent[] $actions
+ * @property-read int|null $actions_count
+ * @property-read \App\EnrollableInvitationLink $enrollmentInvitationLink
+ * @property-read \App\EnrollableRequestInfo $statusRequestsInfo
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
