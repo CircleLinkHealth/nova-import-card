@@ -28,7 +28,7 @@ class UserRoleFilter extends Filter
      * Apply the filter to the given query.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param mixed                                 $value
+     * @param mixed $value
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -44,31 +44,42 @@ class UserRoleFilter extends Filter
      */
     public function options(Request $request)
     {
-        return [
-            'CLH Super Admin'             => 'administrator',
-            'Participant'                 => 'participant',
-            'API CCD Vendor'              => 'api-ccd-vendor',
-            'API Data Consumer'           => 'api-data-consumer',
-            'Viewer'                      => 'viewer',
-            'Office Admin'                => 'office_admin',
-            'Non CCM Care Center'         => 'no-ccm-care-center',
-            'No Access'                   => 'no-access',
-            'Administrator - View Only'   => 'administrator-view-only',
-            'Program Lead'                => 'practice-lead',
-            'Registered Nurse'            => 'registered-nurse',
-            'Specialist'                  => 'specialist',
-            'Salesperson'                 => 'salesperson',
-            'Care Ambassador'             => 'care-ambassador',
-            'Care Ambassador - View Only' => 'care-ambassador-view-only',
-            'Medical Assistant'           => 'med_assistant',
-            'Provider'                    => 'provider',
-            'CLH Care Coach'              => 'care-center',
-            'Care Coach'                  => 'care-center-external',
-            'EHR Report Writer'           => 'ehr-report-writer',
-            'SAAS Admin'                  => 'saas-admin',
-            'Saas Admin - View Only'      => 'saas-admin-view-only',
-            'CCM Admin'                   => 'software-only',
-            'CLH Developer'               => 'developer',
-        ];
+        $keys   = array_keys(self::ROLES_MAP);
+        $values = array_values(self::ROLES_MAP);
+
+        $result = [];
+        $len    = sizeof($keys);
+        for ($i = 0; $i < $len; $i++) {
+            $result[$values[$i]] = $keys[$i];
+        }
+
+        return $result;
     }
+
+    public const ROLES_MAP = [
+        'administrator'             => 'CLH Super Admin',
+        'participant'               => 'Participant',
+        'api-ccd-vendor'            => 'API CCD Vendor',
+        'api-data-consumer'         => 'API Data Consumer',
+        'viewer'                    => 'Viewer',
+        'office_admin'              => 'Office Admin',
+        'no-ccm-care-center'        => 'Non CCM Care Center',
+        'no-access'                 => 'No Access',
+        'administrator-view-only'   => 'Administrator - View Only',
+        'practice-lead'             => 'Program Lead',
+        'registered-nurse'          => 'Registered Nurse',
+        'specialist'                => 'Specialist',
+        'salesperson'               => 'Salesperson',
+        'care-ambassador'           => 'Care Ambassador',
+        'care-ambassador-view-only' => 'Care Ambassador - View Only',
+        'med_assistant'             => 'Medical Assistant',
+        'provider'                  => 'Provider',
+        'care-center'               => 'CLH Care Coach',
+        'care-center-external'      => 'Care Coach',
+        'ehr-report-writer'         => 'EHR Report Writer',
+        'saas-admin'                => 'SAAS Admin',
+        'saas-admin-view-only'      => 'Saas Admin - View Only',
+        'software-only'             => 'CCM Admin',
+        'developer'                 => 'CLH Developer',
+    ];
 }
