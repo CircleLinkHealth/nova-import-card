@@ -14,8 +14,6 @@ use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
 use App\Console\Commands\CountPatientMonthlySummaryCalls;
 use App\Console\Commands\CreateApprovableBillablePatientsReport;
 use App\Console\Commands\CheckUserTotalTimeTracked;
-use App\Console\Commands\CountPatientMonthlySummaryCalls;
-use App\Console\Commands\CreateApprovableBillablePatientsReport;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesPerformanceDailyReport;
