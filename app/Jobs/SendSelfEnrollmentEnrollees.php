@@ -11,6 +11,7 @@ use App\Notifications\SendEnrollementSms;
 use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -37,7 +38,10 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
     public function handle()
     {
         if (App::environment(['local', 'review'])) {
-            $enrollees = $this->getEnrollees()->get()
+            $practiceId = Practice::whereName('demo')->firstOrFail()->id;
+            $enrollees = $this->getEnrollees()
+                ->where('practice_id', $practiceId)
+                ->get()
                 ->take(SendEnrollmentNotifications::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING)
                 ->all();
             $this->createSurveyOnlyUserFromEnrollee($enrollees);

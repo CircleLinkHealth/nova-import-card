@@ -7,7 +7,9 @@ namespace App\Console\Commands;
 
 use App\Jobs\SendSelfEnrollmentEnrollees;
 use App\Jobs\SendSelfEnrollmentUnreachablePatients;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\App;
 
 class SendEnrollmentNotifications extends Command
 {
