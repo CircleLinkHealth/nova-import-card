@@ -1,8 +1,7 @@
 <?php
 
 use CircleLinkHealth\Eligibility\Database\Seeders\EnrollmentInvitationLetterSeeder;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Illuminate\Database\Migrations\Migration;
 
 class PopulateEnrollmentLetter extends Migration
@@ -14,7 +13,9 @@ class PopulateEnrollmentLetter extends Migration
      */
     public function up()
     {
-        if ( ! isUnitTestingEnv()) {
+        $enrollmentInvitationLetter = EnrollmentInvitationLetter::first();
+//        run only if table is empty
+        if (!isUnitTestingEnv() && empty($enrollmentInvitationLetter)) {
             Artisan::call('db:seed', [
                 '--class' => EnrollmentInvitationLetterSeeder::class,
             ]);
