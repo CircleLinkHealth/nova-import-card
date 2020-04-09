@@ -37,6 +37,7 @@ class CreateCarePlansTable extends Migration
             $table->dateTime('first_printed')->nullable();
             $table->string('last_printed')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 }
