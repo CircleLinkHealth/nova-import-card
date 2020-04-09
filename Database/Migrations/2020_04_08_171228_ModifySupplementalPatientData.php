@@ -29,9 +29,9 @@ class ModifySupplementalPatientData extends Migration
             SupplementalPatientData::where('id', '>', 0)->update([
                 'practice_id' => Practice::whereName(CarePlanHelper::NBI_PRACTICE_NAME)->value('id')
                                             ]);
-        } else {
+        } elseif(SupplementalPatientData::where('id', '>', 0)->exists()) {
             SupplementalPatientData::where('id', '>', 0)->update([
-                                                'practice_id' => Practice::where('is_demo', true)->firstOrFail()
+                                                'practice_id' => Practice::where('is_demo', true)->firstOrFail() ?? null
                                             ]);
         }
 
