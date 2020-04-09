@@ -205,7 +205,7 @@ class ProcessEligibilityBatch implements ShouldQueue
      */
     private function queueClhMedicalRecordTemplateJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        if ( ! (bool) $batch->options['finishedReadingFile']) {
+        if ( ! (bool) $batch->options['finishedReadingFile'] ?? false) {
             ini_set('memory_limit', '1000M');
 
             $created = $this->createEligibilityJobsFromJsonFile($batch);
