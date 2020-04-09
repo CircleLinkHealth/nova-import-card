@@ -14,7 +14,9 @@ class AddSuccessStoryInNotes extends Migration
     public function up()
     {
         Schema::table('notes', function (Blueprint $table) {
-            $table->boolean('success_story')->default(false);
+            if (! Schema::hasColumn('notes', 'success_story')) {
+                $table->boolean('success_story')->default(false);
+            }
         });
     }
 
@@ -25,10 +27,6 @@ class AddSuccessStoryInNotes extends Migration
      */
     public function down()
     {
-        Schema::table('notes', function (Blueprint $table) {
-            if (Schema::hasColumn('notes', 'success_story')) {
-                $table->dropColumn('success_story');
-            }
-        });
+
     }
 }
