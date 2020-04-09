@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "87e9187ba093377172b7e4c753a0f04a",
+    "content-hash": "d17b596e04a13904ea5b040b205caaa2",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -417,16 +417,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.134.4",
+            "version": "3.134.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "74dc1df2cb5ee7ebbcf3203fda9c24ce7134e952"
+                "reference": "3ebf1d8b24dc38339d93d943971d7d3e1102327b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/74dc1df2cb5ee7ebbcf3203fda9c24ce7134e952",
-                "reference": "74dc1df2cb5ee7ebbcf3203fda9c24ce7134e952",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3ebf1d8b24dc38339d93d943971d7d3e1102327b",
+                "reference": "3ebf1d8b24dc38339d93d943971d7d3e1102327b",
                 "shasum": ""
             },
             "require": {
@@ -497,7 +497,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-04-06T18:14:00+00:00"
+            "time": "2020-04-08T18:27:07+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -879,7 +879,8 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
-                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8"
+                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8",
+                "shasum": null
             },
             "require": {
                 "php": ">=7.1.0"
@@ -975,11 +976,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.2.0",
+            "version": "v2.2.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "414da4a849af274f459625390c13ef0c111cf6c4"
+                "reference": "3f1c1a86d56d4a2428c568baf693fe37f5dc153d"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1013,7 +1014,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-07T14:12:18+00:00"
+            "time": "2020-04-08T15:41:30+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1054,7 +1055,8 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
-                "reference": "8b21629514943da628f3f5acb602c7610c2d9167"
+                "reference": "8b21629514943da628f3f5acb602c7610c2d9167",
+                "shasum": null
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1120,7 +1122,8 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "f0df8eb877194dea1489f870e9d57de695feff3b"
+                "reference": "376c054cfcdb0c0bdd432a8fcac7db79ba6747e5",
+                "shasum": null
             },
             "require": {
                 "php": ">=7.1.0",
@@ -1130,13 +1133,13 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CircleLinkHealth\\ImportPracticeStaffCsv\\CardServiceProvider"
+                        "Circlelinkhealth\\ImportPracticeStaffCsv\\CardServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "CircleLinkHealth\\ImportPracticeStaffCsv\\": "src/"
+                    "Circlelinkhealth\\ImportPracticeStaffCsv\\": "src/"
                 }
             },
             "license": [
@@ -1293,11 +1296,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.3.0",
+            "version": "v1.3.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "a7b0883362ee2479a77d2a3bc5463a9211dd5902"
+                "reference": "713111d2916137fc8abc1d4887ae871cd16d1faf"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1311,7 +1314,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-02T20:49:24+00:00"
+            "time": "2020-04-08T18:40:02+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -1468,16 +1471,16 @@
         },
         {
             "name": "composer/ca-bundle",
-            "version": "1.2.6",
+            "version": "1.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "47fe531de31fca4a1b997f87308e7d7804348f7e"
+                "reference": "95c63ab2117a72f48f5a55da9740a3273d45b7fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/47fe531de31fca4a1b997f87308e7d7804348f7e",
-                "reference": "47fe531de31fca4a1b997f87308e7d7804348f7e",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/95c63ab2117a72f48f5a55da9740a3273d45b7fd",
+                "reference": "95c63ab2117a72f48f5a55da9740a3273d45b7fd",
                 "shasum": ""
             },
             "require": {
@@ -1520,7 +1523,7 @@
                 "ssl",
                 "tls"
             ],
-            "time": "2020-01-13T10:02:55+00:00"
+            "time": "2020-04-08T08:27:21+00:00"
         },
         {
             "name": "consoletvs/charts",
@@ -2233,6 +2236,47 @@
                 "validator"
             ],
             "time": "2020-02-13T22:36:52+00:00"
+        },
+        {
+            "name": "epartment/nova-dependency-container",
+            "version": "1.2.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/epartment/nova-dependency-container.git",
+                "reference": "d4081499c45b86111d5d95ef3c4457db4dd4bbdf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/epartment/nova-dependency-container/zipball/d4081499c45b86111d5d95ef3c4457db4dd4bbdf",
+                "reference": "d4081499c45b86111d5d95ef3c4457db4dd4bbdf",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Epartment\\NovaDependencyContainer\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Epartment\\NovaDependencyContainer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova field container allowing to depend on other fields values",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "time": "2019-12-01T02:45:45+00:00"
         },
         {
             "name": "erusev/parsedown",
@@ -3905,16 +3949,16 @@
         },
         {
             "name": "kylekatarnls/update-helper",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kylekatarnls/update-helper.git",
-                "reference": "5786fa188e0361b9adf9e8199d7280d1b2db165e"
+                "reference": "429be50660ed8a196e0798e5939760f168ec8ce9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kylekatarnls/update-helper/zipball/5786fa188e0361b9adf9e8199d7280d1b2db165e",
-                "reference": "5786fa188e0361b9adf9e8199d7280d1b2db165e",
+                "url": "https://api.github.com/repos/kylekatarnls/update-helper/zipball/429be50660ed8a196e0798e5939760f168ec8ce9",
+                "reference": "429be50660ed8a196e0798e5939760f168ec8ce9",
                 "shasum": ""
             },
             "require": {
@@ -3946,7 +3990,7 @@
                 }
             ],
             "description": "Update helper",
-            "time": "2019-07-29T11:03:54+00:00"
+            "time": "2020-04-07T20:44:10+00:00"
         },
         {
             "name": "lab404/laravel-impersonate",
@@ -7152,20 +7196,6 @@
                 "x.509",
                 "x509"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/terrafrost",
-                    "type": "github"
-                },
-                {
-                    "url": "https://www.patreon.com/phpseclib",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/phpseclib/phpseclib",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-04-04T23:17:33+00:00"
         },
         {
@@ -8862,12 +8892,6 @@
             "keywords": [
                 "pdf-to-text",
                 "spatie"
-            ],
-            "funding": [
-                {
-                    "url": "https://spatie.be/open-source/support-us",
-                    "type": "custom"
-                }
             ],
             "time": "2020-03-11T17:11:25+00:00"
         },
@@ -15037,6 +15061,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/shared-models-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
@@ -15054,6 +15080,5 @@
         "ext-redis": "*",
         "ext-simplexml": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "platform-dev": []
 }

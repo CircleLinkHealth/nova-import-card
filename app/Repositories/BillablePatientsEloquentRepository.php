@@ -7,7 +7,6 @@
 namespace App\Repositories;
 
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
-use App\Constants;
 use App\Relationships\BillableCPMPatientRelations;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
@@ -71,38 +70,32 @@ class BillablePatientsEloquentRepository
             ->when(
                 false === $ignoreWith,
                 function ($q) use ($month, $practiceId) {
-                    return $q->with(
-                        [
-                            'patient' => function ($q) use ($month, $practiceId) {
-                                $q->with(
-                                    [
-                                        'patientInfo',
-                                        'primaryPractice',
-                                        'careTeamMembers' => function ($q) {
-                                            $q->where('type', '=', 'billing_provider');
-                                        },
-                                    ]
-                                );
-                            },
-                            'chargeableServices',
-                        ]
-                    );
+                    return $q->with([
+                        'patient' => function ($q) use ($month, $practiceId) {
+                            $q->with([
+                                'patientInfo',
+                                'primaryPractice.chargeableServices',
+                                'careTeamMembers' => function ($q) {
+                                    $q->where('type', '=', 'billing_provider');
+                                },
+                                'ccdProblems' => function ($problem) {
+                                    $problem->with(['cpmProblem', 'codes', 'icd10Codes']);
+                                },
+                            ]);
+                        },
+                        'chargeableServices',
+                    ]);
                 }
             )
             ->whereHas(
                 'patient',
                 function ($q) use ($practiceId) {
-                    $q->whereHas(
-                        'practices',
-                        function ($q) use ($practiceId) {
-                            $q->where('id', '=', $practiceId);
-                        }
-                    )->orWhereHas(
-                                                   'primaryPractice',
-                                                   function ($q) use ($practiceId) {
-                                                       $q->where('id', '=', $practiceId);
-                                                   }
-                                               );
+                    $q->whereHas('practices', function ($q) use ($practiceId) {
+                        $q->where('id', '=', $practiceId);
+                    })
+                        ->orWhereHas('primaryPractice', function ($q) use ($practiceId) {
+                          $q->where('id', '=', $practiceId);
+                      });
                 }
             );
 
