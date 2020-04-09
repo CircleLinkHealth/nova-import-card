@@ -7,6 +7,7 @@
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Faker\Factory;
 use Illuminate\Database\Seeder;
 
@@ -22,9 +23,8 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
      */
     public function run()
     {
+
         $faker = Factory::create();
-        $mothStart = Carbon::parse(now())->copy()->startOfMonth()->toDateTimeString();
-        $monthEnd = Carbon::parse($mothStart)->copy()->endOfMonth()->toDateTimeString();
         $practice = Practice::firstOrCreate(
             [
                 'name' => 'demo'
@@ -38,6 +38,38 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 'outgoing_phone_number' => +18886958537
             ]
         );
+        $mothStart = Carbon::parse(now())->copy()->startOfMonth()->toDateTimeString();
+        $monthEnd = Carbon::parse($mothStart)->copy()->endOfMonth()->toDateTimeString();
+        $provider = $this->createUser($practice->id, 'provider', 'enrolled');
+
+        $n = 1;
+        $limit = 5;
+        while ($n <= $limit) {
+             Enrollee::create(
+                [
+                    'provider_id' => $provider->id,
+                    'practice_id' => $practice->id,
+                    'mrn' => $faker->numberBetween(6, 6),
+                    'first_name' => $faker->firstName,
+                    'last_name' => $faker->lastName,
+                    'address' => $faker->address,
+                    'city' => $faker->city,
+                    'state' => $faker->state,
+                    'zip' => 44508,
+                    'primary_phone' => $faker->phoneNumber,
+                    'other_phone' => $faker->phoneNumber,
+                    'home_phone' => $faker->phoneNumber,
+                    'cell_phone' => $faker->phoneNumber,
+                    'dob' => $faker->date('Y-m-d'),
+                    'lang' => 'EN',
+                    'status' => Enrollee::TO_CALL,
+                    'primary_insurance' => 'test',
+                    'secondary_insurance' => 'test',
+                    'email' => $faker->email,
+                    'referring_provider_name' => 'Dr. Demo',
+                ]
+            );
+        }
 
         $unreachablePatients = User::with('patientInfo')
             ->whereDoesntHave('enrollmentInvitationLink')
@@ -60,6 +92,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 ++$n;
             }
         }
+
 
     }
 }
