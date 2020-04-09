@@ -25,7 +25,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         $faker = Factory::create();
         $mothStart = Carbon::parse(now())->copy()->startOfMonth()->toDateTimeString();
         $monthEnd = Carbon::parse($mothStart)->copy()->endOfMonth()->toDateTimeString();
-//        $practice = Practice::where('name', '=', 'demo')->first();
+//        $practice = Practice::where('name', '=', 'demo')->firstOrFail();
 
         $unreachablePatients = User::with('patientInfo')
             ->whereDoesntHave('enrollmentInvitationLink')
@@ -36,20 +36,18 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 ]);
             })->exists();
 
-        if (true) {
+        if (!$unreachablePatients) {
             $n = 1;
             $limit = 5;
             while ($n <= $limit) {
                 $user = $this->createUser(8, 'participant', self::CCM_STATUS_UNREACHABLE);
                 $user->patientInfo()->update([
-                    'birth_date' => $faker->date(),
+                    'birth_date' => $faker->date('Y-m-d'),
                     'date_unreachable' => now()
                 ]);
                 ++$n;
-//                $this->command->info("$n Patients");
             }
         }
 
-//        $this->command->info('Finished but no patients needed to be create');
     }
 }
