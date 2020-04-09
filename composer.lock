@@ -1089,7 +1089,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "f0df8eb877194dea1489f870e9d57de695feff3b",
+                "reference": "376c054cfcdb0c0bdd432a8fcac7db79ba6747e5",
                 "shasum": null
             },
             "require": {
@@ -1100,13 +1100,13 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CircleLinkHealth\\ImportPracticeStaffCsv\\CardServiceProvider"
+                        "Circlelinkhealth\\ImportPracticeStaffCsv\\CardServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "CircleLinkHealth\\ImportPracticeStaffCsv\\": "src/"
+                    "Circlelinkhealth\\ImportPracticeStaffCsv\\": "src/"
                 }
             },
             "license": [
@@ -15028,6 +15028,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/shared-models-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
