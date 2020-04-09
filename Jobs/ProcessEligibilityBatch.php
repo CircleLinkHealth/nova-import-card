@@ -72,9 +72,6 @@ class ProcessEligibilityBatch implements ShouldQueue
             case EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS:
                 $this->batch = $this->queueGoogleDriveJobs($this->batch);
                 break;
-            case EligibilityBatch::TYPE_PHX_DB_TABLES:
-                $this->batch = $this->queuePHXJobs($this->batch);
-                break;
             case EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE:
                 $this->batch = $this->queueClhMedicalRecordTemplateJobs($this->batch);
                 break;
@@ -280,30 +277,7 @@ class ProcessEligibilityBatch implements ShouldQueue
 
         return $batch;
     }
-
-    /**
-     * @param $batch
-     */
-    private function queuePHXJobs($batch): EligibilityBatch
-    {
-        $jobsToBeProcessedExist = EligibilityJob::whereBatchId($batch->id)
-            ->where('status', '<', 2)
-            ->exists();
-
-        if ($jobsToBeProcessedExist) {
-            $batch->status = EligibilityBatch::STATUSES['processing'];
-        } elseif ( ! PhoenixHeartName::where('processed', '=', false)->exists()) {
-            $batch->status = EligibilityBatch::STATUSES['complete'];
-        }
-
-        $batch->save();
-
-        MakePhoenixHeartWelcomeCallList::dispatch($batch)
-            ->onQueue('low');
-
-        return $batch->fresh();
-    }
-
+    
     private function queueSingleCsvJobs(EligibilityBatch $batch): EligibilityBatch
     {
         if (array_keys_exist(['folder', 'fileName'], $batch->options) && !! $batch->options['finishedReadingFile'] !== true) {

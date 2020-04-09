@@ -162,16 +162,18 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
      */
     public function checkDuplicity()
     {
-        $demos = $this->demographics()->first();
+        $newUser = User::ofType('participant')->find($this->patient_id);
 
-        if ($demos) {
+        if ($newUser) {
+            $this->duplicate_id = null;
+            
             $practiceId = $this->practice_id;
 
-            $query = User::whereFirstName($demos->first_name)
-                ->whereLastName($demos->last_name)
-                ->whereHas('patientInfo', function ($q) use ($demos) {
-                    $q->whereBirthDate($demos->dob);
-                });
+            $query = User::whereFirstName($newUser->first_name)
+                ->whereLastName($newUser->last_name)
+                ->whereHas('patientInfo', function ($q) use ($newUser) {
+                    $q->where('birth_date', $newUser->getBirthDate());
+                })->where('id','!=', $newUser->id);
             if ($practiceId) {
                 $query = $query->where('program_id', $practiceId);
             }
@@ -186,7 +188,7 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
 
             $patient = Patient::whereHas('user', function ($q) use ($practiceId) {
                 $q->where('program_id', $practiceId);
-            })->whereMrnNumber($demos->mrn_number)->first();
+            })->whereMrnNumber($newUser->getMRN())->whereNotNull('mrn_number')->where('user_id','!=', $newUser->id)->first();
 
             if ($patient) {
                 $this->duplicate_id = $patient->user_id;

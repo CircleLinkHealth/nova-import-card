@@ -323,7 +323,7 @@ class EligibilityChecker
     {
         $cpmProblems = \Cache::remember(
             'all_cpm_problems',
-            5,
+            2,
             function () {
                 return CpmProblem::all()
                                  ->transform(
@@ -350,7 +350,7 @@ class EligibilityChecker
         
         $icd9Map = \Cache::remember(
             'map_icd_9_to_cpm_problems',
-            5,
+            2,
             function () {
                 return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', Constants::ICD9);
             }
@@ -358,7 +358,7 @@ class EligibilityChecker
         
         $icd10Map = \Cache::remember(
             'map_icd_10_to_cpm_problems',
-            5,
+            2,
             function () {
                 return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', Constants::ICD10);
             }
@@ -366,7 +366,7 @@ class EligibilityChecker
         
         $snomedMap = \Cache::remember(
             'map_snomed_to_cpm_problems',
-            5,
+            2,
             function () {
                 return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', Constants::SNOMED);
             }
@@ -374,7 +374,7 @@ class EligibilityChecker
         
         $cpmProblemsMap = \Cache::remember(
             'map_name_to_cpm_problems',
-            5,
+            2,
             function () use ($cpmProblems) {
                 return $cpmProblems->pluck('name', 'id');
             }
@@ -382,7 +382,7 @@ class EligibilityChecker
         
         $allBhiProblemIds = \Cache::remember(
             'bhi_cpm_problem_ids',
-            5,
+            2,
             function () use ($cpmProblems) {
                 return $cpmProblems->where('is_behavioral', '=', true)->pluck('id');
             }
@@ -772,7 +772,8 @@ class EligibilityChecker
         $args['provider_id'] = $this->practice->user_id;
         
         if (empty($args['email'])) {
-            $args['email'] = 'noEmail@noEmail.com';
+            $timestamp = now()->timestamp;
+            $args['email'] = "eJ_{$this->eligibilityJob->id}_$timestamp@cpm.com";
         }
         
         $args['address']   = $args['street'] ?? $args['address_line_1'] ?? '';

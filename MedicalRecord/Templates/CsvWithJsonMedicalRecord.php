@@ -5,7 +5,7 @@ namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem;
 
-class MarillacMedicalRecord extends BaseMedicalRecordTemplate
+class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 {
     /**
      * @var array
@@ -19,6 +19,10 @@ class MarillacMedicalRecord extends BaseMedicalRecordTemplate
     
     public function fillAllergiesSection(): array
     {
+        if ( ! array_key_exists('allergies_string', $this->data)) {
+            return [];
+        }
+        
         return collect(collect(json_decode($this->data['allergies_string']))->first())
             ->map(
                 function ($allergy) {
@@ -252,6 +256,10 @@ class MarillacMedicalRecord extends BaseMedicalRecordTemplate
     
     public function fillMedicationsSection(): array
     {
+        if ( ! array_key_exists('medications_string', $this->data)) {
+            return [];
+        }
+    
         return collect(collect(json_decode($this->data['medications_string']))->first())
             ->map(
                 function ($medication) {
@@ -332,6 +340,10 @@ class MarillacMedicalRecord extends BaseMedicalRecordTemplate
     
     public function fillProblemsSection(): array
     {
+        if ( ! array_key_exists('problems_string', $this->data)) {
+            return [];
+        }
+    
         return collect(collect(json_decode($this->data['problems_string']))->first())
             ->map(
                 function ($problem) {
@@ -424,6 +436,6 @@ class MarillacMedicalRecord extends BaseMedicalRecordTemplate
     
     public function getType(): string
     {
-        return 'marillac-clinic-inc';
+        return 'csv-with-json';
     }
 }

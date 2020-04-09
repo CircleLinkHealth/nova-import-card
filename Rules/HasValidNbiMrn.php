@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Rules;
 
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
-use CircleLinkHealth\Eligibility\Entities\PatientData;
+use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Validation\Rule;
 
@@ -51,10 +51,11 @@ class HasValidNbiMrn implements Rule
         if (CarePlanHelper::NBI_PRACTICE_NAME !== $this->patientUser->primaryPractice->name) {
             return true;
         }
-        $dataFromPractice = PatientData::where('first_name', 'like', "{$this->patientUser->first_name}%")
-            ->where('last_name', $this->patientUser->last_name)
-            ->where('dob', $this->patientUser->getBirthDate())
-            ->first();
+        $dataFromPractice = SupplementalPatientData::where('first_name', 'like', "{$this->patientUser->first_name}%")
+                                                   ->where('last_name', $this->patientUser->last_name)
+                                                   ->where('practice_id', $this->patientUser->primaryPractice->id)
+                                                   ->where('dob', $this->patientUser->getBirthDate())
+                                                   ->first();
         if ( ! $dataFromPractice) {
             return false;
         }
