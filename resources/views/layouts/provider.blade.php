@@ -80,6 +80,7 @@
 <script type="text/javascript" src="{{mix('compiled/js/app-provider-ui.js')}}"></script>
 <script type="text/javascript" src="{{ mix('compiled/js/issue-688.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.min.js" integrity="sha256-fOPHmaamqkHPv4QYGxkiSKm7O/3GAJ4554pQXYleoLo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
 
 @stack('scripts')
 
