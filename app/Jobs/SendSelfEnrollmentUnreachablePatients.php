@@ -10,6 +10,7 @@ use App\Console\Commands\SendEnrollmentNotifications;
 use App\Notifications\SendEnrollementSms;
 use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -48,7 +49,11 @@ class SendSelfEnrollmentUnreachablePatients implements ShouldQueue
 
         //    Just for testing
         if (App::environment(['local', 'review', 'staging'])) {
-            $patients = $this->getUnreachablePatients($mothStart, $monthEnd)->get()->take(SendEnrollmentNotifications::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING);
+            $practiceId = Practice::where('name', '=', 'demo')->firstOrFail()->id;
+            $patients = $this->getUnreachablePatients($mothStart, $monthEnd)
+                ->where('program_id', $practiceId)
+                ->get()
+                ->take(SendEnrollmentNotifications::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING);
             foreach ($patients->all() as $patient) {
                 /** @var User $patient */
                 if ( ! $patient->checkForSurveyOnlyRole()) {

@@ -45,11 +45,11 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         $n = 1;
         $limit = 5;
         while ($n <= $limit) {
-             Enrollee::create(
+            Enrollee::create(
                 [
                     'provider_id' => $provider->id,
                     'practice_id' => $practice->id,
-                    'mrn' => $faker->numberBetween(6, 6),
+                    'mrn' => $faker->randomNumber(6),
                     'first_name' => $faker->firstName,
                     'last_name' => $faker->lastName,
                     'address' => $faker->address,
@@ -69,16 +69,20 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                     'referring_provider_name' => 'Dr. Demo',
                 ]
             );
+
+            ++$n;
         }
 
         $unreachablePatients = User::with('patientInfo')
+            ->where('program_id', $practice->id)
             ->whereDoesntHave('enrollmentInvitationLink')
             ->whereHas('patientInfo', function ($patient) use ($mothStart, $monthEnd) {
                 $patient->where('ccm_status', self::CCM_STATUS_UNREACHABLE)->where([
                     ['date_unreachable', '>=', $mothStart],
                     ['date_unreachable', '<=', $monthEnd],
                 ]);
-            })->exists();
+            })
+            ->exists();
 
         if (!$unreachablePatients) {
             $n = 1;
