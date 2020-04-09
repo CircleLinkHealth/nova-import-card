@@ -3,6 +3,7 @@
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
+
 namespace CircleLinkHealth\Eligibility\Database\Seeders;
 
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -11,8 +12,6 @@ use Illuminate\Database\Seeder;
 
 class EnrollmentInvitationLetterSeeder extends Seeder
 {
-//    @todo: move this to eligibility Module AND put in a migration
-
     /**
      * Run the database seeds.
      *
@@ -20,23 +19,26 @@ class EnrollmentInvitationLetterSeeder extends Seeder
      */
     public function run()
     {
-        $providerLastName = EnrollmentInvitationLetter::PROVIDER_LAST_NAME;
-        $locationEnrollButton = EnrollmentInvitationLetter::LOCATION_ENROLL_BUTTON;
-        $careAmbassadorPhone = EnrollmentInvitationLetter::CARE_AMBASSADOR_NUMBER;
-        $signatoryName = EnrollmentInvitationLetter::SIGNATORY_NAME;
-        $practiceName = EnrollmentInvitationLetter::PRACTICE_NAME;
-        $customerSignaturePic = EnrollmentInvitationLetter::CUSTOMER_SIGNATURE_PIC;
+        $enrollmentInvitationLetters = EnrollmentInvitationLetter::first();
+//        Run only if table is empty.
+        if (empty($enrollmentInvitationLetters)) {
+            $providerLastName = EnrollmentInvitationLetter::PROVIDER_LAST_NAME;
+            $locationEnrollButton = EnrollmentInvitationLetter::LOCATION_ENROLL_BUTTON;
+            $careAmbassadorPhone = EnrollmentInvitationLetter::CARE_AMBASSADOR_NUMBER;
+            $signatoryName = EnrollmentInvitationLetter::SIGNATORY_NAME;
+            $practiceName = EnrollmentInvitationLetter::PRACTICE_NAME;
+            $customerSignaturePic = EnrollmentInvitationLetter::CUSTOMER_SIGNATURE_PIC;
 
-        $practices = Practice::get();
+            $practices = Practice::get();
 
-        foreach ($practices as $practice) {
-            EnrollmentInvitationLetter::updateOrCreate(
-                ['practice_id' => $practice->id],
-                [
-                    'letter' => json_encode([
-                        'page_1' => [
-                            'identifier' => 'letter_main_subject',
-                            'body' => "<p>Please note that Dr. $providerLastName invested in a new wellness program called the
+            foreach ($practices as $practice) {
+                EnrollmentInvitationLetter::updateOrCreate(
+                    ['practice_id' => $practice->id],
+                    [
+                        'letter' => json_encode([
+                            'page_1' => [
+                                'identifier' => 'letter_main_subject',
+                                'body' => "<p>Please note that Dr. $providerLastName invested in a new wellness program called the
                         <strong>Personalized<br>
                             Care Program.</strong></p>
                     <p>It was created to help people living with conditions like diabetes, heart disease and kidney
@@ -84,11 +86,11 @@ class EnrollmentInvitationLetterSeeder extends Seeder
                     <br>
                     $signatoryName
                     $practiceName <br>",
-                        ],
+                            ],
 
-                        'page_2' => [
-                            'identifier' => 'faq',
-                            'body' => " <p style=\"text-decoration: underline;\"><strong>Frequently Asked Questions</strong></p>
+                            'page_2' => [
+                                'identifier' => 'faq',
+                                'body' => " <p style=\"text-decoration: underline;\"><strong>Frequently Asked Questions</strong></p>
                         <p><strong>What is a chronic illness?</strong></p>
                         <p>A chronic illness is a long-lasting health problem that can often be controlled with proper treatment and management. A few examples include asthma, diabetes, arthritis, hypertension, and heart disease.</p>
                         <p><strong>What is the Personalized Care Program?</strong></p>
@@ -101,11 +103,11 @@ class EnrollmentInvitationLetterSeeder extends Seeder
                         <p>Great. Let's keep it that way. One of the reasons your doctor is inviting you to participate in this program is to help you get and stay as healthy as possible. The program also focuses on things like helping you keep on top of preventive care and helping you find valuable healthcare resources and community services.</p>
                         <p><strong>What does the program cost?</strong></p>
                         <p>The Personalized Care Program is a benefit under Medicare Part B. However, there may be a co-payment for this benefit. If you have a secondary health plan, it will likely cover the remainder. For example, if you have both Medicare and Medicaid, there is $0 out of pocket cost. You can contact your health plan if you&rsquo;re not sure of your coverage or you can ask our care coordinators for assistance when they reach out to you.&nbsp;</p> <br>",
-                        ],
+                            ],
 
-                        'page_3' => [
-                            'identifier' => 'faq',
-                            'body' => " <p><strong>What are the benefits of signing up for the Personalized Care Program?</strong></p>
+                            'page_3' => [
+                                'identifier' => 'faq',
+                                'body' => " <p><strong>What are the benefits of signing up for the Personalized Care Program?</strong></p>
                         <p>When you sign up, you will be taking an important step toward living a healthier life. Benefits of the program include:</p>
                         <ul>
                             <li>Access to a 24 hours a day / 7 days a week care hotline</li>
@@ -121,10 +123,13 @@ class EnrollmentInvitationLetterSeeder extends Seeder
                         <p><strong>How do I sign up?</strong></p>
                         <p>If you would like additional information, or are interested in enrolling today, please call <strong>$careAmbassadorPhone.</strong></p>
                         <p>Your doctor can count on them to look out for you between visits and make sure that you get the information, appointments, treatments and care you need when you need it.</p> <br>",
-                        ],
-                    ]),
-                ]
-            );
+                            ],
+                        ]),
+                    ]
+                );
+            }
         }
+
+
     }
 }
