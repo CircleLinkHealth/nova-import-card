@@ -27,11 +27,11 @@ class ImportAllergies extends BaseCcdaImportTask
             $new = $this->transform($allergy);
         
             if ( ! $this->validate($new)) {
-                null;
+                return null;
             }
         
             if (empty($new['allergen_name'])) {
-                null;
+                return null;
             }
         
             Allergy::updateOrCreate(
