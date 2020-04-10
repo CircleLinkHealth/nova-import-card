@@ -36,6 +36,11 @@ class ImportInsurances extends BaseCcdaSectionImporter
                             ],
                             $new)
             );
+    
+            if ($insurance->wasRecentlyCreated) {
+                $insurance->approved = false;
+                $insurance->save();
+            }
         });
     }
 }
