@@ -4,10 +4,10 @@
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 
-use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaSectionImporter;
+use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
 
-class ImportInsurances extends BaseCcdaSectionImporter
+class ImportInsurances extends BaseCcdaImportTask
 {
     /**
      * @param object $insurance

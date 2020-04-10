@@ -2,10 +2,10 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
-use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaSectionImporter;
+use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 
-class FirstOrCreateCarePlan extends BaseCcdaSectionImporter
+class FirstOrCreateCarePlan extends BaseCcdaImportTask
 {
     protected function import()
     {

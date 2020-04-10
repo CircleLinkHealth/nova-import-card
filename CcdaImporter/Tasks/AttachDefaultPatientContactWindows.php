@@ -6,11 +6,11 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaSectionImporter;
+use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 
-class AttachDefaultPatientContactWindows extends BaseCcdaSectionImporter
+class AttachDefaultPatientContactWindows extends BaseCcdaImportTask
 {
     /** @var Enrollee */
     private $enrollee;

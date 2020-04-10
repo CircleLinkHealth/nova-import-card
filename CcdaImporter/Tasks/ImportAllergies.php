@@ -4,12 +4,12 @@
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 
-use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaSectionImporter;
+use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\SharedModels\Entities\Allergy;
 use CircleLinkHealth\SharedModels\Entities\AllergyLog;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 
-class ImportAllergies extends BaseCcdaSectionImporter
+class ImportAllergies extends BaseCcdaImportTask
 {
     /**
      * @param AllergyLog $allergy

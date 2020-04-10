@@ -7,12 +7,12 @@
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\CcdaImporter\Contracts\CcdaSectionImporter;
+use CircleLinkHealth\Eligibility\CcdaImporter\Contracts\CcdaImportTask;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\CcdToLogTranformer;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 
-abstract class BaseCcdaSectionImporter implements CcdaSectionImporter
+abstract class BaseCcdaImportTask implements CcdaImportTask
 {
     /**
      * @var CcdToLogTranformer

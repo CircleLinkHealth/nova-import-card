@@ -11,11 +11,11 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\Validator;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 /**
- * This is a Section CcdaSectionImporter. It allows for each Health Section to be able to be imported for QA.
+ * This is a Section CcdaImportTask. It allows for each Health Section to be able to be imported for QA.
  *
- * Interface CcdaSectionImporter
+ * Interface CcdaImportTask
  */
-interface CcdaSectionImporter
+interface CcdaImportTask
 {
     public function chooseValidator($item);
     

@@ -5,9 +5,9 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 
 use CircleLinkHealth\Customer\Entities\CarePerson;
-use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaSectionImporter;
+use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 
-class ImportBillingProvider extends BaseCcdaSectionImporter
+class ImportBillingProvider extends BaseCcdaImportTask
 {
     protected function import()
     {
