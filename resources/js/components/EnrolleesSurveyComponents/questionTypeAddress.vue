@@ -20,7 +20,6 @@
 
             </div>
         </div>
-
         <br>
         <!--next button-->
         <div :class="isLastQuestion ? 'text-center' : 'text-left'">
