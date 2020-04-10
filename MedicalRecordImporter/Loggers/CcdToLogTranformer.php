@@ -28,7 +28,7 @@ class CcdToLogTranformer
      *
      * @return array
      */
-    public function allergy($allergy)
+    public function allergy(object $allergy)
     {
         return [
             'start'         => $allergy->date_range->start,
