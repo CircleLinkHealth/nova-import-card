@@ -64,6 +64,7 @@ class CcdaImporterTest extends CustomerTestCase
                 'policy_id'  => null,
                 'relation'   => null,
                 'subscriber' => null,
+                'approved'   => false,
             ]
         );
         
@@ -75,6 +76,7 @@ class CcdaImporterTest extends CustomerTestCase
                 'policy_id'  => null,
                 'relation'   => null,
                 'subscriber' => null,
+                'approved'   => false,
             ]
         );
         
