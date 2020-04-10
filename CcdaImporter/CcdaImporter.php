@@ -20,6 +20,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\FirstOrCreateCarePlan;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportAllergies;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportInsurances;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportMedications;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
@@ -208,43 +209,7 @@ class CcdaImporter
      */
     public function storeMedications()
     {
-        if (empty($this->meds)) {
-            return $this;
-        }
-        
-        $medicationGroups = [];
-        
-        foreach ($this->meds as $medication) {
-            if ( ! $medication->name && ! $medication->sig) {
-                continue;
-            }
-            $ccdMedication = Medication::updateOrCreate(
-                [
-                    'patient_id' => $this->patient->id,
-                    'name'       => $medication->name,
-                    'sig'        => $medication->sig,
-                ],
-                [
-                    'ccd_medication_log_id' => $medication->ccd_medication_log_id,
-                    'medication_import_id'  => $medication->id,
-                    'medication_group_id'   => $medication->medication_group_id,
-                    'code'                  => $medication->code,
-                    'code_system'           => $medication->code_system,
-                    'code_system_name'      => $medication->code_system_name,
-                ]
-            );
-            
-            $medicationGroups[] = $medication->medication_group_id;
-        }
-        
-        $misc = CpmMisc::whereName(CpmMisc::MEDICATION_LIST)
-                       ->first();
-        
-        if ( ! $this->hasMisc($this->patient, $misc)) {
-            $this->patient->cpmMiscs()->attach(optional($misc)->id);
-        }
-        
-        $this->patient->cpmMedicationGroups()->sync(array_filter($medicationGroups));
+        ImportMedications::for($this->patient, $this->ccda);
         
         return $this;
     }

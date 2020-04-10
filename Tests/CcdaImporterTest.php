@@ -7,6 +7,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachLocation;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportAllergies;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportInsurances;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportMedications;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
 use Tests\CustomerTestCase;
 use Tests\TestCase;
@@ -88,5 +89,16 @@ class CcdaImporterTest extends CustomerTestCase
         AttachLocation::for($this->patient(), $ccda);
         
         $this->assertTrue($this->patient()->locations()->where('locations.id', $this->location()->id)->exists());
+    }
+    
+    public function test_it_imports_csv_ccda_medications()
+    {
+        $ccda = FakeCalvaryCcda::create();
+        
+        ImportMedications::for($this->patient(), $ccda);
+        
+        $meds = $this->patient()->ccdMedications()->get();
+        
+        $this->assertCount(28, $meds);
     }
 }

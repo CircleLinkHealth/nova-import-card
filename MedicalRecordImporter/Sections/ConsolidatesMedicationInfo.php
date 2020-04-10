@@ -19,11 +19,11 @@ trait ConsolidatesMedicationInfo
      * Consolidate Medication info from BB Medication Product and BB Medication Product Translation sections.
      * Sometimes info is in product, or translation or both.
      *
-     * @param MedicationLog $medicationLog
+     * @param object $medicationLog
      *
      * @return mixed
      */
-    private function consolidateMedicationInfo(MedicationLog $medicationLog)
+    private function consolidateMedicationInfo(object $medicationLog)
     {
         $consolidatedMedication = new \stdClass();
 
@@ -46,7 +46,7 @@ trait ConsolidatesMedicationInfo
 
         $consolidatedMedication->cons_code             = $medicationLog->product_code;
         $consolidatedMedication->cons_code_system      = $medicationLog->product_code_system;
-        $consolidatedMedication->cons_code_system_name = $medicationLog->product_code_system_name;
+        $consolidatedMedication->cons_code_system_name = $medicationLog->product_code_system_name ?? null;
         $consolidatedMedication->cons_name             = $medicationLog->reference_title;
 
         $consolidatedMedication = $this->consolidateName($consolidatedMedication, $medicationLog);
