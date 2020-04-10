@@ -730,36 +730,6 @@
             script: function () {
                 return this.patient_data.script;
             },
-            home_phone: function () {
-                return this.enrollee.home_phone;
-            },
-            cell_phone: function () {
-                return this.enrollee.cell_phone;
-            },
-            other_phone: function () {
-                return this.enrollee.other_phone;
-            },
-            address: function () {
-                return this.enrollee.address || 'N/A';
-            },
-            address_2: function () {
-                return this.enrollee.address_2 || 'N/A';
-            },
-            state: function () {
-                return this.enrollee.state || 'N/A';
-            },
-            city: function () {
-                return this.enrollee.city || 'N/A';
-            },
-            zip: function () {
-                return this.enrollee.zip || 'N/A';
-            },
-            email: function () {
-                return this.enrollee.email || 'N/A';
-            },
-            dob: function () {
-                return this.enrollee.dob || 'N/A';
-            },
             last_call_outcome: function () {
                 return this.enrollee.last_call_outcome ? this.enrollee.last_call_outcome : '';
             },
@@ -985,16 +955,15 @@
                 csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 userFullName: userFullName,
 
-                // home_phone: '',
-                // cell_phone: '',
-                // other_phone: '',
-                // address: '',
-                // address_2: '',
-                // state: '',
-                // city: '',
-                // zip: '',
-                // email: '',
-                // dob: '',
+                home_phone: '',
+                cell_phone: '',
+                other_phone: '',
+                address: '',
+                address_2: '',
+                city: '',
+                zip: '',
+                email: '',
+                dob: '',
 
                 disableHome: false,
                 disableCell: false,
@@ -1032,8 +1001,7 @@
             };
         },
         mounted: function () {
-            this.patient_data = this.patientData;
-
+            this.setPatientData(this.patientData);
             this.family_loading = true;
 
             this.start_time = Date.now();
@@ -1124,6 +1092,19 @@
             },
             submitPendingForm() {
                 this.pending_form.submit();
+            },
+            setPatientData(data){
+                this.patient_data = data;
+                this.home_phone = data.enrollee.home_phone
+                this.cell_phone = data.enrollee.cell_phone
+                this.other_phone = data.enrollee.other_phone
+                this.address = data.enrollee.address || 'N/A'
+                this.address_2 = data.enrollee.address_2 || 'N/A'
+                this.city = data.enrollee.city || 'N/A'
+                this.zip = data.enrollee.zip || 'N/A'
+                this.state = data.enrollee.state || 'N/A'
+                this.email = data.enrollee.email || 'N/A'
+                this.dob = data.enrollee.dob || 'N/A'
             },
             getSuggestedFamilyMembers() {
                 return this.axios

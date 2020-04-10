@@ -40,17 +40,14 @@
             };
         },
         mounted: function () {
-
             this.retrievePatient();
-
-
         },
         methods: {
             retrievePatient(){
                 return this.axios
                     .get(rootUrl('/enrollment/show'))
                     .then(response => {
-                        this.patientData = response.data;
+                        this.patientData = response.data.data;
                     })
                     .catch(err => {
                        //to implement

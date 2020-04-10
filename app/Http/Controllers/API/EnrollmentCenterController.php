@@ -7,6 +7,7 @@
 namespace App\Http\Controllers\API;
 
 use App\CareAmbassadorLog;
+use App\Http\Resources\Enrollable;
 use App\Services\Enrollment\EnrolleeCallQueue;
 use App\Services\Enrollment\SuggestEnrolleeFamilyMembers;
 use App\TrixField;
@@ -22,25 +23,14 @@ class EnrollmentCenterController extends ApiController
 
     public function show()
     {
-        $careAmbassador = auth()->user()->careAmbassador;
+        //todo: WHAT IF NO ENROLLABLE? deal in front end?
 
-        $enrollee = EnrolleeCallQueue::getNext($careAmbassador);
+        //todo: middleware for careAmbassador
 
-        $provider = $enrollee->provider;
-
-        //todo: deal with this later
-//        if (null == $enrollee) {
-//            //no calls available
-//            return view('enrollment-ui.no-available-calls');
-//        }
-
-        return $this->json([
-            'enrollee' => $enrollee,
-            'report'   => CareAmbassadorLog::createOrGetLogs($careAmbassador->id),
-            'script'   => TrixField::careAmbassador($enrollee->lang)->first(),
-            'provider' => $provider,
-            'providerPhone' => $provider->getPhone(),
-            'hasTips' => !! $enrollee->practice->enrollmentTips
-        ]);
+        return Enrollable::make(
+            EnrolleeCallQueue::getNext(
+                auth()->user()->careAmbassador
+            )
+        );
     }
 }
