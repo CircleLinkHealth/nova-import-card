@@ -15,9 +15,10 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachDefaultPatientContactWindows;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachLocation;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\FirstOrCreateCarePlan;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportAllergies;
-use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportBillingProvider;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportInsurances;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
@@ -84,7 +85,7 @@ class CcdaImporter
      */
     public function createNewCarePlan()
     {
-        $this->carePlan = FirstOrCreateCarePlan::for($this->patient);
+        $this->carePlan = FirstOrCreateCarePlan::for($this->patient, $this->ccda);
         
         return $this;
     }
@@ -124,7 +125,7 @@ class CcdaImporter
      */
     public function storeBillingProvider()
     {
-        ImportBillingProvider::for($this->patient, $this->ccda);
+        AttachBillingProvider::for($this->patient, $this->ccda);
         
         return $this;
     }
@@ -195,11 +196,7 @@ class CcdaImporter
      */
     public function storeLocation()
     {
-        $locationId = $this->imr->location_id ?? null;
-        
-        if ($locationId) {
-            $this->patient->attachLocation($locationId);
-        }
+        AttachLocation::for($this->patient, $this->ccda);
         
         return $this;
     }

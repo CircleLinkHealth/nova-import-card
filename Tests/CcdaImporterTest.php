@@ -3,8 +3,9 @@
 namespace CircleLinkHealth\Eligibility\Tests;
 
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachDefaultPatientContactWindows;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachLocation;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportAllergies;
-use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportBillingProvider;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportInsurances;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
 use Tests\CustomerTestCase;
@@ -30,7 +31,7 @@ class CcdaImporterTest extends CustomerTestCase
     {
         $ccda = FakeCalvaryCcda::create(['billing_provider_id' => $this->provider()->id]);
         
-        ImportBillingProvider::for($this->patient(), $ccda);
+        AttachBillingProvider::for($this->patient(), $ccda);
         
         $this->assertTrue($this->provider()->id === $this->patient()->billingProviderUser()->id);
     }
@@ -79,6 +80,13 @@ class CcdaImporterTest extends CustomerTestCase
                 'approved'   => false,
             ]
         );
+    }
+    
+    public function test_it_attaches_location() {
+        $ccda = FakeCalvaryCcda::create(['location_id' => $this->location()->id]);
+    
+        AttachLocation::for($this->patient(), $ccda);
         
+        $this->assertTrue($this->patient()->locations()->where('locations.id', $this->location()->id)->exists());
     }
 }
