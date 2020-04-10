@@ -17,7 +17,11 @@ class NameNotNull implements SectionValidator
 
     public function shouldValidate($item): bool
     {
-        $keys = collect($item->toArray())->keys();
+        if (method_exists($item, 'toArray')) {
+            $keys = collect($item->toArray())->keys();
+        } elseif (is_array($item)) {
+            $keys = collect(array_keys($item));
+        }
 
         return $keys->contains('translation_name') || $keys->contains('reference_title') || $keys->contains('text') || $keys->contains('product_name') || $keys->contains('name');
     }

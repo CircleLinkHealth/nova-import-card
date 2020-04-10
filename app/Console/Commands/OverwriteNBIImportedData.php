@@ -66,9 +66,14 @@ class OverwriteNBIImportedData extends Command
      */
     public function lookupAndReplacePatientData(ImportedMedicalRecord $imr)
     {
+        $nbiPractice = Practice::whereName(CarePlanHelper::NBI_PRACTICE_NAME)->with('locations')->first();
+        
+        if (!$nbiPractice) {
+            return;
+        }
+        
         $mr    = $imr->medicalRecord();
         $dem   = $imr->demographics()->first();
-        $nbiPractice = Practice::whereName(CarePlanHelper::NBI_PRACTICE_NAME)->with('locations')->firstOrFail();
         $datas = \CircleLinkHealth\Eligibility\Entities\SupplementalPatientData::where(
             'first_name',
             'like',
