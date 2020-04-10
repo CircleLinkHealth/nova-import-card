@@ -571,7 +571,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
 
         try {
-            $this->locations()->attach($location);
+            if (! $this->locations()->where('locations.id', $location)->exists()) {
+                $this->locations()->attach($location);
+            }
         } catch (\Exception $e) {
             //check if this is a mysql exception for unique key constraint
             if ($e instanceof \Illuminate\Database\QueryException) {
