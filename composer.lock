@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7c8c35b5c2cb7491a87a38616a25c226",
+    "content-hash": "a8c57b99013cd5a162717a1f41c374fb",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -8944,11 +8944,11 @@
         },
         {
             "name": "subzero10/condition-code-lookup-module",
-            "version": "v1.0.1",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:subzero10/condition-code-lookup-module.git",
-                "reference": "d39e36f02e1a0dd70dc72e6e35233cc4366071a2"
+                "reference": "768cff48a2c0c4d8aac520ff2515fba760d170d6"
             },
             "require": {
                 "ext-curl": "*",
@@ -8976,7 +8976,7 @@
                     "email": "pagcosma@gmail.com"
                 }
             ],
-            "time": "2020-04-10T06:05:52+00:00"
+            "time": "2020-04-10T07:06:40+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
