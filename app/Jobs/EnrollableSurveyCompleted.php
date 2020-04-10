@@ -63,8 +63,8 @@ class EnrollableSurveyCompleted implements ShouldQueue
      */
     public function handle()
     {
-        $enrollableId = json_decode($this->data)->enrollable_id;
-        $surveyInstanceId = json_decode($this->data)->survey_instance_id;
+        $enrollableId = $this->data['enrollable_id'];
+        $surveyInstanceId = $this->data['survey_instance_id'];
 
         $surveyAnswers = $this->getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId);
         $user = User::withTrashed()->whereId($enrollableId)->firstOrFail();
@@ -87,9 +87,11 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 'status' => Enrollee::ENROLLED,
             ]);
 
-            if (App::environment(['local', 'review'])) {
+            if (App::environment(['local', 'review', 'staging'])) {
                 $this->importEnrolleeSurveyOnly($enrollee, $user);
             }
+            //@todo: Confirm what excactly should be done here...if something else should be done
+//            Enrolled user should be visiible in ccd-importer.
             $patientType = 'Initial';
             $id = $enrollee->id;
         } else {
@@ -176,6 +178,10 @@ class EnrollableSurveyCompleted implements ShouldQueue
             return $answerVal;
         }
 
+        if (is_bool($answerVal)){
+            return $answerVal;
+        }
+
         if (is_array($answerVal)) {
             foreach ($answerVal as $value) {
                 if (array_key_exists('name', $value)) {
@@ -189,7 +195,8 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
             return $answers;
         }
-        if (array_key_exists('value', $answerVal)) {
+
+        if ($answerVal && array_key_exists('value', $answerVal)) {
             return $answerVal->value;
         }
 
