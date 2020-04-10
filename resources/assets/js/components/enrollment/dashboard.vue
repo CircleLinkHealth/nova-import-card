@@ -7,7 +7,7 @@
             </div>
         </div>
         <div v-if="patientData">
-            <patient-to-enroll></patient-to-enroll>
+            <patient-to-enroll :patient-data="patientData"></patient-to-enroll>
         </div>
     </div>
 </template>
@@ -15,7 +15,10 @@
 <script>
 
     import Twilio from 'twilio-client';
+
     import PatientToEnroll from './patient-to-enroll';
+
+    import {rootUrl} from '../../app.config';
 
     import Loader from '../loader.vue';
 
@@ -38,35 +41,19 @@
         },
         mounted: function () {
 
+            this.retrievePatient();
+
 
         },
         methods: {
-            handleSubmit(event) {
-                if (this.suggested_family_members.length > 0 && this.confirmed_family_members.length == 0) {
-                    event.preventDefault();
-                    this.pending_form = event.target;
-                    let modal = M.Modal.getInstance(document.getElementById('suggested-family-members-modal'));
-                    modal.open();
-                }
-            },
-            submitPendingForm() {
-                this.pending_form.submit();
-            },
-            getSuggestedFamilyMembers() {
+            retrievePatient(){
                 return this.axios
-                    .get(rootUrl('/enrollment/get-suggested-family-members/' + enrollee.id))
+                    .get(rootUrl('/enrollment/show'))
                     .then(response => {
-                        this.family_loading = false;
-                        this.suggested_family_members = response.data.suggested_family_members;
-                        this.confirmed_family_members = response.data.suggested_family_members.map(function (member) {
-                            return member.is_confirmed ? member.id : null;
-                        }).filter(x => !!x);
+                        this.patientData = response.data;
                     })
                     .catch(err => {
-                        this.family_loading = false;
-                        this.bannerText = err.response.data.message;
-                        this.bannerType = 'danger';
-                        this.showBanner = true;
+                       //to implement
                     });
             },
 
@@ -79,16 +66,7 @@
             softReject() {
                 this.isSoftDecline = true;
             },
-            getTipsSettings() {
-                const tipsSettingsStr = localStorage.getItem('enrollment-tips-per-practice');
-                if (tipsSettingsStr) {
-                    return JSON.parse(tipsSettingsStr);
-                }
-                return null;
-            },
-            setTipsSettings(settings) {
-                localStorage.setItem('enrollment-tips-per-practice', JSON.stringify(settings));
-            },
+
             /**
              * used by the tips modal
              * @param e
