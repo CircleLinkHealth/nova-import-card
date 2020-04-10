@@ -23,10 +23,6 @@ class EnrollmentCenterController extends ApiController
 
     public function show()
     {
-        //todo: WHAT IF NO ENROLLABLE? deal in front end?
-
-        //todo: middleware for careAmbassador
-
         return Enrollable::make(
             EnrolleeCallQueue::getNext(
                 auth()->user()->careAmbassador
