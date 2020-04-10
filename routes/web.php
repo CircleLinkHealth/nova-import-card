@@ -479,6 +479,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'API\EnrollmentCenterController@getSuggestedFamilyMembers',
                 'as'   => 'enrollment-center.family-members',
             ])->middleware('permission:enrollee.read');
+
+            Route::get('/show', [
+                'uses' => 'API\EnrollmentCenterController@show',
+                'as'   => 'enrollment-center.show',
+            ])->middleware('permission:enrollee.read');
         }
     );
 

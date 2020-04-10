@@ -119,15 +119,7 @@ class EnrollmentCenterController extends Controller
             return view('enrollment-ui.no-available-calls');
         }
 
-        return view(
-            'enrollment-ui.dashboard',
-            [
-                'enrollee' => $enrollee,
-                'report'   => CareAmbassadorLog::createOrGetLogs($careAmbassador->id),
-                'script'   => TrixField::careAmbassador($enrollee->lang)->first(),
-                'provider' => $enrollee->provider,
-            ]
-        );
+        return view('enrollment-ui.dashboard');
     }
 
     /**
