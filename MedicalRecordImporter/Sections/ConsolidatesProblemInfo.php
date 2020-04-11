@@ -20,7 +20,7 @@ trait ConsolidatesProblemInfo
      *
      * @return mixed
      */
-    private function consolidateProblemInfo(ProblemLog $problemLog)
+    private function consolidateProblemInfo(object $problemLog)
     {
         $consolidatedProblem = new \stdClass();
 

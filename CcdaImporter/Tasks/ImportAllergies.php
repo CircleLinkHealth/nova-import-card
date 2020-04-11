@@ -46,7 +46,7 @@ class ImportAllergies extends BaseCcdaImportTask
     
         $this->patient->load('ccdAllergies');
     
-        $unique = $this->patient->ccdAllergies->unique('name')->pluck('id');
+        $unique = $this->patient->ccdAllergies->unique('name')->pluck('id')->all();
     
         $deleted = $this->patient->ccdAllergies()->whereNotIn('id', $unique)->delete();
     

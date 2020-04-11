@@ -14,6 +14,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportInsurances;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportMedications;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
 use Tests\CustomerTestCase;
 use Tests\TestCase;
@@ -156,4 +157,16 @@ class CcdaImporterTest extends CustomerTestCase
         
         $this->assertTrue($this->patient()->program_id === $differentPracticeId);
     }
+    
+    public function test_it_imports_csv_ccda_problems()
+    {
+        $ccda = FakeCalvaryCcda::create();
+        
+        ImportProblems::for($this->patient(), $ccda);
+        
+        $problems = $this->patient()->ccdProblems()->get();
+        
+        $this->assertCount(18, $problems);
+    }
+    
 }

@@ -20,8 +20,8 @@ class GetProblemInstruction extends BaseCcdaImportHook
             }
         );
     
-        $cpmProblem = $this->payload->cpm_problem_id
-            ? $cpmProblems[$this->payload->cpm_problem_id]
+        $cpmProblem = $this->payload['cpm_problem_id']
+            ? $cpmProblems[$this->payload['cpm_problem_id']]
             : null;
     
         return optional($cpmProblem)->instruction();

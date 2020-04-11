@@ -28,7 +28,7 @@ class GetUPG0506ProblemInstruction extends BaseCcdaImportHook
         return null;
     }
     
-    private function createInstructionFromUPG0506(Ccda $ccda, $newProblem): ?CpmInstruction
+    private function createInstructionFromUPG0506(Ccda $ccda, array $newProblem): ?CpmInstruction
     {
         $pdfMedia = $ccda->getUPG0506PdfCareplanMedia();
         
@@ -43,7 +43,7 @@ class GetUPG0506ProblemInstruction extends BaseCcdaImportHook
         }
         
         $matchingProblem = collect($customProperties->care_plan->instructions)
-            ->where('name', $newProblem->name)
+            ->where('name', $newProblem['name'])
             ->first();
         
         

@@ -4,21 +4,31 @@
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 
+use App\Constants;
+use App\Importer\Section\Validators\NameNotNull;
 use App\MedicationGroupsMap;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
+use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\GetProblemInstruction;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\ConsolidatesProblemInfo;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Entities\Medication;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\SharedModels\Entities\ProblemCode;
+use Illuminate\Database\Eloquent\Collection;
 
 class ImportProblems extends BaseCcdaImportTask
 {
-    const HOOK_USE_DIFFERENT_INSTRUCTION_IMPORTER  = 'USE_DIFFERENT_INSTRUCTION_IMPORTER';
+    const HOOK_USE_DIFFERENT_INSTRUCTION_IMPORTER = 'USE_DIFFERENT_INSTRUCTION_IMPORTER';
+    /**
+     * @var Collection
+     */
+    private $cpmProblems;
     
     use ConsolidatesProblemInfo;
     use FiresImportingHooks;
@@ -30,77 +40,69 @@ class ImportProblems extends BaseCcdaImportTask
      */
     private function transform(object $problem): array
     {
-        return $this->getTransformer()->problem($problem);
+        return array_merge(
+            $this->getTransformer()->problem($problem),
+            ['codes' => $this->getTransformer()->problemCodes($problem)]
+        );
     }
     
     protected function import()
     {
-        collect($this->ccda->bluebuttonJson()->problems ?? [])->each(
-            function ($problem) use (&$medicationGroups) {
-                $new = (array) $this->consolidateProblemInfo((object) $this->transform($problem));
-            
-                if ( ! $this->validate($new)) {
-                    return null;
-                }
-            
-                if ( ! $new['cons_name'] && ! $new['cons_text']) {
-                    return null;
-                }
-    
-                $instruction = $this->getInstruction($problem);
-    
-                $ccdProblem = Problem::updateOrCreate(
-                    [
-                        'name'           => $problem->name,
-                        'patient_id'     => $this->patient->id,
-                        'cpm_problem_id' => $problem->cpm_problem_id,
-                    ],
-                    [
-                        'problem_import_id'  => $problem->id,
-                        'is_monitored'       => (bool)$problem->cpm_problem_id,
-                        'ccd_problem_log_id' => $problem->ccd_problem_log_id,
-                        'cpm_instruction_id' => optional($instruction)->id ?? null,
-                    ]
-                );
-    
-                $problemLog = $problem->ccdLog;
-    
-                if ($problemLog) {
-                    $problemLog->codes->map(
-                        function ($codeLog) use ($ccdProblem) {
-                            ProblemCode::updateOrCreate(
-                                [
-                                    'problem_id' => $ccdProblem->id,
-                                    'code'       => $codeLog->code,
-                                ],
-                                [
-                                    'code_system_name' => $codeLog->code_system_name,
-                                    'code_system_oid'  => $codeLog->code_system_oid,
-                                ]
-                            );
-                        }
-                    );
-                }
+        $this->cpmProblems = \Cache::remember(
+            'all_cpm_problems',
+            2,
+            function () {
+                return CpmProblem::all();
             }
         );
+        
+        $this->processProblems()->each(
+            function ($problemCollection, $problemType) use (&$medicationGroups) {
+                $problemCollection->each(function ($problem) use (&$medicationGroups, $problemType){
+                    $new = $problem['attributes'];
     
+                    $instruction = $this->getInstruction($problem);
+    
+                    $ccdProblem = Problem::updateOrCreate(
+                        [
+                            'name'           => $new['name'],
+                            'patient_id'     => $this->patient->id,
+                            'cpm_problem_id' => $new['cpm_problem_id'],
+                        ],
+                        [
+                            'ccda_id' => $this->ccda,
+                            'is_monitored'       => (bool) $new['cpm_problem_id'],
+                            'cpm_instruction_id' => optional($instruction)->id ?? null,
+                        ]
+                    );
+    
+                    if (array_key_exists('itemLog', $problem) && array_key_exists('codes', $problem['itemLog'])) {
+                        collect($problem['itemLog']['codes'])->each(
+                            function ($codeLog) use ($ccdProblem) {
+                                ProblemCode::updateOrCreate(
+                                    [
+                                        'problem_id' => $ccdProblem->id,
+                                        'code'       => $codeLog['code'],
+                                    ],
+                                    [
+                                        'code_system_name' => $codeLog['code_system_name'],
+                                        'code_system_oid'  => $codeLog['code_system_oid'],
+                                    ]
+                                );
+                            }
+                        );
+                    }
+                });
+            }
+        );
+        
+        $this->patient->load('ccdProblems');
+        
+        $unique = $this->patient->ccdProblems->unique('name')->pluck('id')->all();
+        
+        $deleted = $this->patient->ccdProblems()->whereNotIn('id', $unique)->delete();
+        
         $misc = CpmMisc::whereName(CpmMisc::OTHER_CONDITIONS)
-                       ->first();
-    
-        if ( ! $this->hasMisc($this->patient, $misc)) {
-            $this->patient->cpmMiscs()->attach(optional($misc)->id);
-        }
-        ////////////
-        
-        $this->patient->load('ccdMedications');
-        
-        $unique = $this->patient->ccdMedications->unique('name')->pluck('id');
-        
-        $deleted = $this->patient->ccdMedications()->whereNotIn('id', $unique)->delete();
-        
-        $this->patient->cpmMedicationGroups()->sync(array_filter($medicationGroups));
-        
-        $misc = CpmMisc::whereName(CpmMisc::MEDICATION_LIST)
                        ->first();
         
         if ( ! $this->hasMisc($this->patient, $misc)) {
@@ -110,9 +112,180 @@ class ImportProblems extends BaseCcdaImportTask
     
     private function getInstruction($newProblem)
     {
-        $this->fireImportingHook(self::HOOK_USE_DIFFERENT_INSTRUCTION_IMPORTER, $this->patient, $this->ccda, $newProblem);
+        $instructions = $this->fireImportingHook(
+            self::HOOK_USE_DIFFERENT_INSTRUCTION_IMPORTER,
+            $this->patient,
+            $this->ccda,
+            $newProblem
+        );
         
-        return (new GetProblemInstruction())->for($newProblem);
+        if (is_null($instructions)) {
+            return (new GetProblemInstruction($this->patient, $this->ccda))->run();
+        }
     }
     
+    /**
+     * Get the CpmProblem for a ProblemLog.
+     *
+     * @param ProblemLog $itemLog
+     * @param $problemName
+     *
+     * @return CpmProblem|null
+     */
+    private function getCpmProblem($itemLog, $problemName)
+    {
+        if ( ! validProblemName($problemName)) {
+            return null;
+        }
+        
+        $codes = collect($itemLog['codes'] ?? [])->pluck('code')->all();
+        
+        $problemMap = SnomedToCpmIcdMap::with('cpmProblem')
+                                       ->has('cpmProblem')
+                                       ->where(
+                                           function ($q) use ($codes) {
+                                               $q->whereIn(Constants::ICD9, $codes)
+                                                 ->where(Constants::ICD9, '!=', '')
+                                                 ->whereNotNull(Constants::ICD9);
+                                           }
+                                       )
+                                       ->orWhere(
+                                           function ($q) use ($codes) {
+                                               $q->whereIn(Constants::ICD10, $codes)
+                                                 ->where(Constants::ICD10, '!=', '')
+                                                 ->whereNotNull(Constants::ICD10);
+                                           }
+                                       )
+                                       ->orWhere(
+                                           function ($q) use ($codes) {
+                                               $q->whereIn(Constants::SNOMED, $codes)
+                                                 ->where(Constants::SNOMED, '!=', '')
+                                                 ->whereNotNull(Constants::SNOMED);
+                                           }
+                                       )
+                                       ->first();
+        
+        if ($problemMap) {
+            return $problemMap->cpmProblem;
+        }
+        
+        // Try to match keywords
+        foreach ($this->cpmProblems as $cpmProblem) {
+            //Do not perform keyword matching if name is just Cancer
+            //https://circlelinkhealth.atlassian.net/browse/CPM-108
+            if (0 === strcasecmp($problemName, 'cancer')) {
+                break;
+            }
+            
+            $keywords = array_filter(array_merge(explode(',', $cpmProblem->contains), [$cpmProblem->name]));
+            
+            foreach ($keywords as $keyword) {
+                if ( ! $keyword || empty($keyword)) {
+                    continue;
+                }
+                
+                $keyword = trim($keyword);
+                
+                if (str_contains(strtolower($problemName), strtolower($keyword))) {
+                    return $cpmProblem;
+                }
+            }
+        }
+    }
+    
+    private function processProblems()
+    {
+        $problemsGroups = collect($this->ccda->bluebuttonJson()->problems ?? [])->map(
+            function ($problem) use (&$medicationGroups) {
+                return $this->transform($problem);
+            }
+        );
+        
+        $shouldValidate = true;
+        
+        $haveName = $problemsGroups->reject(
+            function (array $p) {
+                return ! (new NameNotNull())->isValid($p);
+            }
+        )->count();
+        
+        $haveCode = $problemsGroups->reject(
+            function (array $p) {
+                return empty($this->consolidateProblemInfo((object) $p)->cons_code);
+            }
+        )->filter()->count();
+        
+        if ($haveCode > $haveName) {
+            $shouldValidate = false;
+        }
+        
+        if ($shouldValidate) {
+            $problemsGroups = $problemsGroups->unique(
+                function ($itemLog) {
+                    $name = $itemLog->name ?? $itemLog->reference_title ?? $itemLog->translation_name;
+                    
+                    return empty($name)
+                        ? false
+                        : $name;
+                }
+            )
+                                             ->values();
+        }
+        
+        $problemsGroups = $problemsGroups->mapToGroups(
+            function ($itemLog) use (
+                $shouldValidate
+            ) {
+                if ($shouldValidate && ! $this->validate($itemLog)) {
+                    return ['do_not_import' => $itemLog->id];
+                }
+                
+                /**
+                 * Check if the information is in the Translation Section of BB.
+                 */
+                $problemCodes = $this->consolidateProblemInfo((object) $itemLog);
+                
+                if ( ! validProblemName($problemCodes->cons_name)) {
+                    return ['do_not_import' => $itemLog->id];
+                }
+                
+                $cpmProblem   = $this->getCpmProblem($itemLog, $problemCodes->cons_name);
+                $cpmProblemId = optional($cpmProblem)->id;
+                
+                //if problem is Diabetes and string contains 2, it's probably diabetes type 2
+                if (1 == $cpmProblemId && str_contains($problemCodes->cons_name, ['2'])) {
+                    $cpmProblem = $this->cpmProblems->firstWhere(
+                        'name',
+                        'Diabetes Type 2'
+                    );
+                } //if problem is Diabetes and string contains 1, it's probably diabetes type 1
+                elseif (1 == $cpmProblemId && str_contains(
+                        $problemCodes->cons_name,
+                        ['1']
+                    )) {
+                    $cpmProblem = $this->cpmProblems->firstWhere(
+                        'name',
+                        'Diabetes Type 1'
+                    );
+                }
+                
+                $problem = [
+                    'attributes'    => [
+                        'name'               => $problemCodes->cons_name,
+                        'cpm_problem_id'     => $cpmProblemId,
+                    ],
+                    'is_behavioral' => optional($cpmProblem)->is_behavioral,
+                    'itemLog'       => $itemLog,
+                ];
+                
+                if ($cpmProblem) {
+                    return ['monitored' => $problem];
+                }
+                
+                return ['not_monitored' => $problem];
+            }
+        );
+        
+        return $problemsGroups;
+    }
 }

@@ -78,7 +78,7 @@ class ImportMedications extends BaseCcdaImportTask
         
         $this->patient->load('ccdMedications');
         
-        $unique = $this->patient->ccdMedications->unique('name')->pluck('id');
+        $unique = $this->patient->ccdMedications->unique('name')->pluck('id')->all();
         
         $deleted = $this->patient->ccdMedications()->whereNotIn('id', $unique)->delete();
         
