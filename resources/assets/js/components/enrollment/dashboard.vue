@@ -64,12 +64,6 @@
                 return Math.round(Date.now() - millis) / 1000;
             },
 
-            //triggered when cilck on Soft Decline
-            //gets reset when modal closes
-            softReject() {
-                this.isSoftDecline = true;
-            },
-
             /**
              * used by the tips modal
              * @param e

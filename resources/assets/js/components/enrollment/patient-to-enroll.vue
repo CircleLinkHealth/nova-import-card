@@ -1091,7 +1091,7 @@
                     let modal = M.Modal.getInstance(document.getElementById('suggested-family-members-modal'));
                     modal.open();
                 }
-                this.submitForm()
+                this.submitForm(event.target, url)
 
             },
             submitForm(form, url){
