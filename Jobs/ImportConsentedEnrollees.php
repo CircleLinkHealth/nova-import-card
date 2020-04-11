@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Jobs;
 
 use App\CLH\Repositories\CCDImporterRepository;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
@@ -198,7 +199,7 @@ class ImportConsentedEnrollees implements ShouldQueue
             ReimportPatientMedicalRecord::class,
             [
                 'patientUserId'   => $user->id,
-                'initiatorUserId' => auth()->id(),
+                'initiatorUserId' => optional(auth()->user())->isCareAmbassador() ? $this->getDefaultPatientReimportNotifiableId() : auth()->id(),
                 '--flush-ccd'     => true,
             ]
         );
@@ -312,6 +313,11 @@ class ImportConsentedEnrollees implements ShouldQueue
             
             return $user;
         }
+    }
+
+    private function getDefaultPatientReimportNotifiableId() : ? int
+    {
+        return AppConfig::whereConfigKey('default_patient_reimport_notifiable_id')->pluck('config_value')->first();
     }
 }
 
