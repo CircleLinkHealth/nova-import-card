@@ -52,8 +52,6 @@ class PhoneNumber extends \CircleLinkHealth\Core\Entities\BaseModel
         'extension',
     ];
     
-    
-    public $timestamps = false;
     /**
      * The attributes that are mass assignable.
      *
