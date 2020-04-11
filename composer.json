@@ -114,6 +114,10 @@
     {
       "type": "path",
       "url": "./nova-components/GenerateSuccessStoriesReport"
+    },
+    {
+      "type": "path",
+      "url": "./nova-components/ClhNovaTheme"
     }
   ],
   "require": {
@@ -196,7 +200,8 @@
     "vink/nova-cache-card": "^1.0",
     "waavi/url-shortener": "dev-master",
     "waynestate/nova-ckeditor4-field": "^0.4.0",
-    "yajra/laravel-datatables-oracle": "~8.0"
+    "yajra/laravel-datatables-oracle": "~8.0",
+    "circlelinkhealth/clh-nova-theme": "*"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",
