@@ -17,7 +17,7 @@ class ImportMedications extends BaseCcdaImportTask
     use ConsolidatesMedicationInfo;
     
     /**
-     * @param AllergyLog $allergy
+     * @param object $medication
      *
      * @return array
      */

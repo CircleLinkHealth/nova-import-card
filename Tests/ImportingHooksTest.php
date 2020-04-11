@@ -20,7 +20,7 @@ class ImportingHooksTest extends CustomerTestCase
     public function test_it_stores_importing_hook()
     {
         $this->assertNull($this->practice()->importing_hooks);
-        $this->practice()->storeImportingHook(ImportPatientInfo::HOOK_IMPORTING_PATIENT_INFO, ReplaceFieldsFromSupplementaryData::IMPORTING_LISTENER_NAME, ['patientId' => $this->patient()->id]);
+        $this->practice()->storeImportingHook(ImportPatientInfo::HOOK_IMPORTING_PATIENT_INFO, ReplaceFieldsFromSupplementaryData::IMPORTING_LISTENER_NAME);
         $this->assertJson($this->practice()->importing_hooks);
      
         $ccda = FakeCalvaryCcda::create();

@@ -51,12 +51,8 @@ trait FiresImportingHooks
             return null;
         }
         
-        $args = $practice->importing_hooks->get($hookName) ?? [];
+        $args = $practice->importing_hooks->get($hookName);
         
-        if (is_array($args['args'] ?? null) && !empty($args['args'])) {
-            return app(Hooks::LISTENERS[$args['listener']], $args['args'])->run();
-        }
-        
-        return app(Hooks::LISTENERS[$hookName])->run();
+        return app(Hooks::LISTENERS[$args['listener']], ['patient' => $user])->run();
     }
 }

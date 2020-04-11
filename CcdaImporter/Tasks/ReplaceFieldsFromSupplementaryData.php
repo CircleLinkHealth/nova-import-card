@@ -19,19 +19,15 @@ class ReplaceFieldsFromSupplementaryData
      * @var User
      */
     protected $patient;
-    /**
-     * @var int
-     */
-    protected $patientId;
     
     /**
      * ReplaceFieldsFromSupplementaryData constructor.
      *
-     * @param int $patientId
+     * @param User $patient
      */
-    public function __construct(int $patientId)
+    public function __construct(User $patient)
     {
-        $this->patientId = $patientId;
+        $this->patient = $patient;
     }
     
     const NBI_PRACTICE_NAME = 'bethcare-newark-beth-israel';
@@ -40,8 +36,6 @@ class ReplaceFieldsFromSupplementaryData
     
     public function run()
     {
-        $this->fetchPatient();
-        
         if (self::NBI_PRACTICE_NAME != $this->patient->primaryPractice->name) {
             return null;
         }
@@ -68,10 +62,5 @@ class ReplaceFieldsFromSupplementaryData
         }
         
         return null;
-    }
-    
-    private function fetchPatient()
-    {
-        $this->patient = User::ofType('participant')->with(['patientInfo', 'primaryPractice'])->findOrFail($this->patientId);
     }
 }

@@ -21,6 +21,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportAllergies;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportInsurances;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportMedications;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
@@ -41,9 +42,7 @@ use Illuminate\Validation\Rule;
 
 class CcdaImporter
 {
-    const NBI_PRACTICE_NAME = 'bethcare-newark-beth-israel';
-    
-    const RECEIVES_NBI_EXCEPTIONS_NOTIFICATIONS = 'receives_nbi_exceptions_notifications';
+
 
     /**
      * @var Ccda
@@ -221,135 +220,7 @@ class CcdaImporter
      */
     public function storePatientInfo()
     {
-        $mrn = $this->dem->mrn_number;
-        
-        $primaryPractice = $this->patient->primaryPractice;
-        
-        if (self::NBI_PRACTICE_NAME == $primaryPractice->name) {
-            $dataFromPractice = SupplementalPatientData::where('first_name', 'like', "{$this->patient->first_name}%")
-                                                       ->where('last_name', $this->patient->last_name)
-                                                       ->where('dob', $this->dem->dob)
-                                                       ->where('practice_id', Practice::whereName(self::NBI_PRACTICE_NAME)->value('id'))
-                                                       ->first();
-            
-            if ( ! $dataFromPractice) {
-                sendNbiPatientMrnWarning($this->patient->id);
-                
-                $recipients = AppConfig::where('config_key', '=', self::RECEIVES_NBI_EXCEPTIONS_NOTIFICATIONS)->get();
-                
-                foreach ($recipients as $recipient) {
-                    Notification::route('mail', $recipient->config_value)
-                                ->notify(new NBISupplementaryDataNotFound($this->patient));
-                }
-            }
-            
-            if (optional($dataFromPractice)->mrn) {
-                $mrn = $dataFromPractice->mrn;
-            }
-        }
-        
-        $agentDetails = $this->getEnrolleeAgentDetailsIfExist();
-        
-        $args = array_merge(
-            [
-                'imported_medical_record_id' => $this->imr->id,
-                'ccda_id'                    => Ccda::class == $this->imr->medical_record_type
-                    ? $this->imr->medical_record_id
-                    : null,
-                'birth_date'                 => $this->dem->dob,
-                'ccm_status'                 => 'enrolled',
-                'consent_date'               => $this->dem->consent_date,
-                'gender'                     => $this->dem->gender,
-                'mrn_number'                 => $mrn,
-                'preferred_contact_language' => $this->dem->preferred_contact_language,
-                'preferred_contact_location' => $this->imr->location_id,
-                'preferred_contact_method'   => 'CCT',
-                'registration_date'          => $this->patient->user_registered,
-                'general_comment'            => $this->enrollee
-                    ? $this->enrollee->last_call_outcome_reason
-                    : null,
-            ],
-            $agentDetails
-        );
-        
-        $this->patientInfo = Patient::firstOrCreate(
-            [
-                'user_id' => $this->patient->id,
-            ],
-            $args
-        );
-        
-        if ( ! $this->patientInfo->mrn_number) {
-            $this->patientInfo->mrn_number = $args['mrn_number'];
-        }
-        
-        if ( ! $this->patientInfo->birth_date) {
-            $this->patientInfo->birth_date = $args['birth_date'];
-        }
-        
-        if ( ! $this->patientInfo->imported_medical_record_id) {
-            $this->patientInfo->imported_medical_record_id = $args['imported_medical_record_id'];
-        }
-        
-        if ( ! $this->patientInfo->ccda_id) {
-            $this->patientInfo->ccda_id = $args['ccda_id'];
-        }
-        
-        if ( ! $this->patientInfo->ccm_status) {
-            $this->patientInfo->ccm_status = $args['ccm_status'];
-        }
-        
-        if ( ! $this->patientInfo->consent_date) {
-            $this->patientInfo->consent_date = $args['consent_date'];
-        }
-        
-        if ( ! $this->patientInfo->gender) {
-            $this->patientInfo->gender = $args['gender'];
-        }
-        
-        if ( ! $this->patientInfo->preferred_contact_language) {
-            $this->patientInfo->preferred_contact_language = $args['preferred_contact_language'];
-        }
-        
-        if ( ! $this->patientInfo->preferred_contact_location) {
-            $this->patientInfo->preferred_contact_location = $args['preferred_contact_location'];
-        }
-        
-        if ( ! $this->patientInfo->preferred_contact_method) {
-            $this->patientInfo->preferred_contact_method = $args['preferred_contact_method'];
-        }
-        
-        if ( ! $this->patientInfo->agent_name) {
-            $this->patientInfo->agent_name = $args['agent_name'] ?? null;
-        }
-        
-        if ( ! $this->patientInfo->agent_telephone) {
-            $this->patientInfo->agent_telephone = $args['agent_telephone'] ?? null;
-        }
-        
-        if ( ! $this->patientInfo->agent_email) {
-            $this->patientInfo->agent_email = $args['agent_email'] ?? null;
-        }
-        
-        if ( ! $this->patientInfo->agent_relationship) {
-            $this->patientInfo->agent_relationship = $args['agent_relationship'] ?? null;
-        }
-        
-        if ( ! $this->patientInfo->registration_date) {
-            $this->patientInfo->registration_date = $args['registration_date'];
-        }
-        
-        if ( ! $this->patientInfo->general_comment) {
-            $this->patientInfo->general_comment = $this->enrollee
-                ? $this->enrollee->last_call_outcome_reason
-                : null;
-        }
-        
-        
-        if ($this->patientInfo->isDirty()) {
-            $this->patientInfo->save();
-        }
-        
+        ImportPatientInfo::for($this->patient, $this->ccda);
         
         return $this;
     }
@@ -648,29 +519,6 @@ class CcdaImporter
         }
         
         return $this;
-    }
-    
-    /**
-     * If Enrollee exists and if agent details are set,
-     * Get array to save in patient info.
-     *
-     * @return array
-     */
-    private function getEnrolleeAgentDetailsIfExist()
-    {
-        if ( ! $this->enrollee) {
-            return [];
-        }
-        if (empty($this->enrollee->agent_details)) {
-            return [];
-        }
-        
-        return [
-            'agent_name'         => $this->enrollee->getAgentAttribute(Enrollee::AGENT_NAME_KEY),
-            'agent_telephone'    => $this->enrollee->getAgentAttribute(Enrollee::AGENT_PHONE_KEY),
-            'agent_email'        => $this->enrollee->getAgentAttribute(Enrollee::AGENT_EMAIL_KEY),
-            'agent_relationship' => $this->enrollee->getAgentAttribute(Enrollee::AGENT_RELATIONSHIP_KEY),
-        ];
     }
     
     private function updateTrainingFeatures()
