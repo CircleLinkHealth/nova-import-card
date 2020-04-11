@@ -37,4 +37,11 @@ abstract class BaseCcdaImportHook
         $this->ccda = $ccda;
         $this->payload = $payload;
     }
+    
+    /**
+     * Run the hook
+     *
+     * @return mixed
+     */
+    abstract public function run();
 }

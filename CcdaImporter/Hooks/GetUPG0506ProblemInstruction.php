@@ -5,10 +5,8 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter\Hooks;
 
 
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportHook;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
-use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 
 class GetUPG0506ProblemInstruction extends BaseCcdaImportHook
 {
