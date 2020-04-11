@@ -9,7 +9,7 @@ namespace App\Http\Controllers\Enrollment;
 use App\CareAmbassadorLog;
 use App\Http\Controllers\Controller;
 use App\Services\Enrollment\AttachEnrolleeFamilyMembers;
-use App\Services\Enrollment\EnrolleeCallQueue;
+use App\Services\Enrollment\EnrollableCallQueue;
 use App\TrixField;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -103,9 +103,11 @@ class EnrollmentCenterController extends Controller
 
         ImportConsentedEnrollees::dispatch([$enrollee->id], $enrollee->batch);
 
-        EnrolleeCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
+        EnrollableCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
 
-        return redirect()->route('enrollment-center.dashboard');
+        return response()->json([
+            'status' => 200
+        ]);
     }
 
     public function dashboard()
@@ -114,7 +116,7 @@ class EnrollmentCenterController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse
+     *
      */
     public function rejected(Request $request)
     {
@@ -155,9 +157,11 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->save();
 
-        EnrolleeCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
+        EnrollableCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
 
-        return redirect()->route('enrollment-center.dashboard');
+        return response()->json([
+            'status' => 200
+        ]);
     }
 
     public function training()
@@ -202,8 +206,10 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->save();
 
-        EnrolleeCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
+        EnrollableCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
 
-        return redirect()->route('enrollment-center.dashboard');
+        return response()->json([
+            'status' => 200
+        ]);
     }
 }

@@ -279,7 +279,7 @@
 
             <!-- Success / Patient Consented -->
             <div id="consented" class="modal confirm modal-fixed-footer consented_modal">
-                <form method="post" id="consented_form" :action="consentedUrl" v-on:submit="handleSubmit($event)">
+                <form method="post" id="consented_form" :action="consentedUrl" v-on:submit="handleSubmit($event, consentedUrl)">
 
                     <input type="hidden" name="_token" :value="csrf">
 
@@ -486,7 +486,7 @@
 
             <!-- Unable To Contact -->
             <div id="utc" class="modal confirm modal-fixed-footer">
-                <form method="post" id="utc_form" :action="utcUrl" v-on:submit="handleSubmit($event)">
+                <form method="post" id="utc_form" :action="utcUrl" v-on:submit="handleSubmit($event, utcUrl)">
 
                     <input type="hidden" name="_token" :value="csrf">
 
@@ -553,7 +553,7 @@
             <!-- Rejected -->
             <div id="rejected" class="modal confirm modal-fixed-footer" style="height: 50% !important;">
                 <form ref="rejected" method="post" id="rejected_form" :action="rejectedUrl"
-                      v-on:submit="handleSubmit($event)">
+                      v-on:submit="handleSubmit($event, rejectedUrl)">
 
                     <input type="hidden" name="_token" :value="csrf">
 
@@ -995,6 +995,7 @@
                 confirmed_family_members: [],
 
                 pending_form: null,
+                pending_form_url: null,
 
                 days: ['Days:'],
                 times: ['Times:']
@@ -1082,16 +1083,35 @@
             capitalizeFirstLetter(string) {
                 return string.charAt(0).toUpperCase() + string.slice(1);
             },
-            handleSubmit(event) {
+            handleSubmit(event, url) {
                 if (this.suggested_family_members.length > 0 && this.confirmed_family_members.length == 0) {
                     event.preventDefault();
                     this.pending_form = event.target;
+                    this.pending_form_url = url
                     let modal = M.Modal.getInstance(document.getElementById('suggested-family-members-modal'));
                     modal.open();
                 }
+                this.submitForm()
+
+            },
+            submitForm(form, url){
+
+                let formData = new FormData(form)
+
+                return this.axios
+                    .post(url, formData)
+                    .then(response => {
+                        //add event
+                        console.log(response)
+                        //add global modal?
+                        App.$emit('enrollable-action-complete')
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    });
             },
             submitPendingForm() {
-                this.pending_form.submit();
+                this.submitForm(this.pending_form, this.pending_form_url)
             },
             setPatientData(data){
                 this.patient_data = data;

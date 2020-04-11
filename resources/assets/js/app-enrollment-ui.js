@@ -7,6 +7,7 @@ import './prototypes/array.prototype';
 import Vue from 'vue';
 import axios from './bootstrap-axios';
 import VueAxios from 'vue-axios';
+import EventBus from './admin/time-tracker/comps/event-bus';
 
 if (document) {
     const elem = document.querySelector('meta[name="base-url"]');
@@ -30,6 +31,8 @@ Vue.component('patient-to-enroll',PatientToEnroll);
 const App = new Vue({
     el: '#app'
 });
+
+App.EventBus = EventBus
 
 if (window) {
     window.App = App;

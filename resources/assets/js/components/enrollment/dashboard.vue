@@ -41,6 +41,12 @@
         },
         mounted: function () {
             this.retrievePatient();
+
+
+            App.$on('enrollable-action-complete', ()=>{
+                this.patientData = null;
+                this.retrievePatient();
+            })
         },
         methods: {
             retrievePatient(){

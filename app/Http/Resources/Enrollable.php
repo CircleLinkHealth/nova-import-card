@@ -22,9 +22,12 @@ class Enrollable extends Resource
     public function toArray($request)
     {
         $careAmbassador = $this->careAmbassador->careAmbassador;
+        $enrollable = $this->resource;
+
+        $enrollable->load(['practice']);
 
         return [
-            'enrollee' => $this->resource->toArray(),
+            'enrollee' => $enrollable->toArray(),
             'report'   => CareAmbassadorLog::createOrGetLogs($careAmbassador->id),
             'script'   => TrixField::careAmbassador($this->lang)->first(),
             'provider' => $this->provider->toArray(),
