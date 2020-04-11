@@ -3,6 +3,7 @@
 namespace CircleLinkHealth\Eligibility\Tests;
 
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachDefaultPatientContactWindows;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachLocation;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportAllergies;
@@ -10,6 +11,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportInsurances;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportMedications;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
 use Tests\CustomerTestCase;
 use Tests\TestCase;
@@ -121,6 +123,25 @@ class CcdaImporterTest extends CustomerTestCase
             'preferred_calls_per_month' => 2,
             'daily_contact_window_start' => '09:00:00',
             'daily_contact_window_end' => '18:00:00',
+        ]);
+    }
+    
+    public function test_it_imports_phones()
+    {
+        $ccda = FakeCalvaryCcda::create();
+        
+        $this->patient()->phoneNumbers()->delete();
+        $this->assertEmpty($this->patient()->phoneNumbers()->get());
+        
+        ImportPhones::for($this->patient(), $ccda);
+    
+        $this->assertTrue(1 === $this->patient()->phoneNumbers()->count());
+    
+    
+        $this->assertDatabaseHas('phone_numbers', [
+            'user_id' => $this->patient()->id,
+            'type' => PhoneNumber::HOME,
+            'number' => '+12012819204',
         ]);
     }
 }

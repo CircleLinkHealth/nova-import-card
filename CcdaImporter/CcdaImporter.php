@@ -22,6 +22,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportInsurances;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportMedications;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
@@ -232,150 +233,7 @@ class CcdaImporter
      */
     public function storePhones()
     {
-        $pPhone      = optional($this->enrollee)->primary_phone ?? $this->str->extractNumbers($this->dem->primary_phone);
-        $homePhone   = null;
-        $mobilePhone = null;
-        $workPhone   = null;
-        
-        //`$this->demographicsImport->primary_phone` may be a phone number or phone type
-        $primaryPhone = ! empty($pPhone)
-            ? $this->str->formatPhoneNumberE164($pPhone)
-            : $this->dem->primary_phone;
-        
-        $homeNumber = optional($this->enrollee)->home_phone ?? $this->dem->home_phone ?? $primaryPhone;
-        
-        if ( ! empty($homeNumber)) {
-            if ($this->validatePhoneNumber($homeNumber)) {
-                $number = $this->str->formatPhoneNumberE164($homeNumber);
-                
-                $makePrimary = 0 == strcasecmp(
-                        $primaryPhone,
-                        PhoneNumber::HOME
-                    ) || $primaryPhone == $number || ! $primaryPhone;
-                
-                $homePhone = PhoneNumber::updateOrCreate(
-                    [
-                        'user_id' => $this->patient->id,
-                        'number'  => $number,
-                        'type'    => PhoneNumber::HOME,
-                    ],
-                    [
-                        'is_primary' => $makePrimary,
-                    ]
-                );
-                
-                /**
-                 * Band-aid solution to avoid making all phones primary, if there is no primary phone.
-                 * In `$makePrimary = strcasecmp($primaryPhone, PhoneNumber::HOME) == 0 || $primaryPhone == $number || ! $primaryPhone;`, `! $primaryPhone`
-                 * would make all phones primary, if `! $primaryPhone`.
-                 */
-                if ($makePrimary) {
-                    $primaryPhone = $number;
-                }
-            }
-        }
-        
-        $mobileNumber = optional($this->enrollee)->cell_phone ?? $this->dem->cell_phone;
-        if ( ! empty($mobileNumber)) {
-            if ($this->validatePhoneNumber($mobileNumber)) {
-                $number = $this->str->formatPhoneNumberE164($mobileNumber);
-                
-                $makePrimary = 0 == strcasecmp($primaryPhone, PhoneNumber::MOBILE) || 0 == strcasecmp(
-                        $primaryPhone,
-                        'cell'
-                    ) || $primaryPhone == $number || ! $primaryPhone;
-                
-                $mobilePhone = PhoneNumber::updateOrCreate(
-                    [
-                        'user_id' => $this->patient->id,
-                        'number'  => $number,
-                        'type'    => PhoneNumber::MOBILE,
-                    ],
-                    [
-                        'is_primary' => $makePrimary,
-                    ]
-                );
-            }
-        }
-        
-        $workNumber = $this->dem->work_phone;
-        if ( ! empty($workNumber)) {
-            if ($this->validatePhoneNumber($mobileNumber)) {
-                $number = $this->str->formatPhoneNumberE164($workNumber);
-                
-                $makePrimary = PhoneNumber::WORK == $primaryPhone || $primaryPhone == $number || ! $primaryPhone;
-                
-                $workPhone = PhoneNumber::updateOrCreate(
-                    [
-                        'user_id' => $this->patient->id,
-                        'number'  => $number,
-                        'type'    => PhoneNumber::WORK,
-                    ],
-                    [
-                        'is_primary' => $makePrimary,
-                    ]
-                );
-            }
-        }
-        
-        if ( ! $primaryPhone) {
-            $primaryPhone = empty($mobileNumber)
-                ? empty($homeNumber)
-                    ? empty($workNumber)
-                        ? false
-                        : $workPhone
-                    : $homePhone
-                : $mobilePhone;
-            
-            if ($primaryPhone) {
-                $primaryPhone->setAttribute('is_primary', true);
-                $primaryPhone->save();
-            }
-            
-            if ( ! $primaryPhone && $this->dem->primary_phone) {
-                PhoneNumber::updateOrCreate(
-                    [
-                        'user_id' => $this->patient->id,
-                        'number'  => $this->str->formatPhoneNumberE164($this->dem->primary_phone),
-                        'type'    => PhoneNumber::HOME,
-                    ],
-                    [
-                        'is_primary' => true,
-                    ]
-                );
-            }
-        } else {
-            if ($this->validatePhoneNumber($primaryPhone)) {
-                $number = $this->str->formatPhoneNumberE164($primaryPhone);
-                
-                foreach (
-                    [
-                        PhoneNumber::HOME   => $homePhone,
-                        PhoneNumber::MOBILE => $mobilePhone,
-                        PhoneNumber::WORK   => $workPhone,
-                    ] as $type => $phone
-                ) {
-                    if ( ! $phone) {
-                        PhoneNumber::updateOrCreate(
-                            [
-                                'user_id' => $this->patient->id,
-                                'number'  => $number,
-                                'type'    => $type,
-                            ],
-                            [
-                                'is_primary' => true,
-                            ]
-                        );
-                        
-                        break;
-                    }
-                    if ($phone->number == $number) {
-                        //number is already saved. bail
-                        break;
-                    }
-                }
-            }
-        }
+        ImportPhones::for($this->patient, $this->ccda);
         
         return $this;
     }
@@ -561,18 +419,6 @@ class CcdaImporter
         }
         
         return $this;
-    }
-    
-    private function validatePhoneNumber($phoneNumber)
-    {
-        $validator = \Validator::make(
-            ['number' => $phoneNumber],
-            [
-                'number' => ['required', Rule::phone()->country(['US'])],
-            ]
-        );
-        
-        return $validator->passes();
     }
     
     private function getInstruction(ProblemImport $problemImport)
