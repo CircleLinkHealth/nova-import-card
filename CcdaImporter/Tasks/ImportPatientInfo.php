@@ -45,7 +45,32 @@ class ImportPatientInfo extends BaseCcdaImportTask
                 'birth_date'                 => $demographics['dob'],
                 'ccm_status'                 => Patient::ENROLLED,
                 'consent_date'               => now()->toDateString(),
-                'gender'                     => $demographics['gender'],
+                'gender'                     => call_user_func(function () use (
+                    $demographics
+                ) {
+                    $maleVariations = [
+                        'm',
+                        'male',
+                        'man',
+                    ];
+    
+                    $femaleVariations = [
+                        'f',
+                        'female',
+                        'woman',
+                    ];
+    
+                    if (in_array(strtolower($demographics['gender']), $maleVariations)) {
+                        $gender = 'M';
+                    } else {
+                        if (in_array(strtolower($demographics['gender']), $femaleVariations)) {
+                            $gender = 'F';
+                        }
+                    }
+    
+                    return empty($gender)
+                        ?: $gender;
+                }),
                 'mrn_number'                 => $mrn,
                 'preferred_contact_language' => call_user_func(
                     function () use (
@@ -80,7 +105,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
                 ),
                 'preferred_contact_location' => $this->ccda->location_id,
                 'preferred_contact_method'   => 'CCT',
-                'registration_date'          => $this->patient->user_registered,
+                'registration_date'          => $this->patient->user_registered->toDateString(),
                 'general_comment'            => $this->enrollee()
                     ? $this->enrollee()->last_call_outcome_reason
                     : null,
@@ -103,10 +128,6 @@ class ImportPatientInfo extends BaseCcdaImportTask
         
         if ( ! $patientInfo->birth_date) {
             $patientInfo->birth_date = $args['birth_date'];
-        }
-        
-        if ( ! $patientInfo->imported_medical_record_id) {
-            $patientInfo->imported_medical_record_id = $args['imported_medical_record_id'];
         }
         
         if ( ! $patientInfo->ccda_id) {
@@ -171,7 +192,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
         $this->fireImportingHook(self::HOOK_IMPORTED_PATIENT_INFO, $this->patient, $patientInfo);
     }
     
-    private function enrollee(): Enrollee
+    private function enrollee(): ?Enrollee
     {
         if ( ! $this->enrollee) {
             $this->enrollee = Enrollee::where(
