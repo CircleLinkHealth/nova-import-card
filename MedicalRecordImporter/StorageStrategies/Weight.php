@@ -27,12 +27,11 @@ class Weight extends BaseStorageStrategy implements StorageStrategy
         $biometric = CpmBiometric::whereName(CpmBiometric::WEIGHT)->first();
 
         try {
-            $this->user->cpmBiometrics()->attach($biometric->id);
+            if (! $this->user->cpmBiometrics()->where('id', $biometric->id)->exists()) {
+                $this->user->cpmBiometrics()->attach($biometric->id);
+            }
         } catch (\Exception $e) {
-            //check if this is a mysql exception for unique key constraint
             if ($e instanceof \Illuminate\Database\QueryException) {
-                //                    @todo:heroku query to see if it exists, then attach
-
                 $errorCode = $e->errorInfo[1];
                 if (1062 == $errorCode) {
                     //do nothing

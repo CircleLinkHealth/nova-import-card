@@ -8,7 +8,6 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
 use App\Events\PatientUserCreated;
 use CircleLinkHealth\Core\StringManipulation;
-use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachDefaultPatientContactWindows;
@@ -21,18 +20,10 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportMedications;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportVitals;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\BloodPressure;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\ProblemsToMonitor;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\Weight;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
-use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
-use CircleLinkHealth\SharedModels\Entities\CpmMisc;
-use CircleLinkHealth\SharedModels\Entities\CpmProblem;
-use CircleLinkHealth\SharedModels\Entities\Problem;
-use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 
 class CcdaImporter
 {
@@ -245,35 +236,6 @@ class CcdaImporter
     }
     
     /**
-     * Activates Problems to Monitor (CCM Conditions).
-     * Still used by: ReImportCcdToGetProblemTranslationCodes.php.
-     *
-     * @return $this
-     */
-    public function storeProblemsToMonitor()
-    {
-        if (empty($this->probs)) {
-            return $this;
-        }
-        
-        $storage = new ProblemsToMonitor($this->patient->program_id, $this->patient);
-        
-        $problemsToActivate = [];
-        
-        foreach ($this->probs as $problem) {
-            if (empty($problem->cpm_problem_id)) {
-                continue;
-            }
-            
-            $problemsToActivate[] = $problem->cpm_problem_id;
-        }
-        
-        $storage->import(array_unique($problemsToActivate));
-        
-        return $this;
-    }
-    
-    /**
      * Store Vitals.
      *
      * @todo: This only applies to CCDAs. Find a cleaner solution. This doesn't fit here.
@@ -282,75 +244,7 @@ class CcdaImporter
      */
     public function storeVitals()
     {
-        if (Ccda::class != $this->imr->medical_record_type) {
-            return $this;
-        }
-        
-        if ( ! $this->mr) {
-            return $this;
-        }
-        
-        //doing this here to not break View CCDA button
-        $this->mr->patient_id = $this->patient->id;
-        $this->mr->save();
-        
-        $decodedCcda = $this->mr->bluebuttonJson();
-        
-        //Weight
-        $weightParseAndStore = new Weight($this->patient->program_id, $this->patient);
-        $weight              = $weightParseAndStore->parse($decodedCcda);
-        if ( ! empty($weight)) {
-            $weightParseAndStore->import($weight);
-        }
-        
-        //Blood Pressure
-        $bloodPressureParseAndStore = new BloodPressure($this->patient->program_id, $this->patient);
-        $bloodPressure              = $bloodPressureParseAndStore->parse($decodedCcda);
-        if ( ! empty($bloodPressure)) {
-            $bloodPressureParseAndStore->import($bloodPressure);
-        }
-        
-        return $this;
-    }
-    
-    private function updateTrainingFeatures()
-    {
-        $this
-            ->mr
-            ->document
-            ->each(
-                function ($documentLog) {
-                    $documentLog->practice_id         = $this->imr->practice_id;
-                    $documentLog->location_id         = $this->imr->location_id;
-                    $documentLog->billing_provider_id = $this->imr->billing_provider_id;
-                    
-                    $documentLog->save();
-                }
-            );
-        
-        $this
-            ->mr
-            ->providers
-            ->each(
-                function ($providerLog) {
-                    $providerLog->practice_id         = $this->imr->practice_id;
-                    $providerLog->location_id         = $this->imr->location_id;
-                    $providerLog->billing_provider_id = $this->imr->billing_provider_id;
-                    
-                    $providerLog->save();
-                }
-            );
-        
-        $mr = $this
-            ->mr;
-        
-        if ($mr) {
-            $mr->practice_id         = $this->imr->practice_id;
-            $mr->location_id         = $this->imr->location_id;
-            $mr->billing_provider_id = $this->imr->billing_provider_id;
-            
-            $mr->save();
-        }
+        ImportVitals::for($this->patient, $this->ccda);
         
         return $this;
     }
