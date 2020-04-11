@@ -110,15 +110,6 @@ class EnrollmentCenterController extends Controller
 
     public function dashboard()
     {
-        $careAmbassador = auth()->user()->careAmbassador;
-
-        $enrollee = EnrolleeCallQueue::getNext($careAmbassador);
-
-        if (null == $enrollee) {
-            //no calls available
-            return view('enrollment-ui.no-available-calls');
-        }
-
         return view('enrollment-ui.dashboard');
     }
 

@@ -6,11 +6,9 @@
 
 namespace App\Http\Controllers\API;
 
-use App\CareAmbassadorLog;
 use App\Http\Resources\Enrollable;
-use App\Services\Enrollment\EnrolleeCallQueue;
+use App\Services\Enrollment\EnrollableCallQueue;
 use App\Services\Enrollment\SuggestEnrolleeFamilyMembers;
-use App\TrixField;
 
 class EnrollmentCenterController extends ApiController
 {
@@ -24,7 +22,7 @@ class EnrollmentCenterController extends ApiController
     public function show()
     {
         return Enrollable::make(
-            EnrolleeCallQueue::getNext(
+            EnrollableCallQueue::getNext(
                 auth()->user()->careAmbassador
             )
         );

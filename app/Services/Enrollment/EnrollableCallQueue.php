@@ -10,7 +10,7 @@ namespace App\Services\Enrollment;
 use App\CareAmbassador;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
-class EnrolleeCallQueue
+class EnrollableCallQueue
 {
     static function getNext(CareAmbassador $careAmbassador)
     {
