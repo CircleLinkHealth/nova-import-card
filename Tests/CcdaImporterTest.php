@@ -4,8 +4,10 @@ namespace CircleLinkHealth\Eligibility\Tests;
 
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachDefaultPatientContactWindows;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachLocation;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachPractice;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportAllergies;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportInsurances;
@@ -143,5 +145,15 @@ class CcdaImporterTest extends CustomerTestCase
             'type' => PhoneNumber::HOME,
             'number' => '+12012819204',
         ]);
+    }
+    
+    public function test_it_attaches_practice() {
+        $differentPracticeId = Practice::where('id', '!=', $this->practice()->id)->value('id');
+        
+        $ccda = FakeCalvaryCcda::create(['practice_id' => $differentPracticeId]);
+        
+        AttachPractice::for($this->patient(), $ccda);
+        
+        $this->assertTrue($this->patient()->program_id === $differentPracticeId);
     }
 }

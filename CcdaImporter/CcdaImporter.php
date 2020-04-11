@@ -7,44 +7,34 @@
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
 use App\Events\PatientUserCreated;
-use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\StringManipulation;
-use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\PhoneNumber;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachDefaultPatientContactWindows;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachLocation;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachPractice;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\FirstOrCreateCarePlan;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportAllergies;
-use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportInsurances;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportMedications;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\BloodPressure;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\ProblemsToMonitor;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\Weight;
-use CircleLinkHealth\Eligibility\NBISupplementaryDataNotFound;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
-use CircleLinkHealth\SharedModels\Entities\Medication;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\SharedModels\Entities\ProblemCode;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Validation\Rule;
 
 class CcdaImporter
 {
-
-
     /**
      * @var Ccda
      */
@@ -240,12 +230,7 @@ class CcdaImporter
     
     public function storePractice()
     {
-        $practiceId = $this->imr->practice_id ?? null;
-        
-        if ($practiceId) {
-            $this->patient->attachPractice($practiceId, [Role::whereName('participant')->firstOrFail()->id]);
-            $this->patient->load('primaryPractice');
-        }
+        AttachPractice::for($this->patient, $this->ccda);
         
         return $this;
     }
