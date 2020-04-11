@@ -6,7 +6,7 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
-use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\FiresImportingHooks;
+use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
 class ImportPatientInfo extends BaseCcdaImportTask
@@ -113,7 +113,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
             $agentDetails
         );
         
-        $this->fireImportingHook(self::HOOK_IMPORTING_PATIENT_INFO, $this->patient, $args);
+        $this->fireImportingHook(self::HOOK_IMPORTING_PATIENT_INFO, $this->patient, $this->ccda, $args);
         
         $patientInfo = Patient::firstOrCreate(
             [
@@ -189,7 +189,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
             $patientInfo->save();
         }
         
-        $this->fireImportingHook(self::HOOK_IMPORTED_PATIENT_INFO, $this->patient, $patientInfo);
+        $this->fireImportingHook(self::HOOK_IMPORTED_PATIENT_INFO, $this->patient, $this->ccda,$patientInfo);
     }
     
     private function enrollee(): ?Enrollee

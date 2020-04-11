@@ -2,7 +2,7 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Settings;
 
-use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ReplaceFieldsFromSupplementaryData;
+use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\ReplaceFieldsFromSupplementaryData;
 
 class Hooks
 {

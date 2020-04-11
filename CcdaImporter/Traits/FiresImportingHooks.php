@@ -1,17 +1,18 @@
 <?php
 
 
-namespace CircleLinkHealth\Eligibility\CcdaImporter\Hooks;
+namespace CircleLinkHealth\Eligibility\CcdaImporter\Traits;
 
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Settings\Hooks;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Collection;
 
 trait FiresImportingHooks
 {
-    public function fireImportingHook(string $hookName, User $patient, &$payload)
+    public function fireImportingHook(string $hookName, User $patient, Ccda $ccda, &$payload)
     {
         $patient->loadMissing('primaryPractice');
         
@@ -19,7 +20,7 @@ trait FiresImportingHooks
             return;
         }
         
-        return $this->runHook($hookName, $patient->primaryPractice, $patient, $payload);
+        return $this->runHook($hookName, $patient->primaryPractice, $patient, $ccda,$payload);
     }
     
     public function shouldRunHook(string $hookName, Practice $practice): bool
@@ -45,7 +46,7 @@ trait FiresImportingHooks
         return true;
     }
     
-    private function runHook(string $hookName, Practice $practice, User $user, &$payload)
+    private function runHook(string $hookName, Practice $practice, User $user, Ccda $ccda,  &$payload)
     {
         if ( ! $this->shouldRunHook($hookName, $practice)) {
             return null;
@@ -53,6 +54,6 @@ trait FiresImportingHooks
         
         $args = $practice->importing_hooks->get($hookName);
         
-        return app(Hooks::LISTENERS[$args['listener']], ['patient' => $user])->run();
+        return app(Hooks::LISTENERS[$args['listener']], ['patient' => $user, 'ccda' => $ccda])->run();
     }
 }

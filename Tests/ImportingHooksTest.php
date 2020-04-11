@@ -3,7 +3,7 @@
 namespace CircleLinkHealth\Eligibility\Tests;
 
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
-use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ReplaceFieldsFromSupplementaryData;
+use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\ReplaceFieldsFromSupplementaryData;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
 use Tests\CustomerTestCase;
 use Tests\TestCase;
@@ -28,7 +28,7 @@ class ImportingHooksTest extends CustomerTestCase
         $this->assertTrue($importer->shouldRunHook(ImportPatientInfo::HOOK_IMPORTING_PATIENT_INFO, $this->practice()));
         
         $oldValue = $this->patient()->patientInfo;
-        $hook = $importer->fireImportingHook(ImportPatientInfo::HOOK_IMPORTING_PATIENT_INFO, $this->patient(), $this->patient()->patientInfo);
+        $hook = $importer->fireImportingHook(ImportPatientInfo::HOOK_IMPORTING_PATIENT_INFO, $this->patient(), $ccda, $this->patient()->patientInfo);
         $this->assertNull($hook);
     }
 }

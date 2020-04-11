@@ -1,7 +1,7 @@
 <?php
 
 
-namespace CircleLinkHealth\Eligibility\CcdaImporter\Hooks;
+namespace CircleLinkHealth\Eligibility\CcdaImporter\Traits;
 
 
 trait HasImportingHooks

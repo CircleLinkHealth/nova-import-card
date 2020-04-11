@@ -1,34 +1,22 @@
 <?php
 
 
-namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
+namespace CircleLinkHealth\Eligibility\CcdaImporter\Hooks;
 
 
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportHook;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use CircleLinkHealth\Eligibility\NBISupplementaryDataNotFound;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Facades\Notification;
 
-class ReplaceFieldsFromSupplementaryData
+class ReplaceFieldsFromSupplementaryData extends BaseCcdaImportHook
 {
     const IMPORTING_LISTENER_NAME = 'import.from.supplemental.patient.data';
-    /**
-     * @var User
-     */
-    protected $patient;
-    
-    /**
-     * ReplaceFieldsFromSupplementaryData constructor.
-     *
-     * @param User $patient
-     */
-    public function __construct(User $patient)
-    {
-        $this->patient = $patient;
-    }
     
     const NBI_PRACTICE_NAME = 'bethcare-newark-beth-israel';
     

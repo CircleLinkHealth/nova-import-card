@@ -20,6 +20,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportInsurances;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportMedications;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\BloodPressure;
@@ -51,10 +52,6 @@ class CcdaImporter
      * @var StringManipulation
      */
     protected $str;
-    /**
-     * @var boolean|null
-     */
-    protected $hasUPG0506Instructions;
     /**
      * @var CarePlan|\Illuminate\Database\Eloquent\Model
      */
@@ -242,55 +239,7 @@ class CcdaImporter
      */
     public function storeProblemsList()
     {
-        if (empty($this->probs)) {
-            return $this;
-        }
-        
-        /** @var ProblemImport $problem */
-        foreach ($this->probs as $problem) {
-            $instruction = $this->getInstruction($problem);
-            
-            $ccdProblem = Problem::updateOrCreate(
-                [
-                    'name'           => $problem->name,
-                    'patient_id'     => $this->patient->id,
-                    'cpm_problem_id' => $problem->cpm_problem_id,
-                ],
-                [
-                    'problem_import_id'  => $problem->id,
-                    'is_monitored'       => (bool)$problem->cpm_problem_id,
-                    'ccd_problem_log_id' => $problem->ccd_problem_log_id,
-                    'cpm_instruction_id' => optional($instruction)->id ?? null,
-                ]
-            );
-            
-            $problemLog = $problem->ccdLog;
-            
-            if ($problemLog) {
-                $problemLog->codes->map(
-                    function ($codeLog) use ($ccdProblem) {
-                        ProblemCode::updateOrCreate(
-                            [
-                                'problem_id' => $ccdProblem->id,
-                                'code'       => $codeLog->code,
-                            ],
-                            [
-                                'code_system_name' => $codeLog->code_system_name,
-                                'code_system_oid'  => $codeLog->code_system_oid,
-                            ]
-                        );
-                    }
-                );
-            }
-        }
-        
-        
-        $misc = CpmMisc::whereName(CpmMisc::OTHER_CONDITIONS)
-                       ->first();
-        
-        if ( ! $this->hasMisc($this->patient, $misc)) {
-            $this->patient->cpmMiscs()->attach(optional($misc)->id);
-        }
+        ImportProblems::for($this->patient, $this->ccda);
         
         return $this;
     }
@@ -404,61 +353,6 @@ class CcdaImporter
         }
         
         return $this;
-    }
-    
-    private function getInstruction(ProblemImport $problemImport)
-    {
-        if (is_null($this->hasUPG0506Instructions)) {
-            $this->hasUPG0506Instructions = $this->mr->hasUPG0506PdfCareplanMedia()->exists();
-        }
-        
-        if (true === $this->hasUPG0506Instructions) {
-            return $this->createInstructionFromUPG0506($problemImport);
-        }
-        
-        $cpmProblems = \Cache::remember(
-            'all_cpm_problems_keyed_by_id',
-            2,
-            function () {
-                return CpmProblem::get()->keyBy('id');
-            }
-        );
-        
-        $cpmProblem = $problemImport->cpm_problem_id
-            ? $cpmProblems[$problemImport->cpm_problem_id]
-            : null;
-        
-        return optional($cpmProblem)->instruction();
-    }
-    
-    private function createInstructionFromUPG0506(ProblemImport $problemImport): ?CpmInstruction
-    {
-        $pdfMedia = $this->mr->getUPG0506PdfCareplanMedia();
-        
-        if ( ! $pdfMedia) {
-            return null;
-        }
-        
-        $customProperties = json_decode($pdfMedia->custom_properties);
-        
-        if ( ! isset($customProperties->care_plan)) {
-            return null;
-        }
-        
-        $matchingProblem = collect($customProperties->care_plan->instructions)
-            ->where('name', $problemImport->name)
-            ->first();
-        
-        
-        if ( ! $matchingProblem) {
-            return null;
-        }
-        
-        return CpmInstruction::create(
-            [
-                'name' => $matchingProblem->instructions,
-            ]
-        );
     }
 }
 

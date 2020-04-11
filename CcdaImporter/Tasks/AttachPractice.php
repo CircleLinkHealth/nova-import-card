@@ -4,9 +4,6 @@
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 
-use CircleLinkHealth\Customer\Entities\CarePerson;
-use CircleLinkHealth\Customer\Entities\PracticeRoleUser;
-use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 
 class AttachPractice extends BaseCcdaImportTask
