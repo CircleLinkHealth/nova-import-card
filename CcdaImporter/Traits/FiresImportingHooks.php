@@ -12,15 +12,15 @@ use Illuminate\Support\Collection;
 
 trait FiresImportingHooks
 {
-    public function fireImportingHook(string $hookName, User $patient, Ccda $ccda, &$payload)
+    public function fireImportingHook(string $hookName, User $patient, Ccda $ccda, $payload)
     {
         $patient->loadMissing('primaryPractice');
         
         if ( ! $patient->primaryPractice) {
-            return;
+            return null;
         }
         
-        return $this->runHook($hookName, $patient->primaryPractice, $patient, $ccda,$payload);
+        return $this->runHook($hookName, $patient->primaryPractice, $patient, $ccda, $payload);
     }
     
     public function shouldRunHook(string $hookName, Practice $practice): bool
@@ -46,7 +46,7 @@ trait FiresImportingHooks
         return true;
     }
     
-    private function runHook(string $hookName, Practice $practice, User $user, Ccda $ccda,  &$payload)
+    private function runHook(string $hookName, Practice $practice, User $user, Ccda $ccda, $payload)
     {
         if ( ! $this->shouldRunHook($hookName, $practice)) {
             return null;
@@ -54,6 +54,6 @@ trait FiresImportingHooks
         
         $args = $practice->importing_hooks->get($hookName);
         
-        return app(Hooks::LISTENERS[$args['listener']], ['patient' => $user, 'ccda' => $ccda])->run();
+        return app(Hooks::LISTENERS[$args['listener']], ['patient' => $user, 'ccda' => $ccda, 'payload' => $payload])->run();
     }
 }

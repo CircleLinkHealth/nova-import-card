@@ -12,19 +12,22 @@ use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 
 class GetUPG0506ProblemInstruction extends BaseCcdaImportHook
 {
+    const IMPORTING_LISTENER_NAME = 'import_UPG0506_problem_instructions';
     /**
      * @var boolean|null
      */
     protected $hasUPG0506Instructions;
     
-    public function for(Ccda $ccda, $newProblem) {
+    public function run(): ?CpmInstruction {
         if (is_null($this->hasUPG0506Instructions)) {
             $this->hasUPG0506Instructions = $this->ccda->hasUPG0506PdfCareplanMedia()->exists();
         }
     
         if (true === $this->hasUPG0506Instructions) {
-            return $this->createInstructionFromUPG0506($ccda, $newProblem);
+            return $this->createInstructionFromUPG0506($this->ccda, $this->payload);
         }
+        
+        return null;
     }
     
     private function createInstructionFromUPG0506(Ccda $ccda, $newProblem): ?CpmInstruction

@@ -19,10 +19,22 @@ abstract class BaseCcdaImportHook
      * @var Ccda
      */
     protected $ccda;
+    /**
+     * @var null
+     */
+    protected $payload;
     
-    public function __construct(User $patient, Ccda $ccda)
+    /**
+     * BaseCcdaImportHook constructor.
+     *
+     * @param User $patient
+     * @param Ccda $ccda
+     * @param null $payload
+     */
+    public function __construct(User $patient, Ccda $ccda, $payload = null)
     {
         $this->patient = $patient;
         $this->ccda = $ccda;
+        $this->payload = $payload;
     }
 }
