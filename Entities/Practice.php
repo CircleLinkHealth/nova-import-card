@@ -14,7 +14,7 @@ use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
-use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\HasImportingHooks;
+use CircleLinkHealth\Eligibility\CcdaImporter\Traits\HasImportingHooks;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Nova\Actions\Actionable;
