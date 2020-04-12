@@ -1108,8 +1108,6 @@
                 return this.axios
                     .post(url, formData)
                     .then(response => {
-                        //add event
-                        console.log(response)
                         //add global modal?
                         App.$emit('enrollable-action-complete')
                     })
@@ -1121,6 +1119,7 @@
                 this.submitForm(this.pending_form, this.pending_form_url)
             },
             setPatientData(data){
+                //replace with loop from resource
                 this.patient_data = data;
                 this.home_phone = data.enrollee.home_phone
                 this.cell_phone = data.enrollee.cell_phone
