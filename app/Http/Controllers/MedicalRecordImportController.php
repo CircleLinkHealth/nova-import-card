@@ -8,7 +8,7 @@ namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 
@@ -31,17 +31,10 @@ class MedicalRecordImportController extends Controller
                 continue;
             }
 
-            $imr = ImportedMedicalRecord::find($id);
+            $ccda = Ccda::find($id);
 
-            if ($imr) {
-                $medicalRecord = $imr->medicalRecord();
-                $medicalRecord->update(
-                    [
-                        'imported' => false,
-                    ]
-                );
-
-                $imr->delete();
+            if ($ccda) {
+                $ccda->delete();
             } else {
                 array_push($recordsNotFound, $id);
                 array_splice($recordsToDelete, array_search($id, $recordsToDelete));
@@ -60,16 +53,16 @@ class MedicalRecordImportController extends Controller
             foreach ($recordsToImport as $record) {
                 if ($record) {
                     $id  = $record['id'];
-                    $imr = ImportedMedicalRecord::find($id);
-                    if (empty($imr)) {
+                    $ccda = Ccda::find($id);
+                    if (empty($ccda)) {
                         continue;
                     }
-                    try {
-                        $imr['location_id']         = $record['location_id'];
-                        $imr['practice_id']         = $record['practice_id'];
-                        $imr['billing_provider_id'] = $record['billing_provider_id'];
-                        $imr['nurse_user_id']       = $record['nurse_user_id'] ?? null;
-                        $carePlan                   = $imr->updateOrCreateCarePlan();
+
+                        $ccda['location_id']         = $record['location_id'];
+                        $ccda['practice_id']         = $record['practice_id'];
+                        $ccda['billing_provider_id'] = $record['billing_provider_id'];
+                        $ccda['nurse_user_id']       = $record['nurse_user_id'] ?? null;
+                        $carePlan                   = $ccda->updateOrCreateCarePlan();
                         array_push(
                             $importedRecords,
                             [
@@ -78,17 +71,8 @@ class MedicalRecordImportController extends Controller
                                 'patient'   => $carePlan->patient()->first(),
                             ]
                         );
-                        $imr->imported = true;
-                        $imr->save();
-                    } catch (\Exception $ex) {
-                        //throwing Exceptions to help debug importing issues
-                        throw $ex;
-//                            array_push($importedRecords, [
-//                                'id' => $id,
-//                                'completed' => false,
-//                                'error' => $ex->getMessage()
-//                            ]);
-                    }
+                        $ccda->imported = true;
+                        $ccda->save();
                 }
             }
 
@@ -109,11 +93,7 @@ class MedicalRecordImportController extends Controller
             'patientUserId'   => $userId,
             'initiatorUserId' => auth()->id(),
         ];
-
-        if ('on' === $request->input('flushCcd')) {
-            $args['--flush-ccd'] = true;
-        }
-
+        
         Artisan::queue(
             ReimportPatientMedicalRecord::class,
             $args

@@ -6,13 +6,13 @@
 
 namespace Tests\Feature;
 
-use App\Models\CCD\CcdVendor;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Tests\CustomerTestCase;
 use Tests\TestCase;
 
-class ImportCcdFromAwv extends TestCase
+class ImportCcdFromAwv extends CustomerTestCase
 {
     protected function setUp()
     {
@@ -31,9 +31,6 @@ class ImportCcdFromAwv extends TestCase
         //Illuminate\Contracts\Container\BindingResolutionException : Unresolvable dependency resolving [Parameter #0 [ <required> $model ]] in class Algolia\ScoutExtended\Builder
         //->had to disable Laravel Profile (PROFILER_ENABLED=false in phpunit.xml)
 
-        /** @var CcdVendor $ccdVendor */
-        $ccdVendor = factory(CcdVendor::class)->create();
-
         User::where('display_name', '=', 'Myra Jones')->delete();
         $ccdaPath          = storage_path('ccdas/Samples/demo.xml');
         $uploadCcdResponse = $this->json('POST', 'api/ccd-importer/imported-medical-records?json&source=importer_awv', [
@@ -48,7 +45,7 @@ class ImportCcdFromAwv extends TestCase
             [
                 'id'               => $uploadCcdResponse->json()[0]['medical_record_id'],
                 'Location'         => $uploadCcdResponse->json()[0]['location_id'] ?? null,
-                'Practice'         => $ccdVendor->program_id,
+                'Practice'         => $this->practice()->id,
                 'Billing Provider' => $uploadCcdResponse->json()[0]['billing_provider_id'] ?? null,
             ],
         ]);

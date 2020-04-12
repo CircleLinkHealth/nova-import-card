@@ -690,10 +690,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'ImporterController@uploadRawFiles',
             'as'   => 'upload.ccda',
         ]);
-
-        Route::get('uploaded-ccd-items/{importedMedicalRecordId}/edit', 'ImportedMedicalRecordController@edit');
-
-        Route::post('import', 'MedicalRecordImportController@importDEPRECATED');
     });
 
     //CCD Parser Demo Route

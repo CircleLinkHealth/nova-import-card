@@ -8,10 +8,8 @@ namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Jobs\ImportCcda;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\Request;
-use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
 class ImporterController extends Controller
 {
@@ -34,7 +32,7 @@ class ImporterController extends Controller
     
     public function getImportedRecords()
     {
-        return ImportedMedicalRecord::whereNull('imported')
+        return Ccda::whereNull('imported')
                                     ->with(
                                         [
                                             'billingProvider' => function ($q) {
@@ -80,17 +78,10 @@ class ImporterController extends Controller
                                     ->whereIn('practice_id', auth()->user()->viewableProgramIds())
                                     ->get()
                                     ->transform(
-                function (ImportedMedicalRecord $summary) {
-                    $mr = $summary->medicalRecord();
-                    
-                    if ( ! $mr) {
-                        return false;
-                    }
-                    
+                function (Ccda $ccda) {
                     if (upg0506IsEnabled()) {
                         $isUpg0506Incomplete = false;
                         
-                        if ($mr instanceof Ccda) {
                             $isUpg0506Incomplete = Ccda::whereHas(
                                 'media',
                                 function ($q) {
@@ -101,60 +92,16 @@ class ImporterController extends Controller
                                 function ($q) {
                                     $q->where('from', 'like', '%@upg.ssdirect.aprima.com');
                                 }
-                            )->where('id', $mr->id)->exists();
-                        }
+                            )->where('id', $ccda->id)->exists();
                         
                         if ($isUpg0506Incomplete) {
                             return false;
                         }
                     }
                     
-                    if ( ! $summary->billing_provider_id) {
-                        $mr = $mr->guessPracticeLocationProvider();
-                        
-                        $summary->billing_provider_id = $mr->getBillingProviderId();
-                        
-                        if ($summary->isDirty('billing_provider_id')) {
-                            $summary->load('billingProvider');
-                        }
-                        
-                        if ( ! $summary->location_id) {
-                            $summary->location_id = $mr->getLocationId();
-                            $summary->load('location');
-                        }
-                        
-                        if ( ! $summary->practice_id) {
-                            $summary->practice_id = $mr->getPracticeId();
-                            $summary->load('practice');
-                        }
-                        
-                        if ($summary->isDirty()) {
-                            $summary->save();
-                        }
-                    }
+                    $ccda->checkDuplicity();
                     
-                    $providers = $mr->providers()->where(
-                        [
-                            ['first_name', '!=', null],
-                            ['last_name', '!=', null],
-                            ['ml_ignore', '=', false],
-                        ]
-                    )->get()->unique(
-                        function ($m) {
-                            return $m->first_name.$m->last_name;
-                        }
-                    );
-                    
-                    $summary['flag'] = false;
-                    
-                    if ($providers->count(
-                        ) > 1 || ! $mr->location_id || ! $mr->location_id || ! $mr->billing_provider_id) {
-                        $summary['flag'] = true;
-                    }
-                    
-                    $summary->checkDuplicity();
-                    
-                    return $summary;
+                    return $ccda;
                 }
             )->filter()->unique('patient_id')
                                     ->values();

@@ -6,7 +6,6 @@
 
 use App\Call;
 use App\DirectMailMessage;
-use App\Models\CCD\CcdVendor;
 use App\Services\PdfReports\Handlers\AthenaApiPdfHandler;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Ehr;
@@ -347,16 +346,6 @@ $factory->define(Call::class, function (Faker\Generator $faker) {
         'service'         => 'phone',
         'status'          => $faker->randomElement(['scheduled', 'reached', 'done']),
         'scheduler'       => null, // to be filled in during test
-    ];
-});
-
-$factory->define(CcdVendor::class, function (Faker\Generator $faker) {
-    $practice = factory(Practice::class)->create();
-
-    return [
-        'id'          => 1,
-        'program_id'  => $practice->id,
-        'vendor_name' => 'TEST',
     ];
 });
 
