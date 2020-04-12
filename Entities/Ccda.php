@@ -124,8 +124,14 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     
     public function bluebuttonJson()
     {
+        if (!empty($this->decodedJson)) {
+            return $this->decodedJson;
+        }
+        
         if ($this->json) {
-            return json_decode($this->json);
+            $this->decodedJson = json_decode($this->json);
+            
+            return $this->decodedJson;
         }
         
         if ( ! $this->id || ! $this->hasMedia(self::CCD_MEDIA_COLLECTION_NAME)) {
@@ -140,8 +146,10 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
                 $this->parseToJson();
             }
         }
-        
-        return json_decode($this->json);
+      
+        $this->decodedJson = json_decode($this->json);
+    
+        return $this->decodedJson;
     }
     
     public function ccdaRequest()
@@ -362,22 +370,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     
     public function updateOrCreateCarePlan(): CarePlan
     {
-        if ( ! $this->patient_id) {
-            $user = (new CCDImporterRepository())->createRandomUser(
-                $this,
-                [
-                    'email'       => $this->patientEmail(),
-                    'first_name'  => $this->patientFirstName(),
-                    'last_name'   => $this->patientLastName(),
-                    'practice_id' => $this->practice_id,
-                ]
-            );
-            
-            $this->patient_id = $user->id;
-            $this->save();
-        }
-        
-        return (new CcdaImporter($this, $user ?? $this->patient))->storeImportedValues();
+        return (new CcdaImporter($this, $this->load('patient')->patient ?? null))->attemptCreateCarePlan();
     }
     
     public function patientEmail()
@@ -473,6 +466,9 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     
     public function raiseConcerns()
     {
+
+        $this->load('patient');
+
         $isDuplicate             = $this->isDuplicate();
         $ccmConditionsCount      = $this->ccmConditionsCount();
         $hasAtLeast1BhiCondition = $this->hasAtLeast1BhiCondition();
