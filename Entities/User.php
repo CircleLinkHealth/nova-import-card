@@ -750,18 +750,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasOne(CpmWeight::class, 'patient_id');
     }
 
-    public function createNewUser(
-        $email,
-        $password
-    ) {
-        $this->username = $email;
-        $this->email    = $email;
-        $this->password = bcrypt($password);
-        $this->save();
-
-        return $this;
-    }
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
