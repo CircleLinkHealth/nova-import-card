@@ -169,15 +169,4 @@ class CcdaImporterTest extends CustomerTestCase
         
         $this->assertCount(18, $problems);
     }
-    
-    public function test_it_imports_csv_ccda_vitals()
-    {
-        $ccda = FakeCalvaryCcda::create();
-        
-        ImportVitals::for($this->patient(), $ccda);
-        
-        $problems = $this->patient()->ccdProblems()->get();
-        
-        $this->assertCount(18, $problems);
-    }
 }

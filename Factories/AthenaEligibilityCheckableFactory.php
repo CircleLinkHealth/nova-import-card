@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Factories;
 
+use CircleLinkHealth\Core\Exceptions\InvalidCcdaException;
 use CircleLinkHealth\Eligibility\Exceptions\CcdaWasNotFetchedFromAthenaApi;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Checkables\AthenaCheckable;
@@ -64,6 +65,10 @@ class AthenaEligibilityCheckableFactory
         
         if ( ! $ccda) {
             self::getCCDFromAthenaApi($targetPatient);
+        }
+        
+        if (! $ccda) {
+            throw new CcdaWasNotFetchedFromAthenaApi($targetPatient);
         }
         
         return new AthenaCheckable($ccda, $targetPatient->practice, $targetPatient->batch, $targetPatient);
