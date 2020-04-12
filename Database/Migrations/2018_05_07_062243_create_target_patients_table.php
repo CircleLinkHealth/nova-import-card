@@ -30,6 +30,8 @@ class CreateTargetPatientsTable extends Migration
             $table->integer('user_id')->unsigned()->nullable()->index('target_patients_user_id_foreign');
             $table->integer('enrollee_id')->unsigned()->nullable()->index('target_patients_enrollee_id_foreign');
             $table->integer('ehr_patient_id')->unsigned();
+            $table->integer('ehr_practice_id')->unsigned();
+            $table->integer('ehr_department_id')->unsigned();
             $table->integer('practice_id')->unsigned();
             $table->integer('department_id')->unsigned();
             $table->enum('status', ['to_process', 'eligible', 'ineligible', 'consented', 'enrolled', 'error', 'duplicate'])->nullable();
