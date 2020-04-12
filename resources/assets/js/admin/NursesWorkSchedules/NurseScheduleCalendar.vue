@@ -353,6 +353,13 @@
                             });
                         },
                     },
+                    // We could  add another source here, which means another axios request
+                    // {
+                    //     events(start, end, timezone, callback) {
+                    //
+                    //     }
+                    //
+                    // }
                 ],
 
                 config: {
@@ -816,6 +823,14 @@
                     return removeDuplicatesFrom(this.holidays);
                 } else {
                     return removeDuplicatesFrom(workEventsWithHolidays);
+                }
+            },
+            dailyReport() {
+                return {
+                    title: "SEX",
+                    start: '2020-04-12',
+                    end: '2020-04-12',
+                    allDay: true
                 }
             },
 

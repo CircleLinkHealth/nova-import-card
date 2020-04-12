@@ -1652,6 +1652,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'care.center.work.schedule.getCalendarData',
         ])->middleware('permission:nurseContactWindow.read');
 
+        Route::get('work-schedule/get-daily-report', [
+            'uses' => 'CareCenter\WorkScheduleController@dailyReportForNurse',
+            'as'   => 'care.center.work.schedule.getDailyReport',
+        ])->middleware('permission:nurseContactWindow.read');
+
         Route::get('work-schedule/get-nurse-calendar-data', [
             'uses' => 'CareCenter\WorkScheduleController@calendarWorkEventsForAuthNurse',
             'as'   => 'care.center.work.schedule.calendarWorkEventsForAuthNurse',
