@@ -261,7 +261,7 @@
       "php artisan --env=testing migrate:fresh",
       "php artisan --env=testing migrate:views",
       "php artisan --env=testing db:seed --class=TestSuiteSeeder",
-      "./vendor/phpunit/phpunit/phpunit --testsuite=Feature,Unit --colors --testdox"
+      "./vendor/phpunit/phpunit/phpunit --testsuite=EligibilityModule,Feature,Unit --colors --testdox"
     ],
     "clear": [
       "php artisan clear-compiled",
