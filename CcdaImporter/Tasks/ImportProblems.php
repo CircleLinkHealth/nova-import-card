@@ -70,7 +70,7 @@ class ImportProblems extends BaseCcdaImportTask
                             'cpm_problem_id' => $new['cpm_problem_id'],
                         ],
                         [
-                            'ccda_id' => $this->ccda,
+                            'ccda_id' => $this->ccda->id,
                             'is_monitored'       => (bool) $new['cpm_problem_id'],
                             'cpm_instruction_id' => optional($instruction)->id ?? null,
                         ]
