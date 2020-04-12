@@ -76,7 +76,7 @@ abstract class CreatesTestPatients
             $patientData['roles'] = [$role->id];
             $bag                  = new ParameterBag($patientData);
 
-            $user = $repo->createNewUser(new User(), $bag);
+            $user = $repo->createNewUser($bag);
 
             $this->createAndAttachProblems($problems, $user, $patientData);
 

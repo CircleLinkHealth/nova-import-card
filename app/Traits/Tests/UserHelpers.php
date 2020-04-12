@@ -218,7 +218,7 @@ trait UserHelpers
         );
 
         //create a user
-        $user = (new UserRepository())->createNewUser(new User(), $bag);
+        $user = (new UserRepository())->createNewUser($bag);
 
         $practice = Practice::with('locations')->findOrFail($practiceId);
 

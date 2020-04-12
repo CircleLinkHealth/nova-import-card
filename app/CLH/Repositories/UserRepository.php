@@ -24,6 +24,8 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Storage;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -67,10 +69,28 @@ class UserRepository
     }
 
     public function createNewUser(
-        User $user,
         ParameterBag $params
     ) {
-        $user = $user->createNewUser($params->get('email'), $params->get('password'));
+        $validator = \Validator::make($this->createNewUserRules(),[
+            'required'                   => 'The :attribute field is required.',
+            'home_phone_number.required' => 'The patient phone number field is required.',
+        ]);
+        
+        if($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+        
+        $user = User::create([
+                             'saas_account_id' => $params->get('saas_account_id'),
+                             'first_name' => $params->get('first_name'),
+                             'last_name' => $params->get('last_name'),
+                             'program_id' => $params->get('program_id'),
+                             'email' => $params->get('email'),
+                             'username' => $params->get('username'),
+                         ]);
+        
+        $user->username = $user->email    = $params->get('email');
+        $user->password = bcrypt($params->get('password'));
 
         if ( ! $user || is_null($user->id)) {
             \Log::error('User has not been created.', [
@@ -618,5 +638,37 @@ class UserRepository
 
             $authyUser->save();
         }
+    }
+    
+    /**
+     * Validation rules for creating a new User
+     *
+     * @return array
+     */
+    private function createNewUserRules()
+    {
+        return [
+            'saas_account_id'         => 'required|exists:saas_accounts,id',
+            'first_name'              => 'required',
+            'last_name'               => 'required',
+            'gender'                  => 'required',
+            'mrn_number'              => 'required',
+            'birth_date'              => 'required',
+            'home_phone_number'       => 'required',
+            'consent_date'            => 'required',
+            'ccm_status'              => 'required',
+            'program_id'              => 'required|exists:practices,id',
+            'email' => [
+                'required',
+                Rule::unique('users', 'email')
+            ],
+            'username' => [
+                'required',
+                Rule::unique('users', 'username')
+            ],
+            'roles.*' => [
+                'required|exists:lv_roles,id'
+            ]
+        ];
     }
 }
