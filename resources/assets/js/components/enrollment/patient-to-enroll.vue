@@ -412,13 +412,14 @@
                             </blockquote>
                             <div class="col s12 m3">
                                 <label for="days[]" class="label">Day</label>
-                                <select class="do-not-close" v-model="days" name="days[]" id="days[]" multiple>
+                                <select class="do-not-close" v-model="days" name="days[]" id="days[]" @change="setDays"multiple>
                                     <option disabled selected>Days:</option>
                                     <option value="1">Monday</option>
                                     <option value="2">Tuesday</option>
                                     <option value="3">Wednesday</option>
                                     <option value="4">Thursday</option>
                                     <option value="5">Friday</option>
+                                    <option value="all">Any day</option>
                                 </select>
                             </div>
                             <div class="col s12 m3">
@@ -1080,6 +1081,12 @@
             this.getSuggestedFamilyMembers();
         },
         methods: {
+            setDays(event){
+                if (this.days.includes('all')){
+                    this.days = ['1', '2', '3', '4', '5', 'all'];
+                    M.FormSelect.getInstance(document.getElementById('days[]')).dropdown.close()
+                }
+            },
             capitalizeFirstLetter(string) {
                 return string.charAt(0).toUpperCase() + string.slice(1);
             },
