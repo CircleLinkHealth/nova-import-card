@@ -7,24 +7,11 @@
 namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers;
 
 use CircleLinkHealth\Core\StringManipulation;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsLog;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DocumentLog;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
-use CircleLinkHealth\SharedModels\Entities\AllergyLog;
 
-/**
- * Takes data from the the json CCD and transforms it so that it can be saved as one of the transformer Models.
- * There is a method in this class for each model, it is listed using @see above every function
- * Class CcdToLogTranformer.
- */
 class CcdToLogTranformer
 {
     /**
-     * @see \CircleLinkHealth\SharedModels\Entities\AllergyLog
-     *
-     * @param $allergy
+     * @param object $allergy
      *
      * @return array
      */
@@ -37,10 +24,8 @@ class CcdToLogTranformer
             'allergen_name' => $allergy->allergen->name,
         ];
     }
-
+    
     /**
-     * @see DemographicsLog
-     *
      * @param $demographics
      *
      * @return array
@@ -75,10 +60,8 @@ class CcdToLogTranformer
             'ethnicity'     => $demographics->ethnicity,
         ];
     }
-
+    
     /**
-     * @see DocumentLog
-     *
      * @param $document
      *
      * @return array
@@ -92,10 +75,8 @@ class CcdToLogTranformer
                 ?: $document->type,
         ];
     }
-
+    
     /**
-     * @see InsuranceLog
-     *
      * @param $payer
      *
      * @return array
@@ -112,8 +93,6 @@ class CcdToLogTranformer
     }
 
     /**
-     * @see @see CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog
-     *
      * @param $medication
      *
      * @return array

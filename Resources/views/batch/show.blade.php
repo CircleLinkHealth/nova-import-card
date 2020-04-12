@@ -169,22 +169,6 @@
                                     @endforelse
                                 </div>
                             </div>
-
-
-
-                            <div class="row" style="margin-top: 10px;">
-                                @if($athenaInsurancesExist)
-                                    <div class="pull-left" style="padding-left: 2%;">
-                                        <a href="{{route('eligibility.download.supplemental_insurance_info', [$batch->id])}}"
-                                           class="btn btn-success">Download Supplemental Insurance Info CSV</a>
-                                    </div>
-                                    <div class="pull-left" style="padding-left: 2%;">
-                                        <a href="{{route('eligibility.download.copays', [$batch->id])}}"
-                                           class="btn btn-danger">Download Copays CSV</a>
-                                    </div>
-                                @endif
-                            </div>
-
                         <script>
                             function notifyReportWriter() {
                                 var x = document.getElementById("notify");

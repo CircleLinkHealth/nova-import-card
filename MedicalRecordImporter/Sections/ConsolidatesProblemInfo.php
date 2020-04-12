@@ -6,8 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections;
 
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
-
 trait ConsolidatesProblemInfo
 {
     /**
@@ -16,7 +14,7 @@ trait ConsolidatesProblemInfo
      *
      * Overwrite the problem section with the preferred one.
      *
-     * @param ProblemLog $problemLog
+     * @param object $problemLog
      *
      * @return mixed
      */

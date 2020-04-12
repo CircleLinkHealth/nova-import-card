@@ -6,18 +6,13 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 use App\Constants;
 use App\Importer\Section\Validators\NameNotNull;
-use App\MedicationGroupsMap;
-use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\GetProblemInstruction;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\ConsolidatesProblemInfo;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
-use CircleLinkHealth\SharedModels\Entities\Medication;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 use Illuminate\Database\Eloquent\Collection;
@@ -124,14 +119,6 @@ class ImportProblems extends BaseCcdaImportTask
         }
     }
     
-    /**
-     * Get the CpmProblem for a ProblemLog.
-     *
-     * @param ProblemLog $itemLog
-     * @param $problemName
-     *
-     * @return CpmProblem|null
-     */
     private function getCpmProblem($itemLog, $problemName)
     {
         if ( ! validProblemName($problemName)) {

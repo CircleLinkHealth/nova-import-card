@@ -6,8 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections;
 
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog;
-
 trait ConsolidatesMedicationInfo
 {
     public function containsSigKeywords($field): bool
