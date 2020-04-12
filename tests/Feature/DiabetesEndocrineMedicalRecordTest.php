@@ -1768,7 +1768,6 @@ class DiabetesEndocrineMedicalRecordTest extends CustomerTestCase
                 'source'      => $mr->getType(),
                 'json'        => $mr->toJson(),
                 'practice_id' => $this->patient()->program_id,
-                'patient_id'  => $this->patient()->id,
                 'mrn'         => $this->patient()->getMRN(),
             ]
         );
@@ -1777,11 +1776,10 @@ class DiabetesEndocrineMedicalRecordTest extends CustomerTestCase
             'patientUserId' => $this->patient()->id,
         ];
         
-        Artisan::call(
-            ReimportPatientMedicalRecord::class,
-            $args
-        );
+        $ccda->import();
         
-        $this->assertEquals($this->expectedResult(), $mr->toArray());
+        $newPatient = $ccda->patient()->first();
+        
+        $this->assertTrue($ccda->patientFirstName() === $newPatient->first_name);
     }
 }
