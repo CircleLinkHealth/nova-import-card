@@ -32,13 +32,13 @@ class ImporterController extends Controller
     
     public function getImportedRecords()
     {
-        return Ccda::whereNull('imported')
+        return Ccda::has('patient')
                                     ->with(
                                         [
-                                            'billingProvider' => function ($q) {
+                                            'patient.billingProvider.user' => function ($q) {
                                                 $q->select(
                                                     [
-                                                        'id',
+                                                        'users.id',
                                                         'saas_account_id',
                                                         'program_id',
                                                         'display_name',
@@ -48,10 +48,10 @@ class ImporterController extends Controller
                                                     ]
                                                 );
                                             },
-                                            'nurseUser'       => function ($q) {
+                                            'patient.patientNurseAsPatient.permanentNurse'       => function ($q) {
                                                 $q->select(
                                                     [
-                                                        'id',
+                                                        'users.id',
                                                         'saas_account_id',
                                                         'program_id',
                                                         'display_name',
@@ -61,10 +61,10 @@ class ImporterController extends Controller
                                                     ]
                                                 );
                                             },
-                                            'location'        => function ($q) {
+                                            'patient.locations'        => function ($q) {
                                                 $q->select(
                                                     [
-                                                        'id',
+                                                        'locations.id',
                                                         'practice_id',
                                                         'is_primary',
                                                         'name',
@@ -72,10 +72,15 @@ class ImporterController extends Controller
                                                 );
                                             },
                                             'patient.patientInfo',
-                                            'practice',
+                                            'patient.primaryPractice',
                                         ]
                                     )
-                                    ->whereIn('practice_id', auth()->user()->viewableProgramIds())
+                                    ->where(function ($q) {
+                                        $q->whereIn('practice_id', auth()->user()->viewableProgramIds())
+                                            ->when(auth()->user()->isAdmin(), function ($q) {
+                                                $q->orWhereNull('practice_id');
+                                            });
+                                    })
                                     ->get()
                                     ->transform(
                 function (Ccda $ccda) {
