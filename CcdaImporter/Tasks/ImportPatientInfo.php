@@ -34,6 +34,8 @@ class ImportPatientInfo extends BaseCcdaImportTask
     
     protected function import()
     {
+        $this->patient->load('patientInfo');
+        
         $demographics = $this->transform($this->ccda->bluebuttonJson()->demographics);
         
         $mrn = $demographics['mrn_number'];
@@ -122,7 +124,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
             $args = $hook;
         }
         
-        $patientInfo = Patient::firstOrNew(
+        $patientInfo = Patient::firstOrCreate(
             [
                 'user_id' => $this->patient->id,
             ],
