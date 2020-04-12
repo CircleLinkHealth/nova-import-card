@@ -64,7 +64,7 @@ class InsuranceFromAthena implements MedicalRecordDecorator
         return tap(
             $insurances,
             function (array $insurances) use ($ccda) {
-                $this->storeInsuranceLogsFromAthenaApi($insurances, $ccda);
+                $this->addInsurancesToCcda($insurances, $ccda);
             }
         );
     }
@@ -72,12 +72,12 @@ class InsuranceFromAthena implements MedicalRecordDecorator
     /**
      * @return Collection
      */
-    private function storeInsuranceLogsFromAthenaApi(array $insurances, Ccda $ccda)
+    public function addInsurancesToCcda(array $insurances, Ccda $ccda)
     {
         if (array_key_exists('insurances', $insurances)) {
+            $json = $ccda->bluebuttonJson();
             foreach ($insurances['insurances'] as $insurance) {
-                //@importerv3qa
-                $ccda->bluebuttonJson()->payers->push(
+                array_push($json->payers,
                     [
                         'insurance'   => $insurance['insuranceplanname'] ?? null,
                         'policy_type' => $insurance['insurancetype'] ?? null,
@@ -87,6 +87,8 @@ class InsuranceFromAthena implements MedicalRecordDecorator
                     ]
                 );
             }
+            $ccda->json = json_encode($json);
+            $ccda->save();
         }
     }
     
