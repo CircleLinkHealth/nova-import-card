@@ -68,7 +68,7 @@ class OverwriteNBIImportedData extends Command
         $this->table(['imr_id', 'was_replaced'], $result->all());
     }
     
-    public function nbiPractice()
+    public function nbiPractice():?Practice
     {
         if ( ! $this->nbiPractice) {
             $this->nbiPractice = Practice::whereName(ReplaceFieldsFromSupplementaryData::NBI_PRACTICE_NAME)->with(
@@ -84,6 +84,10 @@ class OverwriteNBIImportedData extends Command
      */
     public function lookupAndReplacePatientData(Ccda $ccda)
     {
+        if ( ! $this->nbiPractice()) {
+            return;
+        }
+        
         $datas = SupplementalPatientData::where(
             'first_name',
             'like',
