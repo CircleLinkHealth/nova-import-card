@@ -32,6 +32,8 @@ class AttachDefaultPatientContactWindows extends BaseCcdaImportTask
     
     protected function import()
     {
+        $this->patient->load('patientInfo');
+    
         if ( ! $this->patient->timezone) {
             $this->patient->timezone = optional($this->ccda->location)->timezone ?? 'America/New_York';
         }

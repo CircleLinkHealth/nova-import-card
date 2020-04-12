@@ -6,8 +6,10 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
+use App\CLH\Repositories\UserRepository;
 use App\Events\PatientUserCreated;
 use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachDefaultPatientContactWindows;
@@ -24,6 +26,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportVitals;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CcdaImporter
 {
@@ -50,10 +53,10 @@ class CcdaImporter
     
     public function __construct(
         Ccda $ccda,
-        User $patient
+        User $patient = null
     ) {
-        $this->str   = new StringManipulation();
-        $this->ccda = $ccda;
+        $this->str     = new StringManipulation();
+        $this->ccda    = $ccda;
         $this->patient = $patient;
     }
     
@@ -62,23 +65,29 @@ class CcdaImporter
      *
      * @return $this
      */
-    public function createNewCarePlan()
+    private function createNewCarePlan()
     {
         $this->carePlan = FirstOrCreateCarePlan::for($this->patient, $this->ccda);
         
         return $this;
     }
     
-    public function handleEnrollees()
+    private function handleEnrollees()
     {
         $enrollee = Enrollee::duplicates($this->patient, $this->ccda)->first();
         
         if ($enrollee) {
-            if (strtolower($this->patient->first_name) != strtolower($enrollee->first_name) || strtolower($this->patient->last_name) != strtolower($enrollee->last_name)) {
-                throw new \Exception("Something fishy is going on. enrollee:{$enrollee->id} has user:{$enrollee->user_id}, which does not matched with user:{$this->patient->id}");
+            if (strtolower($this->patient->first_name) != strtolower($enrollee->first_name) || strtolower(
+                                                                                                   $this->patient->last_name
+                                                                                               ) != strtolower(
+                                                                                                   $enrollee->last_name
+                                                                                               )) {
+                throw new \Exception(
+                    "Something fishy is going on. enrollee:{$enrollee->id} has user:{$enrollee->user_id}, which does not matched with user:{$this->patient->id}"
+                );
             }
-            $this->enrollee        = $enrollee;
-            $enrollee->user_id     = $this->patient->id;
+            $this->enrollee    = $enrollee;
+            $enrollee->user_id = $this->patient->id;
             $enrollee->save();
         }
         
@@ -90,7 +99,7 @@ class CcdaImporter
      *
      * @return $this
      */
-    public function storeAllergies()
+    private function storeAllergies()
     {
         ImportAllergies::for($this->patient, $this->ccda);
         
@@ -102,7 +111,7 @@ class CcdaImporter
      *
      * @return $this
      */
-    public function storeBillingProvider()
+    private function storeBillingProvider()
     {
         AttachBillingProvider::for($this->patient, $this->ccda);
         
@@ -114,42 +123,50 @@ class CcdaImporter
      *
      * @return $this
      */
-    public function storeContactWindows()
+    private function storeContactWindows()
     {
         AttachDefaultPatientContactWindows::for($this->patient, $this->ccda);
         
         return $this;
     }
     
-    public function storeImportedValues()
+    public function attemptCreateCarePlan()
     {
-        $this->patient->loadMissing(['primaryPractice', 'patientInfo']);
-        $this->ccda->loadMissing(['location']);
-        
-        $this->handleEnrollees()
-             ->createNewCarePlan()
-             ->storeAllergies()
-             ->storeProblemsList()
-             ->storeMedications()
-             ->storeBillingProvider()
-             ->storeLocation()
-             ->storePractice()
-             ->storePatientInfo()
-             ->storeContactWindows()
-             ->storePhones()
-             ->storeInsurance()
-             ->storeVitals();
-        
-        // Populate display_name on User
-        $this->patient->display_name = "{$this->patient->first_name} {$this->patient->last_name}";
-        $this->patient->program_id   = $this->imr->practice_id ?? null;
-        $this->patient->save();
+        \DB::transaction(
+            function () {
+                if (is_null($this->patient)) {
+                    $this->createNewPatient();
+                }
     
-        //This CarePlan is now ready to be QA'ed by a CLH Admin
-        $this->ccda->status = Ccda::QA;
-        $this->ccda->save();
-        
-        event(new PatientUserCreated($this->patient));
+                $this->patient->loadMissing(['primaryPractice', 'patientInfo']);
+                $this->ccda->loadMissing(['location']);
+                
+                $this->handleEnrollees()
+                     ->createNewCarePlan()
+                     ->storeAllergies()
+                     ->storeProblemsList()
+                     ->storeMedications()
+                     ->storeBillingProvider()
+                     ->storeLocation()
+                     ->storePractice()
+                     ->storePatientInfo()
+                     ->storeContactWindows()
+                     ->storePhones()
+                     ->storeInsurance()
+                     ->storeVitals();
+                
+                // Populate display_name on User
+                $this->patient->display_name = "{$this->patient->first_name} {$this->patient->last_name}";
+                $this->patient->program_id   = $this->imr->practice_id ?? null;
+                $this->patient->save();
+                
+                //This CarePlan is now ready to be QA'ed by a CLH Admin
+                $this->ccda->status = Ccda::QA;
+                $this->ccda->save();
+                
+                event(new PatientUserCreated($this->patient));
+            }
+        );
         
         return $this->carePlan;
     }
@@ -159,10 +176,10 @@ class CcdaImporter
      *
      * @return $this
      */
-    public function storeInsurance()
+    private function storeInsurance()
     {
         ImportInsurances::for($this->patient, $this->ccda);
-    
+        
         return $this;
     }
     
@@ -171,7 +188,7 @@ class CcdaImporter
      *
      * @return $this
      */
-    public function storeLocation()
+    private function storeLocation()
     {
         AttachLocation::for($this->patient, $this->ccda);
         
@@ -183,7 +200,7 @@ class CcdaImporter
      *
      * @return $this
      */
-    public function storeMedications()
+    private function storeMedications()
     {
         ImportMedications::for($this->patient, $this->ccda);
         
@@ -195,7 +212,7 @@ class CcdaImporter
      *
      * @return $this
      */
-    public function storePatientInfo()
+    private function storePatientInfo()
     {
         ImportPatientInfo::for($this->patient, $this->ccda);
         
@@ -207,14 +224,14 @@ class CcdaImporter
      *
      * @return $this
      */
-    public function storePhones()
+    private function storePhones()
     {
         ImportPhones::for($this->patient, $this->ccda);
         
         return $this;
     }
     
-    public function storePractice()
+    private function storePractice()
     {
         AttachPractice::for($this->patient, $this->ccda);
         
@@ -226,7 +243,7 @@ class CcdaImporter
      *
      * @return $this
      */
-    public function storeProblemsList()
+    private function storeProblemsList()
     {
         ImportProblems::for($this->patient, $this->ccda);
         
@@ -240,11 +257,50 @@ class CcdaImporter
      *
      * @return $this
      */
-    public function storeVitals()
+    private function storeVitals()
     {
         ImportVitals::for($this->patient, $this->ccda);
         
         return $this;
+    }
+    
+    private function createNewPatient()
+    {
+        $params = [
+            'email'       => $this->ccda->patientEmail(),
+            'first_name'  => $this->ccda->patientFirstName(),
+            'last_name'   => $this->ccda->patientLastName(),
+            'practice_id' => $this->ccda->practice_id,
+        ];
+        
+        $newUserId = str_random(25);
+        
+        $email = empty($email = $params['email'])
+            ? $newUserId.'@careplanmanager.com'
+            : $email;
+        
+        $this->patient = (new UserRepository())->createNewUser(
+            new ParameterBag(
+                [
+                    'email'             => $email,
+                    'password'          => str_random(),
+                    'display_name'      => ucwords(strtolower($params['first_name'].' '.$params['last_name'])),
+                    'first_name'        => $params['first_name'],
+                    'last_name'         => $params['last_name'],
+                    'username'          => empty($email)
+                        ? $newUserId
+                        : $email,
+                    'program_id'        => $params['practice_id'],
+                    'is_auto_generated' => true,
+                    'roles'             => [Role::whereName('participant')->firstOrFail()->id],
+                    'is_awv'            => Ccda::IMPORTER_AWV === $this->ccda->source,
+                ]
+            )
+        );
+        
+        Ccda::where('id', $this->ccda->id)->update([
+            'patient_id' => $this->patient->id,
+                                                    ]);
     }
 }
 
