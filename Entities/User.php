@@ -3961,4 +3961,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             );
         });
     }
+    
+    public function patientNurseAsPatient() {
+        return $this->hasOne(PatientNurse::class, 'patient_user_id');
+    }
 }
