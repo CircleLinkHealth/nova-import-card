@@ -154,7 +154,7 @@ return [
                 'minProcesses' => 5,
                 'maxProcesses' => 10,
                 'tries'        => 3,
-                'timeout'      => 300,
+                'timeout'      => 900,
             ],
         ],
     ],
