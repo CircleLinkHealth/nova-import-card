@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Jobs\ImportCcda;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\Request;
 
@@ -32,7 +33,9 @@ class ImporterController extends Controller
     
     public function getImportedRecords()
     {
-        return Ccda::has('patient')
+        return Ccda::whereHas('patient.carePlan', function ($q) {
+            $q->whereNull('status')->orWhere('status', CarePlan::DRAFT);
+        })
                                     ->with(
                                         [
                                             'patient.billingProvider.user' => function ($q) {
