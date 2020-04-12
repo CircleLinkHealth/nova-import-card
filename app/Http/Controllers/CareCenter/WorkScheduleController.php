@@ -200,21 +200,20 @@ class WorkScheduleController extends Controller
     public function multipleDelete(NurseContactWindow $window)
     {
         $windowDate = Carbon::parse($window->date);
+        $today = now()->startOfDay();
+        $tomorrow = $today->addDay(1);
         $windows = NurseContactWindow::where('nurse_info_id', $window->nurse_info_id)
-            ->where('date', '>', now()->startOfDay()) // Dont collect events lt today.
-            ->where('date', '>=', $windowDate)
+            ->where('date', '>', $tomorrow)
             ->where('repeat_start', $window->repeat_start)
             ->get();
 
         foreach ($windows as $workWindow) {
             // Update Work Hours
-            $today = now()->startOfDay();
-            $tomorrow = $today->addDay(1);
             WorkHours::where('workhourable_id', $workWindow->nurse_info_id)
                 ->where('work_week_start', '>=', $windowDate->copy()->startOfWeek())
                 ->where('work_week_start', '<=', $workWindow->until)
                 ->get()
-                ->map(function ($week) use ($workWindow, $today, $tomorrow) {
+                ->each(function ($week) use ($workWindow, $today, $tomorrow) {
                     /** @var WorkHours $week */
                     $dates = createWeekMap($week->work_week_start);
                     foreach ($dates as $date) {
