@@ -26,7 +26,9 @@ class BloodPressure extends BaseStorageStrategy implements StorageStrategy
         $biometric = CpmBiometric::whereName(CpmBiometric::BLOOD_PRESSURE)->first();
 
         try {
-            $this->user->cpmBiometrics()->attach($biometric->id);
+            if (! $this->user->cpmBiometrics()->where('id', $biometric->id)->exists()) {
+                $this->user->cpmBiometrics()->attach($biometric->id);
+            }
         } catch (\Exception $e) {
             //check if this is a mysql exception for unique key constraint
             if ($e instanceof \Illuminate\Database\QueryException) {

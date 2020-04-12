@@ -83,11 +83,6 @@ Route::prefix('eligibility')->group(function () {
                     'as'   => 'eligibility.download.supplemental_insurance_info',
                 ])->middleware('permission:enrollee.read');
             
-                Route::get('insurance-copays-csv', [
-                    'uses' => 'EligibilityBatchController@downloadAthenaApiInsuranceCopaysCsv',
-                    'as'   => 'eligibility.download.copays',
-                ])->middleware('permission:enrollee.read');
-            
                 Route::get('/reprocess', [
                     'uses' => 'EligibilityBatchController@getReprocess',
                     'as'   => 'get.eligibility.reprocess',
@@ -148,14 +143,4 @@ Route::prefix('eligibility')->group(function () {
         });
     });
     
-});
-
-Route::group([
-                 'middleware' => [
-                     'auth',
-                     'permission:ccd-import',
-                 ],
-                 'prefix' => 'ccd-importer',
-             ], function () {
-    Route::post('demographics', 'DemographicsImportsController@store');
 });

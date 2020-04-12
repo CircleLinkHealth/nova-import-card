@@ -58,6 +58,10 @@ class AthenaCheckable implements Checkable
     public function createAndProcessEligibilityJobFromMedicalRecord(): EligibilityJob
     {
         if ( ! $this->eligibilityJob) {
+            //@todo: below is for a bug fix but is inefficient. look into improving
+            $this->targetPatient->eligibility_job_id = (new CcdaToEligibilityJobAdapter($this->ccda, $this->practice, $this->batch))->adaptToEligibilityJob()->id;
+            if($this->targetPatient->isDirty('eligibility_job_id')) $this->targetPatient->save();
+            
             //We are "decorating" existing Ccda adapter to add insurance we will get from Athena API
             //In other words CcdaToEligibilityJobAdapter will extract data for eligibility from CCD. We will take that
             //result, add insurance from AthenaAPI to it and store it.

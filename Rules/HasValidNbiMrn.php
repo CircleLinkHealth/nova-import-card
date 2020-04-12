@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Eligibility\Rules;
 
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
-use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\ReplaceFieldsFromSupplementaryData;
+use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use Illuminate\Contracts\Validation\Rule;
 
 class HasValidNbiMrn implements Rule
@@ -48,7 +48,7 @@ class HasValidNbiMrn implements Rule
      */
     public function passes($attribute, $value)
     {
-        if (CarePlanHelper::NBI_PRACTICE_NAME !== $this->patientUser->primaryPractice->name) {
+        if (ReplaceFieldsFromSupplementaryData::NBI_PRACTICE_NAME !== $this->patientUser->primaryPractice->name) {
             return true;
         }
         $dataFromPractice = SupplementalPatientData::where('first_name', 'like', "{$this->patientUser->first_name}%")
