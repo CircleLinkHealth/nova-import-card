@@ -317,7 +317,8 @@ $factory->define(TargetPatient::class, function (Faker\Generator $faker) {
         'practice_id'       => $batch->practice_id,
         'ehr_id'            => $ehr->id,
         'ehr_patient_id'    => $faker->numberBetween(1, 2),
-        'department_id' => $faker->numberBetween(1, 10),
+        'ehr_practice_id'   => $faker->numberBetween(1, 5000),
+        'ehr_department_id' => $faker->numberBetween(1, 10),
     ];
 });
 
