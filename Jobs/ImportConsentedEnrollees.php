@@ -12,8 +12,6 @@ use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
@@ -168,42 +166,31 @@ class ImportConsentedEnrollees implements ShouldQueue
     
     private function importFromEligibilityJob(Enrollee $enrollee, EligibilityJob $job)
     {
-        if ( ! $enrollee->user_id) {
-            $user = (new CCDImporterRepository())->createRandomUser(
-                new DemographicsImport(
-                    [
-                        'email'      => $enrollee->email,
-                        'first_name' => $enrollee->first_name,
-                        'last_name'  => $enrollee->last_name,
-                        'street'     => $enrollee->address,
-                        'street2'    => $enrollee->address_2,
-                        'city'       => $enrollee->city,
-                        'state'      => $enrollee->state,
-                        'zip'        => $enrollee->zip,
-                    ]
-                ),
-                ImportedMedicalRecord::firstOrNew([
-                    'patient_id' => $enrollee->user_id,
-                    'practice_id' => $enrollee->practice_id,
-                    'medical_record_id' => $enrollee->medical_record_id,
-                    'medical_record_type' => $enrollee->medical_record_type,
-                                                  ])
-            );
-            
-            $enrollee->user_id = $user->id;
-            $enrollee->save();
-        }
-    
-        Artisan::call(
-            ReimportPatientMedicalRecord::class,
-            [
-                'patientUserId'   => $user->id,
-                'initiatorUserId' => auth()->id(),
-                '--flush-ccd'     => true,
-            ]
-        );
-    
-        $this->enrolleeMedicalRecordImported($enrollee);
+//        if (!$enrollee->medical_record_type === Ccda::class) {
+//            //
+//        }
+//
+//        if ( ! $enrollee->user_id) {
+//            $user = (new CCDImporterRepository())->createRandomUser(Ccda::where(), [
+//                                                                                         'email'      => $enrollee->email,
+//                                                                                         'first_name' => $enrollee->first_name,
+//                                                                                         'last_name'  => $enrollee->last_name,
+//                                                                                         'practice_id' => $enrollee->practice_id,
+//                                                                                     ]);
+//
+//            $enrollee->user_id = $user->id;
+//            $enrollee->save();
+//        }
+//
+//        Artisan::call(
+//            ReimportPatientMedicalRecord::class,
+//            [
+//                'patientUserId'   => $user->id,
+//                'initiatorUserId' => auth()->id(),
+//            ]
+//        );
+//
+//        $this->enrolleeMedicalRecordImported($enrollee);
     }
     
     private function importTargetPatient(Enrollee $enrollee)
@@ -304,7 +291,6 @@ class ImportConsentedEnrollees implements ShouldQueue
                 [
                     'patientUserId'   => $user->id,
                     'initiatorUserId' => auth()->id(),
-                    '--flush-ccd'     => true,
                 ]
             );
             

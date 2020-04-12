@@ -4,6 +4,7 @@
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
@@ -39,10 +40,12 @@ class ImportPatientInfo extends BaseCcdaImportTask
         
         $agentDetails = $this->getEnrolleeAgentDetailsIfExist();
         
+        $dob = Carbon::parse($demographics['dob']);
+        
         $args = array_merge(
             [
                 'ccda_id'                    => $this->ccda->id,
-                'birth_date'                 => $demographics['dob'],
+                'birth_date'                 => $dob,
                 'ccm_status'                 => Patient::ENROLLED,
                 'consent_date'               => now()->toDateString(),
                 'gender'                     => call_user_func(function () use (
@@ -119,7 +122,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
             $args = $hook;
         }
         
-        $patientInfo = Patient::firstOrCreate(
+        $patientInfo = Patient::firstOrNew(
             [
                 'user_id' => $this->patient->id,
             ],

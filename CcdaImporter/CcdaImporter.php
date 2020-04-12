@@ -127,9 +127,7 @@ class CcdaImporter
         $this->ccda->loadMissing(['location']);
         
         $this->handleEnrollees()
-             ->updateTrainingFeatures();
-        
-        $this->createNewCarePlan()
+             ->createNewCarePlan()
              ->storeAllergies()
              ->storeProblemsList()
              ->storeMedications()

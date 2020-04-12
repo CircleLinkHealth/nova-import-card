@@ -77,7 +77,7 @@ class ImportProblems extends BaseCcdaImportTask
                     );
     
                     if (array_key_exists('itemLog', $problem) && array_key_exists('codes', $problem['itemLog'])) {
-                        collect($problem['itemLog']['codes'])->each(
+                        collect($problem['itemLog']['codes'])->where('code', '!=', null)->where('code', '!=', 'null')->where('code', '!=', '')->each(
                             function ($codeLog) use ($ccdProblem) {
                                 ProblemCode::updateOrCreate(
                                     [
@@ -237,7 +237,7 @@ class ImportProblems extends BaseCcdaImportTask
                 $shouldValidate
             ) {
                 if ($shouldValidate && ! $this->validate($itemLog)) {
-                    return ['do_not_import' => $itemLog->id];
+                    return ['do_not_import' => $itemLog];
                 }
                 
                 /**
@@ -246,7 +246,7 @@ class ImportProblems extends BaseCcdaImportTask
                 $problemCodes = $this->consolidateProblemInfo((object) $itemLog);
                 
                 if ( ! validProblemName($problemCodes->cons_name)) {
-                    return ['do_not_import' => $itemLog->id];
+                    return ['do_not_import' => $itemLog];
                 }
                 
                 $cpmProblem   = $this->getCpmProblem($itemLog, $problemCodes->cons_name);

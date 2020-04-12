@@ -15,7 +15,6 @@ use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Core\Traits\MySQLSearchable;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 /**
@@ -423,14 +422,7 @@ class Enrollee extends BaseModel
     {
         return (new StringManipulation())->formatPhoneNumberE164($this->home_phone);
     }
-
-    public function getImportedMedicalRecord()
-    {
-        return ImportedMedicalRecord::whereMedicalRecordId($this->medical_record_id)
-                                    ->whereMedicalRecordType($this->medical_record_type)
-                                    ->first();
-    }
-
+    
     public function getLastEncounterAttribute($lastEncounter)
     {
         return $lastEncounter
@@ -730,7 +722,7 @@ class Enrollee extends BaseModel
                 [
                     'practice_id',
                     '=',
-                    $patient->primaryPractice->id,
+                    $patient->program_id,
                 ],
                 [
                     'first_name',

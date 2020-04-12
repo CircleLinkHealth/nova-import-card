@@ -149,13 +149,3 @@ Route::prefix('eligibility')->group(function () {
     });
     
 });
-
-Route::group([
-                 'middleware' => [
-                     'auth',
-                     'permission:ccd-import',
-                 ],
-                 'prefix' => 'ccd-importer',
-             ], function () {
-    Route::post('demographics', 'DemographicsImportsController@store');
-});

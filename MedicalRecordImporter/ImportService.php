@@ -6,8 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\MedicalRecordImporter;
 
-use CircleLinkHealth\SharedModels\Entities\TabularMedicalRecord;
-use CircleLinkHealth\Eligibility\Entities\PhoenixHeartName;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -16,94 +14,6 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class ImportService
 {
-    /**
-     * Create a TabularMedicalRecord for each row, and import it.
-     *
-     * @param $row
-     *
-     * @throws \Exception
-     *
-     * @return \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord
-     */
-    public function createTabularMedicalRecordAndImport($row, Practice $practice)
-    {
-        $row['dob']         = $this->parseDOBDate($row['dob']);
-        $row['practice_id'] = $practice->id;
-        $row['location_id'] = $practice->primary_location_id;
-
-        if (array_key_exists('consent_date', $row)) {
-            $row['consent_date'] = Carbon::parse($row['consent_date'])->format('Y-m-d');
-        }
-
-        if (array_key_exists('street', $row)) {
-            $row['address'] = $row['street'];
-        }
-
-        if (array_key_exists('street_2', $row)) {
-            $row['address2'] = $row['street_2'];
-        }
-
-        if (array_key_exists('problems', $row) & ! array_key_exists('problems_string', $row)) {
-            $row['problems_string'] = $row['problems'];
-            unset($row['problems']);
-            if (is_array($row['problems_string'])) {
-                $row['problems_string'] = json_encode($row['problems_string']);
-            }
-        }
-
-        if (array_key_exists('referring_provider_name', $row) & ! array_key_exists('provider_name', $row)) {
-            $row['provider_name'] = $row['referring_provider_name'];
-        }
-
-        if (array_key_exists('primary_phone', $row) && array_key_exists('primary_phone_type', $row)) {
-            if (str_contains(strtolower($row['primary_phone_type']), ['cell', 'mobile'])) {
-                $row['cell_phone'] = $row['primary_phone'];
-            } elseif (str_contains(strtolower($row['primary_phone_type']), 'home')) {
-                $row['home_phone'] = $row['primary_phone'];
-            } elseif (str_contains(strtolower($row['primary_phone_type']), 'work')) {
-                $row['work_phone'] = $row['primary_phone'];
-            }
-        }
-
-        if (array_key_exists('alt_phone', $row) && array_key_exists('alt_phone_type', $row)) {
-            if (str_contains(strtolower($row['alt_phone_type']), ['cell', 'mobile'])) {
-                $row['cell_phone'] = $row['alt_phone'];
-            } elseif (str_contains(strtolower($row['alt_phone_type']), 'home')) {
-                $row['home_phone'] = $row['alt_phone'];
-            } elseif (str_contains(strtolower($row['alt_phone_type']), 'work')) {
-                $row['work_phone'] = $row['alt_phone'];
-            }
-        }
-
-        $exists = TabularMedicalRecord::where(
-            [
-                'first_name' => $row['first_name'],
-                'last_name'  => $row['last_name'],
-                'dob'        => $row['dob'],
-            ]
-        )->first();
-
-        if ($exists) {
-            if ( ! $exists->importedMedicalRecord()) {
-                $exists->delete();
-            }
-        }
-
-        if (139 == $practice->id) {
-            $mrn = $this->lookupPHXmrn($row['first_name'], $row['last_name'], $row['dob'], $row['mrn']);
-
-            if ( ! $mrn) {
-                throw new \Exception('Phoenix Heart Patient not found');
-            }
-
-            $row['mrn'] = $mrn;
-        }
-
-        $mr = TabularMedicalRecord::create($row);
-
-        return $mr->import();
-    }
-
     /**
      * Import a Patient whose CCDA we have already.
      *
@@ -166,27 +76,6 @@ class ImportService
         $response->imr     = $imr;
 
         return $response;
-    }
-
-    /**
-     * @throws \Exception
-     *
-     * @return \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord
-     */
-    public function importPHXEnrollee(Enrollee $enrollee)
-    {
-        $phx     = Practice::whereName('phoenix-heart')->firstOrFail();
-        $patient = $enrollee->toArray();
-
-        $imr = $this->createTabularMedicalRecordAndImport($patient, $phx);
-
-        if ( ! $imr) {
-            return null;
-        }
-
-        $enrollee->medical_record_type = $imr->medical_record_type;
-        $enrollee->medical_record_id   = $imr->medical_record_id;
-        $enrollee->save();
     }
 
     public function isCcda($medicalRecordType)

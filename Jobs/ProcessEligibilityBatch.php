@@ -7,14 +7,11 @@
 namespace CircleLinkHealth\Eligibility\Jobs;
 
 use CircleLinkHealth\Core\GoogleDrive;
+use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordAdapter;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Jobs\MakePhoenixHeartWelcomeCallList;
-use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
-use CircleLinkHealth\Eligibility\Entities\PhoenixHeartName;
-use CircleLinkHealth\Eligibility\ProcessEligibilityService;
-use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordAdapter;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
