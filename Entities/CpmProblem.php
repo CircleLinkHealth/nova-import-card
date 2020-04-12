@@ -6,75 +6,9 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
-use CircleLinkHealth\SharedModels\Entities\CpmInstructable;
-use CircleLinkHealth\SharedModels\Entities\CpmLifestyle;
-use CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup;
-use CircleLinkHealth\SharedModels\Entities\CpmProblemUser;
-use CircleLinkHealth\SharedModels\Entities\CpmSymptom;
-use CircleLinkHealth\SharedModels\Entities\Instructable;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
-use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 
-/**
- * CircleLinkHealth\SharedModels\Entities\CpmProblem.
- *
- * @property int                                                                                 $id
- * @property string                                                                              $default_icd_10_code
- * @property string                                                                              $name
- * @property string                                                                              $icd10from
- * @property string                                                                              $icd10to
- * @property float                                                                               $icd9from
- * @property float                                                                               $icd9to
- * @property string                                                                              $contains
- * @property \Carbon\Carbon                                                                      $created_at
- * @property \Carbon\Carbon                                                                      $updated_at
- * @property \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection                    $carePlanTemplates
- * @property \CircleLinkHealth\SharedModels\Entities\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection             $cpmBiometricsToBeActivated
- * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection           $cpmInstructions
- * @property \CircleLinkHealth\SharedModels\Entities\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection             $cpmLifestylesToBeActivated
- * @property \CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection       $cpmMedicationGroupsToBeActivated
- * @property \CircleLinkHealth\SharedModels\Entities\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection               $cpmSymptomsToBeActivated
- * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $patient
- * @property App\Models\CPM\CpmInstructable                                                      $instructable
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereContains($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereDefaultIcd10Code($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereIcd10from($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereIcd10to($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereIcd9from($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereIcd9to($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereUpdatedAt($value)
- * @mixin \Eloquent
- * @property int                                                                                         $is_behavioral
- * @property int                                                                                         $weight
- * @property \App\Importer\Models\ImportedItems\ProblemImport[]|\Illuminate\Database\Eloquent\Collection $problemImports
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]              $revisionHistory
- * @property \App\CLH\CCD\Importer\SnomedToCpmIcdMap[]|\Illuminate\Database\Eloquent\Collection          $snomedMaps
- * @property \CircleLinkHealth\SharedModels\Entities\CpmProblemUser[]|\Illuminate\Database\Eloquent\Collection                   $user
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereIsBehavioral($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereWeight($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem withIcd10Codes()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem withLatestCpmInstruction()
- * @property int|null $care_plan_templates_count
- * @property int|null $cpm_biometrics_to_be_activated_count
- * @property int|null $cpm_instructions_count
- * @property int|null $cpm_lifestyles_to_be_activated_count
- * @property int|null $cpm_medication_groups_to_be_activated_count
- * @property int|null $cpm_symptoms_to_be_activated_count
- * @property int|null $patient_count
- * @property int|null $problem_imports_count
- * @property int|null $revision_history_count
- * @property int|null $snomed_maps_count
- * @property int|null $user_count
- */
 class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use Instructable;
@@ -173,11 +107,6 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
     public function patient()
     {
         return $this->belongsToMany(User::class, 'cpm_problems_users', 'patient_id');
-    }
-
-    public function problemImports()
-    {
-        return $this->hasMany(ProblemImport::class);
     }
 
     public function scopeWithIcd10Codes($builder)
