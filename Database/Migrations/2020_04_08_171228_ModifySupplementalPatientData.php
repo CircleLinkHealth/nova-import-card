@@ -1,11 +1,11 @@
 <?php
 
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\ReplaceFieldsFromSupplementaryData;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class ModifySupplementalPatientData extends Migration
 {
@@ -27,7 +27,7 @@ class ModifySupplementalPatientData extends Migration
         
         if (config('database.connections.mysql.database') === 'cpm_production') {
             SupplementalPatientData::where('id', '>', 0)->update([
-                'practice_id' => Practice::whereName(CarePlanHelper::NBI_PRACTICE_NAME)->value('id')
+                'practice_id' => Practice::whereName(ReplaceFieldsFromSupplementaryData::NBI_PRACTICE_NAME)->value('id')
                                             ]);
         } elseif(SupplementalPatientData::where('id', '>', 0)->exists()) {
             SupplementalPatientData::where('id', '>', 0)->update([
