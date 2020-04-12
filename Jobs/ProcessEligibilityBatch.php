@@ -35,7 +35,7 @@ class ProcessEligibilityBatch implements ShouldQueue
      *
      * @var int
      */
-    public $timeout = 600;
+    public $timeout = 900;
 
     /**
      * @var \CircleLinkHealth\Eligibility\ProcessEligibilityService
@@ -60,6 +60,11 @@ class ProcessEligibilityBatch implements ShouldQueue
      */
     public function handle(ProcessEligibilityService $processEligibilityService)
     {
+        ini_set('upload_max_filesize', '200M');
+        ini_set('post_max_size', '200M');
+        ini_set('max_input_time', 900);
+        ini_set('max_execution_time', 900);
+        
         $this->processEligibilityService = $processEligibilityService;
 
         switch ($this->batch->type) {
