@@ -427,11 +427,11 @@ Route::group(['middleware' => 'auth'], function () {
             ]);
 
             Route::post('records/confirm', [
-                'uses' => 'MedicalRecordImportController@import',
+                'uses' => 'ImporterController@import',
                 'as'   => 'imported.records.confirm',
             ]);
 
-            Route::get('records/delete', 'MedicalRecordImportController@deleteRecords');
+            Route::get('records/delete', 'ImporterController@deleteRecords');
         });
     });
 
@@ -636,7 +636,7 @@ Route::group(['middleware' => 'auth'], function () {
     ])->middleware('permission:ccda.read');
 
     Route::get('medical-record/patient/attempt-reimport/{userId}', [
-        'uses' => 'MedicalRecordImportController@reImportPatient',
+        'uses' => 'ImporterController@reImportPatient',
         'as'   => 'medical-record.patient.reimport',
     ])->middleware('permission:ccda.read');
 
