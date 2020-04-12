@@ -294,7 +294,7 @@ class MarillacMedicalRecordTest extends TestCase
                                 ],
                         ],
                 ],
-            
+    
             'medications' => [
                     '0'  =>
                         [
@@ -1513,7 +1513,21 @@ class MarillacMedicalRecordTest extends TestCase
                         ],
                 ],
             'payers'      => [
-                ],
+                    [
+                        'insurance' => 'MEDICARE Part A',
+                        'policy_type' => 'primary_insurance',
+                        'policy_id' => NULL,
+                        'relation' => NULL,
+                        'subscriber' => NULL,
+                    ],
+                    [
+                        'insurance' => 'Test Secondary Insurance',
+                        'policy_type' => 'secondary_insurance',
+                        'policy_id' => NULL,
+                        'relation' => NULL,
+                        'subscriber' => NULL,
+                    ],
+            ],
             'problems'    => [
                     '0' =>
                         (object) [
@@ -1764,6 +1778,13 @@ class MarillacMedicalRecordTest extends TestCase
     {
         $mr = new CsvWithJsonMedicalRecord($this->getFakeMedicalRecord());
         
-        $this->assertEquals($this->expectedResult(), $mr->toArray());
+        $this->assertEquals($this->expectedResult()['type'], $mr->toArray()['type']);
+        $this->assertEquals($this->expectedResult()['document'], $mr->toArray()['document']);
+        $this->assertEquals($this->expectedResult()['allergies'], $mr->toArray()['allergies']);
+        $this->assertEquals($this->expectedResult()['demographics'], $mr->toArray()['demographics']);
+        $this->assertEquals($this->expectedResult()['medications'], $mr->toArray()['medications']);
+        $this->assertEquals($this->expectedResult()['payers'], $mr->toArray()['payers']);
+        $this->assertEquals($this->expectedResult()['problems'], $mr->toArray()['problems']);
+        $this->assertEquals($this->expectedResult()['vitals'], $mr->toArray()['vitals']);
     }
 }
