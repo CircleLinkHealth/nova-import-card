@@ -326,4 +326,31 @@ trait UserHelpers
 
         return $patient;
     }
+
+    private function addWorkHours(User $nurse, Carbon $forDate, int $hours)
+    {
+        $workWeekStart = $forDate->copy()->startOfWeek()->toDateString();
+        $dayOfWeek = carbonToClhDayOfWeek($forDate->dayOfWeek);
+
+        $nurse->nurseInfo->windows()->updateOrCreate(
+            [
+                'date' => $forDate->toDateString(),
+            ],
+            [
+                'day_of_week' => $dayOfWeek,
+                'window_time_start' => '11:00',
+                'window_time_end' => '18:00',
+                'repeat_frequency' => 'does_not_repeat',
+            ]
+        );
+
+        $nurse->nurseInfo->workhourables()->updateOrCreate(
+            [
+                'work_week_start' => $workWeekStart,
+            ],
+            [
+                strtolower(clhDayOfWeekToDayName($dayOfWeek)) => $hours
+            ]
+        );
+    }
 }

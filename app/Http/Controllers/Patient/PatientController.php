@@ -91,12 +91,12 @@ class PatientController extends Controller
                     ->orWhere('last_name', 'like', "%${term}%")
                     ->orWhere('id', 'like', "%${term}%")
                     ->orWhereHas('patientInfo', function ($query) use ($term) {
-                      $query->where('mrn_number', 'like', "%${term}%")
-                          ->orWhere('birth_date', 'like', "%${term}%");
-                  })
+                        $query->where('mrn_number', 'like', "%${term}%")
+                            ->orWhere('birth_date', 'like', "%${term}%");
+                    })
                     ->orWhereHas('phoneNumbers', function ($query) use ($term) {
-                      $query->where('number', 'like', "%${term}%");
-                  });
+                        $query->where('number', 'like', "%${term}%");
+                    });
             });
         }
 
@@ -326,8 +326,8 @@ class PatientController extends Controller
         // get number of approvals
         $patients = User::intersectPracticesWith(auth()->user())
             ->with('phoneNumbers', 'patientInfo', 'careTeamMembers')->whereHas('roles', function ($q) {
-                            $q->where('name', '=', 'participant');
-                        })->get()->pluck('fullNameWithId', 'id')->all();
+                $q->where('name', '=', 'participant');
+            })->get()->pluck('fullNameWithId', 'id')->all();
 
         return view('wpUsers.patient.select', compact(['patients']));
     }

@@ -32,6 +32,7 @@ use App\Listeners\NotifySlackChannel;
 use App\Listeners\PatientContactWindowUpdated;
 use App\Listeners\SendCarePlanForDMProviderApproval;
 use App\Listeners\UpdateCarePlanStatus;
+use App\Listeners\UpdateCcdaStatus;
 use App\Listeners\UPG0506CcdaImporterListener;
 use App\Listeners\UPG0506DirectMailListener;
 use App\Listeners\UPG0506Handler;
@@ -96,6 +97,7 @@ class CpmEventServiceProvider extends ServiceProvider
         ],
         CarePlanWasApproved::class => [
             UpdateCarePlanStatus::class,
+            UpdateCcdaStatus::class,
         ],
         CarePlanWasQAApproved::class => [
             AddPatientConsentNote::class,

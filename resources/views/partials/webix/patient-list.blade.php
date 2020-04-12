@@ -65,9 +65,9 @@
                         id: "last_name",
                         header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
                         template: "<a href='<?php echo route(
-                            'patient.summary',
-                            ['patient' => '#key#']
-                        ); ?>'>#last_name#, #first_name#</a>",
+    'patient.summary',
+    ['patient' => '#key#']
+); ?>'>#last_name#, #first_name#</a>",
                         width: 200,
                         sort: 'string'
                     },
@@ -169,9 +169,10 @@
                 },
                 data: <?php echo $patientJson; ?>
             });
-            webix.event(window, "resize", function () {
+            const debounced = _.debounce(() => {
                 obs_alerts_dtable.adjust();
-            });
+            }, 1000);
+            webix.event(window, "resize", debounced);
             obs_alerts_dtable.sort("#patient_name#");
             obs_alerts_dtable.hideColumn("last_name");
             obs_alerts_dtable.hideColumn("site");

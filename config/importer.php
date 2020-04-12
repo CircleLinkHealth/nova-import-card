@@ -28,7 +28,6 @@ return [
         App\Importer\Loggers\Problem\JsonListProblemLogger::class,
         App\Importer\Loggers\Problem\CommaDelimitedListProblemLogger::class,
         App\Importer\Loggers\Problem\ArrayProblemLogger::class,
-        App\Importer\Loggers\Problem\PHXProblemLogger::class,
         App\Importer\Loggers\Problem\ArrayCodeAndNameProblemLogger::class,
     ],
 ];

@@ -9,7 +9,6 @@ use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Notification;
 use Tests\CustomerTestCase;
 
@@ -80,12 +79,13 @@ class PatientLoginTest extends CustomerTestCase
     /**
      *
      */
-    public function test_notification_is_sent_after_cp_provider_approval(){
+    public function test_notification_is_sent_after_cp_provider_approval()
+    {
         $this->patient->carePlan->status = CarePlan::QA_APPROVED;
         $this->patient->carePlan->save();
-    
+
         Notification::fake();
-    
+
         //Provider approves patient Care pLAN
         $this->providerApprovesCarePlan();
 
@@ -98,7 +98,7 @@ class PatientLoginTest extends CustomerTestCase
 
                 $mailData = $notification->toMail($this->patient)->toArray();
 
-                $this->assertTrue('Your CarePlan has just been approved' === $mailData['subject']);
+                $this->assertTrue('Your Care Plan has just been approved' === $mailData['subject']);
 
                 return true;
             }
@@ -171,9 +171,9 @@ class PatientLoginTest extends CustomerTestCase
              ->assertRedirect(route('patient-user.careplan'));
 
         $this->call('GET', route('patient-user.careplan'))
-             ->assertSeeText('This Care Plan is pending Dr. approval')
-             ->assertSeeText($this->patient->first_name)
-             ->assertSeeText($this->patient->last_name);
+             ->assertSeeText(sanitizeString('This Care Plan is pending Dr. approval'))
+             ->assertSeeText(sanitizeString($this->patient->first_name))
+             ->assertSeeText(sanitizeString($this->patient->first_name));
 
     }
 
@@ -271,9 +271,9 @@ class PatientLoginTest extends CustomerTestCase
         ]))
              ->assertSessionHasNoErrors()
              ->assertRedirect(route('patient.careplan.print', [
-            'patientId'    => $this->patient->id,
-            'clearSession' => false,
-        ]));
+                 'patientId'    => $this->patient->id,
+                 'clearSession' => false,
+             ]));
 
         auth()->logout();
 

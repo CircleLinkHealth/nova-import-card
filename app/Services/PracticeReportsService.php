@@ -57,12 +57,7 @@ class PracticeReportsService
 
         $saasAccount = null;
 
-        foreach (
-            Practice::with(['settings', 'chargeableServices', 'saasAccount'])->whereIn(
-                'id',
-                $practices
-            )->get() as $practice
-        ) {
+        foreach (Practice::with(['settings', 'chargeableServices', 'saasAccount'])->whereIn('id', $practices)->get() as $practice) {
             if ( ! $saasAccount) {
                 $saasAccount = $practice->saasAccount;
             }

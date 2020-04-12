@@ -27,7 +27,7 @@ class CarePlanObserver
         $time = $carePlan->first_printed->setTimezone($carePlan->patient->timezone ?? 'America/New_York')->format(
             'g:i A T'
         );
-        
+
         $note = $carePlan->patient->notes()->create(
             [
                 'author_id'    => PatientSupportUser::id(),
@@ -37,12 +37,12 @@ class CarePlanObserver
             ]
         );
     }
-    
+
     public function creating(CarePlan $carePlan)
     {
         if ($carePlan->patient->practice('upg')) {
             $cpmMisc = CpmMisc::whereName('Other')->first();
-            
+
             $instruction = CpmInstruction::updateOrCreate(
                 [
                     'is_default' => true,
@@ -59,13 +59,13 @@ class CarePlanObserver
 - Get a flu shot every year but check with your provider first. Ask your provider if you should get a pneumococcal (pneumonia) vaccine, tetanus (Tdap) vaccine or a zoster (shingles) vaccine.',
                 ]
             );
-            
+
             $patientMiscExists = $carePlan->patient->cpmMiscs()->where('cpm_misc_id', $cpmMisc->id)->first();
-            
+
             if ($patientMiscExists) {
                 $carePlan->patient->cpmMiscs()->detach($patientMiscExists);
             }
-            
+
             $patientMisc = $carePlan->patient->cpmMiscs()->attach(
                 $cpmMisc->id,
                 [
@@ -74,7 +74,7 @@ class CarePlanObserver
             );
         }
     }
-    
+
     public function saved(CarePlan $carePlan)
     {
         if ($this->shouldScheduleCall($carePlan)) {
@@ -84,24 +84,24 @@ class CarePlanObserver
             $schedulerService = app()->make(SchedulerService::class);
             $schedulerService->ensurePatientHasScheduledCall($carePlan->patient);
         }
-        
+
         if ($carePlan->isDirty('first_printed')) {
             $carePlan->load('patient');
             $this->addCarePlanPrintedNote($carePlan);
         }
-        
+
         if ($carePlan->isDirty('status')) {
             if (CarePlan::QA_APPROVED == $carePlan->status) {
                 event(new CarePlanWasQAApproved($carePlan->patient));
             }
-            
+
             if (CarePlan::PROVIDER_APPROVED == $carePlan->status) {
                 event(new CarePlanWasProviderApproved($carePlan->patient));
                 event(new PdfableCreated($carePlan));
             }
         }
     }
-    
+
     /**
      * Listen to the CarePlan saving event.
      */
@@ -111,22 +111,17 @@ class CarePlanObserver
             $carePlan->care_plan_template_id = getDefaultCarePlanTemplate()->id;
         }
     }
-    
-    /**
-     * @param CarePlan $carePlan
-     *
-     * @return bool
-     */
+
     private function shouldScheduleCall(CarePlan $carePlan): bool
     {
         if ( ! $carePlan->isDirty('status')) {
             return false;
         }
-        
+
         if (CarePlan::QA_APPROVED == $carePlan->status) {
             return true;
         }
-        
+
         return false;
     }
 }

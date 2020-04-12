@@ -7,8 +7,6 @@
 namespace App\Http\Controllers;
 
 use App\Exports\CareCoachMonthlyReport;
-use App\Jobs\CreateNurseInvoices;
-use App\Notifications\NurseInvoiceCreated;
 use App\Reports\NurseDailyReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
@@ -38,6 +36,37 @@ class NurseController extends Controller
     }
 
     public function monthlyOverview(Request $request)
+    {
+        return $request->has('v2') ? $this->allocationV2($request) : $this->allocation($request);
+    }
+
+    public function monthlyReport(Request $request)
+    {
+        $date = Carbon::now();
+        if ($request['date']) {
+            $date = new Carbon($request['date']);
+        }
+        $report = new CareCoachMonthlyReport($date);
+        $rows   = $report->collection();
+
+        if ($request->has('json')) {
+            return response()->json($rows);
+        }
+        if ($request->has('excel')) {
+            return $report;
+        }
+
+        $currentPage              = LengthAwarePaginator::resolveCurrentPage();
+        $perPage                  = 100;
+        $currentPageSearchResults = $rows->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        $rows                     = new LengthAwarePaginator($currentPageSearchResults, count($rows), $perPage);
+
+        $rows = $rows->withPath('admin/reports/nurse/monthly');
+
+        return view('admin.nurse.monthly-report', compact(['date', 'rows']));
+    }
+
+    private function allocation(Request $request)
     {
         $input = $request->input();
 
@@ -94,29 +123,49 @@ class NurseController extends Controller
         );
     }
 
-    public function monthlyReport(Request $request)
+    private function allocationV2(Request $request)
     {
-        $date = Carbon::now();
-        if ($request['date']) {
-            $date = new Carbon($request['date']);
+        $input = $request->input();
+
+        if (isset($input['next'])) {
+            $dayCounter = Carbon::parse($input['next'])->firstOfMonth()->startOfDay();
+            $last       = Carbon::parse($input['next'])->lastOfMonth()->endOfDay();
+        } elseif (isset($input['previous'])) {
+            $dayCounter = Carbon::parse($input['previous'])->firstOfMonth()->startOfDay();
+            $last       = Carbon::parse($input['previous'])->lastOfMonth()->endOfDay();
+        } else {
+            $dayCounter = Carbon::now()->firstOfMonth()->startOfDay();
+            $last       = Carbon::now()->lastOfMonth()->endOfDay();
         }
-        $report = new CareCoachMonthlyReport($date);
-        $rows   = $report->collection();
 
-        if ($request->has('json')) {
-            return response()->json($rows);
+        $nurses = User::select(['id', 'first_name', 'last_name'])
+            ->has('nurseInfo')
+            ->ofType('care-center')
+            ->where('access_disabled', 0)
+            ->get();
+        $data = [];
+
+        while ($dayCounter->lte($last)) {
+            foreach ($nurses as $nurse) {
+                $formattedDate = $dayCounter->format('m/d Y');
+
+                $name = $nurse->first_name[0].'. '.$nurse->getLastName();
+
+                $data[$formattedDate][$name]['Scheduled'] = $nurse->nurseInfo->countScheduledCallsFor($dayCounter);
+
+                $data[$formattedDate][$name]['Actual Made'] = $nurse->nurseInfo->countCompletedCallsFor($dayCounter);
+            }
+
+            $dayCounter = $dayCounter->addDays(1);
         }
-        if ($request->has('excel')) {
-            return $report;
-        }
 
-        $currentPage              = LengthAwarePaginator::resolveCurrentPage();
-        $perPage                  = 100;
-        $currentPageSearchResults = $rows->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        $rows                     = new LengthAwarePaginator($currentPageSearchResults, count($rows), $perPage);
-
-        $rows = $rows->withPath('admin/reports/nurse/monthly');
-
-        return view('admin.nurse.monthly-report', compact(['date', 'rows']));
+        return view(
+            'admin.reports.allocation',
+            [
+                'data'  => $data,
+                'month' => Carbon::parse($last),
+                'v2'    => true,
+            ]
+        );
     }
 }

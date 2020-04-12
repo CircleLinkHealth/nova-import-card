@@ -6,8 +6,6 @@
 
 namespace App\CLH\Repositories;
 
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -20,16 +18,12 @@ class CCDImporterRepository
      * Creates a user with random credentials
      * Used to attach XML CCDs to a Patient.
      *
-     * @param DemographicsImport $demographics
-     * @param ImportedMedicalRecord $imr
+     * @param array $params
      *
-     * @return \CircleLinkHealth\Customer\Entities\User
+     * @return User
      * @throws \Exception
      */
-    public function createRandomUser(
-        DemographicsImport $demographics,
-        ImportedMedicalRecord $imr
-    ) {
+    public function createRandomUser(Ccda $ccda, array $params) {
         $role = Role::whereName('participant')->first();
 
         if (empty($role)) {
@@ -38,7 +32,7 @@ class CCDImporterRepository
 
         $newUserId = str_random(25);
 
-        $email = empty($email = $demographics->email)
+        $email = empty($email = $params['email'])
             ? $newUserId.'@careplanmanager.com'
             : $email;
 
@@ -47,33 +41,22 @@ class CCDImporterRepository
             : $email;
 
         //user_nicename, display_name
-        $user_nicename = empty($fullName = $demographics->first_name.' '.$demographics->last_name)
+        $user_nicename = empty($fullName = $params['first_name'].' '.$params['last_name'])
             ? ''
             : ucwords(strtolower($fullName));
-
-        //decide whether user is awv only
-        $is_awv = false;
-        if (Ccda::class === $imr->medical_record_type) {
-            $ccda   = Ccda::find($imr->medical_record_id);
-            $is_awv = $ccda && Ccda::IMPORTER_AWV === $ccda->source;
-        }
+        
 
         $bag = new ParameterBag([
             'email'             => $email,
             'password'          => str_random(),
             'display_name'      => $user_nicename,
-            'first_name'        => $demographics->first_name,
-            'last_name'         => $demographics->last_name,
+            'first_name'        => $params['first_name'],
+            'last_name'         => $params['last_name'],
             'username'          => $username,
-            'program_id'        => $imr->practice_id,
-            'address'           => $demographics->street,
-            'address2'          => $demographics->street2,
-            'city'              => $demographics->city,
-            'state'             => $demographics->state,
-            'zip'               => $demographics->zip,
+            'program_id'        => $params['practice_id'],
             'is_auto_generated' => true,
             'roles'             => [$role->id],
-            'is_awv'            => $is_awv,
+            'is_awv'            => Ccda::IMPORTER_AWV === $ccda->source,
         ]);
 
         return (new UserRepository())->createNewUser(new User(), $bag);

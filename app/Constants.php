@@ -43,6 +43,7 @@ class Constants
     const MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS = 1200;
 
     //Groups for Nova Resources
+    const NOVA_GROUP_ADMIN        = 'Admin';
     const NOVA_GROUP_CARE_COACHES = 'Care Coaches';
     const NOVA_GROUP_ENROLLMENT   = 'Enrollment';
     const NOVA_GROUP_NBI          = 'NBI';
@@ -63,13 +64,13 @@ class Constants
         'margin-bottom'      => '15',
         'margin-right'       => '0.75',
     ];
-    const SNOMED                     = ProblemCodeSystem::SNOMED;
-    const SNOMED_NAME                = ProblemCodeSystem::SNOMED_NAME;
+    const SNOMED      = ProblemCodeSystem::SNOMED;
+    const SNOMED_NAME = ProblemCodeSystem::SNOMED_NAME;
+
+    const THIRTY_DAYS_IN_MINUTES     = 43200;
     const TRIX_ALLOWABLE_TAGS_STRING = '<div><strong><h1><em><del><blockquote><pre><br><ul><ol><li><span><a>';
     const TRIX_FIELDS                = ['patient-email-body'];
     const VIEWING_PATIENT            = 'viewing-patient';
-
-    const THIRTY_DAYS_IN_MINUTES = 43200;
 
     public static function athenaEhrId()
     {
