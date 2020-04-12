@@ -1,14 +1,37 @@
 <template>
     <div id="enrollment_calls">
-        <div v-if="this.loading">
+        <div v-if="loading">
             <div class="loading-patient">
                 <span>Loading patient... </span>
                 <loader/>
             </div>
         </div>
-        <div v-if="patientData">
-            <patient-to-enroll :patient-data="patientData"></patient-to-enroll>
+        <div v-else>
+            <div v-if="patientExists">
+                <patient-to-enroll :patient-data="patientData"></patient-to-enroll>
+            </div>
+            <div v-else>
+                <div class="row">
+                    <div class="col cookie">
+                        <div class="card horizontal">
+                            <div class="card-image">
+                                <img :src="'/img/cookie.png'">
+                            </div>
+                            <div class="card-stacked">
+                                <div class="card-content">
+                                    <h2 class="header" style="color: #47beab">Oops!</h2>
+                                    <p>You’re out of patients to call, please contact your administrator to request more
+                                        calls.</p>
+                                    <br>
+                                    <p>In the meantime, enjoy this cookie.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
     </div>
 </template>
 
@@ -30,33 +53,37 @@
             'patient-to-enroll': PatientToEnroll
         },
         computed: {
-            loading: function () {
-                return !this.patientData;
+            patientExists: function () {
+                return this.patientData.length > 0;
             }
         },
         data: function () {
             return {
-                patientData: null
+                patientData: [],
+                loading: false,
             };
         },
         mounted: function () {
+            this.loading = true;
             this.retrievePatient();
 
 
-            App.$on('enrollable-action-complete', ()=>{
+            App.$on('enrollable-action-complete', () => {
                 this.patientData = null;
+                this.loading = true;
                 this.retrievePatient();
             })
         },
         methods: {
-            retrievePatient(){
+            retrievePatient() {
                 return this.axios
                     .get(rootUrl('/enrollment/show'))
                     .then(response => {
+                        this.loading = false
                         this.patientData = response.data.data;
                     })
                     .catch(err => {
-                       //to implement
+                        //to implement
                     });
             },
 
@@ -191,6 +218,11 @@
     .loading-patient span {
         color: lightgrey;
         font-size: large;
+    }
+
+    .cookie {
+        margin-top: 10%;
+        margin-left: 15%;
     }
 </style>
 

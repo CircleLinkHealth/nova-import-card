@@ -21,8 +21,13 @@ class Enrollable extends Resource
      */
     public function toArray($request)
     {
-        $careAmbassador = $this->careAmbassador->careAmbassador;
         $enrollable = $this->resource;
+
+        if (! $enrollable){
+            return [];
+        }
+
+        $careAmbassador = $this->careAmbassador->careAmbassador;
 
         $enrollable->load(['practice']);
 

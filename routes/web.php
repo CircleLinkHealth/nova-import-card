@@ -484,6 +484,21 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'API\EnrollmentCenterController@show',
                 'as'   => 'enrollment-center.show',
             ])->middleware('permission:enrollee.read');
+
+            Route::post('/consented', [
+                'uses' => 'API\EnrollmentCenterController@consented',
+                'as'   => 'enrollment-center.consented',
+            ])->middleware('permission:enrollee.update');
+
+            Route::post('/utc', [
+                'uses' => 'API\EnrollmentCenterController@unableToContact',
+                'as'   => 'enrollment-center.utc',
+            ])->middleware('permission:enrollee.update');
+
+            Route::post('/rejected', [
+                'uses' => 'API\EnrollmentCenterController@rejected',
+                'as'   => 'enrollment-center.rejected',
+            ])->middleware('permission:enrollee.update');
         }
     );
 
@@ -1877,21 +1892,6 @@ Route::group([
             'uses' => 'Enrollment\EnrollmentCenterController@dashboard',
             'as'   => 'enrollment-center.dashboard',
         ])->middleware('permission:enrollee.read,enrollee.update');
-
-        Route::post('/consented', [
-            'uses' => 'Enrollment\EnrollmentCenterController@consented',
-            'as'   => 'enrollment-center.consented',
-        ])->middleware('permission:enrollee.update');
-
-        Route::post('/utc', [
-            'uses' => 'Enrollment\EnrollmentCenterController@unableToContact',
-            'as'   => 'enrollment-center.utc',
-        ])->middleware('permission:enrollee.update');
-
-        Route::post('/rejected', [
-            'uses' => 'Enrollment\EnrollmentCenterController@rejected',
-            'as'   => 'enrollment-center.rejected',
-        ])->middleware('permission:enrollee.update');
     });
 });
 
