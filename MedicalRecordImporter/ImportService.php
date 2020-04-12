@@ -100,29 +100,6 @@ class ImportService
         return $date;
     }
 
-    private function lookupPHXmrn($firstName, $lastName, $dob, $mrn)
-    {
-        $dob = Carbon::parse($dob)->format('n/j/Y');
-
-        $row = PhoenixHeartName::where('patient_first_name', $firstName)
-            ->where('patient_last_name', $lastName)
-            ->where('dob', $dob)
-            ->first();
-
-        if ($row && $row->patient_id && empty($mrn)) {
-            return $row->patient_id;
-        }
-
-        $row = PhoenixHeartName::where('patient_id', $mrn)
-            ->first();
-
-        if ($row && $row->patient_id) {
-            return $row->patient_id;
-        }
-
-        return null;
-    }
-
     /**
      * @param $dob
      *
