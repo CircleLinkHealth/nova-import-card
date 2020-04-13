@@ -908,6 +908,40 @@
             ]
         },
         {
+            "name": "circlelinkhealth/clh-nova-theme",
+            "version": "dev-development",
+            "dist": {
+                "type": "path",
+                "url": "./nova-components/ClhNovaTheme",
+                "reference": "6ecab1c47b37727c17819ad31972bbd437c4a44a",
+                "shasum": null
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Circlelinkhealth\\ClhNovaTheme\\ThemeServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Circlelinkhealth\\ClhNovaTheme\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova theme.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ]
+        },
+        {
             "name": "circlelinkhealth/core-module",
             "version": "v1.5.1",
             "source": {

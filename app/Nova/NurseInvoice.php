@@ -123,7 +123,7 @@ class NurseInvoice extends Resource
 
             Date::make('month_year')->sortable(),
 
-            Button::make('View Invoice')->link(route('nurseinvoices.admin.show', [$this->nurse->user_id, $this->id]), '_blank')->style('info'),
+            Button::make('View Invoice')->link(route('nurseinvoices.admin.show', [$this->nurse->user_id, $this->id]), '_blank')->style('primary'),
 
             ID::make()->sortable(),
         ];
