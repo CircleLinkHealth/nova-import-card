@@ -8,10 +8,10 @@ namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Jobs\ImportCcda;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
+use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\Request;
-use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
 class ImporterController extends Controller
 {
@@ -34,13 +34,17 @@ class ImporterController extends Controller
     
     public function getImportedRecords()
     {
-        return ImportedMedicalRecord::whereNull('imported')
+        return Ccda::where(function ($q){
+            $q->whereHas('patient.carePlan', function ($q) {
+                $q->whereNull('status')->orWhere('status', CarePlan::DRAFT);
+            })->orWhere('created_at', '>', now()->subDay(5));
+        })->whereNotNull('json')
                                     ->with(
                                         [
-                                            'billingProvider' => function ($q) {
+                                            'patient.billingProvider.user' => function ($q) {
                                                 $q->select(
                                                     [
-                                                        'id',
+                                                        'users.id',
                                                         'saas_account_id',
                                                         'program_id',
                                                         'display_name',
@@ -50,10 +54,10 @@ class ImporterController extends Controller
                                                     ]
                                                 );
                                             },
-                                            'nurseUser'       => function ($q) {
+                                            'patient.patientNurseAsPatient.permanentNurse'       => function ($q) {
                                                 $q->select(
                                                     [
-                                                        'id',
+                                                        'users.id',
                                                         'saas_account_id',
                                                         'program_id',
                                                         'display_name',
@@ -63,10 +67,10 @@ class ImporterController extends Controller
                                                     ]
                                                 );
                                             },
-                                            'location'        => function ($q) {
+                                            'patient.locations'        => function ($q) {
                                                 $q->select(
                                                     [
-                                                        'id',
+                                                        'locations.id',
                                                         'practice_id',
                                                         'is_primary',
                                                         'name',
@@ -74,23 +78,21 @@ class ImporterController extends Controller
                                                 );
                                             },
                                             'patient.patientInfo',
-                                            'practice',
+                                            'patient.primaryPractice',
                                         ]
                                     )
-                                    ->whereIn('practice_id', auth()->user()->viewableProgramIds())
+                                    ->where(function ($q) {
+                                        $q->whereIn('practice_id', auth()->user()->viewableProgramIds())
+                                            ->when(auth()->user()->isAdmin(), function ($q) {
+                                                $q->orWhereNull('practice_id');
+                                            });
+                                    })
                                     ->get()
                                     ->transform(
-                function (ImportedMedicalRecord $summary) {
-                    $mr = $summary->medicalRecord();
-                    
-                    if ( ! $mr) {
-                        return false;
-                    }
-                    
+                function (Ccda $ccda) {
                     if (upg0506IsEnabled()) {
                         $isUpg0506Incomplete = false;
                         
-                        if ($mr instanceof Ccda) {
                             $isUpg0506Incomplete = Ccda::whereHas(
                                 'media',
                                 function ($q) {
@@ -101,60 +103,16 @@ class ImporterController extends Controller
                                 function ($q) {
                                     $q->where('from', 'like', '%@upg.ssdirect.aprima.com');
                                 }
-                            )->where('id', $mr->id)->exists();
-                        }
+                            )->where('id', $ccda->id)->exists();
                         
                         if ($isUpg0506Incomplete) {
                             return false;
                         }
                     }
                     
-                    if ( ! $summary->billing_provider_id) {
-                        $mr = $mr->guessPracticeLocationProvider();
-                        
-                        $summary->billing_provider_id = $mr->getBillingProviderId();
-                        
-                        if ($summary->isDirty('billing_provider_id')) {
-                            $summary->load('billingProvider');
-                        }
-                        
-                        if ( ! $summary->location_id) {
-                            $summary->location_id = $mr->getLocationId();
-                            $summary->load('location');
-                        }
-                        
-                        if ( ! $summary->practice_id) {
-                            $summary->practice_id = $mr->getPracticeId();
-                            $summary->load('practice');
-                        }
-                        
-                        if ($summary->isDirty()) {
-                            $summary->save();
-                        }
-                    }
+                    $ccda->checkDuplicity();
                     
-                    $providers = $mr->providers()->where(
-                        [
-                            ['first_name', '!=', null],
-                            ['last_name', '!=', null],
-                            ['ml_ignore', '=', false],
-                        ]
-                    )->get()->unique(
-                        function ($m) {
-                            return $m->first_name.$m->last_name;
-                        }
-                    );
-                    
-                    $summary['flag'] = false;
-                    
-                    if ($providers->count(
-                        ) > 1 || ! $mr->location_id || ! $mr->location_id || ! $mr->billing_provider_id) {
-                        $summary['flag'] = true;
-                    }
-                    
-                    $summary->checkDuplicity();
-                    
-                    return $summary;
+                    return $ccda;
                 }
             )->filter()->unique('patient_id')
                                     ->values();
@@ -273,5 +231,86 @@ class ImporterController extends Controller
         parse_str($parts['query'], $query);
         
         return $query['source'] ?? null;
+    }
+    
+    public function deleteRecords(Request $request)
+    {
+        $recordsToDelete = explode(',', $request->input('records'));
+        $recordsNotFound = [];
+        
+        foreach ($recordsToDelete as $id) {
+            if (empty($id)) {
+                continue;
+            }
+            
+            $ccda = Ccda::find($id);
+            
+            if ($ccda) {
+                $ccda->delete();
+            } else {
+                array_push($recordsNotFound, $id);
+                array_splice($recordsToDelete, array_search($id, $recordsToDelete));
+            }
+        }
+        
+        return response()->json(['deleted' => $recordsToDelete, 'not_found' => $recordsNotFound], 200);
+    }
+    
+    public function import(Request $request)
+    {
+        $recordsToImport = $request->all();
+        
+        if (is_array($recordsToImport)) {
+            $importedRecords = [];
+            foreach ($recordsToImport as $record) {
+                if ($record) {
+                    $id  = $record['id'];
+                    $ccda = Ccda::find($id);
+                    if (empty($ccda)) {
+                        continue;
+                    }
+                    
+                    $ccda['location_id']         = $record['location_id'];
+                    $ccda['practice_id']         = $record['practice_id'];
+                    $ccda['billing_provider_id'] = $record['billing_provider_id'];
+                    $ccda['nurse_user_id']       = $record['nurse_user_id'] ?? null;
+                    $carePlan                   = $ccda->updateOrCreateCarePlan();
+                    array_push(
+                        $importedRecords,
+                        [
+                            'id'        => $id,
+                            'completed' => true,
+                            'patient'   => $carePlan->patient()->first(),
+                        ]
+                    );
+                    $ccda->imported = true;
+                    $ccda->save();
+                }
+            }
+            
+            return response()->json($importedRecords, 200);
+        }
+        
+        return response()->json(
+            [
+                'message' => 'no records provided',
+            ],
+            400
+        );
+    }
+    
+    public function reImportPatient(Request $request, $userId)
+    {
+        $args = [
+            'patientUserId'   => $userId,
+            'initiatorUserId' => auth()->id(),
+        ];
+        
+        Artisan::queue(
+            ReimportPatientMedicalRecord::class,
+            $args
+        );
+        
+        return redirect()->back();
     }
 }

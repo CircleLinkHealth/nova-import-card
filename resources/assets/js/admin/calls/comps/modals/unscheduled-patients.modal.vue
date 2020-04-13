@@ -109,6 +109,9 @@
             getPatients() {
                 this.loaders.patients = true
                 this.cache().get(this.patientUrl).then(patients => {
+                    if (!Array.isArray(patients)) {
+                        patients = Object.values(patients);
+                    }
                     this.loaders.patients = false
                     this.patients = (patients || [])
                     //console.log('unscheduled-patients-get-patients', patients)
