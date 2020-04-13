@@ -10,7 +10,6 @@ use App\Http\Resources\ApprovableBillablePatient;
 use App\Repositories\BillablePatientsEloquentRepository;
 use App\Repositories\PatientSummaryEloquentRepository;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 
 class ApproveBillablePatientsService
 {
@@ -100,7 +99,7 @@ class ApproveBillablePatientsService
         //note: this only applies to the paginated results, not the whole collection. not sure if intended
         $summaries->getCollection()->transform(
             function ($summary) use (&$time2, &$time3, &$time4) {
-                if ( ! $summary->actor_id && ! $summary->needs_qa) {
+                if ( ! $summary->actor_id && ! $summary->needs_qa && ! $summary->approved && ! $summary->rejected) {
                     $aSummary = $this->patientSummaryRepo->attachChargeableServices($summary);
                     $summary  = $this->patientSummaryRepo->setApprovalStatusAndNeedsQA($aSummary);
                 }
