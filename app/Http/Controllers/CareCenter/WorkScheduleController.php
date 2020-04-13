@@ -153,23 +153,18 @@ class WorkScheduleController extends Controller
      */
     public function dailyReportsForNurse($authId)
     {
-        $today = now();
-        $startDate = $today->copy()->subWeek(1);
-        $dates = [];
-
-        while ($startDate->lte($today)) {
-            $dates[] = $startDate;
-            $startDate->addDay();
-        }
+        $yesterday = now()->copy()->subDay(1);
+        $startDate = $yesterday->copy()->subDays(6);
+        $dates = getDatesForRange($startDate, $yesterday);
 
         $service = new NursesPerformanceReportService();
 
         $reports = [];
         foreach ($dates as $date) {
-            $reportForDay = $service->getDailyReportJson($date);
+            $reportForDay = $service->getDailyReportJson(Carbon::parse($date));
             if (!$reportForDay || !is_json($reportForDay)) {
                 $reports[] = collect();
-            }else{
+            } else {
                 $reports[] = collect(json_decode($reportForDay, true))->where('nurse_id', 1920)->first();
             }
 
