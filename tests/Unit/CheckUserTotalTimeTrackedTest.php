@@ -56,7 +56,7 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $checker = new UserTotalTimeChecker($start, $end, true, $nurse->id);
         $alerts  = $checker->check();
         $this->assertFalse($alerts->has('daily'));
-//        $this->assertFalse($alerts->has('weekly'));
+        $this->assertFalse($alerts->has('weekly'));
     }
 
     public function test_it_does_not_raise_alert_for_total_time_less_than_8_hours_in_a_day()
