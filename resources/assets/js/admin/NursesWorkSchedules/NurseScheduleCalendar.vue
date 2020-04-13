@@ -825,14 +825,6 @@
                     return removeDuplicatesFrom(workEventsWithHolidays);
                 }
             },
-            dailyReport() {
-                return {
-                    title: "SEX",
-                    start: '2020-04-12',
-                    end: '2020-04-12',
-                    allDay: true
-                }
-            },
 
             eventsFiltered() {
                 const workEvents = this.workHours;
