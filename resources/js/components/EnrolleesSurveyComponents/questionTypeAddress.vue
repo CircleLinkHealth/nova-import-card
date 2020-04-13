@@ -20,7 +20,6 @@
 
             </div>
         </div>
-
         <br>
         <!--next button-->
         <div :class="isLastQuestion ? 'text-center' : 'text-left'">
@@ -79,11 +78,11 @@
         computed: {
             singeInputHasValue() {
                 const input = this.singleInputHasText;
-                return input.length !== 0;
+                return input !== undefined ? input.length !== 0 : false;
             },
             hasTypedInAllInputs() {
                 const data = Object.values(this.physicalAddress);
-                return data.every(key => key.length > 0);
+                return data.every(key => key !== undefined ? key.length > 0 : false);
             },
         },
 
