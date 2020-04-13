@@ -136,7 +136,7 @@
     "circlelinkhealth/clh-import-card-extended": "*",
     "circlelinkhealth/core-module": "1.5.1",
     "circlelinkhealth/cpm-migrations-module": "1.5.7",
-    "circlelinkhealth/customer-module": "dev-importer-v3",
+    "circlelinkhealth/customer-module": "dev-CPM-1835_abp_pagination",
     "circlelinkhealth/eligibility-module": "dev-importer-v3",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/generate-success-stories-report": "*",
