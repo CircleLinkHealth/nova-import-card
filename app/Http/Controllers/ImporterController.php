@@ -34,9 +34,11 @@ class ImporterController extends Controller
     
     public function getImportedRecords()
     {
-        return Ccda::whereHas('patient.carePlan', function ($q) {
-            $q->whereNull('status')->orWhere('status', CarePlan::DRAFT);
-        })
+        return Ccda::where(function ($q){
+            $q->whereHas('patient.carePlan', function ($q) {
+                $q->whereNull('status')->orWhere('status', CarePlan::DRAFT);
+            })->orWhere('created_at', '>', now()->subDay(5));
+        })->whereNotNull('json')
                                     ->with(
                                         [
                                             'patient.billingProvider.user' => function ($q) {

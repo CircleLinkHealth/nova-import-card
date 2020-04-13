@@ -867,4 +867,8 @@
     .ccm-problem-codes {
         max-width: 150px;
     }
+
+    .pagination li:not(.disabled) a {
+        cursor: pointer;
+    }
 </style>

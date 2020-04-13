@@ -295,6 +295,95 @@ class WorkScheduleController extends Controller
         return redirect()->back();
     }
 
+    public function multipleDelete(NurseContactWindow $window)
+    {
+        $windowDate = Carbon::parse($window->date);
+        $today = now()->startOfDay();
+        $tomorrow = $today->addDay(1);
+        $windows = NurseContactWindow::where('nurse_info_id', $window->nurse_info_id)
+            ->where('date', '>', $tomorrow)
+            ->where('repeat_start', $window->repeat_start)
+            ->get();
+
+        foreach ($windows as $workWindow) {
+            // Update Work Hours
+            WorkHours::where('workhourable_id', $workWindow->nurse_info_id)
+                ->where('work_week_start', '>=', $windowDate->copy()->startOfWeek())
+                ->where('work_week_start', '<=', $workWindow->until)
+                ->get()
+                ->each(function ($week) use ($workWindow, $today, $tomorrow) {
+                    /** @var WorkHours $week */
+                    $dates = createWeekMap($week->work_week_start);
+                    foreach ($dates as $date) {
+                        $carbonDate = Carbon::parse($date);
+                        if ($carbonDate->eq(Carbon::parse($workWindow->date))
+                            && $carbonDate->gt($today)
+                            && $carbonDate->gt($tomorrow)) {
+                            $week->update(
+                                [
+                                    strtolower(clhDayOfWeekToDayName($carbonDate->dayOfWeek)) => 0
+                                ]);
+                        }
+                    }
+                });
+
+            // Delete Window
+            $workWindow->forceDelete();
+        }
+
+        $this->informSlackNurseSide($window);
+    }
+
+    /**
+     * @return Collection|mixed
+     */
+    public function getActiveNurses()
+    {
+        $workScheduleData = [];
+        User::ofType('care-center')
+            ->with('nurseInfo.windows', 'nurseInfo.holidays')
+            ->whereHas('nurseInfo.windows')
+            ->whereHas('nurseInfo', function ($q) {
+                $q->where('status', 'active');
+            })
+            ->chunk(50, function ($nurses) use (&$workScheduleData) {
+                $workScheduleData[] = $nurses;
+            });
+
+        return collect($workScheduleData)->flatten() ?? [];
+    }
+
+    /**
+     * @param $nurseInfoId
+     * @param $workScheduleData
+     *
+     * @return int|mixed
+     */
+    public function getHoursSum($nurseInfoId, $workScheduleData)
+    {
+        return NurseContactWindow::where([
+            ['nurse_info_id', '=', $nurseInfoId],
+            //            ['day_of_week', '=', $workScheduleData['day_of_week']],
+            ['date', '=', $workScheduleData['date']],
+        ])
+            ->get()
+            ->sum(function ($window) {
+                return Carbon::createFromFormat(
+                    'H:i:s',
+                    $window->window_time_end
+                )->diffInHours(Carbon::createFromFormat(
+                        'H:i:s',
+                        $window->window_time_start
+                    ));
+            }) + Carbon::createFromFormat(
+                'H:i',
+                $workScheduleData['window_time_end']
+            )->diffInHours(Carbon::createFromFormat(
+                    'H:i',
+                    $workScheduleData['window_time_start']
+                ));
+    }
+
     public function getSelectedNurseCalendarData(Request $request)
     {
         $startDate = Carbon::parse($request->input('startDate'))->toDateString();
@@ -334,6 +423,97 @@ class WorkScheduleController extends Controller
         //Temporary fix
         $disableTimeTracking = true; // @todo: we need this ?  it wasnt used in view
         return view('care-center.work-schedule', compact('authData', 'today'));
+    }
+
+    /**
+     * @param $nurseInfoId
+     * @param $workScheduleData
+     */
+    public function informSlackAdminSide($nurseInfoId, NurseContactWindow $window, $workScheduleData)
+    {
+        $user      = auth()->user();
+        $nurseUser = Nurse::find($nurseInfoId)->user;
+        $dayName   = clhDayOfWeekToDayName($window->day_of_week);
+
+        $nurseMessage = "Admin {$user->display_name} assigned Nurse {$nurseUser->display_name} to work for";
+        $message      = "${nurseMessage} {$workScheduleData['work_hours']} hours on ${dayName} between {$window->range()->start->format('h:i A T')} to {$window->range()->end->format('h:i A T')}";
+        sendSlackMessage('#carecoachscheduling', $message);
+    }
+
+    /**
+     * When admin creates single NOT repeated work window.
+     *
+     * @param $nurseInfoId
+     * @param $workScheduleData
+     *
+     * @return \Illuminate\Database\Eloquent\Model|NurseContactWindow
+     */
+    public function saveAdminSingleWindow($nurseInfoId, $workScheduleData)
+    {
+        return $this->nurseContactWindows->create([
+            'nurse_info_id'     => $nurseInfoId,
+            'date'              => $workScheduleData['date'],
+            'day_of_week'       => $workScheduleData['day_of_week'],
+            'window_time_start' => $workScheduleData['window_time_start'],
+            'window_time_end'   => $workScheduleData['window_time_end'],
+            'repeat_frequency'  => $workScheduleData['repeat_freq'],
+            'until'             => $workScheduleData['until'],
+        ]);
+    }
+
+    /**
+     * User nurse creates a NOT repeated work window.
+     *
+     * @param $workScheduleData
+     *
+     * @return mixed
+     */
+    public function saveNurseSingleWindow($workScheduleData)
+    {
+        $user = auth()->user();
+
+        return $user->nurseInfo->windows()->create([
+            'date'              => $workScheduleData['date'],
+            'day_of_week'       => $workScheduleData['day_of_week'],
+            'window_time_start' => $workScheduleData['window_time_start'],
+            'window_time_end'   => $workScheduleData['window_time_end'],
+            'repeat_frequency'  => $workScheduleData['repeat_freq'],
+            'until'             => $workScheduleData['until'],
+        ]);
+    }
+
+    /**
+     * @param $nurseInfoId
+     * @param mixed $workScheduleData
+     */
+    public function saveRecurringEvents(
+        $nurseInfoId,
+        bool $updateCollisions,
+        \Illuminate\Contracts\Validation\Validator $validator,
+        $workScheduleData
+    ): JsonResponse {
+        $recurringEventsToSave = $this->fullCalendarService->createRecurringEvents($nurseInfoId, $workScheduleData);
+//        It should never happen. Same validation exist in client.We can also use it in the future to give the option to choose what to do with each event.
+        $confirmationNeededEvents = $this->fullCalendarService->getEventsToAskConfirmation($recurringEventsToSave, $updateCollisions);
+        if ( ! empty($confirmationNeededEvents) && ! $updateCollisions) {
+            $collidingDates = $this->fullCalendarService->getCollidingDates($confirmationNeededEvents);
+
+            return response()->json([
+                'errors'    => 'Validation Failed',
+                'validator' => $validator->getMessageBag()->add(
+                    'error',
+                    "This window is overlapping with an existing window in $collidingDates."
+                ),
+                'collidingEvents' => $confirmationNeededEvents,
+            ], 422);
+        }
+
+        CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, NurseContactWindow::class, $updateCollisions, $workScheduleData['work_hours'])->onQueue('low');
+
+        return response()->json([
+            'success' => true,
+            'window'  => $recurringEventsToSave,
+        ], 200);
     }
 
     /**
