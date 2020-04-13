@@ -318,19 +318,18 @@
                 authIsAdmin: false,
                 authIsNurse: false,
                 clickedOnDay: false,
-                dailyReports:[],
+                dailyReports: [],
                 eventSources: [
                     { // has to be 'events()' else it doesnt work
                         events(start, end, timezone, callback) {
+                            debugger;
                             self.loader = true;
                             axios.get('care-center/work-schedule/get-calendar-data', {
                                 params: {
                                     start: new Date(start),
                                     end: new Date(end),
                                 }
-                            })
-                                .then((response => {
-                                    debugger;
+                            }).then((response => {
                                     const calendarData = response.data.calendarData;
                                     self.workHours = [];
                                     self.holidays = [];
@@ -359,25 +358,29 @@
                     {
                         events(start, end, timezone, callback) {
                             self.loader = true;
-                            axios.get('care-center/work-schedule/get-daily-report')
-                                .then((response => {
-                                    debugger;
-                                    const dailyReports = response.data.dailyReports;
-                                    self.dailyReports.push(...dailyReports);
-                                    self.loader = false;
-                                    callback(dailyReports);
-                                })).catch((error) => {
-                                if (error.response.status === 422) {
-                                    const e = error.response.data;
-                                    if (e.hasOwnProperty('message')) {
-                                        alert(e.message);
-                                    } else {
-                                        alert(e.validator);
+                            // Dont call this on view change from "week" to "month"
+                            if (self.dailyReports.length === 0) {
+                                axios.get('care-center/work-schedule/get-daily-report')
+                                    .then((response => {
+                                        const dailyReports = response.data.dailyReports;
+                                        self.dailyReports.push(...dailyReports);
+                                        self.loader = false;
+                                        callback(dailyReports);
+                                    })).catch((error) => {
+                                    if (error.response.status === 422) {
+                                        const e = error.response.data;
+                                        if (e.hasOwnProperty('message')) {
+                                            alert(e.message);
+                                        } else {
+                                            alert(e.validator);
+                                        }
+                                        self.loader = false;
                                     }
-                                    self.loader = false;
-                                }
-                                console.log(error);
-                            });
+                                    console.log(error);
+                                });
+                            } else {
+                                callback(self.dailyReports)
+                            }
                         }
                     }
                 ],
@@ -886,7 +889,6 @@
                 const maxRepeatDate = date.setMonth(date.getMonth() + 1);
                 return this.formatDate(maxRepeatDate);
             },
-
         }),
 //@todo:implement a count for search bar results - for results found - and in which month are found. maybe a side bar
         computed: {
@@ -933,8 +935,7 @@
 
             addFromMainButtonDateLabel() {
                 return this.addNewEventMainClicked && this.addHolidays ? 'Day-off on:' : 'Working on:';
-            }
-
+            },
         },
 
         created() {
@@ -950,6 +951,7 @@
 
         mounted() {
             $('#addWorkEvent').on("hidden.bs.modal", this.resetModalValues);
+
         }
     }
 
