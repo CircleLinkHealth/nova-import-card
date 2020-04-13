@@ -250,7 +250,7 @@ class WorkScheduleController extends Controller
 
         $this->informSlackNurseSide($window);
     }
-  
+
     /**
      * @return Collection|mixed
      */
@@ -368,16 +368,6 @@ class WorkScheduleController extends Controller
         $sentence .= route('get.admin.nurse.schedules');
 
         \sendSlackMessage('#carecoachscheduling', $sentence);
-    }
-
-    public function multipleDelete(NurseContactWindow $window)
-    {
-        $this->nurseContactWindows
-            ->where('nurse_info_id', $window->nurse_info_id)
-            ->where('repeat_start', $window->repeat_start)
-            ->forceDelete();
-
-        $this->informSlackNurseSide($window);
     }
 
     /**
