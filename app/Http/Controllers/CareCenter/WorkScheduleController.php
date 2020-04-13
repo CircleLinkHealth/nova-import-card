@@ -10,7 +10,6 @@ use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CalendarRange;
 use App\Jobs\CreateCalendarRecurringEventsJob;
-use App\Services\NursesPerformanceReportService;
 use App\Traits\ValidatesWorkScheduleCalendar;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Holiday;
@@ -84,7 +83,6 @@ class WorkScheduleController extends Controller
             //"Resetting" array keys using array_values().
             // Otherwise sometimes (when holidays are spreading into the beginning of next month) it becomes not iterable.
             $holidays = array_values($this->fullCalendarService->prepareHolidaysData($holidaysData, $auth, $startDate, $endDate)->toArray());
-            $lastWeekDailyReports = $this->dailyReportsForNurse($auth->id);
             $dataForDropdown = '';
         }
 
@@ -147,30 +145,15 @@ class WorkScheduleController extends Controller
         return $this->fullCalendarService->prepareWorkDataForEachNurse($windows, $nurse);
     }
 
-    /**
-     * @param $authId
-     * @return \Illuminate\Support\Collection
-     */
-    public function dailyReportsForNurse($authId)
+//TEST ONLY
+    public function dailyReportsForNurse()
     {
-        $yesterday = now()->copy()->subDay(1);
-        $startDate = $yesterday->copy()->subDays(6);
-        $dates = getDatesForRange($startDate, $yesterday);
+        $dailyReports = $this->fullCalendarService->prepareDailyReportsForNurse();
 
-        $service = new NursesPerformanceReportService();
-
-        $reports = [];
-        foreach ($dates as $date) {
-            $reportForDay = $service->getDailyReportJson(Carbon::parse($date));
-            if (!$reportForDay || !is_json($reportForDay)) {
-                $reports[] = collect();
-            } else {
-                $reports[] = collect(json_decode($reportForDay, true))->where('nurse_id', 1920)->first();
-            }
-
-        }
-
-        return collect($reports);
+        return response()->json([
+            'success' => true,
+            'dailyReports' => $dailyReports,
+        ], 200);
     }
 
     /**

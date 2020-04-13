@@ -318,6 +318,7 @@
                 authIsAdmin: false,
                 authIsNurse: false,
                 clickedOnDay: false,
+                dailyReports:[],
                 eventSources: [
                     { // has to be 'events()' else it doesnt work
                         events(start, end, timezone, callback) {
@@ -329,6 +330,7 @@
                                 }
                             })
                                 .then((response => {
+                                    debugger;
                                     const calendarData = response.data.calendarData;
                                     self.workHours = [];
                                     self.holidays = [];
@@ -353,13 +355,31 @@
                             });
                         },
                     },
-                    // We could  add another source here, which means another axios request
-                    // {
-                    //     events(start, end, timezone, callback) {
-                    //
-                    //     }
-                    //
-                    // }
+                    // This means another axios request...
+                    {
+                        events(start, end, timezone, callback) {
+                            self.loader = true;
+                            axios.get('care-center/work-schedule/get-daily-report')
+                                .then((response => {
+                                    debugger;
+                                    const dailyReports = response.data.dailyReports;
+                                    self.dailyReports.push(...dailyReports);
+                                    self.loader = false;
+                                    callback(dailyReports);
+                                })).catch((error) => {
+                                if (error.response.status === 422) {
+                                    const e = error.response.data;
+                                    if (e.hasOwnProperty('message')) {
+                                        alert(e.message);
+                                    } else {
+                                        alert(e.validator);
+                                    }
+                                    self.loader = false;
+                                }
+                                console.log(error);
+                            });
+                        }
+                    }
                 ],
 
                 config: {

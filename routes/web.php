@@ -1653,7 +1653,7 @@ Route::group(['middleware' => 'auth'], function () {
         ])->middleware('permission:nurseContactWindow.read');
 
         Route::get('work-schedule/get-daily-report', [
-            'uses' => 'CareCenter\WorkScheduleController@dailyReportForNurse',
+            'uses' => 'CareCenter\WorkScheduleController@dailyReportsForNurse',
             'as'   => 'care.center.work.schedule.getDailyReport',
         ])->middleware('permission:nurseContactWindow.read');
 
