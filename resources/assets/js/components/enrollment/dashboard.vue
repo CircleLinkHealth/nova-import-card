@@ -54,7 +54,7 @@
         },
         computed: {
             patientExists: function () {
-                return this.patientData.length > 0;
+                return this.patientData.enrollable;
             }
         },
         data: function () {

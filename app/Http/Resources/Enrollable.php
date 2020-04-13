@@ -32,7 +32,7 @@ class Enrollable extends Resource
         $enrollable->load(['practice']);
 
         return [
-            'enrollee' => $enrollable->toArray(),
+            'enrollable' => $enrollable->toArray(),
             'report'   => CareAmbassadorLog::createOrGetLogs($careAmbassador->id),
             'script'   => TrixField::careAmbassador($this->lang)->first(),
             'provider' => $this->provider->toArray(),

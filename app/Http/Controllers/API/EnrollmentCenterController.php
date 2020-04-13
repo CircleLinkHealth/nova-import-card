@@ -23,7 +23,7 @@ class EnrollmentCenterController extends ApiController
      */
     public function rejected(Request $request)
     {
-        $enrollee       = Enrollee::find($request->input('enrollee_id'));
+        $enrollee       = Enrollee::find($request->input('enrollable_id'));
         $careAmbassador = auth()->user()->careAmbassador;
 
         AttachEnrolleeFamilyMembers::attach($request);
@@ -70,7 +70,7 @@ class EnrollmentCenterController extends ApiController
 
     public function unableToContact(Request $request)
     {
-        $enrollee       = Enrollee::find($request->input('enrollee_id'));
+        $enrollee       = Enrollee::find($request->input('enrollable_id'));
         $careAmbassador = auth()->user()->careAmbassador;
 
         AttachEnrolleeFamilyMembers::attach($request);
@@ -116,7 +116,7 @@ class EnrollmentCenterController extends ApiController
     {
         $careAmbassador = auth()->user()->careAmbassador;
 
-        $enrollee = Enrollee::find($request->input('enrollee_id'));
+        $enrollee = Enrollee::find($request->input('enrollable_id'));
 
         AttachEnrolleeFamilyMembers::attach($request);
 

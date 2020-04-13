@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="patient_data.hasOwnProperty('enrollee')">
+        <div v-if="patient_data.hasOwnProperty('enrollable')">
             <div class="side-nav fixed">
                 <div style="height: 150%; overflow-y: hidden">
                     <div class="row">
@@ -466,7 +466,7 @@
                         </blockquote>
 
                         <input type="hidden" name="status" value="consented">
-                        <input type="hidden" name="enrollee_id" :value="enrolleeId">
+                        <input type="hidden" name="enrollable_id" :value="enrollableId">
                         <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
                         <input type="hidden" name="time_elapsed" :value="time_elapsed">
                         <input type="hidden" name="confirmed_family_members" v-model="confirmed_family_members">
@@ -532,7 +532,7 @@
                         </div>
 
                         <input type="hidden" name="status" value="utc">
-                        <input type="hidden" name="enrollee_id" :value="enrolleeId">
+                        <input type="hidden" name="enrollable_id" :value="enrollableId">
                         <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
                         <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
                         <input type="hidden" name="confirmed_family_members" v-model="confirmed_family_members">
@@ -588,7 +588,7 @@
                         </div>
 
 
-                        <input type="hidden" name="enrollee_id" :value="enrolleeId">
+                        <input type="hidden" name="enrollable_id" :value="enrollableId">
                         <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
                         <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
                         <input type="hidden" name="confirmed_family_members" v-model="confirmed_family_members">
@@ -704,8 +704,8 @@
             'loader': Loader,
         },
         computed: {
-            enrollee: function () {
-                return this.patient_data.enrollee
+            enrollable: function () {
+                return this.patient_data.enrollable
             },
             provider: function () {
                 return this.patient_data.provider
@@ -713,14 +713,14 @@
             providerPhone: function () {
                 return this.patient_data.providerPhone
             },
-            enrolleeId: function () {
-                return this.enrollee.id;
+            enrollableId: function () {
+                return this.enrollable.id;
             },
-            enrolleeUserId: function () {
-                return this.enrollee.user ? this.enrollee.user.id : null;
+            enrollableUserId: function () {
+                return this.enrollable.user ? this.enrollable.user.id : null;
             },
             enrollmentTips: function () {
-                return this.enrollee.practice && this.enrollee.practice.enrollment_tips ? this.enrollee.practice.enrollment_tips.content : '';
+                return this.enrollable.practice && this.enrollable.practice.enrollment_tips ? this.enrollable.practice.enrollment_tips.content : '';
             },
             hasTips: function () {
                 return this.patient_data.hasTips;
@@ -732,28 +732,28 @@
                 return this.patient_data.script;
             },
             last_call_outcome: function () {
-                return this.enrollee.last_call_outcome ? this.enrollee.last_call_outcome : '';
+                return this.enrollable.last_call_outcome ? this.enrollable.last_call_outcome : '';
             },
             last_call_outcome_reason: function () {
-                return this.enrollee.last_call_outcome_reason ? this.enrollee.last_call_outcome_reason : '';
+                return this.enrollable.last_call_outcome_reason ? this.enrollable.last_call_outcome_reason : '';
             },
             has_copay: function () {
-                return this.enrollee.has_copay;
+                return this.enrollable.has_copay;
             },
             name: function () {
-                return this.enrollee.first_name + ' ' + this.enrollee.last_name;
+                return this.enrollable.first_name + ' ' + this.enrollable.last_name;
             },
             lang: function () {
-                return this.enrollee.lang;
+                return this.enrollable.lang;
             },
             practice_id: function () {
-                return this.enrollee.practice.id;
+                return this.enrollable.practice.id;
             },
             practice_name: function () {
-                return this.enrollee.practice.display_name;
+                return this.enrollable.practice.display_name;
             },
             practice_phone: function () {
-                return this.enrollee.practice.outgoing_phone_number;
+                return this.enrollable.practice.outgoing_phone_number;
             },
             total_time_in_system: function () {
                 return this.report && this.report.total_time_in_system ? this.report.total_time_in_system : 0;
@@ -893,7 +893,7 @@
                 return this.providerInfo ? (this.providerInfo.sex || 'N/A') : 'N/A';
             },
             last_office_visit_at: function () {
-                return this.enrollee.last_encounter ? this.enrollee.last_encounter : 'N/A';
+                return this.enrollable.last_encounter ? this.enrollable.last_encounter : 'N/A';
             },
             care_ambassador_script: function () {
 
@@ -914,22 +914,22 @@
                 return Array.isArray(this.suggested_family_members) && this.suggested_family_members.length > 0;
             },
             attempt_count() {
-                return this.enrollee.attempt_count || 0;
+                return this.enrollable.attempt_count || 0;
             },
             last_attempt_at() {
-                return this.enrollee.last_attempt_at || 'N/A';
+                return this.enrollable.last_attempt_at || 'N/A';
             },
             address_2_exists() {
-                return !!this.enrollee.address_2;
+                return !!this.enrollable.address_2;
             },
             home_phone_exists() {
-                return !!this.enrollee.home_phone;
+                return !!this.enrollable.home_phone;
             },
             cell_phone_exists() {
-                return !!this.enrollee.cell_phone;
+                return !!this.enrollable.cell_phone;
             },
             other_phone_exists() {
-                return !!this.enrollee.other_phone;
+                return !!this.enrollable.other_phone;
             },
             preferred_phone_empty() {
                 return !this.preferred_phone;
@@ -1083,29 +1083,30 @@
         methods: {
             setDays(event){
                 if (this.days.includes('all')){
-                    this.days = ['1', '2', '3', '4', '5', 'all'];
                     M.FormSelect.getInstance(document.getElementById('days[]')).dropdown.close()
+                    this.days = ['1', '2', '3', '4', '5', 'all'];
                 }
             },
             capitalizeFirstLetter(string) {
                 return string.charAt(0).toUpperCase() + string.slice(1);
             },
             handleSubmit(event, url) {
+                event.preventDefault();
+
                 if (this.suggested_family_members.length > 0 && this.confirmed_family_members.length == 0) {
-                    event.preventDefault();
                     this.pending_form = event.target;
                     this.pending_form_url = url
                     let modal = M.Modal.getInstance(document.getElementById('suggested-family-members-modal'));
                     modal.open();
                 }
-                this.submitForm(event.target, url)
 
+                this.submitForm(event.target, url)
             },
             submitForm(form, url){
 
                 let formData = new FormData(form)
 
-                return this.axios
+                this.axios
                     .post(url, formData)
                     .then(response => {
                         //add global modal?
@@ -1121,20 +1122,20 @@
             setPatientData(data){
                 //replace with loop from resource
                 this.patient_data = data;
-                this.home_phone = data.enrollee.home_phone
-                this.cell_phone = data.enrollee.cell_phone
-                this.other_phone = data.enrollee.other_phone
-                this.address = data.enrollee.address || 'N/A'
-                this.address_2 = data.enrollee.address_2 || 'N/A'
-                this.city = data.enrollee.city || 'N/A'
-                this.zip = data.enrollee.zip || 'N/A'
-                this.state = data.enrollee.state || 'N/A'
-                this.email = data.enrollee.email || 'N/A'
-                this.dob = data.enrollee.dob || 'N/A'
+                this.home_phone = data.enrollable.home_phone
+                this.cell_phone = data.enrollable.cell_phone
+                this.other_phone = data.enrollable.other_phone
+                this.address = data.enrollable.address || 'N/A'
+                this.address_2 = data.enrollable.address_2 || 'N/A'
+                this.city = data.enrollable.city || 'N/A'
+                this.zip = data.enrollable.zip || 'N/A'
+                this.state = data.enrollable.state || 'N/A'
+                this.email = data.enrollable.email || 'N/A'
+                this.dob = data.enrollable.dob || 'N/A'
             },
             getSuggestedFamilyMembers() {
                 return this.axios
-                    .get(rootUrl('/enrollment/get-suggested-family-members/' + this.enrollee.id))
+                    .get(rootUrl('/enrollment/get-suggested-family-members/' + this.enrollableId))
                     .then(response => {
                         this.family_loading = false;
                         this.suggested_family_members = response.data.suggested_family_members;
@@ -1228,7 +1229,7 @@
                     To: phoneSanitized,
                     From: this.practice_phone ? this.practice_phone : undefined,
                     IsUnlistedNumber: false,
-                    InboundUserId: this.enrolleeUserId,
+                    InboundUserId: this.enrollableUserId,
                     OutboundUserId: userId
                 });
             },
