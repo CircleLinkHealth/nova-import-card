@@ -250,8 +250,9 @@
                     approved: 0,
                     rejected: 0,
                     flagged: 0,
+                    other: 0,
                     total() {
-                        return this.approved + this.rejected + this.flagged
+                        return this.approved + this.rejected + this.flagged + this.other
                     }
                 },
                 columns: [

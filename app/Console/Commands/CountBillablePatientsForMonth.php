@@ -51,6 +51,12 @@ class CountBillablePatientsForMonth extends Command
         $practiceId = '8';
         $month      = now()->startOfMonth();
 
+        /*$counts = $this->service->counts($practiceId, $month);
+        $this->info(json_encode($counts));
+        $time = round(microtime(true) - $start, 2);
+        $this->info("Time: {$time} seconds");
+        return;*/
+
         /** @var Collection $result */
         $result = $this->service->getBillablePatientsForMonth($practiceId, $month);
 
