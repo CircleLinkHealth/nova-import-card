@@ -38,20 +38,8 @@ class ApproveBillablePatientsService
 
     public function counts($practiceId, Carbon $month)
     {
-        //make sure all summaries have their fields set (approved, rejected, needs_qa)
-        $this->approvePatientsRepo
-            ->billablePatientSummaries($practiceId, $month, true)
-            ->whereNull('actor_id')
-            ->each(function ($summary) {
-                $this->patientSummaryRepo->setApprovalStatusAndNeedsQA(
-                    $this->patientSummaryRepo->attachChargeableServices($summary)
-                );
-            });
-
-        /** @var Collection $allSummaries */
-        /*$allSummaries = $this->approvePatientsRepo
-            ->billablePatientSummaries($practiceId, $month, true)
-            ->get(['id', 'approved', 'rejected', 'needs_qa']);*/
+        // the counts might be inaccurate here because the records might
+        // not be processed yet. see command ProcessApprovableBillablePatientSummary
 
         $count['approved'] = $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month, true)
@@ -72,7 +60,8 @@ class ApproveBillablePatientsService
             ->where('approved', '=', false)
             ->count();
 
-        // TODO: should we even allow this? (having records that are neither rejected nor approved and needs_qa is false
+        // 1. not all fields might have been set, because they might not have been processed yet
+        // 2. or we have an actor_id but none of these is true
         $count['other'] = $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month, true)
             ->where('rejected', '=', false)
@@ -88,6 +77,7 @@ class ApproveBillablePatientsService
         return $this->patientSummaryRepo->detachChargeableService($summary, $defaultCodeId);
     }
 
+
     /**
      * Returns a collection containing information about billable patients for a practice for a month.
      *
@@ -97,6 +87,8 @@ class ApproveBillablePatientsService
      *
      * @param $practiceId
      *
+     * @param Carbon $date
+     *
      * @return \Illuminate\Support\Collection
      */
     public function getBillablePatientsForMonth($practiceId, Carbon $date)
@@ -105,19 +97,18 @@ class ApproveBillablePatientsService
         //    ccm > 1200 and/or bhi > 1200
         $summaries = $this->billablePatientSummaries($practiceId, $date)->paginate(30);
 
-        // 2. if patient is only eligible for PCM, we should make sure ccm time is over 30 mins
-        //    if patient is eligible for both PCM and CCM we choose CCM
+        //note: this only applies to the paginated results, not the whole collection. not sure if intended
         $summaries->getCollection()->transform(
-            function ($summary) {
-                if ( ! $summary->actor_id) {
-                    $summary = $this->patientSummaryRepo->setApprovalStatusAndNeedsQA(
-                        $this->patientSummaryRepo->attachChargeableServices($summary)
-                    );
+            function ($summary) use (&$time2, &$time3, &$time4) {
+                if ( ! $summary->actor_id && ! $summary->needs_qa) {
+                    $aSummary = $this->patientSummaryRepo->attachChargeableServices($summary);
+                    $summary  = $this->patientSummaryRepo->setApprovalStatusAndNeedsQA($aSummary);
                 }
 
                 return ApprovableBillablePatient::make($summary);
             }
         );
+
 
         $isClosed = (bool)$summaries->getCollection()->every(
             function ($summary) {

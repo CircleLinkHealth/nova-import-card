@@ -60,26 +60,28 @@ class BillablePatientsEloquentRepository
                                     ->orderBy('no_of_successful_calls', 'asc')
                                     ->orderBy('rejected', 'asc')
                                     ->where('month_year', $month)
-                                    ->where(
-                                        function ($q) {
-                                            $q->where('ccm_time', '>=',
-                                                AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS)
-                                              ->orWhere('bhi_time', '>=',
-                                                  AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS);
-                                        }
-                                    )
+                                    ->where(function ($q) {
+                                        $q->where('ccm_time', '>=',
+                                            AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS)
+                                          ->orWhere('bhi_time', '>=',
+                                              AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS);
+                                    })
                                     ->when(false === $ignoreWith, function ($q) use ($month, $practiceId) {
                                         return $q->with([
                                             'attestedProblems' => function ($problem) {
                                                 $problem->with(['cpmProblem', 'codes']);
                                             },
-                                        ]);
-                                    })
-                                    ->when(false === $ignoreWith, function ($q) use ($month, $practiceId) {
-                                        return $q->with([
-                                            'patient' => function ($q) use ($month, $practiceId) {
+                                            'patient'          => function ($q) use ($month, $practiceId) {
                                                 $q->with([
-                                                    'patientInfo',
+                                                    'billingProvider',
+                                                    'patientInfo'     => function ($q) use ($month) {
+                                                        $q->with([
+                                                            'ccmStatusRevisions' => function ($q) use ($month) {
+                                                                $endOfMonth = $month->endOfMonth();
+                                                                $q->where('created_at', '>=', $endOfMonth)->limit(1);
+                                                            },
+                                                        ]);
+                                                    },
                                                     'primaryPractice.chargeableServices',
                                                     'careTeamMembers' => function ($q) {
                                                         $q->where('type', '=', 'billing_provider');
