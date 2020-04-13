@@ -82,7 +82,7 @@ class UserRepository
         }
         
         $user = User::create([
-                             'saas_account_id' => $params->get('saas_account_id'),
+                             'saas_account_id' => $params->get('saas_account_id') ?? Practice::whereId($params->get('program_id'))->value('saas_account_id'),
                              'first_name' => $params->get('first_name'),
                              'last_name' => $params->get('last_name'),
                              'program_id' => $params->get('program_id'),
@@ -661,7 +661,6 @@ class UserRepository
     private function createNewUserRules()
     {
         return [
-            'saas_account_id'         => 'required|exists:saas_accounts,id',
             'first_name'              => 'required',
             'last_name'               => 'required',
             'program_id'              => 'required|exists:practices,id',
