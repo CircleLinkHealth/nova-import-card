@@ -16,6 +16,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\PracticeRoleUser;
 use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
@@ -71,7 +72,7 @@ class UserRepository
     public function createNewUser(
         ParameterBag $params
     ) {
-        $validator = \Validator::make($this->createNewUserRules(),[
+        $validator = \Validator::make($params->all(), $this->createNewUserRules(),[
             'required'                   => 'The :attribute field is required.',
             'home_phone_number.required' => 'The patient phone number field is required.',
         ]);
@@ -220,7 +221,9 @@ class UserRepository
 
         // set primary program
         $user->program_id = $params->get('program_id');
-        $user->save();
+        if ($user->isDirty()) {
+            $user->save();
+        }
 
         return array_unique($userPrograms);
     }
@@ -516,28 +519,38 @@ class UserRepository
         ParameterBag $params
     ) {
         $practices = $this->saveAndGetPractice($user, $params);
-
-        foreach ($practices as $practiceId) {
-            if ( ! empty($params->get('role'))) {
-                $user->detachRolesForSite([], $practiceId);
-                $user->attachRoleForPractice($params->get('role'), $practiceId);
+        
+        if (! $practices) {
+            foreach ($params->get('roles') as $roleId) {
+                $pru = PracticeRoleUser::create([
+                                             'program_id' => null,
+                                             'user_id' => $user->id,
+                                             'role_id' => $roleId,
+                                         ]);
             }
-
-            if ( ! empty($params->get('roles'))) {
-                $user->detachRolesForSite([], $practiceId);
-                // support if one role is passed in as a string
-                if ( ! is_array($params->get('roles'))) {
-                    $user->attachRoleForPractice($params->get('roles'), $practiceId);
-                } else {
-                    $user->attachRoleForPractice($params->get('roles'), $practiceId);
+        } else {
+            foreach ($practices as $practiceId) {
+                if ( ! empty($params->get('role'))) {
+                    $user->detachRolesForSite([], $practiceId);
+                    $user->attachRoleForPractice($params->get('role'), $practiceId);
+                }
+        
+                if ( ! empty($params->get('roles'))) {
+                    $user->detachRolesForSite([], $practiceId);
+                    // support if one role is passed in as a string
+                    if ( ! is_array($params->get('roles'))) {
+                        $user->attachRoleForPractice($params->get('roles'), $practiceId);
+                    } else {
+                        $user->attachRoleForPractice($params->get('roles'), $practiceId);
+                    }
                 }
             }
+    
+            DB::table('practice_role_user')
+              ->where('user_id', $user->id)
+              ->whereNotIn('program_id', $practices)
+              ->delete();
         }
-
-        DB::table('practice_role_user')
-          ->where('user_id', $user->id)
-          ->whereNotIn('program_id', $practices)
-          ->delete();
 
         $this->clearRolesCache($user);
 
@@ -666,9 +679,7 @@ class UserRepository
                 'required',
                 Rule::unique('users', 'username')
             ],
-            'roles.*' => [
-                'required|exists:lv_roles,id'
-            ]
+            'roles.*' => 'required|exists:lv_roles,id'
         ];
     }
 }
