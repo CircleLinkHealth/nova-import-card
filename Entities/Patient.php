@@ -628,7 +628,7 @@ class Patient extends BaseModel
             ? null
             : $result;
     }
-    
+
     /**
      * Get last ccm_status for a specific month:
      * 1. Get next month
@@ -636,26 +636,35 @@ class Patient extends BaseModel
      * 3. If exists, then return the `old_value`
      * 4. Otherwise, return ccm_status from {@link Patient @patientInfo}
      *
+     * NOTE: if relation is already loaded, data from relation will be used
+     *
      * @param Carbon $monthYear
      *
      * @return string
      */
     public function getCcmStatusForMonth(Carbon $monthYear)
     {
-        $endOfMonth = $monthYear->endOfMonth();
-        
-        /** @var Revision|null $revision */
-        $revision = Revision::where('revisionable_id', '=', $this->id)
-                            ->where('revisionable_type', '=', self::class)
-                            ->where('created_at', '>=', $endOfMonth)
-                            ->where('key', '=', 'ccm_status')
-                            ->orderBy('id')
-                            ->first();
-        
+        if ($this->relationLoaded('ccmStatusRevisions')) {
+            $revision = $this->ccmStatusRevisions->first();
+        }
+        else {
+            $endOfMonth = $monthYear->endOfMonth();
+            $revision = $this->ccmStatusRevisions()
+                ->where('created_at', '>=', $endOfMonth)
+                ->first();
+        }
+
         if ($revision && $revision->old_value) {
             return $revision->old_value;
         }
-        
+
         return $this->ccm_status;
+    }
+
+    public function ccmStatusRevisions() {
+        return $this->hasMany(Revision::class, 'revisionable_id', 'id')
+            ->where('revisionable_type', '=', self::class)
+            ->where('key', '=', 'ccm_status')
+            ->orderBy('id');
     }
 }
