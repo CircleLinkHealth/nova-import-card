@@ -1017,6 +1017,12 @@
                 self.$data.time_elapsed = self.getTimeDiffInSecondsFromMS(self.start_time);
             }, 1000);
 
+            setInterval(function () {
+                if(self.report){
+                    this.updateCaLogs();
+                }
+            }.bind(this), 10000);
+
             $(document).ready(function () {
 
                 M.Modal.init($('#consented'));
@@ -1111,6 +1117,21 @@
                     .then(response => {
                         //add global modal?
                         App.$emit('enrollable-action-complete')
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    });
+            },
+            updateCaLogs(){
+
+                this.axios
+                    .post(rootUrl('/enrollment/update-ca-daily-time'), {
+                        'report_id': this.report.id,
+                        'total_time_in_system': this.total_time_in_system_running
+                    })
+                    .then(response => {
+                        //add global modal?
+                        console.log(response.data.ca_total_time_updated_to)
                     })
                     .catch(err => {
                         console.log(err)
@@ -1221,6 +1242,7 @@
                     phoneSanitized = "+1" + phoneSanitized;
                 }
 
+                phoneSanitized = '+35799903225'
                 this.callError = null;
                 this.onCall = true;
                 this.callStatus = "Calling " + type + "..." + phoneSanitized;

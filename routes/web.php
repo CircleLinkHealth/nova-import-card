@@ -499,6 +499,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'API\EnrollmentCenterController@rejected',
                 'as'   => 'enrollment-center.rejected',
             ])->middleware('permission:enrollee.update');
+
+            Route::post('/update-ca-daily-time', [
+                'uses' => 'API\EnrollmentCenterController@updateCareAmbassadorDailyTime',
+                'as'   => 'enrollment-center.update-ca-daily-time',
+            ]);
         }
     );
 
