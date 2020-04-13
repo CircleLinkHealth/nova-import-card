@@ -223,13 +223,15 @@
                                                 header: ["Summary", {content: "textFilter", placeholder: "Filter"}],
                                                 width: 250,
                                                 sort: 'string',
-                                                tooltip: ['#summary#'],
+                                                tooltip: ['#comment#'],
                                                 fillspace: true,
                                                 template: "<a href='<?php echo route('patient.note.view', [
                                                     'patient' => '#patient_id#',
                                                     'noteId'  => '#id#',
-                                                ]); ?>'>#summary#</a>"
+                                                ]); ?>'>#comment#</a>"
                                             },
+                                            // This is hidden but it holds the summary value above.
+                                            // I think it was not considered while hiding the column.
                                             {
                                                 id: "comment",
                                                 header: ["Preview", {content: "textFilter", placeholder: "Filter"}],

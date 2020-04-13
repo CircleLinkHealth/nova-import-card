@@ -7,20 +7,18 @@
 namespace Tests\Feature;
 
 use App\Constants;
-use App\Models\CCD\CcdVendor;
 use App\Traits\Tests\PracticeHelpers;
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Tests\TestCase;
+use Tests\CustomerTestCase;
 
-class ImportPcmCcd extends TestCase
+class ImportPcmCcd extends CustomerTestCase
 {
     use UserHelpers;
     use PracticeHelpers;
@@ -77,25 +75,19 @@ class ImportPcmCcd extends TestCase
             'file' => [new UploadedFile($xmlPath, $xmlName, 'text/xml', null, true)],
         ]);
 
-        self::assertEquals(200, $uploadCcdResponse->status());
+        self::assertTrue(200 === $uploadCcdResponse->status());
 
         $result = $uploadCcdResponse->json();
         self::assertNotEmpty($result);
-
-        $ccdaId = $result['ccdas'][0];
-
-        /** @var ImportedMedicalRecord $imr */
-        $imr = ImportedMedicalRecord::where('medical_record_id', '=', $ccdaId)
-                                    ->where('medical_record_type', '=', Ccda::class)
-                                    ->first();
-        $this->assertNotNull($imr);;
+        
+        $ccda = Ccda::findOrFail($result['ccdas'][0]);
 
         $confirmCcdResponse = $this->json('POST', 'api/ccd-importer/records/confirm', [
             [
-                'id'               => $imr->id,
-                'Location'         => $imr->location_id ?? null,
+                'id'               => $ccda->id,
+                'Location'         => $ccda->location_id ?? null,
                 'Practice'         => $practiceId,
-                'Billing Provider' => $imr->billing_provider_id ?? null,
+                'Billing Provider' => $ccda->billing_provider_id ?? null,
             ],
         ]);
         self::assertTrue(200 === $confirmCcdResponse->status());
@@ -114,13 +106,7 @@ class ImportPcmCcd extends TestCase
         bool $addBhiService = false,
         bool $addPcmService = false
     ): Practice {
-        /** @var CcdVendor $ccdVendor */
-        $ccdVendor = CcdVendor::first();
-        if ( ! $ccdVendor) {
-            $ccdVendor = factory(CcdVendor::class)->create();
-        }
-
-        $practice = Practice::find($ccdVendor->program_id);
+        $practice = Practice::find($this->practice()->id);
         $practice = $this->setupExistingPractice($practice, true, false, true, true);
 
         return $practice;

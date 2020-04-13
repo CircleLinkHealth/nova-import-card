@@ -44,7 +44,7 @@ class PatientSummaryEloquentRepository
      *
      * @param $summary
      * @param array|ChargeableService|null $chargeableServiceId | The Chargeable Service Code to attach
-     * @param bool                         $detach              | Whether to detach existing chargeable services, when using the sync function
+     * @param bool $detach | Whether to detach existing chargeable services, when using the sync function
      *
      * @return mixed
      */
@@ -63,7 +63,7 @@ class PatientSummaryEloquentRepository
         }
 
         $sync = $summary->chargeableServices()
-            ->sync($chargeableServiceId, $detach);
+                        ->sync($chargeableServiceId, $detach);
 
         if ($sync['attached'] || $sync['detached'] || $sync['updated']) {
             $class = PatientMonthlySummary::class;
@@ -106,6 +106,7 @@ class PatientSummaryEloquentRepository
                 }
             );
 
+        //    if patient is eligible for both PCM and CCM we choose CCM
         if ($hasCcm && $hasPcm) {
             $candidates = $candidates->filter(
                 function ($service) {
@@ -129,7 +130,7 @@ class PatientSummaryEloquentRepository
     public function detachChargeableService($summary, $chargeableServiceId)
     {
         $detached = $summary->chargeableServices()
-            ->detach($chargeableServiceId);
+                            ->detach($chargeableServiceId);
 
         $summary->load('chargeableServices');
 
@@ -185,7 +186,7 @@ class PatientSummaryEloquentRepository
             $summary->needs_qa = $summary->rejected = false;
         }
 
-        if ($summary->isDirty()) {
+        if ($summary->isDirty(['approved', 'rejected', 'needs_qa'])) {
             $summary->save();
         }
 
@@ -253,6 +254,6 @@ class PatientSummaryEloquentRepository
      */
     private function shouldNotTouch(PatientMonthlySummary $summary): bool
     {
-        return (bool) $summary->actor_id;
+        return (bool)$summary->actor_id;
     }
 }

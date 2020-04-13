@@ -223,9 +223,9 @@ class PracticeStaff extends ReportsErrorsToSlack implements WithChunkReading, To
             ->first();
 
         if ( ! $user) {
-            $user = new User();
+            return $this->repo->createNewUser($bag);
         }
-
-        return $this->repo->createNewUser($user, $bag);
+        
+        return $this->repo->editUser($user, $bag);
     }
 }

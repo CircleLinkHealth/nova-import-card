@@ -547,7 +547,7 @@ class PatientCareplanController extends Controller
                 'careplan_mode'   => CarePlan::WEB,
             ]
         );
-        $newUser = $userRepo->createNewUser($user, $params);
+        $newUser = $userRepo->createNewUser($params);
 
         if ($request->has('provider_id')) {
             $newUser->setBillingProviderId($request->input('provider_id'));
