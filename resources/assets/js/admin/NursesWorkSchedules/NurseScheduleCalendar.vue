@@ -517,6 +517,7 @@
                     this.errors = error;
                     alert(this.errors.response.data.errors);
                 });
+
             },
 
             deleteWorkDay(event, shouldDeleteAll) {
