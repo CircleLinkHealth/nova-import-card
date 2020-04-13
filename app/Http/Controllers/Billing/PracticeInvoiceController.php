@@ -20,9 +20,6 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\SharedModels\Entities\CpmProblem;
-use CircleLinkHealth\SharedModels\Entities\Problem;
-use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 
@@ -65,20 +62,20 @@ class PracticeInvoiceController extends Controller
         $savedSummaries = collect();
 
         $this->getCurrentMonthSummariesQuery($practice_id, $date)
-            ->chunkById(100, function ($summaries) use ($user, &$savedSummaries) {
-                foreach ($summaries as $summary) {
-                    $summary->actor_id = $user->id;
-                    $summary->needs_qa = false;
-                    if ($summary->patient) {
-                        if ($summary->patient->patientInfo) {
-                            $summary->closed_ccm_status = $summary->patient->patientInfo->ccm_status;
-                        }
-                    }
-                    $summary->save();
+             ->chunkById(100, function ($summaries) use ($user, &$savedSummaries) {
+                 foreach ($summaries as $summary) {
+                     $summary->actor_id = $user->id;
+                     $summary->needs_qa = false;
+                     if ($summary->patient) {
+                         if ($summary->patient->patientInfo) {
+                             $summary->closed_ccm_status = $summary->patient->patientInfo->ccm_status;
+                         }
+                     }
+                     $summary->save();
 
-                    $savedSummaries->push($summary);
-                }
-            });
+                     $savedSummaries->push($summary);
+                 }
+             });
 
         return response()->json($savedSummaries);
     }
@@ -118,9 +115,9 @@ class PracticeInvoiceController extends Controller
         }
 
         $readyToBill = Practice::active()
-            ->authUserCanAccess()
-            ->get();
-        $invoice_no = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
+                               ->authUserCanAccess()
+                               ->get();
+        $invoice_no  = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
 
         return view('billing.practice.create', compact(
             [
@@ -156,7 +153,7 @@ class PracticeInvoiceController extends Controller
 
         $month = $this->service->getBillablePatientsForMonth($practice_id, $date);
 
-        return response($month['summaries'])->header('is-closed', (int) $month['is_closed']);
+        return response($month['summaries'])->header('is-closed', (int)$month['is_closed']);
     }
 
     /**
@@ -171,12 +168,12 @@ class PracticeInvoiceController extends Controller
         $practice,
         $name
     ) {
-        if ( ! auth()->user()->practice((int) $practice) && ! auth()->user()->isAdmin()) {
+        if ( ! auth()->user()->practice((int)$practice) && ! auth()->user()->isAdmin()) {
             return abort(403, 'Unauthorized action.');
         }
 
-        return response()->download(storage_path('/download/'.$name), $name, [
-            'Content-Length: '.filesize(storage_path('/download/'.$name)),
+        return response()->download(storage_path('/download/' . $name), $name, [
+            'Content-Length: ' . filesize(storage_path('/download/' . $name)),
         ]);
     }
 
@@ -202,11 +199,11 @@ class PracticeInvoiceController extends Controller
     public function make()
     {
         $practices = Practice::orderBy('display_name')
-            ->select(['name', 'id', 'display_name'])
-            ->with('chargeableServices')
-            ->authUserCanAccess(auth()->user()->isSoftwareOnly())
-            ->active()
-            ->get();
+                             ->select(['name', 'id', 'display_name'])
+                             ->with('chargeableServices')
+                             ->authUserCanAccess(auth()->user()->isSoftwareOnly())
+                             ->active()
+                             ->get();
 
         $cpmProblems = (new CpmProblemService())->all();
 
@@ -252,7 +249,9 @@ class PracticeInvoiceController extends Controller
 
         $niceDate = "{$date->shortEnglishMonth} {$date->year}";
 
-        session()->put('messages', array_merge(["We are creating reports for $niceDate, for the following practices:"], $practices, ['We will send you an email when they are ready.']));
+        session()->put('messages',
+            array_merge(["We are creating reports for $niceDate, for the following practices:"], $practices,
+                ['We will send you an email when they are ready.']));
 
         return redirect()->back();
     }
@@ -291,14 +290,14 @@ class PracticeInvoiceController extends Controller
      */
     public function send(Request $request)
     {
-        $invoices = (array) json_decode($request->input('links'));
+        $invoices = (array)json_decode($request->input('links'));
 
         $logger = '';
 
         foreach ($invoices as $key => $value) {
             $practice = Practice::whereDisplayName($key)->first();
 
-            $data = (array) $value;
+            $data = (array)$value;
 
             $patientReportUrl = $data['patient_report_url'];
             $invoiceURL       = $data['invoice_url'];
@@ -320,7 +319,7 @@ class PracticeInvoiceController extends Controller
                         $user->notify($notification);
                     } else {
                         Notification::route('mail', $recipient)
-                            ->notify($notification);
+                                    ->notify($notification);
                     }
 
                     $logger .= "Sent report for {$practice->name} to ${recipient} <br />";
@@ -382,6 +381,10 @@ class PracticeInvoiceController extends Controller
         $summary->approved = $request['approved'];
         $summary->rejected = $request['rejected'];
 
+        if ( ! $summary->approved && ! $summary->rejected) {
+            $summary->needs_qa = true;
+        }
+
         //if approved was unchecked, rejected stays as is. If it was approved, rejected becomes 0
         $summary->actor_id = auth()->user()->id;
         $summary->save();
@@ -396,7 +399,7 @@ class PracticeInvoiceController extends Controller
                 'approved' => $summary->approved,
                 'rejected' => $summary->rejected,
             ],
-            'actor_id' => $summary->actor_id,
+            'actor_id'  => $summary->actor_id,
         ]);
     }
 
@@ -441,9 +444,9 @@ class PracticeInvoiceController extends Controller
     private function getCurrentMonthSummariesQuery($practice_id, Carbon $date)
     {
         return PatientMonthlySummary::with('patient.patientInfo')
-            ->whereHas('patient', function ($q) use ($practice_id) {
-                $q->ofPractice($practice_id);
-            })
-            ->where('month_year', $date->startOfMonth());
+                                    ->whereHas('patient', function ($q) use ($practice_id) {
+                                        $q->ofPractice($practice_id);
+                                    })
+                                    ->where('month_year', $date->startOfMonth());
     }
 }
