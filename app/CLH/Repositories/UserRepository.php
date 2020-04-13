@@ -664,12 +664,6 @@ class UserRepository
             'saas_account_id'         => 'required|exists:saas_accounts,id',
             'first_name'              => 'required',
             'last_name'               => 'required',
-            'gender'                  => 'required',
-            'mrn_number'              => 'required',
-            'birth_date'              => 'required',
-            'home_phone_number'       => 'required',
-            'consent_date'            => 'required',
-            'ccm_status'              => 'required',
             'program_id'              => 'required|exists:practices,id',
             'email' => [
                 'required',
