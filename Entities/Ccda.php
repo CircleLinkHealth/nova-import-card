@@ -372,6 +372,8 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     
     public function updateOrCreateCarePlan(): CarePlan
     {
+        if (!$this->json) $this->bluebuttonJson();
+        
         return (new CcdaImporter($this, $this->load('patient')->patient ?? null))->attemptCreateCarePlan();
     }
     
