@@ -375,6 +375,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property-read int|null $actions_count
  * @property-read \App\EnrollableInvitationLink $enrollmentInvitationLink
  * @property-read \App\EnrollableRequestInfo $statusRequestsInfo
+ * @property-read \CircleLinkHealth\Customer\Entities\PatientNurse $patientNurseAsPatient
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
