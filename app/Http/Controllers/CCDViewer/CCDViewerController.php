@@ -59,7 +59,7 @@ class CCDViewerController extends Controller
         if ($request->hasFile('uploadedCcd')) {
             $xml = file_get_contents($request->file('uploadedCcd'));
 
-            $ccd = json_decode($this->repo->toJson($xml));
+            $ccd = json_decode($this->repo->toBlueButtonJson($xml));
 
             return view('CCDViewer.old-viewer', compact('ccd'));
         }

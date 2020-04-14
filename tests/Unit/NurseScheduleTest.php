@@ -27,9 +27,9 @@ class NurseScheduleTest extends TestCase
 
     public function test_empty_schedule()
     {
-//        $schedule = $this->nurse->nurseInfo->weeklySchedule();
-//
-//        $this->assertTrue($schedule->isEmpty());
+        $schedule = $this->nurse->nurseInfo->currentWeekWindows()->get();
+
+        $this->assertTrue($schedule->isEmpty());
     }
 
     public function test_non_empty_schedule()
@@ -62,12 +62,8 @@ class NurseScheduleTest extends TestCase
             'window_time_end'   => '22:00',
         ]);
 
-//        $schedule = $this->nurse->nurseInfo->weeklySchedule();
-//
-//        //assert 3 days
-//        $this->assertTrue(3 == $schedule->count());
-//
-//        //assert 4 windows
-//        $this->assertTrue(4 == $schedule->flatten()->count());
+        $schedule = $this->nurse->nurseInfo->currentWeekWindows()->get();
+
+        $this->assertTrue($schedule->isNotEmpty());
     }
 }

@@ -9,6 +9,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Validation\ValidationException;
 
 class UserTableSeeder extends Seeder
 {
@@ -18,7 +19,13 @@ class UserTableSeeder extends Seeder
     {
         $practice = Practice::first();
 
-        if ($practice) {
+        if (! $practice) {
+            $this->command->error('user-seeder: no practice found');
+            
+            return;
+        }
+        
+        try {
             // create admin user
             factory(User::class, 1)->create(['saas_account_id' => $practice->saas_account_id])->each(function ($admin) use ($practice) {
                 $admin->username = 'admin';
@@ -28,10 +35,10 @@ class UserTableSeeder extends Seeder
                 $admin->program_id = $practice->id;
                 $admin->password = Hash::make('hello');
                 $admin->save();
-
+        
                 $this->command->info("admin user $admin->display_name seeded");
             });
-
+    
             //create nurse
             factory(User::class, 1)->create(['saas_account_id' => $practice->saas_account_id])->each(function ($nurse) use ($practice) {
                 $nurse->username = 'nurse';
@@ -44,44 +51,44 @@ class UserTableSeeder extends Seeder
                 $info = $nurse->nurseInfo()->create();
                 $info->status = 'active';
                 $info->save();
-
+        
                 $this->command->info("nurse user $nurse->display_name seeded");
             });
-
+    
             $provider                       = $this->createUser($practice, 'provider');
             $provider->username             = 'provider';
             $provider->auto_attach_programs = true;
             $provider->password             = Hash::make('hello');
             $provider->saas_account_id      = $practice->saas_account_id;
             $provider->save();
-
+    
             $careCenter                       = $this->createUser($practice, 'care-center-external');
             $careCenter->username             = 'care-center-external';
             $careCenter->auto_attach_programs = true;
             $careCenter->password             = Hash::make('hello');
             $careCenter->saas_account_id      = $practice->saas_account_id;
             $careCenter->save();
-
+    
             $careAmbassador                  = $this->createUser($practice, 'care-ambassador');
             $careAmbassador->username        = 'care-ambassador';
             $careAmbassador->auto_attach_programs = true;
             $careAmbassador->password        = Hash::make('hello');
             $careAmbassador->saas_account_id = $practice->saas_account_id;
             $careAmbassador->save();
-
+    
             $p                  = $this->createUser($practice, 'participant');
             $p->saas_account_id = $practice->saas_account_id;
             $p->save();
-
+    
             $p                  = $this->createUser($practice, 'participant');
             $p->saas_account_id = $practice->saas_account_id;
             $p->save();
-
+    
             $p                  = $this->createUser($practice, 'participant');
             $p->saas_account_id = $practice->saas_account_id;
             $p->save();
-        } else {
-            $this->command->error('user-seeder: no practice found');
+        } catch (ValidationException $e) {
+            dd($e->validator->errors()->all());
         }
     }
 }

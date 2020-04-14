@@ -7,6 +7,7 @@
 namespace App\Nova;
 
 use App\Constants;
+use App\Nova\Actions\ImportEnrollee;
 use App\Nova\Importers\EnroleeData as EnroleeDataImporter;
 use CircleLinkHealth\ClhImportCardExtended\ClhImportCardExtended;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -68,7 +69,9 @@ class EnroleeData extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            new ImportEnrollee
+        ];
     }
 
     /**

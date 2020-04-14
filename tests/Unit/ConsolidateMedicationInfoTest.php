@@ -6,14 +6,13 @@
 
 namespace Tests\Unit;
 
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\ConsolidatesMedicationInfo;
 use Tests\TestCase;
 
 class ConsolidateMedicationInfoTest extends TestCase
 {
     use ConsolidatesMedicationInfo;
-
+    
     /**
      * A basic unit test example.
      *
@@ -21,8 +20,8 @@ class ConsolidateMedicationInfoTest extends TestCase
      */
     public function test_it_chooses_the_correct_medication_name()
     {
-        $log = new MedicationLog(
-            [
+        $log =
+            (object) [
                 'reference'                    => null,
                 'reference_title'              => null,
                 'reference_sig'                => null,
@@ -36,11 +35,10 @@ class ConsolidateMedicationInfoTest extends TestCase
                 'translation_code_system'      => null,
                 'translation_code_system_name' => null,
                 'import'                       => true,
-            ]
-        );
-
+            ];
+        
         $consMed = $this->consolidateMedicationInfo($log);
-
+        
         $this->assertEquals($log->product_name, $consMed->cons_name);
         $this->assertFalse($this->containsSigKeywords($consMed->cons_name));
     }

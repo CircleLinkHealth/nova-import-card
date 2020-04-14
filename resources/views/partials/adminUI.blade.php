@@ -321,6 +321,9 @@
 
 <script src="{{mix('compiled/js/app-clh-admin-ui.js')}}"></script>
 <script type="text/javascript" src="{{ mix('compiled/js/admin-ui.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
+
 <script>
     $(document).ready(function () {
         $('.select2').select2();
@@ -333,17 +336,6 @@
 @include('partials.sentry-js')
 
 <div style="clear:both;height:100px;"></div>
-
-{{--Display CPM version number--}}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="pull-right">
-                CarePlan Manager - @version
-            </div>
-        </div>
-    </div>
-</div>
 
 </body>
 </html>

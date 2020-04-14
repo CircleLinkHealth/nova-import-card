@@ -37,6 +37,7 @@ class SuccessStoriesExport implements FromCollection, WithHeadings
                 return [
                     $note->patient->display_name,
                     $note->author->display_name,
+                    $note->patient->primaryPractice->display_name,
                     $note->type,
                     $note->link(),
                 ];
@@ -51,6 +52,7 @@ class SuccessStoriesExport implements FromCollection, WithHeadings
         return [
             'Patient Name',
             'Author Name',
+            'Practice Name',
             'Note Type',
             'Note Link'
         ];

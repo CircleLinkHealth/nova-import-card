@@ -7,6 +7,7 @@ namespace App\Jobs;
 
 
 use App\CareAmbassadorLog;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -44,22 +45,14 @@ class EraseTestEnrollees implements ShouldQueue
             $eligibilityJob->batch->delete();
             $eligibilityJob->delete();
 
-            //erase ccda data
-            $imr = $enrollee->getImportedMedicalRecord();
-            if ($imr) {
-                $ccda = $imr->medicalRecord();
-                if ($ccda) {
-                    $ccda->forceDelete();
-                }
-                $imr->forceDelete();
-            }
-
             //erase user and data
             $user = $enrollee->user()->first();
 
             if ($user) {
                 $user->patientSummaries()->delete();
                 $user->forceDelete();
+                
+                Ccda::where('patient_id', $user->id)->forceDelete();
             }
 
             $careAmbassador = $enrollee->careAmbassador()->first();

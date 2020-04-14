@@ -206,10 +206,8 @@
                     return () => this.tableData.find(record => record.id === id).errors
                 },
                 setupRecord(record) {
-                    record.dob = '';
-
-                    if((record.patient || {}).patient_info && (record.patient || {}).patient_info.birth_date) {
-                        record.dob = moment((record.patient || {}).patient_info.birth_date).format('MM-DD-YYYY');
+                    if(record.dob) {
+                        record.dob = moment(record.dob).format('MM-DD-YYYY');
                     }
                     const self = this;
                     const practice = {
@@ -238,7 +236,7 @@
                         patient: record.patient,
                         patient_id: record.patient_id,
                         selected: false,
-                        Name: (record.patient || {}).display_name,
+                        Name: record.display_name,
                         DOB: record.dob,
                         Practice: practice,
                         practice_id: practice.value,
