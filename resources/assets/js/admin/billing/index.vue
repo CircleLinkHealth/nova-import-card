@@ -306,6 +306,7 @@
                             this.counts.approved = ((response.data || {}).counts || {}).approved || 0
                             this.counts.rejected = ((response.data || {}).counts || {}).rejected || 0
                             this.counts.flagged = ((response.data || {}).counts || {}).toQA || 0
+                            this.counts.other = ((response.data || {}).counts || {}).other || 0
                         }
                         tablePatient.actorId = (response.data || {}).actor_id
                         console.log('billing-approve-reject', response.data)
@@ -396,6 +397,7 @@
                         this.counts.approved = (response.data || {}).approved || 0
                         this.counts.rejected = (response.data || {}).rejected || 0
                         this.counts.flagged = (response.data || {}).toQA || 0
+                        this.counts.other = (response.data || {}).other || 0
                         return this.counts
                     })
                     .catch(err => {
