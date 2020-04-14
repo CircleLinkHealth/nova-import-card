@@ -23,6 +23,7 @@ use CircleLinkHealth\Eligibility\Adapters\CcdaToEligibilityJobAdapter;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporter;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
@@ -370,11 +371,11 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         );
     }
     
-    public function updateOrCreateCarePlan(): CarePlan
+    public function updateOrCreateCarePlan(Enrollee $enrollee = null): CarePlan
     {
         if (!$this->json) $this->bluebuttonJson();
         
-        return (new CcdaImporter($this, $this->load('patient')->patient ?? null))->attemptCreateCarePlan();
+        return (new CcdaImporter($this, $this->load('patient')->patient ?? null, $enrollee))->attemptCreateCarePlan();
     }
     
     public function patientEmail()
@@ -449,21 +450,19 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     /**
      * Handles importing a MedicalRecordForEligibilityCheck for QA.
      *
+     * @param Enrollee|null $enrollee
+     *
      * @return Ccda
      */
-    public function import()
+    public function import(Enrollee $enrollee = null)
     {
         $this
             ->guessPracticeLocationProvider();
         
-        $this->updateOrCreateCarePlan();
+        $this->updateOrCreateCarePlan($enrollee);
         $this->raiseConcerns();
         
         event(new CcdaImported($this->getId()));
-        
-        $this->imported = true;
-        $this->status   = Ccda::QA;
-        $this->save();
         
         return $this;
     }
@@ -679,6 +678,9 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
                              $q->whereBirthDate($this->patientDob());
                          }
                      );
+        if ($this->patient_id) {
+            $query = $query->where('id', '!=', $this->patient_id);
+        }
         if ($practiceId) {
             $query = $query->where('program_id', $practiceId);
         }
@@ -699,7 +701,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             }
         )->whereMrnNumber($this->patientMrn())->first();
         
-        if ($patient && (int) $this->duplicate_id !== (int) $user->id) {
+        if ($patient && (int) $this->duplicate_id !== (int) $patient->user_id && (int) $this->patient_id !== (int) $patient->user_id) {
             $this->duplicate_id = $patient->user_id;
             $this->save();
             
