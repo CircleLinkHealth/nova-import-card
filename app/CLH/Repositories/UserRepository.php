@@ -670,9 +670,9 @@ class UserRepository
     private function createNewUserRules()
     {
         return [
-            'first_name'              => 'required',
-            'last_name'               => 'required',
-            'program_id'              => 'required|exists:practices,id',
+            'first_name'              => 'filled|required',
+            'last_name'               => 'filled|required',
+            'program_id'              => 'filled|required|exists:practices,id',
             'email' => [
                 'required',
                 Rule::unique('users', 'email')
@@ -681,7 +681,7 @@ class UserRepository
                 'required',
                 Rule::unique('users', 'username')
             ],
-            'roles.*' => 'required|exists:lv_roles,id'
+            'roles.*' => 'filled|required|exists:lv_roles,id'
         ];
     }
     
@@ -707,8 +707,8 @@ class UserRepository
     private function createNewPatientRules(ParameterBag $params)
     {
         return array_merge($this->createNewUserRules(), [
-            'birth_date'              => 'required|date',
-            'mrn_number' => ['required', new PatientIsNotDuplicate($params->get('program_id'), $params->get('first_name'), $params->get('last_name'), $params->get('mrn_number'), $params->get('birth_date')),]
+            'birth_date'              => 'filled|required|date',
+            'mrn_number' => ['filled', 'required', new PatientIsNotDuplicate($params->get('program_id'), $params->get('first_name'), $params->get('last_name'), $params->get('mrn_number'), $params->get('birth_date')),]
         ]);
     }
 }
