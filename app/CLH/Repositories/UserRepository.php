@@ -23,6 +23,7 @@ use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
 use CircleLinkHealth\Customer\Tasks\ClearUserCache;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use Illuminate\Support\Facades\DB;
@@ -450,7 +451,12 @@ class UserRepository
             }
 
             if ($params->get($key)) {
-                $user->patientInfo->$key = $params->get($key);
+                if ('birth_date' === $key) {
+                    $user->patientInfo->$key = ImportPatientInfo::parseDOBDate($params->get($key));
+                }
+                else {
+                    $user->patientInfo->$key = $params->get($key);
+                }
             }
         }
 
