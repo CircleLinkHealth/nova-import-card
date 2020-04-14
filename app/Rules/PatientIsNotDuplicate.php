@@ -37,7 +37,7 @@ class PatientIsNotDuplicate implements Rule
     /**
      * @var int
      */
-    private   $duplicatePatientUserId;
+    private $duplicatePatientUserId;
     
     /**
      * Create a new rule instance.
@@ -45,10 +45,12 @@ class PatientIsNotDuplicate implements Rule
      * @param int $practiceId
      * @param string $firstName
      * @param string $lastName
+     * @param string $dob
      * @param string $mrn
-     * @param Carbon $dob
+     *
+     * @throws \Exception
      */
-    public function __construct(int $practiceId, string $firstName, string $lastName, string $mrn, string $dob)
+    public function __construct(int $practiceId, string $firstName, string $lastName, string $dob, $mrn = null)
     {
         $this->practiceId = $practiceId;
         $this->firstName  = $firstName;
@@ -78,28 +80,30 @@ class PatientIsNotDuplicate implements Rule
     public function passes($attribute, $value)
     {
         $this->duplicatePatientUserId = User::whereFirstName($this->firstName)
-                    ->whereLastName($this->lastName)
-                    ->whereHas(
-                        'patientInfo',
-                        function ($q) {
-                            $q->where('birth_date', $this->dob);
-                        }
-                    )->where('program_id', $this->practiceId)->value('id');
+                                            ->whereLastName($this->lastName)
+                                            ->whereHas(
+                                                'patientInfo',
+                                                function ($q) {
+                                                    $q->where('birth_date', $this->dob);
+                                                }
+                                            )->where('program_id', $this->practiceId)->value('id');
         
         if ($this->duplicatePatientUserId) {
             return false;
         }
         
-        $this->duplicatePatientUserId = Patient::whereHas(
-            'user',
-            function ($q) {
-                $q->where('program_id', $this->practiceId);
+        if ($this->mrn) {
+            $this->duplicatePatientUserId = Patient::whereHas(
+                'user',
+                function ($q) {
+                    $q->where('program_id', $this->practiceId);
+                }
+            )->whereMrnNumber($this->mrn)->whereNotNull('mrn_number')
+                                                   ->value('user_id');
+            
+            if ($this->duplicatePatientUserId) {
+                return false;
             }
-        )->whereMrnNumber($this->mrn)->whereNotNull('mrn_number')
-                          ->value('user_id');
-        
-        if ($this->duplicatePatientUserId) {
-            return false;
         }
         
         return true;

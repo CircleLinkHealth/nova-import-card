@@ -216,6 +216,7 @@ trait UserHelpers
                 'home_phone_number' => $workPhone,
 
                 'ccm_status' => $ccmStatus,
+                'birth_date' => $faker->date('Y-m-d'),
             ]
         );
 

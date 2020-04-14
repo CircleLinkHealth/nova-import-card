@@ -75,7 +75,17 @@ class UserRepository
         ParameterBag $params
     ) {
         if ($this->isPatient($params)) {
-            $validator = \Validator::make($params->all(), $this->createNewPatientRules($params),[
+            $validator = \Validator::make($params->all(), $this->createNewPatientRules(),[
+                'required'                   => 'The :attribute field is required.',
+                'home_phone_number.required' => 'The patient phone number field is required.',
+            ]);
+    
+            if($validator->fails()) {
+                throw new ValidationException($validator);
+            }
+    
+            //Using 2 different validators because the custom rule expects non-null items in its constructor
+            $validator = \Validator::make($params->all(), $this->checkPatientForDupes($params),[
                 'required'                   => 'The :attribute field is required.',
                 'home_phone_number.required' => 'The patient phone number field is required.',
             ]);
@@ -704,11 +714,17 @@ class UserRepository
         return false;
     }
     
-    private function createNewPatientRules(ParameterBag $params)
+    private function createNewPatientRules()
     {
         return array_merge($this->createNewUserRules(), [
             'birth_date'              => 'filled|required|date',
-            'mrn_number' => ['filled', 'required', new PatientIsNotDuplicate($params->get('program_id'), $params->get('first_name'), $params->get('last_name'), $params->get('mrn_number'), $params->get('birth_date')),]
+            'mrn_number' => ['filled',]
         ]);
+    }
+    
+    private function checkPatientForDupes(ParameterBag $params) {
+        return [
+            'mrn_number' => [new PatientIsNotDuplicate($params->get('program_id'), $params->get('first_name'), $params->get('last_name'), $params->get('birth_date'), $params->get('mrn_number'))]
+        ];
     }
 }
