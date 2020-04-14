@@ -119,6 +119,12 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         'duplicate_id',
         'validation_checks',
     ];
+    /**
+     * Duplicate patient user ID
+     *
+     * @var int
+     */
+    private   $duplicate_id;
     
     public function batch()
     {
@@ -689,7 +695,6 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         
         if ($user && (int) $this->duplicate_id !== (int) $user->id) {
             $this->duplicate_id = $user->id;
-            $this->save();
             
             return true;
         }
@@ -703,7 +708,6 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         
         if ($patient && (int) $this->duplicate_id !== (int) $patient->user_id && (int) $this->patient_id !== (int) $patient->user_id) {
             $this->duplicate_id = $patient->user_id;
-            $this->save();
             
             return true;
         }
