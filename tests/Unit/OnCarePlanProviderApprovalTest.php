@@ -68,7 +68,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
     public function test_care_center_can_qa_approve()
     {
         $this->assertTrue($this->careCoach()->canQAApproveCarePlans());
-        $this->assertTrue(CarePlan::DRAFT === $this->patient()->carePlan->status);
+        $this->assertTrue(CarePlan::DRAFT === $this->carePlan->status);
 
         $response = $this->actingAs($this->careCoach())->get(route('patient.careplan.print', [
             'patientId' => $this->patient()->id,
@@ -78,7 +78,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
 
     public function test_care_center_cannot_approve()
     {
-        $carePlan = $this->patient()->carePlan;
+        $carePlan = $this->carePlan;
 
         $carePlan->status = CarePlan::QA_APPROVED;
         $carePlan->save();
@@ -96,13 +96,9 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
         $validator = $this->carePlan->validator();
 
         $this->assertTrue($validator->fails());
-        $this->assertEquals(
-            'The Care Plan must have two CPM problems for CCM, one if practice has PCM (G2065) enabled or one BHI problem.',
-            $validator->errors()->first('conditions')
-        );
-        $this->assertEquals('The dob field is required.', $validator->errors()->first('dob'));
-        $this->assertEquals('The mrn field is required.', $validator->errors()->first('mrn'));
-        $this->assertEquals('The billing provider field is required.', $validator->errors()->first('billingProvider'));
+        $this->assertTrue('The Care Plan must have two CPM problems for CCM, one if practice has PCM (G2065) enabled or one BHI problem.' === $validator->errors()->first('conditions'), $validator->errors()->first('conditions'));
+        $this->assertTrue('The mrn field is required.' === $validator->errors()->first('mrn'), $validator->errors()->first('mrn'));
+        $this->assertTrue('The billing provider field is required.' === $validator->errors()->first('billingProvider'), $validator->errors()->first('billingProvider'));
 
         $cpmProblems = CpmProblem::get();
         $ccdProblems = $this->patient()->ccdProblems()->createMany([
@@ -180,8 +176,8 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
         $medicalAssistant = $this->createUser($this->practice()->id, 'med_assistant');
         auth()->login($medicalAssistant);
 
-        $this->patient()->carePlan->status = CarePlan::QA_APPROVED;
-        $this->patient()->carePlan->save();
+        $this->carePlan->status = CarePlan::QA_APPROVED;
+        $this->carePlan->save();
 
         $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient()->id,
@@ -191,8 +187,8 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
 
     public function test_provider_can_approve()
     {
-        $this->patient()->carePlan->status = CarePlan::QA_APPROVED;
-        $this->patient()->carePlan->save();
+        $this->carePlan->status = CarePlan::QA_APPROVED;
+        $this->carePlan->save();
 
         $response = $this->actingAs($this->provider())->get(route('patient.careplan.print', [
             'patientId' => $this->patient()->id,
@@ -202,8 +198,8 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
 
     public function test_provider_can_approve_all_practice_careplans()
     {
-        $this->patient()->carePlan->status = CarePlan::QA_APPROVED;
-        $this->patient()->carePlan->save();
+        $this->carePlan->status = CarePlan::QA_APPROVED;
+        $this->carePlan->save();
         $this->patient()->setBillingProviderId($this->provider(2)[0]->id);
 
         $this->assertNotEquals($this->provider(2)[0]->id, $this->provider(2)[1]->id);
@@ -257,7 +253,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
         //create care center that can QA approve careplans
         $careCenter = $this->createUser($this->practice()->id, 'care-center');
         auth()->login($careCenter);
-        $carePlan = $this->patient()->carePlan;
+        $carePlan = $this->carePlan;
         $this->assertEquals($carePlan->status, CarePlan::DRAFT);
 
         //set previous url to assert redirect, call route and assert session errors
@@ -301,8 +297,8 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
 
         auth()->login($rn);
 
-        $this->patient()->carePlan->status = CarePlan::QA_APPROVED;
-        $this->patient()->carePlan->save();
+        $this->carePlan->status = CarePlan::QA_APPROVED;
+        $this->carePlan->save();
 
         $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient()->id,
