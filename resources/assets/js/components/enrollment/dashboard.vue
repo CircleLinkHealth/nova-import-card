@@ -1,5 +1,6 @@
 <template>
     <div id="enrollment_calls">
+        <div v-if="callActive"></div>
         <div v-if="loading">
             <div class="loading-patient">
                 <span>Loading patient... </span>
@@ -45,6 +46,10 @@
 
     import Loader from '../loader.vue';
 
+    const userId = window.userId;
+    const userFullName = window.userFullName;
+
+
     export default {
         name: 'enrollment-dashboard',
         props: [],
@@ -61,6 +66,14 @@
             return {
                 patientData: [],
                 loading: false,
+                phone: null,
+                callError: null,
+                onCall: false,
+                callStatus: 'Summoning Calling Gods...',
+                practice_phone: null,
+                enrollableUserId: null,
+                device: null,
+                log: null,
             };
         },
         mounted: function () {
@@ -69,6 +82,18 @@
 
 
             App.$on('enrollable-action-complete', () => {
+                this.patientData = null;
+                this.loading = true;
+                this.retrievePatient();
+            })
+
+            App.$on('enrollable:call', () => {
+                this.patientData = null;
+                this.loading = true;
+                this.retrievePatient();
+            })
+
+            App.$on('enrollable:hang-up', () => {
                 this.patientData = null;
                 this.loading = true;
                 this.retrievePatient();

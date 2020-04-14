@@ -1141,6 +1141,7 @@
                 this.submitForm(this.pending_form, this.pending_form_url)
             },
             setPatientData(data){
+                // Object.entries($vm.patientData).map.
                 //replace with loop from resource
                 this.patient_data = data;
                 this.home_phone = data.enrollable.home_phone
@@ -1249,7 +1250,7 @@
                 M.toast({html: this.callStatus, displayLength: 3000});
                 this.device.connect({
                     To: phoneSanitized,
-                    From: this.practice_phone ? this.practice_phone : undefined,
+                    From: '+18634171503',
                     IsUnlistedNumber: false,
                     InboundUserId: this.enrollableUserId,
                     OutboundUserId: userId
