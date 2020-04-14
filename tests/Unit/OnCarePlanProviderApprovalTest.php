@@ -78,15 +78,12 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
 
     public function test_care_center_cannot_approve()
     {
-        $careCenter = $this->createUser($this->practice()->id, 'care-center');
-        $this->be($careCenter);
-
         $carePlan = $this->patient()->carePlan;
 
         $carePlan->status = CarePlan::QA_APPROVED;
         $carePlan->save();
 
-        $response = $this->get(route('patient.careplan.print', [
+        $response = $this->actingAs($this->careCoach())->get(route('patient.careplan.print', [
             'patientId' => $this->patient()->id,
         ]))
             ->assertDontSee('Approve');
