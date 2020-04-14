@@ -79,7 +79,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
     public function test_care_center_cannot_approve()
     {
         $careCenter = $this->createUser($this->practice()->id, 'care-center');
-        auth()->login($careCenter);
+        $this->be($careCenter);
 
         $carePlan = $this->patient()->carePlan;
 
