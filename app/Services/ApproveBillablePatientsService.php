@@ -98,8 +98,8 @@ class ApproveBillablePatientsService
 
         //note: this only applies to the paginated results, not the whole collection. not sure if intended
         $summaries->getCollection()->transform(
-            function ($summary) use (&$time2, &$time3, &$time4) {
-                if ( ! $summary->actor_id && ! $summary->needs_qa && ! $summary->approved && ! $summary->rejected) {
+            function ($summary) {
+                if ( ! $summary->actor_id) {
                     $aSummary = $this->patientSummaryRepo->attachChargeableServices($summary);
                     $summary  = $this->patientSummaryRepo->setApprovalStatusAndNeedsQA($aSummary);
                 }
