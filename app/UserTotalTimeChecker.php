@@ -151,10 +151,15 @@ class UserTotalTimeChecker
         }
 
         $totalCommittedHours = 0;
-        $coll->each(function ($item) use ($nurse, &$totalCommittedHours) {
-            $date = Carbon::parse($item->date);
+        $current = $this->start->toDateString();
+        //$last is excluded, that's why we add 1 day
+        $last = $this->end->copy()->addDay()->toDateString();
+        while ($current !== $last) {
+            $date = Carbon::parse($current);
             $totalCommittedHours += $nurse->getHoursCommittedForCarbonDate($date);
-        });
+
+            $current = $date->addDay()->toDateString();
+        }
 
         $maxHoursAllowed = $totalCommittedHours * $thresholdForWeek;
 
