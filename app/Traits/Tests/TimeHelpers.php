@@ -71,6 +71,7 @@ trait TimeHelpers
                 ],
             ],
         ]);
-        (new StoreTimeTracking($bag))->handle();
+        
+        StoreTimeTracking::dispatchNow($bag);
     }
 }

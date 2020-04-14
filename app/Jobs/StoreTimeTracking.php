@@ -42,9 +42,11 @@ class StoreTimeTracking implements ShouldQueue
      * @var ParameterBag
      */
     protected $params;
-
+    
     /**
      * Create a new job instance.
+     *
+     * @param ParameterBag $params
      */
     public function __construct(ParameterBag $params)
     {

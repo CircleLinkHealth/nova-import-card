@@ -334,16 +334,5 @@
 
 <div style="clear:both;height:100px;"></div>
 
-{{--Display CPM version number--}}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="pull-right">
-                CarePlan Manager - @version
-            </div>
-        </div>
-    </div>
-</div>
-
 </body>
 </html>
