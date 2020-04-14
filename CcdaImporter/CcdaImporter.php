@@ -139,7 +139,7 @@ class CcdaImporter
                 }
     
                 $this->patient->loadMissing(['primaryPractice', 'patientInfo']);
-                $this->ccda->loadMissing(['location']);
+                $this->ccda->loadMissing(['location', 'patient']);
                 
                 $this->handleEnrollees()
                      ->createNewCarePlan()

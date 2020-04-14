@@ -10,6 +10,7 @@ use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Validation\ValidationException;
 use Tests\CustomerTestCase;
 
 class DiabetesEndocrineMedicalRecordTest extends CustomerTestCase
@@ -1768,7 +1769,6 @@ class DiabetesEndocrineMedicalRecordTest extends CustomerTestCase
                 'source'      => $mr->getType(),
                 'json'        => $mr->toJson(),
                 'practice_id' => $this->patient()->program_id,
-                'mrn'         => $this->patient()->getMRN(),
             ]
         );
         
@@ -1776,9 +1776,13 @@ class DiabetesEndocrineMedicalRecordTest extends CustomerTestCase
             'patientUserId' => $this->patient()->id,
         ];
         
+    try {
         $ccda->import();
+    } catch (ValidationException $e) {
+        $this->addWarning($e->validator->errors()->toJson());
+    }
         
-        $newPatient = $ccda->patient()->first();
+        $newPatient = $ccda->fresh()->patient()->firstOrFail();
         
         $this->assertTrue($ccda->patientFirstName() === $newPatient->first_name);
     }
