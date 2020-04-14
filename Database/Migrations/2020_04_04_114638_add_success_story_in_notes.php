@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddSuccessStoriesToNotes extends Migration
+class AddSuccessStoryInNotes extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,12 @@ class AddSuccessStoriesToNotes extends Migration
      */
     public function up()
     {
-        Schema::table('notes', function (Blueprint $table) {
-            $table->boolean('success_story')->default(false);
-        });
+        if (!Schema::hasColumn('notes', 'success_story')) {
+            Schema::table('notes', function (Blueprint $table) {
+                $table->boolean('success_story')->default(false);
+            });
+
+        }
     }
 
     /**

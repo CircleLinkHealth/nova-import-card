@@ -24,12 +24,14 @@ class CreateTargetPatientsTable extends Migration
     {
         Schema::create('target_patients', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('eligibility_job_id');
+            $table->unsignedInteger('eligibility_job_id')->nullable();
             $table->integer('batch_id')->unsigned()->nullable()->index('target_patients_batch_id_foreign');
             $table->integer('ehr_id')->unsigned()->index('target_patients_ehr_id_foreign');
             $table->integer('user_id')->unsigned()->nullable()->index('target_patients_user_id_foreign');
             $table->integer('enrollee_id')->unsigned()->nullable()->index('target_patients_enrollee_id_foreign');
             $table->integer('ehr_patient_id')->unsigned();
+            $table->integer('ehr_practice_id')->unsigned();
+            $table->integer('ehr_department_id')->unsigned();
             $table->integer('practice_id')->unsigned();
             $table->integer('department_id')->unsigned();
             $table->enum('status', ['to_process', 'eligible', 'ineligible', 'consented', 'enrolled', 'error', 'duplicate'])->nullable();
