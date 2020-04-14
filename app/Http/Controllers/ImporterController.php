@@ -36,7 +36,7 @@ class ImporterController extends Controller
     {
         return Ccda::where(function ($q){
             $q->whereHas('patient.carePlan', function ($q) {
-                $q->whereNull('status')->orWhere('status', CarePlan::DRAFT);
+                $q->whereNull('status')->orWhere('status', CarePlan::DRAFT)->orWhere('status', '');
             })->orWhere('created_at', '>', now()->subDay(5));
         })->whereNotNull('json')
                                     ->with(
@@ -112,7 +112,23 @@ class ImporterController extends Controller
                     
                     $ccda->checkDuplicity();
                     
-                    return $ccda;
+                    return [
+                        'display_name' => $ccda->patientFirstName().' '.$ccda->patientLastName(),
+                        'dob' => $ccda->patientDob(),
+                        'mrn' => $ccda->patientMrn(),
+                        'id' => $ccda->id,
+                        'patient' => $ccda->patient,
+                        'practice' => $ccda->practice,
+                        'location' => $ccda->location,
+                        'billing_provider_id' => $ccda->billing_provider_id,
+                        'validation_checks' => $ccda->validation_checks,
+                        'duplicate_id' => $ccda->duplicate_id,
+                        'practice_id' => $ccda->practice_id,
+                        'location_id' => $ccda->location_id,
+                        'patient_id' => $ccda->patient_id,
+                        'flag' => (! ($ccda->billing_provider_id && $ccda->practice_id && $ccda->location_id)) || $ccda->duplicate_id,
+                        'nurse_user' => $ccda->patient->patientNurseAsPatient->permanentNurse ?? null
+                    ];
                 }
             )->filter()->unique('patient_id')
                                     ->values();
