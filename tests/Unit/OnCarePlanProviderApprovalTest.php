@@ -68,7 +68,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
     public function test_care_center_can_qa_approve()
     {
         $this->assertTrue($this->careCoach()->canQAApproveCarePlans());
-        $this->assertEquals(CarePlan::DRAFT, $this->patient()->carePlan->status);
+        $this->assertTrue(CarePlan::DRAFT === $this->patient()->carePlan->status);
 
         $response = $this->actingAs($this->careCoach())->get(route('patient.careplan.print', [
             'patientId' => $this->patient()->id,
@@ -82,7 +82,9 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
 
         $carePlan->status = CarePlan::QA_APPROVED;
         $carePlan->save();
-
+        $this->assertTrue(CarePlan::QA_APPROVED === $carePlan->fresh()->status);
+        $this->assertFalse($this->careCoach()->canApproveCarePlans());
+    
         $response = $this->actingAs($this->careCoach())->get(route('patient.careplan.print', [
             'patientId' => $this->patient()->id,
         ]))
