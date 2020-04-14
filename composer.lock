@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f08eb9704ad67c5cc456a4bbc18051c4",
+    "content-hash": "b4786a20347a9b5ff87f29da5c4cfa94",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1052,11 +1052,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.2.1",
+            "version": "dev-importer-v3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "1f72c3a2140329ebea32d7c944d8dffe18921322"
+                "reference": "a36c785605d65cc64428a416445fc470b25a6eee"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1081,7 +1081,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-14T01:11:49+00:00"
+            "time": "2020-04-14T04:01:34+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1331,11 +1331,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.3.5",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "a6a288973e9bc1bbbb5a0ff5c8d90880dd3bbbc0"
+                "reference": "a4e8306fc32bfe5eb6b78d43a54daf4ce792b01a"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1349,7 +1349,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-14T00:57:03+00:00"
+            "time": "2020-04-14T04:01:34+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -15135,6 +15135,8 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/eligibility-module": 20,
+        "circlelinkhealth/shared-models-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
