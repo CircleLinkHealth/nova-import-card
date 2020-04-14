@@ -61,7 +61,7 @@ class SendSelfEnrollmentUnreachablePatients implements ShouldQueue
                 /** @var User $patient */
                 if ( ! $patient->checkForSurveyOnlyRole()) {
                     $patient->notify(new SendEnrollmentEmail($patient));
-                    $patient->notify(new SendEnrollementSms($patient));
+//                    $patient->notify(new SendEnrollementSms($patient));
                 }
             }
         } else {
