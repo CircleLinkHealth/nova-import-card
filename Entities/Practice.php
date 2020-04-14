@@ -14,6 +14,7 @@ use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
+use CircleLinkHealth\Eligibility\CcdaImporter\Traits\HasImportingHooks;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Nova\Actions\Actionable;
@@ -133,13 +134,19 @@ class Practice extends BaseModel implements HasMedia
     use Actionable;
     use HasChargeableServices;
     use HasMediaTrait;
+    use HasImportingHooks;
     use HasSettings;
     use Notifiable;
     use SaasAccountable;
     use Searchable;
     use SoftDeletes;
 
+    protected $casts = [
+        'importing_hooks' => 'collection'
+    ];
+    
     protected $fillable = [
+        'importing_hooks',
         'saas_account_id',
         'name',
         'display_name',

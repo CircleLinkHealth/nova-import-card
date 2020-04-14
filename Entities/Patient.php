@@ -7,150 +7,12 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use App\Call;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Revisionable\Entities\Revision;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * CircleLinkHealth\Customer\Entities\Patient.
- *
- * @property int $id
- * @property int|null $imported_medical_record_id
- * @property int $user_id
- * @property int|null $ccda_id
- * @property int|null $care_plan_id
- * @property string|null $active_date
- * @property string|null $agent_name
- * @property string|null $agent_telephone
- * @property string|null $agent_email
- * @property string|null $agent_relationship
- * @property string|null $birth_date
- * @property string|null $ccm_status
- * @property string|null $consent_date
- * @property string|null $gender
- * @property \Carbon\Carbon|null $date_paused
- * @property \Carbon\Carbon|null $date_withdrawn
- * @property string|null $mrn_number
- * @property string|null $preferred_cc_contact_days
- * @property string|null $preferred_contact_language
- * @property string|null $preferred_contact_location
- * @property string|null $preferred_contact_method
- * @property string|null $preferred_contact_time
- * @property string|null $preferred_contact_timezone
- * @property string|null $registration_date
- * @property string|null $daily_reminder_optin
- * @property string|null $daily_reminder_time
- * @property string|null $daily_reminder_areas
- * @property string|null $hospital_reminder_optin
- * @property string|null $hospital_reminder_time
- * @property string|null $hospital_reminder_areas
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property string|null $deleted_at
- * @property string $general_comment
- * @property int $preferred_calls_per_month
- * @property string $last_successful_contact_time
- * @property int|null $no_call_attempts_since_last_success
- * @property string $last_contact_time
- * @property string $daily_contact_window_start
- * @property string $daily_contact_window_end
- * @property int|null $next_call_id
- * @property int|null $family_id
- * @property string|null $date_welcomed
- * @property \CircleLinkHealth\Customer\Entities\Family|null $family
- * @property mixed $address
- * @property mixed $city
- * @property mixed $first_name
- * @property mixed $last_name
- * @property mixed $state
- * @property mixed $zip
- * @property \CircleLinkHealth\Customer\Entities\PatientContactWindow[]|\Illuminate\Database\Eloquent\Collection
- *     $contactWindows
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
- * @property \CircleLinkHealth\Customer\Entities\User $user
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient enrolled()
- * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient hasFamily()
- * @method static \Illuminate\Database\Query\Builder|\App\Patient onlyTrashed()
- * @method static bool|null restore()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereActiveDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereAgentEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereAgentName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereAgentRelationship($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereAgentTelephone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereBirthDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereCarePlanId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereCcdaId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereCcmStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereConsentDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereCurMonthActivityTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereDailyContactWindowEnd($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereDailyContactWindowStart($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereDailyReminderAreas($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereDailyReminderOptin($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereDailyReminderTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereDatePaused($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereDateWelcomed($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereDateWithdrawn($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereFamilyId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereGender($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereGeneralComment($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereHospitalReminderAreas($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereHospitalReminderOptin($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereHospitalReminderTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereImportedMedicalRecordId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereLastContactTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereLastSuccessfulContactTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereMrnNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereNextCallId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereNoCallAttemptsSinceLastSuccess($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient wherePreferredCallsPerMonth($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient wherePreferredCcContactDays($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient wherePreferredContactLanguage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient wherePreferredContactLocation($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient wherePreferredContactMethod($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient wherePreferredContactTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient wherePreferredContactTimezone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereRegistrationDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereUserId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Patient withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\Patient withoutTrashed()
- * @mixin \Eloquent
- * @property \Illuminate\Support\Carbon|null $paused_letter_printed_at
- * @property \Illuminate\Support\Carbon|null $date_unreachable
- * @property mixed $last_call_status
- * @property \CircleLinkHealth\Customer\Entities\Location|null $location
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient byStatus($fromDate, $toDate)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient ccmStatus($status, $operator = '=')
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient
- *     filter(\App\Filters\QueryFilters $filters)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient query()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient
- *     whereDateUnreachable($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient
- *     wherePausedLetterPrintedAt($value)
- * @property string|null $withdrawn_reason
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient enrolledOrPaused()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient
- *     whereWithdrawnReason($value)
- * @property-read int|null $contact_windows_count
- * @property-read \CircleLinkHealth\Customer\Entities\User|null $nurse
- * @property-read int|null $revision_history_count
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient
- *     whereNurseUserId($value)
- * @property int $is_awv
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereIsAwv($value)
- * @property-read \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord $importedMedicalRecord
- */
 class Patient extends BaseModel
 {
     use Filterable;
@@ -198,6 +60,7 @@ class Patient extends BaseModel
         'date_paused',
         'date_unreachable',
         'paused_letter_printed_at',
+        'registration_date',
     ];
 
     protected $fillable = [
@@ -765,11 +628,7 @@ class Patient extends BaseModel
             ? null
             : $result;
     }
-    
-    public function importedMedicalRecord() {
-        return $this->hasOne(ImportedMedicalRecord::class);
-    }
-    
+
     /**
      * Get last ccm_status for a specific month:
      * 1. Get next month
@@ -777,26 +636,35 @@ class Patient extends BaseModel
      * 3. If exists, then return the `old_value`
      * 4. Otherwise, return ccm_status from {@link Patient @patientInfo}
      *
+     * NOTE: if relation is already loaded, data from relation will be used
+     *
      * @param Carbon $monthYear
      *
      * @return string
      */
     public function getCcmStatusForMonth(Carbon $monthYear)
     {
-        $endOfMonth = $monthYear->endOfMonth();
-        
-        /** @var Revision|null $revision */
-        $revision = Revision::where('revisionable_id', '=', $this->id)
-                            ->where('revisionable_type', '=', self::class)
-                            ->where('created_at', '>=', $endOfMonth)
-                            ->where('key', '=', 'ccm_status')
-                            ->orderBy('id')
-                            ->first();
-        
+        if ($this->relationLoaded('ccmStatusRevisions')) {
+            $revision = $this->ccmStatusRevisions->first();
+        }
+        else {
+            $endOfMonth = $monthYear->endOfMonth();
+            $revision = $this->ccmStatusRevisions()
+                ->where('created_at', '>=', $endOfMonth)
+                ->first();
+        }
+
         if ($revision && $revision->old_value) {
             return $revision->old_value;
         }
-        
+
         return $this->ccm_status;
+    }
+
+    public function ccmStatusRevisions() {
+        return $this->hasMany(Revision::class, 'revisionable_id', 'id')
+            ->where('revisionable_type', '=', self::class)
+            ->where('key', '=', 'ccm_status')
+            ->orderBy('id');
     }
 }

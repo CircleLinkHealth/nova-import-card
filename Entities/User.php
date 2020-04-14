@@ -642,7 +642,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
 
         try {
-            $this->locations()->attach($location);
+            if (! $this->locations()->where('locations.id', $location)->exists()) {
+                $this->locations()->attach($location);
+            }
         } catch (\Exception $e) {
             //check if this is a mysql exception for unique key constraint
             if ($e instanceof \Illuminate\Database\QueryException) {
@@ -1082,19 +1084,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function cpmWeight()
     {
         return $this->hasOne(CpmWeight::class, 'patient_id');
-    }
-
-    public function createNewUser(
-        $email,
-        $password
-    )
-    {
-        $this->username = $email;
-        $this->email = $email;
-        $this->password = bcrypt($password);
-        $this->save();
-
-        return $this;
     }
 
     /**
@@ -2329,12 +2318,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function patientAWVSummaries()
     {
         return $this->hasMany(PatientAWVSummary::class, 'user_id');
-    }
-
-    public function patientDemographics()
-    {
-        return $this->hasMany(\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport::class,
-            'provider_id');
     }
 
     public function patientInfo()
@@ -4005,5 +3988,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function checkForSurveyOnlyRole()
     {
         return $this->roles()->where('name', SendSelfEnrollmentEnrollees::SURVEY_ONLY)->exists();
+    }
+
+    public function patientNurseAsPatient() {
+        return $this->hasOne(PatientNurse::class, 'patient_user_id');
     }
 }
