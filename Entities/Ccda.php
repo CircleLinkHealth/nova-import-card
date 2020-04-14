@@ -572,6 +572,9 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         return $baseQuery->when(
             ! empty($this->practice_id),
             function ($q) {
+                if (! method_exists($q, 'ofPractice')) {
+                    return $q->whereIn('practice_ids', [$this->practice_id]);
+                }
                 $q->ofPractice($this->practice_id);
             }
         )->first();
