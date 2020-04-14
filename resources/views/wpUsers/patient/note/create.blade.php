@@ -178,30 +178,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Performance Time -->
-                            <div class="form-block col-md-12" style="margin-bottom: 25px">
-                                <div class="row">
-                                    <div class="new-note-item">
-                                        <div class="form-group" style="margin-bottom: 25px">
-                                            <div class="col-sm-12">
-                                                <label class="label-margin" for="performed_at">
-                                                    When (Patient Local Time):
-                                                </label>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group">
-                                                    <input id="performed_at" name="performed_at" type="datetime-local"
-                                                           class="selectpickerX form-control"
-                                                           data-width="95px" data-size="10" list max="{{$userTime}}"
-                                                           value="{{$userTime}}"
-                                                           required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                         <div class="col-md-6" style="padding-top: 10px">

@@ -458,7 +458,7 @@ class NotesController extends Controller
 
         return view('wpUsers.patient.note.view', $view_data);
     }
-    
+
     /**
      * Store a note.
      * If note has call and user is care-center:
@@ -471,12 +471,11 @@ class NotesController extends Controller
      * Also: in some conditions call will be stored for other roles as well.
      * They are never redirected to Schedule Next Call page.
      *
-     * @param SafeRequest $request
-     * @param SchedulerService $schedulerService
      * @param $patientId
      *
-     * @return \Illuminate\Http\RedirectResponse
      * @throws \Illuminate\Validation\ValidationException
+     *
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(
         SafeRequest $request,
@@ -530,10 +529,10 @@ class NotesController extends Controller
         $input['author_id'] = auth()->id();
 
         //performed_at entered in patient's timezone and stored in app's timezone
-        $input['performed_at'] = Carbon::parse(
+        $input['performed_at'] = array_key_exists('performed_at', $input) ? Carbon::parse(
             $input['performed_at'],
             $patient->timezone
-        )->setTimezone(config('app.timezone'))->toDateTimeString();
+        )->setTimezone(config('app.timezone'))->toDateTimeString() : now()->toDateTimeString();
 
         $noteIsAlreadyComplete = false;
         if ($editingNoteId) {
