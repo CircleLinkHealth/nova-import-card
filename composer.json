@@ -139,7 +139,7 @@
     "circlelinkhealth/cerberus-gatekeeper-module": "3.0.6",
     "circlelinkhealth/clh-import-card-extended": "*",
     "circlelinkhealth/core-module": "1.5.1",
-    "circlelinkhealth/cpm-migrations-module": "1.5.7",
+    "circlelinkhealth/cpm-migrations-module": "dev-master",
     "circlelinkhealth/customer-module": "2.2.4",
     "circlelinkhealth/eligibility-module": "2.2.1",
     "circlelinkhealth/generate-patient-call-data-csv": "*",

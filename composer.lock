@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8308800730da82396defd4b9a9bd7a34",
+    "content-hash": "f08eb9704ad67c5cc456a4bbc18051c4",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -909,7 +909,7 @@
         },
         {
             "name": "circlelinkhealth/clh-nova-theme",
-            "version": "dev-development",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
@@ -980,11 +980,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.5.7",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "b9d0e86f6787979edab38c2e0e57c26748a6e498"
+                "reference": "36e7e15faf09c30a196db635c24dd3c9577f86ac"
             },
             "type": "laravel-module",
             "extra": {
@@ -1006,7 +1006,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-12T22:17:15+00:00"
+            "time": "2020-04-14T02:57:01+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1119,7 +1119,7 @@
         },
         {
             "name": "circlelinkhealth/generate-success-stories-report",
-            "version": "dev-development",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
@@ -15134,6 +15134,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
