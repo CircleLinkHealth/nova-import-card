@@ -13,6 +13,7 @@ class MakeJsonFieldToJson extends Migration
      */
     public function up()
     {
+        DB::statement("UPDATE ccdas SET json = NULL WHERE json = ''");
         DB::statement("ALTER TABLE ccdas CHANGE COLUMN json json json NULL");
     }
 
