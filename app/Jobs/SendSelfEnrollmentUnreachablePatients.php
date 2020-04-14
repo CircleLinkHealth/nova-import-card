@@ -51,6 +51,9 @@ class SendSelfEnrollmentUnreachablePatients implements ShouldQueue
         if (App::environment(['local', 'review', 'staging'])) {
             $practiceId = Practice::where('name', '=', 'demo')->firstOrFail()->id;
             $patients = $this->getUnreachablePatients($mothStart, $monthEnd)
+                ->whereHas('patientInfo', function ($patientInfo){
+                    $patientInfo->where('birth_date', Carbon::parse('1901-01-01'));
+                })
                 ->where('program_id', $practiceId)
                 ->get()
                 ->take(SendEnrollmentNotifications::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING);

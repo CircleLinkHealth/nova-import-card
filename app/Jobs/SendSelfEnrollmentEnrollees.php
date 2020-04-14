@@ -7,7 +7,6 @@ namespace App\Jobs;
 
 
 use App\Console\Commands\SendEnrollmentNotifications;
-use App\Notifications\SendEnrollementSms;
 use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -37,10 +36,11 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
      */
     public function handle()
     {
-        if (App::environment(['local', 'review'])) {
+        if (App::environment(['local', 'staging', 'review'])) {
             $practiceId = Practice::whereName('demo')->firstOrFail()->id;
             $enrollees = $this->getEnrollees()
                 ->where('practice_id', $practiceId)
+                ->where('dob', Carbon::parse('1901-01-01'))
                 ->get()
                 ->take(SendEnrollmentNotifications::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING)
                 ->all();
@@ -129,6 +129,6 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
 
     private function sendSms(User $userCreatedFromEnrollee)
     {
-        $userCreatedFromEnrollee->notify(new SendEnrollementSms($userCreatedFromEnrollee));
+//        $userCreatedFromEnrollee->notify(new SendEnrollementSms($userCreatedFromEnrollee));
     }
 }

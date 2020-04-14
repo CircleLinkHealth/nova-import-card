@@ -15,7 +15,6 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
 {
     use UserHelpers;
     const CCM_STATUS_UNREACHABLE = 'unreachable';
-
     /**
      * Run the database seeds.
      *
@@ -60,7 +59,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                     'other_phone' => $faker->phoneNumber,
                     'home_phone' => $faker->phoneNumber,
                     'cell_phone' => $faker->phoneNumber,
-                    'dob' => $faker->date('Y-m-d'),
+                    'dob' => \Carbon\Carbon::parse('1901-01-01'),
                     'lang' => 'EN',
                     'status' => Enrollee::TO_CALL,
                     'primary_insurance' => 'test',
@@ -73,30 +72,28 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             ++$n;
         }
 
-        $unreachablePatients = User::with('patientInfo')
-            ->where('program_id', $practice->id)
-            ->whereDoesntHave('enrollmentInvitationLink')
-            ->whereHas('patientInfo', function ($patient) use ($mothStart, $monthEnd) {
-                $patient->where('ccm_status', self::CCM_STATUS_UNREACHABLE)->where([
-                    ['date_unreachable', '>=', $mothStart],
-                    ['date_unreachable', '<=', $monthEnd],
-                ]);
-            })
-            ->exists();
-
-        if (!$unreachablePatients) {
+//        $unreachablePatients = User::with('patientInfo')
+//            ->where('program_id', $practice->id)
+//            ->whereDoesntHave('enrollmentInvitationLink')
+//            ->whereHas('patientInfo', function ($patient) use ($mothStart, $monthEnd) {
+//                $patient->where('ccm_status', self::CCM_STATUS_UNREACHABLE)->where([
+//                    ['date_unreachable', '>=', $mothStart],
+//                    ['date_unreachable', '<=', $monthEnd],
+//                ]);
+//            })
+//            ->exists();
+//
+//        if (!$unreachablePatients) {
             $n = 1;
             $limit = 5;
             while ($n <= $limit) {
                 $user = $this->createUser($practice->id, 'participant', self::CCM_STATUS_UNREACHABLE);
                 $user->patientInfo()->update([
-                    'birth_date' => $faker->date('Y-m-d'),
+                    'birth_date' => \Carbon\Carbon::parse('1901-01-01'),
                     'date_unreachable' => now()
                 ]);
                 ++$n;
             }
         }
-
-
-    }
+//    }
 }

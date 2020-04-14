@@ -2164,7 +2164,7 @@ Route::get('/reset-enrollment-test', [
     'uses' => 'Enrollment\EnrollmentCenterController@resetEnrollmentTest',
     'as'   => 'reset.test.qa',
 ])->middleware('auth');
-//---------------------------------------
+
 Route::get('/send-enrollment-invites', [
     'uses' => 'Enrollment\EnrollmentCenterController@inviteUnreachablesToEnroll',
     'as'   => 'send.enrollment.invitations',
@@ -2174,6 +2174,8 @@ Route::get('/invite-unreachable', [
     'uses' => 'Enrollment\EnrollmentCenterController@sendInvitesPanel',
     'as'   => 'send.invitates.panel',
 ])->middleware('auth');
+//---------------------------------------
+
 
 // TEMPORARY SIGNED ROUTE
 Route::get('/patient-self-enrollment', [
