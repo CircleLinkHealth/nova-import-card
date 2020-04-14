@@ -7,11 +7,10 @@
 namespace CircleLinkHealth\Eligibility\Tasks;
 
 
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Exceptions\CcdaWasNotFetchedFromAthenaApi;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicalRecordEloquent;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class CreateCcdaFromAthenaApi

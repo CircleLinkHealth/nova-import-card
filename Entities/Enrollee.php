@@ -16,7 +16,7 @@ use CircleLinkHealth\Core\Traits\MySQLSearchable;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 /**
  * CircleLinkHealth\Eligibility\Entities\Enrollee
@@ -428,13 +428,6 @@ class Enrollee extends BaseModel
         return (new StringManipulation())->formatPhoneNumberE164($this->home_phone);
     }
 
-    public function getImportedMedicalRecord()
-    {
-        return ImportedMedicalRecord::whereMedicalRecordId($this->medical_record_id)
-            ->whereMedicalRecordType($this->medical_record_type)
-            ->first();
-    }
-
     public function getLastEncounterAttribute($lastEncounter)
     {
         return $lastEncounter
@@ -706,10 +699,60 @@ class Enrollee extends BaseModel
         }
     }
 
-    public function confirmedFamilyMembers()
-    {
-        return $this->belongsToMany(Enrollee::class, 'enrollee_family_members', 'enrollee_id',
-            'family_member_enrollee_id');
+    /**
+     * Scope for patients in the system that might be the same patient (ie. duplicates)
+     *
+     * @param $query
+     * @param User $patient
+     * @param Ccda $ccda
+     *
+     * @return mixed
+     */
+    public function scopeDuplicates($query, User $patient, Ccda $ccda) {
+        return $query->where(
+            function ($q) use ($ccda, $patient) {
+                $q
+                    ->where('medical_record_type', get_class($ccda))
+                    ->whereMedicalRecordId($ccda->id)
+                    ->where('user_id', '!=', $patient->id);
+            }
+        )->orWhere(
+            [
+                [
+                    'practice_id',
+                    '=',
+                    $patient->program_id,
+                ],
+                [
+                    'first_name',
+                    '=',
+                    $patient->first_name,
+                ],
+                [
+                    'last_name',
+                    '=',
+                    $patient->last_name,
+                ],
+                [
+                    'dob',
+                    '=',
+                    $patient->getBirthDate(),
+                ],
+            ]
+        )->orWhere(
+            [
+                [
+                    'practice_id',
+                    '=',
+                    $patient->program_id,
+                ],
+                [
+                    'mrn',
+                    '=',
+                    $patient->getMRN(),
+                ],
+            ]
+        );
     }
 }
 

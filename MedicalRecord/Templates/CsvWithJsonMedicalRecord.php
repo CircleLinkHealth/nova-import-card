@@ -431,7 +431,29 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
     
     public function fillPayersSection(): array
     {
-        return [];
+        $insurances = [
+            'primary_insurance' => $this->data['primary_insurance'],
+            'secondary_insurance' => $this->data['secondary_insurance'],
+            'tertiary_insurance' => $this->data['tertiary_insurance'],
+        ];
+    
+        return collect($insurances)
+            ->map(
+                function ($insurance, $type) {
+                    if (empty($insurance)) return false;
+                    
+                    return [
+                        'insurance'  => $insurance,
+                        'policy_type'=> $type,
+                        'policy_id'  => null,
+                        'relation'   => null,
+                        'subscriber' => null,
+                    ];
+                }
+            )
+            ->filter()
+            ->values()
+            ->toArray();
     }
     
     public function getType(): string

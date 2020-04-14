@@ -1,0 +1,58 @@
+<?php
+
+
+namespace CircleLinkHealth\Eligibility\CcdaImporter\Hooks;
+
+
+use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportHook;
+use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
+use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
+use CircleLinkHealth\Eligibility\NBISupplementaryDataNotFound;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
+use Illuminate\Support\Facades\Notification;
+
+class ReplaceFieldsFromSupplementaryData extends BaseCcdaImportHook
+{
+    const IMPORTING_LISTENER_NAME = 'import_from_supplemental_patient_data';
+    
+    const NBI_PRACTICE_NAME = 'bethcare-newark-beth-israel';
+    
+    const RECEIVES_NBI_EXCEPTIONS_NOTIFICATIONS = 'receives_nbi_exceptions_notifications';
+    
+    public function run(): Patient
+    {
+        if (self::NBI_PRACTICE_NAME != $this->patient->primaryPractice->name) {
+            return $this->payload;
+        }
+        
+        $dataFromPractice = SupplementalPatientData::where('first_name', 'like', "{$this->patient->first_name}%")
+                                                   ->where('last_name', $this->patient->last_name)
+                                                   ->where('dob', $this->patient->patientInfo->dob)
+                                                   ->where(
+                                                       'practice_id',
+                                                       Practice::whereName(self::NBI_PRACTICE_NAME)->value('id')
+                                                   )
+                                                   ->first();
+        
+        if ( ! $dataFromPractice) {
+            sendNbiPatientMrnWarning($this->patient->id);
+            
+            $recipients = AppConfig::where('config_key', '=', self::RECEIVES_NBI_EXCEPTIONS_NOTIFICATIONS)->get();
+            
+            foreach ($recipients as $recipient) {
+                Notification::route('mail', $recipient->config_value)
+                            ->notify(new NBISupplementaryDataNotFound($this->patient));
+            }
+        }
+        
+        if (optional($dataFromPractice)->mrn) {
+            $this->payload->mrn_number = $dataFromPractice->mrn;
+        }
+        
+        return $this->payload;
+    }
+}

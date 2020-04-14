@@ -6,34 +6,15 @@
 
 namespace CircleLinkHealth\Eligibility\Console;
 
-use CircleLinkHealth\Eligibility\Notifications\PatientNotReimportedNotification;
-use CircleLinkHealth\Eligibility\Notifications\PatientReimportedNotification;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Decorators\DemographicsFromAthena;
-use CircleLinkHealth\Eligibility\Decorators\InsuranceFromAthena;
-use CircleLinkHealth\Eligibility\Decorators\MedicalHistoryFromAthena;
-use CircleLinkHealth\Eligibility\Decorators\PcmChargeableServices;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
 use CircleLinkHealth\Eligibility\MedicalRecord\MedicalRecordFactory;
-use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord;
-use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CommonwealthMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\AllergyImport;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationImport;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
-use CircleLinkHealth\SharedModels\Entities\Allergy;
-use CircleLinkHealth\SharedModels\Entities\AllergyLog;
+use CircleLinkHealth\Eligibility\Notifications\PatientNotReimportedNotification;
+use CircleLinkHealth\Eligibility\Notifications\PatientReimportedNotification;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
-use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
-use CircleLinkHealth\SharedModels\Entities\Medication;
-use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Console\Command;
 
 class ReimportPatientMedicalRecord extends Command
@@ -49,7 +30,7 @@ class ReimportPatientMedicalRecord extends Command
      *
      * @var string
      */
-    protected $signature = 'patient:recreate {patientUserId} {initiatorUserId?} {--flush-ccd}';
+    protected $signature = 'patient:recreate {patientUserId} {initiatorUserId?}';
     private   $ccda;
     /**
      * @var Enrollee
@@ -82,12 +63,6 @@ class ReimportPatientMedicalRecord extends Command
         }
         
         \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id}");
-        
-        if ($this->option('flush-ccd')) {
-            $this->warn('Clearing CCDA data.');
-            \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id}:clearing_ccds:ln:".__LINE__);
-            $this->clearImportRecordsFor();
-        }
         
         if ($this->attemptTemplate($user)) {
             return;
@@ -195,72 +170,6 @@ class ReimportPatientMedicalRecord extends Command
         return null;
     }
     
-    private function clearImportRecordsFor()
-    {
-        $u = $this->getUser()->load(['ccdas']);
-        
-        $userId = $u->id;
-        
-        $u->ccdas->each(
-            function ($ccda) {
-                \Log::debug("ReimportPatientMedicalRecord:user_id:{$ccda->patient_id}:clearing_ccds:ccda_id:{$ccda->id}");
-    
-                $class = get_class($ccda);
-                
-                ProblemImport::where('medical_record_id', '=', $ccda->id)
-                             ->where('medical_record_type', '=', $class)
-                             ->delete();
-                
-                ProblemLog::where('medical_record_id', '=', $ccda->id)
-                          ->where('medical_record_type', '=', $class)
-                          ->delete();
-                
-                MedicationImport::where('medical_record_id', '=', $ccda->id)
-                                ->where('medical_record_type', '=', $class)
-                                ->delete();
-                
-                MedicationLog::where('medical_record_id', '=', $ccda->id)
-                             ->where('medical_record_type', '=', $class)
-                             ->delete();
-                
-                AllergyImport::where('medical_record_id', '=', $ccda->id)
-                             ->where('medical_record_type', '=', $class)
-                             ->delete();
-                
-                AllergyLog::where('medical_record_id', '=', $ccda->id)
-                          ->where('medical_record_type', '=', $class)
-                          ->delete();
-                
-                InsuranceLog::where('medical_record_id', '=', $ccda->id)
-                            ->where('medical_record_type', '=', $class)
-                            ->delete();
-                
-                CcdInsurancePolicy::where('medical_record_id', '=', $ccda->id)
-                                  ->where('medical_record_type', '=', $class)
-                                  ->delete();
-    
-                ImportedMedicalRecord::where('medical_record_id', '=', $ccda->id)
-                                  ->where('medical_record_type', '=', $class)
-                                  ->delete();
-            }
-        );
-        
-        Problem::where('patient_id', '=', $userId)
-               ->delete();
-        
-        Medication::where('patient_id', '=', $userId)
-                  ->delete();
-        
-        Allergy::where('patient_id', '=', $userId)
-               ->delete();
-        
-        CcdInsurancePolicy::where('patient_id', '=', $userId)
-                          ->delete();
-    
-        ImportedMedicalRecord::where('patient_id', '=', $userId)
-                             ->delete();
-    }
-    
     private function correctMrnIfWrong(User $user)
     {
         if (empty($user->patientInfo->mrn_number) && ! empty($this->getEnrollee($user)->mrn)) {
@@ -353,19 +262,6 @@ class ReimportPatientMedicalRecord extends Command
         \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Importing CCDA:{$ccda->id}:ln:".__LINE__);
     
         $ccda->import();
-        
-        /**
-         * @todo: method below is inefficient. Needs to be optimized.
-         */
-        /** @var ImportedMedicalRecord $imr */
-        $imr = $ccda->importedMedicalRecord();
-        
-        if ( ! $imr) {
-            $this->warn("ReimportPatientMedicalRecord:user_id:{$user->id} Creating IMR for CCDA:{$ccda->id}:ln:".__LINE__);
-            \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Creating IMR for CCDA:{$ccda->id}:ln:".__LINE__);
-    
-            $imr = $ccda->createImportedMedicalRecord()->importedMedicalRecord();
-        }
     
         \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} ImportedMedicalRecord_id:{$imr->id}:{$ccda->id}:ln:".__LINE__);
     
