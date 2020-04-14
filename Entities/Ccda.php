@@ -506,52 +506,45 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
      */
     public function checkDuplicity()
     {
-        $newUser = User::ofType('participant')->find($this->patient_id);
+        $this->duplicate_id = null;
+    
+        $user = User::whereFirstName($this->patientFirstName())
+                     ->whereLastName($this->patientLastName())
+                     ->whereHas(
+                         'patientInfo',
+                         function ($q) {
+                             $q->where('birth_date', $this->patientDob());
+                         }
+                     )->when($this->practice_id, function ($q){
+                        $q->where('program_id', $this->practice_id);
+            })->when($this->patient_id, function ($q){
+                $q->where('id', '!=', $this->patient_id);
+            })->first();
         
-        if ($newUser) {
-            $this->duplicate_id = null;
+        if ($user) {
+            $this->duplicate_id = $user->id;
             
-            $practiceId = $this->practice_id;
-            
-            $query = User::whereFirstName($newUser->first_name)
-                         ->whereLastName($newUser->last_name)
-                         ->whereHas(
-                             'patientInfo',
-                             function ($q) use ($newUser) {
-                                 $q->where('birth_date', $newUser->getBirthDate());
-                             }
-                         )->where('id', '!=', $newUser->id);
-            if ($practiceId) {
-                $query = $query->where('program_id', $practiceId);
-            }
-            
-            $user = $query->first();
-            
-            if ($user) {
-                $this->duplicate_id = $user->id;
-                
-                return $user->id;
-            }
-            
-            $patient = Patient::whereHas(
-                'user',
-                function ($q) use ($practiceId) {
-                    $q->where('program_id', $practiceId);
-                }
-            )->whereMrnNumber($newUser->getMRN())->whereNotNull('mrn_number')->where(
-                'user_id',
-                '!=',
-                $newUser->id
-            )->first();
-            
-            if ($patient) {
-                $this->duplicate_id = $patient->user_id;
-                
-                return $patient->user_id;
-            }
-            
-            return null;
+            return $user->id;
         }
+        
+        $patient = Patient::whereHas(
+            'user',
+            function ($q) {
+                $q->where('program_id', $this->practice_id);
+            }
+        )->whereMrnNumber($this->patientMrn())->whereNotNull('mrn_number')
+            ->when($this->patient_id, function ($q){
+                $q->where('user_id', '!=', $this->patient_id);
+            })
+          ->first();
+        
+        if ($patient) {
+            $this->duplicate_id = $patient->user_id;
+            
+            return $patient->user_id;
+        }
+        
+        return null;
     }
     
     /**
