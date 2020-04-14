@@ -17,6 +17,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
+use CircleLinkHealth\Eligibility\Tests\Fakers\FakeDiabetesAndEndocrineCcda;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Validation\ValidationException;
 use Tests\CustomerTestCase;
@@ -170,16 +171,7 @@ class CcdaImporterTest extends CustomerTestCase
     }
     
     public function test_it_does_not_import_ccd_without_practice_id() {
-        $mr = new CcdaMedicalRecord($this->getFakeMedicalRecord());
-        
-        $ccda = Ccda::create(
-            [
-                'source'      => $mr->getType(),
-                'json'        => $mr->toJson(),
-            ]
-        );
-        
         $this->expectException(ValidationException::class);
-        $ccda->import();
+        FakeDiabetesAndEndocrineCcda::create()->import();
     }
 }
