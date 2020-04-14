@@ -76,33 +76,10 @@ class ImportConsentedEnrollees implements ShouldQueue
                                     }
                                 }
                         
-                                //verify it wasn't already imported
-                                $imr = $enrollee->getImportedMedicalRecord();
-                                if ($imr) {
-                                    if ($imr->patient_id) {
-                                        $enrollee->user_id = $imr->patient_id;
-                                        $enrollee->save();
-                                
-                                        $this->enrolleeAlreadyImported($enrollee);
-                                
-                                        return null;
-                                    }
-                            
-                                    $this->enrolleeMedicalRecordImported($enrollee);
-                            
-                                    return null;
-                                }
-                        
                                 //import ccda
                                 if ($importService->isCcda($enrollee->medical_record_type)) {
+                                    
                                     return $importService->importExistingCcda($enrollee->medical_record_id);
-                                }
-                        
-                                //import PHX
-                                if (139 == $enrollee->practice_id) {
-                                    ImportPHXEnrollee::dispatch($enrollee);
-                            
-                                    return $enrollee;
                                 }
                         
                                 //import from AthenaAPI
@@ -166,31 +143,9 @@ class ImportConsentedEnrollees implements ShouldQueue
     
     private function importFromEligibilityJob(Enrollee $enrollee, EligibilityJob $job)
     {
-//        if (!$enrollee->medical_record_type === Ccda::class) {
-//            //
-//        }
-//
-//        if ( ! $enrollee->user_id) {
-//            $user = (new CCDImporterRepository())->createRandomUser(Ccda::where(), [
-//                                                                                         'email'      => $enrollee->email,
-//                                                                                         'first_name' => $enrollee->first_name,
-//                                                                                         'last_name'  => $enrollee->last_name,
-//                                                                                         'practice_id' => $enrollee->practice_id,
-//                                                                                     ]);
-//
-//            $enrollee->user_id = $user->id;
-//            $enrollee->save();
-//        }
-//
-//        Artisan::call(
-//            ReimportPatientMedicalRecord::class,
-//            [
-//                'patientUserId'   => $user->id,
-//                'initiatorUserId' => auth()->id(),
-//            ]
-//        );
-//
-//        $this->enrolleeMedicalRecordImported($enrollee);
+        
+        
+        $this->enrolleeMedicalRecordImported($enrollee);
     }
     
     private function importTargetPatient(Enrollee $enrollee)
