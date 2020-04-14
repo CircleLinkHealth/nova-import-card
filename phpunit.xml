@@ -13,11 +13,14 @@
          convertNoticesToExceptions="false"
          convertWarningsToExceptions="false"
          processIsolation="true"
-         stopOnFailure="true"
+         stopOnFailure="false"
          verbose="true">
     <testsuites>
         <testsuite name="Unit">
             <directory suffix="Test.php">./tests/Unit</directory>
+        </testsuite>
+        <testsuite name="EligibilityModule">
+            <directory suffix="Test.php">./Modules/Eligibility/Tests</directory>
         </testsuite>
         <testsuite name="Feature">
             <directory suffix="Test.php">./tests/Feature</directory>

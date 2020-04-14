@@ -13,6 +13,8 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use DateTime;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ServerException;
+use Illuminate\Support\Facades\Log;
 
 class DatamonitorService
 {
@@ -183,7 +185,11 @@ class DatamonitorService
         if ($wpBlog) {
             // $alerts_url = 'https://'. $wpBlog->domain . '/alerts/?user=' . $user_id;
             $alerts_url = 'https://'.$wpBlog->domain.'/manage-patients/'.$user_id.'/summary';
-            $alerts_url = $this->client->get('http://tinyurl.com/api-create.php?url='.$alerts_url)->getBody();
+            try {
+                $alerts_url = $this->client->get('http://tinyurl.com/api-create.php?url='.$alerts_url)->getBody();
+            } catch (ServerException $e) {
+                Log::warning("Could not generate tinyurl: {$e->getMessage()}");
+            }
         }
 
         return $alerts_url;

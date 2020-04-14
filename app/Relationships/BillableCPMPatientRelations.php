@@ -11,28 +11,22 @@ use Carbon\Carbon;
 
 class BillableCPMPatientRelations
 {
-    /**
-     * @var Carbon
-     */
-    protected $month;
-    
-    public function __construct(Carbon $month)
-    {
-        $this->month = $month;
-    }
-    
     const DEFAULT_RELATIONSHIPS = [
         'careTeamMembers',
         'patientInfo',
         'primaryPractice',
         'patientSummaries',
     ];
-    
-    public static function getDefaultWith(Carbon $month): array
+    /**
+     * @var Carbon
+     */
+    protected $month;
+
+    public function __construct(Carbon $month)
     {
-        return (new static($month))->get(self::DEFAULT_RELATIONSHIPS);
+        $this->month = $month;
     }
-    
+
     public function get(
         array $with = [
             'careTeamMembers',
@@ -46,7 +40,7 @@ class BillableCPMPatientRelations
                 'patientSummaries' => $this->getPatientSummariesCallback(),
                 'patientInfo',
                 'primaryPractice',
-                'careTeamMembers'  => function ($q) {
+                'careTeamMembers' => function ($q) {
                     $q->where('type', '=', 'billing_provider');
                 },
             ]
@@ -58,25 +52,30 @@ class BillableCPMPatientRelations
                 if (in_array($item, $with)) {
                     return false;
                 }
-                
+
                 return true;
             }
         )->all();
     }
-    
+
+    public static function getDefaultWith(Carbon $month): array
+    {
+        return (new static($month))->get(self::DEFAULT_RELATIONSHIPS);
+    }
+
     private function getPatientSummariesCallback()
     {
         return function ($query) {
             $query->where('month_year', $this->month)
-                  ->where(
+                ->where(
                       'total_time',
                       '>=',
                       AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS
                   )
-                  ->where('no_of_successful_calls', '>=', 1)
-                  ->with('chargeableServices')
-                  ->with('attestedProblems.cpmProblem')
-                  ->with('attestedProblems.icd10Codes');
+                ->where('no_of_successful_calls', '>=', 1)
+                ->with('chargeableServices')
+                ->with('attestedProblems.cpmProblem')
+                ->with('attestedProblems.icd10Codes');
         };
     }
 }

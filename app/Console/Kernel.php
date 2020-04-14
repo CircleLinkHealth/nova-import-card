@@ -13,6 +13,7 @@ use App\Console\Commands\CheckForMissingLogoutsAndInsert;
 use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
 use App\Console\Commands\CountPatientMonthlySummaryCalls;
 use App\Console\Commands\CreateApprovableBillablePatientsReport;
+use App\Console\Commands\CheckUserTotalTimeTracked;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesPerformanceDailyReport;
@@ -135,7 +136,7 @@ class Kernel extends ConsoleKernel
                  ->everyThirtyMinutes()->onOneServer();
 
         $schedule->command(CountPatientMonthlySummaryCalls::class, [now()->startOfMonth()->toDateString()])
-                 ->everyThirtyMinutes()->onOneServer();
+            ->everyThirtyMinutes()->onOneServer();
 
 //        $schedule->command(
 //            SendCareCoachInvoices::class,
@@ -180,8 +181,10 @@ class Kernel extends ConsoleKernel
 //                 ->everyThirtyMinutes()
 //                 ->withoutOverlapping()->onOneServer();
 
-        $schedule->command(NursesPerformanceDailyReport::class,
-            [now()->yesterday()->startOfDay()->toDateString(), '--notify'])->dailyAt('00:03')->onOneServer();
+        $schedule->command(
+            NursesPerformanceDailyReport::class,
+            [now()->yesterday()->startOfDay()->toDateString(), '--notify']
+        )->dailyAt('00:03')->onOneServer();
 
         $schedule->command(CheckForMissingLogoutsAndInsert::class)->dailyAt('04:00')->onOneServer();
 
@@ -211,5 +214,9 @@ class Kernel extends ConsoleKernel
         $schedule->command(ImportCommand::class, [
             Location::class,
         ])->dailyAt('03:15');
+
+        $schedule->command(CheckUserTotalTimeTracked::class)
+            ->dailyAt('01:10')
+            ->onOneServer();
     }
 }
