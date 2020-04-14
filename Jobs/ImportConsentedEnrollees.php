@@ -79,7 +79,6 @@ class ImportConsentedEnrollees implements ShouldQueue
                         
                                 //import ccda
                                 if ($importService->isCcda($enrollee->medical_record_type)) {
-                                    
                                     return $importService->importExistingCcda($enrollee->medical_record_id, $enrollee);
                                 }
                         
