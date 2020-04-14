@@ -42,15 +42,15 @@ class ImportingHooksTest extends CustomerTestCase
     public function test_it_upg0506_instructions_importing_hook()
     {
         $this->assertNull($this->practice()->importing_hooks);
-        $this->practice()->storeImportingHook(ImportProblems::HOOK_USE_DIFFERENT_INSTRUCTION_IMPORTER, GetUPG0506ProblemInstruction::IMPORTING_LISTENER_NAME);
+        $this->practice()->storeImportingHook(ImportProblems::IMPORTING_PROBLEM_INSTRUCTIONS, GetUPG0506ProblemInstruction::IMPORTING_LISTENER_NAME);
         $this->assertJson($this->practice()->importing_hooks);
         
         $ccda = FakeCalvaryCcda::create();
         $importer = new ImportProblems($this->patient(), $ccda);
-        $this->assertTrue($importer->shouldRunHook(ImportProblems::HOOK_USE_DIFFERENT_INSTRUCTION_IMPORTER, $this->practice()));
+        $this->assertTrue($importer->shouldRunHook(ImportProblems::IMPORTING_PROBLEM_INSTRUCTIONS, $this->practice()));
         
         $oldValue = $this->patient()->patientInfo;
-        $hook = $importer->fireImportingHook(ImportProblems::HOOK_USE_DIFFERENT_INSTRUCTION_IMPORTER, $this->patient(), $ccda, $this->patient()->patientInfo);
+        $hook = $importer->fireImportingHook(ImportProblems::IMPORTING_PROBLEM_INSTRUCTIONS, $this->patient(), $ccda, $this->patient()->patientInfo);
         $this->assertNull($hook);
     }
 }

@@ -53,7 +53,7 @@ class ImportAllergies extends BaseCcdaImportTask
         $misc = CpmMisc::whereName(CpmMisc::ALLERGIES)
                        ->first();
     
-        if ( ! $this->hasMisc($this->patient, $misc)) {
+        if (!empty($unique) && ! $this->hasMisc($this->patient, $misc)) {
             $this->patient->cpmMiscs()->attach(optional($misc)->id);
         }
     }

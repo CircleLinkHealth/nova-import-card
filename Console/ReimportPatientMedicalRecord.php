@@ -64,7 +64,7 @@ class ReimportPatientMedicalRecord extends Command
         
         \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id}");
         
-        if ($this->attemptTemplate($user)) {
+        if (! $user->hasCcda() && $this->attemptTemplate($user)) {
             return;
         }
         
@@ -263,25 +263,7 @@ class ReimportPatientMedicalRecord extends Command
     
         $ccda->import();
     
-        \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} ImportedMedicalRecord_id:{$imr->id}:{$ccda->id}:ln:".__LINE__);
-    
-    
-        $imr->patient_id = $user->id;
-        $imr->save();
-        
-        $this->warn("ReimportPatientMedicalRecord:user_id:{$user->id} Creating CarePlan for CCDA:{$ccda->id}:ln:".__LINE__);
-        \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Creating CarePlan for CCDA:{$ccda->id}:ln:".__LINE__);
-    
-    
-        $imr->updateOrCreateCarePlan();
-        
-        $this->line("Patient $user->id reimported from CCDA $ccda->id");
-        \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Created CarePlan for CCDA:{$ccda->id}:ln:".__LINE__);
-    
-    
-        $this->getEnrollee($user)->medical_record_id   = $ccda->id;
-        $this->getEnrollee($user)->medical_record_type = get_class($ccda);
-        $this->getEnrollee($user)->save();
+        \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} CcdaId:{$ccda->id}:ln:".__LINE__);
     }
     
     private function notifyFailure(User $user)

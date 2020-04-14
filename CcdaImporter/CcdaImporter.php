@@ -53,11 +53,13 @@ class CcdaImporter
     
     public function __construct(
         Ccda $ccda,
-        User $patient = null
+        User $patient = null,
+        Enrollee $enrollee = null
     ) {
-        $this->str     = new StringManipulation();
-        $this->ccda    = $ccda;
-        $this->patient = $patient;
+        $this->str      = new StringManipulation();
+        $this->ccda     = $ccda;
+        $this->patient  = $patient;
+        $this->enrollee = $enrollee;
     }
     
     /**
@@ -74,7 +76,12 @@ class CcdaImporter
     
     private function handleEnrollees()
     {
-        $enrollee = Enrollee::duplicates($this->patient, $this->ccda)->first();
+        $enrollee = Enrollee::duplicates($this->patient, $this->ccda)->when(
+            $this->enrollee instanceof Enrollee,
+            function ($q) {
+                $q->where('id', '!=', $this->enrollee->id);
+            }
+        )->first();
         
         if ($enrollee) {
             if (strtolower($this->patient->first_name) != strtolower($enrollee->first_name) || strtolower(
@@ -125,7 +132,7 @@ class CcdaImporter
      */
     private function storeContactWindows()
     {
-        AttachDefaultPatientContactWindows::for($this->patient, $this->ccda);
+        AttachDefaultPatientContactWindows::for($this->patient, $this->ccda, $this->enrollee);
         
         return $this;
     }
@@ -137,7 +144,7 @@ class CcdaImporter
                 if (is_null($this->patient)) {
                     $this->createNewPatient();
                 }
-    
+                
                 $this->patient->loadMissing(['primaryPractice', 'patientInfo']);
                 $this->ccda->loadMissing(['location', 'patient']);
                 
@@ -155,14 +162,17 @@ class CcdaImporter
                      ->storeInsurance()
                      ->storeVitals();
                 
-                // Populate display_name on User
-                $this->patient->display_name = "{$this->patient->first_name} {$this->patient->last_name}";
-                $this->patient->program_id   = $this->imr->practice_id ?? null;
-                $this->patient->save();
-                
                 //This CarePlan is now ready to be QA'ed by a CLH Admin
-                $this->ccda->status = Ccda::QA;
+                $this->ccda->imported = true;
+                $this->ccda->status   = Ccda::QA;
                 $this->ccda->save();
+                
+                if ($this->enrollee) {
+                    $this->enrollee->medical_record_type = get_class($this->ccda);
+                    $this->enrollee->medical_record_id   = $this->ccda->id;
+                    $this->enrollee->user_id             = $this->ccda->patient_id;
+                    $this->enrollee->save();
+                }
                 
                 event(new PatientUserCreated($this->patient));
             }
@@ -266,16 +276,9 @@ class CcdaImporter
     
     private function createNewPatient()
     {
-        $params = [
-            'email'       => $this->ccda->patientEmail(),
-            'first_name'  => $this->ccda->patientFirstName(),
-            'last_name'   => $this->ccda->patientLastName(),
-            'practice_id' => $this->ccda->practice_id,
-        ];
-        
         $newUserId = str_random(25);
         
-        $email = empty($email = $params['email'])
+        $email = empty($email = $this->ccda->patientEmail())
             ? $newUserId.'@careplanmanager.com'
             : $email;
         
@@ -283,14 +286,18 @@ class CcdaImporter
             new ParameterBag(
                 [
                     'email'             => $email,
-                    'password'          => str_random(),
-                    'display_name'      => ucwords(strtolower($params['first_name'].' '.$params['last_name'])),
-                    'first_name'        => $params['first_name'],
-                    'last_name'         => $params['last_name'],
+                    'password'          => str_random(30),
+                    'display_name'      => ucwords(
+                        strtolower($this->ccda->patientFirstName().' '.$this->ccda->patientLastName())
+                    ),
+                    'first_name'        => $this->ccda->patientFirstName(),
+                    'last_name'         => $this->ccda->patientLastName(),
+                    'mrn_number'        => $this->ccda->patientMrn(),
+                    'birth_date'        => $this->ccda->patientDob(),
                     'username'          => empty($email)
                         ? $newUserId
                         : $email,
-                    'program_id'        => $params['practice_id'],
+                    'program_id'        => $this->ccda->practice_id,
                     'is_auto_generated' => true,
                     'roles'             => [Role::whereName('participant')->firstOrFail()->id],
                     'is_awv'            => Ccda::IMPORTER_AWV === $this->ccda->source,
@@ -298,9 +305,11 @@ class CcdaImporter
             )
         );
         
-        Ccda::where('id', $this->ccda->id)->update([
-            'patient_id' => $this->patient->id,
-                                                    ]);
+        Ccda::where('id', $this->ccda->id)->update(
+            [
+                'patient_id' => $this->patient->id,
+            ]
+        );
     }
 }
 
