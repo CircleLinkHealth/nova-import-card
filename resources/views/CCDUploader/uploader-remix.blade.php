@@ -21,11 +21,7 @@
         <br>
         <div class="row">
             <div class="col-md-12">
-                @if ($shouldUseNewVersion)
-                    <imported-medical-records-management ref="importedMedicalRecordsManagement"></imported-medical-records-management>
-                @else
-                    <ccd-viewer ref="ccdViewer"></ccd-viewer>
-                @endif
+                <imported-medical-records-management ref="importedMedicalRecordsManagement"></imported-medical-records-management>
             </div>
         </div>
     </div>

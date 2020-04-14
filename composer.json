@@ -114,6 +114,10 @@
     {
       "type": "path",
       "url": "./nova-components/GenerateSuccessStoriesReport"
+    },
+    {
+      "type": "path",
+      "url": "./nova-components/ClhNovaTheme"
     }
   ],
   "require": {
@@ -135,8 +139,8 @@
     "circlelinkhealth/cerberus-gatekeeper-module": "3.0.6",
     "circlelinkhealth/clh-import-card-extended": "*",
     "circlelinkhealth/core-module": "1.5.1",
-    "circlelinkhealth/cpm-migrations-module": "1.5.7",
-    "circlelinkhealth/customer-module": "dev-importer-v3",
+    "circlelinkhealth/cpm-migrations-module": "dev-master",
+    "circlelinkhealth/customer-module": "2.2.4",
     "circlelinkhealth/eligibility-module": "dev-importer-v3",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/generate-success-stories-report": "*",
@@ -196,7 +200,8 @@
     "vink/nova-cache-card": "^1.0",
     "waavi/url-shortener": "dev-master",
     "waynestate/nova-ckeditor4-field": "^0.4.0",
-    "yajra/laravel-datatables-oracle": "~8.0"
+    "yajra/laravel-datatables-oracle": "~8.0",
+    "circlelinkhealth/clh-nova-theme": "*"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",

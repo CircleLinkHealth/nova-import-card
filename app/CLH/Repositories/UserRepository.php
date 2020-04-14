@@ -7,6 +7,7 @@
 namespace App\CLH\Repositories;
 
 use App\CareAmbassador;
+use App\Rules\PatientIsNotDuplicate;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\GoogleDrive;
@@ -18,9 +19,11 @@ use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\PracticeRoleUser;
 use CircleLinkHealth\Customer\Entities\ProviderInfo;
+use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
 use CircleLinkHealth\Customer\Tasks\ClearUserCache;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use Illuminate\Support\Facades\DB;
@@ -72,10 +75,27 @@ class UserRepository
     public function createNewUser(
         ParameterBag $params
     ) {
-        $validator = \Validator::make($params->all(), $this->createNewUserRules(),[
-            'required'                   => 'The :attribute field is required.',
-            'home_phone_number.required' => 'The patient phone number field is required.',
-        ]);
+        if ($this->isPatient($params)) {
+            $validator = \Validator::make($params->all(), $this->createNewPatientRules(),[
+                'required'                   => 'The :attribute field is required.',
+                'home_phone_number.required' => 'The patient phone number field is required.',
+            ]);
+    
+            if($validator->fails()) {
+                throw new ValidationException($validator);
+            }
+    
+            //Using 2 different validators because the custom rule expects non-null items in its constructor
+            $validator = \Validator::make($params->all(), $this->checkPatientForDupes($params),[
+                'required'                   => 'The :attribute field is required.',
+                'home_phone_number.required' => 'The patient phone number field is required.',
+            ]);
+        } else {
+            $validator = \Validator::make($params->all(), $this->createNewUserRules(),[
+                'required'                   => 'The :attribute field is required.',
+                'home_phone_number.required' => 'The patient phone number field is required.',
+            ]);
+        }
         
         if($validator->fails()) {
             throw new ValidationException($validator);
@@ -431,7 +451,12 @@ class UserRepository
             }
 
             if ($params->get($key)) {
-                $user->patientInfo->$key = $params->get($key);
+                if ('birth_date' === $key) {
+                    $user->patientInfo->$key = ImportPatientInfo::parseDOBDate($params->get($key));
+                }
+                else {
+                    $user->patientInfo->$key = $params->get($key);
+                }
             }
         }
 
@@ -661,9 +686,9 @@ class UserRepository
     private function createNewUserRules()
     {
         return [
-            'first_name'              => 'required',
-            'last_name'               => 'required',
-            'program_id'              => 'required|exists:practices,id',
+            'first_name'              => 'filled|required',
+            'last_name'               => 'filled|required',
+            'program_id'              => 'filled|required|exists:practices,id',
             'email' => [
                 'required',
                 Rule::unique('users', 'email')
@@ -672,7 +697,42 @@ class UserRepository
                 'required',
                 Rule::unique('users', 'username')
             ],
-            'roles.*' => 'required|exists:lv_roles,id'
+            'roles.*' => 'filled|required|exists:lv_roles,id'
+        ];
+    }
+    
+    private function isPatient(ParameterBag $params):bool
+    {
+        $participantRoleId = \Cache::remember('participant_role_id', 2, function () {
+            return Role::where('name', 'participant')->value('id');
+        });
+        
+        if (is_array($params->get('roles')) && in_array($participantRoleId, $params->get('roles'))) {
+            return true;
+        }
+    
+        if ($params->get('roles') == $participantRoleId) {
+            return true;
+        }
+    
+        if ($params->get('role') == $participantRoleId) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    private function createNewPatientRules()
+    {
+        return array_merge($this->createNewUserRules(), [
+            'birth_date'              => 'filled|required|date',
+            'mrn_number' => ['filled',]
+        ]);
+    }
+    
+    private function checkPatientForDupes(ParameterBag $params) {
+        return [
+            'mrn_number' => [new PatientIsNotDuplicate($params->get('program_id'), $params->get('first_name'), $params->get('last_name'), $params->get('birth_date'), $params->get('mrn_number'))]
         ];
     }
 }
