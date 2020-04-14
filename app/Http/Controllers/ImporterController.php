@@ -12,6 +12,7 @@ use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class ImporterController extends Controller
 {
