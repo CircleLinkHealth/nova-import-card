@@ -129,7 +129,8 @@ class WorkScheduleController extends Controller
      */
     public function dailyReportsForNurse()
     {
-        $auth         = auth()->user();
+//        $auth         = auth()->user();
+        $auth = User::whereId(8023)->first();
         $dailyReports = $this->fullCalendarService->prepareDailyReportsForNurse($auth);
 
         return response()->json([

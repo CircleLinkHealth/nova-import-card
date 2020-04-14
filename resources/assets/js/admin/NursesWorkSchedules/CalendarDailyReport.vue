@@ -2,26 +2,27 @@
     <div>
         <div class="modal fade" id="dailyReport" tabindex="-1" role="dialog"
              aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content" style="width: fit-content;">
+            <div class="modal-dialog" role="document" style="position: fixed; margin-left: 134px;">
+                <div class="modal-content" style="width: fit-content; overflow-y: scroll; max-height: 725px;">
                     <div class="modal-header">
 
                         <div class="modal-title" id="exampleModalLabel">
                             <div class="row">
                                 <div class="col-md-12" style="text-align: center">
-                                    <h3>Daily Report for:</h3>
+                                    <h3>Daily Report for: {{this.reportDate}}</h3>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="container">
+                        <br>
                         <p>Dear {{this.reportData.nurse_full_name}},</p>
                         <p>&nbsp;</p>
                         <p>Thanks for providing care on the CircleLink platform on {{this.reportDate}}</p>
                         <p>&nbsp;</p>
                         <ol>
-                            <li> Work Completed Yesterday {{this.reportDate}}</li>
+                            <li><strong>Work Completed Yesterday {{this.reportDate}}</strong></li>
                         </ol>
                         <ul>
 
@@ -34,7 +35,7 @@
                         <p>&nbsp;</p>
                         <ol start="2">
 
-                            <li> Monthly Case Completion ({{this.reportData.caseLoadComplete}})</li>
+                            <li><strong>Monthly Case Completion ({{this.reportData.caseLoadComplete}})</strong></li>
                         </ol>
                         <ul>
                             <li>Monthly caseload: {{this.reportData.totalPatientsInCaseLoad}} patients</li>
@@ -49,7 +50,7 @@
                         <div v-if="reportFlags.showEfficiencyMetrics">
                             <p>&nbsp;</p>
                             <ol start="3">
-                                <li> Efficiency Metrics</li>
+                                <li><strong>Efficiency Metrics</strong></li>
                             </ol>
                             <ul>
                                 <li>Average CCM time per successful patient: {{this.reportData.avgCCMTimePerPatient}}
@@ -79,7 +80,7 @@
 
                         <div v-if="reportFlags.enableDailyReportMetrics">
                             <ol start="4">
-                                <li> Scheduling and Monthly Hours</li>
+                                <li><strong>Scheduling and Monthly Hours</strong></li>
                             </ol>
                             <ul>
                                 <li>Estimated time to complete case load: {{this.reportData.caseLoadNeededToComplete}}
@@ -103,8 +104,8 @@
                                     </li>
                                 </ul>
                                 <li>Surplus or deficit for the remainder of month: <a
-                                        style="color:$deficitTextColor">{{this.reportData.surplusShortfallHours}}</a> hr
-                                    **$deficitOrSurplusText**
+                                        :style="surplusDeficitColor">{{this.reportData.surplusShortfallHours}}</a> hr
+                                    {{this.reportData.deficitOrSurplusText}}
                                 </li>
                                 <ul>
                                     <li><a style="color: green">Surplus</a> indicates you are doing well for the month
@@ -151,6 +152,16 @@
         name: "CalendarDailyReport",
         props: ['reportData', 'reportDate', 'reportFlags'],
         components: {},
+
+        computed: {
+            surplusDeficitColor() {
+                {
+                    return {
+                        "color": this.reportData.deficitTextColor
+                    }
+                }
+            },
+        },
 
         methods: {
             closeModal() {

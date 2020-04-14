@@ -19,11 +19,52 @@ class NurseCalendarService
     use ValidatesWorkScheduleCalendar;
     const COMPANY_HOLIDAY = 'companyHoliday';
 
-    const END      = 'end';
+    const END = 'end';
     const SATURDAY = 6;
-    const START    = 'start';
-    const SUNDAY   = 0;
-    const TITLE    = 'title';
+    const START = 'start';
+    const SUNDAY = 0;
+    const TITLE = 'title';
+
+    /**
+     * @param $nurseInfoId
+     * @param $workScheduleData
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function createRecurringEvents($nurseInfoId, $workScheduleData)
+    {
+        $repeatFrequency = null === $workScheduleData['repeat_freq'] ? 'weekly' : $workScheduleData['repeat_freq'];
+        $defaultRepeatDate = Carbon::parse($workScheduleData['date'])->copy()->addMonths(1)->toDateString();
+        $repeatEventUntil = null === $workScheduleData['until'] ? $defaultRepeatDate : $workScheduleData['until'];
+        $rangeToRepeat = $this->getWeeksOrDaysToRepeat($workScheduleData['date'], $repeatEventUntil, $repeatFrequency);
+        $excludeWeekends = !empty($workScheduleData['excludeWkds']) ? $workScheduleData['excludeWkds'] : false;
+        $validatedDefault = 'not_checked';
+        $nurse = Nurse::findOrFail($nurseInfoId);
+
+        $holidays = $nurse->upcomingHolidaysFrom(Carbon::parse($workScheduleData['date']));
+        //        Using $holidayDates to avoid creating work-windows on days-off
+        $holidayDates = $holidays->map(function ($holiday) {
+            return Carbon::parse($holiday->date)->toDateString();
+        })->toArray();
+
+        $recurringDates = $this->createRecurringDates($rangeToRepeat, $workScheduleData['date'], $repeatFrequency, $holidayDates, $excludeWeekends);
+
+        return $this->createWindowData($recurringDates, $nurseInfoId, $workScheduleData, $validatedDefault, $repeatFrequency, $repeatEventUntil);
+    }
+
+    /**
+     * @param $eventDate
+     * @param $repeatUntil
+     * @param $repeatFrequency
+     *
+     * @return int
+     */
+    public function getWeeksOrDaysToRepeat($eventDate, $repeatUntil, $repeatFrequency)
+    {
+        return 'daily' !== $repeatFrequency
+            ? Carbon::parse($eventDate)->diffInWeeks($repeatUntil)
+            : Carbon::parse($eventDate)->diffInDays($repeatUntil);
+    }
 
     /**
      * @param $diffRange
@@ -43,11 +84,11 @@ class NurseCalendarService
                 $defaultRecurringDate = Carbon::parse($eventDate)->copy()->addWeek($i)->toDateString();
                 //do NOT create workEvents over days-off.
                 if ($excludeWeekends) {
-                    if ( ! in_array($defaultRecurringDate, $holidayDates) && $this->checkIfIsNotWeekend($defaultRecurringDate)) {
+                    if (!in_array($defaultRecurringDate, $holidayDates) && $this->checkIfIsNotWeekend($defaultRecurringDate)) {
                         $defaultRecurringDates[] = $defaultRecurringDate;
                     }
                 } else {
-                    if ( ! in_array($defaultRecurringDate, $holidayDates)) {
+                    if (!in_array($defaultRecurringDate, $holidayDates)) {
                         $defaultRecurringDates[] = $defaultRecurringDate;
                     }
                 }
@@ -59,11 +100,11 @@ class NurseCalendarService
                 $defaultRecurringDate = Carbon::parse($eventDate)->copy()->addDay($i)->toDateString();
                 //do NOT create workEvents over days-off and weekends
                 if ($excludeWeekends) {
-                    if ( ! in_array($defaultRecurringDate, $holidayDates) && $this->checkIfIsNotWeekend($defaultRecurringDate)) {
+                    if (!in_array($defaultRecurringDate, $holidayDates) && $this->checkIfIsNotWeekend($defaultRecurringDate)) {
                         $defaultRecurringDates[] = $defaultRecurringDate;
                     }
                 } else {
-                    if ( ! in_array($defaultRecurringDate, $holidayDates)) {
+                    if (!in_array($defaultRecurringDate, $holidayDates)) {
                         $defaultRecurringDates[] = $defaultRecurringDate;
                     }
                 }
@@ -71,33 +112,6 @@ class NurseCalendarService
         }
 
         return $defaultRecurringDates;
-    }
-
-    /**
-     * @param $nurseInfoId
-     * @param $workScheduleData
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function createRecurringEvents($nurseInfoId, $workScheduleData)
-    {
-        $repeatFrequency   = null === $workScheduleData['repeat_freq'] ? 'weekly' : $workScheduleData['repeat_freq'];
-        $defaultRepeatDate = Carbon::parse($workScheduleData['date'])->copy()->addMonths(1)->toDateString();
-        $repeatEventUntil  = null === $workScheduleData['until'] ? $defaultRepeatDate : $workScheduleData['until'];
-        $rangeToRepeat     = $this->getWeeksOrDaysToRepeat($workScheduleData['date'], $repeatEventUntil, $repeatFrequency);
-        $excludeWeekends   = ! empty($workScheduleData['excludeWkds']) ? $workScheduleData['excludeWkds'] : false;
-        $validatedDefault  = 'not_checked';
-        $nurse             = Nurse::findOrFail($nurseInfoId);
-
-        $holidays = $nurse->upcomingHolidaysFrom(Carbon::parse($workScheduleData['date']));
-        //        Using $holidayDates to avoid creating work-windows on days-off
-        $holidayDates = $holidays->map(function ($holiday) {
-            return Carbon::parse($holiday->date)->toDateString();
-        })->toArray();
-
-        $recurringDates = $this->createRecurringDates($rangeToRepeat, $workScheduleData['date'], $repeatFrequency, $holidayDates, $excludeWeekends);
-
-        return $this->createWindowData($recurringDates, $nurseInfoId, $workScheduleData, $validatedDefault, $repeatFrequency, $repeatEventUntil);
     }
 
     /**
@@ -121,7 +135,8 @@ class NurseCalendarService
         $validatedDefault,
         $defaultRepeatFreq,
         $repeatEventByDefaultUntil
-    ) {
+    )
+    {
         return collect($defaultRecurringDates)->map(function ($date) use (
             $nurseInfoId,
             $workScheduleData,
@@ -132,43 +147,19 @@ class NurseCalendarService
             $newWindowDayOfWeek = Carbon::parse($date)->dayOfWeek;
 
             return [
-                'nurse_info_id'     => $nurseInfoId,
-                'date'              => $date,
-                'day_of_week'       => carbonToClhDayOfWeek($newWindowDayOfWeek),
+                'nurse_info_id' => $nurseInfoId,
+                'date' => $date,
+                'day_of_week' => carbonToClhDayOfWeek($newWindowDayOfWeek),
                 'window_time_start' => $workScheduleData['window_time_start'],
-                'window_time_end'   => $workScheduleData['window_time_end'],
-                'validated'         => $validatedDefault,
-                'repeat_frequency'  => $defaultRepeatFreq,
-                'repeat_start'      => Carbon::parse($workScheduleData['date'])->toDateString(),
-                'until'             => $repeatEventByDefaultUntil,
-                'created_at'        => Carbon::parse(now())->toDateTimeString(),
-                'updated_at'        => Carbon::parse(now())->toDateTimeString(),
+                'window_time_end' => $workScheduleData['window_time_end'],
+                'validated' => $validatedDefault,
+                'repeat_frequency' => $defaultRepeatFreq,
+                'repeat_start' => Carbon::parse($workScheduleData['date'])->toDateString(),
+                'until' => $repeatEventByDefaultUntil,
+                'created_at' => Carbon::parse(now())->toDateTimeString(),
+                'updated_at' => Carbon::parse(now())->toDateTimeString(),
             ];
         });
-    }
-
-    /**
-     * @return array
-     */
-    public function dailyReportsForNurse()
-    {
-        $yesterday = now()->copy()->subDay(1);
-        $startDate = $yesterday->copy()->subDays(6);
-        $dates     = getDatesForRange($startDate, $yesterday);
-
-        $service = new NursesPerformanceReportService();
-
-        $reports = [];
-        foreach ($dates as $date) {
-            $reportForDay = $service->getDailyReportJson(Carbon::parse($date));
-            if ( ! $reportForDay || ! is_json($reportForDay)) {
-                $reports[$date] = [];
-            } else {
-                $reports[$date] = collect(json_decode($reportForDay, true))->where('nurse_id', 1920)->first();
-            }
-        }
-
-        return $reports;
     }
 
     /**
@@ -186,7 +177,7 @@ class NurseCalendarService
 
         if ($auth->isCareCoach()) {
             return [
-                'role'        => 'nurse',
+                'role' => 'nurse',
                 'nurseInfoId' => $auth->nurseInfo->id,
             ];
         }
@@ -216,7 +207,7 @@ class NurseCalendarService
         return $nurses->map(function ($nurse) {
             return [
                 'nurseId' => $nurse->nurseInfo->id,
-                'label'   => $nurse->display_name,
+                'label' => $nurse->display_name,
             ];
         });
     }
@@ -231,7 +222,7 @@ class NurseCalendarService
     {
         $askForConfirmationEvents = [];
         foreach ($recurringEventsToSave as $event) {
-            $windowsExists = ! $updateCollisions ? $this->windowsExistsValidator($event) : false;
+            $windowsExists = !$updateCollisions ? $this->windowsExistsValidator($event) : false;
 
             if ($windowsExists) {
                 $askForConfirmationEvents[] = $windowsExists;
@@ -257,139 +248,6 @@ class NurseCalendarService
         })->flatten(1);
     }
 
-    public function getNursesWithSchedule()
-    {
-        $workScheduleData = [];
-        User::ofType('care-center')
-            ->with('nurseInfo.windows', 'nurseInfo.holidays')
-            ->whereHas('nurseInfo', function ($q) {
-                $q->where('status', 'active');
-            })
-            ->chunk(100, function ($nurses) use (&$workScheduleData) {
-                $workScheduleData[] = $nurses;
-            });
-
-        return $workScheduleData[0];
-    }
-
-    /**
-     * @param $eventDate
-     * @param $repeatUntil
-     * @param $repeatFrequency
-     *
-     * @return int
-     */
-    public function getWeeksOrDaysToRepeat($eventDate, $repeatUntil, $repeatFrequency)
-    {
-        return 'daily' !== $repeatFrequency
-            ? Carbon::parse($eventDate)->diffInWeeks($repeatUntil)
-            : Carbon::parse($eventDate)->diffInDays($repeatUntil);
-    }
-
-    /**
-     * @param $nurse
-     * @param mixed $startDate
-     * @param mixed $endDate
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getWindows($nurse, $startDate, $endDate)
-    {
-        return $nurse->nurseInfo->windows->where('date', '>=', $startDate)
-            ->where('date', '<=', $endDate);
-    }
-
-    /**
-     * @param Collection $nurses
-     * @param mixed      $startDate
-     * @param mixed      $endDate
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function prepareCalendarDataForAllActiveNurses($nurses, $startDate, $endDate)
-    {
-        return $nurses->map(function ($nurse) use ($startDate, $endDate) {
-            $windows = $this->getWindows($nurse, $startDate, $endDate);
-
-            return $this->prepareWorkDataForEachNurse($windows, $nurse);
-        })->flatten(1);
-    }
-
-    /**
-     * @param $auth
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function prepareDailyReportsForNurse($auth)
-    {
-        $reports = $this->dailyReportsForNurse();
-        $title   = 'Daily Report';
-
-        $reportsForCalendarView = [];
-        foreach ($reports as $date => $report) {
-            $showEfficiencyMetric       = false;
-            $enableDailyReportMetrics   = false;
-            $patientsCompletedRemaining = false;
-
-            if (showNurseMetricsInDailyEmailReport(1920, 'efficiency_metrics')) {
-                $showEfficiencyMetric = true;
-            }
-
-            if (showNurseMetricsInDailyEmailReport(1920, 'enable_daily_report_metrics')) {
-                $enableDailyReportMetrics = true;
-            }
-
-            if (showNurseMetricsInDailyEmailReport(1920, 'patients_completed_and_remaining')) {
-                $patientsCompletedRemaining = true;
-            }
-
-            $nextUpcomingWindow = ! empty($report) ? $report['nextUpcomingWindow'] : false;
-
-            $windowStartEnd = [
-                'windowStart' => $nextUpcomingWindow
-                    ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A')
-                    : null,
-                'windowEnd' => $nextUpcomingWindow
-                    ? Carbon::parse($nextUpcomingWindow['window_time_end'])->format('g:i A')
-                    : null,
-
-                'nextUpcomingWindowDay' => $nextUpcomingWindow
-                    ? Carbon::parse($nextUpcomingWindow['date'])->format('l')
-                    : null,
-                'nextUpcomingWindowMonth' => $nextUpcomingWindow
-                    ? Carbon::parse($nextUpcomingWindow['date'])->format('F d')
-                    : null,
-            ];
-
-            $dataReport = array_merge($report, $windowStartEnd);
-
-            if ( ! empty($report)) {
-                if (0 !== $report['systemTime'] && $auth->nurseInfo->hourly_rate > 1) {
-                    $reportsForCalendarView[] = [
-                        self::TITLE => $title,
-                        self::START => $date,
-                        'allDay'    => true,
-                        'color'     => '#d79ef0',
-                        'data'      => [
-                            //                    'name' => $report['nurse_full_name'],
-                            'date'        => $date,
-                            'day'         => clhDayOfWeekToDayName(clhToCarbonDayOfWeek(Carbon::parse($date)->dayOfWeek)),
-                            'eventType'   => 'dailyReport',
-                            'reportData'  => $dataReport,
-                            'reportFlags' => [
-                                'showEfficiencyMetrics'      => $showEfficiencyMetric,
-                                'enableDailyReportMetrics'   => $enableDailyReportMetrics,
-                                'patientsCompletedRemaining' => $patientsCompletedRemaining,
-                            ],
-                        ],
-                    ];
-                }
-            }
-        }
-
-        return collect($reportsForCalendarView);
-    }
-
     public function prepareHolidaysData($holidays, $nurse, $startDate, $endDate)
     {
         return collect($holidays)
@@ -413,19 +271,63 @@ class NurseCalendarService
                     [
                         self::TITLE => $title,
                         self::START => $holidayDate,
-                        'allDay'    => true,
-                        'color'     => '#f5c431',
-                        'data'      => [
+                        'allDay' => true,
+                        'color' => '#f5c431',
+                        'data' => [
                             'holidayId' => $holiday['id'],
-                            'nurseId'   => $nurse->nurseInfo->id,
-                            'name'      => $nurse->display_name,
-                            'date'      => $holidayDate,
-                            'day'       => $holidayInHumanLang,
+                            'nurseId' => $nurse->nurseInfo->id,
+                            'name' => $nurse->display_name,
+                            'date' => $holidayDate,
+                            'day' => $holidayInHumanLang,
                             'eventType' => $eventType,
                         ],
                     ]
                 );
             });
+    }
+
+    public function getNursesWithSchedule()
+    {
+        $workScheduleData = [];
+        User::ofType('care-center')
+            ->with('nurseInfo.windows', 'nurseInfo.holidays')
+            ->whereHas('nurseInfo', function ($q) {
+                $q->where('status', 'active');
+            })
+            ->chunk(100, function ($nurses) use (&$workScheduleData) {
+                $workScheduleData[] = $nurses;
+            });
+
+        return $workScheduleData[0];
+    }
+
+    /**
+     * @param Collection $nurses
+     * @param mixed $startDate
+     * @param mixed $endDate
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function prepareCalendarDataForAllActiveNurses($nurses, $startDate, $endDate)
+    {
+        return $nurses->map(function ($nurse) use ($startDate, $endDate) {
+            $windows = $this->getWindows($nurse, $startDate, $endDate);
+
+            return $this->prepareWorkDataForEachNurse($windows, $nurse);
+        })->flatten(1);
+    }
+
+    /**
+     * @param $nurse
+     * @param mixed $startDate
+     * @param mixed $endDate
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getWindows($nurse, $startDate, $endDate)
+    {
+        return $nurse->nurseInfo->windows->where('date', '>=', $startDate)
+            ->where('date', '<=', $endDate);
     }
 
     /**
@@ -472,29 +374,139 @@ class NurseCalendarService
 
                 return collect(
                     [
-                        self::TITLE        => $title,
-                        self::START        => "{$windowDate}T{$window->window_time_start}",
-                        self::END          => "{$windowDate}T{$window->window_time_end}",
-                        'color'            => $color,
-                        'textColor'        => '#fff',
+                        self::TITLE => $title,
+                        self::START => "{$windowDate}T{$window->window_time_start}",
+                        self::END => "{$windowDate}T{$window->window_time_end}",
+                        'color' => $color,
+                        'textColor' => '#fff',
                         'repeat_frequency' => $window->repeat_frequency,
-                        'repeat_start'     => $window->repeat_start,
-                        'until'            => $window->until,
-                        'allDay'           => true,
-                        'data'             => [
-                            'nurseId'      => $nurse->nurseInfo->id,
-                            'windowId'     => $window->id,
-                            'name'         => "$nurse->display_name",
-                            'day'          => $dayInHumanLang,
-                            'date'         => $windowDate,
-                            'start'        => $window->window_time_start,
-                            'end'          => $window->window_time_end,
-                            'workHours'    => $workHoursForDay,
-                            'eventType'    => 'workDay',
+                        'repeat_start' => $window->repeat_start,
+                        'until' => $window->until,
+                        'allDay' => true,
+                        'data' => [
+                            'nurseId' => $nurse->nurseInfo->id,
+                            'windowId' => $window->id,
+                            'name' => "$nurse->display_name",
+                            'day' => $dayInHumanLang,
+                            'date' => $windowDate,
+                            'start' => $window->window_time_start,
+                            'end' => $window->window_time_end,
+                            'workHours' => $workHoursForDay,
+                            'eventType' => 'workDay',
                             'clhDayOfWeek' => $window->day_of_week,
                         ],
                     ]
                 );
             });
+    }
+
+    /**
+     * @param $auth
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function prepareDailyReportsForNurse($auth)
+    {
+        $reports = $this->dailyReportsForNurse($auth->id);
+        $title = 'Daily Report';
+
+        $reportsForCalendarView = [];
+        foreach ($reports as $date => $report) {
+            $showEfficiencyMetric = true;
+            $enableDailyReportMetrics = true;
+            $patientsCompletedRemaining = true;
+
+            if (showNurseMetricsInDailyEmailReport($auth->id, 'efficiency_metrics')) {
+                $showEfficiencyMetric = true;
+            }
+
+            if (showNurseMetricsInDailyEmailReport($auth->id, 'enable_daily_report_metrics')) {
+                $enableDailyReportMetrics = true;
+            }
+
+            if (showNurseMetricsInDailyEmailReport($auth->id, 'patients_completed_and_remaining')) {
+                $patientsCompletedRemaining = true;
+            }
+
+            $nextUpcomingWindow = !empty($report) ? $report['nextUpcomingWindow'] : false;
+
+            $reportCalculations = [
+                'windowStart' => $nextUpcomingWindow
+                    ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A')
+                    : null,
+                'windowEnd' => $nextUpcomingWindow
+                    ? Carbon::parse($nextUpcomingWindow['window_time_end'])->format('g:i A')
+                    : null,
+
+                'nextUpcomingWindowDay' => $nextUpcomingWindow
+                    ? Carbon::parse($nextUpcomingWindow['date'])->format('l')
+                    : null,
+
+                'nextUpcomingWindowMonth' => $nextUpcomingWindow
+                    ? Carbon::parse($nextUpcomingWindow['date'])->format('F d')
+                    : null,
+
+                'deficitTextColor' => $report['surplusShortfallHours'] < 0
+                    ? '#f44336'
+                    : '#009688',
+
+                'deficitOrSurplusText' => $report['surplusShortfallHours'] < 0
+                    ? 'Deficit'
+                    : 'Surplus',
+            ];
+
+
+            $dataReport = array_merge($report, $reportCalculations);
+
+            if (!empty($report)) {
+                if (0 !== $report['systemTime'] && $auth->nurseInfo->hourly_rate > 1) {
+                    $reportsForCalendarView[] = [
+                        self::TITLE => $title,
+                        self::START => $date,
+                        'allDay' => true,
+                        'color' => '#d79ef0',
+                        'data' => [
+                            //                    'name' => $report['nurse_full_name'],
+                            'date' => $date,
+                            'day' => clhDayOfWeekToDayName(clhToCarbonDayOfWeek(Carbon::parse($date)->dayOfWeek)),
+                            'eventType' => 'dailyReport',
+                            'reportData' => $dataReport,
+                            'reportFlags' => [
+                                'showEfficiencyMetrics' => $showEfficiencyMetric,
+                                'enableDailyReportMetrics' => $enableDailyReportMetrics,
+                                'patientsCompletedRemaining' => $patientsCompletedRemaining,
+                            ],
+                        ],
+                    ];
+                }
+            }
+        }
+
+        return collect($reportsForCalendarView);
+    }
+
+    /**
+     * @param $authId
+     * @return array
+     */
+    public function dailyReportsForNurse($authId)
+    {
+        $yesterday = now()->copy()->subDay(1);
+        $startDate = $yesterday->copy()->subDays(6);
+        $dates = getDatesForRange($startDate, $yesterday);
+
+        $service = new NursesPerformanceReportService();
+
+        $reports = [];
+        foreach ($dates as $date) {
+            $reportForDay = $service->getDailyReportJson(Carbon::parse($date));
+            if (!$reportForDay || !is_json($reportForDay)) {
+                $reports[$date] = [];
+            } else {
+                $reports[$date] = collect(json_decode($reportForDay, true))->where('nurse_id', $authId)->first();
+            }
+        }
+
+        return $reports;
     }
 }
