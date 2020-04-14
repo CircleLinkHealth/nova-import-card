@@ -12,6 +12,7 @@ use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
@@ -79,7 +80,7 @@ class ImportConsentedEnrollees implements ShouldQueue
                                 //import ccda
                                 if ($importService->isCcda($enrollee->medical_record_type)) {
                                     
-                                    return $importService->importExistingCcda($enrollee->medical_record_id);
+                                    return $importService->importExistingCcda($enrollee->medical_record_id, $enrollee);
                                 }
                         
                                 //import from AthenaAPI
@@ -143,7 +144,16 @@ class ImportConsentedEnrollees implements ShouldQueue
     
     private function importFromEligibilityJob(Enrollee $enrollee, EligibilityJob $job)
     {
+        $ccda = Ccda::create([
+            'json' => (new CsvWithJsonMedicalRecord($job->data))->toJson(),
+            'practice_id' => $enrollee->practice_id
+                             ]);
         
+        $enrollee->medical_record_type = get_class($ccda);
+        $enrollee->medical_record_id = $ccda->id;
+        $enrollee->save();
+        
+        $ccda = $ccda->import($enrollee);
         
         $this->enrolleeMedicalRecordImported($enrollee);
     }

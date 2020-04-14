@@ -42,12 +42,10 @@ class ImportPatientInfo extends BaseCcdaImportTask
         
         $agentDetails = $this->getEnrolleeAgentDetailsIfExist();
         
-        $dob = Carbon::parse($demographics['dob']);
-        
         $args = array_merge(
             [
                 'ccda_id'                    => $this->ccda->id,
-                'birth_date'                 => $dob,
+                'birth_date'                 => $this->parseDOBDate($demographics['dob']),
                 'ccm_status'                 => Patient::ENROLLED,
                 'consent_date'               => now()->toDateString(),
                 'gender'                     => call_user_func(function () use (
@@ -124,7 +122,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
             $args = $hook;
         }
         
-        $patientInfo = Patient::firstOrCreate(
+        $patientInfo = Patient::updateOrCreate(
             [
                 'user_id' => $this->patient->id,
             ],
@@ -238,5 +236,72 @@ class ImportPatientInfo extends BaseCcdaImportTask
             'agent_email'        => $this->enrollee()->getAgentAttribute(Enrollee::AGENT_EMAIL_KEY),
             'agent_relationship' => $this->enrollee()->getAgentAttribute(Enrollee::AGENT_RELATIONSHIP_KEY),
         ];
+    }
+    
+    /**
+     * @param $dob
+     *
+     * @throws \Exception
+     *
+     * @return Carbon|null
+     */
+    private function parseDOBDate($dob)
+    {
+        if ($dob instanceof Carbon) {
+            return $this->correctCenturyIfNeeded($dob);
+        }
+        
+        try {
+            $date = Carbon::parse($dob);
+            
+            if ($date->isToday()) {
+                throw new \InvalidArgumentException('date note parsed correctly');
+            }
+            
+            return $this->correctCenturyIfNeeded($date);
+        } catch (\InvalidArgumentException $e) {
+            if ( ! $dob) {
+                return null;
+            }
+            
+            if (str_contains($dob, '/')) {
+                $delimiter = '/';
+            } elseif (str_contains($dob, '-')) {
+                $delimiter = '-';
+            }
+            $date = explode($delimiter, $dob);
+            
+            if (count($date) < 3) {
+                throw new \Exception("Invalid date $dob");
+            }
+            
+            $year = $date[2];
+            
+            if (2 == strlen($year)) {
+                //if date is two digits we are assuming it's from the 1900s
+                $year = (int) $year + 1900;
+            }
+            
+            return Carbon::createFromDate($year, $date[0], $date[1]);
+        }
+    }
+    
+    /**
+     * Subtracts 100 years off date if it's after 1/1/2000.
+     *
+     * @param Carbon $date
+     *
+     * @return Carbon
+     */
+    private function correctCenturyIfNeeded(Carbon &$date)
+    {
+        //If a DOB is after 2000 it's because at some point the date incorrectly assumed to be in the 2000's, when it was actually in the 1900's. For example, this date 10/05/04.
+        $cutoffDate = Carbon::createFromDate(2000, 1, 1);
+        
+        if ($date->gte($cutoffDate)) {
+            $date->subYears(100);
+        }
+        
+        return $date;
     }
 }

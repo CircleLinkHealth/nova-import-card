@@ -53,11 +53,13 @@ class CcdaImporter
     
     public function __construct(
         Ccda $ccda,
-        User $patient = null
+        User $patient = null,
+        Enrollee $enrollee = null
     ) {
         $this->str     = new StringManipulation();
         $this->ccda    = $ccda;
         $this->patient = $patient;
+        $this->enrollee = $enrollee;
     }
     
     /**
@@ -74,7 +76,7 @@ class CcdaImporter
     
     private function handleEnrollees()
     {
-        $enrollee = Enrollee::duplicates($this->patient, $this->ccda)->first();
+        $enrollee = Enrollee::duplicates($this->patient, $this->ccda)->when($this->enrollee instanceof Enrollee, function ($q) {$q->where('id', '!=', $this->enrollee->id);})->first();
         
         if ($enrollee) {
             if (strtolower($this->patient->first_name) != strtolower($enrollee->first_name) || strtolower(
@@ -125,7 +127,7 @@ class CcdaImporter
      */
     private function storeContactWindows()
     {
-        AttachDefaultPatientContactWindows::for($this->patient, $this->ccda);
+        AttachDefaultPatientContactWindows::for($this->patient, $this->ccda, $this->enrollee);
         
         return $this;
     }
@@ -155,14 +157,17 @@ class CcdaImporter
                      ->storeInsurance()
                      ->storeVitals();
                 
-                // Populate display_name on User
-                $this->patient->display_name = "{$this->patient->first_name} {$this->patient->last_name}";
-                $this->patient->program_id   = $this->imr->practice_id ?? null;
-                $this->patient->save();
-                
                 //This CarePlan is now ready to be QA'ed by a CLH Admin
+                $this->ccda->imported = true;
                 $this->ccda->status = Ccda::QA;
                 $this->ccda->save();
+    
+                if ($this->enrollee) {
+                    $this->enrollee->medical_record_type = get_class($this->ccda);
+                    $this->enrollee->medical_record_id = $this->ccda->id;
+                    $this->enrollee->user_id = $this->ccda->patient_id;
+                    $this->enrollee->save();
+                }
                 
                 event(new PatientUserCreated($this->patient));
             }
