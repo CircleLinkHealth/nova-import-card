@@ -321,6 +321,9 @@
 
 <script src="{{mix('compiled/js/app-clh-admin-ui.js')}}"></script>
 <script type="text/javascript" src="{{ mix('compiled/js/admin-ui.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
+
 <script>
     $(document).ready(function () {
         $('.select2').select2();
