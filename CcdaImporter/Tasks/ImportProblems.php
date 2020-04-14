@@ -117,6 +117,8 @@ class ImportProblems extends BaseCcdaImportTask
         if (is_null($instructions)) {
             return (new GetProblemInstruction($this->patient, $this->ccda))->run();
         }
+        
+        return $instructions;
     }
     
     private function getCpmProblem($itemLog, $problemName)
