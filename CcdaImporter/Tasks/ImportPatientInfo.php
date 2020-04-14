@@ -45,7 +45,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
         $args = array_merge(
             [
                 'ccda_id'                    => $this->ccda->id,
-                'birth_date'                 => $this->parseDOBDate($demographics['dob']),
+                'birth_date'                 => self::parseDOBDate($demographics['dob']),
                 'ccm_status'                 => Patient::ENROLLED,
                 'consent_date'               => now()->toDateString(),
                 'gender'                     => call_user_func(function () use (
@@ -245,10 +245,10 @@ class ImportPatientInfo extends BaseCcdaImportTask
      *
      * @return Carbon|null
      */
-    private function parseDOBDate($dob)
+    public static function parseDOBDate($dob)
     {
         if ($dob instanceof Carbon) {
-            return $this->correctCenturyIfNeeded($dob);
+            return self::correctCenturyIfNeeded($dob);
         }
         
         try {
@@ -258,7 +258,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
                 throw new \InvalidArgumentException('date note parsed correctly');
             }
             
-            return $this->correctCenturyIfNeeded($date);
+            return self::correctCenturyIfNeeded($date);
         } catch (\InvalidArgumentException $e) {
             if ( ! $dob) {
                 return null;
@@ -293,7 +293,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
      *
      * @return Carbon
      */
-    private function correctCenturyIfNeeded(Carbon &$date)
+    private static function correctCenturyIfNeeded(Carbon &$date)
     {
         //If a DOB is after 2000 it's because at some point the date incorrectly assumed to be in the 2000's, when it was actually in the 1900's. For example, this date 10/05/04.
         $cutoffDate = Carbon::createFromDate(2000, 1, 1);
