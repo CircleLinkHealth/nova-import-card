@@ -224,6 +224,7 @@ return [
         CardServiceProvider::class,
         CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,
+        \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class
     ],
 
     /*

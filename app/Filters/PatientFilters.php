@@ -7,6 +7,7 @@
 namespace App\Filters;
 
 use App\Repositories\PatientReadRepository;
+use App\User;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -42,7 +43,7 @@ class PatientFilters extends QueryFilters
     public function careplanStatus($status)
     {
         return $this->builder->whereHas('carePlan', function ($query) use ($status) {
-            $query->where('status', $status)->orWhere('status', 'LIKE', '%\"status\":\"'.$status.'\"%');
+            $query->where('status', $status)->orWhere('status', 'LIKE', '%'.$status.'%');
         });
     }
 
@@ -61,15 +62,15 @@ class PatientFilters extends QueryFilters
                     ->where('date_paused', 'LIKE', "%${date}%");
             })
                 ->orWhere(function ($subQuery) use ($date) {
-                    $subQuery->where('ccm_status', Patient::UNREACHABLE)
-                        ->where('date_unreachable', 'LIKE', "%${date}%");
-                })
+                      $subQuery->where('ccm_status', Patient::UNREACHABLE)
+                          ->where('date_unreachable', 'LIKE', "%${date}%");
+                  })
                 ->orWhere(
-                    function ($subQuery) use ($date) {
-                        $subQuery->where('ccm_status', Patient::WITHDRAWN)
-                            ->where('date_withdrawn', 'LIKE', "%${date}%");
-                    }
-                );
+                      function ($subQuery) use ($date) {
+                          $subQuery->where('ccm_status', Patient::WITHDRAWN)
+                              ->where('date_withdrawn', 'LIKE', "%${date}%");
+                      }
+                  );
         });
     }
 
@@ -92,7 +93,19 @@ class PatientFilters extends QueryFilters
 
     public function globalFilters(): array
     {
-        return [];
+        $filters = [];
+
+        $currFilters = $this->request->all();
+        if ( ! isset($currFilters['careplanStatus'])) {
+            /** @var User $user */
+            $user = auth()->user();
+            if ( ! $user->isAdmin()) {
+                // CPM-1790, non-admins should only see qa_approved and provider_approved
+                $filters['careplanStatus'] = 'approved';
+            }
+        }
+
+        return $filters;
     }
 
     public function isAutocomplete()

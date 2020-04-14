@@ -18,6 +18,9 @@
                                 <button value="{{Carbon\Carbon::parse($month)->firstOfMonth()->addMonths(1)->toDateString()}}"
                                         style="display:inline-block;" type="submit" name="next"> >
                                 </button>
+                                @if(isset($v2))
+                                    <input type="hidden" name="v2" value="true">
+                                @endif
                             </form>
                             <hr>
                             <?php $count = 0; ?>

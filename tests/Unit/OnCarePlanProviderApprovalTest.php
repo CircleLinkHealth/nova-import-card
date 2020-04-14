@@ -201,6 +201,23 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
             ->assertSee('Approve');
     }
 
+    public function test_provider_can_approve_all_practice_careplans()
+    {
+        $this->patient()->carePlan->status = CarePlan::QA_APPROVED;
+        $this->patient()->carePlan->save();
+        $this->patient()->setBillingProviderId($this->provider(2)[0]->id);
+
+        $this->assertNotEquals($this->provider(2)[0]->id, $this->provider(2)[1]->id);
+
+        $this->assertTrue(1 === $this->provider(2)[0]->patientsPendingProviderApproval()->count());
+        $this->assertTrue(1 === $this->provider(2)[1]->patientsPendingProviderApproval()->count());
+
+        $response = $this->actingAs($this->provider(2)[1])->get(route('patient.careplan.print', [
+            'patientId' => $this->patient()->id,
+        ]))
+            ->assertSee('Approve');
+    }
+
     public function test_provider_cannot_qa_approve()
     {
         $response = $this->actingAs($this->provider())->get(route('patient.careplan.print', [
@@ -292,22 +309,5 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
             'patientId' => $this->patient()->id,
         ]))
             ->assertSee('Approve');
-    }
-    
-    public function test_provider_can_approve_all_practice_careplans()
-    {
-        $this->patient()->carePlan->status = CarePlan::QA_APPROVED;
-        $this->patient()->carePlan->save();
-        $this->patient()->setBillingProviderId($this->provider(2)[0]->id);
-        
-        $this->assertNotEquals($this->provider(2)[0]->id, $this->provider(2)[1]->id);
-    
-        $this->assertTrue(1 === $this->provider(2)[0]->patientsPendingProviderApproval()->count());
-        $this->assertTrue(1 === $this->provider(2)[1]->patientsPendingProviderApproval()->count());
-        
-        $response = $this->actingAs($this->provider(2)[1])->get(route('patient.careplan.print', [
-            'patientId' => $this->patient()->id,
-        ]))
-                         ->assertSee('Approve');
     }
 }

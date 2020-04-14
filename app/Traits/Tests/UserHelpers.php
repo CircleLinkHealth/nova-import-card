@@ -18,6 +18,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
@@ -186,6 +187,7 @@ trait UserHelpers
 
         $bag = new ParameterBag(
             [
+                'saas_account_id'        => SaasAccount::firstOrFail()->id,
                 'email'        => $email,
                 'password'     => 'password',
                 'display_name' => "$firstName $lastName",
@@ -218,7 +220,7 @@ trait UserHelpers
         );
 
         //create a user
-        $user = (new UserRepository())->createNewUser(new User(), $bag);
+        $user = (new UserRepository())->createNewUser($bag);
 
         $practice = Practice::with('locations')->findOrFail($practiceId);
 
@@ -325,5 +327,32 @@ trait UserHelpers
         }
 
         return $patient;
+    }
+
+    private function addWorkHours(User $nurse, Carbon $forDate, int $hours)
+    {
+        $workWeekStart = $forDate->copy()->startOfWeek()->toDateString();
+        $dayOfWeek = carbonToClhDayOfWeek($forDate->dayOfWeek);
+
+        $nurse->nurseInfo->windows()->updateOrCreate(
+            [
+                'date' => $forDate->toDateString(),
+            ],
+            [
+                'day_of_week' => $dayOfWeek,
+                'window_time_start' => '11:00',
+                'window_time_end' => '18:00',
+                'repeat_frequency' => 'does_not_repeat',
+            ]
+        );
+
+        $nurse->nurseInfo->workhourables()->updateOrCreate(
+            [
+                'work_week_start' => $workWeekStart,
+            ],
+            [
+                strtolower(clhDayOfWeekToDayName($dayOfWeek)) => $hours
+            ]
+        );
     }
 }

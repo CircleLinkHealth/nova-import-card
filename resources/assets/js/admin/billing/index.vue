@@ -103,23 +103,23 @@
             <div class="col-sm-12 text-center line-50 row">
                 <div class="col-sm-4">
                     <strong>Approved: </strong>
-                    <loader v-if="loaders.billables"></loader>
+                    <loader v-if="loaders.billables || loaders.counts"></loader>
                     <span class="color-green">
-                        {{loaders.billables ? '' : counts.approved}}
+                        {{(loaders.billables || loaders.counts) ? '' : counts.approved}}
                     </span>
                 </div>
                 <div class="col-sm-4">
                     <strong>Flagged: </strong>
-                    <loader v-if="loaders.billables"></loader>
+                    <loader v-if="loaders.billables || loaders.counts"></loader>
                     <span class="color-dark-orange">
-                        {{loaders.billables ? '' : counts.flagged}}
+                        {{(loaders.billables || loaders.counts) ? '' : counts.flagged}}
                     </span>
                 </div>
                 <div class="col-sm-4">
                     <strong>Rejected: </strong>
-                    <loader v-if="loaders.billables"></loader>
+                    <loader v-if="loaders.billables || loaders.counts"></loader>
                     <span class="color-dark-red">
-                        {{loaders.billables ? '' : counts.rejected}}
+                        {{(loaders.billables || loaders.counts) ? '' : counts.rejected}}
                     </span>
                 </div>
             </div>
@@ -169,12 +169,20 @@
                     </div>
                 </template>
             </v-client-table>
-            <div class="text-right" v-if="tableData.length > 0">
-                <button class="btn btn-danger" v-if="!isClosed" @click="closeMonth">Save and Lock Month</button>
-                <loader v-if="loaders.closeMonth"></loader>
-                <button class="btn btn-success" v-if="isClosed" @click="openMonth">Unlock / Edit Month</button>
-                <loader v-if="loaders.openMonth"></loader>
-            </div>
+            <template v-if="tableData.length > 0">
+                <div class="row">
+                    <div class="col-md-6">
+                        <loader v-if="loaders.billablesBackground"></loader>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button class="btn btn-danger" v-if="!isClosed" @click="closeMonth">Save and Lock Month</button>
+                        <loader v-if="loaders.closeMonth"></loader>
+                        <button class="btn btn-success" v-if="isClosed" @click="openMonth">Unlock / Edit Month</button>
+                        <loader v-if="loaders.openMonth"></loader>
+                    </div>
+                </div>
+            </template>
+
             <attest-call-conditions-modal ref="attestCallConditionsModal"
                                           :cpm-problems="cpmProblems"></attest-call-conditions-modal>
             <chargeable-services-modal ref="chargeableServicesModal"
@@ -231,6 +239,8 @@
                 loaders: {
                     practices: false,
                     billables: false,
+                    billablesBackground: false,
+                    counts: false,
                     chargeableServices: false,
                     openMonth: false,
                     closeMonth: false
@@ -240,8 +250,9 @@
                     approved: 0,
                     rejected: 0,
                     flagged: 0,
+                    other: 0,
                     total() {
-                        return this.approved + this.rejected + this.flagged
+                        return this.approved + this.rejected + this.flagged + this.other
                     }
                 },
                 columns: [
@@ -276,8 +287,7 @@
                     if (type == 'approve') {
                         tablePatient.approved = e.target.checked
                         tablePatient.rejected = false
-                    }
-                    else {
+                    } else {
                         tablePatient.rejected = e.target.checked
                         tablePatient.approved = false
                     }
@@ -307,39 +317,39 @@
                 }
             },
             changePractice() {
-                this.tableData = []
+                this.tableData = [];
                 this.url = null;
-                this.$refs.tblBillingReport.setPage(1)
-                this.getCounts()
-                this.retrieve()
+                this.$refs.tblBillingReport.setPage(1);
+                this.getCounts();
+                this.retrieve();
             },
             detachChargeableService(e) {
-                if (e) e.preventDefault()
-                const id = this.selectedService
-                console.log('billing:chargeable-service:default', id)
-                const service = this.chargeableServices.find(s => s.id == id)
-                const practice = this.practices.find(p => p.id == this.selectedPractice)
+                if (e) e.preventDefault();
+                const id = this.selectedService;
+                console.log('billing:chargeable-service:default', id);
+                const service = this.chargeableServices.find(s => s.id == id);
+                const practice = this.practices.find(p => p.id == this.selectedPractice);
                 if (id && service && practice && !this.loaders.chargeableServices && confirm(`Are you sure you want to remove ${service.code} from all chargeable services for ${practice.name} in ${this.selectedMonth}?`)) {
-                    return this.updateChargeableService(id, true)
+                    return this.updateChargeableService(id, true);
                 }
             },
             attachChargeableService(e) {
-                if (e) e.preventDefault()
-                const id = this.selectedService
-                console.log('billing:chargeable-service:default', id)
-                const service = this.chargeableServices.find(s => s.id == id)
-                const practice = this.practices.find(p => p.id == this.selectedPractice)
+                if (e) e.preventDefault();
+                const id = this.selectedService;
+                console.log('billing:chargeable-service:default', id);
+                const service = this.chargeableServices.find(s => s.id == id);
+                const practice = this.practices.find(p => p.id == this.selectedPractice);
                 if (id && service && practice && !this.loaders.chargeableServices && confirm(`Are you sure you want to set ${service.code} as the default chargeable service for ${practice.name} in ${this.selectedMonth}?`)) {
-                    return this.updateChargeableService(id)
+                    return this.updateChargeableService(id);
                 }
             },
             updateChargeableService(id, isDetach = false) {
-                this.loaders.chargeableServices = true
+                this.loaders.chargeableServices = true;
                 const data = {
                     practice_id: this.selectedPractice,
                     date: this.selectedMonth,
                     default_code_id: id
-                }
+                };
                 if (isDetach) {
                     data.detach = true
                 }
@@ -377,94 +387,132 @@
             },
             */
             getCounts() {
-                return this.axios.get(rootUrl(`admin/reports/monthly-billing/v2/counts?practice_id=${this.selectedPractice}&date=${this.selectedMonth}`)).then(response => {
-                    console.log('billing:counts', response.data)
-                    this.counts.approved = (response.data || {}).approved || 0
-                    this.counts.rejected = (response.data || {}).rejected || 0
-                    this.counts.flagged = (response.data || {}).toQA || 0
-                    return this.counts
-                })
+                this.loaders.counts = true;
+                return this.axios
+                    .get(rootUrl(`admin/reports/monthly-billing/v2/counts?practice_id=${this.selectedPractice}&date=${this.selectedMonth}`))
+                    .then(response => {
+                        this.loaders.counts = false;
+                        console.log('billing:counts', response.data)
+                        this.counts.approved = (response.data || {}).approved || 0
+                        this.counts.rejected = (response.data || {}).rejected || 0
+                        this.counts.flagged = (response.data || {}).toQA || 0
+                        return this.counts
+                    })
+                    .catch(err => {
+                        this.loaders.counts = false;
+                        console.error(err);
+                    });
             },
-            retrieve() {
-                this.loaders.billables = true
-                this.axios.post(this.url || rootUrl(`admin/reports/monthly-billing/v2/data`), {
-                    practice_id: this.selectedPractice,
-                    date: this.selectedMonth
-                }).then(response => {
-                    console.log('billables:response', response)
-                    const pagination = response.data || []
-                    const ids = this.tableData.map(i => i.id)
-                    this.url = pagination.next_page_url
-                    this.isClosed = !!Number(response.headers['is-closed'])
-                    this.tableData = this.tableData.concat((pagination.data || []).filter(patient => !ids.includes(patient.id)).map((patient, index) => {
-                        const item = {
-                            id: patient.id,
-                            MRN: patient.mrn,
-                            approved: patient.approve,
-                            rejected: patient.reject,
-                            reportId: patient.report_id,
-                            actorId: patient.actor_id,
-                            qa: patient.qa,
-                            problems: patient.problems || [],
-                            Provider: patient.provider,
-                            Patient: patient.name,
-                            patientUrl: patient.url,
-                            Practice: patient.practice,
-                            DOB: patient.dob,
-                            Status: patient.status,
-                            'CCM Mins': timeDisplay(patient.ccm_time),
-                            'BHI Mins': timeDisplay(patient.bhi_time),
-                            attested_ccm_problems: patient.attested_ccm_problems,
-                            attested_bhi_problems: patient.attested_bhi_problems,
-                            '#Successful Calls': patient.no_of_successful_calls,
-                            chargeable_services: (patient.chargeable_services || []).map(item => item.id),
-                            promises: {
-                                approve_reject: false,
-                                update_chargeables: false
-                            },
-                            errors: {
-                                approve_reject: null
-                            },
-                            chargeables: () => {
-                                //we need the chargeableService for the practice (not all chargeableServices)
-                                const practiceChargeableServices = this.selectedPracticeChargeableServices;
-                                return item.chargeable_services.map(id => practiceChargeableServices.find(service => service.id == id)).filter(Boolean)
-                            },
-                            onChargeableServicesUpdate: (serviceIDs) => {
-                                item.chargeable_services = serviceIDs
-                                console.log('service-ids', serviceIDs, item)
-                                item.promises.update_chargeables = true
-                                return this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updateSummaryServices'), {
-                                    report_id: item.reportId,
-                                    patient_chargeable_services: serviceIDs
-                                }).then(response => {
-                                    console.log('billing:chargeable-services:update', response.data)
-                                    item.promises.update_chargeables = false
-                                }).catch(err => {
-                                    console.error('billing:chargeable-services:update', err)
-                                    item.promises.update_chargeables = false
-                                })
-                            },
-                            isBhiEligible() {
-                                return !!this.chargeables().find(service => service.code === SERVICES.CPT_99484);
-                            },
-                            isCcmEligible() {
-                                return !!this.chargeables().find(service => service.code === SERVICES.CPT_99490);
-                            },
-                            hasOver20MinutesBhiTime() {
-                                return patient.bhi_time >= 1200;
-                            },
-                            hasOver20MinutesCCMTime() {
-                                return patient.ccm_time >= 1200;
-                            },
+            retrieve(isBackground) {
+
+                if (isBackground) {
+                    this.loaders.billablesBackground = true;
+                } else {
+                    this.loaders.billables = true;
+                }
+
+                this.axios
+                    .post(this.url || rootUrl(`admin/reports/monthly-billing/v2/data`), {
+                        practice_id: this.selectedPractice,
+                        date: this.selectedMonth
+                    })
+                    .then(response => {
+                        console.log('billables:response', response);
+                        const pagination = response.data || [];
+                        const ids = this.tableData.map(i => i.id);
+                        this.url = pagination.next_page_url;
+                        this.isClosed = !!Number(response.headers['is-closed']);
+                        this.tableData = this.tableData
+                            .concat((pagination.data || [])
+                                .filter(patient => !ids.includes(patient.id))
+                                .map(this.setupRow)
+                                .sort((pA, pB) => pB.qa - pA.qa));
+
+                        if (isBackground) {
+                            this.loaders.billablesBackground = false;
+                        } else {
+                            this.loaders.billables = false;
                         }
-                        return item
-                    }).sort((pA, pB) => pB.qa - pA.qa))
-                    this.loaders.billables = false
-                }).catch(err => {
-                    console.error(err)
-                    this.loaders.billables = false
-                })
+
+                        if (this.url) {
+                            setTimeout(() => this.retrieve(true), 100);
+                        } else {
+                            console.log('all pages loaded');
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        if (isBackground) {
+                            this.loaders.billablesBackground = false;
+                        } else {
+                            this.loaders.billables = false;
+                        }
+                    });
+            },
+
+            setupRow(patient) {
+                const item = {
+                    id: patient.id,
+                    MRN: patient.mrn,
+                    approved: patient.approve,
+                    rejected: patient.reject,
+                    reportId: patient.report_id,
+                    actorId: patient.actor_id,
+                    qa: patient.qa,
+                    problems: patient.problems || [],
+                    Provider: patient.provider,
+                    Patient: patient.name,
+                    patientUrl: patient.url,
+                    Practice: patient.practice,
+                    DOB: patient.dob,
+                    Status: patient.status,
+                    'CCM Mins': timeDisplay(patient.ccm_time),
+                    'BHI Mins': timeDisplay(patient.bhi_time),
+                    attested_ccm_problems: patient.attested_ccm_problems,
+                    attested_bhi_problems: patient.attested_bhi_problems,
+                    '#Successful Calls': patient.no_of_successful_calls,
+                    chargeable_services: (patient.chargeable_services || []).map(item => item.id),
+                    promises: {
+                        approve_reject: false,
+                        update_chargeables: false
+                    },
+                    errors: {
+                        approve_reject: null
+                    },
+                    chargeables: () => {
+                        //we need the chargeableService for the practice (not all chargeableServices)
+                        const practiceChargeableServices = this.selectedPracticeChargeableServices;
+                        return item.chargeable_services.map(id => practiceChargeableServices.find(service => service.id == id)).filter(Boolean)
+                    },
+                    onChargeableServicesUpdate: (serviceIDs) => {
+                        item.chargeable_services = serviceIDs
+                        console.log('service-ids', serviceIDs, item)
+                        item.promises.update_chargeables = true
+                        return this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updateSummaryServices'), {
+                            report_id: item.reportId,
+                            patient_chargeable_services: serviceIDs
+                        }).then(response => {
+                            console.log('billing:chargeable-services:update', response.data)
+                            item.promises.update_chargeables = false
+                        }).catch(err => {
+                            console.error('billing:chargeable-services:update', err)
+                            item.promises.update_chargeables = false
+                        })
+                    },
+                    isBhiEligible() {
+                        return !!this.chargeables().find(service => service.code === SERVICES.CPT_99484);
+                    },
+                    isCcmEligible() {
+                        return !!this.chargeables().find(service => service.code === SERVICES.CPT_99490);
+                    },
+                    hasOver20MinutesBhiTime() {
+                        return patient.bhi_time >= 1200;
+                    },
+                    hasOver20MinutesCCMTime() {
+                        return patient.ccm_time >= 1200;
+                    },
+                };
+                return item;
             },
 
             showChargeableServicesModal(row) {
@@ -662,11 +710,11 @@
                     date: this.selectedMonth,
                     is_bhi: data.is_bhi
                 }).then(response => {
-                    if (data.is_bhi){
+                    if (data.is_bhi) {
                         this.tableData.filter(function (p) {
                             return String(p.id) === String(data.patient_id);
                         })[0].attested_bhi_problems = response.data.attested_problems;
-                    }else{
+                    } else {
                         this.tableData.filter(function (p) {
                             return String(p.id) === String(data.patient_id);
                         })[0].attested_ccm_problems = response.data.attested_problems;
@@ -683,8 +731,8 @@
 
                 let is_behavioral = false
 
-                if (ccdProblem.cpm_id){
-                    is_behavioral = !! this.cpmProblems.filter(function(cpmProblem){
+                if (ccdProblem.cpm_id) {
+                    is_behavioral = !!this.cpmProblems.filter(function (cpmProblem) {
                         return cpmProblem.id == ccdProblem.cpm_id;
                     })[0].is_behavioral;
                 }
@@ -698,16 +746,20 @@
                     is_behavioral: is_behavioral,
                     code: ccdProblem.codes[0].code
                 });
-            })
+            });
 
             Event.$on('vue-tables.pagination', (page) => {
+                // still need to get counts to know the Approved, Flagged and Rejected
+                this.getCounts();
+                /*
                 const $table = this.$refs.tblBillingReport;
                 if (page === $table.totalPages) {
                     console.log('next page clicked');
                     this.retrieve();
-                    this.getCounts()
+                    this.getCounts();
                 }
-            })
+                */
+            });
         }
     }
 </script>
@@ -815,5 +867,9 @@
 
     .ccm-problem-codes {
         max-width: 150px;
+    }
+
+    .pagination li:not(.disabled) a {
+        cursor: pointer;
     }
 </style>

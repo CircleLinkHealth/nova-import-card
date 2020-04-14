@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\GeneratePatientCallDataCsv;
 
+use App\Note;
 use CircleLinkHealth\Core\Exports\FromArray;
 use App\Services\PatientCallData;
 use Carbon\Carbon;

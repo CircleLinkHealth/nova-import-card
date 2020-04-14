@@ -13,7 +13,7 @@ use Laravel\Nova\Filters\Filter;
 class NurseFilter extends Filter
 {
     public $name = 'Care Coach';
-    
+
     /**
      * The filter's component.
      *
@@ -59,6 +59,6 @@ class NurseFilter extends Filter
      */
     public function options(Request $request)
     {
-        return User::careCoaches()->pluck('id', 'display_name')->all();
+        return User::careCoaches()->pluck('id', 'display_name')->sortKeys()->all();
     }
 }
