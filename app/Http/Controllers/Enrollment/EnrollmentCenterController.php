@@ -55,9 +55,9 @@ class EnrollmentCenterController extends Controller
         AttachEnrolleeFamilyMembers::attach($request);
 
         //update report for care ambassador:
-        $report = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
-        $report->no_enrolled = $report->no_enrolled + 1;
-        $report->total_calls = $report->total_calls + 1;
+        $report                       = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
+        $report->no_enrolled          = $report->no_enrolled + 1;
+        $report->total_calls          = $report->total_calls + 1;
         $report->total_time_in_system = $request->input('total_time_in_system');
         $report->save();
 
@@ -79,9 +79,9 @@ class EnrollmentCenterController extends Controller
             case 'agent':
                 $enrollee->setPrimaryPhoneNumberAttribute($request->input('agent_phone'));
                 $enrollee->agent_details = [
-                    Enrollee::AGENT_PHONE_KEY => $request->input('agent_phone'),
-                    Enrollee::AGENT_NAME_KEY => $request->input('agent_name'),
-                    Enrollee::AGENT_EMAIL_KEY => $request->input('agent_email'),
+                    Enrollee::AGENT_PHONE_KEY        => $request->input('agent_phone'),
+                    Enrollee::AGENT_NAME_KEY         => $request->input('agent_name'),
+                    Enrollee::AGENT_EMAIL_KEY        => $request->input('agent_email'),
                     Enrollee::AGENT_RELATIONSHIP_KEY => $request->input('agent_relationship'),
                 ];
                 break;
@@ -89,14 +89,14 @@ class EnrollmentCenterController extends Controller
                 $enrollee->setPrimaryPhoneNumberAttribute($request->input('home_phone'));
         }
 
-        $enrollee->address = $request->input('address');
-        $enrollee->address_2 = $request->input('address_2');
-        $enrollee->state = $request->input('state');
-        $enrollee->city = $request->input('city');
-        $enrollee->zip = $request->input('zip');
-        $enrollee->email = $request->input('email');
-        $enrollee->dob = $request->input('dob');
-        $enrollee->last_call_outcome = $request->input('consented');
+        $enrollee->address                 = $request->input('address');
+        $enrollee->address_2               = $request->input('address_2');
+        $enrollee->state                   = $request->input('state');
+        $enrollee->city                    = $request->input('city');
+        $enrollee->zip                     = $request->input('zip');
+        $enrollee->email                   = $request->input('email');
+        $enrollee->dob                     = $request->input('dob');
+        $enrollee->last_call_outcome       = $request->input('consented');
         $enrollee->care_ambassador_user_id = $careAmbassador->user_id;
 
         $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
@@ -114,8 +114,8 @@ class EnrollmentCenterController extends Controller
             $enrollee->preferred_window = implode(', ', $request->input('times'));
         }
 
-        $enrollee->status = Enrollee::CONSENTED;
-        $enrollee->consented_at = Carbon::now()->toDateTimeString();
+        $enrollee->status          = Enrollee::CONSENTED;
+        $enrollee->consented_at    = Carbon::now()->toDateTimeString();
         $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
 
         $enrollee->save();
@@ -125,7 +125,7 @@ class EnrollmentCenterController extends Controller
             $queue,
             explode(',', $request->input('confirmed_family_members'))
         ))->unique()->toArray();
-        if (!empty($queue) && in_array($enrollee->id, $queue)) {
+        if ( ! empty($queue) && in_array($enrollee->id, $queue)) {
             unset($queue[array_search($enrollee->id, $queue)]);
         }
 
@@ -134,6 +134,17 @@ class EnrollmentCenterController extends Controller
         EnrolleeCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
 
         return redirect()->route('enrollment-center.dashboard');
+    }
+
+    /**
+     * @param $enrollable
+     * @param $responseStatus
+     *
+     * @return mixed
+     */
+    public function createEnrollStatusRequestsInfo($enrollable)
+    {
+        return $enrollable->statusRequestsInfo()->create();
     }
 
     public function dashboard()
@@ -151,24 +162,34 @@ class EnrollmentCenterController extends Controller
             'enrollment-ui.dashboard',
             [
                 'enrollee' => $enrollee,
-                'report' => CareAmbassadorLog::createOrGetLogs($careAmbassador->id),
-                'script' => TrixField::careAmbassador($enrollee->lang)->first(),
+                'report'   => CareAmbassadorLog::createOrGetLogs($careAmbassador->id),
+                'script'   => TrixField::careAmbassador($enrollee->lang)->first(),
                 'provider' => $enrollee->provider,
             ]
         );
     }
 
+    /**
+     * @param $enrollable
+     *
+     * @return bool
+     */
+    public function enrollableHasRequestedInfo($enrollable)
+    {
+        return $enrollable->statusRequestsInfo()->exists();
+    }
+
     public function enrolleeContactDetails(Request $request)
     {
         $enrollableId = $request->input('enrollee_id');
-        $enrollee = Enrollee::whereId($enrollableId)->firstOrFail();
+        $enrollee     = Enrollee::whereId($enrollableId)->firstOrFail();
 
         $enrolleeData = [
             'enrolleeFirstName' => $enrollee->first_name,
-            'enrolleeLastName' => $enrollee->last_name,
-            'cellPhone' => $enrollee->cell_phone,
-            'homePhone' => $cellPhone = $enrollee->home_phone,
-            'otherPhone' => $cellPhone = $enrollee->other_phone,
+            'enrolleeLastName'  => $enrollee->last_name,
+            'cellPhone'         => $enrollee->cell_phone,
+            'homePhone'         => $cellPhone = $enrollee->home_phone,
+            'otherPhone'        => $cellPhone = $enrollee->other_phone,
         ];
 
         return view('enrollment-consent.enrolleeDetails', compact('enrolleeData'));
@@ -177,16 +198,16 @@ class EnrollmentCenterController extends Controller
     /**
      * NOTE: Currently ONLY Enrollee model have the option to request info.
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      * @throws \Exception
      *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      */
     public function enrolleeRequestsInfo(Request $request)
     {
         /** @var Enrollee $enrollee */
-        $enrollableId = $request->input('enrollable_id');
-        $isSurveyOnly = $request->input('is_survey_only');
-        $enrollee = $this->getEnrollee($enrollableId);
+        $enrollableId      = $request->input('enrollable_id');
+        $isSurveyOnly      = $request->input('is_survey_only');
+        $enrollee          = $this->getEnrollee($enrollableId);
         $userModelEnrollee = $this->getUserModelEnrollee($enrollableId);
 
         if ($enrollee->statusRequestsInfo()->exists()
@@ -211,37 +232,15 @@ class EnrollmentCenterController extends Controller
     }
 
     /**
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    private function returnEnrolleeRequestedInfoMessage(Enrollee $enrollee)
-    {
-        $practiceNumber = $enrollee->practice->outgoing_phone_number;
-        $providerName = $enrollee->provider->last_name;
-
-        return view('enrollment-consent.enrollmentInfoRequested', compact('practiceNumber', 'providerName'));
-    }
-
-    /**
-     * @param $enrollable
-     * @param $responseStatus
-     *
-     * @return mixed
-     */
-    public function createEnrollStatusRequestsInfo($enrollable)
-    {
-        return $enrollable->statusRequestsInfo()->create();
-    }
-
-    /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      */
     public function enrolleesInvitationLetterBoard(Request $request)
     {
 //        Remember all enrollees at this point have user model also
-        if (!$request->hasValidSignature()) {
+        if ( ! $request->hasValidSignature()) {
             abort(401);
         }
-        $enrollableId = $request->input('enrollable_id');
+        $enrollableId     = $request->input('enrollable_id');
         $isSurveyOnlyUser = $request->input('is_survey_only');
 //        for future: This can be either "user created from enrolle" or user (unreachable patient)
 //        but we dont mind for now  - * see NOTE:on top of method.
@@ -258,7 +257,7 @@ class EnrollmentCenterController extends Controller
         }
 
         // If enrollable is not survey only then create link AND redirect to survey
-        if (!$isSurveyOnlyUser) {
+        if ( ! $isSurveyOnlyUser) {
             $this->expirePastInvitationLink($userEnrollee);
 
             return $this->createUrlAndRedirectToSurvey($enrollableId);
@@ -267,7 +266,7 @@ class EnrollmentCenterController extends Controller
         // IF $userForEnrollment is empty means that ENROLLEE has already enrolled and his user model is deleted
         if (empty($userEnrollee)
             && $isSurveyOnlyUser
-            && !$enrollee->statusRequestsInfo()->exists()) {
+            && ! $enrollee->statusRequestsInfo()->exists()) {
             return 'This enrollment invitation link has expired';
         }
 
@@ -281,21 +280,60 @@ class EnrollmentCenterController extends Controller
     }
 
     /**
-     * @param $isSurveyOnlyUser
-     * @param $hideButtons
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      */
-    private function enrollmentLetterView(User $userEnrollee, $isSurveyOnlyUser, Enrollee $enrollee, $hideButtons)
+    public function enrollNow(Request $request)
     {
-        $enrollablePrimaryPractice = $userEnrollee->primaryPractice;
-        $provider = $this->getEnrollableProvider($isSurveyOnlyUser, $userEnrollee);
-        $letterPages = $this->getEnrollmentLetter($userEnrollee, $enrollablePrimaryPractice, $isSurveyOnlyUser, $provider);
-        $practiceName = $enrollablePrimaryPractice->name;
-        $signatoryNameForHeader = $provider->display_name;
-        $dateLetterSent = Carbon::parse($enrollee->getLastEnrollmentInvitationLink()->updated_at)->toDateString();
+        $enrollableId      = $request->input('enrollable_id');
+        $userForEnrollment = $this->getUserModelEnrollee($enrollableId);
+        $enrollable        = $this->getEnrollableModelType($userForEnrollment);
 
-        return view('enrollment-consent.enrollmentInvitation', compact('userEnrollee', 'isSurveyOnlyUser', 'letterPages', 'practiceName', 'signatoryNameForHeader', 'dateLetterSent', 'hideButtons'));
+        //      This can happen only on the first redirect and if page is refreshed
+        if ($this->enrollableHasRequestedInfo($enrollable)) {
+            return 'Action Not Allowed';
+        }
+
+        $this->expirePastInvitationLink($enrollable);
+        $pastActiveSurveyLink = $this->getSurveyInvitationLink($userForEnrollment->patientInfo->id);
+        if (empty($pastActiveSurveyLink)) {
+            return $this->createUrlAndRedirectToSurvey($enrollableId);
+        }
+
+        return redirect($pastActiveSurveyLink->url);
+    }
+
+    public function evaluateEnrolledForSurveyTest(Request $request)
+    {
+        $data = [
+            'enrollable_id' => $request->input('enrolleeId'), 'survey_instance_id' => $this->getEnrolleesSurveyInstance()->id,
+        ];
+
+        EnrollableSurveyCompleted::dispatch($data);
+    }
+
+    public function finalActionTest()
+    {
+        FinalActionOnNonResponsivePatients::dispatch(new EnrollmentInvitationService());
+    }
+
+    /**
+     * @param $enrollable
+     * @param $isSurveyOnly
+     *
+     * @return \App\User|array|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+     */
+    public function getCareAmbassador($enrollable, $isSurveyOnly)
+    {
+        if ($isSurveyOnly) {
+            $enrollee               = Enrollee::whereUserId($enrollable->id)->firstOrFail();
+            $careAmbassadorIdExists = ! empty($enrollee->care_ambassador_user_id);
+
+            return $careAmbassadorIdExists
+                ? User::whereId($enrollee->care_ambassador_user_id)->firstOrFail()
+                : [];
+        }
+
+        return $enrollable->careAmbassador;
     }
 
     /**
@@ -323,73 +361,6 @@ class EnrollmentCenterController extends Controller
         return $this->enrollmentInvitationService->createLetter($practiceName, $practiceLetter, $careAmbassadorPhoneNumber, $provider);
     }
 
-    /**
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
-     */
-    public function enrollNow(Request $request)
-    {
-        $enrollableId = $request->input('enrollable_id');
-        $userForEnrollment = $this->getUserModelEnrollee($enrollableId);
-        $enrollable = $this->getEnrollableModelType($userForEnrollment);
-
-        //      This can happen only on the first redirect and if page is refreshed
-        if ($this->enrollableHasRequestedInfo($enrollable)) {
-            return 'Action Not Allowed';
-        }
-
-        $this->expirePastInvitationLink($enrollable);
-        $pastActiveSurveyLink = $this->getSurveyInvitationLink($userForEnrollment->patientInfo->id);
-        if (empty($pastActiveSurveyLink)) {
-            return $this->createUrlAndRedirectToSurvey($enrollableId);
-        }
-
-        return redirect($pastActiveSurveyLink->url);
-    }
-
-    /**
-     * @param $enrollable
-     *
-     * @return bool
-     */
-    public function enrollableHasRequestedInfo($enrollable)
-    {
-        return $enrollable->statusRequestsInfo()->exists();
-    }
-
-    public function evaluateEnrolledForSurveyTest(Request $request)
-    {
-        $data = [
-            'enrollable_id' => $request->input('enrolleeId'), 'survey_instance_id' => $this->getEnrolleesSurveyInstance()->id,
-        ];
-
-        EnrollableSurveyCompleted::dispatch($data);
-    }
-
-    public function finalActionTest()
-    {
-        FinalActionOnNonResponsivePatients::dispatch(new EnrollmentInvitationService());
-    }
-
-    /**
-     * @param $enrollable
-     * @param $isSurveyOnly
-     *
-     * @return \App\User|array|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
-     */
-    public function getCareAmbassador($enrollable, $isSurveyOnly)
-    {
-        if ($isSurveyOnly) {
-            $enrollee = Enrollee::whereUserId($enrollable->id)->firstOrFail();
-            $careAmbassadorIdExists = !empty($enrollee->care_ambassador_user_id);
-
-            return $careAmbassadorIdExists
-                ? User::whereId($enrollee->care_ambassador_user_id)->firstOrFail()
-                : [];
-        }
-
-        return $enrollable->careAmbassador;
-    }
-
     public function inviteUnreachablesToEnroll()
     {
         Artisan::call('command:sendEnrollmentNotifications');
@@ -402,7 +373,7 @@ class EnrollmentCenterController extends Controller
      */
     public function rejected(Request $request)
     {
-        $enrollee = Enrollee::find($request->input('enrollee_id'));
+        $enrollee       = Enrollee::find($request->input('enrollee_id'));
         $careAmbassador = auth()->user()->careAmbassador;
 
         AttachEnrolleeFamilyMembers::attach($request);
@@ -419,7 +390,7 @@ class EnrollmentCenterController extends Controller
             $report->no_soft_rejected = $report->no_soft_rejected + 1;
         }
 
-        $report->total_calls = $report->total_calls + 1;
+        $report->total_calls          = $report->total_calls + 1;
         $report->total_time_in_system = $request->input('total_time_in_system');
         $report->save();
 
@@ -433,8 +404,8 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->status = $status;
 
-        $enrollee->attempt_count = $enrollee->attempt_count + 1;
-        $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
+        $enrollee->attempt_count    = $enrollee->attempt_count + 1;
+        $enrollee->last_attempt_at  = Carbon::now()->toDateTimeString();
         $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
 
         $enrollee->save();
@@ -453,7 +424,7 @@ class EnrollmentCenterController extends Controller
                 $notification->where('type', SendEnrollmentEmail::class);
             })->where('created_at', '>', Carbon::parse(now())->startOfMonth())
             ->whereHas('patientInfo', function ($patient) {
-                /** @var Patient $patient */
+                // @var Patient $patient
                 $patient->where('birth_date', '=', '1901-01-01');
             })
             ->get();
@@ -509,9 +480,15 @@ class EnrollmentCenterController extends Controller
         return redirect()->back();
     }
 
-    public function sendEnrollmentReminderQaMethod()
+    public function sendEnrollmentReminderTestMethod()
     {
-        SendEnrollmentPatientsReminder::dispatch();
+        try {
+            SendEnrollmentPatientsReminder::dispatch();
+        } catch (\Exception $e) {
+            return 'Something went wrong';
+        }
+
+        return 'Please check your email';
     }
 
     public function sendInvitesPanel()
@@ -531,10 +508,10 @@ class EnrollmentCenterController extends Controller
                 : $invitationable->display_name;
 
             return [
-                'invitationUrl' => $url->url,
+                'invitationUrl'   => $url->url,
                 'isEnrolleeClass' => $isEnrolleeClass,
-                'name' => $name,
-                'dob' => Carbon::parse($patientInfo->birth_date)->toDateString(),
+                'name'            => $name,
+                'dob'             => Carbon::parse($patientInfo->birth_date)->toDateString(),
             ];
         });
 
@@ -548,15 +525,15 @@ class EnrollmentCenterController extends Controller
 
     public function unableToContact(Request $request)
     {
-        $enrollee = Enrollee::find($request->input('enrollee_id'));
+        $enrollee       = Enrollee::find($request->input('enrollee_id'));
         $careAmbassador = auth()->user()->careAmbassador;
 
         AttachEnrolleeFamilyMembers::attach($request);
 
         //update report for care ambassador:
-        $report = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
-        $report->no_utc = $report->no_utc + 1;
-        $report->total_calls = $report->total_calls + 1;
+        $report                       = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
+        $report->no_utc               = $report->no_utc + 1;
+        $report->total_calls          = $report->total_calls + 1;
         $report->total_time_in_system = $request->input('total_time_in_system');
         $report->save();
 
@@ -577,8 +554,8 @@ class EnrollmentCenterController extends Controller
             $enrollee->status = Enrollee::UNREACHABLE;
         }
 
-        $enrollee->attempt_count = $enrollee->attempt_count + 1;
-        $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
+        $enrollee->attempt_count    = $enrollee->attempt_count + 1;
+        $enrollee->last_attempt_at  = Carbon::now()->toDateTimeString();
         $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
 
         $enrollee->save();
@@ -586,5 +563,34 @@ class EnrollmentCenterController extends Controller
         EnrolleeCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
 
         return redirect()->route('enrollment-center.dashboard');
+    }
+
+    /**
+     * @param $isSurveyOnlyUser
+     * @param $hideButtons
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    private function enrollmentLetterView(User $userEnrollee, $isSurveyOnlyUser, Enrollee $enrollee, $hideButtons)
+    {
+        $enrollablePrimaryPractice = $userEnrollee->primaryPractice;
+        $provider                  = $this->getEnrollableProvider($isSurveyOnlyUser, $userEnrollee);
+        $letterPages               = $this->getEnrollmentLetter($userEnrollee, $enrollablePrimaryPractice, $isSurveyOnlyUser, $provider);
+        $practiceName              = $enrollablePrimaryPractice->name;
+        $signatoryNameForHeader    = $provider->display_name;
+        $dateLetterSent            = Carbon::parse($enrollee->getLastEnrollmentInvitationLink()->updated_at)->toDateString();
+
+        return view('enrollment-consent.enrollmentInvitation', compact('userEnrollee', 'isSurveyOnlyUser', 'letterPages', 'practiceName', 'signatoryNameForHeader', 'dateLetterSent', 'hideButtons'));
+    }
+
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    private function returnEnrolleeRequestedInfoMessage(Enrollee $enrollee)
+    {
+        $practiceNumber = $enrollee->practice->outgoing_phone_number;
+        $providerName   = $enrollee->provider->last_name;
+
+        return view('enrollment-consent.enrollmentInfoRequested', compact('practiceNumber', 'providerName'));
     }
 }

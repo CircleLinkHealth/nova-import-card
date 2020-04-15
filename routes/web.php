@@ -2142,7 +2142,7 @@ Route::prefix('admin')->group(
 
 // TESTING ROUTES - DELETE AFTER TEST
 Route::get('/send-enrollment-reminder-test', [
-    'uses' => 'Enrollment\EnrollmentCenterController@sendEnrollmentReminderQaMethod',
+    'uses' => 'Enrollment\EnrollmentCenterController@sendEnrollmentReminderTestMethod',
     'as'   => 'send.reminder.qa',
 ])->middleware('auth');
 
@@ -2171,7 +2171,6 @@ Route::get('/invite-unreachable', [
     'as'   => 'send.invitates.panel',
 ])->middleware('auth');
 //---------------------------------------
-
 
 // TEMPORARY SIGNED ROUTE
 Route::get('/patient-self-enrollment', [

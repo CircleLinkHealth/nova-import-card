@@ -2,7 +2,8 @@
     <div class="content">
         <ol>
             <li>
-                <a href="https://app.moqups.com/veE6z3eVLS/view/page/aa9df7b72">Follow the flow chart here:</a>
+                <a href="https://app.moqups.com/veE6z3eVLS/view/page/aa9df7b72" target="_blank">Follow the flow chart
+                    here:</a>
                 should be enough as test workflow guide (it's 2 pages):
             </li>
 
@@ -47,7 +48,7 @@
             <br>
 
             <div class="request-info-href">
-                <a href="{{route('send.reminder.qa')}}">
+                <a href="{{route('send.reminder.qa')}}" target="_blank">
                     <button type="button" class="btn btn-warning">Send Reminder to non responding patients (2 days after
                         first
                         invite)
@@ -58,7 +59,7 @@
             <br>
 
             <div class="request-info-href">
-                <a href="{{route('final.action.qa')}}">
+                <a href="{{route('final.action.qa')}}" target="_blank">
                     <button type="button" class="btn btn-warning">Take Final Action on Non Reponding Patients (4 days
                         after
                         first invite)
@@ -69,7 +70,7 @@
             <br>
 
             <div class="request-info-href">
-                <form action="{{route('evaluate.survey.completed')}}">
+                <form action="{{route('evaluate.survey.completed')}}" target="_blank">
                     <label for="enrolleeId">Enter ID of patient that Completed Survey(Enrolled)
                         - Only use if did not import automatically after survey completion:</label><br>
                     <input type="text" id="enrolleeId" name="enrolleeId" placeholder="ex.1616"><br>
@@ -102,7 +103,7 @@
                     <br>
                     DOB: {{$data['dob']}}
                     <br>
-                    <a href="{{$data['invitationUrl']}}">Invitation for Unreachable Patient</a>
+                    <a href="{{$data['invitationUrl']}}" target="_blank">Invitation for Unreachable Patient</a>
                 </ul>
             @endif
 

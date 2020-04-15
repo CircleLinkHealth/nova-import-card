@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Jobs;
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+namespace App\Jobs;
+
+// This file is part of CarePlan Manager by CircleLink Health.
 
 use App\Notifications\SendEnrollementSms;
 use App\Notifications\SendEnrollmentEmail;
@@ -43,12 +45,12 @@ class SendEnrollmentPatientsReminder implements ShouldQueue
      */
     public function handle()
     {
-        $twoDaysAgo = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
+        $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
-        $testingMode = App::environment(['review', 'local']);
+        $testingMode   = App::environment(['review', 'staging', 'local']);
 
         if ($testingMode) {
-            $twoDaysAgo = Carbon::parse(now())->startOfMonth()->toDateTimeString();
+            $twoDaysAgo    = Carbon::parse(now())->startOfMonth()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfMonth()->toDateTimeString();
         }
 
@@ -75,7 +77,7 @@ class SendEnrollmentPatientsReminder implements ShouldQueue
 
                 // $hasRequestedInfoOnInvitation & hasSurveyCompleted should never be used for 'surveyOnlyUsers' cause if
                 // patient requested info or completed survey the user model would be deleted, hence it will never be collected
-                if (!$hasRequestedInfoOnInvitation || !$this->hasSurveyInProgress($enrollable) || $this->hasSurveyCompleted($enrollable)) {
+                if ( ! $hasRequestedInfoOnInvitation || ! $this->hasSurveyInProgress($enrollable) || $this->hasSurveyCompleted($enrollable)) {
                     $enrollable->notify(new SendEnrollmentEmail($enrollable, true));
                     $enrollable->notify(new SendEnrollementSms($enrollable, true));
                 }
