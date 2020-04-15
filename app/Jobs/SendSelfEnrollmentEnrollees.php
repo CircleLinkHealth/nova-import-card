@@ -75,8 +75,18 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
     public function createSurveyOnlyUserFromEnrollee($enrollees)
     {
         foreach ($enrollees as $enrollee) {
-            $surveyRoleId = Role::where('name', 'survey-only')->firstOrFail()->id;
 
+            $surveyRole = Role::firstOrCreate(
+                [
+                    'name' => 'survey-only'
+                ],
+                [
+                    'display_name' => 'Survey User',
+                    'description' => 'Became Users just to be enrolled in AWV survey'
+                ]
+            );
+
+            $surveyRoleId = $surveyRole->id;
             //                Create User model from enrollee
             /** @var User $userCreatedFromEnrollee */
             /** @var Enrollee $enrollee */
