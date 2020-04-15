@@ -142,11 +142,18 @@ class VariablePayCalculator
         return $this->nurseCareRateLogs;
     }
 
-    private function getEntryForRange($ranges, $index, $nurseInfoId, $newDuration, $successfulCall, $logDate)
-    {
+    private function getEntryForRange(
+        $ranges,
+        $index,
+        $nurseInfoId,
+        $newDuration,
+        $successfulCall,
+        $logDate,
+        $replaceLogDate = true
+    ) {
         $range = $ranges[$index];
         $prev  = null;
-        if (array_key_exists($nurseInfoId, $range)) {
+        if (isset($range[$nurseInfoId])) {
             $prev = $ranges[$index][$nurseInfoId];
         }
 
@@ -158,6 +165,9 @@ class VariablePayCalculator
             }
 
             $duration += $prev['duration'];
+            if ( ! $replaceLogDate) {
+                $logDate = $prev['last_log_date'];
+            }
         }
 
         return [
@@ -596,13 +606,18 @@ class VariablePayCalculator
                 $f = collect($f);
             }
 
+            // in case of ccm and only one billable event, it means that we are paying for
+            // the first 20 minute ccm range.
+            // so last_log_date must be the date when the 20 minute range was reached
+            // i.e. take the first last_log_date, instead of the last
+            // (which could be when the 60 minute range was reached)
 
             return $f->each(function ($f2, $key) use ($nurseTimes) {
-                $current = $nurseTimes->get($key, ['duration' => 0, 'has_successful_call' => false]);
+                $current = $nurseTimes->get($key, ['duration' => 0, 'has_successful_call' => false, 'last_log_date' => null]);
                 $nurseTimes->put($key, [
                     'duration'            => $current['duration'] + $f2['duration'],
                     'has_successful_call' => $current['has_successful_call'] || $f2['has_successful_call'],
-                    'last_log_date'       => $f2['last_log_date'],
+                    'last_log_date'       => $current['last_log_date'] ?? $f2['last_log_date'],
                 ]);
             });
         });
@@ -695,7 +710,7 @@ class VariablePayCalculator
             return null;
         }
 
-        $logDate = array_key_exists($nurseInfo->id, $range)
+        $logDate = isset($range[$nurseInfo->id])
             ? $range[$nurseInfo->id]['last_log_date']
             : null;
 
@@ -907,7 +922,8 @@ class VariablePayCalculator
                     $nurseInfoId,
                     $add_to_accrued_after_20,
                     $isSuccessfulCall,
-                    $logDate
+                    $logDate,
+                    false
                 );
             }
 
@@ -921,7 +937,8 @@ class VariablePayCalculator
                     $nurseInfoId,
                     $add_to_accrued_after_40,
                     $isSuccessfulCall,
-                    $logDate
+                    $logDate,
+                    false
                 );
             }
 
@@ -935,7 +952,8 @@ class VariablePayCalculator
                     $nurseInfoId,
                     $add_to_accrued_after_60,
                     $isSuccessfulCall,
-                    $logDate
+                    $logDate,
+                    false
                 );
             }
 
@@ -957,7 +975,8 @@ class VariablePayCalculator
                     $nurseInfoId,
                     $add_to_accrued_after_30,
                     $isSuccessfulCall,
-                    $logDate
+                    $logDate,
+                    false
                 );
             }
         });
