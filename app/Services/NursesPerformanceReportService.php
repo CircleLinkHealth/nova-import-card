@@ -304,14 +304,7 @@ class NursesPerformanceReportService
         if ($day->lte($this->getLimitDate())) {
             throw new FileNotFoundException('No reports exists before this date');
         }
-        $json = optional(
-            SaasAccount::whereSlug('circlelink-health')
-                ->first()
-                ->getMedia("nurses-and-states-daily-report-{$day->toDateString()}.json")
-                ->sortByDesc('id')
-                ->first()
-        )
-            ->getFile();
+        $json = $this->getDailyReportJson($day);
 
         if (!$json || !is_json($json)) {
             return collect();
@@ -366,5 +359,20 @@ class NursesPerformanceReportService
                 ],
             ];
         })->toArray();
+    }
+
+    /**
+     * @param Carbon $day
+     * @return mixed
+     */
+    public function getDailyReportJson(Carbon $day)
+    {
+       return optional(
+            SaasAccount::whereSlug('circlelink-health')
+                ->first()
+                ->getMedia("nurses-and-states-daily-report-{$day->toDateString()}.json")
+                ->sortByDesc('id')
+                ->first()
+        )->getFile();
     }
 }

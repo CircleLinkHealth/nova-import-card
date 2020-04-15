@@ -59,6 +59,14 @@ class WelcomeController extends Controller
             throw new \Exception("Log in for User with id {$user->id} failed. User has no assigned Roles.");
         }
 
+        if ($user->isCareCoach()) {
+            return redirect()->route('patientCallList.index');
+        }
+
+        if ($user->isParticipant()) {
+            return redirect()->route('patient-user.careplan');
+        }
+
         if ($user->isAdmin()) {
             return \App::call('App\Http\Controllers\Admin\DashboardController@index');
         }
@@ -79,10 +87,6 @@ class WelcomeController extends Controller
             return redirect()->route('login')->with(
                 ['messages' => ['message' => 'Ehr Report Writers can only login in the Worker. Please visit: https://circlelink-worker.medstack.net']]
             );
-        }
-
-        if ($user->isParticipant()) {
-            return redirect()->route('patient-user.careplan');
         }
 
         return \App::call('App\Http\Controllers\Patient\PatientController@showDashboard');

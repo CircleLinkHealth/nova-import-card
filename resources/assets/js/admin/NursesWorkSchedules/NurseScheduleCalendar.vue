@@ -32,6 +32,7 @@
                 </vue-select>
             </div>
         </div>
+
         <div class="calendar">
             <!-- Add new event - main button-->
             <div class="add-event-main col-md-3">
@@ -46,7 +47,16 @@
             </full-calendar>
             <!--LOADER-->
             <calendar-loader v-show="loader"></calendar-loader>
-            <!-- Modal --- sorry couldn't make a vue component act as modal here so i dumped it here-->
+            <!-- Daily Report Modal -->
+
+            <calendar-daily-report
+                    :report-data="reportData"
+                    :report-date="reportDate"
+                    :report-flags="reportFlags">
+            </calendar-daily-report>
+            <!-- Daily Report Modal End-->
+
+            <!-- Modal -->
             <div class="modal fade" id="addWorkEvent" tabindex="-1" role="dialog"
                  aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -65,6 +75,7 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
+
                         <div class="modal-body-custom col-md-12">
                             <!--  Filter Options-->
                             <div class="row">
@@ -254,6 +265,10 @@
     import {addNotification} from '../../../../../resources/assets/js/store/actions.js';
     import CalendarLoader from './FullScreenLoader';
     import axios from "../../bootstrap-axios";
+    import CalendarDailyReport from "./CalendarDailyReport";
+    // import VModal from 'vue-js-modal';
+    //
+    // Vue.use(VModal);
 
     let self;
 
@@ -283,7 +298,8 @@
             'vue-select': VueSelect,
             'addNotification': addNotification,
             CalendarLoader,
-            RRule
+            RRule,
+            'calendar-daily-report': CalendarDailyReport
         },
 
         data() {
@@ -318,6 +334,10 @@
                 authIsAdmin: false,
                 authIsNurse: false,
                 clickedOnDay: false,
+                dailyReports: [],
+                reportData: [],
+                reportDate: '',
+                reportFlags: [],
                 eventSources: [
                     { // has to be 'events()' else it doesnt work
                         events(start, end, timezone, callback) {
@@ -327,19 +347,18 @@
                                     start: new Date(start),
                                     end: new Date(end),
                                 }
-                            })
-                                .then((response => {
-                                    const calendarData = response.data.calendarData;
-                                    self.workHours = [];
-                                    self.holidays = [];
-                                    self.dataForDropdown = [];
-                                    self.holidays.push(...calendarData.holidayEvents);
-                                    self.workHours.push(...calendarData.workEvents);
-                                    self.dataForDropdown.push(...calendarData.dataForDropdown);
-                                    const eventsFiltered = self.eventsFiltered();
-                                    self.loader = false;
-                                    callback(eventsFiltered);
-                                })).catch((error) => {
+                            }).then((response => {
+                                const calendarData = response.data.calendarData;
+                                self.workHours = [];
+                                self.holidays = [];
+                                self.dataForDropdown = [];
+                                self.holidays.push(...calendarData.holidayEvents);
+                                self.workHours.push(...calendarData.workEvents);
+                                self.dataForDropdown.push(...calendarData.dataForDropdown);
+                                const eventsFiltered = self.eventsFiltered();
+                                self.loader = false;
+                                callback(eventsFiltered);
+                            })).catch((error) => {
                                 if (error.response.status === 422) {
                                     const e = error.response.data;
                                     if (e.hasOwnProperty('message')) {
@@ -353,6 +372,35 @@
                             });
                         },
                     },
+                    {
+                        events(start, end, timezone, callback) {
+                            self.loader = true;
+                            // Dont call this on view change from "week" to "month"
+                            if (self.dailyReports.length === 0 && self.authIsNurse) {
+                                axios.get('care-center/work-schedule/get-daily-report')
+                                    .then((response => {
+                                        const dailyReports = response.data.dailyReports;
+                                        self.dailyReports.push(...dailyReports);
+                                        self.loader = false;
+                                        callback(dailyReports);
+                                    })).catch((error) => {
+                                    if (error.response.status === 422) {
+                                        const e = error.response.data;
+                                        if (e.hasOwnProperty('message')) {
+                                            alert(e.message);
+                                        } else {
+                                            alert(e.validator);
+                                        }
+                                        self.loader = false;
+                                    }
+                                    console.log(error);
+                                });
+                            } else {
+                                callback(self.dailyReports);
+                                self.loader = false;
+                            }
+                        }
+                    }
                 ],
 
                 config: {
@@ -430,6 +478,10 @@
                     document.getElementById("toggleSwitch").checked = true;
                 }
             },
+
+            // showModal() {
+            //     this.$modal.show('hello-world');
+            // },
             eventIsTomorrow() {
                 const todayDate = new Date(this.today);
                 const eventDate = new Date(this.workEventDate);
@@ -449,6 +501,10 @@
 
             toggleModal() {
                 $("#addWorkEvent").modal('toggle');
+            },
+
+            toggleModalDailyReport() {
+                $("#dailyReport").modal('toggle');
             },
 
             userIsNurseAndDeletesTomorrowEvent(eventType) {
@@ -490,6 +546,7 @@
                     this.errors = error;
                     alert(this.errors.response.data.errors);
                 });
+
             },
 
             deleteWorkDay(event, shouldDeleteAll) {
@@ -759,6 +816,18 @@
                     alert("You cannot edit a nurse's holiday");
                     return;
                 }
+
+                if (this.authIsNurse && arg.data.eventType === 'dailyReport') {
+                    this.reportData = [];
+                    this.reportDate = '';
+                    this.reportFlags = [];
+                    this.reportData = arg.data.reportData;
+                    this.reportDate = arg.data.date;
+                    this.reportFlags = arg.data.reportFlags;
+                    this.toggleModalDailyReport();
+                    return;
+                }
+
                 const clickedDate = Date.parse(arg.data.date);
                 // Dont allow delete of a past event
                 if (clickedDate <= today) {
@@ -858,7 +927,6 @@
                 const maxRepeatDate = date.setMonth(date.getMonth() + 1);
                 return this.formatDate(maxRepeatDate);
             },
-
         }),
 //@todo:implement a count for search bar results - for results found - and in which month are found. maybe a side bar
         computed: {
@@ -905,8 +973,7 @@
 
             addFromMainButtonDateLabel() {
                 return this.addNewEventMainClicked && this.addHolidays ? 'Day-off on:' : 'Working on:';
-            }
-
+            },
         },
 
         created() {
@@ -922,6 +989,7 @@
 
         mounted() {
             $('#addWorkEvent').on("hidden.bs.modal", this.resetModalValues);
+
         }
     }
 
