@@ -412,6 +412,9 @@ class NurseCalendarService
 
         $reportsForCalendarView = [];
         foreach ($reports as $date => $report) {
+            
+            if (empty($report)) continue;
+            
             $showEfficiencyMetric = true;
             $enableDailyReportMetrics = true;
             $patientsCompletedRemaining = true;
