@@ -1296,7 +1296,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'Survey User',
                 'description' => 'Became Users just to be enrolled in AWV survey',
                 'permissions' => [
-                    'phi.read'
+
                 ],
             ]
 
