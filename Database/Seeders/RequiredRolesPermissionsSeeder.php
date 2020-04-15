@@ -1291,6 +1291,15 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 ],
             ],
 
+            [
+                'name' => 'survey-only',
+                'display_name' => 'Survey User',
+                'description' => 'Became Users just to be enrolled in AWV survey',
+                'permissions' => [
+                    'phi.read'
+                ],
+            ]
+
         ];
     }
 
