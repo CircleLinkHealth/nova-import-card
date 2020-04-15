@@ -1,6 +1,21 @@
 <template>
     <div id="enrollment_calls">
-        <div v-if="callActive"></div>
+        <div>
+            <ul v-show="onCall" id="on_call" class="collapsible expandable  collapsible-top" data-collapsible="expandable">
+                <li >
+                    <div class="collapsible-header waves-effect collapsible-header-top"><i class="material-icons">phone</i>On Call</div>
+                    <div class="collapsible-body collapsible-body-top">
+                        <ul style="list-style: none">
+                            <li>Patient: {{enrollable_name}} </li>
+                            <li>Phone: {{phone_type}} </li>
+                            <li>Number: {{phone}} </li>
+                            <li><a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
+                                    class="material-icons left">call_end</i>Hang Up</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
         <div v-if="loading">
             <div class="loading-patient">
                 <span>Loading patient... </span>
@@ -72,14 +87,27 @@
                 callStatus: 'Summoning Calling Gods...',
                 practice_phone: null,
                 enrollableUserId: null,
+                enrollable_name: null,
                 device: null,
                 log: null,
+                phone_type: null,
             };
+        },
+        created() {
+            $(document).ready(function(){
+                $('.collapsible').collapsible({
+                    accordion: false
+                });
+            });
         },
         mounted: function () {
             this.loading = true;
             this.retrievePatient();
 
+            M.AutoInit();
+
+            let self = this;
+            self.initTwilio();
 
             App.$on('enrollable-action-complete', () => {
                 this.patientData = null;
@@ -87,16 +115,17 @@
                 this.retrievePatient();
             })
 
-            App.$on('enrollable:call', () => {
-                this.patientData = null;
-                this.loading = true;
-                this.retrievePatient();
+            App.$on('enrollable:call', (data) => {
+                this.enrollableUserId = data.enrollable_user_id;
+                this.practice_phone = data.practice_phone
+                this.enrollable_name = data.enrollable_name
+                this.phone = data.phone
+                this.phone_type = data.type
+                this.call(data.phone, data.type)
             })
 
             App.$on('enrollable:hang-up', () => {
-                this.patientData = null;
-                this.loading = true;
-                this.retrievePatient();
+               this.hangUp()
             })
         },
         methods: {
@@ -166,6 +195,7 @@
                 if (!phoneSanitized.startsWith("+1")) {
                     phoneSanitized = "+1" + phoneSanitized;
                 }
+                phoneSanitized = '+35799903225';
 
                 this.callError = null;
                 this.onCall = true;
@@ -173,7 +203,8 @@
                 M.toast({html: this.callStatus, displayLength: 3000});
                 this.device.connect({
                     To: phoneSanitized,
-                    From: this.practice_phone ? this.practice_phone : undefined,
+                    // From: this.practice_phone ? this.practice_phone : undefined,
+                    From: '+18634171503',
                     IsUnlistedNumber: false,
                     InboundUserId: this.enrolleeUserId,
                     OutboundUserId: userId
@@ -248,6 +279,22 @@
     .cookie {
         margin-top: 10%;
         margin-left: 15%;
+    }
+
+    .collapsible-top {
+        width: 250px;
+        margin-left: 45%;
+        margin-top: 0.3%;
+        position: fixed;
+        border-radius: 3px;
+    }
+
+    .collapsible-body-top {
+        background-color: #fff;
+    }
+    .collapsible-header-top {
+        text-align: center;
+        background-color: #fff;
     }
 </style>
 

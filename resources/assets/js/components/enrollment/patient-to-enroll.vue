@@ -942,8 +942,7 @@
             },
             reason_empty() {
                 return this.reason.length <= 1;
-            }
-
+            },
         },
         data: function () {
             return {
@@ -1009,7 +1008,7 @@
             this.start_time = Date.now();
             this.total_time_in_system_running = this.total_time_in_system;
             let self = this;
-            self.initTwilio();
+            // self.initTwilio();
 
             //timer
             setInterval(function () {
@@ -1235,32 +1234,42 @@
             },
             call(phone, type) {
 
-                //make sure we have +1 on the phone,
-                //and remove any dashes
-                let phoneSanitized = phone.toString();
-                phoneSanitized = phoneSanitized.replace(/-/g, "");
-                if (!phoneSanitized.startsWith("+1")) {
-                    phoneSanitized = "+1" + phoneSanitized;
-                }
-
-                phoneSanitized = '+35799903225'
-                this.callError = null;
-                this.onCall = true;
-                this.callStatus = "Calling " + type + "..." + phoneSanitized;
-                M.toast({html: this.callStatus, displayLength: 3000});
-                this.device.connect({
-                    To: phoneSanitized,
-                    From: '+18634171503',
-                    IsUnlistedNumber: false,
-                    InboundUserId: this.enrollableUserId,
-                    OutboundUserId: userId
-                });
+                App.$emit('enrollable:call', {
+                    'phone': phone,
+                    'type': type,
+                    'practice_phone': this.practice_phone,
+                    'enrollable_user_id': this.enrollableUserId,
+                    'enrollable_name': this.name
+                })
+                //
+                // //make sure we have +1 on the phone,
+                // //and remove any dashes
+                // let phoneSanitized = phone.toString();
+                // phoneSanitized = phoneSanitized.replace(/-/g, "");
+                // if (!phoneSanitized.startsWith("+1")) {
+                //     phoneSanitized = "+1" + phoneSanitized;
+                // }
+                //
+                // phoneSanitized = '+35799903225'
+                // this.callError = null;
+                // this.onCall = true;
+                // this.callStatus = "Calling " + type + "..." + phoneSanitized;
+                // M.toast({html: this.callStatus, displayLength: 3000});
+                // this.device.connect({
+                //     To: phoneSanitized,
+                //     From: '+18634171503',
+                //     IsUnlistedNumber: false,
+                //     InboundUserId: this.enrollableUserId,
+                //     OutboundUserId: userId
+                // });
             },
             hangUp() {
-                this.onCall = false;
-                this.callStatus = "Ended Call";
-                M.toast({html: this.callStatus, displayLength: 3000});
-                this.device.disconnectAll();
+                App.$emit('enrollable:hang-up');
+
+                // this.onCall = false;
+                // this.callStatus = "Ended Call";
+                // M.toast({html: this.callStatus, displayLength: 3000});
+                // this.device.disconnectAll();
             },
             initTwilio: function () {
                 const self = this;
