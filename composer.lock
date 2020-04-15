@@ -605,25 +605,26 @@
         },
         {
             "name": "brick/math",
-            "version": "0.8.14",
+            "version": "0.8.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brick/math.git",
-                "reference": "6f7a46b5c3d487b277f38fbd17df57d348cace8a"
+                "reference": "9b08d412b9da9455b210459ff71414de7e6241cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brick/math/zipball/6f7a46b5c3d487b277f38fbd17df57d348cace8a",
-                "reference": "6f7a46b5c3d487b277f38fbd17df57d348cace8a",
+                "url": "https://api.github.com/repos/brick/math/zipball/9b08d412b9da9455b210459ff71414de7e6241cd",
+                "reference": "9b08d412b9da9455b210459ff71414de7e6241cd",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.1"
+                "ext-json": "*",
+                "php": "^7.1|^8.0"
             },
             "require-dev": {
-                "php-coveralls/php-coveralls": "2.*",
-                "phpunit/phpunit": "7.*",
-                "vimeo/psalm": "3.*"
+                "php-coveralls/php-coveralls": "^2.2",
+                "phpunit/phpunit": "^7.5.15|^8.5",
+                "vimeo/psalm": "^3.5"
             },
             "type": "library",
             "autoload": {
@@ -646,7 +647,7 @@
                 "brick",
                 "math"
             ],
-            "time": "2020-02-17T13:57:43+00:00"
+            "time": "2020-04-15T15:59:35+00:00"
         },
         {
             "name": "brick/money",
@@ -982,7 +983,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "af178e532eb3a168f2e5e96dd40b462d421e8417"
+                "reference": "cb3d0648c94cb5f90d42a69147b793a73c74af32"
             },
             "type": "laravel-module",
             "extra": {
@@ -1004,7 +1005,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-14T17:10:27+00:00"
+            "time": "2020-04-15T18:35:45+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1012,7 +1013,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "82117a0b01c74cc5fe3d277b0c81b499fba62fb9"
+                "reference": "b8024f2cb3102dc7f5d35f387d36c69242304387"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1046,7 +1047,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-15T12:01:23+00:00"
+            "time": "2020-04-15T18:35:45+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1054,7 +1055,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "79b46fe5422a873d358d9521bcc77abda47e6a0b"
+                "reference": "9a67908f79acdb6f937a62cccf1a1720e290ef5e"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1079,7 +1080,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-14T17:34:52+00:00"
+            "time": "2020-04-15T17:52:25+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -12456,19 +12457,20 @@
         },
         {
             "name": "itsgoingd/clockwork",
-            "version": "v4.1",
+            "version": "v4.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/itsgoingd/clockwork.git",
-                "reference": "74f1b4d2d06ce39c333388cb5b1379e1abc66a32"
+                "reference": "5b149a708a74027404126abe05289ff10d9f0f1d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/itsgoingd/clockwork/zipball/74f1b4d2d06ce39c333388cb5b1379e1abc66a32",
-                "reference": "74f1b4d2d06ce39c333388cb5b1379e1abc66a32",
+                "url": "https://api.github.com/repos/itsgoingd/clockwork/zipball/5b149a708a74027404126abe05289ff10d9f0f1d",
+                "reference": "5b149a708a74027404126abe05289ff10d9f0f1d",
                 "shasum": ""
             },
             "require": {
+                "ext-json": "*",
                 "php": ">=5.5",
                 "psr/log": "1.*"
             },
@@ -12510,7 +12512,7 @@
                 "profiling",
                 "slim"
             ],
-            "time": "2020-04-06T19:13:31+00:00"
+            "time": "2020-04-15T15:10:57+00:00"
         },
         {
             "name": "jkocik/laravel-profiler",
