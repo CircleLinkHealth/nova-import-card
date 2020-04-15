@@ -6,8 +6,10 @@
 
 namespace App\Jobs;
 
+use App\CareAmbassadorLog;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Bus\Queueable;
@@ -15,6 +17,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class StoreTimeTracking implements ShouldQueue
@@ -42,11 +45,9 @@ class StoreTimeTracking implements ShouldQueue
      * @var ParameterBag
      */
     protected $params;
-    
+
     /**
      * Create a new job instance.
-     *
-     * @param ParameterBag $params
      */
     public function __construct(ParameterBag $params)
     {
@@ -58,11 +59,13 @@ class StoreTimeTracking implements ShouldQueue
      */
     public function handle()
     {
-        $provider = User::with('nurseInfo')
+        $provider = User::with(['nurseInfo', 'careAmbassador'])
             ->findOrFail($this->params->get('providerId', null));
 
-        $isPatientBhi = User::isBhiChargeable()
-            ->where('id', $this->params->get('patientId'))
+        $patientId = $this->params->get('patientId', 0);
+
+        $isPatientBhi = ! empty($patientId) && User::isBhiChargeable()
+            ->where('id', $patientId)
             ->exists();
 
         foreach ($this->params->get('activities', []) as $activity) {
@@ -74,8 +77,22 @@ class StoreTimeTracking implements ShouldQueue
 
             if ($this->isBillableActivity($pageTimer, $provider)) {
                 $newActivity = $this->createActivity($pageTimer, $isBehavioral);
-                ProcessMonthltyPatientTime::dispatchNow($this->params->get('patientId'));
+                ProcessMonthltyPatientTime::dispatchNow($patientId);
                 ProcessNurseMonthlyLogs::dispatchNow($newActivity);
+            }
+
+            if (isset($activity['enrolleeId'])) {
+                // TODO: should be done in a separate job
+                $enrolleeId = $activity['enrolleeId'];
+                $totalTime  = PageTimer::where('enrollee_id', '=', $enrolleeId)
+                    ->sum('duration');
+                DB::table((new Enrollee())->getTable())
+                    ->where('id', '=', $enrolleeId)
+                    ->update(['total_time_elapsed' => $totalTime]);
+
+                $report                       = CareAmbassadorLog::createOrGetLogs($provider->careAmbassador->id);
+                $report->total_time_in_system = PageTimer::where('provider_id', '=', $provider->id)
+                    ->sum('duration');
             }
         }
     }
@@ -87,7 +104,11 @@ class StoreTimeTracking implements ShouldQueue
      */
     public function tags()
     {
-        return ['storetime', 'patient:'.$this->params->get('patientId'), 'provider:'.$this->params->get('providerId', null)];
+        return [
+            'storetime',
+            'patient:'.$this->params->get('patientId'),
+            'provider:'.$this->params->get('providerId', null),
+        ];
     }
 
     /**
@@ -135,6 +156,7 @@ class StoreTimeTracking implements ShouldQueue
         $pageTimer->duration          = $duration;
         $pageTimer->duration_unit     = 'seconds';
         $pageTimer->patient_id        = $this->params->get('patientId');
+        $pageTimer->enrollee_id       = $activity['enrolleeId'] ?? null;
         $pageTimer->provider_id       = $this->params->get('providerId', null);
         $pageTimer->start_time        = $startTime->toDateTimeString();
         $pageTimer->end_time          = $endTime->toDateTimeString();

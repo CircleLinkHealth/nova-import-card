@@ -27,10 +27,13 @@ class EnrollmentCenterController extends Controller
         AttachEnrolleeFamilyMembers::attach($request);
 
         //update report for care ambassador:
-        $report                       = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
-        $report->no_enrolled          = $report->no_enrolled + 1;
-        $report->total_calls          = $report->total_calls + 1;
-        $report->total_time_in_system = $request->input('total_time_in_system');
+        $report              = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
+        $report->no_enrolled = $report->no_enrolled + 1;
+        $report->total_calls = $report->total_calls + 1;
+
+        // This will be done from Time Tracker. See StoreTimeTracking
+        // $report->total_time_in_system = $request->input('total_time_in_system');
+
         $report->save();
 
         $enrollee->setHomePhoneAttribute($request->input('home_phone'));
@@ -71,7 +74,8 @@ class EnrollmentCenterController extends Controller
         $enrollee->last_call_outcome       = $request->input('consented');
         $enrollee->care_ambassador_user_id = $careAmbassador->user_id;
 
-        $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
+        // This will be set from time tracker. see StoreTimeTracking
+        //$enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
 
         $enrollee->attempt_count = $enrollee->attempt_count + 1;
 
@@ -152,8 +156,11 @@ class EnrollmentCenterController extends Controller
             $report->no_soft_rejected = $report->no_soft_rejected + 1;
         }
 
-        $report->total_calls          = $report->total_calls + 1;
-        $report->total_time_in_system = $request->input('total_time_in_system');
+        $report->total_calls = $report->total_calls + 1;
+
+        // This will be done from Time Tracker. See StoreTimeTracking
+        // $report->total_time_in_system = $request->input('total_time_in_system');
+
         $report->save();
 
         $enrollee->last_call_outcome = $request->input('reason');
@@ -166,9 +173,11 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->status = $status;
 
-        $enrollee->attempt_count    = $enrollee->attempt_count + 1;
-        $enrollee->last_attempt_at  = Carbon::now()->toDateTimeString();
-        $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
+        $enrollee->attempt_count   = $enrollee->attempt_count + 1;
+        $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
+
+        // This will be set from time tracker. see StoreTimeTracking
+        // $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
 
         $enrollee->save();
 
@@ -190,10 +199,13 @@ class EnrollmentCenterController extends Controller
         AttachEnrolleeFamilyMembers::attach($request);
 
         //update report for care ambassador:
-        $report                       = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
-        $report->no_utc               = $report->no_utc + 1;
-        $report->total_calls          = $report->total_calls + 1;
-        $report->total_time_in_system = $request->input('total_time_in_system');
+        $report              = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
+        $report->no_utc      = $report->no_utc + 1;
+        $report->total_calls = $report->total_calls + 1;
+
+        // This will be done from Time Tracker. See StoreTimeTracking
+        // $report->total_time_in_system = $request->input('total_time_in_system');
+
         $report->save();
 
         $enrollee->last_call_outcome = $request->input('reason');
@@ -213,9 +225,11 @@ class EnrollmentCenterController extends Controller
             $enrollee->status = Enrollee::UNREACHABLE;
         }
 
-        $enrollee->attempt_count    = $enrollee->attempt_count + 1;
-        $enrollee->last_attempt_at  = Carbon::now()->toDateTimeString();
-        $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
+        $enrollee->attempt_count   = $enrollee->attempt_count + 1;
+        $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
+
+        // This will be set from time tracker. see StoreTimeTracking
+        //$enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
 
         $enrollee->save();
 

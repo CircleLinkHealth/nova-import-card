@@ -37,7 +37,12 @@
                         <div class="card">
                             <div class="card-content" style="text-align: center">
                                 <div style="color: #6d96c5" class="counter">
-                                    {{formatted_total_time_in_system}}
+                                    <time-tracker ref="TimeTrackerApp"
+                                                  :twilio-enabled="true"
+                                                  :info="getTimeTrackerInfo()"
+                                                  :no-live-count="false"
+                                                  :override-timeout="false">
+                                    </time-tracker>
                                 </div>
                                 <div class="card-subtitle">
                                     Time worked
@@ -450,8 +455,6 @@
 
                     <input type="hidden" name="status" value="consented">
                     <input type="hidden" name="enrollee_id" :value="enrolleeId">
-                    <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
-                    <input type="hidden" name="time_elapsed" :value="time_elapsed">
                     <input type="hidden" name="confirmed_family_members" v-model="confirmed_family_members">
 
                 </div>
@@ -513,8 +516,6 @@
 
                     <input type="hidden" name="status" value="utc">
                     <input type="hidden" name="enrollee_id" :value="enrolleeId">
-                    <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
-                    <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
                     <input type="hidden" name="confirmed_family_members" v-model="confirmed_family_members">
 
                 </div>
@@ -569,8 +570,6 @@
 
 
                     <input type="hidden" name="enrollee_id" :value="enrolleeId">
-                    <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
-                    <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
                     <input type="hidden" name="confirmed_family_members" v-model="confirmed_family_members">
                 </div>
                 <div class="modal-footer" style="padding-right: 60px">
@@ -670,6 +669,7 @@
     import CoPayEs from './call-scripts/copay-es';
     import NoCoPayEs from './call-scripts/no-copay-es';
     import Loader from '../loader.vue';
+    import TimeTracker from '../../admin/time-tracker';
     //Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
     const hasTips = window.hasTips;
@@ -683,13 +683,16 @@
 
     export default {
         name: 'enrollment-dashboard',
-        props: [],
+        props: [
+            'timeTrackerInfo'
+        ],
         components: {
             'copay-en': CoPayEn,
             'no-copay-en': NoCoPayEn,
             'copay-es': CoPayEs,
             'no-copay-es': NoCoPayEs,
             'loader': Loader,
+            'time-tracker': TimeTracker
         },
         computed: {
             enrolleeId: function () {
@@ -724,12 +727,6 @@
             },
             practice_phone: function () {
                 return enrollee.practice.outgoing_phone_number;
-            },
-            total_time_in_system: function () {
-                return this.report && this.report.total_time_in_system ? this.report.total_time_in_system : 0;
-            },
-            formatted_total_time_in_system: function () {
-                return new Date(1000 * this.total_time_in_system_running).toISOString().substr(11, 8);
             },
             //other phone computer vars
             other_phone_label: function () {
@@ -928,9 +925,6 @@
                 disableHome: false,
                 disableCell: false,
                 disableOther: false,
-                time_elapsed: 0,
-                start_time: null,
-                total_time_in_system_running: 0,
                 onCall: false,
                 callStatus: 'Summoning Calling Gods...',
                 toCall: '',
@@ -964,16 +958,8 @@
 
             this.family_loading = true;
 
-            this.start_time = Date.now();
-            this.total_time_in_system_running = this.total_time_in_system;
             let self = this;
             self.initTwilio();
-
-            //timer
-            setInterval(function () {
-                self.$data.total_time_in_system_running = self.getTimeDiffInSecondsFromMS(self.start_time) + (self.total_time_in_system);
-                self.$data.time_elapsed = self.getTimeDiffInSecondsFromMS(self.start_time);
-            }, 1000);
 
             $(document).ready(function () {
 
@@ -1039,6 +1025,9 @@
             this.getSuggestedFamilyMembers();
         },
         methods: {
+            getTimeTrackerInfo() {
+                return window['timeTrackerInfo'];
+            },
             handleSubmit(event) {
                 if (this.suggested_family_members.length > 0 && this.confirmed_family_members.length == 0) {
                     event.preventDefault();
