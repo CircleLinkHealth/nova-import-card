@@ -40,6 +40,16 @@
     <div class="buttons col-lg-12">
         <div class="row">
             <div class="enroll-now-href">
+                <h4>Step 1</h4>
+                <a href="{{route('trigger.enrolldata.test')}}">
+                    <button type="button" class="btn btn-success">Create Test Conditions first</button>
+                </a>
+            </div>
+
+            <br>
+
+            <div class="enroll-now-href">
+                <h4>Step 2</h4>
                 <a href="{{route('send.enrollment.invitations')}}">
                     <button type="button" class="btn btn-success">Invite Patients to Enroll</button>
                 </a>
@@ -48,6 +58,7 @@
             <br>
 
             <div class="request-info-href">
+                <h4>Test Case 1</h4>
                 <a href="{{route('send.reminder.qa')}}" target="_blank">
                     <button type="button" class="btn btn-warning">Send Reminder to non responding patients (2 days after
                         first
@@ -59,6 +70,7 @@
             <br>
 
             <div class="request-info-href">
+                <h4>Test Case 2</h4>
                 <a href="{{route('final.action.qa')}}" target="_blank">
                     <button type="button" class="btn btn-warning">Take Final Action on Non Reponding Patients (4 days
                         after
@@ -70,6 +82,7 @@
             <br>
 
             <div class="request-info-href">
+                <h4>Test Case 3 - User Completed Enrollment Survey</h4>
                 <form action="{{route('evaluate.survey.completed')}}" target="_blank">
                     <label for="enrolleeId">Enter ID of patient that Completed Survey(Enrolled)
                         - Only use if did not import automatically after survey completion:</label><br>

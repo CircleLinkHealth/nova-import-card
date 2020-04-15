@@ -523,6 +523,17 @@ class EnrollmentCenterController extends Controller
         return view('enrollment-ui.training');
     }
 
+    public function triggerEnrollmentSeederTest()
+    {
+        try {
+            Artisan::call('db:seed', ['--class' => 'PrepareDataForReEnrollmentTestSeeder']);
+        } catch (\Exception $e) {
+            return 'Somethings Wrong. Please try one more time...';
+        }
+
+        return 'All good to go...you can go back and refresh the page before you go to next step';
+    }
+
     public function unableToContact(Request $request)
     {
         $enrollee       = Enrollee::find($request->input('enrollee_id'));

@@ -2166,6 +2166,11 @@ Route::get('/send-enrollment-invites', [
     'as'   => 'send.enrollment.invitations',
 ])->middleware('auth');
 
+Route::get('/trigger-enrolldata-test', [
+    'uses' => 'Enrollment\EnrollmentCenterController@triggerEnrollmentSeederTest',
+    'as'   => 'trigger.enrolldata.test',
+])->middleware('auth');
+
 Route::get('/invite-unreachable', [
     'uses' => 'Enrollment\EnrollmentCenterController@sendInvitesPanel',
     'as'   => 'send.invitates.panel',
