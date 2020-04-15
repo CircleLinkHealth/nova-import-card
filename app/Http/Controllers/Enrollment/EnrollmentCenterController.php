@@ -19,7 +19,6 @@ use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
 use App\TrixField;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
@@ -490,18 +489,35 @@ class EnrollmentCenterController extends Controller
 
     public function sendInvitesPanelTest()
     {
-        $invitedPatientsUrls = EnrollableInvitationLink::select(['url', 'invitationable_id', 'invitationable_type'])->get();
+        $invitedPatientsUrls = EnrollableInvitationLink::select(['url', 'invitationable_id', 'invitationable_type', 'manually_expired'])->get();
 
-        $invitationData = $invitedPatientsUrls->transform(function ($url) {
+        $invitationData = $invitedPatientsUrls->transform(function ($url) use ($invitedPatientsUrls) {
             $isEnrolleeClass = Enrollee::class === $url->invitationable_type;
+            /** @var EnrollableInvitationLink $url */
             $invitationable = $url->invitationable()->firstOrFail();
 
+            $isManuallyExpired = $url->manually_expired;
+
+            // meaning has got deleted after survey completion
+            $hasDeletedPatientInfo = $isEnrolleeClass
+                ? $invitationable->user()->withTrashed()->first()->doesntHave('patientInfo')->exists()
+                : $invitationable->withTrashed()->first()->doesntHave('patientInfo')->exists();
+
+            if ($isManuallyExpired && $hasDeletedPatientInfo) {
+                return [
+                    'invitationUrl'   => '',
+                    'isEnrolleeClass' => '',
+                    'name'            => '',
+                    'dob'             => '',
+                ];
+            }
+
             $patientInfo = $isEnrolleeClass
-                ? $invitationable->user->patientInfo()->withTrashed()->first()
+                ? $invitationable->user()->withTrashed()->first()->patientInfo()->withTrashed()->first()
                 : $invitationable->patientInfo()->withTrashed()->first();
 
             $name = $isEnrolleeClass
-                ? $invitationable->user->display_name
+                ? $invitationable->user()->withTrashed()->first()->display_name
                 : $invitationable->display_name;
 
             return [

@@ -2,7 +2,8 @@
     <div class="content">
         <ul>
             <li>
-                <a href="https://app.moqups.com/veE6z3eVLS/view/page/aa9df7b72" target="_blank">Follow this flow chart</a>
+                <a href="https://app.moqups.com/veE6z3eVLS/view/page/aa9df7b72" target="_blank">Follow this flow
+                    chart</a>
                 should be enough as test workflow guide (it's 2 pages):
             </li>
 
@@ -104,18 +105,16 @@
                     DOB: {{$data['dob']}}
                     <br>
                     Open this link in incognito window
-                    {{$data['invitationUrl']}}
                     <a href="{{$data['invitationUrl']}}" target="_blank">Invitation for Enrollee</a>
                 </ul>
-            @else
-
+            @endif
+            @if($data['isEnrolleeClass'] === false)
                 <ul>
                     Invited Name: {{$data['name']}}
                     <br>
                     DOB: {{$data['dob']}}
                     <br>
                     Open this link in incognito window
-                    {{$data['invitationUrl']}}
                     <a href="{{$data['invitationUrl']}}" target="_blank">Invitation for Unreachable Patient</a>
                 </ul>
             @endif
@@ -124,3 +123,6 @@
     </div>
 
 </div>
+
+
+
