@@ -129,7 +129,5 @@ class EnrollmentInvitationLetterSeeder extends Seeder
                 );
             }
         }
-
-
     }
 }
