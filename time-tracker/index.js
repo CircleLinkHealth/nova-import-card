@@ -6,7 +6,16 @@ const errorLogger = require('../logger').getErrorLogger();
 function TimeTracker($emitter = new EventEmitter()) {
     const users = {}
 
-    this.key = (info) => `${info.providerId}-${info.patientId}`
+    this.key = (info) => {
+        let result;
+        if (info.isFromCaPanel) {
+            result = `${info.providerId}`;
+        }
+        else {
+            result = `${info.providerId}-${info.patientId}`;
+        }
+        return result;
+    };
 
     this.validateInfo = validateInfo
 

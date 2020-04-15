@@ -241,7 +241,7 @@ module.exports = app => {
         });
 
         ws.on('close', ev => {
-            const keyInfo = {patientId: ws.patientId, providerId: ws.providerId};
+            const keyInfo = {patientId: ws.patientId, providerId: ws.providerId, isFromCaPanel: ws.isFromCaPanel};
 
             // there are cases where we have same keyInfo in timeTracker and timeTrackerNoLiveCount.
             // for this reason, we should check both collections
@@ -279,6 +279,7 @@ module.exports = app => {
                     name: activity.name,
                     title: activity.title,
                     duration: activity.duration,
+                    enrolleeId: activity.enrolleeId,
                     url: activity.url,
                     url_short: activity.url_short,
                     start_time: activity.start_time,
@@ -290,7 +291,7 @@ module.exports = app => {
                 console.log('will not cache ccc because time is 0');
             } else {
                 console.log('caching ccm', user.totalCcmSeconds);
-                storeTime(requestData.patientId, requestData.activities, user.totalCcmSeconds, user.totalBhiSeconds);
+                storeTime(user.key, requestData.activities, user.totalCcmSeconds, user.totalBhiSeconds);
             }
 
             axios.post(url, requestData).then((response) => {

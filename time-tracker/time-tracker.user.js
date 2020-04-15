@@ -7,8 +7,13 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
 
     validateInfo(info)
 
-    const key = `${info.providerId}-${info.patientId}`;
-
+    let key;
+    if (info.isFromCaPanel) {
+        key = `${info.providerId}`;
+    }
+    else {
+        key = `${info.providerId}-${info.patientId}`;
+    }
 
     const validateWebSocket = (ws) => {
         if (!ws) throw new Error('[ws] must be a valid WebSocket instance')
@@ -47,7 +52,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         },
 
         get totalCcmTimeFromCache() {
-            return getTime(this.patientId).ccm;
+            return getTime(this.key).ccm;
         },
 
         get totalCcmSecondsFromCache() {
@@ -55,7 +60,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         },
 
         get totalBhiTimeFromCache() {
-            return getTime(this.patientId).bhi;
+            return getTime(this.key).bhi;
         },
 
         get totalBhiSecondsFromCache() {
@@ -131,7 +136,10 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
      * @param {{ activity: '', isManualBehavioral: false }} info
      */
     user.findActivity = (info) => {
-        return user.activities.find(item => (item.name == info.activity) && (item.isBehavioral == info.isManualBehavioral))
+        if (info.isFromCaPanel) {
+            return user.activities.find(item => item.name == info.activity && item.enrolleeId == info.enrolleeId);
+        }
+        return user.activities.find(item => (item.name == info.activity) && (item.isBehavioral == info.isManualBehavioral));
     }
 
     user.switchBhi = (info) => {
@@ -163,6 +171,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         user.enter(info, ws)
         ws.providerId = info.providerId
         ws.patientId = info.patientId
+        ws.isFromCaPanel = info.isFromCaPanel;
         let activity = user.findActivity(info)
         if (!!Number(info.initSeconds) && user.allSockets.length <= 1 && activity) {
             /**
