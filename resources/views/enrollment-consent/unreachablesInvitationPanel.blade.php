@@ -37,7 +37,7 @@
     <div class="buttons col-lg-12">
         <div class="row">
             <div class="enroll-now-href">
-                <h4>Step 1</h4>
+                <h4>Step 1. Use this again if you dont have 4 invited patients in total</h4>
                 <a href="{{route('trigger.enrolldata.test')}}">
                     <button type="button" class="btn btn-success">Create Test Conditions first</button>
                 </a>

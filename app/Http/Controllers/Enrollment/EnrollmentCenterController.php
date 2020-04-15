@@ -488,7 +488,7 @@ class EnrollmentCenterController extends Controller
         return 'Please check your email';
     }
 
-    public function sendInvitesPanel()
+    public function sendInvitesPanelTest()
     {
         $invitedPatientsUrls = EnrollableInvitationLink::select(['url', 'invitationable_id', 'invitationable_type'])->get();
 

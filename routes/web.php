@@ -2172,7 +2172,7 @@ Route::get('/trigger-enrolldata-test', [
 ])->middleware('auth');
 
 Route::get('/invite-unreachable', [
-    'uses' => 'Enrollment\EnrollmentCenterController@sendInvitesPanel',
+    'uses' => 'Enrollment\EnrollmentCenterController@sendInvitesPanelTest',
     'as'   => 'send.invitates.panel',
 ])->middleware('auth');
 //---------------------------------------
