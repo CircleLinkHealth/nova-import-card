@@ -813,11 +813,11 @@ class NotesController extends Controller
         if ( ! isset($input['author_id'])) {
             $input['author_id'] = auth()->id();
         }
-
-        $input['performed_at'] = Carbon::parse(
+    
+        $input['performed_at'] = array_key_exists('performed_at', $input) ? Carbon::parse(
             $input['performed_at'],
             $patient->timezone
-        )->setTimezone(config('app.timezone'))->toDateTimeString();
+        )->setTimezone(config('app.timezone'))->toDateTimeString() : now()->toDateTimeString();
 
         if ($noteId) {
             $note = Note::find($noteId);
