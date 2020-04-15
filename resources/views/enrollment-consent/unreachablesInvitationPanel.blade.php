@@ -1,26 +1,23 @@
 <div class="container">
     <div class="content">
-        <ol>
+        <ul>
             <li>
-                <a href="https://app.moqups.com/veE6z3eVLS/view/page/aa9df7b72" target="_blank">Follow the flow chart
-                    here:</a>
+                <a href="https://app.moqups.com/veE6z3eVLS/view/page/aa9df7b72" target="_blank">Follow this flow chart</a>
                 should be enough as test workflow guide (it's 2 pages):
             </li>
 
             <li>
-                To re-create the process first:
-                Click <strong>"Invite Patients to Enroll"</strong>. Will invite Initial AND Unreachable Patients for
-                testing
+                Click <strong>"Invite Patients to Enroll"</strong> to invite 2 Initial AND 2 Unreachable Patients for
+                testing.
             </li>
             <li>
                 Check you email. You should have received all the invitations 2 initial plus 2 unreachable patients.
                 I have setup the app to send everything to your email account.
             </li>
             <li>
-                Same goes for the SMS....but i ll keep them disabled for first round of QA. Nothing changes in terms of
-                wokflow
+                Same goes for the SMS but they are disabled for first round of QA.
             </li>
-        </ol>
+        </ul>
         <ul>
             <li>
                 Note: if you click <strong>"Invite Patients to Enroll"</strong> and take no action (enroll now or
@@ -61,8 +58,7 @@
                 <h4>Test Case 1</h4>
                 <a href="{{route('send.reminder.qa')}}" target="_blank">
                     <button type="button" class="btn btn-warning">Send Reminder to non responding patients (2 days after
-                        first
-                        invite)
+                        first invitation)
                     </button>
                 </a>
             </div>
@@ -73,8 +69,7 @@
                 <h4>Test Case 2</h4>
                 <a href="{{route('final.action.qa')}}" target="_blank">
                     <button type="button" class="btn btn-warning">Take Final Action on Non Reponding Patients (4 days
-                        after
-                        first invite)
+                        after first invite)
                     </button>
                 </a>
             </div>
