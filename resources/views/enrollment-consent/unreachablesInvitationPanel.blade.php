@@ -108,6 +108,7 @@
                     <a href="{{$data['invitationUrl']}}" target="_blank">Invitation for Enrollee</a>
                 </ul>
             @else
+
                 <ul>
                     Invited Name: {{$data['name']}}
                     <br>
