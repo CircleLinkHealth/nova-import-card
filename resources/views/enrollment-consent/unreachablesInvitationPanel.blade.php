@@ -96,7 +96,6 @@
     </div>
 
     <div>
-        <h4>Open this link in incognito window</h4>
         @foreach($invitationData as $data)
             @if($data['isEnrolleeClass'])
                 <ul>
@@ -104,6 +103,8 @@
                     <br>
                     DOB: {{$data['dob']}}
                     <br>
+                    Open this link in incognito window
+                    {{$data['invitationUrl']}}
                     <a href="{{$data['invitationUrl']}}" target="_blank">Invitation for Enrollee</a>
                 </ul>
             @else
@@ -112,6 +113,8 @@
                     <br>
                     DOB: {{$data['dob']}}
                     <br>
+                    Open this link in incognito window
+                    {{$data['invitationUrl']}}
                     <a href="{{$data['invitationUrl']}}" target="_blank">Invitation for Unreachable Patient</a>
                 </ul>
             @endif
