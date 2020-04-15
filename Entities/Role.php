@@ -12,14 +12,14 @@ use Michalisantoniou6\Cerberus\CerberusRole;
 /**
  * CircleLinkHealth\Customer\Entities\Role.
  *
- * @property int                                                                                       $id
- * @property string                                                                                    $name
- * @property string|null                                                                               $display_name
- * @property string|null                                                                               $description
- * @property \Carbon\Carbon                                                                            $created_at
- * @property \Carbon\Carbon                                                                            $updated_at
+ * @property int $id
+ * @property string $name
+ * @property string|null $display_name
+ * @property string|null $description
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
  * @property \CircleLinkHealth\Customer\Entities\Permission[]|\Illuminate\Database\Eloquent\Collection $perms
- * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection       $users
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $users
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereDisplayName($value)
@@ -43,7 +43,6 @@ class Role extends CerberusRole
         'med_assistant',
         'provider',
     ];
-
     /**
      * Cache roles for 24 Hours.
      *
@@ -51,6 +50,13 @@ class Role extends CerberusRole
      */
     private const CACHE_ROLES_MINUTES = 3;
 
+//@todo:    Heroku Review app breaks without out fillable. Shall remove after testing?
+    protected $fillable = [
+        'name',
+        'display_name',
+        'description'
+
+    ];
     /**
      * The database table used by the model.
      *
@@ -97,7 +103,7 @@ class Role extends CerberusRole
     public function toSearchableArray()
     {
         return [
-            'name'         => $this->name,
+            'name' => $this->name,
             'display_name' => $this->display_name,
         ];
     }
