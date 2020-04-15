@@ -55,7 +55,6 @@ class Role extends CerberusRole
         'name',
         'display_name',
         'description'
-
     ];
     /**
      * The database table used by the model.
