@@ -103,7 +103,7 @@
                     <br>
                     DOB: {{$data['dob']}}
                     <br>
-                    <a href="{{$data['invitationUrl']}}">Invitation for Enrollee</a>
+                    <a href="{{$data['invitationUrl']}}" target="_blank">Invitation for Enrollee</a>
                 </ul>
             @else
                 <ul>

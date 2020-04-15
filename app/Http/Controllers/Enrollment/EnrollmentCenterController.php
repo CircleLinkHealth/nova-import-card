@@ -423,10 +423,7 @@ class EnrollmentCenterController extends Controller
             ->whereHas('notifications', function ($notification) {
                 $notification->where('type', SendEnrollmentEmail::class);
             })->where('created_at', '>', Carbon::parse(now())->startOfMonth())
-            ->whereHas('patientInfo', function ($patient) {
-                // @var Patient $patient
-                $patient->where('birth_date', '=', '1901-01-01');
-            })
+            ->whereHas('patientInfo')
             ->get();
 
         $survey = $this->getEnrolleeSurvey();
@@ -465,7 +462,7 @@ class EnrollmentCenterController extends Controller
                     ]
                 );
 
-                $patientInfo = $user->patientInfo()->withTrashed()->first();
+                $patientInfo = $user->patientInfo->withTrashed()->first();
                 DB::table('invitation_links')
                     ->where('patient_info_id', $patientInfo->id)
                     ->delete();
