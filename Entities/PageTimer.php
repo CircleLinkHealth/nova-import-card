@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int                                                                                         $duration
  * @property string|null                                                                                 $duration_unit
  * @property int                                                                                         $patient_id
+ * @property int                                                                                         $enrollee_id
  * @property int                                                                                         $provider_id
  * @property string                                                                                      $start_time
  * @property string                                                                                      $end_time
