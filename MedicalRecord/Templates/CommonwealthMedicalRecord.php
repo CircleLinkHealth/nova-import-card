@@ -81,7 +81,7 @@ class CommonwealthMedicalRecord extends BaseMedicalRecordTemplate
     
     public function fillVitals(): array
     {
-        return $this->ccdaMedicalRecord->fillVitals();;
+        return $this->ccdaMedicalRecord->fillVitals();
     }
     
     private function getAllergyName($allergy): string
