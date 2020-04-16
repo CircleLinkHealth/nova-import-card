@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="patient_data.hasOwnProperty('enrollable')">
+        <div>
             <div class="side-nav fixed">
                 <div style="height: 150%; overflow-y: hidden">
                     <div class="row">
@@ -8,7 +8,7 @@
                             <div class="card">
                                 <div class="card-content" style="text-align: center">
                                     <div style="color: #6d96c5" class="counter">
-                                        {{report.total_calls ? report.total_calls : 0}}
+                                        {{total_calls}}
                                     </div>
                                     <div class="card-subtitle">
                                         Total Calls
@@ -68,7 +68,7 @@
                                                 :title="provider_sex"><b>Provider Sex:</b> {{provider_sex}}</span>
                                         </li>
                                         <li class="sidebar-demo-list"><span
-                                                :title="providerPhone"><b>Provider Phone:</b> {{providerPhone}}</span>
+                                                :title="provider_phone"><b>Provider Phone:</b> {{provider_phone}}</span>
                                         </li>
                                         <li class="sidebar-demo-list"><span
                                                 :title="last_office_visit_at"><b>Last Office Visit:</b> {{last_office_visit_at}}</span>
@@ -466,7 +466,7 @@
                         </blockquote>
 
                         <input type="hidden" name="status" value="consented">
-                        <input type="hidden" name="enrollable_id" :value="enrollableId">
+                        <input type="hidden" name="enrollable_id" :value="enrollable_id">
                         <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
                         <input type="hidden" name="time_elapsed" :value="time_elapsed">
                         <input type="hidden" name="confirmed_family_members" v-model="confirmed_family_members">
@@ -521,7 +521,7 @@
                             <div v-show="utc_other" class="col s6 m12 select-custom">
                                 <label for="utc_reason_other" class="label">If you selected other, please
                                     specify:</label>
-                                <input class="input-field" name="reason_other" id="utc_reason_other"/>
+                                <input class="input-field" name="reason_other" v-model="utc_reason_other" id="utc_reason_other"/>
                             </div>
 
                             <div v-show="utc_requested_callback" class="col s6 m12 select-custom">
@@ -532,7 +532,7 @@
                         </div>
 
                         <input type="hidden" name="status" value="utc">
-                        <input type="hidden" name="enrollable_id" :value="enrollableId">
+                        <input type="hidden" name="enrollable_id" :value="enrollable_id">
                         <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
                         <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
                         <input type="hidden" name="confirmed_family_members" v-model="confirmed_family_members">
@@ -575,7 +575,7 @@
                             <div v-show="rejected_other" class="col s6 m12 select-custom">
                                 <label for="rejected_reason_other" class="label">If you selected other, please
                                     specify:</label>
-                                <input class="input-field" name="reason_other" id="rejected_reason_other"/>
+                                <input class="input-field" name="reason_other" v-model="reason_other" id="rejected_reason_other"/>
                             </div>
 
                             <div v-if="isSoftDecline" class="col s6 m12 select-custom">
@@ -588,7 +588,7 @@
                         </div>
 
 
-                        <input type="hidden" name="enrollable_id" :value="enrollableId">
+                        <input type="hidden" name="enrollable_id" :value="enrollable_id">
                         <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
                         <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
                         <input type="hidden" name="confirmed_family_members" v-model="confirmed_family_members">
@@ -704,56 +704,11 @@
             'loader': Loader,
         },
         computed: {
-            enrollable: function () {
-                return this.patient_data.enrollable
-            },
-            provider: function () {
-                return this.patient_data.provider
-            },
-            providerPhone: function () {
-                return this.patient_data.providerPhone
-            },
-            enrollableId: function () {
-                return this.enrollable.id;
-            },
-            enrollableUserId: function () {
-                return this.enrollable.user ? this.enrollable.user.id : null;
+            total_calls: function (){
+                return this.report.total_calls || 0;
             },
             enrollmentTips: function () {
-                return this.enrollable.practice && this.enrollable.practice.enrollment_tips ? this.enrollable.practice.enrollment_tips.content : '';
-            },
-            hasTips: function () {
-                return this.patient_data.hasTips;
-            },
-            report: function () {
-                return this.patient_data.report;
-            },
-            script: function () {
-                return this.patient_data.script;
-            },
-            last_call_outcome: function () {
-                return this.enrollable.last_call_outcome ? this.enrollable.last_call_outcome : '';
-            },
-            last_call_outcome_reason: function () {
-                return this.enrollable.last_call_outcome_reason ? this.enrollable.last_call_outcome_reason : '';
-            },
-            has_copay: function () {
-                return this.enrollable.has_copay;
-            },
-            name: function () {
-                return this.enrollable.first_name + ' ' + this.enrollable.last_name;
-            },
-            lang: function () {
-                return this.enrollable.lang;
-            },
-            practice_id: function () {
-                return this.enrollable.practice.id;
-            },
-            practice_name: function () {
-                return this.enrollable.practice.display_name;
-            },
-            practice_phone: function () {
-                return this.enrollable.practice.outgoing_phone_number;
+                return this.enrollable_practice && this.enrollable_practice.enrollment_tips ? this.enrollable_practice.enrollment_tips.content : '';
             },
             total_time_in_system: function () {
                 return this.report && this.report.total_time_in_system ? this.report.total_time_in_system : 0;
@@ -850,6 +805,9 @@
                 let last_name = this.provider.last_name;
                 let suffix = this.provider.suffix;
 
+                if (! first_name && ! last_name){
+                    return '';
+                }
                 let name = this.capitalizeFirstLetter(first_name.toLowerCase()) + ' ' + this.capitalizeFirstLetter(last_name.toLowerCase());
 
                 if (suffix.length > 0) {
@@ -878,7 +836,7 @@
                 return providerName
             },
             providerInfo(){
-                return this.patient_data.provider.providerInfo
+                return this.provider.providerInfo
             },
             provider_pronunciation_exists() {
                 return this.providerInfo ? (!!this.providerInfo.pronunciation) : false;
@@ -893,7 +851,7 @@
                 return this.providerInfo ? (this.providerInfo.sex || 'N/A') : 'N/A';
             },
             last_office_visit_at: function () {
-                return this.enrollable.last_encounter ? this.enrollable.last_encounter : 'N/A';
+                return this.last_encounter;
             },
             care_ambassador_script: function () {
 
@@ -902,34 +860,26 @@
                 }
                 let ca_script = this.script.body;
 
-                let processed_script = ca_script.replace(/{doctor}/gi, this.provider_name_for_enrollment_script)
+                return ca_script.replace(/{doctor}/gi, this.provider_name_for_enrollment_script)
                     .replace(/{patient}/gi, this.name)
                     .replace(/{practice}/gi, this.practice_name)
                     .replace(/{last visit}/gi, this.last_office_visit_at)
                     .replace(/{enroller}/gi, userFullName);
-
-                return processed_script;
             },
             suggested_family_members_exist: function () {
                 return Array.isArray(this.suggested_family_members) && this.suggested_family_members.length > 0;
             },
-            attempt_count() {
-                return this.enrollable.attempt_count || 0;
-            },
-            last_attempt_at() {
-                return this.enrollable.last_attempt_at || 'N/A';
-            },
             address_2_exists() {
-                return !!this.enrollable.address_2;
+                return !!this.address_2;
             },
             home_phone_exists() {
-                return !!this.enrollable.home_phone;
+                return !!this.home_phone;
             },
             cell_phone_exists() {
-                return !!this.enrollable.cell_phone;
+                return !!this.cell_phone;
             },
             other_phone_exists() {
-                return !!this.enrollable.other_phone;
+                return !!this.other_phone;
             },
             preferred_phone_empty() {
                 return !this.preferred_phone;
@@ -946,15 +896,28 @@
         },
         data: function () {
             return {
-                patient_data: [],
                 showBanner: false,
                 bannerText: '',
                 bannerType: 'info',
+                report: [],
+                script: [],
 
                 family_loading: false,
                 csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 userFullName: userFullName,
 
+                enrollable_id: null,
+                enrollable_user_id: null,
+
+                practice: null,
+                practice_id: null,
+                practice_name: null,
+                practice_phone: null,
+                has_tips: null,
+                last_call_outcome: '',
+                last_call_outcome_reason: '',
+                name: '',
+                lang: '',
                 home_phone: '',
                 cell_phone: '',
                 other_phone: '',
@@ -964,6 +927,7 @@
                 zip: '',
                 email: '',
                 dob: '',
+                state: '',
 
                 disableHome: false,
                 disableCell: false,
@@ -974,13 +938,22 @@
                 onCall: false,
                 callStatus: 'Summoning Calling Gods...',
                 toCall: '',
-                isSoftDecline: false,
-                utc_reason: '',
-                reason: '',
                 callError: null,
+
+                //urls
                 consentedUrl: rootUrl('enrollment/consented'),
                 utcUrl: rootUrl('enrollment/utc'),
                 rejectedUrl: rootUrl('enrollment/rejected'),
+
+
+                isSoftDecline: false,
+                utc_reason: '',
+                reason: '',
+                reason_other: '',
+                utc_reason_other: '',
+                last_encounter: null,
+                attempt_count: null,
+                last_attempt_at: null,
 
                 //twilio
                 device: null,
@@ -998,7 +971,10 @@
                 pending_form_url: null,
 
                 days: ['Days:'],
-                times: ['Times:']
+                times: ['Times:'],
+
+                provider: [],
+                provider_phone: ''
             };
         },
         mounted: function () {
@@ -1065,7 +1041,7 @@
                     closeOnClick: false
                 });
 
-                if (self.hasTips) {
+                if (self.has_tips) {
                     let showTips = true;
                     const tipsSettings = self.getTipsSettings();
                     if (tipsSettings) {
@@ -1086,10 +1062,9 @@
             this.getSuggestedFamilyMembers();
 
             App.$on('enrollable:update-call-status', (data) => {
-                this.onCall = data.onCall;
-                this.callStatus = data.callStatus
-                this.log = data.log;
-                this.callError = data.callError;
+                for (let [key, value] of Object.entries(data)) {
+                    this.$data[key] = value;
+                }
             })
         },
         methods: {
@@ -1146,27 +1121,13 @@
                 this.submitForm(this.pending_form, this.pending_form_url)
             },
             setPatientData(data){
-                // Object.entries($vm.patientData).map.
-                //replace with loop from resource
-                this.patient_data = data;
-                this.home_phone = data.enrollable.home_phone
-                this.cell_phone = data.enrollable.cell_phone
-                this.other_phone = data.enrollable.other_phone
-                this.address = data.enrollable.address || 'N/A'
-                this.address_2 = data.enrollable.address_2 || 'N/A'
-                this.city = data.enrollable.city || 'N/A'
-                this.zip = data.enrollable.zip || 'N/A'
-                this.state = data.enrollable.state || 'N/A'
-                this.email = data.enrollable.email || 'N/A'
-                this.dob = data.enrollable.dob || 'N/A'
-                this.onCall = data.onCall
-                this.callStatus = data.callStatus
-                this.log = data.log
-                this.callError = data.callError
+                for (let [key, value] of Object.entries(data)) {
+                    this.$data[key] = value;
+                }
             },
             getSuggestedFamilyMembers() {
                 return this.axios
-                    .get(rootUrl('/enrollment/get-suggested-family-members/' + this.enrollableId))
+                    .get(rootUrl('/enrollment/get-suggested-family-members/' + this.enrollable_id))
                     .then(response => {
                         this.family_loading = false;
                         this.suggested_family_members = response.data.suggested_family_members;
@@ -1262,7 +1223,7 @@
                     'phone': phoneSanitized,
                     'type': type,
                     'practice_phone': this.practice_phone,
-                    'enrollable_user_id': this.enrollableUserId,
+                    'enrollable_user_id': this.enrollable_user_id,
                     'enrollable_name': this.name,
                     'callError': this.callError,
                     'onCall': this.onCall,

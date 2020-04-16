@@ -20,7 +20,8 @@ class EnrollableCallQueue
             : [];
 
         //add more logic to this
-        //if previous enrollee id, try to get call_queue or maybe engaged family enrollees
+        //do not check status for call_queue. If they have been selected by the CA they must have been on call queue initially
+        //per CPM-2256 we will be applying the same statuses on confirmed family members, so that we can pre-fill their data on the page.
         if ( ! empty($queue)) {
             $nextEnrolleeId = collect($queue)->first();
             $enrollee       = Enrollee::find($nextEnrolleeId);

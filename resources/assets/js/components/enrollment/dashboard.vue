@@ -80,7 +80,7 @@
         },
         computed: {
             patientExists: function () {
-                return this.patientData.enrollable;
+                return this.patientData.enrollable_id;
             }
         },
         data: function () {
@@ -92,7 +92,7 @@
                 onCall: false,
                 callStatus: 'Summoning Calling Gods...',
                 practice_phone: null,
-                enrollableUserId: null,
+                enrollable_user_id: null,
                 enrollable_name: null,
                 device: null,
                 log: null,
@@ -125,14 +125,9 @@
             })
 
             App.$on('enrollable:call', (data) => {
-                this.enrollableUserId = data.enrollable_user_id;
-                this.practice_phone = data.practice_phone
-                this.enrollable_name = data.enrollable_name
-                this.phone = data.phone
-                this.phone_type = data.type
-                this.callError = data.callError
-                this.callStatus = data.callStatus
-                this.onCall = data.onCall
+                for (let [key, value] of Object.entries(data)) {
+                    this.$data[key] = value;
+                }
                 this.call(data.phone, data.type)
             })
 
@@ -167,16 +162,12 @@
             },
 
             updateCallStatus() {
-                // let self = this;
-                // setTimeout(function(){
-                    App.$emit('enrollable:update-call-status', {
-                        'onCall': self.onCall,
-                        'callStatus': self.callStatus,
-                        'log': self.log,
-                        'callError': self.callError
-                    })
-                // }, 5000)
-
+                App.$emit('enrollable:update-call-status', {
+                    'onCall': self.onCall,
+                    'callStatus': self.callStatus,
+                    'log': self.log,
+                    'callError': self.callError
+                })
             },
 
             /**
@@ -198,7 +189,7 @@
                     // From: this.practice_phone ? this.practice_phone : undefined,
                     From: '+18634171503',
                     IsUnlistedNumber: false,
-                    InboundUserId: this.enrolleeUserId,
+                    InboundUserId: this.enrollable_user_id,
                     OutboundUserId: userId
                 });
             },
