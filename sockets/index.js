@@ -187,7 +187,7 @@ module.exports = app => {
                         break;
 
                     case 'client:activity':
-                        user.changeActivity(data.activity, ws);
+                        user.changeActivity(data.info, ws);
                         break;
 
                     default:

@@ -9,10 +9,6 @@ module.exports = {
         return sentry !== null;
     },
     getErrorLogger: function () {
-        if (!raygun && !sentry) {
-            return null;
-        }
-
         return {
             report: function (err, options, callback) {
                 if (sentry) {
