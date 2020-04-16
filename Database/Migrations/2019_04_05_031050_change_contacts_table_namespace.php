@@ -22,10 +22,10 @@ class ChangeContactsTableNamespace extends Migration
                     \DB::table('contacts')
                         ->where('contactable_type', $type)
                         ->update(
-                           [
-                               'contactable_type' => str_replace('CircleLinkHealth\Customer\Entities', 'App', $type),
-                           ]
-                       );
+                            [
+                                'contactable_type' => str_replace('CircleLinkHealth\Customer\Entities', 'App', $type),
+                            ]
+                        );
                 }
             );
     }
@@ -44,10 +44,10 @@ class ChangeContactsTableNamespace extends Migration
                     \DB::table('contacts')
                         ->where('contactable_type', $type)
                         ->update(
-                           [
-                               'contactable_type' => str_replace('App', 'CircleLinkHealth\Customer\Entities', $type),
-                           ]
-                       );
+                            [
+                                'contactable_type' => str_replace('App', 'CircleLinkHealth\Customer\Entities', $type),
+                            ]
+                        );
                 }
             );
     }

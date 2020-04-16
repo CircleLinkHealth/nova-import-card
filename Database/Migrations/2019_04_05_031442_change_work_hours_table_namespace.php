@@ -22,10 +22,10 @@ class ChangeWorkHoursTableNamespace extends Migration
                     \DB::table('work_hours')
                         ->where('workhourable_type', $type)
                         ->update(
-                           [
-                               'workhourable_type' => str_replace('CircleLinkHealth\Customer\Entities', 'App', $type),
-                           ]
-                       );
+                            [
+                                'workhourable_type' => str_replace('CircleLinkHealth\Customer\Entities', 'App', $type),
+                            ]
+                        );
                 }
             );
     }
@@ -44,10 +44,10 @@ class ChangeWorkHoursTableNamespace extends Migration
                     \DB::table('work_hours')
                         ->where('workhourable_type', $type)
                         ->update(
-                           [
-                               'workhourable_type' => str_replace('App', 'CircleLinkHealth\Customer\Entities', $type),
-                           ]
-                       );
+                            [
+                                'workhourable_type' => str_replace('App', 'CircleLinkHealth\Customer\Entities', $type),
+                            ]
+                        );
                 }
             );
     }

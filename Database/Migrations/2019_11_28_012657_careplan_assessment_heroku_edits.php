@@ -1,11 +1,24 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CareplanAssessmentHerokuEdits extends Migration
 {
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+    }
+
     /**
      * Run the migrations.
      *
@@ -13,7 +26,7 @@ class CareplanAssessmentHerokuEdits extends Migration
      */
     public function up()
     {
-        Schema::table('careplan_assessments', function (Blueprint $table){
+        Schema::table('careplan_assessments', function (Blueprint $table) {
             $table->text('alcohol_misuse_counseling')->nullable()->change();
             $table->text('diabetes_screening_interval')->nullable()->change();
             $table->text('diabetes_screening_risk', 16777215)->nullable()->change();
@@ -28,15 +41,5 @@ class CareplanAssessmentHerokuEdits extends Migration
             $table->date('eye_screening_last_date')->nullable()->change();
             $table->date('eye_screening_next_date')->nullable()->change();
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        //
     }
 }

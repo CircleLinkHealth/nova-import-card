@@ -22,10 +22,10 @@ class RefactorPermissiblesPermissibleType extends Migration
                     \DB::table('permissibles')
                         ->where('permissible_type', $type)
                         ->update(
-                           [
-                               'permissible_type' => str_replace('CircleLinkHealth\Customer\Entities', 'App', $type),
-                           ]
-                       );
+                            [
+                                'permissible_type' => str_replace('CircleLinkHealth\Customer\Entities', 'App', $type),
+                            ]
+                        );
                 }
             );
     }
@@ -44,10 +44,10 @@ class RefactorPermissiblesPermissibleType extends Migration
                     \DB::table('permissibles')
                         ->where('permissible_type', $type)
                         ->update(
-                           [
-                               'permissible_type' => str_replace('App', 'CircleLinkHealth\Customer\Entities', $type),
-                           ]
-                       );
+                            [
+                                'permissible_type' => str_replace('App', 'CircleLinkHealth\Customer\Entities', $type),
+                            ]
+                        );
                 }
             );
     }

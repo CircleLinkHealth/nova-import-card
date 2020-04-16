@@ -45,6 +45,5 @@ class CpmMigrationsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-    
     }
 }

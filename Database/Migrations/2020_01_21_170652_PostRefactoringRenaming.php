@@ -1,11 +1,24 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class PostRefactoringRenaming extends Migration
 {
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+    }
+
     /**
      * Run the migrations.
      *
@@ -13,24 +26,25 @@ class PostRefactoringRenaming extends Migration
      */
     public function up()
     {
-        if (app()->environment('testing')) return;
-        
+        if (app()->environment('testing')) {
+            return;
+        }
         \DB::table('instructables')
-           ->where('instructable_type', 'App\Models\CPM\CpmProblem')
-           ->update(
+            ->where('instructable_type', 'App\Models\CPM\CpmProblem')
+            ->update(
                [
                    'instructable_type' => 'CircleLinkHealth\SharedModels\Entities\CpmProblem',
                ]
            );
-    
+
         \DB::table('pdfs')
-           ->where('pdfable_type', 'App\CarePlan')
-           ->update(
+            ->where('pdfable_type', 'App\CarePlan')
+            ->update(
                [
                    'pdfable_type' => 'CircleLinkHealth\SharedModels\Entities\CarePlan',
                ]
            );
-        
+
         collect([
                     [
                         'old' => 'App\Models\CPM\CpmProblem',
@@ -115,25 +129,16 @@ class PostRefactoringRenaming extends Migration
                         'new' => 'CircleLinkHealth\Eligibility\Entities\Enrollee',
                     ],
                 ])->each(function ($change) {
+          
                     echo "\nChanging {$change['old']} to {$change['new']}.\n";
-                    
-            \DB::table('revisions')
-               ->where('revisionable_type', $change['old'])
-               ->update(
+
+                    \DB::table('revisions')
+                        ->where('revisionable_type', $change['old'])
+                        ->update(
                    [
                        'revisionable_type' => $change['new'],
                    ]
                );
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        //
+                });
     }
 }
