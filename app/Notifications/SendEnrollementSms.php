@@ -52,22 +52,22 @@ class SendEnrollementSms extends Notification
     public function toTwilio(User $notifiable)
     {
 //        at this point will always exist only one active link from the mail notif send
-//        $receiver = $this->getEnrollableModelType($notifiable);
-//
-//        $invitationUrl = $receiver->getLastEnrollmentInvitationLink();
-//        $shortenUrl = null;
-//
-//        try {
-//            $shortenUrl = shortenUrl($invitationUrl->url);
-//        } catch (\Exception $e) {
-//            \Log::warning($e->getMessage());
-//        }
-//
-//        $notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
-//        $smsSubject = $notificationContent['line1'] . $notificationContent['line2'] . $shortenUrl ?? $invitationUrl->url;
-//
-//        return (new TwilioSmsMessage())
-//            ->content($smsSubject);
+        $receiver = $this->getEnrollableModelType($notifiable);
+
+        $invitationUrl = $receiver->getLastEnrollmentInvitationLink();
+        $shortenUrl = null;
+
+        try {
+            $shortenUrl = shortenUrl($invitationUrl->url);
+        } catch (\Exception $e) {
+            \Log::warning($e->getMessage());
+        }
+
+        $notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
+        $smsSubject = $notificationContent['line1'] . $notificationContent['line2'] . $shortenUrl ?? $invitationUrl->url;
+
+        return (new TwilioSmsMessage())
+            ->content($smsSubject);
     }
 
     /**

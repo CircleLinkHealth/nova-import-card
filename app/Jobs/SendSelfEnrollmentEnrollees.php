@@ -7,6 +7,7 @@ namespace App\Jobs;
 
 
 use App\Console\Commands\SendEnrollmentNotifications;
+use App\Notifications\SendEnrollementSms;
 use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -139,6 +140,6 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
 
     private function sendSms(User $userCreatedFromEnrollee)
     {
-        $userCreatedFromEnrollee->notify(new SendEnrollementSms($userCreatedFromEnrollee));
+//        $userCreatedFromEnrollee->notify(new SendEnrollementSms($userCreatedFromEnrollee));
     }
 }
