@@ -155,13 +155,12 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                                 </li>
                             @endif
 
-                            <li>
-                                <a href="{{ route('patients.dashboard') }}" class="text-white"><i
-                                            class="top-nav-item-icon glyphicon glyphicon-home"></i>Home</a>
-                            </li>
-
 
                             @if(! $user->isCareCoach())
+                                <li>
+                                    <a href="{{ route('patients.dashboard') }}" class="text-white"><i
+                                                class="top-nav-item-icon glyphicon glyphicon-home"></i>Home</a>
+                                </li>
                                 @if(sizeof($patientListDropdown) === 1)
                                     <li>
                                         @if($patientListDropdown[0] === 'ccm')
@@ -203,6 +202,10 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                             <li>
                                 <a href="{{ route('patientCallList.index') }}" class="text-white"><i
                                             class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('care.center.work.schedule.index') }}" class="text-white"><i
+                                            class="top-nav-item-icon glyphicon glyphicon-calendar"></i>Schedule</a>
                             </li>
                         @endif
 
