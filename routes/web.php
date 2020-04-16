@@ -2162,7 +2162,7 @@ Route::get('/reset-enrollment-test', [
 ])->middleware('auth');
 
 Route::get('/send-enrollment-invites', [
-    'uses' => 'Enrollment\EnrollmentCenterController@inviteUnreachablesToEnroll',
+    'uses' => 'Enrollment\EnrollmentCenterController@inviteUnreachablesToEnrollTest',
     'as'   => 'send.enrollment.invitations',
 ])->middleware('auth');
 

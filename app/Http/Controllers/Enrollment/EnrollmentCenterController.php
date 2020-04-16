@@ -360,7 +360,7 @@ class EnrollmentCenterController extends Controller
         return $this->enrollmentInvitationService->createLetter($practiceName, $practiceLetter, $careAmbassadorPhoneNumber, $provider);
     }
 
-    public function inviteUnreachablesToEnroll()
+    public function inviteUnreachablesToEnrollTest()
     {
         Artisan::call('command:sendEnrollmentNotifications');
 
