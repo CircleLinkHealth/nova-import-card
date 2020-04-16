@@ -14,6 +14,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\ImportEnrollee;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
+use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -225,7 +226,7 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                     
                     if ($enrollee->isDirty()) $enrollee->save();
                     
-                    return ImportEnrollee::import($enrollee);
+                    return ImportConsentedEnrollees::dispatch([$enrollee->id]);
                 }
             );
         }
