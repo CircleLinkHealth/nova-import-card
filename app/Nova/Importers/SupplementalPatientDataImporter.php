@@ -168,20 +168,24 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
             'practice_id'         => $this->getPractice()->id,
         ];
         
+        
+        $args['location_id']              = optional(
+            Location::where('practice_id', $args['practice_id'])->where(
+                'name',
+                $args['location']
+            )->first()
+        )->id;
+        
+        $args['billing_provider_user_id'] = optional(
+            Ccda::searchBillingProvider($args['provider'], $args['practice_id'])
+        )->id;
+        
         if ( ! empty($args['mrn']) && ! empty($args['first_name']) && ! empty($args['last_name'])) {
             return tap(
                 SupplementalPatientData::updateOrCreate(
                     [
-                        'mrn'                      => $row['mrn'],
-                        'location_id'              => optional(
-                            Location::where('practice_id', $args['practice_id'])->where(
-                                'name',
-                                $args['location']
-                            )->first()
-                        )->id,
-                        'billing_provider_user_id' => optional(
-                            Ccda::searchBillingProvider($args['provider'], $args['practice_id'])
-                        )->id,
+                        'mrn'         => $row['mrn'],
+                        'practice_id' => $this->getPractice()->id,
                     ],
                     $args
                 ),
@@ -209,14 +213,16 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                             return $spd;
                         }
                         
-                        $enrollee = Enrollee::create([
-                            'practice_id' => $spd->practice_id,
-                            'first_name' => $spd->first_name,
-                            'last_name' => $spd->last_name,
-                            'mrn' => $spd->mrn,
-                            'dob' => $spd->dob,
-                                                     ]);
-    
+                        $enrollee = Enrollee::create(
+                            [
+                                'practice_id' => $spd->practice_id,
+                                'first_name'  => $spd->first_name,
+                                'last_name'   => $spd->last_name,
+                                'mrn'         => $spd->mrn,
+                                'dob'         => $spd->dob,
+                            ]
+                        );
+                        
                         $enrollee->eligibility_job_id = $ejv->eligibiliy_job_id;
                     }
                     
@@ -224,7 +230,9 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                         $enrollee->location_id = $spd->location_id;
                     }
                     
-                    if ($enrollee->isDirty()) $enrollee->save();
+                    if ($enrollee->isDirty()) {
+                        $enrollee->save();
+                    }
                     
                     return ImportConsentedEnrollees::dispatch([$enrollee->id]);
                 }
