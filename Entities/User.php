@@ -2662,7 +2662,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function routeNotificationForTwilio()
     {
         if (App::environment(['review', 'staging', 'local'])) {
-            return '+35799018718'; // tester
+            return '+35799952761'; // tester
         } else {
             return $this->getPhone();
         }
