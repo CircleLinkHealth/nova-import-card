@@ -10,7 +10,7 @@ namespace App\Services\Enrollment;
 use App\CareAmbassador;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
-class EnrolleeCallQueue
+class EnrollableCallQueue
 {
     static function getNext(CareAmbassador $careAmbassador)
     {
@@ -66,6 +66,8 @@ class EnrolleeCallQueue
         if ($enrollee) {
             //mark as engaged to prevent double dipping
             $enrollee->status = Enrollee::ENGAGED;
+            //re-assign care ambassador, in case patient has been retrieved as a confirmed family member
+            $enrollee->care_ambassador_user_id = $careAmbassador->user_id;
             $enrollee->save();
         }
 

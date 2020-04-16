@@ -33,14 +33,6 @@
     <script>
         window['userId'] = @json($user->id);
         window['userFullName'] = @json($user->getFullName());
-        window['hasTips'] = @json((!!$enrollee->practice->enrollmentTips));
-        window['enrollee'] = @json($enrollee);
-        window['provider'] = @json($provider);
-        window['providerFullName'] = @json($provider ? $provider->getFullName() : 'N/A');
-        window['providerPhone'] = @json($provider ? $provider->getPhone() : 'N/A');
-        window['providerInfo'] = @json($enrollee->getProviderInfo());
-        window['report'] = @json($report);
-        window['script'] = @json($script);
 
         //for time tracker
         function addPadding(v) {
@@ -135,7 +127,7 @@
 
             //new fields for ca panel
             "isFromCaPanel": true,
-            "enrolleeId": '{{$enrollee->id}}',
+            "enrolleeId": '0',
         };
     </script>
 
