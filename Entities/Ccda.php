@@ -554,9 +554,17 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     
     /**
      * Search for a Billing Provider using a search term, and.
+     *
+     * @param string $term
+     *
+     * @param int $practiceId
+     *
+     * @return User|null
      */
-    public function searchBillingProvider(string $term): ?User
+    public static function searchBillingProvider(string $term, int $practiceId = null): ?User
     {
+        if (! $practiceId) return null;
+        
         $baseQuery = (new ProviderByName())->query($term);
         
         if ('algolia' === config('scout.driver')) {
@@ -566,21 +574,21 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
                         'typoTolerance' => true,
                     ]
                 )->when(
-                    ! empty($this->practice_id),
-                    function ($q) {
-                        $q->whereIn('practice_ids', [$this->practice_id]);
+                    ! empty($practiceId),
+                    function ($q) use ($practiceId) {
+                        $q->whereIn('practice_ids', [$practiceId]);
                     }
                 )
                 ->first();
         }
         
         return $baseQuery->when(
-            ! empty($this->practice_id),
-            function ($q) {
+            ! empty($practiceId),
+            function ($q) use ($practiceId){
                 if (! method_exists($q, 'ofPractice')) {
-                    return $q->whereIn('practice_ids', [$this->practice_id]);
+                    return $q->whereIn('practice_ids', [$practiceId]);
                 }
-                $q->ofPractice($this->practice_id);
+                $q->ofPractice($practiceId);
             }
         )->first();
     }
@@ -717,7 +725,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     
     private function setAllPracticeInfoFromProvider(string $term)
     {
-        $searchProvider = $this->searchBillingProvider($term);
+        $searchProvider = self::searchBillingProvider($term, $this->practice_id);
         
         if ( ! $searchProvider) {
             return;
