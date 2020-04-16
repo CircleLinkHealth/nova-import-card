@@ -207,6 +207,14 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                         if ( ! $ejv) {
                             return $spd;
                         }
+                        
+                        $enrollee = Enrollee::create([
+                            'practice_id' => $spd->practice_id,
+                            'first_name' => $spd->first_name,
+                            'last_name' => $spd->last_name,
+                            'mrn' => $spd->mrn,
+                            'dob' => $spd->dob,
+                                                     ]);
     
                         $enrollee->eligibility_job_id = $ejv->eligibiliy_job_id;
                     }
