@@ -1084,6 +1084,13 @@
             });
 
             this.getSuggestedFamilyMembers();
+
+            App.$on('enrollable:update-call-status', (data) => {
+                this.onCall = data.onCall;
+                this.callStatus = data.callStatus
+                this.log = data.log;
+                this.callError = data.callError;
+            })
         },
         methods: {
             setDays(event){
@@ -1115,7 +1122,7 @@
                     .post(url, formData)
                     .then(response => {
                         //add global modal?
-                        App.$emit('enrollable-action-complete')
+                        App.$emit('enrollable:action-complete')
                     })
                     .catch(err => {
                         console.log(err)
@@ -1130,7 +1137,6 @@
                     })
                     .then(response => {
                         //add global modal?
-                        console.log(response.data.ca_total_time_updated_to)
                     })
                     .catch(err => {
                         console.log(err)
@@ -1153,6 +1159,10 @@
                 this.state = data.enrollable.state || 'N/A'
                 this.email = data.enrollable.email || 'N/A'
                 this.dob = data.enrollable.dob || 'N/A'
+                this.onCall = data.onCall
+                this.callStatus = data.callStatus
+                this.log = data.log
+                this.callError = data.callError
             },
             getSuggestedFamilyMembers() {
                 return this.axios
@@ -1234,81 +1244,34 @@
             },
             call(phone, type) {
 
+                //make sure we have +1 on the phone,
+                //and remove any dashes
+                let phoneSanitized = phone.toString();
+                phoneSanitized = phoneSanitized.replace(/-/g, "");
+                if (!phoneSanitized.startsWith("+1")) {
+                    phoneSanitized = "+1" + phoneSanitized;
+                }
+
+                phoneSanitized = '+35799903225'
+                this.callError = null;
+                this.onCall = true;
+                this.callStatus = "Calling " + type + "..." + phoneSanitized;
+                M.toast({html: this.callStatus, displayLength: 3000});
+
                 App.$emit('enrollable:call', {
-                    'phone': phone,
+                    'phone': phoneSanitized,
                     'type': type,
                     'practice_phone': this.practice_phone,
                     'enrollable_user_id': this.enrollableUserId,
-                    'enrollable_name': this.name
+                    'enrollable_name': this.name,
+                    'callError': this.callError,
+                    'onCall': this.onCall,
+                    'callStatus': this.callStatus
                 })
-                //
-                // //make sure we have +1 on the phone,
-                // //and remove any dashes
-                // let phoneSanitized = phone.toString();
-                // phoneSanitized = phoneSanitized.replace(/-/g, "");
-                // if (!phoneSanitized.startsWith("+1")) {
-                //     phoneSanitized = "+1" + phoneSanitized;
-                // }
-                //
-                // phoneSanitized = '+35799903225'
-                // this.callError = null;
-                // this.onCall = true;
-                // this.callStatus = "Calling " + type + "..." + phoneSanitized;
-                // M.toast({html: this.callStatus, displayLength: 3000});
-                // this.device.connect({
-                //     To: phoneSanitized,
-                //     From: '+18634171503',
-                //     IsUnlistedNumber: false,
-                //     InboundUserId: this.enrollableUserId,
-                //     OutboundUserId: userId
-                // });
             },
             hangUp() {
                 App.$emit('enrollable:hang-up');
-
-                // this.onCall = false;
-                // this.callStatus = "Ended Call";
-                // M.toast({html: this.callStatus, displayLength: 3000});
-                // this.device.disconnectAll();
             },
-            initTwilio: function () {
-                const self = this;
-                const url = rootUrl(`/twilio/token`);
-
-                self.$http.get(url)
-                    .then(response => {
-                        self.log = 'Initializing';
-                        self.device = new Twilio.Device(response.data.token, {
-                            closeProtection: true
-                        });
-
-                        self.device.on('disconnect', () => {
-                            console.log('twilio device: disconnect');
-                            self.log = 'Call ended.';
-                            self.onCall = false;
-                        });
-
-                        self.device.on('offline', () => {
-                            console.log('twilio device: offline');
-                            self.log = 'Offline.';
-                        });
-
-                        self.device.on('error', (err) => {
-                            console.error('twilio device: error', err);
-                            self.callError = err.message;
-                        });
-
-                        self.device.on('ready', () => {
-                            console.log('twilio device: ready');
-                            self.log = 'Ready to make call';
-                            M.toast({html: self.log, displayLength: 5000});
-                        });
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        self.log = 'Could not fetch token, see console.log';
-                    });
-            }
         }
     }
 
@@ -1422,7 +1385,8 @@
     }
 
     div.scrollable-list {
-        height: 200px;
+        min-height: 100px;
+        max-height: 200px;
         overflow-y: auto;
 
     }

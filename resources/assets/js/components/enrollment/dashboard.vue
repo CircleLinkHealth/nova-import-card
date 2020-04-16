@@ -116,10 +116,12 @@
             let self = this;
             self.initTwilio();
 
-            App.$on('enrollable-action-complete', () => {
+            App.$on('enrollable:action-complete', () => {
                 this.patientData = null;
                 this.loading = true;
+                this.loading_modal.open();
                 this.retrievePatient();
+                this.updateCallStatus()
             })
 
             App.$on('enrollable:call', (data) => {
@@ -128,11 +130,15 @@
                 this.enrollable_name = data.enrollable_name
                 this.phone = data.phone
                 this.phone_type = data.type
+                this.callError = data.callError
+                this.callStatus = data.callStatus
+                this.onCall = data.onCall
                 this.call(data.phone, data.type)
             })
 
             App.$on('enrollable:hang-up', () => {
                 this.hangUp()
+                this.updateCallStatus()
             })
         },
         methods: {
@@ -140,9 +146,16 @@
                 return this.axios
                     .get(rootUrl('/enrollment/show'))
                     .then(response => {
-                        // this.loading = false
-                        // this.loading_modal.close()
-                        // this.patientData = response.data.data;
+                        this.loading = false
+                        this.loading_modal.close()
+
+                        let patientData = response.data.data;
+
+                        patientData.onCall = this.onCall
+                        patientData.callStatus = this.callStatus
+                        patientData.log = this.log
+                        patientData.callError = this.callError
+                        this.patientData = response.data.data;
                     })
                     .catch(err => {
                         //to implement
@@ -151,6 +164,19 @@
 
             getTimeDiffInSecondsFromMS(millis) {
                 return Math.round(Date.now() - millis) / 1000;
+            },
+
+            updateCallStatus() {
+                // let self = this;
+                // setTimeout(function(){
+                    App.$emit('enrollable:update-call-status', {
+                        'onCall': self.onCall,
+                        'callStatus': self.callStatus,
+                        'log': self.log,
+                        'callError': self.callError
+                    })
+                // }, 5000)
+
             },
 
             /**
@@ -165,52 +191,10 @@
                 settings[this.practice_id] = {show: !e.currentTarget.checked};
                 this.setTipsSettings(settings);
             },
-            validatePhone(value) {
-                let isValid = this.isValidPhoneNumber(value)
 
-                if (isValid) {
-                    this.isValid = true;
-                    this.disableHome = true;
-                    return true;
-                } else {
-                    this.isValid = false;
-                    this.disableHome = true;
-                    return false;
-                }
-            },
-            isValidPhoneNumber(string) {
-                //return true if string is empty
-                if (string.length === 0) {
-                    return true
-                }
-
-                let matchNumbers = string.match(/\d+-?/g)
-
-                if (matchNumbers === null) {
-                    return false
-                }
-
-                matchNumbers = matchNumbers.join('')
-
-                return !(matchNumbers === null || matchNumbers.length < 10 || string.match(/[a-z]/i));
-            },
             call(phone, type) {
-
-                //make sure we have +1 on the phone,
-                //and remove any dashes
-                let phoneSanitized = phone.toString();
-                phoneSanitized = phoneSanitized.replace(/-/g, "");
-                if (!phoneSanitized.startsWith("+1")) {
-                    phoneSanitized = "+1" + phoneSanitized;
-                }
-                phoneSanitized = '+35799903225';
-
-                this.callError = null;
-                this.onCall = true;
-                this.callStatus = "Calling " + type + "..." + phoneSanitized;
-                M.toast({html: this.callStatus, displayLength: 3000});
                 this.device.connect({
-                    To: phoneSanitized,
+                    To: this.phone,
                     // From: this.practice_phone ? this.practice_phone : undefined,
                     From: '+18634171503',
                     IsUnlistedNumber: false,
@@ -239,27 +223,32 @@
                             console.log('twilio device: disconnect');
                             self.log = 'Call ended.';
                             self.onCall = false;
+                            this.updateCallStatus()
                         });
 
                         self.device.on('offline', () => {
                             console.log('twilio device: offline');
                             self.log = 'Offline.';
+                            this.updateCallStatus()
                         });
 
                         self.device.on('error', (err) => {
                             console.error('twilio device: error', err);
                             self.callError = err.message;
+                            this.updateCallStatus()
                         });
 
                         self.device.on('ready', () => {
                             console.log('twilio device: ready');
                             self.log = 'Ready to make call';
                             M.toast({html: self.log, displayLength: 5000});
+                            this.updateCallStatus()
                         });
                     })
                     .catch(error => {
                         console.log(error);
                         self.log = 'Could not fetch token, see console.log';
+                        this.updateCallStatus()
                     });
             }
         }
