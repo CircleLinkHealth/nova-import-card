@@ -170,7 +170,7 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
         ];
         
         
-        $args['location_id']              = optional(
+        $args['location_id'] = optional(
             Location::where('practice_id', $args['practice_id'])->where(
                 'name',
                 $args['location']
@@ -216,11 +216,12 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                         
                         $enrollee = Enrollee::create(
                             [
-                                'practice_id' => $spd->practice_id,
-                                'first_name'  => $spd->first_name,
-                                'last_name'   => $spd->last_name,
-                                'mrn'         => $spd->mrn,
-                                'dob'         => $spd->dob,
+                                'eligibility_job_id' => $spd->eligibility_job_id,
+                                'practice_id'        => $spd->practice_id,
+                                'first_name'         => $spd->first_name,
+                                'last_name'          => $spd->last_name,
+                                'mrn'                => $spd->mrn,
+                                'dob'                => $spd->dob,
                             ]
                         );
                         
