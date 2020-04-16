@@ -182,7 +182,11 @@ class ImportEnrollee
         }
         
         $user = User::withTrashed()->find($enrollee->user_id);
-        
+
+        if ($user->hasRole('survey-only')){
+            return null;
+        }
+
         if ( ! $user) {
             $enrollee->user_id = null;
             $enrollee->save();
