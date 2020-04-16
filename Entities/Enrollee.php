@@ -257,6 +257,7 @@ class Enrollee extends BaseModel
     public $phi = [
         'first_name',
         'last_name',
+        'dob',
         'address',
         'address_2',
         'city',
