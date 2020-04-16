@@ -14,6 +14,24 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class ImportService
 {
+    public static function replaceCpmValues(Ccda $ccda, ?Enrollee $enrollee)
+    {
+        if ( ! $ccda->practice_id) {
+            $ccda->practice_id = $enrollee->practice_id;
+        }
+        if ( ! $ccda->location_id) {
+            $ccda->location_id = $enrollee->location_id;
+        }
+        if ( ! $ccda->billing_provider_id) {
+            $ccda->billing_provider_id = $enrollee->billing_provider_user_id;
+        }
+        if ($ccda->isDirty()) {
+            $ccda->save();
+        }
+        
+        return $ccda;
+    }
+    
     /**
      * Import a Patient whose CCDA we have already.
      *
@@ -21,34 +39,27 @@ class ImportService
      *
      * @param Enrollee|null $enrollee
      *
-     * @return \stdClass
+     * @return User|null
      */
-    public function importExistingCcda($ccdaId, Enrollee $enrollee = null)
+    public function importExistingCcda($ccdaId, Enrollee $enrollee = null): ?User
     {
-        $response = new \stdClass();
-
+        /** @var Ccda $ccda */
         $ccda = Ccda::withTrashed()
-            ->with(['patient.patientInfo', 'media'])
-            ->find($ccdaId);
-
+                    ->with(['patient.patientInfo', 'media'])
+                    ->find($ccdaId);
+        
         if ( ! $ccda) {
-            $response->success = false;
-            $response->message = "We could not locate CCDA with id ${ccdaId}";
-            $response->imr     = null;
-
-            return $response;
+            return null;
         }
-
+        
+        $ccda = self::replaceCpmValues($ccda, $enrollee);
+        
         if ($ccda->imported) {
             if ($ccda->patient) {
-                $response->success = false;
-                $response->message = "CCDA with id ${ccdaId} has already been imported.";
-                $response->imr     = null;
-
-                return $response;
+                return $ccda->patient;
             }
         }
-
+        
         if ($ccda->patientMrn() && $ccda->practice_id) {
             $exists = User::whereHas(
                 'patientInfo',
@@ -56,30 +67,22 @@ class ImportService
                     $q->where('mrn_number', $ccda->patientMrn());
                 }
             )->whereProgramId($ccda->practice_id)
-                ->exists();
-
+                          ->first();
+            
             if ($exists) {
-                $response->success = false;
-                $response->message = "CCDA with id ${ccdaId} has already been imported.";
-                $response->imr     = null;
-
-                return $response;
+                return $exists;
             }
         }
-
-        $imr = $ccda->import($enrollee);
-
+        
+        $ccda = $ccda->import($enrollee);
+        
         $ccda->status   = Ccda::QA;
         $ccda->imported = true;
         $ccda->save();
-
-        $response->success = true;
-        $response->message = 'CCDA successfully imported.';
-        $response->imr     = $imr;
-
-        return $response;
+        
+        return $ccda->patient;
     }
-
+    
     public function isCcda($medicalRecordType)
     {
         return stripcslashes($medicalRecordType) == stripcslashes(Ccda::class);

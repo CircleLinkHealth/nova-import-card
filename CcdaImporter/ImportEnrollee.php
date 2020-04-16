@@ -6,6 +6,7 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
+use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;
@@ -21,14 +22,15 @@ class ImportEnrollee
         
         //verify it wasn't already imported
         if ($enrollee->user_id) {
-            /** @var User|null $handled */
-            $handled = $static->handleExistingUser($enrollee);
+            /** @var User|null $patientUser */
+            $patientUser = $static->handleExistingUser($enrollee);
             
-            if ( ! is_null($handled)) {
-                return $handled;
+            if ( ! is_null($patientUser)) {
+                return $patientUser;
             }
         }
         
+        /** @var ImportService $importService */
         $importService = app(ImportService::class);
         
         //import ccda
@@ -98,16 +100,16 @@ class ImportEnrollee
     /**
      * @param Enrollee $enrollee
      *
-     * @return void|null
+     * @return User|null
      */
-    private function importTargetPatient(Enrollee $enrollee)
+    private function importTargetPatient(Enrollee $enrollee) :?User
     {
         $url = route(
             'import.ccd.remix',
             'Click here to Create and a CarePlan and review.'
         );
         
-        $athenaApi = app(\CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation::class);
+        $athenaApi = app(AthenaApiImplementation::class);
         
         $ccdaExternal = $athenaApi->getCcd(
             $enrollee->targetPatient->ehr_patient_id,
@@ -131,10 +133,12 @@ class ImportEnrollee
         
         $enrollee->medical_record_id   = $ccda->id;
         $enrollee->medical_record_type = Ccda::class;
-        $imported                      = $ccda->import();
         $enrollee->save();
-        
+        $imported                      = $ccda->import();
+    
         $this->enrolleeMedicalRecordImported($enrollee);
+        
+        return $imported->patient;
     }
     
     private function log($message)

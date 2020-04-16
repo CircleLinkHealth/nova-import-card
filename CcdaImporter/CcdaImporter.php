@@ -24,6 +24,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportVitals;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -96,6 +97,10 @@ class CcdaImporter
             $this->enrollee    = $enrollee;
             $enrollee->user_id = $this->patient->id;
             $enrollee->save();
+        }
+        
+        if ($this->enrollee) {
+            $this->ccda = ImportService::replaceCpmValues($this->ccda, $this->enrollee);
         }
         
         return $this;
