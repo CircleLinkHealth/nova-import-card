@@ -1,33 +1,38 @@
 <template>
     <div id="enrollment_calls">
-        <div>
-            <ul v-show="onCall" id="on_call" class="collapsible collapsible-top">
-                <li >
-                    <div class="collapsible-header waves-effect waves-light collapsible-header-top btn call-button"><i class="material-icons">phone</i><strong>On Call</strong></div>
-                    <div class="collapsible-body collapsible-body-top">
-                        <ul style="list-style: none">
-                            <li><strong>Patient:</strong> {{enrollable_name}} </li>
-                            <li><strong>Phone:</strong> {{phone_type}} </li>
-                            <li><strong>Number:</strong> {{phone}} </li>
-                            <li style="margin-bottom: 25px"><hr style="border-top: 1px grey"></li>
-                            <li style="text-align: center"><a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
-                                    class="material-icons left">call_end</i>Hang Up</a></li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <div v-if="loading">
-            <div class="loading-patient">
-                <span>Loading patient... </span>
-                <loader/>
+        <div id="loading" class="modal confirm" style="width: 40% !important">
+            <div class="modal-content">
+                <div class="loading-patient">
+                    <span>Loading patient... </span>
+                    <loader/>
+                </div>
+                <div v-show="onCall" id="on_call" class="on-call-info">
+                    <ul>
+                        <li style="margin-bottom: 5%">
+                            <span>Calling {{enrollable_name}} on {{phone}}</span>
+                        </li>
+                        <li style="margin-bottom: 25px">
+                            <hr style="border-top: 1px grey">
+                        </li>
+                        <li><a v-on:click="hangUp"
+                               class="waves-effect waves-light btn"
+                               style="background: red"><i
+                                class="material-icons left">call_end</i>Hang Up</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-        <div v-else>
+        <div v-if="!loading">
             <div v-if="patientExists">
                 <patient-to-enroll :patient-data="patientData"></patient-to-enroll>
             </div>
             <div v-else>
+                <div v-show="onCall">
+                    <a v-on:click="hangUp"
+                       class="waves-effect waves-light btn"
+                       style="background: red;  margin-top: 1%; margin-left: 50%; position: fixed"><i
+                            class="material-icons left">call_end</i>Hang Up</a>
+                </div>
                 <div class="row">
                     <div class="col cookie">
                         <div class="card horizontal">
@@ -92,20 +97,21 @@
                 device: null,
                 log: null,
                 phone_type: null,
+                loading_modal: null
             };
         },
-        created() {
-            $(document).ready(function(){
-                $('.collapsible').collapsible({
-                    accordion: false
-                });
-            });
-        },
         mounted: function () {
-            this.loading = true;
-            this.retrievePatient();
+            // M.AutoInit();
 
-            M.AutoInit();
+            this.loading = true;
+            M.Modal.init($('#loading'), {
+                preventScrolling: true,
+                dismissible: false
+            });
+            this.loading_modal = M.Modal.getInstance(document.getElementById('loading'));
+            this.loading_modal.open();
+
+            this.retrievePatient();
 
             let self = this;
             self.initTwilio();
@@ -126,7 +132,7 @@
             })
 
             App.$on('enrollable:hang-up', () => {
-               this.hangUp()
+                this.hangUp()
             })
         },
         methods: {
@@ -134,8 +140,9 @@
                 return this.axios
                     .get(rootUrl('/enrollment/show'))
                     .then(response => {
-                        this.loading = false
-                        this.patientData = response.data.data;
+                        // this.loading = false
+                        // this.loading_modal.close()
+                        // this.patientData = response.data.data;
                     })
                     .catch(err => {
                         //to implement
@@ -261,19 +268,18 @@
 </script>
 <style>
     .loading-patient {
-        top: 50%;
-        left: 50%;
-        position: absolute;
-        transform: translate(-50%, -50%);
+        margin-top: 10%;
+        margin-left: 37%;
+        margin-bottom: 15%;
     }
 
     .loading-patient .loader {
-        margin-left: 36%;
-        margin-top: 20%;
+        margin-left: 14%;
+        margin-top: 10%;
     }
 
     .loading-patient span {
-        color: lightgrey;
+        color: darkgray;
         font-size: large;
     }
 
@@ -293,6 +299,7 @@
     .collapsible-body-top {
         background-color: #fff;
     }
+
     .collapsible-header-top {
         text-align: center;
         background-color: #fff;
@@ -301,6 +308,18 @@
 
     .collapsible-body-top li {
         margin-bottom: 5px;
+    }
+
+    .on-call-info {
+        margin-top: 20%;
+    }
+
+    .on-call-info ul {
+        list-style: none;
+    }
+
+    .on-call-info ul li {
+        text-align: center;
     }
 </style>
 
