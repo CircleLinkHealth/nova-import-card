@@ -396,7 +396,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
     
     public function getMrn(): string
     {
-        return $this->data['mrn'];
+        return $this->data['mrn'] ?? $this->data['mrn_number'] ?? $this->data['patient_id'];
     }
     
     public function getFirstName(): string
