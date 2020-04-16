@@ -12,7 +12,7 @@ if (isset($patient)) {
 }
 $user                = auth()->user();
 $patientListDropdown = getPatientListDropdown($user);
-$isTwoFaRoute = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
+$isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
 ?>
 @push('styles')
     <style>
@@ -155,52 +155,57 @@ $isTwoFaRoute = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
                                 </li>
                             @endif
 
-                            <li>
-                                <a href="{{ route('patients.dashboard') }}" class="text-white"><i
-                                            class="top-nav-item-icon glyphicon glyphicon-home"></i>Home</a>
-                            </li>
 
-
-                        @if(sizeof($patientListDropdown) === 1)
-                            <li>
-                                @if($patientListDropdown[0] === 'ccm')
-                                    <a href="{{ route('patients.listing') }}" class="text-white">
-                                        <i class="top-nav-item-icon glyphicon glyphicon-user"></i>
-                                        Patient List
-                                    </a>
+                            @if(! $user->isCareCoach())
+                                <li>
+                                    <a href="{{ route('patients.dashboard') }}" class="text-white"><i
+                                                class="top-nav-item-icon glyphicon glyphicon-home"></i>Home</a>
+                                </li>
+                                @if(sizeof($patientListDropdown) === 1)
+                                    <li>
+                                        @if($patientListDropdown[0] === 'ccm')
+                                            <a href="{{ route('patients.listing') }}" class="text-white">
+                                                <i class="top-nav-item-icon glyphicon glyphicon-user"></i>
+                                                Patient List
+                                            </a>
+                                        @else
+                                            <a href="{{ config('services.awv.url') }}" class="text-white">
+                                                <i class="top-nav-item-icon glyphicon glyphicon-user"></i>
+                                                Patient List
+                                            </a>
+                                        @endif
+                                    </li>
                                 @else
-                                    <a href="{{ config('services.awv.url') }}" class="text-white">
-                                        <i class="top-nav-item-icon glyphicon glyphicon-user"></i>
-                                        Patient List
-                                    </a>
+                                    <li class="dropdown">
+                                        <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
+                                             aria-expanded="false">
+                                            Patient List
+                                            <span class="caret text-white"></span>
+                                        </div>
+                                        <ul class="dropdown-menu" role="menu" style="background: white !important;">
+                                            <li>
+                                                <a href="{{ route('patients.listing') }}">
+                                                    CCM
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ config('services.awv.url') }}">
+                                                    Wellness Visit
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
                                 @endif
-                            </li>
-                        @else
-                            <li class="dropdown">
-                                <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
-                                     aria-expanded="false">
-                                    Patient List
-                                    <span class="caret text-white"></span>
-                                </div>
-                                <ul class="dropdown-menu" role="menu" style="background: white !important;">
-                                    <li>
-                                        <a href="{{ route('patients.listing') }}">
-                                            CCM
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ config('services.awv.url') }}">
-                                            Wellness Visit
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
                         @endif
 
                         @if($user->isCareCoach())
                             <li>
                                 <a href="{{ route('patientCallList.index') }}" class="text-white"><i
                                             class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('care.center.work.schedule.index') }}" class="text-white"><i
+                                            class="top-nav-item-icon glyphicon glyphicon-calendar"></i>Schedule</a>
                             </li>
                         @endif
 
@@ -222,7 +227,7 @@ $isTwoFaRoute = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
                                 <li>
                                     <a href="{{route('patient.reports.u20')}}">Under 20 Minutes Report</a>
                                 </li>
-                                @if($user->hasRole('developer'))
+                                @if($user->hasRole('developer') || $user->isAdmin())
                                     <li>
                                         <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
                                     </li>

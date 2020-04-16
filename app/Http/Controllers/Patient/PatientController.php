@@ -239,11 +239,19 @@ class PatientController extends Controller
      */
     public function showPatientListing()
     {
+        if (auth()->user()->isCareCoach()) {
+            abort(403);
+        }
+
         return view('wpUsers.patient.listing');
     }
 
     public function showPatientListingPdf(PdfService $pdfService)
     {
+        if (auth()->user()->isCareCoach()) {
+            abort(403);
+        }
+
         $storageDirectory = 'storage/pdfs/patients/';
         $datetimePrefix   = date('Y-m-dH:i:s');
         $fileName         = $storageDirectory.$datetimePrefix.'-patient-list.pdf';

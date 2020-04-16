@@ -25,38 +25,40 @@ $hasAwv              = in_array('awv', $patientListDropdown);
                     {{--</a>--}}
                     {{--</li>--}}
 
-                    @if (config('services.awv.url', null) && $hasAwv)
+                    @if(! auth()->user()->isCareCoach())
+                        @if (config('services.awv.url', null) && $hasAwv)
+                            <li class="menu-item">
+                                <a href="{{ config('services.awv.url') . '/manage-patients' }}">
+                                    <div class="icon-container column-centered">
+                                        <i class="icon--list-patient--big icon--menu">
+                                        </i>
+                                    </div>
+                                    <div>
+                                        <p class="text-medium-big text--menu text-serif">
+                                            Wellness Visit Patient List
+                                            <br/>
+                                            <br/>
+                                        </p>
+                                    </div>
+                                </a>
+                            </li>
+                        @endif
+
                         <li class="menu-item">
-                            <a href="{{ config('services.awv.url') . '/manage-patients' }}">
+                            <a id="patient-list" href="{{ route('patients.listing', array()) }}">
                                 <div class="icon-container column-centered">
                                     <i class="icon--list-patient--big icon--menu">
+                                        <div class="notification btn-warning">{{ $pendingApprovals }}</div>
                                     </i>
                                 </div>
                                 <div>
-                                    <p class="text-medium-big text--menu text-serif">
-                                        Wellness Visit Patient List
-                                        <br/>
-                                        <br/>
-                                    </p>
+                                    <p class="text-medium-big text--menu text-serif">CCM Patient List<br><span
+                                                style="color:red;font-style:italic;font-size:85%;" class="text-thin">{{ $pendingApprovals }}
+                                        Pending<br>Approvals</span><br></p>
                                 </div>
                             </a>
                         </li>
                     @endif
-
-                    <li class="menu-item">
-                        <a id="patient-list" href="{{ route('patients.listing', array()) }}">
-                            <div class="icon-container column-centered">
-                                <i class="icon--list-patient--big icon--menu">
-                                    <div class="notification btn-warning">{{ $pendingApprovals }}</div>
-                                </i>
-                            </div>
-                            <div>
-                                <p class="text-medium-big text--menu text-serif">CCM Patient List<br><span
-                                            style="color:red;font-style:italic;font-size:85%;" class="text-thin">{{ $pendingApprovals }}
-                                        Pending<br>Approvals</span><br></p>
-                            </div>
-                        </a>
-                    </li>
 
                     <li class="menu-item">
                         <a dusk="add-patient-btn" href="{{ route('patient.demographics.create') }}">
@@ -104,11 +106,6 @@ $hasAwv              = in_array('awv', $patientListDropdown);
             </div>
         </div>
         @include('errors.errors')
-
-        @if($nurse && auth()->user()->isNotSaas())
-            @include('partials.care-center.dashboard-schedule', [$nurse])
-        @endif
-
     </div>
 
     <div class="container-fluid">

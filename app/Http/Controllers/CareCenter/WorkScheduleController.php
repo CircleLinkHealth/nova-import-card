@@ -59,10 +59,8 @@ class WorkScheduleController extends Controller
     {
         $startDate = Carbon::parse($request->input('start'))->toDateString();
         $endDate   = Carbon::parse($request->input('end'))->toDateString();
-//        $startDate = Carbon::parse(now())->startOfMonth()->toDateString();
-//        $endDate = Carbon::parse($startDate)->endOfMonth()->toDateString();
-        $today = Carbon::parse(now())->toDateString();
-        $auth  = auth()->user();
+        $today     = Carbon::parse(now())->toDateString();
+        $auth      = auth()->user();
 
         if ($auth->isAdmin()) {
             $nurses = $this->getActiveNurses();
@@ -124,6 +122,20 @@ class WorkScheduleController extends Controller
             });
 
         return $this->fullCalendarService->prepareWorkDataForEachNurse($windows, $nurse);
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function dailyReportsForNurse()
+    {
+        $auth         = auth()->user();
+        $dailyReports = $this->fullCalendarService->prepareDailyReportsForNurse($auth);
+
+        return response()->json([
+            'success'      => true,
+            'dailyReports' => $dailyReports,
+        ], 200);
     }
 
     /**
@@ -212,45 +224,6 @@ class WorkScheduleController extends Controller
         }
     }
 
-    public function multipleDelete(NurseContactWindow $window)
-    {
-        $windowDate = Carbon::parse($window->date);
-        $today = now()->startOfDay();
-        $tomorrow = $today->addDay(1);
-        $windows = NurseContactWindow::where('nurse_info_id', $window->nurse_info_id)
-            ->where('date', '>', $tomorrow)
-            ->where('repeat_start', $window->repeat_start)
-            ->get();
-
-        foreach ($windows as $workWindow) {
-            // Update Work Hours
-            WorkHours::where('workhourable_id', $workWindow->nurse_info_id)
-                ->where('work_week_start', '>=', $windowDate->copy()->startOfWeek())
-                ->where('work_week_start', '<=', $workWindow->until)
-                ->get()
-                ->each(function ($week) use ($workWindow, $today, $tomorrow) {
-                    /** @var WorkHours $week */
-                    $dates = createWeekMap($week->work_week_start);
-                    foreach ($dates as $date) {
-                        $carbonDate = Carbon::parse($date);
-                        if ($carbonDate->eq(Carbon::parse($workWindow->date))
-                            && $carbonDate->gt($today)
-                            && $carbonDate->gt($tomorrow)) {
-                            $week->update(
-                                [
-                                    strtolower(clhDayOfWeekToDayName($carbonDate->dayOfWeek)) => 0
-                                ]);
-                        }
-                    }
-                });
-
-            // Delete Window
-            $workWindow->forceDelete();
-        }
-
-        $this->informSlackNurseSide($window);
-    }
-
     /**
      * @return Collection|mixed
      */
@@ -289,16 +262,16 @@ class WorkScheduleController extends Controller
                     'H:i:s',
                     $window->window_time_end
                 )->diffInHours(Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_start
-                    ));
+                    'H:i:s',
+                    $window->window_time_start
+                ));
             }) + Carbon::createFromFormat(
                 'H:i',
                 $workScheduleData['window_time_end']
             )->diffInHours(Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_start']
-                ));
+                'H:i',
+                $workScheduleData['window_time_start']
+            ));
     }
 
     public function getSelectedNurseCalendarData(Request $request)
@@ -368,6 +341,46 @@ class WorkScheduleController extends Controller
         $sentence .= route('get.admin.nurse.schedules');
 
         \sendSlackMessage('#carecoachscheduling', $sentence);
+    }
+
+    public function multipleDelete(NurseContactWindow $window)
+    {
+        $windowDate = Carbon::parse($window->date);
+        $today      = now()->startOfDay();
+        $tomorrow   = $today->addDay(1);
+        $windows    = NurseContactWindow::where('nurse_info_id', $window->nurse_info_id)
+            ->where('date', '>', $tomorrow)
+            ->where('repeat_start', $window->repeat_start)
+            ->get();
+
+        foreach ($windows as $workWindow) {
+            // Update Work Hours
+            WorkHours::where('workhourable_id', $workWindow->nurse_info_id)
+                ->where('work_week_start', '>=', $windowDate->copy()->startOfWeek())
+                ->where('work_week_start', '<=', $workWindow->until)
+                ->get()
+                ->each(function ($week) use ($workWindow, $today, $tomorrow) {
+                    /** @var WorkHours $week */
+                    $dates = createWeekMap($week->work_week_start);
+                    foreach ($dates as $date) {
+                        $carbonDate = Carbon::parse($date);
+                        if ($carbonDate->eq(Carbon::parse($workWindow->date))
+                            && $carbonDate->gt($today)
+                            && $carbonDate->gt($tomorrow)) {
+                            $week->update(
+                                [
+                                    strtolower(clhDayOfWeekToDayName($carbonDate->dayOfWeek)) => 0,
+                                ]
+                            );
+                        }
+                    }
+                });
+
+            // Delete Window
+            $workWindow->forceDelete();
+        }
+
+        $this->informSlackNurseSide($window);
     }
 
     /**

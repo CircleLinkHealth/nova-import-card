@@ -6,6 +6,7 @@
 
 namespace App\FullCalendar;
 
+use App\Services\NursesPerformanceReportService;
 use App\Traits\ValidatesWorkScheduleCalendar;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -144,6 +145,32 @@ class NurseCalendarService
                 'updated_at'        => Carbon::parse(now())->toDateTimeString(),
             ];
         });
+    }
+
+    /**
+     * @param $authId
+     *
+     * @return array
+     */
+    public function dailyReportsForNurse($authId)
+    {
+        $yesterday = now()->copy()->subDay(1);
+        $startDate = $yesterday->copy()->subDays(6);
+        $dates     = getDatesForRange($startDate, $yesterday);
+
+        $service = new NursesPerformanceReportService();
+
+        $reports = [];
+        foreach ($dates as $date) {
+            $reportForDay = $service->getDailyReportJson(Carbon::parse($date));
+            if ( ! $reportForDay || ! is_json($reportForDay)) {
+                $reports[$date] = [];
+            } else {
+                $reports[$date] = collect(json_decode($reportForDay, true))->where('nurse_id', $authId)->first();
+            }
+        }
+
+        return $reports;
     }
 
     /**
@@ -288,6 +315,93 @@ class NurseCalendarService
 
             return $this->prepareWorkDataForEachNurse($windows, $nurse);
         })->flatten(1);
+    }
+
+    /**
+     * @param $auth
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function prepareDailyReportsForNurse($auth)
+    {
+        $reports = $this->dailyReportsForNurse($auth->id);
+        $title   = 'Daily Report';
+
+        $reportsForCalendarView = [];
+        foreach ($reports as $date => $report) {
+            if (empty($report)) {
+                continue;
+            }
+            $showEfficiencyMetric       = true;
+            $enableDailyReportMetrics   = true;
+            $patientsCompletedRemaining = true;
+
+            if (showNurseMetricsInDailyEmailReport($auth->id, 'efficiency_metrics')) {
+                $showEfficiencyMetric = true;
+            }
+
+            if (showNurseMetricsInDailyEmailReport($auth->id, 'enable_daily_report_metrics')) {
+                $enableDailyReportMetrics = true;
+            }
+
+            if (showNurseMetricsInDailyEmailReport($auth->id, 'patients_completed_and_remaining')) {
+                $patientsCompletedRemaining = true;
+            }
+
+            $nextUpcomingWindow = ! empty($report) ? $report['nextUpcomingWindow'] : false;
+
+            $reportCalculations = [
+                'windowStart' => $nextUpcomingWindow
+                    ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A')
+                    : null,
+                'windowEnd' => $nextUpcomingWindow
+                    ? Carbon::parse($nextUpcomingWindow['window_time_end'])->format('g:i A')
+                    : null,
+
+                'nextUpcomingWindowDay' => $nextUpcomingWindow
+                    ? Carbon::parse($nextUpcomingWindow['date'])->format('l')
+                    : null,
+
+                'nextUpcomingWindowMonth' => $nextUpcomingWindow
+                    ? Carbon::parse($nextUpcomingWindow['date'])->format('F d')
+                    : null,
+
+                'deficitTextColor' => $report['surplusShortfallHours'] < 0
+                    ? '#f44336'
+                    : '#009688',
+
+                'deficitOrSurplusText' => $report['surplusShortfallHours'] < 0
+                    ? 'Deficit'
+                    : 'Surplus',
+            ];
+
+            $dataReport = array_merge($report, $reportCalculations);
+
+            if ( ! empty($report)) {
+                if (0 !== $report['systemTime'] && $auth->nurseInfo->hourly_rate > 1) {
+                    $reportsForCalendarView[] = [
+                        self::TITLE => $title,
+                        self::START => $date,
+                        'allDay'    => true,
+                        'color'     => '#d79ef0',
+                        'data'      => [
+                            //                    'name' => $report['nurse_full_name'],
+                            'date'        => $date,
+                            'day'         => clhDayOfWeekToDayName(clhToCarbonDayOfWeek(Carbon::parse($date)->dayOfWeek)),
+                            'eventType'   => 'dailyReport',
+                            'reportData'  => $dataReport,
+                            'reportFlags' => [
+                                'showEfficiencyMetrics'      => $showEfficiencyMetric,
+                                'enableDailyReportMetrics'   => $enableDailyReportMetrics,
+                                'patientsCompletedRemaining' => $patientsCompletedRemaining,
+                            ],
+                        ],
+                    ];
+                }
+            }
+        }
+
+        return collect($reportsForCalendarView);
     }
 
     public function prepareHolidaysData($holidays, $nurse, $startDate, $endDate)

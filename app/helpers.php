@@ -1076,11 +1076,11 @@ if ( ! function_exists('validProblemName')) {
                 'check',
             ]
         ) && ! in_array(
-            strtolower($name),
-            [
-                'fu',
-            ]
-        );
+                strtolower($name),
+                [
+                    'fu',
+                ]
+            );
     }
 }
 
@@ -1590,7 +1590,21 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
         }
     }
 }
+if ( ! function_exists('getDatesForRange')) {
+    /**
+     * @return array
+     */
+    function getDatesForRange(Carbon $from, Carbon $to)
+    {
+        $dates = [];
+        for ($date = $from; $date->lte($to); $date->addDay(1)) {
+//            If i dont format here they mutate AF.
+            $dates[] = $date->format('Y-m-d');
+        }
 
+        return $dates;
+    }
+}
 if ( ! function_exists('createWeekMap')) {
     /**
      * Date parameter is the date the user saved the event for. Take that to startOfWeek and create the dates of that week?
@@ -1876,7 +1890,7 @@ if ( ! function_exists('genericDiabetes')) {
     function genericDiabetes(): \CircleLinkHealth\SharedModels\Entities\CpmProblem
     {
         return \Cache::remember('cpm_problem_diabetes', 2, function () {
-            return  \CircleLinkHealth\SharedModels\Entities\CpmProblem::where('name', 'Diabetes')->first();
+            return \CircleLinkHealth\SharedModels\Entities\CpmProblem::where('name', 'Diabetes')->first();
         });
     }
 }
@@ -1915,8 +1929,8 @@ if ( ! function_exists('getPatientListDropdown')) {
                     }
 
                     if ((1 === $count && $hasAwvInitial) ||
-                         (1 === $count && $hasAwvSubsequent) ||
-                         (2 === $count && $hasAwvInitial && $hasAwvSubsequent)) {
+                        (1 === $count && $hasAwvSubsequent) ||
+                        (2 === $count && $hasAwvInitial && $hasAwvSubsequent)) {
                         return;
                     }
 
