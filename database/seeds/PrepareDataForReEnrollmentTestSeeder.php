@@ -26,7 +26,6 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
      */
     public function run()
     {
-        $faker = Factory::create();
         $practice = Practice::firstOrCreate(
             [
                 'name' => 'demo',
@@ -42,13 +41,12 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         );
         $mothStart = Carbon::parse(now())->copy()->startOfMonth()->toDateTimeString();
         $monthEnd = Carbon::parse($mothStart)->copy()->endOfMonth()->toDateTimeString();
-        $provider = $this->createUser($practice->id, 'provider', 'enrolled');
 
         $enrollees = Enrollee::where('dob', \Carbon\Carbon::parse('1901-01-01'))
             ->whereDoesntHave('enrollmentInvitationLink');
 
-        if ( ! $enrollees->exists() || $enrollees->count() < 5) {
-
+        if ($enrollees->count() < 5) {
+            $enrollees->delete(); //Just to be sure
             $enrolleesForTesting = factory(Enrollee::class, 5)->create([
                 'dob' => \Carbon\Carbon::parse('1901-01-01'),
             ]);
@@ -68,7 +66,8 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 ])->where('birth_date', '=', '1901-01-01');
             });
 
-        if (!$unreachablePatients->exists() || $unreachablePatients->count() < 5) {
+        if ($unreachablePatients->count() < 5) {
+            $unreachablePatients->forceDelete(); //Just to be sure
             $n = 1;
             $limit = 5;
             while ($n <= $limit) {
