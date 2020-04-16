@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3743ad94612091b3a421142b8391fb44",
+    "content-hash": "c54d446b1996b3de68e87309fbf4e768",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -980,11 +980,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-master",
+            "version": "dev-CPM-2072_ca_panel_time_tracker",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "36e7e15faf09c30a196db635c24dd3c9577f86ac"
+                "reference": "b7eb6c6048842a6fbe332f97788e2018429a53c6"
             },
             "type": "laravel-module",
             "extra": {
@@ -1006,7 +1006,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-14T02:57:01+00:00"
+            "time": "2020-04-15T18:55:47+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1056,7 +1056,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "1dd4122c4b655649f1829922f92f0961accb8188"
+                "reference": "e1ddd640a8cbcffffe4362c770fb25357a93da62"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1081,7 +1081,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-14T07:01:27+00:00"
+            "time": "2020-04-16T02:43:48+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1335,7 +1335,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "426b83c4f11c3fc4aeb0080e165927cc523a8806"
+                "reference": "62d227f6e49ea80df8a43b3060c095abdd6a0f47"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1349,7 +1349,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-14T05:27:49+00:00"
+            "time": "2020-04-16T00:00:04+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -1386,11 +1386,11 @@
         },
         {
             "name": "circlelinkhealth/timetracking-module",
-            "version": "v1.1.8",
+            "version": "dev-CPM-2072_ca_panel_time_tracker",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "e8df27ecf467fa58da56cb4d126f5772c566578b"
+                "reference": "bdb5d6c2bd531f516b25652974b87abb4540689a"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1415,7 +1415,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-29T08:02:00+00:00"
+            "time": "2020-04-15T18:55:48+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -15137,6 +15137,7 @@
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/shared-models-module": 20,
+        "circlelinkhealth/timetracking-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
