@@ -37,7 +37,7 @@
                             <div class="card">
                                 <div class="card-content" style="text-align: center">
                                     <div style="color: #6d96c5" class="counter">
-                                        {{formatted_total_time_in_system}}
+                                        {{timeTrackerTime}}
                                     </div>
                                     <div class="card-subtitle">
                                         Time worked
@@ -279,7 +279,8 @@
 
             <!-- Success / Patient Consented -->
             <div id="consented" class="modal confirm modal-fixed-footer consented_modal">
-                <form method="post" id="consented_form" :action="consentedUrl" v-on:submit="handleSubmit($event, consentedUrl)">
+                <form method="post" id="consented_form" :action="consentedUrl"
+                      v-on:submit="handleSubmit($event, consentedUrl)">
 
                     <input type="hidden" name="_token" :value="csrf">
 
@@ -412,7 +413,8 @@
                             </blockquote>
                             <div class="col s12 m3">
                                 <label for="days[]" class="label">Day</label>
-                                <select class="do-not-close" v-model="days" name="days[]" id="days[]" @change="setDays"multiple>
+                                <select class="do-not-close" v-model="days" name="days[]" id="days[]" @change="setDays"
+                                        multiple>
                                     <option disabled selected>Days:</option>
                                     <option value="1">Monday</option>
                                     <option value="2">Tuesday</option>
@@ -467,8 +469,6 @@
 
                         <input type="hidden" name="status" value="consented">
                         <input type="hidden" name="enrollable_id" :value="enrollableId">
-                        <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
-                        <input type="hidden" name="time_elapsed" :value="time_elapsed">
                         <input type="hidden" name="confirmed_family_members" v-model="confirmed_family_members">
 
                     </div>
@@ -533,8 +533,6 @@
 
                         <input type="hidden" name="status" value="utc">
                         <input type="hidden" name="enrollable_id" :value="enrollableId">
-                        <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
-                        <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
                         <input type="hidden" name="confirmed_family_members" v-model="confirmed_family_members">
 
                     </div>
@@ -589,8 +587,6 @@
 
 
                         <input type="hidden" name="enrollable_id" :value="enrollableId">
-                        <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
-                        <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
                         <input type="hidden" name="confirmed_family_members" v-model="confirmed_family_members">
                     </div>
                     <div class="modal-footer" style="padding-right: 60px">
@@ -698,12 +694,16 @@
     export default {
         name: 'patient-to-enroll',
         props: [
-            'patientData'
+            'patientData',
+            'timeTracker'
         ],
         components: {
             'loader': Loader,
         },
         computed: {
+            timeTrackerTime: function () {
+                return this.timeTracker.formattedTime;
+            },
             enrollable: function () {
                 return this.patient_data.enrollable
             },
@@ -754,12 +754,6 @@
             },
             practice_phone: function () {
                 return this.enrollable.practice.outgoing_phone_number;
-            },
-            total_time_in_system: function () {
-                return this.report && this.report.total_time_in_system ? this.report.total_time_in_system : 0;
-            },
-            formatted_total_time_in_system: function () {
-                return new Date(1000 * this.total_time_in_system_running).toISOString().substr(11, 8);
             },
             //other phone computer vars
             other_phone_label: function () {
@@ -877,7 +871,7 @@
 
                 return providerName
             },
-            providerInfo(){
+            providerInfo() {
                 return this.patient_data.provider.providerInfo
             },
             provider_pronunciation_exists() {
@@ -897,7 +891,7 @@
             },
             care_ambassador_script: function () {
 
-                if (! this.script) {
+                if (!this.script) {
                     return 'Script not found.'
                 }
                 let ca_script = this.script.body;
@@ -968,9 +962,7 @@
                 disableHome: false,
                 disableCell: false,
                 disableOther: false,
-                time_elapsed: 0,
                 start_time: null,
-                total_time_in_system_running: 0,
                 onCall: false,
                 callStatus: 'Summoning Calling Gods...',
                 toCall: '',
@@ -1006,21 +998,8 @@
             this.family_loading = true;
 
             this.start_time = Date.now();
-            this.total_time_in_system_running = this.total_time_in_system;
             let self = this;
             // self.initTwilio();
-
-            //timer
-            setInterval(function () {
-                self.$data.total_time_in_system_running = self.getTimeDiffInSecondsFromMS(self.start_time) + (self.total_time_in_system);
-                self.$data.time_elapsed = self.getTimeDiffInSecondsFromMS(self.start_time);
-            }, 1000);
-
-            setInterval(function () {
-                if(self.report){
-                    this.updateCaLogs();
-                }
-            }.bind(this), 10000);
 
             $(document).ready(function () {
 
@@ -1086,8 +1065,8 @@
             this.getSuggestedFamilyMembers();
         },
         methods: {
-            setDays(event){
-                if (this.days.includes('all')){
+            setDays(event) {
+                if (this.days.includes('all')) {
                     M.FormSelect.getInstance(document.getElementById('days[]')).dropdown.close()
                     this.days = ['1', '2', '3', '4', '5', 'all'];
                 }
@@ -1107,7 +1086,7 @@
 
                 this.submitForm(event.target, url)
             },
-            submitForm(form, url){
+            submitForm(form, url) {
 
                 let formData = new FormData(form)
 
@@ -1121,25 +1100,10 @@
                         console.log(err)
                     });
             },
-            updateCaLogs(){
-
-                this.axios
-                    .post(rootUrl('/enrollment/update-ca-daily-time'), {
-                        'report_id': this.report.id,
-                        'total_time_in_system': this.total_time_in_system_running
-                    })
-                    .then(response => {
-                        //add global modal?
-                        console.log(response.data.ca_total_time_updated_to)
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    });
-            },
             submitPendingForm() {
                 this.submitForm(this.pending_form, this.pending_form_url)
             },
-            setPatientData(data){
+            setPatientData(data) {
                 // Object.entries($vm.patientData).map.
                 //replace with loop from resource
                 this.patient_data = data;

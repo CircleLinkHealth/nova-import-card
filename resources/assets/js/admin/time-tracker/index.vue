@@ -103,6 +103,9 @@
             'notifications': Notifications
         },
         computed: {
+            formattedTime() {
+                return this.$refs.timeDisplay.getTime();
+            },
             totalTime() {
                 return this.seconds
             }

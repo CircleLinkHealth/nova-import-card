@@ -57,5 +57,6 @@ class ProcessCareAmbassadorTime implements ShouldQueue
         $report                       = CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id);
         $report->total_time_in_system = PageTimer::where('provider_id', '=', $user->id)
                                                  ->sum('duration');
+        $report->save();
     }
 }

@@ -143,7 +143,7 @@ class StoreTimeTracking implements ShouldQueue
         $pageTimer->duration          = $duration;
         $pageTimer->duration_unit     = 'seconds';
         $pageTimer->patient_id        = $this->params->get('patientId');
-        $pageTimer->enrollee_id       = $activity['enrolleeId'] ?? null;
+        $pageTimer->enrollee_id       = empty($activity['enrolleeId']) ? null : $activity['enrolleeId']; //0 is null
         $pageTimer->provider_id       = $this->params->get('providerId', null);
         $pageTimer->start_time        = $startTime->toDateTimeString();
         $pageTimer->end_time          = $endTime->toDateTimeString();

@@ -1,16 +1,30 @@
 <template>
     <div id="enrollment_calls">
         <div>
+            <button style="position: fixed" @click="retrievePatient">Get new enrollee</button>
+        </div>
+        <div>
+            <time-tracker v-show="false"
+                          ref="timeTracker"
+                          :twilio-enabled="true"
+                          :info="getTimeTrackerInfo()"
+                          :no-live-count="false"
+                          :override-timeout="false">
+            </time-tracker>
             <ul v-show="onCall" id="on_call" class="collapsible collapsible-top">
-                <li >
-                    <div class="collapsible-header waves-effect waves-light collapsible-header-top btn call-button"><i class="material-icons">phone</i><strong>On Call</strong></div>
+                <li>
+                    <div class="collapsible-header waves-effect waves-light collapsible-header-top btn call-button"><i
+                            class="material-icons">phone</i><strong>On Call</strong></div>
                     <div class="collapsible-body collapsible-body-top">
                         <ul style="list-style: none">
-                            <li><strong>Patient:</strong> {{enrollable_name}} </li>
-                            <li><strong>Phone:</strong> {{phone_type}} </li>
-                            <li><strong>Number:</strong> {{phone}} </li>
-                            <li style="margin-bottom: 25px"><hr style="border-top: 1px grey"></li>
-                            <li style="text-align: center"><a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
+                            <li><strong>Patient:</strong> {{enrollable_name}}</li>
+                            <li><strong>Phone:</strong> {{phone_type}}</li>
+                            <li><strong>Number:</strong> {{phone}}</li>
+                            <li style="margin-bottom: 25px">
+                                <hr style="border-top: 1px grey">
+                            </li>
+                            <li style="text-align: center"><a v-on:click="hangUp" class="waves-effect waves-light btn"
+                                                              style="background: red"><i
                                     class="material-icons left">call_end</i>Hang Up</a></li>
                         </ul>
                     </div>
@@ -25,7 +39,7 @@
         </div>
         <div v-else>
             <div v-if="patientExists">
-                <patient-to-enroll :patient-data="patientData"></patient-to-enroll>
+                <patient-to-enroll :patient-data="patientData" :time-tracker="$refs.timeTracker"></patient-to-enroll>
             </div>
             <div v-else>
                 <div class="row">
@@ -60,6 +74,9 @@
 
     import {rootUrl} from '../../app.config';
 
+    import TimeTracker from '../../admin/time-tracker';
+    import TimeTrackerEventBus from '../../admin/time-tracker/comps/event-bus';
+
     import Loader from '../loader.vue';
 
     const userId = window.userId;
@@ -68,10 +85,13 @@
 
     export default {
         name: 'enrollment-dashboard',
-        props: [],
+        props: [
+            'timeTrackerInfo'
+        ],
         components: {
             'loader': Loader,
-            'patient-to-enroll': PatientToEnroll
+            'patient-to-enroll': PatientToEnroll,
+            'time-tracker': TimeTracker
         },
         computed: {
             patientExists: function () {
@@ -95,14 +115,13 @@
             };
         },
         created() {
-            $(document).ready(function(){
+            $(document).ready(function () {
                 $('.collapsible').collapsible({
                     accordion: false
                 });
             });
         },
         mounted: function () {
-            this.loading = true;
             this.retrievePatient();
 
             M.AutoInit();
@@ -112,7 +131,6 @@
 
             App.$on('enrollable-action-complete', () => {
                 this.patientData = null;
-                this.loading = true;
                 this.retrievePatient();
             })
 
@@ -126,19 +144,37 @@
             })
 
             App.$on('enrollable:hang-up', () => {
-               this.hangUp()
+                this.hangUp()
             })
         },
         methods: {
+            getTimeTrackerInfo() {
+                return window['timeTrackerInfo'];
+            },
+            setTimeTrackerInfo(info) {
+                //in case connection is lost and time tracker re-connects,
+                // we need to have the timeTrackerInfo object up to date
+                window['timeTrackerInfo'] = info;
+            },
+            notifyTimeTracker() {
+                const info = this.getTimeTrackerInfo();
+                info.enrolleeId = this.patientData.enrollable.id;
+                this.setTimeTrackerInfo(info);
+                TimeTrackerEventBus.$emit('tracker:activity', info);
+            },
             retrievePatient() {
+                this.loading = true;
                 return this.axios
                     .get(rootUrl('/enrollment/show'))
                     .then(response => {
-                        this.loading = false
+                        this.loading = false;
                         this.patientData = response.data.data;
+                        this.notifyTimeTracker();
                     })
                     .catch(err => {
                         //to implement
+                        this.loading = false;
+                        console.error(err);
                     });
             },
 
@@ -293,6 +329,7 @@
     .collapsible-body-top {
         background-color: #fff;
     }
+
     .collapsible-header-top {
         text-align: center;
         background-color: #fff;

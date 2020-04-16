@@ -27,6 +27,9 @@
             }
         },
         methods: {
+            getTime() {
+                return this.time;
+            },
             pad(num, count) {
                 count = count || 0;
                 const $num = num + '';
