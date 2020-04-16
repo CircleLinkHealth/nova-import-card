@@ -3,6 +3,15 @@ const getTime = require("../cache/user-time").getTime;
 const {EventEmitter} = require('events')
 const {validateInfo, createActivity} = require('./utils.fn');
 
+const axios = require('axios')
+const axiosRetry = require('axios-retry');
+axiosRetry(axios, {retries: 3, retryDelay: axiosRetry.exponentialDelay});
+
+const errorLogger = require('../logger').getErrorLogger();
+const storeTime = require("../cache/user-time").storeTime;
+
+const {ignorePatientTimeSync} = require('../sockets/sync.with.cpm');
+
 function TimeTrackerUser(info, $emitter = new EventEmitter()) {
 
     validateInfo(info)
@@ -10,8 +19,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
     let key;
     if (info.isFromCaPanel) {
         key = `${info.providerId}`;
-    }
-    else {
+    } else {
         key = `${info.providerId}-${info.patientId}`;
     }
 
@@ -428,6 +436,68 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         })),
         key: user.key
     })
+
+    user.changeActivity = (info, ws) => {
+        user.sendToCpm(false);
+        const totalCcm = user.totalCcmSeconds;
+        const totalBhi = user.totalBhiSeconds;
+        user.activities = [];
+        user.totalCCMTime = totalCcm;
+        user.totalBHITime = totalBhi;
+        user.totalTime = totalCcm + totalBhi;
+        user.enter(info, ws);
+    };
+
+    user.sendToCpm = (emitLogout) => {
+        const url = user.url
+
+        if (user.timeSyncUrl) {
+            ignorePatientTimeSync(user.timeSyncUrl, user.patientId);
+        }
+
+        const requestData = {
+            patientId: user.patientId,
+            providerId: user.providerId,
+            ipAddr: user.ipAddr,
+            programId: user.programId,
+            activities: user.activities.filter(activity => activity.duration > 0).map(activity => ({
+                name: activity.name,
+                title: activity.title,
+                duration: activity.duration,
+                enrolleeId: activity.enrolleeId,
+                url: activity.url,
+                url_short: activity.url_short,
+                start_time: activity.start_time,
+                is_behavioral: activity.isBehavioral
+            }))
+        };
+
+        if (user.totalCcmSeconds === 0 && user.totalBhiSeconds === 0) {
+            console.log('will not cache ccc because time is 0');
+        } else {
+            console.log('caching ccm', user.totalCcmSeconds);
+            storeTime(user.key, requestData.activities, user.totalCcmSeconds, user.totalBhiSeconds);
+        }
+
+        axios
+            .post(url, requestData)
+            .then((response) => {
+
+                console.log(response.status,
+                    response.data,
+                    requestData.patientId,
+                    requestData.activities.map(activity => activity.duration).join(', '));
+
+            })
+            .catch((err) => {
+                errorLogger.report(err);
+                console.error(err)
+            });
+
+        if (emitLogout) {
+            $emitter.emit('socket:server:logout', requestData)
+        }
+    };
 
     return user
 }
