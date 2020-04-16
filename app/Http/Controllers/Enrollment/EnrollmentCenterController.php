@@ -462,6 +462,7 @@ class EnrollmentCenterController extends Controller
                 );
 
                 $patientInfo = $user->patientInfo->withTrashed()->first();
+
                 DB::table('invitation_links')
                     ->where('patient_info_id', $patientInfo->id)
                     ->delete();

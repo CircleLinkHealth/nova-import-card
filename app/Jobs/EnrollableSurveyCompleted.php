@@ -8,20 +8,16 @@ namespace App\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Jobs\ImportConsEnrolleesJustForQa;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
-use CircleLinkHealth\Eligibility\ValueObjects\SurveyOnlyEnrolleeMedicalRecord;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 
 class EnrollableSurveyCompleted implements ShouldQueue
@@ -64,8 +60,8 @@ class EnrollableSurveyCompleted implements ShouldQueue
      */
     public function handle()
     {
-        $enrollableId = $this->data['enrollable_id'];
-        $surveyInstanceId = $this->data['survey_instance_id'];
+        $enrollableId = is_json($this->data) ? json_decode($this->data)->enrollable_id : $this->data['enrollable_id'];
+        $surveyInstanceId = is_json($this->data) ? json_decode($this->data)->survey_instance_id : $this->data['survey_instance_id'];
 
         $surveyAnswers = $this->getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId);
         $user = User::withTrashed()->whereId($enrollableId)->firstOrFail();
@@ -88,10 +84,8 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 'status' => Enrollee::ENROLLED,
             ]);
 
-//            if (App::environment(['local', 'review', 'staging'])) {
-//                $this->importEnrolleeSurveyOnly($enrollee, $user);
-                ImportConsentedEnrollees::dispatch([$enrollee->id]);
-//            }
+            $this->importEnrolleeSurveyOnly($enrollee, $user);
+
 
             $patientType = 'Initial';
             $id = $enrollee->id;
@@ -179,7 +173,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
             return $answerVal;
         }
 
-        if (is_bool($answerVal)){
+        if (is_bool($answerVal)) {
             return $answerVal;
         }
 
@@ -255,62 +249,20 @@ class EnrollableSurveyCompleted implements ShouldQueue
      */
     public function importEnrolleeSurveyOnly($enrollee, User $user)
     {
-        $job = new EligibilityJob();
-        $practice = Practice::whereId($enrollee->practice_id)->first();
-        $medicalRecord = (new SurveyOnlyEnrolleeMedicalRecord($job, $practice))->createFromSurveyOnlyUser($enrollee);
-        $eligibilityBatch = $this->updateOrCreateBatch($user, $practice);
-        $hash = $this->createHash($enrollee);
-        $this->updateOrCreateEligibilityJob($eligibilityBatch, $medicalRecord, $hash);
-
         $user->delete();
-        ImportConsEnrolleesJustForQa::dispatch([$enrollee->id]);
+        ImportConsentedEnrollees::dispatch([$enrollee->id]);
+
+//        $job = new EligibilityJob();
+//        $practice = Practice::whereId($enrollee->practice_id)->first();
+//        $medicalRecord = (new SurveyOnlyEnrolleeMedicalRecord($job, $practice))->createFromSurveyOnlyUser($enrollee);
+//        $eligibilityBatch = $this->updateOrCreateBatch($user, $practice);
+//        $hash = $this->createHash($enrollee);
+//        $this->updateOrCreateEligibilityJob($eligibilityBatch, $medicalRecord, $hash);
+//
+//        $user->delete();
+//        ImportConsEnrolleesJustForQa::dispatch([$enrollee->id]);
 //        $this->deleteBatch($user->id);
 //        $user->forceDelete();
-    }
-
-    /**
-     * @param $user
-     * @param $practice
-     *
-     * @return EligibilityBatch|\Illuminate\Database\Eloquent\Model
-     */
-    public function updateOrCreateBatch($user, $practice)
-    {
-        return EligibilityBatch::updateOrCreate(
-            [
-                'practice_id' => $practice->id,
-                'type' => 'survey_only',
-            ],
-            [
-                'status' => EligibilityBatch::STATUSES['complete'],
-            ]
-        );
-    }
-
-    /**
-     * @return string
-     */
-    public function createHash(Enrollee $enrollee)
-    {
-        return $enrollee->practice->name . $enrollee->first_name . $enrollee->last_name . $enrollee->mrn . $enrollee->city . $enrollee->state . $enrollee->zip;
-    }
-
-    /**
-     * @param $eligibilityBatch
-     * @param $medicalRecord
-     * @param $hash
-     */
-    public function updateOrCreateEligibilityJob($eligibilityBatch, $medicalRecord, $hash)
-    {
-        EligibilityJob::updateOrCreate(
-            [
-                'batch_id' => $eligibilityBatch->id,
-            ],
-            [
-                'data' => $medicalRecord,
-                'hash' => $hash,
-            ]
-        );
     }
 
     /**
@@ -378,5 +330,50 @@ class EnrollableSurveyCompleted implements ShouldQueue
         $user->patientInfo->update([
             'ccm_status' => Patient::ENROLLED,
         ]);
+    }
+
+    /**
+     * @param $user
+     * @param $practice
+     *
+     * @return EligibilityBatch|\Illuminate\Database\Eloquent\Model
+     */
+    public function updateOrCreateBatch($user, $practice)
+    {
+        return EligibilityBatch::updateOrCreate(
+            [
+                'practice_id' => $practice->id,
+                'type' => 'survey_only',
+            ],
+            [
+                'status' => EligibilityBatch::STATUSES['complete'],
+            ]
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function createHash(Enrollee $enrollee)
+    {
+        return $enrollee->practice->name . $enrollee->first_name . $enrollee->last_name . $enrollee->mrn . $enrollee->city . $enrollee->state . $enrollee->zip;
+    }
+
+    /**
+     * @param $eligibilityBatch
+     * @param $medicalRecord
+     * @param $hash
+     */
+    public function updateOrCreateEligibilityJob($eligibilityBatch, $medicalRecord, $hash)
+    {
+        EligibilityJob::updateOrCreate(
+            [
+                'batch_id' => $eligibilityBatch->id,
+            ],
+            [
+                'data' => $medicalRecord,
+                'hash' => $hash,
+            ]
+        );
     }
 }

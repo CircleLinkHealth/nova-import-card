@@ -9,7 +9,6 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\SeedEligibilityJobsForEnrollees;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use Faker\Factory;
 use Illuminate\Database\Seeder;
 
 class PrepareDataForReEnrollmentTestSeeder extends Seeder
@@ -49,6 +48,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             $enrollees->delete(); //Just to be sure
             $enrolleesForTesting = factory(Enrollee::class, 5)->create([
                 'dob' => \Carbon\Carbon::parse('1901-01-01'),
+                'referring_provider_name' => 'Dr. Demo',
             ]);
 
             $this->seedEligibilityJobs(collect($enrolleesForTesting));
