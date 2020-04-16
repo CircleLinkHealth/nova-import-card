@@ -7,8 +7,13 @@
 namespace App\Nova\Importers;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\CcdaImporter\ImportEnrollee;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\Importable;
@@ -109,6 +114,7 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
         return [
             'NA: In CPM',
             'N/A',
+            '########',
         ];
     }
     
@@ -141,8 +147,15 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
     
     private function persistRow(array $row)
     {
+        ini_set('upload_max_filesize', '200M');
+        ini_set('post_max_size', '200M');
+        ini_set('max_input_time', 900);
+        ini_set('max_execution_time', 900);
+        
         $args = [
-            'dob'                 => optional($this->nullOrValue($row['dob']))->toDateString(),
+            'dob'                 => optional(
+                ImportPatientInfo::parseDOBDate($this->nullOrValue($row['dob']))
+            )->toDateString(),
             'first_name'          => $this->nullOrValue($row['first_name']),
             'last_name'           => $this->nullOrValue($row['last_name']),
             'mrn'                 => $this->nullOrValue($row['mrn']),
@@ -150,15 +163,61 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
             'secondary_insurance' => $this->nullOrValue($row['secondary_insurance']),
             'provider'            => $this->nullOrValue($row['provider']),
             'location'            => $this->nullOrValue($row['location']),
+            'practice_id'         => $this->getPractice()->id,
         ];
         
         if ( ! empty($args['mrn']) && ! empty($args['first_name']) && ! empty($args['last_name'])) {
-            return SupplementalPatientData::updateOrCreate(
-                [
-                    'mrn'         => $row['mrn'],
-                    'practice_id' => $this->getPractice()->id,
-                ],
-                $args
+            return tap(
+                SupplementalPatientData::updateOrCreate(
+                    [
+                        'mrn'                      => $row['mrn'],
+                        'location_id'              => optional(
+                            Location::where('practice_id', $args['practice_id'])->where(
+                                'name',
+                                $args['location']
+                            )->first()
+                        )->id,
+                        'billing_provider_user_id' => optional(
+                            Ccda::searchBillingProvider($args['provider'], $args['practice_id'])
+                        )->id,
+                    ],
+                    $args
+                ),
+                function ($spd) use ($row) {
+                    if ( ! array_key_exists('import_now', $row)) {
+                        return $spd;
+                    }
+                    
+                    if ( ! ('y' === strtolower(
+                            $row['import_now']
+                        ) && $spd->practice_id && $spd->first_name && $spd->last_name && $spd->mrn)) {
+                        return $spd;
+                    }
+                    
+                    if ( ! ($enrollee = Enrollee::where('practice_id', $spd->practice_id)->where(
+                        'first_name',
+                        $spd->first_name
+                    )->where('last_name', $spd->last_name)->where('mrn', $spd->mrn)->first())) {
+                        $ej = DB::table('eligible_patients')->where('mrn', $spd->mrn)->where(
+                            'last_name',
+                            $spd->last_name
+                        )->where('first_name', $spd->first_name)->where('practice_id', $spd->practice_id)->first();
+                        
+                        if ( ! $ej) {
+                            return $spd;
+                        }
+    
+                        $enrollee->eligibility_job_id = $ej->id;
+                    }
+                    
+                    if ( ! $enrollee->location_id && $spd->location_id) {
+                        $enrollee->location_id = $spd->location_id;
+                    }
+                    
+                    if ($enrollee->isDirty()) $enrollee->save();
+                    
+                    return ImportEnrollee::import($enrollee);
+                }
             );
         }
     }
@@ -166,6 +225,12 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
     private function validateDob($dob)
     {
         if ( ! $dob) {
+            return false;
+        }
+        
+        $validator = \Validator::make(['dob' => $dob], ['dob' => 'required|filled|date']);
+        
+        if ($validator->fails()) {
             return false;
         }
         
