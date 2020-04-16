@@ -43,26 +43,26 @@ class SurveyInstance extends BaseModel
     public function users()
     {
         return $this->belongsToMany(User::class, 'users_surveys', 'survey_instance_id', 'user_id')
-                    ->withPivot([
-                        'survey_id',
-                        'last_question_answered_id',
-                        'status',
-                        'start_date',
-                        'completed_at',
-                    ])
-                    ->withTimestamps();
+            ->withPivot([
+                'survey_id',
+                'last_question_answered_id',
+                'status',
+                'start_date',
+                'completed_at',
+            ])
+            ->withTimestamps();
     }
 
     public function questions()
     {
         return $this->belongsToMany(Question::class, 'survey_questions', 'survey_instance_id',
             'question_id')
-                    ->withPivot([
-                        'order',
-                        'sub_order',
-                    ])
-                    ->orderBy('pivot_order')
-                    ->orderBy('pivot_sub_order');
+            ->withPivot([
+                'order',
+                'sub_order',
+            ])
+            ->orderBy('pivot_order')
+            ->orderBy('pivot_sub_order');
     }
 
     /**
@@ -96,8 +96,8 @@ class SurveyInstance extends BaseModel
                       $table
                     GROUP BY survey_id) group_max"),
             "$table.survey_id", '=', 'group_max.survey_id')
-              ->whereRaw("FIND_IN_SET(year, grouped_year) = 1")
-              ->orderByDesc("$table.year");
+            ->whereRaw("FIND_IN_SET(year, grouped_year) = 1")
+            ->orderByDesc("$table.year");
     }
 
     public function scopeCurrent($query)
@@ -153,8 +153,19 @@ class SurveyInstance extends BaseModel
 
         /** @var Question $nextQuestion */
         $nextQuestion = $this->questions->get($newIndex);
-        if ( ! $nextQuestion) {
+        if (!$nextQuestion) {
             return null;
+        }
+
+        if ($user->hasRole('survey-only')
+            && $nextQuestion->optional
+            && !empty($nextQuestion->conditions)
+            && array_key_exists('nonAwvCheck', $nextQuestion->conditions[0])) {
+            $answer = $this->getAnswerForQuestion($user, $nextQuestion->id);
+            return empty($answer)
+                ? $nextQuestion
+                : null;
+
         }
 
         // 1. first check if the question is optional
@@ -166,17 +177,17 @@ class SurveyInstance extends BaseModel
             return $this->getNextUnansweredQuestion($user, $newIndex, $skipOptionals);
         }
 
-        $answer     = $this->getAnswerForQuestion($user, $nextQuestion->id);
+        $answer = $this->getAnswerForQuestion($user, $nextQuestion->id);
         $isAnswered = $answer !== null;
         if ($isAnswered) {
             return $this->getNextUnansweredQuestion($user, $newIndex, $skipOptionals);
         }
 
         $isDisabled = false;
-        if ( ! empty($nextQuestion->conditions)) {
+        if (!empty($nextQuestion->conditions)) {
             foreach ($nextQuestion->conditions as $condition) {
 
-                if ( ! isset($condition['related_question_order_number'])) {
+                if (!isset($condition['related_question_order_number'])) {
                     continue;
                 }
 
@@ -188,7 +199,7 @@ class SurveyInstance extends BaseModel
 
                 /** @var Answer $firstQuestionAnswer */
                 $firstQuestionAnswer = $this->getAnswerForQuestion($user, $firstQuestion->id);
-                if ( ! $firstQuestionAnswer) {
+                if (!$firstQuestionAnswer) {
                     $isDisabled = true;
                     break;
                 }
@@ -201,12 +212,12 @@ class SurveyInstance extends BaseModel
 
                     if ($condition['operator'] === 'greater_or_equal_than') {
                         //Again we use only the first Question of the related Questions, which is OK for now.
-                        $isDisabled = ! ($valueToCheck >= $condition['related_question_expected_answer']);
+                        $isDisabled = !($valueToCheck >= $condition['related_question_expected_answer']);
                         break;
                     }
 
                     if ($condition['operator'] === 'less_or_equal_than') {
-                        $isDisabled = ! ($valueToCheck <= $condition['related_question_expected_answer']);
+                        $isDisabled = !($valueToCheck <= $condition['related_question_expected_answer']);
                         break;
                     }
                 }
@@ -223,7 +234,7 @@ class SurveyInstance extends BaseModel
                     }
                 } else {
                     //we are looking for any answer
-                    if ( ! isset($firstQuestionAnswer->value['value'])) {
+                    if (!isset($firstQuestionAnswer->value['value'])) {
                         if (is_array($firstQuestionAnswer->value) && empty($firstQuestionAnswer->value)) {
                             $isDisabled = true;
                         }
@@ -249,11 +260,12 @@ class SurveyInstance extends BaseModel
             : $nextQuestion;
     }
 
-    private function getValue($val) {
-        if (is_array($val)) {
-            return $this->getValue(reset($val));
-        }
-        return $val;
+    private function getAnswerForQuestion(User $user, $questionId)
+    {
+        return $user->answers()
+            ->where('survey_instance_id', $this->id)
+            ->where('question_id', $questionId)
+            ->first();
     }
 
     private function getQuestionsOfOrder($order): Collection
@@ -263,12 +275,12 @@ class SurveyInstance extends BaseModel
         });
     }
 
-    private function getAnswerForQuestion(User $user, $questionId)
+    private function getValue($val)
     {
-        return $user->answers()
-                    ->where('survey_instance_id', $this->id)
-                    ->where('question_id', $questionId)
-                    ->first();
+        if (is_array($val)) {
+            return $this->getValue(reset($val));
+        }
+        return $val;
     }
 
 
