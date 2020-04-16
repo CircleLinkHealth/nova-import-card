@@ -139,6 +139,6 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
 
     private function sendSms(User $userCreatedFromEnrollee)
     {
-//        $userCreatedFromEnrollee->notify(new SendEnrollementSms($userCreatedFromEnrollee));
+        $userCreatedFromEnrollee->notify(new SendEnrollementSms($userCreatedFromEnrollee));
     }
 }
