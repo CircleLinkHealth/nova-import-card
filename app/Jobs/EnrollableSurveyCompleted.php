@@ -14,6 +14,7 @@ use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsEnrolleesJustForQa;
+use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use CircleLinkHealth\Eligibility\ValueObjects\SurveyOnlyEnrolleeMedicalRecord;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -87,11 +88,11 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 'status' => Enrollee::ENROLLED,
             ]);
 
-            if (App::environment(['local', 'review', 'staging'])) {
-                $this->importEnrolleeSurveyOnly($enrollee, $user);
-            }
-            //@todo: Confirm what excactly should be done here...if something else should be done
-//            Enrolled user should be visiible in ccd-importer.
+//            if (App::environment(['local', 'review', 'staging'])) {
+//                $this->importEnrolleeSurveyOnly($enrollee, $user);
+                ImportConsentedEnrollees::dispatch([$enrollee->id]);
+//            }
+
             $patientType = 'Initial';
             $id = $enrollee->id;
         } else {
@@ -127,7 +128,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
             'preferred_number' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_NUMBER')[1],
             'preferred_days' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_DAYS')[2],
             'preferred_time' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_TIME')[3],
-            'requests_info' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_REQUESTS_INFO')[4][0],
+            'requests_info' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_REQUESTS_INFO')[4],
             'address' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_ADDRESS')[5],
             'email' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_EMAIL')[6],
             'confirm_letter_read' => !empty($this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER')[7])
