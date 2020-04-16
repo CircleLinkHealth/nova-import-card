@@ -23,11 +23,6 @@
                     Offline Activity Time Requests
                 </a>
             </li>
-            <li class="hidden-xs">
-                <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link">
-                    Work Schedule
-                </a>
-            </li>
             @if(!isProductionEnv() || (isProductionEnv() && Carbon\Carbon::now()->gte(Carbon\Carbon::create(2019,6,1,1,0,0))))
                 <li class="hidden-xs">
                     <a href="{{ route('care.center.invoice.review') }}"

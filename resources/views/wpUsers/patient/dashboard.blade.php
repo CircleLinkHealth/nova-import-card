@@ -106,11 +106,6 @@ $hasAwv              = in_array('awv', $patientListDropdown);
             </div>
         </div>
         @include('errors.errors')
-
-        @if($nurse && auth()->user()->isNotSaas())
-            @include('partials.care-center.dashboard-schedule', [$nurse])
-        @endif
-
     </div>
 
     <div class="container-fluid">
