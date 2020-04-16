@@ -6,6 +6,7 @@
 
 namespace App\Nova\Importers;
 
+use App\EligiblePatientView;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -198,16 +199,16 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                         'first_name',
                         $spd->first_name
                     )->where('last_name', $spd->last_name)->where('mrn', $spd->mrn)->first())) {
-                        $ej = DB::table('eligible_patients')->where('mrn', $spd->mrn)->where(
+                        $ejv = EligiblePatientView::where('mrn', $spd->mrn)->where(
                             'last_name',
                             $spd->last_name
                         )->where('first_name', $spd->first_name)->where('practice_id', $spd->practice_id)->first();
                         
-                        if ( ! $ej) {
+                        if ( ! $ejv) {
                             return $spd;
                         }
     
-                        $enrollee->eligibility_job_id = $ej->id;
+                        $enrollee->eligibility_job_id = $ejv->eligibiliy_job_id;
                     }
                     
                     if ( ! $enrollee->location_id && $spd->location_id) {
