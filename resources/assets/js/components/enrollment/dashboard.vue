@@ -1,15 +1,16 @@
 <template>
     <div id="enrollment_calls">
         <div>
-            <ul v-show="onCall" id="on_call" class="collapsible expandable  collapsible-top" data-collapsible="expandable">
+            <ul v-show="onCall" id="on_call" class="collapsible collapsible-top">
                 <li >
-                    <div class="collapsible-header waves-effect collapsible-header-top"><i class="material-icons">phone</i>On Call</div>
+                    <div class="collapsible-header waves-effect waves-light collapsible-header-top btn call-button"><i class="material-icons">phone</i><strong>On Call</strong></div>
                     <div class="collapsible-body collapsible-body-top">
                         <ul style="list-style: none">
-                            <li>Patient: {{enrollable_name}} </li>
-                            <li>Phone: {{phone_type}} </li>
-                            <li>Number: {{phone}} </li>
-                            <li><a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
+                            <li><strong>Patient:</strong> {{enrollable_name}} </li>
+                            <li><strong>Phone:</strong> {{phone_type}} </li>
+                            <li><strong>Number:</strong> {{phone}} </li>
+                            <li style="margin-bottom: 25px"><hr style="border-top: 1px grey"></li>
+                            <li style="text-align: center"><a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
                                     class="material-icons left">call_end</i>Hang Up</a></li>
                         </ul>
                     </div>
@@ -295,6 +296,11 @@
     .collapsible-header-top {
         text-align: center;
         background-color: #fff;
+        padding-left: 20%;
+    }
+
+    .collapsible-body-top li {
+        margin-bottom: 5px;
     }
 </style>
 
