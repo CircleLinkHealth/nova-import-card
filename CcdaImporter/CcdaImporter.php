@@ -179,6 +179,8 @@ class CcdaImporter
                     $this->enrollee->save();
                 }
                 
+                if ($this->patient->isDirty()) $this->patient->save();
+                
                 event(new PatientUserCreated($this->patient));
             }
         );
