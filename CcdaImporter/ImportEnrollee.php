@@ -13,6 +13,7 @@ use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecor
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 
 class ImportEnrollee
 {
@@ -56,7 +57,7 @@ class ImportEnrollee
             $static->importFromEligibilityJob($enrollee, $job);
         }
         
-        throw new \Exception("This should never be reached. enrollee: $enrollee->id");
+        Log::error("This should never be reached. enrollee: $enrollee->id");
     }
     
     private function eligibilityJob(Enrollee $enrollee)
