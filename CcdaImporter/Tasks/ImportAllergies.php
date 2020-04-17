@@ -6,13 +6,12 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\SharedModels\Entities\Allergy;
-use CircleLinkHealth\SharedModels\Entities\AllergyLog;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 
 class ImportAllergies extends BaseCcdaImportTask
 {
     /**
-     * @param AllergyLog $allergy
+     * @param object $allergy
      *
      * @return array
      */
@@ -36,10 +35,8 @@ class ImportAllergies extends BaseCcdaImportTask
         
             Allergy::updateOrCreate(
                 [
+                    'patient_id'    => $this->patient->id,
                     'allergen_name' => $new['allergen_name'],
-                ],
-                [
-                    'patient_id'         => $this->patient->id,
                 ]
             );
         });
