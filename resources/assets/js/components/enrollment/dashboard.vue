@@ -107,6 +107,7 @@
                 onCall: false,
                 callStatus: 'Summoning Calling Gods...',
                 practice_phone: null,
+                enrollable_id: null,
                 enrollable_user_id: null,
                 enrollable_name: null,
                 device: null,
@@ -180,7 +181,10 @@
                         patientData.callStatus = this.callStatus
                         patientData.log = this.log
                         patientData.callError = this.callError
-                        this.patientData = response.data.data;
+                        this.patientData = patientData;
+
+                        this.enrollable_id = patientData.enrollable_id;
+
                         this.notifyTimeTracker();
                     })
                     .catch(err => {
