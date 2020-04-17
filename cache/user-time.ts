@@ -7,7 +7,7 @@ const UNTRACKED_ROUTES = [
 
 const _usersTime: UsersTimeCollection = {};
 
-export function storeTime(userId: number, activities: { title: string, is_behavioral: boolean; duration: number }[], totalCcm: number, totalBhi: number) {
+export function storeTime(key: string, activities: { title: string, is_behavioral: boolean; duration: number }[], totalCcm: number, totalBhi: number) {
     let finalCcm = totalCcm;
     let finalBhi = totalBhi;
     activities.forEach(a => {
@@ -20,14 +20,14 @@ export function storeTime(userId: number, activities: { title: string, is_behavi
             finalCcm -= a.duration;
         }
     });
-    _usersTime[userId] = {ccm: finalCcm, bhi: finalBhi};
+    _usersTime[key] = {ccm: finalCcm, bhi: finalBhi};
 }
 
-export function getTime(userId: number): TimeEntity {
-    if (!_usersTime[userId]) {
+export function getTime(key: string): TimeEntity {
+    if (!_usersTime[key]) {
         return {ccm: 0, bhi: 0};
     }
-    return _usersTime[userId];
+    return _usersTime[key];
 }
 
 interface TimeEntity {
@@ -36,5 +36,5 @@ interface TimeEntity {
 }
 
 interface UsersTimeCollection {
-    [userId: number]: TimeEntity;
+    [key: string]: TimeEntity;
 }

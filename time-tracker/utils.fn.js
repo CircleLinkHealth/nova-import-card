@@ -8,6 +8,7 @@ const createActivity = (info) => {
     return {
         name: info.activity || 'unknown',
         title: info.title || 'unknown',
+        enrolleeId: info.enrolleeId,
         duration: 0,
         url: info.urlFull,
         url_short: info.urlShort,
