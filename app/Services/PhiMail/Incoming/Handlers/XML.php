@@ -46,7 +46,7 @@ class XML extends BaseHandler
         );
         
         //save practice id after creting CCDA because guess practice may throw an exception
-        if ($practiceId = $this->guessPractice($dm->from)) {
+        if ($practiceId = self::guessPractice($dm->from)) {
             $ccda->practice_id = $practiceId;
             $ccda->save();
         }
@@ -64,9 +64,9 @@ class XML extends BaseHandler
      * @return int|null
      * @throws \Exception
      */
-    private function guessPractice(string $from) :?int
+    public static function guessPractice(string $from) :?int
     {
-        $practiceIds = $this->practicesFromDmAddress(EmrDirectAddress::where('address', $from)->get());
+        $practiceIds = self::practicesFromDmAddress(EmrDirectAddress::where('address', $from)->get());
         
         if ($practiceIds->count() === 1) {
             return $practiceIds->first();
@@ -82,7 +82,7 @@ class XML extends BaseHandler
             return null;
         }
         
-        $practiceIds = $this->practicesFromDmAddress(
+        $practiceIds = self::practicesFromDmAddress(
             EmrDirectAddress::where('address', 'like', "%$exploded[1]")->get()
         );
         
@@ -97,11 +97,13 @@ class XML extends BaseHandler
         return null;
     }
     
-    private function practicesFromDmAddress($collection)
+    public static function practicesFromDmAddress($collection)
     {
         return $collection->map(
             function ($dm) {
-                $obj = $dm->emrDirectableType::find($dm->emrDirectableId);
+                if (!class_exists($dm->emrDirectable_type)) return;
+                if (!is_numeric($dm->emrDirectable_id)) return;
+                $obj = $dm->emrDirectable_type::find($dm->emrDirectable_id);
                 
                 if ( ! $obj) {
                     return null;
