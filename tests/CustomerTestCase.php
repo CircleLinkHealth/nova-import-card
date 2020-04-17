@@ -107,6 +107,7 @@ class CustomerTestCase extends TestCase
     {
         if ( ! $this->practice) {
             $this->practice = factory(Practice::class)->create();
+            $this->location();
         }
 
         return $this->practice;
