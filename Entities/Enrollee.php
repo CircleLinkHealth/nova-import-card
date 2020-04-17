@@ -756,5 +756,9 @@ class Enrollee extends BaseModel
             ]
         );
     }
+    
+    public function ccda() {
+        return $this->belongsTo(Ccda::class, 'medical_record_id');
+    }
 }
 
