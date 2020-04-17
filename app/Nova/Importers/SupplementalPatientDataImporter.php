@@ -205,27 +205,27 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                         'first_name',
                         $spd->first_name
                     )->where('last_name', $spd->last_name)->where('mrn', $spd->mrn)->first())) {
-                        $ejv = EligiblePatientView::where('mrn', $spd->mrn)->where(
+                        $jobId = EligiblePatientView::where('mrn', $spd->mrn)->where(
                             'last_name',
                             $spd->last_name
-                        )->where('first_name', $spd->first_name)->where('practice_id', $spd->practice_id)->first();
+                        )->where('first_name', $spd->first_name)->where('practice_id', $spd->practice_id)->value('eligibility_job_id');
                         
-                        if ( ! $ejv) {
+                        if ( ! $jobId) {
                             return $spd;
                         }
                         
-                        $enrollee = Enrollee::create(
+                        $enrollee = Enrollee::updateOrCreate(
                             [
-                                'eligibility_job_id' => $spd->eligibility_job_id,
                                 'practice_id'        => $spd->practice_id,
                                 'first_name'         => $spd->first_name,
                                 'last_name'          => $spd->last_name,
                                 'mrn'                => $spd->mrn,
+                            ],
+                            [
+                                'eligibility_job_id' => $jobId,
                                 'dob'                => $spd->dob,
                             ]
                         );
-                        
-                        $enrollee->eligibility_job_id = $ejv->eligibiliy_job_id;
                     }
                     
                     if ( ! $enrollee->location_id && $spd->location_id) {
