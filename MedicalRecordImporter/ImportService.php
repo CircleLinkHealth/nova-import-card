@@ -78,13 +78,7 @@ class ImportService
             }
         }
         
-        $ccda = $ccda->import($enrollee);
-        
-        $ccda->status   = Ccda::QA;
-        $ccda->imported = true;
-        $ccda->save();
-        
-        return $ccda->patient;
+        return $ccda->import($enrollee)->patient;
     }
     
     public function isCcda($medicalRecordType)
