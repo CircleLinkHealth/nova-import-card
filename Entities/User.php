@@ -282,6 +282,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             $location = $location->id;
         }
         
+        if (empty($location)) {
+            return;
+        }
+        
         if (! $this->locations()->where('locations.id', $location)->exists()) {
             $this->locations()->attach($location);
         }
