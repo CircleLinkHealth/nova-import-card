@@ -475,6 +475,12 @@ class WorkScheduleController extends Controller
      */
     public function singleDelete(NurseContactWindow $window)
     {
+        $workScheduleData = [
+            'day_of_week' => $window->day_of_week,
+            'date' => $window->date,
+            'work_hours' => 0
+        ];
+
         if ('does_not_repeat' !== $window->repeat_frequency) {
             $windowsCount = $this->nurseContactWindows
                 ->where('nurse_info_id', $window->nurse_info_id)
@@ -488,14 +494,19 @@ class WorkScheduleController extends Controller
                     ->get();
                 //Update last event of repeated events frequency to 'does_not_repeat'.
                 foreach ($lastTwoEvents as $event) {
-                    $event->id === $window->id ?
-                        $window->forceDelete()
-                        : $event->update(['repeat_frequency' => 'does_not_repeat']);
+                    if ($event->id === $window->id) {
+                        $this->updateWorkHours($window->nurse_info_id, $workScheduleData);
+                        $window->forceDelete();
+                    } else {
+                        $event->update(['repeat_frequency' => 'does_not_repeat']);
+                    }
                 }
             } else {
+                $this->updateWorkHours($window->nurse_info_id, $workScheduleData);
                 $window->forceDelete();
             }
         } else {
+            $this->updateWorkHours($window->nurse_info_id, $workScheduleData);
             $window->forceDelete();
         }
     }
