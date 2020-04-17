@@ -19,7 +19,8 @@ class ModifyProblemForeignKeyOnCallProblemsTable extends Migration
             $table->foreign('ccd_problem_id')
                   ->references('id')
                   ->on('ccd_problems')
-                  ->onDelete('cascade');
+                  ->onDelete('cascade')
+                  ->onUpdate('cascade');
         });
     }
 
