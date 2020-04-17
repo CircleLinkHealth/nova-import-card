@@ -396,7 +396,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
     
     public function getMrn(): string
     {
-        return $this->data['mrn'];
+        return $this->data['mrn'] ?? $this->data['mrn_number'] ?? $this->data['patient_id'];
     }
     
     public function getFirstName(): string
@@ -432,12 +432,13 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
     public function fillPayersSection(): array
     {
         $insurances = [
-            'primary_insurance' => $this->data['primary_insurance'],
-            'secondary_insurance' => $this->data['secondary_insurance'],
-            'tertiary_insurance' => $this->data['tertiary_insurance'],
+            'primary_insurance' => $this->data['primary_insurance'] ?? null,
+            'secondary_insurance' => $this->data['secondary_insurance'] ?? null,
+            'tertiary_insurance' => $this->data['tertiary_insurance'] ?? null,
         ];
     
         return collect($insurances)
+            ->filter()
             ->map(
                 function ($insurance, $type) {
                     if (empty($insurance)) return false;

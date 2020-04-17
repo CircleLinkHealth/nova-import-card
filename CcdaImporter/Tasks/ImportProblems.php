@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class ImportProblems extends BaseCcdaImportTask
 {
-    const HOOK_USE_DIFFERENT_INSTRUCTION_IMPORTER = 'USE_DIFFERENT_INSTRUCTION_IMPORTER';
+    const IMPORTING_PROBLEM_INSTRUCTIONS = 'IMPORTING_PROBLEM_INSTRUCTIONS';
     /**
      * @var Collection
      */
@@ -108,7 +108,7 @@ class ImportProblems extends BaseCcdaImportTask
     private function getInstruction($newProblem)
     {
         $instructions = $this->fireImportingHook(
-            self::HOOK_USE_DIFFERENT_INSTRUCTION_IMPORTER,
+            self::IMPORTING_PROBLEM_INSTRUCTIONS,
             $this->patient,
             $this->ccda,
             $newProblem
@@ -117,6 +117,8 @@ class ImportProblems extends BaseCcdaImportTask
         if (is_null($instructions)) {
             return (new GetProblemInstruction($this->patient, $this->ccda))->run();
         }
+        
+        return $instructions;
     }
     
     private function getCpmProblem($itemLog, $problemName)

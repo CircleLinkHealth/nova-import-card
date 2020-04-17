@@ -257,6 +257,7 @@ class Enrollee extends BaseModel
     public $phi = [
         'first_name',
         'last_name',
+        'dob',
         'address',
         'address_2',
         'city',
@@ -754,6 +755,10 @@ class Enrollee extends BaseModel
                 ],
             ]
         );
+    }
+    
+    public function ccda() {
+        return $this->belongsTo(Ccda::class, 'medical_record_id');
     }
 }
 

@@ -5,22 +5,20 @@ namespace CircleLinkHealth\Eligibility\Tests;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachDefaultPatientContactWindows;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachLocation;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachPractice;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportAllergies;
-use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportInsurances;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportMedications;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
-use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportVitals;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
+use CircleLinkHealth\Eligibility\Tests\Fakers\FakeDiabetesAndEndocrineCcda;
+use Illuminate\Validation\ValidationException;
 use Tests\CustomerTestCase;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CcdaImporterTest extends CustomerTestCase
 {
@@ -168,5 +166,10 @@ class CcdaImporterTest extends CustomerTestCase
         $problems = $this->patient()->ccdProblems()->get();
         
         $this->assertCount(18, $problems);
+    }
+    
+    public function test_it_does_not_import_ccd_without_practice_id() {
+        $this->expectException(ValidationException::class);
+        FakeDiabetesAndEndocrineCcda::create()->import();
     }
 }
