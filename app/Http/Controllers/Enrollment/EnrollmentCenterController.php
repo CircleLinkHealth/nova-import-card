@@ -492,7 +492,7 @@ class EnrollmentCenterController extends Controller
     {
         $invitedPatientsUrls = EnrollableInvitationLink::select(['url', 'invitationable_id', 'invitationable_type', 'manually_expired'])->get();
 
-        $invitationData = $invitedPatientsUrls->transform(function ($url) use ($invitedPatientsUrls) {
+        $invitationData = $invitedPatientsUrls->transform(function ($url) {
             $isEnrolleeClass = Enrollee::class === $url->invitationable_type;
             /** @var EnrollableInvitationLink $url */
             $invitationable = $url->invitationable()->firstOrFail();

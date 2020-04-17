@@ -66,15 +66,14 @@ class CreateEnrolleesSurveySeeder extends Seeder
     {
         return collect([
             [
-                'identifier' => self::DOB,
+                'identifier' => self::CONFIRM_EMAIL,
                 'order' => 1,
-                'question_body' => 'Please update or confirm your date of birth',
-                'question_type' => self::QUESTION_TYPE_DOB,
-                'conditions' => [
-                    'is_auto_generated' => true,
-                    'generated_from' => [
-                        [
-                            'key' => 'dob',
+                'question_body' => 'Please confirm or update your email address:',
+                'question_type' => self::ADDRESS,
+                'question_type_answers' => [
+                    [
+                        'options' => [
+                            'placeholder' => 'Known email if exists',
                         ],
                     ],
                 ],
@@ -168,14 +167,15 @@ class CreateEnrolleesSurveySeeder extends Seeder
             ],
 
             [
-                'identifier' => self::CONFIRM_EMAIL,
+                'identifier' => self::DOB,
                 'order' => 6,
-                'question_body' => 'Please confirm or update your email address:',
-                'question_type' => self::ADDRESS,
-                'question_type_answers' => [
-                    [
-                        'options' => [
-                            'placeholder' => 'Known email if exists',
+                'question_body' => 'Please update or confirm your date of birth',
+                'question_type' => self::QUESTION_TYPE_DOB,
+                'conditions' => [
+                    'is_auto_generated' => true,
+                    'generated_from' => [
+                        [
+                            'key' => 'dob',
                         ],
                     ],
                 ],
@@ -229,10 +229,9 @@ class CreateEnrolleesSurveySeeder extends Seeder
                     : null,
             ]);
 
-            $question = DB::table($questionsTable)->where('id', '=', $questionId)->first();
-
             $questionTypeId = DB::table('question_types')->insertGetId([
                 'type' => $questionData['question_type'],
+                'question_id' => $questionId
             ]);
 
             if (array_key_exists('question_type_answers', $questionData)) {

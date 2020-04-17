@@ -42,11 +42,13 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         $monthEnd = Carbon::parse($mothStart)->copy()->endOfMonth()->toDateTimeString();
 
         $enrollees = Enrollee::where('dob', \Carbon\Carbon::parse('1901-01-01'))
+            ->where('practice_id', $practice->id)
             ->whereDoesntHave('enrollmentInvitationLink');
 
         if ($enrollees->count() < 5) {
             $enrollees->delete(); //Just to be sure
             $enrolleesForTesting = factory(Enrollee::class, 5)->create([
+                'practice_id' => $practice->id,
                 'dob' => \Carbon\Carbon::parse('1901-01-01'),
                 'referring_provider_name' => 'Dr. Demo',
             ]);
