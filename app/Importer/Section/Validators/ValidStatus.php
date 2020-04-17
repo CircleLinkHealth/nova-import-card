@@ -12,19 +12,35 @@ class ValidStatus implements SectionValidator
 {
     public function isValid($item): bool
     {
+        if (is_array($item)) {
+            $item = (object) $item;
+        }
+        
         if ( ! $this->shouldValidate($item)) {
             return false;
         }
-
-        return true;
+        
+        if (in_array(strtolower($item->status), [
+            'active',
+            'chronic',
+        ])) {
+            return true;
+        }
+        
+        return false;
     }
 
     public function shouldValidate($item): bool
     {
+        if (is_array($item)) {
+            $item = (object) $item;
+        }
+        
         return empty($item->status)
             ? false
             : in_array(strtolower($item->status), [
                 'active',
+                'inactive',
                 'chronic',
             ]);
     }
