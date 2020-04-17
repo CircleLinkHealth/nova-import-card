@@ -175,7 +175,7 @@
                                             <div v-if="home_phone !== ''" class="col s4">
 
                                                 <div class="waves-effect waves-light btn call-button"
-                                                     v-on:click="call(home_phone, 'Home')">
+                                                     v-on:click="call(home_phone_sanitized, 'Home')">
                                                     <i class="material-icons">phone</i>
                                                 </div>
                                                 <div>
@@ -186,7 +186,7 @@
                                             <div v-if="cell_phone !== ''" class="col s4">
 
                                                 <div class="waves-effect waves-light btn call-button"
-                                                     v-on:click="call(cell_phone, 'Cell')">
+                                                     v-on:click="call(cell_phone_sanitized, 'Cell')">
                                                     <i class="material-icons">phone</i>
 
                                                 </div>
@@ -198,7 +198,7 @@
                                             <div v-if="other_phone !== ''" class="col s4">
 
                                                 <div class="waves-effect waves-light btn call-button"
-                                                     v-on:click="call(other_phone, 'Other')">
+                                                     v-on:click="call(other_phone_sanitized, 'Other')">
                                                     <i class="material-icons">phone</i>
 
                                                 </div>
@@ -697,7 +697,8 @@
         name: 'patient-to-enroll',
         props: [
             'patientData',
-            'timeTracker'
+            'timeTracker',
+            'debug'
         ],
         components: {
             'loader': Loader,
@@ -922,8 +923,11 @@
                 name: '',
                 lang: '',
                 home_phone: '',
+                home_phone_sanitized: '',
                 cell_phone: '',
+                cell_phone_sanitized: '',
                 other_phone: '',
+                other_phone_sanitized: '',
                 address: '',
                 address_2: '',
                 city: '',
@@ -1162,8 +1166,12 @@
                     this.disableHome = true;
                     return false;
                 }
-            },
-            isValidPhoneNumber(string) {
+            }, isValidPhoneNumber(string) {
+                //on non production enviroments, allow all
+                if (this.debug) {
+                    return true;
+                }
+
                 //return true if string is empty
                 if (string.length === 0) {
                     return true
@@ -1184,12 +1192,16 @@
                 //make sure we have +1 on the phone,
                 //and remove any dashes
                 let phoneSanitized = phone.toString();
-                phoneSanitized = phoneSanitized.replace(/-/g, "");
-                if (!phoneSanitized.startsWith("+1")) {
-                    phoneSanitized = "+1" + phoneSanitized;
-                }
 
-                phoneSanitized = '+35799903225'
+                //may not be needed we are sanitizing in resource
+                // if(! this.debug){
+                //     phoneSanitized = phoneSanitized.replace(/-/g, "");
+                //     if (!phoneSanitized.startsWith("+1")) {
+                //         phoneSanitized = "+1" + phoneSanitized;
+                //     }
+                // }
+
+                // phoneSanitized = '+35799903225'
                 this.callError = null;
                 this.onCall = true;
                 this.callStatus = "Calling " + type + "..." + phoneSanitized;

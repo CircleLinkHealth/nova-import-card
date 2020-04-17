@@ -128,7 +128,7 @@
     </script>
 
     <div id="app">
-        <enrollment-dashboard></enrollment-dashboard>
+        <enrollment-dashboard :debug="{{json_encode(!isProductionEnv())}}"></enrollment-dashboard>
     </div>
 
     <script src="{{mix('compiled/js/app-enrollment-ui.js')}}"></script>

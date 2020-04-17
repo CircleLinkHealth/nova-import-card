@@ -33,7 +33,7 @@
         </div>
         <div v-if="!loading">
             <div v-if="patientExists">
-                <patient-to-enroll :patient-data="patientData" :time-tracker="$refs.timeTracker"></patient-to-enroll>
+                <patient-to-enroll :patient-data="patientData" :time-tracker="$refs.timeTracker" :debug="debug"></patient-to-enroll>
             </div>
             <div v-else>
                 <div v-show="onCall">
@@ -85,7 +85,8 @@
     export default {
         name: 'enrollment-dashboard',
         props: [
-            'timeTrackerInfo'
+            'timeTracker',
+            'debug'
         ],
         components: {
             'loader': Loader,
