@@ -12,11 +12,13 @@ use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\CcdaImporter\ImportEnrollee;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
+use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -246,6 +248,17 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                     
                     if (optional($ccda)->isDirty()) {
                         $ccda->save();
+                    }
+                    
+                    if ($enrollee->user_id) {
+                        Artisan::queue(
+                            ReimportPatientMedicalRecord::class,
+                            [
+                                'patientUserId'   => $enrollee->user_id,
+                                'initiatorUserId' => auth()->id(),
+                            ]
+                        );
+                        return;
                     }
                     
                     return ImportConsentedEnrollees::dispatch([$enrollee->id]);
