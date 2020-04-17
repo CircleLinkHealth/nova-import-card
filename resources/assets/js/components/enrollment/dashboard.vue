@@ -1,9 +1,6 @@
 <template>
     <div id="enrollment_calls">
         <div>
-            <button style="position: fixed" @click="retrievePatient">Get new enrollee</button>
-        </div>
-        <div>
             <time-tracker v-show="false"
                           ref="timeTracker"
                           :twilio-enabled="true"
