@@ -7,7 +7,7 @@ var UNTRACKED_ROUTES = [
     'patient.reports.progress',
 ];
 var _usersTime = {};
-function storeTime(userId, activities, totalCcm, totalBhi) {
+function storeTime(key, activities, totalCcm, totalBhi) {
     var finalCcm = totalCcm;
     var finalBhi = totalBhi;
     activities.forEach(function (a) {
@@ -21,13 +21,13 @@ function storeTime(userId, activities, totalCcm, totalBhi) {
             finalCcm -= a.duration;
         }
     });
-    _usersTime[userId] = { ccm: finalCcm, bhi: finalBhi };
+    _usersTime[key] = { ccm: finalCcm, bhi: finalBhi };
 }
 exports.storeTime = storeTime;
-function getTime(userId) {
-    if (!_usersTime[userId]) {
+function getTime(key) {
+    if (!_usersTime[key]) {
         return { ccm: 0, bhi: 0 };
     }
-    return _usersTime[userId];
+    return _usersTime[key];
 }
 exports.getTime = getTime;
