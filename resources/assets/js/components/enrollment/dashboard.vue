@@ -1,5 +1,17 @@
 <template>
     <div id="enrollment_calls">
+        <div>
+            <button style="position: fixed" @click="retrievePatient">Get new enrollee</button>
+        </div>
+        <div>
+            <time-tracker v-show="false"
+                          ref="timeTracker"
+                          :twilio-enabled="true"
+                          :info="getTimeTrackerInfo()"
+                          :no-live-count="false"
+                          :override-timeout="false">
+            </time-tracker>
+        </div>
         <div id="loading" class="modal confirm" style="width: 40% !important">
             <div class="modal-content">
                 <div class="loading-patient">
@@ -24,7 +36,7 @@
         </div>
         <div v-if="!loading">
             <div v-if="patientExists">
-                <patient-to-enroll :patient-data="patientData"></patient-to-enroll>
+                <patient-to-enroll :patient-data="patientData" :time-tracker="$refs.timeTracker"></patient-to-enroll>
             </div>
             <div v-else>
                 <div v-show="onCall">
@@ -65,6 +77,9 @@
 
     import {rootUrl} from '../../app.config';
 
+    import TimeTracker from '../../admin/time-tracker';
+    import TimeTrackerEventBus from '../../admin/time-tracker/comps/event-bus';
+
     import Loader from '../loader.vue';
 
     const userId = window.userId;
@@ -73,10 +88,13 @@
 
     export default {
         name: 'enrollment-dashboard',
-        props: [],
+        props: [
+            'timeTrackerInfo'
+        ],
         components: {
             'loader': Loader,
-            'patient-to-enroll': PatientToEnroll
+            'patient-to-enroll': PatientToEnroll,
+            'time-tracker': TimeTracker
         },
         computed: {
             patientExists: function () {
@@ -137,7 +155,22 @@
             })
         },
         methods: {
+            getTimeTrackerInfo() {
+                return window['timeTrackerInfo'];
+            },
+            setTimeTrackerInfo(info) {
+                //in case connection is lost and time tracker re-connects,
+                // we need to have the timeTrackerInfo object up to date
+                window['timeTrackerInfo'] = info;
+            },
+            notifyTimeTracker() {
+                const info = this.getTimeTrackerInfo();
+                info.enrolleeId = this.enrollable_id;
+                this.setTimeTrackerInfo(info);
+                TimeTrackerEventBus.$emit('tracker:activity', info);
+            },
             retrievePatient() {
+                this.loading = true;
                 return this.axios
                     .get(rootUrl('/enrollment/show'))
                     .then(response => {
@@ -151,9 +184,12 @@
                         patientData.log = this.log
                         patientData.callError = this.callError
                         this.patientData = response.data.data;
+                        this.notifyTimeTracker();
                     })
                     .catch(err => {
                         //to implement
+                        this.loading = false;
+                        console.error(err);
                     });
             },
 

@@ -38,7 +38,7 @@
                 <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount"
                               :redirect-url="'manage-patients/' + info.patientId + '/activities'"/>
             </span>
-            
+
             <inactivity-tracker :call-mode="callMode" ref="inactivityTracker"/>
             <away ref="away"/>
         </span>
@@ -103,6 +103,9 @@
             'notifications': Notifications
         },
         computed: {
+            formattedTime() {
+                return this.$refs.timeDisplay.getTime();
+            },
             totalTime() {
                 return this.seconds
             }
@@ -150,9 +153,9 @@
                     if (this.overrideTimeout) {
                         // setTimeout(() => {
                         //     EventBus.$emit('modal-inactivity:timeouts:override', {
-                        //         alertTimeout: 30, 
+                        //         alertTimeout: 30,
                         //         logoutTimeout: 120,
-                        //         alertTimeoutCallMode: 60, 
+                        //         alertTimeoutCallMode: 60,
                         //         logoutTimeoutCallMode: 150
                         //     })
                         // }, 1000)
@@ -291,6 +294,7 @@
                     CLOSE_INACTIVE_MODAL: 'client:inactive-modal:close',
                     ENTER_CALL_MODE: 'client:call-mode:enter',
                     EXIT_CALL_MODE: 'client:call-mode:exit',
+                    ACTIVITY: 'client:activity',
                     LOGOUT: 'client:logout',
                     BHI: 'client:bhi',
                     TIMEOUTS_OVERRIDE: 'client:timeouts:override'
@@ -404,6 +408,12 @@
                     }
                     console.log('tracker:bhi:switch', mode)
                 })
+
+                EventBus.$on('tracker:activity', (newInfo) => {
+                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                        this.socket.send(JSON.stringify({message: STATE.ACTIVITY, info: this.info}))
+                    }
+                });
 
                 Event.$on('careplan:bhi', ({hasCcm, hasBehavioral}) => {
                     const shouldUpdateNetwork = (this.info.isBehavioral && this.info.isCcm) !== (hasCcm && hasBehavioral)

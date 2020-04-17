@@ -18,100 +18,6 @@ use Illuminate\Http\Request;
 
 class EnrollmentCenterController extends ApiController
 {
-    /**
-     *
-     */
-    public function rejected(Request $request)
-    {
-        $enrollee       = Enrollee::find($request->input('enrollable_id'));
-        $careAmbassador = auth()->user()->careAmbassador;
-
-        AttachEnrolleeFamilyMembers::attach($request);
-
-        //soft_rejected or rejected
-        $status = $request->input('status', Enrollee::REJECTED);
-
-        //update report for care ambassador:
-        $report = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
-
-        if (Enrollee::REJECTED === $status) {
-            $report->no_rejected = $report->no_rejected + 1;
-        } else {
-            $report->no_soft_rejected = $report->no_soft_rejected + 1;
-        }
-
-        $report->total_calls          = $report->total_calls + 1;
-        $report->total_time_in_system = $request->input('total_time_in_system');
-        $report->save();
-
-        $enrollee->last_call_outcome = $request->input('reason');
-
-        if ($request->input('reason_other')) {
-            $enrollee->last_call_outcome_reason = $request->input('reason_other');
-        }
-
-        $enrollee->care_ambassador_user_id = $careAmbassador->user_id;
-
-        $enrollee->status = $status;
-
-        $enrollee->attempt_count    = $enrollee->attempt_count + 1;
-        $enrollee->last_attempt_at  = Carbon::now()->toDateTimeString();
-        $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
-
-        $enrollee->save();
-
-        EnrollableCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
-
-        return response()->json([
-            'status' => 200
-        ]);
-    }
-
-
-    public function unableToContact(Request $request)
-    {
-        $enrollee       = Enrollee::find($request->input('enrollable_id'));
-        $careAmbassador = auth()->user()->careAmbassador;
-
-        AttachEnrolleeFamilyMembers::attach($request);
-
-        //update report for care ambassador:
-        $report                       = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
-        $report->no_utc               = $report->no_utc + 1;
-        $report->total_calls          = $report->total_calls + 1;
-        $report->total_time_in_system = $request->input('total_time_in_system');
-        $report->save();
-
-        $enrollee->last_call_outcome = $request->input('reason');
-
-        if ($request->input('reason_other')) {
-            $enrollee->last_call_outcome_reason = $request->input('reason_other');
-        }
-
-        $enrollee->care_ambassador_user_id = $careAmbassador->user_id;
-
-        if ('requested callback' == $request->input('reason')) {
-            $enrollee->status = Enrollee::TO_CALL;
-            if ($request->has('utc_callback')) {
-                $enrollee->requested_callback = $request->input('utc_callback');
-            }
-        } else {
-            $enrollee->status = Enrollee::UNREACHABLE;
-        }
-
-        $enrollee->attempt_count    = $enrollee->attempt_count + 1;
-        $enrollee->last_attempt_at  = Carbon::now()->toDateTimeString();
-        $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
-
-        $enrollee->save();
-
-        EnrollableCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
-
-        return response()->json([
-            'status' => 200
-        ]);
-    }
-
     public function consented(Request $request)
     {
         $careAmbassador = auth()->user()->careAmbassador;
@@ -121,10 +27,10 @@ class EnrollmentCenterController extends ApiController
         AttachEnrolleeFamilyMembers::attach($request);
 
         //update report for care ambassador:
-        $report                       = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
-        $report->no_enrolled          = $report->no_enrolled + 1;
-        $report->total_calls          = $report->total_calls + 1;
-        $report->total_time_in_system = $request->input('total_time_in_system');
+        $report              = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
+        $report->no_enrolled = $report->no_enrolled + 1;
+        $report->total_calls = $report->total_calls + 1;
+//        $report->total_time_in_system = $request->input('total_time_in_system');
         $report->save();
 
         $enrollee->setHomePhoneAttribute($request->input('home_phone'));
@@ -165,7 +71,7 @@ class EnrollmentCenterController extends ApiController
         $enrollee->last_call_outcome       = $request->input('consented');
         $enrollee->care_ambassador_user_id = $careAmbassador->user_id;
 
-        $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
+//        $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
 
         $enrollee->attempt_count = $enrollee->attempt_count + 1;
 
@@ -200,14 +106,60 @@ class EnrollmentCenterController extends ApiController
         EnrollableCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
 
         return response()->json([
-            'status' => 200
+            'status' => 200,
         ]);
     }
 
     public function getSuggestedFamilyMembers($enrolleeId)
     {
         return $this->json([
-            'suggested_family_members' => SuggestEnrolleeFamilyMembers::get((int)$enrolleeId),
+            'suggested_family_members' => SuggestEnrolleeFamilyMembers::get((int) $enrolleeId),
+        ]);
+    }
+
+    public function rejected(Request $request)
+    {
+        $enrollee       = Enrollee::find($request->input('enrollable_id'));
+        $careAmbassador = auth()->user()->careAmbassador;
+
+        AttachEnrolleeFamilyMembers::attach($request);
+
+        //soft_rejected or rejected
+        $status = $request->input('status', Enrollee::REJECTED);
+
+        //update report for care ambassador:
+        $report = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
+
+        if (Enrollee::REJECTED === $status) {
+            $report->no_rejected = $report->no_rejected + 1;
+        } else {
+            $report->no_soft_rejected = $report->no_soft_rejected + 1;
+        }
+
+        $report->total_calls = $report->total_calls + 1;
+//        $report->total_time_in_system = $request->input('total_time_in_system');
+        $report->save();
+
+        $enrollee->last_call_outcome = $request->input('reason');
+
+        if ($request->input('reason_other')) {
+            $enrollee->last_call_outcome_reason = $request->input('reason_other');
+        }
+
+        $enrollee->care_ambassador_user_id = $careAmbassador->user_id;
+
+        $enrollee->status = $status;
+
+        $enrollee->attempt_count   = $enrollee->attempt_count + 1;
+        $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
+//        $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
+
+        $enrollee->save();
+
+        EnrollableCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
+
+        return response()->json([
+            'status' => 200,
         ]);
     }
 
@@ -220,15 +172,59 @@ class EnrollmentCenterController extends ApiController
         );
     }
 
-    public function updateCareAmbassadorDailyTime(Request $request){
-        $reportId = $request->input('report_id');
+    public function unableToContact(Request $request)
+    {
+        $enrollee       = Enrollee::find($request->input('enrollable_id'));
+        $careAmbassador = auth()->user()->careAmbassador;
+
+        AttachEnrolleeFamilyMembers::attach($request);
+
+        //update report for care ambassador:
+        $report              = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
+        $report->no_utc      = $report->no_utc + 1;
+        $report->total_calls = $report->total_calls + 1;
+//        $report->total_time_in_system = $request->input('total_time_in_system');
+        $report->save();
+
+        $enrollee->last_call_outcome = $request->input('reason');
+
+        if ($request->input('reason_other')) {
+            $enrollee->last_call_outcome_reason = $request->input('reason_other');
+        }
+
+        $enrollee->care_ambassador_user_id = $careAmbassador->user_id;
+
+        if ('requested callback' == $request->input('reason')) {
+            $enrollee->status = Enrollee::TO_CALL;
+            if ($request->has('utc_callback')) {
+                $enrollee->requested_callback = $request->input('utc_callback');
+            }
+        } else {
+            $enrollee->status = Enrollee::UNREACHABLE;
+        }
+
+        $enrollee->attempt_count   = $enrollee->attempt_count + 1;
+        $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
+//        $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
+
+        $enrollee->save();
+
+        EnrollableCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
+
+        return response()->json([
+            'status' => 200,
+        ]);
+    }
+
+    public function updateCareAmbassadorDailyTime(Request $request)
+    {
+        $reportId          = $request->input('report_id');
         $totalTimeInSystem = $request->input('total_time_in_system');
 
         CareAmbassadorLog::whereId($reportId)->update(['total_time_in_system' => $totalTimeInSystem]);
 
         return $this->json([
-            'ca_total_time_updated_to' => $totalTimeInSystem
+            'ca_total_time_updated_to' => $totalTimeInSystem,
         ]);
-
     }
 }
