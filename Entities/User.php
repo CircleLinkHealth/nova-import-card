@@ -273,21 +273,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if (is_a($location, Location::class)) {
             $location = $location->id;
         }
-
-        try {
-            if (! $this->locations()->where('locations.id', $location)->exists()) {
-                $this->locations()->attach($location);
-            }
-        } catch (\Exception $e) {
-            //check if this is a mysql exception for unique key constraint
-            if ($e instanceof \Illuminate\Database\QueryException) {
-                $errorCode = $e->errorInfo[1];
-                if (1062 == $errorCode) {
-                    //do nothing
-                    //we don't actually want to terminate the program if we detect duplicates
-                    //we just don't wanna add the row again
-                }
-            }
+        
+        if (! $this->locations()->where('locations.id', $location)->exists()) {
+            $this->locations()->attach($location);
         }
     }
 
