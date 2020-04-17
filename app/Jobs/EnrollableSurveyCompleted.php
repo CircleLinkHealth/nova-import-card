@@ -118,13 +118,13 @@ class EnrollableSurveyCompleted implements ShouldQueue
     public function getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId)
     {
         return [
-            'dob' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_DOB')[0],
+            'email' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_EMAIL')[0],
             'preferred_number' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_NUMBER')[1],
             'preferred_days' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_DAYS')[2],
             'preferred_time' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_TIME')[3],
             'requests_info' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_REQUESTS_INFO')[4],
             'address' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_ADDRESS')[5],
-            'email' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_EMAIL')[6],
+            'dob' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_DOB')[6],
             'confirm_letter_read' => !empty($this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER')[7])
                 ? $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER')[7][0]
                 : '',
@@ -332,48 +332,48 @@ class EnrollableSurveyCompleted implements ShouldQueue
         ]);
     }
 
-    /**
-     * @param $user
-     * @param $practice
-     *
-     * @return EligibilityBatch|\Illuminate\Database\Eloquent\Model
-     */
-    public function updateOrCreateBatch($user, $practice)
-    {
-        return EligibilityBatch::updateOrCreate(
-            [
-                'practice_id' => $practice->id,
-                'type' => 'survey_only',
-            ],
-            [
-                'status' => EligibilityBatch::STATUSES['complete'],
-            ]
-        );
-    }
-
-    /**
-     * @return string
-     */
-    public function createHash(Enrollee $enrollee)
-    {
-        return $enrollee->practice->name . $enrollee->first_name . $enrollee->last_name . $enrollee->mrn . $enrollee->city . $enrollee->state . $enrollee->zip;
-    }
-
-    /**
-     * @param $eligibilityBatch
-     * @param $medicalRecord
-     * @param $hash
-     */
-    public function updateOrCreateEligibilityJob($eligibilityBatch, $medicalRecord, $hash)
-    {
-        EligibilityJob::updateOrCreate(
-            [
-                'batch_id' => $eligibilityBatch->id,
-            ],
-            [
-                'data' => $medicalRecord,
-                'hash' => $hash,
-            ]
-        );
-    }
+//    /**
+//     * @param $user
+//     * @param $practice
+//     *
+//     * @return EligibilityBatch|\Illuminate\Database\Eloquent\Model
+//     */
+//    public function updateOrCreateBatch($user, $practice)
+//    {
+//        return EligibilityBatch::updateOrCreate(
+//            [
+//                'practice_id' => $practice->id,
+//                'type' => 'survey_only',
+//            ],
+//            [
+//                'status' => EligibilityBatch::STATUSES['complete'],
+//            ]
+//        );
+//    }
+//
+//    /**
+//     * @return string
+//     */
+//    public function createHash(Enrollee $enrollee)
+//    {
+//        return $enrollee->practice->name . $enrollee->first_name . $enrollee->last_name . $enrollee->mrn . $enrollee->city . $enrollee->state . $enrollee->zip;
+//    }
+//
+//    /**
+//     * @param $eligibilityBatch
+//     * @param $medicalRecord
+//     * @param $hash
+//     */
+//    public function updateOrCreateEligibilityJob($eligibilityBatch, $medicalRecord, $hash)
+//    {
+//        EligibilityJob::updateOrCreate(
+//            [
+//                'batch_id' => $eligibilityBatch->id,
+//            ],
+//            [
+//                'data' => $medicalRecord,
+//                'hash' => $hash,
+//            ]
+//        );
+//    }
 }
