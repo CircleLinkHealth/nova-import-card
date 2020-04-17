@@ -32,6 +32,7 @@ class ImportInsurances extends BaseCcdaImportTask
                 $insurance = CcdInsurancePolicy::updateOrCreate(
                     [
                         'patient_id' => $this->patient->id,
+                        'name' => $new['name'],
                     ],
                     array_merge(
                         [
