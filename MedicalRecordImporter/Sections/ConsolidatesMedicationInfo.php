@@ -31,6 +31,8 @@ trait ConsolidatesMedicationInfo
         $consolidatedMedication->cons_name             = null;
         $consolidatedMedication->cons_text             = null;
         $consolidatedMedication->status                = $medicationLog->status ?? null;
+        $consolidatedMedication->start                = $medicationLog->start ?? null;
+        $consolidatedMedication->end               = $medicationLog->end ?? null;
 
         if ( ! empty($medicationLog->translation_code)) {
             $consolidatedMedication->cons_code             = $medicationLog->translation_code;
