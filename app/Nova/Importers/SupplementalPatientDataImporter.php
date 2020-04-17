@@ -236,11 +236,11 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                         $enrollee->save();
                     }
     
-                    if (! $ccda->location_id && $spd->location_id) {
+                    if ($ccda && ! $ccda->location_id && $spd->location_id) {
                         $ccda->location_id = $spd->location_id;
                     }
     
-                    if (! $ccda->billing_provider_id && $spd->billing_provider_user_id) {
+                    if ($ccda && ! $ccda->billing_provider_id && $spd->billing_provider_user_id) {
                         $ccda->billing_provider_id = $spd->billing_provider_user_id;
                     }
                     
