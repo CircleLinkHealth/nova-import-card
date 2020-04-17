@@ -561,9 +561,10 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
      *
      * @return User|null
      */
-    public static function searchBillingProvider(string $term, int $practiceId = null): ?User
+    public static function searchBillingProvider(string $term = null, int $practiceId = null): ?User
     {
         if (! $practiceId) return null;
+        if (! $term) return null;
         
         $baseQuery = (new ProviderByName())->query($term);
         
