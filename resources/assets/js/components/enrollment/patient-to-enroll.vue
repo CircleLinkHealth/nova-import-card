@@ -1188,27 +1188,14 @@
                 return !(matchNumbers === null || matchNumbers.length < 10 || string.match(/[a-z]/i));
             },
             call(phone, type) {
-
-                //make sure we have +1 on the phone,
-                //and remove any dashes
-                let phoneSanitized = phone.toString();
-
-                //may not be needed we are sanitizing in resource
-                // if(! this.debug){
-                //     phoneSanitized = phoneSanitized.replace(/-/g, "");
-                //     if (!phoneSanitized.startsWith("+1")) {
-                //         phoneSanitized = "+1" + phoneSanitized;
-                //     }
-                // }
-
-                // phoneSanitized = '+35799903225'
+                //phone number now come sanitized from Enrollable Resource, in E164 format
                 this.callError = null;
                 this.onCall = true;
                 this.callStatus = "Calling " + type + "..." + phoneSanitized;
                 M.toast({html: this.callStatus, displayLength: 3000});
 
                 App.$emit('enrollable:call', {
-                    'phone': phoneSanitized,
+                    'phone': phone,
                     'type': type,
                     'practice_phone': this.practice_phone,
                     'enrollable_user_id': this.enrollable_user_id,

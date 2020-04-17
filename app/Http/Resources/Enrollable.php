@@ -8,6 +8,7 @@ namespace App\Http\Resources;
 
 use App\CareAmbassadorLog;
 use App\TrixField;
+use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Resources\Json\Resource;
 
@@ -45,11 +46,13 @@ class Enrollable extends Resource
             'practice_name'            => $enrollable->practice->display_name,
             'practice_phone'           => $enrollable->practice->outgoing_phone_number,
             'other_phone'              => $enrollable->other_phone,
-            'other_phone_sanitized'    => $enrollable->other_phone_e164,
             'cell_phone'               => $enrollable->cell_phone,
-            'cell_phone_sanitized'     => $enrollable->cell_phone_e164,
             'home_phone'               => $enrollable->home_phone,
-            'home_phone_sanitized'     => $enrollable->home_phone_e164,
+
+            //these phone numbers will be used to call by Twilio. This will allow us to use custom numbers on non-prod environments
+            'other_phone_sanitized'    => isProductionEnv() ? $enrollable->other_phone_e164 : $enrollable->other_phone_raw,
+            'cell_phone_sanitized'     => isProductionEnv() ? $enrollable->cell_phone_e164 : $enrollable->cell_phone_raw,
+            'home_phone_sanitized'     => isProductionEnv() ? $enrollable->home_phone_e164 : $enrollable->home_phone_raw,
 
             //we need to prefill these per CPM-2256 for confirmed family members
             'utc_reason'       => Enrollee::UNREACHABLE === $enrollable->status && $enrollable->last_call_outcome ? $enrollable->last_call_outcome : '',
@@ -71,7 +74,7 @@ class Enrollable extends Resource
             'script' => TrixField::careAmbassador($this->lang)->first(),
 
             'provider'       => $this->provider->toArray(),
-            'provider_phone' => $this->provider->getPhone(),
+            'provider_phone' => (new StringManipulation())->formatPhoneNumber($this->provider->getPhone()),
             'has_tips'       => (bool) $this->practice->enrollmentTips,
         ];
     }
