@@ -199,16 +199,16 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                         return $spd;
                     }
                     
-                    $query = Enrollee::with('ccda');
+                    $query = Enrollee::with(['ccda'=>function($q) { $q->select(['id', 'location_id', 'practice_id', 'billing_provider_id']); }]);
                     
-                    if ( ! ($enrollee = $query::where('practice_id', $spd->practice_id)->where('first_name', $spd->first_name)->where('last_name', $spd->last_name)->where('mrn', $spd->mrn)->first())) {
+                    if ( ! ($enrollee = $query->where('practice_id', $spd->practice_id)->where('first_name', $spd->first_name)->where('last_name', $spd->last_name)->where('mrn', $spd->mrn)->first())) {
                         $jobId = EligiblePatientView::where('mrn', $spd->mrn)->where('last_name', $spd->last_name)->where('first_name', $spd->first_name)->where('practice_id', $spd->practice_id)->value('eligibility_job_id');
                         
                         if ( ! $jobId) {
                             return $spd;
                         }
                         
-                        $enrollee = $query::firstOrNew(
+                        $enrollee = $query->firstOrNew(
                             [
                                 'practice_id'        => $spd->practice_id,
                                 'first_name'         => $spd->first_name,
@@ -234,7 +234,7 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                         $enrollee->save();
                     }
                     
-                    if ($enrollee->ccda->isDirty()) {
+                    if (optional($enrollee->ccda)->isDirty()) {
                         $enrollee->ccda->save();
                     }
                     
