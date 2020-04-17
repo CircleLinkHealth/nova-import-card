@@ -23,6 +23,9 @@ class ValidStatus implements SectionValidator
         if (in_array(strtolower($item->status), [
             'active',
             'chronic',
+            'taking',
+            'continue',
+            'refill',
         ])) {
             return true;
         }
@@ -42,6 +45,11 @@ class ValidStatus implements SectionValidator
                 'active',
                 'inactive',
                 'chronic',
+                
+                'taking',
+                'continue',
+                'refill',
+                'not taking',
             ]);
     }
 }
