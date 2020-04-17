@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3743ad94612091b3a421142b8391fb44",
+    "content-hash": "7038c43880dff10b6776c77e204ac67f",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1011,11 +1011,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.2.4",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "c4a5e5a4675a063cc173b0ecb470f0a4f29bfad5"
+                "reference": "89778d95563415041c5d336cf828ebc63830cb90"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1049,7 +1049,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-13T18:53:55+00:00"
+            "time": "2020-04-17T02:15:45+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -15137,6 +15137,7 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/shared-models-module": 20,
         "daltcore/lara-pdf-merger": 20,
