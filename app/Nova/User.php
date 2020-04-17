@@ -17,9 +17,12 @@ use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Titasgailius\SearchRelations\SearchesRelations;
 
 class User extends Resource
 {
+    use SearchesRelations;
+
     /**
      * The logical group associated with the resource.
      *
@@ -45,6 +48,15 @@ class User extends Resource
         'email',
         'first_name',
         'last_name',
+    ];
+
+    /**
+     * The relationship columns that should be searched.
+     *
+     * @var array
+     */
+    public static $searchRelations = [
+        'primaryPractice' => ['display_name'],
     ];
 
     /**
@@ -130,6 +142,8 @@ class User extends Resource
                     ->creationRules('required', 'string', 'min:6')
                     ->updateRules('nullable', 'string', 'min:6'),
 
+            Text::make('Practice', 'primaryPractice.display_name'),
+
             Text::make('Role', function () {
                 $role = $this->practiceOrGlobalRole();
                 if ( ! $role) {
@@ -140,7 +154,13 @@ class User extends Resource
             }),
 
             Text::make('Edit', function () {
-                $url = route('admin.users.edit', ['id' => $this->id]);
+                if ($this->isAdmin() || $this->isParticipant()) {
+                    //this automatically redirects admins and participants to their pages
+                    $url = route('admin.users.edit', ['id' => $this->id]);
+                } else {
+                    $practiceSlug = $this->primaryPractice->name;
+                    $url          = route('provider.dashboard.manage.staff', ['practiceSlug' => $practiceSlug]);
+                }
 
                 return $this->getEditButton($url);
             })->asHtml(),
@@ -169,20 +189,20 @@ class User extends Resource
      */
     public static function indexQuery(NovaRequest $request, $query)
     {
+        $withRelations = ['primaryPractice', 'roles', 'practices'];
+
         /** @var \CircleLinkHealth\Customer\Entities\User $user */
         $user = auth()->user();
         if ($user->isAdmin()) {
-            return $query;
+            return $query->with($withRelations);
         }
 
         $programIds = $user->viewableProgramIds();
 
-        return $query->whereHas(
-            'practices',
-            function ($q) use ($programIds) {
-                $q->whereIn('practice_role_user.program_id', $programIds);
-            }
-        );
+        return $query->with($withRelations)
+                     ->whereHas('practices', function ($q) use ($programIds) {
+                         $q->whereIn('practice_role_user.program_id', $programIds);
+                     });
     }
 
     public static function label()
