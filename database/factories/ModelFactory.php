@@ -287,7 +287,6 @@ $factory->define(EligibilityBatch::class, function (Faker\Generator $faker) {
 
     return [
         'practice_id' => $practice->id,
-        'type'        => EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE,
         'options'     => [],
     ];
 });
