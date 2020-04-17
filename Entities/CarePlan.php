@@ -423,6 +423,8 @@ class CarePlan extends BaseModel implements PdfReport
             'mrn'             => $patient->getMRN(),
             'name'            => $patient->getFullName(),
             'billingProvider' => optional($patient->billingProviderUser())->id,
+            'practice' => $patient->program_id,
+            'location' => $patient->getPreferredContactLocation(),
         ];
 
         return Validator::make(
@@ -441,6 +443,8 @@ class CarePlan extends BaseModel implements PdfReport
                 'mrn'             => ['required', new HasValidNbiMrn($patient)],
                 'name'            => 'required',
                 'billingProvider' => 'required|numeric',
+                'practice'        => 'required|numeric',
+                'location'        => 'required|numeric',
             ],
             [
                 'phoneNumber.phone' => 'The patient has an invalid phone number.',
