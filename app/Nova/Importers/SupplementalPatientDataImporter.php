@@ -222,20 +222,30 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                         );
                     }
                     
+                    $ccda = $enrollee->ccda;
+                    
                     if ( ! $enrollee->location_id && $spd->location_id) {
-                        $enrollee->location_id = $enrollee->ccda->location_id = $spd->location_id;
+                        $enrollee->location_id = $spd->location_id;
+                        
+                        if ($ccda) {
+                            $ccda->location_id = $spd->location_id;
+                        }
                     }
     
                     if ( ! $enrollee->provider_id && $spd->billing_provider_user_id) {
-                        $enrollee->provider_id = $enrollee->ccda->billing_provider_id = $spd->billing_provider_user_id;
+                        $enrollee->provider_id = $spd->billing_provider_user_id;
+    
+                        if ($ccda) {
+                            $ccda->billing_provider_id = $spd->billing_provider_user_id;
+                        }
                     }
                     
                     if ($enrollee->isDirty()) {
                         $enrollee->save();
                     }
                     
-                    if (optional($enrollee->ccda)->isDirty()) {
-                        $enrollee->ccda->save();
+                    if (optional($ccda)->isDirty()) {
+                        $ccda->save();
                     }
                     
                     return ImportConsentedEnrollees::dispatch([$enrollee->id]);
