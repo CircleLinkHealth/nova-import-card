@@ -6,6 +6,7 @@
 @section('content')
 
     <?php
+    /** @var \CircleLinkHealth\Customer\Entities\User $user */
     $user      = auth()->user();
     $route     = Route::current();
     $routeName = $route->getName();
@@ -20,13 +21,8 @@
     $pieces     = explode('?', $requestUri);
     $urlShort   = $pieces[0];
 
-    $bhiTime = 0;
-    $ccmTime = \CircleLinkHealth\TimeTracking\Entities\PageTimer::whereProviderId($user->id)
-        ->whereBetween('start_time', [
-            now()->startOfMonth(),
-            now()->endOfMonth(),
-        ])
-        ->sum('duration');
+    $bhiTime     = 0;
+    $ccmTime     = optional(App\CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id))->total_time_in_system ?? 0;
     $monthlyTime = $user->formattedTime($ccmTime);
     ?>
 
