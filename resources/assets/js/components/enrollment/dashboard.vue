@@ -117,7 +117,6 @@
             };
         },
         mounted: function () {
-            // M.AutoInit();
 
             this.loading = true;
             M.Modal.init($('#loading'), {
@@ -141,10 +140,16 @@
             })
 
             App.$on('enrollable:call', (data) => {
-                for (let [key, value] of Object.entries(data)) {
-                    this.$data[key] = value;
-                }
-                this.call(data.phone, data.type)
+                this.phone = data.phone;
+                this.type = data.type;
+                this.practice_phone = data.practice_phone;
+                this.enrollable_user_id = data.enrollable_user_id;
+                this.enrollable_name = data.enrollable_name;
+                this.callError = data.callError;
+                this.onCall = data.onCall;
+                this.callStatus = data.callStatus;
+
+                this.call()
             })
 
             App.$on('enrollable:hang-up', () => {
@@ -220,7 +225,7 @@
                 this.setTipsSettings(settings);
             },
 
-            call(phone, type) {
+            call() {
                 this.device.connect({
                     To: this.phone,
                     // From: this.practice_phone ? this.practice_phone : undefined,

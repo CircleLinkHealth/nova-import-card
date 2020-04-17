@@ -54,6 +54,8 @@
                                     <ul>
                                         <li class="sidebar-demo-list"><span :title="name"><b>Name:</b> {{name}}</span>
                                         </li>
+                                        <li class="sidebar-demo-list"><span :title="dob"><b>Date of Birth:</b> {{dob}}</span>
+                                        </li>
                                         <li class="sidebar-demo-list"><span
                                                 :title="lang"><b>Language:</b> {{lang}}</span>
                                         </li>
@@ -854,6 +856,9 @@
                 }
                 let ca_script = this.script.body;
 
+                if (! ca_script){
+                    return 'Script not found.'
+                }
                 return ca_script.replace(/{doctor}/gi, this.provider_name_for_enrollment_script)
                     .replace(/{patient}/gi, this.name)
                     .replace(/{practice}/gi, this.practice_name)

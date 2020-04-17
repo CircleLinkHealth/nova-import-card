@@ -55,13 +55,14 @@ class Enrollable extends Resource
             'reason_other' => $enrollable->status !== Enrollee::UNREACHABLE && $enrollable->last_call_outcome_reason ? $enrollable->last_call_outcome_reason : '',
             'last_encounter' => $enrollable->last_encounter ?? 'N/A',
             'attempt_count' => $enrollable->attempt_count ?? 0,
-            'last_attempt_at' => $enrollable->last_attempt_at ?? 'N/A',
+            'last_attempt_at' => optional($enrollable->last_attempt_at)->toDateString() ?? 'N/A',
             'address' => $enrollable->address,
             'address_2' => $enrollable->address_2,
             'state' => $enrollable->state,
             'zip' => $enrollable->zip,
             'email' => $enrollable->email,
             'city' => $enrollable->city,
+            'dob' => optional($enrollable->dob)->toDateString() ?? 'N/A',
 
 
 
