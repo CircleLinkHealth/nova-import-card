@@ -32,6 +32,10 @@ class ImportAllergies extends BaseCcdaImportTask
             if (empty($new['allergen_name'])) {
                 return null;
             }
+            
+            if (str_contains(strtolower($new['allergen_name']), 'no known')) {
+                return null;
+            }
         
             Allergy::updateOrCreate(
                 [

@@ -6,6 +6,7 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 use App\Constants;
 use App\Importer\Section\Validators\NameNotNull;
+use App\Importer\Section\Validators\ValidStatus;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\GetProblemInstruction;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
@@ -54,6 +55,10 @@ class ImportProblems extends BaseCcdaImportTask
         $this->processProblems()->each(
             function ($problemCollection, $problemType) use (&$medicationGroups) {
                 $problemCollection->each(function ($problem) use (&$medicationGroups, $problemType){
+                    if (! array_key_exists('attributes', $problem) || 'do_not_import' === $problemType) {
+                        return false;
+                    }
+                    
                     $new = $problem['attributes'];
     
                     $instruction = $this->getInstruction($problem);
@@ -194,7 +199,7 @@ class ImportProblems extends BaseCcdaImportTask
         
         $haveName = $problemsGroups->reject(
             function (array $p) {
-                return ! (new NameNotNull())->isValid($p);
+                return ! (new NameNotNull())->isValid($p) || ! (new ValidStatus())->isValid($p);
             }
         )->count();
         

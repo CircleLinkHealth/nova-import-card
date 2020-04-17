@@ -30,6 +30,7 @@ trait ConsolidatesMedicationInfo
         $consolidatedMedication->cons_code_system_name = null;
         $consolidatedMedication->cons_name             = null;
         $consolidatedMedication->cons_text             = null;
+        $consolidatedMedication->status                = $medicationLog->status ?? null;
 
         if ( ! empty($medicationLog->translation_code)) {
             $consolidatedMedication->cons_code             = $medicationLog->translation_code;
