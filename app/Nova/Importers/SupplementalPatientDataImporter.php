@@ -214,7 +214,7 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                             return $spd;
                         }
                         
-                        $enrollee = Enrollee::updateOrCreate(
+                        $enrollee = Enrollee::firstOrNew(
                             [
                                 'practice_id'        => $spd->practice_id,
                                 'first_name'         => $spd->first_name,
@@ -230,6 +230,10 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                     
                     if ( ! $enrollee->location_id && $spd->location_id) {
                         $enrollee->location_id = $spd->location_id;
+                    }
+    
+                    if ( ! $enrollee->provider_id && $spd->billing_provider_user_id) {
+                        $enrollee->provider_id = $spd->billing_provider_user_id;
                     }
                     
                     if ($enrollee->isDirty()) {
