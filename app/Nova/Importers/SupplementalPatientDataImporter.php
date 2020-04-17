@@ -201,7 +201,9 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                         return $spd;
                     }
                     
-                    if ( ! ($enrollee = Enrollee::where('practice_id', $spd->practice_id)->where(
+                    $query = Enrollee::with('ccda');
+                    
+                    if ( ! ($enrollee = $query::where('practice_id', $spd->practice_id)->where(
                         'first_name',
                         $spd->first_name
                     )->where('last_name', $spd->last_name)->where('mrn', $spd->mrn)->first())) {
@@ -214,7 +216,7 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                             return $spd;
                         }
                         
-                        $enrollee = Enrollee::firstOrNew(
+                        $enrollee = $query::firstOrNew(
                             [
                                 'practice_id'        => $spd->practice_id,
                                 'first_name'         => $spd->first_name,
@@ -229,15 +231,19 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                     }
                     
                     if ( ! $enrollee->location_id && $spd->location_id) {
-                        $enrollee->location_id = $spd->location_id;
+                        $enrollee->location_id = $enrollee->ccda->location_id = $spd->location_id;
                     }
     
                     if ( ! $enrollee->provider_id && $spd->billing_provider_user_id) {
-                        $enrollee->provider_id = $spd->billing_provider_user_id;
+                        $enrollee->provider_id = $enrollee->ccda->billing_provider_id = $spd->billing_provider_user_id;
                     }
                     
                     if ($enrollee->isDirty()) {
                         $enrollee->save();
+                    }
+                    
+                    if ($enrollee->ccda->isDirty()) {
+                        $enrollee->ccda->save();
                     }
                     
                     return ImportConsentedEnrollees::dispatch([$enrollee->id]);
