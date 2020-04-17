@@ -29,15 +29,18 @@ export default {
          * is patient BHI, CCM or BOTH?
          */
         checkPatientBehavioralStatus() {
-            const ccmCount = this.problems.filter(problem => {
+            const problems = this.problems || [];
+            const cpmProblems = this.cpm_problems || [];
+
+            const ccmCount = problems.filter(problem => {
                 if (problem.is_monitored) {
-                    const cpmProblem = this.cpm_problems.find(cpm => cpm.id == problem.cpm_id)
+                    const cpmProblem = cpmProblems.find(cpm => cpm.id == problem.cpm_id)
                     return cpmProblem ? !cpmProblem.is_behavioral : false
                 }
                 return false
-            }).length
-            const bhiCount = this.problems.filter(problem => {
-                const cpmProblem = this.cpm_problems.find(cpm => cpm.id == problem.cpm_id)
+            }).length;
+            const bhiCount = problems.filter(problem => {
+                const cpmProblem = cpmProblems.find(cpm => cpm.id == problem.cpm_id)
                 return cpmProblem ? cpmProblem.is_behavioral : false
             }).length
             console.log('ccm', ccmCount, 'bhi', bhiCount)
