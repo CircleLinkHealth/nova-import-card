@@ -15,10 +15,8 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportMedications;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
-use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeDiabetesAndEndocrineCcda;
-use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Validation\ValidationException;
 use Tests\CustomerTestCase;
 
