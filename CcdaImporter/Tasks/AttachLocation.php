@@ -11,15 +11,21 @@ class AttachLocation extends BaseCcdaImportTask
 {
     protected function import()
     {
-        if ($locationId = $this->ccda->location_id ?? null) {
-            $this->patient->attachLocation($locationId);
-            
-            $timezone = Location::whereNotNull('timezone')->find($locationId)->value('timezone');
-            
-            if ($timezone) {
-                $this->patient->timezone = $timezone;
-                $this->patient->save();
-            }
+        $locationId = $this->ccda->location_id ?? null;
+        
+        if ( ! $locationId && $this->patient->primaryPractice->locations->count() === 1) {
+            $locationId = $this->patient->primaryPractice->locations->first()->id;
+        }
+        
+        if ( ! $locationId) {
+            return;
+        }
+        
+        $this->patient->attachLocation($locationId);
+        
+        if ($timezone = Location::whereNotNull('timezone')->where('id', $locationId)->value('timezone')) {
+            $this->patient->timezone = $timezone;
+            $this->patient->save();
         }
     }
 }
