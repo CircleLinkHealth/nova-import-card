@@ -523,7 +523,8 @@
                             <div v-show="utc_other" class="col s6 m12 select-custom">
                                 <label for="utc_reason_other" class="label">If you selected other, please
                                     specify:</label>
-                                <input class="input-field" name="reason_other" v-model="utc_reason_other" id="utc_reason_other"/>
+                                <input class="input-field" name="reason_other" v-model="utc_reason_other"
+                                       id="utc_reason_other"/>
                             </div>
 
                             <div v-show="utc_requested_callback" class="col s6 m12 select-custom">
@@ -575,7 +576,8 @@
                             <div v-show="rejected_other" class="col s6 m12 select-custom">
                                 <label for="rejected_reason_other" class="label">If you selected other, please
                                     specify:</label>
-                                <input class="input-field" name="reason_other" v-model="reason_other" id="rejected_reason_other"/>
+                                <input class="input-field" name="reason_other" v-model="reason_other"
+                                       id="rejected_reason_other"/>
                             </div>
 
                             <div v-if="isSoftDecline" class="col s6 m12 select-custom">
@@ -683,8 +685,6 @@
 
 <script>
 
-    import Twilio from 'twilio-client';
-
     import {rootUrl} from '../../app.config';
 
     import Loader from '../loader.vue';
@@ -704,9 +704,13 @@
         },
         computed: {
             timeTrackerTime: function () {
+                if (!this.timeTracker || !this.timeTracker.formattedTime) {
+                    return 'Loading...';
+                }
+
                 return this.timeTracker.formattedTime;
             },
-            total_calls: function (){
+            total_calls: function () {
                 return this.report.total_calls || 0;
             },
             enrollmentTips: function () {
@@ -801,7 +805,7 @@
                 let last_name = this.provider.last_name;
                 let suffix = this.provider.suffix;
 
-                if (! first_name && ! last_name){
+                if (!first_name && !last_name) {
                     return '';
                 }
                 let name = this.capitalizeFirstLetter(first_name.toLowerCase()) + ' ' + this.capitalizeFirstLetter(last_name.toLowerCase());
@@ -831,7 +835,7 @@
 
                 return providerName
             },
-            providerInfo(){
+            providerInfo() {
                 return this.provider.providerInfo
             },
             provider_pronunciation_exists() {
@@ -851,7 +855,7 @@
             },
             care_ambassador_script: function () {
 
-                if (! this.script) {
+                if (!this.script || !this.script.body) {
                     return 'Script not found.'
                 }
                 let ca_script = this.script.body;
@@ -1013,13 +1017,15 @@
 
                 M.FormSelect.init($('select'));
 
-                M.Dropdown.init($('.auto-close'), {
+                // i think this does not work
+                $('.auto-close').dropdown({
                     alignment: 'right',
                     coverTrigger: false,
                     closeOnClick: true
                 });
 
-                M.Dropdown.init($('.do-not-close'), {
+                // i think this does not work
+                $('.do-not-close').dropdown({
                     alignment: 'right',
                     coverTrigger: false,
                     closeOnClick: false
@@ -1090,7 +1096,7 @@
             submitPendingForm() {
                 this.submitForm(this.pending_form, this.pending_form_url)
             },
-            setPatientData(data){
+            setPatientData(data) {
                 for (let [key, value] of Object.entries(data)) {
                     this.$data[key] = value;
                 }

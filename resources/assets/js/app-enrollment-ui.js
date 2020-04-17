@@ -8,6 +8,7 @@ import Vue from 'vue';
 import axios from './bootstrap-axios';
 import VueAxios from 'vue-axios';
 import EventBus from './admin/time-tracker/comps/event-bus';
+import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'
 
 if (document) {
     const elem = document.querySelector('meta[name="base-url"]');
@@ -38,4 +39,7 @@ if (window) {
     window.App = App;
     window.Vue = Vue;
 }
+
+BindWindowFocusChange(window)
+BindWindowVisibilityChange(window, document)
 

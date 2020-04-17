@@ -104,6 +104,9 @@
         },
         computed: {
             formattedTime() {
+                if (this.showLoader || !this.$refs.timeDisplay) {
+                    return undefined;
+                }
                 return this.$refs.timeDisplay.getTime();
             },
             totalTime() {
@@ -466,6 +469,7 @@
     }
 
     #notifications-wrapper {
+        z-index: 100;
         position: fixed;
         top: 65px;
         right: 15px;

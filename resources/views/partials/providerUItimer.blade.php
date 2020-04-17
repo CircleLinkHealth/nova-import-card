@@ -143,7 +143,6 @@ use CircleLinkHealth\Customer\Entities\Patient;
                     "title": '{{$title}}',
                     "submitUrl": '{{route("api.pagetracking")}}',
                     "timeSyncUrl": '{{route("api.get.time.patients")}}',
-                    "timeUserSyncUrl": '{{route("api.get.time.user")}}',
                     {{--                    "startTimeOld": '{{Carbon\Carbon::now()->subSeconds(8)->toDateTimeString()}}', //what's the point of this?--}}
                     "startTime": getCarbonDateTimeStringInServerTimezone(new Date(window.performance.timing.connectStart)),
                     "noLiveCount": ('{{$noLiveCountTimeTracking}}' == '1') ? 1 : 0,

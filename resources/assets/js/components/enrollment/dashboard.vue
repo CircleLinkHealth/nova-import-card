@@ -1,8 +1,8 @@
 <template>
     <div id="enrollment_calls">
         <div>
-            <time-tracker v-show="false"
-                          ref="timeTracker"
+            <time-tracker ref="timeTracker"
+                          :hide-tracker="true"
                           :twilio-enabled="true"
                           :info="getTimeTrackerInfo()"
                           :no-live-count="false"
@@ -81,7 +81,6 @@
 
     const userId = window.userId;
     const userFullName = window.userFullName;
-
 
     export default {
         name: 'enrollment-dashboard',
