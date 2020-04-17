@@ -10,7 +10,6 @@ use App\EligiblePatientView;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Eligibility\CcdaImporter\ImportEnrollee;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -197,14 +196,30 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                         return $spd;
                     }
                     
-                    if ( ! ('y' === strtolower($row['import_now']) && $spd->practice_id && $spd->first_name && $spd->last_name && $spd->mrn)) {
+                    if ( ! ('y' === strtolower(
+                            $row['import_now']
+                        ) && $spd->practice_id && $spd->first_name && $spd->last_name && $spd->mrn)) {
                         return $spd;
                     }
                     
-                    $query = Enrollee::with(['ccda'=>function($q) { $q->select(['id', 'location_id', 'practice_id', 'billing_provider_id']); }]);
+                    $query = Enrollee::with(
+                        [
+                            'ccda' => function ($q) {
+                                $q->select(['id', 'location_id', 'practice_id', 'billing_provider_id', 'patient_id']);
+                            },
+                        ]
+                    );
                     
-                    if ( ! ($enrollee = $query->where('practice_id', $spd->practice_id)->where('first_name', $spd->first_name)->where('last_name', $spd->last_name)->where('mrn', $spd->mrn)->first())) {
-                        $jobId = EligiblePatientView::where('mrn', $spd->mrn)->where('last_name', $spd->last_name)->where('first_name', $spd->first_name)->where('practice_id', $spd->practice_id)->value('eligibility_job_id');
+                    if ( ! ($enrollee = $query->where('practice_id', $spd->practice_id)->where(
+                        'first_name',
+                        $spd->first_name
+                    )->where('last_name', $spd->last_name)->where('mrn', $spd->mrn)->first())) {
+                        $jobId = EligiblePatientView::where('mrn', $spd->mrn)->where(
+                            'last_name',
+                            $spd->last_name
+                        )->where('first_name', $spd->first_name)->where('practice_id', $spd->practice_id)->value(
+                            'eligibility_job_id'
+                        );
                         
                         if ( ! $jobId) {
                             return $spd;
@@ -212,10 +227,10 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                         
                         $enrollee = $query->firstOrNew(
                             [
-                                'practice_id'        => $spd->practice_id,
-                                'first_name'         => $spd->first_name,
-                                'last_name'          => $spd->last_name,
-                                'mrn'                => $spd->mrn,
+                                'practice_id' => $spd->practice_id,
+                                'first_name'  => $spd->first_name,
+                                'last_name'   => $spd->last_name,
+                                'mrn'         => $spd->mrn,
                             ],
                             [
                                 'eligibility_job_id' => $jobId,
@@ -226,22 +241,38 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                     
                     $ccda = $enrollee->ccda;
                     
+                    if ( ! $ccda) {
+                        $ccda = Ccda::where('practice_id', $spd->practice_id)->where(
+                            'json->demographics->mrn_number',
+                            $spd->mrn
+                        )->where('json->demographics->name->family', $spd->last_name)->select(
+                            ['id', 'location_id', 'practice_id', 'billing_provider_id', 'patient_id']
+                        )->first();
+                        if ($ccda) {
+                            $enrollee->medical_record_id = $ccda->id;
+                        }
+                    }
+                    
                     if ( ! $enrollee->location_id && $spd->location_id) {
                         $enrollee->location_id = $spd->location_id;
                     }
-    
+                    
                     if ( ! $enrollee->provider_id && $spd->billing_provider_user_id) {
                         $enrollee->provider_id = $spd->billing_provider_user_id;
+                    }
+                    
+                    if ($ccda && ! $enrollee->user_id && $ccda->patient_id) {
+                        $enrollee->user_id = $ccda->patient_id;
                     }
                     
                     if ($enrollee->isDirty()) {
                         $enrollee->save();
                     }
-    
+                    
                     if ($ccda && ! $ccda->location_id && $spd->location_id) {
                         $ccda->location_id = $spd->location_id;
                     }
-    
+                    
                     if ($ccda && ! $ccda->billing_provider_id && $spd->billing_provider_user_id) {
                         $ccda->billing_provider_id = $spd->billing_provider_user_id;
                     }
@@ -258,6 +289,7 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                                 'initiatorUserId' => auth()->id(),
                             ]
                         );
+                        
                         return;
                     }
                     
