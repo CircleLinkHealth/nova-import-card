@@ -242,7 +242,7 @@ class EnrollmentCenterController extends Controller
         $enrollableId     = $request->input('enrollable_id');
         $isSurveyOnlyUser = $request->input('is_survey_only');
 //        for future: This can be either "user created from enrolle" or user (unreachable patient)
-//        but we dont mind for now  - * see NOTE:on top of method.
+//        but we dont mind for now  - * see NOTE:on top of enrolleeRequestsInfo().
 //        anyhow Seperation is done by $isSurveyOnly - "enrollees that became users ar survey onlys"
         $userEnrollee = $this->getUserModelEnrollee($enrollableId);
         /** @var Enrollee $enrollee */
