@@ -195,22 +195,14 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                         return $spd;
                     }
                     
-                    if ( ! ('y' === strtolower(
-                            $row['import_now']
-                        ) && $spd->practice_id && $spd->first_name && $spd->last_name && $spd->mrn)) {
+                    if ( ! ('y' === strtolower($row['import_now']) && $spd->practice_id && $spd->first_name && $spd->last_name && $spd->mrn)) {
                         return $spd;
                     }
                     
                     $query = Enrollee::with('ccda');
                     
-                    if ( ! ($enrollee = $query::where('practice_id', $spd->practice_id)->where(
-                        'first_name',
-                        $spd->first_name
-                    )->where('last_name', $spd->last_name)->where('mrn', $spd->mrn)->first())) {
-                        $jobId = EligiblePatientView::where('mrn', $spd->mrn)->where(
-                            'last_name',
-                            $spd->last_name
-                        )->where('first_name', $spd->first_name)->where('practice_id', $spd->practice_id)->value('eligibility_job_id');
+                    if ( ! ($enrollee = $query::where('practice_id', $spd->practice_id)->where('first_name', $spd->first_name)->where('last_name', $spd->last_name)->where('mrn', $spd->mrn)->first())) {
+                        $jobId = EligiblePatientView::where('mrn', $spd->mrn)->where('last_name', $spd->last_name)->where('first_name', $spd->first_name)->where('practice_id', $spd->practice_id)->value('eligibility_job_id');
                         
                         if ( ! $jobId) {
                             return $spd;

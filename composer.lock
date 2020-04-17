@@ -1015,7 +1015,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "d31a3c5a8ca098a025150c9b28192f4153162722"
+                "reference": "4ebe7fc7e411a4238c446fd28cf3fc795b972f29"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1049,7 +1049,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-17T02:29:19+00:00"
+            "time": "2020-04-17T05:37:31+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1057,7 +1057,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "1395a0beda041d16d2606e1afe96c11635b0f03f"
+                "reference": "cb9664a4aebcf47829ac43cf3c9f444511d90514"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1082,7 +1082,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-17T03:07:52+00:00"
+            "time": "2020-04-17T05:13:15+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -11300,16 +11300,16 @@
     "packages-dev": [
         {
             "name": "barryvdh/laravel-debugbar",
-            "version": "v3.3.1",
+            "version": "v3.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-debugbar.git",
-                "reference": "67ced7c6a7451b8bb079d92a57d75f1111f3342d"
+                "reference": "95c31aab33689cd4572d27038186886f4bfa63ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-debugbar/zipball/67ced7c6a7451b8bb079d92a57d75f1111f3342d",
-                "reference": "67ced7c6a7451b8bb079d92a57d75f1111f3342d",
+                "url": "https://api.github.com/repos/barryvdh/laravel-debugbar/zipball/95c31aab33689cd4572d27038186886f4bfa63ae",
+                "reference": "95c31aab33689cd4572d27038186886f4bfa63ae",
                 "shasum": ""
             },
             "require": {
@@ -11364,7 +11364,7 @@
                 "profiler",
                 "webprofiler"
             ],
-            "time": "2020-04-16T09:09:05+00:00"
+            "time": "2020-04-16T20:19:40+00:00"
         },
         {
             "name": "barryvdh/laravel-ide-helper",
