@@ -227,8 +227,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         if (is_array($roleId)) {
             foreach ($roleId as $key => $role) {
+                if (count($roleId) === 1) {
+                    return $this->attachGlobalRole($role);
+                }
+                
                 $this->attachGlobalRole($role);
-                unset($key);
+                unset($roleId[$key]);
             }
         }
 
@@ -265,6 +269,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         if (is_array($location)) {
             foreach ($location as $key => $loc) {
+                if (count($location) === 1) {
+                    return $this->attachLocation($loc);
+                }
+                
                 $this->attachLocation($loc);
                 unset($location[$key]);
             }
