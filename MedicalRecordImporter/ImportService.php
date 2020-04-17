@@ -6,10 +6,9 @@
 
 namespace CircleLinkHealth\Eligibility\MedicalRecordImporter;
 
-use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class ImportService
@@ -66,11 +65,16 @@ class ImportService
                 function ($q) use ($ccda) {
                     $q->where('mrn_number', $ccda->patientMrn());
                 }
-            )->whereProgramId($ccda->practice_id)
+            )->whereProgramId($ccda->practice_id)->with('carePlan')
                           ->first();
             
             if ($exists) {
-                return $exists;
+                $ccda->patient_id = $enrollee->user_id = $exists->id;
+                $ccda->save();
+                $enrollee->save();
+                if (in_array($exists->carePlan->status, [CarePlan::PROVIDER_APPROVED, CarePlan::QA_APPROVED])) {
+                    return $exists;
+                }
             }
         }
         

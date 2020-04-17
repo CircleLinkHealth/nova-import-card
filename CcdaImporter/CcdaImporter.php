@@ -169,17 +169,25 @@ class CcdaImporter
                 
                 //This CarePlan is now ready to be QA'ed by a CLH Admin
                 $this->ccda->imported = true;
-                $this->ccda->status   = Ccda::QA;
+                if (in_array($this->patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::PROVIDER_APPROVED])) {
+                    $this->ccda->status = Ccda::CAREPLAN_CREATED;
+                } else {
+                    $this->ccda->status = Ccda::QA;
+                }
                 $this->ccda->save();
                 
                 if ($this->enrollee) {
                     $this->enrollee->medical_record_type = get_class($this->ccda);
                     $this->enrollee->medical_record_id   = $this->ccda->id;
                     $this->enrollee->user_id             = $this->ccda->patient_id;
+                    $this->enrollee->provider_id         = $this->ccda->billing_provider_id;
+                    $this->enrollee->location_id         = $this->ccda->location_id;
                     $this->enrollee->save();
                 }
                 
-                if ($this->patient->isDirty()) $this->patient->save();
+                if ($this->patient->isDirty()) {
+                    $this->patient->save();
+                }
                 
                 event(new PatientUserCreated($this->patient));
             }
