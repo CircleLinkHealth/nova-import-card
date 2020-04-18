@@ -64,7 +64,6 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
             ->whereIn('status', [
                 'call_queue',
                 'utc',
-                'soft_rejected',
             ]);
     }
 

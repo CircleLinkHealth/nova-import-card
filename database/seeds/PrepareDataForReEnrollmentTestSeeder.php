@@ -47,13 +47,18 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
 
         if ($enrollees->count() < 5) {
             $enrollees->delete(); //Just to be sure
-            $enrolleesForTesting = factory(Enrollee::class, 5)->create([
-                'practice_id' => $practice->id,
-                'dob' => \Carbon\Carbon::parse('1901-01-01'),
-                'referring_provider_name' => 'Dr. Demo',
-            ]);
-
-            $this->seedEligibilityJobs(collect($enrolleesForTesting));
+            $n = 1;
+            $limit = 5;
+            while ($n <= $limit) {
+                $enrolleesForTesting = factory(Enrollee::class, 1)->create([
+                    'practice_id' => $practice->id,
+                    'dob' => \Carbon\Carbon::parse('1901-01-01'),
+                    'referring_provider_name' => 'Dr. Demo',
+                    'mrn' => mt_rand(100000, 999999),
+                ]);
+                $this->seedEligibilityJobs(collect($enrolleesForTesting));
+                ++$n;
+            }
 
         }
 

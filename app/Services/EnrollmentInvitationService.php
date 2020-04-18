@@ -48,10 +48,10 @@ class EnrollmentInvitationService
             '[CUSTOMER_SIGNATURE_PIC]',
         ];
 
-        $letter      = json_decode($practiceLetter->letter);
+        $letter = json_decode($practiceLetter->letter);
         $letterPages = [];
         foreach ($letter as $page) {
-            $body          = $page->body;
+            $body = $page->body;
             $letterPages[] = str_replace($varsToBeReplaced, $replacementVars, $body);
         }
 
@@ -66,6 +66,7 @@ class EnrollmentInvitationService
         $enrollee->update(
             [
                 'status' => 'call_queue',
+                'auto_enrollment_triggered' => true
             ]
         );
     }
@@ -93,7 +94,7 @@ class EnrollmentInvitationService
     {
         $enrollee->update(
             [
-                'status'             => 'call_queue',
+                'status' => 'call_queue',
                 'requested_callback' => Carbon::parse(now())->toDate(),
             ]
         );
@@ -105,7 +106,8 @@ class EnrollmentInvitationService
     public function markAsNonResponsive(Enrollee $enrollee)
     {
         $enrollee->update([
-            'enrollment_non_responsive' => true
+            'enrollment_non_responsive' => true,
+            'auto_enrollment_triggered' => true,
         ]);
 
     }

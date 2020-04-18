@@ -10,14 +10,15 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
+use Faker\Factory;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 
 class EnrollableSurveyCompleted implements ShouldQueue
@@ -26,6 +27,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
     private $data;
 
     /**
@@ -71,6 +73,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
         if ($isSurveyOnly) {
             $enrollee = Enrollee::whereUserId($user->id)->firstOrFail();
+
             $enrollee->update([
                 'dob' => $dob,
                 'primary_phone' => $surveyAnswers['preferred_number'],
@@ -82,10 +85,10 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 'zip' => $addressData['zip'],
                 'email' => $surveyAnswers['email'],
                 'status' => Enrollee::ENROLLED,
+                'auto_enrollment_triggered' => true,
             ]);
 
             $this->importEnrolleeSurveyOnly($enrollee, $user);
-
 
             $patientType = 'Initial';
             $id = $enrollee->id;
@@ -94,14 +97,16 @@ class EnrollableSurveyCompleted implements ShouldQueue
             $preferredContactDaysToArray = explode(',', $preferredContactDays);
             $patientContactTimeStart = Carbon::parse($surveyAnswers['preferred_time'][0]->from)->toTimeString();
             $patientContactTimeEnd = Carbon::parse($surveyAnswers['preferred_time'][0]->to)->toTimeString();
-
             $this->updateUserModel($user, $addressData);
             $this->updatePatientPhoneNumber($user, $surveyAnswers['preferred_number']);
             $this->upatePatientInfo($user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd, $dob);
             $this->updatePatientContactWindow($user, $preferredContactDaysToArray, $patientContactTimeStart, $patientContactTimeEnd);
-
-
             $this->reEnrollUnreachablePatient($user);
+
+            if (App::environment(['local', 'review', 'staging'])) {
+                $this->createAnEnrolleeModelForUserJustForTesting($user);
+            }
+
             $patientType = 'Unreachable';
             $id = $user->id;
         }
@@ -267,6 +272,42 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
     /**
      * @param User $user
+     */
+    private function createAnEnrolleeModelForUserJustForTesting(User $user)
+    {
+//        So it can be rendere to CA ambassadors dashboard
+        $faker = Factory::create();
+        Enrollee::updateOrCreate(
+            [
+                'user_id' => $user->id
+            ],
+            [
+                'practice_id' => $user->primary_practice_id,
+                'mrn' => mt_rand(111111, 999999),
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'address' => $user->address,
+                'city' => $user->city,
+                'state' => $user->state,
+                'zip' => 44508,
+                'primary_phone' => $faker->phoneNumber,
+                'other_phone' => $faker->phoneNumber,
+                'home_phone' => $faker->phoneNumber,
+                'cell_phone' => $faker->phoneNumber,
+                'dob' => \Carbon\Carbon::parse('1901-01-01'),
+                'lang' => 'EN',
+                'status' => Enrollee::ENROLLED,
+                'primary_insurance' => 'test',
+                'secondary_insurance' => 'test',
+                'email' => $user->email,
+                'referring_provider_name' => 'Dr. Demo',
+                'auto_enrollment_triggered' => true
+            ]
+        );
+    }
+
+    /**
+     * @param User $user
      * @param $addressData
      */
     private function updateUserModel(User $user, $addressData)
@@ -307,6 +348,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
             'preferred_cc_contact_days' => $preferredContactDays,
             'daily_contact_window_start' => $patientContactTimeStart,
             'daily_contact_window_end' => $patientContactTimeEnd,
+            'auto_enrollment_triggered' => true,
 
         ]);
     }
@@ -327,53 +369,9 @@ class EnrollableSurveyCompleted implements ShouldQueue
      */
     public function reEnrollUnreachablePatient(User $user)
     {
+//        Im no showing this info anywhere. Do i need to show them anywhere?
         $user->patientInfo->update([
             'ccm_status' => Patient::ENROLLED,
         ]);
     }
-
-//    /**
-//     * @param $user
-//     * @param $practice
-//     *
-//     * @return EligibilityBatch|\Illuminate\Database\Eloquent\Model
-//     */
-//    public function updateOrCreateBatch($user, $practice)
-//    {
-//        return EligibilityBatch::updateOrCreate(
-//            [
-//                'practice_id' => $practice->id,
-//                'type' => 'survey_only',
-//            ],
-//            [
-//                'status' => EligibilityBatch::STATUSES['complete'],
-//            ]
-//        );
-//    }
-//
-//    /**
-//     * @return string
-//     */
-//    public function createHash(Enrollee $enrollee)
-//    {
-//        return $enrollee->practice->name . $enrollee->first_name . $enrollee->last_name . $enrollee->mrn . $enrollee->city . $enrollee->state . $enrollee->zip;
-//    }
-//
-//    /**
-//     * @param $eligibilityBatch
-//     * @param $medicalRecord
-//     * @param $hash
-//     */
-//    public function updateOrCreateEligibilityJob($eligibilityBatch, $medicalRecord, $hash)
-//    {
-//        EligibilityJob::updateOrCreate(
-//            [
-//                'batch_id' => $eligibilityBatch->id,
-//            ],
-//            [
-//                'data' => $medicalRecord,
-//                'hash' => $hash,
-//            ]
-//        );
-//    }
 }

@@ -308,11 +308,14 @@ class EnrollmentCenterController extends Controller
         ];
 
         EnrollableSurveyCompleted::dispatch($data);
+
+        return 'enrolled successfully';
     }
 
     public function finalActionTest()
     {
         FinalActionOnNonResponsivePatients::dispatch(new EnrollmentInvitationService());
+        return 'Done!';
     }
 
     /**
@@ -499,12 +502,8 @@ class EnrollmentCenterController extends Controller
 
             $isManuallyExpired = $url->manually_expired;
 
-            // meaning has got deleted after survey completion
-            $hasDeletedPatientInfo = $isEnrolleeClass
-                ? $invitationable->user()->withTrashed()->first()->doesntHave('patientInfo')->exists()
-                : $invitationable->withTrashed()->first()->doesntHave('patientInfo')->exists();
 
-            if ($isManuallyExpired && $hasDeletedPatientInfo) {
+            if ($isManuallyExpired) {
                 return [
                     'invitationUrl'   => '',
                     'isEnrolleeClass' => '',

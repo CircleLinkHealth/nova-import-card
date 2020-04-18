@@ -118,6 +118,8 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
      */
     public function sendLetterWithRegularMail($noResponsivePatient, $pages)
     {
+//        @todo: Here create a nova page "of non-responsive patients or a list of all responsive patients that we can cross reference. Whichever is easiest"
+//        Will be the same page where the admin can send the notifs
 //        $noResponsivePatient->notify(new SendEnrollmentLetterToNonResponsivePatients($noResponsivePatient, $pages));
     }
 }
