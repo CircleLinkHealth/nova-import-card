@@ -356,7 +356,8 @@ class Enrollee extends BaseModel
         //contains array of agent details, similar to patient_info fields
         'agent_details',
 //
-        'enrollment_non_responsive'
+        'enrollment_non_responsive',
+        'auto_enrollment_triggered'
     ];
 
     protected $table = 'enrollees';
@@ -711,7 +712,8 @@ class Enrollee extends BaseModel
      *
      * @return mixed
      */
-    public function scopeDuplicates($query, User $patient, Ccda $ccda) {
+    public function scopeDuplicates($query, User $patient, Ccda $ccda)
+    {
         return $query->where(
             function ($q) use ($ccda, $patient) {
                 $q

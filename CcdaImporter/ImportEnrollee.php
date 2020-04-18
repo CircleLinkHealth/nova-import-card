@@ -45,17 +45,17 @@ class ImportEnrollee
         
         //import from eligibility jobs
         $job = $static->eligibilityJob($enrollee);
-        
+
         if ($job) {
             $importedUsingMrn = $static->importCcdUsingMrnFromEligibilityJob($job, $enrollee);
-            
+
             if (false !== $importedUsingMrn) {
                 return $importedUsingMrn;
             }
-            
+
             $static->importFromEligibilityJob($enrollee, $job);
         }
-        
+
         throw new \Exception("This should never be reached. enrollee: $enrollee->id");
     }
     

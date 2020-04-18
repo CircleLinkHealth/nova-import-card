@@ -21,7 +21,7 @@ trait SeedEligibilityJobsForEnrollees
                 'patient_id' => $enrollee->mrn,
                 'last_name' => $enrollee->last_name,
                 'first_name' => $enrollee->first_name,
-                'date_of_birth' => $enrollee->dob->toDateString(),
+                'dob' => $enrollee->dob->toDateString(), // its dob in importer v-3
                 'gender' => collect(['M', 'F'])->random(),
                 'lang' => $enrollee->lang,
                 'preferred_provider' => $enrollee->providerFullName,
@@ -40,6 +40,8 @@ trait SeedEligibilityJobsForEnrollees
                 'postal_code' => $enrollee->zip,
                 'primary_insurance' => $enrollee->primary_insurance,
                 'secondary_insurance' => $enrollee->secondary_insturance,
+                'referring_provider_name' => $enrollee->referring_provider_name,
+                'mrn' => $enrollee->mrn,
                 'problems' => [
                     [
                         'name' => 'Hypertension',
