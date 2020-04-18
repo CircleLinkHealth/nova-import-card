@@ -103,9 +103,9 @@ class EnrollableSurveyCompleted implements ShouldQueue
             $this->updatePatientContactWindow($user, $preferredContactDaysToArray, $patientContactTimeStart, $patientContactTimeEnd);
             $this->reEnrollUnreachablePatient($user);
 
-            if (App::environment(['local', 'review', 'staging'])) {
-                $this->createAnEnrolleeModelForUserJustForTesting($user);
-            }
+//            if (App::environment(['local', 'review', 'staging'])) {
+//                $this->createAnEnrolleeModelForUserJustForTesting($user);
+//            }
 
             $patientType = 'Unreachable';
             $id = $user->id;
