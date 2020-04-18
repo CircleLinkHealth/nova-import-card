@@ -1333,6 +1333,11 @@
         overflow-y: auto;
     }
 
+    .enrollment-script {
+        height: 100%;
+        overflow-y: scroll;
+    }
+
     .enrollment-script ol li {
         margin-left: 3%;
     }
