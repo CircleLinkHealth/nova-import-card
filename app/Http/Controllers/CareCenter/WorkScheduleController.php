@@ -293,6 +293,7 @@ class WorkScheduleController extends Controller
                     } else {
                         $event->update(['repeat_frequency' => 'does_not_repeat']);
                     }
+
                 }
             } else {
                 $this->updateWorkHours($window->nurse_info_id, $workScheduleData);
