@@ -26,6 +26,9 @@ trait ConsolidatesProblemInfo
         $consolidatedProblem->cons_code_system      = null;
         $consolidatedProblem->cons_code_system_name = null;
         $consolidatedProblem->cons_name             = $problemLog->name;
+        $consolidatedProblem->status                = $problemLog->status ?? null;
+        $consolidatedProblem->start                = $problemLog->start ?? null;
+        $consolidatedProblem->end                = $problemLog->end ?? null;
 
         if ( ! empty($problemLog->code)) {
             $consolidatedProblem->cons_code             = $problemLog->code;
