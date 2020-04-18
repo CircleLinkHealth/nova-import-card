@@ -1079,9 +1079,9 @@
                     this.pending_form_url = url
                     let modal = M.Modal.getInstance(document.getElementById('suggested-family-members-modal'));
                     modal.open();
+                }else{
+                    this.submitForm(event.target, url)
                 }
-
-                this.submitForm(event.target, url)
             },
             submitForm(form, url) {
 
