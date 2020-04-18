@@ -31,6 +31,7 @@ class EnrolleesSeeder extends Seeder
 
             $job->data = [
                 'patient_id'              => $enrollee->mrn,
+                'mrn'              => $enrollee->mrn,
                 'last_name'               => $enrollee->last_name,
                 'first_name'              => $enrollee->first_name,
                 'date_of_birth'           => $enrollee->dob->toDateString(),
