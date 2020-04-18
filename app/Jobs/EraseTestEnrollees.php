@@ -8,6 +8,7 @@ namespace App\Jobs;
 
 use App\CareAmbassadorLog;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -40,9 +41,15 @@ class EraseTestEnrollees implements ShouldQueue
                              ->get();
 
         foreach ($enrollees as $enrollee) {
+            $time =PageTimer::where('enrollee_id', $enrollee->id)
+                     ->get();
+            foreach($time as $entry){
+                $entry->forceDelete();
+            }
+
             //erase eligibility job
             $eligibilityJob = $enrollee->eligibilityJob;
-            $eligibilityJob->batch->delete();
+            optional($eligibilityJob)->batch->delete();
             $eligibilityJob->delete();
 
             //erase user and data
