@@ -161,6 +161,8 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee duplicates(\CircleLinkHealth\Customer\Entities\User $patient, \CircleLinkHealth\SharedModels\Entities\Ccda $ccda)
  * @property int|null $location_id
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee whereLocationId($value)
+ * @property int $auto_enrollment_triggered
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee whereAutoEnrollmentTriggered($value)
  */
 class Enrollee extends BaseModel
 {
