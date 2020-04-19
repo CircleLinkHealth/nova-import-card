@@ -19,6 +19,7 @@ use Titasgailius\SearchRelations\SearchesRelations;
 class NotesSuccessStories extends Resource
 {
     use SearchesRelations;
+
     /**
      * The logical group associated with the resource.
      *
@@ -38,7 +39,7 @@ class NotesSuccessStories extends Resource
      * @var array
      */
     public static $search = [
-        'type',
+        'id', 'type',
     ];
 
     /**
@@ -77,7 +78,7 @@ class NotesSuccessStories extends Resource
      */
     public function authorizedToUpdate(Request $request)
     {
-        return false;
+        return true;
     }
 
     /**
@@ -117,6 +118,11 @@ class NotesSuccessStories extends Resource
                 ->hideWhenUpdating()
                 ->sortable(),
 
+            Text::make('Note id', 'id')
+                ->hideWhenCreating()
+                ->sortable()
+                ->readonly(true),
+
             Text::make('Note Type', 'type')
                 ->hideWhenCreating()
                 ->readonly(true),
@@ -125,11 +131,11 @@ class NotesSuccessStories extends Resource
                 ->hideWhenCreating()
                 ->readonly(true),
 
-//            Text::make('Patient', 'patient.display_name')
-//                ->hideFromIndex()
-//                ->hideFromDetail()
-//                ->hideWhenCreating()
-//                ->readonly(true),
+            Text::make('Patient', 'patient.display_name')
+                ->hideFromIndex()
+                ->hideFromDetail()
+                ->hideWhenCreating()
+                ->readonly(true),
 
             BelongsTo::make('Patient', 'patient', User::class)
                 ->sortable()
@@ -139,7 +145,6 @@ class NotesSuccessStories extends Resource
 
             Boolean::make('Success Story', 'success_story')
                 ->hideWhenCreating()
-                ->readonly(true),
         ];
     }
 
