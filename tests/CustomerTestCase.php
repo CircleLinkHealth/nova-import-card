@@ -77,8 +77,8 @@ class CustomerTestCase extends TestCase
     {
         if ( ! $this->location) {
             $this->location = Location::where('practice_id', $this->practice()->id)->first();
-            if (!$this->location) {
-                $this->location = factory(Location::class)->create();
+            if (! $this->location) {
+                $this->location = factory(Location::class)->create(['practice_id' => $this->practice()->id]);
             }
         }
 
