@@ -14,19 +14,28 @@ class AttachEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
 {
     public static function attach(SafeRequest $request)
     {
-        if ( ! $request->has('confirmed_family_members') || ! $request->has('enrollee_id')) {
+        if ( ! $request->has('confirmed_family_members') || ! $request->has('enrollable_id')) {
             return false;
         }
 
-
-        return (new static($request->input('enrollee_id')))->attachFamilyMembers($request->input('confirmed_family_members'));
+        return (new static($request->input('enrollable_id')))->attachFamilyMembers($request);
     }
 
-    private function attachFamilyMembers($ids)
+    private function attachFamilyMembers(SafeRequest $request)
     {
         $this->getModel();
 
-        $this->assignToCareAmbassador($ids);
+        $ids = $request->input('confirmed_family_members');
+
+        if (empty($ids)) {
+            return false;
+        }
+
+        if ( ! is_array($ids)) {
+            $ids = explode(',', $ids);
+        }
+
+        $this->assignToCareAmbassador($request, $ids);
 
         //make sure to check if duplicate entry exists,
         //also attach the inverse for each on
@@ -35,33 +44,29 @@ class AttachEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
         $this->attachInverseRelationship($ids);
     }
 
-    private function assignToCareAmbassador($ids)
+    private function assignToCareAmbassador(SafeRequest $request, $ids)
     {
-        if (empty($ids)) {
-            return false;
-        }
-        if ( ! is_array($ids)) {
-            $ids = explode(',', $ids);
-        }
+        $x =1;
+        //per CPM-2256 make sure to update confirmed family member statuses, to be able to pre-fill their data on CA-panel.
+        //pre-fill status as well. Enrollee should still come next in queue, since we're not checking for status on Confirmed FamilyMembers Queue
         Enrollee::whereIn('id', $ids)->update([
-            'care_ambassador_user_id' => auth()->user()->id,
-            'status'                  => Enrollee::TO_CALL,
+            'care_ambassador_user_id'  => auth()->user()->id,
+            'status'                   => $request->input('status') ?? Enrollee::TO_CALL,
+            'last_call_outcome'        => $request->input('reason'),
+            'last_call_outcome_reason' => $request->input('reason_other'),
+            'preferred_window'         => $request->input('times') ? createTimeRangeFromEarliestAndLatest($request->input('times')) : null,
+            'preferred_days'           => is_array($request->input('days')) ? collect($request->input('days'))->reject(function ($d) {
+                return $d == 'all';
+            })->implode(', ') : null,
         ]);
     }
 
     private function attachInverseRelationship($ids)
     {
-        if (empty($ids)) {
-            return false;
-        }
-        if ( ! is_array($ids)) {
-            $ids = explode(',', $ids);
-        }
-
         Enrollee::whereIn('id', $ids)
                 ->get()
                 ->each(function (Enrollee $e) {
-                    if (! $e->confirmedFamilyMembers()->where('id', $this->enrollee->id)->exists()) {
+                    if ( ! $e->confirmedFamilyMembers()->where('id', $this->enrollee->id)->exists()) {
                         $e->attachFamilyMembers($this->enrollee->id);
                     }
                 });

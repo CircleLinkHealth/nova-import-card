@@ -1952,3 +1952,51 @@ if (!function_exists('getPatientListDropdown')) {
         });
     }
 }
+
+if (!function_exists('createTimeRangeFromEarliestAndLatest')) {
+
+
+    /**
+     * Used in CA:
+     * Example:
+     * Create string '09:00-18:00' from array:
+     *
+     * [
+     * '09:00-11:00',
+     * '11:00-13:00',
+     * '13:00-18:00
+     * ]
+     *
+     * @param array $times
+     *
+     * @return string|null
+     */
+    function createTimeRangeFromEarliestAndLatest(array $times) : ? string
+    {
+        $times = collect($times);
+
+        if ($times->count() == 1){
+            return $times->first();
+        }
+
+        $start = collect(explode('-', $times->first()))->first();
+
+        if (! $start){
+            return null;
+        }
+
+        $end = collect(explode('-', $times->last()))->last();
+
+
+        if (! $end){
+            //if more than 2 entries get second to last and try to parse
+            $secondToLastEnd = collect(explode('-', $times[$times->count() - 2]))->last();
+            if ($times->count() == 2 || ! $secondToLastEnd){
+                return $times->first();
+            }
+            $end = $secondToLastEnd;
+        }
+
+        return $start.'-'.$end;
+    }
+}
