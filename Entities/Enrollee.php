@@ -330,6 +330,7 @@ class Enrollee extends BaseModel
         'status',
         'last_call_outcome_reason',
         'last_call_outcome',
+        'other_note',
 
         'preferred_window',
         'preferred_days',
