@@ -53,23 +53,10 @@ class EnrolleesSeeder extends Seeder
                 'postal_code'         => $enrollee->zip,
                 'primary_insurance'   => $enrollee->primary_insurance,
                 'secondary_insurance' => $enrollee->secondary_insturance,
-                'problems'            => [
-                    [
-                        'name'       => 'Hypertension',
-                        'start_date' => \Carbon\Carbon::now()->toDateString(),
-                        'code'       => 'I10',
-                        'code_type'  => 'ICD-10',
-                    ],
-                    [
-                        'name'       => 'Asthma',
-                        'start_date' => \Carbon\Carbon::now()->toDateString(),
-                        'code'       => 'J45.901',
-                        'code_type'  => 'ICD-10',
-                    ],
-                ],
-                'allergies'   => [['name' => 'peanut']],
-                'medications' => [],
-                'is_demo'     => 'true',
+                'problems'            => [],
+                'allergies'           => [],
+                'medications'         => [],
+                'is_demo'             => 'true',
             ];
             $job->save();
 
