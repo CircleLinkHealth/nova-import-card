@@ -247,16 +247,17 @@ class ImportProblems extends BaseCcdaImportTask
                 $cpmProblemId = optional($cpmProblem)->id;
                 
                 //if problem is Diabetes and string contains 2, it's probably diabetes type 2
-                if (1 == $cpmProblemId && str_contains($problemCodes->cons_name, ['2'])) {
+                if (1 == $cpmProblem->id && Illuminate\Support\Str::contains($problemCodes->cons_name, ['2'])) {
                     $cpmProblem = $this->cpmProblems->firstWhere(
                         'name',
                         'Diabetes Type 2'
-                    );
-                } //if problem is Diabetes and string contains 1, it's probably diabetes type 1
-                elseif (1 == $cpmProblemId && str_contains(
-                        $problemCodes->cons_name,
-                        ['1']
-                    )) {
+                                            );
+                }
+                //if problem is Diabetes and string contains 1, it's probably diabetes type 1
+                elseif (1 == $cpmProblem->id && Illuminate\Support\Str::contains(
+                    $problemCodes->cons_name,
+                    ['1']
+                                        )) {
                     $cpmProblem = $this->cpmProblems->firstWhere(
                         'name',
                         'Diabetes Type 1'
