@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8b42d3082488783330fd3073412e46d7",
+    "content-hash": "a46accf66854eb2b1c8a517940053db1",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1354,11 +1354,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v1.1.0",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "caaca105f93451583f7a2fcedc7fa5999f6abcdb"
+                "reference": "53e681a15d6278841e3467ee73235fda0da1c332"
             },
             "type": "laravel-module",
             "extra": {
@@ -1383,15 +1383,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-05T16:36:15+00:00"
+            "time": "2020-04-16T00:00:05+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
-            "version": "v1.1.8",
+            "version": "v1.1.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "e8df27ecf467fa58da56cb4d126f5772c566578b"
+                "reference": "f96abaf50628380a16991a3dc0c5d650a0f9301c"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1416,7 +1416,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-29T08:02:00+00:00"
+            "time": "2020-03-24T18:33:45+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
