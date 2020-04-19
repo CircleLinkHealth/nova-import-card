@@ -230,7 +230,10 @@ trait UserHelpers
             ->all();
 
         $user->locations()->sync($locations);
-
+        
+        if (array_key_exists(0, $locations) && is_numeric($locations[0])) {
+            $user->setPreferredContactLocation($locations[0]);
+        }
         return $user;
     }
 

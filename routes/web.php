@@ -485,7 +485,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource(
         'practice.users',
         'API\PracticeStaffController'
-    )->middleware('permission:practiceStaff.create,practiceStaff.read,practiceStaff.update,practiceStaff.delete');
+    )->middleware('permission:practiceStaff.create,practiceStaff.read,practiceStaff.update,practiceStaff.delete')->only(['destroy', 'index', 'update']);
 
     Route::resource(
         'practice.locations',
