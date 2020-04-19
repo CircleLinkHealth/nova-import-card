@@ -288,7 +288,7 @@ $factory->define(EligibilityBatch::class, function (Faker\Generator $faker) {
     return [
         'practice_id' => $practice->id,
         'options'     => [],
-        'type'        => [],
+        'type'        => 'test',
     ];
 });
 
