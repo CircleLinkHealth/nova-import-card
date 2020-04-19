@@ -79,7 +79,9 @@ class EnrollmentCenterController extends ApiController
         $enrollee->last_call_outcome_reason = $request->input('extra');
 
         if (is_array($request->input('days'))) {
-            $enrollee->preferred_days = implode(', ', $request->input('days'));
+            $enrollee->preferred_days = collect($request->input('days'))->reject(function ($d) {
+                return $d == 'all';
+            })->implode(', ');
         }
 
         if (is_array($request->input('times'))) {
