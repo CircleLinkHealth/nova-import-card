@@ -7,6 +7,7 @@
 namespace App\Nova;
 
 use App\Constants;
+use App\Nova\Actions\ImportEnrollee;
 use App\Nova\Importers\EnroleeData as EnroleeDataImporter;
 use CircleLinkHealth\ClhImportCardExtended\ClhImportCardExtended;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -68,7 +69,9 @@ class EnroleeData extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            new ImportEnrollee
+        ];
     }
 
     /**
@@ -92,8 +95,8 @@ class EnroleeData extends Resource
         if ( ! isProductionEnv()) {
             $cards[] = (new LinkableAway())
                 ->title('Create Patients')
-                ->url(route('ca-director.create-test-enrollees'))
-                ->subtitle('(Creates 100 test patients)')
+                ->url(route('ca-director.test-enrollees'))
+                ->subtitle('(Creates 10 test patients)')
                 ->target('_blank');
         }
 

@@ -222,6 +222,21 @@ class NotesController extends Controller
         return redirect()->route('patient.note.index', ['patientId' => $patientId]);
     }
 
+    public function download(Request $request, $patientId, $noteId)
+    {
+        $format = $request->input('format');
+        $note   = Note::with('patient.ccdProblems')->wherePatientId($patientId)->findOrFail($noteId);
+
+        if ('pdf' === $format) {
+            return response()->download($note->toPdf(), "patient-$patientId-note-$noteId.pdf")->deleteFileAfterSend();
+        }
+        if ('html' === $format) {
+            return $note->toPdf(null, true);
+        }
+
+        return redirect()->back();
+    }
+
     /**
      * @param $noteId
      *
@@ -458,6 +473,8 @@ class NotesController extends Controller
      *
      * @param $patientId
      *
+     * @throws \Illuminate\Validation\ValidationException
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(
@@ -512,10 +529,10 @@ class NotesController extends Controller
         $input['author_id'] = auth()->id();
 
         //performed_at entered in patient's timezone and stored in app's timezone
-        $input['performed_at'] = Carbon::parse(
+        $input['performed_at'] = array_key_exists('performed_at', $input) ? Carbon::parse(
             $input['performed_at'],
             $patient->timezone
-        )->setTimezone(config('app.timezone'))->toDateTimeString();
+        )->setTimezone(config('app.timezone'))->toDateTimeString() : now()->toDateTimeString();
 
         $noteIsAlreadyComplete = false;
         if ($editingNoteId) {
@@ -796,11 +813,11 @@ class NotesController extends Controller
         if ( ! isset($input['author_id'])) {
             $input['author_id'] = auth()->id();
         }
-
-        $input['performed_at'] = Carbon::parse(
+    
+        $input['performed_at'] = array_key_exists('performed_at', $input) ? Carbon::parse(
             $input['performed_at'],
             $patient->timezone
-        )->setTimezone(config('app.timezone'))->toDateTimeString();
+        )->setTimezone(config('app.timezone'))->toDateTimeString() : now()->toDateTimeString();
 
         if ($noteId) {
             $note = Note::find($noteId);
@@ -913,7 +930,7 @@ class NotesController extends Controller
             [Patient::ENROLLED, Patient::WITHDRAWN, Patient::PAUSED, Patient::WITHDRAWN_1ST_CALL]
         )) {
             $inputCcmStatus = $input['ccm_status'];
-            if (Patient::WITHDRAWN === $inputCcmStatus && $patient->onFirstCall(isset($input['welcome_call']) || isset($input['other_call']))) {
+            if (Patient::WITHDRAWN === $inputCcmStatus && $patient->onFirstCall()) {
                 $inputCcmStatus = Patient::WITHDRAWN_1ST_CALL;
             }
 

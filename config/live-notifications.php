@@ -17,5 +17,9 @@ return [
         App\Notifications\CallCreated::class,
         App\Notifications\CcdaImportedNotification::class,
         App\Notifications\InvoicesCreatedNotification::class,
+        \CircleLinkHealth\Eligibility\Notifications\PatientReimportedNotification::class,
+        \CircleLinkHealth\Eligibility\Notifications\PatientNotReimportedNotification::class,
+        App\Notifications\PracticeStaffCreatedNote::class,
+        App\Notifications\SendSignedUrlToDownloadPracticeReport::class,
     ],
 ];

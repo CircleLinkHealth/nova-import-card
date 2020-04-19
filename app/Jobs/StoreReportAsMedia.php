@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\Contracts\Reports\PracticeDataExportInterface;
@@ -8,18 +12,26 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Exception;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use Spatie\MediaLibrary\Helpers\RemoteFile;
 use Spatie\MediaLibrary\Models\Media;
 
 class StoreReportAsMedia implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    /**
+     * @var string
+     */
+    protected $filename;
     /**
      * @var \Illuminate\Filesystem\FilesystemAdapter
      */
@@ -27,15 +39,11 @@ class StoreReportAsMedia implements ShouldQueue
     /**
      * @var string
      */
-    protected $filename;
+    protected $mediaCollectionName;
     /**
      * @var int
      */
     protected $practiceId;
-    /**
-     * @var string
-     */
-    protected $mediaCollectionName;
     /**
      * @var int
      */
@@ -63,7 +71,7 @@ class StoreReportAsMedia implements ShouldQueue
         $this->mediaCollectionName = $mediaCollectionName;
         $this->userId              = $userId;
     }
-    
+
     /**
      * Execute the job.
      *
@@ -77,31 +85,14 @@ class StoreReportAsMedia implements ShouldQueue
             Log::alert($e->getMessage().' '.$e->getFile().':'.$e->getLine());
         }
     }
-    
+
     /**
-     * @return Media
-     */
-    private function createMedia(): Media
-    {
-        return Practice::findOrFail($this->practiceId)->addMedia($this->fullPath())->toMediaCollection(
-            $this->mediaCollectionName
-        );
-    }
-    
-    private function fullPath()
-    {
-        return Storage::disk($this->filesystemName)->path($this->filename);
-    }
-    
-    /**
-     * @param Media $media
-     *
      * @return mixed
      */
     public function notifyUser(Media $media)
     {
         $user = User::findOrFail($this->userId);
-        
+
         $signedLink = URL::temporarySignedRoute(
             'download.media.from.signed.url',
             now()->addDays(PracticeDataExportInterface::EXPIRES_IN_DAYS),
@@ -111,9 +102,25 @@ class StoreReportAsMedia implements ShouldQueue
                 'practice_id' => $this->practiceId,
             ]
         );
-        
+
         $user->notify(
             new SendSignedUrlToDownloadPracticeReport(get_called_class(), $signedLink, $this->practiceId, $media->id)
         );
+    }
+
+    private function createMedia(): Media
+    {
+        return Practice::findOrFail($this->practiceId)->addMedia($this->mediaToAdd())->toMediaCollection(
+            $this->mediaCollectionName
+        );
+    }
+
+    private function mediaToAdd()
+    {
+        if ('local' === Storage::disk($this->filesystemName)->getDriver()) {
+            return Storage::disk($this->filesystemName)->path($this->filename);
+        }
+
+        return new RemoteFile($this->filename, $this->filesystemName);
     }
 }

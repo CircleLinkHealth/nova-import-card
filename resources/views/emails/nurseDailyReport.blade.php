@@ -1,86 +1,87 @@
-<body>
-<p>
-    Dear {{ $name }},
-</p>
-<p>
-    Thanks for providing care on the CircleLink platform on {{$date->englishDayOfWeek}}
-    , {{$date->englishMonth}} {{$date->day}}, {{$date->year}}!
-</p>
-<p>
-    Yesterday, {{$date->format('F jS Y')}}, you worked {{$actualHours}} hours out of {{$committedHours}} hours committed:
-</p>
+<div class="container">
+    <p>Dear {{ $name }},</p>
+    <p>&nbsp;</p>
+    <p>Thanks for providing care on the CircleLink platform on {{$date->format('m-d-Y')}}</p>
+    <p>&nbsp;</p>
+    <ol>
+        <li> Work Completed Yesterday {{$date->format('m-d-Y')}}</li>
+    </ol>
+    <ul>
 
-<ul>
-    <li><b>Attendance rate<span style="color: red;">*</span>:</b>&nbsp;{{$attendanceRate}}%</li>
-    <li><b>Calls Completion rate<span style="color: red;">**</span>:</b>&nbsp;{{$callsCompletionRate}}%</li>
-    <li><b>Efficiency Index (70 - 100 is goal, higher better)<span style="color: red;">***</span>:</b>&nbsp;{{$efficiencyIndex}}</li>
-    <li><b>Total time in system on {{$date->englishDayOfWeek}} ({{$date->format('m/d')}}
-            ):</b>&nbsp;{{ $totalTimeInSystemOnGivenDate }}</li>
-</ul>
+        <li>{{$actualHours}} Hours Worked out of {{$committedHours}} Hours Committed</li>
+        <li>Total calls completed: {{$callsCompleted}}</li>
+        <li>Total successful calls: {{$successfulCalls}}</li>
+        {{--        <li>Total visits completed: __ (To be Linked to invoice page in CPM)</li>--}}
+    </ul>
+    <p>&nbsp;</p>
+    <ol start="2">
 
+        <li> Monthly Case Completion ({{$caseLoadComplete}}%)</li>
+    </ol>
+    <ul>
+        <li>Monthly caseload: {{$totalPatientsInCaseLoad}} patients</li>
+        @if(showNurseMetricsInDailyEmailReport($nurseUserId, 'patients_completed_and_remaining'))
+            <li>Patients completed for the month: {{$completedPatients}}</li>
+            <li>Patients remaining: {{$incompletePatients}}</li>
+        @endif
+    </ul>
+    <br>
+    @if(showNurseMetricsInDailyEmailReport($nurseUserId, 'efficiency_metrics'))
+        <p>&nbsp;</p>
+        <ol start="3">
+            <li> Efficiency Metrics</li>
+        </ol>
+        <ul>
+            <li>Average CCM time per successful patient: {{$avgCCMTimePerPatient}} minutes (goal is to stay as close to
+                20 minutes as possible)
+            </li>
+            <ul>
+                <li>Calculated by dividing your total CCM time on successful patients by the total amount of completed
+                    patients for the month
+                </li>
+            </ul>
+            <li>Average time to complete a patient: {{$avgCompletionTime}} minutes (goal is to be under 30 minutes)</li>
+            <ul>
+                <li>Calculated by dividing your total CPM time by the number of completed patients for the month</li>
+            </ul>
+        </ul>
+        <p>&nbsp;</p>
+    @endif
 
-<p>
-    Your progress this month:
-</p>
-<ul>
-    <li>
-        <b>%age case load complete:</b>&nbsp;{{$caseLoadComplete}}%
-    </li>
-    <li>
-        <b>Est. hours to complete monthly case load:</b>&nbsp;{{$caseLoadNeededToComplete}} hrs
-    </li>
-    <li>
-        <b>Projected hours left in month<span style="color: red;">****</span></b>&nbsp;{{$projectedHoursLeftInMonth}} hrs
-    </li>
-    <li>
-        <b>Hours deficit or surplus:</b>&nbsp;@if($surplusShortfallHours > 0)<span style="color: green">{{$surplusShortfallHours}}
-            hrs Surplus</span>@elseif($surplusShortfallHours < 0)<span style="color: red">{{abs($surplusShortfallHours)}}
-            hrs Deficit</span>@endif
-    </li>
-    <li>
-        <b>Avg. hours worked in last 10 sessions:</b> {{$avgHoursWorkedLast10Sessions}} hrs
-    </li>
-    <li>
-        <b>Total time in system this month:</b> {{ $totalTimeInSystemThisMonth }}
-    </li>
-</ul>
+    @if(showNurseMetricsInDailyEmailReport($nurseUserId, 'enable_daily_report_metrics'))
+        <ol start="4">
+            <li> Scheduling and Monthly Hours</li>
+        </ol>
+        <ul>
+            <li>Estimated time to complete case load: {{$caseLoadNeededToComplete}} hrs</li>
+            <ul>
+                <li>Calculated by multiplying the average time to complete a patient (above) by total remaining patients
+                    and dividing by 60 minutes to get an hour total
+                </li>
+            </ul>
+            <li>Committed hours for remainder of month: {{$hoursCommittedRestOfMonth}} hrs</li>
+            <ul>
+                <li>For more accuracy, enter your schedule for the entire month. Otherwise, the system estimates based
+                    off the current week's hours
+                </li>
+            </ul>
+            <li>Surplus or deficit for the remainder of month: <a
+                        style="color:{{$deficitTextColor}}">{{$surplusShortfallHours}}</a> hr {{$deficitOrSurplusText}}
+            </li>
+            <ul>
+                <li><a style="color: green">Surplus</a> indicates you are doing well for the month and are on pace to
+                    successfully complete your caseload
+                </li>
+                <li><a style="color: red">Deficit</a> indicates you are behind in completing your caseload and need to
+                    make up hours or reach out for assistance in completing your caseload
+                </li>
+            </ul>
+            <li>Next scheduled shift: {{ $totalHours }} hours between {{$windowStart}} and {{$windowEnd}}
+                on {{$nextUpcomingWindowDay}}, {{$nextUpcomingWindowMonth}}</li>
+        </ul>
+    @endif
+    <p>If you have any questions, concerns or schedule changes, please reach out to your CLH managers over Slack.</p>
+    <p>Have a great day and keep up the good work!</p>
+    <p>The CircleLink Health Team</p>
+</div>
 
-@if ($nextUpcomingWindowLabel)
-    <p>
-        <b><u>Reminder:</u> {{ $nextUpcomingWindowLabel }}
-            you are scheduled for {{ $totalHours }} total hours
-            between {{$windowStart}}
-            and {{$windowEnd}}
-
-
-            <br>(Remember to provide 3 week’s notice if you need to cut your hours, thanks!)</b>
-    </p>
-@endif
-
-<p>
-
-</p>
-
-<p>
-    If you have any questions please reach out to your day-to-day contact at CircleLink Health via Slack (Direct
-    Messaging),
-    e-mail or phone.
-</p>
-
-<p>
-    Have a great day and keep up the good work!
-</p>
-
-<p>
-    CircleLink Team
-</p>
-<p></p>
-<p><span style="color: red;">*</span> %age of the hours committed that you worked</p>
-
-<p><span style="color: red;">**</span> %age of assigned calls that you completed.</p>
-
-<p><span style="color: red;">***</span> Calculated by comparing your total time in system vs. the time you would have spent if each single successful call took 20 minutes of total CCM time (talk + prep/notes); and unsuccessful calls took 3 minutes of total CCM time.</p>
-
-<p><span style="color: red;">****</span> Shows hours left in month based on your average hours worked per committed session in your last 10 sessions.</p>
-
-</body>

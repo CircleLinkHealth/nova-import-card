@@ -23,11 +23,6 @@
                     Offline Activity Time Requests
                 </a>
             </li>
-            <li class="hidden-xs">
-                <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link">
-                    Work Schedule
-                </a>
-            </li>
             @if(!isProductionEnv() || (isProductionEnv() && Carbon\Carbon::now()->gte(Carbon\Carbon::create(2019,6,1,1,0,0))))
                 <li class="hidden-xs">
                     <a href="{{ route('care.center.invoice.review') }}"
@@ -57,9 +52,18 @@
                 </a>
             </li>
         @endif
-        <li><a href="{{ route('user.logout') }}">
+        <li><a href="{{ route('user.logout') }}" onclick="emitLogout()">
                 Logout
             </a>
         </li>
     </ul>
 </li>
+@push('scripts')
+    <script>
+        function emitLogout() {
+            if (typeof App !== 'undefined' && App.EventBus) {
+                App.EventBus.$emit('tracker:stop', true);
+            }
+        }
+    </script>
+@endpush

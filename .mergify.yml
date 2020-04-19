@@ -4,6 +4,7 @@ pull_request_rules:
       - status-success=continuous-integration/heroku
       - "#approved-reviews-by>=1"
       - label!=wip
+      - label=shipToProd
       - base=master
       - approved-reviews-by=NektariosX01
       - approved-reviews-by=michalisantoniou6
@@ -44,7 +45,7 @@ pull_request_rules:
     conditions:
       - status-success=continuous-integration/heroku
       - label=fastlane
-      - approved-reviews-by=michalisantoniou6
+      - author=michalisantoniou6
     actions:
       merge:
         method: merge
@@ -54,7 +55,7 @@ pull_request_rules:
     conditions:
       - status-success=continuous-integration/heroku
       - label=fastlane
-      - approved-reviews-by=subzero10
+      - author=subzero10
     actions:
       merge:
         method: merge

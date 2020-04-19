@@ -8,7 +8,6 @@ namespace App\Jobs;
 
 use App\Notifications\CcdaImportedNotification;
 use App\User;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -56,17 +55,7 @@ class ImportCcda implements ShouldQueue
      */
     public function handle()
     {
-        $importedMedicalRecord = $this->ccda->import();
-
-        if (is_a($importedMedicalRecord, ImportedMedicalRecord::class)) {
-            $update = Ccda::whereId($this->ccda->id)
-                ->update(
-                    [
-                        'status'   => Ccda::QA,
-                        'imported' => true,
-                    ]
-                );
-            
+        if ($this->ccda->import()) {
             $this->sendCcdaUploadedNotification();
         }
     }

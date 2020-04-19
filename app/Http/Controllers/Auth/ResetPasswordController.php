@@ -12,6 +12,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
 use CircleLinkHealth\Customer\Rules\PasswordCharacters;
 use Illuminate\Foundation\Auth\ResetsPasswords;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class ResetPasswordController extends Controller
@@ -31,6 +32,8 @@ class ResetPasswordController extends Controller
     use ResetsPasswords {
         reset as traitReset;
     }
+
+    const EXPIRED_TOKEN_ERROR_MESSAGE = 'Your password reset token has expired. Please request a new one.';
 
     /**
      * Where to redirect users after resetting their password.
@@ -85,6 +88,8 @@ class ResetPasswordController extends Controller
 
         $resetResponse = $this->traitReset($request);
 
+        $this->changeResetResponseTargetUrlIfYouMust($resetResponse);
+
         //won't even reach here if traitReset fails (throws exception)
         if ( ! ($resetResponse->isClientError() || $resetResponse->isServerError()) && $current_password) {
             $this->saveOldPasswordInHistory($current_password);
@@ -104,9 +109,43 @@ class ResetPasswordController extends Controller
      */
     public function showResetForm(Request $request, $token = null)
     {
+        //This became an issue while user was logged in as admin, then tried to reset password as patient
+        //It caused the checkPracticeNameCookie to misbehave
+        if (auth()->check()) {
+            auth()->logout();
+        }
+
         $this->checkPracticeNameCookie($request);
 
-        return response()->view('auth.passwords.reset', ['token' => $token, 'email' => $request->email]);
+        $email = $request->input('email');
+
+        $userIsPatient = false;
+
+        //If a patient tries to reset their password, pre-fill email input and disable it,
+        //to prevent unnecessary confusion for the patient
+        if ($email) {
+            $user = User::whereEmail($email)->first();
+
+            if ($user) {
+                $userIsPatient = $user->isParticipant();
+                if ( ! $user->isParticipant()) {
+                    $this->forgetCookie();
+                }
+            }
+        }
+
+        if ($userIsPatient) {
+            $request->session()->flash(
+                'messages',
+                ['patient-user' => 'Please enter your new password below, which must contain an uppercase letter, number and a special character (!,$,#,%,@,&,*)']
+            );
+        }
+
+        return response()->view('auth.passwords.reset', [
+            'token'           => $token,
+            'email'           => $email,
+            'user_is_patient' => $userIsPatient,
+        ]);
     }
 
     protected function rules()
@@ -122,6 +161,32 @@ class ResetPasswordController extends Controller
                 new PasswordCharacters(),
             ],
         ];
+    }
+
+    /**
+     * Redirect to request pasword reset page if:
+     * - email belongs to patient
+     * - reset has failed due to expired token.
+     */
+    private function changeResetResponseTargetUrlIfYouMust(RedirectResponse $response)
+    {
+        if ( ! $this->userToReset->isParticipant()) {
+            return;
+        }
+
+        $sessionAttributes = $response->getSession()->all();
+
+        if (array_key_exists('errors', $sessionAttributes)) {
+            $messages = $sessionAttributes['errors']->getMessages();
+
+            if (array_key_exists('email', $messages)) {
+                if (in_array(self::EXPIRED_TOKEN_ERROR_MESSAGE, $messages['email'])) {
+                    $response->setTargetUrl(route('password.request', [
+                        'email' => $this->userToReset->email,
+                    ]));
+                }
+            }
+        }
     }
 
     /**

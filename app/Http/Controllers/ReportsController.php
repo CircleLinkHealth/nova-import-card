@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Contracts\ReportFormatter;
 use App\Http\Requests\GetUnder20MinutesReport;
+use App\Relationships\PatientCareplanRelations;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanAssessmentService;
 use App\Services\CareplanService;
@@ -15,7 +16,6 @@ use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\PrintPausedPatientLettersService;
 use App\Services\ReportsService;
-use App\ValueObjects\PatientCareplanRelations;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -666,8 +666,7 @@ class ReportsController extends Controller
 
         $patient_counter = 0;
         foreach ($patients as $patient) {
-            $u20_patients[$patient_counter]['site'] = $patient->primaryPractice->display_name;
-
+            $u20_patients[$patient_counter]['site']            = $patient->primaryPractice->display_name;
             $u20_patients[$patient_counter]['colsum_careplan'] = 0;
             $u20_patients[$patient_counter]['colsum_changes']  = 0;
             $u20_patients[$patient_counter]['colsum_progress'] = 0;
@@ -679,6 +678,7 @@ class ReportsController extends Controller
             $u20_patients[$patient_counter]['dob']             = Carbon::parse($patient->getBirthDate())->format(
                 'm/d/Y'
             );
+            $u20_patients[$patient_counter]['mrn']          = $patient->patientInfo->mrn_number;
             $u20_patients[$patient_counter]['patient_name'] = $patient->getFullName();
             $u20_patients[$patient_counter]['patient_id']   = $patient->id;
             $acts                                           = $patient->activities;

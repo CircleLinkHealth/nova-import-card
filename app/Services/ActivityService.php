@@ -35,8 +35,6 @@ class ActivityService
      * Get the CCM Time provided by a specific provider to a specific patient for a given month.
      *
      * @param $providerId
-     * @param array       $patientIds
-     * @param Carbon|null $monthYear
      *
      * @return mixed
      */
@@ -53,8 +51,7 @@ class ActivityService
     /**
      * Process activity time for month.
      *
-     * @param array|int   $userIds
-     * @param Carbon|null $monthYear
+     * @param array|int $userIds
      */
     public function processMonthlyActivityTime(
         $userIds,
@@ -86,9 +83,16 @@ class ActivityService
                     'month_year' => $monthYear,
                 ]);
 
-                if (0 == $summary->no_of_calls || 0 == $summary->no_of_successful_calls) {
+                // this creates race conditions and inconsistencies:
+                // Note with successful call is saved - 1st successful call
+                // - this method is called from CallObserver.php
+                // - no_of_successful_calls is 0 at this point
+                // - syncCallCounts is called, which returns 1 (1 call with status reach)
+                // - NotesController@store calls PatientWriteRepository@updateCallLogs which increments no_of_successful_calls from 1 to 2
+                // - so 1 call, but db has 2
+                /*if (0 == $summary->no_of_calls || 0 == $summary->no_of_successful_calls) {
                     $summary = $this->patientSummaryEloquentRepository->syncCallCounts($summary);
-                }
+                }*/
 
                 $total_time_per_user[$id] += $ccmTime;
 
@@ -110,9 +114,10 @@ class ActivityService
                     'month_year' => $monthYear,
                 ]);
 
-                if (0 == $summary->no_of_calls || 0 == $summary->no_of_successful_calls) {
+                // see comment above
+                /*if (0 == $summary->no_of_calls || 0 == $summary->no_of_successful_calls) {
                     $summary = $this->patientSummaryEloquentRepository->syncCallCounts($summary);
-                }
+                }*/
 
                 $total_time_per_user[$id] += $bhiTime;
 
@@ -127,7 +132,6 @@ class ActivityService
      * Get total CCM Time for a patient for a month. If no month is given, it defaults to the current month.
      *
      * @param $patientId
-     * @param Carbon|null $monthYear
      *
      * @return mixed
      */

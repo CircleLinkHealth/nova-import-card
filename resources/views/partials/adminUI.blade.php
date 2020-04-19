@@ -26,7 +26,7 @@
     <![endif]-->
 
     <!-- JQuery -->
-    <link rel="stylesheet" href="{{mix('/css/smoothness-jquery-ui-1.11.4.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css" integrity="sha256-iWTx/iC9IoKaoSKD5+WVFef8ZYNIgQ4AxVpMbBw2hig=" crossorigin="anonymous" />
 
     <!-- http://trentrichardson.com/examples/timepicker/ -->
     <link rel="stylesheet"
@@ -34,14 +34,17 @@
 
     <link rel="stylesheet" href="{{mix('/css/bootstrap.min.css')}}">
 
-    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="//cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
 
     <!-- select2 -->
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
 
     <style>
         body {
-            font-family: Roboto, sans-serif;}
+            font-family: Roboto, sans-serif;
+        }
+
         .table-striped > tbody > tr:nth-child(odd) > td,
         .table-striped > tbody > tr:nth-child(odd) > th {
             /* background-color: #eee; */
@@ -56,9 +59,8 @@
         }
     </style>
     @stack('styles')
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/introjs.min.css" integrity="sha256-/oZ7h/Jkj6AfibN/zTWrCoba0L+QhP9Tf/ZSgyZJCnY=" crossorigin="anonymous" />
-
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/introjs.min.css"
+          integrity="sha256-/oZ7h/Jkj6AfibN/zTWrCoba0L+QhP9Tf/ZSgyZJCnY=" crossorigin="anonymous"/>
     @include('cpm-module-raygun::partials.real-user-monitoring')
 </head>
 <body>
@@ -74,7 +76,8 @@
                              style="position:relative;top:-15px"
                              width="100px"/>
                     </a>
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                            data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                         <span class="sr-only">Toggle navigation</span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
@@ -84,51 +87,48 @@
 
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                            <li role="presentation" class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                                   aria-expanded="false">
-                                    Users <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ route('admin.users.index') }}">All Users</a></li>
-                                    <li><a href="{{ route('admin.users.create') }}">New User</a></li>
-                                    <li><a href="{{ route('observations-dashboard.index') }}">Edit/Delete
-                                            Observations</a></li>
-                                </ul>
-                            </li>
+                        <li role="presentation" class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                               aria-expanded="false">
+                                Users <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ route('admin.users.index') }}">All Users</a></li>
+                                <li><a href="{{ route('admin.users.create') }}">New User</a></li>
+                                <li><a href="{{ route('observations-dashboard.index') }}">Edit/Delete
+                                        Observations</a></li>
+                            </ul>
+                        </li>
 
-                            <li role="presentation" class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                                   aria-expanded="false">
-                                    Activities <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ route('admin.patientCallManagement.v2.index') }}">Manage (V2)</a></li>
-                                    <li><a href="{{ route('admin.families.index') }}">Families</a></li>
-                                    <li><a href="{{ route('algo.mock.create') }}">
-                                            Algo v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}} Simulator</a>
-                                    </li>
-                                    <li><a href="{{ route('CallReportController.exportxls') }}">Export
-                                            Calls</a></li>
-                                    <li><a href="{{ route('CallsDashboard.index') }}">Edit Call Status</a></li>
-                                </ul>
-                            </li>
+                        <li role="presentation" class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                               aria-expanded="false">
+                                Activities <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ route('admin.patientCallManagement.v2.index') }}">Manage (V2)</a></li>
+                                <li><a href="{{ route('admin.families.index') }}">Families</a></li>
+                                <li><a href="{{ route('CallsDashboard.index') }}">Edit Call Status</a></li>
+                            </ul>
+                        </li>
 
-                            <li role="presentation" class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                                   aria-expanded="false">
-                                    Nurses <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ route('admin.offline-activity-time-requests.index') }}">Offline Activity Time Requests</a>
-                                    <li><a href="{{ route('get.admin.nurse.schedules') }}">Schedules</a>
-                                    <li><a href="{{ route('admin.reports.nurse.daily') }}">Daily
-                                            Report</a></li>
-                                    <li><a href="{{ route('admin.reports.nurse.allocation') }}">
-                                            Allocation</a></li>
-
-                                </ul>
-                            </li>
+                        <li role="presentation" class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                               aria-expanded="false">
+                                Nurses <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ route('admin.offline-activity-time-requests.index') }}">Offline Activity
+                                        Time Requests</a>
+                                <li><a href="{{ route('get.admin.nurse.schedules') }}">Schedules</a>
+                                <li><a href="{{ route('admin.reports.nurse.daily') }}">Daily
+                                        Report</a></li>
+                                <li><a href="{{ route('admin.reports.nurse.allocation') }}">
+                                        Allocation</a></li>
+                                <li><a href="{{ route('admin.reports.nurse.allocation', ['v2']) }}">
+                                        Allocation (V2)</a></li>
+                            </ul>
+                        </li>
 
                         <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
@@ -154,14 +154,15 @@
                                 Reports<span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                <li><a href="{{ route('import.ccd.remix', []) }}">CCDs To Import</a></li>
+                                <li><a href="{{ route('import.ccd.remix', ['v3']) }}">CCDs To Import</a></li>
                                 <li><a href="{{ route('get.patients.for.insurance.check') }}">Patients For Insurance
                                         Check
                                     </a></li>
 
                                 <li><a href="{{ route('monthly.billing.make') }}">Approve Billable Patients</a></li>
 
-                                <li><a href="{{ route('excel.report.unreachablePatients') }}">Unreachable Patients (export)</a>
+                                <li><a href="{{ route('excel.report.unreachablePatients') }}">Unreachable Patients
+                                        (export)</a>
                                 </li>
 
                                 <li>
@@ -209,10 +210,6 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ route('saas-admin.practices.create')}}">Add New</a></li>
                                 <li><a href="{{ route('saas-admin.practices.index')}}">Manage</a></li>
-                                <li><a href="{{ route('invite.create', []) }}">Send Onboarding Invite</a>
-                                <li>
-                                    <a href="{{ route('get.onboarding.create.program.lead.user', []) }}">Onboarding</a>
-                                </li>
                                 <li><a href="{{ route('practice.billing.create', []) }}">Invoice/Billable
                                         Patient Report</a></li>
                             </ul>
@@ -252,7 +249,8 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ route('eligibility.batches.index') }}">Eligibility</a></li>
                                 <li><a href="{{ route('report-writer.dashboard') }}">Report Writer Panel</a></li>
-                                <li><a href="{{ getEhrReportWritersFolderUrl() }}" target="_blank">EHR Report Writers Google Folder</a></li>
+                                <li><a href="{{ getEhrReportWritersFolderUrl() }}" target="_blank">EHR Report Writers
+                                        Google Folder</a></li>
                                 <li><a href="{{ route('ca-director.index') }}">CA Director</a></li>
                             </ul>
                         </li>
@@ -283,7 +281,8 @@
                             </li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                   aria-expanded="false">{{ Auth::user()->getFullName() }} [ID:{{ Auth::user()->id }}]<span
+                                   aria-expanded="false">{{ Auth::user()->getFullName() }} [ID:{{ Auth::user()->id }}
+                                    ]<span
                                             class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
                                     @include('partials.last-login')
@@ -322,26 +321,21 @@
 
 <script src="{{mix('compiled/js/app-clh-admin-ui.js')}}"></script>
 <script type="text/javascript" src="{{ mix('compiled/js/admin-ui.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
+
 <script>
     $(document).ready(function () {
         $('.select2').select2();
     });
 </script>
 @stack('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.min.js" integrity="sha256-fOPHmaamqkHPv4QYGxkiSKm7O/3GAJ4554pQXYleoLo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.min.js"
+        integrity="sha256-fOPHmaamqkHPv4QYGxkiSKm7O/3GAJ4554pQXYleoLo=" crossorigin="anonymous"></script>
+
+@include('partials.sentry-js')
 
 <div style="clear:both;height:100px;"></div>
-
-{{--Display CPM version number--}}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="pull-right">
-                CarePlan Manager - @version
-            </div>
-        </div>
-    </div>
-</div>
 
 </body>
 </html>

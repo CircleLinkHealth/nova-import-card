@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\CarePlanApprovalRequestsReceivers;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Console\Command;
@@ -110,24 +111,7 @@ class SendCarePlanApprovalReminders extends Command
 
     public function recipients(User $providerUser)
     {
-        $recipients = collect();
-
-        if ($providerUser->forwardAlertsTo->isEmpty()) {
-            $recipients->push($providerUser);
-        } else {
-            foreach ($providerUser->forwardAlertsTo as $forwardee) {
-                if (User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER == $forwardee->pivot->name) {
-                    $recipients->push($providerUser);
-                    $recipients->push($forwardee);
-                }
-
-                if (User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER == $forwardee->pivot->name) {
-                    $recipients->push($forwardee);
-                }
-            }
-        }
-
-        return $recipients;
+        return CarePlanApprovalRequestsReceivers::forProvider($providerUser);
     }
 
     public function sendEmail(User $recipient, $numberOfCareplans, bool $pretend)

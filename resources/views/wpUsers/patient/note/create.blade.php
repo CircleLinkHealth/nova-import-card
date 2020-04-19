@@ -74,12 +74,12 @@
     @include('partials.confirm-modal')
 
     @if (!empty($note) && $note->status === 'draft')
-    <form id="delete-form" action="{{ route('patient.note.delete.draft', [
+        <form id="delete-form" action="{{ route('patient.note.delete.draft', [
                                     'patientId' => $note->patient_id,
                                     'noteId' => $note->id
                                 ]) }}" method="POST" style="display: none;">
-        {{ csrf_field() }}
-    </form>
+            {{ csrf_field() }}
+        </form>
     @endif
 
     <form id="newNote" method="post"
@@ -172,30 +172,6 @@
                                                             </option>
                                                         @endforeach
                                                     </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Performance Time -->
-                            <div class="form-block col-md-12" style="margin-bottom: 25px">
-                                <div class="row">
-                                    <div class="new-note-item">
-                                        <div class="form-group" style="margin-bottom: 25px">
-                                            <div class="col-sm-12">
-                                                <label class="label-margin" for="performed_at">
-                                                    When (Patient Local Time):
-                                                </label>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group">
-                                                    <input id="performed_at" name="performed_at" type="datetime-local"
-                                                           class="selectpickerX form-control"
-                                                           data-width="95px" data-size="10" list max="{{$userTime}}"
-                                                           value="{{$userTime}}"
-                                                           required>
                                                 </div>
                                             </div>
                                         </div>
@@ -432,6 +408,15 @@
                                                                 recently)
                                                             </label>
                                                         </div>
+                                                        <div>
+                                                            <input type="checkbox"
+                                                                   name="success_story"
+                                                                   value="true"
+                                                                   id="success_story"/>
+                                                            <label for="success_story">
+                                                                <span> </span>Patient Success Story
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -440,7 +425,6 @@
                                 </div>
                             </div>
                         </div>
-
 
 
                         <div class="col-md-12">
@@ -484,7 +468,8 @@
                                                                    @empty($note_channels_text) disabled="disabled"
                                                                    @endempty value="1">
                                                             <label id="notify-careteam-label" for="notify-careteam"
-                                                                   style="display: inline-block;"><span id="notify-careteam-span"></span>Provider/CareTeam
+                                                                   style="display: inline-block;"><span
+                                                                        id="notify-careteam-span"></span>Provider/CareTeam
 
                                                             </label>
                                                             <div class="label"
@@ -497,14 +482,15 @@
 
                                                 </div>
                                                 <div class="col-md-4">
-                                                    @if(authUserCanSendPatientEmail())
+                                                @if(authUserCanSendPatientEmail())
                                                     <!-- Email Patient Checkbox -->
-                                                    <div class="form-block col-md-12" style="margin-bottom: 10px">
-                                                        <input type="checkbox" id="email-patient"
-                                                               name="email-patient" value="1">
-                                                        <label for="email-patient"><span> </span>Email Patient</label>
-                                                    </div>
-                                                        @endif
+                                                        <div class="form-block col-md-12" style="margin-bottom: 10px">
+                                                            <input type="checkbox" id="email-patient"
+                                                                   name="email-patient" value="1">
+                                                            <label for="email-patient"><span> </span>Email
+                                                                Patient</label>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
@@ -520,9 +506,9 @@
                                 <div class="new-note-item">
                                     <div class="form-group">
                                         <div id="email-patient-div" class="col-md-12" style="display: none;">
-                                                <send-email-to-patient
-                                                        :patient="{{$patient}}"
-                                                ></send-email-to-patient>
+                                            <send-email-to-patient
+                                                    :patient="{{$patient}}"
+                                            ></send-email-to-patient>
                                         </div>
                                     </div>
                                 </div>
@@ -686,7 +672,7 @@
                         $("<input>")
                             .attr("id", "attested_problems")
                             .attr("type", "hidden")
-                            .attr("name", "attested_problems["+i+"][ccd_problem_id]").val(condition).appendTo(form);
+                            .attr("name", "attested_problems[" + i + "][ccd_problem_id]").val(condition).appendTo(form);
                         i++;
                     });
                     confirmSubmitForm();
@@ -730,8 +716,7 @@
                             $('.other-radios').show();
                             $("#Inbound").prop("checked", false);
                             $("#Outbound").prop("checked", true);
-                        }
-                        else {
+                        } else {
                             if (isEditingCompleteTask || patientNurseTasks.length) {
                                 $('#task-label').show();
                             }
@@ -745,8 +730,7 @@
                         if (window['App']) {
                             window['App'].$emit('create-note:with-call', e.currentTarget.checked);
                         }
-                    }
-                    else {
+                    } else {
                         $('#collapseOne').toggle();
                         $('.call-status-radios').toggle();
                         $('.other-radios').toggle();
@@ -800,8 +784,7 @@
                             $('.tasks-radio').prop('checked', true);
                             $('.tasks-radio').trigger('change');
                         }
-                    }
-                    else {
+                    } else {
 
                         $('.tasks-radio').prop('checked', false);
                         $('#phone-label').show();
@@ -833,8 +816,7 @@
                     if (isEditingCompleteTask) {
                         $('#task').trigger('change');
                     }
-                }
-                else {
+                } else {
                     $('#task-label').hide();
                 }
 
@@ -847,8 +829,7 @@
 
                     if (!editingTaskType && task.sub_type === 'Call Back') {
                         $('.call-status-radios').show();
-                    }
-                    else {
+                    } else {
                         $('.call-status-radios').hide();
                     }
 
@@ -869,16 +850,14 @@
                             @empty($notifies_text)
                             whoIsNotifiedEl.text("{{optional($patient->billingProviderUser())->getFullName()}}");
                             @endempty
-                        }
-                        else {
+                        } else {
                             notifyCareteamEl.prop("checked", false);
                             notifyCareteamEl.prop("disabled", false);
                             notifyCareteamEl.trigger('change');
 
                             whoIsNotifiedEl.text("{{$notifies_text}}");
                         }
-                    }
-                    else {
+                    } else {
 
                     }
                 }
@@ -902,26 +881,26 @@
 
 
                     //prevent sent if send patient email is check and email body is empty
-                    if($("[id='email-patient']").prop("checked") == true && shouldValidateEmailBody){
+                    if ($("[id='email-patient']").prop("checked") == true && shouldValidateEmailBody) {
 
 
-                        if ($("[id='patient-email-body-input']").val() == 0){
+                        if ($("[id='patient-email-body-input']").val() == 0) {
                             alert("Please fill out the patient email!");
                             return;
-                        }else{
-                           return validateEmailBody()
+                        } else {
+                            return validateEmailBody()
                         }
                     }
                     //append patient email attachments on form if the exist
-                    if (formAttachments){
+                    if (formAttachments) {
                         let i = 0;
                         formAttachments.map(function (attachment) {
                             $("<input>")
                                 .attr("type", "hidden")
-                                .attr("name", "attachments["+i+"][media_id]").val(attachment.media_id).appendTo(form);
+                                .attr("name", "attachments[" + i + "][media_id]").val(attachment.media_id).appendTo(form);
                             $("<input>")
                                 .attr("type", "hidden")
-                                .attr("name", "attachments["+i+"][path]").val(attachment.path).appendTo(form);
+                                .attr("name", "attachments[" + i + "][path]").val(attachment.path).appendTo(form);
                             i++;
                         });
                     }
@@ -937,8 +916,7 @@
                         //radio buttons
                         callHasStatus = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].value.length > 0;
                         callIsSuccess = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].value === "reached";
-                    }
-                    else {
+                    } else {
                         //checkbox
                         callIsSuccess = form['welcome_call'].checked || form['other_call'].checked;
                     }
@@ -1007,7 +985,7 @@
 
                 function confirmSubmitForm() {
 
-                    if (!conditionsAttested && callIsSuccess && userIsCareCoach){
+                    if (!conditionsAttested && callIsSuccess && userIsCareCoach) {
                         App.$emit('show-attest-call-conditions-modal');
                         return;
                     }
@@ -1048,10 +1026,10 @@
                         .post(validateEmailBodyUrl, {
                             //validate subject as well
                             patient_email_subject: $("[id='email-subject']").val(),
-                            patient_email_body : $("[id='patient-email-body-input']").val()
+                            patient_email_body: $("[id='patient-email-body-input']").val()
                         })
                         .then((response) => {
-                            if (response.data.status == 400){
+                            if (response.data.status == 400) {
                                 App.$emit('patient-email-body-errors', response.data.messages);
                                 return false;
                             }
@@ -1143,7 +1121,8 @@
                         body: fullBody,
                         logger_id: $('#logger_id').val(),
                         programId: $('#programId').val(),
-                        task_status: $('#task_status').val()
+                        task_status: $('#task_status').val(),
+                        success_story: $('#success_story').is(":checked")
                     })
                     .then((response, status) => {
                         isSavingDraft = false;

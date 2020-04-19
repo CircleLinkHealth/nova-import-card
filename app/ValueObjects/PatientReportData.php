@@ -12,9 +12,12 @@ namespace App\ValueObjects;
  */
 class PatientReportData
 {
+    protected $allBhiCodes;
+
+    protected $allCcmProblemCodes;
     protected $awvDate;
 
-    protected $bhiCode;
+    protected $bhiCodes;
 
     protected $bhiTime;
 
@@ -25,6 +28,8 @@ class PatientReportData
     protected $ccmTime;
 
     protected $dob;
+
+    protected $enableAllProblemCodesColumnns;
 
     protected $locationName;
 
@@ -37,6 +42,22 @@ class PatientReportData
     /**
      * @return mixed
      */
+    public function getAllBhiCodes()
+    {
+        return $this->allBhiCodes;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAllCcmProblemCodes()
+    {
+        return $this->allCcmProblemCodes;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getAwvDate()
     {
         return $this->awvDate;
@@ -45,7 +66,7 @@ class PatientReportData
     /**
      * @return mixed
      */
-    public function getBhiCode()
+    public function getBhiCodes()
     {
         return $this->bhiCode;
     }
@@ -93,6 +114,14 @@ class PatientReportData
     /**
      * @return mixed
      */
+    public function getEnableAllProblemCodesColumnns()
+    {
+        return $this->enableAllProblemCodesColumnns;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getLocationName()
     {
         return $this->locationName;
@@ -123,6 +152,22 @@ class PatientReportData
     }
 
     /**
+     * @param mixed $allBhiCodes
+     */
+    public function setAllBhiCodes($allBhiCodes): void
+    {
+        $this->allBhiCodes = $allBhiCodes;
+    }
+
+    /**
+     * @param mixed $allCcmProblemCodes
+     */
+    public function setAllCcmProblemCodes($allCcmProblemCodes): void
+    {
+        $this->allCcmProblemCodes = $allCcmProblemCodes;
+    }
+
+    /**
      * @param mixed $awvDate
      */
     public function setAwvDate($awvDate): void
@@ -131,11 +176,11 @@ class PatientReportData
     }
 
     /**
-     * @param mixed $bhiCode
+     * @param mixed $bhiCodes
      */
-    public function setBhiCode($bhiCode): void
+    public function setBhiCodes($bhiCodes): void
     {
-        $this->bhiCode = $bhiCode;
+        $this->bhiCode = $bhiCodes;
     }
 
     /**
@@ -176,6 +221,14 @@ class PatientReportData
     public function setDob($dob): void
     {
         $this->dob = $dob;
+    }
+
+    /**
+     * @param mixed $enableAllProblemCodesColumnns
+     */
+    public function setEnableAllProblemCodesColumnns($enableAllProblemCodesColumnns): void
+    {
+        $this->enableAllProblemCodesColumnns = $enableAllProblemCodesColumnns;
     }
 
     /**

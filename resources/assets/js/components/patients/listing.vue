@@ -3,8 +3,12 @@
         <div class="row">
             <div class="col-sm-12 text-right pad-10">
                 <div class="col-sm-6 text-left" v-if="this.showProviderPatientsButton">
-                    <button v-if="this.showPracticePatients" class="btn btn-info btn-xs" @click="togglePracticePatients">Show My Patients</button>
-                    <button v-if="!this.showPracticePatients" class="btn btn-info btn-xs" @click="togglePracticePatients">Show Practice Patients</button>
+                    <button v-if="this.showPracticePatients" class="btn btn-info btn-xs"
+                            @click="togglePracticePatients">Show My Patients
+                    </button>
+                    <button v-if="!this.showPracticePatients" class="btn btn-info btn-xs"
+                            @click="togglePracticePatients">Show Practice Patients
+                    </button>
                 </div>
                 <div v-bind:class="{'col-sm-6': this.showProviderPatientsButton}">
                     <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
@@ -32,17 +36,7 @@
             </template>
             <template slot="ccmStatus" slot-scope="props">
                 <div>
-                    {{
-                    (({
-                    enrolled: 'Enrolled',
-                    to_enroll: 'To Enroll',
-                    patient_rejected: 'Patient Declined',
-                    withdrawn: 'Withdrawn',
-                    withdrawn_1st_call: 'Withdrawn 1st Call',
-                    paused: 'Paused',
-                    unreachable: 'Unreachable',
-                    })[props.row.ccmStatus] || props.row.ccmStatus)
-                    }}
+                    {{ccmStatusMap[props.row.ccmStatus] || props.row.ccmStatus}}
                 </div>
             </template>
             <template slot="h__ccmStatusDate" slot-scope="props">
@@ -50,16 +44,7 @@
             </template>
             <template slot="careplanStatus" slot-scope="props">
                 <a :href="props.row.careplanStatus === 'qa_approved' ? rootUrl('manage-patients/' + props.row.id + '/view-careplan') : null">
-                    {{
-                    (({
-                    qa_approved: 'Approve Now',
-                    to_enroll: 'To Enroll',
-                    provider_approved: 'Provider Approved',
-                    none: 'None',
-                    draft: 'Draft',
-                    g0506: 'G0506'
-                    })[props.row.careplanStatus] || props.row.careplanStatus)
-                    }}
+                    {{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}
                 </a>
             </template>
             <template slot="filter__ccm">
@@ -78,7 +63,8 @@
                 Withdrawn Reason
             </template>
             <template slot="withdrawnReason" slot-scope="props">
-                <div class="withdrawn-reason-column"><span :title="props.row.withdrawnReason">{{ props.row.withdrawnReason }}</span></div>
+                <div class="withdrawn-reason-column"><span :title="props.row.withdrawnReason">{{ props.row.withdrawnReason }}</span>
+                </div>
             </template>
             <template slot="h__dob" slot-scope="props">
                 Date of Birth
@@ -145,12 +131,34 @@
             loader
         },
         props: {
+            isAdmin: {
+                type: Boolean,
+                required: true,
+            },
             showProviderPatientsButton: {
                 type: Boolean,
                 required: true,
             }
         },
         data() {
+
+            let carePlanStatusMap;
+            if (this.isAdmin) {
+                carePlanStatusMap = {
+                    to_enroll: 'To Enroll',
+                    qa_approved: 'QA Approved',
+                    provider_approved: 'Provider Approved',
+                    none: 'None',
+                    draft: 'Draft',
+                    g0506: 'G0506'
+                };
+            } else {
+                carePlanStatusMap = {
+                    qa_approved: 'Approve Now',
+                    provider_approved: 'Approved',
+                };
+            }
+
             return {
                 pagination: null,
                 tableData: [],
@@ -169,14 +177,35 @@
                 tokens: {
                     next: null
                 },
-                exportCSVText: 'Export as CSV'
+                exportCSVText: 'Export as CSV',
+                ccmStatusMap: {
+                    enrolled: 'Enrolled',
+                    to_enroll: 'To Enroll',
+                    patient_rejected: 'Patient Declined',
+                    withdrawn: 'Withdrawn',
+                    withdrawn_1st_call: 'Withdrawn 1st Call',
+                    paused: 'Paused',
+                    unreachable: 'Unreachable',
+                },
+                carePlanStatusMap
             }
         },
         computed: {
             options() {
+
+                let careplanStatus = [
+                    {id: 'qa_approved', text: this.carePlanStatusMap['qa_approved']},
+                    {id: 'provider_approved', text: this.carePlanStatusMap['provider_approved']},
+                ];
+                if (this.isAdmin) {
+                    careplanStatus.push({id: '', text: this.carePlanStatusMap['none']});
+                    careplanStatus.push({id: 'g0506', text: this.carePlanStatusMap['g0506']});
+                    careplanStatus.push({id: 'draft', text: this.carePlanStatusMap['draft']});
+                }
+
                 return {
                     filterByColumn: true,
-                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus','withdrawnReason', 'dob', 'age', 'mrn', 'registeredOn', 'bhi', 'ccm'],
+                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'age', 'mrn', 'registeredOn', 'bhi', 'ccm'],
                     filterable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'phone', 'age', 'mrn', 'registeredOn'],
                     listColumns: {
                         provider: this.providersForSelect,
@@ -189,13 +218,7 @@
                             {id: 'unreachable', text: 'Unreachable'},
                             {id: 'patient_rejected', text: 'Patient Rejected'}
                         ],
-                        careplanStatus: [
-                            {id: '', text: 'none'},
-                            {id: 'qa_approved', text: 'QA Approved'},
-                            {id: 'provider_approved', text: 'Provider Approved'},
-                            {id: 'g0506', text: 'G0506'},
-                            {id: 'draft', text: 'Draft'}
-                        ],
+                        careplanStatus,
                         program: this.practices.map(practice => ({
                             id: practice.id,
                             text: practice.display_name
@@ -271,7 +294,7 @@
                 }
             },
             togglePracticePatients() {
-                this.showPracticePatients = ! this.showPracticePatients
+                this.showPracticePatients = !this.showPracticePatients
                 this.activateFilters()
             },
             activateFilters() {
@@ -339,7 +362,7 @@
                         this.tokens.next = c
                     })
                 }).then(response => {
-                    if(!response){
+                    if (!response) {
                         //request was cancelled
                         return;
                     }

@@ -8,15 +8,14 @@ namespace App\Formatters;
 
 use App\Contracts\ReportFormatter;
 use App\Note;
+use App\Relationships\PatientCareplanRelations;
 use App\Services\CPM\CpmMiscService;
 use App\Services\NoteService;
 use App\Services\ReportsService;
-use App\ValueObjects\PatientCareplanRelations;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Database\Eloquent\Collection;
 
 class WebixFormatter implements ReportFormatter
@@ -46,6 +45,7 @@ class WebixFormatter implements ReportFormatter
                     'provider_name'    => $billingProvider,
                     'tags'             => '',
                     'status'           => $note->status,
+                    'success_story'    => $note->success_story,
                 ];
 
                 if (empty($result['type_name'])) {
@@ -87,6 +87,10 @@ class WebixFormatter implements ReportFormatter
 
                 if ($was_seen) {
                     $result['tags'] .= '<div class="label label-success" style="top: -2px; position: relative;"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
+                }
+
+                if ($note->success_story) {
+                    $result['tags'] .= '<div class="label label-warning" style="top: -2px; position: relative; background-color: #9865f2" ><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></div> ';
                 }
 
                 return $result;
@@ -212,6 +216,10 @@ class WebixFormatter implements ReportFormatter
 
             if ($was_seen) {
                 $formatted_notes[$count]['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
+            }
+
+            if ($note->success_story) {
+                $formatted_notes[$count]['tags'] .= '<div class="label label-warning" style="top: -2px; position: relative; background-color: #9865f2" ><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></div>';
             }
 
             ++$count;

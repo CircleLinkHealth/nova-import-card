@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\Contracts\DirectMailableNotification;
 use App\Contracts\FaxableNotification;
 use App\Contracts\HasAttachment;
 use App\Note;
@@ -18,7 +19,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 
-class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, FaxableNotification
+class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, FaxableNotification, DirectMailableNotification
 {
     use Queueable;
     public $attachment;
@@ -45,20 +46,7 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, 
         $this->channels = array_merge($this->channels, $channels);
     }
 
-    /**
-     * Returns an Eloquent model.
-     */
-    public function getAttachment(): ?Model
-    {
-        return $this->note;
-    }
-
-    /**
-     * Get the body of a DM.
-     *
-     * @return string
-     */
-    public function getDMBody()
+    public function directMailBody($notifiable): string
     {
         $link = $this->note->link();
 
@@ -66,6 +54,19 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, 
         $lastLine = PHP_EOL.PHP_EOL."The web version of the note can be found at $link";
 
         return $this->getBody($message, $lastLine);
+    }
+
+    public function directMailSubject($notifiable): string
+    {
+        return $this->getSubject();
+    }
+
+    /**
+     * Returns an Eloquent model.
+     */
+    public function getAttachment(): ?Model
+    {
+        return $this->note;
     }
 
     /**
@@ -112,7 +113,7 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, 
             'receiver_id'    => $notifiable->id,
             'receiver_email' => $notifiable->email,
             'email_body'     => $this->getEmailBody(),
-            'dm_body'        => $this->getDMBody(),
+            'dm_body'        => $this->directMailBody($notifiable),
             'link'           => $this->note->link(),
             'subject'        => $this->getSubject(),
             'note_id'        => $this->note->id,
@@ -127,15 +128,15 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, 
      *
      * @return bool|string
      */
-    public function toDirectMail($notifiable)
+    public function toDirectMail($notifiable): SimpleNotification
     {
         if ( ! $notifiable || ! $notifiable->emr_direct_address) {
             return false;
         }
 
         return (new SimpleNotification())
-            ->setBody($this->getDMBody())
-            ->setSubject($this->getSubject())
+            ->setBody($this->directMailBody($notifiable))
+            ->setSubject($this->directMailSubject($notifiable))
             ->setFilePath($this->toPdf());
     }
 
@@ -143,10 +144,8 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, 
      * Get a pdf representation of the note to send via Fax.
      *
      * @param $notifiable
-     *
-     * @return array
      */
-    public function toFax($notifiable = null) : array
+    public function toFax($notifiable = null): array
     {
         return [
             'file' => $this->toPdf(),

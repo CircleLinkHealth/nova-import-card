@@ -13,7 +13,8 @@ export default {
                 cpm_problem_id: null
             },
             patient_id: null,
-            cpm_problems: []
+            cpm_problems: [],
+            showNoProblemSelected: false
         }
     },
     mixins: [CareplanMixin],
@@ -21,9 +22,6 @@ export default {
         patientHasSelectedProblem() {
             if (!this.selectedProblem) return (this.newProblem.name !== '') && this.problems.findIndex(problem => (problem.name || '').toLowerCase() == (this.newProblem.name || '').toLowerCase()) >= 0
             else return (this.selectedProblem.name !== '') && this.problems.findIndex(problem => (problem != this.selectedProblem) && ((problem.name || '').toLowerCase() == (this.selectedProblem.name || '').toLowerCase())) >= 0
-        },
-        cpmProbs(){
-            return this.cpmProblems ? this.cpmProblems : this.cpm_problems;
         }
     },
     methods: {
@@ -31,15 +29,18 @@ export default {
          * is patient BHI, CCM or BOTH?
          */
         checkPatientBehavioralStatus() {
-            const ccmCount = this.problems.filter(problem => {
+            const problems = this.problems || [];
+            const cpmProblems = this.cpm_problems || [];
+
+            const ccmCount = problems.filter(problem => {
                 if (problem.is_monitored) {
-                    const cpmProblem = this.cpmProbs.find(cpm => cpm.id == problem.cpm_id)
+                    const cpmProblem = cpmProblems.find(cpm => cpm.id == problem.cpm_id)
                     return cpmProblem ? !cpmProblem.is_behavioral : false
                 }
                 return false
-            }).length
-            const bhiCount = this.problems.filter(problem => {
-                const cpmProblem = this.cpmProbs.find(cpm => cpm.id == problem.cpm_id)
+            }).length;
+            const bhiCount = problems.filter(problem => {
+                const cpmProblem = cpmProblems.find(cpm => cpm.id == problem.cpm_id)
                 return cpmProblem ? cpmProblem.is_behavioral : false
             }).length
             console.log('ccm', ccmCount, 'bhi', bhiCount)
@@ -66,7 +67,14 @@ export default {
     mounted() {
         if(! this.cpmProblems){
             this.cpm_problems = this.careplan().allCpmProblems || []
+        }else{
+            this.cpm_problems = this.cpmProblems
         }
+
+        if (this.patientId){
+            this.patient_id = this.patientId;
+        }
+
         this.getSystemCodes()
 
     }

@@ -5,6 +5,8 @@
 
 namespace App\Testing;
 
+use CircleLinkHealth\Customer\Entities\SaasAccount;
+
 class TestPatients extends CreatesTestPatients
 {
     protected $noOfPatients = 5;
@@ -18,19 +20,22 @@ class TestPatients extends CreatesTestPatients
     {
 
         $patientData = [];
+        $saasAccountId = SaasAccount::firstOrFail()->id;
         for ($i = $this->noOfPatients; $i > 0; $i--) {
-            $patientData[] = $this->getPatientFakeData();
+            $patientData[] = $this->getPatientFakeData($saasAccountId);
         }
 
         return $patientData;
     }
 
-    private function getPatientFakeData(): array
+    private function getPatientFakeData(int $saasAccountId): array
     {
         return [
+            'saas_account_id' => $saasAccountId,
             'first_name' => $this->faker->firstName,
             'last_name'  => $this->faker->lastName,
             'email'      => $this->faker->email,
+            'username'      => $this->faker->email.now()->timestamp,
             'password'                   => bcrypt('secret'),
             'is_auto_generated'          => true,
 

@@ -10,7 +10,9 @@ if (isset($patient)) {
 } else {
     $monthlyTime = '';
 }
-$user = auth()->user();
+$user                = auth()->user();
+$patientListDropdown = getPatientListDropdown($user);
+$isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
 ?>
 @push('styles')
     <style>
@@ -69,112 +71,155 @@ $user = auth()->user();
                         </button>
                     </div>
 
-                    <div id="search-bar-container" class="col-md-9 col-xs-12">
-                        @include('partials.search')
-                    </div>
+                    @if(!$isTwoFaRoute)
+                        <div id="search-bar-container" class="col-md-9 col-xs-12">
+                            @include('partials.search')
+                        </div>
+                    @endif
                 </div>
             </div>
 
             <div class="col-lg-8 col-sm-12 col-xs-12">
                 <div class="collapse navbar-collapse" id="navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $user->isCareCoach() && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking)
-                            <li>
-                                <time-tracker-call-mode ref="timeTrackerCallMode"
-                                                        :twilio-enabled="@json(config('services.twilio.enabled') && ($patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : false))"
-                                                        :patient-id="{{ $patient->id }}"></time-tracker-call-mode>
-                            </li>
-                        @endif
-                        @if($user->hasRole('saas-admin') || $user->isAdmin() || $user->hasRole('saas-admin-view-only'))
-                            <li class="dropdown-toggle">
-                                <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
-                                     aria-expanded="false">
-                                    Users <span class="caret text-white"></span>
-                                </div>
-                                <ul class="dropdown-menu" role="menu" style="background: white !important;">
-                                    <li><a href="{{ route('saas-admin.users.create') }}">Add Internal User</a></li>
-                                    <li><a href="{{ route('saas-admin.practices.index') }}">Add Customer User</a></li>
-                                    <li><a href="{{ route('saas-admin.users.index') }}">View All</a></li>
-                                </ul>
-                            </li>
+                        @if(!$isTwoFaRoute)
+                            @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $user->isCareCoach() && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking)
+                                <li>
+                                    <time-tracker-call-mode ref="timeTrackerCallMode"
+                                                            :twilio-enabled="@json(config('services.twilio.enabled') && ($patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : false))"
+                                                            :patient-id="{{ $patient->id }}"></time-tracker-call-mode>
+                                </li>
+                            @endif
+                            @if($user->hasRole('saas-admin') || $user->isAdmin() || $user->hasRole('saas-admin-view-only'))
+                                <li class="dropdown-toggle">
+                                    <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
+                                         aria-expanded="false">
+                                        Users <span class="caret text-white"></span>
+                                    </div>
+                                    <ul class="dropdown-menu" role="menu" style="background: white !important;">
+                                        <li><a href="{{ route('saas-admin.users.create') }}">Add Internal User</a></li>
+                                        <li><a href="{{ route('saas-admin.practices.index') }}">Add Customer User</a>
+                                        </li>
+                                        <li><a href="{{ route('saas-admin.users.index') }}">View All</a></li>
+                                    </ul>
+                                </li>
 
-                            <li class="dropdown-toggle">
-                                <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
-                                     aria-expanded="false">
-                                    Practices <span class="caret text-white"></span>
-                                </div>
-                                <ul class="dropdown-menu" role="menu" style="background: white !important;">
-                                    <li><a href="{{ route('saas-admin.practices.create')}}">Add New</a></li>
-                                    <li><a href="{{ route('saas-admin.practices.index')}}">Manage</a></li>
-                                    <li><a href="{{ route('saas-admin.practices.billing.create') }}">Billable Patient
-                                            Report</a></li>
-                                    <li><a href="{{ route('saas-admin.monthly.billing.make') }}">Approve Billable
-                                            Patients</a></li>
-                                </ul>
-                            </li>
-                        @endif
+                                <li class="dropdown-toggle">
+                                    <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
+                                         aria-expanded="false">
+                                        Practices <span class="caret text-white"></span>
+                                    </div>
+                                    <ul class="dropdown-menu" role="menu" style="background: white !important;">
+                                        <li><a href="{{ route('saas-admin.practices.create')}}">Add New</a></li>
+                                        <li><a href="{{ route('saas-admin.practices.index')}}">Manage</a></li>
+                                        <li><a href="{{ route('saas-admin.practices.billing.create') }}">Billable
+                                                Patient
+                                                Report</a></li>
+                                        <li><a href="{{ route('saas-admin.monthly.billing.make') }}">Approve Billable
+                                                Patients</a></li>
+                                    </ul>
+                                </li>
+                            @endif
 
-                        @if ( ! auth()->guest()
-                             && $user->isNotSaas()
-                             && $user->hasRole('software-only'))
-                            <li class="dropdown">
-                                <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
-                                     aria-expanded="false">
-                                    Admin
-                                    <span class="caret text-white"></span>
-                                </div>
-                                <ul class="dropdown-menu" role="menu" style="background: white !important;">
+                            @if ( ! auth()->guest()
+                                 && $user->isNotSaas()
+                                 && $user->hasRole('software-only'))
+                                <li class="dropdown">
+                                    <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
+                                         aria-expanded="false">
+                                        Admin
+                                        <span class="caret text-white"></span>
+                                    </div>
+                                    <ul class="dropdown-menu" role="menu" style="background: white !important;">
+                                        <li>
+                                            <a href="{{ route('admin.patientCallManagement.v2.index') }}">
+                                                Patient Activity Management
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('monthly.billing.make') }}">
+                                                Approve Billable Patients
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @endif
+
+                            @if (!isset($patient))
+                                <li data-monthly-time="{{$monthlyTime}}"
+                                    style="line-height: 20px;">
+                                    <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true"
+                                                  :twilio-enabled="@json(config('services.twilio.enabled'))"
+                                                  :no-live-count="@json($noLiveCountTimeTracking)"
+                                                  :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
+                                </li>
+                            @endif
+
+
+                            @if(! $user->isCareCoach())
+                                <li>
+                                    <a href="{{ route('patients.dashboard') }}" class="text-white"><i
+                                                class="top-nav-item-icon glyphicon glyphicon-home"></i>Home</a>
+                                </li>
+                                @if(sizeof($patientListDropdown) === 1)
                                     <li>
-                                        <a href="{{ route('admin.patientCallManagement.v2.index') }}">
-                                            Patient Activity Management
-                                        </a>
+                                        @if($patientListDropdown[0] === 'ccm')
+                                            <a href="{{ route('patients.listing') }}" class="text-white">
+                                                <i class="top-nav-item-icon glyphicon glyphicon-user"></i>
+                                                Patient List
+                                            </a>
+                                        @else
+                                            <a href="{{ config('services.awv.url') }}" class="text-white">
+                                                <i class="top-nav-item-icon glyphicon glyphicon-user"></i>
+                                                Patient List
+                                            </a>
+                                        @endif
                                     </li>
-                                    <li>
-                                        <a href="{{ route('monthly.billing.make') }}">
-                                            Approve Billable Patients
-                                        </a>
+                                @else
+                                    <li class="dropdown">
+                                        <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
+                                             aria-expanded="false">
+                                            Patient List
+                                            <span class="caret text-white"></span>
+                                        </div>
+                                        <ul class="dropdown-menu" role="menu" style="background: white !important;">
+                                            <li>
+                                                <a href="{{ route('patients.listing') }}">
+                                                    CCM
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ config('services.awv.url') }}">
+                                                    Wellness Visit
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </li>
-                                </ul>
-                            </li>
+                                @endif
                         @endif
-
-                        @if (!isset($patient))
-                            <li data-monthly-time="{{$monthlyTime}}"
-                                style="line-height: 20px;">
-                                <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true"
-                                              :twilio-enabled="@json(config('services.twilio.enabled'))"
-                                              :no-live-count="@json($noLiveCountTimeTracking)"
-                                              :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
-                            </li>
-                        @endif
-
-                        <li>
-                            <a href="{{ route('patients.dashboard') }}" class="text-white"><i
-                                        class="top-nav-item-icon glyphicon glyphicon-home"></i>Home</a>
-                        </li>
-
-                        <li>
-                            <a href="{{ route('patients.listing') }}" class="text-white"><i
-                                        class="top-nav-item-icon glyphicon glyphicon-user"></i>Patient List</a>
-                        </li>
 
                         @if($user->isCareCoach())
-                        <li>
-                            <a href="{{ route('patientCallList.index') }}" class="text-white"><i
-                                        class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
-                        </li>
+                            <li>
+                                <a href="{{ route('patientCallList.index') }}" class="text-white"><i
+                                            class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('care.center.work.schedule.index') }}" class="text-white"><i
+                                            class="top-nav-item-icon glyphicon glyphicon-calendar"></i>Schedule</a>
+                            </li>
                         @endif
 
-                        <li class="dropdown">
-                            <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
-                                 aria-expanded="false"><i class="top-nav-item-icon glyphicon glyphicon-list-alt"></i>Reports<span
-                                        class="caret text-white"></span></div>
+                            <li class="dropdown">
+                                <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
+                                     aria-expanded="false"><i
+                                            class="top-nav-item-icon glyphicon glyphicon-list-alt"></i>Reports<span
+                                            class="caret text-white"></span></div>
 
                             <ul class="dropdown-menu" role="menu" style="background: white !important;">
                                 @if($user->isAdmin())
-                                <li>
-                                    <a href="{{ route('patients.careplan.printlist') }}">Care Plan Print List</a>
-                                </li>
+                                    <li>
+                                        <a href="{{ route('patients.careplan.printlist') }}">Care Plan Print List</a>
+                                    </li>
                                 @endif
                                 <li>
                                     <a href="{{ route('patient.note.listing') }}">Notes Report</a>
@@ -182,14 +227,14 @@ $user = auth()->user();
                                 <li>
                                     <a href="{{route('patient.reports.u20')}}">Under 20 Minutes Report</a>
                                 </li>
-                                @if($user->hasRole('developer'))
-                                <li>
-                                    <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('admin.reports.nurse.metrics') }}">
-                                        Nurse Performance Report</a>
-                                </li>
+                                @if($user->hasRole('developer') || $user->isAdmin())
+                                    <li>
+                                        <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('admin.reports.nurse.metrics') }}">
+                                            Nurse Performance Report</a>
+                                    </li>
                                 @endif
                             </ul>
                         </li>
@@ -199,11 +244,12 @@ $user = auth()->user();
                                  aria-expanded="false"><i class="glyphicon glyphicon-bell"></i> Notifications
                                 <a class="inline-block">
 
-                                    <pusher-notifications
-                                            :user-id="{{json_encode(\Illuminate\Support\Facades\Auth::id())}}"></pusher-notifications>
-                                </a>
-                            </div>
-                        </li>
+                                        <pusher-notifications
+                                                :user-id="{{json_encode(auth()->id())}}"></pusher-notifications>
+                                    </a>
+                                </div>
+                            </li>
+                        @endif
 
                         @include('partials.user-account-dropdown')
                     </ul>

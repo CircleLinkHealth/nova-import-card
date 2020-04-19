@@ -143,7 +143,7 @@
                                         {
                                             id: "tags",
                                             css: {'text-align': 'left', 'top': 0, 'left': 0, 'bottom': 0, 'right': 0},
-                                            header: ["Status"],
+                                            header: ["Status",],
                                             width: 110,
                                             sort: 'string'
                                         },
@@ -197,9 +197,6 @@
                                         //CPM-725: Maximum Call Stack Size exceeded error on low-end machines
                                         this.config.autoheight = false;
                                     },
-                                    /*ready:function(){
-                                     this.adjustRowHeight("obs_value");
-                                     },*/
                                     pager: {
                                         animate: true,
                                         container: "paging_container",// the container where the pager controls will be placed into
@@ -219,11 +216,11 @@
                                         group: 5   // the number of pages in the pager
                                     },
                                     data: activityJson
-                                })
-                                ;
-                                webix.event(window, "resize", function () {
+                                });
+                                const debounced = _.debounce(() => {
                                     obs_alerts_dtable.adjust();
-                                })
+                                }, 1000);
+                                webix.event(window, "resize", debounced);
                             </script>
                         @endpush
 
@@ -255,6 +252,13 @@
                                         <span class="glyphicon glyphicon-envelope"></span>
                                     </div>
                                     Forwarded To Provider
+                                </li>
+
+                                <li>
+                                    <div class="label label-warning" style="margin-right: 4px; text-align: right; background-color: #9865f2">
+                                        <span class="glyphicon glyphicon-thumbs-up"></span>
+                                    </div>
+                                    Success Story
                                 </li>
 
                                 <li>

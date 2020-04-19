@@ -24,7 +24,7 @@ class NursesPerformanceDailyReport extends Command
      *
      * @var string
      */
-    protected $signature = 'report:nursesAndStatesDaily {forDate?}';
+    protected $signature = 'report:nursesAndStatesDaily {forDate?} {--notify}';
     private $service;
 
     /**
@@ -38,6 +38,10 @@ class NursesPerformanceDailyReport extends Command
 
     /**
      * Execute the console command.
+     *
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\DiskDoesNotExist
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\FileDoesNotExist
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\FileIsTooBig
      *
      * @return mixed
      */
@@ -60,11 +64,11 @@ class NursesPerformanceDailyReport extends Command
         $saved    = file_put_contents($path, json_encode($data));
 
         if ( ! $saved) {
-            if (isProductionEnv()) {
+            if (isProductionEnv() && $this->option('notify')) {
                 sendSlackMessage(
-                '#carecoach_ops',
-                "Nurses And States dashboard report {$date->toDateString()} could not be created. \n"
-            );
+                    '#carecoach_ops',
+                    "Nurses And States dashboard report {$date->toDateString()} could not be created. \n"
+                );
             }
 
             $this->info('Nurses And States dashboard report could not be uploaded to S3');
@@ -75,13 +79,13 @@ class NursesPerformanceDailyReport extends Command
             ->addMedia($path)
             ->toMediaCollection($fileName);
 
-        if (isProductionEnv()) {
+       if (isProductionEnv() && $this->option('notify')) {
             sendSlackMessage(
                 '#carecoach_ops',
                 "Nurses weekly calls and work hours report {$date->toDateString()} created. \n"
             );
         }
 
-        $this->info('Daily Nurses Calls & Work hrs uploaded to S3');
+        $this->info("Daily Nurses Calls & Work hrs for {$date->toDateString()} uploaded to S3");
     }
 }

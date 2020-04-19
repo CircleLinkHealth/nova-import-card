@@ -7,7 +7,9 @@
 namespace App\CLH\Repositories;
 
 use App\CareAmbassador;
+use App\Rules\PatientIsNotDuplicate;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -15,17 +17,19 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\PracticeRoleUser;
 use CircleLinkHealth\Customer\Entities\ProviderInfo;
+use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
 use CircleLinkHealth\Customer\Tasks\ClearUserCache;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
-use Config;
-use Illuminate\Cache\TaggableStore;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Storage;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -51,7 +55,7 @@ class UserRepository
         }
 
         $program_name  = $program->display_name;
-        $email_subject = '['.$program_name.'] New User Registration!';
+        $email_subject = '[' . $program_name . '] New User Registration!';
         $data          = [
             'patient_name'  => $user->getFullName(),
             'patient_id'    => $user->id,
@@ -69,13 +73,48 @@ class UserRepository
     }
 
     public function createNewUser(
-        User $user,
         ParameterBag $params
     ) {
-        $user = $user->createNewUser($params->get('email'), $params->get('password'));
+        if ($this->isPatient($params)) {
+            $validator = \Validator::make($params->all(), $this->createNewPatientRules(),[
+                'required'                   => 'The :attribute field is required.',
+                'home_phone_number.required' => 'The patient phone number field is required.',
+            ]);
+    
+            if($validator->fails()) {
+                throw new ValidationException($validator);
+            }
+    
+            //Using 2 different validators because the custom rule expects non-null items in its constructor
+            $validator = \Validator::make($params->all(), $this->checkPatientForDupes($params),[
+                'required'                   => 'The :attribute field is required.',
+                'home_phone_number.required' => 'The patient phone number field is required.',
+            ]);
+        } else {
+            $validator = \Validator::make($params->all(), $this->createNewUserRules(),[
+                'required'                   => 'The :attribute field is required.',
+                'home_phone_number.required' => 'The patient phone number field is required.',
+            ]);
+        }
+        
+        if($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+        
+        $user = User::create([
+                             'saas_account_id' => $params->get('saas_account_id') ?? Practice::whereId($params->get('program_id'))->value('saas_account_id'),
+                             'first_name' => $params->get('first_name'),
+                             'last_name' => $params->get('last_name'),
+                             'program_id' => $params->get('program_id'),
+                             'email' => $params->get('email'),
+                             'username' => $params->get('username'),
+                         ]);
+        
+        $user->username = $user->email    = $params->get('email');
+        $user->password = bcrypt($params->get('password'));
 
         if ( ! $user || is_null($user->id)) {
-            \Log::channel('logdna')->error('User has not been created.', [
+            \Log::error('User has not been created.', [
                 'email_exists_in_parameters' => ! is_null($params->get('email')),
             ]);
         }
@@ -92,7 +131,7 @@ class UserRepository
         $this->saveOrUpdateRoles($user, $params);
 
         if ( ! empty($params->get('roles')) && 0 == $user->roles()->count()) {
-            \Log::channel('logdna')->error('User roles have not been attached.', [
+            \Log::error('User roles have not been attached.', [
                 'user_id' => $user->id,
             ]);
         }
@@ -202,7 +241,9 @@ class UserRepository
 
         // set primary program
         $user->program_id = $params->get('program_id');
-        $user->save();
+        if ($user->isDirty()) {
+            $user->save();
+        }
 
         return array_unique($userPrograms);
     }
@@ -229,11 +270,11 @@ class UserRepository
         }
 
         $writerFolder = $ehr->where('type', '=', 'dir')
-            ->where('filename', '=', "report-writer-{$user->id}")
-            ->first();
+                            ->where('filename', '=', "report-writer-{$user->id}")
+                            ->first();
 
         if ( ! $writerFolder) {
-            $cloudDisk->makeDirectory($ehrPath."/report-writer-{$user->id}");
+            $cloudDisk->makeDirectory($ehrPath . "/report-writer-{$user->id}");
 
             return $this->saveEhrReportWriterFolder($user);
         }
@@ -252,7 +293,9 @@ class UserRepository
         $permission = new \Google_Service_Drive_Permission();
         $permission->setRole('writer');
         $permission->setType('user');
-        $permission->setEmailAddress('joe@circlelinkhealth.com');
+
+        $permission->setEmailAddress(AppConfig::pull('ehr_report_writer_folder_director',
+            'ethan@circlelinkhealth.com'));
 
         $service->permissions->create(
             $writerFolder['basename'],
@@ -294,7 +337,7 @@ class UserRepository
         CareAmbassador::updateOrCreate(
             ['user_id' => $user->id],
             [
-                'hourly_rate' => $params->get('hourly_rate')
+                'hourly_rate'    => $params->get('hourly_rate')
                     ?: null,
                 'speaks_spanish' => 'on' == $params->get('speaks_spanish')
                     ? 1
@@ -373,7 +416,7 @@ class UserRepository
             for ($i = 0; $i < count($contactDays); ++$i) {
                 $contactDaysDelmited .= (count($contactDays) == $i + 1)
                     ? $contactDays[$i]
-                    : $contactDays[$i].', ';
+                    : $contactDays[$i] . ', ';
             }
             $params->add(['preferred_cc_contact_days' => $contactDaysDelmited]);
         }
@@ -408,7 +451,12 @@ class UserRepository
             }
 
             if ($params->get($key)) {
-                $user->patientInfo->$key = $params->get($key);
+                if ('birth_date' === $key) {
+                    $user->patientInfo->$key = ImportPatientInfo::parseDOBDate($params->get($key));
+                }
+                else {
+                    $user->patientInfo->$key = $params->get($key);
+                }
             }
         }
 
@@ -496,28 +544,38 @@ class UserRepository
         ParameterBag $params
     ) {
         $practices = $this->saveAndGetPractice($user, $params);
-
-        foreach ($practices as $practiceId) {
-            if ( ! empty($params->get('role'))) {
-                $user->detachRolesForSite([], $practiceId);
-                $user->attachRoleForPractice($params->get('role'), $practiceId);
+        
+        if (! $practices) {
+            foreach ($params->get('roles') as $roleId) {
+                $pru = PracticeRoleUser::create([
+                                             'program_id' => null,
+                                             'user_id' => $user->id,
+                                             'role_id' => $roleId,
+                                         ]);
             }
-
-            if ( ! empty($params->get('roles'))) {
-                $user->detachRolesForSite([], $practiceId);
-                // support if one role is passed in as a string
-                if ( ! is_array($params->get('roles'))) {
-                    $user->attachRoleForPractice($params->get('roles'), $practiceId);
-                } else {
-                    $user->attachRoleForPractice($params->get('roles'), $practiceId);
+        } else {
+            foreach ($practices as $practiceId) {
+                if ( ! empty($params->get('role'))) {
+                    $user->detachRolesForSite([], $practiceId);
+                    $user->attachRoleForPractice($params->get('role'), $practiceId);
+                }
+        
+                if ( ! empty($params->get('roles'))) {
+                    $user->detachRolesForSite([], $practiceId);
+                    // support if one role is passed in as a string
+                    if ( ! is_array($params->get('roles'))) {
+                        $user->attachRoleForPractice($params->get('roles'), $practiceId);
+                    } else {
+                        $user->attachRoleForPractice($params->get('roles'), $practiceId);
+                    }
                 }
             }
+    
+            DB::table('practice_role_user')
+              ->where('user_id', $user->id)
+              ->whereNotIn('program_id', $practices)
+              ->delete();
         }
-
-        DB::table('practice_role_user')
-            ->where('user_id', $user->id)
-            ->whereNotIn('program_id', $practices)
-            ->delete();
 
         $this->clearRolesCache($user);
 
@@ -618,5 +676,63 @@ class UserRepository
 
             $authyUser->save();
         }
+    }
+    
+    /**
+     * Validation rules for creating a new User
+     *
+     * @return array
+     */
+    private function createNewUserRules()
+    {
+        return [
+            'first_name'              => 'filled|required',
+            'last_name'               => 'filled|required',
+            'program_id'              => 'filled|required|exists:practices,id',
+            'email' => [
+                'required',
+                Rule::unique('users', 'email')
+            ],
+            'username' => [
+                'required',
+                Rule::unique('users', 'username')
+            ],
+            'roles.*' => 'filled|required|exists:lv_roles,id'
+        ];
+    }
+    
+    private function isPatient(ParameterBag $params):bool
+    {
+        $participantRoleId = \Cache::remember('participant_role_id', 2, function () {
+            return Role::where('name', 'participant')->value('id');
+        });
+        
+        if (is_array($params->get('roles')) && in_array($participantRoleId, $params->get('roles'))) {
+            return true;
+        }
+    
+        if ($params->get('roles') == $participantRoleId) {
+            return true;
+        }
+    
+        if ($params->get('role') == $participantRoleId) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    private function createNewPatientRules()
+    {
+        return array_merge($this->createNewUserRules(), [
+            'birth_date'              => 'filled|required|date',
+            'mrn_number' => ['filled',]
+        ]);
+    }
+    
+    private function checkPatientForDupes(ParameterBag $params) {
+        return [
+            'mrn_number' => [new PatientIsNotDuplicate($params->get('program_id'), $params->get('first_name'), $params->get('last_name'), $params->get('birth_date'), $params->get('mrn_number'))]
+        ];
     }
 }

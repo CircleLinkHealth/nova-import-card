@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\Contracts\DirectMailableNotification;
 use App\Contracts\FaxableNotification;
 use App\Note;
 use App\ValueObjects\SimpleNotification;
@@ -16,7 +17,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 
-class CarePlanProviderApproved extends Notification implements FaxableNotification
+class CarePlanProviderApproved extends Notification implements FaxableNotification, DirectMailableNotification
 {
     use Queueable;
     public $attachment;
@@ -24,6 +25,10 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
     public $carePlan;
     public $channels = ['database'];
     public $pathToPdf;
+    /**
+     * @var array
+     */
+    private $faxOptions = [];
 
     /**
      * Create a new notification instance.
@@ -38,6 +43,16 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
         $this->attachment = $this->carePlan = $carePlan;
 
         $this->channels = array_unique(array_merge($this->channels, $channels));
+    }
+
+    public function directMailBody($notifiable): string
+    {
+        return $this->getBody();
+    }
+
+    public function directMailSubject($notifiable): string
+    {
+        return $this->getSubject();
     }
 
     /**
@@ -68,6 +83,14 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
     }
 
     /**
+     * Add any specific options for eFax API here.
+     */
+    public function getFaxOptions(): array
+    {
+        return $this->faxOptions;
+    }
+
+    /**
      * Get the mail's subject.
      *
      * @return string
@@ -75,6 +98,13 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
     public function getSubject()
     {
         return 'A CarePlan has just been approved';
+    }
+
+    public function setFaxOptions(array $faxOptions): CarePlanProviderApproved
+    {
+        $this->faxOptions = $faxOptions;
+
+        return $this;
     }
 
     /**
@@ -116,15 +146,15 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
      *
      * @return bool|string
      */
-    public function toDirectMail($notifiable)
+    public function toDirectMail($notifiable): SimpleNotification
     {
         if ( ! $notifiable || ! $notifiable->emr_direct_address) {
             return false;
         }
 
         return (new SimpleNotification())
-            ->setBody($this->getBody())
-            ->setSubject($this->getSubject())
+            ->setBody($this->directMailBody($notifiable))
+            ->setSubject($this->directMailSubject($notifiable))
             ->setFilePath($this->toPdf());
     }
 

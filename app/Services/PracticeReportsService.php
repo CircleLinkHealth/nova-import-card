@@ -19,8 +19,8 @@ use Spatie\MediaLibrary\Exceptions\InvalidConversion;
 class PracticeReportsService
 {
     /**
-     * @throws InvalidConversion
      * @throws FileCannotBeAdded
+     * @throws InvalidConversion
      *
      * @return array
      */
@@ -54,13 +54,11 @@ class PracticeReportsService
     public function getQuickbooksReport($practices, $format, Carbon $date)
     {
         $data = [];
-        
+
         $saasAccount = null;
 
-        foreach ($practices as $practiceId) {
-            $practice = Practice::with(['settings', 'chargeableServices', 'saasAccount'])->find($practiceId);
-            
-            if (!$saasAccount) {
+        foreach (Practice::with(['settings', 'chargeableServices', 'saasAccount'])->whereIn('id', $practices)->get() as $practice) {
+            if ( ! $saasAccount) {
                 $saasAccount = $practice->saasAccount;
             }
 
@@ -119,6 +117,7 @@ class PracticeReportsService
     /**
      * @param $rows
      * @param $format
+     * @param mixed $saasAccount
      *
      * @return mixed
      */
@@ -131,6 +130,8 @@ class PracticeReportsService
     }
 
     /**
+     * @param mixed|null $requestedByUserId
+     *
      * @throws \Exception
      * @throws \Waavi\UrlShortener\InvalidResponseException
      *
@@ -146,7 +147,7 @@ class PracticeReportsService
 
         $reportName = $practice->name.'-'.$date->format('Y-m').'-patients';
 
-        $patientReport = $generator->makePatientReportPdf($reportName);
+        $patientReport = $generator->makePatientReportCsv($reportName);
 
         $link = shortenUrl($patientReport->getUrl());
 
@@ -194,23 +195,10 @@ class PracticeReportsService
                 ? 'Software-Only Platform Fee'
                 : $chargeableService->description,
             'LineUnitPrice' => (string) '$'.' '.$lineUnitPrice,
-            'Msg'           => 'Send Check Payments to:
-CircleLink Health Inc.
-1178 Broadway
-3rd floor #1265
-New York, NY 10001
-
-ACH Payments: JPMorgan Chase Bank 
-Routing Number (ABA): 02110361 
-Account Number: 693139136 
-Account Name: CircleLink Health Account 
-Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902 
-
-Wire Payments: JPMorgan Chase Bank 
-Routing Number (ABA): 021000021 
-Account Number: 693139136 
-Account Name: Circle Link Health Account 
-Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902
+            'Msg'           => 'ACH Payments: Silicon Valley Bank
+Routing Number (ABA): 121140399
+Account Number: 3302397258
+Account Name: CIRCLELINK HEALTH INC.
 ',
         ];
 

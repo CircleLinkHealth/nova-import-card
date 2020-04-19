@@ -8,24 +8,35 @@ namespace App\Providers;
 
 use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Events\CarePlanWasApproved;
+use App\Events\CarePlanWasProviderApproved;
+use App\Events\CarePlanWasQAApproved;
 use App\Events\NoteFinalSaved;
 use App\Events\PatientUserCreated;
 use App\Events\PdfableCreated;
 use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
+use App\Listeners\AddPatientConsentNote;
+use App\Listeners\AssignPatientToStandByNurse;
 use App\Listeners\AttachAttestedProblemsToCall;
 use App\Listeners\AttachUPG0506CarePlanToPatientUser;
+use App\Listeners\AutoApproveCarePlan;
+use App\Listeners\ChangeOrApproveCareplanResponseListener;
 use App\Listeners\CheckBeforeSendMessageListener;
 use App\Listeners\CreateAndHandlePdfReport;
+use App\Listeners\ForwardApprovedCarePlanToPractice;
 use App\Listeners\ForwardNote;
 use App\Listeners\LogFailedNotification;
 use App\Listeners\LogSuccessfulLogin;
 use App\Listeners\LogSuccessfulLogout;
+use App\Listeners\NotifyPatientOfCarePlanApproval;
 use App\Listeners\NotifySlackChannel;
 use App\Listeners\PatientContactWindowUpdated;
+use App\Listeners\SendCarePlanForDMProviderApproval;
 use App\Listeners\UpdateCarePlanStatus;
+use App\Listeners\UpdateCcdaStatus;
 use App\Listeners\UPG0506CcdaImporterListener;
 use App\Listeners\UPG0506DirectMailListener;
+use App\Listeners\UPG0506Handler;
 use App\Listeners\UserLoggedOut;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Customer\Events\PatientContactWindowUpdatedEvent;
@@ -52,9 +63,6 @@ class CpmEventServiceProvider extends ServiceProvider
         Authenticated::class => [
             UpdateUserSessionInfo::class,
         ],
-        CarePlanWasApproved::class => [
-            UpdateCarePlanStatus::class,
-        ],
         PdfableCreated::class => [
             CreateAndHandlePdfReport::class,
         ],
@@ -79,6 +87,7 @@ class CpmEventServiceProvider extends ServiceProvider
         ],
         DirectMailMessageReceived::class => [
             UPG0506DirectMailListener::class,
+            ChangeOrApproveCareplanResponseListener::class,
             NotifySlackChannel::class,
         ],
         CcdaImported::class => [
@@ -86,6 +95,22 @@ class CpmEventServiceProvider extends ServiceProvider
         ],
         PatientUserCreated::class => [
             AttachUPG0506CarePlanToPatientUser::class,
+        ],
+        CarePlanWasApproved::class => [
+            UpdateCarePlanStatus::class,
+            UpdateCcdaStatus::class,
+        ],
+        CarePlanWasQAApproved::class => [
+            AssignPatientToStandByNurse::class,
+            AddPatientConsentNote::class,
+            AutoApproveCarePlan::class,
+            UPG0506Handler::class,
+            SendCarePlanForDMProviderApproval::class,
+            NotifyPatientOfCarePlanApproval::class,
+        ],
+        CarePlanWasProviderApproved::class => [
+            ForwardApprovedCarePlanToPractice::class,
+            NotifyPatientOfCarePlanApproval::class,
         ],
     ];
 

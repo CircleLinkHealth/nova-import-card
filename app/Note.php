@@ -78,6 +78,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $addendums_count
  * @property int|null $notifications_count
  * @property int|null $revision_history_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereSuccessStory($value)
+ * @property int $success_story
  */
 class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfReport, AttachableToNotification
 {
@@ -108,6 +110,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         'did_medication_recon',
         'performed_at',
         'status',
+        'success_story',
     ];
 
     protected $table = 'notes';
@@ -119,7 +122,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
 
     public function call()
     {
-        return $this->hasOne('App\Call');
+        return $this->hasOne(Call::class);
     }
 
     public function editLink()
@@ -152,11 +155,13 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
 
         $cpmSettings = $this->patient->primaryPractice->cpmSettings();
 
+        $patientBillingProviderUser = $this->patient->billingProviderUser();
+
         if ($notifyCareteam) {
             $recipients = $this->patient->getCareTeamReceivesAlerts();
 
-            if ($force) {
-                $recipients->push($this->patient->billingProviderUser());
+            if ($force && $patientBillingProviderUser) {
+                $recipients->push($patientBillingProviderUser);
             }
         }
 
@@ -180,12 +185,27 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
             $channelsForUsers[] = 'mail';
         }
 
+        if ($force && empty($channelsForUsers)) {
+            $channelsForUsers = [
+                'mail',
+                DirectMailChannel::class,
+                FaxChannel::class,
+            ];
+        }
+
         // Notify Users
         $recipients->unique()
             ->values()
             ->map(function ($carePersonUser) use ($channelsForUsers) {
                 optional($carePersonUser)->notify(new NoteForwarded($this, $channelsForUsers));
             });
+
+        if ($force && empty($channelsForLocation)) {
+            $channelsForLocation = [
+                DirectMailChannel::class,
+                FaxChannel::class,
+            ];
+        }
 
         if ( ! $notifyCareteam || empty($channelsForLocation)) {
             return;
@@ -300,19 +320,32 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
      * Create a PDF of this resource and return the path to it.
      *
      * @param null $scale
+     * @param bool $renderHtml
      */
-    public function toPdf($scale = null): string
+    public function toPdf($scale = null, $renderHtml = false): string
     {
         $fileName = Carbon::today()->toDateString().'-'.$this->patient->id.'.pdf';
         $filePath = storage_path('pdfs/notes/'.$fileName);
 
-        if (file_exists($filePath)) {
+        if (file_exists($filePath) && ! $renderHtml) {
             return $filePath;
         }
+
         $problems = $this->patient
-            ->cpmProblems
+            ->ccdProblems
+            ->where('is_monitored', true)
             ->pluck('name')
             ->all();
+
+        if ($renderHtml) {
+            return view('pdfs.note', [
+                'patient'  => $this->patient,
+                'problems' => $problems,
+                'sender'   => $this->author,
+                'note'     => $this,
+                'provider' => $this->patient->billingProviderUser(),
+            ]);
+        }
 
         $pdf = app('snappy.pdf.wrapper');
         $pdf->loadView('pdfs.note', [

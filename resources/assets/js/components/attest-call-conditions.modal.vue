@@ -23,8 +23,11 @@
                             {{addConditionLabel}}
                         </button>
                         <div v-if="addCondition" style="padding-top: 20px">
-                            <add-condition :cpm-problems="cpmProblems" :patient-id="pId"
-                                           :problems="problems" :code-is-required="true"></add-condition>
+                            <add-condition :cpm-problems="cpmProblems" :patient-id="patient_id"
+                                           :problems="problems" :code-is-required="true"
+                                           :is-approve-billable-page="!isNotesPage"
+                                           :patient-has-bhi="patientHasBhi"
+                            :is-bhi="isBhi"></add-condition>
                         </div>
                     </div>
                 </div>
@@ -43,6 +46,9 @@
     import AddCondition from './careplan/add-condition';
     import CareplanMixin from './careplan/mixins/careplan.mixin';
     import {Event} from 'vue-tables-2';
+    import VueSelect from 'vue-select';
+
+    let self;
 
     export default {
         name: "attest-call-conditions-modal",
@@ -50,15 +56,30 @@
         components: {
             'add-condition': AddCondition,
             'modal': Modal,
+            'v-select': VueSelect,
         },
         props: {
             'patientId': String,
             'cpmProblems': Array,
         },
+        created(){
+            self = this;
+        },
         mounted() {
+
             App.$on('show-attest-call-conditions-modal', () => {
                 this.$refs['attest-call-conditions-modal'].visible = true;
             });
+
+            if(! this.cpmProblems){
+                this.cpm_problems = this.careplan().allCpmProblems || []
+            }else{
+                this.cpm_problems = this.cpmProblems
+            }
+
+            if (this.patientId){
+                this.patient_id = this.patientId;
+            }
 
             //if in approve billable patients page, we get problems from the billing component
             if (this.isNotesPage) {
@@ -66,8 +87,18 @@
             }
 
             Event.$on('full-conditions:add', (ccdProblem) => {
+
+                let cpmProblem = this.cpm_problems.filter(function(p){
+                    return p.id == ccdProblem.cpm_id;
+                })[0];
+
                 if (ccdProblem) {
-                    this.problems.push(ccdProblem)
+                    this.problems.push({
+                        id: ccdProblem.id,
+                        name: ccdProblem.name,
+                        code: ccdProblem.code,
+                        is_behavioral: cpmProblem ? cpmProblem.is_behavioral : false
+                    })
                     this.attestedProblems.push(ccdProblem.id)
                 }
                 this.addCondition = false;
@@ -77,11 +108,13 @@
                 this.hideModal();
             })
 
-            Event.$on('modal-attest-call-conditions:show', (patient) => {
+            Event.$on('modal-attest-call-conditions:show', (data) => {
                 this.$refs['attest-call-conditions-modal'].visible = true;
-                this.patient_id = String(patient.id)
-                this.attestedProblems = (patient.attested_ccm_problems);
-                this.problems = patient.problems
+                this.patient_id = String(data.patient.id)
+                this.attestedProblems = data.is_bhi ? data.patient.attested_bhi_problems : data.patient.attested_ccm_problems;
+                this.problems = data.patient.problems
+                this.isBhi = data.is_bhi
+                this.patientHasBhi = data.patient_has_bhi
             })
         },
         data() {
@@ -90,7 +123,9 @@
                 problems: [],
                 attestedProblems: [],
                 addCondition: false,
-                error: null
+                error: null,
+                isBhi: false,
+                patientHasBhi: false
             }
         },
         computed: {
@@ -106,21 +141,19 @@
                     'm-top-5': !this.errorExists,
                 }
             },
-            pId() {
-                return this.patient_id ? this.patient_id : this.patientId;
-            },
             title() {
 
-                return this.isNotesPage ? 'Please select all conditions addressed in this call:' : 'Edit CCM Problem Codes';
+                return this.isNotesPage ? 'Please select all conditions addressed in this call:' : (this.isBhi ? 'Edit BHI Problem Codes' : 'Edit CCM Problem Codes');
             },
             problemsToAttest() {
 
-                let problemsToAttest = (this.problems || []).filter(function (p) {
+                let problemsToAttest = (self.problems || []).filter(function (p) {
                     return !!p.code;
                 });
-                //do not show BHI problems when on Approve Billable Patients Page
-                return this.isNotesPage ? problemsToAttest : (problemsToAttest || []).filter(function (p) {
-                    return !p.is_behavioral;
+                //if in notes page, show all problems
+                //if in approve billable patients page, show ccm or bhi, depending on the modal
+                return self.isNotesPage || !self.patientHasBhi ? problemsToAttest : (problemsToAttest || []).filter(function (p) {
+                    return self.isBhi ? p.is_behavioral : !p.is_behavioral;
                 });
             },
             isNotesPage() {
@@ -139,6 +172,7 @@
                     });
             },
             hideModal() {
+                this.addCondition = false;
                 this.attestedProblems = [];
                 this.error = null;
                 this.$refs['attest-call-conditions-modal'].visible = false;
@@ -155,7 +189,8 @@
                 }
                 App.$emit('call-conditions-attested', {
                     attested_problems: this.attestedProblems,
-                    patient_id: this.pId
+                    patient_id: this.patient_id,
+                    is_bhi: this.isBhi
                 });
             },
             toggleAddCondition() {

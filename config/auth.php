@@ -4,6 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\Customer\Entities\User;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -70,7 +72,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model'  => \CircleLinkHealth\Customer\Entities\User::class,
+            'model'  => User::class,
         ],
 
         // 'users' => [
@@ -80,7 +82,7 @@ return [
     ],
 
     //entrust needs this
-    'model' => \CircleLinkHealth\Customer\Entities\User::class,
+    'model' => User::class,
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords
@@ -106,6 +108,13 @@ return [
             'email'    => 'emails.password',
             'table'    => 'lv_password_resets',
             'expire'   => 60,
+        ],
+        //token for patients, CPM 2081 patient-login
+        'patient_users' => [
+            'provider' => 'users',
+            'email'    => 'emails.password',
+            'table'    => 'lv_password_resets',
+            'expire' => \App\Constants::THIRTY_DAYS_IN_MINUTES,
         ],
     ],
 

@@ -8,13 +8,14 @@ namespace App\Listeners;
 
 use App\Jobs\LogSuccessfulLogoutToDB;
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Http\Request;
+use Illuminate\Queue\InteractsWithQueue;
 
-class LogSuccessfulLogout
+class LogSuccessfulLogout implements ShouldQueue
 {
-    /**
-     * @param Logout $event
-     */
+    use InteractsWithQueue;
+
     public function handle(Logout $event)
     {
         LogSuccessfulLogoutToDB::dispatch($event)->onQueue('low');

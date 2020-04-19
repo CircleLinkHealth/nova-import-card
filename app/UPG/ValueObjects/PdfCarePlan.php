@@ -23,21 +23,26 @@ class PdfCarePlan
         $this->preProcessData();
 
         return [
-            'type'         => 'upg0506-pdf-care-plan',
-            'document'     => $this->fillDocumentSection(),
-            'allergies'    => [],
-            'demographics' => $this->fillDemographicsSection(),
-            'medications'  => [],
-            'payers'       => [
+            'type'                => 'upg0506-pdf-care-plan',
+            'document'            => $this->fillDocumentSection(),
+            'allergies'           => [],
+            'demographics'        => $this->fillDemographicsSection(),
+            'medications'         => [],
+            'payers'              => [
             ],
-            'problems' => $this->fillProblemsSection(),
-            'vitals'   => [],
+            'problems'            => $this->fillProblemsSection(),
+            'vitals'              => [],
             //add problems with instructions array. Template ['name' => problem name, 'value' => instruction]
             'instructions'        => $this->data['problems'],
             'chargeable_services' => $this->data['chargeable_services'],
-            'is_g0506'            => Illuminate\Support\Str::contains(collect($this->data['chargeable_services'])->transform(function ($cs) {
-                return isset($cs['subject']) ? $cs['subject'] : '';
-            })->filter()->implode(' '), 'G0506') ? 'true' : 'false',
+            'is_g0506'            => str_contains(collect($this->data['chargeable_services'])->transform(function ($cs
+            ) {
+                return isset($cs['subject'])
+                    ? $cs['subject']
+                    : '';
+            })->filter()->implode(' '), 'G0506')
+                ? 'true'
+                : 'false',
         ];
     }
 
@@ -49,84 +54,84 @@ class PdfCarePlan
     private function fillDemographicsSection()
     {
         return [
-            'ids' => [
-                'mrn_number' => $this->data['patient_id'],
+            'ids'              => [
+                'mrn_number' => $this->data['patient_id'] ?? '',
             ],
-            'name' => [
+            'name'             => [
                 'prefix' => null,
                 'given'  => [
-                    $this->data['first_name'],
+                    $this->data['first_name'] ?? '',
                 ],
-                'family' => $this->data['last_name'],
+                'family' => $this->data['last_name'] ?? '',
                 'suffix' => null,
             ],
-            'dob'            => $this->data['date_of_birth'],
-            'gender'         => $this->data['gender'],
-            'mrn_number'     => $this->data['patient_id'],
-            'marital_status' => '',
-            'address'        => [
-                'street' => [
-                    $this->data['address'],
+            'dob'              => $this->data['date_of_birth'],
+            'gender'           => $this->data['gender'],
+            'mrn_number'       => $this->data['patient_id'],
+            'marital_status'   => '',
+            'address'          => [
+                'street'  => [
+                    $this->data['address'] ?? '',
                 ],
                 'city'    => '',
                 'state'   => '',
                 'zip'     => '',
                 'country' => '',
             ],
-            'phones' => [
+            'phones'           => [
                 0 => [
                     'type'   => 'home',
                     'number' => $this->data['phones']['home_phone'] ?? '',
                 ],
                 1 => [
                     'type'   => 'primary_phone',
-                    'number' => $this->data['phones']['primary_phone'] ?: (collect($this->data['phones'])->filter()->first() ?: ''),
+                    'number' => $this->data['phones']['primary_phone'] ?? collect($this->data['phones'])->filter()->first() ?? '',
                 ],
                 2 => [
                     'type'   => 'mobile',
                     'number' => $this->data['phones']['cell_phone'] ?? '',
                 ],
             ],
-            'email'      => null,
-            'language'   => null,
-            'race'       => null,
-            'ethnicity'  => null,
-            'religion'   => null,
-            'birthplace' => [
+            'email'            => null,
+            'language'         => null,
+            'race'             => null,
+            'ethnicity'        => null,
+            'religion'         => null,
+            'birthplace'       => [
                 'state'   => null,
                 'zip'     => null,
                 'country' => null,
             ],
-            'guardian' => [
-                'name' => [
-                    'given' => [
+            'guardian'         => [
+                'name'              => [
+                    'given'  => [
                     ],
                     'family' => null,
                 ],
                 'relationship'      => null,
                 'relationship_code' => null,
                 'address'           => [
-                    'street' => [
+                    'street'  => [
                     ],
                     'city'    => null,
                     'state'   => null,
                     'zip'     => null,
                     'country' => null,
                 ],
-                'phone' => [
+                'phone'             => [
                     'home' => null,
                 ],
             ],
             'patient_contacts' => [
             ],
-            'provider' => [
-                'ids' => [
+            'provider'         => [
+                'ids'          => [
                 ],
                 'organization' => null,
                 'phones'       => [
                 ],
-                'address' => [
-                    'street' => [
+                'address'      => [
+                    'street'  => [
                     ],
                     'city'    => null,
                     'state'   => null,
@@ -140,21 +145,21 @@ class PdfCarePlan
     private function fillDocumentSection()
     {
         return [
-            'custodian' => [
-                'name' => isset($this->data['provider']['full_name']) ? $this->data['provider']['full_name'] : '',
+            'custodian'           => [
+                'name' => $this->data['provider']['full_name'] ?? '',
             ],
-            'date'   => '',
-            'title'  => '',
-            'author' => [
-                'npi'  => '',
-                'name' => [
+            'date'                => '',
+            'title'               => '',
+            'author'              => [
+                'npi'     => '',
+                'name'    => [
                     'prefix' => null,
                     'given'  => [],
                     'family' => null,
                     'suffix' => null,
                 ],
                 'address' => [
-                    'street' => [
+                    'street'  => [
                         0 => '',
                     ],
                     'city'    => '',
@@ -162,32 +167,32 @@ class PdfCarePlan
                     'zip'     => '',
                     'country' => '',
                 ],
-                'phones' => [
+                'phones'  => [
                     0 => [
                         'type'   => '',
                         'number' => '',
                     ],
                 ],
             ],
-            'documentation_of' => [
+            'documentation_of'    => [
                 0 => [
                     'provider_id' => null,
                     'name'        => [
                         'prefix' => null,
                         'given'  => [
-                            0 => isset($this->data['provider']['full_name']) ? $this->data['provider']['full_name'] : '',
+                            0 => $this->data['provider']['full_name'] ?? '',
                         ],
                         'family' => '',
                         'suffix' => '',
                     ],
-                    'phones' => [
+                    'phones'      => [
                         0 => [
                             'type'   => '',
                             'number' => '',
                         ],
                     ],
-                    'address' => [
-                        'street' => [
+                    'address'     => [
+                        'street'  => [
                             0 => '',
                         ],
                         'city'    => '',
@@ -198,9 +203,9 @@ class PdfCarePlan
                 ],
             ],
             'legal_authenticator' => [
-                'date'            => null,
-                'ids'             => [],
-                'assigned_person' => [
+                'date'                    => null,
+                'ids'                     => [],
+                'assigned_person'         => [
                     'prefix' => null,
                     'given'  => [],
                     'family' => null,
@@ -219,9 +224,9 @@ class PdfCarePlan
                     ],
                 ],
             ],
-            'location' => [
-                'name'    => null,
-                'address' => [
+            'location'            => [
+                'name'           => null,
+                'address'        => [
                     'street'  => [],
                     'city'    => null,
                     'state'   => null,
@@ -242,9 +247,9 @@ class PdfCarePlan
                 }
 
                 return [
-                    'reference'       => null,
-                    'reference_title' => null,
-                    'date_range'      => [
+                    'reference'        => null,
+                    'reference_title'  => null,
+                    'date_range'       => [
                         'start' => null,
                         'end'   => null,
                     ],
@@ -262,7 +267,7 @@ class PdfCarePlan
                             'code_system_name' => null,
                         ],
                     ],
-                    'comment' => null,
+                    'comment'          => null,
                 ];
             })
             ->filter()
@@ -291,8 +296,10 @@ class PdfCarePlan
                         $currentChargeableService = [];
                     }
 
-                    if (Illuminate\Support\Str::contains(collect($chargeableServices)->transform(function ($cs) {
-                        return isset($cs['provider']) ? $cs['provider'] : 'N/A';
+                    if (str_contains(collect($chargeableServices)->transform(function ($cs) {
+                        return isset($cs['provider'])
+                            ? $cs['provider']
+                            : 'N/A';
                     })->implode(' '), explode(' ', $string))) {
                         $this->providers['primary'] = $string;
                         continue;
@@ -306,7 +313,7 @@ class PdfCarePlan
                         $value = trim($array[1]);
 
                         if ('subject' == $key) {
-                            $currentChargeableService['is_g0506'] = Illuminate\Support\Str::contains(strtolower($value), 'g0506');
+                            $currentChargeableService['is_g0506'] = str_contains(strtolower($value), 'g0506');
                         }
 
                         $currentChargeableService[$key] = $value;
@@ -349,7 +356,7 @@ class PdfCarePlan
                 foreach ($types as $type) {
                     if ( ! isset($phones[$type['key']]) || empty($phones[$type['key']])) {
                         $phones[$type['key']] = null;
-                        if (Illuminate\Support\Str::contains($string, $type['search'])) {
+                        if (str_contains($string, $type['search'])) {
                             $phones[$type['key']] = trim(str_replace($type['search'], ' ', $string));
                         }
                     }
@@ -413,10 +420,10 @@ class PdfCarePlan
                         ? $primaryProvider[2]
                         : null;
 
-                    $fullName = $provider['first_name'].' '.$provider['last_name'];
+                    $fullName = $provider['first_name'] . ' ' . $provider['last_name'];
 
                     $provider['full_name'] = $provider['suffix']
-                        ? $fullName.' '.$provider['suffix']
+                        ? $fullName . ' ' . $provider['suffix']
                         : $fullName;
                 }
             }
@@ -431,27 +438,15 @@ class PdfCarePlan
     private function preProcessData()
     {
         $this->data = [
-            'first_name' => isset($this->data['first_name'])
-                ? $this->data['first_name']
-                : 'N/A',
-            'last_name' => isset($this->data['last_name'])
-                ? $this->data['last_name']
-                : 'N/A',
+            'first_name'          => $this->data['first_name'] ?? 'N/A',
+            'last_name'           => $this->data['last_name'] ?? 'N/A',
             //throw exception if mrn does not exist?
-            'patient_id' => isset($this->data['mrn'])
-                ? $this->data['mrn']
-                : 'N/A',
-            'date_of_birth' => isset($this->data['dob'])
-                ? $this->data['dob']
-                : 'N/A',
-            'gender' => isset($this->data['sex'])
-                ? $this->data['sex']
-                : 'N/A',
-            'visit_date' => isset($this->data['visit_date'])
-                ? $this->data['visit_date']
-                : 'N/A',
-            'address' => $this->getAddresses(),
-            'phones'  => $this->getPhones(),
+            'patient_id'          => $this->data['mrn'] ?? 'N/A',
+            'date_of_birth'       => $this->data['dob'] ?? 'N/A',
+            'gender'              => $this->data['sex'] ?? 'N/A',
+            'visit_date'          => $this->data['visit_date'] ?? 'N/A',
+            'address'             => $this->getAddresses(),
+            'phones'              => $this->getPhones(),
             //with instructions
             'problems'            => $this->getProblemsWithInstructions(),
             'chargeable_services' => $this->getChargeableServices(),

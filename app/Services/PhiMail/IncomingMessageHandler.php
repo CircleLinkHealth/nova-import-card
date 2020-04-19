@@ -25,11 +25,13 @@ class IncomingMessageHandler
     {
         return DirectMailMessage::create(
             [
+                'direction'       => DirectMailMessage::DIRECTION_RECEIVED,
                 'message_id'      => $message->messageId,
                 'from'            => $message->sender,
                 'to'              => $message->recipient,
                 'body'            => $message->info,
                 'num_attachments' => $message->numAttachments,
+                'status'          => $message->statusCode ?? DirectMailMessage::STATUS_SUCCESS,
             ]
         );
     }
@@ -39,7 +41,7 @@ class IncomingMessageHandler
      */
     public function handleMessageAttachment(DirectMailMessage $dm, ShowResult $showRes)
     {
-        return IncomingMessageHandlerFactory::create($dm, $showRes);
+        return IncomingMessageHandlerFactory::create($dm, $showRes)->handle();
     }
 
     /**

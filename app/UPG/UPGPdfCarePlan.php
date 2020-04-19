@@ -50,7 +50,9 @@ class UPGPdfCarePlan
     {
         return [
             [
-                'search'   => 'First Name:',
+                'search' => [
+                    'First Name:',
+                ],
                 'key'      => 'first_name',
                 'callback' => function ($string) {
                     if ( ! empty($string)) {
@@ -59,7 +61,9 @@ class UPGPdfCarePlan
                 },
             ],
             [
-                'search'   => 'Last Name:',
+                'search' => [
+                    'Last Name:',
+                ],
                 'key'      => 'last_name',
                 'callback' => function ($string) {
                     if ( ! empty($string)) {
@@ -68,7 +72,9 @@ class UPGPdfCarePlan
                 },
             ],
             [
-                'search'   => 'Visit Date:',
+                'search' => [
+                    'Visit Date:',
+                ],
                 'key'      => 'visit_date',
                 'callback' => function ($string) {
                     if ( ! empty($string)) {
@@ -77,7 +83,9 @@ class UPGPdfCarePlan
                 },
             ],
             [
-                'search'   => 'Medical Record #:',
+                'search' => [
+                    'Medical Record #:',
+                ],
                 'key'      => 'mrn',
                 'callback' => function ($string) {
                     if ( ! empty($string)) {
@@ -86,11 +94,15 @@ class UPGPdfCarePlan
                 },
             ],
             [
-                'search' => 'Address:',
-                'key'    => 'address',
+                'search' => [
+                    'Address:',
+                ],
+                'key' => 'address',
             ],
             [
-                'search'   => 'Date of Birth:',
+                'search' => [
+                    'Date of Birth:',
+                ],
                 'key'      => 'dob',
                 'callback' => function ($string) {
                     if ( ! empty($string)) {
@@ -99,7 +111,9 @@ class UPGPdfCarePlan
                 },
             ],
             [
-                'search'   => 'Sex:',
+                'search' => [
+                    'Sex:',
+                ],
                 'key'      => 'sex',
                 'callback' => function ($string) {
                     if ( ! empty($string)) {
@@ -108,19 +122,26 @@ class UPGPdfCarePlan
                 },
             ],
             [
-                'search' => 'Phones:',
-                'key'    => 'phones',
+                'search' => [
+                    'Phones:',
+                ],
+                'key' => 'phones',
             ],
             [
-                'search' => 'Dx:',
-                'key'    => 'problems',
+                'search' => [
+                    'Dx:',
+                ],
+                'key' => 'problems',
             ],
             [
-                'search'   => 'Active Problems:',
+                'search' => [
+                    'Active Problems:',
+                    'Plan:',
+                ],
                 'key'      => 'instructions',
                 'callback' => function ($string) {
                     //Usually actual instructions exist below a string containing recommendations and/or care plan, and the name of the condition is above that
-                    if (Illuminate\Support\Str::contains(strtolower($string), 'recommendations:') || Illuminate\Support\Str::contains(strtolower($string), 'care plan')) {
+                    if (str_contains(strtolower($string), 'recommendations:') || str_contains(strtolower($string), 'care plan')) {
                         $this->carePlan['instructions'][] = ['problem_name' => $this->array[$this->count - 1]];
 
                         return;
@@ -139,8 +160,10 @@ class UPGPdfCarePlan
                 },
             ],
             [
-                'search' => 'Services Ordered:',
-                'key'    => 'chargeable_services',
+                'search' => [
+                    'Services Ordered:',
+                ],
+                'key' => 'chargeable_services',
             ],
         ];
     }
@@ -184,13 +207,15 @@ class UPGPdfCarePlan
         while ($this->count < count($this->array)) {
             $checkpoint = $this->checkpoints[$this->currentCheckpoint];
 
-            $search = $checkpoint['search'];
+            $searches = $checkpoint['search'];
 
             $string = $this->array[$this->count];
 
             //if the search term exists in the string remove it. If nothing is left after that, get next string
-            if (Illuminate\Support\Str::contains($string, $search)) {
-                $string = trim(str_replace($search, ' ', $string));
+            foreach ($searches as $search) {
+                if (str_contains($string, $search)) {
+                    $string = trim(str_replace($search, ' ', $string));
+                }
             }
 
             //perform callback if it exists in the section, else just store the string
@@ -205,8 +230,10 @@ class UPGPdfCarePlan
             //check next string, to see if we have reached the next checkpoint
             $nextCheckpoint = $this->currentCheckpoint + 1;
             if (isset($this->array[$this->count + 1], $this->checkpoints[$nextCheckpoint])) {
-                if (Illuminate\Support\Str::contains($this->array[$this->count + 1], $this->checkpoints[$nextCheckpoint]['search'])) {
-                    $this->currentCheckpoint = $nextCheckpoint;
+                foreach ($this->checkpoints[$nextCheckpoint]['search'] as $search) {
+                    if (str_contains($this->array[$this->count + 1], $search)) {
+                        $this->currentCheckpoint = $nextCheckpoint;
+                    }
                 }
             }
 

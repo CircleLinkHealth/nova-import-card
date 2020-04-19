@@ -252,7 +252,7 @@ function formatTime($time)
                                                 }
 
                                                 $route = route(
-                                                    'patient.careplan.print',
+                                                    'patient.note.index',
                                                     ['patient' => $call->patient_id]
                                                 );
 
@@ -401,8 +401,8 @@ function formatTime($time)
     @if (count($calls) > 0)
         @foreach($calls as $call)
             <?php
-            $route      = route('patient.careplan.print', ['patient' => $call->patient_id]);
-            $buttonName = 'Continue to care plan';
+            $route      = route('patient.note.index', ['patient' => $call->patient_id]);
+            $buttonName = 'Continue to notes';
 
             if ('addendum_response' === $call->type) {
                 $route      = route('redirect.readonly.activity', ['callId' => $call->id]);

@@ -8,21 +8,21 @@ namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Jobs\ImportCcda;
-use App\Listeners\UPG0506CcdaImporterListener;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
+use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\Request;
-use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
+use Illuminate\Support\Facades\Artisan;
 
 class ImporterController extends Controller
 {
     private $repo;
-
+    
     public function __construct(CCDImporterRepository $repo)
     {
         $this->repo = $repo;
     }
-
+    
     /**
      * Show the form to upload CCDs.
      *
@@ -32,169 +32,195 @@ class ImporterController extends Controller
     {
         return view('saas.importer.create');
     }
-
+    
     public function getImportedRecords()
     {
-        return ImportedMedicalRecord::whereNull('patient_id')
-            ->with('demographics')
-            ->with('practice')
-            ->with('location')
-            ->with('billingProvider')
-            ->get()
-            //where not in UPG + G0506
-            //where media. where id = upg, custom_properties->mrn = imr.mrn, finished_processing()
-            ->transform(function (ImportedMedicalRecord $summary) {
-                $mr = $summary->medicalRecord();
-
-                if ( ! $mr) {
-                    return false;
+        return Ccda::where(function ($q){
+            $q->whereHas('patient.carePlan', function ($q) {
+                $q->whereNull('status')->orWhere('status', CarePlan::DRAFT)->orWhere('status', '');
+            });
+        })->whereNotNull('json')->where('status', Ccda::QA)
+                                    ->with(
+                                        [
+                                            'patient.billingProvider.user' => function ($q) {
+                                                $q->select(
+                                                    [
+                                                        'users.id',
+                                                        'saas_account_id',
+                                                        'program_id',
+                                                        'display_name',
+                                                        'first_name',
+                                                        'last_name',
+                                                        'suffix',
+                                                    ]
+                                                );
+                                            },
+                                            'patient.patientNurseAsPatient.permanentNurse'       => function ($q) {
+                                                $q->select(
+                                                    [
+                                                        'users.id',
+                                                        'saas_account_id',
+                                                        'program_id',
+                                                        'display_name',
+                                                        'first_name',
+                                                        'last_name',
+                                                        'suffix',
+                                                    ]
+                                                );
+                                            },
+                                            'patient.locations'        => function ($q) {
+                                                $q->select(
+                                                    [
+                                                        'locations.id',
+                                                        'practice_id',
+                                                        'is_primary',
+                                                        'name',
+                                                    ]
+                                                );
+                                            },
+                                            'patient.patientInfo',
+                                            'patient.primaryPractice',
+                                        ]
+                                    )
+                                    ->where(function ($q) {
+                                        $q->whereIn('practice_id', auth()->user()->viewableProgramIds())
+                                            ->when(auth()->user()->isAdmin(), function ($q) {
+                                                $q->orWhereNull('practice_id');
+                                            });
+                                    })
+                                    ->get()
+                                    ->transform(
+                function (Ccda $ccda) {
+                    if (upg0506IsEnabled()) {
+                        $isUpg0506Incomplete = false;
+                        
+                            $isUpg0506Incomplete = Ccda::whereHas(
+                                'media',
+                                function ($q) {
+                                    $q->where('custom_properties->is_upg0506_complete', '!=', 'true');
+                                }
+                            )->whereHas(
+                                'directMessage',
+                                function ($q) {
+                                    $q->where('from', 'like', '%@upg.ssdirect.aprima.com');
+                                }
+                            )->where('id', $ccda->id)->exists();
+                        
+                        if ($isUpg0506Incomplete) {
+                            return false;
+                        }
+                    }
+                    
+                    $ccda->checkDuplicity();
+                    
+                    return [
+                        'display_name' => $ccda->patientFirstName().' '.$ccda->patientLastName(),
+                        'dob' => $ccda->patientDob(),
+                        'mrn' => $ccda->patientMrn(),
+                        'id' => $ccda->id,
+                        'patient' => $ccda->patient,
+                        'practice' => $ccda->practice,
+                        'location' => $ccda->location,
+                        'billing_provider_id' => $ccda->billing_provider_id,
+                        'validation_checks' => $ccda->validation_checks,
+                        'duplicate_id' => $ccda->duplicate_id,
+                        'practice_id' => $ccda->practice_id,
+                        'location_id' => $ccda->location_id,
+                        'patient_id' => $ccda->patient_id,
+                        'flag' => (! ($ccda->billing_provider_id && $ccda->practice_id && $ccda->location_id)) || $ccda->duplicate_id,
+                        'nurse_user' => $ccda->patient->patientNurseAsPatient->permanentNurse ?? null
+                    ];
                 }
-
-                if (upg0506IsEnabled()) {
-                    $isUpg0506Incomplete = false;
-
-                    if ($mr instanceof Ccda) {
-                        $isUpg0506Incomplete = Ccda::whereHas('media', function ($q) {
-                            $q->where('custom_properties->is_upg0506_complete', '!=', 'true');
-                        })->whereHas('directMessage', function ($q) {
-                            $q->where('from', 'like', '%@upg.ssdirect.aprima.com');
-                        })->where('id', $mr->id)->exists();
-                    }
-
-                    if ($isUpg0506Incomplete) {
-                        return false;
-                    }
-                }
-
-                if ( ! $summary->billing_provider_id) {
-                    $mr = $mr->guessPracticeLocationProvider();
-
-                    $summary->billing_provider_id = $mr->getBillingProviderId();
-
-                    if ( ! $summary->location_id) {
-                        $summary->location_id = $mr->getLocationId();
-                    }
-
-                    if ( ! $summary->practice_id) {
-                        $summary->practice_id = $mr->getPracticeId();
-                    }
-
-                    if ($summary->isDirty()) {
-                        $summary->save();
-                    }
-                }
-
-                $providers = $mr->providers()->where([
-                    ['first_name', '!=', null],
-                    ['last_name', '!=', null],
-                    ['ml_ignore', '=', false],
-                ])->get()->unique(function ($m) {
-                    return $m->first_name.$m->last_name;
-                });
-
-                $summary['flag'] = false;
-
-                if ($providers->count() > 1 || ! $mr->location_id || ! $mr->location_id || ! $mr->billing_provider_id) {
-                    $summary['flag'] = true;
-                }
-
-                $summary->checkDuplicity();
-
-                return $summary;
-            })->filter()
-            ->values();
+            )->filter()->unique('patient_id')
+                                    ->values();
     }
-
+    
     public function handleCcdFilesUpload(Request $request)
     {
+        ini_set('upload_max_filesize', '50M');
+        ini_set('post_max_size', '50M');
+        ini_set('max_input_time', 300);
+        ini_set('max_execution_time', 300);
+        
         if ( ! $request->hasFile('file')) {
             return response()->json('No file found', 400);
         }
-
+        
         //example: http://cpm.clh.test/ccd-importer?source=importer_awv
         $source = $this->getSource($request);
-
+        
+        $ccdas = [];
         foreach ($request->file('file') as $file) {
-            \Log::channel('logdna')->warning("reading file $file");
-
+            \Log::warning("reading file $file");
+            
             $xml = file_get_contents($file);
-
-            $ccda = Ccda::create([
-                'user_id' => auth()->user()->id,
-                'xml'     => $xml,
-                'source'  => $source ?? Ccda::IMPORTER,
-            ]);
-
+            
+            \Log::info("finished reading file $file");
+            
+            $ccda = Ccda::create(
+                [
+                    'user_id' => auth()->user()->id,
+                    'xml'     => $xml,
+                    'source'  => $source ?? Ccda::IMPORTER,
+                ]
+            );
+            
             ImportCcda::dispatch($ccda, true);
+            $ccdas[] = $ccda->id;
         }
+        
+        return $ccdas;
     }
-
-    /**
-     * Show all QASummaries that are related to a CCDA.
-     */
-    public function index()
-    {
-        //get rid of orphans
-        $delete = ImportedMedicalRecord::whereNull('medical_record_id')->delete();
-
-        $importedRecords = $this::getImportedRecords();
-
-        JavaScript::put([
-            'importedMedicalRecords' => $importedRecords,
-        ]);
-
-        return view('CCDUploader.uploadedSummary');
-    }
-
+    
     public function records()
     {
         return $this::getImportedRecords();
     }
-
+    
     /**
      * Show the form to upload CCDs.
      *
      * @return \Illuminate\View\View
      */
-    public function remix()
+    public function remix(Request $request)
     {
-        return view('CCDUploader.uploader-remix');
+        return view('CCDUploader.uploader-remix')->with('shouldUseNewVersion', true);
     }
-
+    
     /**
      * Receives XML files, saves them in DB, and returns them JSON Encoded.
      *
+     * @return string
      * @throws \Exception
      *
-     * @return string
      */
     public function uploadRawFiles(Request $request)
     {
         $this::handleCcdFilesUpload($request);
-
+        
         return redirect()->route('view.files.ready.to.import');
     }
-
+    
     /**
      * Route: /api/ccd-importer/import-medical-records.
      *
      * Receives XML and XLSX files, saves them in DB, and returns them JSON Encoded
      *
+     * @return string
      * @throws \Exception
      *
-     * @return string
      */
     public function uploadRecords(Request $request)
     {
-        $this::handleCcdFilesUpload($request);
-
+        $ccdas = $this::handleCcdFilesUpload($request);
+        
         if ( ! $request->has('json')) {
             return redirect()->route('import.ccd.remix');
         }
-
-        return response()->json([]);
+        
+        return response()->json(['ccdas' => $ccdas]);
     }
-
+    
     /**
      * The source of the importer can be submitted through
      * the url. In this case we are checking if available through
@@ -208,19 +234,100 @@ class ImporterController extends Controller
         if ($request->has('source')) {
             return $request->input('source');
         }
-
+        
         if (empty($_SERVER['HTTP_REFERER'])) {
             return null;
         }
-
+        
         $url   = $_SERVER['HTTP_REFERER'];
         $parts = parse_url($url);
         if (empty($parts['query'])) {
             return null;
         }
-
+        
         parse_str($parts['query'], $query);
-
+        
         return $query['source'] ?? null;
+    }
+    
+    public function deleteRecords(Request $request)
+    {
+        $recordsToDelete = explode(',', $request->input('records'));
+        $recordsNotFound = [];
+        
+        foreach ($recordsToDelete as $id) {
+            if (empty($id)) {
+                continue;
+            }
+            
+            $ccda = Ccda::find($id);
+            
+            if ($ccda) {
+                $ccda->delete();
+            } else {
+                array_push($recordsNotFound, $id);
+                array_splice($recordsToDelete, array_search($id, $recordsToDelete));
+            }
+        }
+        
+        return response()->json(['deleted' => $recordsToDelete, 'not_found' => $recordsNotFound], 200);
+    }
+    
+    public function import(Request $request)
+    {
+        $recordsToImport = $request->all();
+        
+        if (is_array($recordsToImport)) {
+            $importedRecords = [];
+            foreach ($recordsToImport as $record) {
+                if ($record) {
+                    $id  = $record['id'];
+                    $ccda = Ccda::find($id);
+                    if (empty($ccda)) {
+                        continue;
+                    }
+                    
+                    $ccda['location_id']         = $record['location_id'];
+                    $ccda['practice_id']         = $record['practice_id'];
+                    $ccda['billing_provider_id'] = $record['billing_provider_id'];
+                    $ccda['nurse_user_id']       = $record['nurse_user_id'] ?? null;
+                    $carePlan                   = $ccda->updateOrCreateCarePlan();
+                    array_push(
+                        $importedRecords,
+                        [
+                            'id'        => $id,
+                            'completed' => true,
+                            'patient'   => $carePlan->patient()->first(),
+                        ]
+                    );
+                    $ccda->imported = true;
+                    $ccda->save();
+                }
+            }
+            
+            return response()->json($importedRecords, 200);
+        }
+        
+        return response()->json(
+            [
+                'message' => 'no records provided',
+            ],
+            400
+        );
+    }
+    
+    public function reImportPatient(Request $request, $userId)
+    {
+        $args = [
+            'patientUserId'   => $userId,
+            'initiatorUserId' => auth()->id(),
+        ];
+        
+        Artisan::queue(
+            ReimportPatientMedicalRecord::class,
+            $args
+        );
+        
+        return redirect()->back();
     }
 }

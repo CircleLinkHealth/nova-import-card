@@ -7,7 +7,7 @@
 
     <title>CCD Importer</title>
 
-    <link rel="stylesheet" href="{{ mix('/compiled/css/stylesheet.css') }}"/>
+
     <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.blue-green.min.css" />
     <!-- Material Design icon font -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">

@@ -12,6 +12,7 @@ use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
+use App\Relationships\PatientCareplanRelations;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanService;
 use App\Services\PatientService;
@@ -162,10 +163,10 @@ class PatientCareplanController extends Controller
             $letter = true;
         }
 
-        $users = explode(',', $request['users']);
+        $userIds = explode(',', $request['users']);
 
         if ($request->input('final')) {
-            foreach ($users as $userId) {
+            foreach ($userIds as $userId) {
                 $careplanService->repo()->approve($userId, auth()->user()->id);
                 $patientService->setStatus($userId, Patient::ENROLLED);
             }
@@ -176,21 +177,13 @@ class PatientCareplanController extends Controller
 
         $fileNameWithPathBlankPage = $this->pdfService->blankPage();
 
+        $users = User::with(PatientCareplanRelations::get())->has('patientInfo')->has('billingProvider.user')->findMany($userIds);
+
         // create pdf for each user
         $p = 1;
-        foreach ($users as $user_id) {
-            $user = User::with(['careTeamMembers', 'carePlan.pdfs', 'primaryPractice'])->find($user_id);
-
-            if ( ! $user) {
-                return response()->json("User with id: {$user->id} not found.");
-            }
-
-            if ( ! $user->billingProviderUser()) {
-                return response()->json("User with id: {$user->id}, does not have a billing provider");
-            }
-
+        foreach ($users as $user) {
             $careplan = $this->formatter->formatDataForViewPrintCareplanReport($user);
-            $careplan = $careplan[$user_id];
+            $careplan = $careplan[$user->id];
             if (empty($careplan)) {
                 return false;
             }
@@ -202,13 +195,13 @@ class PatientCareplanController extends Controller
                 return view(
                     'wpUsers.patient.multiview',
                     [
-                        'careplans'                    => [$user_id => $careplan],
+                        'careplans'                    => [$user->id => $careplan],
                         'isPdf'                        => true,
                         'letter'                       => $letter,
                         'problemNames'                 => $careplan['problem'],
                         'careTeam'                     => $user->careTeamMembers,
                         'shouldShowMedicareDisclaimer' => $shouldShowMedicareDisclaimer,
-                        'data'                         => $careplanService->careplan($user_id),
+                        'data'                         => $careplanService->careplan($user->id),
                     ]
                 );
             }
@@ -221,12 +214,12 @@ class PatientCareplanController extends Controller
             $fileNameWithPath = $this->pdfService->createPdfFromView(
                 'wpUsers.patient.multiview',
                 [
-                    'careplans'                    => [$user_id => $careplan],
+                    'careplans'                    => [$user->id => $careplan],
                     'isPdf'                        => true,
                     'letter'                       => $letter,
                     'problemNames'                 => $careplan['problem'],
                     'careTeam'                     => $user->careTeamMembers,
-                    'data'                         => $careplanService->careplan($user_id),
+                    'data'                         => $careplanService->careplan($user->id),
                     'shouldShowMedicareDisclaimer' => $shouldShowMedicareDisclaimer,
                     'pdfCareplan'                  => $pdfCareplan,
                 ],
@@ -379,59 +372,7 @@ class PatientCareplanController extends Controller
         $patientWithdrawnReason = $patient->getWithdrawnReason();
 
         // States (for dropdown)
-        $states = [
-            'AL' => 'Alabama',
-            'AK' => 'Alaska',
-            'AZ' => 'Arizona',
-            'AR' => 'Arkansas',
-            'CA' => 'California',
-            'CO' => 'Colorado',
-            'CT' => 'Connecticut',
-            'DE' => 'Delaware',
-            'DC' => 'District Of Columbia',
-            'FL' => 'Florida',
-            'GA' => 'Georgia',
-            'HI' => 'Hawaii',
-            'ID' => 'Idaho',
-            'IL' => 'Illinois',
-            'IN' => 'Indiana',
-            'IA' => 'Iowa',
-            'KS' => 'Kansas',
-            'KY' => 'Kentucky',
-            'LA' => 'Louisiana',
-            'ME' => 'Maine',
-            'MD' => 'Maryland',
-            'MA' => 'Massachusetts',
-            'MI' => 'Michigan',
-            'MN' => 'Minnesota',
-            'MS' => 'Mississippi',
-            'MO' => 'Missouri',
-            'MT' => 'Montana',
-            'NE' => 'Nebraska',
-            'NV' => 'Nevada',
-            'NH' => 'New Hampshire',
-            'NJ' => 'New Jersey',
-            'NM' => 'New Mexico',
-            'NY' => 'New York',
-            'NC' => 'North Carolina',
-            'ND' => 'North Dakota',
-            'OH' => 'Ohio',
-            'OK' => 'Oklahoma',
-            'OR' => 'Oregon',
-            'PA' => 'Pennsylvania',
-            'RI' => 'Rhode Island',
-            'SC' => 'South Carolina',
-            'SD' => 'South Dakota',
-            'TN' => 'Tennessee',
-            'TX' => 'Texas',
-            'UT' => 'Utah',
-            'VT' => 'Vermont',
-            'VA' => 'Virginia',
-            'WA' => 'Washington',
-            'WV' => 'West Virginia',
-            'WI' => 'Wisconsin',
-            'WY' => 'Wyoming',
-        ];
+        $states = usStatesArrayForDropdown();
 
         // timezones for dd
         $timezones_raw = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
@@ -607,7 +548,7 @@ class PatientCareplanController extends Controller
                 'careplan_mode'   => CarePlan::WEB,
             ]
         );
-        $newUser = $userRepo->createNewUser($user, $params);
+        $newUser = $userRepo->createNewUser($params);
 
         if ($request->has('provider_id')) {
             $newUser->setBillingProviderId($request->input('provider_id'));

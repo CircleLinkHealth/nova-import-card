@@ -37,11 +37,13 @@ class StoreAuthyPhoneNumber extends FormRequest
             'phone_number' => [
                 'required',
                 Rule::phone()->country(['US', 'CY', 'FR']),
-                Rule::unique((new AuthyUser())->getTable(), 'phone_number'),
+                //is this necessary?
+                //Rule::unique((new AuthyUser())->getTable(), 'phone_number'),
             ],
             'method' => [
-                'required',
-                Rule::in(['app', 'sms', 'phone']),
+                //need to register authy user before generating a qr code, so this might not be always supplied
+                'sometimes',
+                Rule::in(['app', 'sms', 'phone', 'qr_code']),
             ],
             'is_2fa_enabled' => 'boolean',
         ];

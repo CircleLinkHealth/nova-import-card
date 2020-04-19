@@ -15,8 +15,6 @@ interface Efax
      *
      * https://www.phaxio.com/docs/api/v2.1/faxes/create_and_send_fax
      *
-     * @param string $to
-     *
      * @return mixed
      */
     public function send(

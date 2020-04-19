@@ -59,59 +59,7 @@ class UserController extends Controller
         $wpRole = '';
         
         // States (for dropdown)
-        $states_arr = [
-            'AL' => 'Alabama',
-            'AK' => 'Alaska',
-            'AZ' => 'Arizona',
-            'AR' => 'Arkansas',
-            'CA' => 'California',
-            'CO' => 'Colorado',
-            'CT' => 'Connecticut',
-            'DE' => 'Delaware',
-            'DC' => 'District Of Columbia',
-            'FL' => 'Florida',
-            'GA' => 'Georgia',
-            'HI' => 'Hawaii',
-            'ID' => 'Idaho',
-            'IL' => 'Illinois',
-            'IN' => 'Indiana',
-            'IA' => 'Iowa',
-            'KS' => 'Kansas',
-            'KY' => 'Kentucky',
-            'LA' => 'Louisiana',
-            'ME' => 'Maine',
-            'MD' => 'Maryland',
-            'MA' => 'Massachusetts',
-            'MI' => 'Michigan',
-            'MN' => 'Minnesota',
-            'MS' => 'Mississippi',
-            'MO' => 'Missouri',
-            'MT' => 'Montana',
-            'NE' => 'Nebraska',
-            'NV' => 'Nevada',
-            'NH' => 'New Hampshire',
-            'NJ' => 'New Jersey',
-            'NM' => 'New Mexico',
-            'NY' => 'New York',
-            'NC' => 'North Carolina',
-            'ND' => 'North Dakota',
-            'OH' => 'Ohio',
-            'OK' => 'Oklahoma',
-            'OR' => 'Oregon',
-            'PA' => 'Pennsylvania',
-            'RI' => 'Rhode Island',
-            'SC' => 'South Carolina',
-            'SD' => 'South Dakota',
-            'TN' => 'Tennessee',
-            'TX' => 'Texas',
-            'UT' => 'Utah',
-            'VT' => 'Vermont',
-            'VA' => 'Virginia',
-            'WA' => 'Washington',
-            'WV' => 'West Virginia',
-            'WI' => 'Wisconsin',
-            'WY' => 'Wyoming',
-        ];
+        $states_arr = usStatesArrayForDropdown();
         
         // programs for dd
         $wpBlogs = Practice::orderBy('id', 'desc')->pluck('display_name', 'id')->all();
@@ -300,59 +248,7 @@ class UserController extends Controller
         }
         
         // States (for dropdown)
-        $states_arr = [
-            'AL' => 'Alabama',
-            'AK' => 'Alaska',
-            'AZ' => 'Arizona',
-            'AR' => 'Arkansas',
-            'CA' => 'California',
-            'CO' => 'Colorado',
-            'CT' => 'Connecticut',
-            'DE' => 'Delaware',
-            'DC' => 'District Of Columbia',
-            'FL' => 'Florida',
-            'GA' => 'Georgia',
-            'HI' => 'Hawaii',
-            'ID' => 'Idaho',
-            'IL' => 'Illinois',
-            'IN' => 'Indiana',
-            'IA' => 'Iowa',
-            'KS' => 'Kansas',
-            'KY' => 'Kentucky',
-            'LA' => 'Louisiana',
-            'ME' => 'Maine',
-            'MD' => 'Maryland',
-            'MA' => 'Massachusetts',
-            'MI' => 'Michigan',
-            'MN' => 'Minnesota',
-            'MS' => 'Mississippi',
-            'MO' => 'Missouri',
-            'MT' => 'Montana',
-            'NE' => 'Nebraska',
-            'NV' => 'Nevada',
-            'NH' => 'New Hampshire',
-            'NJ' => 'New Jersey',
-            'NM' => 'New Mexico',
-            'NY' => 'New York',
-            'NC' => 'North Carolina',
-            'ND' => 'North Dakota',
-            'OH' => 'Ohio',
-            'OK' => 'Oklahoma',
-            'OR' => 'Oregon',
-            'PA' => 'Pennsylvania',
-            'RI' => 'Rhode Island',
-            'SC' => 'South Carolina',
-            'SD' => 'South Dakota',
-            'TN' => 'Tennessee',
-            'TX' => 'Texas',
-            'UT' => 'Utah',
-            'VT' => 'Vermont',
-            'VA' => 'Virginia',
-            'WA' => 'Washington',
-            'WV' => 'West Virginia',
-            'WI' => 'Wisconsin',
-            'WY' => 'Wyoming',
-        ];
+        $states_arr = usStatesArrayForDropdown();
         
         // programs for dd
         $wpBlogs = Practice::orderBy('id', 'desc')->pluck('display_name', 'id')->all();
@@ -542,15 +438,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $params = new ParameterBag($request->input());
-        
-        $userRepo = new UserRepository();
-        
-        $wpUser = new User();
-        
-        $this->validate($request, $wpUser->getRules());
-        
-        $wpUser = $userRepo->createNewUser($wpUser, $params);
+        $wpUser = (new UserRepository())->createNewUser(new ParameterBag($request->input()));
         
         if ($request->has('provider_id')) {
             $wpUser->setBillingProviderId($request->input('provider_id'));

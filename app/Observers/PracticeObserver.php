@@ -16,7 +16,7 @@ class PracticeObserver
      */
     public function created(Practice $practice)
     {
-        $updated = User::withTrashed()
+        User::withTrashed()
             ->where('saas_account_id', $practice->saas_account_id)
             ->where('auto_attach_programs', true)
             ->with('roles')

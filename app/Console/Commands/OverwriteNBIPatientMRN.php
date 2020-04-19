@@ -6,9 +6,10 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
-use CircleLinkHealth\Eligibility\Entities\PatientData;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\ReplaceFieldsFromSupplementaryData;
+use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use Illuminate\Console\Command;
 
 class OverwriteNBIPatientMRN extends Command
@@ -36,10 +37,10 @@ class OverwriteNBIPatientMRN extends Command
     {
         $result = Patient::with('user')->whereHas('user', function ($q) {
             $q->ofType('participant')->whereHas('practices', function ($q) {
-                $q->where('practices.name', CarePlanHelper::NBI_PRACTICE_NAME);
+                $q->where('practices.name', ReplaceFieldsFromSupplementaryData::NBI_PRACTICE_NAME);
             });
         })->whereNotIn('mrn_number', function ($q) {
-            $q->select('mrn')->from((new PatientData())->getTable());
+            $q->select('mrn')->from((new SupplementalPatientData())->getTable());
         })->where('created_at', '>', self::CUTOFF_DATE)->get()
             ->map(
                 function ($patientInfo) {
@@ -57,10 +58,11 @@ class OverwriteNBIPatientMRN extends Command
 
     private function lookupAndReplaceMrn(Patient $patientInfo)
     {
-        $dataFromPractice = PatientData::where('first_name', 'like', "{$patientInfo->user->first_name}%")
-            ->where('last_name', $patientInfo->user->last_name)
-            ->where('dob', $patientInfo->birth_date)
-            ->first();
+        $dataFromPractice = SupplementalPatientData::where('first_name', 'like', "{$patientInfo->user->first_name}%")
+                                                   ->where('last_name', $patientInfo->user->last_name)
+                                                   ->where('dob', $patientInfo->birth_date)
+                                                   ->where('practice_id', Practice::whereName(ReplaceFieldsFromSupplementaryData::NBI_PRACTICE_NAME)->value('id'))
+                                                   ->first();
 
         if (optional($dataFromPractice)->mrn) {
             $patientInfo->mrn_number = $dataFromPractice->mrn;

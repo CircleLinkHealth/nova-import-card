@@ -12,21 +12,23 @@ use Illuminate\Queue\SerializesModels;
 class CarePlanWasApproved extends Event
 {
     use SerializesModels;
+    /**
+     * @var User
+     */
+    public $approver;
 
+    /**
+     * @var User
+     */
     public $patient;
-    public $practiceSettings;
 
     /**
      * Create a new event instance.
-     *
-     * @param User $patient
      */
-    public function __construct(User $patient)
+    public function __construct(User $patient, User $approver)
     {
-        $this->patient          = $patient;
-        $this->practiceSettings = $patient
-            ->primaryPractice
-            ->cpmSettings();
+        $this->patient  = $patient;
+        $this->approver = $approver;
     }
 
     /**

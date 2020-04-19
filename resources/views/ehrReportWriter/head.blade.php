@@ -26,7 +26,7 @@
     <![endif]-->
 
     <!-- JQuery -->
-    <link rel="stylesheet" href="{{mix('/css/smoothness-jquery-ui-1.11.4.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css" integrity="sha256-iWTx/iC9IoKaoSKD5+WVFef8ZYNIgQ4AxVpMbBw2hig=" crossorigin="anonymous" />
 
     <!-- http://trentrichardson.com/examples/timepicker/ -->
     <link rel="stylesheet"

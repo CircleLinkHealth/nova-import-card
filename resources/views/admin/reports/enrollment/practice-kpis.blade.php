@@ -21,7 +21,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                            <div class="panel-heading">Practice Enrollment KPIs 
+                            <div class="panel-heading">Practice Enrollment KPIs
                                 <span class="pull-right">
                                     <a class="excel-export" data-href="{{ route('enrollment.practice.stats.excel') }}">Export Excel</a>
                                 </span></div>
@@ -32,7 +32,8 @@
 
                                         <label class="col-md-1 control-label" for="textinput">Start Date</label>
                                         <input class="col-md-2" id="start_date" name="start_date"
-                                               value="{{Carbon\Carbon::now()->startOfMonth()->toDateString()}}" type="date"
+                                               value="{{Carbon\Carbon::now()->startOfMonth()->toDateString()}}"
+                                               type="date"
                                                placeholder="placeholder">
                                         <label class="col-md-1 control-label" for="textinput">End Date</label>
                                         <input class="col-md-2" id="end_date" name="end_date"
@@ -65,6 +66,9 @@
                                             #Hard Declined
                                         </th>
                                         <th>
+                                            #Incomplete +3 Attempts
+                                        </th>
+                                        <th>
                                             Labor Hours
                                         </th>
                                         <th>
@@ -94,7 +98,7 @@
 
                 $(function () {
 
-                    function setExcelExportHref (startDate, endDate) {
+                    function setExcelExportHref(startDate, endDate) {
                         var href = $('.excel-export').attr('data-href') + '?start_date=' + startDate + '&end_date=' + endDate
                         $('.excel-export').attr('href', href)
                         return href
@@ -125,13 +129,13 @@
                             }
                         },
                         columns: [
-
                             {data: 'name', name: 'name', className: "text-center"},
                             {data: 'unique_patients_called', name: 'unique_patients_called'},
                             {data: 'consented', name: 'consented'},
                             {data: 'utc', name: 'utc'},
                             {data: 'soft_declined', name: 'soft_declined'},
                             {data: 'hard_declined', name: 'hard_declined'},
+                            {data: '+3_attempts', name: '+3_attempts'},
                             {data: 'labor_hours', name: 'labor_hours'},
                             {data: 'conversion', name: 'conversion'},
                             {data: 'labor_rate', name: 'labor_rate'},
@@ -142,12 +146,12 @@
                         "aaSorting": [2, 'desc'],
                         "iDisplayLength": 15,
                     });
-                    
+
                     $('#practice_kpis')
-                    .on('error.dt', function (e, settings, techNote, message) {
-                        console.log('An error has been reported by DataTables: ', message);
-                    })
-                    .DataTable();
+                        .on('error.dt', function (e, settings, techNote, message) {
+                            console.log('An error has been reported by DataTables: ', message);
+                        })
+                        .DataTable();
                 });
 
                 $('#start_date').on('change', function () {

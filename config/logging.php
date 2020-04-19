@@ -6,6 +6,8 @@
 
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
+use Zwijn\Monolog\Formatter\LogdnaFormatter;
+use Zwijn\Monolog\Handler\LogdnaHandler;
 
 return [
     /*
@@ -19,7 +21,7 @@ return [
     |
     */
 
-    'default' => env('LOG_CHANNEL', 'stack'),
+    'default' => env('LOG_CHANNEL', env('APP_LOG', 'daily')),
 
     /*
     |--------------------------------------------------------------------------
@@ -39,20 +41,20 @@ return [
     'channels' => [
         'stack' => [
             'driver'            => 'stack',
-            'channels'          => ['sentry', 'stderr'],
+            'channels'          => ['stderr'],
             'ignore_exceptions' => false,
         ],
 
         'single' => [
             'driver' => 'single',
-            'path'   => storage_path('logs/laravel.log'),
-            'level'  => 'debug',
+            'path'   => storage_path('logs/laravel-'.php_sapi_name().'.log'),
+            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
         ],
 
         'daily' => [
             'driver' => 'daily',
-            'path'   => storage_path('logs/laravel.log'),
-            'level'  => 'debug',
+            'path'   => storage_path('logs/laravel-'.php_sapi_name().'.log'),
+            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
             'days'   => 14,
         ],
 
@@ -66,12 +68,24 @@ return [
 
         'papertrail' => [
             'driver'       => 'monolog',
-            'level'        => 'debug',
+            'level'        => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
             'handler'      => SyslogUdpHandler::class,
             'handler_with' => [
                 'host' => env('PAPERTRAIL_URL'),
                 'port' => env('PAPERTRAIL_PORT'),
             ],
+        ],
+
+        'logdna' => [
+            'driver'       => 'monolog',
+            'level'        => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
+            'handler'      => LogdnaHandler::class,
+            'handler_with' => [
+                'ingestion_key' => env('LOG_DNA_INGESTION_KEY'),
+                'hostname'      => env('APP_URL'),
+                'level'         => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
+            ],
+            'formatter' => LogdnaFormatter::class,
         ],
 
         'stderr' => [
@@ -85,12 +99,12 @@ return [
 
         'syslog' => [
             'driver' => 'syslog',
-            'level'  => 'debug',
+            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
         ],
 
         'errorlog' => [
             'driver' => 'errorlog',
-            'level'  => 'debug',
+            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
         ],
 
         'sentry' => [

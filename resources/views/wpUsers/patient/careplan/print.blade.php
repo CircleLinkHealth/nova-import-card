@@ -181,7 +181,7 @@ if (isset($patient) && ! empty($patient)) {
                                                 @endif
                                             </template>
 
-                                            @if ( ($patient->getCarePlanStatus() == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->getCarePlanStatus() == 'draft' && auth()->user()->canQAApproveCarePlans()) )
+                                            @if (optional($patientCarePlan)->shouldShowApprovalButton())
                                                 <form id="form-approve"
                                                       action="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}"
                                                       method="POST" style="display: inline">
@@ -190,12 +190,10 @@ if (isset($patient) && ! empty($patient)) {
                                                             aria-label="..."
                                                             form="form-approve"
                                                             type="submit"
-                                                            role="button">
-                                                        Approve
-                                                    </button>
+                                                            role="button">Approve</button>
                                                 </form>
 
-                                                @if(auth()->user()->isProvider())
+                                                @if(auth()->user()->isProvider() || auth()->user()->isAdmin())
                                                     <form id="form-approve-next" action="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}"
                                                           method="POST" style="display: inline">
                                                         {{ csrf_field() }}

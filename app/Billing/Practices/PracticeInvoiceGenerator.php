@@ -7,8 +7,10 @@
 namespace App\Billing\Practices;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Core\PdfService;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Invoices\ItemizedBillablePatientsReport;
 
 class PracticeInvoiceGenerator
 {
@@ -31,8 +33,8 @@ class PracticeInvoiceGenerator
     /**
      * @param bool $withItemized
      *
-     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
      * @throws \Spatie\MediaLibrary\Exceptions\InvalidConversion
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
      *
      * @return array
      */
@@ -44,15 +46,15 @@ class PracticeInvoiceGenerator
 
         $data = [
             'invoice_url' => $pdfInvoice->getUrl(),
-            'mediaIds'       => [$pdfInvoice->id],
+            'mediaIds'    => [$pdfInvoice->id],
         ];
 
         if ($withItemized) {
             $reportName       = trim($this->practice->name).'-'.$this->month->toDateString().'-patients';
-            $pdfPatientReport = $this->makePatientReportPdf($reportName);
+            $pdfPatientReport = $this->makePatientReportCsv($reportName);
 
             $data['patient_report_url'] = $pdfPatientReport->getUrl();
-            $data['mediaIds'][] = $pdfPatientReport->id;
+            $data['mediaIds'][]         = $pdfPatientReport->id;
         }
 
         $data['practiceId'] = $this->practice->id;
@@ -75,11 +77,34 @@ class PracticeInvoiceGenerator
             ->makeDirectory('download');
 
         $path = storage_path("download/${reportName}.pdf");
-        $pdf  = $pdfService->createPdfFromView('billing.practice.invoice', $this->practice->getInvoiceData($this->month), $path);
+        $pdf  = $pdfService->createPdfFromView(
+            'billing.practice.invoice',
+            $this->practice->getInvoiceData($this->month),
+            $path
+        );
 
         return $this->practice
             ->addMedia($path)
             ->toMediaCollection("invoice_for_{$this->month->toDateString()}");
+    }
+
+    /**
+     * @param $reportName
+     *
+     * @return \Spatie\MediaLibrary\Models\Media
+     */
+    public function makePatientReportCsv($reportName)
+    {
+        return (new FromArray(
+            "${reportName}.csv",
+            (new ItemizedBillablePatientsReport(
+                $this->practice->id,
+                $this->practice->display_name,
+                $this->month
+            ))->toArrayForCsv(),
+            [
+            ]
+        ))->storeAndAttachMediaTo($this->practice, "patient_report_for_{$this->month->toDateString()}");
     }
 
     /**
@@ -98,7 +123,15 @@ class PracticeInvoiceGenerator
 
         $path = storage_path("/download/${reportName}.pdf");
 
-        $pdf = $pdfService->createPdfFromView('billing.practice.itemized', $this->practice->getItemizedPatientData($this->month), $path);
+        $pdf = $pdfService->createPdfFromView(
+            'billing.practice.itemized',
+            (new ItemizedBillablePatientsReport(
+                $this->practice->id,
+                $this->practice->display_name,
+                $this->month
+            ))->toArray(),
+            $path
+        );
 
         return $this->practice
             ->addMedia($path)

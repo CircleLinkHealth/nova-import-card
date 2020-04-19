@@ -49,7 +49,7 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
             return;
         }
 
-        if ( ! $this->ccda->hasUPG0506Media()) {
+        if ( ! Ccda::hasUPG0506Media()->whereId($this->ccda->id)->exists()) {
             return;
         }
 

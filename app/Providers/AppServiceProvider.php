@@ -13,6 +13,7 @@ use App\Services\AWV\DirectPatientDocument;
 use App\Services\AWV\EmailPatientDocument;
 use App\Services\AWV\FaxPatientDocument;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Providers\GoogleDriveServiceProvider;
 use DB;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -27,7 +28,6 @@ use Illuminate\Support\Str;
 use Laravel\Horizon\Horizon;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 use Queue;
-use Tests\Commands\CreateAndSeedTestSuiteDB;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -149,12 +149,6 @@ class AppServiceProvider extends ServiceProvider
 
         if ($this->app->environment('local')) {
             $this->app->register(DevelopmentServiceProvider::class);
-        }
-
-        if ($this->app->environment('testing')) {
-            $this->commands([
-                CreateAndSeedTestSuiteDB::class,
-            ]);
         }
 
         $this->app->bind(

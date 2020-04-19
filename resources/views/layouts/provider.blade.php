@@ -10,7 +10,6 @@
 
     <title>CarePlanManager - @yield('title')</title>
 
-    <link href="{{ mix('/compiled/css/stylesheet.css') }}" rel="stylesheet">
     <link href="{{ mix('/css/patientsearch.css') }}" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/introjs.min.css" integrity="sha256-/oZ7h/Jkj6AfibN/zTWrCoba0L+QhP9Tf/ZSgyZJCnY=" crossorigin="anonymous" />
@@ -24,7 +23,7 @@
     <link href="{{ mix('/img/favicon.png') }}" rel="icon">
 
     @if(!isset($isPdf))
-        <link rel="stylesheet" href="{{mix('/css/smoothness-jquery-ui-1.11.4.css')}}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css" integrity="sha256-iWTx/iC9IoKaoSKD5+WVFef8ZYNIgQ4AxVpMbBw2hig=" crossorigin="anonymous" />
     @endif
 
 <!-- Fonts -->
@@ -37,7 +36,6 @@
               href="//cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
 
         <link rel="stylesheet" href="{{ mix('/webix/codebase/webix.css') }}" type="text/css">
-
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
     @endif
     <style>
@@ -82,6 +80,7 @@
 <script type="text/javascript" src="{{mix('compiled/js/app-provider-ui.js')}}"></script>
 <script type="text/javascript" src="{{ mix('compiled/js/issue-688.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.min.js" integrity="sha256-fOPHmaamqkHPv4QYGxkiSKm7O/3GAJ4554pQXYleoLo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
 
 @stack('scripts')
 
@@ -105,6 +104,7 @@
     @endif
 @endauth
 
+@include('partials.sentry-js')
 </body>
 
 </html>

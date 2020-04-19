@@ -36,7 +36,7 @@ class Factory
      *
      * @return
      */
-    public static function create(DirectMailMessage &$dm, ShowResult $showRes)
+    public static function create(DirectMailMessage &$dm, ShowResult $showRes): IncomingDMMimeHandlerInterface
     {
         $static = new static();
 
@@ -54,22 +54,24 @@ class Factory
         return self::UNKNOWN_MIME_HANDLER_METHOD_NAME;
     }
 
-    private function handlePdfMimeType(DirectMailMessage &$dm, string $attachmentData)
+    private function handlePdfMimeType(DirectMailMessage &$dm, string $attachmentData): IncomingDMMimeHandlerInterface
     {
         return new Pdf($dm, $attachmentData);
     }
 
-    private function handlePlainMimeType(DirectMailMessage &$dm, string $attachmentData)
+    private function handlePlainMimeType(DirectMailMessage &$dm, string $attachmentData): IncomingDMMimeHandlerInterface
     {
         return new Plain($dm, $attachmentData);
     }
 
-    private function handleUnknownMimeType(DirectMailMessage &$dm, string $attachmentData)
-    {
+    private function handleUnknownMimeType(
+        DirectMailMessage &$dm,
+        string $attachmentData
+    ): IncomingDMMimeHandlerInterface {
         return new Unknown($dm, $attachmentData);
     }
 
-    private function handleXmlMimeType(DirectMailMessage &$dm, string $attachmentData)
+    private function handleXmlMimeType(DirectMailMessage &$dm, string $attachmentData): IncomingDMMimeHandlerInterface
     {
         return new XML($dm, $attachmentData);
     }

@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Tests\Feature\Unit;
+namespace Tests\Unit;
 
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
@@ -27,7 +27,7 @@ class NurseScheduleTest extends TestCase
 
     public function test_empty_schedule()
     {
-        $schedule = $this->nurse->nurseInfo->weeklySchedule();
+        $schedule = $this->nurse->nurseInfo->currentWeekWindows()->get();
 
         $this->assertTrue($schedule->isEmpty());
     }
@@ -62,12 +62,8 @@ class NurseScheduleTest extends TestCase
             'window_time_end'   => '22:00',
         ]);
 
-        $schedule = $this->nurse->nurseInfo->weeklySchedule();
+        $schedule = $this->nurse->nurseInfo->currentWeekWindows()->get();
 
-        //assert 3 days
-        $this->assertTrue(3 == $schedule->count());
-
-        //assert 4 windows
-        $this->assertTrue(4 == $schedule->flatten()->count());
+        $this->assertTrue($schedule->isNotEmpty());
     }
 }

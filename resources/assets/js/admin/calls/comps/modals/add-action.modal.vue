@@ -780,18 +780,20 @@
             };
 
             Event.$on('modal-add-action:show', () => {
+                //we put a setTimeout in case a modal is already shown
+                //i.e. Modal unscheduled patients is visible
+                setTimeout(() => {
+                    const el = '.modal-container';
+                    waitForEl(el, () => {
+                        $(el).css('width', document.body.offsetWidth * 0.95);
+                    });
 
-                const el = '.modal-container';
-                waitForEl(el, () => {
-                    $(el).css('width', document.body.offsetWidth * 0.95);
-                });
-
-                const el2 = "a.my-tool-tip";
-                waitForEl(el2, () => {
-                    //initialize tooltips
-                    $(el2).tooltip();
-                });
-
+                    const el2 = "a.my-tool-tip";
+                    waitForEl(el2, () => {
+                        //initialize tooltips
+                        $(el2).tooltip();
+                    });
+                }, 100);
             });
 
             Event.$on('add-action-modals:set', (data) => {

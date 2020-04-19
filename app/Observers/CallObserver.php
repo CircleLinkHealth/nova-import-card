@@ -7,11 +7,13 @@
 namespace App\Observers;
 
 use App\Call;
+use App\Events\CarePlanWasApproved;
+use App\Note;
 use App\Notifications\CallCreated;
 use App\Services\ActivityService;
+use App\Services\Calls\SchedulerService;
 use App\Services\NotificationService;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Notification;
 
@@ -53,6 +55,10 @@ class CallObserver
                 ->where('id', $call->inbound_cpm_id)
                 ->orWhere('id', $call->outbound_cpm_id)
                 ->first();
+
+            if ($this->shouldApproveCarePlan($call)) {
+                $this->approveCarePlan($patient);
+            }
 
             $date = Carbon::parse($call->updated_at);
 
@@ -99,5 +105,24 @@ class CallObserver
         if ($call->shouldSendLiveNotification()) {
             $this->createNotificationAndSendToPusher($call);
         }
+    }
+
+    private function approveCarePlan(User $patient)
+    {
+        $note = Note::wherePatientId($patient->id)->whereType(
+            SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE
+        )->first();
+        if ( ! $note) {
+            return;
+        }
+        event(new CarePlanWasApproved($patient, $note->author));
+    }
+
+    private function shouldApproveCarePlan(Call $call)
+    {
+        return SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE === $call->sub_type
+               && 'task'                                                     === $call->type
+               && $call->isDirty('status')
+               && 'done' === $call->status;
     }
 }

@@ -18,6 +18,7 @@ use App\View\MetaTag;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Media;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\URL;
 
@@ -122,6 +123,9 @@ class NoteService
         $note->did_medication_recon = isset($requestInput['medication_recon'])
             ? 'true' === $requestInput['medication_recon']
             : 0;
+        $note->success_story = isset($requestInput['success_story'])
+            ? 'true' === $requestInput['success_story']
+            : 0;
 
         if ($note->isDirty()) {
             $note->save();
@@ -177,10 +181,12 @@ class NoteService
      * @param bool $notifyCareTeam
      * @param bool $notifyCLH
      * @param bool $forceNotify
+     *
+     * @return void
      */
     public function forwardNoteIfYouMust(Note $note, $notifyCareTeam = false, $notifyCLH = false, $forceNotify = false)
     {
-        if ($note->isTCM) {
+        if ($note->isTCM && $this->practiceHasNotesNotificationsEnabled($note->patient->primaryPractice)) {
             $notifyCareTeam = $forceNotify = true;
         }
 
@@ -419,6 +425,13 @@ class NoteService
     public function patientNotes($userId, NoteFilters $filters)
     {
         return $this->noteRepo->patientNotes($userId, $filters);
+    }
+
+    public function practiceHasNotesNotificationsEnabled(Practice $practice): bool
+    {
+        return with($practice->cpmSettings(), function ($settings) {
+            return $settings->email_note_was_forwarded || $settings->efax_pdf_notes || $settings->dm_pdf_notes;
+        });
     }
 
     public function storeCallForNote(

@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use Illuminate\Support\Facades\Artisan;
 
 class PatientObserver
 {
@@ -61,7 +62,7 @@ class PatientObserver
                 Patient::UNREACHABLE,
             ]
         )) {
-            \Artisan::queue(
+            Artisan::queue(
                 RemoveScheduledCallsForWithdrawnAndPausedPatients::class,
                 ['patientUserIds' => [$patient->user_id]]
             );
@@ -99,6 +100,16 @@ class PatientObserver
         if ($patient->isDirty('consent_date')) {
             $this->sendPatientConsentedNote($patient);
         }
+
+        if ($patient->isDirty('ccm_status')) {
+            $oldValue = $patient->getOriginal('ccm_status');
+            $newValue = $patient->ccm_status;
+            if ($this->shouldScheduleCall($patient, $oldValue, $newValue)) {
+                /** @var SchedulerService $schedulerService */
+                $schedulerService = app()->make(SchedulerService::class);
+                $schedulerService->ensurePatientHasScheduledCall($patient->user);
+            }
+        }
     }
 
     /**
@@ -120,13 +131,26 @@ class PatientObserver
                 if (Patient::UNREACHABLE == $oldValue) {
                     $patient->no_call_attempts_since_last_success = 0;
                 }
-
-                if (Patient::ENROLLED != $oldValue) {
-                    /** @var SchedulerService $schedulerService */
-                    $schedulerService = app()->make(SchedulerService::class);
-                    $schedulerService->ensurePatientHasScheduledCall($patient->user);
-                }
             }
         }
+    }
+
+    /**
+     * @param $oldValue
+     * @param $newValue
+     */
+    private function shouldScheduleCall(Patient $patient, $oldValue, $newValue): bool
+    {
+        $patient->loadMissing('user.carePlan');
+
+        if (Patient::ENROLLED != $newValue) {
+            return false;
+        }
+
+        if (Patient::ENROLLED == $oldValue) {
+            return false;
+        }
+
+        return true;
     }
 }

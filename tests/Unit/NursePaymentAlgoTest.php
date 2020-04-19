@@ -4,24 +4,16 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Tests\Feature;
+namespace Tests\Unit;
 
-use App\Call;
 use App\Jobs\CreateNurseInvoices;
-use App\Jobs\StoreTimeTracking;
-use App\Note;
+use App\Traits\Tests\PracticeHelpers;
+use App\Traits\Tests\TimeHelpers;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Entities\AppConfig;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
-use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
-use CircleLinkHealth\SharedModels\Entities\CpmProblem;
-use Symfony\Component\HttpFoundation\ParameterBag;
 use Tests\TestCase;
 
 /**
@@ -62,6 +54,8 @@ use Tests\TestCase;
 class NursePaymentAlgoTest extends TestCase
 {
     use UserHelpers;
+    use TimeHelpers;
+    use PracticeHelpers;
 
     /** @var Location $location */
     protected $location;
@@ -92,9 +86,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_ccm_plus_algo_over_40()
     {
         $nurseHourlyRate = 10.0;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate, true);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate, true);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -140,9 +134,9 @@ class NursePaymentAlgoTest extends TestCase
     {
         $nurseVisitFee   = 12.50;
         $nurseHourlyRate = 10.0;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -184,9 +178,9 @@ class NursePaymentAlgoTest extends TestCase
     {
         $nurseVisitFee   = 12.50;
         $nurseHourlyRate = 10.0;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -227,9 +221,9 @@ class NursePaymentAlgoTest extends TestCase
     {
         $nurseVisitFee   = 12.50;
         $nurseHourlyRate = 10.0;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -272,9 +266,9 @@ class NursePaymentAlgoTest extends TestCase
     {
         $nurseVisitFee   = 12.50;
         $nurseHourlyRate = 10.0;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -324,9 +318,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_ccm_plus_alt_algo_under_20_total_over_30()
     {
         $nurseHourlyRate = 10.0;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate, true);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate, true);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -367,9 +361,9 @@ class NursePaymentAlgoTest extends TestCase
     {
         $nurseHourlyRate = 10.0;
         $visitFee        = 12.50;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $visitFee);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $visitFee);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -407,9 +401,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_fixed_rate_over_20_total_over_30_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, false, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, false, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -448,9 +442,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_fixed_rate_over_20_total_over_30_no_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice();
+        $practice        = $this->setupPractice(true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, false, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, false, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -489,9 +483,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_fixed_rate_over_20_total_under_30_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, false, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, false, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -530,9 +524,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_fixed_rate_over_20_total_under_30_no_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice();
+        $practice        = $this->setupPractice(true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, false, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, false, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -571,9 +565,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_fixed_rate_over_40_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, false, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, false, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -612,9 +606,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_fixed_rate_over_40_no_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice();
+        $practice        = $this->setupPractice(true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, false, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, false, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -653,9 +647,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_fixed_rate_over_60_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, false, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, false, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -695,9 +689,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_fixed_rate_over_60_no_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice();
+        $practice        = $this->setupPractice(true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, false, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, false, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -737,9 +731,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_fixed_rate_under_20_total_over_30_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, false, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, false, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -778,9 +772,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_fixed_rate_under_20_total_over_30_no_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice();
+        $practice        = $this->setupPractice(true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $nurse = $this->setupNurse($practice->id, false, $nurseHourlyRate);
+        $nurse           = $nurse = $this->getNurse($practice->id, false, $nurseHourlyRate);
         $patient         = $patient = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -819,9 +813,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_fixed_rate_under_20_total_under_30_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, false, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, false, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -859,9 +853,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_fixed_rate_under_20_total_under_30_no_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice();
+        $practice        = $this->setupPractice(true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $nurse = $this->setupNurse($practice->id, false, $nurseHourlyRate);
+        $nurse           = $nurse = $this->getNurse($practice->id, false, $nurseHourlyRate);
         $patient         = $patient = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -900,9 +894,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_variable_rate_over_20_total_over_30_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -941,9 +935,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_variable_rate_over_20_total_over_30_no_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice();
+        $practice        = $this->setupPractice(true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -982,9 +976,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_variable_rate_over_20_total_under_30_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -1023,9 +1017,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_variable_rate_over_20_total_under_30_no_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice();
+        $practice        = $this->setupPractice(true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -1065,9 +1059,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_variable_rate_over_40_ccm_plus_practice()
     {
         $nurseHourlyRate = 10.0;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -1107,9 +1101,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_variable_rate_over_40_no_ccm_plus_practice()
     {
         $nurseHourlyRate = 10.0;
-        $practice        = $this->setupPractice();
+        $practice        = $this->setupPractice(true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -1149,9 +1143,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_variable_rate_over_60_ccm_plus_practice()
     {
         $nurseHourlyRate = 10.0;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -1192,9 +1186,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_variable_rate_over_60_no_ccm_plus_practice()
     {
         $nurseHourlyRate = 10.0;
-        $practice        = $this->setupPractice();
+        $practice        = $this->setupPractice(true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -1234,9 +1228,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_variable_rate_under_20_total_over_30_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -1275,9 +1269,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_variable_rate_under_20_total_over_30_no_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice();
+        $practice        = $this->setupPractice(true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -1316,9 +1310,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_variable_rate_under_20_total_under_30_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice(true);
+        $practice        = $this->setupPractice(true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -1357,9 +1351,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_default_algo_variable_rate_under_20_total_under_30_no_ccm_plus_practice()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice();
+        $practice        = $this->setupPractice(true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -1411,9 +1405,9 @@ class NursePaymentAlgoTest extends TestCase
     {
         $nurseVisitFee   = 12.50;
         $nurseHourlyRate = 20.0;
-        $practice        = $this->setupPractice(true);
-        $nurse1          = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
-        $nurse2          = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $practice        = $this->setupPractice(true, true);
+        $nurse1          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse2          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
         $patient         = $this->setupPatient($practice);
 
         $this->addTime($nurse1, $patient, 15, true, true);
@@ -1477,9 +1471,9 @@ class NursePaymentAlgoTest extends TestCase
     {
         $nurseVisitFee   = 12.50;
         $nurseHourlyRate = 20.0;
-        $practice        = $this->setupPractice(true);
-        $nurse1          = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
-        $nurse2          = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $practice        = $this->setupPractice(true, true);
+        $nurse1          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse2          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
         $patient         = $this->setupPatient($practice);
 
         $this->addTime($nurse1, $patient, 15, true, true);
@@ -1541,10 +1535,10 @@ class NursePaymentAlgoTest extends TestCase
     {
         $nurseVisitFee   = 12.50;
         $nurseHourlyRate = 20.0;
-        $practice1       = $this->setupPractice(false);
-        $practice2       = $this->setupPractice(true);
+        $practice1       = $this->setupPractice(true, false);
+        $practice2       = $this->setupPractice(true, true);
         //$this->provider  = $this->createUser($practice1->id);
-        $nurse    = $this->setupNurse($practice1->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse    = $this->getNurse($practice1->id, true, $nurseHourlyRate, true, $nurseVisitFee);
         $patient1 = $this->setupPatient($practice1);
         $patient2 = $this->setupPatient($practice2);
 
@@ -1593,9 +1587,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_bhi_time_default_algo_fixed_rate()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice(false, true);
+        $practice        = $this->setupPractice(true, false, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, false, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, false, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice, true);
 
         $start = Carbon::now()->startOfMonth();
@@ -1640,9 +1634,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_bhi_time_default_algo_variable_rate()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice(false, true);
+        $practice        = $this->setupPractice(true, false, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice, true);
 
         $start = Carbon::now()->startOfMonth();
@@ -1687,9 +1681,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_bhi_time_ccm_plus_algo()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice(false, true);
+        $practice        = $this->setupPractice(true, false, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate, true);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate, true);
         $patient         = $this->setupPatient($practice, true);
 
         $start = Carbon::now()->startOfMonth();
@@ -1735,9 +1729,9 @@ class NursePaymentAlgoTest extends TestCase
     {
         $visitFee        = 12.50;
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice(false, true);
+        $practice        = $this->setupPractice(true, false, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $visitFee);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $visitFee);
         $patient         = $this->setupPatient($practice, true);
 
         $start = Carbon::now()->startOfMonth();
@@ -1783,9 +1777,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_bhi_time_and_ccm_time_default_algo()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice(false, true);
+        $practice        = $this->setupPractice(true, false, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate);
         $patient         = $this->setupPatient($practice, true);
 
         $start = Carbon::now()->startOfMonth();
@@ -1831,9 +1825,9 @@ class NursePaymentAlgoTest extends TestCase
     public function test_bhi_time_and_ccm_time_ccm_plus_algo()
     {
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice(true, true);
+        $practice        = $this->setupPractice(true, true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate, true);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate, true);
         $patient         = $this->setupPatient($practice, true);
 
         $start = Carbon::now()->startOfMonth();
@@ -1880,9 +1874,9 @@ class NursePaymentAlgoTest extends TestCase
     {
         $visitFee        = 12.50;
         $nurseHourlyRate = 30.0;
-        $practice        = $this->setupPractice(true, true);
+        $practice        = $this->setupPractice(true, true, true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $visitFee);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $visitFee);
         $patient         = $this->setupPatient($practice, true);
 
         $start = Carbon::now()->startOfMonth();
@@ -1935,9 +1929,9 @@ class NursePaymentAlgoTest extends TestCase
     {
         $nurseVisitFee   = 12.50;
         $nurseHourlyRate = 20.0;
-        $practice        = $this->setupPractice(true);
-        $nurse1          = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
-        $nurse2          = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $practice        = $this->setupPractice(true, true);
+        $nurse1          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse2          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
         $patient         = $this->setupPatient($practice);
 
         $this->addTime($nurse1, $patient, 15, true, false);
@@ -2000,9 +1994,9 @@ class NursePaymentAlgoTest extends TestCase
     {
         $nurseVisitFee   = 12.50;
         $nurseHourlyRate = 20.0;
-        $practice        = $this->setupPractice(true);
-        $nurse1          = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
-        $nurse2          = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $practice        = $this->setupPractice(true, true);
+        $nurse1          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse2          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
         $patient         = $this->setupPatient($practice);
 
         $this->addTime($nurse1, $patient, 23, true, false);
@@ -2066,10 +2060,10 @@ class NursePaymentAlgoTest extends TestCase
     {
         $nurseVisitFee   = 12.50;
         $nurseHourlyRate = 20.0;
-        $practice        = $this->setupPractice(true);
-        $nurse1          = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
-        $nurse2          = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
-        $nurse3          = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $practice        = $this->setupPractice(true, true);
+        $nurse1          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse2          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse3          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
         $patient         = $this->setupPatient($practice);
 
         $this->addTime($nurse1, $patient, 17, true, false);
@@ -2091,10 +2085,12 @@ class NursePaymentAlgoTest extends TestCase
         $invoice1Data    = NurseInvoice::where('nurse_info_id', $nurse1->nurseInfo->id)
                                        ->orderBy('month_year', 'desc')
                                        ->first()->invoice_data;
+        $visitsCount     = $invoice1Data['visitsCount'];
         $fixedRatePay    = $invoice1Data['fixedRatePay'];
         $variableRatePay = $invoice1Data['variableRatePay'];
         $pay             = $invoice1Data['baseSalary'];
 
+        self::assertEquals(0, $visitsCount);
         self::assertEquals(10.00, $fixedRatePay);
         self::assertEquals(0.00, $variableRatePay);
         self::assertEquals(10.00, $pay);
@@ -2102,10 +2098,12 @@ class NursePaymentAlgoTest extends TestCase
         $invoice2Data    = NurseInvoice::where('nurse_info_id', $nurse2->nurseInfo->id)
                                        ->orderBy('month_year', 'desc')
                                        ->first()->invoice_data;
+        $visitsCount     = $invoice2Data['visitsCount'];
         $fixedRatePay    = $invoice2Data['fixedRatePay'];
         $variableRatePay = $invoice2Data['variableRatePay'];
         $pay             = $invoice2Data['baseSalary'];
 
+        self::assertEquals(0.29, $visitsCount);
         self::assertEquals(10.00, $fixedRatePay);
         self::assertEquals(3.57, $variableRatePay);
         self::assertEquals(10.00, $pay);
@@ -2113,185 +2111,77 @@ class NursePaymentAlgoTest extends TestCase
         $invoice3Data    = NurseInvoice::where('nurse_info_id', $nurse3->nurseInfo->id)
                                        ->orderBy('month_year', 'desc')
                                        ->first()->invoice_data;
+        $visitsCount     = $invoice3Data['visitsCount'];
         $fixedRatePay    = $invoice3Data['fixedRatePay'];
         $variableRatePay = $invoice3Data['variableRatePay'];
         $pay             = $invoice3Data['baseSalary'];
 
+        self::assertEquals(0.71, $visitsCount);
         self::assertEquals(10.00, $fixedRatePay);
         self::assertEquals(8.93, $variableRatePay);
         self::assertEquals(10.00, $pay);
     }
 
-    /**
-     * Add billable or not to a patient and credit nurse.
-     *
-     * @param User $nurse
-     * @param User $patient
-     * @param int $minutes
-     * @param bool $billable
-     * @param bool $withSuccessfulCall
-     * @param bool $bhiTime
-     */
-    private function addTime(
-        User $nurse,
-        User $patient,
-        int $minutes,
-        bool $billable,
-        bool $withSuccessfulCall = false,
-        bool $bhiTime = false
-    ) {
-        if ($withSuccessfulCall) {
-            /** @var Note $fakeNote */
-            $fakeNote             = \factory(Note::class)->make();
-            $fakeNote->author_id  = $nurse->id;
-            $fakeNote->patient_id = $patient->id;
-            $fakeNote->status     = Note::STATUS_COMPLETE;
-            $fakeNote->save();
+    public function test_visits_count_as_a_floating_number()
+    {
+        $practice = $this->setupPractice(true);
+        $nurse1   = $this->getNurse($practice->id, true, 1, true, 12.50);
+        $nurse2   = $this->getNurse($practice->id, true, 1, true, 12.50);
+        $patient1  = $this->setupPatient($practice, false, false);
+        $patient2  = $this->setupPatient($practice, false, false);
 
-            /** @var Call $fakeCall */
-            $fakeCall                  = \factory(Call::class)->make();
-            $fakeCall->note_id         = $fakeNote->id;
-            $fakeCall->status          = Call::REACHED;
-            $fakeCall->inbound_cpm_id  = $patient->id;
-            $fakeCall->outbound_cpm_id = $nurse->id;
-            $fakeCall->save();
-        }
+        $this->addTime($nurse1, $patient1, 20, true, 1);
+        $this->addTime($nurse1, $patient2, 10, true, 1);
+        $this->addTime($nurse2, $patient2, 10, true, 1);
 
-        $seconds = $minutes * 60;
-        $bag     = new ParameterBag();
-        $bag->add([
-            'providerId' => $nurse->id,
-            'patientId'  => $billable
-                ? $patient->id
-                : 0,
-            'activities' => [
-                [
-                    'is_behavioral' => $bhiTime,
-                    'duration'      => $seconds,
-                    'start_time'    => Carbon::now(),
-                    'name'          => $withSuccessfulCall
-                        ? 'Patient Note Creation'
-                        : 'test',
-                    'title'         => 'test',
-                    'url'           => 'test',
-                    'url_short'     => 'test',
-                ],
-            ],
-        ]);
-        (new StoreTimeTracking($bag))->handle();
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse1->id, $nurse2->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoice1Data    = NurseInvoice::where('nurse_info_id', $nurse1->nurseInfo->id)
+                                       ->orderBy('month_year', 'desc')
+                                       ->first()->invoice_data;
+        $visitsCount     = $invoice1Data['visitsCount'];
+        $fixedRatePay    = $invoice1Data['fixedRatePay'];
+        $variableRatePay = $invoice1Data['variableRatePay'];
+        $pay             = $invoice1Data['baseSalary'];
+
+        self::assertEquals(1.5, $visitsCount);
+        self::assertEquals(0.5, $fixedRatePay);
+        self::assertEquals(18.75, $variableRatePay);
+        self::assertEquals(18.75, $pay);
+
+        $invoice2Data    = NurseInvoice::where('nurse_info_id', $nurse2->nurseInfo->id)
+                                       ->orderBy('month_year', 'desc')
+                                       ->first()->invoice_data;
+        $visitsCount     = $invoice2Data['visitsCount'];
+        $fixedRatePay    = $invoice2Data['fixedRatePay'];
+        $variableRatePay = $invoice2Data['variableRatePay'];
+        $pay             = $invoice2Data['baseSalary'];
+
+        self::assertEquals(0.5, $visitsCount);
+        self::assertEquals(0.5, $fixedRatePay);
+        self::assertEquals(6.25, $variableRatePay);
+        self::assertEquals(6.25, $pay);
     }
 
-    private function setupNurse(
-        int $practiceId,
+    private function getNurse(
+        $practiceId,
         bool $variableRate = true,
         float $hourlyRate = 29.0,
         bool $enableCcmPlus = false,
         float $visitFee = null
     ) {
-        $nurse                              = $this->createUser($practiceId, 'care-center');
-        $nurse->nurseInfo->is_variable_rate = $variableRate;
-        $nurse->nurseInfo->hourly_rate      = $hourlyRate;
-        $nurse->nurseInfo->high_rate        = 30.00;
-        $nurse->nurseInfo->high_rate_2      = 28.00;
-        $nurse->nurseInfo->high_rate_3      = 27.50;
+        $nurse = $this->createUser($practiceId, 'care-center');
 
-        $nurse->nurseInfo->low_rate = 10;
-
-        if ($visitFee) {
-            $nurse->nurseInfo->visit_fee   = $visitFee;
-            $nurse->nurseInfo->visit_fee_2 = 12.00;
-            $nurse->nurseInfo->visit_fee_3 = 11.75;
-        }
-
-        $nurse->nurseInfo->save();
-
-        AppConfig::updateOrCreate(
-            [
-                'config_key' => NurseCcmPlusConfig::NURSE_CCM_PLUS_ENABLED_FOR_ALL,
-            ],
-            [
-                'config_value' => $enableCcmPlus
-                    ? 'true'
-                    : 'false',
-            ]
-        );
-
-        if ($enableCcmPlus && $visitFee) {
-            $current = implode(',', NurseCcmPlusConfig::altAlgoEnabledForUserIds());
-            AppConfig::updateOrCreate(
-                [
-                    'config_key' => NurseCcmPlusConfig::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_USER_IDS,
-                ],
-                [
-                    'config_value' => $current . (empty($current)
-                            ? ''
-                            : ',') . $nurse->id,
-                ]
-            );
-        }
-
-        return $nurse;
-    }
-
-    private function setupPatient(Practice $practice, $isBhi = false)
-    {
-        $patient = $this->createUser($practice->id, 'participant');
-        $patient->setPreferredContactLocation($this->location->id);
-
-        if ($isBhi) {
-            $consentDate = Carbon::parse(Patient::DATE_CONSENT_INCLUDES_BHI);
-            $consentDate->addDay();
-            $patient->patientInfo->consent_date = $consentDate;
-        }
-
-        $patient->patientInfo->save();
-        $cpmProblems = CpmProblem::get();
-        $ccdProblems = $patient->ccdProblems()->createMany([
-            ['name' => 'test' . str_random(5)],
-            ['name' => 'test' . str_random(5)],
-            ['name' => 'test' . str_random(5)],
-        ]);
-
-        $len = $ccdProblems->count();
-        for ($i = 0; $i < $len; $i++) {
-            $problem = $ccdProblems->get($i);
-            $isLast  = $i === $len - 1;
-            if ($isLast && $isBhi) {
-                $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 1));
-            } else {
-                $problem->cpmProblem()->associate($cpmProblems->random());
-            }
-            $problem->save();
-        }
-
-        return $patient;
-    }
-
-    private function setupPractice(bool $addCcmPlusServices = false, bool $addBhiServices = false)
-    {
-        $practice       = factory(Practice::class)->create();
-        $this->location = Location::firstOrCreate([
-            'practice_id' => $practice->id,
-        ]);
-
-        $ccmService            = ChargeableService::where('code', '=', ChargeableService::CCM)->first();
-        $sync                  = [];
-        $sync[$ccmService->id] = ['amount' => 29.0];
-
-        if ($addBhiServices) {
-            $bhi            = ChargeableService::where('code', '=', ChargeableService::BHI)->first();
-            $sync[$bhi->id] = ['amount' => 28.0];
-        }
-
-        if ($addCcmPlusServices) {
-            $ccmPlus40            = ChargeableService::where('code', '=', ChargeableService::CCM_PLUS_40)->first();
-            $ccmPlus60            = ChargeableService::where('code', '=', ChargeableService::CCM_PLUS_60)->first();
-            $sync[$ccmPlus40->id] = ['amount' => 28.0];
-            $sync[$ccmPlus60->id] = ['amount' => 28.0];
-        }
-
-        $practice->chargeableServices()->sync($sync);
-
-        return $practice;
+        return $this->setupNurse($nurse, $variableRate, $hourlyRate, $enableCcmPlus, $visitFee);
     }
 }
