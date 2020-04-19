@@ -69,6 +69,10 @@ class CcdInsurancePolicy extends \CircleLinkHealth\Core\Entities\BaseModel
         'subscriber',
         'approved',
     ];
+    
+    protected $attributes = [
+        'approved' => false
+    ];
 
     public function patient()
     {
