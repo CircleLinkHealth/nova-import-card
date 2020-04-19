@@ -14,7 +14,6 @@ trait SeedEligibilityJobsForEnrollees
         foreach ($enrollees as $enrollee) {
             //create eligibility job
             $job = factory(\CircleLinkHealth\Eligibility\Entities\EligibilityJob::class)->create();
-
             $job->hash = $enrollee->practice->name . $enrollee->first_name . $enrollee->last_name . $enrollee->mrn . $enrollee->city . $enrollee->state . $enrollee->zip;
 
             $job->data = [
