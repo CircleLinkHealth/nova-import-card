@@ -192,22 +192,6 @@
 
                         this.notifyTimeTracker();
                     }, 2000)))
-                    // .then(response => {
-                    //     this.loading = false
-                    //     this.loading_modal.close()
-                    //
-                    //     let patientData = response.data.data;
-                    //
-                    //     patientData.onCall = this.onCall
-                    //     patientData.callStatus = this.callStatus
-                    //     patientData.log = this.log
-                    //     patientData.callError = this.callError
-                    //     this.patientData = patientData;
-                    //
-                    //     this.enrollable_id = patientData.enrollable_id;
-                    //
-                    //     this.notifyTimeTracker();
-                    // })
                     .catch(err => {
                         //to implement
                         this.loading = false;
@@ -244,8 +228,7 @@
             call() {
                 this.device.connect({
                     To: this.phone,
-                    // From: this.practice_phone ? this.practice_phone : undefined,
-                    From: '+18634171503',
+                    From: this.practice_phone ? this.practice_phone : undefined,
                     IsUnlistedNumber: false,
                     InboundUserId: this.enrollable_user_id,
                     OutboundUserId: userId
