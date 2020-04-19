@@ -13,10 +13,6 @@ class ChangePatientInfoRegistrationDateNullable extends Migration
      */
     public function up()
     {
-        Schema::table('patient_info', function (Blueprint $table) {
-            $table->dateTime('registration_date')->nullable()->change();
-        });
-
         \Illuminate\Support\Facades\DB::table('patient_info')
                                       ->whereIn('registration_date', [
                                           //any empty strings would be changed to this after we convert
@@ -25,6 +21,10 @@ class ChangePatientInfoRegistrationDateNullable extends Migration
                                           ''
                                       ])
                                       ->update(['registration_date' => null]);
+        
+        Schema::table('patient_info', function (Blueprint $table) {
+            $table->dateTime('registration_date')->nullable()->change();
+        });
     }
 
     /**
