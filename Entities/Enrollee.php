@@ -424,7 +424,7 @@ class Enrollee extends BaseModel
     {
         return (new StringManipulation())->formatPhoneNumberE164($this->home_phone);
     }
-    
+
     public function getLastEncounterAttribute($lastEncounter)
     {
         return $lastEncounter
@@ -526,9 +526,24 @@ class Enrollee extends BaseModel
         return $query->mySQLSearch($this->phoneAttributes, $term, 'NATURAL LANGUAGE');
     }
 
+    /**
+     * Assume DB format (e164)
+     *
+     * @param $query
+     * @param $phone
+     */
+    public function scopeHasPhone($query, $phone)
+    {
+        return $query->where(function ($q) use ($phone) {
+            $q->where('home_phone', $phone)
+              ->orWhere('cell_phone', $phone)
+              ->orWhere('other_phone', $phone);
+        });
+    }
+
     public function scopeSearchAddresses($query, string $term)
     {
-        return $query->mySQLSearch($this->addressAttributes, $term, 'BOOLEAN', false, true);
+        return $query->mySQLSearch($this->addressAttributes, $term, 'BOOLEAN', false, true, true);
     }
 
     public function scopeShouldSuggestAsFamilyForEnrollee($query, $enrolleeId)
@@ -660,11 +675,23 @@ class Enrollee extends BaseModel
         return implode(', ', $phones);
     }
 
-    public function getPhonesAsString()
+    public function getPhonesAsString(Enrollee $compareAgainstEnrollee = null)
     {
         $phones = [];
         foreach ($this->phoneAttributes as $attribute) {
-            $phones[] = $this->{$attribute};
+            $attr = $this->$attribute;
+            if ($compareAgainstEnrollee){
+                if (in_array($attr, [
+                    $compareAgainstEnrollee->home_phone,
+                    $compareAgainstEnrollee->cell_phone,
+                    $compareAgainstEnrollee->other_phone,
+                ]))
+                {
+                    //if it matches, highlight it.
+                    $attr = "<span style='background-color: #26a69a; color: white; padding-left: 5px; padding-right: 5px; border-radius: 3px;'>{$attr}</span>";
+                }
+            }
+            $phones[] = trim($attr);
         }
 
         return collect($phones)->filter()->implode(', ');
@@ -674,7 +701,7 @@ class Enrollee extends BaseModel
     {
         $addresses = [];
         foreach ($this->addressAttributes as $attribute) {
-            $addresses[] = $this->$attribute;
+            $addresses[] = trim($this->$attribute);
         }
 
         return collect($addresses)->filter()->implode(', ');
@@ -701,7 +728,7 @@ class Enrollee extends BaseModel
             }
         }
     }
-    
+
     /**
      * Scope for patients in the system that might be the same patient (ie. duplicates)
      *
@@ -711,7 +738,8 @@ class Enrollee extends BaseModel
      *
      * @return mixed
      */
-    public function scopeDuplicates($query, User $patient, Ccda $ccda) {
+    public function scopeDuplicates($query, User $patient, Ccda $ccda)
+    {
         return $query->where(
             function ($q) use ($ccda, $patient) {
                 $q
@@ -757,8 +785,9 @@ class Enrollee extends BaseModel
             ]
         );
     }
-    
-    public function ccda() {
+
+    public function ccda()
+    {
         return $this->belongsTo(Ccda::class, 'medical_record_id');
     }
 }
