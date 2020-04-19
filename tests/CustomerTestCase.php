@@ -76,11 +76,10 @@ class CustomerTestCase extends TestCase
     protected function location()
     {
         if ( ! $this->location) {
-            $this->location = Location::firstOrCreate(
-                [
-                    'practice_id' => $this->practice()->id,
-                ]
-            );
+            $this->location = Location::where('practice_id', $this->practice()->id)->first();
+            if (!$this->location) {
+                $this->location = factory(Location::class)->create();
+            }
         }
 
         return $this->location;
