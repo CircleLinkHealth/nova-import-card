@@ -225,9 +225,6 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factor
 
         'email'                   => $faker->email,
         'referring_provider_name' => $provider->getFullName(),
-        'problems'                => 'Hypertension, High Cholesterol',
-        'cpm_problem_1'           => 1,
-        'cpm_problem_2'           => 2,
     ];
 });
 
