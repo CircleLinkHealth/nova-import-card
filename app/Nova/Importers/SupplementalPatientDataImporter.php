@@ -6,15 +6,18 @@
 
 namespace App\Nova\Importers;
 
+use App\EligiblePatientView;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Eligibility\CcdaImporter\ImportEnrollee;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
+use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
+use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -115,6 +118,7 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
             'NA: In CPM',
             'N/A',
             '########',
+            '#N/A',
         ];
     }
 
@@ -166,20 +170,23 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
             'practice_id'         => $this->getPractice()->id,
         ];
 
+        $args['location_id'] = optional(
+            Location::where('practice_id', $args['practice_id'])->where(
+                'name',
+                $args['location']
+            )->first()
+        )->id;
+
+        $args['billing_provider_user_id'] = optional(
+            Ccda::searchBillingProvider($args['provider'], $args['practice_id'])
+        )->id;
+
         if ( ! empty($args['mrn']) && ! empty($args['first_name']) && ! empty($args['last_name'])) {
             return tap(
                 SupplementalPatientData::updateOrCreate(
                     [
                         'mrn'         => $row['mrn'],
-                        'location_id' => optional(
-                            Location::where('practice_id', $args['practice_id'])->where(
-                                'name',
-                                $args['location']
-                            )->first()
-                        )->id,
-                        'billing_provider_user_id' => optional(
-                            Ccda::searchBillingProvider($args['provider'], $args['practice_id'])
-                        )->id,
+                        'practice_id' => $this->getPractice()->id,
                     ],
                     $args
                 ),
@@ -194,31 +201,98 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                         return $spd;
                     }
 
-                    if ( ! ($enrollee = Enrollee::where('practice_id', $spd->practice_id)->where(
+                    $query = Enrollee::with(
+                        [
+                            'ccda' => function ($q) {
+                                $q->select(['id', 'location_id', 'practice_id', 'billing_provider_id', 'patient_id']);
+                            },
+                        ]
+                    );
+
+                    if ( ! ($enrollee = $query->where('practice_id', $spd->practice_id)->where(
                         'first_name',
                         $spd->first_name
                     )->where('last_name', $spd->last_name)->where('mrn', $spd->mrn)->first())) {
-                        $ej = DB::table('eligible_patients')->where('mrn', $spd->mrn)->where(
+                        $jobId = EligiblePatientView::where('mrn', $spd->mrn)->where(
                             'last_name',
                             $spd->last_name
-                        )->where('first_name', $spd->first_name)->where('practice_id', $spd->practice_id)->first();
+                        )->where('first_name', $spd->first_name)->where('practice_id', $spd->practice_id)->value(
+                            'eligibility_job_id'
+                        );
 
-                        if ( ! $ej) {
+                        if ( ! $jobId) {
                             return $spd;
                         }
 
-                        $enrollee->eligibility_job_id = $ej->id;
+                        $enrollee = $query->firstOrNew(
+                            [
+                                'practice_id' => $spd->practice_id,
+                                'first_name'  => $spd->first_name,
+                                'last_name'   => $spd->last_name,
+                                'mrn'         => $spd->mrn,
+                            ],
+                            [
+                                'eligibility_job_id' => $jobId,
+                                'dob'                => $spd->dob,
+                            ]
+                        );
+                    }
+
+                    $ccda = $enrollee->ccda;
+
+                    if ( ! $ccda) {
+                        $ccda = Ccda::where('practice_id', $spd->practice_id)->where(
+                            'json->demographics->mrn_number',
+                            $spd->mrn
+                        )->where('json->demographics->name->family', $spd->last_name)->select(
+                            ['id', 'location_id', 'practice_id', 'billing_provider_id', 'patient_id']
+                        )->first();
+                        if ($ccda) {
+                            $enrollee->medical_record_id = $ccda->id;
+                        }
                     }
 
                     if ( ! $enrollee->location_id && $spd->location_id) {
                         $enrollee->location_id = $spd->location_id;
                     }
 
+                    if ( ! $enrollee->provider_id && $spd->billing_provider_user_id) {
+                        $enrollee->provider_id = $spd->billing_provider_user_id;
+                    }
+
+                    if ($ccda && ! $enrollee->user_id && $ccda->patient_id) {
+                        $enrollee->user_id = $ccda->patient_id;
+                    }
+
                     if ($enrollee->isDirty()) {
                         $enrollee->save();
                     }
 
-                    return ImportEnrollee::import($enrollee);
+                    if ($ccda && ! $ccda->location_id && $spd->location_id) {
+                        $ccda->location_id = $spd->location_id;
+                    }
+
+                    if ($ccda && ! $ccda->billing_provider_id && $spd->billing_provider_user_id) {
+                        $ccda->billing_provider_id = $spd->billing_provider_user_id;
+                    }
+
+                    if (optional($ccda)->isDirty()) {
+                        $ccda->save();
+                    }
+
+                    if ($enrollee->user_id) {
+                        Artisan::queue(
+                            ReimportPatientMedicalRecord::class,
+                            [
+                                'patientUserId'   => $enrollee->user_id,
+                                'initiatorUserId' => auth()->id(),
+                            ]
+                        );
+
+                        return;
+                    }
+
+                    return ImportConsentedEnrollees::dispatch([$enrollee->id]);
                 }
             );
         }

@@ -187,14 +187,14 @@ trait UserHelpers
 
         $bag = new ParameterBag(
             [
-                'saas_account_id'        => SaasAccount::firstOrFail()->id,
-                'email'        => $email,
-                'password'     => 'password',
-                'display_name' => "$firstName $lastName",
-                'first_name'   => $firstName,
-                'last_name'    => $lastName,
-                'username'     => $faker->userName,
-                'program_id'   => $practiceId,
+                'saas_account_id' => SaasAccount::firstOrFail()->id,
+                'email'           => $email,
+                'password'        => 'password',
+                'display_name'    => "$firstName $lastName",
+                'first_name'      => $firstName,
+                'last_name'       => $lastName,
+                'username'        => $faker->userName,
+                'program_id'      => $practiceId,
                 //id=9 is testdrive
                 'address'           => $faker->streetAddress,
                 'user_status'       => 1,
@@ -231,7 +231,38 @@ trait UserHelpers
 
         $user->locations()->sync($locations);
 
+        if (array_key_exists(0, $locations) && is_numeric($locations[0])) {
+            $user->setPreferredContactLocation($locations[0]);
+        }
+
         return $user;
+    }
+
+    private function addWorkHours(User $nurse, Carbon $forDate, int $hours)
+    {
+        $workWeekStart = $forDate->copy()->startOfWeek()->toDateString();
+        $dayOfWeek     = carbonToClhDayOfWeek($forDate->dayOfWeek);
+
+        $nurse->nurseInfo->windows()->updateOrCreate(
+            [
+                'date' => $forDate->toDateString(),
+            ],
+            [
+                'day_of_week'       => $dayOfWeek,
+                'window_time_start' => '11:00',
+                'window_time_end'   => '18:00',
+                'repeat_frequency'  => 'does_not_repeat',
+            ]
+        );
+
+        $nurse->nurseInfo->workhourables()->updateOrCreate(
+            [
+                'work_week_start' => $workWeekStart,
+            ],
+            [
+                strtolower(clhDayOfWeekToDayName($dayOfWeek)) => $hours,
+            ]
+        );
     }
 
     private function setupNurse(
@@ -328,32 +359,5 @@ trait UserHelpers
         }
 
         return $patient;
-    }
-
-    private function addWorkHours(User $nurse, Carbon $forDate, int $hours)
-    {
-        $workWeekStart = $forDate->copy()->startOfWeek()->toDateString();
-        $dayOfWeek = carbonToClhDayOfWeek($forDate->dayOfWeek);
-
-        $nurse->nurseInfo->windows()->updateOrCreate(
-            [
-                'date' => $forDate->toDateString(),
-            ],
-            [
-                'day_of_week' => $dayOfWeek,
-                'window_time_start' => '11:00',
-                'window_time_end' => '18:00',
-                'repeat_frequency' => 'does_not_repeat',
-            ]
-        );
-
-        $nurse->nurseInfo->workhourables()->updateOrCreate(
-            [
-                'work_week_start' => $workWeekStart,
-            ],
-            [
-                strtolower(clhDayOfWeekToDayName($dayOfWeek)) => $hours
-            ]
-        );
     }
 }

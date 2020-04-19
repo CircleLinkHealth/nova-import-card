@@ -19,6 +19,7 @@ use Titasgailius\SearchRelations\SearchesRelations;
 class NotesSuccessStories extends Resource
 {
     use SearchesRelations;
+
     /**
      * The logical group associated with the resource.
      *
@@ -38,7 +39,7 @@ class NotesSuccessStories extends Resource
      * @var array
      */
     public static $search = [
-        'type',
+        'id', 'type',
     ];
 
     /**
@@ -55,6 +56,16 @@ class NotesSuccessStories extends Resource
      * @var string
      */
     public static $title = 'id';
+
+    /**
+     * Get the actions available for the resource.
+     *
+     * @return array
+     */
+    public function actions(Request $request)
+    {
+        return [];
+    }
 
     /**
      * @return bool
@@ -77,17 +88,7 @@ class NotesSuccessStories extends Resource
      */
     public function authorizedToUpdate(Request $request)
     {
-        return false;
-    }
-
-    /**
-     * Get the actions available for the resource.
-     *
-     * @return array
-     */
-    public function actions(Request $request)
-    {
-        return [];
+        return true;
     }
 
     /**
@@ -98,7 +99,7 @@ class NotesSuccessStories extends Resource
     public function cards(Request $request)
     {
         return [
-            new GenerateSuccessStoriesReport()
+            new GenerateSuccessStoriesReport(),
         ];
     }
 
@@ -117,6 +118,11 @@ class NotesSuccessStories extends Resource
                 ->hideWhenUpdating()
                 ->sortable(),
 
+            Text::make('Note id', 'id')
+                ->hideWhenCreating()
+                ->sortable()
+                ->readonly(true),
+
             Text::make('Note Type', 'type')
                 ->hideWhenCreating()
                 ->readonly(true),
@@ -125,11 +131,11 @@ class NotesSuccessStories extends Resource
                 ->hideWhenCreating()
                 ->readonly(true),
 
-//            Text::make('Patient', 'patient.display_name')
-//                ->hideFromIndex()
-//                ->hideFromDetail()
-//                ->hideWhenCreating()
-//                ->readonly(true),
+            Text::make('Patient', 'patient.display_name')
+                ->hideFromIndex()
+                ->hideFromDetail()
+                ->hideWhenCreating()
+                ->readonly(true),
 
             BelongsTo::make('Patient', 'patient', User::class)
                 ->sortable()
@@ -138,8 +144,7 @@ class NotesSuccessStories extends Resource
                 ->readonly(true),
 
             Boolean::make('Success Story', 'success_story')
-                ->hideWhenCreating()
-                ->readonly(true),
+                ->hideWhenCreating(),
         ];
     }
 
@@ -151,7 +156,7 @@ class NotesSuccessStories extends Resource
     public function filters(Request $request)
     {
         return [
-            new \App\Nova\Filters\NotesSuccessStories()
+            new \App\Nova\Filters\NotesSuccessStories(),
         ];
     }
 
