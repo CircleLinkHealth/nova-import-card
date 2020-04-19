@@ -2000,3 +2000,28 @@ if (!function_exists('createTimeRangeFromEarliestAndLatest')) {
         return $start.'-'.$end;
     }
 }
+
+if (!function_exists('suggestedFamilyMemberAcceptableRelevanceScore')) {
+
+
+    /**
+     *
+     *
+     * @param array $times
+     *
+     * @return string|null
+     */
+    function suggestedFamilyMemberAcceptableRelevanceScore() : int
+    {
+        $key = 'suggested_family_members_relevance_score';
+
+        return \Cache::remember($key, 2, function () use ($key) {
+            $val = AppConfig::pull($key, null);
+            if (null === $val) {
+                setAppConfig($key, 30);
+            }
+
+            return $val;
+        });
+    }
+}

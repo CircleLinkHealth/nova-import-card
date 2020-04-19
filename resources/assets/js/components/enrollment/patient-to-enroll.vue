@@ -133,9 +133,9 @@
                                                             >
                                                             <span>{{member.first_name}} {{member.last_name}}</span>
                                                             <div style="padding-left: 10px">
-                                                                <div><strong>Addresses:</strong>{{member.addresses.value}}
+                                                                <div><strong>Addresses:</strong><span v-html="member.addresses.value"></span>
                                                                 </div>
-                                                                <div><strong>Phones:</strong>{{member.phones.value}}
+                                                                <div><strong>Phones:</strong><span v-html="member.phones.value"></span>
                                                                 </div>
                                                             </div>
                                                         </label>

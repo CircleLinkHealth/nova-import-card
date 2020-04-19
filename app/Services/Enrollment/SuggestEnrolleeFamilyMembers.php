@@ -15,15 +15,31 @@ class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
         return (new static($enrolleeId))->generate();
     }
 
-    private function constructQuery()
+    private function getSuggestions()
     {
-        $phonesQuery = Enrollee::shouldSuggestAsFamilyForEnrollee($this->enrolleeId)
-            ->searchPhones($this->enrollee->getPhonesE164AsString());
+        //Exact phone number match is the best indicator for a family member
+        $matchingPhones = Enrollee::shouldSuggestAsFamilyForEnrollee($this->enrolleeId)
+            ->searchPhones($this->enrollee->getPhonesE164AsString())->get();
 
-        $addressesQuery = Enrollee::shouldSuggestAsFamilyForEnrollee($this->enrolleeId)
-            ->searchAddresses($this->enrollee->getAddressesAsString());
+        $matchingAddressAndSurname = Enrollee::shouldSuggestAsFamilyForEnrollee($this->enrolleeId)
+            ->searchAddresses($this->enrollee->getAddressesAsString())
+        ->get()
+        ->map(function ($e){
+            //If there is a similar address but not the same phone number, we can take into account if the person with a similar address has the same last name.
+            // That is another indicator our care ambassadors use to determine if someone is related.
+            if ($e->relevance_score < (int)suggestedFamilyMemberAcceptableRelevanceScore()){
+                return null;
+            }
 
-        return $phonesQuery->union($addressesQuery);
+            if ($e->last_name !== $this->enrollee->last_name){
+                return null;
+            }
+
+            return $e;
+        })
+        ->filter();
+
+        return $matchingPhones->merge($matchingAddressAndSurname)->unique('id');
     }
 
     private function formatForView($family)
@@ -35,7 +51,7 @@ class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
                 'last_name'    => $e->last_name,
                 'is_confirmed' => $this->enrollee->confirmedFamilyMembers->contains('id', $e->id),
                 'phones'       => [
-                    'value' => $e->getPhonesAsString(),
+                    'value' => $e->getPhonesAsString($this->enrollee),
                 ],
                 'addresses' => [
                     'value' => $e->getAddressesAsString(),
@@ -48,9 +64,8 @@ class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
     {
         $this->getModel();
 
-        $query = $this->constructQuery();
+        $results = $this->getSuggestions();
 
-        return $this->formatForView($query->take(10)
-            ->get()->unique('id'));
+        return $this->formatForView($results);
     }
 }
