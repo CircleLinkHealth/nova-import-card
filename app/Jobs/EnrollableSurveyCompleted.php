@@ -18,7 +18,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 
 class EnrollableSurveyCompleted implements ShouldQueue
@@ -86,6 +85,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 'email' => $surveyAnswers['email'],
                 'status' => Enrollee::ENROLLED,
                 'auto_enrollment_triggered' => true,
+                'user_id' => null
             ]);
 
             $this->importEnrolleeSurveyOnly($enrollee, $user);
@@ -256,6 +256,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
     {
         $user->delete();
         ImportConsentedEnrollees::dispatch([$enrollee->id]);
+        $user->forceDelete();
 
 //        $job = new EligibilityJob();
 //        $practice = Practice::whereId($enrollee->practice_id)->first();
@@ -268,42 +269,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
 //        ImportConsEnrolleesJustForQa::dispatch([$enrollee->id]);
 //        $this->deleteBatch($user->id);
 //        $user->forceDelete();
-    }
-
-    /**
-     * @param User $user
-     */
-    private function createAnEnrolleeModelForUserJustForTesting(User $user)
-    {
-//        So it can be rendere to CA ambassadors dashboard
-        $faker = Factory::create();
-        Enrollee::updateOrCreate(
-            [
-                'user_id' => $user->id
-            ],
-            [
-                'practice_id' => $user->primary_practice_id,
-                'mrn' => mt_rand(111111, 999999),
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
-                'address' => $user->address,
-                'city' => $user->city,
-                'state' => $user->state,
-                'zip' => 44508,
-                'primary_phone' => $faker->phoneNumber,
-                'other_phone' => $faker->phoneNumber,
-                'home_phone' => $faker->phoneNumber,
-                'cell_phone' => $faker->phoneNumber,
-                'dob' => \Carbon\Carbon::parse('1901-01-01'),
-                'lang' => 'EN',
-                'status' => Enrollee::ENROLLED,
-                'primary_insurance' => 'test',
-                'secondary_insurance' => 'test',
-                'email' => $user->email,
-                'referring_provider_name' => 'Dr. Demo',
-                'auto_enrollment_triggered' => true
-            ]
-        );
     }
 
     /**
@@ -373,5 +338,42 @@ class EnrollableSurveyCompleted implements ShouldQueue
         $user->patientInfo->update([
             'ccm_status' => Patient::ENROLLED,
         ]);
+    }
+
+    /**
+     * This should NOT be here. It should be no where yet.
+     * @param User $user
+     */
+    private function createAnEnrolleeModelForUserJustForTesting(User $user)
+    {
+//        So it can be rendere to CA ambassadors dashboard
+        $faker = Factory::create();
+        Enrollee::updateOrCreate(
+            [
+                'user_id' => $user->id
+            ],
+            [
+                'practice_id' => $user->primary_practice_id,
+                'mrn' => mt_rand(111111, 999999),
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'address' => $user->address,
+                'city' => $user->city,
+                'state' => $user->state,
+                'zip' => 44508,
+                'primary_phone' => $faker->phoneNumber,
+                'other_phone' => $faker->phoneNumber,
+                'home_phone' => $faker->phoneNumber,
+                'cell_phone' => $faker->phoneNumber,
+                'dob' => \Carbon\Carbon::parse('1901-01-01'),
+                'lang' => 'EN',
+                'status' => Enrollee::ENROLLED, // tis should be call_gueue
+                'primary_insurance' => 'test',
+                'secondary_insurance' => 'test',
+                'email' => $user->email,
+                'referring_provider_name' => 'Dr. Demo',
+                'auto_enrollment_triggered' => true
+            ]
+        );
     }
 }

@@ -7,7 +7,6 @@ namespace App\Jobs;
 
 
 use App\Console\Commands\SendEnrollmentNotifications;
-use App\Notifications\SendEnrollementSms;
 use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -28,16 +27,27 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
     const SURVEY_ONLY = 'survey-only';
+
+    /**
+     * @var Role
+     */
+    private $surveyRole;
 
     /**
      * Execute the job.
      *
+     * @param Enrollee|null $enrollee
      * @return void
      */
-    public function handle()
+    public function handle(Enrollee $enrollee = null)
     {
-        if (App::environment(['local', 'staging', 'review'])) {
+        if (!is_null($enrollee)) {
+            return $this->createUserFromEnrollee($enrollee);
+        }
+
+        if (App::environment(['local', 'review'])) {
             $practiceId = Practice::whereName('demo')->firstOrFail()->id;
             $enrollees = $this->getEnrollees()
                 ->where('practice_id', $practiceId)
@@ -45,12 +55,86 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
                 ->get()
                 ->take(SendEnrollmentNotifications::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING)
                 ->all();
-            $this->createSurveyOnlyUserFromEnrollee($enrollees);
+            $this->createSurveyOnlyUserFromEnrollees($enrollees);
         } else {
             $this->getEnrollees()->chunk(50, function ($enrollees) {
-                $this->createSurveyOnlyUserFromEnrollee($enrollees);
+                $this->createSurveyOnlyUserFromEnrollees($enrollees);
             });
         }
+    }
+
+    /**
+     * @param Enrollee $enrollee
+     */
+    public function createUserFromEnrollee(Enrollee $enrollee)
+    {
+        $surveyRole = $this->surveyRole();
+
+        $surveyRoleId = $surveyRole->id;
+        //                Create User model from enrollee
+        /** @var User $userCreatedFromEnrollee */
+        /** @var Enrollee $enrollee */
+        $userCreatedFromEnrollee = $enrollee->user()->updateOrCreate(
+            [
+                'email' => $enrollee->email,
+            ],
+            [
+                'program_id' => $enrollee->practice_id,
+                'display_name' => $enrollee->first_name . ' ' . $enrollee->last_name,
+                'user_registered' => Carbon::parse(now())->toDateTimeString(),
+                'first_name' => $enrollee->first_name,
+                'last_name' => $enrollee->last_name,
+                'address' => $enrollee->address,
+                'address_2' => $enrollee->address_2,
+                'city' => $enrollee->city,
+                'state' => $enrollee->state,
+                'zip' => $enrollee->zip,
+            ]
+        );
+
+        $userCreatedFromEnrollee->attachGlobalRole($surveyRoleId);
+
+        $userCreatedFromEnrollee->phoneNumbers()->create([
+            'number' => $enrollee->primary_phone,
+            'is_primary' => true,
+        ]);
+
+        $userCreatedFromEnrollee->patientInfo()->create([
+            'birth_date' => $enrollee->dob,
+        ]);
+
+        // Why this does not work in create query above?
+        $userCreatedFromEnrollee->patientInfo->update([
+            'ccm_status' => Patient::UNREACHABLE,
+        ]);
+
+        $userCreatedFromEnrollee->setBillingProviderId($enrollee->provider->id);
+
+        $enrollee->update(['user_id' => $userCreatedFromEnrollee->id]);
+        $this->sendEmail($userCreatedFromEnrollee);
+//            $this->sendSms($userCreatedFromEnrollee);
+    }
+
+    private function surveyRole(): Role
+    {
+        if (!$this->surveyRole) {
+            $this->surveyRole = Role::firstOrCreate(
+                [
+                    'name' => 'survey-only'
+                ],
+                [
+                    'display_name' => 'Survey User',
+                    'description' => 'Became Users just to be enrolled in AWV survey'
+                ]
+            );
+        }
+
+        return $this->surveyRole;
+    }
+
+    private function sendEmail(User $userCreatedFromEnrollee)
+    {
+        $userCreatedFromEnrollee->notify(new SendEnrollmentEmail($userCreatedFromEnrollee));
     }
 
     /**
@@ -72,69 +156,11 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
      *
      * @param $enrollees
      */
-    public function createSurveyOnlyUserFromEnrollee($enrollees)
+    public function createSurveyOnlyUserFromEnrollees(iterable $enrollees)
     {
         foreach ($enrollees as $enrollee) {
-
-            $surveyRole = Role::firstOrCreate(
-                [
-                    'name' => 'survey-only'
-                ],
-                [
-                    'display_name' => 'Survey User',
-                    'description' => 'Became Users just to be enrolled in AWV survey'
-                ]
-            );
-
-            $surveyRoleId = $surveyRole->id;
-            //                Create User model from enrollee
-            /** @var User $userCreatedFromEnrollee */
-            /** @var Enrollee $enrollee */
-            $userCreatedFromEnrollee = $enrollee->user()->updateOrCreate(
-                [
-                    'email' => $enrollee->email,
-                ],
-                [
-                    'program_id' => $enrollee->practice_id,
-                    'display_name' => $enrollee->first_name . ' ' . $enrollee->last_name,
-                    'user_registered' => Carbon::parse(now())->toDateTimeString(),
-                    'first_name' => $enrollee->first_name,
-                    'last_name' => $enrollee->last_name,
-                    'address' => $enrollee->address,
-                    'address_2' => $enrollee->address_2,
-                    'city' => $enrollee->city,
-                    'state' => $enrollee->state,
-                    'zip' => $enrollee->zip,
-                ]
-            );
-
-            $userCreatedFromEnrollee->attachGlobalRole($surveyRoleId);
-
-            $userCreatedFromEnrollee->phoneNumbers()->create([
-                'number' => $enrollee->primary_phone,
-                'is_primary' => true,
-            ]);
-
-            $userCreatedFromEnrollee->patientInfo()->create([
-                'birth_date' => $enrollee->dob,
-            ]);
-
-            // Why this does not work in create query above?
-            $userCreatedFromEnrollee->patientInfo->update([
-                'ccm_status' => Patient::UNREACHABLE,
-            ]);
-
-            $userCreatedFromEnrollee->setBillingProviderId($enrollee->provider->id);
-
-            $enrollee->update(['user_id' => $userCreatedFromEnrollee->id]);
-            $this->sendEmail($userCreatedFromEnrollee);
-            $this->sendSms($userCreatedFromEnrollee);
+            $this->createUserFromEnrollee($enrollee);
         }
-    }
-
-    private function sendEmail(User $userCreatedFromEnrollee)
-    {
-        $userCreatedFromEnrollee->notify(new SendEnrollmentEmail($userCreatedFromEnrollee));
     }
 
     private function sendSms(User $userCreatedFromEnrollee)

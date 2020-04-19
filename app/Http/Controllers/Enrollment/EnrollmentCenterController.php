@@ -498,12 +498,10 @@ class EnrollmentCenterController extends Controller
         $invitationData = $invitedPatientsUrls->transform(function ($url) {
             $isEnrolleeClass = Enrollee::class === $url->invitationable_type;
             /** @var EnrollableInvitationLink $url */
-            $invitationable = $url->invitationable()->firstOrFail();
-
+            $invitationable = $url->invitationable()->first(); // If empty = was enrollee and its user model got deleted caused got enrolled.
             $isManuallyExpired = $url->manually_expired;
 
-
-            if ($isManuallyExpired) {
+            if ($isManuallyExpired || empty($invitationable)) {
                 return [
                     'invitationUrl'   => '',
                     'isEnrolleeClass' => '',
