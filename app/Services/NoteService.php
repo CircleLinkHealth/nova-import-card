@@ -21,6 +21,7 @@ use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 class NoteService
 {
@@ -314,7 +315,7 @@ class NoteService
 
                     $a['url'] = $media->getUrl();
                     $a['file_name'] = $media->file_name;
-                    $a['is_image'] = Illuminate\Support\Str::contains($media->mime_type, 'image')
+                    $a['is_image'] = Str::contains($media->mime_type, 'image')
                         ?: false;
 
                     $email['attachments'][] = $a;

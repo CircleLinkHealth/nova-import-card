@@ -16,7 +16,7 @@
 
     <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
 
-    @if (Illuminate\Support\Str::contains(optional(Route::getCurrentRoute())->getName(), 'admin'))
+    @if (\Illuminate\Support\Str::contains(optional(Route::getCurrentRoute())->getName(), 'admin'))
         <link href="{{mix('/css/bootstrap.min.css')}}" rel="stylesheet">
     @endif
 

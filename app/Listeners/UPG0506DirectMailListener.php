@@ -17,6 +17,7 @@ use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Str;
 
 class UPG0506DirectMailListener implements ShouldQueue
 {
@@ -98,6 +99,6 @@ class UPG0506DirectMailListener implements ShouldQueue
 
     private function shouldBail(string $sender)
     {
-        return ! Illuminate\Support\Str::contains($sender, '@upg.ssdirect.aprima.com') || ! upg0506IsEnabled();
+        return ! Str::contains($sender, '@upg.ssdirect.aprima.com') || ! upg0506IsEnabled();
     }
 }
