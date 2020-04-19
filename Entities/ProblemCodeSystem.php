@@ -30,5 +30,13 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  */
 class ProblemCodeSystem extends BaseModel
 {
+    const ICD10_NAME = 'ICD-10';
+    const ICD9_NAME = 'ICD-9';
+    const SNOMED_NAME                = 'SNOMED CT';
+    
+    const ICD10      = 'icd_10_code';
+    const ICD9 = 'icd_9_code';
+    const SNOMED                     = 'snomed_code';
+    
     public $fillable = ['name'];
 }
