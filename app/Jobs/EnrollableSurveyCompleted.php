@@ -103,10 +103,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
             $this->updatePatientContactWindow($user, $preferredContactDaysToArray, $patientContactTimeStart, $patientContactTimeEnd);
             $this->reEnrollUnreachablePatient($user);
 
-//            if (App::environment(['local', 'review', 'staging'])) {
-//                $this->createAnEnrolleeModelForUserJustForTesting($user);
-//            }
-
             $patientType = 'Unreachable';
             $id = $user->id;
         }
@@ -335,45 +331,9 @@ class EnrollableSurveyCompleted implements ShouldQueue
     public function reEnrollUnreachablePatient(User $user)
     {
 //        Im no showing this info anywhere. Do i need to show them anywhere?
+        // @todo:Ask Ethan should i assign this to nurse Ethan ()
         $user->patientInfo->update([
             'ccm_status' => Patient::ENROLLED,
         ]);
-    }
-
-    /**
-     * This should NOT be here. It should be no where yet.
-     * @param User $user
-     */
-    private function createAnEnrolleeModelForUserJustForTesting(User $user)
-    {
-//        So it can be rendere to CA ambassadors dashboard
-        $faker = Factory::create();
-        Enrollee::updateOrCreate(
-            [
-                'user_id' => $user->id
-            ],
-            [
-                'practice_id' => $user->primary_practice_id,
-                'mrn' => mt_rand(111111, 999999),
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
-                'address' => $user->address,
-                'city' => $user->city,
-                'state' => $user->state,
-                'zip' => 44508,
-                'primary_phone' => $faker->phoneNumber,
-                'other_phone' => $faker->phoneNumber,
-                'home_phone' => $faker->phoneNumber,
-                'cell_phone' => $faker->phoneNumber,
-                'dob' => \Carbon\Carbon::parse('1901-01-01'),
-                'lang' => 'EN',
-                'status' => Enrollee::ENROLLED, // tis should be call_gueue
-                'primary_insurance' => 'test',
-                'secondary_insurance' => 'test',
-                'email' => $user->email,
-                'referring_provider_name' => 'Dr. Demo',
-                'auto_enrollment_triggered' => true
-            ]
-        );
     }
 }

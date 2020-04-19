@@ -32,36 +32,14 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
      * @var bool
      */
     private $isReminder;
-
-    /**
-     * @var mixed
-     */
-    private $receiver;
-
     /**
      * Create a new notification instance.
      *
-     * @param User $enrollable
      * @param bool $isReminder
      */
-    public function __construct(User $enrollable, $isReminder = false)
+    public function __construct($isReminder = false)
     {
-        $this->receiver = $enrollable;
         $this->isReminder = $isReminder;
-    }
-
-    // Returns Notifiable model
-    public function attachmentType(): string
-    {
-        return $this->receiver;
-    }
-
-    /**
-     * Returns an Eloquent model.
-     */
-    public function getAttachment(): ?Model
-    {
-        return $this->receiver;
     }
 
     /**
@@ -82,7 +60,7 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     public function toArrayData(User $notifiable)
     {
         if ($notifiable->checkForSurveyOnlyRole()) {
-            $enrollee = Enrollee::whereUserId($this->receiver->id)->first();
+            $enrollee = Enrollee::whereUserId($notifiable->id)->first();
 
             return [
                 'enrollee_id' => $enrollee->id,
@@ -103,6 +81,7 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
+//        @todo: refactor this to split methods.
         $notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
 
         return (new MailMessage())

@@ -78,7 +78,7 @@ class SendEnrollmentPatientsReminder implements ShouldQueue
                 // $hasRequestedInfoOnInvitation & hasSurveyCompleted should never be used for 'surveyOnlyUsers' cause if
                 // patient requested info or completed survey the user model would be deleted, hence it will never be collected
                 if ( ! $hasRequestedInfoOnInvitation || ! $this->hasSurveyInProgress($enrollable) || $this->hasSurveyCompleted($enrollable)) {
-                    $enrollable->notify(new SendEnrollmentEmail($enrollable, true));
+                    $enrollable->notify(new SendEnrollmentEmail(true));
 //                    $enrollable->notify(new SendEnrollementSms($enrollable, true));
                 }
             });

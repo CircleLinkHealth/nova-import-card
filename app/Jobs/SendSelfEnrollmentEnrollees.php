@@ -34,6 +34,12 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
      * @var Role
      */
     private $surveyRole;
+    private $enrollee;
+
+    public function __construct(Enrollee $enrollee)
+    {
+        $this->enrollee = $enrollee;
+    }
 
     /**
      * Execute the job.
@@ -41,10 +47,10 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
      * @param Enrollee|null $enrollee
      * @return void
      */
-    public function handle(Enrollee $enrollee = null)
+    public function handle()
     {
-        if (!is_null($enrollee)) {
-            return $this->createUserFromEnrollee($enrollee);
+        if (! is_null($this->enrollee)) {
+            return $this->createUserFromEnrollee($this->enrollee);
         }
 
         if (App::environment(['local', 'review'])) {
@@ -68,6 +74,7 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
      */
     public function createUserFromEnrollee(Enrollee $enrollee)
     {
+//        @todo: move this to a job
         $surveyRole = $this->surveyRole();
 
         $surveyRoleId = $surveyRole->id;
@@ -134,7 +141,7 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
 
     private function sendEmail(User $userCreatedFromEnrollee)
     {
-        $userCreatedFromEnrollee->notify(new SendEnrollmentEmail($userCreatedFromEnrollee));
+        $userCreatedFromEnrollee->notify(new SendEnrollmentEmail());
     }
 
     /**

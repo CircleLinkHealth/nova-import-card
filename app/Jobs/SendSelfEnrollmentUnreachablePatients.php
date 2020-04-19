@@ -27,12 +27,18 @@ class SendSelfEnrollmentUnreachablePatients implements ShouldQueue
     use SerializesModels;
 
     /**
+     * @var User|null
+     */
+    private $user;
+
+    /**
      * Create a new job instance.
      *
-     * @return void
+     * @param User|null $user
      */
-    public function __construct()
+    public function __construct(User $user = null)
     {
+        $this->user = $user;
     }
 
     /**
@@ -44,14 +50,19 @@ class SendSelfEnrollmentUnreachablePatients implements ShouldQueue
      */
     public function handle()
     {
+        if (!is_null($this->user)) {
+            $this->user->notify(new SendEnrollmentEmail());
+            return;
+        }
+
         $mothStart = Carbon::parse(now())->copy()->startOfMonth()->toDateTimeString();
-        $monthEnd  = Carbon::parse($mothStart)->copy()->endOfMonth()->toDateTimeString();
+        $monthEnd = Carbon::parse($mothStart)->copy()->endOfMonth()->toDateTimeString();
 
         //    Just for testing
-        if (App::environment(['local', 'review', 'staging'])) {
+        if (App::environment(['local', 'review'])) {
             $practiceId = Practice::where('name', '=', 'demo')->firstOrFail()->id;
             $patients = $this->getUnreachablePatients($mothStart, $monthEnd)
-                ->whereHas('patientInfo', function ($patientInfo){
+                ->whereHas('patientInfo', function ($patientInfo) {
                     $patientInfo->where('birth_date', Carbon::parse('1901-01-01'));
                 })
                 ->where('program_id', $practiceId)
@@ -59,8 +70,8 @@ class SendSelfEnrollmentUnreachablePatients implements ShouldQueue
                 ->take(SendEnrollmentNotifications::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING);
             foreach ($patients->all() as $patient) {
                 /** @var User $patient */
-                if ( ! $patient->checkForSurveyOnlyRole()) {
-                    $patient->notify(new SendEnrollmentEmail($patient));
+                if (!$patient->checkForSurveyOnlyRole()) {
+                    $patient->notify(new SendEnrollmentEmail());
 //                    $patient->notify(new SendEnrollementSms($patient));
                 }
             }
@@ -68,8 +79,8 @@ class SendSelfEnrollmentUnreachablePatients implements ShouldQueue
             $this->getUnreachablePatients($mothStart, $monthEnd)->chunk(50, function ($patients) {
                 foreach ($patients as $patient) {
                     /** @var User $patient */
-                    if ( ! $patient->checkForSurveyOnlyRole()) {
-                        $patient->notify(new SendEnrollmentEmail($patient));
+                    if (!$patient->checkForSurveyOnlyRole()) {
+                        $patient->notify(new SendEnrollmentEmail());
                         $patient->notify(new SendEnrollementSms($patient));
                     }
                 }
