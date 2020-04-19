@@ -20,7 +20,7 @@ trait MigrateAndSeedOnce
     /**
      * After the first run of setUp "migrate:fresh --seed".
      */
-    protected function setUp()
+    protected function setUp() :void
     {
         parent::setUp();
 
