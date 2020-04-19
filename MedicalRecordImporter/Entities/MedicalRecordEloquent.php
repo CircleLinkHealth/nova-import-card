@@ -16,6 +16,7 @@ namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities;
 use App\Console\Commands\OverwriteNBIImportedData;
 use App\Search\ProviderByName;
 use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -62,6 +63,15 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
         $this->getLogger()->logAllSections();
 
         return $this;
+    }
+    
+    public function scopeHasUPG0506PdfCareplanMedia($query)
+    {
+        return $query->whereExists(function ($query) {
+            $query->select('id')
+                  ->from('media')
+                  ->where('custom_properties->is_pdf', 'true')->where('custom_properties->is_upg0506', 'true')->where('custom_properties->care_plan->demographics->mrn_number', (string)$this->mrn);
+        });
     }
 
     /**
@@ -133,16 +143,16 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
     public function import()
     {
         $this->createLogs()
-            ->guessPracticeLocationProvider()
-            ->createImportedMedicalRecord()
-            ->importAllergies()
-            ->importDemographics()
-            ->importDocument()
-            ->importInsurance()
-            ->importMedications()
-            ->importProblems()
-            ->importProviders()
-            ->raiseConcerns();
+             ->guessPracticeLocationProvider()
+             ->createImportedMedicalRecord()
+             ->importAllergies()
+             ->importDemographics()
+             ->importDocument()
+             ->importInsurance()
+             ->importMedications()
+             ->importProblems()
+             ->importProviders()
+             ->raiseConcerns();
 
         event(new CcdaImported($this->getId()));
         
@@ -266,8 +276,8 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
 
         if ($historicPrediction) {
             if (isset($practice) && ! $practice->locations->pluck('id')->contains(
-                $historicPrediction
-            ) && $primaryLocationId = $practice->getPrimaryLocationIdAttribute()) {
+                    $historicPrediction
+                ) && $primaryLocationId = $practice->getPrimaryLocationIdAttribute()) {
                 $this->setLocationId($primaryLocationId);
 
                 return $this;
@@ -300,17 +310,28 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
 
     public function raiseConcerns()
     {
-        $isDuplicate              = $this->isDuplicate();
-        $hasAtLeast2CcmConditions = $this->hasAtLeast2CcmConditions();
-        $hasAtLeast1BhiCondition  = $this->hasAtLeast1BhiCondition();
-        $hasMedicare              = $this->hasMedicare();
-        $wasNBIOverwritten        = app(OverwriteNBIImportedData::class)->lookupAndReplacePatientData(
+        $isDuplicate             = $this->isDuplicate();
+        $ccmConditionsCount      = $this->ccmConditionsCount();
+        $hasAtLeast1BhiCondition = $this->hasAtLeast1BhiCondition();
+        $hasMedicare             = $this->hasMedicare();
+        $wasNBIOverwritten       = app(OverwriteNBIImportedData::class)->lookupAndReplacePatientData(
             $this->importedMedicalRecord
         );
 
+        $practiceHasPcm = null;
+        $practiceId     = $this->getPracticeId();
+        if ($practiceId) {
+            $practice = Practice::with('chargeableServices')->find($practiceId);
+            if ($practice) {
+                $practiceHasPcm = $practice->hasServiceCode(ChargeableService::PCM);
+            }
+        }
+
         $this->importedMedicalRecord->validation_checks = [
-            ImportedMedicalRecord::CHECK_HAS_AT_LEAST_2_CCM_CONDITIONS => $hasAtLeast2CcmConditions,
+            ImportedMedicalRecord::CHECK_HAS_AT_LEAST_1_CCM_CONDITION  => $ccmConditionsCount >= 1,
+            ImportedMedicalRecord::CHECK_HAS_AT_LEAST_2_CCM_CONDITIONS => $ccmConditionsCount >= 2,
             ImportedMedicalRecord::CHECK_HAS_AT_LEAST_1_BHI_CONDITION  => $hasAtLeast1BhiCondition,
+            ImportedMedicalRecord::CHECK_PRACTICE_HAS_PCM              => $practiceHasPcm,
             ImportedMedicalRecord::CHECK_HAS_MEDICARE                  => $hasMedicare,
             ImportedMedicalRecord::WAS_NBI_OVERWRITTEN                 => $wasNBIOverwritten,
         ];
@@ -329,9 +350,9 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
             return $baseQuery
                 ->with([
                     'typoTolerance' => true,
-                ])->when( ! empty($this->practice_id), function ($q) {
-                           $q->whereIn('practice_ids', [$this->practice_id]);
-                       })
+                ])->when(! empty($this->practice_id), function ($q) {
+                    $q->whereIn('practice_ids', [$this->practice_id]);
+                })
                 ->first();
         }
 
@@ -375,15 +396,35 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
 
     protected function createImportedMedicalRecord(): MedicalRecord
     {
-        $this->importedMedicalRecord = ImportedMedicalRecord::create(
+        $args = [
+            'practice_id'         => $this->getPracticeId(),
+            'billing_provider_id' => $this->getBillingProviderId(),
+            'location_id'         => $this->getLocationId(),
+        ];
+        
+        $this->importedMedicalRecord = ImportedMedicalRecord::firstOrCreate(
             [
                 'medical_record_type' => get_class($this),
                 'medical_record_id'   => $this->id,
-                'billing_provider_id' => $this->getBillingProviderId(),
-                'location_id'         => $this->getLocationId(),
-                'practice_id'         => $this->getPracticeId(),
-            ]
+            ],
+            $args
         );
+        
+        if (! $this->importedMedicalRecord->practice_id) {
+            $this->importedMedicalRecord->practice_id = $args['practice_id'];
+        }
+    
+        if (! $this->importedMedicalRecord->billing_provider_id) {
+            $this->importedMedicalRecord->billing_provider_id = $args['billing_provider_id'];
+        }
+    
+        if (! $this->importedMedicalRecord->location_id) {
+            $this->importedMedicalRecord->location_id = $args['location_id'];
+        }
+        
+        if ($this->importedMedicalRecord->isDirty()) {
+            $this->importedMedicalRecord->save();
+        }
 
         return $this;
     }
@@ -394,13 +435,13 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
     private function hasAtLeast1BhiCondition()
     {
         return $this->problemsInGroups->get('monitored', collect())
-            ->unique(
-                function ($p) {
-                    return $p['attributes']['cpm_problem_id'];
-                }
-            )
-            ->where('is_behavioral', true)
-            ->count() >= 1;
+                                      ->unique(
+                                          function ($p) {
+                                              return $p['attributes']['cpm_problem_id'];
+                                          }
+                                      )
+                                      ->where('is_behavioral', true)
+                                      ->count() >= 1;
     }
 
     /**
@@ -409,12 +450,26 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
     private function hasAtLeast2CcmConditions()
     {
         return $this->problemsInGroups->get('monitored', collect())
-            ->unique(
-                function ($p) {
-                    return $p['attributes']['cpm_problem_id'];
-                }
-            )
-            ->count() >= 2;
+                                      ->unique(
+                                          function ($p) {
+                                              return $p['attributes']['cpm_problem_id'];
+                                          }
+                                      )
+                                      ->count() >= 2;
+    }
+
+    /**
+     * @return int
+     */
+    private function ccmConditionsCount()
+    {
+        return $this->problemsInGroups->get('monitored', collect())
+                                      ->unique(
+                                          function ($p) {
+                                              return $p['attributes']['cpm_problem_id'];
+                                          }
+                                      )
+                                      ->count();
     }
 
     /**
@@ -423,11 +478,11 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
     private function hasMedicare()
     {
         return $this->insurances->reject(
-            function ($i) {
-                return ! Illuminate\Support\Str::contains(strtolower($i->name.$i->type), 'medicare');
-            }
-        )
-            ->count() >= 1;
+                function ($i) {
+                    return ! Illuminate\Support\Str::contains(strtolower($i->name . $i->type), 'medicare');
+                }
+            )
+                                ->count() >= 1;
     }
 
     /**
@@ -446,20 +501,20 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
         $practiceId = optional($demos->ccda)->practice_id;
 
         $query = User::whereFirstName($demos->first_name)
-            ->whereLastName($demos->last_name)
-            ->whereHas(
-                'patientInfo',
-                function ($q) use ($demos) {
-                    $q->whereBirthDate($demos->dob);
-                }
-            );
+                     ->whereLastName($demos->last_name)
+                     ->whereHas(
+                         'patientInfo',
+                         function ($q) use ($demos) {
+                             $q->whereBirthDate($demos->dob);
+                         }
+                     );
         if ($practiceId) {
             $query = $query->where('program_id', $practiceId);
         }
 
         $user = $query->first();
 
-        if ($user) {
+        if ($user && (int) $this->importedMedicalRecord->duplicate_id !== (int) $user->id) {
             $this->importedMedicalRecord->duplicate_id = $user->id;
             $this->importedMedicalRecord->save();
 
@@ -473,7 +528,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
             }
         )->whereMrnNumber($demos->mrn_number)->first();
 
-        if ($patient) {
+        if ($patient && (int) $this->importedMedicalRecord->duplicate_id !== (int) $user->id) {
             $this->importedMedicalRecord->duplicate_id = $patient->user_id;
             $this->importedMedicalRecord->save();
 

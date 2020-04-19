@@ -2,6 +2,7 @@
 
 namespace CircleLinkHealth\Eligibility\Entities;
 
+use CircleLinkHealth\Core\Traits\MySQLSearchable;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
@@ -28,9 +29,11 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\PcmProblem wherePracticeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\PcmProblem whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\PcmProblem mySQLSearch($columns, $term, $mode = 'BOOLEAN', $shouldRequireAll = true, $shouldRequireIntegers = true)
  */
 class PcmProblem extends Model
 {
+    use MySQLSearchable;
     use Searchable;
 
     protected $fillable = [

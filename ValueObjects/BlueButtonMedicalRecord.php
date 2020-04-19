@@ -132,11 +132,11 @@ class BlueButtonMedicalRecord
                 ],
                 1 => [
                     'type'   => 'primary_phone',
-                    'number' => $this->data['primary_phone'],
+                    'number' => $this->data['primary_phone'] ?? '',
                 ],
                 2 => [
                     'type'   => 'mobile',
-                    'number' => $this->data['cell_phone'],
+                    'number' => $this->data['cell_phone'] ?? '',
                 ],
             ],
             'email'      => null,
@@ -193,7 +193,7 @@ class BlueButtonMedicalRecord
     {
         return [
             'custodian' => [
-                'name' => $this->data['preferred_provider'],
+                'name' => $this->data['preferred_provider'] ?? null,
             ],
             'date'   => '',
             'title'  => '',
@@ -300,10 +300,10 @@ class BlueButtonMedicalRecord
                     'status'  => '',
                     'text'    => null,
                     'product' => [
-                        'name'        => $medication['name'],
+                        'name'        => $medication['name'] ?? null,
                         'code'        => '',
                         'code_system' => '',
-                        'text'        => $medication['sig'],
+                        'text'        => $medication['sig'] ?? null,
                         'translation' => [
                             'name'             => null,
                             'code'             => null,
@@ -367,7 +367,7 @@ class BlueButtonMedicalRecord
     {
         return collect($this->data['problems'])
             ->map(function ($problem) {
-                if ( ! validProblemName($problem['name'])) {
+                if ( ! validProblemName($problem['name'] ?? null)) {
                     return false;
                 }
 
@@ -375,15 +375,15 @@ class BlueButtonMedicalRecord
                     'reference'       => null,
                     'reference_title' => null,
                     'date_range'      => [
-                        'start' => $problem['start_date'],
+                        'start' => $problem['start_date'] ?? null,
                         'end'   => null,
                     ],
-                    'name'             => $problem['name'],
+                    'name'             => $problem['name'] ?? null,
                     'status'           => null,
                     'age'              => null,
-                    'code'             => $problem['code'],
+                    'code'             => $problem['code'] ?? null,
                     'code_system'      => null,
-                    'code_system_name' => $problem['code_type'],
+                    'code_system_name' => $problem['code_type'] ?? null,
                     'translations'     => [
                         [
                             'name'             => null,

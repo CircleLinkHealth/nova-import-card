@@ -1,0 +1,161 @@
+<?php
+
+namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
+
+use Carbon\Carbon;
+use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem;
+
+class CommonwealthMedicalRecord extends BaseMedicalRecordTemplate
+{
+    /**
+     * @var CcdaMedicalRecord
+     */
+    protected $ccdaMedicalRecord;
+    /**
+     * @var array
+     */
+    private $data;
+    
+    public function __construct(array $medicalRecord, CcdaMedicalRecord $ccdaMedicalRecord)
+    {
+        $this->data              = $medicalRecord;
+        $this->ccdaMedicalRecord = $ccdaMedicalRecord;
+    }
+    
+    public function fillAllergiesSection(): array
+    {
+        return $this->ccdaMedicalRecord->fillAllergiesSection();
+    }
+    
+    public function fillDemographicsSection(): object
+    {
+        return $this->ccdaMedicalRecord->fillDemographicsSection();
+    }
+    
+    public function fillDocumentSection() :object
+    {
+        $document = $this->ccdaMedicalRecord->fillDocumentSection();
+        
+        $document->custodian->name  = $this->getProviderName();
+        $document->documentation_of = [
+            [
+                'provider_id' => null,
+                'name'        => [
+                    'prefix' => null,
+                    'given'  => [
+                        0 => $this->getProviderName(),
+                    ],
+                    'family' => '',
+                    'suffix' => '',
+                ],
+                'phones'      => [
+                    0 => [
+                        'type'   => '',
+                        'number' => '',
+                    ],
+                ],
+                'address'     => [
+                    'street'  => [
+                        0 => '',
+                    ],
+                    'city'    => '',
+                    'state'   => '',
+                    'zip'     => '',
+                    'country' => '',
+                ],
+            ],
+        ];
+        
+        return $document;
+    }
+    
+    public function fillMedicationsSection(): array
+    {
+        return $this->ccdaMedicalRecord->fillMedicationsSection();
+    }
+    
+    public function fillProblemsSection(): array
+    {
+        return collect(array_merge((array) $this->ccdaMedicalRecord->fillProblemsSection(), $this->getMedicalHistory()))->unique('name')->all();
+    }
+    
+    public function fillVitals(): array
+    {
+        return $this->ccdaMedicalRecord->fillVitals();;
+    }
+    
+    private function getAllergyName($allergy): string
+    {
+        return $allergy->Name;
+    }
+    
+    public function getProviderName(): string
+    {
+        return $this->data['referring_provider_name'];
+    }
+    
+    public function getMrn(): string
+    {
+        return $this->data['mrn_number'];
+    }
+    
+    public function getFirstName(): string
+    {
+        return $this->data['first_name'];
+    }
+    
+    public function getDob(): Carbon
+    {
+        return Carbon::parse($this->data['dob']);
+    }
+    
+    public function getLastName(): string
+    {
+        return $this->data['last_name'];
+    }
+    
+    private function getAddressLine1(): string
+    {
+        return $this->data['street'];
+    }
+    
+    private function getAddressLine2(): string
+    {
+        return $this->data['street2'];
+    }
+    
+    private function getZipCode(): string
+    {
+        return $this->data['zip'];
+    }
+    
+    private function getMedicalHistory()
+    {
+        return collect($this->data['medical_history']['questions'] ?? [])->where('answer', 'Y')->pluck(
+            'question'
+        )->unique()
+                                                                         ->map(
+                                                                             function ($historyItem) {
+                                                                                 if ( ! validProblemName(
+                                                                                     $historyItem
+                                                                                 )) {
+                                                                                     return false;
+                                                                                 }
+                
+                                                                                 return (new Problem())->setName(
+                                                                                     $historyItem
+                                                                                 )->toarray();
+                                                                             }
+                                                                         )->all();
+    }
+    
+    public function fillPayersSection(): array
+    {
+        return $this->ccdaMedicalRecord->fillPayersSection();
+    }
+    
+    public function getType(): string
+    {
+        return 'commonwealth-pain-associates-pllc';
+    }
+}

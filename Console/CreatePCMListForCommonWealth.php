@@ -2,10 +2,6 @@
 
 namespace CircleLinkHealth\Eligibility\Console;
 
-use CircleLinkHealth\Eligibility\Decorators\AddCareTeamFromAthenaToEligibilityJob;
-use CircleLinkHealth\Eligibility\Decorators\AddDemographicsFromAthenaToEligibilityJob;
-use CircleLinkHealth\Eligibility\Decorators\AddInsuranceFromAthenaToEligibilityJob;
-use CircleLinkHealth\Eligibility\Decorators\AddPcmChargeableServices;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Jobs\ProcessCommonwealthPatientForPcm;
 use Illuminate\Console\Command;
@@ -40,11 +36,12 @@ class CreatePCMListForCommonWealth extends Command
             function ($q) {
                 $q->where('practice_id', self::PRACTICE_ID);
             }
-        )->with(['targetPatient.ccda'])->chunkById(
-            100,
+        )->chunkById(
+            500,
             function ($jobs) {
                 $jobs->each(
                     function ($job) {
+                        $this->warn("Processing eligibilityJob:$job->id");
                         ProcessCommonwealthPatientForPcm::dispatch($this->resetPcm($job));
                     }
                 );
