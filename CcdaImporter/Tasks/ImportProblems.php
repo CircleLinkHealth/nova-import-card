@@ -17,6 +17,7 @@ use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 
 class ImportProblems extends BaseCcdaImportTask
 {
@@ -247,14 +248,14 @@ class ImportProblems extends BaseCcdaImportTask
                 $cpmProblemId = optional($cpmProblem)->id;
                 
                 //if problem is Diabetes and string contains 2, it's probably diabetes type 2
-                if (1 == $cpmProblem->id && Illuminate\Support\Str::contains($problemCodes->cons_name, ['2'])) {
+                if (1 == $cpmProblemId && Str::contains($problemCodes->cons_name, ['2'])) {
                     $cpmProblem = $this->cpmProblems->firstWhere(
                         'name',
                         'Diabetes Type 2'
                                             );
                 }
                 //if problem is Diabetes and string contains 1, it's probably diabetes type 1
-                elseif (1 == $cpmProblem->id && Illuminate\Support\Str::contains(
+                elseif (1 == $cpmProblemId && Str::contains(
                     $problemCodes->cons_name,
                     ['1']
                                         )) {
