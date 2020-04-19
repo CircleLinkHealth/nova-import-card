@@ -93,13 +93,20 @@ trait MySQLSearchable
         string $term,
         $mode = 'BOOLEAN',
         $shouldRequireAll = true,
-        $shouldRequireIntegers = true
+        $shouldRequireIntegers = true,
+        $shouldIncludeRelevanceScore = false
     ) {
         if ( ! $this->validateMode($mode)) {
             throw new \Exception("Invalid MySQL full-text search mode: {$mode}");
         }
 
         $columns = implode(',', $columns);
+
+        if ($shouldIncludeRelevanceScore){
+            $query->selectRaw("*, MATCH ({$columns}) AGAINST (? IN {$mode} MODE)*100 as relevance_score",
+                [$this->fullTextWildcards($term, $shouldRequireAll, $shouldRequireIntegers)]);
+        }
+
 
         $query->whereRaw("MATCH ({$columns}) AGAINST (? IN {$mode} MODE)",
             $this->fullTextWildcards($term, $shouldRequireAll, $shouldRequireIntegers));
