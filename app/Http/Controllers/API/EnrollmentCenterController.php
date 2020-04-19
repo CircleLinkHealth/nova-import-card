@@ -85,7 +85,7 @@ class EnrollmentCenterController extends ApiController
         }
 
         if (is_array($request->input('times'))) {
-            $enrollee->preferred_window = implode(', ', $request->input('times'));
+            $enrollee->preferred_window = $this->createTimeRangeFromEarliestAndLatest($request->input('times'));
         }
 
         $enrollee->status          = Enrollee::CONSENTED;
@@ -228,5 +228,33 @@ class EnrollmentCenterController extends ApiController
         return $this->json([
             'ca_total_time_updated_to' => $totalTimeInSystem,
         ]);
+    }
+
+    private function createTimeRangeFromEarliestAndLatest(array $times){
+        $times = collect($times);
+
+        if ($times->count() == 1){
+            return $times->first();
+        }
+
+        $start = collect(explode('-', $times->first()))->first();
+
+        if (! $start){
+            return null;
+        }
+
+        $end = collect(explode('-', $times->last()))->last();
+
+        //if something goes wrong with input, which is unlikely since its pre-selected
+        if (! $end){
+            //if more than 2 entries get second to last and try to parse
+            $secondToLastEnd = collect(explode('-', $times[$times->count() - 2]))->last();
+            if ($times->count() == 2 || ! $secondToLastEnd){
+                return $times->first();
+            }
+            $end = $secondToLastEnd;
+        }
+
+        return $start.'-'.$end;
     }
 }

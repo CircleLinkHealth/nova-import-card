@@ -428,7 +428,7 @@
                             </div>
                             <div class="col s12 m3">
                                 <label for="times[]" class="label">Times</label>
-                                <select v-model="times" class="do-not-close" name="times[]" id="times[]">
+                                <select v-model="times" class="do-not-close" name="times[]" id="times[]" multiple>
                                     <option disabled selected>Times:</option>
                                     <option value="09:00-12:00">9AM - Noon</option>
                                     <option value="12:00-15:00">Noon - 3PM</option>
