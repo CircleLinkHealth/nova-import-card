@@ -66,7 +66,7 @@ class CreateEnrolleesTable extends Migration
             $table->date('last_encounter')->nullable();
             $table->string('referring_provider_name')->nullable();
             $table->boolean('confident_provider_guess')->nullable();
-            $table->string('problems')->nullable();
+            $table->json('problems')->nullable();
             $table->integer('cpm_problem_1')->unsigned()->nullable()->index('enrollees_cpm_problem_1_foreign');
             $table->integer('cpm_problem_2')->unsigned()->nullable()->index('enrollees_cpm_problem_2_foreign');
             $table->unique(['practice_id', 'mrn']);
