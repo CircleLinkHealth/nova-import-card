@@ -75,8 +75,7 @@ class EnrollmentCenterController extends ApiController
 
         $enrollee->attempt_count = $enrollee->attempt_count + 1;
 
-        //we are adding this as Other Note on patient chart. Therefore, even if it's empty, save it to potentially overwrite previous outcome reasons e.g. when unreachable
-        $enrollee->last_call_outcome_reason = $request->input('extra');
+        $enrollee->other_note = $request->input('extra');
 
         if (is_array($request->input('days'))) {
             $enrollee->preferred_days = collect($request->input('days'))->reject(function ($d) {

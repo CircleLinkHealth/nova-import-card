@@ -73,6 +73,7 @@ class Enrollable extends Resource
             'reason_other'             => Enrollee::UNREACHABLE !== $enrollable->status && $enrollable->last_call_outcome_reason
                 ? $enrollable->last_call_outcome_reason
                 : '',
+            'extra'                    => $enrollable->other_note,
             'last_encounter'           => $enrollable->last_encounter ?? 'N/A',
             'attempt_count'            => $enrollable->attempt_count ?? 0,
             'last_attempt_at'          => optional($enrollable->last_attempt_at)->toDateString() ?? 'N/A',
@@ -87,9 +88,40 @@ class Enrollable extends Resource
             'report' => CareAmbassadorLog::createOrGetLogs($careAmbassador->id),
             'script' => TrixField::careAmbassador($this->lang)->first(),
 
+            'days' => $enrollable->preferred_days ? explode(', ', $enrollable->preferred_days) : [],
+            'times' => $enrollable->preferred_window ? $this->timeRangeToPanelWindows($enrollable->preferred_window) : [],
+
             'provider'       => $this->provider->toArray(),
             'provider_phone' => (new StringManipulation())->formatPhoneNumber($this->provider->getPhone()),
             'has_tips'       => (bool)$this->practice->enrollmentTips,
         ];
+    }
+
+    private function timeRangeToPanelWindows(string $timeRange){
+        $times = collect(explode('-', $timeRange));
+
+        if ($times->count() !== 2){
+            return null;
+        }
+
+        $start = $times->first();
+        $end = $times->last();
+
+        $panelWindows = [];
+
+        //Boolean algebra ftw yo
+        if ($start == '09:00'){
+            $panelWindows[] = '09:00-12:00';
+        }
+
+        if ($end == '15:00' || $end == '18:00'){
+            $panelWindows[] = '12:00-15:00';
+        }
+
+        if ($end == '18:00'){
+            $panelWindows[] = '15:00-18:00';
+        }
+
+        return $panelWindows;
     }
 }
