@@ -156,7 +156,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     ];
 
     protected $casts = [
-        'validation_checks' => 'array',
+        'validation_checks' => 'collection',
     ];
 
     protected $dates = [
@@ -436,6 +436,10 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
         $this->updateOrCreateCarePlan($enrollee);
         $this->raiseConcerns();
+        
+        if ($this->isDirty()) {
+            $this->save();
+        }
 
         event(new CcdaImported($this->getId()));
 
@@ -479,33 +483,13 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
     public function raiseConcerns()
     {
-        $this->load(['patient.ccdProblems', 'patient.ccdInsurancePolicies']);
-
-        $isDuplicate             = $this->isDuplicate();
-        $ccmConditionsCount      = $this->ccmConditionsCount();
-        $hasAtLeast1BhiCondition = $this->hasAtLeast1BhiCondition();
-        $hasMedicare             = $this->hasMedicare();
-        $wasNBIOverwritten       = app(OverwriteNBIImportedData::class)->lookupAndReplacePatientData(
-            $this
-        );
-
-        $practiceHasPcm = null;
-        $practiceId     = $this->getPracticeId();
-        if ($practiceId) {
-            $practice = Practice::with('chargeableServices')->find($practiceId);
-            if ($practice) {
-                $practiceHasPcm = $practice->hasServiceCode(ChargeableService::PCM);
-            }
+        $this->load(['patient.carePlan']);
+    
+        $validator = $this->patient->carePlan->validator();
+        $this->validation_checks = null;
+        if ($validator->fails()) {
+            $this->validation_checks = $validator->errors();
         }
-
-        $this->validation_checks = [
-            self::CHECK_HAS_AT_LEAST_1_CCM_CONDITION  => $ccmConditionsCount >= 1,
-            self::CHECK_HAS_AT_LEAST_2_CCM_CONDITIONS => $ccmConditionsCount >= 2,
-            self::CHECK_HAS_AT_LEAST_1_BHI_CONDITION  => $hasAtLeast1BhiCondition,
-            self::CHECK_PRACTICE_HAS_PCM              => $practiceHasPcm,
-            self::CHECK_HAS_MEDICARE                  => $hasMedicare,
-            self::WAS_NBI_OVERWRITTEN                 => $wasNBIOverwritten,
-        ];
     }
 
     public function scopeExclude($query, $value = [])
@@ -687,20 +671,6 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     }
 
     /**
-     * @return int
-     */
-    private function ccmConditionsCount()
-    {
-        if ( ! $this->patient) {
-            return;
-        }
-
-        return $this->patient->ccdProblems->where('is_monitored', true)
-            ->unique('cpm_problem_id')
-            ->count();
-    }
-
-    /**
      * Gets the parsed json from the parser's table, if it was already parsed.
      *
      * @return string|null
@@ -708,100 +678,6 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     private function getParsedJson()
     {
         return optional(DB::table(config('ccda-parser.db_table'))->where('ccda_id', '=', $this->id)->first())->result;
-    }
-
-    /**
-     * @return bool
-     */
-    private function hasAtLeast1BhiCondition()
-    {
-        if ( ! $this->patient) {
-            return;
-        }
-
-        return $this->patient->ccdProblems->where('is_monitored', true)
-            ->unique('cpm_problem_id')
-            ->where('is_behavioral', true)
-            ->count() >= 1;
-    }
-
-    /**
-     * @return bool
-     */
-    private function hasAtLeast2CcmConditions()
-    {
-        if ( ! $this->patient) {
-            return;
-        }
-
-        return $this->patient->ccdProblems->where('is_monitored', true)
-            ->unique('cpm_problem_id')
-            ->count() >= 2;
-    }
-
-    /**
-     * @return bool
-     */
-    private function hasMedicare()
-    {
-        if ( ! $this->patient) {
-            return;
-        }
-
-        return $this->patient->ccdInsurancePolicies->reject(
-            function ($i) {
-                return ! Str::contains(strtolower($i->name.$i->type), 'medicare');
-            }
-        )
-            ->count() >= 1;
-    }
-
-    /**
-     * Checks whether the patient we have just imported exists in the system.
-     *
-     * @return bool|null
-     */
-    private function isDuplicate()
-    {
-        $practiceId = $this->practice_id;
-
-        $query = User::whereFirstName($this->patientFirstName())
-            ->whereLastName($this->patientLastName())
-            ->whereHas(
-                'patientInfo',
-                function ($q) {
-                    $q->whereBirthDate($this->patientDob());
-                }
-            );
-        if ($this->patient_id) {
-            $query = $query->where('id', '!=', $this->patient_id);
-        }
-        if ($practiceId) {
-            $query = $query->where('program_id', $practiceId);
-        }
-
-        $user = $query->first();
-
-        if ($user && (int) $this->duplicate_id !== (int) $user->id) {
-            $this->duplicate_id = $user->id;
-
-            return true;
-        }
-
-        $patient = Patient::whereHas(
-            'user',
-            function ($q) use ($practiceId) {
-                $q->where('program_id', $practiceId);
-            }
-        )->whereMrnNumber($this->patientMrn())->first();
-
-        if ($patient && (int) $this->duplicate_id !== (int) $patient->user_id && (int) $this->patient_id !== (int) $patient->user_id) {
-            $this->duplicate_id = $patient->user_id;
-
-            return true;
-        }
-
-        return false;
     }
 
     private function setAllPracticeInfoFromProvider(string $term)

@@ -16,6 +16,7 @@ use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NotifyPatientCarePlanApproved;
 use App\Rules\DoesNotHaveBothTypesOfDiabetes;
 use App\Rules\HasEnoughProblems;
+use App\Rules\PatientIsNotDuplicate;
 use App\Services\Calls\SchedulerService;
 use App\Services\CareplanService;
 use App\Traits\PdfReportTrait;
@@ -24,6 +25,7 @@ use CircleLinkHealth\Core\PdfService;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Rules\HasValidNbiMrn;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -486,6 +488,7 @@ class CarePlan extends BaseModel implements PdfReport
             'billingProvider' => optional($patient->billingProviderUser())->id,
             'practice'        => $patient->program_id,
             'location'        => $patient->getPreferredContactLocation(),
+            'duplicate' => $patient->getMRN(),
         ];
 
         return Validator::make(
@@ -506,6 +509,7 @@ class CarePlan extends BaseModel implements PdfReport
                 'billingProvider' => 'required|numeric',
                 'practice'        => 'required|numeric',
                 'location'        => 'required|numeric',
+                'duplicate'      => [new PatientIsNotDuplicate($this->patient->program_id, $this->patient->first_name, $this->patient->last_name, ImportPatientInfo::parseDOBDate($this->patient->patientInfo->birth_date), $this->patient->patientInfo->mrn_number)]
             ],
             [
                 'phoneNumber.phone' => 'The patient has an invalid phone number.',
