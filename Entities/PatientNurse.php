@@ -24,7 +24,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property \CircleLinkHealth\Customer\Entities\User                                                    $patient
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse
  *     newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse newQuery()
@@ -46,7 +45,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse
  *     whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property \CircleLinkHealth\Customer\Entities\User|null $permanentNurse
  * @property \CircleLinkHealth\Customer\Entities\User|null $temporaryNurse
  */
