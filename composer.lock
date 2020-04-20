@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ff8e2fce5c36f4a0b0fda449acb5da57",
+    "content-hash": "a249c7ff50f9ccf6918276d37d3c7752",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1328,11 +1328,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.3.8",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "663b9d3358af2a9c5a8de37b52451d886165ce1e"
+                "reference": "f8829f1e87fa52d5c5998bcf8dbe074dc5ba433d"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1346,7 +1346,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-19T18:09:51+00:00"
+            "time": "2020-04-20T09:51:44+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -1383,11 +1383,11 @@
         },
         {
             "name": "circlelinkhealth/timetracking-module",
-            "version": "v1.1.9",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "f96abaf50628380a16991a3dc0c5d650a0f9301c"
+                "reference": "329819d3ce2a52a078f8a954c38cd4959967c501"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1412,7 +1412,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-24T18:33:45+00:00"
+            "time": "2020-04-20T09:51:44+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -8579,11 +8579,11 @@
         },
         {
             "name": "subzero10/condition-code-lookup-module",
-            "version": "v1.1.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:subzero10/condition-code-lookup-module.git",
-                "reference": "768cff48a2c0c4d8aac520ff2515fba760d170d6"
+                "reference": "735fc735118b1b68664378f74f205362b10b68aa"
             },
             "require": {
                 "ext-curl": "*",
@@ -8611,7 +8611,7 @@
                     "email": "pagcosma@gmail.com"
                 }
             ],
-            "time": "2020-04-10T07:06:40+00:00"
+            "time": "2020-04-20T07:26:01+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -15220,7 +15220,10 @@
         "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/raygun-module": 20,
         "circlelinkhealth/revisionable-module": 20,
+        "circlelinkhealth/shared-models-module": 20,
+        "circlelinkhealth/timetracking-module": 20,
         "daltcore/lara-pdf-merger": 20,
+        "subzero10/condition-code-lookup-module": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20
     },
