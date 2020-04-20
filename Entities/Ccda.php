@@ -73,6 +73,8 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         'validation_checks' => 'array',
     ];
     
+    protected $dontKeepRevisionOf = ['json'];
+    
     private $decodedJson;
     
     const CCD_MEDIA_COLLECTION_NAME = 'ccd';
