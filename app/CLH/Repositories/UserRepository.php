@@ -732,7 +732,7 @@ class UserRepository
     
     private function checkPatientForDupes(ParameterBag $params) {
         return [
-            'mrn_number' => [new PatientIsNotDuplicate($params->get('program_id'), $params->get('first_name'), $params->get('last_name'), $params->get('birth_date'), $params->get('mrn_number'))]
+            'mrn_number' => [new PatientIsNotDuplicate($params->get('program_id'), $params->get('first_name'), $params->get('last_name'), ImportPatientInfo::parseDOBDate($params->get('birth_date')), $params->get('mrn_number'))]
         ];
     }
 }
