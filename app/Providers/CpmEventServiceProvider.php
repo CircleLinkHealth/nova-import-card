@@ -13,7 +13,7 @@ use App\Events\CarePlanWasQAApproved;
 use App\Events\NoteFinalSaved;
 use App\Events\PatientUserCreated;
 use App\Events\PdfableCreated;
-use App\Events\AutoEnrollablesCollected;
+use App\Events\AutoEnrollableCollected;
 use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
 use App\Events\UserFromEnrolleCreated;
@@ -116,7 +116,7 @@ class CpmEventServiceProvider extends ServiceProvider
             NotifyPatientOfCarePlanApproval::class,
         ],
 
-        AutoEnrollablesCollected::class => [
+        AutoEnrollableCollected::class => [
             SendEnrollableEmail::class,
             SendEnrollableSms::class
         ],

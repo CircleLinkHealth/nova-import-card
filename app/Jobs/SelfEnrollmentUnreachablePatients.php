@@ -7,7 +7,7 @@
 namespace App\Jobs;
 
 use App\Console\Commands\SendEnrollmentNotifications;
-use App\Events\AutoEnrollablesCollected;
+use App\Events\AutoEnrollableCollected;
 use App\Notifications\SendEnrollementSms;
 use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
@@ -72,7 +72,7 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
             foreach ($patients->all() as $patient) {
                 /** @var User $patient */
                 if (!$patient->checkForSurveyOnlyRole()) {
-                    event(new AutoEnrollablesCollected($patient));
+                    event(new AutoEnrollableCollected($patient));
                 }
             }
         } else {
@@ -80,7 +80,7 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
                 foreach ($patients as $patient) {
                     /** @var User $patient */
                     if (!$patient->checkForSurveyOnlyRole()) {
-                        event(new AutoEnrollablesCollected($patient));
+                        event(new AutoEnrollableCollected($patient));
                     }
                 }
             });

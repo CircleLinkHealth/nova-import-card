@@ -2,10 +2,10 @@
 
 namespace App\Listeners;
 
-use App\Events\UserFromEnrolleeCreated;
 use App\Notifications\SendEnrollmentEmail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Log;
 
 class SendEnrollableEmail implements ShouldQueue
 {
@@ -32,6 +32,9 @@ class SendEnrollableEmail implements ShouldQueue
         $this->sendEmail($event);
     }
 
+    /**
+     * @param $event
+     */
     private function sendEmail($event)
     {
         $event->user->notify(new SendEnrollmentEmail($event->isReminder));
