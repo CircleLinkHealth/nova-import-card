@@ -45,6 +45,7 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
  * @property int|null                                                                                                         $snomed_maps_count
  * @property \CircleLinkHealth\SharedModels\Entities\CpmProblemUser[]|\Illuminate\Database\Eloquent\Collection                $user
  * @property int|null                                                                                                         $user_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmProblem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmProblem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmProblem query()

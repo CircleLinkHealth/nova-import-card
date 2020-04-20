@@ -31,6 +31,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\Customer\Entities\User                                                    $patient
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Medication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Medication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Medication query()

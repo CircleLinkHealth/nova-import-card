@@ -67,6 +67,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
  * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient                                        $targetPatient
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda exclude($value = [])
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda hasUPG0506Media()
