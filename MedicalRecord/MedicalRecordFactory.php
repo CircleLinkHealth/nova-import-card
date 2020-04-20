@@ -45,9 +45,20 @@ class MedicalRecordFactory
     private function getEnrollee(User $user): Enrollee
     {
         if ( ! $this->enrollee) {
-            $this->enrollee = Enrollee::whereUserId($user->id)->wherePracticeId($user->program_id)->with(
+            $this->enrollee = Enrollee::where(
+                [
+                    ['mrn', '=', $user->getMRN()],
+                    ['practice_id', '=', $user->program_id],
+                    ['first_name', '=', $user->first_name],
+                    ['last_name', '=', $user->last_name],
+                ]
+            )->where(
+                function ($q) use ($user) {
+                    $q->whereNull('user_id')->orWhere('user_id', $user->id);
+                }
+            )->with(
                 'eligibilityJob'
-            )->has('eligibilityJob')->firstOrFail();
+            )->has('eligibilityJob')->orderByDesc('id')->firstOrFail();;
         }
         
         return $this->enrollee;

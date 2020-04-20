@@ -200,7 +200,13 @@ class ImportProblems extends BaseCcdaImportTask
         
         $haveName = $problemsGroups->reject(
             function (array $p) {
-                return ! (new NameNotNull())->isValid($p) || ! (new ValidStatus())->isValid($p);
+                if (! (new NameNotNull())->isValid($p)) return true;
+                
+                $vs = new ValidStatus();
+                
+                if (! $vs->shouldValidate($p)) return false;
+                
+                return ! $vs->isValid($p);
             }
         )->count();
         
@@ -217,7 +223,8 @@ class ImportProblems extends BaseCcdaImportTask
         if ($shouldValidate) {
             $problemsGroups = $problemsGroups->unique(
                 function ($itemLog) {
-                    $name = $itemLog->name ?? $itemLog->reference_title ?? $itemLog->translation_name;
+                    $itemLog = (object) $itemLog;
+                    $name = $itemLog->name ?? $itemLog->reference_title ?? $itemLog->translation_name ?? null;
                     
                     return empty($name)
                         ? false

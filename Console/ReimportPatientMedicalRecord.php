@@ -16,6 +16,7 @@ use CircleLinkHealth\Eligibility\Notifications\PatientNotReimportedNotification;
 use CircleLinkHealth\Eligibility\Notifications\PatientReimportedNotification;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
+use function Clue\StreamFilter\fun;
 
 class ReimportPatientMedicalRecord extends Command
 {
@@ -64,7 +65,7 @@ class ReimportPatientMedicalRecord extends Command
         
         \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id}");
         
-        if (! $user->hasCcda() && $this->attemptTemplate($user)) {
+        if ( ! $user->hasCcda() && $this->attemptTemplate($user)) {
             return;
         }
         
@@ -112,8 +113,10 @@ class ReimportPatientMedicalRecord extends Command
     private function attemptFetchCcda(User $user)
     {
         if ($ccda = $this->getUser()->latestCcda()) {
-            \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Fetched latest CCDA ccda_id:{$ccda->id}:ln:".__LINE__);
-    
+            \Log::debug(
+                "ReimportPatientMedicalRecord:user_id:{$user->id} Fetched latest CCDA ccda_id:{$ccda->id}:ln:".__LINE__
+            );
+            
             return $ccda;
         }
         
@@ -131,10 +134,14 @@ class ReimportPatientMedicalRecord extends Command
     private function attemptTemplate(User $user)
     {
         if (in_array($user->primaryPractice->name, ['marillac-clinic-inc', 'calvary-medical-clinic'])) {
-            $this->warn("ReimportPatientMedicalRecord:user_id:{$user->id}:enrollee_id:{$this->getEnrollee($user)->id} Running 'csv-with-json' decorator:ln:".__LINE__);
-            \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id}:enrollee_id:{$this->getEnrollee($user)->id} Running 'csv-with-json' decorator:ln:".__LINE__);
-    
-    
+            $this->warn(
+                "ReimportPatientMedicalRecord:user_id:{$user->id}:enrollee_id:{$this->getEnrollee($user)->id} Running 'csv-with-json' decorator:ln:".__LINE__
+            );
+            \Log::debug(
+                "ReimportPatientMedicalRecord:user_id:{$user->id}:enrollee_id:{$this->getEnrollee($user)->id} Running 'csv-with-json' decorator:ln:".__LINE__
+            );
+            
+            
             $mr = new CsvWithJsonMedicalRecord(
                 tap(
                     sanitize_array_keys($this->getEnrollee($user)->eligibilityJob->data),
@@ -144,7 +151,7 @@ class ReimportPatientMedicalRecord extends Command
                     }
                 )
             );
-    
+            
             $mrn = $user->patientInfo->mrn_number ?? $this->getEnrollee(
                     $user
                 )->eligibilityJob->data['mrn'] ?? null;
@@ -156,14 +163,16 @@ class ReimportPatientMedicalRecord extends Command
             if (empty($ccda ?? null)) {
                 $ccda = Ccda::create(
                     [
-                        'source'      => $mr->getType(),
-                        'json'        => $mr->toJson(),
+                        'source' => $mr->getType(),
+                        'json' => $mr->toJson(),
                         'practice_id' => (int) $user->program_id,
-                        'patient_id'  => $user->id,
-                        'mrn'         => $mrn,
+                        'patient_id' => $user->id,
+                        'mrn' => $mrn,
                     ]
                 );
-                \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Created CCDA ccda_id:{$ccda->id}:ln:".__LINE__);
+                \Log::debug(
+                    "ReimportPatientMedicalRecord:user_id:{$user->id} Created CCDA ccda_id:{$ccda->id}:ln:".__LINE__
+                );
             }
         }
         
@@ -173,8 +182,10 @@ class ReimportPatientMedicalRecord extends Command
     private function correctMrnIfWrong(User $user)
     {
         if (empty($user->patientInfo->mrn_number) && ! empty($this->getEnrollee($user)->mrn)) {
-            \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Saving mrn from enrollee_id:{$this->getEnrollee($user)->id}:ln:".__LINE__);
-    
+            \Log::debug(
+                "ReimportPatientMedicalRecord:user_id:{$user->id} Saving mrn from enrollee_id:{$this->getEnrollee($user)->id}:ln:".__LINE__
+            );
+            
             $user->patientInfo->mrn_number = $this->getEnrollee($user)->mrn;
             $user->patientInfo->save();
         }
@@ -185,8 +196,10 @@ class ReimportPatientMedicalRecord extends Command
                 && ($this->getEnrollee($user)->last_name == $user->last_name)
                 && ($this->getEnrollee($user)->dob->isSameAs($user->patientInfo->birth_date))
             ) {
-                \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Saving mrn from enrollee_id:{$this->getEnrollee($user)->id}:ln:".__LINE__);
-    
+                \Log::debug(
+                    "ReimportPatientMedicalRecord:user_id:{$user->id} Saving mrn from enrollee_id:{$this->getEnrollee($user)->id}:ln:".__LINE__
+                );
+                
                 $user->patientInfo->mrn_number = $this->getEnrollee($user)->mrn;
                 $user->patientInfo->save();
             }
@@ -231,16 +244,24 @@ class ReimportPatientMedicalRecord extends Command
     {
         if ( ! $this->enrollee) {
             \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Fetching enrollee ln:".__LINE__);
-    
-            $this->enrollee = Enrollee::where([
-                ['user_id', '=', $user->id],
-                ['practice_id', '=', $user->program_id],
-                ['first_name', '=', $user->first_name],
-                ['last_name', '=', $user->last_name],
-                                              ])->with(
+            
+            $this->enrollee = Enrollee::where(
+                [
+                    ['mrn', '=', $user->getMRN()],
+                    ['practice_id', '=', $user->program_id],
+                    ['first_name', '=', $user->first_name],
+                    ['last_name', '=', $user->last_name],
+                ]
+            )->where(
+                function ($q) use ($user) {
+                    $q->whereNull('user_id')->orWhere('user_id', $user->id);
+                }
+            )->with(
                 'eligibilityJob'
             )->has('eligibilityJob')->orderByDesc('id')->firstOrFail();
-            \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Fetched enrollee_id:{$this->enrollee->id}:ln:".__LINE__);
+            \Log::debug(
+                "ReimportPatientMedicalRecord:user_id:{$user->id} Fetched enrollee_id:{$this->enrollee->id}:ln:".__LINE__
+            );
         }
         
         return $this->enrollee;
@@ -260,9 +281,9 @@ class ReimportPatientMedicalRecord extends Command
     {
         $this->warn("ReimportPatientMedicalRecord:user_id:{$user->id} Importing CCDA:{$ccda->id}:ln:".__LINE__);
         \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Importing CCDA:{$ccda->id}:ln:".__LINE__);
-    
+        
         $ccda->import();
-    
+        
         \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} CcdaId:{$ccda->id}:ln:".__LINE__);
     }
     
@@ -270,7 +291,7 @@ class ReimportPatientMedicalRecord extends Command
     {
         $this->warn("Could not find any records for user:{$user->id}.");
         \Log::debug("Could not find any records for user:{$user->id}");
-    
+        
         if ($initiatorId = $this->argument('initiatorUserId')) {
             $this->warn("Notifying of failure user:$initiatorId");
             User::findOrFail($initiatorId)->notify(new PatientNotReimportedNotification($user->id));
