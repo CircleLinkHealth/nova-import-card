@@ -369,7 +369,7 @@ class ActivityController extends Controller
             'patient.activity.view',
             [
                 'patientId' => $activity->patient_id,
-                'actId'   => $activity->id,
+                'actId'     => $activity->id,
             ]
         )->with(
             'messages',
