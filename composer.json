@@ -141,7 +141,7 @@
         "circlelinkhealth/core-module": "dev-CPM-2256-ca-improvements",
         "circlelinkhealth/cpm-migrations-module": "dev-master",
         "circlelinkhealth/customer-module": "dev-master",
-        "circlelinkhealth/eligibility-module": "dev-CPM-ca-additions",
+        "circlelinkhealth/eligibility-module": "dev-CPM-2256-ca-additions",
         "circlelinkhealth/generate-patient-call-data-csv": "*",
         "circlelinkhealth/generate-success-stories-report": "*",
         "circlelinkhealth/import-practice-staff-csv": "*",
