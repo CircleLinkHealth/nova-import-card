@@ -52,10 +52,10 @@ class SetPatientMonthlySummaryClosedCcmStatusForMonth extends Command
             ->with('patient.patientInfo')
             ->has('patient.patientInfo')
             ->chunk(
-                                 500,
-                                 function ($summaries) use ($date) {
-                                     $summaries->each(
-                                         function (PatientMonthlySummary $summary) use ($date) {
+                500,
+                function ($summaries) use ($date) {
+                    $summaries->each(
+                        function (PatientMonthlySummary $summary) use ($date) {
                                              $actualStatus = $summary->patient->patientInfo->getCcmStatusForMonth(
                                                  $date
                                              );
@@ -71,9 +71,9 @@ class SetPatientMonthlySummaryClosedCcmStatusForMonth extends Command
                                                  }
                                              }
                                          }
-                                     );
-                                 }
-                             );
+                    );
+                }
+            );
         $this->info("{$this->changedCount} patient summaries changed.");
     }
 

@@ -12,14 +12,13 @@ use Laravel\Nova\Filters\Filter;
 
 class NurseFilter extends Filter
 {
-    public $name = 'Care Coach';
-
     /**
      * The filter's component.
      *
      * @var string
      */
     public $component = 'select-filter';
+    public $name      = 'Care Coach';
 
     /**
      * @var string
@@ -28,8 +27,6 @@ class NurseFilter extends Filter
 
     /**
      * NurseFilter constructor.
-     *
-     * @param string $column
      */
     public function __construct(string $column = 'id')
     {
@@ -39,7 +36,6 @@ class NurseFilter extends Filter
     /**
      * Apply the filter to the given query.
      *
-     * @param \Illuminate\Http\Request              $request
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param mixed                                 $value
      *
@@ -52,8 +48,6 @@ class NurseFilter extends Filter
 
     /**
      * Get the filter's available options.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */

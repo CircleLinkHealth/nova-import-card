@@ -8,11 +8,11 @@ namespace App\Http\Controllers\Admin\Reports;
 
 use App\Call;
 use App\CallView;
-use CircleLinkHealth\Core\Exports\FromArray;
 use App\Filters\CallFilters;
 use App\Filters\CallViewFilters;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Exports\FromArray;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
@@ -53,68 +53,68 @@ class CallReportController extends Controller
 
         $this->callsQuery($filters, $date)
             ->chunkById(500, function (Collection $calls) use (&$rows, &$headings) {
-                 $calls->each(function ($call) use (&$rows, &$headings) {
-                     if ($call->inboundUser) {
-                         $ccmTime = $call->inboundUser->formattedCcmTime();
-                     } else {
-                         $ccmTime = 'n/a';
-                     }
+                $calls->each(function ($call) use (&$rows, &$headings) {
+                    if ($call->inboundUser) {
+                        $ccmTime = $call->inboundUser->formattedCcmTime();
+                    } else {
+                        $ccmTime = 'n/a';
+                    }
 
-                     if ($call->inboundUser && $call->inboundUser->patientInfo) {
-                         if (is_null($call->inboundUser->patientInfo->no_call_attempts_since_last_success)) {
-                             $noAttmpts = 'n/a';
-                         } elseif ($call->inboundUser->patientInfo->no_call_attempts_since_last_success > 0) {
-                             $noAttmpts = $call->inboundUser->patientInfo->no_call_attempts_since_last_success.'x Attempts';
-                         } else {
-                             $noAttmpts = 'Success';
-                         }
-                     }
-                     // call days
-                     $days = [
-                         1 => 'M',
-                         2 => 'Tu',
-                         3 => 'W',
-                         4 => 'Th',
-                         5 => 'F',
-                         6 => 'Sa',
-                         7 => 'Su',
-                     ];
-                     $preferredCallDays = 'n/a';
-                     if ($call->inboundUser && $call->inboundUser->patientInfo) {
-                         $windowText = '';
-                         $windows = $call->inboundUser->patientInfo->contactWindows()->get();
-                         if ($windows) {
-                             foreach ($days as $key => $val) {
-                                 foreach ($windows as $window) {
-                                     if ($window->day_of_week == $key) {
-                                         $windowText .= $days[$window->day_of_week].',';
-                                     }
-                                 }
-                             }
-                         }
-                         $preferredCallDays = rtrim($windowText, ',');
-                     }
+                    if ($call->inboundUser && $call->inboundUser->patientInfo) {
+                        if (is_null($call->inboundUser->patientInfo->no_call_attempts_since_last_success)) {
+                            $noAttmpts = 'n/a';
+                        } elseif ($call->inboundUser->patientInfo->no_call_attempts_since_last_success > 0) {
+                            $noAttmpts = $call->inboundUser->patientInfo->no_call_attempts_since_last_success.'x Attempts';
+                        } else {
+                            $noAttmpts = 'Success';
+                        }
+                    }
+                    // call days
+                    $days = [
+                        1 => 'M',
+                        2 => 'Tu',
+                        3 => 'W',
+                        4 => 'Th',
+                        5 => 'F',
+                        6 => 'Sa',
+                        7 => 'Su',
+                    ];
+                    $preferredCallDays = 'n/a';
+                    if ($call->inboundUser && $call->inboundUser->patientInfo) {
+                        $windowText = '';
+                        $windows = $call->inboundUser->patientInfo->contactWindows()->get();
+                        if ($windows) {
+                            foreach ($days as $key => $val) {
+                                foreach ($windows as $window) {
+                                    if ($window->day_of_week == $key) {
+                                        $windowText .= $days[$window->day_of_week].',';
+                                    }
+                                }
+                            }
+                        }
+                        $preferredCallDays = rtrim($windowText, ',');
+                    }
 
-                     $rows[] = [
-                         $call->call_id,
-                         $call->nurse_name,
-                         $call->patient_name,
-                         $call->program_name,
-                         $noAttmpts,
-                         $call->scheduled_date,
-                         $call->window_start,
-                         $call->window_end,
-                         $preferredCallDays,
-                         $call->last_contact_time,
-                         $ccmTime,
-                         $call->no_of_successful_calls,
-                         $call->ccm_status,
-                         $call->billing_provider,
-                         $call->birth_date,
-                         $call->scheduler_user_name,
-                     ];
-                 });
-             }, 'calls.id');
+                    $rows[] = [
+                        $call->call_id,
+                        $call->nurse_name,
+                        $call->patient_name,
+                        $call->program_name,
+                        $noAttmpts,
+                        $call->scheduled_date,
+                        $call->window_start,
+                        $call->window_end,
+                        $preferredCallDays,
+                        $call->last_contact_time,
+                        $ccmTime,
+                        $call->no_of_successful_calls,
+                        $call->ccm_status,
+                        $call->billing_provider,
+                        $call->birth_date,
+                        $call->scheduler_user_name,
+                    ];
+                });
+            }, 'calls.id');
 
         $fileName = 'CLH-Report-'.$date.'.xls';
 

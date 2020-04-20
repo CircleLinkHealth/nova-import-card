@@ -16,18 +16,18 @@ class SendAssessmentNotification extends Notification implements FaxableNotifica
 {
     //todo: REMOVE PHI FROM NOTIFICATION
     use Queueable;
-    
-    public  $pathToPdf;
+
+    public $pathToPdf;
     private $approver;
-    
+
     private $attachment;
-    
+
     //Letting this go to just database so we can see if this actually is being used by anyone.
     //If we need this we can retrieve for database
     private $channels = ['database'];
     private $patient;
     private $practice;
-    
+
     /**
      * Create a new notification instance.
      */
@@ -40,12 +40,12 @@ class SendAssessmentNotification extends Notification implements FaxableNotifica
             $this->practice = $this->approver->practices()->first();
         }
     }
-    
+
     public function getAttachment()
     {
         return $this->attachment;
     }
-    
+
     /**
      * Get the array representation of the notification.
      *
@@ -57,28 +57,26 @@ class SendAssessmentNotification extends Notification implements FaxableNotifica
     {
         return [
             'channels' => $this->channels,
-            
+
             'receiver_type'  => $notifiable->id,
             'receiver_id'    => get_class($notifiable),
             'receiver_email' => $notifiable->email ?? $notifiable->routeNotificationForMail(),
-            
+
             'pathToPdf'  => $this->toPdf($notifiable),
             'assessment' => $this->attachment,
         ];
     }
-    
+
     /**
      * @param $notifiable
-     *
-     * @return array
      */
-    public function toFax($notifiable = null) : array
+    public function toFax($notifiable = null): array
     {
         return [
             'file' => $this->toPdf($notifiable),
         ];
     }
-    
+
     /**
      * Get the mail representation of the notification.
      *
@@ -99,16 +97,16 @@ class SendAssessmentNotification extends Notification implements FaxableNotifica
                 ]
             );
     }
-    
+
     public function toPdf($notifiable = null)
     {
         if ( ! file_exists($this->pathToPdf)) {
             $this->pathToPdf = $this->attachment->toPdf($notifiable);
         }
-        
+
         return $this->pathToPdf;
     }
-    
+
     /**
      * Get the notification's delivery channels.
      *

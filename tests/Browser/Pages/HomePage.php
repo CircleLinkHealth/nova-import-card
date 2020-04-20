@@ -12,8 +12,6 @@ class HomePage extends Page
 {
     /**
      * Assert that the browser is on the page.
-     *
-     * @param Browser $browser
      */
     public function assert(Browser $browser)
     {

@@ -11,51 +11,6 @@ use Laravel\Nova\Filters\Filter;
 
 class UserRoleFilter extends Filter
 {
-    /**
-     * The filter's component.
-     *
-     * @var string
-     */
-    public $component = 'select-filter';
-    /**
-     * The displayable name of the filter.
-     *
-     * @var string
-     */
-    public $name = 'Role';
-
-    /**
-     * Apply the filter to the given query.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param mixed $value
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function apply(Request $request, $query, $value)
-    {
-        return $query->ofType($value);
-    }
-
-    /**
-     * Get the filter's available options.
-     *
-     * @return array
-     */
-    public function options(Request $request)
-    {
-        $keys   = array_keys(self::ROLES_MAP);
-        $values = array_values(self::ROLES_MAP);
-
-        $result = [];
-        $len    = sizeof($keys);
-        for ($i = 0; $i < $len; $i++) {
-            $result[$values[$i]] = $keys[$i];
-        }
-
-        return $result;
-    }
-
     public const ROLES_MAP = [
         'administrator'             => 'CLH Super Admin',
         'participant'               => 'Participant',
@@ -82,4 +37,48 @@ class UserRoleFilter extends Filter
         'software-only'             => 'CCM Admin',
         'developer'                 => 'CLH Developer',
     ];
+    /**
+     * The filter's component.
+     *
+     * @var string
+     */
+    public $component = 'select-filter';
+    /**
+     * The displayable name of the filter.
+     *
+     * @var string
+     */
+    public $name = 'Role';
+
+    /**
+     * Apply the filter to the given query.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param mixed                                 $value
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function apply(Request $request, $query, $value)
+    {
+        return $query->ofType($value);
+    }
+
+    /**
+     * Get the filter's available options.
+     *
+     * @return array
+     */
+    public function options(Request $request)
+    {
+        $keys   = array_keys(self::ROLES_MAP);
+        $values = array_values(self::ROLES_MAP);
+
+        $result = [];
+        $len    = sizeof($keys);
+        for ($i = 0; $i < $len; ++$i) {
+            $result[$values[$i]] = $keys[$i];
+        }
+
+        return $result;
+    }
 }

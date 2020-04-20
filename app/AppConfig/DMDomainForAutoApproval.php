@@ -6,8 +6,8 @@
 
 namespace App\AppConfig;
 
-use Illuminate\Support\Str;
 use CircleLinkHealth\Core\Entities\AppConfig;
+use Illuminate\Support\Str;
 
 class DMDomainForAutoApproval
 {
@@ -46,10 +46,10 @@ class DMDomainForAutoApproval
             return AppConfig::where('config_key', '=', self::FLAG_NAME)
                 ->get()
                 ->map(
-                                function ($config) {
-                                    return $config->config_value;
-                                }
-                            )->all();
+                    function ($config) {
+                        return $config->config_value;
+                    }
+                )->all();
         });
     }
 }

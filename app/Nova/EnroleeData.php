@@ -70,7 +70,7 @@ class EnroleeData extends Resource
     public function actions(Request $request)
     {
         return [
-            new ImportEnrollee
+            new ImportEnrollee(),
         ];
     }
 

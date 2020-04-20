@@ -30,7 +30,7 @@ class PatientCcmStatusUpdateTest extends TestCase
 
     protected $requestClass = Request::class;
 
-    protected function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
 

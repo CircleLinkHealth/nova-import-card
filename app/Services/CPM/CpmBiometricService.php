@@ -76,7 +76,7 @@ class CpmBiometricService implements CpmModel
         return $user->cpmBiometrics()->sync($ids);
     }
 
-    private function isEnabled(\CircleLinkHealth\SharedModels\Entities\CpmBiometric $biometric, User $user)
+    private function isEnabled(CpmBiometric $biometric, User $user)
     {
         switch ($biometric->name) {
             case \CircleLinkHealth\SharedModels\Entities\CpmBiometric::BLOOD_PRESSURE:

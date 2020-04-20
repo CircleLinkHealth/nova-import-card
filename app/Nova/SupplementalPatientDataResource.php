@@ -13,15 +13,12 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
-use Sparclex\NovaImportCard\NovaImportCard;
 
 class SupplementalPatientDataResource extends Resource
 {
     public static $group = \App\Constants::NOVA_GROUP_ENROLLMENT;
 
     public static $importer = SupplementalPatientDataImporter::class;
-    
-    public static $with = ['practice'];
 
     /**
      * The model the resource corresponds to.
@@ -29,7 +26,7 @@ class SupplementalPatientDataResource extends Resource
      * @var string
      */
     public static $model = SupplementalPatientData::class;
-    
+
     /**
      * The columns that should be searched.
      *
@@ -46,14 +43,16 @@ class SupplementalPatientDataResource extends Resource
         'location',
         'secondary_insurance',
     ];
-    
+
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
     public static $title = 'mrn';
-    
+
+    public static $with = ['practice'];
+
     /**
      * Get the actions available for the resource.
      *
@@ -72,7 +71,7 @@ class SupplementalPatientDataResource extends Resource
     public function cards(Request $request)
     {
         return [
-            ClhImportCardExtended::forUser(auth()->user(), self::class)
+            ClhImportCardExtended::forUser(auth()->user(), self::class),
         ];
     }
 

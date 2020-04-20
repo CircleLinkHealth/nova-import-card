@@ -9,7 +9,6 @@ namespace App\Console\Commands;
 use App\Call;
 use App\Note;
 use Carbon\Carbon;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 

@@ -8,15 +8,11 @@ namespace Tests\Nurse;
 
 use App\Services\NursesPerformanceReportService;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Tests\CustomerTestCase;
-use Tests\TestCase;
 
 class PerformanceTest extends CustomerTestCase
 {
-    protected function setUp() :void
+    protected function setUp(): void
     {
         parent::setUp();
         \Artisan::call('db:seed', ['--class' => \PopulateNursePerformanceSeeder::class]);

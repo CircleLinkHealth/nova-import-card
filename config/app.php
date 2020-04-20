@@ -4,7 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use Illuminate\Support\Arr;
 use App\Providers\CpmArtisanServiceProvider;
 use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
 use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
@@ -13,6 +12,7 @@ use CircleLinkHealth\Eligibility\Providers\RouteServiceProvider as EligibilityRo
 use CircleLinkHealth\ImportPracticeStaffCsv\CardServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesDeferredBindingsServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
+use Illuminate\Support\Arr;
 
 $appUrl = env('APP_URL', 'http://cpm.dev');
 
@@ -225,7 +225,7 @@ return [
         CardServiceProvider::class,
         CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,
-        \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class
+        \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class,
     ],
 
     /*

@@ -151,7 +151,7 @@ class UserTotalTimeChecker
         }
 
         $totalCommittedHours = 0;
-        $current = $this->start->toDateString();
+        $current             = $this->start->toDateString();
         //$last is excluded, that's why we add 1 day
         $last = $this->end->copy()->addDay()->toDateString();
         while ($current !== $last) {
@@ -204,10 +204,10 @@ class UserTotalTimeChecker
             ->where('provider_id', '=', $userId)
             ->whereBetween('start_time', [$newStart, $end])
             ->where(
-                          DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(start_time))'),
-                          '!=',
-                          DB::raw('MAKEDATE(YEAR(end_time),DAYOFYEAR(end_time))')
-                      )
+                DB::raw('MAKEDATE(YEAR(start_time),DAYOFYEAR(start_time))'),
+                '!=',
+                DB::raw('MAKEDATE(YEAR(end_time),DAYOFYEAR(end_time))')
+            )
             ->groupBy(DB::raw('date'))
             ->get()
             ->keyBy('date');

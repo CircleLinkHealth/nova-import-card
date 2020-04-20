@@ -12,12 +12,13 @@ use Illuminate\Support\Str;
 /**
  * App\TrixField.
  *
- * @property int $id
- * @property string $type
- * @property string $language
- * @property string $body
+ * @property int                             $id
+ * @property string                          $type
+ * @property string                          $language
+ * @property string                          $body
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TrixField careAmbassador($language)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TrixField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TrixField newQuery()
@@ -78,11 +79,11 @@ class TrixField extends Model
         }
 
         $builder->where('type', TrixField::CARE_AMBASSADOR_SCRIPT)
-                ->where(function ($q) use ($scriptLanguage) {
-                    $q->where('language', $scriptLanguage)
+            ->where(function ($q) use ($scriptLanguage) {
+                $q->where('language', $scriptLanguage)
                         //Default to english language. We don't want cases where enrollee has something unexpected in language field,
                         // and we do not bring any script because of that
-                      ->orWhere('language', self::ENGLISH_LANGUAGE);
-                });
+                    ->orWhere('language', self::ENGLISH_LANGUAGE);
+            });
     }
 }

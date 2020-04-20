@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
@@ -9,18 +13,17 @@ use Illuminate\Console\Command;
 class FixAddLastEncounterToPcm extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'fix:FixAddLastEncounterToPcm';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'FixAddLastEncounterToPcm';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'fix:FixAddLastEncounterToPcm';
 
     /**
      * Create a new command instance.

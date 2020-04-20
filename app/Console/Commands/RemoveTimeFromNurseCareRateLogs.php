@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
@@ -9,18 +13,17 @@ use Illuminate\Database\Eloquent\Model;
 class RemoveTimeFromNurseCareRateLogs extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'nursecareratelogs:remove-time {fromId} {newDuration}';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Adjust time in Nurse Care Rate Logs';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'nursecareratelogs:remove-time {fromId} {newDuration}';
 
     /**
      * Create a new command instance.
@@ -55,11 +58,11 @@ class RemoveTimeFromNurseCareRateLogs extends Command
 
         /** @var NurseCareRateLog $careRateLog */
         $careRateLog = NurseCareRateLog::whereId($id)
-                                       ->where('ccm_type', '=', 'accrued_after_ccm')
-                                       ->first();
+            ->where('ccm_type', '=', 'accrued_after_ccm')
+            ->first();
 
         if ( ! $careRateLog) {
-            $this->error("Cannot modify activity. Please choose a different one. [no accrued_after_ccm]");
+            $this->error('Cannot modify activity. Please choose a different one. [no accrued_after_ccm]');
 
             return;
         }
@@ -79,15 +82,15 @@ class RemoveTimeFromNurseCareRateLogs extends Command
         $entriesToSave->push($careRateLog);
 
         NurseCareRateLog::where('patient_user_id', '=', $careRateLog->patient_user_id)
-                        ->where('created_at', '<=', $careRateLog->created_at->copy()->endOfMonth())
-                        ->where('time_before', '>', $careRateLog->time_before)
-                        ->orderBy('time_before', 'asc')
-                        ->chunk(50, function ($items) use ($entriesToSave, $decrementBy) {
-                            $items->each(function (NurseCareRateLog $item) use ($entriesToSave, $decrementBy) {
-                                $item->time_before -= $decrementBy;
-                                $entriesToSave->push($item);
-                            });
-                        });
+            ->where('created_at', '<=', $careRateLog->created_at->copy()->endOfMonth())
+            ->where('time_before', '>', $careRateLog->time_before)
+            ->orderBy('time_before', 'asc')
+            ->chunk(50, function ($items) use ($entriesToSave, $decrementBy) {
+                $items->each(function (NurseCareRateLog $item) use ($entriesToSave, $decrementBy) {
+                    $item->time_before -= $decrementBy;
+                    $entriesToSave->push($item);
+                });
+            });
 
         $entriesToSave->each(function (Model $item) {
             $item->save();

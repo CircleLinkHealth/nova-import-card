@@ -11,7 +11,6 @@ use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
 use App\Services\CarePlanViewService;
 use App\Testing\CBT\TestPatients;
-use App\Testing\TestPatientsService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\PdfService;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -239,15 +238,19 @@ class PatientController extends Controller
      */
     public function showPatientListing()
     {
-        if (auth()->user()->isCareCoach()) abort(403);
-        
+        if (auth()->user()->isCareCoach()) {
+            abort(403);
+        }
+
         return view('wpUsers.patient.listing');
     }
 
     public function showPatientListingPdf(PdfService $pdfService)
     {
-        if (auth()->user()->isCareCoach()) abort(403);
-        
+        if (auth()->user()->isCareCoach()) {
+            abort(403);
+        }
+
         $storageDirectory = 'storage/pdfs/patients/';
         $datetimePrefix   = date('Y-m-dH:i:s');
         $fileName         = $storageDirectory.$datetimePrefix.'-patient-list.pdf';

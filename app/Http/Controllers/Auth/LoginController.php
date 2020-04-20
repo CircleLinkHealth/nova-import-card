@@ -14,8 +14,8 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Jenssegers\Agent\Agent;
 

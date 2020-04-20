@@ -57,18 +57,6 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     }
 
     /**
-     * Get the extra dashboards that should be displayed on the Nova dashboard.
-     *
-     * @return array
-     */
-    protected function dashboards()
-    {
-        return [
-            new ServerInsights(),
-        ];
-    }
-
-    /**
      * Get the cards that should be displayed on the Nova dashboard.
      *
      * @return array
@@ -78,6 +66,18 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         return [
             new PatientsOverTargetCcmTime(),
             new PatientsOverTargetBhiTime(),
+        ];
+    }
+
+    /**
+     * Get the extra dashboards that should be displayed on the Nova dashboard.
+     *
+     * @return array
+     */
+    protected function dashboards()
+    {
+        return [
+            new ServerInsights(),
         ];
     }
 

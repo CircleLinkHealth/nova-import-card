@@ -35,8 +35,6 @@ class RecalculateCcmTime extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param ActivityService $service
      */
     public function __construct(ActivityService $service)
     {

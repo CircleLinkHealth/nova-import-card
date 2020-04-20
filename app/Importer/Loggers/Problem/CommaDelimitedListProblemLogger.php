@@ -6,9 +6,9 @@
 
 namespace App\Importer\Loggers\Problem;
 
-use Illuminate\Support\Str;
 use App\Contracts\Importer\MedicalRecord\Section\Logger;
 use CircleLinkHealth\Eligibility\Entities\Problem;
+use Illuminate\Support\Str;
 
 class CommaDelimitedListProblemLogger implements Logger
 {

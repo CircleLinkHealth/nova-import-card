@@ -25,6 +25,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \Illuminate\Support\Carbon|null                                                         $updated_at
  * @property \CircleLinkHealth\SharedModels\Entities\Ccda[]|\Illuminate\Database\Eloquent\Collection $ccdas
  * @property \App\Media[]|\Illuminate\Database\Eloquent\Collection                                   $media
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage query()
@@ -38,11 +39,13 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property int|null    $ccdas_count
  * @property int|null    $media_count
  * @property string      $direction
  * @property string      $status
  * @property string|null $error_text
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereDirection($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereErrorText($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereStatus($value)

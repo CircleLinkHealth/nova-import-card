@@ -12,8 +12,6 @@ trait PdfReportTrait
 {
     /**
      * Check whether this PDFable has a pdf handler.
-     *
-     * @return bool
      */
     public function hasPdfHandler(): bool
     {
@@ -50,8 +48,6 @@ trait PdfReportTrait
 
     /**
      * Get the PDF dispatcher.
-     *
-     * @return PdfReportHandler
      */
     public function pdfReportHandler(): PdfReportHandler
     {

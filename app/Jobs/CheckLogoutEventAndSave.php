@@ -28,8 +28,6 @@ class CheckLogoutEventAndSave implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param Carbon $date
      */
     public function __construct(Carbon $date)
     {

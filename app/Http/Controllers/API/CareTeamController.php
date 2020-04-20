@@ -6,8 +6,8 @@
 
 namespace App\Http\Controllers\API;
 
-use CircleLinkHealth\Core\StringManipulation;
 use App\Http\Controllers\Controller;
+use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -80,11 +80,11 @@ class CareTeamController extends Controller
                 'zip'           => $memberUser->zip,
                 'phone_numbers' => $phone
                     ? [
-                    [
-                        'id'     => $phone->id,
-                        'number' => $phone->number,
-                    ],
-                ]
+                        [
+                            'id'     => $phone->id,
+                            'number' => $phone->number,
+                        ],
+                    ]
                 : [
                     [
                         'id'     => '',
@@ -93,19 +93,19 @@ class CareTeamController extends Controller
                 ],
                 'primary_practice' => $memberUser->primaryPractice
                     ? [
-                    'id'           => $memberUser->primaryPractice->id,
-                    'display_name' => $memberUser->primaryPractice->display_name,
-                ]
+                        'id'           => $memberUser->primaryPractice->id,
+                        'display_name' => $memberUser->primaryPractice->display_name,
+                    ]
                 : [
                     'id'           => '',
                     'display_name' => '',
                 ],
                 'provider_info' => $memberUser->providerInfo
                     ? [
-                    'id'          => $memberUser->providerInfo->id,
-                    'is_clinical' => $memberUser->providerInfo->is_clinical,
-                    'specialty'   => $memberUser->getSpecialty(),
-                ]
+                        'id'          => $memberUser->providerInfo->id,
+                        'is_clinical' => $memberUser->providerInfo->is_clinical,
+                        'specialty'   => $memberUser->getSpecialty(),
+                    ]
                 : [
                     'id'          => '',
                     'is_clinical' => '',
@@ -173,11 +173,11 @@ class CareTeamController extends Controller
                         'zip'           => $member->user->zip,
                         'phone_numbers' => $phone
                             ? [
-                            [
-                                'id'     => $phone->id,
-                                'number' => $phone->number,
-                            ],
-                        ]
+                                [
+                                    'id'     => $phone->id,
+                                    'number' => $phone->number,
+                                ],
+                            ]
                         : [
                             [
                                 'id'     => '',
@@ -186,19 +186,19 @@ class CareTeamController extends Controller
                         ],
                         'primary_practice' => $member->user->primaryPractice
                             ? [
-                            'id'           => $member->user->primaryPractice->id,
-                            'display_name' => $member->user->primaryPractice->display_name,
-                        ]
+                                'id'           => $member->user->primaryPractice->id,
+                                'display_name' => $member->user->primaryPractice->display_name,
+                            ]
                         : [
                             'id'           => '',
                             'display_name' => '',
                         ],
                         'provider_info' => $member->user->providerInfo
                             ? [
-                            'id'          => $member->user->providerInfo->id,
-                            'is_clinical' => $member->user->providerInfo->is_clinical,
-                            'specialty'   => $member->user->getSpecialty(),
-                        ]
+                                'id'          => $member->user->providerInfo->id,
+                                'is_clinical' => $member->user->providerInfo->is_clinical,
+                                'specialty'   => $member->user->getSpecialty(),
+                            ]
                         : [
                             'id'          => '',
                             'is_clinical' => '',

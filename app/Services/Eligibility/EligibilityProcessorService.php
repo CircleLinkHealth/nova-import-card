@@ -13,12 +13,10 @@ use Illuminate\Http\UploadedFile;
 class EligibilityProcessorService
 {
     /**
-     * @param UploadedFile                                 $uploadedFile
-     * @param \CircleLinkHealth\Customer\Entities\Practice $practice
-     * @param bool                                         $filterLastEncounter
-     * @param bool                                         $filterInsurance
-     * @param bool                                         $filterProblems
-     * @param bool                                         $createEnrollees
+     * @param bool $filterLastEncounter
+     * @param bool $filterInsurance
+     * @param bool $filterProblems
+     * @param bool $createEnrollees
      *
      * @throws \Exception
      *

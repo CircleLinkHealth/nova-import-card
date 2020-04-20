@@ -32,8 +32,8 @@ class OverwriteNBIImportedData extends Command
      * @var string
      */
     protected $signature = 'nbi:overwrite';
-    private   $nbiPractice;
-    
+    private $nbiPractice;
+
     /**
      * Create a new command instance.
      */
@@ -41,7 +41,7 @@ class OverwriteNBIImportedData extends Command
     {
         parent::__construct();
     }
-    
+
     /**
      * Execute the console command.
      *
@@ -51,34 +51,24 @@ class OverwriteNBIImportedData extends Command
     {
         if ( ! $this->nbiPractice()) {
             $this->error('NBI practice not found');
+
             return;
         }
-        
+
         $result = Ccda::where('practice_id', $this->nbiPractice()->id)->whereNull('billing_provider_id')->has('patient')->with('patient')->get()->map(
             function ($ccda) {
                 $this->info("Checking CCDA id: $ccda->id");
-                
+
                 return [
                     'imr_id'       => $ccda->id,
                     'was_replaced' => $this->lookupAndReplacePatientData($ccda),
                 ];
             }
         );
-        
+
         $this->table(['imr_id', 'was_replaced'], $result->all());
     }
-    
-    public function nbiPractice():?Practice
-    {
-        if ( ! $this->nbiPractice) {
-            $this->nbiPractice = Practice::whereName(ReplaceFieldsFromSupplementaryData::NBI_PRACTICE_NAME)->with(
-                'locations'
-            )->first();
-        }
-        
-        return $this->nbiPractice;
-    }
-    
+
     /**
      * @return bool
      */
@@ -87,17 +77,17 @@ class OverwriteNBIImportedData extends Command
         if ( ! $this->nbiPractice()) {
             return;
         }
-        
+
         $datas = SupplementalPatientData::where(
             'first_name',
             'like',
             "{$ccda->patientFirstName()}%"
         )
-                                        ->where('practice_id', $this->nbiPractice()->id)
-                                        ->where(
-                                            'last_name',
-                                            $ccda->patientLastName()
-                                        )->where('dob', $ccda->patientDob())->first();
+            ->where('practice_id', $this->nbiPractice()->id)
+            ->where(
+                'last_name',
+                $ccda->patientLastName()
+            )->where('dob', $ccda->patientDob())->first();
         if ($datas) {
             $map = [
                 'HUSSAINI,RAFIA'     => 11493,
@@ -110,21 +100,32 @@ class OverwriteNBIImportedData extends Command
                 'GARCIA,JOHANNY'     => 11492,
                 'ENGELL,CHRISITAN D' => 11496,
             ];
-            
+
             if ($datas->provider) {
                 $term                      = strtoupper($datas->provider);
                 $ccda->billing_provider_id = $map[$term] ?? optional(ProviderByName::first($term))->id;
             }
-            
+
             $ccda->practice_id = $this->nbiPractice()->id;
             $ccda->location_id = $this->nbiPractice()->primaryLocation()->id;
             $ccda->save();
             $ccda->patient->patientInfo->mrn_number = $datas->mrn;
             $ccda->patient->patientInfo->save();
-            
+
             return true;
         }
-        
+
         return false;
+    }
+
+    public function nbiPractice(): ?Practice
+    {
+        if ( ! $this->nbiPractice) {
+            $this->nbiPractice = Practice::whereName(ReplaceFieldsFromSupplementaryData::NBI_PRACTICE_NAME)->with(
+                'locations'
+            )->first();
+        }
+
+        return $this->nbiPractice;
     }
 }

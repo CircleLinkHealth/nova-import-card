@@ -29,11 +29,10 @@ return [
         'enabled' => false,
         'path'    => base_path().'/vendor/nwidart/laravel-modules/src/Commands/stubs',
         'files'   => [
-            
-            'composer'        => 'composer.json',
+            'composer' => 'composer.json',
         ],
         'replacements' => [
-            'composer'        => [
+            'composer' => [
                 'LOWER_NAME',
                 'STUDLY_NAME',
                 'VENDOR',

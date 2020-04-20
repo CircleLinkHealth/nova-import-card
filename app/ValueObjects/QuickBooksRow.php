@@ -28,8 +28,6 @@ class QuickBooksRow
 
     /**
      * QuickBooksRow constructor.
-     *
-     * @param array $array
      */
     public function __construct(array $array)
     {

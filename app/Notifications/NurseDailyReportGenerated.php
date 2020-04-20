@@ -30,7 +30,6 @@ class NurseDailyReportGenerated extends Notification
     /**
      * Create a new notification instance.
      *
-     * @param Carbon $date
      * @param $url
      */
     public function __construct(Carbon $date, $url)

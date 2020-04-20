@@ -6,7 +6,6 @@
 
 namespace App\Notifications;
 
-use Illuminate\Support\Str;
 use App\Contracts\DirectMailableNotification;
 use App\Notifications\Channels\DirectMailChannel;
 use App\PasswordlessLoginToken;
@@ -14,6 +13,7 @@ use App\ValueObjects\SimpleNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
 use URL;
 
 class SendCarePlanForDirectMailApprovalNotification extends Notification implements DirectMailableNotification

@@ -6,7 +6,6 @@
 
 namespace Tests\Unit;
 
-use Illuminate\Support\Str;
 use App\Notifications\CarePlanProviderApproved;
 use App\Rules\DoesNotHaveBothTypesOfDiabetes;
 use App\Traits\Tests\UserHelpers;
@@ -19,6 +18,7 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\MessageBag;
+use Illuminate\Support\Str;
 use Tests\CustomerTestCase;
 use Tests\Helpers\CarePlanHelpers;
 
@@ -52,7 +52,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
      */
     protected $provider;
 
-    protected function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -85,7 +85,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
         $carePlan->save();
         $this->assertTrue(CarePlan::QA_APPROVED === $carePlan->fresh()->status);
         $this->assertFalse($this->careCoach()->canApproveCarePlans());
-    
+
         $response = $this->actingAs($this->careCoach())->get(route('patient.careplan.print', [
             'patientId' => $this->patient()->id,
         ]))

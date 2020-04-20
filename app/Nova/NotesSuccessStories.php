@@ -58,6 +58,16 @@ class NotesSuccessStories extends Resource
     public static $title = 'id';
 
     /**
+     * Get the actions available for the resource.
+     *
+     * @return array
+     */
+    public function actions(Request $request)
+    {
+        return [];
+    }
+
+    /**
      * @return bool
      */
     public static function authorizedToCreate(Request $request)
@@ -82,16 +92,6 @@ class NotesSuccessStories extends Resource
     }
 
     /**
-     * Get the actions available for the resource.
-     *
-     * @return array
-     */
-    public function actions(Request $request)
-    {
-        return [];
-    }
-
-    /**
      * Get the cards available for the request.
      *
      * @return array
@@ -99,7 +99,7 @@ class NotesSuccessStories extends Resource
     public function cards(Request $request)
     {
         return [
-            new GenerateSuccessStoriesReport()
+            new GenerateSuccessStoriesReport(),
         ];
     }
 
@@ -144,7 +144,7 @@ class NotesSuccessStories extends Resource
                 ->readonly(true),
 
             Boolean::make('Success Story', 'success_story')
-                ->hideWhenCreating()
+                ->hideWhenCreating(),
         ];
     }
 
@@ -156,7 +156,7 @@ class NotesSuccessStories extends Resource
     public function filters(Request $request)
     {
         return [
-            new \App\Nova\Filters\NotesSuccessStories()
+            new \App\Nova\Filters\NotesSuccessStories(),
         ];
     }
 

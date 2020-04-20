@@ -67,27 +67,27 @@ class PatientProblemsReportBase extends BasePracticeReport
         )->all();
     }
 
+    public function mediaCollectionName(): string
+    {
+        return "{$this->practice->name}_patients_with_problems_reports";
+    }
+
     public function query(): Builder
     {
         return User::ofPractice($this->practice)
             ->ofType('participant')
             ->has('patientInfo')
             ->with(
-                       [
-                           'patientInfo' => function ($q) {
-                               $q->select('mrn_number', 'birth_date', 'id', 'user_id');
-                           },
-                           'ccdProblems' => function ($q) {
-                               $q->select('id', 'name', 'cpm_problem_id', 'patient_id')->with(
-                                   ['icd10Codes', 'cpmProblem']
-                               );
-                           },
-                       ]
-                   )->select('id', 'display_name');
-    }
-    
-    public function mediaCollectionName(): string
-    {
-        return "{$this->practice->name}_patients_with_problems_reports";
+                [
+                    'patientInfo' => function ($q) {
+                        $q->select('mrn_number', 'birth_date', 'id', 'user_id');
+                    },
+                    'ccdProblems' => function ($q) {
+                        $q->select('id', 'name', 'cpm_problem_id', 'patient_id')->with(
+                            ['icd10Codes', 'cpmProblem']
+                        );
+                    },
+                ]
+            )->select('id', 'display_name');
     }
 }

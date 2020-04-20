@@ -56,8 +56,6 @@ class SendSampleNoteController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @throws \Exception
      */
     public function sendNoteViaEFax(Request $request)

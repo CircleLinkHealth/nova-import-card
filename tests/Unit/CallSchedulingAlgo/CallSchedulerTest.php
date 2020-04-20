@@ -10,9 +10,7 @@ use App\Repositories\PatientWriteRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
-use CircleLinkHealth\Customer\Entities\User;
 use Tests\CustomerTestCase;
-use Tests\TestCase;
 
 class CallSchedulerTest extends CustomerTestCase
 {

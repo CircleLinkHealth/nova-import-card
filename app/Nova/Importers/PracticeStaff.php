@@ -21,7 +21,6 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Events\AfterImport;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Validator;
 
 class PracticeStaff extends ReportsErrorsToSlack implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueue, WithEvents
 {
@@ -226,7 +225,7 @@ class PracticeStaff extends ReportsErrorsToSlack implements WithChunkReading, To
         if ( ! $user) {
             return $this->repo->createNewUser($bag);
         }
-        
+
         return $this->repo->editUser($user, $bag);
     }
 }

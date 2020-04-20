@@ -7,7 +7,6 @@
 namespace App\Exports\PracticeReports;
 
 use App\Contracts\Reports\PracticeDataExportInterface;
-use App\Notifications\SendSignedUrlToDownloadPracticeReport;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -19,7 +18,6 @@ use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use URL;
 
 abstract class BasePracticeReport implements FromQuery, WithMapping, PracticeDataExportInterface, WithHeadings, ShouldQueue, Mediable
 {

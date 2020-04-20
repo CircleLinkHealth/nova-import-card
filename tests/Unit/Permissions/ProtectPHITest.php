@@ -61,7 +61,6 @@ class ProtectPHITest extends TestCase
         //login
         auth()->login($this->admin);
 
-
         //care-plan
         $this->assertAuthUserCannotSeePatientPhi(
             $this->actingAs($this->admin)->call('GET', route('patient.careplan.print', [
@@ -193,7 +192,7 @@ class ProtectPHITest extends TestCase
     private function disablePHIForUser(User $user)
     {
         $user->setCanSeePhi(false);
-        $this->assertTrue(! $user->hasPermission('phi.read'));
+        $this->assertTrue( ! $user->hasPermission('phi.read'));
     }
 
     private function getExpectedValueForKey($model, $phiField)

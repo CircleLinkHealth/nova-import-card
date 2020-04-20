@@ -27,8 +27,6 @@ class PostLoginTasks implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param Login $event
      */
     public function __construct(Login $event)
     {

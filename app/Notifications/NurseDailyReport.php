@@ -66,8 +66,6 @@ class NurseDailyReport extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param \CircleLinkHealth\Customer\Entities\User $notifiable
-     *
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail(User $notifiable)

@@ -56,29 +56,29 @@ class PracticeCallsReport extends BasePracticeReport
         })->all();
     }
 
+    public function mediaCollectionName(): string
+    {
+        $generatedAt = now()->toDateTimeString();
+
+        return "practice_calls_last_three_months_generated_at_$generatedAt.csv";
+    }
+
     public function query(): Builder
     {
         return User::ofPractice($this->practice)
             ->ofType('participant')
             ->has('patientInfo')
             ->whereHas('inboundCalls', function ($calls) {
-                       $calls->calledLastThreeMonths();
-                   })
+                $calls->calledLastThreeMonths();
+            })
             ->with(
-                       [
-                           'inboundCalls' => function ($calls) {
-                               $calls->select('inbound_cpm_id', 'status', 'called_date')
-                                   ->calledLastThreeMonths();
-                           },
-                           'patientInfo',
-                       ]
-                   )->select('id', 'display_name');
-    }
-    
-    public function mediaCollectionName(): string
-    {
-        $generatedAt    = now()->toDateTimeString();
-        
-        return "practice_calls_last_three_months_generated_at_$generatedAt.csv";
+                [
+                    'inboundCalls' => function ($calls) {
+                        $calls->select('inbound_cpm_id', 'status', 'called_date')
+                            ->calledLastThreeMonths();
+                    },
+                    'patientInfo',
+                ]
+            )->select('id', 'display_name');
     }
 }

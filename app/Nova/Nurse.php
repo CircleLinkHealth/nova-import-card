@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Number;
-use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Titasgailius\SearchRelations\SearchesRelations;
 

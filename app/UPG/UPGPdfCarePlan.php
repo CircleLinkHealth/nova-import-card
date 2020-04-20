@@ -6,9 +6,9 @@
 
 namespace App\UPG;
 
-use Illuminate\Support\Str;
 use App\UPG\ValueObjects\PdfCarePlan;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use setasign\Fpdi\Fpdi;
 use Spatie\PdfToText\Pdf;
 

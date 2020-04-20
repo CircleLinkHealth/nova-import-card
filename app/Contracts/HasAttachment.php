@@ -12,8 +12,6 @@ interface HasAttachment
 {
     /**
      * Returns an Eloquent model.
-     *
-     * @return Model|null
      */
     public function getAttachment(): ?Model;
 }

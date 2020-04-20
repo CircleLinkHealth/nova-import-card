@@ -7,7 +7,6 @@
 namespace App\Jobs;
 
 use App\LoginLogout;
-use Carbon\Carbon;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -30,8 +29,6 @@ class LogSuccessfulLoginToDB implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param Login $event
      */
     public function __construct(Login $event)
     {
@@ -40,8 +37,6 @@ class LogSuccessfulLoginToDB implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @param Request $request
      */
     public function handle(Request $request)
     {

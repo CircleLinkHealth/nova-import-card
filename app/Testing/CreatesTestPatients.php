@@ -1,10 +1,10 @@
 <?php
+
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Testing;
-
 
 use App\CLH\Repositories\UserRepository;
 use Carbon\Carbon;
@@ -25,44 +25,6 @@ abstract class CreatesTestPatients
         $this->faker = Faker::create();
     }
 
-    abstract protected function data();
-
-    /**
-     * @param int $i
-     *
-     * Generate dummy medication names for users
-     *
-     * @return array
-     */
-    protected function testMedications($i = 25)
-    {
-        $medications = [];
-        while ($i > 0) {
-            $medications[] = ['name' => 'med' . ' ' . $i];
-            --$i;
-        }
-
-        return $medications;
-    }
-
-    protected function getPracticeId()
-    {
-        $demoPractice = Practice::whereName('demo');
-
-        return $demoPractice->exists()
-            ? $demoPractice->first()->id
-            : Practice::firstOrFail()->id;
-    }
-
-    protected function getProvider($id = null): User
-    {
-        if ($id && User::whereId($id)->exists()) {
-            return User::find($id);
-        }
-
-        return User::ofType('provider')->firstOrFail();
-    }
-
     public function create()
     {
         $repo     = new UserRepository();
@@ -70,7 +32,6 @@ abstract class CreatesTestPatients
         $problems = CpmProblem::get();
 
         foreach ($this->data() as $patientData) {
-
             $this->deleteUsersIfExist($patientData['email']);
 
             $patientData['roles'] = [$role->id];
@@ -91,9 +52,46 @@ abstract class CreatesTestPatients
         }
     }
 
+    abstract protected function data();
+
+    protected function getPracticeId()
+    {
+        $demoPractice = Practice::whereName('demo');
+
+        return $demoPractice->exists()
+            ? $demoPractice->first()->id
+            : Practice::firstOrFail()->id;
+    }
+
+    protected function getProvider($id = null): User
+    {
+        if ($id && User::whereId($id)->exists()) {
+            return User::find($id);
+        }
+
+        return User::ofType('provider')->firstOrFail();
+    }
+
+    /**
+     * @param int $i
+     *
+     * Generate dummy medication names for users
+     *
+     * @return array
+     */
+    protected function testMedications($i = 25)
+    {
+        $medications = [];
+        while ($i > 0) {
+            $medications[] = ['name' => 'med'.' '.$i];
+            --$i;
+        }
+
+        return $medications;
+    }
+
     private function createAndAttachProblems($problems, User $user, $patientData)
     {
-
         $userProblems = in_array('all', $patientData['conditions'])
             ? $problems
             : $problems->whereIn('name', $patientData['conditions']);
@@ -119,7 +117,7 @@ abstract class CreatesTestPatients
         $problem1Id = $user->ccdProblems->random()->id;
         $problem2Id = $user->ccdProblems->where('id', '!=', $problem1Id)->random()->id;
 
-        for ($i = 9; $i > 0; $i--) {
+        for ($i = 9; $i > 0; --$i) {
             $date = $now->copy()->firstOfMonth()->subMonth($i);
             $user->patientSummaries()->updateOrCreate([
                 'month_year' => $date,
@@ -133,7 +131,7 @@ abstract class CreatesTestPatients
                 'problem_2'              => $problem2Id,
                 'approved'               => 1,
                 'actor_id'               => User::ofType('administrator')->first()->id,
-                'created_at'             => $date->toDateTimeString()
+                'created_at'             => $date->toDateTimeString(),
             ]);
         }
     }

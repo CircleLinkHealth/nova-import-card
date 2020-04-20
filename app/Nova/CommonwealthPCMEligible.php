@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Nova;
 
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
@@ -16,21 +20,7 @@ class CommonwealthPCMEligible extends Resource
      * @var string
      */
     public static $model = EligibilityJob::class;
-    
-    /**
-     * The relationships that should be eager loaded on index queries.
-     *
-     * @var array
-     */
-    public static $with = ['targetPatient'];
-    
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     *
-     * @var string
-     */
-    public static $title = 'id';
-    
+
     /**
      * The columns that should be searched.
      *
@@ -52,11 +42,67 @@ class CommonwealthPCMEligible extends Resource
         'data->first_name',
         'data->last_name',
     ];
-    
+
+    /**
+     * The single value that should be used to represent the resource when being displayed.
+     *
+     * @var string
+     */
+    public static $title = 'id';
+
+    /**
+     * The relationships that should be eager loaded on index queries.
+     *
+     * @var array
+     */
+    public static $with = ['targetPatient'];
+
+    /**
+     * Get the actions available for the resource.
+     *
+     * @return array
+     */
+    public function actions(Request $request)
+    {
+        return [];
+    }
+
+    /**
+     * @return bool
+     */
+    public static function authorizedToCreate(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function authorizedToDelete(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function authorizedToUpdate(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * Get the cards available for the request.
+     *
+     * @return array
+     */
+    public function cards(Request $request)
+    {
+        return [];
+    }
+
     /**
      * Get the fields displayed by the resource.
-     *
-     * @param  \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -88,23 +134,9 @@ class CommonwealthPCMEligible extends Resource
             ID::make()->sortable(),
         ];
     }
-    
-    /**
-     * Get the cards available for the request.
-     *
-     * @param  \Illuminate\Http\Request $request
-     *
-     * @return array
-     */
-    public function cards(Request $request)
-    {
-        return [];
-    }
-    
+
     /**
      * Get the filters available for the resource.
-     *
-     * @param  \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -112,35 +144,10 @@ class CommonwealthPCMEligible extends Resource
     {
         return [];
     }
-    
-    /**
-     * Get the lenses available for the resource.
-     *
-     * @param  \Illuminate\Http\Request $request
-     *
-     * @return array
-     */
-    public function lenses(Request $request)
-    {
-        return [];
-    }
-    
-    /**
-     * Get the actions available for the resource.
-     *
-     * @param  \Illuminate\Http\Request $request
-     *
-     * @return array
-     */
-    public function actions(Request $request)
-    {
-        return [];
-    }
-    
+
     /**
      * Build an "index" query for the given resource.
      *
-     * @param \Laravel\Nova\Http\Requests\NovaRequest $request
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return \Illuminate\Database\Eloquent\Builder
@@ -153,13 +160,27 @@ class CommonwealthPCMEligible extends Resource
             0
         );
     }
-    
+
+    public static function label()
+    {
+        return 'G2065 Eligible';
+    }
+
+    /**
+     * Get the lenses available for the resource.
+     *
+     * @return array
+     */
+    public function lenses(Request $request)
+    {
+        return [];
+    }
+
     /**
      * Build a "relatable" query for the given resource.
      *
      * This query determines which instances of the model may be attached to other resources.
      *
-     * @param \Laravel\Nova\Http\Requests\NovaRequest $request
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return \Illuminate\Database\Eloquent\Builder
@@ -171,34 +192,5 @@ class CommonwealthPCMEligible extends Resource
             '>',
             0
         );
-    }
-    
-    public static function label()
-    {
-        return 'G2065 Eligible';
-    }
-    
-    /**
-     * @return bool
-     */
-    public static function authorizedToCreate(Request $request)
-    {
-        return false;
-    }
-    
-    /**
-     * @return bool
-     */
-    public function authorizedToDelete(Request $request)
-    {
-        return false;
-    }
-    
-    /**
-     * @return bool
-     */
-    public function authorizedToUpdate(Request $request)
-    {
-        return false;
     }
 }

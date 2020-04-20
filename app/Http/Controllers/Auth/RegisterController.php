@@ -37,8 +37,6 @@ class RegisterController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @param Request $request
      */
     public function __construct(Request $request)
     {
@@ -47,8 +45,6 @@ class RegisterController extends Controller
 
     /**
      * Create a new user instance after a valid registration.
-     *
-     * @param array $data
      *
      * @return \CircleLinkHealth\Customer\Entities\User
      */
@@ -63,8 +59,6 @@ class RegisterController extends Controller
 
     /**
      * Get a validator for an incoming registration request.
-     *
-     * @param array $data
      *
      * @return \Illuminate\Contracts\Validation\Validator
      */

@@ -7,7 +7,6 @@
 namespace Tests\Unit\CallsAlgo;
 
 use App\Algorithms\Calls\SuccessfulHandler;
-use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;
@@ -22,7 +21,7 @@ class SuccessfulCallHandlerTest extends TestCase
     private $nurse;
     private $practice;
 
-    protected function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
 

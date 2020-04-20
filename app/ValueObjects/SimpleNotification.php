@@ -41,25 +41,16 @@ class SimpleNotification implements Arrayable
      */
     protected $subject;
 
-    /**
-     * @return string
-     */
     public function getBody(): string
     {
         return $this->body;
     }
 
-    /**
-     * @return string|null
-     */
     public function getCcdaAttachmentPath(): ?string
     {
         return $this->ccdaAttachmentPath;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFileName(): ?string
     {
         if ( ! $this->fileName && Str::contains($this->filePath, '/')) {
@@ -69,25 +60,16 @@ class SimpleNotification implements Arrayable
         return $this->fileName;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFilePath(): ?string
     {
         return $this->filePath;
     }
 
-    /**
-     * @return User|null
-     */
     public function getPatient(): ?User
     {
         return $this->patient;
     }
 
-    /**
-     * @return string
-     */
     public function getSubject(): string
     {
         return $this->subject;
@@ -106,8 +88,6 @@ class SimpleNotification implements Arrayable
     }
 
     /**
-     * @param string|null $ccdaAttachmentPath
-     *
      * @return SimpleNotification
      */
     public function setCcdaAttachmentPath(string $ccdaAttachmentPath = null)
@@ -130,8 +110,6 @@ class SimpleNotification implements Arrayable
     }
 
     /**
-     * @param string|null $filePath
-     *
      * @return SimpleNotification
      */
     public function setFilePath(string $filePath = null)
@@ -142,8 +120,6 @@ class SimpleNotification implements Arrayable
     }
 
     /**
-     * @param User|null $patient
-     *
      * @return SimpleNotification
      */
     public function setPatient(User $patient = null)
@@ -154,8 +130,6 @@ class SimpleNotification implements Arrayable
     }
 
     /**
-     * @param string $subject
-     *
      * @return SimpleNotification
      */
     public function setSubject(string $subject)
