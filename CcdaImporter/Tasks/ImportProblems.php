@@ -181,7 +181,7 @@ class ImportProblems extends BaseCcdaImportTask
                 
                 $keyword = trim($keyword);
                 
-                if (str_contains(strtolower($problemName), strtolower($keyword))) {
+                if (Str::contains(strtolower($problemName), strtolower($keyword))) {
                     return $cpmProblem;
                 }
             }
