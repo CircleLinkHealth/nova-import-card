@@ -45,7 +45,6 @@ use Illuminate\Support\Facades\DB;
  * @property \CircleLinkHealth\Customer\Entities\User                                                        $patient
  * @property \CircleLinkHealth\Customer\Entities\User                                                        $provider
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection     $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|Activity
  *     createdBy(\CircleLinkHealth\Customer\Entities\User $user)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity createdThisMonth($field = 'created_at')
@@ -70,7 +69,6 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity
  *     createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity
@@ -79,7 +77,6 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity query()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity
  *     whereIsBehavioral($value)
- *
  * @property int|null $care_rate_logs_count
  * @property int|null $meta_count
  * @property int|null $revision_history_count
