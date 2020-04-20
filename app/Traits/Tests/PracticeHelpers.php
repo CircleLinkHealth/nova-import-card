@@ -22,7 +22,7 @@ trait PracticeHelpers
         $this->location = Location::where('practice_id', $practice->id)->first();
 
         if ( ! $this->location) {
-            $this->location = factory(Location::class)->create();
+            $this->location = factory(Location::class)->create(['practice_id' => $practice->id]);
         }
 
         $sync = [];
