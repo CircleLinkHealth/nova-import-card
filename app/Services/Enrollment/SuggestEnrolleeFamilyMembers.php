@@ -27,7 +27,7 @@ class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
                     'value' => $e->getPhonesAsString($this->enrollee),
                 ],
                 'addresses' => [
-                    'value' => $e->getAddressesAsString(),
+                    'value' => $e->getAddressesAsString($this->enrollee),
                 ],
             ];
         });
@@ -51,21 +51,39 @@ class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
         $matchingAddressAndSurname = Enrollee::shouldSuggestAsFamilyForEnrollee($this->enrolleeId)
             ->searchAddresses($this->enrollee->getAddressesAsString())
             ->get()
-            ->map(function ($e) {
-            //If there is a similar address but not the same phone number, we can take into account if the person with a similar address has the same last name.
-            // That is another indicator our care ambassadors use to determine if someone is related.
-            if ($e->relevance_score < (int) suggestedFamilyMemberAcceptableRelevanceScore()) {
-                return null;
-            }
+            ->map(function (Enrollee $e) {
+                                                 //If there is a similar address but not the same phone number, we can take into account if the person with a similar address has the same last name.
+                                                 // That is another indicator our care ambassadors use to determine if someone is related.
+                                                 if ($e->relevance_score < (int) suggestedFamilyMemberAcceptableRelevanceScore()) {
+                                                     return null;
+                                                 }
 
-            if ($e->last_name !== $this->enrollee->last_name) {
-                return null;
-            }
+                                                 if ( ! $this->levenshteinValidAddressExists($e)) {
+                                                     return null;
+                                                 }
 
-            return $e;
-        })
+                                                 if (levenshtein($e->last_name, $this->enrollee->last_name) > 1) {
+                                                     return null;
+                                                 }
+
+                                                 return $e;
+                                             })
             ->filter();
 
         return $matchingPhones->merge($matchingAddressAndSurname)->unique('id');
+    }
+
+    private function levenshteinValidAddressExists(Enrollee $e)
+    {
+        //todo: account for empty strings
+        return 0 !== collect([
+            levenshtein($e->address, $this->enrollee->address),
+            levenshtein($e->address, $this->enrollee->address_2),
+            levenshtein($e->address_2, $this->enrollee->address),
+            levenshtein($e->address_2, $this->enrollee->address_2),
+        ])->filter(function ($l) {
+                //if less than 7 characters need to change to match strings. See Levenshtein Distance
+                return $l <= 7;
+            })->count();
     }
 }
