@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\Eligibility\Entities;
 
 use CircleLinkHealth\Core\Traits\MySQLSearchable;
@@ -8,16 +12,17 @@ use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
 
 /**
- * CircleLinkHealth\Eligibility\Entities\PcmProblem
+ * CircleLinkHealth\Eligibility\Entities\PcmProblem.
  *
- * @property int $id
- * @property int $practice_id
- * @property string $code_type
- * @property string $code
- * @property string $description
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \CircleLinkHealth\Customer\Entities\Practice $practice
+ * @property int                                          $id
+ * @property int                                          $practice_id
+ * @property string                                       $code_type
+ * @property string                                       $code
+ * @property string                                       $description
+ * @property \Illuminate\Support\Carbon|null              $created_at
+ * @property \Illuminate\Support\Carbon|null              $updated_at
+ * @property \CircleLinkHealth\Customer\Entities\Practice $practice
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\PcmProblem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\PcmProblem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\PcmProblem query()
@@ -29,6 +34,7 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\PcmProblem wherePracticeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\PcmProblem whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\PcmProblem mySQLSearch($columns, $term, $mode = 'BOOLEAN', $shouldRequireAll = true, $shouldRequireIntegers = true)
  */
 class PcmProblem extends Model
@@ -42,6 +48,16 @@ class PcmProblem extends Model
         'code',
         'description',
     ];
+
+    /**
+     * Get the value used to index the model.
+     *
+     * @return mixed
+     */
+    public function getScoutKey()
+    {
+        return $this->id;
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -74,15 +90,5 @@ class PcmProblem extends Model
             'code'        => $this->code,
             'description' => $this->description,
         ];
-    }
-
-    /**
-     * Get the value used to index the model.
-     *
-     * @return mixed
-     */
-    public function getScoutKey()
-    {
-        return $this->id;
     }
 }

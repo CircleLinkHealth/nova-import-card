@@ -16,23 +16,24 @@ use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
 /**
  * CircleLinkHealth\Eligibility\Entities\TargetPatient.
  *
- * @property int                                                                            $id
- * @property int|null                                                                       $batch_id
- * @property string|null                                                                    $eligibility_job_id
- * @property int                                                                            $ehr_id
- * @property int|null                                                                       $user_id
- * @property int|null                                                                       $enrollee_id
- * @property int                                                                            $ehr_patient_id
- * @property int                                                                            $ehr_practice_id
- * @property int                                                                            $ehr_department_id
- * @property string|null                                                                    $status
- * @property \Illuminate\Support\Carbon|null                                                $created_at
- * @property \Illuminate\Support\Carbon|null                                                $updated_at
- * @property string                                                                         $description
- * @property \CircleLinkHealth\Customer\Entities\Ehr                                        $ehr
- * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null                                                             $enrollee
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
- * @property \CircleLinkHealth\Customer\Entities\User|null                                  $user
+ * @property int                                                                                         $id
+ * @property int|null                                                                                    $batch_id
+ * @property string|null                                                                                 $eligibility_job_id
+ * @property int                                                                                         $ehr_id
+ * @property int|null                                                                                    $user_id
+ * @property int|null                                                                                    $enrollee_id
+ * @property int                                                                                         $ehr_patient_id
+ * @property int                                                                                         $ehr_practice_id
+ * @property int                                                                                         $ehr_department_id
+ * @property string|null                                                                                 $status
+ * @property \Illuminate\Support\Carbon|null                                                             $created_at
+ * @property \Illuminate\Support\Carbon|null                                                             $updated_at
+ * @property string                                                                                      $description
+ * @property \CircleLinkHealth\Customer\Entities\Ehr                                                     $ehr
+ * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null                                        $enrollee
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ * @property \CircleLinkHealth\Customer\Entities\User|null                                               $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient query()
@@ -50,16 +51,23 @@ use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUserId($value)
  * @mixin \Eloquent
- * @property int                                          $practice_id
- * @property \CircleLinkHealth\Eligibility\Entities\EligibilityBatch|null                   $batch
- * @property \CircleLinkHealth\Customer\Entities\Practice $practice
+ *
+ * @property int                                                          $practice_id
+ * @property \CircleLinkHealth\Eligibility\Entities\EligibilityBatch|null $batch
+ * @property \CircleLinkHealth\Customer\Entities\Practice                 $practice
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient wherePracticeId($value)
- * @property int|null                             $ccda_id
+ *
+ * @property int|null                                          $ccda_id
  * @property \CircleLinkHealth\SharedModels\Entities\Ccda|null $ccda
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereCcdaId($value)
+ *
  * @property int|null $revision_history_count
  * @property int      $department_id
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereDepartmentId($value)
+ *
  * @property \CircleLinkHealth\Eligibility\Entities\EligibilityJob|null $eligibilityJob
  */
 class TargetPatient extends BaseModel

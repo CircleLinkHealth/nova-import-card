@@ -15,29 +15,25 @@ use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 abstract class BaseCcdaImportTask implements CcdaImportTask
 {
     /**
-     * @var CcdToLogTranformer
+     * @var Ccda
      */
-    private $transformer;
-    
+    protected $ccda;
+
     /**
      * @var User
      */
     protected $patient;
     /**
-     * @var Ccda
+     * @var CcdToLogTranformer
      */
-    protected $ccda;
-    
+    private $transformer;
+
     public function __construct(User $patient, Ccda $ccda)
     {
         $this->patient = $patient;
-        $this->ccda = $ccda;
+        $this->ccda    = $ccda;
     }
-    
-    public static function for(User $patient, Ccda $ccda) {
-        return (app(get_called_class(), ['patient' => $patient, 'ccda' => $ccda]))->import();
-    }
-    
+
     public function chooseValidator($item)
     {
         foreach ($this->validators() as $className) {
@@ -49,6 +45,20 @@ abstract class BaseCcdaImportTask implements CcdaImportTask
         }
 
         return false;
+    }
+
+    public static function for(User $patient, Ccda $ccda)
+    {
+        return (app(get_called_class(), ['patient' => $patient, 'ccda' => $ccda]))->import();
+    }
+
+    public function getTransformer()
+    {
+        if ( ! $this->transformer) {
+            $this->transformer = app(CcdToLogTranformer::class);
+        }
+
+        return $this->transformer;
     }
 
     public function validate($item)
@@ -69,20 +79,11 @@ abstract class BaseCcdaImportTask implements CcdaImportTask
     {
         return \config('importer')['validators'];
     }
-    
-    public function getTransformer()
-    {
-        if (! $this->transformer) {
-            $this->transformer = app(CcdToLogTranformer::class);
-        }
-        
-        return $this->transformer;
-    }
-    
+
     protected function hasMisc(User $user, ?CpmMisc $misc)
     {
         return $user->cpmMiscs()->where('cpm_miscs.id', optional($misc)->id)->exists();
     }
-    
-    protected abstract function import();
+
+    abstract protected function import();
 }

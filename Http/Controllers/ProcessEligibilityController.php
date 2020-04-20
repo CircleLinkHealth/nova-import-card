@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\Eligibility\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use Illuminate\Http\Request;
 
 class ProcessEligibilityController extends Controller

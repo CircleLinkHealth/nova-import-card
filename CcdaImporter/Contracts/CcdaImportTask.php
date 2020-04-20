@@ -18,18 +18,15 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
 interface CcdaImportTask
 {
     public function chooseValidator($item);
-    
+
     /**
      * This will import a Section (eg. Problems, Demographics, Meds), and attach it to an ImportedMedicalRecord for QA.
-     *
-     * @param User $patient
-     * @param Ccda $ccda
      *
      * @return mixed
      */
     public static function for(
-       User $patient,
-       Ccda $ccda
+        User $patient,
+        Ccda $ccda
     );
 
     public function validate($item);

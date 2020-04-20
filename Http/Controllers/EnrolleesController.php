@@ -7,11 +7,11 @@
 namespace CircleLinkHealth\Eligibility\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use CircleLinkHealth\Eligibility\Jobs\ImportMedicalRecordsById;
-use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Http\Request;
 
 class EnrolleesController extends Controller

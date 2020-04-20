@@ -32,8 +32,6 @@ class ProcessEligibilityFromGoogleDrive implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param EligibilityBatch $batch
      */
     public function __construct(EligibilityBatch $batch)
     {
@@ -47,8 +45,6 @@ class ProcessEligibilityFromGoogleDrive implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @param \CircleLinkHealth\Eligibility\ProcessEligibilityService $processEligibilityService
      */
     public function handle(ProcessEligibilityService $processEligibilityService)
     {

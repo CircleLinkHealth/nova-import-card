@@ -22,7 +22,7 @@ class NumberedFieldsValidator extends BaseValidator
             'home_phone',
             'other_phone',
             'primary_phone',
-//            'email',
+            //            'email',
             'street',
             'street2',
             'city',

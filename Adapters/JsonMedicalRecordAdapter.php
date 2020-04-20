@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\Eligibility\Adapters;
 
-use CircleLinkHealth\Eligibility\Entities\MedicalRecordForEligibilityCheck;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\MedicalRecordForEligibilityCheck;
 use CircleLinkHealth\Eligibility\ValidatesEligibility;
 use Illuminate\Support\Collection;
 use Illuminate\Support\MessageBag;
@@ -79,7 +79,7 @@ class JsonMedicalRecordAdapter
                 'batch_id' => $eligibilityBatch->id,
                 'hash'     => $hash,
             ], [
-                'data'     => $this->validatedData->all(),
+                'data' => $this->validatedData->all(),
             ]);
         }
 
@@ -158,7 +158,7 @@ class JsonMedicalRecordAdapter
         } catch (\Exception $e) {
             \Log::debug("Could not parse `date_of_birth`. Value {$this->validatedData->get('date_of_birth')}. Key: `${key}`. {$e->getMessage()}, {$e->getCode()}. Source json string: `{$this->source}`");
         }
-        
+
         $mrn = $this->validatedData->get('patient_id') ?? $this->validatedData->get('mrn') ?? $this->validatedData->get('mrn_number');
 
         return $key.'-'.$dob ?? $this->validatedData->get('date_of_birth').'-'.$mrn;

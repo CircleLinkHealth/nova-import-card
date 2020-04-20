@@ -12,34 +12,32 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
 abstract class BaseCcdaImportHook
 {
     /**
-     * @var User
-     */
-    protected $patient;
-    /**
      * @var Ccda
      */
     protected $ccda;
     /**
+     * @var User
+     */
+    protected $patient;
+    /**
      * @var null
      */
     protected $payload;
-    
+
     /**
      * BaseCcdaImportHook constructor.
      *
-     * @param User $patient
-     * @param Ccda $ccda
      * @param null $payload
      */
     public function __construct(User $patient, Ccda $ccda, $payload = null)
     {
         $this->patient = $patient;
-        $this->ccda = $ccda;
+        $this->ccda    = $ccda;
         $this->payload = $payload;
     }
-    
+
     /**
-     * Run the hook
+     * Run the hook.
      *
      * @return mixed
      */

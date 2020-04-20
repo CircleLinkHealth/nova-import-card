@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Eligibility\Console;
 
+use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;

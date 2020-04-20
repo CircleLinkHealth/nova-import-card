@@ -22,9 +22,6 @@ abstract class BaseValidator implements PatientListValidator
             : $this->validate();
     }
 
-    /**
-     * @return array
-     */
     public function getColumnNames(): array
     {
         return $this->columnNames;
@@ -36,8 +33,6 @@ abstract class BaseValidator implements PatientListValidator
     }
 
     /**
-     * @param array $columnNames
-     *
      * @return SingleFieldsValidator
      */
     public function setColumnNames(array $columnNames)

@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies;
 
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\BaseStorageStrategy;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategy;
 
 class ProblemsToMonitor extends BaseStorageStrategy implements StorageStrategy

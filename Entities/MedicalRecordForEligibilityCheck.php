@@ -113,9 +113,6 @@ class MedicalRecordForEligibilityCheck
         return $this->address_line_2;
     }
 
-    /**
-     * @return array
-     */
     public function getAllergies(): array
     {
         return $this->allergies;
@@ -153,9 +150,6 @@ class MedicalRecordForEligibilityCheck
         return $this->first_name;
     }
 
-    /**
-     * @return array
-     */
     public function getInsurancePlans(): array
     {
         return $this->insurance_plans;
@@ -177,9 +171,6 @@ class MedicalRecordForEligibilityCheck
         return $this->last_visit;
     }
 
-    /**
-     * @return array
-     */
     public function getMedications(): array
     {
         return $this->medications;
@@ -225,9 +216,6 @@ class MedicalRecordForEligibilityCheck
         return $this->primary_phone;
     }
 
-    /**
-     * @return array
-     */
     public function getProblems(): array
     {
         return $this->problems;
@@ -257,9 +245,6 @@ class MedicalRecordForEligibilityCheck
         $this->address_line_2 = $address_line_2;
     }
 
-    /**
-     * @param array $allergies
-     */
     public function setAllergies(array $allergies): void
     {
         $this->allergies = $allergies;
@@ -297,9 +282,6 @@ class MedicalRecordForEligibilityCheck
         $this->first_name = $first_name;
     }
 
-    /**
-     * @param array $insurance_plans
-     */
     public function setInsurancePlans(array $insurance_plans): void
     {
         $this->insurance_plans = $insurance_plans;
@@ -321,9 +303,6 @@ class MedicalRecordForEligibilityCheck
         $this->last_visit = $last_visit;
     }
 
-    /**
-     * @param array $medications
-     */
     public function setMedications(array $medications): void
     {
         $this->medications = $medications;
@@ -369,9 +348,6 @@ class MedicalRecordForEligibilityCheck
         $this->primary_phone = $primary_phone;
     }
 
-    /**
-     * @param array $problems
-     */
     public function setProblems(array $problems): void
     {
         $this->problems = $problems;

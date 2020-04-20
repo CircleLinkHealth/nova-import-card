@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\Tasks;
 
-
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Exceptions\CcdaWasNotFetchedFromAthenaApi;
@@ -19,34 +18,33 @@ class CreateCcdaFromAthenaApi
      * @var AthenaApiImplementation
      */
     protected $athenaApiImplementation;
-    
+
     public function __construct(AthenaApiImplementation $athenaApiImplementation)
     {
         $this->athenaApiImplementation = $athenaApiImplementation;
     }
-    
+
     /**
-     * @param TargetPatient $targetPatient
+     * @throws CcdaWasNotFetchedFromAthenaApi
      *
      * @return MedicalRecord|null
-     * @throws CcdaWasNotFetchedFromAthenaApi
      */
     public function handle(TargetPatient &$targetPatient): MedicalRecord
     {
         if ($targetPatient->ccda) {
             return $targetPatient->ccda;
         }
-        
+
         $ccdaExternal = $this->athenaApiImplementation->getCcd(
             $targetPatient->ehr_patient_id,
             $targetPatient->ehr_practice_id,
             $targetPatient->ehr_department_id
         );
-        
+
         if ( ! isset($ccdaExternal[0])) {
             throw new CcdaWasNotFetchedFromAthenaApi($targetPatient);
         }
-        
+
         return tap(
             Ccda::create(
                 [

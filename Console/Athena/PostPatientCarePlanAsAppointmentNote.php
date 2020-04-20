@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Eligibility\Console\Athena;
 
-use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use App\Services\AthenaAPI\Calls;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Console\Command;
 
 class PostPatientCarePlanAsAppointmentNote extends Command

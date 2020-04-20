@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies;
 
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\BaseStorageStrategy;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategy;
 use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
 
@@ -27,7 +26,7 @@ class Weight extends BaseStorageStrategy implements StorageStrategy
         $biometric = CpmBiometric::whereName(CpmBiometric::WEIGHT)->first();
 
         try {
-            if (! $this->user->cpmBiometrics()->where('id', $biometric->id)->exists()) {
+            if ( ! $this->user->cpmBiometrics()->where('id', $biometric->id)->exists()) {
                 $this->user->cpmBiometrics()->attach($biometric->id);
             }
         } catch (\Exception $e) {

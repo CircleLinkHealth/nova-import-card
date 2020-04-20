@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\Eligibility\MedicalRecord;
 
 use CircleLinkHealth\Customer\Entities\User;
@@ -19,13 +23,23 @@ class MedicalRecordFactory
      * @var Enrollee
      */
     private $enrollee;
-    
+
+    public static function create(User $user, Ccda $ccda)
+    {
+        $static     = new static();
+        $methodName = 'create'.ucfirst(Str::camel($user->primaryPractice->name)).'MedicalRecord';
+
+        if (method_exists($static, $methodName)) {
+            return $static->{$methodName}($user, $ccda);
+        }
+
+        return $static->createDefaultMedicalRecord($user, $ccda);
+    }
+
     /**
-     * @param User $user
-     * @param Ccda $ccda
+     * @throws \Exception
      *
      * @return CommonwealthMedicalRecord
-     * @throws \Exception
      */
     public function createCommonwealthPainAssociatesPllcMedicalRecord(User $user, Ccda $ccda)
     {
@@ -42,7 +56,12 @@ class MedicalRecordFactory
             new CcdaMedicalRecord($ccda->bluebuttonJson())
         );
     }
-    
+
+    public function createDefaultMedicalRecord(User $user, Ccda $ccda)
+    {
+        return new CcdaMedicalRecord(json_decode($ccda->json));
+    }
+
     private function getEnrollee(User $user): Enrollee
     {
         if ( ! $this->enrollee) {
@@ -60,30 +79,13 @@ class MedicalRecordFactory
             )->with(
                 'eligibilityJob'
             )->has('eligibilityJob')->orderByDesc('id')->firstOrFail();
-            
+
             if (is_null($this->enrollee->user_id)) {
                 $this->enrollee->user_id = $user->id;
                 $this->enrollee->save();
             }
         }
-        
+
         return $this->enrollee;
-    }
-    
-    public function createDefaultMedicalRecord(User $user, Ccda $ccda)
-    {
-        return new CcdaMedicalRecord(json_decode($ccda->json));
-    }
-    
-    public static function create(User $user, Ccda $ccda)
-    {
-        $static = new static();
-        $methodName = 'create'.ucfirst(Str::camel($user->primaryPractice->name)).'MedicalRecord';
-        
-        if (method_exists($static, $methodName)) {
-            return $static->{$methodName}($user, $ccda);
-        }
-        
-        return $static->createDefaultMedicalRecord($user, $ccda);
     }
 }

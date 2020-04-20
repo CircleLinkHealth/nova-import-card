@@ -6,22 +6,14 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
-use App\CLH\Repositories\CCDImporterRepository;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\ImportEnrollee;
-use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
-use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Artisan;
 
 class ImportConsentedEnrollees implements ShouldQueue
 {
@@ -29,7 +21,7 @@ class ImportConsentedEnrollees implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    
+
     /**
      * The number of times the job may be attempted.
      *
@@ -44,19 +36,16 @@ class ImportConsentedEnrollees implements ShouldQueue
      * @var array
      */
     private $enrolleeIds;
-    
+
     /**
      * Create a new job instance.
-     *
-     * @param array $enrolleeIds
-     * @param EligibilityBatch|null $batch
      */
     public function __construct(array $enrolleeIds, EligibilityBatch $batch = null)
     {
         $this->enrolleeIds = $enrolleeIds;
         $this->batch       = $batch;
     }
-    
+
     /**
      * Execute the job.
      *
@@ -65,19 +54,19 @@ class ImportConsentedEnrollees implements ShouldQueue
     public function handle()
     {
         Enrollee::whereIn('id', $this->enrolleeIds)
-                ->with(['targetPatient', 'practice', 'eligibilityJob'])
-                ->chunkById(
-                    10,
-                    function ($enrollees) {
+            ->with(['targetPatient', 'practice', 'eligibilityJob'])
+            ->chunkById(
+                10,
+                function ($enrollees) {
                         $enrollees->each(
-                            function ($enrollee)  {
+                            function ($enrollee) {
                                 ImportEnrollee::import($enrollee);
                             }
                         );
                     }
-                );
+            );
     }
-    
+
     /**
      * Get the tags that should be assigned to the job.
      *
@@ -86,8 +75,7 @@ class ImportConsentedEnrollees implements ShouldQueue
     public function tags()
     {
         $ids = implode(',', $this->enrolleeIds);
-        
+
         return ['importconsentedenrollees', 'enrollees:'.$ids];
     }
 }
-

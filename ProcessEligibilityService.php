@@ -6,16 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility;
 
-use CircleLinkHealth\Eligibility\Notifications\EligibilityBatchProcessed;
-use CircleLinkHealth\Eligibility\Exceptions\CsvEligibilityListStructureValidationException;
-use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedAllergyFields;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedMedicationFields;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedProblemFields;
-use CircleLinkHealth\Eligibility\Jobs\CheckCcdaEnrollmentEligibility;
-use CircleLinkHealth\Eligibility\Jobs\ProcessCcda;
-use CircleLinkHealth\Eligibility\Jobs\ProcessCcdaFromGoogleDrive;
-use CircleLinkHealth\Eligibility\Jobs\ProcessEligibilityFromGoogleDrive;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
 use CircleLinkHealth\Core\GoogleDrive;
@@ -25,7 +15,16 @@ use CircleLinkHealth\Eligibility\Entities\CsvPatientList;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\ValidatesEligibility;
+use CircleLinkHealth\Eligibility\Exceptions\CsvEligibilityListStructureValidationException;
+use CircleLinkHealth\Eligibility\Jobs\CheckCcdaEnrollmentEligibility;
+use CircleLinkHealth\Eligibility\Jobs\ProcessCcda;
+use CircleLinkHealth\Eligibility\Jobs\ProcessCcdaFromGoogleDrive;
+use CircleLinkHealth\Eligibility\Jobs\ProcessEligibilityFromGoogleDrive;
+use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedAllergyFields;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedMedicationFields;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedProblemFields;
+use CircleLinkHealth\Eligibility\Notifications\EligibilityBatchProcessed;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -33,7 +32,7 @@ use Illuminate\Support\Str;
 class ProcessEligibilityService
 {
     use ValidatesEligibility;
-    
+
     /**
      * @param $type
      * @param array $options
@@ -51,7 +50,7 @@ class ProcessEligibilityService
             ]
         );
     }
-    
+
     /**
      * @param $folder
      * @param $fileName
@@ -88,50 +87,50 @@ class ProcessEligibilityService
             ]
         );
     }
-    
+
     /**
      * @param $patientListCsvFilePath
      *
-     * @return array
      * @throws \Exception
      *
+     * @return array
      */
     public function createEligibilityJobFromCsvBatch(EligibilityBatch $batch, $patientListCsvFilePath)
     {
         if ( ! file_exists($patientListCsvFilePath)) {
             throw new FileNotFoundException();
         }
-        
+
         return iterateCsv(
             $patientListCsvFilePath,
             function ($row) use ($batch) {
                 $csvPatientList = new CsvPatientList(collect([$row]));
-                $isValid        = $csvPatientList->guessValidatorAndValidate();
-                
+                $isValid = $csvPatientList->guessValidatorAndValidate();
+
                 if ( ! $isValid) {
                     return [
                         'error' => 'This csv does not match any of the supported templates. you can see supported templates here https://drive.google.com/drive/folders/1zpiBkegqjTioZGzdoPqZQAqWvXkaKEgB',
                     ];
                 }
-                
+
                 return $this->createEligibilityJobFromCsvRow($row, $batch);
             }
         );
     }
-    
+
     /**
      * @return EligibilityJob|\Illuminate\Database\Eloquent\Model
      */
     public function createEligibilityJobFromCsvRow(array $patient, EligibilityBatch $batch)
     {
         $patient = $this->transformCsvRow($patient);
-        
+
         $validator = $this->validateRow($patient);
-        
+
         $mrn = $patient['mrn'] ?? $patient['mrn_number'] ?? $patient['patient_id'];
-        
+
         $hash = $batch->practice->name.$patient['first_name'].$patient['last_name'].$mrn;
-        
+
         return EligibilityJob::create(
             [
                 'batch_id' => $batch->id,
@@ -143,7 +142,7 @@ class ProcessEligibilityService
             ]
         );
     }
-    
+
     /**
      * @param $dir
      * @param $filterLastEncounter
@@ -170,7 +169,7 @@ class ProcessEligibilityService
             ]
         );
     }
-    
+
     /**
      * @return $this|\Illuminate\Database\Eloquent\Model
      */
@@ -186,7 +185,7 @@ class ProcessEligibilityService
             ]
         );
     }
-    
+
     /**
      * @param $filterLastEncounter
      * @param $filterInsurance
@@ -212,7 +211,7 @@ class ProcessEligibilityService
             ]
         );
     }
-    
+
     /**
      * @param $folder
      * @param $fileName
@@ -236,9 +235,9 @@ class ProcessEligibilityService
             EligibilityBatch::TYPE_ONE_CSV,
             $practiceId,
             [
-                'folder'              => $folder,
-                'fileName'            => $fileName,
-                'filePath'            => $filePath,
+                'folder'   => $folder,
+                'fileName' => $fileName,
+                'filePath' => $filePath,
                 //did the system read all lines from the file and create eligibility jobs?
                 'finishedReadingFile' => false,
                 'filterLastEncounter' => (bool) $filterLastEncounter,
@@ -247,7 +246,7 @@ class ProcessEligibilityService
             ]
         );
     }
-    
+
     /**
      * Edit the details of the eligibility batch.
      *
@@ -263,43 +262,43 @@ class ProcessEligibilityService
                 'options' => $options,
             ]
         );
-        
+
         return $batch->fresh();
     }
-    
+
     public function fromGoogleDrive(EligibilityBatch $batch)
     {
         ini_set('max_execution_time', 600);
         ini_set('memory_limit', '1000M');
-        
+
         $cloudDisk = Storage::disk('google');
         $recursive = false; // Get subdirectories also?
         $dir       = $batch->options['dir'];
-        
+
         if ($batch->isFinishedFetchingFiles()) {
             return null;
         }
-        
+
         $collection = collect($cloudDisk->listContents($dir, $recursive));
-        
+
         $options                  = $batch->options;
         $options['numberOfFiles'] = $collection->count();
         $batch->options           = $options;
         $batch->save();
-        
+
         echo "\n batch {$batch->id}: {$options['numberOfFiles']} total files on drive";
-        
+
         $alreadyProcessed = Media::select('file_name')->whereModelType(Ccda::class)->whereIn(
             'model_id',
             function ($query) use ($batch) {
                 $query->select('id')
-                      ->from((new Ccda())->getTable())
-                      ->where('batch_id', $batch->id);
+                    ->from((new Ccda())->getTable())
+                    ->where('batch_id', $batch->id);
             }
         )->distinct()->pluck('file_name');
-        
+
         echo "\n batch {$batch->id}: {$alreadyProcessed->count()} CCDs already processed from this batch.";
-        
+
         $col = $collection
             ->where('type', '=', 'file')
             ->whereIn(
@@ -310,9 +309,9 @@ class ProcessEligibilityService
                 ]
             )
             ->whereNotIn('name', $alreadyProcessed->all());
-        
+
         echo "\n batch {$batch->id}: {$col->count()} CCDs to fetch from drive";
-        
+
         if ($col->isEmpty()) {
             return false;
         }
@@ -325,17 +324,17 @@ class ProcessEligibilityService
                         &$i
                     ) {
                         ProcessCcdaFromGoogleDrive::dispatch($file, $batch);
-                        
+
                         ++$i;
                         echo "\n batch {$batch->id}: processing file $i";
                     }
                 );
             }
         );
-        
+
         return true;
     }
-    
+
     public function handleAlreadyDownloadedZip(
         $dir,
         $practiceName,
@@ -344,24 +343,24 @@ class ProcessEligibilityService
         $filterProblems
     ) {
         $cloudDisk = Storage::disk('google');
-        
+
         $practice  = Practice::whereName($practiceName)->firstOrFail();
         $recursive = false; // Get subdirectories also?
         $contents  = collect($cloudDisk->listContents($dir, $recursive));
-        
+
         $processedDir = $contents->where('type', '=', 'dir')
-                                 ->where('filename', '=', 'processed')
-                                 ->first();
-        
+            ->where('filename', '=', 'processed')
+            ->first();
+
         if ( ! $processedDir) {
             $cloudDisk->makeDirectory("${dir}/processed");
-            
+
             $processedDir = collect($cloudDisk->listContents($dir, $recursive))
                 ->where('type', '=', 'dir')
                 ->where('filename', '=', 'processed')
                 ->first();
         }
-        
+
         $zipFiles = $contents
             ->where('type', '=', 'file')
             ->where('mimetype', '=', 'application/zip')
@@ -376,19 +375,19 @@ class ProcessEligibilityService
                     $processedDir
                 ) {
                     $localDisk = Storage::disk('local');
-                    
+
                     $unzipDir = "zip/${dir}/unzipped";
-                    
+
                     $cloudFilePath = $file['path'];
                     $cloudFileName = $file['filename'];
-                    $cloudDirName  = $file['dirname'];
-                    
+                    $cloudDirName = $file['dirname'];
+
                     foreach ($localDisk->allFiles($unzipDir) as $path) {
                         if (Str::contains($path, 'xml')) {
-                            $now       = Carbon::now()->toAtomString();
+                            $now = Carbon::now()->toAtomString();
                             $randomStr = Str::random();
-                            
-                            $put  = $cloudDisk->put(
+
+                            $put = $cloudDisk->put(
                                 "{$processedDir['path']}/${randomStr}-${now}",
                                 fopen($localDisk->path($path), 'r+')
                             );
@@ -401,11 +400,11 @@ class ProcessEligibilityService
                                     'practice_id' => (int) $practice->id,
                                 ]
                             );
-                            
+
                             //for some reason it doesn't save practice_id when using Ccda::create([])
                             $ccda->practice_id = (int) $practice->id;
                             $ccda->save();
-                            
+
                             ProcessCcda::withChain(
                                 [
                                     (new CheckCcdaEnrollmentEligibility(
@@ -417,23 +416,23 @@ class ProcessEligibilityService
                                     ))->onQueue('low'),
                                 ]
                             )->dispatch($ccda->id)
-                                       ->onQueue('low');
+                                ->onQueue('low');
                         } else {
                             $pathWithUnderscores = str_replace('/', '_', $path);
-                            $put                 = $cloudDisk->put(
+                            $put = $cloudDisk->put(
                                 "{$processedDir['path']}/${pathWithUnderscores}",
                                 fopen($localDisk->path($path), 'r+')
                             );
                         }
-                        
+
                         $localDisk->delete($path);
                     }
                 }
             );
-        
+
         return true;
     }
-    
+
     public function notify(EligibilityBatch $batch)
     {
         if (isProductionEnv()) {
@@ -442,10 +441,10 @@ class ProcessEligibilityService
                 "Hey I just processed this list, it's crazy. Here's some patients, call them maybe? {$batch->linkToView()}"
             );
         }
-        
+
         optional($batch->initiatorUser)->notify(new EligibilityBatchProcessed($batch));
     }
-    
+
     /**
      * Store updated EligibilityBatch details for reprocessing. Delete existing EligibilityJobs if option `reprocess
      * from scratch` was chosen.
@@ -482,51 +481,51 @@ class ProcessEligibilityService
                 'reprocessingMethod'  => $reprocessingMethod,
             ]
         );
-        
+
         if (EligibilityBatch::REPROCESS_FROM_SCRATCH == $reprocessingMethod) {
             $deletedJobs = EligibilityJob::whereBatchId($batch->id)
-                                         ->forceDelete();
-            
+                ->forceDelete();
+
             $deletedEnrollees = Enrollee::whereBatchId($batch->id)
-                                        ->delete();
+                ->delete();
         }
-        
+
         return $batch;
     }
-    
+
     /**
-     * @return bool
      * @throws \Exception
      *
+     * @return bool
      */
     public function processCsvForEligibility(EligibilityBatch $batch)
     {
         ini_set('memory_limit', '-1');
-        
+
         if (EligibilityBatch::TYPE_ONE_CSV != $batch->type) {
             throw new \Exception('$batch is not of type `'.EligibilityBatch::TYPE_ONE_CSV.'`.`');
         }
-        
+
         $csvPatientList = $batch->options['patientList'];
-        
+
         if (empty($csvPatientList)) {
             return false;
         }
-        
+
         $processedAtLeast1File = false;
-        
+
         try {
             while ( ! empty($csvPatientList)) {
                 $patient = array_shift($csvPatientList);
-                
+
                 if ( ! is_array($patient)) {
                     continue;
                 }
-                
+
                 $job = $this->createEligibilityJobFromCsvRow($patient, $batch);
-                
+
                 $patient['eligibility_job_id'] = $job->id;
-                
+
                 $processedAtLeast1File = true;
             }
         } catch (\Exception $exception) {
@@ -534,34 +533,33 @@ class ProcessEligibilityService
             $options['patientList'] = $csvPatientList;
             $batch->options         = $options;
             $batch->save();
-            
+
             throw $exception;
         }
-        
+
         $options                = $batch->options;
         $options['patientList'] = $csvPatientList;
         $batch->options         = $options;
         $batch->save();
-        
+
         return $processedAtLeast1File;
     }
-    
+
     /**
-     * @param EligibilityBatch $batch
+     * @throws \Exception
      *
      * @return array
-     * @throws \Exception
      */
     public function processGoogleDriveCsvForEligibility(EligibilityBatch $batch)
     {
         $batch->loadMissing('practice');
-        
+
         $driveFolder   = $batch->options['folder'];
         $driveFileName = $batch->options['fileName'];
         $driveFilePath = $batch->options['filePath'] ?? null;
-        
+
         $driveHandler = new GoogleDrive();
-        
+
         try {
             $stream = $driveHandler
                 ->getFileStream($driveFileName, $driveFolder);
@@ -569,29 +567,29 @@ class ProcessEligibilityService
             \Log::error("EXCEPTION `{$e->getMessage()}`");
             $batch->status = EligibilityBatch::STATUSES['error'];
             $batch->save();
-            
+
             return null;
         }
         $localDisk = Storage::disk('local');
-        
+
         $fileName   = "eligibl_{$driveFileName}";
         $pathToFile = storage_path("app/${fileName}");
-        
+
         $savedLocally = $localDisk->put($fileName, $stream);
-        
+
         if ( ! $savedLocally) {
             throw new \Exception("Failed saving ${pathToFile}");
         }
-        
+
         try {
             \Log::info(
                 "BEGIN creating eligibility jobs from csv file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]"
             );
-            
+
             $iterator = read_file_using_generator($pathToFile);
-            
+
             $headers = [];
-            
+
             $i = 1;
             foreach ($iterator as $iteration) {
                 if ( ! $iteration) {
@@ -609,7 +607,7 @@ class ProcessEligibilityService
                         if (array_key_exists($key, $headers)) {
                             $headerName = $headers[$key];
                         }
-                        
+
                         if (isset($headerName)) {
                             $row[$headerName] = $field;
                         }
@@ -621,25 +619,25 @@ class ProcessEligibilityService
                                 'batch_id_tag' => "batch_id:$batch->id",
                             ]
                         );
-                        
+
                         continue;
                     }
                 }
                 $row = array_filter($row);
-                
+
                 if ( ! is_array($row) || empty($row)) {
                     continue;
                 }
-                
+
                 $patient = sanitize_array_keys($this->transformCsvRow($row));
-                
+
                 //we do this to use the data transformation the method performs
                 $validator = $this->validateRow($patient);
-                
+
                 $mrn = $patient['mrn'] ?? $patient['mrn_number'] ?? $patient['patient_id'] ?? $patient['dob'];
-                
+
                 $hash = $batch->practice->name.$patient['first_name'].$patient['last_name'].$mrn;
-                
+
                 $job = EligibilityJob::updateOrCreate(
                     [
                         'batch_id' => $batch->id,
@@ -652,47 +650,69 @@ class ProcessEligibilityService
                             : null,
                     ]
                 );
-                
+
                 ProcessSinglePatientEligibility::dispatch($job, $batch, $batch->practice);
             }
-            
+
             \Log::info(
                 "FINISH creating eligibility jobs from csv file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]"
             );
-            
+
             $mem = format_bytes(memory_get_peak_usage());
-            
+
             \Log::info("BEGIN deleting `${fileName}`");
             $deleted = $localDisk->delete($fileName);
             \Log::info("FINISH deleting `${fileName}`");
-            
+
             \Log::info("memory_get_peak_usage: ${mem}");
-            
+
             $options                        = $batch->options;
             $options['finishedReadingFile'] = true;
             $batch->options                 = $options;
             $batch->save();
-            
+
             $initiator = $batch->initiatorUser()->firstOrFail();
             if ($initiator->hasRole('ehr-report-writer') && $initiator->ehrReportWriterInfo) {
                 Storage::drive('google')->move($driveFilePath, "{$driveFolder}/processed_{$driveFileName}");
             }
         } catch (\Exception $e) {
             \Log::info("EXCEPTION `{$e->getMessage()}`");
-            
+
             \Log::info("BEGIN deleting `${fileName}`");
             $deleted = $localDisk->delete($fileName);
             \Log::info("FINISH deleting `${fileName}`");
-            
+
             throw $e;
         }
     }
-    
+
     public function queueFromGoogleDrive(EligibilityBatch $batch)
     {
         ProcessEligibilityFromGoogleDrive::dispatch($batch);
     }
-    
+
+    private function throwExceptionIfStructureErrors(array $headings, EligibilityBatch $batch)
+    {
+        $patient = array_flip($headings);
+
+        $csvPatientList = new CsvPatientList(collect([$patient]));
+        $isValid        = $csvPatientList->guessValidatorAndValidate() ?? null;
+
+        $errors = [];
+        if ( ! $isValid) {
+            $errors[] = $this->validateRow($patient)->errors()->keys();
+        }
+
+        if ( ! empty($errors)) {
+            $options                        = $batch->options;
+            $options['errorsReadingSource'] = $errors;
+            $batch->options                 = $options;
+            $batch->save();
+
+            throw new CsvEligibilityListStructureValidationException($batch, $errors);
+        }
+    }
+
     /**
      * @param $patient
      *
@@ -702,56 +722,34 @@ class ProcessEligibilityService
     {
         if (count(preg_grep('/^problem_[\d]*/', array_keys($patient))) > 0) {
             $problems = (new NumberedProblemFields())->handle($patient);
-            
+
             $patient['problems_string'] = json_encode(
                 [
                     'Problems' => $problems,
                 ]
             );
         }
-        
+
         if (count(preg_grep('/^medication_[\d]*/', array_keys($patient))) > 0) {
             $medications = (new NumberedMedicationFields())->handle($patient);
-            
+
             $patient['medications_string'] = json_encode(
                 [
                     'Medications' => $medications,
                 ]
             );
         }
-        
+
         if (count(preg_grep('/^allergy_[\d]*/', array_keys($patient))) > 0) {
             $allergies = (new NumberedAllergyFields())->handle($patient);
-            
+
             $patient['allergies_string'] = json_encode(
                 [
                     'Allergies' => $allergies,
                 ]
             );
         }
-        
+
         return $patient;
-    }
-    
-    private function throwExceptionIfStructureErrors(array $headings, EligibilityBatch $batch)
-    {
-        $patient = array_flip($headings);
-        
-        $csvPatientList = new CsvPatientList(collect([$patient]));
-        $isValid        = $csvPatientList->guessValidatorAndValidate() ?? null;
-    
-        $errors = [];
-        if ( ! $isValid) {
-            $errors[]         = $this->validateRow($patient)->errors()->keys();
-        }
-    
-        if ( ! empty($errors)) {
-            $options                        = $batch->options;
-            $options['errorsReadingSource'] = $errors;
-            $batch->options                 = $options;
-            $batch->save();
-        
-            throw new CsvEligibilityListStructureValidationException($batch, $errors);
-        }
     }
 }
