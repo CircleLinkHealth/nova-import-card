@@ -30,7 +30,7 @@ return [
 
     'enabled_overrides' => [
         'production' => false,
-        //        'testing' => false,
+        'testing'    => false,
         //        'local' => false,
     ],
 

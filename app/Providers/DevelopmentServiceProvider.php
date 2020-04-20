@@ -6,12 +6,11 @@
 
 namespace App\Providers;
 
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class DevelopmentServiceProvider extends ServiceProvider
+class DevelopmentServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    protected $defer = true;
-
     /**
      * Bootstrap services.
      */

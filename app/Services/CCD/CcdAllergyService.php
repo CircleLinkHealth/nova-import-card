@@ -55,19 +55,19 @@ class CcdAllergyService
     public function patientAllergies($userId)
     {
         $relQuery = [
-            'ccdAllergies' => function($q){
+            'ccdAllergies' => function ($q) {
                 return $q->distinct('allergen_name');
             },
         ];
-        
+
         if (is_a($userId, User::class)) {
             $user = $userId;
-        
+
             $user->loadMissing($relQuery);
         } else {
             $user = User::with($relQuery)->findOrFail($userId);
         }
-        
+
         return $user->ccdAllergies
             ->map(function ($a) {
                 return [

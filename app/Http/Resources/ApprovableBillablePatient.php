@@ -50,11 +50,11 @@ class ApprovableBillablePatient extends Resource
         }
 
         return [
-            'id'                     => $this->patient->id,
-            'mrn'                    => $this->patient->getMRN(),
-            'name'                   => $name,
-            'url'                    => $url,
-            'provider'               => $bP
+            'id'       => $this->patient->id,
+            'mrn'      => $this->patient->getMRN(),
+            'name'     => $name,
+            'url'      => $url,
+            'provider' => $bP
                 ? optional($bP->user)->getFullName()
                 : '',
             'practice'               => $this->patient->primaryPractice->display_name,

@@ -10,6 +10,7 @@ use App\Entities\CcdaRequest;
 use App\Jobs\ImportCcda;
 use Carbon\Carbon;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use Illuminate\Support\Str;
 
 class CreateAndPostPdfCareplan
 {
@@ -113,7 +114,7 @@ class CreateAndPostPdfCareplan
             //If 'CCM Enabled' contains a y (meaning yes), then save the patient id
             foreach ($patientCustomFields as $customField) {
                 if ($customField['customfieldid'] == $ccmEnabledFieldId
-                    && str_contains($customField['customfieldvalue'], ['Y', 'y'])
+                    && Str::contains($customField['customfieldvalue'], ['Y', 'y'])
                 ) {
                     $ccdaRequest = $this->ccdaRequests->create([
                         'patient_id'    => $patientId,

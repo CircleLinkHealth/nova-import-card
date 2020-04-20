@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Laravel\Horizon\Horizon;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 use Queue;
@@ -36,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(255);
-        
+
         /*
          * If the current date is the 31st of the month, Carbon::now()->subMonth() will go back to the 31st of the previous month.
          * If the previous month does not have 31 days, `$startDate = Carbon::now()->subMonth()->startOfMonth();` jumps to the first day of the current month(!?!).
@@ -140,7 +141,7 @@ class AppServiceProvider extends ServiceProvider
         // Excel Package Importing Config
         // Format input array keys to be all lower-case and sluggified
         HeadingRowFormatter::extend('custom', function ($value) {
-            return strtolower(str_slug($value));
+            return strtolower(Str::slug($value));
         });
 
         $this->app->register(\Maatwebsite\Excel\ExcelServiceProvider::class);

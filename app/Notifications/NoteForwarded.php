@@ -17,6 +17,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
 
 class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, FaxableNotification, DirectMailableNotification
 {
@@ -161,7 +162,7 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, 
     public function toMail($notifiable)
     {
         $saasAccountName     = $notifiable->saasAccountName();
-        $slugSaasAccountName = strtolower(str_slug($saasAccountName, ''));
+        $slugSaasAccountName = strtolower(Str::slug($saasAccountName, ''));
 
         $mail = (new MailMessage())
             ->view(

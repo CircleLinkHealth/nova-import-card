@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Seeder;
 
@@ -27,11 +28,11 @@ class EnrolleesSeeder extends Seeder
             //create eligibility job
             $job = factory(\CircleLinkHealth\Eligibility\Entities\EligibilityJob::class)->create();
 
-            $job->hash = $enrollee->practice->name . $enrollee->first_name . $enrollee->last_name . $enrollee->mrn . $enrollee->city . $enrollee->state . $enrollee->zip;
+            $job->hash = $enrollee->practice->name.$enrollee->first_name.$enrollee->last_name.$enrollee->mrn.$enrollee->city.$enrollee->state.$enrollee->zip;
 
             $job->data = [
                 'patient_id'              => $enrollee->mrn,
-                'mrn'              => $enrollee->mrn,
+                'mrn'                     => $enrollee->mrn,
                 'last_name'               => $enrollee->last_name,
                 'first_name'              => $enrollee->first_name,
                 'date_of_birth'           => $enrollee->dob->toDateString(),
@@ -69,9 +70,9 @@ class EnrolleesSeeder extends Seeder
                         'code_type'  => 'ICD-10',
                     ],
                 ],
-                'allergies'               => [['name' => 'peanut']],
-                'medications'             => [],
-                'is_demo'                 => 'true',
+                'allergies'   => [['name' => 'peanut']],
+                'medications' => [],
+                'is_demo'     => 'true',
             ];
             $job->save();
 
