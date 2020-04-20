@@ -296,8 +296,6 @@ class ReimportPatientMedicalRecord extends Command
             $ccda->patient_id = $user->id;
             $ccda->save();
         }
-        
-        
 
         try {
             $ccda->import($this->getEnrollee($user));
