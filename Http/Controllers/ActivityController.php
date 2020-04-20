@@ -368,7 +368,7 @@ class ActivityController extends Controller
         return redirect()->route(
             'patient.activity.view',
             [
-                'patient' => $activity->patient_id,
+                'patientId' => $activity->patient_id,
                 'actId'   => $activity->id,
             ]
         )->with(
