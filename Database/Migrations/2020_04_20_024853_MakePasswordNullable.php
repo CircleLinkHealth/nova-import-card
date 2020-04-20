@@ -15,6 +15,7 @@ class MakePasswordNullable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('password', 60)->nullable()->change();
+            $table->boolean('auto_attach_programs')->default(false)->change();
         });
     }
 
