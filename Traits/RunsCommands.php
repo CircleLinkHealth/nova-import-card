@@ -13,8 +13,6 @@ trait RunsCommands
     /**
      * Run a command on the terminal.
      *
-     * @param string $command
-     *
      * @throws \Exception
      *
      * @return Process

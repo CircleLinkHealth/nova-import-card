@@ -7,23 +7,26 @@
 namespace CircleLinkHealth\Core\Entities;
 
 use CircleLinkHealth\Core\Traits\ProtectsPhi;
-use Illuminate\Database\Eloquent\Model;
 use CircleLinkHealth\Revisionable\RevisionableTrait;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * CircleLinkHealth\Core\Entities\BaseModel.
  *
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\BaseModel newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\BaseModel newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\BaseModel query()
- * @property-read int|null $revision_history_count
+ *
+ * @property int|null $revision_history_count
  */
 class BaseModel extends Model
 {
-    use RevisionableTrait;
     use ProtectsPhi;
+    use RevisionableTrait;
 
     /**
      * Add any attributes that are PHI here.

@@ -24,7 +24,7 @@ class CreateMySqlDB extends Command
      * @var string
      */
     protected $signature = 'mysql:createdb {name?}';
-    
+
     /**
      * Execute the console command.
      *
@@ -35,16 +35,16 @@ class CreateMySqlDB extends Command
         $schemaName = $this->argument('name') ?: config('database.connections.mysql.database');
         $charset    = config('database.connections.mysql.charset', 'utf8mb4');
         $collation  = config('database.connections.mysql.collation', 'utf8mb4_unicode_ci');
-        
+
         config(['database.connections.mysql.database' => null]);
-        
+
         $query = "CREATE DATABASE IF NOT EXISTS `$schemaName` CHARACTER SET `$charset` COLLATE `$collation`;";
-        
+
         $this->executeSql($query);
-        
+
         config(['database.connections.mysql.database' => $schemaName]);
     }
-    
+
     /**
      * Execute the console command.
      *
@@ -59,13 +59,13 @@ class CreateMySqlDB extends Command
                 config('database.connections.mysql.username'),
                 config('database.connections.mysql.password')
             );
-            
+
             $pdo->exec($query);
         } catch (PDOException $exception) {
             $this->error($exception->getMessage());
         }
     }
-    
+
     /**
      * @param string $host
      * @param int    $port

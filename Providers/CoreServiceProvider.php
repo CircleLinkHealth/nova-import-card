@@ -41,7 +41,7 @@ class CoreServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->registerConfig();
             $this->registerFactories();
-            $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+            $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
         }
     }
 
@@ -77,7 +77,7 @@ class CoreServiceProvider extends ServiceProvider
     public function registerFactories()
     {
         if ( ! isProductionEnv()) {
-            app(Factory::class)->load(__DIR__ . '/../Database/factories');
+            app(Factory::class)->load(__DIR__.'/../Database/factories');
         }
     }
 
@@ -91,7 +91,7 @@ class CoreServiceProvider extends ServiceProvider
         if (is_dir($langPath)) {
             $this->loadTranslationsFrom($langPath, 'core');
         } else {
-            $this->loadTranslationsFrom(__DIR__ . '/../Resources/lang', 'core');
+            $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'core');
         }
     }
 
@@ -102,14 +102,14 @@ class CoreServiceProvider extends ServiceProvider
     {
         $viewPath = resource_path('views/modules/core');
 
-        $sourcePath = __DIR__ . '/../Resources/views';
+        $sourcePath = __DIR__.'/../Resources/views';
 
         $this->publishes([
             $sourcePath => $viewPath,
         ], 'views');
 
         $this->loadViewsFrom(array_merge(array_map(function ($path) {
-            return $path . '/modules/core';
+            return $path.'/modules/core';
         }, \Config::get('view.paths')), [$sourcePath]), 'core');
     }
 
@@ -119,20 +119,20 @@ class CoreServiceProvider extends ServiceProvider
     protected function registerConfig()
     {
         $this->publishes([
-            __DIR__ . '/../Config/config.php' => config_path('core.php'),
+            __DIR__.'/../Config/config.php' => config_path('core.php'),
         ], 'config');
 
         $this->mergeConfigFrom(
-            __DIR__ . '/../Config/config.php',
+            __DIR__.'/../Config/config.php',
             'core'
         );
 
         $this->publishes([
-            __DIR__ . '/../Config/live-notifications.php' => config_path('live-notifications.php'),
+            __DIR__.'/../Config/live-notifications.php' => config_path('live-notifications.php'),
         ], 'live-notifications');
 
         $this->mergeConfigFrom(
-            __DIR__ . '/../Config/live-notifications.php',
+            __DIR__.'/../Config/live-notifications.php',
             'live-notifications'
         );
     }

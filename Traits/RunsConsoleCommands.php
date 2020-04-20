@@ -11,11 +11,9 @@ use Symfony\Component\Process\Process;
 trait RunsConsoleCommands
 {
     /**
-     * @param array $command
-     * @param bool $echoOutput
+     * @throws \Exception
      *
      * @return Process
-     * @throws \Exception
      */
     public function runCpmCommand(array $command, bool $echoOutput = true)
     {

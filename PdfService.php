@@ -58,9 +58,7 @@ class PdfService
      * Create a PDF from a View.
      *
      * @param $view
-     * @param array $args
-     * @param null  $outputFullPath
-     * @param array $options
+     * @param null $outputFullPath
      *
      * @throws \Exception
      *
@@ -121,8 +119,7 @@ class PdfService
      * Merge an array of files.
      * NOTE: Each index in the array has to be a full path to a file.
      *
-     * @param array $filesWithFullPath
-     * @param null  $outputFullPath
+     * @param null $outputFullPath
      *
      * @throws \Exception
      *
