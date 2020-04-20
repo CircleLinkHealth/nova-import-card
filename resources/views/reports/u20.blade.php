@@ -112,7 +112,7 @@
                                             minWidth:150,
                                             template: "<a href='<?php echo route(
     'patient.activity.providerUIIndex',
-    ['patient' => '#patient_id#']
+    ['patientId' => '#patient_id#']
 ); ?>'>#patient_name#</a>"
 
                                         },
