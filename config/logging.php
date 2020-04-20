@@ -1,15 +1,11 @@
 <?php
 
-/*
- * This file is part of CarePlan Manager by CircleLink Health.
- */
-
+use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
-use Zwijn\Monolog\Formatter\LogdnaFormatter;
-use Zwijn\Monolog\Handler\LogdnaHandler;
 
 return [
+
     /*
     |--------------------------------------------------------------------------
     | Default Log Channel
@@ -21,7 +17,7 @@ return [
     |
     */
 
-    'default' => env('LOG_CHANNEL', env('APP_LOG', 'daily')),
+    'default' => env('LOG_CHANNEL', 'stack'),
 
     /*
     |--------------------------------------------------------------------------
@@ -40,80 +36,69 @@ return [
 
     'channels' => [
         'stack' => [
-            'driver'            => 'stack',
-            'channels'          => ['stderr'],
+            'driver' => 'stack',
+            'channels' => ['single'],
             'ignore_exceptions' => false,
         ],
 
         'single' => [
             'driver' => 'single',
-            'path'   => storage_path('logs/laravel-'.php_sapi_name().'.log'),
-            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
+            'path' => storage_path('logs/laravel.log'),
+            'level' => 'debug',
         ],
 
         'daily' => [
             'driver' => 'daily',
-            'path'   => storage_path('logs/laravel-'.php_sapi_name().'.log'),
-            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
-            'days'   => 14,
+            'path' => storage_path('logs/laravel.log'),
+            'level' => 'debug',
+            'days' => 14,
         ],
 
         'slack' => [
-            'driver'   => 'slack',
-            'url'      => env('LOG_SLACK_WEBHOOK_URL'),
+            'driver' => 'slack',
+            'url' => env('LOG_SLACK_WEBHOOK_URL'),
             'username' => 'Laravel Log',
-            'emoji'    => ':boom:',
-            'level'    => 'critical',
+            'emoji' => ':boom:',
+            'level' => 'critical',
         ],
 
         'papertrail' => [
-            'driver'       => 'monolog',
-            'level'        => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
-            'handler'      => SyslogUdpHandler::class,
+            'driver' => 'monolog',
+            'level' => 'debug',
+            'handler' => SyslogUdpHandler::class,
             'handler_with' => [
                 'host' => env('PAPERTRAIL_URL'),
                 'port' => env('PAPERTRAIL_PORT'),
             ],
         ],
 
-        'logdna' => [
-            'driver'       => 'monolog',
-            'level'        => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
-            'handler'      => LogdnaHandler::class,
-            'handler_with' => [
-                'ingestion_key' => env('LOG_DNA_INGESTION_KEY'),
-                'hostname'      => env('APP_URL'),
-                'level'         => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
-            ],
-            'formatter' => LogdnaFormatter::class,
-        ],
-
         'stderr' => [
-            'driver'    => 'monolog',
-            'handler'   => StreamHandler::class,
+            'driver' => 'monolog',
+            'handler' => StreamHandler::class,
             'formatter' => env('LOG_STDERR_FORMATTER'),
-            'with'      => [
+            'with' => [
                 'stream' => 'php://stderr',
             ],
         ],
 
         'syslog' => [
             'driver' => 'syslog',
-            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
+            'level' => 'debug',
         ],
 
         'errorlog' => [
             'driver' => 'errorlog',
-            'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
+            'level' => 'debug',
         ],
 
-        'sentry' => [
-            'driver' => 'sentry',
-            // The minimum monolog logging level at which this handler will be triggered
-            // For example: `\Monolog\Logger::ERROR`
-            'level' => \Monolog\Logger::ERROR,
-            // Whether the messages that are handled can bubble up the stack or not
-            'bubble' => true,
+        'null' => [
+            'driver' => 'monolog',
+            'handler' => NullHandler::class,
+        ],
+
+        'emergency' => [
+            'path' => storage_path('logs/laravel.log'),
         ],
     ],
+
 ];
