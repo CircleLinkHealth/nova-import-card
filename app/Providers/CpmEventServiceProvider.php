@@ -13,10 +13,12 @@ use App\Events\CarePlanWasQAApproved;
 use App\Events\NoteFinalSaved;
 use App\Events\PatientUserCreated;
 use App\Events\PdfableCreated;
+use App\Events\UnreachablePatientInvited;
 use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
 use App\Events\UserFromEnrolleCreated;
 use App\Events\UserFromEnrolleeCreated;
+use App\Jobs\UnrechablePatientInvited;
 use App\Listeners\AddPatientConsentNote;
 use App\Listeners\AttachAttestedProblemsToCall;
 use App\Listeners\AttachUPG0506CarePlanToPatientUser;
@@ -116,6 +118,12 @@ class CpmEventServiceProvider extends ServiceProvider
 
         UserFromEnrolleeCreated::class => [
             SendEnrollableEmail::class,
+            SendEnrollableSms::class
+        ],
+
+        UnreachablePatientInvited::class => [
+            SendEnrollableEmail::class,
+            SendEnrollableSms::class
         ],
     ];
 

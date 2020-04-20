@@ -7,6 +7,7 @@
 namespace App\Jobs;
 
 use App\Console\Commands\SendEnrollmentNotifications;
+use App\Events\UnreachablePatientInvited;
 use App\Notifications\SendEnrollementSms;
 use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
@@ -19,7 +20,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 
-class SendSelfEnrollmentUnreachablePatients implements ShouldQueue
+class SelfEnrollmentUnreachablePatients implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -71,8 +72,7 @@ class SendSelfEnrollmentUnreachablePatients implements ShouldQueue
             foreach ($patients->all() as $patient) {
                 /** @var User $patient */
                 if (!$patient->checkForSurveyOnlyRole()) {
-                    $patient->notify(new SendEnrollmentEmail());
-//                    $patient->notify(new SendEnrollementSms($patient));
+                    event(new UnreachablePatientInvited($patient));
                 }
             }
         } else {
@@ -80,8 +80,7 @@ class SendSelfEnrollmentUnreachablePatients implements ShouldQueue
                 foreach ($patients as $patient) {
                     /** @var User $patient */
                     if (!$patient->checkForSurveyOnlyRole()) {
-                        $patient->notify(new SendEnrollmentEmail());
-//                        $patient->notify(new SendEnrollementSms($patient));
+                        event(new UnreachablePatientInvited($patient));
                     }
                 }
             });

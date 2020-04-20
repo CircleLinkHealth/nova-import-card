@@ -21,7 +21,6 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     use EnrollableManagement;
     use EnrollableNotificationContent;
     use Queueable;
-    const ENROLLEE = Enrollee::class;
     const USER = User::class;
 
     /**

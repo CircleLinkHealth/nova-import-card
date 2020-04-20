@@ -5,8 +5,8 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\SendSelfEnrollmentEnrollees;
-use App\Jobs\SendSelfEnrollmentUnreachablePatients;
+use App\Jobs\SelfEnrollmentEnrollees;
+use App\Jobs\SelfEnrollmentUnreachablePatients;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
@@ -47,8 +47,8 @@ class SendEnrollmentNotifications extends Command
      */
     public function handle()
     {
-        SendSelfEnrollmentUnreachablePatients::withChain([
-            new SendSelfEnrollmentEnrollees(),
+        SelfEnrollmentUnreachablePatients::withChain([
+            new SelfEnrollmentEnrollees(),
         ])->dispatch();
     }
 }

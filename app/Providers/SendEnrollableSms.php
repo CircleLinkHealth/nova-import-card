@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Listeners;
+namespace App\Providers;
 
 use App\Events\UserFromEnrolleeCreated;
-use App\Notifications\SendEnrollmentEmail;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Notifications\SendEnrollementSms;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendEnrollableEmail implements ShouldQueue
+class SendEnrollableSms implements ShouldQueue
 {
     use InteractsWithQueue;
-
     /**
      * Create the event listener.
      *
@@ -29,11 +28,11 @@ class SendEnrollableEmail implements ShouldQueue
      */
     public function handle($event)
     {
-        $this->sendEmail($event->user);
+        $this->sendSms($event->user);
     }
 
-    private function sendEmail($notifiable)
+    private function sendSms($notifiable)
     {
-        $notifiable->notify(new SendEnrollmentEmail());
+        $notifiable->notify(new SendEnrollementSms());
     }
 }

@@ -19,7 +19,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 
-class SendSelfEnrollmentEnrollees implements ShouldQueue
+class SelfEnrollmentEnrollees implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -74,7 +74,6 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
     {
         $surveyRole = $this->surveyRole();
         CreateUserFromEnrollee::dispatch($enrollee, $surveyRole->id);
-//            $this->sendSms($userCreatedFromEnrollee);
     }
 
     private function surveyRole(): Role
@@ -118,10 +117,5 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
         foreach ($enrollees as $enrollee) {
             $this->createUserFromEnrolleeAndInvite($enrollee);
         }
-    }
-
-    private function sendSms(User $userCreatedFromEnrollee)
-    {
-//        $userCreatedFromEnrollee->notify(new SendEnrollementSms($userCreatedFromEnrollee));
     }
 }

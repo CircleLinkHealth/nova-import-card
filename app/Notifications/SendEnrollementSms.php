@@ -17,28 +17,19 @@ class SendEnrollementSms extends Notification
     use EnrollableNotificationContent;
     use HasEnrollableInvitation;
     use Queueable;
+
     /**
      * @var bool
      */
     private $isReminder;
-    /**
-     * @var mixed
-     */
-    private $modelName;
-    /**
-     * @var mixed
-     */
-    private $receiver;
 
     /**
      * Create a new notification instance.
      *
-     * @param $receiver
      * @param bool $isReminder
      */
-    public function __construct(User $receiver, $isReminder = false)
+    public function __construct($isReminder = false)
     {
-        $this->receiver = $receiver;
         $this->isReminder = $isReminder;
     }
 
@@ -71,6 +62,14 @@ class SendEnrollementSms extends Notification
     }
 
     /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return [];
+    }
+
+    /**
      * Get the notification's delivery channels.
      *
      * @param mixed $notifiable
@@ -79,6 +78,6 @@ class SendEnrollementSms extends Notification
      */
     public function via($notifiable)
     {
-        return [TwilioChannel::class];
+        return ['database', TwilioChannel::class];
     }
 }
