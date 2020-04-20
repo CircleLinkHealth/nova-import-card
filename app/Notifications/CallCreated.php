@@ -139,7 +139,7 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
     {
         $patientId = $this->getPatientId();
 
-        return route('patient.careplan.print', ['patient' => $patientId]);
+        return route('patient.careplan.print', [$patientId]);
     }
 
     public function senderId(): int

@@ -136,7 +136,7 @@
         "appstract/laravel-opcache": "^3.2.1",
         "barryvdh/laravel-snappy": "0.4.7",
         "circlelinkhealth/ccda-parser-processor-php-module": "1.1",
-        "circlelinkhealth/cerberus-gatekeeper-module": "3.0.8art ",
+        "circlelinkhealth/cerberus-gatekeeper-module": "3.0.8",
         "circlelinkhealth/clh-import-card-extended": "*",
         "circlelinkhealth/core-module": "dev-laravel-6-upgrade",
         "circlelinkhealth/cpm-migrations-module": "1.6.2",
