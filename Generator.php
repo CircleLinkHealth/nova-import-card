@@ -108,21 +108,21 @@ class Generator
                     $q->whereHas(
                         'pageTimersAsProvider',
                         function ($s) {
-                                   $s->whereBetween(
-                                       'start_time',
-                                       [
-                                           $this->startDate->copy()->startOfDay(),
-                                           $this->endDate->copy()->endOfDay(),
-                                       ]
-                                   );
-                               }
+                            $s->whereBetween(
+                                'start_time',
+                                [
+                                    $this->startDate->copy()->startOfDay(),
+                                    $this->endDate->copy()->endOfDay(),
+                                ]
+                            );
+                        }
                     )
                         ->whereHas(
-                                   'nurseInfo',
-                                   function ($s) {
+                            'nurseInfo',
+                            function ($s) {
                                        $s->where('is_demo', false);
                                    }
-                               );
+                        );
                 }
             );
     }
