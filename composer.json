@@ -146,7 +146,7 @@
         "circlelinkhealth/ccda-parser-processor-php-module": "1.1",
         "circlelinkhealth/cerberus-gatekeeper-module": "6.x-dev",
         "circlelinkhealth/clh-import-card-extended": "*",
-        "circlelinkhealth/core-module": "1.5.2",
+        "circlelinkhealth/core-module": "dev-laravel-6-upgrade",
         "circlelinkhealth/cpm-migrations-module": "1.6.2",
         "circlelinkhealth/customer-module": "2.2.5",
         "circlelinkhealth/eligibility-module": "2.2.5",
