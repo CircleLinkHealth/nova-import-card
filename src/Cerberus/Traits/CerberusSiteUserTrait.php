@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 trait CerberusSiteUserTrait
@@ -48,14 +49,14 @@ trait CerberusSiteUserTrait
             foreach ($this->cachedPermissions() as $perm) {
                 //first check if the User has this permission directly related and active
                 //if it's not active it means it has been removed from the default permissions of a role for this User.
-                if (str_is($permission, $perm->name)) {
+                if (Str::is($permission, $perm->name)) {
                     return $perm->pivot->is_active ? true : false;
                 }
             }
             foreach ($this->cachedRoles() as $role) {
                 // Validate against the Permission table
                 foreach ($role->cachedPermissions() as $perm) {
-                    if (str_is($permission, $perm->name)) {
+                    if (Str::is($permission, $perm->name)) {
                         return true;
                     }
                 }
@@ -102,13 +103,13 @@ trait CerberusSiteUserTrait
                 foreach ($this->cachedPermissions() as $perm) {
                     //first check if the User has this permission directly related and active
                     //if it's not active it means it has been removed from the default permissions of a role for this User.
-                    if (str_is($permission, $perm->name)) {
+                    if (Str::is($permission, $perm->name)) {
                         return $perm->pivot->is_active ? true : false;
                     }
                 }
                 // Validate against the Permission table
                 foreach ($role->cachedPermissions() as $perm) {
-                    if (str_is($permission, $perm->name)) {
+                    if (Str::is($permission, $perm->name)) {
                         return true;
                     }
                 }
