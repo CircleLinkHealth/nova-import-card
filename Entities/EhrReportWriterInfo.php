@@ -18,7 +18,6 @@ use Storage;
  * @property \Illuminate\Support\Carbon|null          $created_at
  * @property \Illuminate\Support\Carbon|null          $updated_at
  * @property \CircleLinkHealth\Customer\Entities\User $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EhrReportWriterInfo newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EhrReportWriterInfo newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EhrReportWriterInfo query()

@@ -228,7 +228,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $tokens_count
  * @property \App\CPRulesUCP[]|\Illuminate\Database\Eloquent\Collection                                                      $ucp
  * @property int|null                                                                                                        $ucp_count
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User careCoaches()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User exceptType($type)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User filter(\App\Filters\QueryFilters $filters)
@@ -292,16 +291,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use \Laravel\Nova\Actions\Actionable;
     use Authenticatable;
     use CanResetPassword;
-    use CerberusSiteUserTrait {
-        hasRole as cerberusHasRole;
-        hasPermission as cerberusHasPermission;
-    }
+    use CerberusSiteUserTrait;
     use Filterable;
     use HasApiTokens;
-    use HasCpmRoles {
-        HasCpmRoles::hasPermission insteadof CerberusSiteUserTrait;
-        HasCpmRoles::hasRole insteadof CerberusSiteUserTrait;
-    }
+    use HasCpmRoles;
     use HasEmrDirectAddress;
     use HasMediaTrait;
     use Impersonate;

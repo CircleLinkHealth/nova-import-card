@@ -19,7 +19,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property \Illuminate\Support\Carbon|null                                                             $created_at
  * @property \Illuminate\Support\Carbon|null                                                             $updated_at
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser query()
@@ -31,10 +30,8 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser whereUserId($value)
  * @mixin \Eloquent
- *
  * @property int|null $revision_history_count
  * @property int      $key_id
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser whereKeyId($value)
  */
 class PracticeRoleUser extends BaseModel
