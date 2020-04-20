@@ -44,7 +44,8 @@ use Illuminate\Support\Facades\DB;
  * @property \CircleLinkHealth\TimeTracking\Entities\PageTimer                                               $pageTime
  * @property \CircleLinkHealth\Customer\Entities\User                                                        $patient
  * @property \CircleLinkHealth\Customer\Entities\User                                                        $provider
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]                  $revisionHistory
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection     $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|Activity
  *     createdBy(\CircleLinkHealth\Customer\Entities\User $user)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity createdThisMonth($field = 'created_at')
@@ -69,6 +70,7 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity
  *     createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity
@@ -77,9 +79,10 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity query()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity
  *     whereIsBehavioral($value)
- * @property-read int|null $care_rate_logs_count
- * @property-read int|null $meta_count
- * @property-read int|null $revision_history_count
+ *
+ * @property int|null $care_rate_logs_count
+ * @property int|null $meta_count
+ * @property int|null $revision_history_count
  */
 class Activity extends BaseModel
 {
@@ -174,10 +177,8 @@ class Activity extends BaseModel
     /**
      * Returns activity data used to build reports.
      *
-     * @param array $months
-     * @param int   $timeLessThan
-     * @param array $patientIds
-     * @param bool  $range
+     * @param int  $timeLessThan
+     * @param bool $range
      *
      * @return bool
      */

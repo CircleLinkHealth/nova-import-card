@@ -382,8 +382,8 @@ class ActivityController extends Controller
         $acts = DB::table('lv_activities')
             ->select(
                 DB::raw(
-                          'lv_activities.id,lv_activities.logged_from,DATE(lv_activities.performed_at)as performed_at, lv_activities.type, SUM(lv_activities.duration) as duration, lv_activities.is_behavioral, users.first_name as provider_first_name, users.last_name as provider_last_name, users.suffix as provider_suffix'
-                      )
+                    'lv_activities.id,lv_activities.logged_from,DATE(lv_activities.performed_at)as performed_at, lv_activities.type, SUM(lv_activities.duration) as duration, lv_activities.is_behavioral, users.first_name as provider_first_name, users.last_name as provider_last_name, users.suffix as provider_suffix'
+                )
             )
             ->join('users', 'users.id', '=', 'lv_activities.provider_id')
             ->where('lv_activities.performed_at', '>=', $start)
@@ -398,8 +398,8 @@ class ActivityController extends Controller
             )
             ->groupBy(
                 DB::raw(
-                          'lv_activities.provider_id, DATE(lv_activities.performed_at),lv_activities.type,lv_activities.is_behavioral'
-                      )
+                    'lv_activities.provider_id, DATE(lv_activities.performed_at),lv_activities.type,lv_activities.is_behavioral'
+                )
             )
             ->orderBy('lv_activities.created_at', 'desc')
             ->get();

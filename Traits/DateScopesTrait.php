@@ -21,7 +21,6 @@ trait DateScopesTrait
      * may be specified.
      *
      * @param $builder
-     * @param Carbon $date
      * @param string $field
      */
     public function scopeCreatedInMonth(
@@ -42,7 +41,6 @@ trait DateScopesTrait
      * be specified.
      *
      * @param $builder
-     * @param Carbon $date
      * @param string $field
      */
     public function scopeCreatedOn(
