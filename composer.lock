@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "017788905a471ecc2723b8dd8757eef5",
+    "content-hash": "dcfca244ccfb2532f0432d2870e765ef",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -983,7 +983,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "ebc797da717c66b0bead53c25df807b5283f166b"
+                "reference": "771905cc8afd9595988b7dcc753499030bf94c7c"
             },
             "type": "laravel-module",
             "extra": {
@@ -1005,7 +1005,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-20T06:41:33+00:00"
+            "time": "2020-04-20T06:50:20+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1051,11 +1051,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.2.5",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "38267a235d9523dea7c170876c19d7c34a95bb0e"
+                "reference": "73c401e021c9b3634d8ea690c7b6f88bb18d987f"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1080,7 +1080,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-20T02:15:40+00:00"
+            "time": "2020-04-20T06:37:54+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -15168,6 +15168,7 @@
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/raygun-module": 20,
         "circlelinkhealth/revisionable-module": 20,
         "daltcore/lara-pdf-merger": 20,
