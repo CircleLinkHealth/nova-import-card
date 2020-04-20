@@ -15,9 +15,9 @@ Route::post('webhooks/on-sent-fax', [
     'as'   => 'webhook.on-fax-sent',
 ]);
 
-Route::group(['middleware' => ['auth', 'cacheResponse']], function () {
+Route::group(['middleware' => ['auth']], function () {
     Route::get('profiles', 'API\ProfileController@index')->middleware(
-        ['permission:user.read,role.read', 'cacheResponse']
+        ['permission:user.read,role.read']
     );
 });
 
@@ -52,7 +52,7 @@ Route::get('home', [
     'as'   => 'home',
 ]);
 
-Route::get('login', 'Auth\LoginController@showLoginForm', ['as' => 'login'])->middleware('doNotCacheResponse');
+Route::get('login', 'Auth\LoginController@showLoginForm', ['as' => 'login']);
 Route::post('browser-check', [
     'uses' => 'Auth\LoginController@storeBrowserCompatibilityCheckPreference',
     'as'   => 'store.browser.compatibility.check.preference',
@@ -60,7 +60,7 @@ Route::post('browser-check', [
 
 Route::group([
     'prefix'     => 'auth',
-    'middleware' => ['doNotCacheResponse', 'web'],
+    'middleware' => ['web'],
 ], function () {
     Auth::routes();
 
@@ -98,34 +98,34 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('impersonate/leave', [
         'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@leave',
         'as'   => 'impersonate.leave',
-    ])->middleware('doNotCacheResponse');
+    ]);
 
     Route::get('cache/view/{key}', [
         'as'   => 'get.cached.view.by.key',
         'uses' => 'Cache\UserCacheController@getCachedViewByKey',
-    ])->middleware('doNotCacheResponse');
+    ]);
 
     Route::view('jobs/completed', 'admin.jobsCompleted.manage');
 
     Route::get('download/{filePath}', [
         'uses' => 'DownloadController@file',
         'as'   => 'download',
-    ])->middleware('doNotCacheResponse');
+    ]);
 
     Route::get('download-media-collection-zip/{collectionName}', [
         'uses' => 'DownloadController@downloadUserMediaCollectionAsZip',
         'as'   => 'download.collection-as-zip',
-    ])->middleware('doNotCacheResponse');
+    ]);
 
     Route::get('download-google-drive-csv/{filename}/{dir?}/{recursive?}', [
         'uses' => 'DownloadController@downloadCsvFromGoogleDrive',
         'as'   => 'download.google.csv',
-    ])->middleware('doNotCacheResponse');
+    ]);
 
     Route::get('download-zipped-media/{user_id}/{media_ids}', [
         'uses' => 'DownloadController@downloadZippedMedia',
         'as'   => 'download.zipped.media',
-    ])->middleware('doNotCacheResponse')->middleware('signed');
+    ])->middleware('signed');
 
     Route::group([
         'prefix'     => 'ehr-report-writer',
@@ -173,7 +173,7 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     // API
-    Route::group(['prefix' => 'api', 'middleware' => ['cacheResponse']], function () {
+    Route::group(['prefix' => 'api'], function () {
         Route::group(['prefix' => 'admin'], function () {
             Route::get('clear-cache/{key}', [
                 'uses' => 'Admin\DashboardController@clearCache',
@@ -438,12 +438,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get(
         'user/{patientId}/care-plan',
         'API\PatientCarePlanController@index'
-    )->middleware(['permission:careplan.read', 'cacheResponse']);
+    )->middleware(['permission:careplan.read']);
 
     Route::get('user/{user}/care-team', [
         'uses' => 'API\CareTeamController@index',
         'as'   => 'user.care-team.index',
-    ])->middleware(['permission:carePerson.read', 'cacheResponse']);
+    ])->middleware(['permission:carePerson.read']);
     Route::delete('user/{userId}/care-team', [
         'uses' => 'API\CareTeamController@destroy',
         'as'   => 'user.care-team.destroy',
@@ -455,12 +455,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('user/{user}/care-team/{care_team}/edit', [
         'uses' => 'API\CareTeamController@edit',
         'as'   => 'user.care-team.edit',
-    ])->middleware(['permission:carePerson.read', 'cacheResponse']);
+    ])->middleware(['permission:carePerson.read']);
 
     Route::get('practice/{practice}/locations', [
         'uses' => 'API\PracticeLocationsController@index',
         'as'   => 'practice.locations.index',
-    ])->middleware(['permission:location.read', 'cacheResponse']);
+    ])->middleware(['permission:location.read']);
     Route::delete('practice/{practice}/locations/{location}', [
         'uses' => 'API\PracticeLocationsController@destroy',
         'as'   => 'practice.locations.destroy',
@@ -532,7 +532,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('download-pdf-careplan/{filePath}', [
         'uses' => 'API\PatientCarePlanController@downloadPdf',
         'as'   => 'download.pdf.careplan',
-    ])->middleware('permission:careplan-pdf.read')->middleware('doNotCacheResponse');
+    ])->middleware('permission:careplan-pdf.read');
 
     Route::group([
         'middleware' => [],
@@ -733,7 +733,7 @@ Route::group(['middleware' => 'auth'], function () {
     // **** PATIENTS (/manage-patients/
     Route::group([
         'prefix'     => 'manage-patients/',
-        'middleware' => ['patientProgramSecurity', 'cacheResponse'],
+        'middleware' => ['patientProgramSecurity'],
     ], function () {
         Route::group(['prefix' => 'offline-activity-time-requests'], function () {
             Route::get('', [
@@ -851,7 +851,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.summary',
         ])->middleware([
             'permission:patient.read,patientProblem.read,misc.read,observation.read,patientSummary.read',
-            'cacheResponse',
         ]);
         Route::get('summary-biochart', [
             'uses' => 'ReportsController@biometricsCharts',
@@ -869,7 +868,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('view-careplan', [
             'uses' => 'ReportsController@viewPrintCareplan',
             'as'   => 'patient.careplan.print',
-        ])->middleware(['permission:careplan.read', 'cacheResponse']);
+        ])->middleware(['permission:careplan.read']);
 
         Route::get('view-careplan/assessment', [
             'uses' => 'ReportsController@makeAssessment',
@@ -948,11 +947,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('create', [
                 'uses' => 'NotesController@create',
                 'as'   => 'patient.note.create',
-            ])->middleware(['permission:patient.read', 'cacheResponse']);
+            ])->middleware(['permission:patient.read']);
             Route::get('edit/{noteId}', [
                 'uses' => 'NotesController@create',
                 'as'   => 'patient.note.edit',
-            ])->middleware(['permission:note.create,patient.update,patientSummary.update', 'cacheResponse']);
+            ])->middleware(['permission:note.create,patient.update,patientSummary.update']);
             Route::post('store', [
                 'uses' => 'NotesController@store',
                 'as'   => 'patient.note.store',
@@ -970,12 +969,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'patient.note.index',
             ])->middleware([
                 'permission:patient.read,provider.read,note.read,appointment.read,activity.read',
-                'cacheResponse',
             ]);
             Route::get('view/{noteId}', [
                 'uses' => 'NotesController@show',
                 'as'   => 'patient.note.view',
-            ])->middleware(['permission:patient.read,provider.read,note.read', 'cacheResponse']);
+            ])->middleware(['permission:patient.read,provider.read,note.read']);
             Route::post('send/{noteId}', [
                 'uses' => 'NotesController@send',
                 'as'   => 'patient.note.send',
@@ -987,7 +985,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('download/{noteId}', [
                 'uses' => 'NotesController@download',
                 'as'   => 'patient.note.download',
-            ])->middleware(['permission:patient.read', 'cacheResponse']);
+            ])->middleware(['permission:patient.read']);
         });
 
         Route::get('progress', [
@@ -1653,7 +1651,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // CARE-CENTER GROUP
     Route::group([
-        'middleware' => ['permission:has-schedule', 'doNotCacheResponse'],
+        'middleware' => ['permission:has-schedule'],
         'prefix'     => 'care-center',
     ], function () {
         Route::resource('work-schedule', 'CareCenter\WorkScheduleController', [
