@@ -30,10 +30,8 @@ class EmailWeeklyPracticeReport implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param \CircleLinkHealth\Customer\Entities\Practice $practice
      * @param $startRange
      * @param $endRange
-     * @param User|null $tester
      */
     public function __construct(Practice $practice, $startRange, $endRange, User $tester = null)
     {

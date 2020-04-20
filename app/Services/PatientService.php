@@ -6,7 +6,6 @@
 
 namespace App\Services;
 
-use CircleLinkHealth\Core\Exports\FromArray;
 use App\Filters\PatientFilters;
 use App\Http\Resources\UserAutocompleteResource;
 use App\Http\Resources\UserCsvResource;
@@ -15,6 +14,7 @@ use App\Repositories\PatientReadRepository;
 use App\Repositories\PatientWriteRepository;
 use App\Services\CCD\CcdAllergyService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;

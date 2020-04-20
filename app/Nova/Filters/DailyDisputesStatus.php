@@ -22,7 +22,6 @@ class DailyDisputesStatus extends Filter
     /**
      * Apply the filter to the given query.
      *
-     * @param Request $request
      * @param Builder $query
      * @param mixed   $value
      *
@@ -35,8 +34,6 @@ class DailyDisputesStatus extends Filter
 
     /**
      * Get the filter's available options.
-     *
-     * @param Request $request
      *
      * @return array
      */

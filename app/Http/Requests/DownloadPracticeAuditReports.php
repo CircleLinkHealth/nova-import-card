@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Requests;
 
 use App\Constants;
@@ -18,7 +22,7 @@ class DownloadPracticeAuditReports extends FormRequest
     {
         return auth()->check();
     }
-    
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -33,15 +37,15 @@ class DownloadPracticeAuditReports extends FormRequest
                 Rule::exists('practice_role_user', 'program_id')->where(
                     function ($query) {
                         $query->where('user_id', auth()->id())
-                              ->where('program_id', $this->input('practice_id'))
-                              ->whereIn(
-                                  'role_id',
-                                  Role::whereIn('name', array_merge(Constants::PRACTICE_STAFF_ROLE_NAMES, ['administrator']))->pluck('id')->all()
-                              );
+                            ->where('program_id', $this->input('practice_id'))
+                            ->whereIn(
+                                'role_id',
+                                Role::whereIn('name', array_merge(Constants::PRACTICE_STAFF_ROLE_NAMES, ['administrator']))->pluck('id')->all()
+                            );
                     }
                 ),
             ],
-            'month'       => 'required|date',
+            'month' => 'required|date',
         ];
     }
 }

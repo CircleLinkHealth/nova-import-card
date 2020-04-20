@@ -18,6 +18,7 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\MessageBag;
+use Illuminate\Support\Str;
 use Tests\CustomerTestCase;
 use Tests\Helpers\CarePlanHelpers;
 
@@ -102,9 +103,9 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
 
         $cpmProblems = CpmProblem::get();
         $ccdProblems = $this->patient()->ccdProblems()->createMany([
-            ['name' => 'test'.str_random(5)],
-            ['name' => 'test'.str_random(5)],
-            ['name' => 'test'.str_random(5)],
+            ['name' => 'test'.Str::random(5)],
+            ['name' => 'test'.Str::random(5)],
+            ['name' => 'test'.Str::random(5)],
         ]);
 
         foreach ($ccdProblems as $problem) {

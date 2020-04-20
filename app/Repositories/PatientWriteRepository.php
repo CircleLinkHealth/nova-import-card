@@ -78,14 +78,9 @@ class PatientWriteRepository
 
         return $newProblem;
     }
-    
+
     /**
      * Updates the patient's call info based on the status of the last call.
-     *
-     * @param Patient $patient
-     * @param bool $successfulLastCall
-     * @param bool $isCallBack
-     * @param Carbon|null $forDate
      *
      * @return \Illuminate\Database\Eloquent\Model|PatientMonthlySummary|static|null
      */

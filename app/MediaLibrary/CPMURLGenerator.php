@@ -12,8 +12,6 @@ class CPMURLGenerator extends S3UrlGenerator
 {
     /**
      * Get the url for the profile of a media item.
-     *
-     * @return string
      */
     public function getUrl(): string
     {

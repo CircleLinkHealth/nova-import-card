@@ -9,7 +9,6 @@ namespace App\Http\Requests;
 use CircleLinkHealth\Eligibility\Rules\EligibilityPhones;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
 class EditEnrolleeData extends FormRequest
 {
@@ -31,10 +30,10 @@ class EditEnrolleeData extends FormRequest
     public function rules()
     {
         return [
-            'id'         => 'required',
-            'first_name' => 'required',
-            'last_name'  => 'required',
-            'lang'       => 'required',
+            'id'                  => 'required',
+            'first_name'          => 'required',
+            'last_name'           => 'required',
+            'lang'                => 'required',
             'status'              => 'required',
             'phones'              => ['required', new EligibilityPhones()],
             'address'             => 'required',

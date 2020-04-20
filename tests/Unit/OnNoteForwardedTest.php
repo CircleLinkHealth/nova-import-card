@@ -10,11 +10,9 @@ use App\Notifications\NoteForwarded;
 use App\Services\NoteService;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Notification;
 use Tests\CustomerTestCase;
-use Tests\TestCase;
 
 class OnNoteForwardedTest extends CustomerTestCase
 {

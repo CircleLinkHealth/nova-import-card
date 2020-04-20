@@ -10,12 +10,12 @@ use Illuminate\Notifications\Notification;
 
 abstract class SendsNotification
 {
-    abstract protected function getNotifiable();
-
-    abstract protected function getNotification(): Notification;
-
     public function send()
     {
         return $this->getNotifiable()->notify($this->getNotification());
     }
+
+    abstract protected function getNotifiable();
+
+    abstract protected function getNotification(): Notification;
 }

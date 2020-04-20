@@ -9,7 +9,6 @@ namespace App\Listeners;
 use App\Jobs\LogSuccessfulLogoutToDB;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Http\Request;
 use Illuminate\Queue\InteractsWithQueue;
 
 class LogSuccessfulLogout implements ShouldQueue

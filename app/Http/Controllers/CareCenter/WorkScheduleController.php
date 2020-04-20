@@ -259,17 +259,17 @@ class WorkScheduleController extends Controller
         ])
             ->get()
             ->sum(function ($window) {
-                    return Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_end
-                    )->diffInHours(Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_start
-                    ));
-                }) + Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_end']
+                return Carbon::createFromFormat(
+                    'H:i:s',
+                    $window->window_time_end
                 )->diffInHours(Carbon::createFromFormat(
+                    'H:i:s',
+                    $window->window_time_start
+                ));
+            }) + Carbon::createFromFormat(
+                'H:i',
+                $workScheduleData['window_time_end']
+            )->diffInHours(Carbon::createFromFormat(
                 'H:i',
                 $workScheduleData['window_time_start']
             ));

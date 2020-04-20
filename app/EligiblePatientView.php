@@ -6,9 +6,7 @@
 
 namespace App;
 
-use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\SqlViewModel;
-use CircleLinkHealth\Core\Filters\Filterable;
 
 /**
  * App\CallView.

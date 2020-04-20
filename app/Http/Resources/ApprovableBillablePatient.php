@@ -7,7 +7,6 @@
 namespace App\Http\Resources;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceEloquent;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Resources\Json\Resource;
 
@@ -41,7 +40,7 @@ class ApprovableBillablePatient extends Resource
 
         $name = $this->patient->getFullName();
         $url  = route('patient.note.index', [
-            'patient' => $this->patient->id,
+            $this->patient->id,
         ]);
 
         $status = $this->closed_ccm_status;

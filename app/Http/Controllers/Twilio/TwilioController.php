@@ -7,7 +7,6 @@
 namespace App\Http\Controllers\Twilio;
 
 use App\Contracts\Services\TwilioClientable;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Http\Controllers\Controller;
 use App\TwilioCall;
 use App\TwilioConferenceCallParticipant;
@@ -15,6 +14,7 @@ use App\TwilioRawLog;
 use App\TwilioRecording;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use SimpleXMLElement;
@@ -45,8 +45,6 @@ class TwilioController extends Controller
      * This function is called from Twilio (status callback)
      * - It inserts a record in our DB for raw logs (for debugging)
      * - It inspects the status request from Twilio and creates or updates any existing calls (using call sid).
-     *
-     * @param Request $request
      */
     public function callStatusCallback(Request $request)
     {
@@ -58,8 +56,6 @@ class TwilioController extends Controller
      * This function is called from Twilio (conference status callback)
      * - It inserts a record in our DB for raw logs (for debugging)
      * - It inspects the status request and creates or updates a conference.
-     *
-     * @param Request $request
      *
      * @throws TwimlException
      *
@@ -78,8 +74,6 @@ class TwilioController extends Controller
      * When the call ends, this handler is called (different from callStatusCallback below)
      * This handler decides what happens next:
      * We simply log the status and duration and hang up.
-     *
-     * @param Request $request
      *
      * @return \Illuminate\Http\Response
      */
@@ -188,8 +182,6 @@ class TwilioController extends Controller
      * - It inserts a record in our DB for raw logs (for debugging)
      * - It inspects the status request from Twilio and creates or updates any existing calls (using call sid).
      *
-     * @param Request $request
-     *
      * @throws TwimlException
      *
      * @return Twiml XML Empty Response
@@ -204,8 +196,6 @@ class TwilioController extends Controller
 
     /**
      * End a call using an sid. Usually used to end a call in a conference.
-     *
-     * @param Request $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -232,8 +222,6 @@ class TwilioController extends Controller
      * Get conference info using inbound user id and outbound user id.
      * These two fields make the conference friendly name.
      * Returns the conference sid and participant's sid(s).
-     *
-     * @param Request $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -283,8 +271,6 @@ class TwilioController extends Controller
 
     /**
      * Join an active conference using the conference sid.
-     *
-     * @param Request $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -365,8 +351,6 @@ class TwilioController extends Controller
      * So, the parent call (inbound) and the child call leg (outbound) will move to a conference
      * without hanging up!
      *
-     * @param Request $request
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function jsCreateConference(Request $request)
@@ -407,7 +391,7 @@ class TwilioController extends Controller
                         'method' => 'POST',
                         'url'    => route('twilio.call.dial.action'),
                     ]
-                         );
+                );
 
             return response()->json([]);
         } catch (\Exception $e) {
@@ -429,8 +413,6 @@ class TwilioController extends Controller
      * OutboundUserId - the user making the call (i.e nurse)
      * IsUnlistedNumber - has value if the number we are calling is manually inserted from the client side
      * IsCallToPatient - true if calling a patient, false if calling another party (eg patient's practice).
-     *
-     * @param Request $request
      *
      * @throws \Twilio\Exceptions\TwimlException
      *
@@ -520,8 +502,6 @@ class TwilioController extends Controller
      * It is called when recording an Outbound-Dial or Conference
      * - It inserts a record in our DB for raw logs (for debugging)
      * - It inspects the status request and creates or updates a recording in our DB.
-     *
-     * @param Request $request
      */
     public function recordingStatusCallback(Request $request)
     {
@@ -589,8 +569,6 @@ class TwilioController extends Controller
      * legs.
      *
      * NOTE: Conference Duration and Status are sent in recording status callback.
-     *
-     * @param Request $request
      */
     private function logConferenceToDb(Request $request)
     {
@@ -676,8 +654,6 @@ class TwilioController extends Controller
      *
      * The $request will have ParentCallSid when the action callback is made for the child leg.
      * It will not have ParentCallSid when its made for the root leg.
-     *
-     * @param Request $request
      */
     private function logDialActionToDb(Request $request)
     {
@@ -764,7 +740,7 @@ class TwilioController extends Controller
                         'participant_number',
                         '=',
                         TwilioController::CLIENT_ANONYMOUS
-                                                                        )
+                    )
                     ->first();
 
                 if ($conferenceParticipant) {
@@ -851,8 +827,6 @@ class TwilioController extends Controller
     /**
      * Update TwilioCall model with call_recording_sid or conference_recording_sid
      * Update TwilioCallRecordings with account sid, call or conference sid, recording sid, url, status, duration.
-     *
-     * @param Request $request
      */
     private function logRecordingToDb(Request $request)
     {

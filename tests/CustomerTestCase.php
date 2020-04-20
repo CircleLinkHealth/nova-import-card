@@ -10,7 +10,6 @@ use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use Tests\Helpers\CustomerTestCaseHelper;
 
 class CustomerTestCase extends TestCase
 {

@@ -7,7 +7,6 @@
 namespace Tests\Feature;
 
 use App\Services\Calls\SchedulerService;
-use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;

@@ -47,7 +47,7 @@ class CreateCalendarRecurringEventsCommand extends Command
     public function handle()
     {
         ini_set('memory_limit', '512M');
-        
+
         $today          = Carbon::parse(now())->toDateString();
         $currentWeekMap = createWeekMap($today);
 

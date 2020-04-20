@@ -16,8 +16,6 @@ class CallViewFilters extends QueryFilters
      * Sorting and filters just work, simply because
      * the column names match the view table names and they
      * are ordered by them.
-     *
-     * @param Request $request
      */
     public function __construct(Request $request)
     {

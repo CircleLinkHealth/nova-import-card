@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Nova\Filters;
 
 use Illuminate\Http\Request;
@@ -17,9 +21,9 @@ class NotesSuccessStories extends Filter
     /**
      * Apply the filter to the given query.
      *
-     * @param \Illuminate\Http\Request $request
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param mixed $value
+     * @param mixed                                 $value
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function apply(Request $request, $query, $value)
@@ -29,6 +33,7 @@ class NotesSuccessStories extends Filter
 
     /**
      * Defines the default filter value. In this case is where "success_story" = true.
+     *
      * @return array|int|mixed
      */
     public function default()
@@ -39,13 +44,12 @@ class NotesSuccessStories extends Filter
     /**
      * Get the filter's available options.
      *
-     * @param \Illuminate\Http\Request $request
      * @return array
      */
     public function options(Request $request)
     {
         return [
-            'Success Stories' => 1
+            'Success Stories' => 1,
         ];
     }
 }

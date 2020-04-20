@@ -85,7 +85,6 @@ class OfflineActivityTimeRequestController extends Controller
     }
 
     /**
-     * @param CreateOfflineActivityTimeRequest $request
      * @param $patientId
      *
      * @throws \Exception

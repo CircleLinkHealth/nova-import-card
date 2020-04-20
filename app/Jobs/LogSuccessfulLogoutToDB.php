@@ -7,7 +7,6 @@
 namespace App\Jobs;
 
 use App\LoginLogout;
-use Carbon\Carbon;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -11,20 +11,21 @@ use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\LoginLogout
+ * App\LoginLogout.
  *
- * @property int $id
- * @property int|null $user_id
- * @property \dateTime|null $login_time
- * @property \dateTime|null $logout_time
- * @property int $duration_in_sec
- * @property string $ip_address
- * @property int $was_edited
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\TimeTracking\Entities\PageTimer[] $activities
- * @property-read int|null $activities_count
- * @property-read \CircleLinkHealth\Customer\Entities\User|null $user
+ * @property int                                                                                          $id
+ * @property int|null                                                                                     $user_id
+ * @property \dateTime|null                                                                               $login_time
+ * @property \dateTime|null                                                                               $logout_time
+ * @property int                                                                                          $duration_in_sec
+ * @property string                                                                                       $ip_address
+ * @property int                                                                                          $was_edited
+ * @property \Illuminate\Support\Carbon|null                                                              $created_at
+ * @property \Illuminate\Support\Carbon|null                                                              $updated_at
+ * @property \CircleLinkHealth\TimeTracking\Entities\PageTimer[]|\Illuminate\Database\Eloquent\Collection $activities
+ * @property int|null                                                                                     $activities_count
+ * @property \CircleLinkHealth\Customer\Entities\User|null                                                $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\LoginLogout newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\LoginLogout newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\LoginLogout query()

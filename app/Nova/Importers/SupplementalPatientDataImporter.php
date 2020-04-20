@@ -19,6 +19,7 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -319,9 +320,9 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
 
             return $this->correctCenturyIfNeeded($date);
         } catch (\InvalidArgumentException $e) {
-            if (str_contains($dob, '/')) {
+            if (Str::contains($dob, '/')) {
                 $delimiter = '/';
-            } elseif (str_contains($dob, '-')) {
+            } elseif (Str::contains($dob, '-')) {
                 $delimiter = '-';
             }
             $date = explode($delimiter, $dob);

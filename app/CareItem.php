@@ -27,6 +27,7 @@ namespace App;
  * @property mixed                                                                                       $meta_key
  * @property \App\CareItem                                                                               $parents
  * @property \App\CPRulesQuestions                                                                       $question
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereDisplayName($value)
@@ -41,10 +42,13 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem query()
+ *
  * @property int|null $care_plans_count
  * @property int|null $children_count
  * @property int|null $revision_history_count
@@ -89,6 +93,6 @@ class CareItem extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function question() // rules prefix because ->items is a protect class var on parent
     {
-        return $this->belongsTo('App\CPRulesQuestions', 'qid', 'qid');
+        return $this->belongsTo(\App\CPRulesQuestions::class, 'qid', 'qid');
     }
 }

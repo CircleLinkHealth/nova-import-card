@@ -20,45 +20,45 @@ use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use Illuminate\Support\Str;
 use Tests\CustomerTestCase;
 
 class ApproveCPViaDM extends CustomerTestCase
 {
     const TEST_DM_DOMAIN = '@test.directproject.net';
-    
+
     public function directMailSubject($patient): string
     {
         return "{$patient->getFullName()}'s CCM Care Plan to approve!";
     }
-    
+
     public function test_care_plan_is_approved_when_task_is_resolved()
     {
         $this->patient()->setCarePlanStatus(CarePlan::QA_APPROVED);
         $this->assertEquals(CarePlan::QA_APPROVED, $this->patient()->carePlan->status);
-        
+
         PatientNurse::create(
             [
                 'patient_user_id' => $this->patient()->id,
                 'nurse_user_id'   => $this->careCoach()->id,
             ]
         );
-        
+
         $task         = $this->fakeTask();
         $task->status = 'done';
         $task->save();
-        
+
         $this->assertTrue($this->patient()->carePlan->wasApprovedViaNurse());
         $this->assertEquals($this->careCoach()->getFullName(), $this->patient()->carePlan->getNurseApproverName());
-        
+
         $this->assertEquals(
             CarePlan::PROVIDER_APPROVED,
             $this->patient()->carePlan()->firstOrFail()->status,
             'Careplan was not approved after DM with approval code was received.'
         );
     }
-    
+
     public function test_careplan_dm_approval_notification_channels()
     {
         $this->assertEquals(
@@ -68,7 +68,7 @@ class ApproveCPViaDM extends CustomerTestCase
             )
         );
     }
-    
+
     public function test_careplan_dm_approved_confirmation_notification_channels()
     {
         $this->assertEquals(
@@ -76,17 +76,17 @@ class ApproveCPViaDM extends CustomerTestCase
             (new CarePlanDMApprovalConfirmation($this->patient()))->via($this->provider())
         );
     }
-    
+
     public function test_cp_approve_notification_is_sent_via_dm()
     {
         $this->patient()->carePlan->status = CarePlan::QA_APPROVED;
         $this->patient()->carePlan->save();
-        
+
         $this->provider()->emr_direct_address = 'circlelinkhealth'.self::TEST_DM_DOMAIN;
-        
+
         $notification = new SendCarePlanForDirectMailApprovalNotification($this->patient());
         $this->provider()->notify($notification);
-        
+
         $this->assertDatabaseHas(
             'passwordless_login_tokens',
             [
@@ -94,7 +94,7 @@ class ApproveCPViaDM extends CustomerTestCase
                 'token'   => $notification->token($this->provider())->token,
             ]
         );
-        
+
         $this->assertDatabaseHas(
             (new DirectMailMessage())->getTable(),
             [
@@ -107,37 +107,71 @@ class ApproveCPViaDM extends CustomerTestCase
             ]
         );
     }
-    
+
     public function test_extracting_approval_or_rejection_codes()
     {
         $listener = app(ChangeOrApproveCareplanResponseListener::class);
-        
+
         $this->assertEquals(120, $listener->getCareplanIdToApprove('   #approve120'));
         $this->assertEquals(120, $listener->getCareplanIdToApprove('#approve120'));
         $this->assertEquals(32, $listener->getCareplanIdToApprove('#approve 32'));
         $this->assertEquals(3, $listener->getCareplanIdToApprove('#approve       3   '));
         $this->assertEquals(3, $listener->getCareplanIdToApprove('#      approve       3   '));
-        
+
         $this->assertEquals(2, $listener->getCareplanIdToChange('#change2'));
         $this->assertEquals(312, $listener->getCareplanIdToChange('# change 312'));
     }
-    
+
+    public function test_it_does_not_create_note_if_note_is_direction_sent()
+    {
+        $this->enableFeatureFlag($this->practice()->id);
+
+        $patient = $this->patient();
+        $patient->setCarePlanStatus(CarePlan::QA_APPROVED);
+        $this->assertEquals(CarePlan::QA_APPROVED, $patient->carePlan->status);
+        $patient->setBillingProviderId($this->provider()->id);
+
+        $this->provider()->emr_direct_address = 'drtest'.self::TEST_DM_DOMAIN.Str::random(5);
+
+        $changeCode = "#change{$patient->carePlan->id}";
+        $body       = "Please make the following changes for this patient $changeCode";
+        $directMail = factory(DirectMailMessage::class)->create(
+            [
+                'direction' => DirectMailMessage::DIRECTION_SENT,
+                'body'      => $body,
+                'from'      => $this->provider()->emr_direct_address,
+            ]
+        );
+
+        event(new DirectMailMessageReceived($directMail));
+
+        $this->assertDatabaseMissing(
+            'notes',
+            [
+                'patient_id' => $patient->id,
+                'author_id'  => $this->provider()->id,
+                'type'       => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
+                'body'       => $body,
+            ]
+        );
+    }
+
     public function test_it_sends_careplan_approval_dm_upon_qa_approval()
     {
         $this->enableFeatureFlag($this->practice()->id);
-        
+
         Notification::fake();
         $this->actingAs($this->superadmin());
-        
+
         $patient = $this->patient();
         $patient->setCarePlanStatus(CarePlan::DRAFT);
         $patient->setBillingProviderId($this->provider()->id);
-        
+
         $this->assertEquals(CarePlan::DRAFT, $patient->carePlan->status);
         event(new CarePlanWasApproved($patient, $this->superadmin()));
         $patient->carePlan->fresh();
         $this->assertEquals(CarePlan::QA_APPROVED, $patient->carePlan->status);
-        
+
         Notification::assertSentTo(
             $this->provider(),
             SendCarePlanForDirectMailApprovalNotification::class,
@@ -159,24 +193,24 @@ class ApproveCPViaDM extends CustomerTestCase
                         'token'   => $notification->token($this->provider())->token,
                     ]
                 );
-                
+
                 return true;
             }
         );
     }
-    
+
     public function test_provider_can_approve_careplan_with_valid_dm_response()
     {
         $this->enableFeatureFlag($this->practice()->id);
-        
+
         Notification::fake();
         $patient = $this->patient();
         $patient->setCarePlanStatus(CarePlan::QA_APPROVED);
         $this->assertEquals(CarePlan::QA_APPROVED, $patient->carePlan->status);
         $patient->setBillingProviderId($this->provider()->id);
-        
-        $this->provider()->emr_direct_address = 'drtest'.self::TEST_DM_DOMAIN.str_random(5);
-        
+
+        $this->provider()->emr_direct_address = 'drtest'.self::TEST_DM_DOMAIN.Str::random(5);
+
         $approvalCode = "#approve{$patient->carePlan->id}";
         $directMail   = factory(DirectMailMessage::class)->create(
             [
@@ -184,15 +218,15 @@ class ApproveCPViaDM extends CustomerTestCase
                 'from' => $this->provider()->emr_direct_address,
             ]
         );
-        
+
         event(new DirectMailMessageReceived($directMail));
-        
+
         $this->assertEquals(
             CarePlan::PROVIDER_APPROVED,
             $patient->carePlan->fresh()->status,
             'Careplan was not approved after DM with approval code was received.'
         );
-        
+
         Notification::assertSentTo(
             $this->provider(),
             CarePlanDMApprovalConfirmation::class,
@@ -202,23 +236,23 @@ class ApproveCPViaDM extends CustomerTestCase
                     "Thanks for approving {$patient->getFullName()}}'s Care Plan! Have a great day - CircleLink Team",
                     $notification->directMailBody($notifiable)
                 );
-                
+
                 return true;
             }
         );
     }
-    
+
     public function test_provider_can_create_task_with_valid_dm_response()
     {
         $this->enableFeatureFlag($this->practice()->id);
-        
+
         $patient = $this->patient();
         $patient->setCarePlanStatus(CarePlan::QA_APPROVED);
         $this->assertEquals(CarePlan::QA_APPROVED, $patient->carePlan->status);
         $patient->setBillingProviderId($this->provider()->id);
-        
-        $this->provider()->emr_direct_address = 'drtest'.self::TEST_DM_DOMAIN.str_random(5);
-        
+
+        $this->provider()->emr_direct_address = 'drtest'.self::TEST_DM_DOMAIN.Str::random(5);
+
         $changeCode = "#change{$patient->carePlan->id}";
         $taskBody   = "Please make the following changes for this patient $changeCode";
         $directMail = factory(DirectMailMessage::class)->create(
@@ -227,9 +261,9 @@ class ApproveCPViaDM extends CustomerTestCase
                 'from' => $this->provider()->emr_direct_address,
             ]
         );
-        
+
         event(new DirectMailMessageReceived($directMail));
-        
+
         $note = Note::where(
             [
                 ['patient_id', '=', $patient->id],
@@ -238,7 +272,7 @@ class ApproveCPViaDM extends CustomerTestCase
                 ['body', '=', $taskBody],
             ]
         )->firstOrFail();
-        
+
         $this->assertDatabaseHas(
             'calls',
             [
@@ -255,53 +289,19 @@ class ApproveCPViaDM extends CustomerTestCase
             ]
         );
     }
-    
-    public function test_it_does_not_create_note_if_note_is_direction_sent()
-    {
-        $this->enableFeatureFlag($this->practice()->id);
-        
-        $patient = $this->patient();
-        $patient->setCarePlanStatus(CarePlan::QA_APPROVED);
-        $this->assertEquals(CarePlan::QA_APPROVED, $patient->carePlan->status);
-        $patient->setBillingProviderId($this->provider()->id);
-        
-        $this->provider()->emr_direct_address = 'drtest'.self::TEST_DM_DOMAIN.str_random(5);
-    
-        $changeCode = "#change{$patient->carePlan->id}";
-        $body   = "Please make the following changes for this patient $changeCode";
-        $directMail = factory(DirectMailMessage::class)->create(
-            [
-                'direction' => DirectMailMessage::DIRECTION_SENT,
-                'body'      => $body,
-                'from'      => $this->provider()->emr_direct_address,
-            ]
-        );
-        
-        event(new DirectMailMessageReceived($directMail));
-        
-        $this->assertDatabaseMissing(
-            'notes',
-            [
-                'patient_id' => $patient->id,
-                'author_id'  => $this->provider()->id,
-                'type'       => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
-                'body'       => $body,
-            ]
-        );
-    }
-    
+
     public function tests_provider_can_login_with_passwordless_link()
     {
         $this->assertFalse(auth()->check());
-        
+
         $notification = new SendCarePlanForDirectMailApprovalNotification($this->patient());
-        
+
         $link = $notification->passwordlessLoginLink($this->provider());
-        
+
         $response = $this->get($link)->assertStatus(302);
-        
+
         $this->assertEquals($this->provider()->id, auth()->id());
-        
+
         $this->assertDatabaseMissing(
             'passwordless_login_tokens',
             [
@@ -310,7 +310,17 @@ class ApproveCPViaDM extends CustomerTestCase
             ]
         );
     }
-    
+
+    private function enableFeatureFlag(int $practiceId)
+    {
+        AppConfig::create(
+            [
+                'config_key'   => DMDomainForAutoApproval::FLAG_NAME,
+                'config_value' => $practiceId.self::TEST_DM_DOMAIN,
+            ]
+        );
+    }
+
     private function fakeTask()
     {
         $note = Note::create(
@@ -321,7 +331,7 @@ class ApproveCPViaDM extends CustomerTestCase
                 'body'       => 'Instructions from provider',
             ]
         );
-        
+
         return Call::create(
             [
                 'type'            => 'task',
@@ -334,16 +344,6 @@ class ApproveCPViaDM extends CustomerTestCase
                 'outbound_cpm_id' => $this->patient()->patientInfo->getNurse()->id,
                 'asap'            => true,
                 'note_id'         => $note->id,
-            ]
-        );
-    }
-    
-    private function enableFeatureFlag(int $practiceId)
-    {
-        AppConfig::create(
-            [
-                'config_key'   => DMDomainForAutoApproval::FLAG_NAME,
-                'config_value' => $practiceId.self::TEST_DM_DOMAIN,
             ]
         );
     }

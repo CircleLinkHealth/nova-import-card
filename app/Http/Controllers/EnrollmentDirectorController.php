@@ -6,7 +6,6 @@
 
 namespace App\Http\Controllers;
 
-use App\CareAmbassadorLog;
 use App\EnrolleeCustomFilter;
 use App\EnrolleeView;
 use App\Filters\EnrolleeFilters;

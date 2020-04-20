@@ -7,10 +7,7 @@
 namespace Tests\Feature;
 
 use CircleLinkHealth\Customer\Entities\Role;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\CustomerTestCase;
-use Tests\TestCase;
 
 class HasCpmRoleTraitTest extends CustomerTestCase
 {

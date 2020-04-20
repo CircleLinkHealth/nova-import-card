@@ -30,8 +30,6 @@ class CheckEmrDirectInbox extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param DirectMail $directMail
      */
     public function __construct(DirectMail $directMail)
     {

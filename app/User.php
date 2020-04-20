@@ -13,26 +13,26 @@ namespace App;
  * @property int|null                                                                                                        $saas_account_id
  * @property int                                                                                                             $skip_browser_checks                          Skip compatible browser checks when the user logs in
  * @property int                                                                                                             $count_ccm_time
- * @property string                                                                                                          $username
- * @property string                                                                                                          $program_id
- * @property string                                                                                                          $password
+ * @property string|null                                                                                                     $username
+ * @property int|null                                                                                                        $program_id
+ * @property string|null                                                                                                     $password
  * @property string                                                                                                          $email
  * @property \Illuminate\Support\Carbon|null                                                                                 $user_registered
  * @property int|null                                                                                                        $user_status
- * @property int                                                                                                             $auto_attach_programs
- * @property string                                                                                                          $display_name
- * @property string                                                                                                          $first_name
- * @property string                                                                                                          $last_name
+ * @property int|null                                                                                                        $auto_attach_programs
+ * @property string|null                                                                                                     $display_name
+ * @property string|null                                                                                                     $first_name
+ * @property string|null                                                                                                     $last_name
  * @property string|null                                                                                                     $suffix
- * @property string                                                                                                          $address
- * @property string                                                                                                          $address2
- * @property string                                                                                                          $city
- * @property string                                                                                                          $state
- * @property string                                                                                                          $zip
+ * @property string|null                                                                                                     $address
+ * @property string|null                                                                                                     $address2
+ * @property string|null                                                                                                     $city
+ * @property string|null                                                                                                     $state
+ * @property string|null                                                                                                     $zip
  * @property string|null                                                                                                     $timezone
- * @property string                                                                                                          $status
+ * @property string|null                                                                                                     $status
  * @property int                                                                                                             $access_disabled
- * @property int|null                                                                                                        $is_auto_generated
+ * @property int                                                                                                             $is_auto_generated
  * @property string|null                                                                                                     $remember_token
  * @property \Illuminate\Support\Carbon|null                                                                                 $created_at
  * @property \Illuminate\Support\Carbon|null                                                                                 $updated_at
@@ -149,7 +149,7 @@ namespace App;
  * @property int|null                                                                                                        $perms_count
  * @property \CircleLinkHealth\Customer\Entities\PhoneNumber[]|\Illuminate\Database\Eloquent\Collection                      $phoneNumbers
  * @property int|null                                                                                                        $phone_numbers_count
- * @property \CircleLinkHealth\Customer\Entities\Practice                                                                    $primaryPractice
+ * @property \CircleLinkHealth\Customer\Entities\Practice|null                                                               $primaryPractice
  * @property \CircleLinkHealth\Customer\Entities\ProviderInfo                                                                $providerInfo
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection                     $revisionHistory
  * @property int|null                                                                                                        $revision_history_count

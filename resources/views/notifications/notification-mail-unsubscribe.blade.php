@@ -8,7 +8,7 @@
             <h2>
                 <br>
                 You have unsubscribed from receiving <span
-                        class="badge badge-primary">{{str_plural($activityType)}}</span> notifications.
+                        class="badge badge-primary">{{Str::plural($activityType)}}</span> notifications.
                 <br>
                 To manage your notification subscriptions <a href="{{route('subscriptions.notification.mail')}}" style="color: #2e92cc">click
                     here</a>

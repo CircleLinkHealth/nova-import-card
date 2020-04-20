@@ -9,8 +9,6 @@ namespace App\Listeners;
 use App\Events\CarePlanWasQAApproved;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class AssignPatientToStandByNurse
 {

@@ -31,7 +31,7 @@
                 </div>
                 @include('partials.userheader')
                 <div class="col-sm-6 col-xs-4">
-                    <a href="{{ route('patient.note.create', array('patient' => $patient->id)) }}"
+                    <a href="{{ route('patient.note.create', [$patient->id]) }}"
                        class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">
                         + NEW NOTE
                     </a>
@@ -94,25 +94,25 @@
 
                                                     if (obj.logger_id === myUserId && obj.status === "draft") {
                                                         return "<a href='<?php echo route('patient.note.edit', [
-                                                            'patientId' => $patient->id,
-                                                            'noteId'    => '',
+                                                            $patient->id,
+                                                            '',
                                                         ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
                                                     }
                                                     else {
                                                         return "<a href='<?php echo route('patient.note.view', [
-                                                            'patientId' => $patient->id,
-                                                            'noteId'    => '',
+                                                            $patient->id,
+                                                            '',
                                                         ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
                                                     }
                                                 else if (obj.logged_from === "appointment") {
                                                     return "<a href='<?php echo route('patient.appointment.view', [
-                                                        'patientId'     => $patient->id,
-                                                        'appointmentId' => '',
+                                                        $patient->id,
+                                                        '',
                                                     ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
                                                 } else {
                                                     return "<a href='<?php echo route('patient.activity.view', [
-                                                        'patientId' => $patient->id,
-                                                        'actId'     => '',
+                                                        $patient->id,
+                                                        '',
                                                     ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
                                                 }
                                                 return obj.type_name;
@@ -153,19 +153,19 @@
                                             template: function (obj) {
                                                 if (obj.logged_from === "note" || obj.logged_from === "note_task") {
                                                     return "<a href='<?php echo route('patient.note.view', [
-                                                        'patientId' => $patient->id,
-                                                        'noteId'    => '',
+                                                        $patient->id,
+                                                        '',
                                                     ]); ?>/" + obj.id + "' title='" + obj.comment + "'>" + obj.comment + "</a>";
                                                 }
                                                 else if (obj.logged_from === "manual_input" || obj.logged_from === "activity") {
                                                     return "<a href='<?php echo route('patient.activity.view', [
-                                                        'patientId' => $patient->id,
-                                                        'actId'     => '',
+                                                        $patient->id,
+                                                        '',
                                                     ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
                                                 } else if (obj.logged_from === "appointment") {
                                                     return "<a href='<?php echo route('patient.appointment.view', [
-                                                        'patientId'     => $patient->id,
-                                                        'appointmentId' => '',
+                                                        $patient->id,
+                                                        '',
                                                     ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
                                                 } else
                                                     return obj.type_name;
@@ -203,12 +203,12 @@
                                         template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}@if(is_null($showAll)) <p></p>\n" +
                                             "@elseif($showAll == true)\n" +
                                             "<a\n" +
-                                            "href=\"{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => false)) }}\"\n" +
+                                            "href=\"{{ route('patient.note.index', array('patientId' => $patient->id, 'showAll' => false)) }}\"\n" +
                                             "class=\"btn btn-primary btn-sm\"\n" +
                                             "role=\"button\">Show Last 2 Months</a>\n" +
                                             "@else\n" +
                                             "<a\n" +
-                                            "href=\"{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => true)) }}\"\n" +
+                                            "href=\"{{ route('patient.note.index', array('patientId' => $patient->id, 'showAll' => true)) }}\"\n" +
                                             "class=\"btn btn-primary btn-sm\" role=\"button\">Show\n" +
                                             "All</a>\n" +
                                             "@endif",

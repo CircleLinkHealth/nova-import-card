@@ -9,8 +9,6 @@ namespace Tests\Feature;
 use App\Console\Commands\SendTestDirectMail;
 use App\DirectMailMessage;
 use App\Services\PhiMail\SendResult;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class SendReceiveDirectMailTest extends TestCase
@@ -59,7 +57,7 @@ class SendReceiveDirectMailTest extends TestCase
         $this->assertIsArray($sent);
         $this->assertArrayHasKey(0, $sent);
 
-        /** @var SendResult $sent */
+        // @var SendResult $sent
         return $sent[0];
 //        $this->assertDatabaseHas('direct_mail_messages', [
 //            'message_id' => $sent->messageId,

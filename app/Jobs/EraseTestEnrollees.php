@@ -1,12 +1,13 @@
 <?php
-/**
+
+/*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Jobs;
 
-
 use App\CareAmbassadorLog;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Bus\Queueable;
@@ -14,7 +15,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
 class EraseTestEnrollees implements ShouldQueue
 {
@@ -24,11 +24,9 @@ class EraseTestEnrollees implements ShouldQueue
     use SerializesModels;
 
     /**
-     *
      * Erase test enrollees (created by seeder - having is_demo set as true in eligibilityJob->data)
      * And all potential related data that might be generated during the testing phase, including users created.
      * Also, reset CareAmbassador Logs for CA's that have called these patients.
-     *
      *
      * @throws \Exception
      */
@@ -38,12 +36,12 @@ class EraseTestEnrollees implements ShouldQueue
             //only check for this. These are only seeder enrollees.
             $j->where('data->is_demo', 'true');
         })
-                             ->get();
+            ->get();
 
         foreach ($enrollees as $enrollee) {
-            $time =PageTimer::where('enrollee_id', $enrollee->id)
-                     ->get();
-            foreach($time as $entry){
+            $time = PageTimer::where('enrollee_id', $enrollee->id)
+                ->get();
+            foreach ($time as $entry) {
                 $entry->forceDelete();
             }
 
@@ -58,7 +56,7 @@ class EraseTestEnrollees implements ShouldQueue
             if ($user) {
                 $user->patientSummaries()->delete();
                 $user->forceDelete();
-                
+
                 Ccda::where('patient_id', $user->id)->forceDelete();
             }
 
@@ -67,8 +65,8 @@ class EraseTestEnrollees implements ShouldQueue
             if ($careAmbassador) {
                 $date = $enrollee->updated_at->format('Y-m-d');
                 CareAmbassadorLog::where('enroller_id', $careAmbassador->careAmbassador->id)
-                                 ->where('day', $date)
-                                 ->delete();
+                    ->where('day', $date)
+                    ->delete();
             }
 
             $enrollee->delete();

@@ -27,8 +27,6 @@ class RemoveScheduledCallsForWithdrawnAndPausedPatients extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param SchedulerService $schedulerService
      */
     public function __construct(SchedulerService $schedulerService)
     {
@@ -45,7 +43,7 @@ class RemoveScheduledCallsForWithdrawnAndPausedPatients extends Command
     public function handle()
     {
         $userIds = $this->argument('patientUserIds') ?? [];
-        
+
         $result = $this->schedulerService->removeScheduledCallsForWithdrawnAndPausedPatients($userIds);
 
         $this->comment("${result} calls deleted.");

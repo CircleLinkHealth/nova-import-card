@@ -6,15 +6,7 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use App\CareAmbassadorLog;
 use App\Http\Controllers\Controller;
-use App\Services\Enrollment\AttachEnrolleeFamilyMembers;
-use App\Services\Enrollment\EnrollableCallQueue;
-use App\TrixField;
-use Carbon\Carbon;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
-use Illuminate\Http\Request;
 
 class EnrollmentCenterController extends Controller
 {

@@ -16,7 +16,6 @@ use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
 use Validator;
 
@@ -482,8 +481,6 @@ class OnboardingService
                         $newUser['forward_careplan_approval_emails_to']['who']
                     );
                 }
-
-                Cache::forget($user->getCpmRolesCacheKey());
 //                $user->notify(new StaffInvite($implementationLead, $primaryPractice));
             } catch (\Exception $e) {
                 \Log::alert($e);

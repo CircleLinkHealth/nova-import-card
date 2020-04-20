@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Exports;
 
 use App\Note;
@@ -16,7 +20,6 @@ class SuccessStoriesExport implements FromCollection, WithHeadings
 
     /**
      * SuccessStoriesExport constructor.
-     * @param Carbon $month
      */
     public function __construct(Carbon $month)
     {
@@ -33,7 +36,7 @@ class SuccessStoriesExport implements FromCollection, WithHeadings
             ->where('performed_at', '>=', $this->month->startOfMonth()->toDateString())
             ->where('performed_at', '<=', $this->month->endOfMonth()->toDateString())
             ->get()->map(function ($note) {
-                /** @var Note $note */
+                // @var Note $note
                 return [
                     $note->patient->display_name,
                     $note->author->display_name,
@@ -45,7 +48,7 @@ class SuccessStoriesExport implements FromCollection, WithHeadings
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function headings(): array
     {
@@ -54,7 +57,7 @@ class SuccessStoriesExport implements FromCollection, WithHeadings
             'Author Name',
             'Practice Name',
             'Note Type',
-            'Note Link'
+            'Note Link',
         ];
     }
 }

@@ -54,7 +54,7 @@ class EmailWeeklyProviderReport implements ShouldQueue
                 SalesByProviderReport::SECTIONS,
                 $this->startRange->copy(),
                 $this->endRange->copy()
-                ))
+            ))
                 ->data(true);
 
             $providerData['name']    = $provider->display_name;

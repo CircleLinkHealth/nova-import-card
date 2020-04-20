@@ -577,7 +577,7 @@ class WebixFormatter implements ReportFormatter
                         if ($canQAApproveCarePlans) {
                             $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
                                 'patient.demographics.show',
-                                ['patient' => $patient->id]
+                                [$patient->id]
                             ).'"><strong>CLH Approve</strong></a>';
                         }
                     }

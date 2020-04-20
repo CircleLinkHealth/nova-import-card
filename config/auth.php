@@ -114,7 +114,7 @@ return [
             'provider' => 'users',
             'email'    => 'emails.password',
             'table'    => 'lv_password_resets',
-            'expire' => \App\Constants::THIRTY_DAYS_IN_MINUTES,
+            'expire'   => \App\Constants::THIRTY_DAYS_IN_MINUTES,
         ],
     ],
 

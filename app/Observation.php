@@ -40,6 +40,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \App\CPRulesQuestions                                                                       $question
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\User                                                    $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation query()
@@ -59,6 +60,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereUserId($value)
  * @mixin \Eloquent
+ *
  * @property int|null $meta_count
  * @property int|null $revision_history_count
  */
@@ -84,7 +86,7 @@ class Observation extends BaseModel
 
     public function comment()
     {
-        return $this->belongsTo('App\Comment');
+        return $this->belongsTo(\App\Comment::class);
     }
 
     public function getAlertLevelAttribute()

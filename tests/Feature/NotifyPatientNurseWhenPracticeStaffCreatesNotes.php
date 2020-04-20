@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Feature;
 
 use App\Note;
@@ -9,44 +13,9 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\User;
 use Tests\CustomerTestCase;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class NotifyPatientNurseWhenPracticeStaffCreatesNotes extends CustomerTestCase
 {
-    public function test_it_sends_notification_when_practice_staff_writes_note()
-    {
-        $patientNurse = PatientNurse::create(
-            [
-                'patient_user_id' => $this->patient()->id,
-                'nurse_user_id'   => $this->careCoach()->id,
-            ]
-        );
-        
-        Notification::fake();
-        
-        $note = Note::create($this->getFakeCreateNoteParams($this->medicalAssistant()));
-        
-        Notification::assertSentTo($this->careCoach(), PracticeStaffCreatedNote::class);
-    }
-    
-    public function test_it_does_not_send_notification_when_a_non_member_of_practice_staff_writes_note()
-    {
-        $patientNurse = PatientNurse::create(
-            [
-                'patient_user_id' => $this->patient()->id,
-                'nurse_user_id'   => $this->careCoach()->id,
-            ]
-        );
-        
-        Notification::fake();
-        
-        $note = Note::create($this->getFakeCreateNoteParams($this->superadmin()));
-        
-        Notification::assertNothingSent();
-    }
-    
     public function getFakeCreateNoteParams(User $author)
     {
         return [
@@ -67,5 +36,37 @@ class NotifyPatientNurseWhenPracticeStaffCreatesNotes extends CustomerTestCase
             'programId'              => $this->practice()->id,
             'task_status'            => '',
         ];
+    }
+
+    public function test_it_does_not_send_notification_when_a_non_member_of_practice_staff_writes_note()
+    {
+        $patientNurse = PatientNurse::create(
+            [
+                'patient_user_id' => $this->patient()->id,
+                'nurse_user_id'   => $this->careCoach()->id,
+            ]
+        );
+
+        Notification::fake();
+
+        $note = Note::create($this->getFakeCreateNoteParams($this->superadmin()));
+
+        Notification::assertNothingSent();
+    }
+
+    public function test_it_sends_notification_when_practice_staff_writes_note()
+    {
+        $patientNurse = PatientNurse::create(
+            [
+                'patient_user_id' => $this->patient()->id,
+                'nurse_user_id'   => $this->careCoach()->id,
+            ]
+        );
+
+        Notification::fake();
+
+        $note = Note::create($this->getFakeCreateNoteParams($this->medicalAssistant()));
+
+        Notification::assertSentTo($this->careCoach(), PracticeStaffCreatedNote::class);
     }
 }

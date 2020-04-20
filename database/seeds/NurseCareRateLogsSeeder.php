@@ -16,6 +16,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class NurseCareRateLogsSeeder extends Seeder
@@ -194,9 +195,9 @@ class NurseCareRateLogsSeeder extends Seeder
         $patient->patientInfo->save();
         $cpmProblems = CpmProblem::get();
         $ccdProblems = $patient->ccdProblems()->createMany([
-            ['name' => 'test'.str_random(5)],
-            ['name' => 'test'.str_random(5)],
-            ['name' => 'test'.str_random(5)],
+            ['name' => 'test'.Str::random(5)],
+            ['name' => 'test'.Str::random(5)],
+            ['name' => 'test'.Str::random(5)],
         ]);
         foreach ($ccdProblems as $problem) {
             $problem->cpmProblem()->associate($cpmProblems->random());

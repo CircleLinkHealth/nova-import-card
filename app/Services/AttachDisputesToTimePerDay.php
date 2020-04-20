@@ -52,8 +52,6 @@ class AttachDisputesToTimePerDay
 
     /**
      * @param $invoice
-     *
-     * @return array
      */
     public function getNurseDailyDisputes($invoice): array
     {

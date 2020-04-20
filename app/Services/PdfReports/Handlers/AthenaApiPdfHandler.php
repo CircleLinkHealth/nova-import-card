@@ -20,8 +20,6 @@ class AthenaApiPdfHandler implements PdfReportHandler
     /**
      * Dispatch a PDFReport to an API, or EMR Direct Mailbox.
      *
-     * @param PdfReport $report
-     *
      * @return mixed
      */
     public function pdfHandle(PdfReport $report)

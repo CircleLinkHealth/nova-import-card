@@ -45,6 +45,7 @@ use CircleLinkHealth\SharedModels\Entities\Problem;
  * @property \App\Note|null                                                                              $note
  * @property \CircleLinkHealth\Customer\Entities\User|null                                               $outboundUser
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAttemptNote($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereCallTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereCalledDate($value)
@@ -64,6 +65,7 @@ use CircleLinkHealth\SharedModels\Entities\Problem;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowEnd($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowStart($value)
  * @mixin \Eloquent
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call newQuery()
@@ -74,12 +76,17 @@ use CircleLinkHealth\SharedModels\Entities\Problem;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereIsManual($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereSubType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereType($value)
+ *
  * @property int $asap
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAsap($value)
+ *
  * @property int|null                                                                                                        $revision_history_count
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call calledLastThreeMonths()
+ *
  * @property \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection $attestedProblems
  * @property int|null                                                           $attested_problems_count
  */

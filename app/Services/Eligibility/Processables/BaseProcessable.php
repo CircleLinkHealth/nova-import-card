@@ -46,11 +46,10 @@ abstract class BaseProcessable implements EligibilityProcessable
      * BaseProcessable constructor.
      *
      * @param $file
-     * @param Practice $practice
-     * @param bool     $filterLastEncounter
-     * @param bool     $filterInsurance
-     * @param bool     $filterProblems
-     * @param bool     $createEnrollees
+     * @param bool $filterLastEncounter
+     * @param bool $filterInsurance
+     * @param bool $filterProblems
+     * @param bool $createEnrollees
      */
     public function __construct(
         $file,
