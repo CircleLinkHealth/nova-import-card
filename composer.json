@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": "~7.3.16",
-        "laravel/framework": "~6.0"
+        "laravel/framework": "^6.18"
     },
     "autoload": {
         "psr-4": {
@@ -29,5 +29,11 @@
 
             }
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "git@github.com:circlelinkhealth/revisionable-module.git"
+        }
+    ]
 }
