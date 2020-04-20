@@ -22,7 +22,6 @@ use Laravel\Scout\Searchable;
  * @property \Illuminate\Support\Carbon|null              $created_at
  * @property \Illuminate\Support\Carbon|null              $updated_at
  * @property \CircleLinkHealth\Customer\Entities\Practice $practice
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\PcmProblem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\PcmProblem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\PcmProblem query()
@@ -34,7 +33,6 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\PcmProblem wherePracticeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\PcmProblem whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\PcmProblem mySQLSearch($columns, $term, $mode = 'BOOLEAN', $shouldRequireAll = true, $shouldRequireIntegers = true)
  */
 class PcmProblem extends Model

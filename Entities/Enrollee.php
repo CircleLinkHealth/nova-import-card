@@ -74,7 +74,6 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
  * @property \CircleLinkHealth\Customer\Entities\User|null     $provider
  * @property mixed                                             $primary_phone_number
  * @property \CircleLinkHealth\Customer\Entities\User|null     $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee toCall()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee toSMS()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAddress($value)
@@ -125,7 +124,6 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereZip($value)
  * @mixin \Eloquent
- *
  * @property int|null                                                   $batch_id
  * @property int|null                                                   $eligibility_job_id
  * @property int|null                                                   $care_ambassador_user_id
@@ -137,7 +135,6 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection
  *     $revisionHistory
  * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient $targetPatient
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee newQuery()
@@ -147,22 +144,16 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereEligibilityJobId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereSoftRejectedCallback($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereRequestedCallback($value)
- *
  * @property int|null   $revision_history_count
  * @property array|null $agent_details
  * @property mixed      $agent
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAgentDetails($value)
- *
  * @property int|null $family_enrollee_id
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereFamilyEnrolleeId($value)
- *
  * @property string|null $soft_rejected_callback
  * @property \CircleLinkHealth\Eligibility\Entities\Enrollee[]|\Illuminate\Database\Eloquent\Collection
  *     $confirmedFamilyMembers
  * @property int|null $confirmed_family_members_count
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
  *     mySQLSearch($columns, $term, $mode = 'BOOLEAN', $shouldRequireAll = true, $shouldRequireIntegers = true)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
@@ -171,10 +162,8 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
  *     searchPhones($term)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
  *     shouldSuggestAsFamilyForEnrollee($enrolleeId)
- *
  * @property int|null                                          $location_id
  * @property \CircleLinkHealth\SharedModels\Entities\Ccda|null $ccda
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee duplicates(\CircleLinkHealth\Customer\Entities\User $patient, \CircleLinkHealth\SharedModels\Entities\Ccda $ccda)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee whereLocationId($value)
  */
