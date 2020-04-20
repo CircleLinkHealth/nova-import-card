@@ -6,14 +6,12 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use App\Console\Commands\OverwriteNBIImportedData;
 use App\DirectMailMessage;
 use App\Entities\CcdaRequest;
 use App\Search\ProviderByName;
 use App\Traits\Relationships\BelongsToPatientUser;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidCcdaException;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -30,7 +28,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
-use  Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
@@ -111,44 +108,12 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
     const CCD_MEDIA_COLLECTION_NAME = 'ccd';
 
-    /**
-     * An option in validation_checks.
-     */
-    const CHECK_HAS_AT_LEAST_1_BHI_CONDITION = 'has_at_least_1_bhi_condition';
-    /**
-     * An option in validation_checks.
-     */
-    const CHECK_HAS_AT_LEAST_1_CCM_CONDITION = 'has_at_least_1_ccm_condition';
-    /**
-     * An option in validation_checks.
-     */
-    const CHECK_HAS_AT_LEAST_2_CCM_CONDITIONS = 'has_at_least_2_ccm_conditions';
-    /**
-     * An option in validation_checks.
-     */
-    const CHECK_HAS_MEDICARE = 'has_medicare';
-    /**
-     * An option in validation_checks.
-     * Indicates whether CLH can offer PCM service to the patient, if practice has PCM enabled.
-     */
-    const CHECK_PRACTICE_HAS_PCM = 'practice_has_pcm';
-    /**
-     * For 'type' column, for G0506.
-     */
-    const COMPREHENSIVE_ASSESSMENT_TYPE = 'comprehensive_assessment';
-
     const EMR_DIRECT   = 'emr_direct';
     const GOOGLE_DRIVE = 'google_drive';
     const IMPORTER     = 'importer';
     const IMPORTER_AWV = 'importer_awv';
     const SFTP_DROPBOX = 'sftp_dropbox';
     const UPLOADED     = 'uploaded';
-    /**
-     * An option in validation_checks.
-     * Indicates whether or not this patient's data was overwritten from additional data we received from the practice.
-     * Currently this only applies to NBI.
-     */
-    const WAS_NBI_OVERWRITTEN = 'was_nbi_overwritten';
 
     protected $attributes = [
         'imported' => false,
