@@ -23,25 +23,24 @@ class CreateLoginLogoutEventsTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('login_logout_events'))
-        Schema::create('login_logout_events', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('user_id')->unsigned();
-            $table->dateTime('login_time')->nullable();
-            $table->dateTime('logout_time')->nullable();
-            $table->integer('duration_in_sec')->unsigned();
-            $table->string('ip_address');
-            $table->boolean('was_edited')->default(false);
-            $table->timestamps();
-        });
-    
+        if ( ! Schema::hasTable('login_logout_events')) {
+            Schema::create('login_logout_events', function (Blueprint $table) {
+                $table->increments('id');
+                $table->integer('user_id')->unsigned();
+                $table->dateTime('login_time')->nullable();
+                $table->dateTime('logout_time')->nullable();
+                $table->integer('duration_in_sec')->unsigned();
+                $table->string('ip_address');
+                $table->boolean('was_edited')->default(false);
+                $table->timestamps();
+            });
+        }
+
         Schema::table('login_logout_events', function (Blueprint $table) {
             $table->foreign('user_id')
-                  ->references('id')
-                  ->on('users')
-                  ->onUpdate('cascade');
+                ->references('id')
+                ->on('users')
+                ->onUpdate('cascade');
         });
-    
-        
     }
 }

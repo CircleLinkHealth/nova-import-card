@@ -1,24 +1,15 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
-use function Clue\StreamFilter\fun;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class MakeCarePlanSoftDeletable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::table('care_plans', function(Blueprint $table){
-            $table->softDeletes();
-        });
-    }
-
     /**
      * Reverse the migrations.
      *
@@ -26,6 +17,17 @@ class MakeCarePlanSoftDeletable extends Migration
      */
     public function down()
     {
-        //
+    }
+
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('care_plans', function (Blueprint $table) {
+            $table->softDeletes();
+        });
     }
 }

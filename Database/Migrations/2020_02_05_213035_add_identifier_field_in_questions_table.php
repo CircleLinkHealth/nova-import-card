@@ -1,59 +1,19 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class AddIdentifierFieldInQuestionsTable extends Migration
 {
-    private const HRA_SURVEY_NAME = 'HRA';
+    private const HRA_SURVEY_NAME    = 'HRA';
     private const VITALS_SURVEY_NAME = 'Vitals';
 
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        if (!Schema::hasColumn('questions', 'identifier')) {
-            Schema::table('questions', function (Blueprint $table) {
-                $table->string('identifier')->after('id')->nullable(true);
-            });
-        }
-
-        $this->setup(self::HRA_SURVEY_NAME);
-        $this->setup(self::VITALS_SURVEY_NAME);
-
-        //nothing to do, survey not found
-        if ( ! $this->hraQuestions || $this->hraQuestions->count() === 0) {
-            return;
-        }
-
-        foreach ($this->hraQuestionsMap as $key => $value) {
-            $this->setIdentifierForQuestion(self::HRA_SURVEY_NAME, $key, $value['order'], $value['sub_order']);
-        }
-
-        foreach ($this->vitalsQuestionsMap as $key => $value) {
-            $this->setIdentifierForQuestion(self::VITALS_SURVEY_NAME, $key, $value['order'], $value['sub_order']);
-        }
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        if (Schema::hasColumn('questions', 'identifier')) {
-            Schema::table('questions', function (Blueprint $table) {
-                $table->removeColumn('identifier');
-            });
-        }
-    }
-
-    /** @var \Illuminate\Database\Query\Builder $hraQuestions */
+    /** @var \Illuminate\Database\Query\Builder */
     private $hraQuestions;
 
     private $hraQuestionsMap = [
@@ -118,7 +78,7 @@ class AddIdentifierFieldInQuestionsTable extends Migration
         'Q_COMMENTS'                   => ['order' => 46, 'sub_order' => null],
     ];
 
-    /** @var \Illuminate\Support\Collection $vitalsQuestions */
+    /** @var \Illuminate\Support\Collection */
     private $vitalsQuestions;
 
     private $vitalsQuestionsMap = [
@@ -134,47 +94,91 @@ class AddIdentifierFieldInQuestionsTable extends Migration
     private function setup($surveyName)
     {
         $survey = DB::table('surveys')
-                    ->where('name', '=', $surveyName)
-                    ->first();
+            ->where('name', '=', $surveyName)
+            ->first();
 
         if ( ! $survey) {
             return;
         }
 
         $surveyInstance = DB::table('survey_instances')
-                            ->where('survey_id', '=', $survey->id)
-                            ->orderByDesc('year')
-                            ->first();
+            ->where('survey_id', '=', $survey->id)
+            ->orderByDesc('year')
+            ->first();
 
         if ( ! $surveyInstance) {
             return;
         }
 
-        if ($surveyName === self::HRA_SURVEY_NAME) {
+        if (self::HRA_SURVEY_NAME === $surveyName) {
             $variable = 'hraQuestions';
         } else {
             $variable = 'vitalsQuestions';
         }
 
         $this->$variable = DB::table('questions')
-                             ->join('survey_questions', 'survey_questions.question_id', '=', 'questions.id')
-                             ->where('survey_questions.survey_instance_id', '=', $surveyInstance->id)
-                             ->get();
+            ->join('survey_questions', 'survey_questions.question_id', '=', 'questions.id')
+            ->where('survey_questions.survey_instance_id', '=', $surveyInstance->id)
+            ->get();
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        if (Schema::hasColumn('questions', 'identifier')) {
+            Schema::table('questions', function (Blueprint $table) {
+                $table->removeColumn('identifier');
+            });
+        }
+    }
+
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        if ( ! Schema::hasColumn('questions', 'identifier')) {
+            Schema::table('questions', function (Blueprint $table) {
+                $table->string('identifier')->after('id')->nullable(true);
+            });
+        }
+
+        $this->setup(self::HRA_SURVEY_NAME);
+        $this->setup(self::VITALS_SURVEY_NAME);
+
+        //nothing to do, survey not found
+        if ( ! $this->hraQuestions || 0 === $this->hraQuestions->count()) {
+            return;
+        }
+
+        foreach ($this->hraQuestionsMap as $key => $value) {
+            $this->setIdentifierForQuestion(self::HRA_SURVEY_NAME, $key, $value['order'], $value['sub_order']);
+        }
+
+        foreach ($this->vitalsQuestionsMap as $key => $value) {
+            $this->setIdentifierForQuestion(self::VITALS_SURVEY_NAME, $key, $value['order'], $value['sub_order']);
+        }
     }
 
     private function getQuestionOfOrder($surveyName, $order, $subOrder = null)
     {
-        if ($surveyName === self::HRA_SURVEY_NAME) {
+        if (self::HRA_SURVEY_NAME === $surveyName) {
             $variable = 'hraQuestions';
         } else {
             $variable = 'vitalsQuestions';
         }
 
         return $this->$variable->where('order', '=', $order)
-                               ->when($subOrder, function ($q) use ($subOrder) {
-                                   return $q->where('sub_order', '=', $subOrder);
-                               })
-                               ->first();
+            ->when($subOrder, function ($q) use ($subOrder) {
+                return $q->where('sub_order', '=', $subOrder);
+            })
+            ->first();
     }
 
     private function setIdentifierForQuestion($surveyName, $identifier, $order, $subOrder = null)
@@ -186,7 +190,7 @@ class AddIdentifierFieldInQuestionsTable extends Migration
         }
 
         DB::table('questions')
-          ->where('id', '=', $question->id)
-          ->update(['identifier' => $identifier]);
+            ->where('id', '=', $question->id)
+            ->update(['identifier' => $identifier]);
     }
 }

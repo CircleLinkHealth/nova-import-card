@@ -22,10 +22,10 @@ class ChangeChargeablesTableNamespace extends Migration
                     \DB::table('chargeables')
                         ->where('chargeable_type', $type)
                         ->update(
-                           [
-                               'chargeable_type' => str_replace('CircleLinkHealth\Customer\Entities', 'App', $type),
-                           ]
-                       );
+                            [
+                                'chargeable_type' => str_replace('CircleLinkHealth\Customer\Entities', 'App', $type),
+                            ]
+                        );
                 }
             );
     }
@@ -44,10 +44,10 @@ class ChangeChargeablesTableNamespace extends Migration
                     \DB::table('chargeables')
                         ->where('chargeable_type', $type)
                         ->update(
-                           [
-                               'chargeable_type' => str_replace('App', 'CircleLinkHealth\Customer\Entities', $type),
-                           ]
-                       );
+                            [
+                                'chargeable_type' => str_replace('App', 'CircleLinkHealth\Customer\Entities', $type),
+                            ]
+                        );
                 }
             );
     }
