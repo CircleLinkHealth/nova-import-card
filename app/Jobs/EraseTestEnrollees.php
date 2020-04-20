@@ -39,9 +39,9 @@ class EraseTestEnrollees implements ShouldQueue
             ->get();
 
         foreach ($enrollees as $enrollee) {
-            $time =PageTimer::where('enrollee_id', $enrollee->id)
-                     ->get();
-            foreach($time as $entry){
+            $time = PageTimer::where('enrollee_id', $enrollee->id)
+                ->get();
+            foreach ($time as $entry) {
                 $entry->forceDelete();
             }
 

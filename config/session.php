@@ -4,8 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use Illuminate\Support\Str;
-
 $sessionDomain = env('SESSION_DOMAIN', null);
 
 $sessionDomain = str_replace('${HEROKU_APP_NAME}', getenv('HEROKU_APP_NAME'), $sessionDomain);
@@ -133,7 +131,7 @@ return [
 
     'cookie' => env(
         'SESSION_COOKIE',
-        Str::slug(env('APP_NAME', 'laravel'), '_').'_session'
+        'cpm_'.env('APP_ENV').'_laravel_session',
     ),
 
     /*
