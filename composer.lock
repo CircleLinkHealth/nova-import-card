@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6763cffd8c84229dc6832539921c6f8c",
+    "content-hash": "84300288f802eea00c683d45e23c4319",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -942,11 +942,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.5.1",
+            "version": "dev-CPM-2256-ca-improvements",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "2f19f9fda06766cb4e2585908604630ddd428491"
+                "reference": "919e15adf3198fae524fd9973da393a6248f5f9d"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -975,15 +975,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-27T17:56:09+00:00"
+            "time": "2020-04-19T23:56:19+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-CPM-2072_ca_panel_time_tracker",
+            "version": "dev-CPM-2256-add-other-note-on-enrollees-table",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "b7eb6c6048842a6fbe332f97788e2018429a53c6"
+                "reference": "28ffc744d0cd5c20ee76f196aca39e028d41c050"
             },
             "type": "laravel-module",
             "extra": {
@@ -1005,7 +1005,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-15T18:55:47+00:00"
+            "time": "2020-04-19T20:59:32+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1051,11 +1051,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.2.2",
+            "version": "dev-CPM-2256-ca-additions",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "9df8f9c1d1fcdc630855ac51122425461254d175"
+                "reference": "d72f5db55bcaa89c92608b620c0ff7e9d4786181"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1080,7 +1080,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-18T02:42:36+00:00"
+            "time": "2020-04-19T23:56:19+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -13382,20 +13382,23 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.18",
+            "version": "0.12.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "1ce27fe29c8660a27926127d350d53d80c4d4286"
+                "reference": "054f6d76b12ba9a6c13a5a8d5fcdf51219615f4d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/1ce27fe29c8660a27926127d350d53d80c4d4286",
-                "reference": "1ce27fe29c8660a27926127d350d53d80c4d4286",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/054f6d76b12ba9a6c13a5a8d5fcdf51219615f4d",
+                "reference": "054f6d76b12ba9a6c13a5a8d5fcdf51219615f4d",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1"
+            },
+            "conflict": {
+                "phpstan/phpstan-shim": "*"
             },
             "bin": [
                 "phpstan",
@@ -13417,7 +13420,7 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2020-03-22T16:51:47+00:00"
+            "time": "2020-04-19T20:35:10+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -15146,7 +15149,9 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/timetracking-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
