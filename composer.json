@@ -14,10 +14,6 @@
         },
         {
             "type": "git",
-            "url": "git@github.com:jamisonvalenta/Laravel-4-Generators.git"
-        },
-        {
-            "type": "git",
             "url": "git@github.com:subzero10/url-shortener.git"
         },
         {
@@ -110,10 +106,6 @@
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/nova-import-card.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/Laravel-4-Generators.git"
         },
         {
             "type": "vcs",
@@ -229,8 +221,7 @@
         "spatie/phpunit-watcher": "^1.8",
         "squizlabs/php_codesniffer": "*",
         "symfony/css-selector": "^4.0",
-        "symfony/dom-crawler": "^4.0",
-        "xethron/laravel-4-generators": "3.1.2"
+        "symfony/dom-crawler": "^4.0"
     },
     "autoload": {
         "classmap": [
