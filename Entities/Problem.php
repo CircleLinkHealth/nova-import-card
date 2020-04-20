@@ -37,7 +37,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null                                                                                             $patient_summaries_count
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection          $revisionHistory
  * @property int|null                                                                                             $revision_history_count
- *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Problem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Problem newQuery()
