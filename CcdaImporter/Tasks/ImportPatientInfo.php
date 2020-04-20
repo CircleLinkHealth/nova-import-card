@@ -226,9 +226,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
         }
 
         if ( ! $patientInfo->general_comment) {
-            $patientInfo->general_comment = $this->enrollee()
-                ? $this->enrollee()->other_note
-                : null;
+            $patientInfo->general_comment = $args['general_comment'] ?? null;
         }
 
         if ($patientInfo->isDirty()) {

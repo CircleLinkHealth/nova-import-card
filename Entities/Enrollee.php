@@ -508,11 +508,23 @@ class Enrollee extends BaseModel
         return (new StringManipulation())->formatPhoneNumberE164($this->other_phone);
     }
 
-    public function getPhonesAsString()
+    public function getPhonesAsString(Enrollee $compareAgainstEnrollee = null)
     {
         $phones = [];
         foreach ($this->phoneAttributes as $attribute) {
-            $phones[] = $this->{$attribute};
+            $attr = $this->$attribute;
+            if ($compareAgainstEnrollee){
+                if (in_array($attr, [
+                    $compareAgainstEnrollee->home_phone,
+                    $compareAgainstEnrollee->cell_phone,
+                    $compareAgainstEnrollee->other_phone,
+                ]))
+                {
+                    //if it matches, highlight it.
+                    $attr = "<span style='background-color: #26a69a; color: white; padding-left: 5px; padding-right: 5px; border-radius: 3px;'>{$attr}</span>";
+                }
+            }
+            $phones[] = trim($attr);
         }
 
         return collect($phones)->filter()->implode(', ');
@@ -642,11 +654,6 @@ class Enrollee extends BaseModel
                 ],
             ]
         );
-    }
-
-    public function scopeSearchAddresses($query, string $term)
-    {
-        return $query->mySQLSearch($this->addressAttributes, $term, 'BOOLEAN', false, true);
     }
 
     /**
@@ -797,133 +804,6 @@ class Enrollee extends BaseModel
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
-    }
-}
-
-    public function getPhonesE164AsString()
-    {
-        $phones = [];
-        foreach ($this->phoneAttributes as $attribute) {
-            $phones[] = $this->{$attribute . '_e164'};
-        }
-
-        return implode(', ', $phones);
-    }
-
-    public function getPhonesAsString(Enrollee $compareAgainstEnrollee = null)
-    {
-        $phones = [];
-        foreach ($this->phoneAttributes as $attribute) {
-            $attr = $this->$attribute;
-            if ($compareAgainstEnrollee){
-                if (in_array($attr, [
-                    $compareAgainstEnrollee->home_phone,
-                    $compareAgainstEnrollee->cell_phone,
-                    $compareAgainstEnrollee->other_phone,
-                ]))
-                {
-                    //if it matches, highlight it.
-                    $attr = "<span style='background-color: #26a69a; color: white; padding-left: 5px; padding-right: 5px; border-radius: 3px;'>{$attr}</span>";
-                }
-            }
-            $phones[] = trim($attr);
-        }
-
-        return collect($phones)->filter()->implode(', ');
-    }
-
-    public function getAddressesAsString()
-    {
-        $addresses = [];
-        foreach ($this->addressAttributes as $attribute) {
-            $addresses[] = trim($this->$attribute);
-        }
-
-        return collect($addresses)->filter()->implode(', ');
-    }
-
-    public function confirmedFamilyMembers()
-    {
-        return $this->belongsToMany(Enrollee::class, 'enrollee_family_members', 'enrollee_id',
-            'family_member_enrollee_id');
-    }
-
-    public function attachFamilyMembers($input)
-    {
-        if (empty($input)) {
-            return false;
-        }
-        if ( ! is_array($input)) {
-            $input = explode(',', $input);
-        }
-        foreach ($input as $id) {
-            //todo: try/change to syncWithoutDetaching
-            if ( ! $this->confirmedFamilyMembers()->where('id', $id)->exists()) {
-                $this->confirmedFamilyMembers()->attach($input);
-            }
-        }
-    }
-
-    /**
-     * Scope for patients in the system that might be the same patient (ie. duplicates)
-     *
-     * @param $query
-     * @param User $patient
-     * @param Ccda $ccda
-     *
-     * @return mixed
-     */
-    public function scopeDuplicates($query, User $patient, Ccda $ccda)
-    {
-        return $query->where(
-            function ($q) use ($ccda, $patient) {
-                $q
-                    ->where('medical_record_type', get_class($ccda))
-                    ->whereMedicalRecordId($ccda->id)
-                    ->where('user_id', '!=', $patient->id);
-            }
-        )->orWhere(
-            [
-                [
-                    'practice_id',
-                    '=',
-                    $patient->program_id,
-                ],
-                [
-                    'first_name',
-                    '=',
-                    $patient->first_name,
-                ],
-                [
-                    'last_name',
-                    '=',
-                    $patient->last_name,
-                ],
-                [
-                    'dob',
-                    '=',
-                    $patient->getBirthDate(),
-                ],
-            ]
-        )->orWhere(
-            [
-                [
-                    'practice_id',
-                    '=',
-                    $patient->program_id,
-                ],
-                [
-                    'mrn',
-                    '=',
-                    $patient->getMRN(),
-                ],
-            ]
-        );
-    }
-
-    public function ccda()
-    {
-        return $this->belongsTo(Ccda::class, 'medical_record_id');
     }
 }
 
