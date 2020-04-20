@@ -138,7 +138,7 @@
     "circlelinkhealth/ccda-parser-processor-php-module": "1.1",
     "circlelinkhealth/cerberus-gatekeeper-module": "3.0.6",
     "circlelinkhealth/clh-import-card-extended": "*",
-    "circlelinkhealth/core-module": "1.5.1",
+    "circlelinkhealth/core-module": "dev-CPM-2256-ca-improvements",
     "circlelinkhealth/cpm-migrations-module": "dev-CPM-2256-add-other-note-on-enrollees-table",
     "circlelinkhealth/customer-module": "2.2.5",
     "circlelinkhealth/eligibility-module": "dev-CPM-2256-ca-additions",
