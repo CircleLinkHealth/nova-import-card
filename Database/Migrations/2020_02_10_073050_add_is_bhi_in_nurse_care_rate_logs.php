@@ -53,20 +53,20 @@ class AddIsBhiInNurseCareRateLogs extends Migration
                 function (Illuminate\Support\Collection $list) {
                     $list->each(
                         function ($record) {
-                          $activityId = $record->activity_id;
-                          $activity = DB::table('lv_activities')->find($activityId);
-                          if ( ! $activity) {
-                              return;
-                          }
+                            $activityId = $record->activity_id;
+                            $activity = DB::table('lv_activities')->find($activityId);
+                            if ( ! $activity) {
+                                return;
+                            }
 
-                          DB::table('nurse_care_rate_logs')
-                              ->where('id', '=', $record->id)
-                              ->update(
+                            DB::table('nurse_care_rate_logs')
+                                ->where('id', '=', $record->id)
+                                ->update(
                                   [
                                       'is_behavioral' => $activity->is_behavioral,
                                   ]
                               );
-                      }
+                        }
                     );
                 }
             );
