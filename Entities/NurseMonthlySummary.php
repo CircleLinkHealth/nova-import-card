@@ -18,21 +18,21 @@ namespace CircleLinkHealth\Customer\Entities;
  * @property int|null            $no_of_successful_calls
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereAccruedAfterCcm($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereAccruedTowardsCcm($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereMonthYear($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereNoOfCalls($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereNoOfSuccessfulCalls($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereNurseId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereUpdatedAt($value)
+ * @method   static              \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereAccruedAfterCcm($value)
+ * @method   static              \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereAccruedTowardsCcm($value)
+ * @method   static              \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereCreatedAt($value)
+ * @method   static              \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereId($value)
+ * @method   static              \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereMonthYear($value)
+ * @method   static              \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereNoOfCalls($value)
+ * @method   static              \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereNoOfSuccessfulCalls($value)
+ * @method   static              \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereNurseId($value)
+ * @method   static              \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseMonthlySummary newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseMonthlySummary newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseMonthlySummary query()
- * @property int|null $revision_history_count
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseMonthlySummary newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseMonthlySummary newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseMonthlySummary query()
+ * @property int|null                                                                                    $revision_history_count
  */
 class NurseMonthlySummary extends \CircleLinkHealth\Core\Entities\BaseModel
 {

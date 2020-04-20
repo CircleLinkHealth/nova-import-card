@@ -17,20 +17,20 @@ use Illuminate\Database\Eloquent\Model;
  * @property string         $old_password
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory query()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereOldPassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereOlderPassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereUserId($value)
+ * @method   static         \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory newModelQuery()
+ * @method   static         \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory newQuery()
+ * @method   static         \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory query()
+ * @method   static         \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereCreatedAt($value)
+ * @method   static         \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereId($value)
+ * @method   static         \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereOldPassword($value)
+ * @method   static         \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereOlderPassword($value)
+ * @method   static         \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereUpdatedAt($value)
+ * @method   static         \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereUserId($value)
  * @mixin \Eloquent
  * @property int         $force_change
  * @property string|null $force_change_reason
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereForceChange($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereForceChangeReason($value)
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereForceChange($value)
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereForceChangeReason($value)
  */
 class UserPasswordsHistory extends Model
 {

@@ -24,26 +24,26 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
  * @property \Carbon\Carbon|null                                   $updated_at
  * @property \CircleLinkHealth\TimeTracking\Entities\Activity|null $activity
  * @property \CircleLinkHealth\Customer\Entities\Nurse             $nurse
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereActivityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereCcmType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereIncrement($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereNurseId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereUpdatedAt($value)
+ * @method   static                                                \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereActivityId($value)
+ * @method   static                                                \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereCcmType($value)
+ * @method   static                                                \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereCreatedAt($value)
+ * @method   static                                                \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereId($value)
+ * @method   static                                                \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereIncrement($value)
+ * @method   static                                                \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereNurseId($value)
+ * @method   static                                                \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog
  *     newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog query()
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog newQuery()
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog query()
  * @property int|null $revision_history_count
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog whereIsSuccessfulCall($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog wherePatientUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog whereTimeBefore($value)
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog whereIsSuccessfulCall($value)
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog wherePatientUserId($value)
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog whereTimeBefore($value)
  * @property int|null $chargeable_service_id
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog whereChargeableServiceId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog whereIsBehavioral($value)
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog whereChargeableServiceId($value)
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog whereIsBehavioral($value)
  */
 class NurseCareRateLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
