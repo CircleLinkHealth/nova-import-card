@@ -44,7 +44,6 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * @property string|null $ccm_status
  * @property string|null $patient_nurse_id
  * @property string|null $patient_nurse
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView newQuery()
@@ -76,18 +75,60 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereTimezone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereType($value)
  * @mixin \Eloquent
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereCcmStatus($value)
- *
  * @property int $asap
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereAsap($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView wherePatientNurse($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView wherePatientNurseId($value)
- *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection
  *     $revisionHistory
  * @property int|null $revision_history_count
+ * @property int $eligibility_job_id
+ * @property string|null $provider
+ * @property string|null $primary_insurance
+ * @property string|null $secondary_insurance
+ * @property string|null $tertiary_insurance
+ * @property string|null $last_encounter
+ * @property string|null $home_phone
+ * @property string|null $cell_phone
+ * @property string|null $dob
+ * @property string|null $lang
+ * @property string|null $mrn
+ * @property string|null $first_name
+ * @property string|null $last_name
+ * @property string|null $address
+ * @property string|null $address_2
+ * @property string|null $city
+ * @property string|null $state
+ * @property string|null $zip
+ * @property string|null $primary_phone
+ * @property string|null $other_phone
+ * @property string|null $email
+ * @property string|null $medical_record_type
+ * @property string|null $medical_record_id
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereAddress2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereCellPhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereCity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereDob($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereEligibilityJobId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereHomePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereLang($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereLastEncounter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereLastName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereMedicalRecordId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereMedicalRecordType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereMrn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereOtherPhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView wherePrimaryInsurance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView wherePrimaryPhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereProvider($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereSecondaryInsurance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereState($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereTertiaryInsurance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereZip($value)
  */
 class EligiblePatientView extends SqlViewModel
 {
