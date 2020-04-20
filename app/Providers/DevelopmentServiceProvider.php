@@ -23,7 +23,6 @@ class DevelopmentServiceProvider extends ServiceProvider implements DeferrablePr
         return [
             \Orangehill\Iseed\IseedServiceProvider::class,
             \Way\Generators\GeneratorsServiceProvider::class,
-            \Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
             \Laravel\Dusk\DuskServiceProvider::class,
             \JKocik\Laravel\Profiler\ServiceProvider::class,
         ];
@@ -36,7 +35,6 @@ class DevelopmentServiceProvider extends ServiceProvider implements DeferrablePr
     {
         $this->app->register(\Orangehill\Iseed\IseedServiceProvider::class);
         $this->app->register(\Way\Generators\GeneratorsServiceProvider::class);
-        $this->app->register(\Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
         $this->app->register(\Laravel\Dusk\DuskServiceProvider::class);
         $this->app->register(\JKocik\Laravel\Profiler\ServiceProvider::class);
     }
