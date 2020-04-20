@@ -20,25 +20,21 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection   $cpmInstructions
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                 $patient
  * @property \CircleLinkHealth\SharedModels\Entities\CpmLifestyleUser[]|\Illuminate\Database\Eloquent\Collection $users
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereCareItemId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereUpdatedAt($value)
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereCareItemId($value)
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereCreatedAt($value)
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereId($value)
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereName($value)
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle query()
- *
- * @property int|null $care_plan_templates_count
- * @property int|null $cpm_instructions_count
- * @property int|null $patient_count
- * @property int|null $revision_history_count
- * @property int|null $users_count
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle query()
+ * @property int|null                                                                                    $care_plan_templates_count
+ * @property int|null                                                                                    $cpm_instructions_count
+ * @property int|null                                                                                    $patient_count
+ * @property int|null                                                                                    $revision_history_count
+ * @property int|null                                                                                    $users_count
  */
 class CpmLifestyle extends \CircleLinkHealth\Core\Entities\BaseModel
 {

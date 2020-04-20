@@ -17,24 +17,21 @@ namespace CircleLinkHealth\SharedModels\Entities;
  * @property \Carbon\Carbon                                         $updated_at
  * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction $instruction
  * @mixin \Eloquent
- *
  * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection $cpmInstructions
  * @property \CircleLinkHealth\SharedModels\Entities\CpmProblem                                                $problems
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection       $revisionHistory
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser whereCpmInstructionId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser whereCpmProblemId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser wherePatientId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser whereUpdatedAt($value)
- *
- * @property \CircleLinkHealth\SharedModels\Entities\CpmProblem $problem
- * @property int|null                                           $cpm_instructions_count
- * @property int|null                                           $revision_history_count
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser newModelQuery()
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser newQuery()
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser query()
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser whereCpmInstructionId($value)
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser whereCpmProblemId($value)
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser whereCreatedAt($value)
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser whereId($value)
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser wherePatientId($value)
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser whereUpdatedAt($value)
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmProblem                                                $problem
+ * @property int|null                                                                                          $cpm_instructions_count
+ * @property int|null                                                                                          $revision_history_count
  */
 class CpmProblemUser extends \CircleLinkHealth\Core\Entities\BaseModel
 {
