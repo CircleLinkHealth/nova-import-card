@@ -11,24 +11,25 @@ use Illuminate\Database\Eloquent\Model as Eloquent;
 
 /**
  * Revision.
- * 
+ *
  * Base model to allow for revision history on
  * any model that extends this model
- * 
+ *
  * (c) Venture Craft <http://www.venturecraft.com.au>
  *
- * @property int $id
- * @property string $revisionable_type
- * @property int $revisionable_id
- * @property int|null $user_id
- * @property string $key
- * @property string|null $old_value
- * @property string|null $new_value
- * @property string|null $ip
- * @property int $is_phi
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $revisionable
+ * @property int                                           $id
+ * @property string                                        $revisionable_type
+ * @property int                                           $revisionable_id
+ * @property int|null                                      $user_id
+ * @property string                                        $key
+ * @property string|null                                   $old_value
+ * @property string|null                                   $new_value
+ * @property string|null                                   $ip
+ * @property int                                           $is_phi
+ * @property \Illuminate\Support\Carbon|null               $created_at
+ * @property \Illuminate\Support\Carbon|null               $updated_at
+ * @property \Eloquent|\Illuminate\Database\Eloquent\Model $revisionable
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Revisionable\Revision query()
@@ -58,9 +59,6 @@ class Revision extends Eloquent
      */
     protected $revisionFormattedFields = [];
 
-    /**
-     * @param array $attributes
-     */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
@@ -255,7 +253,7 @@ class Revision extends Eloquent
 
                     // Now we can find out the namespace of of related model
                     if ( ! method_exists($main_model, $related_model)) {
-                        $related_model =  Illuminate\Support\Str::camel($related_model); // for cases like published_status_id
+                        $related_model = Illuminate\Support\Str::camel($related_model); // for cases like published_status_id
                         if ( ! method_exists($main_model, $related_model)) {
                             throw new \Exception('Relation '.$related_model.' does not exist for '.get_class($main_model));
                         }

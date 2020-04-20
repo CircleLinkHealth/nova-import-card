@@ -11,7 +11,7 @@ use Illuminate\Support\ServiceProvider;
 class RevisionableServiceProvider extends ServiceProvider
 {
     protected $defer = true;
-    
+
     /**
      * Bootstrap the application services.
      */
@@ -19,12 +19,30 @@ class RevisionableServiceProvider extends ServiceProvider
     {
         $this->registerConfig();
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
-    
+
         $this->publishes([
             __DIR__.'/../Database/Migrations/' => database_path('migrations'),
         ], 'migrations');
     }
-    
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return string[]
+     */
+    public function provides()
+    {
+        return [
+        ];
+    }
+
+    /**
+     * Register the application services.
+     */
+    public function register()
+    {
+    }
+
     /**
      * Register config.
      *
@@ -42,25 +60,5 @@ class RevisionableServiceProvider extends ServiceProvider
             __DIR__.'/../Config/revisionable.php',
             'revisionable'
         );
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return string[]
-     */
-    public function provides()
-    {
-        return [
-        
-        ];
-    }
-
-    /**
-     * Register the application services.
-     */
-    public function register()
-    {
-        //
     }
 }

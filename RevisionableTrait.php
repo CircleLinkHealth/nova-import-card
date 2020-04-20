@@ -240,7 +240,7 @@ trait RevisionableTrait
                 'created_at'        => now(),
                 'updated_at'        => now(),
             ];
-            
+
             StoreRevisions::dispatch($revision);
         }
     }
@@ -265,7 +265,7 @@ trait RevisionableTrait
                 'created_at'        => now(),
                 'updated_at'        => now(),
             ];
-            
+
             StoreRevisions::dispatch($revision);
         }
     }
