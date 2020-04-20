@@ -831,7 +831,8 @@ if ( ! function_exists('authUserCanSendPatientEmail')) {
 
         return \Cache::remember($key, 2, function () use ($key) {
             return AppConfig::where('config_key', $key)
-                ->where('config_value', auth()->user()->id)->exists();
+                ->whereIn('config_value', [auth()->user()->id, 'all'])
+                ->exists();
         });
     }
 }
