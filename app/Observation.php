@@ -84,7 +84,7 @@ class Observation extends BaseModel
 
     public function comment()
     {
-        return $this->belongsTo('App\Comment');
+        return $this->belongsTo(\App\Comment::class);
     }
 
     public function getAlertLevelAttribute()

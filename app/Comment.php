@@ -85,7 +85,7 @@ class Comment extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function observation()
     {
-        return $this->belongsTo('App\Observation', 'comment_ID');
+        return $this->belongsTo(\App\Observation::class, 'comment_ID');
     }
 
     public function save(array $params = [])

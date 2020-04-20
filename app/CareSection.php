@@ -69,7 +69,7 @@ class CareSection extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function carePlanItems()
     {
-        return $this->hasMany('App\CarePlanItem', 'section_id');
+        return $this->hasMany(\App\CarePlanItem::class, 'section_id');
     }
 
     public function carePlans()

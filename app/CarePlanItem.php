@@ -59,16 +59,16 @@ class CarePlanItem extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function careSection()
     {
-        return $this->belongsTo('App\CareSection', 'section_id', 'id');
+        return $this->belongsTo(\App\CareSection::class, 'section_id', 'id');
     }
 
     public function children()
     {
-        return $this->hasMany('App\CarePlanItem', 'parent_id');
+        return $this->hasMany(\App\CarePlanItem::class, 'parent_id');
     }
 
     public function parents()
     {
-        return $this->belongsTo('App\CarePlanItem', 'parent_id');
+        return $this->belongsTo(\App\CarePlanItem::class, 'parent_id');
     }
 }

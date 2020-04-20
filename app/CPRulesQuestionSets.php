@@ -65,11 +65,11 @@ class CPRulesQuestionSets extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function answer()
     {
-        return $this->hasOne('App\CPRulesAnswers', 'qid', 'qid');
+        return $this->hasOne(\App\CPRulesAnswers::class, 'qid', 'qid');
     }
 
     public function question()
     {
-        return $this->hasOne('App\CPRulesQuestions', 'qid', 'qid');
+        return $this->hasOne(\App\CPRulesQuestions::class, 'qid', 'qid');
     }
 }

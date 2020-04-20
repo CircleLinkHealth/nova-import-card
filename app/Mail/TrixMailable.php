@@ -56,7 +56,7 @@ class TrixMailable extends Mailable
         foreach ($this->mailAttachments as $attachment) {
             $media[] = Media::where('collection_name', 'patient-email-attachments')
                 ->where('model_id', $this->patient->id)
-                ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
+                ->whereIn('model_type', [\App\User::class, 'CircleLinkHealth\Customer\Entities\User'])
                 ->where('mime_type', 'like', '%'.'image'.'%')
                 ->find($attachment['media_id']);
         }

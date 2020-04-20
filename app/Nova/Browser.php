@@ -18,7 +18,7 @@ class Browser extends Resource
      *
      * @var string
      */
-    public static $model = 'App\Browser';
+    public static $model = \App\Browser::class;
 
     /**
      * The columns that should be searched.

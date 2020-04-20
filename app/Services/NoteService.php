@@ -309,7 +309,7 @@ class NoteService
                         ->where('model_id', $n->notifiable_id)
                         ->whereIn(
                             'model_type',
-                            ['App\User', 'CircleLinkHealth\Customer\Entities\User']
+                            [\App\User::class, 'CircleLinkHealth\Customer\Entities\User']
                         )
                         ->find($attachment['media_id']);
 

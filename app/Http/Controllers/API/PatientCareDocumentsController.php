@@ -56,7 +56,7 @@ class PatientCareDocumentsController extends Controller
 
         $files = Media::where('collection_name', 'patient-care-documents')
             ->where('model_id', $patientId)
-            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
+            ->whereIn('model_type', [\App\User::class, 'CircleLinkHealth\Customer\Entities\User'])
             ->get()
             ->sortByDesc('created_at')
             ->mapToGroups(function ($item, $key) {
@@ -181,7 +181,7 @@ class PatientCareDocumentsController extends Controller
     {
         return Media::where('collection_name', 'patient-care-documents')
             ->where('model_id', $modelId)
-            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
+            ->whereIn('model_type', [\App\User::class, 'CircleLinkHealth\Customer\Entities\User'])
             ->find($mediaId);
     }
 
