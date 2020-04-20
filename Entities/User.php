@@ -65,6 +65,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
@@ -1254,7 +1255,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
 
         $fullName = $this->getFullName();
-        $doctor   = starts_with(strtolower($fullName), 'dr.')
+        $doctor   = Str::startsWith(strtolower($fullName), 'dr.')
             ? ''
             : 'Dr. ';
 

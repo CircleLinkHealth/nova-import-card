@@ -17,6 +17,7 @@ use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\HasImportingHooks;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Laravel\Nova\Actions\Actionable;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
@@ -301,7 +302,7 @@ class Practice extends BaseModel implements HasMedia
             $isSoftwareOnly = 'Software-Only' == $chargeableServiceCode;
 
             //for AWV Codes
-            if (starts_with($chargeableServiceCode, 'AWV')) {
+            if (Str::startsWith($chargeableServiceCode, 'AWV')) {
                 $billable = User::ofType('participant')
                                 ->ofPractice($this->id)
                                 ->whereHas(
