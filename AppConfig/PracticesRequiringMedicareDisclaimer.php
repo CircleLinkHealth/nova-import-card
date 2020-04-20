@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 11/20/19
- * Time: 11:46 AM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace CircleLinkHealth\Customer\AppConfig;
-
 
 use CircleLinkHealth\Core\Entities\AppConfig;
 
@@ -19,7 +16,7 @@ class PracticesRequiringMedicareDisclaimer
      * See ticket https://circlelinkhealth.atlassian.net/browse/CPM-1578
      */
     const PRACTICE_REQUIRES_MEDICARE_DISCLAIMER_NOVA_KEY = 'practice_requires_medicare_disclaimer';
-    
+
     /**
      * Returns db field "name" of Practices that exclusively has requested us to show a Medicare disclaimer on their careplans.
      *
@@ -31,15 +28,15 @@ class PracticesRequiringMedicareDisclaimer
     {
         return \Cache::remember(self::PRACTICE_REQUIRES_MEDICARE_DISCLAIMER_NOVA_KEY, 2, function () {
             return AppConfig::where('config_key', '=', self::PRACTICE_REQUIRES_MEDICARE_DISCLAIMER_NOVA_KEY)
-                            ->get()
-                            ->map(
-                                function ($practiceName) {
+                ->get()
+                ->map(
+                    function ($practiceName) {
                                     return $practiceName->config_value;
                                 }
-                            )->all();
+                )->all();
         });
     }
-    
+
     public static function shouldShowMedicareDisclaimer($practiceName)
     {
         return in_array($practiceName, self::names());

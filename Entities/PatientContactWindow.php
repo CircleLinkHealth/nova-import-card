@@ -21,6 +21,7 @@ use CircleLinkHealth\Customer\Events\PatientContactWindowUpdatedEvent;
  * @property \Carbon\Carbon|null                         $created_at
  * @property \Carbon\Carbon|null                         $updated_at
  * @property \CircleLinkHealth\Customer\Entities\Patient $patient_info
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientContactWindow whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientContactWindow whereDayOfWeek($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientContactWindow whereId($value)
@@ -29,11 +30,14 @@ use CircleLinkHealth\Customer\Events\PatientContactWindowUpdatedEvent;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientContactWindow whereWindowTimeEnd($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientContactWindow whereWindowTimeStart($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientContactWindow newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientContactWindow newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientContactWindow query()
- * @property-read int|null $revision_history_count
+ *
+ * @property int|null $revision_history_count
  */
 class PatientContactWindow extends BaseModel
 {
@@ -315,10 +319,8 @@ class PatientContactWindow extends BaseModel
      * Delete all current call windows. Then add the ones given.
      * Returns an array of contact windows created.
      *
-     * @param Patient $info
-     * @param array   $days
-     * @param string  $windowStart
-     * @param string  $windowEnd
+     * @param string $windowStart
+     * @param string $windowEnd
      *
      * @return array $created
      */

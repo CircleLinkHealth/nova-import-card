@@ -13,7 +13,7 @@ use Laravel\Scout\Searchable;
 
 /**
  * CircleLinkHealth\Customer\Entities\Location.
- * 
+ *
  * CircleLinkHealth\Customer\Entities\Location.
  *
  * @property int                                                                                             $id
@@ -43,6 +43,7 @@ use Laravel\Scout\Searchable;
  * @property \CircleLinkHealth\Customer\Entities\Practice                                                    $program
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection             $providers
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection             $user
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Location onlyTrashed()
  * @method static bool|null restore()
@@ -67,25 +68,28 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Query\Builder|\App\Location withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Location withoutTrashed()
  * @mixin \Eloquent
+ *
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]                                  $revisionHistory
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection                     $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location query()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location whereClinicalEscalationPhone($value)
- * @property-read int|null $clinical_emergency_contact_count
- * @property-read int|null $emr_direct_count
- * @property-read int|null $notifications_count
- * @property-read int|null $providers_count
- * @property-read int|null $revision_history_count
- * @property-read int|null $user_count
+ *
+ * @property int|null $clinical_emergency_contact_count
+ * @property int|null $emr_direct_count
+ * @property int|null $notifications_count
+ * @property int|null $providers_count
+ * @property int|null $revision_history_count
+ * @property int|null $user_count
  */
 class Location extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use HasEmrDirectAddress;
     use Notifiable;
-    use SoftDeletes;
     use Searchable;
+    use SoftDeletes;
 
     //Aprima's constant location id.
     const UPG_PARENT_LOCATION_ID = 26;
@@ -111,12 +115,12 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
         'ehr_login',
         'ehr_password',
     ];
-    
+
     protected $hidden = [
         'ehr_login',
         'ehr_password',
     ];
-    
+
     public function clinicalEmergencyContact()
     {
         return $this->morphToMany(User::class, 'contactable', 'contacts')
@@ -176,6 +180,16 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
         return Location::where('parent_id', '=', $id)->pluck('name', 'id')->all();
     }
 
+    /**
+     * Get the value used to index the model.
+     *
+     * @return mixed
+     */
+    public function getScoutKey()
+    {
+        return $this->id;
+    }
+
     public function isNotSaas()
     {
         return ! $this->isSaas();
@@ -228,6 +242,16 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
         return 'CircleLink Health';
     }
 
+    /**
+     * Get Scout index name for the model.
+     *
+     * @return string
+     */
+    public function searchableAs()
+    {
+        return 'locations_index';
+    }
+
     public static function setPrimary(Location $loc)
     {
         //set all other practices to 0
@@ -244,21 +268,6 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
         return $loc;
     }
 
-    public function user()
-    {
-        return $this->belongsToMany(User::class);
-    }
-
-    /**
-     * Get Scout index name for the model.
-     *
-     * @return string
-     */
-    public function searchableAs()
-    {
-        return 'locations_index';
-    }
-
     /**
      * Get the indexable data array for the model.
      *
@@ -267,17 +276,12 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
     public function toSearchableArray()
     {
         return [
-            'name'         => $this->name,
+            'name' => $this->name,
         ];
     }
 
-    /**
-     * Get the value used to index the model.
-     *
-     * @return mixed
-     */
-    public function getScoutKey()
+    public function user()
     {
-        return $this->id;
+        return $this->belongsToMany(User::class);
     }
 }

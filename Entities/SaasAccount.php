@@ -14,17 +14,18 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 /**
  * CircleLinkHealth\Customer\Entities\SaasAccount.
  *
- * @property int                                                                                     $id
- * @property string                                                                                  $name
- * @property string                                                                                  $slug
- * @property string|null                                                                             $logo_path
- * @property \Illuminate\Support\Carbon|null                                                         $created_at
- * @property \Illuminate\Support\Carbon|null                                                         $updated_at
- * @property string|null                                                                             $deleted_at
- * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection    $media
- * @property \CircleLinkHealth\Customer\Entities\Practice[]|\Illuminate\Database\Eloquent\Collection $practices
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]          $revisionHistory
- * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection     $users
+ * @property int                                                                                         $id
+ * @property string                                                                                      $name
+ * @property string                                                                                      $slug
+ * @property string|null                                                                                 $logo_path
+ * @property \Illuminate\Support\Carbon|null                                                             $created_at
+ * @property \Illuminate\Support\Carbon|null                                                             $updated_at
+ * @property string|null                                                                                 $deleted_at
+ * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection        $media
+ * @property \CircleLinkHealth\Customer\Entities\Practice[]|\Illuminate\Database\Eloquent\Collection     $practices
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection         $users
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount newQuery()
@@ -41,10 +42,11 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount withoutTrashed()
  * @mixin \Eloquent
- * @property-read int|null $media_count
- * @property-read int|null $practices_count
- * @property-read int|null $revision_history_count
- * @property-read int|null $users_count
+ *
+ * @property int|null $media_count
+ * @property int|null $practices_count
+ * @property int|null $revision_history_count
+ * @property int|null $users_count
  */
 class SaasAccount extends BaseModel implements HasMedia
 {

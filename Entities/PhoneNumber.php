@@ -22,6 +22,7 @@ use CircleLinkHealth\Core\StringManipulation;
  * @property string                                   $updated_at
  * @property string|null                              $deleted_at
  * @property \CircleLinkHealth\Customer\Entities\User $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereExtension($value)
@@ -33,12 +34,15 @@ use CircleLinkHealth\Core\StringManipulation;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereUserId($value)
  * @mixin \Eloquent
- * @property string                                                                         $number_with_dashes
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
+ *
+ * @property string                                                                                      $number_with_dashes
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PhoneNumber newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PhoneNumber newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PhoneNumber query()
- * @property-read int|null $revision_history_count
+ *
+ * @property int|null $revision_history_count
  */
 class PhoneNumber extends \CircleLinkHealth\Core\Entities\BaseModel
 {
@@ -46,12 +50,12 @@ class PhoneNumber extends \CircleLinkHealth\Core\Entities\BaseModel
     const HOME   = 'home';
     const MOBILE = 'mobile';
     const WORK   = 'work';
-    
+
     public $phi = [
         'number',
         'extension',
     ];
-    
+
     /**
      * The attributes that are mass assignable.
      *

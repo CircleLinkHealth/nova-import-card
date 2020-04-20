@@ -26,38 +26,39 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 /**
  * CircleLinkHealth\Customer\Entities\Practice.
  *
- * @property int $id
- * @property int|null $ehr_id
- * @property int|null $user_id
- * @property string $name
- * @property string|null $display_name
- * @property int $active
- * @property float $clh_pppm
- * @property int $term_days
- * @property string|null $federal_tax_id
- * @property int|null $same_ehr_login
- * @property int|null $same_clinical_contact
- * @property int $auto_approve_careplans
- * @property int $send_alerts
- * @property string|null $weekly_report_recipients
- * @property string $invoice_recipients
- * @property string $bill_to_name
- * @property string|null $external_id
- * @property string $outgoing_phone_number
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property string|null $deleted_at
- * @property string|null $sms_marketing_number
+ * @property int                                                                                                 $id
+ * @property int|null                                                                                            $ehr_id
+ * @property int|null                                                                                            $user_id
+ * @property string                                                                                              $name
+ * @property string|null                                                                                         $display_name
+ * @property int                                                                                                 $active
+ * @property float                                                                                               $clh_pppm
+ * @property int                                                                                                 $term_days
+ * @property string|null                                                                                         $federal_tax_id
+ * @property int|null                                                                                            $same_ehr_login
+ * @property int|null                                                                                            $same_clinical_contact
+ * @property int                                                                                                 $auto_approve_careplans
+ * @property int                                                                                                 $send_alerts
+ * @property string|null                                                                                         $weekly_report_recipients
+ * @property string                                                                                              $invoice_recipients
+ * @property string                                                                                              $bill_to_name
+ * @property string|null                                                                                         $external_id
+ * @property string                                                                                              $outgoing_phone_number
+ * @property \Carbon\Carbon                                                                                      $created_at
+ * @property \Carbon\Carbon                                                                                      $updated_at
+ * @property string|null                                                                                         $deleted_at
+ * @property string|null                                                                                         $sms_marketing_number
  * @property \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection $careplan
- * @property \CircleLinkHealth\Customer\Entities\Ehr|null $ehr
- * @property mixed $formatted_name
- * @property mixed $primary_location_id
- * @property mixed $subdomain
- * @property \CircleLinkHealth\Customer\Entities\User|null $lead
- * @property \CircleLinkHealth\Customer\Entities\Location[]|\Illuminate\Database\Eloquent\Collection $locations
- * @property \App\CPRulesPCP[]|\Illuminate\Database\Eloquent\Collection $pcp
- * @property \CircleLinkHealth\Customer\Entities\Settings[]|\Illuminate\Database\Eloquent\Collection $settings
- * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $users
+ * @property \CircleLinkHealth\Customer\Entities\Ehr|null                                                        $ehr
+ * @property mixed                                                                                               $formatted_name
+ * @property mixed                                                                                               $primary_location_id
+ * @property mixed                                                                                               $subdomain
+ * @property \CircleLinkHealth\Customer\Entities\User|null                                                       $lead
+ * @property \CircleLinkHealth\Customer\Entities\Location[]|\Illuminate\Database\Eloquent\Collection             $locations
+ * @property \App\CPRulesPCP[]|\Illuminate\Database\Eloquent\Collection                                          $pcp
+ * @property \CircleLinkHealth\Customer\Entities\Settings[]|\Illuminate\Database\Eloquent\Collection             $settings
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                 $users
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|Practice active()
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|Practice onlyTrashed()
@@ -87,18 +88,20 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Query\Builder|Practice withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Practice withoutTrashed()
  * @mixin \Eloquent
- * @property int|null $saas_account_id
+ *
+ * @property int|null                                                          $saas_account_id
  * @property \App\CareAmbassadorLog[]|\Illuminate\Database\Eloquent\Collection $careAmbassadorLogs
  * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection
  *     $chargeableServices
- * @property \App\EnrolleeCustomFilter[]|\Illuminate\Database\Eloquent\Collection $enrolleeCustomFilters
- * @property \App\PracticeEnrollmentTips $enrollmentTips
- * @property string $number_with_dashes
+ * @property \App\EnrolleeCustomFilter[]|\Illuminate\Database\Eloquent\Collection                 $enrolleeCustomFilters
+ * @property \App\PracticeEnrollmentTips                                                          $enrollmentTips
+ * @property string                                                                               $number_with_dashes
  * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection $media
  * @property \Illuminate\Notifications\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection
  *     $notifications
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
- * @property \CircleLinkHealth\Customer\Entities\SaasAccount|null $saasAccount
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ * @property \CircleLinkHealth\Customer\Entities\SaasAccount|null                                        $saasAccount
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice activeBillable()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
  *     authUserCanAccess($softwareOnly = false)
@@ -112,32 +115,36 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice query()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
  *     whereSaasAccountId($value)
- * @property-read int|null $care_ambassador_logs_count
- * @property-read int|null $careplan_count
- * @property-read int|null $chargeable_services_count
- * @property-read int|null $enrollee_custom_filters_count
- * @property-read int|null $locations_count
- * @property-read int|null $media_count
- * @property-read int|null $notifications_count
- * @property-read int|null $pcp_count
- * @property-read int|null $revision_history_count
- * @property-read int|null $settings_count
- * @property-read int|null $users_count
- * @property int $is_demo
+ *
+ * @property int|null $care_ambassador_logs_count
+ * @property int|null $careplan_count
+ * @property int|null $chargeable_services_count
+ * @property int|null $enrollee_custom_filters_count
+ * @property int|null $locations_count
+ * @property int|null $media_count
+ * @property int|null $notifications_count
+ * @property int|null $pcp_count
+ * @property int|null $revision_history_count
+ * @property int|null $settings_count
+ * @property int|null $users_count
+ * @property int      $is_demo
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
  *     whereIsDemo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice opsDashboardQuery(\Carbon\Carbon $startOfMonth, \Carbon\Carbon $revisionsFromDate)
- * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Nova\Actions\ActionEvent[] $actions
- * @property-read int|null $actions_count
- * @property \Illuminate\Support\Collection|null $importing_hooks
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Nova\Actions\ActionEvent[] $actions
+ * @property int|null                                                                     $actions_count
+ * @property \Illuminate\Support\Collection|null                                          $importing_hooks
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice whereImportingHooks($value)
  */
 class Practice extends BaseModel implements HasMedia
 {
     use Actionable;
     use HasChargeableServices;
-    use HasMediaTrait;
     use HasImportingHooks;
+    use HasMediaTrait;
     use HasSettings;
     use Notifiable;
     use SaasAccountable;
@@ -145,9 +152,9 @@ class Practice extends BaseModel implements HasMedia
     use SoftDeletes;
 
     protected $casts = [
-        'importing_hooks' => 'collection'
+        'importing_hooks' => 'collection',
     ];
-    
+
     protected $fillable = [
         'importing_hooks',
         'saas_account_id',
@@ -214,8 +221,8 @@ class Practice extends BaseModel implements HasMedia
                 $q->where('program_id', $this->id);
             }
         )
-                           ->whereNotNull('ccm_status')
-                           ->get();
+            ->whereNotNull('ccm_status')
+            ->get();
 
         $data = [
             'withdrawn' => 0,
@@ -266,8 +273,8 @@ class Practice extends BaseModel implements HasMedia
         }
 
         return [
-            'line1' => $primary->address_line_1 . ' ' . $primary->address_line_2,
-            'line2' => $primary->city . ', ' . $primary->state . ' ' . $primary->postal_code,
+            'line1' => $primary->address_line_1.' '.$primary->address_line_2,
+            'line2' => $primary->city.', '.$primary->state.' '.$primary->postal_code,
         ];
     }
 
@@ -277,16 +284,16 @@ class Practice extends BaseModel implements HasMedia
 
         return User
             ::where('user_status', 1)
-            ->whereProgramId($this->id)
-            ->whereHas(
-                'roles',
-                function ($q) use (
+                ->whereProgramId($this->id)
+                ->whereHas(
+                    'roles',
+                    function ($q) use (
                     $role
                 ) {
                     $q->whereName($role);
                 }
-            )
-            ->count();
+                )
+                ->count();
     }
 
     public function getFormattedNameAttribute()
@@ -306,49 +313,49 @@ class Practice extends BaseModel implements HasMedia
             //for AWV Codes
             if (Str::startsWith($chargeableServiceCode, 'AWV')) {
                 $billable = User::ofType('participant')
-                                ->ofPractice($this->id)
-                                ->whereHas(
-                                    'patientAWVSummaries',
-                                    function ($query) use ($chargeableServiceCode, $month) {
+                    ->ofPractice($this->id)
+                    ->whereHas(
+                        'patientAWVSummaries',
+                        function ($query) use ($chargeableServiceCode, $month) {
                                         $query->where('is_billable', true)
-                                              ->where(
-                                                  'billable_at',
-                                                  '>=',
-                                                  $month->copy()->startOfMonth()->startOfDay()
-                                              )
-                                              ->where('billable_at', '<=', $month->copy()->endOfMonth()->endOfDay())
-                                              ->when(
-                                                  $chargeableServiceCode == 'AWV: G0438',
-                                                  function ($query) {
+                                            ->where(
+                                                'billable_at',
+                                                '>=',
+                                                $month->copy()->startOfMonth()->startOfDay()
+                                            )
+                                            ->where('billable_at', '<=', $month->copy()->endOfMonth()->endOfDay())
+                                            ->when(
+                                                'AWV: G0438' == $chargeableServiceCode,
+                                                function ($query) {
                                                       $query->where('is_initial_visit', 1);
                                                   }
-                                              )
-                                              ->when(
-                                                  $chargeableServiceCode == 'AWV: G0439',
-                                                  function ($query) {
+                                            )
+                                            ->when(
+                                                'AWV: G0439' == $chargeableServiceCode,
+                                                function ($query) {
                                                       $query->where('is_initial_visit', 0);
                                                   }
-                                              );
+                                            );
                                     }
-                                )
-                                ->count() ?? 0;
+                    )
+                    ->count() ?? 0;
             } else {
                 $billable = User::ofType('participant')
-                                ->ofPractice($this->id)
-                                ->whereHas(
-                                    'patientSummaries',
-                                    function ($query) use ($chargeableServiceId, $isSoftwareOnly, $month) {
+                    ->ofPractice($this->id)
+                    ->whereHas(
+                        'patientSummaries',
+                        function ($query) use ($chargeableServiceId, $isSoftwareOnly, $month) {
                                         $query->whereHas(
                                             'chargeableServices',
                                             function ($query) use ($chargeableServiceId) {
                                                 $query->where('id', $chargeableServiceId);
                                             }
                                         )
-                                              ->where('month_year', $month->toDateString())
-                                              ->where('approved', '=', true)
-                                              ->when(
-                                                  ! $isSoftwareOnly,
-                                                  function ($q) {
+                                            ->where('month_year', $month->toDateString())
+                                            ->where('approved', '=', true)
+                                            ->when(
+                                                ! $isSoftwareOnly,
+                                                function ($q) {
                                                       $q->whereDoesntHave(
                                                           'chargeableServices',
                                                           function ($query) {
@@ -356,22 +363,22 @@ class Practice extends BaseModel implements HasMedia
                                                           }
                                                       );
                                                   }
-                                              );
+                                            );
                                     }
-                                )
-                                ->count() ?? 0;
+                    )
+                    ->count() ?? 0;
             }
         } else {
             $billable = User::ofType('participant')
-                            ->ofPractice($this->id)
-                            ->whereHas(
-                                'patientSummaries',
-                                function ($query) use ($month) {
+                ->ofPractice($this->id)
+                ->whereHas(
+                    'patientSummaries',
+                    function ($query) use ($month) {
                                     $query->where('month_year', $month->toDateString())
-                                          ->where('approved', '=', true);
+                                        ->where('approved', '=', true);
                                 }
-                            )
-                            ->count() ?? 0;
+                )
+                ->count() ?? 0;
         }
 
         return [
@@ -383,7 +390,7 @@ class Practice extends BaseModel implements HasMedia
             'invoice_num'    => incrementInvoiceNo(),
             'invoice_date'   => Carbon::today()->toDateString(),
             'due_by'         => Carbon::today()->addDays($this->term_days)->toDateString(),
-            'invoice_amount' => number_format(round((float)$this->clh_pppm * $billable, 2), 2),
+            'invoice_amount' => number_format(round((float) $this->clh_pppm * $billable, 2), 2),
             'billable'       => $billable,
         ];
     }
@@ -520,30 +527,7 @@ class Practice extends BaseModel implements HasMedia
         }
 
         return $q->whereActive(1)
-                 ->whereIsDemo(0);
-    }
-
-    public function scopeOpsDashboardQuery($query, Carbon $startOfMonth, Carbon $revisionsFromDate)
-    {
-        return $query->with([
-            'patients' => function ($p) use ($startOfMonth, $revisionsFromDate) {
-                $p->with([
-                    'patientSummaries'            => function ($s) use ($startOfMonth){
-                        $s->where('month_year', $startOfMonth);
-                    },
-                    'patientInfo.revisionHistory' => function ($r) use ($revisionsFromDate){
-                        $r->where('key', 'ccm_status')
-                          ->where(
-                              'created_at',
-                              '>=',
-                              $revisionsFromDate
-                          );
-                    },
-                ])
-                  ->isNotDemo();
-            },
-        ])
-                     ->whereHas('patients.patientInfo');
+            ->whereIsDemo(0);
     }
 
     public function scopeAuthUserCanAccess($q, $softwareOnly = false)
@@ -575,15 +559,38 @@ class Practice extends BaseModel implements HasMedia
                             'activities',
                         ]
                     )
-                      ->whereHas(
-                          'patientInfo',
-                          function ($patient) {
+                        ->whereHas(
+                            'patientInfo',
+                            function ($patient) {
                               $patient->where('ccm_status', Patient::ENROLLED);
                           }
-                      );
+                        );
                 },
             ]
         );
+    }
+
+    public function scopeOpsDashboardQuery($query, Carbon $startOfMonth, Carbon $revisionsFromDate)
+    {
+        return $query->with([
+            'patients' => function ($p) use ($startOfMonth, $revisionsFromDate) {
+                $p->with([
+                    'patientSummaries' => function ($s) use ($startOfMonth) {
+                        $s->where('month_year', $startOfMonth);
+                    },
+                    'patientInfo.revisionHistory' => function ($r) use ($revisionsFromDate) {
+                        $r->where('key', 'ccm_status')
+                            ->where(
+                                'created_at',
+                                '>=',
+                                $revisionsFromDate
+                            );
+                    },
+                ])
+                    ->isNotDemo();
+            },
+        ])
+            ->whereHas('patients.patientInfo');
     }
 
     /**
@@ -620,7 +627,7 @@ class Practice extends BaseModel implements HasMedia
     public function users()
     {
         return $this->belongsToMany(User::class, 'practice_role_user', 'program_id', 'user_id')
-                    ->withPivot('role_id', 'send_billing_reports')
-                    ->withTimestamps();
+            ->withPivot('role_id', 'send_billing_reports')
+            ->withTimestamps();
     }
 }

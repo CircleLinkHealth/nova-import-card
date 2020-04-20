@@ -14,71 +14,72 @@ use CircleLinkHealth\Revisionable\Entities\Revision;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * CircleLinkHealth\Customer\Entities\Patient
+ * CircleLinkHealth\Customer\Entities\Patient.
  *
- * @property int $id
- * @property int|null $imported_medical_record_id
- * @property int $user_id
- * @property int|null $ccda_id
- * @property int|null $care_plan_id
- * @property string|null $active_date
- * @property string|null $agent_name
- * @property string|null $agent_telephone
- * @property string|null $agent_email
- * @property string|null $agent_relationship
- * @property \Illuminate\Support\Carbon|null $birth_date
- * @property string|null $ccm_status
- * @property \Illuminate\Support\Carbon|null $paused_letter_printed_at
- * @property \Illuminate\Support\Carbon|null $consent_date
- * @property string|null $gender
- * @property \Illuminate\Support\Carbon|null $date_paused
- * @property \Illuminate\Support\Carbon|null $date_withdrawn
- * @property string|null $withdrawn_reason
- * @property \Illuminate\Support\Carbon|null $date_unreachable
- * @property string|null $mrn_number
- * @property string|null $preferred_cc_contact_days
- * @property string|null $preferred_contact_language
- * @property string|null $preferred_contact_location
- * @property string|null $preferred_contact_method
- * @property string|null $preferred_contact_time
- * @property string|null $preferred_contact_timezone
- * @property \Illuminate\Support\Carbon|null $registration_date
- * @property string|null $daily_reminder_optin
- * @property string|null $daily_reminder_time
- * @property string|null $daily_reminder_areas
- * @property string|null $hospital_reminder_optin
- * @property string|null $hospital_reminder_time
- * @property string|null $hospital_reminder_areas
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property string|null $general_comment
- * @property int $preferred_calls_per_month
- * @property string|null $last_successful_contact_time
- * @property int|null $no_call_attempts_since_last_success
- * @property string|null $last_contact_time
- * @property string $daily_contact_window_start
- * @property string $daily_contact_window_end
- * @property int|null $next_call_id
- * @property int|null $family_id
- * @property string|null $date_welcomed
- * @property int $is_awv
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $ccmStatusRevisions
- * @property-read int|null $ccm_status_revisions_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\PatientContactWindow[] $contactWindows
- * @property-read int|null $contact_windows_count
- * @property-read \CircleLinkHealth\Customer\Entities\Family|null $family
- * @property mixed $address
- * @property mixed $city
- * @property mixed $first_name
- * @property-read mixed $last_call_status
- * @property mixed $last_name
- * @property mixed $state
- * @property mixed $zip
- * @property-read \CircleLinkHealth\Customer\Entities\Location|null $location
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
- * @property-read int|null $revision_history_count
- * @property-read \CircleLinkHealth\Customer\Entities\User $user
+ * @property int                                                                                                 $id
+ * @property int|null                                                                                            $imported_medical_record_id
+ * @property int                                                                                                 $user_id
+ * @property int|null                                                                                            $ccda_id
+ * @property int|null                                                                                            $care_plan_id
+ * @property string|null                                                                                         $active_date
+ * @property string|null                                                                                         $agent_name
+ * @property string|null                                                                                         $agent_telephone
+ * @property string|null                                                                                         $agent_email
+ * @property string|null                                                                                         $agent_relationship
+ * @property \Illuminate\Support\Carbon|null                                                                     $birth_date
+ * @property string|null                                                                                         $ccm_status
+ * @property \Illuminate\Support\Carbon|null                                                                     $paused_letter_printed_at
+ * @property \Illuminate\Support\Carbon|null                                                                     $consent_date
+ * @property string|null                                                                                         $gender
+ * @property \Illuminate\Support\Carbon|null                                                                     $date_paused
+ * @property \Illuminate\Support\Carbon|null                                                                     $date_withdrawn
+ * @property string|null                                                                                         $withdrawn_reason
+ * @property \Illuminate\Support\Carbon|null                                                                     $date_unreachable
+ * @property string|null                                                                                         $mrn_number
+ * @property string|null                                                                                         $preferred_cc_contact_days
+ * @property string|null                                                                                         $preferred_contact_language
+ * @property string|null                                                                                         $preferred_contact_location
+ * @property string|null                                                                                         $preferred_contact_method
+ * @property string|null                                                                                         $preferred_contact_time
+ * @property string|null                                                                                         $preferred_contact_timezone
+ * @property \Illuminate\Support\Carbon|null                                                                     $registration_date
+ * @property string|null                                                                                         $daily_reminder_optin
+ * @property string|null                                                                                         $daily_reminder_time
+ * @property string|null                                                                                         $daily_reminder_areas
+ * @property string|null                                                                                         $hospital_reminder_optin
+ * @property string|null                                                                                         $hospital_reminder_time
+ * @property string|null                                                                                         $hospital_reminder_areas
+ * @property \Illuminate\Support\Carbon|null                                                                     $created_at
+ * @property \Illuminate\Support\Carbon|null                                                                     $updated_at
+ * @property \Illuminate\Support\Carbon|null                                                                     $deleted_at
+ * @property string|null                                                                                         $general_comment
+ * @property int                                                                                                 $preferred_calls_per_month
+ * @property string|null                                                                                         $last_successful_contact_time
+ * @property int|null                                                                                            $no_call_attempts_since_last_success
+ * @property string|null                                                                                         $last_contact_time
+ * @property string                                                                                              $daily_contact_window_start
+ * @property string                                                                                              $daily_contact_window_end
+ * @property int|null                                                                                            $next_call_id
+ * @property int|null                                                                                            $family_id
+ * @property string|null                                                                                         $date_welcomed
+ * @property int                                                                                                 $is_awv
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection         $ccmStatusRevisions
+ * @property int|null                                                                                            $ccm_status_revisions_count
+ * @property \CircleLinkHealth\Customer\Entities\PatientContactWindow[]|\Illuminate\Database\Eloquent\Collection $contactWindows
+ * @property int|null                                                                                            $contact_windows_count
+ * @property \CircleLinkHealth\Customer\Entities\Family|null                                                     $family
+ * @property mixed                                                                                               $address
+ * @property mixed                                                                                               $city
+ * @property mixed                                                                                               $first_name
+ * @property mixed                                                                                               $last_call_status
+ * @property mixed                                                                                               $last_name
+ * @property mixed                                                                                               $state
+ * @property mixed                                                                                               $zip
+ * @property \CircleLinkHealth\Customer\Entities\Location|null                                                   $location
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection         $revisionHistory
+ * @property int|null                                                                                            $revision_history_count
+ * @property \CircleLinkHealth\Customer\Entities\User                                                            $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient byStatus($fromDate, $toDate)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient ccmStatus($status, $operator = '=')
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient enrolled()
@@ -146,7 +147,7 @@ class Patient extends BaseModel
 {
     use Filterable;
     use SoftDeletes;
-    const BHI_CONSENT_NOTE_TYPE = 'Consented to BHI';
+    const BHI_CONSENT_NOTE_TYPE   = 'Consented to BHI';
     const BHI_REJECTION_NOTE_TYPE = 'Did Not Consent to BHI';
 
     /**
@@ -161,14 +162,14 @@ class Patient extends BaseModel
     /**
      * Available Patient Statuses.
      */
-    const ENROLLED = 'enrolled';
+    const ENROLLED         = 'enrolled';
     const PATIENT_REJECTED = 'patient_rejected';
-    const PAUSED = 'paused';
-    const TO_ENROLL = 'to_enroll';
-    const UNREACHABLE = 'unreachable';
-    const WITHDRAWN = 'withdrawn';
+    const PAUSED           = 'paused';
+    const TO_ENROLL        = 'to_enroll';
+    const UNREACHABLE      = 'unreachable';
+    const WITHDRAWN        = 'withdrawn';
     /**
-     * Withdrawn on 1st Call
+     * Withdrawn on 1st Call.
      * */
     const WITHDRAWN_1ST_CALL = 'withdrawn_1st_call';
 
@@ -238,7 +239,7 @@ class Patient extends BaseModel
         'next_call_id',
         'family_id',
         'date_welcomed',
-        'is_awv'
+        'is_awv',
     ];
 
     /**
@@ -292,6 +293,14 @@ class Patient extends BaseModel
         );
     }
 
+    public function ccmStatusRevisions()
+    {
+        return $this->hasMany(Revision::class, 'revisionable_id', 'id')
+            ->where('revisionable_type', '=', self::class)
+            ->where('key', '=', 'ccm_status')
+            ->orderBy('id');
+    }
+
     public function contactWindows()
     {
         return $this->hasMany(PatientContactWindow::class, 'patient_info_id');
@@ -310,6 +319,35 @@ class Patient extends BaseModel
     public function getAddressAttribute()
     {
         return $this->user->address;
+    }
+
+    /**
+     * Get last ccm_status for a specific month:
+     * 1. Get next month
+     * 2. Find first entry from end of month
+     * 3. If exists, then return the `old_value`
+     * 4. Otherwise, return ccm_status from {@link Patient @patientInfo}.
+     *
+     * NOTE: if relation is already loaded, data from relation will be used
+     *
+     * @return string
+     */
+    public function getCcmStatusForMonth(Carbon $monthYear)
+    {
+        if ($this->relationLoaded('ccmStatusRevisions')) {
+            $revision = $this->ccmStatusRevisions->first();
+        } else {
+            $endOfMonth = $monthYear->endOfMonth();
+            $revision   = $this->ccmStatusRevisions()
+                ->where('created_at', '>=', $endOfMonth)
+                ->first();
+        }
+
+        if ($revision && $revision->old_value) {
+            return $revision->old_value;
+        }
+
+        return $this->ccm_status;
     }
 
     public function getCcmTime()
@@ -363,8 +401,6 @@ class Patient extends BaseModel
      * Get family members of a patient.
      * TODO: remove patient argument, since its a function of the Patient class. Or, make it a static function.
      *
-     * @param Patient $patient
-     *
      * @return array|static
      */
     public function getFamilyMembers(Patient $patient)
@@ -400,7 +436,7 @@ class Patient extends BaseModel
         }
 
         if ($this->no_call_attempts_since_last_success > 0) {
-            return $this->no_call_attempts_since_last_success . 'x Attempts';
+            return $this->no_call_attempts_since_last_success.'x Attempts';
         }
 
         return 'Success';
@@ -409,6 +445,64 @@ class Patient extends BaseModel
     public function getLastNameAttribute()
     {
         return $this->user->getLastName();
+    }
+
+    /**
+     * Returns current nurse of patient (could be temporary or permanent.
+     *
+     * @return User|null
+     */
+    public function getNurse()
+    {
+        /** @var PatientNurse $record */
+        $record = PatientNurse::where('patient_user_id', '=', $this->user_id)
+            ->with('nurse')
+            ->first();
+
+        if ( ! $record) {
+            return null;
+        }
+
+        if ( ! $record->nurse) {
+            return null;
+        }
+
+        return $record->nurse;
+    }
+
+    /**
+     * Get current nurse (could be parmanent or temporary) and upcoming (temporary).
+     */
+    public function getNurses()
+    {
+        /** @var PatientNurse $record */
+        $record = PatientNurse::where('patient_user_id', '=', $this->user_id)
+            ->with(['permanentNurse', 'temporaryNurse'])
+            ->first();
+
+        if ( ! $record) {
+            return null;
+        }
+
+        $result = [];
+        if ($record->permanentNurse) {
+            $result['permanent'] = [
+                'user' => $record->permanentNurse,
+            ];
+        }
+
+        $now = Carbon::now();
+        if ($record->temporaryNurse && $now->isBefore($record->temporary_to)) {
+            $result['temporary'] = [
+                'from' => $record->temporary_from,
+                'to'   => $record->temporary_to,
+                'user' => $record->temporaryNurse,
+            ];
+        }
+
+        return empty($result)
+            ? null
+            : $result;
     }
 
     public function getPreferences()
@@ -448,11 +542,11 @@ class Patient extends BaseModel
     public function lastNurseThatPerformedActivity()
     {
         $id = \CircleLinkHealth\TimeTracking\Entities\Activity::where('patient_id', $this->user_id)
-                                                              ->whereHas('provider', function ($q) {
-                                                                  $q->ofType('care-center');
-                                                              })
-                                                              ->orderBy('created_at', 'desc')
-                                                              ->first()['provider_id'];
+            ->whereHas('provider', function ($q) {
+                $q->ofType('care-center');
+            })
+            ->orderBy('created_at', 'desc')
+            ->first()['provider_id'];
 
         return Nurse::where('user_id', $id)->first();
     }
@@ -460,9 +554,9 @@ class Patient extends BaseModel
     public function lastReachedNurse()
     {
         return Call::where('inbound_cpm_id', $this->user_id)
-                   ->whereNotNull('called_date')
-                   ->orderBy('called_date', 'desc')
-                   ->first()['outbound_cpm_id'];
+            ->whereNotNull('called_date')
+            ->orderBy('called_date', 'desc')
+            ->first()['outbound_cpm_id'];
     }
 
     /**
@@ -549,11 +643,11 @@ class Patient extends BaseModel
     public function safe()
     {
         return [
-            'id'               => $this->id,
-            'user_id'          => $this->user_id,
-            'ccm_status'       => $this->ccm_status,
-            'birth_date'       => presentDate($this->birth_date, false),
-            'age'              => $this->birth_date
+            'id'         => $this->id,
+            'user_id'    => $this->user_id,
+            'ccm_status' => $this->ccm_status,
+            'birth_date' => presentDate($this->birth_date, false),
+            'age'        => $this->birth_date
                 ? (Carbon::now()->year - Carbon::parse($this->birth_date)->year)
                 : 0,
             'gender'           => $this->gender,
@@ -572,25 +666,25 @@ class Patient extends BaseModel
         return $query->where(function ($query) use ($fromDate, $toDate) {
             $query->where(function ($subQuery) use ($fromDate, $toDate) {
                 $subQuery->ccmStatus(Patient::PAUSED)
-                         ->where([
-                             ['date_paused', '>=', $fromDate],
-                             ['date_paused', '<=', $toDate],
-                         ]);
+                    ->where([
+                        ['date_paused', '>=', $fromDate],
+                        ['date_paused', '<=', $toDate],
+                    ]);
             })
-                  ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
-                      $subQuery->ccmStatus([Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])
-                               ->where([
-                                   ['date_withdrawn', '>=', $fromDate],
-                                   ['date_withdrawn', '<=', $toDate],
-                               ]);
-                  })
-                  ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
-                      $subQuery->ccmStatus(Patient::ENROLLED)
-                               ->where([
-                                   ['registration_date', '>=', $fromDate],
-                                   ['registration_date', '<=', $toDate],
-                               ]);
-                  });
+                ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
+                    $subQuery->ccmStatus([Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])
+                        ->where([
+                            ['date_withdrawn', '>=', $fromDate],
+                            ['date_withdrawn', '<=', $toDate],
+                        ]);
+                })
+                ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
+                    $subQuery->ccmStatus(Patient::ENROLLED)
+                        ->where([
+                            ['registration_date', '>=', $fromDate],
+                            ['registration_date', '<=', $toDate],
+                        ]);
+                });
         });
     }
 
@@ -698,102 +792,5 @@ class Patient extends BaseModel
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
-    }
-
-    /**
-     * Returns current nurse of patient (could be temporary or permanent
-     *
-     * @return User|null
-     */
-    public function getNurse()
-    {
-        /** @var PatientNurse $record */
-        $record = PatientNurse::where('patient_user_id', '=', $this->user_id)
-                              ->with('nurse')
-                              ->first();
-
-        if ( ! $record) {
-            return null;
-        }
-
-        if ( ! $record->nurse) {
-            return null;
-        }
-
-        return $record->nurse;
-    }
-
-    /**
-     * Get current nurse (could be parmanent or temporary) and upcoming (temporary)
-     */
-    public function getNurses()
-    {
-        /** @var PatientNurse $record */
-        $record = PatientNurse::where('patient_user_id', '=', $this->user_id)
-                              ->with(['permanentNurse', 'temporaryNurse'])
-                              ->first();
-
-        if ( ! $record) {
-            return null;
-        }
-
-        $result = [];
-        if ($record->permanentNurse) {
-            $result['permanent'] = [
-                'user' => $record->permanentNurse,
-            ];
-        }
-
-        $now = Carbon::now();
-        if ($record->temporaryNurse && $now->isBefore($record->temporary_to)) {
-            $result['temporary'] = [
-                'from' => $record->temporary_from,
-                'to'   => $record->temporary_to,
-                'user' => $record->temporaryNurse,
-            ];
-        }
-
-        return empty($result)
-            ? null
-            : $result;
-    }
-
-    /**
-     * Get last ccm_status for a specific month:
-     * 1. Get next month
-     * 2. Find first entry from end of month
-     * 3. If exists, then return the `old_value`
-     * 4. Otherwise, return ccm_status from {@link Patient @patientInfo}
-     *
-     * NOTE: if relation is already loaded, data from relation will be used
-     *
-     * @param Carbon $monthYear
-     *
-     * @return string
-     */
-    public function getCcmStatusForMonth(Carbon $monthYear)
-    {
-        if ($this->relationLoaded('ccmStatusRevisions')) {
-            $revision = $this->ccmStatusRevisions->first();
-        }
-        else {
-            $endOfMonth = $monthYear->endOfMonth();
-            $revision = $this->ccmStatusRevisions()
-                ->where('created_at', '>=', $endOfMonth)
-                ->first();
-        }
-
-        if ($revision && $revision->old_value) {
-            return $revision->old_value;
-        }
-
-        return $this->ccm_status;
-    }
-
-    public function ccmStatusRevisions() {
-        return $this->hasMany(Revision::class, 'revisionable_id', 'id')
-            ->where('revisionable_type', '=', self::class)
-            ->where('key', '=', 'ccm_status')
-            ->orderBy('id');
     }
 }

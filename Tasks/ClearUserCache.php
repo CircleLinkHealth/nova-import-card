@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 2/18/20
- * Time: 1:34 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace CircleLinkHealth\Customer\Tasks;
-
 
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Cache\TaggableStore;
@@ -28,18 +25,18 @@ class ClearUserCache
         } else {
             $store = \Cache::getStore();
         }
-    
+
         foreach ($keys as $key) {
             $store->forget($key);
             Cache::forget($key);
         }
-    
+
         $cacheDriver = config('cache.default');
-    
+
         if ('redis' === $cacheDriver) {
             \RedisManager::del($user->getCpmRolesCacheKey());
         }
-    
+
         $user->clearObjectCache();
         $user->unsetRelation('roles');
     }

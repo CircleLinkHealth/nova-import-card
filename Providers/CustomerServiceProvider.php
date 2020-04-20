@@ -64,7 +64,7 @@ class CustomerServiceProvider extends ServiceProvider
 
         $this->commands([
             CreateRolesPermissionsMigration::class,
-            CreateOrReplacePatientAWVSurveyInstanceStatusTable::class
+            CreateOrReplacePatientAWVSurveyInstanceStatusTable::class,
         ]);
     }
 

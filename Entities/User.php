@@ -75,159 +75,160 @@ use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
 /**
- * CircleLinkHealth\Customer\Entities\User
+ * CircleLinkHealth\Customer\Entities\User.
  *
- * @property int $id
- * @property int|null $saas_account_id
- * @property int $skip_browser_checks Skip compatible browser checks when the user logs in
- * @property int $count_ccm_time
- * @property string $username
- * @property string $program_id
- * @property string $password
- * @property string $email
- * @property \Illuminate\Support\Carbon|null $user_registered
- * @property int|null $user_status
- * @property int $auto_attach_programs
- * @property string $display_name
- * @property string $first_name
- * @property string $last_name
- * @property string|null $suffix
- * @property string $address
- * @property string $address2
- * @property string $city
- * @property string $state
- * @property string $zip
- * @property string|null $timezone
- * @property string $status
- * @property int $access_disabled
- * @property int|null $is_auto_generated
- * @property string|null $remember_token
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property string|null $last_login
- * @property int $is_online
- * @property string|null $last_session_id
- * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Nova\Actions\ActionEvent[] $actions
- * @property-read int|null $actions_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\TimeTracking\Entities\Activity[] $activities
- * @property-read int|null $activities_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\TimeTracking\Entities\Activity[] $activitiesAsProvider
- * @property-read int|null $activities_as_provider_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\Appointment[] $appointments
- * @property-read int|null $appointments_count
- * @property-read \CircleLinkHealth\TwoFA\Entities\AuthyUser $authyUser
- * @property-read \App\CareAmbassador $careAmbassador
- * @property-read \CircleLinkHealth\SharedModels\Entities\CarePlan $carePlan
- * @property-read \App\CareplanAssessment $carePlanAssessment
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\CarePerson[] $careTeamMembers
- * @property-read int|null $care_team_members_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\Allergy[] $ccdAllergies
- * @property-read int|null $ccd_allergies_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy[] $ccdInsurancePolicies
- * @property-read int|null $ccd_insurance_policies_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\Medication[] $ccdMedications
- * @property-read int|null $ccd_medications_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\Problem[] $ccdProblems
- * @property-read int|null $ccd_problems_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\Ccda[] $ccdas
- * @property-read int|null $ccdas_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\ChargeableService[] $chargeableServices
- * @property-read int|null $chargeable_services_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $clients
- * @property-read int|null $clients_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\Location[] $clinicalEmergencyContactLocations
- * @property-read int|null $clinical_emergency_contact_locations_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Comment[] $comment
- * @property-read int|null $comment_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\CpmBiometric[] $cpmBiometrics
- * @property-read int|null $cpm_biometrics_count
- * @property-read \CircleLinkHealth\SharedModels\Entities\CpmBloodPressure $cpmBloodPressure
- * @property-read \CircleLinkHealth\SharedModels\Entities\CpmBloodSugar $cpmBloodSugar
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\CpmLifestyle[] $cpmLifestyles
- * @property-read int|null $cpm_lifestyles_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup[] $cpmMedicationGroups
- * @property-read int|null $cpm_medication_groups_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\CpmMiscUser[] $cpmMiscUserPivot
- * @property-read int|null $cpm_misc_user_pivot_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\CpmMisc[] $cpmMiscs
- * @property-read int|null $cpm_miscs_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\CpmProblem[] $cpmProblems
- * @property-read int|null $cpm_problems_count
- * @property-read \CircleLinkHealth\SharedModels\Entities\CpmSmoking $cpmSmoking
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\CpmSymptom[] $cpmSymptoms
- * @property-read int|null $cpm_symptoms_count
- * @property-read \CircleLinkHealth\SharedModels\Entities\CpmWeight $cpmWeight
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\NurseInvoices\Entities\Dispute[] $disputes
- * @property-read int|null $disputes_count
- * @property-read \CircleLinkHealth\Eligibility\Entities\TargetPatient $ehrInfo
- * @property-read \CircleLinkHealth\Customer\Entities\EhrReportWriterInfo $ehrReportWriterInfo
- * @property-read \App\Models\EmailSettings $emailSettings
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\EmrDirectAddress[] $emrDirect
- * @property-read int|null $emr_direct_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\ForeignId[] $foreignId
- * @property-read int|null $foreign_id_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\User[] $forwardAlertsTo
- * @property-read int|null $forward_alerts_to_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\User[] $forwardedAlertsBy
- * @property-read int|null $forwarded_alerts_by_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\User[] $forwardedCarePlanApprovalEmailsBy
- * @property-read int|null $forwarded_care_plan_approval_emails_by_count
- * @property mixed $emr_direct_address
- * @property-read mixed $full_name_with_id
- * @property-read string $name
- * @property-read mixed $timezone_abbr
- * @property-read mixed $timezone_offset
- * @property-read mixed $timezone_offset_hours
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Call[] $inboundActivities
- * @property-read int|null $inbound_activities_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Call[] $inboundCalls
- * @property-read int|null $inbound_calls_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Message[] $inboundMessages
- * @property-read int|null $inbound_messages_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\Location[] $locations
- * @property-read int|null $locations_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\Media[] $media
- * @property-read int|null $media_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Note[] $notes
- * @property-read int|null $notes_count
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\CircleLinkHealth\Core\Entities\DatabaseNotification[] $notifications
- * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra[] $nurseBonuses
- * @property-read int|null $nurse_bonuses_count
- * @property-read \CircleLinkHealth\Customer\Entities\Nurse $nurseInfo
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Observation[] $observations
- * @property-read int|null $observations_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Call[] $outboundCalls
- * @property-read int|null $outbound_calls_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Message[] $outboundMessages
- * @property-read int|null $outbound_messages_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\TimeTracking\Entities\PageTimer[] $pageTimersAsProvider
- * @property-read int|null $page_timers_as_provider_count
- * @property-read \CircleLinkHealth\Customer\Entities\UserPasswordsHistory $passwordsHistory
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\PatientAWVSummary[] $patientAWVSummaries
- * @property-read int|null $patient_a_w_v_summaries_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\TimeTracking\Entities\Activity[] $patientActivities
- * @property-read int|null $patient_activities_count
- * @property-read \CircleLinkHealth\Customer\Entities\Patient $patientInfo
- * @property-read \CircleLinkHealth\Customer\Entities\PatientNurse $patientNurseAsPatient
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary[] $patientSummaries
- * @property-read int|null $patient_summaries_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\Permission[] $perms
- * @property-read int|null $perms_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\PhoneNumber[] $phoneNumbers
- * @property-read int|null $phone_numbers_count
- * @property-read \CircleLinkHealth\Customer\Entities\Practice $primaryPractice
- * @property-read \CircleLinkHealth\Customer\Entities\ProviderInfo $providerInfo
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
- * @property-read int|null $revision_history_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\Role[] $roles
- * @property-read int|null $roles_count
- * @property-read \CircleLinkHealth\Customer\Entities\SaasAccount|null $saasAccount
- * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $tokens
- * @property-read int|null $tokens_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\CPRulesUCP[] $ucp
- * @property-read int|null $ucp_count
+ * @property int                                                                                                             $id
+ * @property int|null                                                                                                        $saas_account_id
+ * @property int                                                                                                             $skip_browser_checks                          Skip compatible browser checks when the user logs in
+ * @property int                                                                                                             $count_ccm_time
+ * @property string                                                                                                          $username
+ * @property string                                                                                                          $program_id
+ * @property string                                                                                                          $password
+ * @property string                                                                                                          $email
+ * @property \Illuminate\Support\Carbon|null                                                                                 $user_registered
+ * @property int|null                                                                                                        $user_status
+ * @property int                                                                                                             $auto_attach_programs
+ * @property string                                                                                                          $display_name
+ * @property string                                                                                                          $first_name
+ * @property string                                                                                                          $last_name
+ * @property string|null                                                                                                     $suffix
+ * @property string                                                                                                          $address
+ * @property string                                                                                                          $address2
+ * @property string                                                                                                          $city
+ * @property string                                                                                                          $state
+ * @property string                                                                                                          $zip
+ * @property string|null                                                                                                     $timezone
+ * @property string                                                                                                          $status
+ * @property int                                                                                                             $access_disabled
+ * @property int|null                                                                                                        $is_auto_generated
+ * @property string|null                                                                                                     $remember_token
+ * @property \Illuminate\Support\Carbon|null                                                                                 $created_at
+ * @property \Illuminate\Support\Carbon|null                                                                                 $updated_at
+ * @property \Illuminate\Support\Carbon|null                                                                                 $deleted_at
+ * @property string|null                                                                                                     $last_login
+ * @property int                                                                                                             $is_online
+ * @property string|null                                                                                                     $last_session_id
+ * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Nova\Actions\ActionEvent[]                                    $actions
+ * @property int|null                                                                                                        $actions_count
+ * @property \CircleLinkHealth\TimeTracking\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection                     $activities
+ * @property int|null                                                                                                        $activities_count
+ * @property \CircleLinkHealth\TimeTracking\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection                     $activitiesAsProvider
+ * @property int|null                                                                                                        $activities_as_provider_count
+ * @property \CircleLinkHealth\Customer\Entities\Appointment[]|\Illuminate\Database\Eloquent\Collection                      $appointments
+ * @property int|null                                                                                                        $appointments_count
+ * @property \CircleLinkHealth\TwoFA\Entities\AuthyUser                                                                      $authyUser
+ * @property \App\CareAmbassador                                                                                             $careAmbassador
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlan                                                                $carePlan
+ * @property \App\CareplanAssessment                                                                                         $carePlanAssessment
+ * @property \CircleLinkHealth\Customer\Entities\CarePerson[]|\Illuminate\Database\Eloquent\Collection                       $careTeamMembers
+ * @property int|null                                                                                                        $care_team_members_count
+ * @property \CircleLinkHealth\SharedModels\Entities\Allergy[]|\Illuminate\Database\Eloquent\Collection                      $ccdAllergies
+ * @property int|null                                                                                                        $ccd_allergies_count
+ * @property \CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy[]|\Illuminate\Database\Eloquent\Collection           $ccdInsurancePolicies
+ * @property int|null                                                                                                        $ccd_insurance_policies_count
+ * @property \CircleLinkHealth\SharedModels\Entities\Medication[]|\Illuminate\Database\Eloquent\Collection                   $ccdMedications
+ * @property int|null                                                                                                        $ccd_medications_count
+ * @property \CircleLinkHealth\SharedModels\Entities\Problem[]|\Illuminate\Database\Eloquent\Collection                      $ccdProblems
+ * @property int|null                                                                                                        $ccd_problems_count
+ * @property \CircleLinkHealth\SharedModels\Entities\Ccda[]|\Illuminate\Database\Eloquent\Collection                         $ccdas
+ * @property int|null                                                                                                        $ccdas_count
+ * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection                $chargeableServices
+ * @property int|null                                                                                                        $chargeable_services_count
+ * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[]                                             $clients
+ * @property int|null                                                                                                        $clients_count
+ * @property \CircleLinkHealth\Customer\Entities\Location[]|\Illuminate\Database\Eloquent\Collection                         $clinicalEmergencyContactLocations
+ * @property int|null                                                                                                        $clinical_emergency_contact_locations_count
+ * @property \App\Comment[]|\Illuminate\Database\Eloquent\Collection                                                         $comment
+ * @property int|null                                                                                                        $comment_count
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection                 $cpmBiometrics
+ * @property int|null                                                                                                        $cpm_biometrics_count
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodPressure                                                        $cpmBloodPressure
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodSugar                                                           $cpmBloodSugar
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection                 $cpmLifestyles
+ * @property int|null                                                                                                        $cpm_lifestyles_count
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection           $cpmMedicationGroups
+ * @property int|null                                                                                                        $cpm_medication_groups_count
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection                  $cpmMiscUserPivot
+ * @property int|null                                                                                                        $cpm_misc_user_pivot_count
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMisc[]|\Illuminate\Database\Eloquent\Collection                      $cpmMiscs
+ * @property int|null                                                                                                        $cpm_miscs_count
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmProblem[]|\Illuminate\Database\Eloquent\Collection                   $cpmProblems
+ * @property int|null                                                                                                        $cpm_problems_count
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmSmoking                                                              $cpmSmoking
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection                   $cpmSymptoms
+ * @property int|null                                                                                                        $cpm_symptoms_count
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmWeight                                                               $cpmWeight
+ * @property \CircleLinkHealth\NurseInvoices\Entities\Dispute[]|\Illuminate\Database\Eloquent\Collection                     $disputes
+ * @property int|null                                                                                                        $disputes_count
+ * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient                                                            $ehrInfo
+ * @property \CircleLinkHealth\Customer\Entities\EhrReportWriterInfo                                                         $ehrReportWriterInfo
+ * @property \App\Models\EmailSettings                                                                                       $emailSettings
+ * @property \CircleLinkHealth\Customer\Entities\EmrDirectAddress[]|\Illuminate\Database\Eloquent\Collection                 $emrDirect
+ * @property int|null                                                                                                        $emr_direct_count
+ * @property \App\ForeignId[]|\Illuminate\Database\Eloquent\Collection                                                       $foreignId
+ * @property int|null                                                                                                        $foreign_id_count
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                             $forwardAlertsTo
+ * @property int|null                                                                                                        $forward_alerts_to_count
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                             $forwardedAlertsBy
+ * @property int|null                                                                                                        $forwarded_alerts_by_count
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                             $forwardedCarePlanApprovalEmailsBy
+ * @property int|null                                                                                                        $forwarded_care_plan_approval_emails_by_count
+ * @property mixed                                                                                                           $emr_direct_address
+ * @property mixed                                                                                                           $full_name_with_id
+ * @property string                                                                                                          $name
+ * @property mixed                                                                                                           $timezone_abbr
+ * @property mixed                                                                                                           $timezone_offset
+ * @property mixed                                                                                                           $timezone_offset_hours
+ * @property \App\Call[]|\Illuminate\Database\Eloquent\Collection                                                            $inboundActivities
+ * @property int|null                                                                                                        $inbound_activities_count
+ * @property \App\Call[]|\Illuminate\Database\Eloquent\Collection                                                            $inboundCalls
+ * @property int|null                                                                                                        $inbound_calls_count
+ * @property \App\Message[]|\Illuminate\Database\Eloquent\Collection                                                         $inboundMessages
+ * @property int|null                                                                                                        $inbound_messages_count
+ * @property \CircleLinkHealth\Customer\Entities\Location[]|\Illuminate\Database\Eloquent\Collection                         $locations
+ * @property int|null                                                                                                        $locations_count
+ * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection                            $media
+ * @property int|null                                                                                                        $media_count
+ * @property \App\Note[]|\Illuminate\Database\Eloquent\Collection                                                            $notes
+ * @property int|null                                                                                                        $notes_count
+ * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
+ * @property int|null                                                                                                        $notifications_count
+ * @property \CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra[]|\Illuminate\Database\Eloquent\Collection           $nurseBonuses
+ * @property int|null                                                                                                        $nurse_bonuses_count
+ * @property \CircleLinkHealth\Customer\Entities\Nurse                                                                       $nurseInfo
+ * @property \App\Observation[]|\Illuminate\Database\Eloquent\Collection                                                     $observations
+ * @property int|null                                                                                                        $observations_count
+ * @property \App\Call[]|\Illuminate\Database\Eloquent\Collection                                                            $outboundCalls
+ * @property int|null                                                                                                        $outbound_calls_count
+ * @property \App\Message[]|\Illuminate\Database\Eloquent\Collection                                                         $outboundMessages
+ * @property int|null                                                                                                        $outbound_messages_count
+ * @property \CircleLinkHealth\TimeTracking\Entities\PageTimer[]|\Illuminate\Database\Eloquent\Collection                    $pageTimersAsProvider
+ * @property int|null                                                                                                        $page_timers_as_provider_count
+ * @property \CircleLinkHealth\Customer\Entities\UserPasswordsHistory                                                        $passwordsHistory
+ * @property \CircleLinkHealth\Customer\Entities\PatientAWVSummary[]|\Illuminate\Database\Eloquent\Collection                $patientAWVSummaries
+ * @property int|null                                                                                                        $patient_a_w_v_summaries_count
+ * @property \CircleLinkHealth\TimeTracking\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection                     $patientActivities
+ * @property int|null                                                                                                        $patient_activities_count
+ * @property \CircleLinkHealth\Customer\Entities\Patient                                                                     $patientInfo
+ * @property \CircleLinkHealth\Customer\Entities\PatientNurse                                                                $patientNurseAsPatient
+ * @property \CircleLinkHealth\Customer\Entities\PatientMonthlySummary[]|\Illuminate\Database\Eloquent\Collection            $patientSummaries
+ * @property int|null                                                                                                        $patient_summaries_count
+ * @property \CircleLinkHealth\Customer\Entities\Permission[]|\Illuminate\Database\Eloquent\Collection                       $perms
+ * @property int|null                                                                                                        $perms_count
+ * @property \CircleLinkHealth\Customer\Entities\PhoneNumber[]|\Illuminate\Database\Eloquent\Collection                      $phoneNumbers
+ * @property int|null                                                                                                        $phone_numbers_count
+ * @property \CircleLinkHealth\Customer\Entities\Practice                                                                    $primaryPractice
+ * @property \CircleLinkHealth\Customer\Entities\ProviderInfo                                                                $providerInfo
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection                     $revisionHistory
+ * @property int|null                                                                                                        $revision_history_count
+ * @property \CircleLinkHealth\Customer\Entities\Role[]|\Illuminate\Database\Eloquent\Collection                             $roles
+ * @property int|null                                                                                                        $roles_count
+ * @property \CircleLinkHealth\Customer\Entities\SaasAccount|null                                                            $saasAccount
+ * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[]                                              $tokens
+ * @property int|null                                                                                                        $tokens_count
+ * @property \App\CPRulesUCP[]|\Illuminate\Database\Eloquent\Collection                                                      $ucp
+ * @property int|null                                                                                                        $ucp_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User careCoaches()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User exceptType($type)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User filter(\App\Filters\QueryFilters $filters)
@@ -306,11 +307,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use Impersonate;
     use MakesOrReceivesCalls;
     use Notifiable;
+    use PivotEventTrait;
     use SaasAccountable;
     use Searchable;
     use SoftDeletes;
     use TimezoneTrait;
-    use PivotEventTrait;
+
+    const FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER = 'forward_alerts_in_addition_to_provider';
+    const FORWARD_ALERTS_INSTEAD_OF_PROVIDER     = 'forward_alerts_instead_of_provider';
+
+    const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_careplan_approval_emails_in_addition_to_provider';
+    const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER     = 'forward_careplan_approval_emails_instead_of_provider';
 
     /**
      * Package Clockwork is hardcoded to look for $user->name. Adding this so that it will work.
@@ -318,12 +325,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      * @var string|null
      */
     public $name;
-
-    const FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER = 'forward_alerts_in_addition_to_provider';
-    const FORWARD_ALERTS_INSTEAD_OF_PROVIDER = 'forward_alerts_instead_of_provider';
-
-    const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_careplan_approval_emails_in_addition_to_provider';
-    const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER = 'forward_careplan_approval_emails_instead_of_provider';
 
     public $phi = [
         'username',
@@ -440,10 +441,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         if (is_array($roleId)) {
             foreach ($roleId as $key => $role) {
-                if (count($roleId) === 1) {
+                if (1 === count($roleId)) {
                     return $this->attachGlobalRole($role);
                 }
-                
+
                 $this->attachGlobalRole($role);
                 unset($roleId[$key]);
             }
@@ -482,10 +483,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         if (is_array($location)) {
             foreach ($location as $key => $loc) {
-                if (count($location) === 1) {
+                if (1 === count($location)) {
                     return $this->attachLocation($loc);
                 }
-                
+
                 $this->attachLocation($loc);
                 unset($location[$key]);
             }
@@ -494,12 +495,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if (is_a($location, Location::class)) {
             $location = $location->id;
         }
-        
+
         if (empty($location)) {
             return;
         }
-        
-        if (! $this->locations()->where('locations.id', $location)->exists()) {
+
+        if ( ! $this->locations()->where('locations.id', $location)->exists()) {
             $this->locations()->attach($location);
         }
     }
@@ -515,8 +516,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $practiceId = $ids[0];
 
         $rolesForPractice = PracticeRoleUser::where('user_id', '=', $this->id)
-                                            ->where('program_id', '=', $practiceId)
-                                            ->get();
+            ->where('program_id', '=', $practiceId)
+            ->get();
 
         //remove any roles not in $roleIds array
         foreach ($rolesForPractice as $roleForPractice) {
@@ -541,8 +542,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 ],
                 null != $sendBillingReports
                     ? [
-                    'send_billing_reports' => $sendBillingReports,
-                ]
+                        'send_billing_reports' => $sendBillingReports,
+                    ]
                     : []
             );
         } else {
@@ -555,8 +556,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     ],
                     null != $sendBillingReports
                         ? [
-                        'send_billing_reports' => $sendBillingReports,
-                    ]
+                            'send_billing_reports' => $sendBillingReports,
+                        ]
                         : []
                 );
             }
@@ -609,20 +610,20 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function billableProblems()
     {
         return $this->ccdProblems()
-                    ->whereNotNull('cpm_problem_id')
+            ->whereNotNull('cpm_problem_id')
             //filter out unspecified diabetes
-                    ->where('cpm_problem_id', '!=', 1)
-                    ->with('icd10Codes')
-                    ->where('billable', true);
+            ->where('cpm_problem_id', '!=', 1)
+            ->with('icd10Codes')
+            ->where('billable', true);
     }
 
     public function billingCodes(Carbon $monthYear)
     {
         $summary = $this->patientSummaries()
-                        ->where('month_year', $monthYear->toDateString())
-                        ->with('chargeableServices')
-                        ->has('chargeableServices')
-                        ->first();
+            ->where('month_year', $monthYear->toDateString())
+            ->with('chargeableServices')
+            ->has('chargeableServices')
+            ->first();
 
         if ( ! $summary) {
             return '';
@@ -673,7 +674,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 $user->providerInfo()->restore();
                 $user->patientInfo()->restore();
                 $user->carePlan()->restore();
-                $user->careTeamMembers()->get()->each(function ($ctm) {$ctm->restore();});
+                $user->careTeamMembers()->get()->each(function ($ctm) {
+                    $ctm->restore();
+                });
             }
         );
 
@@ -698,11 +701,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         static::updating(function ($model) {
             //this is how we catch standard eloquent events
         });
-    }
-
-    public function clearRolesCache()
-    {
-        ClearUserCache::roles($this);
     }
 
     public function cachedNotificationsList()
@@ -812,8 +810,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function chargeableServices()
     {
         return $this->morphToMany(ChargeableService::class, 'chargeable')
-                    ->withPivot(['amount'])
-                    ->withTimestamps();
+            ->withPivot(['amount'])
+            ->withTimestamps();
     }
 
     /**
@@ -821,7 +819,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      *
      * @param $number
      * @param $type
-     * @param bool $isPrimary
+     * @param bool       $isPrimary
      * @param mixed|null $extension
      *
      * @return bool
@@ -849,13 +847,18 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
     }
 
+    public function clearRolesCache()
+    {
+        ClearUserCache::roles($this);
+    }
+
     public function clinicalEmergencyContactLocations()
     {
         return $this->morphedByMany(Location::class, 'contactable', 'contacts')
-                    ->withPivot('name')
-                    ->wherePivot('name', '=', 'in_addition_to_billing_provider')
-                    ->orWherePivot('name', '=', 'instead_of_billing_provider')
-                    ->withTimestamps();
+            ->withPivot('name')
+            ->wherePivot('name', '=', 'in_addition_to_billing_provider')
+            ->orWherePivot('name', '=', 'instead_of_billing_provider')
+            ->withTimestamps();
     }
 
     public function comment()
@@ -869,8 +872,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function cpmBiometrics()
     {
         return $this->belongsToMany(CpmBiometric::class, 'cpm_biometrics_users', 'patient_id')
-                    ->withPivot('cpm_instruction_id')
-                    ->withTimestamps('created_at', 'updated_at');
+            ->withPivot('cpm_instruction_id')
+            ->withTimestamps('created_at', 'updated_at');
     }
 
     /**
@@ -895,8 +898,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function cpmLifestyles()
     {
         return $this->belongsToMany(CpmLifestyle::class, 'cpm_lifestyles_users', 'patient_id')
-                    ->withPivot('cpm_instruction_id')
-                    ->withTimestamps('created_at', 'updated_at');
+            ->withPivot('cpm_instruction_id')
+            ->withTimestamps('created_at', 'updated_at');
     }
 
     /**
@@ -905,8 +908,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function cpmMedicationGroups()
     {
         return $this->belongsToMany(CpmMedicationGroup::class, 'cpm_medication_groups_users', 'patient_id')
-                    ->withPivot('cpm_instruction_id')
-                    ->withTimestamps('created_at', 'updated_at');
+            ->withPivot('cpm_instruction_id')
+            ->withTimestamps('created_at', 'updated_at');
     }
 
     /**
@@ -915,8 +918,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function cpmMiscs()
     {
         return $this->belongsToMany(CpmMisc::class, 'cpm_miscs_users', 'patient_id')
-                    ->withPivot('cpm_instruction_id')
-                    ->withTimestamps('created_at', 'updated_at');
+            ->withPivot('cpm_instruction_id')
+            ->withTimestamps('created_at', 'updated_at');
     }
 
     /**
@@ -933,8 +936,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function cpmProblems()
     {
         return $this->belongsToMany(CpmProblem::class, 'cpm_problems_users', 'patient_id')
-                    ->withPivot('cpm_instruction_id')
-                    ->withTimestamps('created_at', 'updated_at');
+            ->withPivot('cpm_instruction_id')
+            ->withTimestamps('created_at', 'updated_at');
     }
 
     /**
@@ -951,8 +954,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function cpmSymptoms()
     {
         return $this->belongsToMany(CpmSymptom::class, 'cpm_symptoms_users', 'patient_id')
-                    ->withPivot('cpm_instruction_id')
-                    ->withTimestamps('created_at', 'updated_at');
+            ->withPivot('cpm_instruction_id')
+            ->withTimestamps('created_at', 'updated_at');
     }
 
     /**
@@ -1043,8 +1046,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function forwardAlertsTo()
     {
         return $this->morphToMany(User::class, 'contactable', 'contacts')
-                    ->withPivot('name')
-                    ->withTimestamps();
+            ->withPivot('name')
+            ->withTimestamps();
     }
 
     /**
@@ -1056,10 +1059,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function forwardedAlertsBy()
     {
         return $this->morphedByMany(User::class, 'contactable', 'contacts')
-                    ->withPivot('name')
-                    ->wherePivot('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
-                    ->orWherePivot('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
-                    ->withTimestamps();
+            ->withPivot('name')
+            ->wherePivot('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
+            ->orWherePivot('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
+            ->withTimestamps();
     }
 
     /**
@@ -1070,10 +1073,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function forwardedCarePlanApprovalEmailsBy()
     {
         return $this->forwardedAlertsBy()
-                    ->withPivot('name')
-                    ->wherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER)
-                    ->orWherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER)
-                    ->withTimestamps();
+            ->withPivot('name')
+            ->wherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER)
+            ->orWherePivot('name', '=', User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER)
+            ->withTimestamps();
     }
 
     /**
@@ -1154,12 +1157,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function getBhiTime()
     {
         return optional(
-                   $this->patientSummaries()
-                        ->select(['bhi_time', 'id'])
-                        ->orderBy('id', 'desc')
-                        ->whereMonthYear(Carbon::now()->startOfMonth())
-                        ->first()
-               )->bhi_time ?? 0;
+            $this->patientSummaries()
+                ->select(['bhi_time', 'id'])
+                ->orderBy('id', 'desc')
+                ->whereMonthYear(Carbon::now()->startOfMonth())
+                ->first()
+        )->bhi_time ?? 0;
     }
 
     public function getBillingProviderId()
@@ -1319,9 +1322,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
 
         $careTeam = $this->careTeamMembers->where('alert', '=', true)
-                                          ->keyBy('member_user_id')
-                                          ->unique()
-                                          ->values();
+            ->keyBy('member_user_id')
+            ->unique()
+            ->values();
 
         $users = new Collection();
 
@@ -1385,12 +1388,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function getCcmTime()
     {
         return optional(
-                   $this->patientSummaries()
-                        ->select(['ccm_time', 'id'])
-                        ->orderBy('id', 'desc')
-                        ->whereMonthYear(Carbon::now()->startOfMonth())
-                        ->first()
-               )->ccm_time ?? 0;
+            $this->patientSummaries()
+                ->select(['ccm_time', 'id'])
+                ->orderBy('id', 'desc')
+                ->whereMonthYear(Carbon::now()->startOfMonth())
+                ->first()
+        )->ccm_time ?? 0;
     }
 
     public function getConsentDate()
@@ -1471,7 +1474,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ? ''
             : 'Dr. ';
 
-        return $doctor . $fullName . $specialty;
+        return $doctor.$fullName.$specialty;
     }
 
     public function getEmailForPasswordReset()
@@ -1497,14 +1500,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         $name = $this->getFullName();
 
-        return $name . ' (' . $this->id . ')';
+        return $name.' ('.$this->id.')';
     }
 
     public function getFullNameWithIdAttribute()
     {
         $name = $this->getFullName();
 
-        return $name . ' (' . $this->id . ')';
+        return $name.' ('.$this->id.')';
     }
 
     public function getGender()
@@ -1627,9 +1630,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             $output .= (1 == $i
                     ? ''
                     : ', ')
-                       . ($i == $last && $i > 1
+                       .($i == $last && $i > 1
                     ? 'and '
-                    : '') . $channel;
+                    : '').$channel;
 
             ++$i;
         }
@@ -1647,9 +1650,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         foreach ($careTeam as $carePerson) {
             $output .= (1 == $i
                     ? ''
-                    : ', ') . ($i == $last && $i > 1
+                    : ', ').($i == $last && $i > 1
                     ? 'and '
-                    : '') . $carePerson->getFullName();
+                    : '').$carePerson->getFullName();
 
             ++$i;
         }
@@ -1684,9 +1687,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'consent_date'            => 'required',
             'ccm_status'              => 'required',
             'program_id'              => 'required',
-            'email' => [
+            'email'                   => [
                 'sometimes',
-                Rule::unique('users', 'email')->ignore($this)
+                Rule::unique('users', 'email')->ignore($this),
             ],
         ];
     }
@@ -1887,7 +1890,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function getUCP()
     {
-        $userUcp     = $this->ucp()->with(
+        $userUcp = $this->ucp()->with(
             [
                 'item.meta',
                 'item.question',
@@ -1972,13 +1975,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return Call::where(
             function ($q) {
                 $q->whereNull('type')
-                  ->orWhere('type', '=', 'call');
+                    ->orWhere('type', '=', 'call');
             }
         )
-                   ->where('inbound_cpm_id', $this->id)
-                   ->where('status', 'scheduled')
-                   ->where('scheduled_date', '=', Carbon::today()->format('Y-m-d'))
-                   ->exists();
+            ->where('inbound_cpm_id', $this->id)
+            ->where('status', 'scheduled')
+            ->where('scheduled_date', '=', Carbon::today()->format('Y-m-d'))
+            ->exists();
     }
 
     public function inboundActivities()
@@ -1994,12 +1997,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function inboundCalls()
     {
         return $this->hasMany(Call::class, 'inbound_cpm_id', 'id')
-                    ->where(
-                        function ($q) {
+            ->where(
+                function ($q) {
                             $q->whereNull('type')
-                              ->orWhere('type', '=', 'call');
+                                ->orWhere('type', '=', 'call');
                         }
-                    );
+            );
     }
 
     public function inboundMessages()
@@ -2010,27 +2013,27 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function inboundScheduledActivities(Carbon $after = null)
     {
         return $this->inboundActivities()
-                    ->where('status', '=', 'scheduled')
-                    ->when(
-                        $after,
-                        function ($query) use ($after) {
+            ->where('status', '=', 'scheduled')
+            ->when(
+                $after,
+                function ($query) use ($after) {
                             return $query->where('scheduled_date', '>=', $after->toDateString());
                         }
-                    )
-                    ->where('called_date', '=', null);
+            )
+            ->where('called_date', '=', null);
     }
 
     public function inboundScheduledCalls(Carbon $after = null)
     {
         return $this->inboundCalls()
-                    ->where('status', '=', 'scheduled')
-                    ->when(
-                        $after,
-                        function ($query) use ($after) {
+            ->where('status', '=', 'scheduled')
+            ->when(
+                $after,
+                function ($query) use ($after) {
                             return $query->where('scheduled_date', '>=', $after->toDateString());
                         }
-                    )
-                    ->where('called_date', '=', null);
+            )
+            ->where('called_date', '=', null);
     }
 
     /**
@@ -2043,62 +2046,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         //Do we wanna cache this for a minute maybe?
 //        return \Cache::remember("user:$this->id:is_bhi", 1, function (){
         return User::isBhiChargeable()
-                   ->where('id', $this->id)
-                   ->exists();
+            ->where('id', $this->id)
+            ->exists();
 //        });
     }
 
     public function isCcm()
     {
         return $this->ccmNoOfMonitoredProblems() >= 1;
-    }
-
-    private function ccmNoOfMonitoredProblems() {
-        return $this->ccdProblems()
-                    ->where('is_monitored', 1)
-                    ->whereHas(
-                        'cpmProblem',
-                        function ($cpm) {
-                            return $cpm->where('is_behavioral', 0);
-                        }
-                    )
-                    ->count();
-    }
-
-    public function isPcm()
-    {
-        if ($this->ccmNoOfMonitoredProblems() >= 2) {
-            return false;
-        }
-
-        return $this->whereHas('ccdProblems', function ($q){
-            $q->where(function ($q){
-                $q->whereHas('codes', function ($q) {
-                    $q->whereIn('code', function ($q) {
-                        $q->select('code')->from('pcm_problems')->where('practice_id', '=', $this->program_id);
-                    });
-                });
-            })->orWhere(function ($q){
-                $q->whereIn('name', function ($q) {
-                    $q->select('description')->from('pcm_problems')->where('practice_id', '=', $this->program_id);
-                });
-            });
-        })->exists();
-    }
-
-    /**
-     * Returns true if the patient has CCM and the patient's practice has G2058 chargeable service code enabled.
-     *
-     * @return bool
-     */
-    public function isCcmPlus()
-    {
-        return $this->isCcm() && $this->primaryPractice->hasCCMPlusServiceCode();
-    }
-
-    public function shouldShowCcmPlusBadge()
-    {
-        return isPatientCcmPlusBadgeEnabled() && $this->isCcmPlus();
     }
 
     public function isCCMCountable()
@@ -2114,6 +2069,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function isCcmEligible()
     {
         return 'to_enroll' == $this->getCcmStatus();
+    }
+
+    /**
+     * Returns true if the patient has CCM and the patient's practice has G2058 chargeable service code enabled.
+     *
+     * @return bool
+     */
+    public function isCcmPlus()
+    {
+        return $this->isCcm() && $this->primaryPractice->hasCCMPlusServiceCode();
     }
 
     public function isInternalUser()
@@ -2135,9 +2100,30 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         //Do we wanna cache this for a minute maybe?
 //        return \Cache::remember("user:$this->id:is_bhi_eligible", 1, function (){
         return User::isBhiEligible()
-                   ->where('id', $this->id)
-                   ->exists();
+            ->where('id', $this->id)
+            ->exists();
 //        });
+    }
+
+    public function isPcm()
+    {
+        if ($this->ccmNoOfMonitoredProblems() >= 2) {
+            return false;
+        }
+
+        return $this->whereHas('ccdProblems', function ($q) {
+            $q->where(function ($q) {
+                $q->whereHas('codes', function ($q) {
+                    $q->whereIn('code', function ($q) {
+                        $q->select('code')->from('pcm_problems')->where('practice_id', '=', $this->program_id);
+                    });
+                });
+            })->orWhere(function ($q) {
+                $q->whereIn('name', function ($q) {
+                    $q->select('description')->from('pcm_problems')->where('practice_id', '=', $this->program_id);
+                });
+            });
+        })->exists();
     }
 
     public function lastObservation()
@@ -2148,8 +2134,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function latestCcda()
     {
         return $this->ccdas()
-                    ->orderBy('updated_at', 'desc')
-                    ->first();
+            ->orderBy('updated_at', 'desc')
+            ->first();
     }
 
     /**
@@ -2182,12 +2168,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function locations()
     {
         return $this->belongsToMany(Location::class)
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 
     public function name()
     {
-        return $this->display_name ?? ($this->getFirstName() . $this->getLastName());
+        return $this->display_name ?? ($this->getFirstName().$this->getLastName());
     }
 
     public function notes()
@@ -2217,8 +2203,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function onFirstCall(): bool
     {
-        return $this->inboundCalls()
-                    ->where('status', 'reached')->count() == 0;
+        return 0 == $this->inboundCalls()
+            ->where('status', 'reached')->count();
     }
 
     /**
@@ -2229,12 +2215,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function outboundCalls()
     {
         return $this->hasMany(Call::class, 'outbound_cpm_id', 'id')
-                    ->where(
-                        function ($q) {
+            ->where(
+                function ($q) {
                             $q->whereNull('type')
-                              ->orWhere('type', '=', 'call');
+                                ->orWhere('type', '=', 'call');
                         }
-                    );
+            );
     }
 
     public function outboundMessages()
@@ -2270,63 +2256,86 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasOne(Patient::class, 'user_id', 'id');
     }
 
+    public function patientIsUPG0506(): bool
+    {
+        if ( ! $this->patientInfo || ! $this->isParticipant()) {
+            return false;
+        }
+
+        $ccda = $this->ccdas->first();
+        if ( ! $ccda) {
+            return false;
+        }
+
+        if ( ! $ccda->hasUPG0506PdfCareplanMedia()->exists()) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function patientList()
     {
         return User::intersectPracticesWith($this)
-                   ->ofType('participant')
-                   ->whereHas('patientInfo')
-                   ->with(
-                       [
-                           'observations'    => function ($query) {
-                               $query->where('obs_key', '!=', 'Outbound');
-                               $query->orderBy('obs_date', 'DESC');
-                               $query->first();
-                           },
-                           'careTeamMembers' => function ($q) {
-                               $q->where('type', '=', CarePerson::BILLING_PROVIDER)
-                                 ->with('user');
-                           },
-                           'phoneNumbers'    => function ($q) {
-                               $q->where('type', '=', PhoneNumber::HOME);
-                           },
-                           'carePlan.providerApproverUser',
-                           'primaryPractice',
-                           'patientInfo',
-                       ]
-                   )
-                   ->get();
+            ->ofType('participant')
+            ->whereHas('patientInfo')
+            ->with(
+                [
+                    'observations' => function ($query) {
+                        $query->where('obs_key', '!=', 'Outbound');
+                        $query->orderBy('obs_date', 'DESC');
+                        $query->first();
+                    },
+                    'careTeamMembers' => function ($q) {
+                        $q->where('type', '=', CarePerson::BILLING_PROVIDER)
+                            ->with('user');
+                    },
+                    'phoneNumbers' => function ($q) {
+                        $q->where('type', '=', PhoneNumber::HOME);
+                    },
+                    'carePlan.providerApproverUser',
+                    'primaryPractice',
+                    'patientInfo',
+                ]
+            )
+            ->get();
     }
-    
+
+    public function patientNurseAsPatient()
+    {
+        return $this->hasOne(PatientNurse::class, 'patient_user_id');
+    }
+
     public function patientsPendingCLHApproval()
     {
         return User::intersectPracticesWith($this, false)
-                   ->ofType('participant')
-                   ->whereHas('patientInfo', function ($q){
-                       $q->enrolled();
-                   })
-                   ->whereHas(
-                       'carePlan',
-                       function ($q) {
+            ->ofType('participant')
+            ->whereHas('patientInfo', function ($q) {
+                $q->enrolled();
+            })
+            ->whereHas(
+                'carePlan',
+                function ($q) {
                            $q->whereIn('status', [CarePlan::DRAFT]);
                        }
-                   )
-                   ->with(
-                       [
-                           'observations' => function ($query) {
-                               $query->where('obs_key', '!=', 'Outbound');
-                               $query->orderBy('obs_date', 'DESC');
-                               $query->first();
-                           },
-                           'phoneNumbers' => function ($q) {
-                               $q->where('type', '=', PhoneNumber::HOME);
-                           },
-                           'patientInfo.location',
-                           'primaryPractice',
-                           'carePlan',
-                       ]
-                   );
+            )
+            ->with(
+                [
+                    'observations' => function ($query) {
+                        $query->where('obs_key', '!=', 'Outbound');
+                        $query->orderBy('obs_date', 'DESC');
+                        $query->first();
+                    },
+                    'phoneNumbers' => function ($q) {
+                        $q->where('type', '=', PhoneNumber::HOME);
+                    },
+                    'patientInfo.location',
+                    'primaryPractice',
+                    'carePlan',
+                ]
+            );
     }
-    
+
     public function patientsPendingProviderApproval()
     {
         $approveOwnCarePlans = $this->providerInfo
@@ -2334,28 +2343,28 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             : false;
 
         return User::intersectPracticesWith($this)
-                   ->ofType('participant')
-                   ->whereHas('patientInfo', function ($q){
-                       $q->enrolled();
-                   })
-                   ->whereHas(
-                       'carePlan',
-                       function ($q) {
+            ->ofType('participant')
+            ->whereHas('patientInfo', function ($q) {
+                $q->enrolled();
+            })
+            ->whereHas(
+                'carePlan',
+                function ($q) {
                            $q->whereIn('status', [CarePlan::QA_APPROVED]);
                        }
-                   )
-                   ->whereHas(
-                       'careTeamMembers',
-                       function ($q) use ($approveOwnCarePlans) {
+            )
+            ->whereHas(
+                'careTeamMembers',
+                function ($q) use ($approveOwnCarePlans) {
                            $q->where(
                                [
                                    ['type', '=', CarePerson::BILLING_PROVIDER],
                                    ['member_user_id', '=', $this->id],
                                ]
                            )
-                             ->when(
-                                 ! $approveOwnCarePlans,
-                                 function ($q) {
+                               ->when(
+                                   ! $approveOwnCarePlans,
+                                   function ($q) {
                                      $q->orWhere(
                                          function ($q) {
                                              $q->whereHas(
@@ -2365,47 +2374,47 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                                          'forwardAlertsTo',
                                                          function ($q) {
                                                              $q->where('contactable_id', $this->id)
-                                                               ->orWhereIn(
-                                                                   'name',
-                                                                   [
-                                                                       'forward_careplan_approval_emails_instead_of_provider',
-                                                                       'forward_careplan_approval_emails_in_addition_to_provider',
-                                                                   ]
-                                                               );
+                                                                 ->orWhereIn(
+                                                                     'name',
+                                                                     [
+                                                                         'forward_careplan_approval_emails_instead_of_provider',
+                                                                         'forward_careplan_approval_emails_in_addition_to_provider',
+                                                                     ]
+                                                                 );
                                                          }
                                                      );
                                                  }
                                              )
-                                             ->when($this->canApproveCarePlans(),function ($q) {
-                                                 $q->orWhereHas(
-                                                     'user',
-                                                     function ($q) {
+                                                 ->when($this->canApproveCarePlans(), function ($q) {
+                                                     $q->orWhereHas(
+                                                         'user',
+                                                         function ($q) {
                                                          $q->intersectPracticesWith($this);
                                                      }
-                                                 );
-                                             })
+                                                     );
+                                                 })
                                              ;
                                          }
                                      );
-                                         }
-                                     );
                                  }
-                             )
-                   ->with(
-                       [
-                           'observations' => function ($query) {
-                               $query->where('obs_key', '!=', 'Outbound');
-                               $query->orderBy('obs_date', 'DESC');
-                               $query->first();
-                           },
-                           'phoneNumbers' => function ($q) {
-                               $q->where('type', '=', PhoneNumber::HOME);
-                           },
-                           'patientInfo.location',
-                           'primaryPractice',
-                           'carePlan',
-                       ]
-                   );
+                               );
+                       }
+            )
+            ->with(
+                [
+                    'observations' => function ($query) {
+                        $query->where('obs_key', '!=', 'Outbound');
+                        $query->orderBy('obs_date', 'DESC');
+                        $query->first();
+                    },
+                    'phoneNumbers' => function ($q) {
+                        $q->where('type', '=', PhoneNumber::HOME);
+                    },
+                    'patientInfo.location',
+                    'primaryPractice',
+                    'carePlan',
+                ]
+            );
     }
 
     public function patientSummaries()
@@ -2416,9 +2425,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function patientSummaryForMonth(Carbon $date = null)
     {
         return $this->patientSummaries()
-                    ->orderBy('id', 'desc')
-                    ->whereMonthYear(($date ?? Carbon::now())->startOfMonth())
-                    ->first();
+            ->orderBy('id', 'desc')
+            ->whereMonthYear(($date ?? Carbon::now())->startOfMonth())
+            ->first();
     }
 
     public function phoneNumbers()
@@ -2439,8 +2448,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return Cache::remember("{$this->id}_practice", 1, function () use ($practice) {
             if (is_string($practice) && ! is_int($practice)) {
                 return $this->practices()
-                            ->where('name', '=', $practice)
-                            ->first();
+                    ->where('name', '=', $practice)
+                    ->first();
             }
 
             $practiceId = parseIds($practice);
@@ -2450,8 +2459,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             }
 
             return $this->practices()
-                        ->where('program_id', '=', $practiceId[0])
-                        ->first();
+                ->where('program_id', '=', $practiceId[0])
+                ->first();
         });
     }
 
@@ -2479,16 +2488,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         array $ofRoleIds = null
     ) {
         return $this->belongsToMany(Practice::class, 'practice_role_user', 'user_id', 'program_id')
-                    ->withPivot('role_id')
-                    ->when(
-                        $onlyActive,
-                        function ($query) use ($onlyActive) {
+            ->withPivot('role_id')
+            ->when(
+                $onlyActive,
+                function ($query) use ($onlyActive) {
                             return $query->where('active', '=', 1);
                         }
-                    )
-                    ->when(
-                        $onlyEnrolledPatients,
-                        function ($query) use ($onlyEnrolledPatients) {
+            )
+            ->when(
+                $onlyEnrolledPatients,
+                function ($query) use ($onlyEnrolledPatients) {
                             //$query -> Practice Model
                             return $query->whereHas(
                                 'patients',
@@ -2504,14 +2513,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                 }
                             );
                         }
-                    )
-                    ->when(
-                        $ofRoleIds,
-                        function ($query) use ($ofRoleIds) {
+            )
+            ->when(
+                $ofRoleIds,
+                function ($query) use ($ofRoleIds) {
                             return $query->whereIn('practice_role_user.role_id', $ofRoleIds);
                         }
-                    )
-                    ->withTimestamps();
+            )
+            ->withTimestamps();
     }
 
     public function practiceSettings()
@@ -2548,13 +2557,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $billableProblems = new Collection();
 
         $ccdProblems = $this->ccdProblems()
-                            ->with('icd10Codes')
-                            ->with('cpmProblem')
-                            ->whereNotNull('cpm_problem_id')
-                            ->groupBy('cpm_problem_id')
-                            ->get()
-                            ->map(
-                                function ($problem) use ($billableProblems) {
+            ->with('icd10Codes')
+            ->with('cpmProblem')
+            ->whereNotNull('cpm_problem_id')
+            ->groupBy('cpm_problem_id')
+            ->get()
+            ->map(
+                function ($problem) use ($billableProblems) {
                                     $problem->billing_code = $problem->icd10Code();
 
                                     if ( ! $problem->billing_code) {
@@ -2571,7 +2580,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
                                     return $problem;
                                 }
-                            );
+            );
 
         return $billableProblems;
     }
@@ -2583,7 +2592,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function receivesBroadcastNotificationsOn()
     {
-        return 'App.User.' . $this->id;
+        return 'App.User.'.$this->id;
     }
 
     /**
@@ -2609,8 +2618,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function rolesInPractice($practiceId)
     {
         return $this->roles()
-                    ->wherePivot('program_id', '=', $practiceId)
-                    ->get();
+            ->wherePivot('program_id', '=', $practiceId)
+            ->get();
     }
 
     /*public function hasScheduledCallThisWeek()
@@ -2647,7 +2656,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
         if ($saasAccount) {
             $this->saasAccount()
-                 ->associate($saasAccount);
+                ->associate($saasAccount);
 
             return $saasAccount->name;
         }
@@ -2717,7 +2726,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 $billing_provider_id
             ) {
                 $k->whereType('billing_provider')
-                  ->whereMemberUserId($billing_provider_id);
+                    ->whereMemberUserId($billing_provider_id);
             }
         );
     }
@@ -2745,13 +2754,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             }
         );
     }
-    
+
     /**
      * Scope a query to intersect practices with the given user.
      *
      * @param $query
      * @param $user
-     * @param bool $withDemo
      *
      * @return
      */
@@ -2809,12 +2817,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 function ($q) {
                     $q->where(function ($q) {
                         $q->notOfPracticeRequiringSpecialBhiConsent()
-                          ->whereHas(
-                              'patientInfo',
-                              function ($q) {
+                            ->whereHas(
+                                'patientInfo',
+                                function ($q) {
                                   $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
                               }
-                          );
+                            );
                     })->orWhere(function ($q) {
                         $q->orWhereHas(
                             'notes',
@@ -2852,13 +2860,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->where(function ($q) {
                 $q->where(function ($q) {
                     $q->notOfPracticeRequiringSpecialBhiConsent()
-                      ->whereHas(
-                          'patientInfo',
-                          function ($q) {
+                        ->whereHas(
+                            'patientInfo',
+                            function ($q) {
                               $q->enrolled()
-                                ->where('consent_date', '<', Patient::DATE_CONSENT_INCLUDES_BHI);
+                                  ->where('consent_date', '<', Patient::DATE_CONSENT_INCLUDES_BHI);
                           }
-                      );
+                        );
                 })->orWhere(function ($q) {
                     $q->ofPracticeRequiringSpecialBhiConsent();
                 });
@@ -2997,7 +3005,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 $q2->whereHas('patientInfo', function ($q3) {
                     $q3->where('is_awv', 0);
                 })
-                   ->orWhereDoesntHave('patientInfo');
+                    ->orWhereDoesntHave('patientInfo');
             });
         });
     }
@@ -3039,28 +3047,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     $type
                 ) {
                     $q->where('type', $type)
-                      ->with('user');
+                        ->with('user');
                 },
             ]
         );
-    }
-
-    public function patientIsUPG0506() : bool
-    {
-        if (! $this->patientInfo || ! $this->isParticipant()){
-            return false;
-        }
-
-        $ccda = $this->ccdas->first();
-        if (! $ccda){
-            return false;
-        }
-
-        if (! $ccda->hasUPG0506PdfCareplanMedia()->exists()){
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -3632,8 +3622,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         )->delete();
         foreach ($memberUserIds as $memberUserId) {
             $careTeamMember = $this->careTeamMembers()->where('alert', '=', false)
-                                   ->where('member_user_id', $memberUserId)
-                                   ->first();
+                ->where('member_user_id', $memberUserId)
+                ->first();
             if ($careTeamMember) {
                 $careTeamMember->alert = true;
                 $careTeamMember->save();
@@ -3701,9 +3691,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     /**
      * Determines whether to show the BHI banner to the logged in user, for a given patient.
      *
-     * @return bool
      * @throws \Exception
      *
+     * @return bool
      */
     public function shouldShowBhiBannerIfPatientHasScheduledCallToday(User $patient)
     {
@@ -3715,9 +3705,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     /**
      * Determines whether to show the BHI banner to the logged in user, for a given patient.
      *
-     * @return bool
      * @throws \Exception
      *
+     * @return bool
      */
     public function shouldShowBhiFlagFor(User $patient)
     {
@@ -3726,9 +3716,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                && $patient->isLegacyBhiEligible()
                && $patient->billingProviderUser()
                && ! Cache::has(
-                $this->getLegacyBhiNursePatientCacheKey($patient->id)
-            )
+                   $this->getLegacyBhiNursePatientCacheKey($patient->id)
+               )
                && ($this->isAdmin() || $this->isCareCoach());
+    }
+
+    public function shouldShowCcmPlusBadge()
+    {
+        return isPatientCcmPlusBadgeEnabled() && $this->isCcmPlus();
     }
 
     /**
@@ -3740,10 +3735,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $invoiceMonth = $now->copy()->startOfMonth()->subMonth();
 
         $invoice = NurseInvoice::where('month_year', $invoiceMonth)
-                               ->undisputed()
-                               ->notApproved()
-                               ->ofNurses(auth()->id())
-                               ->exists();
+            ->undisputed()
+            ->notApproved()
+            ->ofNurses(auth()->id())
+            ->exists();
 
         return $invoice && $now->lte(NurseInvoiceDisputeDeadline::for($invoiceMonth));
     }
@@ -3776,7 +3771,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function userConfig()
     {
-        $key        = 'wp_' . $this->primaryProgramId() . '_user_config';
+        $key        = 'wp_'.$this->primaryProgramId().'_user_config';
         $userConfig = $this->meta->where('meta_key', $key)->first();
         if ( ! $userConfig) {
             return false;
@@ -3788,14 +3783,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function viewablePatientIds(): array
     {
         return User::ofType('participant')
-                   ->whereHas(
-                       'practices',
-                       function ($q) {
+            ->whereHas(
+                'practices',
+                function ($q) {
                            $q->whereIn('program_id', $this->viewableProgramIds());
                        }
-                   )
-                   ->pluck('id')
-                   ->all();
+            )
+            ->pluck('id')
+            ->all();
     }
 
     public function viewableProgramIds(bool $withDemo = true): array
@@ -3847,11 +3842,24 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $patientIds->pluck('id')->all();
     }
 
+    private function ccmNoOfMonitoredProblems()
+    {
+        return $this->ccdProblems()
+            ->where('is_monitored', 1)
+            ->whereHas(
+                'cpmProblem',
+                function ($cpm) {
+                            return $cpm->where('is_behavioral', 0);
+                        }
+            )
+            ->count();
+    }
+
     private function queryOfPracticesRequiringSpecialBhiConsent($builder, $operator)
     {
         $practiceNames = PracticesRequiringSpecialBhiConsent::names();
 
-        return $builder->when(! empty($practiceNames), function ($builder) use ($practiceNames, $operator) {
+        return $builder->when( ! empty($practiceNames), function ($builder) use ($practiceNames, $operator) {
             return $builder->whereHas(
                 'primaryPractice',
                 function ($q) use ($practiceNames, $operator) {
@@ -3859,9 +3867,5 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 }
             );
         });
-    }
-    
-    public function patientNurseAsPatient() {
-        return $this->hasOne(PatientNurse::class, 'patient_user_id');
     }
 }
