@@ -4,6 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\Customer\Entities\User;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -45,9 +47,8 @@ return [
         ],
 
         'api' => [
-            'driver'   => 'token',
+            'driver'   => 'passport',
             'provider' => 'users',
-            'hash'     => false,
         ],
     ],
 
@@ -71,7 +72,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model'  => App\User::class,
+            'model'  => User::class,
         ],
 
         // 'users' => [
@@ -80,10 +81,16 @@ return [
         // ],
     ],
 
+    //entrust needs this
+    'model' => User::class,
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords
     |--------------------------------------------------------------------------
+    |
+    | Here you may set the options for resetting passwords including the view
+    | that is your password reset e-mail. You may also set the name of the
+    | table that maintains all of the reset tokens for your application.
     |
     | You may specify multiple password reset configurations if you have more
     | than one user table or model in the application and you want to have
@@ -98,22 +105,29 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
-            'table'    => 'password_resets',
+            'email'    => 'emails.password',
+            'table'    => 'lv_password_resets',
             'expire'   => 60,
-            'throttle' => 60,
+        ],
+        //token for patients, CPM 2081 patient-login
+        'patient_users' => [
+            'provider' => 'users',
+            'email'    => 'emails.password',
+            'table'    => 'lv_password_resets',
+            'expire'   => \App\Constants::THIRTY_DAYS_IN_MINUTES,
         ],
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Password Confirmation Timeout
+    | Enable 2 Factor Authentication (2FA)
     |--------------------------------------------------------------------------
     |
-    | Here you may define the amount of seconds before a password confirmation
-    | times out and the user is prompted to re-enter their password via the
-    | confirmation screen. By default, the timeout lasts for three hours.
+    | Set this to true if you want 2FA enabled.
     |
     */
 
-    'password_timeout' => 10800,
+    'two_fa_enabled' => env('TWO_FA_ENABLED', false),
+
+    'force_password_change' => env('FORCE_PASSWORD_CHANGE', true),
 ];
