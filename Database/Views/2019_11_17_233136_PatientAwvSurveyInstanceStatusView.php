@@ -43,7 +43,7 @@ WHERE IF ((hra.year IS NULL AND v.year IS NOT NULL) OR (hra.year IS NOT NULL AND
 AND u.deleted_at is null
       ");
     }
-    
+
     /**
      * Get the name of the sql view.
      */

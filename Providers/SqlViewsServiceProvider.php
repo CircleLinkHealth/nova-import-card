@@ -58,7 +58,7 @@ class SqlViewsServiceProvider extends ServiceProvider
             );
         }
     }
-    
+
     /**
      * Register config.
      *
@@ -67,8 +67,8 @@ class SqlViewsServiceProvider extends ServiceProvider
     protected function registerConfig()
     {
         $this->publishes([
-                             __DIR__.'/../Config/config.php' => config_path('sqlviews.php'),
-                         ], 'config');
+            __DIR__.'/../Config/config.php' => config_path('sqlviews.php'),
+        ], 'config');
         $this->mergeConfigFrom(
             __DIR__.'/../Config/config.php',
             'sqlviews'

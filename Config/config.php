@@ -7,8 +7,6 @@
 return [
     'name' => 'SqlViews',
 
-    /**
-     * The directory where SQL Views are stored
-     */
+    // The directory where SQL Views are stored
     'sql-views-directory' => __DIR__.'/../Database/Views',
 ];
