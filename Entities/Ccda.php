@@ -253,13 +253,13 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             ->whereHas(
                 'patientInfo',
                 function ($q) {
-                             $q->where('birth_date', $this->patientDob());
-                         }
+                    $q->where('birth_date', $this->patientDob());
+                }
             )->when($this->practice_id, function ($q) {
-                         $q->where('program_id', $this->practice_id);
-                     })->when($this->patient_id, function ($q) {
-                         $q->where('id', '!=', $this->patient_id);
-                     })->first();
+                $q->where('program_id', $this->practice_id);
+            })->when($this->patient_id, function ($q) {
+                $q->where('id', '!=', $this->patient_id);
+            })->first();
 
         if ($user) {
             $this->duplicate_id = $user->id;
@@ -770,8 +770,8 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             ->whereHas(
                 'patientInfo',
                 function ($q) {
-                             $q->whereBirthDate($this->patientDob());
-                         }
+                    $q->whereBirthDate($this->patientDob());
+                }
             );
         if ($this->patient_id) {
             $query = $query->where('id', '!=', $this->patient_id);
