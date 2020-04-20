@@ -165,7 +165,8 @@ class CcdaImporter
                      ->storeContactWindows()
                      ->storePhones()
                      ->storeInsurance()
-                     ->storeVitals();
+//                     ->storeVitals()
+                ;
                 
                 //This CarePlan is now ready to be QA'ed by a CLH Admin
                 $this->ccda->imported = true;

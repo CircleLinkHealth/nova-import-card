@@ -163,11 +163,11 @@ class ReimportPatientMedicalRecord extends Command
             if (empty($ccda ?? null)) {
                 $ccda = Ccda::create(
                     [
-                        'source' => $mr->getType(),
-                        'json' => $mr->toJson(),
+                        'source'      => $mr->getType(),
+                        'json'        => $mr->toJson(),
                         'practice_id' => (int) $user->program_id,
-                        'patient_id' => $user->id,
-                        'mrn' => $mrn,
+                        'patient_id'  => $user->id,
+                        'mrn'         => $mrn,
                     ]
                 );
                 \Log::debug(
@@ -282,7 +282,12 @@ class ReimportPatientMedicalRecord extends Command
         $this->warn("ReimportPatientMedicalRecord:user_id:{$user->id} Importing CCDA:{$ccda->id}:ln:".__LINE__);
         \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Importing CCDA:{$ccda->id}:ln:".__LINE__);
         
-        $ccda->import();
+        if ( ! $ccda->patient_id) {
+            $ccda->patient_id = $user->id;
+            $ccda->save();
+        }
+        
+        $ccda->import($this->getEnrollee($user));
         
         \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} CcdaId:{$ccda->id}:ln:".__LINE__);
     }

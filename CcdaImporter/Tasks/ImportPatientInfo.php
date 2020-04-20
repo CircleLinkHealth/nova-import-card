@@ -106,7 +106,6 @@ class ImportPatientInfo extends BaseCcdaImportTask
                             : $language;
                     }
                 ),
-                'preferred_contact_location' => $this->ccda->location_id,
                 'preferred_contact_method'   => 'CCT',
                 'registration_date'          => $this->patient->user_registered->toDateString(),
                 'general_comment'            => $this->enrollee()
@@ -157,8 +156,8 @@ class ImportPatientInfo extends BaseCcdaImportTask
             $patientInfo->preferred_contact_language = $args['preferred_contact_language'];
         }
         
-        if ( ! $patientInfo->preferred_contact_location) {
-            $patientInfo->preferred_contact_location = $args['preferred_contact_location'];
+        if ( ! $patientInfo->preferred_contact_location && $this->ccda->location_id) {
+            $patientInfo->preferred_contact_location = $this->ccda->location_id;
         }
         
         if ( ! $patientInfo->preferred_contact_method) {

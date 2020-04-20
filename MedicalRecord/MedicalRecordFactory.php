@@ -58,7 +58,12 @@ class MedicalRecordFactory
                 }
             )->with(
                 'eligibilityJob'
-            )->has('eligibilityJob')->orderByDesc('id')->firstOrFail();;
+            )->has('eligibilityJob')->orderByDesc('id')->firstOrFail();
+            
+            if (is_null($this->enrollee->user_id)) {
+                $this->enrollee->user_id = $user->id;
+                $this->enrollee->save();
+            }
         }
         
         return $this->enrollee;

@@ -21,9 +21,9 @@ class AttachLocation extends BaseCcdaImportTask
             return;
         }
         
-        $this->patient->attachLocation($locationId);
+        $this->patient->setPreferredContactLocation($locationId);
         
-        if ($timezone = Location::whereNotNull('timezone')->where('id', $locationId)->value('timezone')) {
+        if ($timezone = optional($this->patient->primaryPractice->locations->first())->timezone) {
             $this->patient->timezone = $timezone;
             $this->patient->save();
         }
