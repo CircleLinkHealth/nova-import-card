@@ -140,7 +140,7 @@
         "circlelinkhealth/clh-import-card-extended": "*",
         "circlelinkhealth/core-module": "dev-laravel-6-upgrade",
         "circlelinkhealth/cpm-migrations-module": "dev-master",
-        "circlelinkhealth/customer-module": "2.2.5",
+        "circlelinkhealth/customer-module": "dev-master",
         "circlelinkhealth/eligibility-module": "dev-master",
         "circlelinkhealth/generate-patient-call-data-csv": "*",
         "circlelinkhealth/generate-success-stories-report": "*",
