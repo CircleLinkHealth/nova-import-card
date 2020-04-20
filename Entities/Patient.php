@@ -13,6 +13,135 @@ use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Revisionable\Entities\Revision;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * CircleLinkHealth\Customer\Entities\Patient
+ *
+ * @property int $id
+ * @property int|null $imported_medical_record_id
+ * @property int $user_id
+ * @property int|null $ccda_id
+ * @property int|null $care_plan_id
+ * @property string|null $active_date
+ * @property string|null $agent_name
+ * @property string|null $agent_telephone
+ * @property string|null $agent_email
+ * @property string|null $agent_relationship
+ * @property \Illuminate\Support\Carbon|null $birth_date
+ * @property string|null $ccm_status
+ * @property \Illuminate\Support\Carbon|null $paused_letter_printed_at
+ * @property \Illuminate\Support\Carbon|null $consent_date
+ * @property string|null $gender
+ * @property \Illuminate\Support\Carbon|null $date_paused
+ * @property \Illuminate\Support\Carbon|null $date_withdrawn
+ * @property string|null $withdrawn_reason
+ * @property \Illuminate\Support\Carbon|null $date_unreachable
+ * @property string|null $mrn_number
+ * @property string|null $preferred_cc_contact_days
+ * @property string|null $preferred_contact_language
+ * @property string|null $preferred_contact_location
+ * @property string|null $preferred_contact_method
+ * @property string|null $preferred_contact_time
+ * @property string|null $preferred_contact_timezone
+ * @property \Illuminate\Support\Carbon|null $registration_date
+ * @property string|null $daily_reminder_optin
+ * @property string|null $daily_reminder_time
+ * @property string|null $daily_reminder_areas
+ * @property string|null $hospital_reminder_optin
+ * @property string|null $hospital_reminder_time
+ * @property string|null $hospital_reminder_areas
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string|null $general_comment
+ * @property int $preferred_calls_per_month
+ * @property string|null $last_successful_contact_time
+ * @property int|null $no_call_attempts_since_last_success
+ * @property string|null $last_contact_time
+ * @property string $daily_contact_window_start
+ * @property string $daily_contact_window_end
+ * @property int|null $next_call_id
+ * @property int|null $family_id
+ * @property string|null $date_welcomed
+ * @property int $is_awv
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $ccmStatusRevisions
+ * @property-read int|null $ccm_status_revisions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\PatientContactWindow[] $contactWindows
+ * @property-read int|null $contact_windows_count
+ * @property-read \CircleLinkHealth\Customer\Entities\Family|null $family
+ * @property mixed $address
+ * @property mixed $city
+ * @property mixed $first_name
+ * @property-read mixed $last_call_status
+ * @property mixed $last_name
+ * @property mixed $state
+ * @property mixed $zip
+ * @property-read \CircleLinkHealth\Customer\Entities\Location|null $location
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
+ * @property-read int|null $revision_history_count
+ * @property-read \CircleLinkHealth\Customer\Entities\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient byStatus($fromDate, $toDate)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient ccmStatus($status, $operator = '=')
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient enrolled()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient enrolledOrPaused()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient filter(\App\Filters\QueryFilters $filters)
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient hasFamily()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient newQuery()
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\Patient onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereActiveDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereAgentEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereAgentName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereAgentRelationship($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereAgentTelephone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereBirthDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereCarePlanId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereCcdaId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereCcmStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereConsentDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereDailyContactWindowEnd($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereDailyContactWindowStart($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereDailyReminderAreas($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereDailyReminderOptin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereDailyReminderTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereDatePaused($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereDateUnreachable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereDateWelcomed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereDateWithdrawn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereFamilyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereGender($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereGeneralComment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereHospitalReminderAreas($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereHospitalReminderOptin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereHospitalReminderTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereImportedMedicalRecordId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereIsAwv($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereLastContactTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereLastSuccessfulContactTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereMrnNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereNextCallId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereNoCallAttemptsSinceLastSuccess($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient wherePausedLetterPrintedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient wherePreferredCallsPerMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient wherePreferredCcContactDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient wherePreferredContactLanguage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient wherePreferredContactLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient wherePreferredContactMethod($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient wherePreferredContactTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient wherePreferredContactTimezone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereRegistrationDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereWithdrawnReason($value)
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\Patient withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\Patient withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Patient extends BaseModel
 {
     use Filterable;
