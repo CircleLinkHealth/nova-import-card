@@ -51,8 +51,8 @@ class AddIsBhiInNurseCareRateLogs extends Migration
             ->chunk(
                 50,
                 function (Illuminate\Support\Collection $list) {
-                  $list->each(
-                      function ($record) {
+                    $list->each(
+                        function ($record) {
                           $activityId = $record->activity_id;
                           $activity = DB::table('lv_activities')->find($activityId);
                           if ( ! $activity) {
@@ -67,8 +67,8 @@ class AddIsBhiInNurseCareRateLogs extends Migration
                                   ]
                               );
                       }
-                  );
-              }
+                    );
+                }
             );
     }
 }

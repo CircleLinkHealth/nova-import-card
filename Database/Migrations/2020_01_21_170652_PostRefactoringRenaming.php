@@ -132,10 +132,10 @@ class PostRefactoringRenaming extends Migration
             \DB::table('revisions')
                 ->where('revisionable_type', $change['old'])
                 ->update(
-                            [
-                                'revisionable_type' => $change['new'],
-                            ]
-                        );
+                    [
+                        'revisionable_type' => $change['new'],
+                    ]
+                );
         });
     }
 }
