@@ -69,11 +69,5 @@
       }
     }
   },
-  "minimum-stability": "dev",
-  "repositories": [
-    {
-      "type": "git",
-      "url": "git@github.com:circlelinkhealth/cerberus-gatekeeper-module.git"
-    }
-  ]
+  "minimum-stability": "dev"
 }
