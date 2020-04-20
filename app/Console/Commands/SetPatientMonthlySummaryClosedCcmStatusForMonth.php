@@ -56,21 +56,21 @@ class SetPatientMonthlySummaryClosedCcmStatusForMonth extends Command
                 function ($summaries) use ($date) {
                     $summaries->each(
                         function (PatientMonthlySummary $summary) use ($date) {
-                                             $actualStatus = $summary->patient->patientInfo->getCcmStatusForMonth(
-                                                 $date
-                                             );
-                                             if ($summary->closed_ccm_status !== $actualStatus) {
-                                                 $this->warn(
-                                                     "changing patient:{$summary->patient->id} summary:$summary->id"
-                                                 );
+                            $actualStatus = $summary->patient->patientInfo->getCcmStatusForMonth(
+                                $date
+                            );
+                            if ($summary->closed_ccm_status !== $actualStatus) {
+                                $this->warn(
+                                    "changing patient:{$summary->patient->id} summary:$summary->id"
+                                );
 
-                                                 if ( ! $this->isDryRun()) {
-                                                     $summary->closed_ccm_status = $actualStatus;
-                                                     $summary->save();
-                                                     ++$this->changedCount;
-                                                 }
-                                             }
-                                         }
+                                if ( ! $this->isDryRun()) {
+                                    $summary->closed_ccm_status = $actualStatus;
+                                    $summary->save();
+                                    ++$this->changedCount;
+                                }
+                            }
+                        }
                     );
                 }
             );

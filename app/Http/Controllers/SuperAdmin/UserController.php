@@ -320,10 +320,10 @@ class UserController extends Controller
             ->get()
             ->mapWithKeys(
                 function ($user) {
-                             return [
-                                 $user->id => "{$user->getFirstName()} {$user->getLastName()} ({$user->id})",
-                             ];
-                         }
+                    return [
+                        $user->id => "{$user->getFirstName()} {$user->getLastName()} ({$user->id})",
+                    ];
+                }
             )
             ->all();
 
@@ -581,11 +581,11 @@ class UserController extends Controller
             ->whereHas(
                 'patientInfo',
                 function ($query) {
-                                      $query->whereNotIn(
-                                          'ccm_status',
-                                          [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL]
-                                      );
-                                  }
+                    $query->whereNotIn(
+                        'ccm_status',
+                        [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL]
+                    );
+                }
             )
             ->whereIn('id', $userIds)
             ->pluck('id', 'inbound_calls_count');

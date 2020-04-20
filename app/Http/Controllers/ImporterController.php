@@ -108,52 +108,52 @@ class ImporterController extends Controller
             ->where(function ($q) {
                 $q->whereIn('practice_id', auth()->user()->viewableProgramIds())
                     ->when(auth()->user()->isAdmin(), function ($q) {
-                                                $q->orWhereNull('practice_id');
-                                            });
+                        $q->orWhereNull('practice_id');
+                    });
             })
             ->get()
             ->transform(
                 function (Ccda $ccda) {
-                                            if (upg0506IsEnabled()) {
-                                                $isUpg0506Incomplete = false;
+                    if (upg0506IsEnabled()) {
+                        $isUpg0506Incomplete = false;
 
-                                                $isUpg0506Incomplete = Ccda::whereHas(
-                                                    'media',
-                                                    function ($q) {
-                                $q->where('custom_properties->is_upg0506_complete', '!=', 'true');
-                            }
-                                                )->whereHas(
-                            'directMessage',
+                        $isUpg0506Incomplete = Ccda::whereHas(
+                            'media',
                             function ($q) {
-                                    $q->where('from', 'like', '%@upg.ssdirect.aprima.com');
-                                }
-                        )->where('id', $ccda->id)->exists();
+                                                        $q->where('custom_properties->is_upg0506_complete', '!=', 'true');
+                                                    }
+                        )->whereHas(
+                                                    'directMessage',
+                                                    function ($q) {
+                                $q->where('from', 'like', '%@upg.ssdirect.aprima.com');
+                            }
+                                                )->where('id', $ccda->id)->exists();
 
-                                                if ($isUpg0506Incomplete) {
-                                                    return false;
-                                                }
-                                            }
+                        if ($isUpg0506Incomplete) {
+                            return false;
+                        }
+                    }
 
-                                            $ccda->checkDuplicity();
+                    $ccda->checkDuplicity();
 
-                                            return [
-                                                'display_name'        => $ccda->patientFirstName().' '.$ccda->patientLastName(),
-                                                'dob'                 => $ccda->patientDob(),
-                                                'mrn'                 => $ccda->patientMrn(),
-                                                'id'                  => $ccda->id,
-                                                'patient'             => $ccda->patient,
-                                                'practice'            => $ccda->practice,
-                                                'location'            => $ccda->location,
-                                                'billing_provider_id' => $ccda->billing_provider_id,
-                                                'validation_checks'   => $ccda->validation_checks,
-                                                'duplicate_id'        => $ccda->duplicate_id,
-                                                'practice_id'         => $ccda->practice_id,
-                                                'location_id'         => $ccda->location_id,
-                                                'patient_id'          => $ccda->patient_id,
-                                                'flag'                => ( ! ($ccda->billing_provider_id && $ccda->practice_id && $ccda->location_id)) || $ccda->duplicate_id,
-                                                'nurse_user'          => $ccda->patient->patientNurseAsPatient->permanentNurse ?? null,
-                                            ];
-                                        }
+                    return [
+                        'display_name'        => $ccda->patientFirstName().' '.$ccda->patientLastName(),
+                        'dob'                 => $ccda->patientDob(),
+                        'mrn'                 => $ccda->patientMrn(),
+                        'id'                  => $ccda->id,
+                        'patient'             => $ccda->patient,
+                        'practice'            => $ccda->practice,
+                        'location'            => $ccda->location,
+                        'billing_provider_id' => $ccda->billing_provider_id,
+                        'validation_checks'   => $ccda->validation_checks,
+                        'duplicate_id'        => $ccda->duplicate_id,
+                        'practice_id'         => $ccda->practice_id,
+                        'location_id'         => $ccda->location_id,
+                        'patient_id'          => $ccda->patient_id,
+                        'flag'                => ( ! ($ccda->billing_provider_id && $ccda->practice_id && $ccda->location_id)) || $ccda->duplicate_id,
+                        'nurse_user'          => $ccda->patient->patientNurseAsPatient->permanentNurse ?? null,
+                    ];
+                }
             )->filter()->unique('patient_id')
             ->values();
     }

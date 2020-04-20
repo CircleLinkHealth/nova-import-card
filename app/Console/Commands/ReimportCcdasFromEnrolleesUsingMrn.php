@@ -47,15 +47,15 @@ class ReimportCcdasFromEnrolleesUsingMrn extends Command
             ->chunkById(
                 100,
                 function ($enrollees) {
-                        $enrollees->each(
-                            function (Enrollee $e) {
+                    $enrollees->each(
+                        function (Enrollee $e) {
                                 $this->showPreMessage($e);
                                 $this->updateOrCreateCarePlan(
                                     $this->medicalRecord($e)
                                 );
                             }
-                        );
-                    }
+                    );
+                }
             );
     }
 
