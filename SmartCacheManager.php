@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\Core;
 
 use Carbon\Carbon;
@@ -23,12 +27,19 @@ class SmartCacheManager extends CacheManager
         $this->app = $app;
     }
 
+    public function clear()
+    {
+        //make sure array store is cleared
+        $this->store('array')->clear();
+
+        return parent::clear();
+    }
+
     /**
      * Get an item from the cache, or execute the given Closure and store the result.
      *
-     * @param string $key
-     * @param \DateTimeInterface|\DateInterval|float|int $minutes
-     * @param \Closure $callback
+     * @param string                                     $key
+     * @param \DateInterval|\DateTimeInterface|float|int $minutes
      *
      * @return mixed
      */
@@ -43,21 +54,11 @@ class SmartCacheManager extends CacheManager
         return parent::remember($key, $minutes, $callback);
     }
 
-    public function clear()
-    {
-        //make sure array store is cleared
-        $this->store('array')->clear();
-
-        return parent::clear();
-    }
-
     /**
      * Get threshold number of minutes where we always
      * cache in array store.
      *
      * Default: 2 minutes
-     *
-     * @return int
      */
     private function getArrayStoreThreshold(): int
     {
@@ -68,13 +69,15 @@ class SmartCacheManager extends CacheManager
     {
         if (is_int($val) || is_float($val)) {
             return $val;
-        } else if ($val instanceof Carbon) {
+        }
+        if ($val instanceof Carbon) {
             /** @var Carbon $val */
             $carbonVal = $val;
             $now       = now();
 
             return $carbonVal->diffInMinutes($now);
-        } else if ($val instanceof \DateInterval) {
+        }
+        if ($val instanceof \DateInterval) {
             /** @var \DateInterval $diVal */
             $diVal = $val;
 
@@ -83,5 +86,4 @@ class SmartCacheManager extends CacheManager
 
         return $val;
     }
-
 }

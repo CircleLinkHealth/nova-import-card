@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 8/6/19
- * Time: 8:14 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace CircleLinkHealth\Core\Loggers;
-
 
 use Zwijn\Monolog\Formatter\LogdnaFormatter;
 
@@ -17,7 +14,7 @@ class LogdnaLogger
     {
         $logdnaHandler = new \Zwijn\Monolog\Handler\LogdnaHandler($config['ingestion_key'], $config['host_name'], $config['level']);
         $logdnaHandler->setFormatter(app(LogdnaFormatter::class));
-        
+
         return $logdnaHandler;
     }
 }

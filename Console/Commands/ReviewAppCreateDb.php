@@ -65,7 +65,7 @@ class ReviewAppCreateDb extends Command
         if (false === $dbTableExists) {
             $cmd = 'mysql:createdb';
             $this->output->note("Running command $cmd");
-            $this->runCommand(['php', 'artisan', '-vvv', $cmd, $dbName]);
+            $this->runCpmCommand(['php', 'artisan', '-vvv', $cmd, $dbName]);
         }
 
         $this->warn('reviewapp:create-db ran');

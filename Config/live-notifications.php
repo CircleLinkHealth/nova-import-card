@@ -11,9 +11,7 @@ return [
      */
     'only_show_notifications_created_after' => \Carbon\Carbon::create(2019, 10, 1, 0, 0, 0),
 
-    /**
-     * Only show notifications of the following classes in Live Notifications count.
-     */
+    // Only show notifications of the following classes in Live Notifications count.
     'classes' => [
         //        App\Notifications\AddendumCreated::class,
     ],

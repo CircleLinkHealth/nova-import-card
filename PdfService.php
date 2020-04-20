@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Core;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
+use Illuminate\Support\Str;
 use LynX39\LaraPdfMerger\PdfManage;
 
 class PdfService
@@ -57,9 +58,7 @@ class PdfService
      * Create a PDF from a View.
      *
      * @param $view
-     * @param array $args
-     * @param null  $outputFullPath
-     * @param array $options
+     * @param null $outputFullPath
      *
      * @throws \Exception
      *
@@ -120,8 +119,7 @@ class PdfService
      * Merge an array of files.
      * NOTE: Each index in the array has to be a full path to a file.
      *
-     * @param array $filesWithFullPath
-     * @param null  $outputFullPath
+     * @param null $outputFullPath
      *
      * @throws \Exception
      *
@@ -154,7 +152,7 @@ class PdfService
      */
     private function randomFileFullPath()
     {
-        $name = Carbon::now()->toAtomString().str_random(20);
+        $name = Carbon::now()->toAtomString().Str::random(20);
 
         return storage_path("pdfs/${name}.pdf");
     }

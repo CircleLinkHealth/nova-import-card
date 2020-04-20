@@ -24,7 +24,7 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider
      * @var bool
      */
     protected $defer = true;
-    
+
     /**
      * Get the services provided by the provider.
      *
@@ -44,7 +44,7 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider
             \Illuminate\Notifications\Channels\DatabaseChannel::class,
         ];
     }
-    
+
     /**
      * Register the service provider.
      */

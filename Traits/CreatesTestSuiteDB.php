@@ -39,7 +39,7 @@ trait CreatesTestSuiteDB
                     array_push($command, '--env=testing');
                 }
 
-                $this->runCommand(array_merge($base, $command));
+                $this->runCpmCommand(array_merge($base, $command));
             }
         );
     }

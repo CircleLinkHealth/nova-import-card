@@ -34,8 +34,6 @@ class FromArray implements FromCollection, Responsable, WithHeadings
      * FromArray constructor.
      *
      * @param $filename
-     * @param array $reportData
-     * @param array $columnTitles
      */
     public function __construct($filename, array $reportData, array $columnTitles = [])
     {
@@ -53,17 +51,11 @@ class FromArray implements FromCollection, Responsable, WithHeadings
         return collect($this->reportData);
     }
 
-    /**
-     * @return string
-     */
     public function getFilename(): string
     {
         return $this->filename;
     }
 
-    /**
-     * @return array
-     */
     public function headings(): array
     {
         return ! empty($this->columnTitles)
@@ -71,11 +63,6 @@ class FromArray implements FromCollection, Responsable, WithHeadings
             : $this->headingsFromReportData();
     }
 
-    /**
-     * @param string $filename
-     *
-     * @return FromArray
-     */
     public function setFilename(string $filename): FromArray
     {
         $this->filename = $filename;

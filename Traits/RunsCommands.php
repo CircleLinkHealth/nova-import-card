@@ -13,13 +13,11 @@ trait RunsCommands
     /**
      * Run a command on the terminal.
      *
-     * @param string $command
-     *
      * @throws \Exception
      *
      * @return Process
      */
-    private function runCommand(string $command)
+    private function runCpmCommand(string $command)
     {
         $this->info("Running: `$command`");
         $process = Process::fromShellCommandline($command);

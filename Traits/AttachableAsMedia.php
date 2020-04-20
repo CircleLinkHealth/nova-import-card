@@ -13,7 +13,6 @@ use Spatie\MediaLibrary\HasMedia\HasMedia;
 trait AttachableAsMedia
 {
     /**
-     * @param Model $model
      * @param $filePath
      * @param $mediaCollection
      *

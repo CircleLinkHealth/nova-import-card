@@ -64,7 +64,7 @@ class ReviewAppSeedDb extends Command
         if (false === $dbTableExists) {
             $cmd = 'db:seed';
             $this->output->note("Running command $cmd");
-            $this->runCommand(['php', 'artisan', '-vvv', $cmd, '--class=TestSuiteSeeder']);
+            $this->runCpmCommand(['php', 'artisan', '-vvv', $cmd, '--class=TestSuiteSeeder']);
         }
 
         $this->warn('reviewapp:seed-db ran');
