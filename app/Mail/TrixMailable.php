@@ -73,7 +73,7 @@ class TrixMailable extends Mailable
         //attach media
         if ( ! empty($this->mailAttachments)) {
             foreach ($this->mailAttachments as $attachment) {
-                $email->attachFromStorageDisk('google', $attachment['path']);
+                $email->attachFromStorageDisk('cloud', $attachment['path']);
             }
         }
 
