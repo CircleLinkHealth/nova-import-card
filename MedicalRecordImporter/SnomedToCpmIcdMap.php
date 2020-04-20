@@ -40,10 +40,10 @@ use CircleLinkHealth\SharedModels\Entities\CpmProblem;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap query()
- * @property int|null $revision_history_count
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap query()
+ * @property int|null                                                                                    $revision_history_count
  */
 class SnomedToCpmIcdMap extends \CircleLinkHealth\Core\Entities\BaseModel
 {
