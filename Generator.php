@@ -120,8 +120,8 @@ class Generator
                         ->whereHas(
                             'nurseInfo',
                             function ($s) {
-                                       $s->where('is_demo', false);
-                                   }
+                                $s->where('is_demo', false);
+                            }
                         );
                 }
             );
