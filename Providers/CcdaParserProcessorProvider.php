@@ -17,7 +17,7 @@ class CcdaParserProcessorProvider extends ServiceProvider
      * @var bool
      */
     protected $defer = true;
-    
+
     /**
      * Boot the application events.
      */
@@ -30,7 +30,7 @@ class CcdaParserProcessorProvider extends ServiceProvider
             ]
         );
     }
-    
+
     /**
      * Get the services provided by the provider.
      *
@@ -42,15 +42,14 @@ class CcdaParserProcessorProvider extends ServiceProvider
             CcdaParse::class,
         ];
     }
-    
+
     /**
      * Register the service provider.
      */
     public function register()
     {
-    
     }
-    
+
     /**
      * Register config.
      */
