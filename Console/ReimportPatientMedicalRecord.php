@@ -16,6 +16,7 @@ use CircleLinkHealth\Eligibility\Notifications\PatientNotReimportedNotification;
 use CircleLinkHealth\Eligibility\Notifications\PatientReimportedNotification;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ReimportPatientMedicalRecord extends Command
 {
@@ -295,8 +296,14 @@ class ReimportPatientMedicalRecord extends Command
             $ccda->patient_id = $user->id;
             $ccda->save();
         }
+        
+        
 
-        $ccda->import($this->getEnrollee($user));
+        try {
+            $ccda->import($this->getEnrollee($user));
+        } catch (ModelNotFoundException $e) {
+            $ccda->import();
+        }
 
         \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} CcdaId:{$ccda->id}:ln:".__LINE__);
     }
