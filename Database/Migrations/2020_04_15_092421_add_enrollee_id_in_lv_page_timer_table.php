@@ -35,8 +35,8 @@ class AddEnrolleeIdInLvPageTimerTable extends Migration
         //for L5.8
         config(['database.connections.mysql.strict' => false]);
         DB::reconnect();
-        DB::statement("ALTER TABLE lv_page_timer CHANGE start_time start_time TIMESTAMP NULL DEFAULT NULL");
-        DB::statement("ALTER TABLE lv_page_timer CHANGE end_time end_time TIMESTAMP NULL DEFAULT NULL");
+        DB::statement('ALTER TABLE lv_page_timer CHANGE start_time start_time TIMESTAMP NULL DEFAULT NULL');
+        DB::statement('ALTER TABLE lv_page_timer CHANGE end_time end_time TIMESTAMP NULL DEFAULT NULL');
         //for L5.8
 
         Schema::table('lv_page_timer', function (Blueprint $table) {
