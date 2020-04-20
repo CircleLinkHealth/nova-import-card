@@ -1,8 +1,7 @@
+\
 <?php
 
-/*
- * This file is part of CarePlan Manager by CircleLink Health.
- */
+// This file is part of CarePlan Manager by CircleLink Health.
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -47,26 +46,6 @@ class L58MakeNullable extends Migration
                 }
             }
         }
-
-        DB::statement('ALTER TABLE wp_blog_versions CHANGE last_updated last_updated DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP');
-
-        DB::statement('ALTER TABLE wp_links CHANGE link_updated link_updated DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP');
-
-        DB::statement('ALTER TABLE wp_blogsXXX CHANGE registered registered DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP');
-        DB::statement('ALTER TABLE wp_blogsXXX CHANGE last_updated last_updated DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP');
-
-        DB::statement('ALTER TABLE wp_comments CHANGE comment_date comment_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP');
-        DB::statement('ALTER TABLE wp_comments CHANGE comment_date_gmt comment_date_gmt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP');
-
-        DB::statement('ALTER TABLE wp_posts CHANGE post_date post_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP');
-        DB::statement('ALTER TABLE wp_posts CHANGE post_date_gmt post_date_gmt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP');
-        DB::statement('ALTER TABLE wp_posts CHANGE post_modified post_modified DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP');
-        DB::statement('ALTER TABLE wp_posts CHANGE post_modified_gmt post_modified_gmt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP');
-
-        DB::statement('ALTER TABLE wp_registration_log CHANGE date_registered date_registered DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP');
-
-        DB::statement('ALTER TABLE wp_signups CHANGE registered registered DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP');
-        DB::statement('ALTER TABLE wp_signups CHANGE activated activated DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP');
 
         DB::statement('ALTER TABLE notes CHANGE performed_at performed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP');
 
