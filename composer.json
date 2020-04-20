@@ -166,7 +166,7 @@
         "jubeki/nova-card-linkable": "^1.0",
         "kreitje/nova-horizon-stats": "^0.3.0",
         "lab404/laravel-impersonate": "^1.2",
-        "laracasts/utilities": "~2.0",
+        "laracasts/utilities": "~3.0",
         "laravel/framework": "^6.18",
         "laravel/horizon": "^3.2.7",
         "laravel/nova": "^2.3",
