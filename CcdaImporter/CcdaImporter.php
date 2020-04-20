@@ -27,6 +27,7 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CcdaImporter
@@ -292,7 +293,7 @@ class CcdaImporter
     
     private function createNewPatient()
     {
-        $newUserId = str_random(25);
+        $newUserId = Str::random(25);
         
         $email = empty($email = $this->ccda->patientEmail())
             ? $newUserId.'@careplanmanager.com'
@@ -302,7 +303,7 @@ class CcdaImporter
             new ParameterBag(
                 [
                     'email'             => $email,
-                    'password'          => str_random(30),
+                    'password'          => Str::random(30),
                     'display_name'      => ucwords(
                         strtolower($this->ccda->patientFirstName().' '.$this->ccda->patientLastName())
                     ),

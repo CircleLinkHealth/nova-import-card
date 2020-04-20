@@ -28,6 +28,7 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\ValidatesEligibility;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProcessEligibilityService
 {
@@ -383,9 +384,9 @@ class ProcessEligibilityService
                     $cloudDirName  = $file['dirname'];
                     
                     foreach ($localDisk->allFiles($unzipDir) as $path) {
-                        if (str_contains($path, 'xml')) {
+                        if (Str::contains($path, 'xml')) {
                             $now       = Carbon::now()->toAtomString();
-                            $randomStr = str_random();
+                            $randomStr = Str::random();
                             
                             $put  = $cloudDisk->put(
                                 "{$processedDir['path']}/${randomStr}-${now}",
