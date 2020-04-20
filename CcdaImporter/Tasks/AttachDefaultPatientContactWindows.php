@@ -1,8 +1,10 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
-
 
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
@@ -14,14 +16,17 @@ class AttachDefaultPatientContactWindows extends BaseCcdaImportTask
 {
     /** @var Enrollee */
     private $enrollee;
-    
-    public static function for(User $patient, Ccda $ccda, Enrollee $enrollee = null) {
+
+    public static function for(User $patient, Ccda $ccda, Enrollee $enrollee = null)
+    {
         $static = new static($patient, $ccda);
-        if ($enrollee instanceof Enrollee)
-        $static->setEnrollee($enrollee);
+        if ($enrollee instanceof Enrollee) {
+            $static->setEnrollee($enrollee);
+        }
+
         return $static->import();
     }
-    
+
     /**
      * @param mixed $enrollee
      */
@@ -29,22 +34,22 @@ class AttachDefaultPatientContactWindows extends BaseCcdaImportTask
     {
         $this->enrollee = $enrollee;
     }
-    
+
     protected function import()
     {
         $this->patient->load('patientInfo');
-    
+
         if ( ! $this->patient->timezone) {
             $this->patient->timezone = optional($this->ccda->location)->timezone ?? 'America/New_York';
         }
-    
+
         if (PatientContactWindow::where('patient_info_id', $this->patient->patientInfo->id)->exists()) {
             return;
         }
-    
+
         $preferredCallDays  = $this->getEnrolleePreferredCallDays();
         $preferredCallTimes = $this->getEnrolleePreferredCallTimes();
-    
+
         if ( ! $preferredCallDays && ! $preferredCallTimes) {
             PatientContactWindow::sync(
                 $this->patient->patientInfo,
@@ -56,10 +61,10 @@ class AttachDefaultPatientContactWindows extends BaseCcdaImportTask
                     5,
                 ]
             );
-        
+
             return;
         }
-    
+
         PatientContactWindow::sync(
             $this->patient->patientInfo,
             $preferredCallDays,
@@ -67,30 +72,30 @@ class AttachDefaultPatientContactWindows extends BaseCcdaImportTask
             $preferredCallTimes['end']
         );
     }
-    
+
     private function getEnrolleePreferredCallDays()
     {
         if ( ! $this->enrollee) {
             return null;
         }
-        
+
         if (empty($this->enrollee->preferred_days)) {
             return null;
         }
-        
+
         return explode(', ', $this->enrollee->preferred_days);
     }
-    
+
     private function getEnrolleePreferredCallTimes()
     {
         if ( ! $this->enrollee) {
             return null;
         }
-        
+
         if (empty($this->enrollee->preferred_window)) {
             return null;
         }
-        
+
         return parseCallTimes($this->enrollee->preferred_window);
     }
 }

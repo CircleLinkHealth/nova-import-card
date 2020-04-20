@@ -25,8 +25,6 @@ class EligibilityBatchProcessed extends Notification implements LiveNotification
 
     /**
      * Create a new notification instance.
-     *
-     * @param EligibilityBatch $batch
      */
     public function __construct(EligibilityBatch $batch)
     {
@@ -34,16 +32,46 @@ class EligibilityBatchProcessed extends Notification implements LiveNotification
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function description($notifiable): string
+    {
+        return '';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubject($notifiable): string
+    {
+        return "Eligibility Batch {$this->batch->id} has finished processing";
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function redirectLink($notifiable): string
+    {
+        return route('eligibility.batch.show', [$this->batch->id]);
+    }
+
+    /**
      * Get the array representation of the notification.
      *
      * @param mixed $notifiable
-     *
-     * @return array
      */
-    public function toArray($notifiable) :array
+    public function toArray($notifiable): array
     {
         return [
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toBroadcast($notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([]);
     }
 
     /**
@@ -72,37 +100,5 @@ class EligibilityBatchProcessed extends Notification implements LiveNotification
     public function via($notifiable)
     {
         return ['mail', 'database', 'broadcast'];
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public function description($notifiable): string
-    {
-        return '';
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public function getSubject($notifiable): string
-    {
-        return "Eligibility Batch {$this->batch->id} has finished processing";
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public function redirectLink($notifiable): string
-    {
-        return route('eligibility.batch.show',[$this->batch->id]);
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public function toBroadcast($notifiable): BroadcastMessage
-    {
-        return new BroadcastMessage([]);
     }
 }

@@ -7,11 +7,9 @@
 namespace CircleLinkHealth\Eligibility\Adapters;
 
 use CircleLinkHealth\Eligibility\Contracts\EligibilityCheckAdapter;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\Decorators\InsuranceFromAthena;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
-use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use Illuminate\Support\Collection;
 
 class AddInsurancesFromAthena implements EligibilityCheckAdapter
@@ -24,15 +22,13 @@ class AddInsurancesFromAthena implements EligibilityCheckAdapter
      * @var Collection
      */
     private $insuranceCollection;
-    
+
     /**
      * AddInsurancesFromAthena constructor.
-     *
-     * @param EligibilityCheckAdapter $adapter
      */
     public function __construct(EligibilityCheckAdapter $adapter)
     {
-        $this->adapter       = $adapter;
+        $this->adapter = $adapter;
     }
 
     /**

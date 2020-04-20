@@ -6,9 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts;
 
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\ImportedSection;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\Validator;
-
 /**
  * This is any Section from a Health Record.
  * Examples include Problems, Medications, Demographics, Vitals, Appointments, Insurance and so

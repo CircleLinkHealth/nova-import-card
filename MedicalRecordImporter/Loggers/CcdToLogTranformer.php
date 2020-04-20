@@ -11,8 +11,6 @@ use CircleLinkHealth\Core\StringManipulation;
 class CcdToLogTranformer
 {
     /**
-     * @param object $allergy
-     *
      * @return array
      */
     public function allergy(object $allergy)
@@ -24,7 +22,7 @@ class CcdToLogTranformer
             'allergen_name' => $allergy->allergen->name,
         ];
     }
-    
+
     /**
      * @param $demographics
      *
@@ -60,7 +58,7 @@ class CcdToLogTranformer
             'ethnicity'     => $demographics->ethnicity,
         ];
     }
-    
+
     /**
      * @param $document
      *
@@ -75,7 +73,61 @@ class CcdToLogTranformer
                 ?: $document->type,
         ];
     }
-    
+
+    /**
+     * Returns formatted phone numbers, organized by type ('home', 'mobile' etc).
+     *
+     * @param array $phones
+     *
+     * @return array
+     */
+    public function getAllPhoneNumbers($phones = [])
+    {
+        $home    = [];
+        $mobile  = [];
+        $work    = [];
+        $primary = [];
+
+        foreach ($phones as $phone) {
+            if ( ! isset($phone->number)) {
+                continue;
+            }
+
+            $type = isset($phone->type)
+                ? $phone->type
+                : 'home';
+
+            if ( ! $number = (new StringManipulation())->formatPhoneNumber($phone->number)) {
+                continue;
+            }
+
+            switch ($type) {
+                case 'home':
+                    array_push($home, $number);
+                    break;
+                case 'mobile':
+                    array_push($mobile, $number);
+                    break;
+                case 'work':
+                    array_push($work, $number);
+                    break;
+                case 'primary_phone':
+                    array_push($primary, $number);
+                    break;
+            }
+        }
+
+        $phoneCollections = compact('home', 'mobile', 'work', 'primary');
+
+        foreach ($phoneCollections as $key => $phoneCollection) {
+            if (empty($phoneCollection)) {
+                array_push($phoneCollections[$key], null);
+            }
+        }
+
+        return $phoneCollections;
+    }
+
     /**
      * @param $payer
      *
@@ -193,8 +245,9 @@ class CcdToLogTranformer
         }
 
         foreach ($ccdProblem->translations as $translation) {
-            if (empty($translation)) continue;
-            
+            if (empty($translation)) {
+                continue;
+            }
             if ( ! $translation->code_system_name) {
                 $translation->code_system_name = getProblemCodeSystemName([$translation->code_system]);
 
@@ -251,59 +304,5 @@ class CcdToLogTranformer
             'home_phone' => $phones['home'][0],
             'work_phone' => $phones['work'][0],
         ];
-    }
-    
-    /**
-     * Returns formatted phone numbers, organized by type ('home', 'mobile' etc).
-     *
-     * @param array $phones
-     *
-     * @return array
-     */
-    public function getAllPhoneNumbers($phones = [])
-    {
-        $home    = [];
-        $mobile  = [];
-        $work    = [];
-        $primary = [];
-        
-        foreach ($phones as $phone) {
-            if ( ! isset($phone->number)) {
-                continue;
-            }
-            
-            $type = isset($phone->type)
-                ? $phone->type
-                : 'home';
-            
-            if ( ! $number = (new StringManipulation())->formatPhoneNumber($phone->number)) {
-                continue;
-            }
-            
-            switch ($type) {
-                case 'home':
-                    array_push($home, $number);
-                    break;
-                case 'mobile':
-                    array_push($mobile, $number);
-                    break;
-                case 'work':
-                    array_push($work, $number);
-                    break;
-                case 'primary_phone':
-                    array_push($primary, $number);
-                    break;
-            }
-        }
-        
-        $phoneCollections = compact('home', 'mobile', 'work', 'primary');
-        
-        foreach ($phoneCollections as $key => $phoneCollection) {
-            if (empty($phoneCollection)) {
-                array_push($phoneCollections[$key], null);
-            }
-        }
-        
-        return $phoneCollections;
     }
 }

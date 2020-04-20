@@ -1,57 +1,59 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\Eligibility\Jobs;
 
 use CircleLinkHealth\Eligibility\Decorators\EncountersFromAthena;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class FetchEncountersFromAthena implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     /**
-     * @var TargetPatient
+     * @var string|null
      */
-    public $targetPatient;
+    public $endDate;
     /**
      * @var string|null
      */
     public $startDate;
     /**
-     * @var string|null
+     * @var TargetPatient
      */
-    public $endDate;
-    
+    public $targetPatient;
+
     /**
      * Create a new job instance.
-     *
-     * @param TargetPatient $targetPatient
-     * @param string|null $startDate
-     * @param string|null $endDate
      */
     public function __construct(TargetPatient $targetPatient, string $startDate = null, string $endDate = null)
     {
         $this->targetPatient = $targetPatient;
-        $this->startDate = $startDate;
-        $this->endDate = $endDate;
+        $this->startDate     = $startDate;
+        $this->endDate       = $endDate;
     }
-    
+
     /**
      * Execute the job.
      *
-     * @param EncountersFromAthena $encountersFromAthena
+     * @throws \Exception
      *
      * @return void
-     * @throws \Exception
      */
     public function handle(EncountersFromAthena $encountersFromAthena)
     {
         $this->targetPatient->loadMissing('eligibilityJob');
-        
+
         $encountersFromAthena->setStartDate($this->startDate)->setEndDate($this->endDate)->decorate($this->targetPatient->eligibilityJob);
     }
 }

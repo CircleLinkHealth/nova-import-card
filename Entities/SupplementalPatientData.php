@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null                     $secondary_insurance
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SupplementalPatientData\NBI\SupplementalPatientData newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SupplementalPatientData\NBI\SupplementalPatientData newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SupplementalPatientData\NBI\SupplementalPatientData query()
@@ -36,13 +37,24 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SupplementalPatientData\NBI\SupplementalPatientData whereSecondaryInsurance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SupplementalPatientData\NBI\SupplementalPatientData whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property int                                          $practice_id
+ * @property int|null                                     $location_id
+ * @property int|null                                     $billing_provider_user_id
+ * @property string|null                                  $location
+ * @property \CircleLinkHealth\Customer\Entities\Practice $practice
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\SupplementalPatientData whereBillingProviderUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\SupplementalPatientData whereLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\SupplementalPatientData whereLocationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\SupplementalPatientData wherePracticeId($value)
  */
 class SupplementalPatientData extends Model
 {
     protected $dates = [
         'dob',
     ];
-    
+
     protected $fillable = [
         'practice_id',
         'location_id',
@@ -57,8 +69,9 @@ class SupplementalPatientData extends Model
         'location',
     ];
     protected $table = 'supplemental_patient_data';
-    
-    public function practice() {
+
+    public function practice()
+    {
         return $this->belongsTo(Practice::class);
     }
 }

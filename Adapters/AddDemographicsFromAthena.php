@@ -20,28 +20,24 @@ class AddDemographicsFromAthena implements EligibilityCheckAdapter
      */
     protected $adapter;
     /**
-     * @var TargetPatient
-     */
-    protected $targetPatient;
-    /**
      * @var Ccda
      */
     protected $ccda;
-    
+    /**
+     * @var TargetPatient
+     */
+    protected $targetPatient;
+
     /**
      * AddInsurancesFromAthena constructor.
-     *
-     * @param EligibilityCheckAdapter $adapter
-     * @param TargetPatient $targetPatient
-     * @param Ccda $ccda
      */
     public function __construct(EligibilityCheckAdapter $adapter, TargetPatient $targetPatient, Ccda $ccda)
     {
-        $this->adapter = $adapter;
+        $this->adapter       = $adapter;
         $this->targetPatient = $targetPatient;
-        $this->ccda = $ccda;
+        $this->ccda          = $ccda;
     }
-    
+
     /**
      * @throws \Exception
      */
@@ -51,7 +47,7 @@ class AddDemographicsFromAthena implements EligibilityCheckAdapter
             $this->adapter->adaptToEligibilityJob()
         );
     }
-    
+
     public function getMedicalRecord(): MedicalRecord
     {
         return $this->adapter->getMedicalRecord();

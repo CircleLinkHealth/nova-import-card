@@ -17,8 +17,6 @@ interface ImportedSection
 {
     /**
      * After QA is done, we Import the data.
-     *
-     * @return bool
      */
     public function createCarePlanSection(): bool;
 

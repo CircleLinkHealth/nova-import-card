@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\EligibilityChecker;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\EligibilityChecker;
-use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -22,7 +22,7 @@ class ProcessSinglePatientEligibility implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    
+
     /**
      * @var EligibilityBatch
      */
@@ -31,33 +31,29 @@ class ProcessSinglePatientEligibility implements ShouldQueue
      * @var \CircleLinkHealth\Eligibility\Entities\EligibilityJob
      */
     private $eligibilityJob;
-    
+
     /**
      * @var bool
      */
     private $filterInsurance;
-    
+
     /**
      * @var bool
      */
     private $filterLastEncounter;
-    
+
     /**
      * @var bool
      */
     private $filterProblems;
-    
+
     /**
      * @var \CircleLinkHealth\Customer\Entities\Practice
      */
     private $practice;
-    
+
     /**
      * Create a new job instance.
-     *
-     * @param \CircleLinkHealth\Eligibility\Entities\EligibilityJob $eligibilityJob
-     * @param \CircleLinkHealth\Eligibility\Entities\EligibilityBatch $batch
-     * @param \CircleLinkHealth\Customer\Entities\Practice $practice
      */
     public function __construct(
         EligibilityJob $eligibilityJob,
@@ -71,7 +67,7 @@ class ProcessSinglePatientEligibility implements ShouldQueue
         $this->filterInsurance     = $batch->shouldFilterInsurance();
         $this->eligibilityJob      = $eligibilityJob;
     }
-    
+
     /**
      * Execute the job.
      *

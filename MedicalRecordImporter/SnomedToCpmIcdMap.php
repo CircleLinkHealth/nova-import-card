@@ -11,19 +11,20 @@ use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 /**
  * CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap.
  *
- * @property int                             $id
- * @property int                             $snomed_code
- * @property string                          $snomed_name
- * @property string                          $icd_10_code
- * @property string                          $icd_10_name
- * @property \Carbon\Carbon                  $created_at
- * @property \Carbon\Carbon                  $updated_at
- * @property string                          $icd_9_code
- * @property string                          $icd_9_name
- * @property float                           $icd_9_avg_usage
- * @property int                             $icd_9_is_nec
- * @property int|null                        $cpm_problem_id
+ * @property int                                                     $id
+ * @property int                                                     $snomed_code
+ * @property string                                                  $snomed_name
+ * @property string                                                  $icd_10_code
+ * @property string                                                  $icd_10_name
+ * @property \Carbon\Carbon                                          $created_at
+ * @property \Carbon\Carbon                                          $updated_at
+ * @property string                                                  $icd_9_code
+ * @property string                                                  $icd_9_name
+ * @property float                                                   $icd_9_avg_usage
+ * @property int                                                     $icd_9_is_nec
+ * @property int|null                                                $cpm_problem_id
  * @property \CircleLinkHealth\SharedModels\Entities\CpmProblem|null $cpmProblem
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap
  *     whereCpmProblemId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap whereCreatedAt($value)
@@ -39,10 +40,13 @@ use CircleLinkHealth\SharedModels\Entities\CpmProblem;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap whereSnomedName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap query()
+ *
  * @property int|null $revision_history_count
  */
 class SnomedToCpmIcdMap extends \CircleLinkHealth\Core\Entities\BaseModel

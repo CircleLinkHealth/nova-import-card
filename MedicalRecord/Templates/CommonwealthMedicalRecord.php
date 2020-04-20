@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
 
 use Carbon\Carbon;
@@ -15,27 +19,27 @@ class CommonwealthMedicalRecord extends BaseMedicalRecordTemplate
      * @var array
      */
     private $data;
-    
+
     public function __construct(array $medicalRecord, CcdaMedicalRecord $ccdaMedicalRecord)
     {
         $this->data              = $medicalRecord;
         $this->ccdaMedicalRecord = $ccdaMedicalRecord;
     }
-    
+
     public function fillAllergiesSection(): array
     {
         return $this->ccdaMedicalRecord->fillAllergiesSection();
     }
-    
+
     public function fillDemographicsSection(): object
     {
         return $this->ccdaMedicalRecord->fillDemographicsSection();
     }
-    
-    public function fillDocumentSection() :object
+
+    public function fillDocumentSection(): object
     {
         $document = $this->ccdaMedicalRecord->fillDocumentSection();
-        
+
         $document->custodian->name  = $this->getProviderName();
         $document->documentation_of = [
             [
@@ -48,14 +52,14 @@ class CommonwealthMedicalRecord extends BaseMedicalRecordTemplate
                     'family' => '',
                     'suffix' => '',
                 ],
-                'phones'      => [
+                'phones' => [
                     0 => [
                         'type'   => '',
                         'number' => '',
                     ],
                 ],
-                'address'     => [
-                    'street'  => [
+                'address' => [
+                    'street' => [
                         0 => '',
                     ],
                     'city'    => '',
@@ -65,97 +69,97 @@ class CommonwealthMedicalRecord extends BaseMedicalRecordTemplate
                 ],
             ],
         ];
-        
+
         return $document;
     }
-    
+
     public function fillMedicationsSection(): array
     {
         return $this->ccdaMedicalRecord->fillMedicationsSection();
     }
-    
+
+    public function fillPayersSection(): array
+    {
+        return $this->ccdaMedicalRecord->fillPayersSection();
+    }
+
     public function fillProblemsSection(): array
     {
         return collect(array_merge((array) $this->ccdaMedicalRecord->fillProblemsSection(), $this->getMedicalHistory()))->unique('name')->all();
     }
-    
+
     public function fillVitals(): array
     {
         return $this->ccdaMedicalRecord->fillVitals();
     }
-    
-    private function getAllergyName($allergy): string
-    {
-        return $allergy->Name;
-    }
-    
-    public function getProviderName(): string
-    {
-        return $this->data['referring_provider_name'];
-    }
-    
-    public function getMrn(): string
-    {
-        return $this->data['mrn_number'];
-    }
-    
-    public function getFirstName(): string
-    {
-        return $this->data['first_name'];
-    }
-    
+
     public function getDob(): Carbon
     {
         return Carbon::parse($this->data['dob']);
     }
-    
+
+    public function getFirstName(): string
+    {
+        return $this->data['first_name'];
+    }
+
     public function getLastName(): string
     {
         return $this->data['last_name'];
     }
-    
+
+    public function getMrn(): string
+    {
+        return $this->data['mrn_number'];
+    }
+
+    public function getProviderName(): string
+    {
+        return $this->data['referring_provider_name'];
+    }
+
+    public function getType(): string
+    {
+        return 'commonwealth-pain-associates-pllc';
+    }
+
     private function getAddressLine1(): string
     {
         return $this->data['street'];
     }
-    
+
     private function getAddressLine2(): string
     {
         return $this->data['street2'];
     }
-    
-    private function getZipCode(): string
+
+    private function getAllergyName($allergy): string
     {
-        return $this->data['zip'];
+        return $allergy->Name;
     }
-    
+
     private function getMedicalHistory()
     {
         return collect($this->data['medical_history']['questions'] ?? [])->where('answer', 'Y')->pluck(
             'question'
         )->unique()
-                                                                         ->map(
-                                                                             function ($historyItem) {
-                                                                                 if ( ! validProblemName(
-                                                                                     $historyItem
-                                                                                 )) {
-                                                                                     return false;
-                                                                                 }
-                
-                                                                                 return (new Problem())->setName(
-                                                                                     $historyItem
-                                                                                 )->toarray();
-                                                                             }
-                                                                         )->all();
+            ->map(
+                function ($historyItem) {
+                    if ( ! validProblemName(
+                        $historyItem
+                    )) {
+                        return false;
+                    }
+
+                    return (new Problem())->setName(
+                        $historyItem
+                    )->toarray();
+                }
+            )->all();
     }
-    
-    public function fillPayersSection(): array
+
+    private function getZipCode(): string
     {
-        return $this->ccdaMedicalRecord->fillPayersSection();
-    }
-    
-    public function getType(): string
-    {
-        return 'commonwealth-pain-associates-pllc';
+        return $this->data['zip'];
     }
 }

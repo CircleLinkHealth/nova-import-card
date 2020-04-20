@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Contracts;
 
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\HasMedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\HasMedicalRecord;
 
 interface EligibilityCheckAdapter extends HasMedicalRecord
 {

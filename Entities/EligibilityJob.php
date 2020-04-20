@@ -6,47 +6,45 @@
 
 namespace CircleLinkHealth\Eligibility\Entities;
 
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\EligibilityChecker;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Core\Entities\BaseModel;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\EligibilityChecker;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * CircleLinkHealth\Eligibility\Entities\EligibilityJob.
  *
- * @property int $id
- * @property int $batch_id
- * @property string|null $hash
- * @property int|null $status
- * @property array $data
- * @property string|null $outcome
- * @property string|null $reason
- * @property array $messages
- * @property array|null $errors
- * @property \Illuminate\Support\Carbon|null $last_encounter
- * @property string|null $primary_insurance
- * @property string|null $secondary_insurance
- * @property string|null $tertiary_insurance
- * @property int|null $ccm_problem_1_id
- * @property int|null $ccm_problem_2_id
- * @property int|null $bhi_problem_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property int $invalid_data
- * @property int $invalid_structure
- * @property int $invalid_mrn
- * @property int $invalid_first_name
- * @property int $invalid_last_name
- * @property int $invalid_dob
- * @property int $invalid_problems
- * @property int $invalid_phones
+ * @property int                                                     $id
+ * @property int                                                     $batch_id
+ * @property string|null                                             $hash
+ * @property int|null                                                $status
+ * @property array                                                   $data
+ * @property string|null                                             $outcome
+ * @property string|null                                             $reason
+ * @property array                                                   $messages
+ * @property array|null                                              $errors
+ * @property \Illuminate\Support\Carbon|null                         $last_encounter
+ * @property string|null                                             $primary_insurance
+ * @property string|null                                             $secondary_insurance
+ * @property string|null                                             $tertiary_insurance
+ * @property int|null                                                $ccm_problem_1_id
+ * @property int|null                                                $ccm_problem_2_id
+ * @property int|null                                                $bhi_problem_id
+ * @property \Illuminate\Support\Carbon|null                         $created_at
+ * @property \Illuminate\Support\Carbon|null                         $updated_at
+ * @property string|null                                             $deleted_at
+ * @property int                                                     $invalid_data
+ * @property int                                                     $invalid_structure
+ * @property int                                                     $invalid_mrn
+ * @property int                                                     $invalid_first_name
+ * @property int                                                     $invalid_last_name
+ * @property int                                                     $invalid_dob
+ * @property int                                                     $invalid_problems
+ * @property int                                                     $invalid_phones
  * @property \CircleLinkHealth\Eligibility\Entities\EligibilityBatch $batch
- * @property \CircleLinkHealth\Eligibility\Entities\Enrollee $enrollee
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]
+ * @property \CircleLinkHealth\Eligibility\Entities\Enrollee         $enrollee
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection
  *     $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob eligible()
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob newModelQuery()
@@ -84,58 +82,59 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\EligibilityJob withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\EligibilityJob withoutTrashed()
  * @mixin \Eloquent
- * @property \App\EligibilityJob $eligibilityJob
- * @property int|null $revision_history_count
- * @property-read \CircleLinkHealth\Eligibility\Entities\TargetPatient $targetPatient
+ *
+ * @property \App\EligibilityJob                                  $eligibilityJob
+ * @property int|null                                             $revision_history_count
+ * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient $targetPatient
  */
 class EligibilityJob extends BaseModel
 {
     use SoftDeletes;
-    
+
     //Outcome: A patient that exists more than once in the same batch
     const DUPLICATE = 'duplicate';
-    
+
     //Outcome: A patient that was found to be eligible for the first time in this batch
     const ELIGIBLE = 'eligible';
-    
+
     //Outcome: A patient that was found to be eligible in this batch, but was also found eligible in a previous batch
     const ELIGIBLE_ALSO_IN_PREVIOUS_BATCH = 'eligible_also_in_previous_batch';
-    
+
     //Outcome: A patient that was found eligible, but is already an enrolled patient in CPM
     const ENROLLED = 'enrolled';
-    
+
     //Outcome: Something went wrong during processing.
     const ERROR = 'error';
-    
+
     //Outcome: An ineligile patient
     const INELIGIBLE = 'ineligible';
-    
+
     const STATUSES = [
         'not_started' => 0,
         'processing'  => 1,
         'error'       => 2,
         'complete'    => 3,
     ];
-    
+
     protected $attributes = [
         'status' => 0,
     ];
-    
+
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
     protected $casts = [
-        'data' => 'array',
+        'data'     => 'array',
         'messages' => 'array',
-        'errors' => 'array',
+        'errors'   => 'array',
     ];
-    
+
     protected $dates = [
         'last_encounter',
     ];
-    
+
     protected $fillable = [
         'batch_id',
         'hash',
@@ -161,27 +160,22 @@ class EligibilityJob extends BaseModel
         'invalid_problems',
         'invalid_phones',
     ];
-    
-    public function sanitizeDataKeys()
-    {
-        $this->data = sanitize_array_keys($this->data);
-    }
-    
+
     public function batch()
     {
         return $this->belongsTo(EligibilityBatch::class, 'batch_id');
     }
-    
+
     public function eligibilityJob()
     {
         return $this->belongsTo(EligibilityJob::class);
     }
-    
+
     public function enrollee()
     {
         return $this->hasOne(Enrollee::class);
     }
-    
+
     public function getStatus($statusId = null)
     {
         if ( ! $statusId) {
@@ -190,31 +184,31 @@ class EligibilityJob extends BaseModel
             }
             $statusId = $this->status;
         }
-        
+
         foreach (self::STATUSES as $name => $id) {
             if ($id == $statusId) {
                 return $name;
             }
         }
-        
+
         return null;
     }
-    
+
     public function isAlreadyEnrolled()
     {
         return self::ENROLLED == $this->outcome;
     }
-    
+
     public function isEligible()
     {
         return self::ELIGIBLE == $this->outcome;
     }
-    
+
     public function isIneligible()
     {
         return self::INELIGIBLE == $this->outcome;
     }
-    
+
     /**
      * Process Eligibility With Batch Options.
      *
@@ -227,14 +221,14 @@ class EligibilityJob extends BaseModel
         if ( ! $this->batch) {
             throw new \Exception('A batch is necessary to process an eligibility job.');
         }
-        
+
         return $this->processWithOptions(
             $this->batch->shouldFilterLastEncounter(),
             $this->batch->shouldFilterInsurance(),
             $this->batch->shouldFilterProblems()
         );
     }
-    
+
     /**
      * Process eligibility with given options.
      *
@@ -254,7 +248,7 @@ class EligibilityJob extends BaseModel
         if ( ! $this->batch) {
             throw new \Exception('A batch is necessary to process an eligibility job.');
         }
-        
+
         return new EligibilityChecker(
             $this,
             $this->batch->practice,
@@ -265,17 +259,22 @@ class EligibilityJob extends BaseModel
             true
         );
     }
-    
+
+    public function sanitizeDataKeys()
+    {
+        $this->data = sanitize_array_keys($this->data);
+    }
+
     public function scopeEligible($builder)
     {
         return $builder->where('outcome', '=', self::ELIGIBLE);
     }
-    
+
     public function targetPatient()
     {
         return $this->hasOne(TargetPatient::class);
     }
-    
+
     public function wasAlreadyFoundEligibleInAPreviouslyCreatedBatch()
     {
         return self::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH == $this->outcome;
