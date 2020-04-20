@@ -21,6 +21,9 @@ class CreateRevisionsTable extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('revisions')) {
+            return;
+        }
         Schema::create('revisions', function ($table) {
             $table->increments('id');
             $table->string('revisionable_type');
