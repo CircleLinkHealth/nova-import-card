@@ -14,33 +14,30 @@ use Illuminate\Http\Request;
 class PatientController extends Controller
 {
     private $patientService;
-    
+
     /**
      * CpmProblemController constructor.
-     *
-     * @param PatientService $patientService
      */
     public function __construct(
         PatientService $patientService
     ) {
-        $this->patientService         = $patientService;
+        $this->patientService = $patientService;
     }
 
-    public function show($userId)
-    {
-        return response()->json($this->patientService->getPatientByUserId($userId));
-    }
-    
     /**
      * returns a list of CPM Problems in the system.
      *
      * @param Request $request
-     * @param PatientFilters $filters
      *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\Response|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function index(PatientFilters $filters)
     {
         return $this->patientService->patients($filters);
+    }
+
+    public function show($userId)
+    {
+        return response()->json($this->patientService->getPatientByUserId($userId));
     }
 }

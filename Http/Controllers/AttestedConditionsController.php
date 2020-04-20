@@ -22,8 +22,6 @@ class AttestedConditionsController extends Controller
 
     /**
      * CcdProblemController constructor.
-     *
-     * @param CcdProblemService $ccdProblemService
      */
     public function __construct(CcdProblemService $ccdProblemService)
     {
@@ -39,13 +37,13 @@ class AttestedConditionsController extends Controller
         }
 
         $patient = User::ofType('participant')
-                       ->with([
-                           'patientSummaries' => function ($pms) use ($date) {
-                               $pms->with('attestedProblems')
-                                   ->getForMonth($date);
-                           },
-                       ])
-                       ->findOrFail($userId);
+            ->with([
+                'patientSummaries' => function ($pms) use ($date) {
+                    $pms->with('attestedProblems')
+                        ->getForMonth($date);
+                },
+            ])
+            ->findOrFail($userId);
 
         $attestedProblems = $request->input('attested_problems');
 
@@ -59,9 +57,14 @@ class AttestedConditionsController extends Controller
         //if summary does not have BHI all codes will be included in request from the CCM, no need to merge.
         //else merge and attest, but return only the ones actually used by modal
         if ($summary->hasServiceCode(ChargeableService::BHI)) {
-            $attestedProblems = array_merge($attestedProblems,
-                $summary->attestedProblems->where('cpmProblem.is_behavioral', '=',
-                    ! $request->input('is_bhi'))->pluck('id')->toArray());
+            $attestedProblems = array_merge(
+                $attestedProblems,
+                $summary->attestedProblems->where(
+                    'cpmProblem.is_behavioral',
+                    '=',
+                    ! $request->input('is_bhi')
+                )->pluck('id')->toArray()
+            );
         }
 
         $summary->syncAttestedProblems($attestedProblems);

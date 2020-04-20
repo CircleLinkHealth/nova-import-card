@@ -20,8 +20,6 @@ class UserLifestyleController extends Controller
 
     /**
      * UserLifestyleController constructor.
-     *
-     * @param CpmLifestyleService $lifestyleService
      */
     public function __construct(CpmLifestyleService $lifestyleService)
     {

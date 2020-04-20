@@ -9,7 +9,6 @@ namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 use App\Services\CPM\CpmMedicationGroupService;
 use App\Services\CPM\CpmMedicationService;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 
 class MedicationController extends Controller
