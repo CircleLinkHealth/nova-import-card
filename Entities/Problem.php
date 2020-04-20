@@ -12,6 +12,54 @@ use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * CircleLinkHealth\SharedModels\Entities\Problem
+ *
+ * @property int $id
+ * @property int $is_monitored A monitored problem is a problem we provide Care Management for.
+ * @property int|null $problem_import_id
+ * @property int|null $ccda_id
+ * @property int $patient_id
+ * @property int|null $ccd_problem_log_id
+ * @property string|null $name
+ * @property int|null $billable
+ * @property int|null $cpm_problem_id
+ * @property int|null $cpm_instruction_id A pointer to an instruction for the ccd problem
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\ProblemCode[] $codes
+ * @property-read int|null $codes_count
+ * @property-read \CircleLinkHealth\SharedModels\Entities\CpmInstruction $cpmInstruction
+ * @property-read \CircleLinkHealth\SharedModels\Entities\CpmProblem|null $cpmProblem
+ * @property-read \CircleLinkHealth\Customer\Entities\User $patient
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary[] $patientSummaries
+ * @property-read int|null $patient_summaries_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
+ * @property-read int|null $revision_history_count
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Problem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Problem newQuery()
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\Problem onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Problem query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Problem whereBillable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Problem whereCcdProblemLogId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Problem whereCcdaId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Problem whereCpmInstructionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Problem whereCpmProblemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Problem whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Problem whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Problem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Problem whereIsMonitored($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Problem whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Problem wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Problem whereProblemImportId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Problem whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\Problem withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\Problem withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contracts\Problem
 {
     use HasProblemCodes;

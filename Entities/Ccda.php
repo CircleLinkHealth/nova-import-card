@@ -34,6 +34,71 @@ use Illuminate\Support\Facades\DB;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
+/**
+ * CircleLinkHealth\SharedModels\Entities\Ccda
+ *
+ * @property int $id
+ * @property int|null $direct_mail_message_id
+ * @property int|null $batch_id
+ * @property \Illuminate\Support\Carbon|null $date
+ * @property string|null $mrn
+ * @property string|null $referring_provider_name
+ * @property int|null $location_id
+ * @property int|null $practice_id
+ * @property int|null $billing_provider_id
+ * @property int|null $user_id
+ * @property int|null $patient_id
+ * @property string $source
+ * @property int $imported
+ * @property mixed|null $json
+ * @property string|null $status
+ * @property array|null $validation_checks
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \CircleLinkHealth\Eligibility\Entities\EligibilityBatch|null $batch
+ * @property-read \App\Entities\CcdaRequest $ccdaRequest
+ * @property-read \App\DirectMailMessage|null $directMessage
+ * @property-read \CircleLinkHealth\Customer\Entities\Location|null $location
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\Media[] $media
+ * @property-read int|null $media_count
+ * @property-read \CircleLinkHealth\Customer\Entities\User|null $patient
+ * @property-read \CircleLinkHealth\Customer\Entities\Practice|null $practice
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
+ * @property-read int|null $revision_history_count
+ * @property-read \CircleLinkHealth\Eligibility\Entities\TargetPatient $targetPatient
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda exclude($value = [])
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda hasUPG0506Media()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda hasUPG0506PdfCareplanMedia()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda newQuery()
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda whereBatchId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda whereBillingProviderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda whereDirectMailMessageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda whereImported($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda whereJson($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda whereLocationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda whereMrn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda wherePracticeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda whereReferringProviderName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda whereSource($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda whereValidationChecks($value)
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Ccda extends BaseModel implements HasMedia, MedicalRecord
 {
     /**
