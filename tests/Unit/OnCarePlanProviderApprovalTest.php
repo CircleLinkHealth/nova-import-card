@@ -6,6 +6,7 @@
 
 namespace Tests\Unit;
 
+use Illuminate\Support\Str;
 use App\Notifications\CarePlanProviderApproved;
 use App\Rules\DoesNotHaveBothTypesOfDiabetes;
 use App\Traits\Tests\UserHelpers;
@@ -102,9 +103,9 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
 
         $cpmProblems = CpmProblem::get();
         $ccdProblems = $this->patient()->ccdProblems()->createMany([
-            ['name' => 'test'.str_random(5)],
-            ['name' => 'test'.str_random(5)],
-            ['name' => 'test'.str_random(5)],
+            ['name' => 'test'.Str::random(5)],
+            ['name' => 'test'.Str::random(5)],
+            ['name' => 'test'.Str::random(5)],
         ]);
 
         foreach ($ccdProblems as $problem) {

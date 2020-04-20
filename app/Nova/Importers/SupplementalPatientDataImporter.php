@@ -6,6 +6,7 @@
 
 namespace App\Nova\Importers;
 
+use Illuminate\Support\Str;
 use App\EligiblePatientView;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -320,9 +321,9 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
             
             return $this->correctCenturyIfNeeded($date);
         } catch (\InvalidArgumentException $e) {
-            if (str_contains($dob, '/')) {
+            if (Str::contains($dob, '/')) {
                 $delimiter = '/';
-            } elseif (str_contains($dob, '-')) {
+            } elseif (Str::contains($dob, '-')) {
                 $delimiter = '-';
             }
             $date = explode($delimiter, $dob);

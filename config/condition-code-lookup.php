@@ -1,9 +1,10 @@
 <?php
+use Illuminate\Support\Str;
 
 $mysqlDBName = env('CCL_DB_DATABASE', env('DB_DATABASE', 'nothing'));
 
 if ('nothing' === $mysqlDBName) {
-    $mysqlDBName = snake_case(getenv('HEROKU_BRANCH'));
+    $mysqlDBName = Str::snake(getenv('HEROKU_BRANCH'));
 }
 
 if (getenv('CI')) {

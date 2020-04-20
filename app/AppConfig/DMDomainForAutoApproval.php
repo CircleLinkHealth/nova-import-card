@@ -6,6 +6,7 @@
 
 namespace App\AppConfig;
 
+use Illuminate\Support\Str;
 use CircleLinkHealth\Core\Entities\AppConfig;
 
 class DMDomainForAutoApproval
@@ -20,7 +21,7 @@ class DMDomainForAutoApproval
     public static function isEnabledForDomain($domain): bool
     {
         foreach ((new static())->getAndCacheDomains() as $str) {
-            if (str_contains($domain, str_after($str, '@'))) {
+            if (Str::contains($domain, Str::after($str, '@'))) {
                 return true;
             }
         }
@@ -31,7 +32,7 @@ class DMDomainForAutoApproval
     public static function isEnabledForPractice($practiceId): bool
     {
         foreach ((new static())->getAndCacheDomains() as $str) {
-            if (starts_with($str, "$practiceId@")) {
+            if (Str::startsWith($str, "$practiceId@")) {
                 return true;
             }
         }

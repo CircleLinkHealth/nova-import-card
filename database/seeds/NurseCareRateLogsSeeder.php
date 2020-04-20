@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use Illuminate\Support\Str;
 use App\Call;
 use App\Jobs\StoreTimeTracking;
 use App\Note;
@@ -194,9 +195,9 @@ class NurseCareRateLogsSeeder extends Seeder
         $patient->patientInfo->save();
         $cpmProblems = CpmProblem::get();
         $ccdProblems = $patient->ccdProblems()->createMany([
-            ['name' => 'test'.str_random(5)],
-            ['name' => 'test'.str_random(5)],
-            ['name' => 'test'.str_random(5)],
+            ['name' => 'test'.Str::random(5)],
+            ['name' => 'test'.Str::random(5)],
+            ['name' => 'test'.Str::random(5)],
         ]);
         foreach ($ccdProblems as $problem) {
             $problem->cpmProblem()->associate($cpmProblems->random());

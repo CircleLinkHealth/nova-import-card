@@ -6,6 +6,7 @@
 
 namespace App\Traits\Tests;
 
+use Illuminate\Support\Str;
 use App\Call;
 use App\CLH\Repositories\UserRepository;
 use App\Repositories\PatientWriteRepository;
@@ -308,13 +309,13 @@ trait UserHelpers
         //$pcmOnly means one ccm condition only
         if ($pcmOnly) {
             $ccdProblems = $patient->ccdProblems()->createMany([
-                ['name' => 'test'.str_random(5)],
+                ['name' => 'test'.Str::random(5)],
             ]);
         } else {
             $ccdProblems = $patient->ccdProblems()->createMany([
-                ['name' => 'test'.str_random(5), 'is_monitored' => 1],
-                ['name' => 'test'.str_random(5)],
-                ['name' => 'test'.str_random(5)],
+                ['name' => 'test'.Str::random(5), 'is_monitored' => 1],
+                ['name' => 'test'.Str::random(5)],
+                ['name' => 'test'.Str::random(5)],
             ]);
         }
 

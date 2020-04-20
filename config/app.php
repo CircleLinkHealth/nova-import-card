@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use Illuminate\Support\Arr;
 use App\Providers\CpmArtisanServiceProvider;
 use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
 use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
@@ -303,7 +304,7 @@ return [
     'debug_blacklist' => [
         '_COOKIE' => array_keys($_COOKIE),
         '_SERVER' => array_keys($_SERVER),
-        '_ENV'    => array_except(array_keys($_ENV), [
+        '_ENV'    => Arr::except(array_keys($_ENV), [
             'APP_ENV',
             'SCOUT_DRIVER',
             'BROADCAST_DRIVER',

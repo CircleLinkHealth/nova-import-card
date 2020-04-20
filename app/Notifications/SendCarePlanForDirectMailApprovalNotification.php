@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use Illuminate\Support\Str;
 use App\Contracts\DirectMailableNotification;
 use App\Notifications\Channels\DirectMailChannel;
 use App\PasswordlessLoginToken;
@@ -107,7 +108,7 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
         if ( ! $this->passwordlessLoginToken) {
             do {
                 $saved = false;
-                $token = str_random(6);
+                $token = Str::random(6);
 
                 if ( ! PasswordlessLoginToken::where('token', $token)->exists()) {
                     $this->passwordlessLoginToken = PasswordlessLoginToken::create(

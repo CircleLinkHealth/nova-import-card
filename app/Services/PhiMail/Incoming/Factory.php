@@ -48,7 +48,7 @@ class Factory
     {
         foreach (self::SUPPORTED_MIME_TYPE_WILDCARDS as $supportedMime) {
             if (Str::contains($mimeType, $supportedMime)) {
-                return 'handle'.camel_case($supportedMime).'MimeType';
+                return 'handle'.Str::camel($supportedMime).'MimeType';
             }
         }
 
