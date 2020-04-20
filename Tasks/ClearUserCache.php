@@ -18,7 +18,6 @@ class ClearUserCache
         $keys = [
             'cerberus_roles_for_user_'.$user->id,
             'cerberus_permissions_for_user_'.$user->id,
-            $user->getCpmRolesCacheKey(),
         ];
         if (\Cache::getStore() instanceof TaggableStore) {
             $store = \Cache::tags(Config::get('cerberus.role_user_site_table'));
@@ -31,13 +30,6 @@ class ClearUserCache
             Cache::forget($key);
         }
 
-        $cacheDriver = config('cache.default');
-
-        if ('redis' === $cacheDriver) {
-            \RedisManager::del($user->getCpmRolesCacheKey());
-        }
-
-        $user->clearObjectCache();
         $user->unsetRelation('roles');
     }
 }

@@ -295,7 +295,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use CerberusSiteUserTrait;
     use Filterable;
     use HasApiTokens;
-    use HasCpmRoles;
     use HasEmrDirectAddress;
     use HasMediaTrait;
     use Impersonate;
@@ -2031,6 +2030,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
+     * Returns whether the user is an administrator.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('administrator');
+    }
+
+    /**
      * Determine whether the User is BHI chargeable (ie. eligible and enrolled).
      *
      * @return bool
@@ -2043,6 +2050,31 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->where('id', $this->id)
             ->exists();
 //        });
+    }
+
+    /**
+     * Returns whether the user is an administrator.
+     *
+     * @param bool $includeViewOnly
+     */
+    public function isCareAmbassador($includeViewOnly = true): bool
+    {
+        $arr = ['care-ambassador'];
+        if ($includeViewOnly) {
+            $arr[] = 'care-ambassador-view-only';
+        }
+
+        return $this->hasRole($arr);
+    }
+
+    /**
+     * Returns whether the user is a Care Coach (AKA Care Center).
+     * A Care Coach can be employed from CLH ['care-center']
+     * or not ['care-center-external'].
+     */
+    public function isCareCoach(): bool
+    {
+        return $this->hasRole(['care-center', 'care-center-external']);
     }
 
     public function isCcm()
@@ -2075,6 +2107,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->isCcm() && $this->primaryPractice->hasCCMPlusServiceCode();
     }
 
+    /**
+     * Returns whether the user is an administrator.
+     */
+    public function isEhrReportWriter(): bool
+    {
+        return $this->hasRole('ehr-report-writer');
+    }
+
     public function isInternalUser()
     {
         return $this->hasRole(Constants::CLH_INTERNAL_USER_ROLE_NAMES);
@@ -2099,6 +2139,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 //        });
     }
 
+    /**
+     * Returns whether the user is a participant.
+     */
+    public function isParticipant(): bool
+    {
+        return $this->hasRole('participant');
+    }
+
     public function isPcm()
     {
         if ($this->ccmNoOfMonitoredProblems() >= 2) {
@@ -2118,6 +2166,35 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 });
             });
         })->exists();
+    }
+
+    public function isPracticeStaff(): bool
+    {
+        return $this->hasRole(Constants::PRACTICE_STAFF_ROLE_NAMES);
+    }
+
+    /**
+     * Returns whether the user is an administrator.
+     */
+    public function isProvider(): bool
+    {
+        return $this->hasRole('provider');
+    }
+
+    /**
+     * Returns whether the user is an administrator.
+     */
+    public function isSaasAdmin(): bool
+    {
+        return $this->hasRole('saas-admin');
+    }
+
+    /**
+     * Returns whether the user is a Software Only user.
+     */
+    public function isSoftwareOnly(): bool
+    {
+        return $this->hasRole('software-only');
     }
 
     public function lastObservation()
@@ -2364,29 +2441,29 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                         $q->whereHas(
                                             'user',
                                             function ($q) {
-                                                $q->whereHas(
-                                                    'forwardAlertsTo',
-                                                    function ($q) {
-                                                        $q->where('contactable_id', $this->id)
-                                                            ->orWhereIn(
-                                                                       'name',
-                                                                       [
-                                                                           'forward_careplan_approval_emails_instead_of_provider',
-                                                                           'forward_careplan_approval_emails_in_addition_to_provider',
-                                                                       ]
-                                                                   );
-                                                    }
-                                                );
-                                            }
+                                                       $q->whereHas(
+                                                           'forwardAlertsTo',
+                                                           function ($q) {
+                                                               $q->where('contactable_id', $this->id)
+                                                                   ->orWhereIn(
+                                                                     'name',
+                                                                     [
+                                                                         'forward_careplan_approval_emails_instead_of_provider',
+                                                                         'forward_careplan_approval_emails_in_addition_to_provider',
+                                                                     ]
+                                                                 );
+                                                           }
+                                                       );
+                                                   }
                                         )
                                             ->when($this->canApproveCarePlans(), function ($q) {
-                                                $q->orWhereHas(
-                                                    'user',
-                                                    function ($q) {
-                                                        $q->intersectPracticesWith($this);
-                                                    }
-                                                );
-                                            })
+                                                       $q->orWhereHas(
+                                                           'user',
+                                                           function ($q) {
+                                                               $q->intersectPracticesWith($this);
+                                                           }
+                                                       );
+                                                   })
                                              ;
                                     }
                                 );
@@ -3200,7 +3277,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function setCanSeePhi(bool $shouldSee = true)
     {
         $permName = 'phi.read';
-        \RedisManager::hdel($this->getCpmRolesCacheKey(), $permName);
+
         $phiRead = Permission::whereName($permName)->first();
         if ($phiRead) {
             $this->attachPermission($phiRead, $shouldSee);
