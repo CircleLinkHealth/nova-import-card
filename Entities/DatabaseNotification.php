@@ -21,7 +21,6 @@ namespace CircleLinkHealth\Core\Entities;
  * @property \Illuminate\Support\Carbon|null               $updated_at
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $attachment
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $notifiable
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification hasAttachmentType($type)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification hasNotifiableType($type)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification newModelQuery()
@@ -38,7 +37,6 @@ namespace CircleLinkHealth\Core\Entities;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification liveNotification()
  */
 class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotification
