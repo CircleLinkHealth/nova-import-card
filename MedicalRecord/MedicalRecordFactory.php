@@ -11,6 +11,7 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CommonwealthMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use Illuminate\Support\Str;
 
 class MedicalRecordFactory
 {
@@ -77,7 +78,7 @@ class MedicalRecordFactory
     public static function create(User $user, Ccda $ccda)
     {
         $static = new static();
-        $methodName = 'create'.ucfirst(camel_case($user->primaryPractice->name)).'MedicalRecord';
+        $methodName = 'create'.ucfirst(Str::camel($user->primaryPractice->name)).'MedicalRecord';
         
         if (method_exists($static, $methodName)) {
             return $static->{$methodName}($user, $ccda);
