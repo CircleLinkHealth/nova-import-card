@@ -228,6 +228,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $tokens_count
  * @property \App\CPRulesUCP[]|\Illuminate\Database\Eloquent\Collection                                                      $ucp
  * @property int|null                                                                                                        $ucp_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User careCoaches()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User exceptType($type)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User filter(\App\Filters\QueryFilters $filters)
@@ -2366,15 +2367,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                                 $q->whereHas(
                                                     'forwardAlertsTo',
                                                     function ($q) {
-                                                               $q->where('contactable_id', $this->id)
-                                                                   ->orWhereIn(
+                                                        $q->where('contactable_id', $this->id)
+                                                            ->orWhereIn(
                                                                        'name',
                                                                        [
                                                                            'forward_careplan_approval_emails_instead_of_provider',
                                                                            'forward_careplan_approval_emails_in_addition_to_provider',
                                                                        ]
                                                                    );
-                                                           }
+                                                    }
                                                 );
                                             }
                                         )
@@ -2382,8 +2383,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                                 $q->orWhereHas(
                                                     'user',
                                                     function ($q) {
-                                                               $q->intersectPracticesWith($this);
-                                                           }
+                                                        $q->intersectPracticesWith($this);
+                                                    }
                                                 );
                                             })
                                              ;
