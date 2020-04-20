@@ -71,7 +71,7 @@ class AppointmentController extends Controller
             'was_completed' => $was_completed,
         ]);
 
-        return redirect()->route('patient.note.index', ['patient' => $input['patientId']])->with(
+        return redirect()->route('patient.note.index', ['patientId' => $input['patientId']])->with(
             'messages',
             ['Successfully Stored Appointment']
         );

@@ -3,7 +3,7 @@
         <ul class="navbar-nav nav">
 
             <li class="inline-block">
-                <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.note.index', array('patient' => $patient->id)) }}">
+                <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.note.index', ['patientId' => $patient->id]) }}">
                     Notes and Activities
                 </a>
             </li>

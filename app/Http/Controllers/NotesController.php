@@ -629,7 +629,7 @@ class NotesController extends Controller
                 $is_withdrawn = in_array($info->ccm_status, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL]);
 
                 if ( ! $is_phone_session && $is_withdrawn) {
-                    return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
+                    return redirect()->route('patient.note.index', ['patientId' => $patientId])->with(
                         'messages',
                         [
                             $noteIsAlreadyComplete
@@ -669,7 +669,7 @@ class NotesController extends Controller
                     $info->save();
 
                     if ($is_withdrawn || null == $prediction || $is_saas) {
-                        return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
+                        return redirect()->route('patient.note.index', ['patientId' => $patientId])->with(
                             'messages',
                             ['Successfully Created Note']
                         );
@@ -748,7 +748,7 @@ class NotesController extends Controller
             }
         }
 
-        return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
+        return redirect()->route('patient.note.index', ['patientId' => $patientId])->with(
             'messages',
             [
                 $noteIsAlreadyComplete
@@ -813,7 +813,7 @@ class NotesController extends Controller
         if ( ! isset($input['author_id'])) {
             $input['author_id'] = auth()->id();
         }
-    
+
         $input['performed_at'] = array_key_exists('performed_at', $input) ? Carbon::parse(
             $input['performed_at'],
             $patient->timezone
