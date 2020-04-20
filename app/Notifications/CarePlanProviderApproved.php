@@ -15,6 +15,7 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
 
 class CarePlanProviderApproved extends Notification implements FaxableNotification, DirectMailableNotification
 {
@@ -179,7 +180,7 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
     public function toMail($notifiable)
     {
         $saasAccountName     = $notifiable->saasAccountName();
-        $slugSaasAccountName = strtolower(str_slug($saasAccountName, ''));
+        $slugSaasAccountName = strtolower(Str::slug($saasAccountName, ''));
 
         $mail = (new MailMessage())
             ->view('vendor.notifications.email', [

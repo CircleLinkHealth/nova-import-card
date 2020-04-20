@@ -14,6 +14,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use CircleLinkHealth\Eligibility\ValidatesEligibility;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Storage;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -199,7 +200,7 @@ class EhrReportWriterController extends Controller
         }
         if (empty($messages)) {
             if (auth()->user()->isAdmin()) {
-                $messages['success'][] = link_to_route('eligibility.batch.show', 'Click here to view Batch',[$batch->id]);
+                $messages['success'][] = link_to_route('eligibility.batch.show', 'Click here to view Batch', [$batch->id]);
             } else {
                 $messages['success'][] = 'Thanks! CLH will review the file and get back to you. This may take a few business days.';
             }
@@ -270,7 +271,7 @@ class EhrReportWriterController extends Controller
                 return null;
             }
             foreach ($contents as $file) {
-                if (starts_with($file['name'], 'processed')) {
+                if (Str::startsWith($file['name'], 'processed')) {
                     continue;
                 }
                 $files[] = $file;
