@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 return [
     /*
    |--------------------------------------------------------------------------
@@ -12,7 +16,7 @@ return [
    | which should receive your application's uncaught exceptions.
    |
    */
-    'api_key'    => env('RAYGUN_API_KEY', 'yourapikey'),
+    'api_key' => env('RAYGUN_API_KEY', 'yourapikey'),
 
     /*
     |--------------------------------------------------------------------------
@@ -40,7 +44,7 @@ return [
     |
     */
     'logger_notify_level' => env('RAYGUN_CRASH_REPORTING_LOGGER_LEVEL', 'warning'),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Enable Crash Reporting Async Mode
@@ -52,7 +56,7 @@ return [
     | Defaults to false.
     |
     */
-    'async'     => env('ENABLE_RAYGUN_CRASH_REPORTING_ASYNC_MODE', false),
+    'async' => env('ENABLE_RAYGUN_CRASH_REPORTING_ASYNC_MODE', false),
 
     /*
     |--------------------------------------------------------------------------
