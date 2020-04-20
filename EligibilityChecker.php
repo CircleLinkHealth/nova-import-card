@@ -326,22 +326,22 @@ class EligibilityChecker
                 return CpmProblem::all()
                     ->transform(
                         function ($problem) {
-                                         $problem->searchKeywords = collect(
-                                             explode(',', $problem->contains),
-                                             [$problem->name]
-                                         )
-                                             ->transform(
+                            $problem->searchKeywords = collect(
+                                explode(',', $problem->contains),
+                                [$problem->name]
+                            )
+                                ->transform(
                                                  function ($keyword) {
                                                      return trim(strtolower($keyword));
                                                  }
                                              )
-                                             ->filter()
-                                             ->unique()
-                                             ->values()
-                                             ->toArray();
+                                ->filter()
+                                ->unique()
+                                ->values()
+                                ->toArray();
 
-                                         return $problem;
-                                     }
+                            return $problem;
+                        }
                     );
             }
         );
@@ -847,16 +847,16 @@ class EligibilityChecker
         $enrolledPatientExists = User::withTrashed()
             ->where(
                 function ($u) use ($args) {
-                                             $u->whereProgramId($args['practice_id'])
-                                                 ->whereHas(
+                    $u->whereProgramId($args['practice_id'])
+                        ->whereHas(
                                                      'patientInfo',
                                                      function ($q) use ($args) {
-                                                       $q->withTrashed()->whereMrnNumber($args['mrn']);
-                                                   }
+                                                         $q->withTrashed()->whereMrnNumber($args['mrn']);
+                                                     }
                                                  );
-                                         }
+                }
             )->orWhere(
-                                         function ($u) use ($args) {
+                function ($u) use ($args) {
                                              $u->where(
                                                  [
                                                      [
@@ -876,13 +876,13 @@ class EligibilityChecker
                                                      ],
                                                  ]
                                              )->whereHas(
-                        'patientInfo',
-                        function ($q) use ($args) {
+                                                 'patientInfo',
+                                                 function ($q) use ($args) {
                             $q->withTrashed()->whereBirthDate($args['dob']);
                         }
-                    );
+                                             );
                                          }
-                                     )->first();
+            )->first();
 
         $duplicateMySqlError = false;
         $errorMsg            = null;

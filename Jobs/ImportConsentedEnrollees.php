@@ -58,12 +58,12 @@ class ImportConsentedEnrollees implements ShouldQueue
             ->chunkById(
                 10,
                 function ($enrollees) {
-                        $enrollees->each(
-                            function ($enrollee) {
+                    $enrollees->each(
+                        function ($enrollee) {
                                 ImportEnrollee::import($enrollee);
                             }
-                        );
-                    }
+                    );
+                }
             );
     }
 

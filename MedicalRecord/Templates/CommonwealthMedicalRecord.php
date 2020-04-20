@@ -145,16 +145,16 @@ class CommonwealthMedicalRecord extends BaseMedicalRecordTemplate
         )->unique()
             ->map(
                 function ($historyItem) {
-                                                                                 if ( ! validProblemName(
-                                                                                     $historyItem
-                                                                                 )) {
-                                                                                     return false;
-                                                                                 }
+                    if ( ! validProblemName(
+                        $historyItem
+                    )) {
+                        return false;
+                    }
 
-                                                                                 return (new Problem())->setName(
-                                                                                     $historyItem
-                                                                                 )->toarray();
-                                                                             }
+                    return (new Problem())->setName(
+                        $historyItem
+                    )->toarray();
+                }
             )->all();
     }
 

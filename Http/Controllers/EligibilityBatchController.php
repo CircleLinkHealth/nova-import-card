@@ -70,26 +70,26 @@ class EligibilityBatchController extends Controller
                     ->chunk(
                         500,
                         function ($jobs) use ($handle, &$firstIteration) {
-                              foreach ($jobs as $job) {
-                                  $data = $job->data;
+                            foreach ($jobs as $job) {
+                                $data = $job->data;
 
-                                  if ($firstIteration) {
-                                      // Add CSV headers
-                                      fputcsv($handle, array_keys($data));
+                                if ($firstIteration) {
+                                    // Add CSV headers
+                                    fputcsv($handle, array_keys($data));
 
-                                      $firstIteration = false;
-                                  }
+                                    $firstIteration = false;
+                                }
 
-                                  foreach ($data as $key => $value) {
-                                      if (is_array($value)) {
-                                          $data[$key] = json_encode($value);
-                                      }
-                                  }
+                                foreach ($data as $key => $value) {
+                                    if (is_array($value)) {
+                                        $data[$key] = json_encode($value);
+                                    }
+                                }
 
-                                  // Add a new row with data
-                                  fputcsv($handle, $data);
-                              }
-                          }
+                                // Add a new row with data
+                                fputcsv($handle, $data);
+                            }
+                        }
                     );
 
                 // Close the output stream
@@ -139,33 +139,33 @@ class EligibilityBatchController extends Controller
                     ->chunk(
                         500,
                         function ($jobs) use ($handle, &$firstIteration, $cpmProblemsMap) {
-                              foreach ($jobs as $job) {
-                                  $data = [
-                                      'batch_id'            => $job->batch_id,
-                                      'hash'                => $job->hash,
-                                      'outcome'             => $job->outcome,
-                                      'reason'              => $job->reason,
-                                      'messages'            => json_encode($job->messages),
-                                      'last_encounter'      => $job->last_encounter,
-                                      'ccm_problem_1'       => $cpmProblemsMap[$job->ccm_problem_1_id] ?? '',
-                                      'ccm_problem_2'       => $cpmProblemsMap[$job->ccm_problem_2_id] ?? '',
-                                      'bhi_problem'         => $cpmProblemsMap[$job->bhi_problem_id] ?? '',
-                                      'primary_insurance'   => $job->primary_insurance,
-                                      'secondary_insurance' => $job->secondary_insurance,
-                                      'tertiary_insurance'  => $job->tertiary_insurance,
-                                      'processing_status'   => $job->getStatus(),
-                                  ];
+                            foreach ($jobs as $job) {
+                                $data = [
+                                    'batch_id'            => $job->batch_id,
+                                    'hash'                => $job->hash,
+                                    'outcome'             => $job->outcome,
+                                    'reason'              => $job->reason,
+                                    'messages'            => json_encode($job->messages),
+                                    'last_encounter'      => $job->last_encounter,
+                                    'ccm_problem_1'       => $cpmProblemsMap[$job->ccm_problem_1_id] ?? '',
+                                    'ccm_problem_2'       => $cpmProblemsMap[$job->ccm_problem_2_id] ?? '',
+                                    'bhi_problem'         => $cpmProblemsMap[$job->bhi_problem_id] ?? '',
+                                    'primary_insurance'   => $job->primary_insurance,
+                                    'secondary_insurance' => $job->secondary_insurance,
+                                    'tertiary_insurance'  => $job->tertiary_insurance,
+                                    'processing_status'   => $job->getStatus(),
+                                ];
 
-                                  if ($firstIteration) {
-                                      // Add CSV headers
-                                      fputcsv($handle, array_keys($data));
+                                if ($firstIteration) {
+                                    // Add CSV headers
+                                    fputcsv($handle, array_keys($data));
 
-                                      $firstIteration = false;
-                                  }
-                                  // Add a new row with data
-                                  fputcsv($handle, $data);
-                              }
-                          }
+                                    $firstIteration = false;
+                                }
+                                // Add a new row with data
+                                fputcsv($handle, $data);
+                            }
+                        }
                     );
 
                 // Close the output stream
@@ -197,19 +197,19 @@ class EligibilityBatchController extends Controller
                     ->chunk(
                         500,
                         function ($jobs) use ($handle, &$firstIteration) {
-                              foreach ($jobs as $job) {
-                                  $data = (new JsonMedicalRecordEligibilityJobToCsvAdapter($job))->toArray();
+                            foreach ($jobs as $job) {
+                                $data = (new JsonMedicalRecordEligibilityJobToCsvAdapter($job))->toArray();
 
-                                  if ($firstIteration) {
-                                      // Add CSV headers
-                                      fputcsv($handle, array_keys($data));
+                                if ($firstIteration) {
+                                    // Add CSV headers
+                                    fputcsv($handle, array_keys($data));
 
-                                      $firstIteration = false;
-                                  }
-                                  // Add a new row with data
-                                  fputcsv($handle, $data);
-                              }
-                          }
+                                    $firstIteration = false;
+                                }
+                                // Add a new row with data
+                                fputcsv($handle, $data);
+                            }
+                        }
                     );
 
                 // Close the output stream
@@ -281,58 +281,58 @@ class EligibilityBatchController extends Controller
                     ->chunk(
                         500,
                         function ($enrollees) use ($handle, &$firstIteration) {
-                                foreach ($enrollees as $enrollee) {
-                                    $data = [
-                                        'eligible_patient_id'           => $enrollee->eligible_patient_id,
-                                        'was_previously_found_eligible' => EligibilityJob::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH == optional(
-                                            $enrollee->eligibilityJob
-                                        )->outcome
-                                            ? 'Y'
-                                            : 'N',
-                                        'eligibility_job_id'      => $enrollee->eligibility_job_id,
-                                        'cpm_problem_1'           => $enrollee->cpm_problem_1,
-                                        'cpm_problem_2'           => $enrollee->cpm_problem_2,
-                                        'medical_record_type'     => $enrollee->medical_record_type,
-                                        'medical_record_id'       => $enrollee->medical_record_id,
-                                        'mrn'                     => $enrollee->mrn,
-                                        'first_name'              => $enrollee->first_name,
-                                        'last_name'               => $enrollee->last_name,
-                                        'location'                => json_decode($enrollee->jsonMedicalRecord, true)['department_name'] ?? '',
-                                        'address'                 => $enrollee->address,
-                                        'address_2'               => $enrollee->address_2,
-                                        'city'                    => $enrollee->city,
-                                        'state'                   => $enrollee->state,
-                                        'zip'                     => $enrollee->zip,
-                                        'primary_phone'           => $enrollee->primary_phone,
-                                        'other_phone'             => $enrollee->other_phone,
-                                        'home_phone'              => $enrollee->home_phone,
-                                        'cell_phone'              => $enrollee->cell_phone,
-                                        'email'                   => $enrollee->email,
-                                        'dob'                     => $enrollee->dob,
-                                        'lang'                    => $enrollee->lang,
-                                        'preferred_days'          => $enrollee->preferred_days,
-                                        'preferred_window'        => $enrollee->preferred_window,
-                                        'primary_insurance'       => $enrollee->primary_insurance,
-                                        'secondary_insurance'     => $enrollee->secondary_insurance,
-                                        'tertiary_insurance'      => $enrollee->tertiary_insurance,
-                                        'last_encounter'          => $enrollee->last_encounter,
-                                        'referring_provider_name' => $enrollee->referring_provider_name,
-                                        'ccm_condition_1'         => $enrollee->ccm_condition_1,
-                                        'ccm_condition_2'         => $enrollee->ccm_condition_2,
-                                        'bhi_condition'           => $enrollee->bhi_condition,
-                                        'problems'                => $enrollee->problems,
-                                    ];
+                            foreach ($enrollees as $enrollee) {
+                                $data = [
+                                    'eligible_patient_id'           => $enrollee->eligible_patient_id,
+                                    'was_previously_found_eligible' => EligibilityJob::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH == optional(
+                                        $enrollee->eligibilityJob
+                                    )->outcome
+                                        ? 'Y'
+                                        : 'N',
+                                    'eligibility_job_id'      => $enrollee->eligibility_job_id,
+                                    'cpm_problem_1'           => $enrollee->cpm_problem_1,
+                                    'cpm_problem_2'           => $enrollee->cpm_problem_2,
+                                    'medical_record_type'     => $enrollee->medical_record_type,
+                                    'medical_record_id'       => $enrollee->medical_record_id,
+                                    'mrn'                     => $enrollee->mrn,
+                                    'first_name'              => $enrollee->first_name,
+                                    'last_name'               => $enrollee->last_name,
+                                    'location'                => json_decode($enrollee->jsonMedicalRecord, true)['department_name'] ?? '',
+                                    'address'                 => $enrollee->address,
+                                    'address_2'               => $enrollee->address_2,
+                                    'city'                    => $enrollee->city,
+                                    'state'                   => $enrollee->state,
+                                    'zip'                     => $enrollee->zip,
+                                    'primary_phone'           => $enrollee->primary_phone,
+                                    'other_phone'             => $enrollee->other_phone,
+                                    'home_phone'              => $enrollee->home_phone,
+                                    'cell_phone'              => $enrollee->cell_phone,
+                                    'email'                   => $enrollee->email,
+                                    'dob'                     => $enrollee->dob,
+                                    'lang'                    => $enrollee->lang,
+                                    'preferred_days'          => $enrollee->preferred_days,
+                                    'preferred_window'        => $enrollee->preferred_window,
+                                    'primary_insurance'       => $enrollee->primary_insurance,
+                                    'secondary_insurance'     => $enrollee->secondary_insurance,
+                                    'tertiary_insurance'      => $enrollee->tertiary_insurance,
+                                    'last_encounter'          => $enrollee->last_encounter,
+                                    'referring_provider_name' => $enrollee->referring_provider_name,
+                                    'ccm_condition_1'         => $enrollee->ccm_condition_1,
+                                    'ccm_condition_2'         => $enrollee->ccm_condition_2,
+                                    'bhi_condition'           => $enrollee->bhi_condition,
+                                    'problems'                => $enrollee->problems,
+                                ];
 
-                                    if ($firstIteration) {
-                                        // Add CSV headers
-                                        fputcsv($handle, array_keys($data));
+                                if ($firstIteration) {
+                                    // Add CSV headers
+                                    fputcsv($handle, array_keys($data));
 
-                                        $firstIteration = false;
-                                    }
-                                    // Add a new row with data
-                                    fputcsv($handle, $data);
+                                    $firstIteration = false;
                                 }
+                                // Add a new row with data
+                                fputcsv($handle, $data);
                             }
+                        }
                     );
 
                 // Close the output stream

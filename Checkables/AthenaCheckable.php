@@ -68,8 +68,8 @@ class AthenaCheckable implements Checkable
             $decoratedAdapter = new AddDemographicsFromAthena(
                 new AddCareTeamFromAthena(
                     new AddInsurancesFromAthena(
-                    new CcdaToEligibilityJobAdapter($this->ccda, $this->practice, $this->batch)
-                )
+                        new CcdaToEligibilityJobAdapter($this->ccda, $this->practice, $this->batch)
+                    )
                 ),
                 $this->getTargetPatient(),
                 $this->ccda

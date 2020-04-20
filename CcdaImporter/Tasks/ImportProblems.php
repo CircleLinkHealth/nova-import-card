@@ -111,24 +111,24 @@ class ImportProblems extends BaseCcdaImportTask
             ->has('cpmProblem')
             ->where(
                 function ($q) use ($codes) {
-                                               $q->whereIn(Constants::ICD9, $codes)
-                                                   ->where(Constants::ICD9, '!=', '')
-                                                   ->whereNotNull(Constants::ICD9);
-                                           }
+                    $q->whereIn(Constants::ICD9, $codes)
+                        ->where(Constants::ICD9, '!=', '')
+                        ->whereNotNull(Constants::ICD9);
+                }
             )
             ->orWhere(
                 function ($q) use ($codes) {
-                                               $q->whereIn(Constants::ICD10, $codes)
-                                                   ->where(Constants::ICD10, '!=', '')
-                                                   ->whereNotNull(Constants::ICD10);
-                                           }
+                    $q->whereIn(Constants::ICD10, $codes)
+                        ->where(Constants::ICD10, '!=', '')
+                        ->whereNotNull(Constants::ICD10);
+                }
             )
             ->orWhere(
                 function ($q) use ($codes) {
-                                               $q->whereIn(Constants::SNOMED, $codes)
-                                                   ->where(Constants::SNOMED, '!=', '')
-                                                   ->whereNotNull(Constants::SNOMED);
-                                           }
+                    $q->whereIn(Constants::SNOMED, $codes)
+                        ->where(Constants::SNOMED, '!=', '')
+                        ->whereNotNull(Constants::SNOMED);
+                }
             )
             ->first();
 
