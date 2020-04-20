@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use  Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
@@ -421,7 +422,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     public function hasProcedureCode(string $code): bool
     {
         return collect(
-            $this->bluebuttonJson()->procedures
+            $this->bluebuttonJson()->procedures ?? []
         )->pluck('code')->contains($code);
     }
     
@@ -737,7 +738,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         
         return $this->patient->ccdInsurancePolicies->reject(
                 function ($i) {
-                    return ! str_contains(strtolower($i->name.$i->type), 'medicare');
+                    return ! Str::contains(strtolower($i->name.$i->type), 'medicare');
                 }
             )
                                 ->count() >= 1;
