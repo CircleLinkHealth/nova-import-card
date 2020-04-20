@@ -74,8 +74,8 @@ class ItemizedBillablePatientsReport
             ->chunkById(
                 100,
                 function ($summaries) use (&$data, $repo) {
-                                     $summaries->each(
-                                         function (PatientMonthlySummary $summary) use (&$data, $repo) {
+                    $summaries->each(
+                        function (PatientMonthlySummary $summary) use (&$data, $repo) {
                                              $u = $summary->patient;
 
                                              $patientData = new PatientReportData();
@@ -106,8 +106,8 @@ class ItemizedBillablePatientsReport
 
                                              $data['patientData'][$u->id] = $patientData;
                                          }
-                                     );
-                                 }
+                    );
+                }
             );
 
         $data['patientData'] = array_key_exists('patientData', $data)
@@ -123,9 +123,9 @@ class ItemizedBillablePatientsReport
             ->whereHas(
                 'patientAWVSummaries',
                 function ($query) {
-                                   $query->where('is_billable', true)
-                                       ->where('year', $this->month->year);
-                               }
+                    $query->where('is_billable', true)
+                        ->where('year', $this->month->year);
+                }
             )
             ->with(
                 [
@@ -139,19 +139,19 @@ class ItemizedBillablePatientsReport
             ->chunk(
                 100,
                 function ($patients) use (&$data) {
-                                   foreach ($patients as $u) {
-                                       $summary = $u->patientAWVSummaries->first();
+                    foreach ($patients as $u) {
+                        $summary = $u->patientAWVSummaries->first();
 
-                                       $patientData = new PatientReportData();
-                                       $patientData->setName($u->getFullName());
-                                       $patientData->setDob($u->getBirthDate());
-                                       $patientData->setPractice($u->program_id);
-                                       $patientData->setProvider($u->getBillingProviderName());
-                                       $patientData->setAwvDate($summary->billable_at);
+                        $patientData = new PatientReportData();
+                        $patientData->setName($u->getFullName());
+                        $patientData->setDob($u->getBirthDate());
+                        $patientData->setPractice($u->program_id);
+                        $patientData->setProvider($u->getBillingProviderName());
+                        $patientData->setAwvDate($summary->billable_at);
 
-                                       $data['awvPatientData'][$u->id] = $patientData;
-                                   }
-                               }
+                        $data['awvPatientData'][$u->id] = $patientData;
+                    }
+                }
             );
 
         $data['awvPatientData'] = array_key_exists('awvPatientData', $data)
@@ -190,8 +190,8 @@ class ItemizedBillablePatientsReport
             ->chunkById(
                 100,
                 function ($summaries) use (&$data) {
-                                     $summaries->each(
-                                         function (User $patientUser) use (&$data) {
+                    $summaries->each(
+                        function (User $patientUser) use (&$data) {
                                              $summary = $patientUser->patientSummaries->sortByDesc('id')->first();
 
                                              if ( ! $summary->approved) {
@@ -252,8 +252,8 @@ class ItemizedBillablePatientsReport
 
                                              $data[] = $newRow;
                                          }
-                                     );
-                                 }
+                    );
+                }
             );
 
         return $data;

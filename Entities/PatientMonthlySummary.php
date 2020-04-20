@@ -245,16 +245,16 @@ class PatientMonthlySummary extends BaseModel
             ->get()
             ->map(
                 function ($patient) use ($monthYear) {
-                                PatientMonthlySummary::create(
-                                    [
-                                        'patient_id'             => $patient->id,
-                                        'ccm_time'               => 0,
-                                        'month_year'             => $monthYear,
-                                        'no_of_calls'            => 0,
-                                        'no_of_successful_calls' => 0,
-                                    ]
-                                );
-                            }
+                    PatientMonthlySummary::create(
+                        [
+                            'patient_id'             => $patient->id,
+                            'ccm_time'               => 0,
+                            'month_year'             => $monthYear,
+                            'no_of_calls'            => 0,
+                            'no_of_successful_calls' => 0,
+                        ]
+                    );
+                }
             );
     }
 
@@ -303,8 +303,8 @@ class PatientMonthlySummary extends BaseModel
             ->whereHas(
                 'roles',
                 function ($q) {
-                                $q->where('name', '=', 'participant');
-                            }
+                    $q->where('name', '=', 'participant');
+                }
             )->get();
 
         $count['approved'] = 0;
@@ -352,8 +352,8 @@ class PatientMonthlySummary extends BaseModel
             ->whereHas(
                 'roles',
                 function ($q) {
-                                $q->where('name', '=', 'participant');
-                            }
+                    $q->where('name', '=', 'participant');
+                }
             )->get();
 
         $count = 0;
@@ -462,8 +462,8 @@ class PatientMonthlySummary extends BaseModel
         return $this->ccmAttestedProblems()
             ->merge(
                 $patientProblems->filter(function (Problem $p) {
-                            return ! $this->ccmAttestedProblems()->contains('id', $p->id) && ! $p->isBehavioral();
-                        })
+                    return ! $this->ccmAttestedProblems()->contains('id', $p->id) && ! $p->isBehavioral();
+                })
             )
             ->take(4)
             ->pluck('id')

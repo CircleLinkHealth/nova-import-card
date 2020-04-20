@@ -1999,9 +1999,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany(Call::class, 'inbound_cpm_id', 'id')
             ->where(
                 function ($q) {
-                            $q->whereNull('type')
-                                ->orWhere('type', '=', 'call');
-                        }
+                    $q->whereNull('type')
+                        ->orWhere('type', '=', 'call');
+                }
             );
     }
 
@@ -2017,8 +2017,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->when(
                 $after,
                 function ($query) use ($after) {
-                            return $query->where('scheduled_date', '>=', $after->toDateString());
-                        }
+                    return $query->where('scheduled_date', '>=', $after->toDateString());
+                }
             )
             ->where('called_date', '=', null);
     }
@@ -2030,8 +2030,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->when(
                 $after,
                 function ($query) use ($after) {
-                            return $query->where('scheduled_date', '>=', $after->toDateString());
-                        }
+                    return $query->where('scheduled_date', '>=', $after->toDateString());
+                }
             )
             ->where('called_date', '=', null);
     }
@@ -2217,9 +2217,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany(Call::class, 'outbound_cpm_id', 'id')
             ->where(
                 function ($q) {
-                            $q->whereNull('type')
-                                ->orWhere('type', '=', 'call');
-                        }
+                    $q->whereNull('type')
+                        ->orWhere('type', '=', 'call');
+                }
             );
     }
 
@@ -2316,8 +2316,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->whereHas(
                 'carePlan',
                 function ($q) {
-                           $q->whereIn('status', [CarePlan::DRAFT]);
-                       }
+                    $q->whereIn('status', [CarePlan::DRAFT]);
+                }
             )
             ->with(
                 [
@@ -2350,23 +2350,23 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->whereHas(
                 'carePlan',
                 function ($q) {
-                           $q->whereIn('status', [CarePlan::QA_APPROVED]);
-                       }
+                    $q->whereIn('status', [CarePlan::QA_APPROVED]);
+                }
             )
             ->whereHas(
                 'careTeamMembers',
                 function ($q) use ($approveOwnCarePlans) {
-                           $q->where(
-                               [
-                                   ['type', '=', CarePerson::BILLING_PROVIDER],
-                                   ['member_user_id', '=', $this->id],
-                               ]
-                           )
-                               ->when(
+                    $q->where(
+                        [
+                            ['type', '=', CarePerson::BILLING_PROVIDER],
+                            ['member_user_id', '=', $this->id],
+                        ]
+                    )
+                        ->when(
                                    ! $approveOwnCarePlans,
                                    function ($q) {
-                                     $q->orWhere(
-                                         function ($q) {
+                                       $q->orWhere(
+                                           function ($q) {
                                              $q->whereHas(
                                                  'user',
                                                  function ($q) {
@@ -2389,16 +2389,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                                      $q->orWhereHas(
                                                          'user',
                                                          function ($q) {
-                                                         $q->intersectPracticesWith($this);
-                                                     }
+                                                             $q->intersectPracticesWith($this);
+                                                         }
                                                      );
                                                  })
                                              ;
                                          }
-                                     );
-                                 }
+                                       );
+                                   }
                                );
-                       }
+                }
             )
             ->with(
                 [
@@ -2492,16 +2492,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->when(
                 $onlyActive,
                 function ($query) use ($onlyActive) {
-                            return $query->where('active', '=', 1);
-                        }
+                    return $query->where('active', '=', 1);
+                }
             )
             ->when(
                 $onlyEnrolledPatients,
                 function ($query) use ($onlyEnrolledPatients) {
-                            //$query -> Practice Model
-                            return $query->whereHas(
-                                'patients',
-                                function ($innerQuery) {
+                    //$query -> Practice Model
+                    return $query->whereHas(
+                        'patients',
+                        function ($innerQuery) {
                                     //$innerQuery -> User Model
                                     return $innerQuery->whereHas(
                                         'patientInfo',
@@ -2511,14 +2511,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                         }
                                     );
                                 }
-                            );
-                        }
+                    );
+                }
             )
             ->when(
                 $ofRoleIds,
                 function ($query) use ($ofRoleIds) {
-                            return $query->whereIn('practice_role_user.role_id', $ofRoleIds);
-                        }
+                    return $query->whereIn('practice_role_user.role_id', $ofRoleIds);
+                }
             )
             ->withTimestamps();
     }
@@ -2564,22 +2564,22 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->get()
             ->map(
                 function ($problem) use ($billableProblems) {
-                                    $problem->billing_code = $problem->icd10Code();
+                    $problem->billing_code = $problem->icd10Code();
 
-                                    if ( ! $problem->billing_code) {
-                                        return $problem;
-                                    }
+                    if ( ! $problem->billing_code) {
+                        return $problem;
+                    }
 
-                                    if ($problem->icd10Codes()->exists()) {
-                                        $billableProblems->prepend($problem);
+                    if ($problem->icd10Codes()->exists()) {
+                        $billableProblems->prepend($problem);
 
-                                        return $problem;
-                                    }
+                        return $problem;
+                    }
 
-                                    $billableProblems->push($problem);
+                    $billableProblems->push($problem);
 
-                                    return $problem;
-                                }
+                    return $problem;
+                }
             );
 
         return $billableProblems;
@@ -2820,8 +2820,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                             ->whereHas(
                                 'patientInfo',
                                 function ($q) {
-                                  $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
-                              }
+                                    $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
+                                }
                             );
                     })->orWhere(function ($q) {
                         $q->orWhereHas(
@@ -2863,9 +2863,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                         ->whereHas(
                             'patientInfo',
                             function ($q) {
-                              $q->enrolled()
-                                  ->where('consent_date', '<', Patient::DATE_CONSENT_INCLUDES_BHI);
-                          }
+                                $q->enrolled()
+                                    ->where('consent_date', '<', Patient::DATE_CONSENT_INCLUDES_BHI);
+                            }
                         );
                 })->orWhere(function ($q) {
                     $q->ofPracticeRequiringSpecialBhiConsent();
@@ -3786,8 +3786,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->whereHas(
                 'practices',
                 function ($q) {
-                           $q->whereIn('program_id', $this->viewableProgramIds());
-                       }
+                    $q->whereIn('program_id', $this->viewableProgramIds());
+                }
             )
             ->pluck('id')
             ->all();
@@ -3849,8 +3849,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->whereHas(
                 'cpmProblem',
                 function ($cpm) {
-                            return $cpm->where('is_behavioral', 0);
-                        }
+                    return $cpm->where('is_behavioral', 0);
+                }
             )
             ->count();
     }

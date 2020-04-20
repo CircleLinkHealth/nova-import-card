@@ -43,8 +43,8 @@ class PracticesWithUPGG0506Workflow
                 ->get()
                 ->map(
                     function ($practiceName) {
-                                    return $practiceName->config_value;
-                                }
+                        return $practiceName->config_value;
+                    }
                 )->all();
         });
     }

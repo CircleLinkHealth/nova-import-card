@@ -290,8 +290,8 @@ class Practice extends BaseModel implements HasMedia
                     function ($q) use (
                     $role
                 ) {
-                    $q->whereName($role);
-                }
+                        $q->whereName($role);
+                    }
                 )
                 ->count();
     }
@@ -317,26 +317,26 @@ class Practice extends BaseModel implements HasMedia
                     ->whereHas(
                         'patientAWVSummaries',
                         function ($query) use ($chargeableServiceCode, $month) {
-                                        $query->where('is_billable', true)
-                                            ->where(
+                            $query->where('is_billable', true)
+                                ->where(
                                                 'billable_at',
                                                 '>=',
                                                 $month->copy()->startOfMonth()->startOfDay()
                                             )
-                                            ->where('billable_at', '<=', $month->copy()->endOfMonth()->endOfDay())
-                                            ->when(
+                                ->where('billable_at', '<=', $month->copy()->endOfMonth()->endOfDay())
+                                ->when(
                                                 'AWV: G0438' == $chargeableServiceCode,
                                                 function ($query) {
-                                                      $query->where('is_initial_visit', 1);
-                                                  }
+                                                    $query->where('is_initial_visit', 1);
+                                                }
                                             )
-                                            ->when(
+                                ->when(
                                                 'AWV: G0439' == $chargeableServiceCode,
                                                 function ($query) {
-                                                      $query->where('is_initial_visit', 0);
-                                                  }
+                                                    $query->where('is_initial_visit', 0);
+                                                }
                                             );
-                                    }
+                        }
                     )
                     ->count() ?? 0;
             } else {
@@ -345,26 +345,26 @@ class Practice extends BaseModel implements HasMedia
                     ->whereHas(
                         'patientSummaries',
                         function ($query) use ($chargeableServiceId, $isSoftwareOnly, $month) {
-                                        $query->whereHas(
-                                            'chargeableServices',
-                                            function ($query) use ($chargeableServiceId) {
+                            $query->whereHas(
+                                'chargeableServices',
+                                function ($query) use ($chargeableServiceId) {
                                                 $query->where('id', $chargeableServiceId);
                                             }
-                                        )
-                                            ->where('month_year', $month->toDateString())
-                                            ->where('approved', '=', true)
-                                            ->when(
+                            )
+                                ->where('month_year', $month->toDateString())
+                                ->where('approved', '=', true)
+                                ->when(
                                                 ! $isSoftwareOnly,
                                                 function ($q) {
-                                                      $q->whereDoesntHave(
-                                                          'chargeableServices',
-                                                          function ($query) {
+                                                    $q->whereDoesntHave(
+                                                        'chargeableServices',
+                                                        function ($query) {
                                                               $query->where('code', 'Software-Only');
                                                           }
-                                                      );
-                                                  }
+                                                    );
+                                                }
                                             );
-                                    }
+                        }
                     )
                     ->count() ?? 0;
             }
@@ -374,9 +374,9 @@ class Practice extends BaseModel implements HasMedia
                 ->whereHas(
                     'patientSummaries',
                     function ($query) use ($month) {
-                                    $query->where('month_year', $month->toDateString())
-                                        ->where('approved', '=', true);
-                                }
+                        $query->where('month_year', $month->toDateString())
+                            ->where('approved', '=', true);
+                    }
                 )
                 ->count() ?? 0;
         }
@@ -562,8 +562,8 @@ class Practice extends BaseModel implements HasMedia
                         ->whereHas(
                             'patientInfo',
                             function ($patient) {
-                              $patient->where('ccm_status', Patient::ENROLLED);
-                          }
+                                $patient->where('ccm_status', Patient::ENROLLED);
+                            }
                         );
                 },
             ]
