@@ -19,7 +19,7 @@ trait RunsCommands
      *
      * @return Process
      */
-    private function runCommand(string $command)
+    private function runCpmCommand(string $command)
     {
         $this->info("Running: `$command`");
         $process = Process::fromShellCommandline($command);

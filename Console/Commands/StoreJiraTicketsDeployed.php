@@ -62,11 +62,11 @@ class StoreJiraTicketsDeployed extends Command
         $this->info('userName: '.$user);
 
         if ( ! file_exists(base_path('.git'))) {
-            $initGit = $this->runCommand(
+            $initGit = $this->runCpmCommand(
                 'git init && git remote add origin git@github.com:CircleLinkHealth/app-cpm-web.git && git fetch'
             );
         }
-        $jiraTicketNumbers = $this->runCommand(
+        $jiraTicketNumbers = $this->runCpmCommand(
             "git log --pretty=oneline $lastDeployedRevision...$newlyDeployedRevision | perl -ne '{ /(CPM)-(\d+)/ && print \"$1-$2\n\" }' | sort | uniq"
         );
 
