@@ -28,7 +28,6 @@ use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
  * @property \CircleLinkHealth\Customer\Entities\User                                                         $initiatorUser
  * @property \CircleLinkHealth\Customer\Entities\Practice|null                                                $practice
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection      $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch query()
@@ -43,7 +42,6 @@ use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property int|null $eligibility_jobs_count
  * @property int|null $revision_history_count
  */
