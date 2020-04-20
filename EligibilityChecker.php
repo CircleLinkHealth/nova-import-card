@@ -332,8 +332,8 @@ class EligibilityChecker
                             )
                                 ->transform(
                                     function ($keyword) {
-                                                     return trim(strtolower($keyword));
-                                                 }
+                                        return trim(strtolower($keyword));
+                                    }
                                 )
                                 ->filter()
                                 ->unique()
@@ -851,8 +851,8 @@ class EligibilityChecker
                         ->whereHas(
                             'patientInfo',
                             function ($q) use ($args) {
-                                                         $q->withTrashed()->whereMrnNumber($args['mrn']);
-                                                     }
+                                $q->withTrashed()->whereMrnNumber($args['mrn']);
+                            }
                         );
                 }
             )->orWhere(
@@ -876,11 +876,11 @@ class EligibilityChecker
                             ],
                         ]
                     )->whereHas(
-                                                 'patientInfo',
-                                                 function ($q) use ($args) {
+                        'patientInfo',
+                        function ($q) use ($args) {
                                                      $q->withTrashed()->whereBirthDate($args['dob']);
                                                  }
-                                             );
+                    );
                 }
             )->first();
 
