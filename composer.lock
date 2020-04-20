@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "646391a98a805453ca9fa6137acc3cb4",
+    "content-hash": "5767995d97082feb6310d733e968bb8b",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -793,20 +793,20 @@
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
-            "version": "6.x-dev",
+            "version": "v3.0.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git",
-                "reference": "66ad03284e4c3ebd7acc2058e0b3daf97d8d9efd"
+                "reference": "0a9791bfcc4550b53a0e7938727b33bf213a1a7b"
             },
             "require": {
-                "illuminate/cache": "~6.0",
-                "illuminate/console": "~6.0",
-                "illuminate/support": "~6.0",
-                "php": "~7.3.16"
+                "illuminate/cache": "~5.0|~6.0",
+                "illuminate/console": "~5.0|~6.0",
+                "illuminate/support": "~5.0|~6.0",
+                "php": ">=5.5.0"
             },
             "require-dev": {
-                "illuminate/database": "~5.0",
+                "illuminate/database": "~5.0|~6.0",
                 "mockery/mockery": "~1.0",
                 "phpunit/phpunit": "~6.0",
                 "sami/sami": "dev-master"
@@ -870,7 +870,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2020-04-20T03:44:52+00:00"
+            "time": "2020-04-20T05:58:38+00:00"
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
@@ -1281,11 +1281,11 @@
         },
         {
             "name": "circlelinkhealth/revisionable-module",
-            "version": "v6.1.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:circlelinkhealth/revisionable-module.git",
-                "reference": "0dd7f52302ede34b4f3a702d1f263df0b6786c06"
+                "reference": "f098c9798c53c31d011c5f64a15abce938c94f69"
             },
             "require": {
                 "laravel/framework": "^6.18",
@@ -1324,7 +1324,7 @@
                 "model",
                 "revision"
             ],
-            "time": "2020-04-20T04:37:46+00:00"
+            "time": "2020-04-20T05:44:08+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -15166,9 +15166,9 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/cerberus-gatekeeper-module": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/raygun-module": 20,
+        "circlelinkhealth/revisionable-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20
