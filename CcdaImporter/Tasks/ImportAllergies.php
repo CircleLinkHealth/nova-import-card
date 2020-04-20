@@ -7,6 +7,7 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\SharedModels\Entities\Allergy;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
+use  Illuminate\Support\Str;
 
 class ImportAllergies extends BaseCcdaImportTask
 {
@@ -33,7 +34,7 @@ class ImportAllergies extends BaseCcdaImportTask
                 return null;
             }
             
-            if (str_contains(strtolower($new['allergen_name']), 'no known')) {
+            if (Str::contains(strtolower($new['allergen_name']), 'no known')) {
                 return null;
             }
         

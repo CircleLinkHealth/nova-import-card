@@ -9,6 +9,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use  Illuminate\Support\Str;
 
 class ImportPatientInfo extends BaseCcdaImportTask
 {
@@ -263,9 +264,9 @@ class ImportPatientInfo extends BaseCcdaImportTask
                 return null;
             }
             
-            if (str_contains($dob, '/')) {
+            if (Str::contains($dob, '/')) {
                 $delimiter = '/';
-            } elseif (str_contains($dob, '-')) {
+            } elseif (Str::contains($dob, '-')) {
                 $delimiter = '-';
             }
             $date = explode($delimiter, $dob);
