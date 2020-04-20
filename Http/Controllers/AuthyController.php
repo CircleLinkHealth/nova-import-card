@@ -79,6 +79,31 @@ class AuthyController extends Controller
         ]);
     }
 
+    public function generateQrCode()
+    {
+        $user      = auth()->user();
+        $authyUser = $user->authyUser()->first();
+        if ( ! $authyUser) {
+            $authyUser = $user->authyUser()->firstOrNew([]);
+            $authyUser = $this->service
+                ->register($authyUser, $user);
+        }
+
+        $response = $this->service
+            ->generateQrCode($authyUser->authy_id, $user);
+
+        if ($response->ok()) {
+            return $this->ok([
+                'message' => 'Verification Code sent via SMS succesfully.',
+                'qr_code' => $response->bodyvar('qr_code'),
+            ]);
+        }
+
+        return response()->json([
+            'errors' => $response->errors(),
+        ], 500);
+    }
+
     public function sendTokenViaSms()
     {
         $authyUser = auth()->user()->authyUser()->firstOrFail();
@@ -109,31 +134,6 @@ class AuthyController extends Controller
         return response()->json($response->errors(), 500);
     }
 
-    public function generateQrCode()
-    {
-        $user      = auth()->user();
-        $authyUser = $user->authyUser()->first();
-        if ( ! $authyUser) {
-            $authyUser = $user->authyUser()->firstOrNew([]);
-            $authyUser = $this->service
-                ->register($authyUser, $user);
-        }
-
-        $response = $this->service
-            ->generateQrCode($authyUser->authy_id, $user);
-
-        if ($response->ok()) {
-            return $this->ok([
-                'message' => 'Verification Code sent via SMS succesfully.',
-                'qr_code' => $response->bodyvar('qr_code'),
-            ]);
-        }
-
-        return response()->json([
-            'errors' => $response->errors(),
-        ], 500);
-    }
-
     public function showVerificationTokenForm()
     {
         return view('twofa::authy');
@@ -141,8 +141,6 @@ class AuthyController extends Controller
 
     /**
      * Register a user with Authy.
-     *
-     * @param StoreAuthyPhoneNumber $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -160,7 +158,7 @@ class AuthyController extends Controller
         }
 
         $isAuthyEnabled = $request->input('is_2fa_enabled', null);
-        if ($isAuthyEnabled !== null) {
+        if (null !== $isAuthyEnabled) {
             $authyUser->is_authy_enabled = $isAuthyEnabled;
         }
 
@@ -184,7 +182,7 @@ class AuthyController extends Controller
         $isSetup = $request->input('is_setup', false);
         $authyId = auth()->user()->authyUser->authy_id;
 
-        $response = $this->service->verifyToken($authyId, $token, !$isSetup);
+        $response = $this->service->verifyToken($authyId, $token, ! $isSetup);
 
         if ($response->ok()) {
             return $this->ok(['message' => 'Token verified successfully.']);

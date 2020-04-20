@@ -12,17 +12,18 @@ use CircleLinkHealth\Customer\Entities\User;
 /**
  * CircleLinkHealth\TwoFA\Entities\AuthyUser.
  *
- * @property int                                                                            $id
- * @property int|null                                                                       $user_id
- * @property int                                                                            $is_authy_enabled
- * @property string|null                                                                    $authy_id
- * @property string|null                                                                    $authy_method
- * @property string|null                                                                    $country_code
- * @property string|null                                                                    $phone_number
- * @property \Illuminate\Support\Carbon|null                                                $created_at
- * @property \Illuminate\Support\Carbon|null                                                $updated_at
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
- * @property \CircleLinkHealth\Customer\Entities\User|null                                  $user
+ * @property int                                                                                         $id
+ * @property int|null                                                                                    $user_id
+ * @property int                                                                                         $is_authy_enabled
+ * @property string|null                                                                                 $authy_id
+ * @property string|null                                                                                 $authy_method
+ * @property string|null                                                                                 $country_code
+ * @property string|null                                                                                 $phone_number
+ * @property \Illuminate\Support\Carbon|null                                                             $created_at
+ * @property \Illuminate\Support\Carbon|null                                                             $updated_at
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ * @property \CircleLinkHealth\Customer\Entities\User|null                                               $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TwoFA\Entities\AuthyUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TwoFA\Entities\AuthyUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TwoFA\Entities\AuthyUser query()
@@ -36,7 +37,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TwoFA\Entities\AuthyUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TwoFA\Entities\AuthyUser whereUserId($value)
  * @mixin \Eloquent
- * @property-read int|null $revision_history_count
+ *
+ * @property int|null $revision_history_count
  */
 class AuthyUser extends BaseModel
 {

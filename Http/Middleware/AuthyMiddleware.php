@@ -33,13 +33,12 @@ class AuthyMiddleware
      * Handle an incoming request.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \Closure $next
      *
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        if ( ! (bool)config('auth.two_fa_enabled')) {
+        if ( ! (bool) config('auth.two_fa_enabled')) {
             \Session::put('authy_status', 'approved');
 
             if (\Route::is('user.2fa.show.token.form')) {

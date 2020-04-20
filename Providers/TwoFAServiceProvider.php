@@ -29,7 +29,7 @@ class TwoFAServiceProvider extends ServiceProvider
             $this->registerVueComponents();
             $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
         }
-        
+
         $this->registerTranslations();
         $this->registerViews();
     }
@@ -99,7 +99,7 @@ class TwoFAServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../Resources/assets/js/components' => resource_path(
                 'assets/js/components'
-                ), ], 'vue-components');
+            ), ], 'vue-components');
     }
 
     /**

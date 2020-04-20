@@ -17,10 +17,8 @@ interface AuthyApiable
      * Create a new approval request for a user.
      *
      * @param string $authy_id User's id stored in your database
-     * @param array $opts Array of options
-     * @param mixed $message
-     *
-     * @return AuthyResponse
+     * @param array  $opts     Array of options
+     * @param mixed  $message
      *
      * @see http://docs.authy.com/onetouch.html#create-approvalrequest
      */
@@ -40,8 +38,6 @@ interface AuthyApiable
      *
      * @param string $request_uuid The UUID of the approval request you want to check
      *
-     * @return AuthyResponse
-     *
      * @see http://docs.authy.com/onetouch.html#check-approvalrequest-status
      */
     public function getApprovalRequest($request_uuid): AuthyResponse;
@@ -51,7 +47,7 @@ interface AuthyApiable
      * This function needs the app to be on Starter Plan (free) or higher.
      *
      * @param string $authy_id User's id stored in your database
-     * @param array $opts Array of options, for example: array("force" => "true")
+     * @param array  $opts     Array of options, for example: array("force" => "true")
      *
      * @return AuthyResponse the server response
      */
@@ -70,8 +66,8 @@ interface AuthyApiable
     /**
      * Phone verification check. (Checks whether the token entered by the user is valid or not).
      *
-     * @param string $phone_number User's phone_number stored in your database
-     * @param string $country_code User's phone country code stored in your database
+     * @param string $phone_number      User's phone_number stored in your database
+     * @param string $country_code      User's phone country code stored in your database
      * @param string $verification_code The verification code entered by the user to be checked
      *
      * @return AuthyResponse the server response
@@ -81,10 +77,10 @@ interface AuthyApiable
     /**
      * Starts phone verification. (Sends token to user via sms or call).
      *
-     * @param string $phone_number User's phone_number stored in your database
-     * @param string $country_code User's phone country code stored in your database
-     * @param string $via The method the token will be sent to user (sms or call)
-     * @param int $code_length The length of the verifcation code to be sent to the user
+     * @param string     $phone_number User's phone_number stored in your database
+     * @param string     $country_code User's phone country code stored in your database
+     * @param string     $via          The method the token will be sent to user (sms or call)
+     * @param int        $code_length  The length of the verifcation code to be sent to the user
      * @param mixed|null $locale
      *
      * @return AuthyResponse the server response
@@ -100,38 +96,39 @@ interface AuthyApiable
     /**
      * Register a user.
      *
-     * @param string $email New user's email
-     * @param string $cellphone New user's cellphone
-     * @param int $country_code New user's country code. defaults to USA(1)
-     * @param bool $send_install_link
+     * @param string $email             New user's email
+     * @param string $cellphone         New user's cellphone
+     * @param int    $country_code      New user's country code. defaults to USA(1)
+     * @param bool   $send_install_link
      *
      * @return AuthyUser the new registered user
      */
     public function registerUser($email, $cellphone, $country_code = 1, $send_install_link = true): AuthyResponse;
 
     /**
-     * Request a valid token via SMS.
-     *
-     * @param string $authy_id User's id stored in your database
-     * @param array $opts Array of options, for example: array("force" => "true")
-     *
-     * @return AuthyResponse the server response
-     */
-    public function requestSms($authy_id, $opts = []): AuthyResponse;
-
-    /**
      * Request a link to a QR code to support other authenticator apps.
      *
      * @param string $authy_id User's id stored in your database
-     * @param array $opts Array of options, for example:
-     *              [
-     *                  "label" => "AppName(myuser@example.com)",
-     *                  "qr_size" => 300
-     *              ]
+     * @param array  $opts     Array of options, for example:
+     *                         [
+     *                         "label" => "AppName(myuser@example.com)",
+     *                         "qr_size" => 300
+     *                         ]
+     * @param mixed  $auth_id
      *
      * @return AuthyResponse the server's response
      */
     public function requestQrCode($auth_id, $opts = []): AuthyResponse;
+
+    /**
+     * Request a valid token via SMS.
+     *
+     * @param string $authy_id User's id stored in your database
+     * @param array  $opts     Array of options, for example: array("force" => "true")
+     *
+     * @return AuthyResponse the server response
+     */
+    public function requestSms($authy_id, $opts = []): AuthyResponse;
 
     /**
      * Gets user status.
@@ -146,8 +143,8 @@ interface AuthyApiable
      * Verify a given token.
      *
      * @param string $authy_id User's id stored in your database
-     * @param string $token The token entered by the user
-     * @param array $opts Array of options, for example: array("force" => "true")
+     * @param string $token    The token entered by the user
+     * @param array  $opts     Array of options, for example: array("force" => "true")
      *
      * @return AuthyResponse the server response
      */
