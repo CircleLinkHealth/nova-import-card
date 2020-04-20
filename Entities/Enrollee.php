@@ -513,13 +513,12 @@ class Enrollee extends BaseModel
         $phones = [];
         foreach ($this->phoneAttributes as $attribute) {
             $attr = $this->$attribute;
-            if ($compareAgainstEnrollee){
+            if ($compareAgainstEnrollee) {
                 if (in_array($attr, [
                     $compareAgainstEnrollee->home_phone,
                     $compareAgainstEnrollee->cell_phone,
                     $compareAgainstEnrollee->other_phone,
-                ]))
-                {
+                ])) {
                     //if it matches, highlight it.
                     $attr = "<span style='background-color: #26a69a; color: white; padding-left: 5px; padding-right: 5px; border-radius: 3px;'>{$attr}</span>";
                 }
@@ -657,18 +656,7 @@ class Enrollee extends BaseModel
     }
 
     /**
-     * @param $query
-     * @param $term
-     *
-     * @return mixed
-     */
-    public function scopeSearchPhones($query, string $term)
-    {
-        return $query->mySQLSearch($this->phoneAttributes, $term, 'NATURAL LANGUAGE');
-    }
-
-    /**
-     * Assume DB format (e164)
+     * Assume DB format (e164).
      *
      * @param $query
      * @param $phone
@@ -677,14 +665,25 @@ class Enrollee extends BaseModel
     {
         return $query->where(function ($q) use ($phone) {
             $q->where('home_phone', $phone)
-              ->orWhere('cell_phone', $phone)
-              ->orWhere('other_phone', $phone);
+                ->orWhere('cell_phone', $phone)
+                ->orWhere('other_phone', $phone);
         });
     }
 
     public function scopeSearchAddresses($query, string $term)
     {
         return $query->mySQLSearch($this->addressAttributes, $term, 'BOOLEAN', false, true, true);
+    }
+
+    /**
+     * @param $query
+     * @param $term
+     *
+     * @return mixed
+     */
+    public function scopeSearchPhones($query, string $term)
+    {
+        return $query->mySQLSearch($this->phoneAttributes, $term, 'NATURAL LANGUAGE');
     }
 
     public function scopeShouldSuggestAsFamilyForEnrollee($query, $enrolleeId)
@@ -806,4 +805,3 @@ class Enrollee extends BaseModel
         return $this->belongsTo(User::class, 'user_id');
     }
 }
-
