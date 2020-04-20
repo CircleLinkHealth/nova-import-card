@@ -331,10 +331,10 @@ class EligibilityChecker
                                 [$problem->name]
                             )
                                 ->transform(
-                                                 function ($keyword) {
+                                    function ($keyword) {
                                                      return trim(strtolower($keyword));
                                                  }
-                                             )
+                                )
                                 ->filter()
                                 ->unique()
                                 ->values()
@@ -849,39 +849,39 @@ class EligibilityChecker
                 function ($u) use ($args) {
                     $u->whereProgramId($args['practice_id'])
                         ->whereHas(
-                                                     'patientInfo',
-                                                     function ($q) use ($args) {
+                            'patientInfo',
+                            function ($q) use ($args) {
                                                          $q->withTrashed()->whereMrnNumber($args['mrn']);
                                                      }
-                                                 );
+                        );
                 }
             )->orWhere(
                 function ($u) use ($args) {
-                                             $u->where(
-                                                 [
-                                                     [
-                                                         'program_id',
-                                                         '=',
-                                                         $args['practice_id'],
-                                                     ],
-                                                     [
-                                                         'first_name',
-                                                         '=',
-                                                         $args['first_name'],
-                                                     ],
-                                                     [
-                                                         'last_name',
-                                                         '=',
-                                                         $args['last_name'],
-                                                     ],
-                                                 ]
-                                             )->whereHas(
+                    $u->where(
+                        [
+                            [
+                                'program_id',
+                                '=',
+                                $args['practice_id'],
+                            ],
+                            [
+                                'first_name',
+                                '=',
+                                $args['first_name'],
+                            ],
+                            [
+                                'last_name',
+                                '=',
+                                $args['last_name'],
+                            ],
+                        ]
+                    )->whereHas(
                                                  'patientInfo',
                                                  function ($q) use ($args) {
-                            $q->withTrashed()->whereBirthDate($args['dob']);
-                        }
+                                                     $q->withTrashed()->whereBirthDate($args['dob']);
+                                                 }
                                              );
-                                         }
+                }
             )->first();
 
         $duplicateMySqlError = false;

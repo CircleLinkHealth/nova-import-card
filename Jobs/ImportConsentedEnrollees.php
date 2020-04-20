@@ -60,8 +60,8 @@ class ImportConsentedEnrollees implements ShouldQueue
                 function ($enrollees) {
                     $enrollees->each(
                         function ($enrollee) {
-                                ImportEnrollee::import($enrollee);
-                            }
+                            ImportEnrollee::import($enrollee);
+                        }
                     );
                 }
             );
