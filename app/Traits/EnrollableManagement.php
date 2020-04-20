@@ -31,9 +31,9 @@ trait EnrollableManagement
      *
      * @return string
      */
-    public function createInvitationLink($notifiable, $data)
+    public function createInvitationLink($notifiable)
     {
-        $url = URL::temporarySignedRoute('invitation.enrollment', now()->addHours(48), $data);
+        $url = URL::temporarySignedRoute('invitation.enrollment', now()->addHours(48), $this->notificationContent['urlData']);
 
         try {
             $shortUrl = shortenUrl($url);

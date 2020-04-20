@@ -12,7 +12,6 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -21,6 +20,7 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     use EnrollableManagement;
     use EnrollableNotificationContent;
     use Queueable;
+
     const USER = User::class;
 
     /**
@@ -31,6 +31,12 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
      * @var bool
      */
     private $isReminder;
+
+    /**
+     * @var array
+     */
+    public $notificationContent;
+
     /**
      * Create a new notification instance.
      *
@@ -82,12 +88,18 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
 //        @todo: refactor this to split methods.
-        $notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
+        $this->getNotificationContent($notifiable);
 
         return (new MailMessage())
-            ->line($notificationContent['line1'])
-            ->line($notificationContent['line2'])
-            ->action('Get More Info', url($this->createInvitationLink($notifiable, $notificationContent['urlData'])));
+            ->line($this->notificationContent['line1'])
+            ->line($this->notificationContent['line2'])
+            ->action('Get More Info', url($this->createInvitationLink($notifiable)));
+    }
+
+    public function getNotificationContent(User $notifiable)
+    {
+        $this->notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
+        return $this->notificationContent;
     }
 
     /**
