@@ -20,13 +20,13 @@ class EnrolleeFamilyTest extends TestCase
     protected $enrollee;
     protected $suggestedFamilyMembers;
 
-    public function setUp()
+    protected function setUp():void
     {
         parent::setUp();
         $this->practice = factory(Practice::class)->create();
         $this->careAmbassador = $this->createUser($this->practice->id, 'care-ambassador');
         $this->provider = $this->createUser($this->practice->id, 'provider');
-        $this->enrollee = factory(Enrollee::class)->create()->first();
+        $this->enrollee = factory(Enrollee::class)->create();
         $this->suggestedFamilyMembers = $this->createSuggestedFamilyMembers();
 
     }
@@ -82,7 +82,7 @@ class EnrolleeFamilyTest extends TestCase
                 'primary_phone' => $this->enrollee->primary_phone
             ],
              [
-                 'address' => $this->enrollee->address_2,
+                 'address' => $this->enrollee->address,
                  'cell_phone' => $this->enrollee->cell_phone,
              ]
         ];

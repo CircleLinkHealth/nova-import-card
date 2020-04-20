@@ -7,6 +7,7 @@
 namespace App\Observers;
 
 use CircleLinkHealth\Customer\Entities\SaasAccount;
+use Illuminate\Support\Str;
 
 class SaasAccountObserver
 {
@@ -17,6 +18,6 @@ class SaasAccountObserver
      */
     public function creating(SaasAccount $saasAccount)
     {
-        $saasAccount->slug = str_slug($saasAccount->name);
+        $saasAccount->slug = Str::slug($saasAccount->name);
     }
 }

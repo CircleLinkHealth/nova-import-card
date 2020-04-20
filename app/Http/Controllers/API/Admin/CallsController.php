@@ -18,6 +18,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class CallsController extends ApiController
 {
@@ -143,7 +144,7 @@ class CallsController extends ApiController
      */
     public function remove($ids)
     {
-        if (str_contains($ids, ',')) {
+        if (Str::contains($ids, ',')) {
             $ids = explode(',', $ids);
         }
 

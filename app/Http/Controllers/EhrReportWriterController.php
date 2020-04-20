@@ -14,6 +14,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use CircleLinkHealth\Eligibility\ValidatesEligibility;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Storage;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -270,7 +271,7 @@ class EhrReportWriterController extends Controller
                 return null;
             }
             foreach ($contents as $file) {
-                if (starts_with($file['name'], 'processed')) {
+                if (Str::startsWith($file['name'], 'processed')) {
                     continue;
                 }
                 $files[] = $file;

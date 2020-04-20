@@ -24,7 +24,7 @@ trait HasChargeableServices
 
         $chargeableServices = Cache::remember(
             "${class}:{$this->id}:chargeableServices",
-            2,
+            120,
             function () {
                 return $this->chargeableServices->keyBy('code');
             }
@@ -39,7 +39,7 @@ trait HasChargeableServices
 
         $chargeableServices = Cache::remember(
             "${class}:{$this->id}:chargeableServices",
-            2,
+            120,
             function () {
                 return $this->chargeableServices->keyBy('code');
             }

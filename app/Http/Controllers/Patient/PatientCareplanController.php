@@ -30,6 +30,7 @@ use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PatientCareplanController extends Controller
@@ -524,7 +525,7 @@ class PatientCareplanController extends Controller
         ];
         $this->validate($request, $user->getPatientRules(), $messages);
         $role      = Role::whereName('participant')->first();
-        $newUserId = str_random(15);
+        $newUserId = Str::random(15);
 
         $carePlanStatus = CarePlan::DRAFT;
         if (auth()->user()->isPracticeStaff()) {

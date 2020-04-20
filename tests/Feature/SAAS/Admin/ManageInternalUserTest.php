@@ -20,7 +20,7 @@ class ManageInternalUserTest extends DuskTestCase
 //
 //    private $saasAdminRole;
 //
-//    protected function setUp()
+//    protected function setUp():void
 //    {
 //        parent::setUp();
 //

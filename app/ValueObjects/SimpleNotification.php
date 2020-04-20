@@ -8,6 +8,7 @@ namespace App\ValueObjects;
 
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Str;
 
 class SimpleNotification implements Arrayable
 {
@@ -61,7 +62,7 @@ class SimpleNotification implements Arrayable
      */
     public function getFileName(): ?string
     {
-        if ( ! $this->fileName && str_contains($this->filePath, '/')) {
+        if ( ! $this->fileName && Str::contains($this->filePath, '/')) {
             $this->fileName = substr($this->filePath, strrpos($this->filePath, '/') + 1);
         }
 

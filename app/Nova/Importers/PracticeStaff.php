@@ -12,6 +12,7 @@ use App\Search\RoleByName;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -166,7 +167,7 @@ class PracticeStaff extends ReportsErrorsToSlack implements WithChunkReading, To
 
         //get phone type
         $type = collect(PhoneNumber::getTypes())->filter(function ($type) use ($row) {
-            return $type == strtolower($row['phone_type']) || starts_with(
+            return $type == strtolower($row['phone_type']) || Str::startsWith(
                 $type,
                 strtolower(substr($row['phone_type'], 0, 2))
             );
@@ -199,7 +200,7 @@ class PracticeStaff extends ReportsErrorsToSlack implements WithChunkReading, To
 
         $bag = new ParameterBag([
             'email'             => $row['email'],
-            'password'          => str_random(),
+            'password'          => Str::random(),
             'display_name'      => $row['first_name'].' '.$row['last_name'],
             'first_name'        => $row['first_name'],
             'last_name'         => $row['last_name'],

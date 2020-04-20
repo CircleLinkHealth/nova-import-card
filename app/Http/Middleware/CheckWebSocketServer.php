@@ -30,7 +30,7 @@ class CheckWebSocketServer
                 $status = $res->getStatusCode();
                 $body   = $res->getBody();
                 if (200 == $status) {
-                    cache()->put('ws:server:working', true, 5);
+                    cache()->put('ws:server:working', true, 300);
                 } else {
                     cache()->forget('ws:server:working');
                 }

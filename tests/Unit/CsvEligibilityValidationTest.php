@@ -24,7 +24,7 @@ class CsvEligibilityValidationTest extends TestCase
      */
     private $service;
 
-    protected function setUp()
+    protected function setUp():void
     {
         parent::setUp();
         $this->service  = new ProcessEligibilityService();

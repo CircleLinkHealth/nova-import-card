@@ -7,6 +7,7 @@
 namespace App\Repositories\Cache;
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class View
 {
@@ -14,7 +15,7 @@ class View
 
     public function __construct($viewHashKey = null)
     {
-        $this->viewHashKey = $viewHashKey ?? 'view'.str_random('20');
+        $this->viewHashKey = $viewHashKey ?? 'view'.Str::random('20');
     }
 
     /**
@@ -32,7 +33,7 @@ class View
             'created_at' => Carbon::now()->toDateTimeString(),
             'expires_at' => Carbon::now()->addWeek()->toDateTimeString(),
             'data'       => $data,
-        ], 11000);
+        ], 660000);
 
         return $this->viewHashKey;
     }

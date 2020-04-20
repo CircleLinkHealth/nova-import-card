@@ -14,6 +14,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
 use Jenssegers\Agent\Agent;
@@ -184,7 +185,7 @@ class LoginController extends Controller
 
     protected function getBrowsers(): Collection
     {
-        return \Cache::remember('supported-browsers', 30, function () {
+        return \Cache::remember('supported-browsers', 1800, function () {
             return DB::table('browsers')->get();
         });
     }
@@ -252,7 +253,7 @@ class LoginController extends Controller
 
         $request->merge(array_map('trim', $request->input()));
 
-        if ( ! str_contains($request->input('email'), '@')) {
+        if ( ! Str::contains($request->input('email'), '@')) {
             $this->username = 'username';
 
             $request->merge([
