@@ -99,15 +99,15 @@ class Generator
             ->when(
                 is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
                 function ($q) {
-                           $q->whereIn('id', $this->nurseUserIds);
-                       }
+                    $q->whereIn('id', $this->nurseUserIds);
+                }
             )
             ->when(
                 empty($this->nurseUserIds),
                 function ($q) {
-                           $q->whereHas(
-                               'pageTimersAsProvider',
-                               function ($s) {
+                    $q->whereHas(
+                        'pageTimersAsProvider',
+                        function ($s) {
                                    $s->whereBetween(
                                        'start_time',
                                        [
@@ -116,14 +116,14 @@ class Generator
                                        ]
                                    );
                                }
-                           )
-                               ->whereHas(
+                    )
+                        ->whereHas(
                                    'nurseInfo',
                                    function ($s) {
-                                     $s->where('is_demo', false);
-                                 }
+                                       $s->where('is_demo', false);
+                                   }
                                );
-                       }
+                }
             );
     }
 }
