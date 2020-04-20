@@ -26,12 +26,13 @@ class CcdasView extends BaseSqlView
         ccdas.location_id as location_id,
         ccdas.billing_provider_id as billing_provider_id,
         ccdas.source as source,
+        ccdas.validation_checks as validation_errors,
         
         nurse_user.id as nurse_user_id,
         nurse_user.display_name as nurse_user_name,
         
         practices.display_name as practice_display_name,
-        practices.display_name as practice_name,
+        practices.name as practice_name,
         
         direct_mail_messages.id as dm_id,
         direct_mail_messages.from as dm_from,
