@@ -85,27 +85,27 @@ class Handler extends ExceptionHandler
         if ( ! $this->shouldReport($e)) {
             return;
         }
-    
+
         if ($e instanceof QueryException) {
             $errorCode = $e->errorInfo[1] ?? null;
-            
+
             if (1062 == $errorCode) {
                 //1062 means we violated some key constraint (eg. trying to enter a duplicate value on a column with a unique index)
                 //we don't actually want to terminate the program if this happens
                 //we just don't wanna add the row again
                 return;
             }
-            
+
             //Query exceptions may contain PHI, so we don't want to send them to bug trackers. We will quietly log it in the background and bail
 //            @todo: decide if we want to implement fully
 //            StorePHIException::dispatch($e);
 //            return;
         }
-    
+
         if (app()->bound('sentry')) {
             app('sentry')->captureException($e);
         }
-    
+
         parent::report($e);
     }
 

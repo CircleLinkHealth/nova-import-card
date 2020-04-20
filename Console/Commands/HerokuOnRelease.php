@@ -49,12 +49,12 @@ class HerokuOnRelease extends Command
         $base = ['php', 'artisan', '-vvv'];
 
         if (app()->environment('review', 'testing')) {
-            $this->runCommand(array_merge($base, ['reviewapp:postdeploy']));
+            $this->runCpmCommand(array_merge($base, ['reviewapp:postdeploy']));
         }
 
-//        $this->runCommand(array_merge($base, ['migrate', '--force']));
-//        $this->runCommand(array_merge($base, ['migrate:views']));
-//        $this->runCommand(array_merge($base, ['deploy:post']));
+//        $this->runCpmCommand(array_merge($base, ['migrate', '--force']));
+//        $this->runCpmCommand(array_merge($base, ['migrate:views']));
+//        $this->runCpmCommand(array_merge($base, ['deploy:post']));
 
         $this->warn('heroku:onrelease ran');
     }
