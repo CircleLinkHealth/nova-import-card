@@ -217,7 +217,7 @@
         "nwidart/laravel-modules": "^6.0",
         "orangehill/iseed": "dev-master",
         "phpstan/phpstan": "^0.12.5",
-        "phpunit/phpunit": "^7.5.8",
+        "phpunit/phpunit": "^8.0",
         "spatie/phpunit-watcher": "^1.8",
         "squizlabs/php_codesniffer": "*",
         "symfony/css-selector": "^4.0",
