@@ -107,7 +107,7 @@ class PatientController extends Controller
             $dob                  = new Carbon(($d->getBirthDate()));
             $patients[$i]['dob']  = $dob->format('m-d-Y');
             $patients[$i]['mrn']  = $d->getMRN();
-            $patients[$i]['link'] = route('patient.summary', ['patient' => $d->id]);
+            $patients[$i]['link'] = route('patient.summary', ['patientId' => $d->id]);
 
             $programObj = Practice::find($d->program_id);
 
