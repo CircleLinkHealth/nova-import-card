@@ -2441,29 +2441,29 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                         $q->whereHas(
                                             'user',
                                             function ($q) {
-                                                       $q->whereHas(
-                                                           'forwardAlertsTo',
-                                                           function ($q) {
+                                                $q->whereHas(
+                                                    'forwardAlertsTo',
+                                                    function ($q) {
                                                                $q->where('contactable_id', $this->id)
                                                                    ->orWhereIn(
-                                                                     'name',
-                                                                     [
-                                                                         'forward_careplan_approval_emails_instead_of_provider',
-                                                                         'forward_careplan_approval_emails_in_addition_to_provider',
-                                                                     ]
-                                                                 );
+                                                                       'name',
+                                                                       [
+                                                                           'forward_careplan_approval_emails_instead_of_provider',
+                                                                           'forward_careplan_approval_emails_in_addition_to_provider',
+                                                                       ]
+                                                                   );
                                                            }
-                                                       );
-                                                   }
+                                                );
+                                            }
                                         )
                                             ->when($this->canApproveCarePlans(), function ($q) {
-                                                       $q->orWhereHas(
-                                                           'user',
-                                                           function ($q) {
+                                                $q->orWhereHas(
+                                                    'user',
+                                                    function ($q) {
                                                                $q->intersectPracticesWith($this);
                                                            }
-                                                       );
-                                                   })
+                                                );
+                                            })
                                              ;
                                     }
                                 );
