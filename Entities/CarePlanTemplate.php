@@ -6,30 +6,25 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
-use CircleLinkHealth\SharedModels\Entities\CpmLifestyle;
-use CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup;
-use CircleLinkHealth\SharedModels\Entities\CpmMisc;
-use CircleLinkHealth\SharedModels\Entities\CpmProblem;
-use CircleLinkHealth\SharedModels\Entities\CpmSymptom;
 use CircleLinkHealth\Customer\Entities\Practice;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\CarePlanTemplate.
  *
- * @property int                                                                           $id
- * @property string                                                                        $display_name
- * @property int|null                                                                      $program_id
- * @property string                                                                        $type
- * @property \Carbon\Carbon                                                                $created_at
- * @property \Carbon\Carbon                                                                $updated_at
+ * @property int                                                                                                   $id
+ * @property string                                                                                                $display_name
+ * @property int|null                                                                                              $program_id
+ * @property string                                                                                                $type
+ * @property \Carbon\Carbon                                                                                        $created_at
+ * @property \Carbon\Carbon                                                                                        $updated_at
  * @property \CircleLinkHealth\SharedModels\Entities\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection       $cpmBiometrics
  * @property \CircleLinkHealth\SharedModels\Entities\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection       $cpmLifestyles
  * @property \CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection $cpmMedicationGroups
  * @property \CircleLinkHealth\SharedModels\Entities\CpmMisc[]|\Illuminate\Database\Eloquent\Collection            $cpmMiscs
  * @property \CircleLinkHealth\SharedModels\Entities\CpmProblem[]|\Illuminate\Database\Eloquent\Collection         $cpmProblems
  * @property \CircleLinkHealth\SharedModels\Entities\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection         $cpmSymptoms
- * @property \CircleLinkHealth\Customer\Entities\Practice|null                             $program
+ * @property \CircleLinkHealth\Customer\Entities\Practice|null                                                     $program
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereDisplayName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereId($value)
@@ -37,10 +32,13 @@ use CircleLinkHealth\Customer\Entities\Practice;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate query()
+ *
  * @property int|null $cpm_biometrics_count
  * @property int|null $cpm_lifestyles_count
  * @property int|null $cpm_medication_groups_count

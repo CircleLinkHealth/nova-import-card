@@ -10,6 +10,8 @@ use CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem;
 
 trait HasProblemCodes
 {
+    private $problemCodeTypes = [];
+
     public function codeMap()
     {
         $map = collect();
@@ -32,26 +34,6 @@ trait HasProblemCodes
         return $map;
     }
 
-    public function icd10Codes()
-    {
-        return $this->codes()
-                    ->where('problem_code_system_id', '=', $this->getProblemCodeTypeId(ProblemCodeSystem::ICD10_NAME));
-    }
-
-    public function icd9Codes()
-    {
-        return $this->codes()
-                    ->where('problem_code_system_id', '=', $this->getProblemCodeTypeId(ProblemCodeSystem::ICD9_NAME));
-    }
-
-    public function snomedCodes()
-    {
-        return $this->codes()
-                    ->where('problem_code_system_id', '=', $this->getProblemCodeTypeId(ProblemCodeSystem::SNOMED_NAME));
-    }
-
-    private $problemCodeTypes = [];
-
     public function getProblemCodeTypeId(string $codeType)
     {
         if (empty($this->problemCodeTypes)) {
@@ -65,5 +47,21 @@ trait HasProblemCodes
         return $this->problemCodeTypes[$codeType]['id'];
     }
 
+    public function icd10Codes()
+    {
+        return $this->codes()
+            ->where('problem_code_system_id', '=', $this->getProblemCodeTypeId(ProblemCodeSystem::ICD10_NAME));
+    }
 
+    public function icd9Codes()
+    {
+        return $this->codes()
+            ->where('problem_code_system_id', '=', $this->getProblemCodeTypeId(ProblemCodeSystem::ICD9_NAME));
+    }
+
+    public function snomedCodes()
+    {
+        return $this->codes()
+            ->where('problem_code_system_id', '=', $this->getProblemCodeTypeId(ProblemCodeSystem::SNOMED_NAME));
+    }
 }

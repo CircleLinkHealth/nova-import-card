@@ -6,32 +6,32 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
- * CircleLinkHealth\SharedModels\Entities\Medication
+ * CircleLinkHealth\SharedModels\Entities\Medication.
  *
- * @property int $id
- * @property int|null $medication_import_id
- * @property int|null $ccda_id
- * @property int $patient_id
- * @property int|null $vendor_id
- * @property int|null $ccd_medication_log_id
- * @property int|null $medication_group_id
- * @property string|null $name
- * @property string|null $sig
- * @property string|null $code
- * @property string|null $code_system
- * @property string|null $code_system_name
- * @property string|null $deleted_at
- * @property \Illuminate\Support\Carbon $created_at
- * @property \Illuminate\Support\Carbon $updated_at
- * @property int|null $active
- * @property-read \CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup|null $cpmMedicationGroup
- * @property-read \CircleLinkHealth\Customer\Entities\User $patient
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
- * @property-read int|null $revision_history_count
+ * @property int                                                                                         $id
+ * @property int|null                                                                                    $medication_import_id
+ * @property int|null                                                                                    $ccda_id
+ * @property int                                                                                         $patient_id
+ * @property int|null                                                                                    $vendor_id
+ * @property int|null                                                                                    $ccd_medication_log_id
+ * @property int|null                                                                                    $medication_group_id
+ * @property string|null                                                                                 $name
+ * @property string|null                                                                                 $sig
+ * @property string|null                                                                                 $code
+ * @property string|null                                                                                 $code_system
+ * @property string|null                                                                                 $code_system_name
+ * @property string|null                                                                                 $deleted_at
+ * @property \Illuminate\Support\Carbon                                                                  $created_at
+ * @property \Illuminate\Support\Carbon                                                                  $updated_at
+ * @property int|null                                                                                    $active
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup|null                             $cpmMedicationGroup
+ * @property \CircleLinkHealth\Customer\Entities\User                                                    $patient
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ * @property int|null                                                                                    $revision_history_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Medication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Medication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Medication query()

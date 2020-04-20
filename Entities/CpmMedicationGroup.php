@@ -6,33 +6,34 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use CircleLinkHealth\SharedModels\Entities\Instructable;
-use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
-use CircleLinkHealth\SharedModels\Entities\Medication;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup.
  *
- * @property int                                                                                 $id
- * @property int|null                                                                            $care_item_id
- * @property string                                                                              $name
- * @property \Carbon\Carbon                                                                      $created_at
- * @property \Carbon\Carbon                                                                      $updated_at
- * @property \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection                    $carePlanTemplates
- * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection           $cpmInstructions
- * @property \CircleLinkHealth\SharedModels\Entities\Medication[]|\Illuminate\Database\Eloquent\Collection               $medications
- * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $patient
+ * @property int                                                                                                 $id
+ * @property int|null                                                                                            $care_item_id
+ * @property string                                                                                              $name
+ * @property \Carbon\Carbon                                                                                      $created_at
+ * @property \Carbon\Carbon                                                                                      $updated_at
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection $carePlanTemplates
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection   $cpmInstructions
+ * @property \CircleLinkHealth\SharedModels\Entities\Medication[]|\Illuminate\Database\Eloquent\Collection       $medications
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                 $patient
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereCareItemId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup query()
+ *
  * @property int|null $care_plan_templates_count
  * @property int|null $cpm_instructions_count
  * @property int|null $medications_count

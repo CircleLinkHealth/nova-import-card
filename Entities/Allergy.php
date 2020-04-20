@@ -6,24 +6,24 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use CircleLinkHealth\SharedModels\Entities\AllergyLog;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\Allergy.
  *
- * @property int                                      $id
- * @property int|null                                 $allergy_import_id
- * @property int|null                                 $ccda_id
- * @property int                                      $patient_id
- * @property int|null                                 $vendor_id
- * @property int|null                                 $ccd_allergy_log_id
- * @property string|null                              $allergen_name
- * @property string|null                              $deleted_at
- * @property \Carbon\Carbon                           $created_at
- * @property \Carbon\Carbon                           $updated_at
+ * @property int                                                $id
+ * @property int|null                                           $allergy_import_id
+ * @property int|null                                           $ccda_id
+ * @property int                                                $patient_id
+ * @property int|null                                           $vendor_id
+ * @property int|null                                           $ccd_allergy_log_id
+ * @property string|null                                        $allergen_name
+ * @property string|null                                        $deleted_at
+ * @property \Carbon\Carbon                                     $created_at
+ * @property \Carbon\Carbon                                     $updated_at
  * @property \CircleLinkHealth\SharedModels\Entities\AllergyLog $ccdLog
- * @property \CircleLinkHealth\Customer\Entities\User $patient
+ * @property \CircleLinkHealth\Customer\Entities\User           $patient
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy whereAllergenName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy whereAllergyImportId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy whereCcdAllergyLogId($value)
@@ -35,10 +35,13 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy whereVendorId($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy query()
+ *
  * @property int|null $revision_history_count
  */
 class Allergy extends \CircleLinkHealth\Core\Entities\BaseModel

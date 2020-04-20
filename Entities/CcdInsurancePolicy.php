@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon                                $updated_at
  * @property string|null                                   $deleted_at
  * @property \CircleLinkHealth\Customer\Entities\User|null $patient
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\CCD\CcdInsurancePolicy onlyTrashed()
  * @method static bool|null restore()
@@ -47,16 +48,23 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\CCD\CcdInsurancePolicy withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\CCD\CcdInsurancePolicy withoutTrashed()
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdInsurancePolicy newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdInsurancePolicy newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdInsurancePolicy query()
+ *
  * @property int|null $revision_history_count
  */
 class CcdInsurancePolicy extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use MedicalRecordIdAndTypeTrait;
     use SoftDeletes;
+
+    protected $attributes = [
+        'approved' => false,
+    ];
 
     protected $fillable = [
         'medical_record_id',
@@ -68,10 +76,6 @@ class CcdInsurancePolicy extends \CircleLinkHealth\Core\Entities\BaseModel
         'relation',
         'subscriber',
         'approved',
-    ];
-    
-    protected $attributes = [
-        'approved' => false
     ];
 
     public function patient()

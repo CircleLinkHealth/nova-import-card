@@ -6,26 +6,24 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\SharedModels\Entities\CpmBiometricUser;
-use CircleLinkHealth\SharedModels\Entities\Instructable;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\CpmBiometric.
  *
- * @property int                                                                                                                                                             $id
- * @property int|null                                                                                                                                                        $care_item_id
- * @property string                                                                                                                                                          $name
- * @property int|null                                                                                                                                                        $type
- * @property string                                                                                                                                                          $unit
- * @property \Carbon\Carbon                                                                                                                                                  $created_at
- * @property \Carbon\Carbon                                                                                                                                                  $updated_at
+ * @property int                                                                                                                                                                                                                 $id
+ * @property int|null                                                                                                                                                                                                            $care_item_id
+ * @property string                                                                                                                                                                                                              $name
+ * @property int|null                                                                                                                                                                                                            $type
+ * @property string                                                                                                                                                                                                              $unit
+ * @property \Carbon\Carbon                                                                                                                                                                                                      $created_at
+ * @property \Carbon\Carbon                                                                                                                                                                                                      $updated_at
  * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodPressure|\CircleLinkHealth\SharedModels\Entities\CpmBloodSugar|\CircleLinkHealth\SharedModels\Entities\CpmSmoking|\CircleLinkHealth\SharedModels\Entities\CpmWeight $info
- * @property \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection                                                                                                $carePlanTemplates
- * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection                                                                                       $cpmInstructions
- * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                                                                             $patient
- * @property \CircleLinkHealth\SharedModels\Entities\CpmBiometricUser[]|\Illuminate\Database\Eloquent\Collection                                                                                     $users
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection                                                                                                                 $carePlanTemplates
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection                                                                                                                   $cpmInstructions
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                                                                                                                                 $patient
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBiometricUser[]|\Illuminate\Database\Eloquent\Collection                                                                                                                 $users
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric whereCareItemId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric whereId($value)
@@ -33,11 +31,14 @@ use CircleLinkHealth\SharedModels\Entities\Instructable;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric whereUnit($value)
+ *
  * @property int|null $care_plan_templates_count
  * @property int|null $cpm_instructions_count
  * @property int|null $patient_count

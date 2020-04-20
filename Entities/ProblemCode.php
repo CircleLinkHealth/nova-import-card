@@ -12,17 +12,18 @@ use Illuminate\Support\Str;
 /**
  * CircleLinkHealth\SharedModels\Entities\ProblemCode.
  *
- * @property int                     $id
- * @property int                     $problem_id
- * @property string                  $code_system_name
- * @property string|null             $code_system_oid
- * @property string                  $code
- * @property string|null             $name
- * @property \Carbon\Carbon|null     $created_at
- * @property \Carbon\Carbon|null     $updated_at
- * @property string|null             $deleted_at
- * @property \CircleLinkHealth\SharedModels\Entities\Problem $problem
- * @property \CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem  $system
+ * @property int                                                       $id
+ * @property int                                                       $problem_id
+ * @property string                                                    $code_system_name
+ * @property string|null                                               $code_system_oid
+ * @property string                                                    $code
+ * @property string|null                                               $name
+ * @property \Carbon\Carbon|null                                       $created_at
+ * @property \Carbon\Carbon|null                                       $updated_at
+ * @property string|null                                               $deleted_at
+ * @property \CircleLinkHealth\SharedModels\Entities\Problem           $problem
+ * @property \CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem $system
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\ProblemCode onlyTrashed()
  * @method static bool|null restore()
@@ -38,12 +39,15 @@ use Illuminate\Support\Str;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\ProblemCode withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\ProblemCode withoutTrashed()
  * @mixin \Eloquent
- * @property int|null                                                                       $problem_code_system_id
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
+ *
+ * @property int|null                                                                                    $problem_code_system_id
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereProblemCodeSystemId($value)
+ *
  * @property int|null $revision_history_count
  */
 class ProblemCode extends \CircleLinkHealth\Core\Entities\BaseModel
@@ -64,19 +68,19 @@ class ProblemCode extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function isIcd10()
     {
-        return '2.16.840.1.113883.6.3'                                                                    == $this->code_system_oid
+        return '2.16.840.1.113883.6.3'                                                                     == $this->code_system_oid
             || Str::contains(strtolower($this->code_system_name), ['10']) || $this->problem_code_system_id == \App\Constants::CODE_SYSTEM_NAME_ID_MAP[\App\Constants::ICD10_NAME];
     }
 
     public function isIcd9()
     {
-        return '2.16.840.1.113883.6.103'                                                                 == $this->code_system_oid
+        return '2.16.840.1.113883.6.103'                                                                     == $this->code_system_oid
                || Str::contains(strtolower($this->code_system_name), ['9']) || $this->problem_code_system_id == \App\Constants::CODE_SYSTEM_NAME_ID_MAP[\App\Constants::ICD9_NAME];
     }
 
     public function isSnomed()
     {
-        return '2.16.840.1.113883.6.96'                                                                       == $this->code_system_oid
+        return '2.16.840.1.113883.6.96'                                                                           == $this->code_system_oid
                || Str::contains(strtolower($this->code_system_name), ['snomed']) || $this->problem_code_system_id == \App\Constants::CODE_SYSTEM_NAME_ID_MAP[\App\Constants::SNOMED_NAME];
     }
 

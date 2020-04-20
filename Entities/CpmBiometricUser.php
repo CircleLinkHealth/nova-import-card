@@ -6,43 +6,41 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use CircleLinkHealth\SharedModels\Entities\CpmBloodPressure;
-use CircleLinkHealth\SharedModels\Entities\CpmBloodSugar;
-use CircleLinkHealth\SharedModels\Entities\CpmSmoking;
-use CircleLinkHealth\SharedModels\Entities\CpmWeight;
-use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\CpmBiometric.
  *
- * @property int                                         $id
- * @property int|null                                    $cpm_instruction_id
- * @property int                                         $cpm_biometric_id
- * @property int                                         $patient_id
- * @property \Carbon\Carbon                              $created_at
- * @property \Carbon\Carbon                              $updated_at
- * @property \CircleLinkHealth\Customer\Entities\User    $patient
- * @property \CircleLinkHealth\SharedModels\Entities\CpmBiometric                $biometric
- * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction              $instruction
+ * @property int                                                      $id
+ * @property int|null                                                 $cpm_instruction_id
+ * @property int                                                      $cpm_biometric_id
+ * @property int                                                      $patient_id
+ * @property \Carbon\Carbon                                           $created_at
+ * @property \Carbon\Carbon                                           $updated_at
+ * @property \CircleLinkHealth\Customer\Entities\User                 $patient
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBiometric     $biometric
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction   $instruction
  * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodPressure $bloodPressure
  * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodSugar    $bloodSugar
- * @property \App\Models\CPM\Biometrics\CpmBloodSmoking  $smoking
- * @property \App\Models\CPM\Biometrics\CpmBloodWeight   $weight
+ * @property \App\Models\CPM\Biometrics\CpmBloodSmoking               $smoking
+ * @property \App\Models\CPM\Biometrics\CpmBloodWeight                $weight
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmBiometric whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmBiometric whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmBiometric whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmBiometric whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmBiometric whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser whereCpmBiometricId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser whereCpmInstructionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser wherePatientId($value)
+ *
  * @property int|null $revision_history_count
  */
 class CpmBiometricUser extends \CircleLinkHealth\Core\Entities\BaseModel

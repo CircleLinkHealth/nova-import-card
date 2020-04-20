@@ -6,13 +6,6 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
-use CircleLinkHealth\SharedModels\Entities\CpmLifestyle;
-use CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup;
-use CircleLinkHealth\SharedModels\Entities\CpmMisc;
-use CircleLinkHealth\SharedModels\Entities\CpmProblem;
-use CircleLinkHealth\SharedModels\Entities\CpmSymptom;
-
 /**
  * CircleLinkHealth\SharedModels\Entities\CpmInstruction.
  *
@@ -21,22 +14,26 @@ use CircleLinkHealth\SharedModels\Entities\CpmSymptom;
  * @property string         $name
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction whereIsDefault($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \CircleLinkHealth\SharedModels\Entities\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection        $cpmBiometrics
- * @property \CircleLinkHealth\SharedModels\Entities\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection        $cpmLifestyles
- * @property \CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection  $cpmMedicationGroups
- * @property \CircleLinkHealth\SharedModels\Entities\CpmMisc[]|\Illuminate\Database\Eloquent\Collection             $cpmMisc
- * @property \CircleLinkHealth\SharedModels\Entities\CpmProblem[]|\Illuminate\Database\Eloquent\Collection          $cpmProblems
- * @property \CircleLinkHealth\SharedModels\Entities\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection          $cpmSymptom
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection       $cpmBiometrics
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection       $cpmLifestyles
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection $cpmMedicationGroups
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMisc[]|\Illuminate\Database\Eloquent\Collection            $cpmMisc
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmProblem[]|\Illuminate\Database\Eloquent\Collection         $cpmProblems
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection         $cpmSymptom
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection           $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction query()
+ *
  * @property int|null $cpm_biometrics_count
  * @property int|null $cpm_lifestyles_count
  * @property int|null $cpm_medication_groups_count

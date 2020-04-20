@@ -10,41 +10,42 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 
 /**
- * CircleLinkHealth\SharedModels\Entities\CpmProblem
+ * CircleLinkHealth\SharedModels\Entities\CpmProblem.
  *
- * @property int $id
- * @property string|null $default_icd_10_code
- * @property string $name
- * @property string $icd10from
- * @property string $icd10to
- * @property float $icd9from
- * @property float $icd9to
- * @property string $contains
- * @property int $is_behavioral
- * @property int $weight
- * @property \Illuminate\Support\Carbon $created_at
- * @property \Illuminate\Support\Carbon $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\CarePlanTemplate[] $carePlanTemplates
- * @property-read int|null $care_plan_templates_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\CpmBiometric[] $cpmBiometricsToBeActivated
- * @property-read int|null $cpm_biometrics_to_be_activated_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\CpmInstruction[] $cpmInstructions
- * @property-read int|null $cpm_instructions_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\CpmLifestyle[] $cpmLifestylesToBeActivated
- * @property-read int|null $cpm_lifestyles_to_be_activated_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup[] $cpmMedicationGroupsToBeActivated
- * @property-read int|null $cpm_medication_groups_to_be_activated_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\CpmSymptom[] $cpmSymptomsToBeActivated
- * @property-read int|null $cpm_symptoms_to_be_activated_count
- * @property-read \CircleLinkHealth\SharedModels\Entities\CpmInstructable $instructable
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\User[] $patient
- * @property-read int|null $patient_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
- * @property-read int|null $revision_history_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap[] $snomedMaps
- * @property-read int|null $snomed_maps_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\CpmProblemUser[] $user
- * @property-read int|null $user_count
+ * @property int                                                                                                              $id
+ * @property string|null                                                                                                      $default_icd_10_code
+ * @property string                                                                                                           $name
+ * @property string                                                                                                           $icd10from
+ * @property string                                                                                                           $icd10to
+ * @property float                                                                                                            $icd9from
+ * @property float                                                                                                            $icd9to
+ * @property string                                                                                                           $contains
+ * @property int                                                                                                              $is_behavioral
+ * @property int                                                                                                              $weight
+ * @property \Illuminate\Support\Carbon                                                                                       $created_at
+ * @property \Illuminate\Support\Carbon                                                                                       $updated_at
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection              $carePlanTemplates
+ * @property int|null                                                                                                         $care_plan_templates_count
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection                  $cpmBiometricsToBeActivated
+ * @property int|null                                                                                                         $cpm_biometrics_to_be_activated_count
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection                $cpmInstructions
+ * @property int|null                                                                                                         $cpm_instructions_count
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection                  $cpmLifestylesToBeActivated
+ * @property int|null                                                                                                         $cpm_lifestyles_to_be_activated_count
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection            $cpmMedicationGroupsToBeActivated
+ * @property int|null                                                                                                         $cpm_medication_groups_to_be_activated_count
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection                    $cpmSymptomsToBeActivated
+ * @property int|null                                                                                                         $cpm_symptoms_to_be_activated_count
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmInstructable                                                          $instructable
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                              $patient
+ * @property int|null                                                                                                         $patient_count
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection                      $revisionHistory
+ * @property int|null                                                                                                         $revision_history_count
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap[]|\Illuminate\Database\Eloquent\Collection $snomedMaps
+ * @property int|null                                                                                                         $snomed_maps_count
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmProblemUser[]|\Illuminate\Database\Eloquent\Collection                $user
+ * @property int|null                                                                                                         $user_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmProblem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmProblem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmProblem query()
