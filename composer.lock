@@ -1285,7 +1285,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:circlelinkhealth/revisionable-module.git",
-                "reference": "1b607b2c3edbfb3526b4a765f012056c9b23f436"
+                "reference": "3cd0e190df6f09eadc58a48b6c2477e3e288d386"
             },
             "require": {
                 "laravel/framework": "^6.18",
@@ -1324,7 +1324,7 @@
                 "model",
                 "revision"
             ],
-            "time": "2020-04-20T17:18:53+00:00"
+            "time": "2020-04-20T17:29:54+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
