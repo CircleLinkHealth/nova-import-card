@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Core;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
+use Illuminate\Support\Str;
 use LynX39\LaraPdfMerger\PdfManage;
 
 class PdfService
@@ -154,7 +155,7 @@ class PdfService
      */
     private function randomFileFullPath()
     {
-        $name = Carbon::now()->toAtomString().str_random(20);
+        $name = Carbon::now()->toAtomString().Str::random(20);
 
         return storage_path("pdfs/${name}.pdf");
     }
