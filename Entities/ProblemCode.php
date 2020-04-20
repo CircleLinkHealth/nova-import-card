@@ -23,28 +23,28 @@ use Illuminate\Support\Str;
  * @property string|null                                               $deleted_at
  * @property \CircleLinkHealth\SharedModels\Entities\Problem           $problem
  * @property \CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem $system
- * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Query\Builder|\App\Models\ProblemCode onlyTrashed()
- * @method static bool|null restore()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereCode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereCodeSystemName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereCodeSystemOid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereProblemId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\ProblemCode withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\Models\ProblemCode withoutTrashed()
+ * @method   static                                                    bool|null forceDelete()
+ * @method   static                                                    \Illuminate\Database\Query\Builder|\App\Models\ProblemCode onlyTrashed()
+ * @method   static                                                    bool|null restore()
+ * @method   static                                                    \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereCode($value)
+ * @method   static                                                    \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereCodeSystemName($value)
+ * @method   static                                                    \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereCodeSystemOid($value)
+ * @method   static                                                    \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereCreatedAt($value)
+ * @method   static                                                    \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereDeletedAt($value)
+ * @method   static                                                    \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereId($value)
+ * @method   static                                                    \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereName($value)
+ * @method   static                                                    \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereProblemId($value)
+ * @method   static                                                    \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereUpdatedAt($value)
+ * @method   static                                                    \Illuminate\Database\Query\Builder|\App\Models\ProblemCode withTrashed()
+ * @method   static                                                    \Illuminate\Database\Query\Builder|\App\Models\ProblemCode withoutTrashed()
  * @mixin \Eloquent
  * @property int|null                                                                                    $problem_code_system_id
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereProblemCodeSystemId($value)
- * @property int|null $revision_history_count
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode query()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereProblemCodeSystemId($value)
+ * @property int|null                                                                                    $revision_history_count
  */
 class ProblemCode extends \CircleLinkHealth\Core\Entities\BaseModel
 {
