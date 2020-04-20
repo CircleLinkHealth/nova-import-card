@@ -7,9 +7,7 @@ namespace App\Jobs;
 
 
 use App\Console\Commands\SendEnrollmentNotifications;
-use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
@@ -36,7 +34,7 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
     private $surveyRole;
     private $enrollee;
 
-    public function __construct(Enrollee $enrollee)
+    public function __construct(Enrollee $enrollee = null)
     {
         $this->enrollee = $enrollee;
     }
@@ -49,8 +47,8 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
      */
     public function handle()
     {
-        if (! is_null($this->enrollee)) {
-            return $this->createUserFromEnrollee($this->enrollee);
+        if (!is_null($this->enrollee)) {
+            return $this->createUserFromEnrolleeAndInvite($this->enrollee);
         }
 
         if (App::environment(['local', 'review'])) {
@@ -72,53 +70,10 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
     /**
      * @param Enrollee $enrollee
      */
-    public function createUserFromEnrollee(Enrollee $enrollee)
+    public function createUserFromEnrolleeAndInvite(Enrollee $enrollee)
     {
-//        @todo: move this to a job
         $surveyRole = $this->surveyRole();
-
-        $surveyRoleId = $surveyRole->id;
-        //                Create User model from enrollee
-        /** @var User $userCreatedFromEnrollee */
-        /** @var Enrollee $enrollee */
-        $userCreatedFromEnrollee = $enrollee->user()->updateOrCreate(
-            [
-                'email' => $enrollee->email,
-            ],
-            [
-                'program_id' => $enrollee->practice_id,
-                'display_name' => $enrollee->first_name . ' ' . $enrollee->last_name,
-                'user_registered' => Carbon::parse(now())->toDateTimeString(),
-                'first_name' => $enrollee->first_name,
-                'last_name' => $enrollee->last_name,
-                'address' => $enrollee->address,
-                'address_2' => $enrollee->address_2,
-                'city' => $enrollee->city,
-                'state' => $enrollee->state,
-                'zip' => $enrollee->zip,
-            ]
-        );
-
-        $userCreatedFromEnrollee->attachGlobalRole($surveyRoleId);
-
-        $userCreatedFromEnrollee->phoneNumbers()->create([
-            'number' => $enrollee->primary_phone,
-            'is_primary' => true,
-        ]);
-
-        $userCreatedFromEnrollee->patientInfo()->create([
-            'birth_date' => $enrollee->dob,
-        ]);
-
-        // Why this does not work in create query above?
-        $userCreatedFromEnrollee->patientInfo->update([
-            'ccm_status' => Patient::UNREACHABLE,
-        ]);
-
-        $userCreatedFromEnrollee->setBillingProviderId($enrollee->provider->id);
-
-        $enrollee->update(['user_id' => $userCreatedFromEnrollee->id]);
-        $this->sendEmail($userCreatedFromEnrollee);
+        CreateUserFromEnrollee::dispatch($enrollee, $surveyRole->id);
 //            $this->sendSms($userCreatedFromEnrollee);
     }
 
@@ -137,11 +92,6 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
         }
 
         return $this->surveyRole;
-    }
-
-    private function sendEmail(User $userCreatedFromEnrollee)
-    {
-        $userCreatedFromEnrollee->notify(new SendEnrollmentEmail());
     }
 
     /**
@@ -166,7 +116,7 @@ class SendSelfEnrollmentEnrollees implements ShouldQueue
     public function createSurveyOnlyUserFromEnrollees(iterable $enrollees)
     {
         foreach ($enrollees as $enrollee) {
-            $this->createUserFromEnrollee($enrollee);
+            $this->createUserFromEnrolleeAndInvite($enrollee);
         }
     }
 

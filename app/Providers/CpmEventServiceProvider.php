@@ -15,6 +15,8 @@ use App\Events\PatientUserCreated;
 use App\Events\PdfableCreated;
 use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
+use App\Events\UserFromEnrolleCreated;
+use App\Events\UserFromEnrolleeCreated;
 use App\Listeners\AddPatientConsentNote;
 use App\Listeners\AttachAttestedProblemsToCall;
 use App\Listeners\AttachUPG0506CarePlanToPatientUser;
@@ -31,6 +33,7 @@ use App\Listeners\NotifyPatientOfCarePlanApproval;
 use App\Listeners\NotifySlackChannel;
 use App\Listeners\PatientContactWindowUpdated;
 use App\Listeners\SendCarePlanForDMProviderApproval;
+use App\Listeners\SendEnrollableEmail;
 use App\Listeners\UpdateCarePlanStatus;
 use App\Listeners\UpdateCcdaStatus;
 use App\Listeners\UPG0506CcdaImporterListener;
@@ -109,6 +112,10 @@ class CpmEventServiceProvider extends ServiceProvider
         CarePlanWasProviderApproved::class => [
             ForwardApprovedCarePlanToPractice::class,
             NotifyPatientOfCarePlanApproval::class,
+        ],
+
+        UserFromEnrolleeCreated::class => [
+            SendEnrollableEmail::class,
         ],
     ];
 

@@ -30,7 +30,6 @@ class EmailRNDailyReport extends Command
     protected $signature = 'nurses:emailDailyReport {date? : Date to generate report for in YYYY-MM-DD.} {nurseUserIds? : Comma separated user IDs of nurses to email report to.} ';
     
     private $service;
-    
     /**
      * Create a new command instance.
      *
