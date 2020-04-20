@@ -1379,11 +1379,6 @@ Route::group(['middleware' => 'auth'], function () {
                 ])->middleware('permission:salesReport.create');
             });
 
-            Route::get('ethnicity', [
-                'uses' => 'Admin\Reports\EthnicityReportController@getReport',
-                'as'   => 'EthnicityReportController.getReport',
-            ])->middleware('permission:ethnicityReport.create');
-
             Route::get('call-v2', [
                 'uses' => 'Admin\Reports\CallReportController@exportxlsV2',
                 'as'   => 'CallReportController.exportxlsv2',
