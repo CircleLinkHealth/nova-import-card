@@ -106,7 +106,7 @@
                         }
                     </script>
                 @endpush
-                {!! $observations->appends(Input::except('page'))->links() !!}
+                {!! $observations->appends(Request::except('page'))->links() !!}
             </div>
         </div>
     </div>
