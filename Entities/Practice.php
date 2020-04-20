@@ -359,8 +359,8 @@ class Practice extends BaseModel implements HasMedia
                                         $q->whereDoesntHave(
                                             'chargeableServices',
                                             function ($query) {
-                                                            $query->where('code', 'Software-Only');
-                                                        }
+                                                $query->where('code', 'Software-Only');
+                                            }
                                         );
                                     }
                                 );
