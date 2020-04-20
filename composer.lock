@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a249c7ff50f9ccf6918276d37d3c7752",
+    "content-hash": "0dd198dcccabbe1e82ae561ee3bcf455",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -753,11 +753,11 @@
         },
         {
             "name": "circlelinkhealth/ccda-parser-processor-php-module",
-            "version": "v1.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccda-parser-module.git",
-                "reference": "00a7aa19a2b47336150d3fefaf5f923c7e530acf"
+                "reference": "1f0925786c0a2d1b449cac164b2bb385f7668d4b"
             },
             "type": "laravel-module",
             "extra": {
@@ -789,15 +789,15 @@
                 }
             ],
             "description": "PHP wrapper for bluebutton nodejs",
-            "time": "2020-03-25T03:04:07+00:00"
+            "time": "2020-04-20T08:26:59+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
-            "version": "v3.0.8",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git",
-                "reference": "0a9791bfcc4550b53a0e7938727b33bf213a1a7b"
+                "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper-module.git",
+                "reference": "cb497f0d6f3adfec7ee41179c1c0c425093100d9"
             },
             "require": {
                 "illuminate/cache": "~5.0|~6.0",
@@ -870,7 +870,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2020-04-20T05:58:38+00:00"
+            "time": "2020-01-17T06:47:22+00:00"
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
@@ -946,7 +946,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "da845408d7b1734c9733b0583fafa13dddde0ae6"
+                "reference": "9daf7a2d695fc9a08c011071ada4ff63b5caaa1f"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -975,7 +975,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-20T09:51:45+00:00"
+            "time": "2020-04-20T16:50:14+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1013,7 +1013,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "110311d987fdcea7f4e3e344a2a5ebddb2bf5afb"
+                "reference": "4c23bf634707b97f5430d995535f941ad2bc474d"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1047,7 +1047,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-20T15:49:05+00:00"
+            "time": "2020-04-20T16:50:14+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1055,7 +1055,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "dcd6e700d94935ae3a90b3c92f577d8769c714d4"
+                "reference": "052395eb023645783f31403f91cdf9098f535e78"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1080,7 +1080,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-20T09:51:45+00:00"
+            "time": "2020-04-20T16:50:13+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1187,11 +1187,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.3.7",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "bffc1abb2097b325515aa806138944d530cda3f7"
+                "reference": "922aea24bd8ec25277804917dbbba3add9d01f88"
             },
             "type": "laravel-module",
             "extra": {
@@ -1214,15 +1214,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-15T08:38:08+00:00"
+            "time": "2020-04-20T09:51:44+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "v1.3.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "f94240f2301665283f728626004983089fbcdc7d"
+                "reference": "bf9d132234ef0457d5a6d430401502a440e9b5cb"
             },
             "type": "laravel-module",
             "extra": {
@@ -1244,7 +1244,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-07T14:10:55+00:00"
+            "time": "2020-04-20T08:31:29+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -1285,7 +1285,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:circlelinkhealth/revisionable-module.git",
-                "reference": "f533e1f20151bac95f18603a3e46a8c2a918ea8e"
+                "reference": "f731212b9ef5401e1ceacb01bed1ae92d7f71f51"
             },
             "require": {
                 "laravel/framework": "^6.18",
@@ -1324,7 +1324,7 @@
                 "model",
                 "revision"
             ],
-            "time": "2020-04-20T09:51:44+00:00"
+            "time": "2020-04-20T16:50:13+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -1332,7 +1332,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "f8829f1e87fa52d5c5998bcf8dbe074dc5ba433d"
+                "reference": "b07df3e72ab8c4ecfc5b4f1078a2782489900ce8"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1346,15 +1346,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-20T09:51:44+00:00"
+            "time": "2020-04-20T16:50:13+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v1.1.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "53e681a15d6278841e3467ee73235fda0da1c332"
+                "reference": "c8178134a284de4e57838feee3f318ab1af2de7c"
             },
             "type": "laravel-module",
             "extra": {
@@ -1379,7 +1379,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-16T00:00:05+00:00"
+            "time": "2020-04-20T08:27:01+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
@@ -1387,7 +1387,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "329819d3ce2a52a078f8a954c38cd4959967c501"
+                "reference": "4a8cddd61815fb711f72131f7f2550e58c295a3f"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1412,15 +1412,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-20T09:51:44+00:00"
+            "time": "2020-04-20T16:50:13+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
-            "version": "v1.1.8",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "220064b7739734c7bc3fdc5829f1a85cdc217f80"
+                "reference": "20ad641fd64742fc31306fb5f8d4fc9b7bd53585"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -1447,7 +1447,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-31T04:02:33+00:00"
+            "time": "2020-04-20T09:51:45+00:00"
         },
         {
             "name": "clue/stream-filter",
@@ -15214,14 +15214,20 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/ccda-parser-processor-php-module": 20,
+        "circlelinkhealth/cerberus-gatekeeper-module": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
+        "circlelinkhealth/nurseinvoices-module": 20,
+        "circlelinkhealth/patientapi-module": 20,
         "circlelinkhealth/raygun-module": 20,
         "circlelinkhealth/revisionable-module": 20,
         "circlelinkhealth/shared-models-module": 20,
+        "circlelinkhealth/sqlviews-module": 20,
         "circlelinkhealth/timetracking-module": 20,
+        "circlelinkhealth/twofa-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "subzero10/condition-code-lookup-module": 20,
         "waavi/url-shortener": 20,
