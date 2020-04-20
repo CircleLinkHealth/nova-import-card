@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
@@ -30,194 +34,7 @@ class CerberusUserTest extends TestCase
         Cache::swap($this->facadeMocks['cache']);
     }
 
-    public function testRoles()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $belongsToMany = new stdClass();
-        $user          = m::mock('HasRoleUser')->makePartial();
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $user->shouldReceive('belongsToMany')
-             ->with('role_table_name', 'assigned_roles_table_name', 'user_id', 'role_id')
-             ->andReturn($belongsToMany)
-             ->once();
-
-        Config::shouldReceive('get')->once()->with('cerberus.role')
-              ->andReturn('role_table_name');
-        Config::shouldReceive('get')->once()->with('cerberus.role_user_site_table')
-              ->andReturn('assigned_roles_table_name');
-        Config::shouldReceive('get')->once()->with('cerberus.user_foreign_key')
-              ->andReturn('user_id');
-        Config::shouldReceive('get')->once()->with('cerberus.role_foreign_key')
-              ->andReturn('role_id');
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $this->assertSame($belongsToMany, $user->roles());
-    }
-
-    public function testHasRole()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $roleA = $this->mockRole('RoleA');
-        $roleB = $this->mockRole('RoleB');
-
-        $user        = new HasRoleUser();
-        $user->roles = [$roleA, $roleB];
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        Config::shouldReceive('get')->with('cerberus.role_user_site_table')->times(9)->andReturn('role_user');
-        Config::shouldReceive('get')->with('cache.ttl')->times(9)->andReturn('1440');
-        Cache::shouldReceive('tags->remember')->times(9)->andReturn($user->roles);
-        Cache::shouldReceive('getStore')->times(9)->andReturn(new ArrayStore);
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $this->assertTrue($user->hasRole('RoleA'));
-        $this->assertTrue($user->hasRole('RoleB'));
-        $this->assertFalse($user->hasRole('RoleC'));
-
-        $this->assertTrue($user->hasRole(['RoleA', 'RoleB']));
-        $this->assertTrue($user->hasRole(['RoleA', 'RoleC']));
-        $this->assertFalse($user->hasRole(['RoleA', 'RoleC'], true));
-        $this->assertFalse($user->hasRole(['RoleC', 'RoleD']));
-    }
-
-    protected function mockRole($roleName)
-    {
-        $roleMock              = m::mock('Michalisantoniou6\Cerberus\Role');
-        $roleMock->name        = $roleName;
-        $roleMock->perms       = [];
-        $roleMock->permissions = [];
-        $roleMock->id          = 1;
-
-        return $roleMock;
-    }
-
-    public function testCan()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $permA = $this->mockPermission('manage_a');
-        $permB = $this->mockPermission('manage_b');
-        $permC = $this->mockPermission('manage_c');
-
-        $roleA = $this->mockRole('RoleA');
-        $roleB = $this->mockRole('RoleB');
-
-        $roleA->perms = [$permA];
-        $roleB->perms = [$permB, $permC];
-
-        $user        = new HasRoleUser();
-        $user->roles = [$roleA, $roleB];
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $roleA->shouldReceive('cachedPermissions')->times(11)->andReturn($roleA->perms);
-        $roleB->shouldReceive('cachedPermissions')->times(7)->andReturn($roleB->perms);
-        Config::shouldReceive('get')->with('cerberus.role_user_site_table')->times(11)->andReturn('role_user');
-        Config::shouldReceive('get')->with('cache.ttl')->times(11)->andReturn('1440');
-        Cache::shouldReceive('tags->remember')->times(11)->andReturn($user->roles);
-        Cache::shouldReceive('getStore')->times(11)->andReturn(new ArrayStore);
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $this->assertTrue($user->hasPermission('manage_a'));
-        $this->assertTrue($user->hasPermission('manage_b'));
-        $this->assertTrue($user->hasPermission('manage_c'));
-        $this->assertFalse($user->hasPermission('manage_d'));
-
-        $this->assertTrue($user->hasPermission(['manage_a', 'manage_b', 'manage_c']));
-        $this->assertTrue($user->hasPermission(['manage_a', 'manage_b', 'manage_d']));
-        $this->assertFalse($user->hasPermission(['manage_a', 'manage_b', 'manage_d'], true));
-        $this->assertFalse($user->hasPermission(['manage_d', 'manage_e']));
-    }
-
-    protected function mockPermission($permName)
-    {
-        $permMock               = m::mock('Michalisantoniou6\Cerberus\Permission');
-        $permMock->name         = $permName;
-        $permMock->display_name = ucwords(str_replace('_', ' ', $permName));
-        $permMock->id           = 1;
-
-        return $permMock;
-    }
-
-    public function testCanWithPlaceholderSupport()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $permA = $this->mockPermission('admin.posts');
-        $permB = $this->mockPermission('admin.pages');
-        $permC = $this->mockPermission('admin.users');
-
-        $role = $this->mockRole('Role');
-
-        $role->perms = [$permA, $permB, $permC];
-
-        $user        = new HasRoleUser();
-        $user->roles = [$role];
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $role->shouldReceive('cachedPermissions')->times(6)->andReturn($role->perms);
-        Config::shouldReceive('get')->with('cerberus.role_user_site_table')->times(6)->andReturn('role_user');
-        Config::shouldReceive('get')->with('cache.ttl')->times(6)->andReturn('1440');
-        Cache::shouldReceive('tags->remember')->times(6)->andReturn($user->roles);
-        Cache::shouldReceive('getStore')->times(6)->andReturn(new ArrayStore);
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $this->assertTrue($user->hasPermission('admin.posts'));
-        $this->assertTrue($user->hasPermission('admin.pages'));
-        $this->assertTrue($user->hasPermission('admin.users'));
-        $this->assertFalse($user->hasPermission('admin.config'));
-
-        $this->assertTrue($user->hasPermission(['admin.*']));
-        $this->assertFalse($user->hasPermission(['site.*']));
-    }
-
-    public function testAbilityShouldReturnBoolean()
+    public function test_ability_default_options()
     {
         /*
         |------------------------------------------------------------
@@ -259,20 +76,20 @@ class CerberusUserTest extends TestCase
         Config::shouldReceive('get')->with('cerberus.role_user_site_table')->times(32)->andReturn('role_user');
         Config::shouldReceive('get')->with('cache.ttl')->times(32)->andReturn('1440');
         Cache::shouldReceive('tags->remember')->times(32)->andReturn($user->roles);
-        Cache::shouldReceive('getStore')->times(32)->andReturn(new ArrayStore);
+        Cache::shouldReceive('getStore')->times(32)->andReturn(new ArrayStore());
 
         $user->shouldReceive('hasRole')
-             ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
-             ->andReturn(true);
+            ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
+            ->andReturn(true);
         $user->shouldReceive('hasRole')
-             ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
-             ->andReturn(false);
+            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
+            ->andReturn(false);
         $user->shouldReceive('hasPermission')
-             ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
-             ->andReturn(true);
+            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
+            ->andReturn(true);
         $user->shouldReceive('hasPermission')
-             ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
-             ->andReturn(false);
+            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
+            ->andReturn(false);
 
         /*
         |------------------------------------------------------------
@@ -280,416 +97,59 @@ class CerberusUserTest extends TestCase
         |------------------------------------------------------------
         */
         // Case: User has everything.
-        $this->assertTrue(
+        $this->assertSame(
             $user->ability(
                 [$userRoleNameA, $userRoleNameB],
                 [$userPermNameA, $userPermNameB]
-            )
-        );
-        $this->assertTrue(
+            ),
             $user->ability(
                 [$userRoleNameA, $userRoleNameB],
                 [$userPermNameA, $userPermNameB],
-                ['validate_all' => true]
+                ['validate_all' => false, 'return_type' => 'boolean']
             )
         );
 
         // Case: User lacks a role.
-        $this->assertTrue(
+        $this->assertSame(
             $user->ability(
                 [$nonUserRoleNameA, $userRoleNameB],
                 [$userPermNameA, $userPermNameB]
-            )
-        );
-        $this->assertFalse(
+            ),
             $user->ability(
                 [$nonUserRoleNameA, $userRoleNameB],
                 [$userPermNameA, $userPermNameB],
-                ['validate_all' => true]
+                ['validate_all' => false, 'return_type' => 'boolean']
             )
         );
 
         // Case: User lacks a permission.
-        $this->assertTrue(
+        $this->assertSame(
             $user->ability(
                 [$userRoleNameA, $userRoleNameB],
                 [$nonUserPermNameA, $userPermNameB]
-            )
-        );
-        $this->assertFalse(
+            ),
             $user->ability(
                 [$userRoleNameA, $userRoleNameB],
                 [$nonUserPermNameA, $userPermNameB],
-                ['validate_all' => true]
+                ['validate_all' => false, 'return_type' => 'boolean']
             )
         );
 
         // Case: User lacks everything.
-        $this->assertFalse(
+        $this->assertSame(
             $user->ability(
                 [$nonUserRoleNameA, $nonUserRoleNameB],
                 [$nonUserPermNameA, $nonUserPermNameB]
-            )
-        );
-        $this->assertFalse(
+            ),
             $user->ability(
                 [$nonUserRoleNameA, $nonUserRoleNameB],
                 [$nonUserPermNameA, $nonUserPermNameB],
-                ['validate_all' => true]
+                ['validate_all' => false, 'return_type' => 'boolean']
             )
         );
     }
 
-    public function testAbilityShouldReturnArray()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $userPermNameA    = 'user_can_a';
-        $userPermNameB    = 'user_can_b';
-        $userPermNameC    = 'user_can_c';
-        $nonUserPermNameA = 'user_cannot_a';
-        $nonUserPermNameB = 'user_cannot_b';
-        $userRoleNameA    = 'UserRoleA';
-        $userRoleNameB    = 'UserRoleB';
-        $nonUserRoleNameA = 'NonUserRoleA';
-        $nonUserRoleNameB = 'NonUserRoleB';
-
-        $permA = $this->mockPermission($userPermNameA);
-        $permB = $this->mockPermission($userPermNameB);
-        $permC = $this->mockPermission($userPermNameC);
-
-        $roleA = $this->mockRole($userRoleNameA);
-        $roleB = $this->mockRole($userRoleNameB);
-
-        $roleA->perms = [$permA];
-        $roleB->perms = [$permB, $permC];
-
-        $user             = m::mock('HasRoleUser')->makePartial();
-        $user->roles      = [$roleA, $roleB];
-        $user->id         = 4;
-        $user->primaryKey = 'id';
-
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $roleA->shouldReceive('cachedPermissions')->times(16)->andReturn($roleA->perms);
-        $roleB->shouldReceive('cachedPermissions')->times(12)->andReturn($roleB->perms);
-        Config::shouldReceive('get')->with('cerberus.role_user_site_table')->times(32)->andReturn('role_user');
-        Config::shouldReceive('get')->with('cache.ttl')->times(32)->andReturn('1440');
-        Cache::shouldReceive('tags->remember')->times(32)->andReturn($user->roles);
-        Cache::shouldReceive('getStore')->times(32)->andReturn(new ArrayStore);
-
-        $user->shouldReceive('hasRole')
-             ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
-             ->andReturn(true);
-        $user->shouldReceive('hasRole')
-             ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
-             ->andReturn(false);
-        $user->shouldReceive('hasPermission')
-             ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
-             ->andReturn(true);
-        $user->shouldReceive('hasPermission')
-             ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
-             ->andReturn(false);
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        // Case: User has everything.
-        $this->assertSame(
-            [
-                'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
-                'permissions' => [$userPermNameA => true, $userPermNameB => true],
-            ],
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
-                ['return_type' => 'array']
-            )
-        );
-        $this->assertSame(
-            [
-                'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
-                'permissions' => [$userPermNameA => true, $userPermNameB => true],
-            ],
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
-                ['validate_all' => true, 'return_type' => 'array']
-            )
-        );
-
-
-        // Case: User lacks a role.
-        $this->assertSame(
-            [
-                'roles'       => [$nonUserRoleNameA => false, $userRoleNameB => true],
-                'permissions' => [$userPermNameA => true, $userPermNameB => true],
-            ],
-            $user->ability(
-                [$nonUserRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
-                ['return_type' => 'array']
-            )
-        );
-        $this->assertSame(
-            [
-                'roles'       => [$nonUserRoleNameA => false, $userRoleNameB => true],
-                'permissions' => [$userPermNameA => true, $userPermNameB => true],
-            ],
-            $user->ability(
-                [$nonUserRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
-                ['validate_all' => true, 'return_type' => 'array']
-            )
-        );
-
-
-        // Case: User lacks a permission.
-        $this->assertSame(
-            [
-                'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
-                'permissions' => [$nonUserPermNameA => false, $userPermNameB => true],
-            ],
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$nonUserPermNameA, $userPermNameB],
-                ['return_type' => 'array']
-            )
-        );
-        $this->assertSame(
-            [
-                'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
-                'permissions' => [$nonUserPermNameA => false, $userPermNameB => true],
-            ],
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$nonUserPermNameA, $userPermNameB],
-                ['validate_all' => true, 'return_type' => 'array']
-            )
-        );
-
-
-        // Case: User lacks everything.
-        $this->assertSame(
-            [
-                'roles'       => [$nonUserRoleNameA => false, $nonUserRoleNameB => false],
-                'permissions' => [$nonUserPermNameA => false, $nonUserPermNameB => false],
-            ],
-            $user->ability(
-                [$nonUserRoleNameA, $nonUserRoleNameB],
-                [$nonUserPermNameA, $nonUserPermNameB],
-                ['return_type' => 'array']
-            )
-        );
-        $this->assertSame(
-            [
-                'roles'       => [$nonUserRoleNameA => false, $nonUserRoleNameB => false],
-                'permissions' => [$nonUserPermNameA => false, $nonUserPermNameB => false],
-            ],
-            $user->ability(
-                [$nonUserRoleNameA, $nonUserRoleNameB],
-                [$nonUserPermNameA, $nonUserPermNameB],
-                ['validate_all' => true, 'return_type' => 'array']
-            )
-        );
-    }
-
-    public function testAbilityShouldReturnBoth()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $userPermNameA    = 'user_can_a';
-        $userPermNameB    = 'user_can_b';
-        $userPermNameC    = 'user_can_c';
-        $nonUserPermNameA = 'user_cannot_a';
-        $nonUserPermNameB = 'user_cannot_b';
-        $userRoleNameA    = 'UserRoleA';
-        $userRoleNameB    = 'UserRoleB';
-        $nonUserRoleNameA = 'NonUserRoleA';
-        $nonUserRoleNameB = 'NonUserRoleB';
-
-        $permA = $this->mockPermission($userPermNameA);
-        $permB = $this->mockPermission($userPermNameB);
-        $permC = $this->mockPermission($userPermNameC);
-
-        $roleA = $this->mockRole($userRoleNameA);
-        $roleB = $this->mockRole($userRoleNameB);
-
-        $roleA->perms = [$permA];
-        $roleB->perms = [$permB, $permC];
-
-        $user             = m::mock('HasRoleUser')->makePartial();
-        $user->roles      = [$roleA, $roleB];
-        $user->id         = 4;
-        $user->primaryKey = 'id';
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $roleA->shouldReceive('cachedPermissions')->times(16)->andReturn($roleA->perms);
-        $roleB->shouldReceive('cachedPermissions')->times(12)->andReturn($roleB->perms);
-        Config::shouldReceive('get')->with('cerberus.role_user_site_table')->times(32)->andReturn('role_user');
-        Config::shouldReceive('get')->with('cache.ttl')->times(32)->andReturn('1440');
-        Cache::shouldReceive('tags->remember')->times(32)->andReturn($user->roles);
-        Cache::shouldReceive('getStore')->times(32)->andReturn(new ArrayStore);
-
-        $user->shouldReceive('hasRole')
-             ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
-             ->andReturn(true);
-        $user->shouldReceive('hasRole')
-             ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
-             ->andReturn(false);
-        $user->shouldReceive('hasPermission')
-             ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
-             ->andReturn(true);
-        $user->shouldReceive('hasPermission')
-             ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
-             ->andReturn(false);
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        // Case: User has everything.
-        $this->assertSame(
-            [
-                true,
-                [
-                    'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
-                    'permissions' => [$userPermNameA => true, $userPermNameB => true],
-                ],
-            ],
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
-                ['return_type' => 'both']
-            )
-        );
-        $this->assertSame(
-            [
-                true,
-                [
-                    'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
-                    'permissions' => [$userPermNameA => true, $userPermNameB => true],
-                ],
-            ],
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
-                ['validate_all' => true, 'return_type' => 'both']
-            )
-        );
-
-
-        // Case: User lacks a role.
-        $this->assertSame(
-            [
-                true,
-                [
-                    'roles'       => [$nonUserRoleNameA => false, $userRoleNameB => true],
-                    'permissions' => [$userPermNameA => true, $userPermNameB => true],
-                ],
-            ],
-            $user->ability(
-                [$nonUserRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
-                ['return_type' => 'both']
-            )
-        );
-        $this->assertSame(
-            [
-                false,
-                [
-                    'roles'       => [$nonUserRoleNameA => false, $userRoleNameB => true],
-                    'permissions' => [$userPermNameA => true, $userPermNameB => true],
-                ],
-            ],
-            $user->ability(
-                [$nonUserRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
-                ['validate_all' => true, 'return_type' => 'both']
-            )
-        );
-
-
-        // Case: User lacks a permission.
-        $this->assertSame(
-            [
-                true,
-                [
-                    'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
-                    'permissions' => [$nonUserPermNameA => false, $userPermNameB => true],
-                ],
-            ],
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$nonUserPermNameA, $userPermNameB],
-                ['return_type' => 'both']
-            )
-        );
-        $this->assertSame(
-            [
-                false,
-                [
-                    'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
-                    'permissions' => [$nonUserPermNameA => false, $userPermNameB => true],
-                ],
-            ],
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$nonUserPermNameA, $userPermNameB],
-                ['validate_all' => true, 'return_type' => 'both']
-            )
-        );
-
-
-        // Case: User lacks everything.
-        $this->assertSame(
-            [
-                false,
-                [
-                    'roles'       => [$nonUserRoleNameA => false, $nonUserRoleNameB => false],
-                    'permissions' => [$nonUserPermNameA => false, $nonUserPermNameB => false],
-                ],
-            ],
-            $user->ability(
-                [$nonUserRoleNameA, $nonUserRoleNameB],
-                [$nonUserPermNameA, $nonUserPermNameB],
-                ['return_type' => 'both']
-            )
-        );
-        $this->assertSame(
-            [
-                false,
-                [
-                    'roles'       => [$nonUserRoleNameA => false, $nonUserRoleNameB => false],
-                    'permissions' => [$nonUserPermNameA => false, $nonUserPermNameB => false],
-                ],
-            ],
-            $user->ability(
-                [$nonUserRoleNameA, $nonUserRoleNameB],
-                [$nonUserPermNameA, $nonUserPermNameB],
-                ['validate_all' => true, 'return_type' => 'both']
-            )
-        );
-    }
-
-    public function testAbilityShouldAcceptStrings()
+    public function test_ability_should_accept_strings()
     {
         /*
         |------------------------------------------------------------
@@ -721,20 +181,20 @@ class CerberusUserTest extends TestCase
         Config::shouldReceive('get')->with('cerberus.role_user_site_table')->times(8)->andReturn('role_user');
         Config::shouldReceive('get')->with('cache.ttl')->times(8)->andReturn('1440');
         Cache::shouldReceive('tags->remember')->times(8)->andReturn($user->roles);
-        Cache::shouldReceive('getStore')->times(8)->andReturn(new ArrayStore);
+        Cache::shouldReceive('getStore')->times(8)->andReturn(new ArrayStore());
 
         $user->shouldReceive('hasRole')
-             ->with(m::anyOf('UserRoleA', 'UserRoleB'), m::anyOf(true, false))
-             ->andReturn(true);
+            ->with(m::anyOf('UserRoleA', 'UserRoleB'), m::anyOf(true, false))
+            ->andReturn(true);
         $user->shouldReceive('hasRole')
-             ->with('NonUserRoleB', m::anyOf(true, false))
-             ->andReturn(false);
+            ->with('NonUserRoleB', m::anyOf(true, false))
+            ->andReturn(false);
         $user->shouldReceive('hasPermission')
-             ->with(m::anyOf('user_can_a', 'user_can_b', 'user_can_c'), m::anyOf(true, false))
-             ->andReturn(true);
+            ->with(m::anyOf('user_can_a', 'user_can_b', 'user_can_c'), m::anyOf(true, false))
+            ->andReturn(true);
         $user->shouldReceive('hasPermission')
-             ->with('user_cannot_b', m::anyOf(true, false))
-             ->andReturn(false);
+            ->with('user_cannot_b', m::anyOf(true, false))
+            ->andReturn(false);
 
         /*
         |------------------------------------------------------------
@@ -755,7 +215,7 @@ class CerberusUserTest extends TestCase
         );
     }
 
-    public function testAbilityDefaultOptions()
+    public function test_ability_should_return_array()
     {
         /*
         |------------------------------------------------------------
@@ -797,20 +257,20 @@ class CerberusUserTest extends TestCase
         Config::shouldReceive('get')->with('cerberus.role_user_site_table')->times(32)->andReturn('role_user');
         Config::shouldReceive('get')->with('cache.ttl')->times(32)->andReturn('1440');
         Cache::shouldReceive('tags->remember')->times(32)->andReturn($user->roles);
-        Cache::shouldReceive('getStore')->times(32)->andReturn(new ArrayStore);
+        Cache::shouldReceive('getStore')->times(32)->andReturn(new ArrayStore());
 
         $user->shouldReceive('hasRole')
-             ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
-             ->andReturn(true);
+            ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
+            ->andReturn(true);
         $user->shouldReceive('hasRole')
-             ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
-             ->andReturn(false);
+            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
+            ->andReturn(false);
         $user->shouldReceive('hasPermission')
-             ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
-             ->andReturn(true);
+            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
+            ->andReturn(true);
         $user->shouldReceive('hasPermission')
-             ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
-             ->andReturn(false);
+            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
+            ->andReturn(false);
 
         /*
         |------------------------------------------------------------
@@ -819,61 +279,408 @@ class CerberusUserTest extends TestCase
         */
         // Case: User has everything.
         $this->assertSame(
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB]
-            ),
+            [
+                'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
+                'permissions' => [$userPermNameA => true, $userPermNameB => true],
+            ],
             $user->ability(
                 [$userRoleNameA, $userRoleNameB],
                 [$userPermNameA, $userPermNameB],
-                ['validate_all' => false, 'return_type' => 'boolean']
+                ['return_type' => 'array']
             )
         );
-
+        $this->assertSame(
+            [
+                'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
+                'permissions' => [$userPermNameA => true, $userPermNameB => true],
+            ],
+            $user->ability(
+                [$userRoleNameA, $userRoleNameB],
+                [$userPermNameA, $userPermNameB],
+                ['validate_all' => true, 'return_type' => 'array']
+            )
+        );
 
         // Case: User lacks a role.
         $this->assertSame(
-            $user->ability(
-                [$nonUserRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB]
-            ),
+            [
+                'roles'       => [$nonUserRoleNameA => false, $userRoleNameB => true],
+                'permissions' => [$userPermNameA => true, $userPermNameB => true],
+            ],
             $user->ability(
                 [$nonUserRoleNameA, $userRoleNameB],
                 [$userPermNameA, $userPermNameB],
-                ['validate_all' => false, 'return_type' => 'boolean']
+                ['return_type' => 'array']
             )
         );
-
+        $this->assertSame(
+            [
+                'roles'       => [$nonUserRoleNameA => false, $userRoleNameB => true],
+                'permissions' => [$userPermNameA => true, $userPermNameB => true],
+            ],
+            $user->ability(
+                [$nonUserRoleNameA, $userRoleNameB],
+                [$userPermNameA, $userPermNameB],
+                ['validate_all' => true, 'return_type' => 'array']
+            )
+        );
 
         // Case: User lacks a permission.
         $this->assertSame(
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$nonUserPermNameA, $userPermNameB]
-            ),
+            [
+                'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
+                'permissions' => [$nonUserPermNameA => false, $userPermNameB => true],
+            ],
             $user->ability(
                 [$userRoleNameA, $userRoleNameB],
                 [$nonUserPermNameA, $userPermNameB],
-                ['validate_all' => false, 'return_type' => 'boolean']
+                ['return_type' => 'array']
+            )
+        );
+        $this->assertSame(
+            [
+                'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
+                'permissions' => [$nonUserPermNameA => false, $userPermNameB => true],
+            ],
+            $user->ability(
+                [$userRoleNameA, $userRoleNameB],
+                [$nonUserPermNameA, $userPermNameB],
+                ['validate_all' => true, 'return_type' => 'array']
             )
         );
 
-
         // Case: User lacks everything.
         $this->assertSame(
-            $user->ability(
-                [$nonUserRoleNameA, $nonUserRoleNameB],
-                [$nonUserPermNameA, $nonUserPermNameB]
-            ),
+            [
+                'roles'       => [$nonUserRoleNameA => false, $nonUserRoleNameB => false],
+                'permissions' => [$nonUserPermNameA => false, $nonUserPermNameB => false],
+            ],
             $user->ability(
                 [$nonUserRoleNameA, $nonUserRoleNameB],
                 [$nonUserPermNameA, $nonUserPermNameB],
-                ['validate_all' => false, 'return_type' => 'boolean']
+                ['return_type' => 'array']
+            )
+        );
+        $this->assertSame(
+            [
+                'roles'       => [$nonUserRoleNameA => false, $nonUserRoleNameB => false],
+                'permissions' => [$nonUserPermNameA => false, $nonUserPermNameB => false],
+            ],
+            $user->ability(
+                [$nonUserRoleNameA, $nonUserRoleNameB],
+                [$nonUserPermNameA, $nonUserPermNameB],
+                ['validate_all' => true, 'return_type' => 'array']
             )
         );
     }
 
-    public function testAbilityShouldThrowInvalidArgumentException()
+    public function test_ability_should_return_boolean()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $userPermNameA    = 'user_can_a';
+        $userPermNameB    = 'user_can_b';
+        $userPermNameC    = 'user_can_c';
+        $nonUserPermNameA = 'user_cannot_a';
+        $nonUserPermNameB = 'user_cannot_b';
+        $userRoleNameA    = 'UserRoleA';
+        $userRoleNameB    = 'UserRoleB';
+        $nonUserRoleNameA = 'NonUserRoleA';
+        $nonUserRoleNameB = 'NonUserRoleB';
+
+        $permA = $this->mockPermission($userPermNameA);
+        $permB = $this->mockPermission($userPermNameB);
+        $permC = $this->mockPermission($userPermNameC);
+
+        $roleA = $this->mockRole($userRoleNameA);
+        $roleB = $this->mockRole($userRoleNameB);
+
+        $roleA->perms = [$permA];
+        $roleB->perms = [$permB, $permC];
+
+        $user             = m::mock('HasRoleUser')->makePartial();
+        $user->roles      = [$roleA, $roleB];
+        $user->id         = 4;
+        $user->primaryKey = 'id';
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $roleA->shouldReceive('cachedPermissions')->times(16)->andReturn($roleA->perms);
+        $roleB->shouldReceive('cachedPermissions')->times(12)->andReturn($roleB->perms);
+        Config::shouldReceive('get')->with('cerberus.role_user_site_table')->times(32)->andReturn('role_user');
+        Config::shouldReceive('get')->with('cache.ttl')->times(32)->andReturn('1440');
+        Cache::shouldReceive('tags->remember')->times(32)->andReturn($user->roles);
+        Cache::shouldReceive('getStore')->times(32)->andReturn(new ArrayStore());
+
+        $user->shouldReceive('hasRole')
+            ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
+            ->andReturn(true);
+        $user->shouldReceive('hasRole')
+            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
+            ->andReturn(false);
+        $user->shouldReceive('hasPermission')
+            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
+            ->andReturn(true);
+        $user->shouldReceive('hasPermission')
+            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
+            ->andReturn(false);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        // Case: User has everything.
+        $this->assertTrue(
+            $user->ability(
+                [$userRoleNameA, $userRoleNameB],
+                [$userPermNameA, $userPermNameB]
+            )
+        );
+        $this->assertTrue(
+            $user->ability(
+                [$userRoleNameA, $userRoleNameB],
+                [$userPermNameA, $userPermNameB],
+                ['validate_all' => true]
+            )
+        );
+
+        // Case: User lacks a role.
+        $this->assertTrue(
+            $user->ability(
+                [$nonUserRoleNameA, $userRoleNameB],
+                [$userPermNameA, $userPermNameB]
+            )
+        );
+        $this->assertFalse(
+            $user->ability(
+                [$nonUserRoleNameA, $userRoleNameB],
+                [$userPermNameA, $userPermNameB],
+                ['validate_all' => true]
+            )
+        );
+
+        // Case: User lacks a permission.
+        $this->assertTrue(
+            $user->ability(
+                [$userRoleNameA, $userRoleNameB],
+                [$nonUserPermNameA, $userPermNameB]
+            )
+        );
+        $this->assertFalse(
+            $user->ability(
+                [$userRoleNameA, $userRoleNameB],
+                [$nonUserPermNameA, $userPermNameB],
+                ['validate_all' => true]
+            )
+        );
+
+        // Case: User lacks everything.
+        $this->assertFalse(
+            $user->ability(
+                [$nonUserRoleNameA, $nonUserRoleNameB],
+                [$nonUserPermNameA, $nonUserPermNameB]
+            )
+        );
+        $this->assertFalse(
+            $user->ability(
+                [$nonUserRoleNameA, $nonUserRoleNameB],
+                [$nonUserPermNameA, $nonUserPermNameB],
+                ['validate_all' => true]
+            )
+        );
+    }
+
+    public function test_ability_should_return_both()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $userPermNameA    = 'user_can_a';
+        $userPermNameB    = 'user_can_b';
+        $userPermNameC    = 'user_can_c';
+        $nonUserPermNameA = 'user_cannot_a';
+        $nonUserPermNameB = 'user_cannot_b';
+        $userRoleNameA    = 'UserRoleA';
+        $userRoleNameB    = 'UserRoleB';
+        $nonUserRoleNameA = 'NonUserRoleA';
+        $nonUserRoleNameB = 'NonUserRoleB';
+
+        $permA = $this->mockPermission($userPermNameA);
+        $permB = $this->mockPermission($userPermNameB);
+        $permC = $this->mockPermission($userPermNameC);
+
+        $roleA = $this->mockRole($userRoleNameA);
+        $roleB = $this->mockRole($userRoleNameB);
+
+        $roleA->perms = [$permA];
+        $roleB->perms = [$permB, $permC];
+
+        $user             = m::mock('HasRoleUser')->makePartial();
+        $user->roles      = [$roleA, $roleB];
+        $user->id         = 4;
+        $user->primaryKey = 'id';
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $roleA->shouldReceive('cachedPermissions')->times(16)->andReturn($roleA->perms);
+        $roleB->shouldReceive('cachedPermissions')->times(12)->andReturn($roleB->perms);
+        Config::shouldReceive('get')->with('cerberus.role_user_site_table')->times(32)->andReturn('role_user');
+        Config::shouldReceive('get')->with('cache.ttl')->times(32)->andReturn('1440');
+        Cache::shouldReceive('tags->remember')->times(32)->andReturn($user->roles);
+        Cache::shouldReceive('getStore')->times(32)->andReturn(new ArrayStore());
+
+        $user->shouldReceive('hasRole')
+            ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
+            ->andReturn(true);
+        $user->shouldReceive('hasRole')
+            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
+            ->andReturn(false);
+        $user->shouldReceive('hasPermission')
+            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
+            ->andReturn(true);
+        $user->shouldReceive('hasPermission')
+            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
+            ->andReturn(false);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        // Case: User has everything.
+        $this->assertSame(
+            [
+                true,
+                [
+                    'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
+                    'permissions' => [$userPermNameA => true, $userPermNameB => true],
+                ],
+            ],
+            $user->ability(
+                [$userRoleNameA, $userRoleNameB],
+                [$userPermNameA, $userPermNameB],
+                ['return_type' => 'both']
+            )
+        );
+        $this->assertSame(
+            [
+                true,
+                [
+                    'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
+                    'permissions' => [$userPermNameA => true, $userPermNameB => true],
+                ],
+            ],
+            $user->ability(
+                [$userRoleNameA, $userRoleNameB],
+                [$userPermNameA, $userPermNameB],
+                ['validate_all' => true, 'return_type' => 'both']
+            )
+        );
+
+        // Case: User lacks a role.
+        $this->assertSame(
+            [
+                true,
+                [
+                    'roles'       => [$nonUserRoleNameA => false, $userRoleNameB => true],
+                    'permissions' => [$userPermNameA => true, $userPermNameB => true],
+                ],
+            ],
+            $user->ability(
+                [$nonUserRoleNameA, $userRoleNameB],
+                [$userPermNameA, $userPermNameB],
+                ['return_type' => 'both']
+            )
+        );
+        $this->assertSame(
+            [
+                false,
+                [
+                    'roles'       => [$nonUserRoleNameA => false, $userRoleNameB => true],
+                    'permissions' => [$userPermNameA => true, $userPermNameB => true],
+                ],
+            ],
+            $user->ability(
+                [$nonUserRoleNameA, $userRoleNameB],
+                [$userPermNameA, $userPermNameB],
+                ['validate_all' => true, 'return_type' => 'both']
+            )
+        );
+
+        // Case: User lacks a permission.
+        $this->assertSame(
+            [
+                true,
+                [
+                    'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
+                    'permissions' => [$nonUserPermNameA => false, $userPermNameB => true],
+                ],
+            ],
+            $user->ability(
+                [$userRoleNameA, $userRoleNameB],
+                [$nonUserPermNameA, $userPermNameB],
+                ['return_type' => 'both']
+            )
+        );
+        $this->assertSame(
+            [
+                false,
+                [
+                    'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
+                    'permissions' => [$nonUserPermNameA => false, $userPermNameB => true],
+                ],
+            ],
+            $user->ability(
+                [$userRoleNameA, $userRoleNameB],
+                [$nonUserPermNameA, $userPermNameB],
+                ['validate_all' => true, 'return_type' => 'both']
+            )
+        );
+
+        // Case: User lacks everything.
+        $this->assertSame(
+            [
+                false,
+                [
+                    'roles'       => [$nonUserRoleNameA => false, $nonUserRoleNameB => false],
+                    'permissions' => [$nonUserPermNameA => false, $nonUserPermNameB => false],
+                ],
+            ],
+            $user->ability(
+                [$nonUserRoleNameA, $nonUserRoleNameB],
+                [$nonUserPermNameA, $nonUserPermNameB],
+                ['return_type' => 'both']
+            )
+        );
+        $this->assertSame(
+            [
+                false,
+                [
+                    'roles'       => [$nonUserRoleNameA => false, $nonUserRoleNameB => false],
+                    'permissions' => [$nonUserPermNameA => false, $nonUserPermNameB => false],
+                ],
+            ],
+            $user->ability(
+                [$nonUserRoleNameA, $nonUserRoleNameB],
+                [$nonUserPermNameA, $nonUserPermNameB],
+                ['validate_all' => true, 'return_type' => 'both']
+            )
+        );
+    }
+
+    public function test_ability_should_throw_invalid_argument_exception()
     {
         /*
         |------------------------------------------------------------
@@ -913,9 +720,9 @@ class CerberusUserTest extends TestCase
         |------------------------------------------------------------
         */
         $user->shouldReceive('hasRole')
-             ->times(3);
+            ->times(3);
         $user->shouldReceive('hasPermission')
-             ->times(3);
+            ->times(3);
 
         /*
         |------------------------------------------------------------
@@ -928,7 +735,7 @@ class CerberusUserTest extends TestCase
         $this->assertTrue(isExceptionThrown($user, ['RoleA'], ['manage_a'], ['return_type' => 'potato']));
     }
 
-    public function testAttachRole()
+    public function test_attach_role()
     {
         /*
         |------------------------------------------------------------
@@ -946,19 +753,19 @@ class CerberusUserTest extends TestCase
         |------------------------------------------------------------
         */
         $roleObject->shouldReceive('getKey')
-                   ->andReturn(1);
+            ->andReturn(1);
 
         $user->shouldReceive('roles')
-             ->andReturn($user);
+            ->andReturn($user);
         $user->shouldReceive('attach')
-             ->with(1)
-             ->once()->ordered();
+            ->with(1)
+            ->once()->ordered();
         $user->shouldReceive('attach')
-             ->with(2)
-             ->once()->ordered();
+            ->with(2)
+            ->once()->ordered();
         $user->shouldReceive('attach')
-             ->with(3)
-             ->once()->ordered();
+            ->with(3)
+            ->once()->ordered();
 
         /*
         |------------------------------------------------------------
@@ -970,50 +777,7 @@ class CerberusUserTest extends TestCase
         $user->attachRole(3);
     }
 
-    public function testDetachRole()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $roleObject = m::mock('Role');
-        $roleArray  = ['id' => 2];
-
-        $user = m::mock('HasRoleUser')->makePartial();
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $roleObject->shouldReceive('getKey')
-                   ->andReturn(1);
-
-        $user->shouldReceive('roles')
-             ->andReturn($user);
-        $user->shouldReceive('detach')
-             ->with(1)
-             ->once()->ordered();
-        $user->shouldReceive('detach')
-             ->with(2)
-             ->once()->ordered();
-        $user->shouldReceive('detach')
-             ->with(3)
-             ->once()->ordered();
-
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $user->detachRole($roleObject);
-        $user->detachRole($roleArray);
-        $user->detachRole(3);
-    }
-
-    public function testAttachRoles()
+    public function test_attach_roles()
     {
         /*
         |------------------------------------------------------------
@@ -1028,14 +792,14 @@ class CerberusUserTest extends TestCase
         |------------------------------------------------------------
         */
         $user->shouldReceive('attachRole')
-             ->with(1)
-             ->once()->ordered();
+            ->with(1)
+            ->once()->ordered();
         $user->shouldReceive('attachRole')
-             ->with(2)
-             ->once()->ordered();
+            ->with(2)
+            ->once()->ordered();
         $user->shouldReceive('attachRole')
-             ->with(3)
-             ->once()->ordered();
+            ->with(3)
+            ->once()->ordered();
 
         /*
         |------------------------------------------------------------
@@ -1045,39 +809,98 @@ class CerberusUserTest extends TestCase
         $user->attachRoles([1, 2, 3]);
     }
 
-    public function testDetachRoles()
+    public function test_can()
     {
         /*
         |------------------------------------------------------------
         | Set
         |------------------------------------------------------------
         */
-        $user = m::mock('HasRoleUser')->makePartial();
+        $permA = $this->mockPermission('manage_a');
+        $permB = $this->mockPermission('manage_b');
+        $permC = $this->mockPermission('manage_c');
+
+        $roleA = $this->mockRole('RoleA');
+        $roleB = $this->mockRole('RoleB');
+
+        $roleA->perms = [$permA];
+        $roleB->perms = [$permB, $permC];
+
+        $user        = new HasRoleUser();
+        $user->roles = [$roleA, $roleB];
 
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('detachRole')
-             ->with(1)
-             ->once()->ordered();
-        $user->shouldReceive('detachRole')
-             ->with(2)
-             ->once()->ordered();
-        $user->shouldReceive('detachRole')
-             ->with(3)
-             ->once()->ordered();
+        $roleA->shouldReceive('cachedPermissions')->times(11)->andReturn($roleA->perms);
+        $roleB->shouldReceive('cachedPermissions')->times(7)->andReturn($roleB->perms);
+        Config::shouldReceive('get')->with('cerberus.role_user_site_table')->times(11)->andReturn('role_user');
+        Config::shouldReceive('get')->with('cache.ttl')->times(11)->andReturn('1440');
+        Cache::shouldReceive('tags->remember')->times(11)->andReturn($user->roles);
+        Cache::shouldReceive('getStore')->times(11)->andReturn(new ArrayStore());
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $user->detachRoles([1, 2, 3]);
+        $this->assertTrue($user->hasPermission('manage_a'));
+        $this->assertTrue($user->hasPermission('manage_b'));
+        $this->assertTrue($user->hasPermission('manage_c'));
+        $this->assertFalse($user->hasPermission('manage_d'));
+
+        $this->assertTrue($user->hasPermission(['manage_a', 'manage_b', 'manage_c']));
+        $this->assertTrue($user->hasPermission(['manage_a', 'manage_b', 'manage_d']));
+        $this->assertFalse($user->hasPermission(['manage_a', 'manage_b', 'manage_d'], true));
+        $this->assertFalse($user->hasPermission(['manage_d', 'manage_e']));
     }
 
-    public function testDetachAllRoles()
+    public function test_can_with_placeholder_support()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $permA = $this->mockPermission('admin.posts');
+        $permB = $this->mockPermission('admin.pages');
+        $permC = $this->mockPermission('admin.users');
+
+        $role = $this->mockRole('Role');
+
+        $role->perms = [$permA, $permB, $permC];
+
+        $user        = new HasRoleUser();
+        $user->roles = [$role];
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $role->shouldReceive('cachedPermissions')->times(6)->andReturn($role->perms);
+        Config::shouldReceive('get')->with('cerberus.role_user_site_table')->times(6)->andReturn('role_user');
+        Config::shouldReceive('get')->with('cache.ttl')->times(6)->andReturn('1440');
+        Cache::shouldReceive('tags->remember')->times(6)->andReturn($user->roles);
+        Cache::shouldReceive('getStore')->times(6)->andReturn(new ArrayStore());
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($user->hasPermission('admin.posts'));
+        $this->assertTrue($user->hasPermission('admin.pages'));
+        $this->assertTrue($user->hasPermission('admin.users'));
+        $this->assertFalse($user->hasPermission('admin.config'));
+
+        $this->assertTrue($user->hasPermission(['admin.*']));
+        $this->assertFalse($user->hasPermission(['site.*']));
+    }
+
+    public function test_detach_all_roles()
     {
         /*
         |------------------------------------------------------------
@@ -1103,10 +926,10 @@ class CerberusUserTest extends TestCase
         Config::shouldReceive('get')->with('cerberus.role_foreign_key')->once()->andReturn('role_id');
 
         $relationship->shouldReceive('get')
-                     ->andReturn($user->roles)->once();
+            ->andReturn($user->roles)->once();
 
         $user->shouldReceive('belongsToMany')
-             ->andReturn($relationship)->once();
+            ->andReturn($relationship)->once();
 
         $user->shouldReceive('detachRole')->twice();
 
@@ -1116,17 +939,186 @@ class CerberusUserTest extends TestCase
         |------------------------------------------------------------
         */
         $user->detachRoles();
+    }
 
+    public function test_detach_role()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $roleObject = m::mock('Role');
+        $roleArray  = ['id' => 2];
+
+        $user = m::mock('HasRoleUser')->makePartial();
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $roleObject->shouldReceive('getKey')
+            ->andReturn(1);
+
+        $user->shouldReceive('roles')
+            ->andReturn($user);
+        $user->shouldReceive('detach')
+            ->with(1)
+            ->once()->ordered();
+        $user->shouldReceive('detach')
+            ->with(2)
+            ->once()->ordered();
+        $user->shouldReceive('detach')
+            ->with(3)
+            ->once()->ordered();
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $user->detachRole($roleObject);
+        $user->detachRole($roleArray);
+        $user->detachRole(3);
+    }
+
+    public function test_detach_roles()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $user = m::mock('HasRoleUser')->makePartial();
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $user->shouldReceive('detachRole')
+            ->with(1)
+            ->once()->ordered();
+        $user->shouldReceive('detachRole')
+            ->with(2)
+            ->once()->ordered();
+        $user->shouldReceive('detachRole')
+            ->with(3)
+            ->once()->ordered();
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $user->detachRoles([1, 2, 3]);
+    }
+
+    public function test_has_role()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $roleA = $this->mockRole('RoleA');
+        $roleB = $this->mockRole('RoleB');
+
+        $user        = new HasRoleUser();
+        $user->roles = [$roleA, $roleB];
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        Config::shouldReceive('get')->with('cerberus.role_user_site_table')->times(9)->andReturn('role_user');
+        Config::shouldReceive('get')->with('cache.ttl')->times(9)->andReturn('1440');
+        Cache::shouldReceive('tags->remember')->times(9)->andReturn($user->roles);
+        Cache::shouldReceive('getStore')->times(9)->andReturn(new ArrayStore());
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($user->hasRole('RoleA'));
+        $this->assertTrue($user->hasRole('RoleB'));
+        $this->assertFalse($user->hasRole('RoleC'));
+
+        $this->assertTrue($user->hasRole(['RoleA', 'RoleB']));
+        $this->assertTrue($user->hasRole(['RoleA', 'RoleC']));
+        $this->assertFalse($user->hasRole(['RoleA', 'RoleC'], true));
+        $this->assertFalse($user->hasRole(['RoleC', 'RoleD']));
+    }
+
+    public function test_roles()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $belongsToMany = new stdClass();
+        $user          = m::mock('HasRoleUser')->makePartial();
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $user->shouldReceive('belongsToMany')
+            ->with('role_table_name', 'assigned_roles_table_name', 'user_id', 'role_id')
+            ->andReturn($belongsToMany)
+            ->once();
+
+        Config::shouldReceive('get')->once()->with('cerberus.role')
+            ->andReturn('role_table_name');
+        Config::shouldReceive('get')->once()->with('cerberus.role_user_site_table')
+            ->andReturn('assigned_roles_table_name');
+        Config::shouldReceive('get')->once()->with('cerberus.user_foreign_key')
+            ->andReturn('user_id');
+        Config::shouldReceive('get')->once()->with('cerberus.role_foreign_key')
+            ->andReturn('role_id');
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertSame($belongsToMany, $user->roles());
+    }
+
+    protected function mockPermission($permName)
+    {
+        $permMock               = m::mock('Michalisantoniou6\Cerberus\Permission');
+        $permMock->name         = $permName;
+        $permMock->display_name = ucwords(str_replace('_', ' ', $permName));
+        $permMock->id           = 1;
+
+        return $permMock;
+    }
+
+    protected function mockRole($roleName)
+    {
+        $roleMock              = m::mock('Michalisantoniou6\Cerberus\Role');
+        $roleMock->name        = $roleName;
+        $roleMock->perms       = [];
+        $roleMock->permissions = [];
+        $roleMock->id          = 1;
+
+        return $roleMock;
     }
 }
 
 class HasRoleUser implements CerberusUserInterface
 {
     use CerberusUserTrait;
+    public $id;
+    public $primaryKey;
 
     public $roles;
-    public $primaryKey;
-    public $id;
 
     public function __construct()
     {
@@ -1136,6 +1128,5 @@ class HasRoleUser implements CerberusUserInterface
 
     public function belongsToMany($role, $assignedRolesTable)
     {
-
     }
 }

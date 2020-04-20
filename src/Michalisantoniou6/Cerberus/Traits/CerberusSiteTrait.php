@@ -1,7 +1,10 @@
 <?php
 
-namespace Michalisantoniou6\Cerberus\Traits;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+namespace Michalisantoniou6\Cerberus\Traits;
 
 use Illuminate\Support\Facades\Config;
 
@@ -14,8 +17,11 @@ trait CerberusSiteTrait
      */
     public function users()
     {
-        return $this->belongsToMany(Config::get('cerberus.user'), Config::get('cerberus.role_user_site_table'),
-            Config::get('cerberus.site_foreign_key'), Config::get('cerberus.user_foreign_key'));
+        return $this->belongsToMany(
+            Config::get('cerberus.user'),
+            Config::get('cerberus.role_user_site_table'),
+            Config::get('cerberus.site_foreign_key'),
+            Config::get('cerberus.user_foreign_key')
+        );
     }
-
 }

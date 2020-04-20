@@ -1,47 +1,24 @@
-<?php namespace Michalisantoniou6\Cerberus\Contracts;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace Michalisantoniou6\Cerberus\Contracts;
 
 /**
  * This file is part of Cerberus,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Michalisantoniou6\Cerberus
  */
-
 interface CerberusUserInterface
 {
     /**
-     * Many-to-Many relations with Role.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function roles();
-
-    /**
-     * Checks if the user has a role by its name.
-     *
-     * @param string|array $name       Role name or array of role names.
-     * @param bool         $requireAll All roles in the array are required.
-     *
-     * @return bool
-     */
-    public function hasRole($name, $requireAll = false);
-
-    /**
-     * Check if user has a permission by its name.
-     *
-     * @param string|array $permission Permission string or array of permissions.
-     * @param bool         $requireAll All permissions in the array are required.
-     *
-     * @return bool
-     */
-    public function hasPermission($permission, $requireAll = false);
-
-    /**
      * Checks role(s) and permission(s).
      *
-     * @param string|array $roles       Array of roles or comma separated string
-     * @param string|array $permissions Array of permissions or comma separated string.
+     * @param array|string $roles       Array of roles or comma separated string
+     * @param array|string $permissions array of permissions or comma separated string
      * @param array        $options     validate_all (true|false) or return_type (boolean|array|both)
      *
      * @throws \InvalidArgumentException
@@ -58,6 +35,13 @@ interface CerberusUserInterface
     public function attachRole($role);
 
     /**
+     * Attach multiple roles to a user.
+     *
+     * @param mixed $roles
+     */
+    public function attachRoles($roles);
+
+    /**
      * Alias to eloquent many-to-many relation's detach() method.
      *
      * @param mixed $role
@@ -65,16 +49,36 @@ interface CerberusUserInterface
     public function detachRole($role);
 
     /**
-     * Attach multiple roles to a user
-     *
-     * @param mixed $roles
-     */
-    public function attachRoles($roles);
-
-    /**
-     * Detach multiple roles from a user
+     * Detach multiple roles from a user.
      *
      * @param mixed $roles
      */
     public function detachRoles($roles);
+
+    /**
+     * Check if user has a permission by its name.
+     *
+     * @param array|string $permission permission string or array of permissions
+     * @param bool         $requireAll all permissions in the array are required
+     *
+     * @return bool
+     */
+    public function hasPermission($permission, $requireAll = false);
+
+    /**
+     * Checks if the user has a role by its name.
+     *
+     * @param array|string $name       role name or array of role names
+     * @param bool         $requireAll all roles in the array are required
+     *
+     * @return bool
+     */
+    public function hasRole($name, $requireAll = false);
+
+    /**
+     * Many-to-Many relations with Role.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function roles();
 }

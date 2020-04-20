@@ -1,6 +1,12 @@
-<?php namespace Michalisantoniou6\Cerberus;
+<?php
 
-/**
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace Michalisantoniou6\Cerberus;
+
+/*
  * This file is part of Cerberus,
  * a role & permission management solution for Laravel.
  *
@@ -8,10 +14,10 @@
  * @package Michalisantoniou6\Cerberus
  */
 
-use Michalisantoniou6\Cerberus\Contracts\CerberusSiteInterface;
-use Michalisantoniou6\Cerberus\Traits\CerberusSiteTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
+use Michalisantoniou6\Cerberus\Contracts\CerberusSiteInterface;
+use Michalisantoniou6\Cerberus\Traits\CerberusSiteTrait;
 
 class CerberusSite extends Model implements CerberusSiteInterface
 {
@@ -26,13 +32,10 @@ class CerberusSite extends Model implements CerberusSiteInterface
 
     /**
      * Creates a new instance of the model.
-     *
-     * @param array $attributes
      */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
         $this->table = Config::get('cerberus.sites_table');
     }
-
 }

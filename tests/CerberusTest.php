@@ -1,24 +1,27 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Michalisantoniou6\Cerberus\Cerberus;
-use Illuminate\Support\Facades\Facade;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
 class CerberusTest extends TestCase
 {
     use m\Adapter\Phpunit\MockeryPHPUnitIntegration;
-
-    protected $nullFilterTest;
     protected $abortFilterTest;
     protected $customResponseFilterTest;
 
     protected $expectedResponse;
 
+    protected $nullFilterTest;
+
     public function setUp()
     {
-        $this->nullFilterTest = function($filterClosure) {
-            if (!($filterClosure instanceof Closure)) {
+        $this->nullFilterTest = function ($filterClosure) {
+            if ( ! ($filterClosure instanceof Closure)) {
                 return false;
             }
 
@@ -27,8 +30,8 @@ class CerberusTest extends TestCase
             return true;
         };
 
-        $this->abortFilterTest = function($filterClosure) {
-            if (!($filterClosure instanceof Closure)) {
+        $this->abortFilterTest = function ($filterClosure) {
+            if ( ! ($filterClosure instanceof Closure)) {
                 return false;
             }
 
@@ -44,8 +47,8 @@ class CerberusTest extends TestCase
             return false;
         };
 
-        $this->customResponseFilterTest = function($filterClosure) {
-            if (!($filterClosure instanceof Closure)) {
+        $this->customResponseFilterTest = function ($filterClosure) {
+            if ( ! ($filterClosure instanceof Closure)) {
                 return false;
             }
 
@@ -57,60 +60,50 @@ class CerberusTest extends TestCase
         };
     }
 
-    public function testHasRole()
+    public function routeNeedsRoleOrPermissionFilterDataProvider()
     {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $app = new stdClass();
-        $cerberus = m::mock('Michalisantoniou6\Cerberus\Cerberus[user]', [$app]);
-        $user = m::mock('_mockedUser');
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $cerberus->shouldReceive('user')
-            ->andReturn($user)
-            ->twice()->ordered();
-
-        $cerberus->shouldReceive('user')
-            ->andReturn(false)
-            ->once()->ordered();
-
-        $user->shouldReceive('hasRole')
-            ->with('UserRole', false)
-            ->andReturn(true)
-            ->once();
-
-        $user->shouldReceive('hasRole')
-            ->with('NonUserRole', false)
-            ->andReturn(false)
-            ->once();
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $this->assertTrue($cerberus->hasRole('UserRole'));
-        $this->assertFalse($cerberus->hasRole('NonUserRole'));
-        $this->assertFalse($cerberus->hasRole('AnyRole'));
+        return [
+            // Both role and permission pass, null is returned
+            [true,  true,  'nullFilterTest'],
+            [true,  true,  'nullFilterTest', true],
+            // Role OR permission fail, require all is false, null is returned
+            [false, true,  'nullFilterTest'],
+            [true,  false, 'nullFilterTest'],
+            // Role and/or permission fail, App::abort() is called
+            [false, true,  'abortFilterTest', true,  true],
+            [true,  false, 'abortFilterTest', true,  true],
+            [false, false, 'abortFilterTest', false, true],
+            [false, false, 'abortFilterTest', true,  true],
+            // Role and/or permission fail, custom response is returned
+            [false, true,  'customResponseFilterTest', true,  false, new stdClass()],
+            [true,  false, 'customResponseFilterTest', true,  false, new stdClass()],
+            [false, false, 'customResponseFilterTest', false, false, new stdClass()],
+            [false, false, 'customResponseFilterTest', true,  false, new stdClass()],
+        ];
     }
 
-    public function testCan()
+    public function simpleFilterDataProvider()
+    {
+        return [
+            // Filter passes, null is returned
+            [true, 'nullFilterTest'],
+            // Filter fails, App::abort() is called
+            [false, 'abortFilterTest', true],
+            // Filter fails, custom response is returned
+            [false, 'customResponseFilterTest', false, new stdClass()],
+        ];
+    }
+
+    public function test_can()
     {
         /*
         |------------------------------------------------------------
         | Set
         |------------------------------------------------------------
         */
-        $app = new stdClass();
+        $app      = new stdClass();
         $cerberus = m::mock('Michalisantoniou6\Cerberus\Cerberus[user]', [$app]);
-        $user = m::mock('_mockedUser');
+        $user     = m::mock('_mockedUser');
 
         /*
         |------------------------------------------------------------
@@ -145,25 +138,107 @@ class CerberusTest extends TestCase
         $this->assertFalse($cerberus->hasPermission('any_permission'));
     }
 
-    public function testUser()
+    /**
+     * @dataProvider simpleFilterDataProvider
+     *
+     * @param mixed      $returnValue
+     * @param mixed      $filterTest
+     * @param mixed      $abort
+     * @param mixed|null $expectedResponse
+     */
+    public function test_filter_generated_by_route_needs_permission($returnValue, $filterTest, $abort = false, $expectedResponse = null)
+    {
+        $this->filterTestExecution('routeNeedsPermission', 'hasPermission', $returnValue, $filterTest, $abort, $expectedResponse);
+    }
+
+    /**
+     * @dataProvider simpleFilterDataProvider
+     *
+     * @param mixed      $returnValue
+     * @param mixed      $filterTest
+     * @param mixed      $abort
+     * @param mixed|null $expectedResponse
+     */
+    public function test_filter_generated_by_route_needs_role($returnValue, $filterTest, $abort = false, $expectedResponse = null)
+    {
+        $this->filterTestExecution('routeNeedsRole', 'hasRole', $returnValue, $filterTest, $abort, $expectedResponse);
+    }
+
+    /**
+     * @dataProvider routeNeedsRoleOrPermissionFilterDataProvider
+     *
+     * @param mixed      $roleIsValid
+     * @param mixed      $permIsValid
+     * @param mixed      $filterTest
+     * @param mixed      $requireAll
+     * @param mixed      $abort
+     * @param mixed|null $expectedResponse
+     */
+    public function test_filter_generated_by_route_needs_role_or_permission(
+        $roleIsValid,
+        $permIsValid,
+        $filterTest,
+        $requireAll = false,
+        $abort = false,
+        $expectedResponse = null
+    ) {
+        $app         = m::mock('Illuminate\Foundation\Application');
+        $app->router = m::mock('Route');
+        $cerberus    = m::mock('Michalisantoniou6\Cerberus\Cerberus[hasRole, hasPermission]', [$app]);
+
+        // Static values
+        $route      = 'route';
+        $roleName   = 'UserRole';
+        $permName   = 'user-permission';
+        $filterName = $this->makeFilterName($route, [$roleName], [$permName]);
+
+        $app->router->shouldReceive('when')->with($route, $filterName)->once();
+        $app->router->shouldReceive('filter')->with($filterName, m::on($this->$filterTest))->once();
+
+        $cerberus->shouldReceive('hasRole')->with($roleName, $requireAll)->andReturn($roleIsValid)->once();
+        $cerberus->shouldReceive('hasPermission')->with($permName, $requireAll)->andReturn($permIsValid)->once();
+
+        if ($abort) {
+            $app->shouldReceive('abort')->with(403)->andThrow('Exception', 'abort')->once();
+        }
+
+        $this->expectedResponse = $expectedResponse;
+
+        $cerberus->routeNeedsRoleOrPermission($route, $roleName, $permName, $expectedResponse, $requireAll);
+    }
+
+    public function test_has_role()
     {
         /*
         |------------------------------------------------------------
         | Set
         |------------------------------------------------------------
         */
-        $app = new stdClass();
-        $app->auth = m::mock('Auth');
-        $cerberus = new Cerberus($app);
-        $user = m::mock('_mockedUser');
+        $app      = new stdClass();
+        $cerberus = m::mock('Michalisantoniou6\Cerberus\Cerberus[user]', [$app]);
+        $user     = m::mock('_mockedUser');
 
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
-        $app->auth->shouldReceive('user')
+        $cerberus->shouldReceive('user')
             ->andReturn($user)
+            ->twice()->ordered();
+
+        $cerberus->shouldReceive('user')
+            ->andReturn(false)
+            ->once()->ordered();
+
+        $user->shouldReceive('hasRole')
+            ->with('UserRole', false)
+            ->andReturn(true)
+            ->once();
+
+        $user->shouldReceive('hasRole')
+            ->with('NonUserRole', false)
+            ->andReturn(false)
             ->once();
 
         /*
@@ -171,22 +246,64 @@ class CerberusTest extends TestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertSame($user, $cerberus->user());
+        $this->assertTrue($cerberus->hasRole('UserRole'));
+        $this->assertFalse($cerberus->hasRole('NonUserRole'));
+        $this->assertFalse($cerberus->hasRole('AnyRole'));
     }
 
-    public function testRouteNeedsRole()
+    public function test_route_needs_permission()
     {
         /*
         |------------------------------------------------------------
         | Set
         |------------------------------------------------------------
         */
-        $app = new stdClass();
+        $app         = new stdClass();
         $app->router = m::mock('Route');
-        $cerberus = new Cerberus($app);
+        $cerberus    = new Cerberus($app);
 
-        $route = 'route';
-        $oneRole = 'RoleA';
+        $route    = 'route';
+        $onePerm  = 'can_a';
+        $manyPerm = ['can_a', 'can_b', 'can_c'];
+
+        $onePermFilterName  = $this->makeFilterName($route, [$onePerm]);
+        $manyPermFilterName = $this->makeFilterName($route, $manyPerm);
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $app->router->shouldReceive('filter')
+            ->with(m::anyOf($onePermFilterName, $manyPermFilterName), m::type('Closure'))
+            ->twice()->ordered();
+
+        $app->router->shouldReceive('when')
+            ->with($route, m::anyOf($onePermFilterName, $manyPermFilterName))
+            ->twice();
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $cerberus->routeNeedsPermission($route, $onePerm);
+        $cerberus->routeNeedsPermission($route, $manyPerm);
+    }
+
+    public function test_route_needs_role()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $app         = new stdClass();
+        $app->router = m::mock('Route');
+        $cerberus    = new Cerberus($app);
+
+        $route    = 'route';
+        $oneRole  = 'RoleA';
         $manyRole = ['RoleA', 'RoleB', 'RoleC'];
 
         $oneRoleFilterName  = $this->makeFilterName($route, [$oneRole]);
@@ -214,66 +331,26 @@ class CerberusTest extends TestCase
         $cerberus->routeNeedsRole($route, $manyRole);
     }
 
-    public function testRouteNeedsPermission()
+    public function test_route_needs_role_or_permission()
     {
         /*
         |------------------------------------------------------------
         | Set
         |------------------------------------------------------------
         */
-        $app = new stdClass();
+        $app         = new stdClass();
         $app->router = m::mock('Route');
-        $cerberus = new Cerberus($app);
+        $cerberus    = new Cerberus($app);
 
-        $route = 'route';
-        $onePerm = 'can_a';
-        $manyPerm = ['can_a', 'can_b', 'can_c'];
-
-        $onePermFilterName = $this->makeFilterName($route, [$onePerm]);
-        $manyPermFilterName = $this->makeFilterName($route, $manyPerm);
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $app->router->shouldReceive('filter')
-            ->with(m::anyOf($onePermFilterName, $manyPermFilterName), m::type('Closure'))
-            ->twice()->ordered();
-
-        $app->router->shouldReceive('when')
-            ->with($route, m::anyOf($onePermFilterName, $manyPermFilterName))
-            ->twice();
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $cerberus->routeNeedsPermission($route, $onePerm);
-        $cerberus->routeNeedsPermission($route, $manyPerm);
-    }
-
-    public function testRouteNeedsRoleOrPermission()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $app = new stdClass();
-        $app->router = m::mock('Route');
-        $cerberus = new Cerberus($app);
-
-        $route = 'route';
-        $oneRole = 'RoleA';
+        $route    = 'route';
+        $oneRole  = 'RoleA';
         $manyRole = ['RoleA', 'RoleB', 'RoleC'];
-        $onePerm = 'can_a';
+        $onePerm  = 'can_a';
         $manyPerm = ['can_a', 'can_b', 'can_c'];
 
-        $oneRoleOnePermFilterName = $this->makeFilterName($route, [$oneRole], [$onePerm]);
-        $oneRoleManyPermFilterName = $this->makeFilterName($route, [$oneRole], $manyPerm);
-        $manyRoleOnePermFilterName = $this->makeFilterName($route, $manyRole, [$onePerm]);
+        $oneRoleOnePermFilterName   = $this->makeFilterName($route, [$oneRole], [$onePerm]);
+        $oneRoleManyPermFilterName  = $this->makeFilterName($route, [$oneRole], $manyPerm);
+        $manyRoleOnePermFilterName  = $this->makeFilterName($route, $manyRole, [$onePerm]);
         $manyRoleManyPermFilterName = $this->makeFilterName($route, $manyRole, $manyPerm);
 
         /*
@@ -316,32 +393,33 @@ class CerberusTest extends TestCase
         $cerberus->routeNeedsRoleOrPermission($route, $manyRole, $manyPerm);
     }
 
-    public function simpleFilterDataProvider()
+    public function test_user()
     {
-        return [
-            // Filter passes, null is returned
-            [true, 'nullFilterTest'],
-            // Filter fails, App::abort() is called
-            [false, 'abortFilterTest', true],
-            // Filter fails, custom response is returned
-            [false, 'customResponseFilterTest', false, new stdClass()]
-        ];
-    }
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $app       = new stdClass();
+        $app->auth = m::mock('Auth');
+        $cerberus  = new Cerberus($app);
+        $user      = m::mock('_mockedUser');
 
-    /**
-     * @dataProvider simpleFilterDataProvider
-     */
-    public function testFilterGeneratedByRouteNeedsRole($returnValue, $filterTest, $abort = false, $expectedResponse = null)
-    {
-        $this->filterTestExecution('routeNeedsRole', 'hasRole', $returnValue, $filterTest, $abort, $expectedResponse);
-    }
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $app->auth->shouldReceive('user')
+            ->andReturn($user)
+            ->once();
 
-    /**
-     * @dataProvider simpleFilterDataProvider
-     */
-    public function testFilterGeneratedByRouteNeedsPermission($returnValue, $filterTest, $abort = false, $expectedResponse = null)
-    {
-        $this->filterTestExecution('routeNeedsPermission', 'hasPermission', $returnValue, $filterTest, $abort, $expectedResponse);
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertSame($user, $cerberus->user());
     }
 
     protected function filterTestExecution($methodTested, $mockedMethod, $returnValue, $filterTest, $abort, $expectedResponse)
@@ -349,7 +427,7 @@ class CerberusTest extends TestCase
         // Mock Objects
         $app         = m::mock('Illuminate\Foundation\Application');
         $app->router = m::mock('Route');
-        $cerberus     = m::mock("Michalisantoniou6\Cerberus\Cerberus[$mockedMethod]", [$app]);
+        $cerberus    = m::mock("Michalisantoniou6\Cerberus\Cerberus[$mockedMethod]", [$app]);
 
         // Static values
         $route       = 'route';
@@ -369,65 +447,12 @@ class CerberusTest extends TestCase
         $cerberus->$methodTested($route, $methodValue, $expectedResponse);
     }
 
-    public function routeNeedsRoleOrPermissionFilterDataProvider()
-    {
-        return [
-            // Both role and permission pass, null is returned
-            [true,  true,  'nullFilterTest'],
-            [true,  true,  'nullFilterTest', true],
-            // Role OR permission fail, require all is false, null is returned
-            [false, true,  'nullFilterTest'],
-            [true,  false, 'nullFilterTest'],
-            // Role and/or permission fail, App::abort() is called
-            [false, true,  'abortFilterTest', true,  true],
-            [true,  false, 'abortFilterTest', true,  true],
-            [false, false, 'abortFilterTest', false, true],
-            [false, false, 'abortFilterTest', true,  true],
-            // Role and/or permission fail, custom response is returned
-            [false, true,  'customResponseFilterTest', true,  false, new stdClass()],
-            [true,  false, 'customResponseFilterTest', true,  false, new stdClass()],
-            [false, false, 'customResponseFilterTest', false, false, new stdClass()],
-            [false, false, 'customResponseFilterTest', true,  false, new stdClass()]
-        ];
-    }
-
-    /**
-     * @dataProvider routeNeedsRoleOrPermissionFilterDataProvider
-     */
-    public function testFilterGeneratedByRouteNeedsRoleOrPermission(
-        $roleIsValid, $permIsValid, $filterTest, $requireAll = false, $abort = false, $expectedResponse = null
-    ) {
-        $app         = m::mock('Illuminate\Foundation\Application');
-        $app->router = m::mock('Route');
-        $cerberus     = m::mock('Michalisantoniou6\Cerberus\Cerberus[hasRole, hasPermission]', [$app]);
-
-        // Static values
-        $route      = 'route';
-        $roleName   = 'UserRole';
-        $permName   = 'user-permission';
-        $filterName = $this->makeFilterName($route, [$roleName], [$permName]);
-
-        $app->router->shouldReceive('when')->with($route, $filterName)->once();
-        $app->router->shouldReceive('filter')->with($filterName, m::on($this->$filterTest))->once();
-
-        $cerberus->shouldReceive('hasRole')->with($roleName, $requireAll)->andReturn($roleIsValid)->once();
-        $cerberus->shouldReceive('hasPermission')->with($permName, $requireAll)->andReturn($permIsValid)->once();
-
-        if ($abort) {
-            $app->shouldReceive('abort')->with(403)->andThrow('Exception', 'abort')->once();
-        }
-
-        $this->expectedResponse = $expectedResponse;
-
-        $cerberus->routeNeedsRoleOrPermission($route, $roleName, $permName, $expectedResponse, $requireAll);
-    }
-
     protected function makeFilterName($route, array $roles, array $permissions = null)
     {
         if (is_null($permissions)) {
-            return implode('_', $roles) . '_' . substr(md5($route), 0, 6);
-        } else {
-            return implode('_', $roles) . '_' . implode('_', $permissions) . '_' . substr(md5($route), 0, 6);
+            return implode('_', $roles).'_'.substr(md5($route), 0, 6);
         }
+
+        return implode('_', $roles).'_'.implode('_', $permissions).'_'.substr(md5($route), 0, 6);
     }
 }

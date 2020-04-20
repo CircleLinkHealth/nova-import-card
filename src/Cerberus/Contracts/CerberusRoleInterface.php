@@ -1,21 +1,54 @@
-<?php namespace Michalisantoniou6\Cerberus\Contracts;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace Michalisantoniou6\Cerberus\Contracts;
 
 /**
  * This file is part of Cerberus,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Michalisantoniou6\Cerberus
  */
-
 interface CerberusRoleInterface
 {
     /**
-     * Many-to-Many relations with the user model.
+     * Attach permission to current role.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @param array|object $permission
+     *
+     * @return void
      */
-    public function users();
+    public function attachPermission($permission);
+
+    /**
+     * Attach multiple permissions to current role.
+     *
+     * @param mixed $permissions
+     *
+     * @return void
+     */
+    public function attachPermissions($permissions);
+
+    /**
+     * Detach permission form current role.
+     *
+     * @param array|object $permission
+     *
+     * @return void
+     */
+    public function detachPermission($permission);
+
+    /**
+     * Detach multiple permissions from current role.
+     *
+     * @param mixed $permissions
+     *
+     * @return void
+     */
+    public function detachPermissions($permissions);
 
     /**
      * Many-to-Many relations with the permission model.
@@ -34,39 +67,10 @@ interface CerberusRoleInterface
      */
     public function savePermissions($inputPermissions);
 
-     /**
-     * Attach permission to current role.
-     *
-     * @param object|array $permission
-     *
-     * @return void
-     */
-    public function attachPermission($permission);
-
     /**
-     * Detach permission form current role.
+     * Many-to-Many relations with the user model.
      *
-     * @param object|array $permission
-     *
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function detachPermission($permission);
-
-    /**
-     * Attach multiple permissions to current role.
-     *
-     * @param mixed $permissions
-     *
-     * @return void
-     */
-    public function attachPermissions($permissions);
-
-    /**
-     * Detach multiple permissions from current role
-     *
-     * @param mixed $permissions
-     *
-     * @return void
-     */
-    public function detachPermissions($permissions);
+    public function users();
 }

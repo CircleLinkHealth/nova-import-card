@@ -1,15 +1,10 @@
 <?php
 
-/**
- * This file is part of Cerberus,
- * a role & permission management solution for Laravel.
- *
- * @license MIT
- * @package Michalisantoniou6\Cerberus
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Cerberus Role Model
@@ -19,7 +14,7 @@ return [
     | the role if it is in a different namespace.
     |
     */
-    'role'                   => 'App\Role',
+    'role' => 'App\Role',
 
     /*
     |--------------------------------------------------------------------------
@@ -29,7 +24,7 @@ return [
     | This is the roles table used by Cerberus to save roles to the database.
     |
     */
-    'roles_table'            => 'roles',
+    'roles_table' => 'roles',
 
     /*
     |--------------------------------------------------------------------------
@@ -40,7 +35,7 @@ return [
     | relation between permissions and roles & roles and users
     |
     */
-    'role_foreign_key'       => 'role_id',
+    'role_foreign_key' => 'role_id',
 
     /*
     |--------------------------------------------------------------------------
@@ -51,7 +46,7 @@ return [
     | relation between permissions and roles, roles and users and users and sites
     |
     */
-    'site_foreign_key'       => 'site_id',
+    'site_foreign_key' => 'site_id',
 
     /*
     |--------------------------------------------------------------------------
@@ -62,7 +57,7 @@ return [
     | Update the User if it is in a different namespace.
     |
     */
-    'user'                   => 'App\User',
+    'user' => 'App\User',
 
     /*
     |--------------------------------------------------------------------------
@@ -73,7 +68,7 @@ return [
     | database.
     |
     */
-    'role_user_site_table'   => 'role_user_site',
+    'role_user_site_table' => 'role_user_site',
 
     /*
     |--------------------------------------------------------------------------
@@ -84,7 +79,7 @@ return [
     | relation between roles and users
     |
     */
-    'user_foreign_key'       => 'user_id',
+    'user_foreign_key' => 'user_id',
 
     /*
     |--------------------------------------------------------------------------
@@ -95,7 +90,7 @@ return [
     | Update the permission if it is in a different namespace.
     |
     */
-    'permission'             => 'App\Permission',
+    'permission' => 'App\Permission',
 
     /*
     |--------------------------------------------------------------------------
@@ -106,7 +101,7 @@ return [
     | database.
     |
     */
-    'permissions_table'      => 'permissions',
+    'permissions_table' => 'permissions',
 
     /*
     |--------------------------------------------------------------------------
@@ -117,7 +112,7 @@ return [
     | between permissions and roles/users to the database.
     |
     */
-    'permissibles_table'  => 'permissibles',
+    'permissibles_table' => 'permissibles',
 
     /*
     |--------------------------------------------------------------------------
@@ -139,7 +134,7 @@ return [
     | Update the permission if it is in a different namespace.
     |
     */
-    'site'                   => 'App\Site',
+    'site' => 'App\Site',
 
     /*
     |--------------------------------------------------------------------------
@@ -150,5 +145,5 @@ return [
     | database.
     |
     */
-    'sites_table'            => 'sites',
+    'sites_table' => 'sites',
 ];

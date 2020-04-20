@@ -1,18 +1,22 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Michalisantoniou6\Cerberus\Middleware\CerberusPermission;
 use Mockery as m;
 
 class CerberusPermissionTest extends MiddlewareTest
 {
-    public function testHandle_IsGuestWithNoPermission_ShouldAbort403()
+    public function test_handle__is_guest_with_no_permission__should_abort403()
     {
         /*
         |------------------------------------------------------------
         | Set
         |------------------------------------------------------------
         */
-        $guard = m::mock('Illuminate\Contracts\Auth\Guard[guest]');
+        $guard   = m::mock('Illuminate\Contracts\Auth\Guard[guest]');
         $request = $this->mockRequest();
 
         $middleware = new CerberusPermission($guard);
@@ -25,7 +29,8 @@ class CerberusPermissionTest extends MiddlewareTest
         $guard->shouldReceive('guest')->andReturn(true);
         $request->user()->shouldReceive('hasPermission')->andReturn(false);
 
-        $middleware->handle($request, function () {}, null, null, true);
+        $middleware->handle($request, function () {
+        }, null, null, true);
 
         /*
         |------------------------------------------------------------
@@ -35,14 +40,14 @@ class CerberusPermissionTest extends MiddlewareTest
         $this->assertAbortCode(403);
     }
 
-    public function testHandle_IsGuestWithPermission_ShouldAbort403()
+    public function test_handle__is_guest_with_permission__should_abort403()
     {
         /*
         |------------------------------------------------------------
         | Set
         |------------------------------------------------------------
         */
-        $guard = m::mock('Illuminate\Contracts\Auth\Guard');
+        $guard   = m::mock('Illuminate\Contracts\Auth\Guard');
         $request = $this->mockRequest();
 
         $middleware = new CerberusPermission($guard);
@@ -55,7 +60,8 @@ class CerberusPermissionTest extends MiddlewareTest
         $guard->shouldReceive('guest')->andReturn(true);
         $request->user()->shouldReceive('hasPermission')->andReturn(true);
 
-        $middleware->handle($request, function () {}, null, null);
+        $middleware->handle($request, function () {
+        }, null, null);
 
         /*
         |------------------------------------------------------------
@@ -65,14 +71,14 @@ class CerberusPermissionTest extends MiddlewareTest
         $this->assertAbortCode(403);
     }
 
-    public function testHandle_IsLoggedInWithNoPermission_ShouldAbort403()
+    public function test_handle__is_logged_in_with_no_permission__should_abort403()
     {
         /*
         |------------------------------------------------------------
         | Set
         |------------------------------------------------------------
         */
-        $guard = m::mock('Illuminate\Contracts\Auth\Guard');
+        $guard   = m::mock('Illuminate\Contracts\Auth\Guard');
         $request = $this->mockRequest();
 
         $middleware = new CerberusPermission($guard);
@@ -85,7 +91,8 @@ class CerberusPermissionTest extends MiddlewareTest
         $guard->shouldReceive('guest')->andReturn(false);
         $request->user()->shouldReceive('hasPermission')->andReturn(false);
 
-        $middleware->handle($request, function () {}, null, null);
+        $middleware->handle($request, function () {
+        }, null, null);
 
         /*
         |------------------------------------------------------------
@@ -95,14 +102,14 @@ class CerberusPermissionTest extends MiddlewareTest
         $this->assertAbortCode(403);
     }
 
-    public function testHandle_IsLoggedInWithPermission_ShouldNotAbort()
+    public function test_handle__is_logged_in_with_permission__should_not_abort()
     {
         /*
         |------------------------------------------------------------
         | Set
         |------------------------------------------------------------
         */
-        $guard = m::mock('Illuminate\Contracts\Auth\Guard');
+        $guard   = m::mock('Illuminate\Contracts\Auth\Guard');
         $request = $this->mockRequest();
 
         $middleware = new CerberusPermission($guard);
@@ -115,7 +122,8 @@ class CerberusPermissionTest extends MiddlewareTest
         $guard->shouldReceive('guest')->andReturn(false);
         $request->user()->shouldReceive('hasPermission')->andReturn(true);
 
-        $middleware->handle($request, function () {}, null, null);
+        $middleware->handle($request, function () {
+        }, null, null);
 
         /*
         |------------------------------------------------------------
