@@ -62,10 +62,10 @@ class AddIsBhiInNurseCareRateLogs extends Migration
                             DB::table('nurse_care_rate_logs')
                                 ->where('id', '=', $record->id)
                                 ->update(
-                                  [
-                                      'is_behavioral' => $activity->is_behavioral,
-                                  ]
-                              );
+                                    [
+                                        'is_behavioral' => $activity->is_behavioral,
+                                    ]
+                                );
                         }
                     );
                 }
