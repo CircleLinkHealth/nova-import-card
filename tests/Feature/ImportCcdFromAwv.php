@@ -14,7 +14,7 @@ use Tests\TestCase;
 
 class ImportCcdFromAwv extends CustomerTestCase
 {
-    protected function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->setAdminUser();

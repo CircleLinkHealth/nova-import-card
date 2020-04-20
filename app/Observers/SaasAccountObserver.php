@@ -13,8 +13,6 @@ class SaasAccountObserver
 {
     /**
      * Listen to the SaasAccount creating event.
-     *
-     * @param SaasAccount $saasAccount
      */
     public function creating(SaasAccount $saasAccount)
     {

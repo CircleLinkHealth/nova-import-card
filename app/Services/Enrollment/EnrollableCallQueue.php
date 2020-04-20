@@ -10,7 +10,7 @@ namespace App\Services\Enrollment;
 use App\CareAmbassador;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
-class EnrolleeCallQueue
+class EnrollableCallQueue
 {
     static function getNext(CareAmbassador $careAmbassador)
     {
@@ -20,7 +20,8 @@ class EnrolleeCallQueue
             : [];
 
         //add more logic to this
-        //if previous enrollee id, try to get call_queue or maybe engaged family enrollees
+        //do not check status for call_queue. If they have been selected by the CA they must have been on call queue initially
+        //per CPM-2256 we will be applying the same statuses on confirmed family members, so that we can pre-fill their data on the page.
         if ( ! empty($queue)) {
             $nextEnrolleeId = collect($queue)->first();
             $enrollee       = Enrollee::find($nextEnrolleeId);
@@ -66,6 +67,8 @@ class EnrolleeCallQueue
         if ($enrollee) {
             //mark as engaged to prevent double dipping
             $enrollee->status = Enrollee::ENGAGED;
+            //re-assign care ambassador, in case patient has been retrieved as a confirmed family member
+            $enrollee->care_ambassador_user_id = $careAmbassador->user_id;
             $enrollee->save();
         }
 

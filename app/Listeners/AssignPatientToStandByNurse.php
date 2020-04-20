@@ -1,12 +1,16 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Listeners;
 
 use App\Events\CarePlanWasQAApproved;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 
 class AssignPatientToStandByNurse
 {
@@ -17,21 +21,21 @@ class AssignPatientToStandByNurse
      */
     public function __construct()
     {
-        //
     }
 
     /**
      * Handle the event.
      *
-     * @param  object  $event
+     * @param object $event
+     *
      * @return void
      */
     public function handle(CarePlanWasQAApproved $event)
     {
-        if (! $standByNurseId = StandByNurseUser::id()) {
+        if ( ! $standByNurseId = StandByNurseUser::id()) {
             return;
         }
-        
+
         PatientNurse::updateOrCreate(
             ['patient_user_id' => $event->patient->id],
             [

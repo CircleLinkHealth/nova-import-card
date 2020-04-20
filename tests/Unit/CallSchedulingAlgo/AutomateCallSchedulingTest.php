@@ -23,10 +23,10 @@ class AutomateCallSchedulingTest extends TestCase
     use \App\Traits\Tests\UserHelpers;
     use CarePlanHelpers;
 
-    /** @var SchedulerService $schedulerService */
+    /** @var SchedulerService */
     protected $schedulerService;
 
-    protected function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->schedulerService = $this->app->make(SchedulerService::class);

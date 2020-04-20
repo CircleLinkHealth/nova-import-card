@@ -22,7 +22,7 @@ class SuccessfulCallHandlerTest extends TestCase
     private $nurse;
     private $practice;
 
-    protected function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
 

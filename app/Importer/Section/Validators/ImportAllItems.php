@@ -15,7 +15,7 @@ class ImportAllItems implements SectionValidator
         if (is_array($item)) {
             $item = (object) $item;
         }
-        
+
         if ( ! $this->shouldValidate($item)) {
             return false;
         }
@@ -28,7 +28,7 @@ class ImportAllItems implements SectionValidator
         if (is_array($item)) {
             $item = (object) $item;
         }
-        
+
         return empty($item->status)
         && empty($item->start)
         && empty($item->end);

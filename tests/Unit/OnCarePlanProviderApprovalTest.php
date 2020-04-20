@@ -51,7 +51,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
      */
     protected $provider;
 
-    protected function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -84,7 +84,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
         $carePlan->save();
         $this->assertTrue(CarePlan::QA_APPROVED === $carePlan->fresh()->status);
         $this->assertFalse($this->careCoach()->canApproveCarePlans());
-    
+
         $response = $this->actingAs($this->careCoach())->get(route('patient.careplan.print', [
             'patientId' => $this->patient()->id,
         ]))

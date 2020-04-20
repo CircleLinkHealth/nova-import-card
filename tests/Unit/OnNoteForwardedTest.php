@@ -26,7 +26,7 @@ class OnNoteForwardedTest extends CustomerTestCase
 
     protected $practice;
 
-    protected function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -60,7 +60,7 @@ class OnNoteForwardedTest extends CustomerTestCase
         //admin
         $auth = $this->superadmin();
         auth()->login($auth);
-        
+
         $note = $this->patient()->notes()->first();
 
         Notification::fake();
@@ -79,31 +79,32 @@ class OnNoteForwardedTest extends CustomerTestCase
             );
         });
     }
-    
-    public function test_practice_has_notes_notifications_enabled_method() {
+
+    public function test_practice_has_notes_notifications_enabled_method()
+    {
         $service = app(NoteService::class);
-        
+
         $settings                           = $this->practice()->cpmSettings();
         $settings->email_note_was_forwarded = true;
         $settings->efax_pdf_notes           = true;
         $settings->dm_pdf_notes             = true;
         $settings->save();
-    
+
         $this->assertTrue($service->practiceHasNotesNotificationsEnabled($this->refreshSettings()));
-        
+
         $settings->email_note_was_forwarded = false;
         $settings->efax_pdf_notes           = false;
         $settings->dm_pdf_notes             = false;
         $settings->save();
-    
+
         $this->assertFalse($service->practiceHasNotesNotificationsEnabled($this->refreshSettings()));
-    
-        $settings->dm_pdf_notes             = true;
+
+        $settings->dm_pdf_notes = true;
         $settings->save();
-    
+
         $this->assertTrue($service->practiceHasNotesNotificationsEnabled($this->refreshSettings()));
     }
-    
+
     private function refreshSettings()
     {
         return $this->practice()->load('settings');

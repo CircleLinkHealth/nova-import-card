@@ -6,9 +6,9 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 
 class EnrollmentConsentController extends Controller
@@ -88,6 +88,7 @@ class EnrollmentConsentController extends Controller
                     ? 'Yes'
                     : 'No',
                 'status'                   => $status,
+                'total_time_spent'         => $enrollee->total_time_spent ?? 0,
                 'care_ambassador'          => ucwords(optional($careAmbassador)->getFullName() ?? null),
                 'last_call_outcome'        => ucwords($enrollee->last_call_outcome),
                 'last_call_outcome_reason' => ucwords($enrollee->last_call_outcome_reason),

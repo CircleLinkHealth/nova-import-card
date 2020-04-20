@@ -6,10 +6,10 @@
 
 namespace App\Providers;
 
-use CircleLinkHealth\Core\HtmlToPdfService;
 use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
 use App\Services\SnappyPdfWrapper;
+use CircleLinkHealth\Core\HtmlToPdfService;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 

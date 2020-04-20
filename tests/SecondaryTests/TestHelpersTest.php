@@ -6,8 +6,8 @@
 
 namespace Tests\Unit;
 
-use Carbon\Carbon;
 use App\Traits\SetupTestCustomerTrait;
+use Carbon\Carbon;
 use Tests\TestCase;
 
 class TestHelpersTest extends TestCase

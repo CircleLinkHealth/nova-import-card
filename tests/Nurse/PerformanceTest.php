@@ -16,7 +16,7 @@ use Tests\TestCase;
 
 class PerformanceTest extends CustomerTestCase
 {
-    protected function setUp() :void
+    protected function setUp(): void
     {
         parent::setUp();
         \Artisan::call('db:seed', ['--class' => \PopulateNursePerformanceSeeder::class]);

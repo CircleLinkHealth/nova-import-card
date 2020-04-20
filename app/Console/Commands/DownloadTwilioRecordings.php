@@ -34,8 +34,6 @@ class DownloadTwilioRecordings extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param TwilioClientable $twilioClientService
      */
     public function __construct(TwilioClientable $twilioClientService)
     {

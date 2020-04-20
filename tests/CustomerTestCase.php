@@ -24,6 +24,7 @@ class CustomerTestCase extends TestCase
      * @var Location
      */
     private $location;
+    private $medicalAssistant;
     /**
      * @var array|User
      */
@@ -40,11 +41,8 @@ class CustomerTestCase extends TestCase
      * @var array|User
      */
     private $superadmin;
-    private $medicalAssistant;
-    
+
     /**
-     * @param int $number
-     *
      * @return array|User
      */
     protected function careCoach(int $number = 1)
@@ -55,20 +53,6 @@ class CustomerTestCase extends TestCase
 
         return $this->careCoach;
     }
-    
-    /**
-     * @param int $number
-     *
-     * @return array|User
-     */
-    protected function superadmin(int $number = 1)
-    {
-        if ( ! $this->superadmin) {
-            $this->superadmin = $this->createUsersOfType('administrator', $number);
-        }
-        
-        return $this->superadmin;
-    }
 
     /**
      * @return Location
@@ -77,17 +61,24 @@ class CustomerTestCase extends TestCase
     {
         if ( ! $this->location) {
             $this->location = Location::where('practice_id', $this->practice()->id)->first();
-            if (! $this->location) {
+            if ( ! $this->location) {
                 $this->location = factory(Location::class)->create(['practice_id' => $this->practice()->id]);
             }
         }
 
         return $this->location;
     }
-    
+
+    protected function medicalAssistant(int $number = 1)
+    {
+        if ( ! $this->medicalAssistant) {
+            $this->medicalAssistant = $this->createUsersOfType('med_assistant', $number);
+        }
+
+        return $this->medicalAssistant;
+    }
+
     /**
-     * @param int $number
-     *
      * @return array|User
      */
     protected function patient(int $number = 1)
@@ -111,10 +102,8 @@ class CustomerTestCase extends TestCase
 
         return $this->practice;
     }
-    
+
     /**
-     * @param int $number
-     *
      * @return array|User
      */
     protected function provider(int $number = 1)
@@ -125,14 +114,17 @@ class CustomerTestCase extends TestCase
 
         return $this->provider;
     }
-    
-    protected function medicalAssistant(int $number = 1)
+
+    /**
+     * @return array|User
+     */
+    protected function superadmin(int $number = 1)
     {
-        if ( ! $this->medicalAssistant) {
-            $this->medicalAssistant = $this->createUsersOfType('med_assistant', $number);
+        if ( ! $this->superadmin) {
+            $this->superadmin = $this->createUsersOfType('administrator', $number);
         }
-        
-        return $this->medicalAssistant;
+
+        return $this->superadmin;
     }
 
     /**

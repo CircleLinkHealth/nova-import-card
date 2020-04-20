@@ -15,7 +15,7 @@ class NameNotNull implements SectionValidator
         if (is_array($item)) {
             $item = (object) $item;
         }
-        
+
         return ! (empty($item->translation_name) && empty($item->reference_title) && empty($item->text) && empty($item->product_name) && empty($item->name));
     }
 
@@ -24,7 +24,7 @@ class NameNotNull implements SectionValidator
         if (is_array($item)) {
             $item = (object) $item;
         }
-    
+
         if (method_exists($item, 'toArray')) {
             $keys = collect($item->toArray())->keys();
         } elseif (is_array($item)) {

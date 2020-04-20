@@ -6,8 +6,8 @@
 
 namespace App\Nova\Importers;
 
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Carbon\Carbon;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Str;
 use Log;
@@ -20,17 +20,11 @@ class EnroleeStatus implements WithChunkReading, ToModel, WithHeadingRow, Should
 {
     use Importable;
 
-    /**
-     * @return int
-     */
     public function batchSize(): int
     {
         return 200;
     }
 
-    /**
-     * @return int
-     */
     public function chunkSize(): int
     {
         return 200;

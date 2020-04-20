@@ -1,8 +1,10 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 namespace App\Traits\Tests;
-
 
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -18,11 +20,11 @@ trait PracticeHelpers
         bool $addPcmService = false
     ) {
         $this->location = Location::where('practice_id', $practice->id)->first();
-        
-        if (! $this->location) {
+
+        if ( ! $this->location) {
             $this->location = factory(Location::class)->create();
         }
-    
+
         $sync = [];
 
         if ($addCcmService) {
@@ -60,7 +62,12 @@ trait PracticeHelpers
     ): Practice {
         $practice = factory(Practice::class)->create();
 
-        return $this->setupExistingPractice($practice, $addCcmService, $addCcmPlusServices, $addBhiService,
-            $addPcmService);
+        return $this->setupExistingPractice(
+            $practice,
+            $addCcmService,
+            $addCcmPlusServices,
+            $addBhiService,
+            $addPcmService
+        );
     }
 }
