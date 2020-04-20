@@ -36,8 +36,6 @@ class InvoiceBeforePayment extends Notification implements HasAttachment, Should
 
     /**
      * Returns an Eloquent model.
-     *
-     * @return Model|null
      */
     public function getAttachment(): ?Model
     {

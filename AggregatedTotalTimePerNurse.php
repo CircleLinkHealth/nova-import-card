@@ -42,11 +42,6 @@ class AggregatedTotalTimePerNurse
      */
     protected $userIds;
 
-    /**
-     * @param array  $userIds
-     * @param Carbon $startDate
-     * @param Carbon $endDate
-     */
     public function __construct(array $userIds, Carbon $startDate, Carbon $endDate)
     {
         $this->userIds   = $userIds;

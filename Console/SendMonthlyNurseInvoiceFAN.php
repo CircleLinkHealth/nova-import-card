@@ -51,8 +51,6 @@ class SendMonthlyNurseInvoiceFAN extends Command
 
     /**
      * Send a notification to the nurse.
-     *
-     * @param User $user
      */
     public function notifyNurse(User $user)
     {

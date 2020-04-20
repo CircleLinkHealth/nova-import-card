@@ -18,63 +18,31 @@ class Invoice extends ViewModel
 {
     const DATE_FORMAT = 'jS M, Y';
 
-    /** @var bool New CCM Plus Algo from Jan 2020 */
-    public $ccmPlusAlgoEnabled;
+    /**
+     * @var Collection
+     */
+    public $aggregatedTotalTime;
 
     /**
      * @var bool Whether Option 1 (Alt Algo - Visit Fee based) algo is enabled or not
      */
     public $altAlgoEnabled;
-
-    /**
-     * @var array $visits A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay]
-     */
-    public $visits;
-
-    /**
-     * @var array $bhiVisits A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay]
-     */
-    public $bhiVisits;
-
-    /**
-     * @var array $pcmVisits A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay]
-     */
-    public $pcmVisits;
-
-    /**
-     * @var int the total number of visits when option 1 algo is enabled
-     */
-    public $visitsCount;
-
-    /**
-     * @var Collection
-     */
-    public $aggregatedTotalTime;
     /**
      * @var float
      */
     public $baseSalary;
+
+    /**
+     * @var array A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay]
+     */
+    public $bhiVisits;
+
+    /** @var bool New CCM Plus Algo from Jan 2020 */
+    public $ccmPlusAlgoEnabled;
     /**
      * @var bool
      */
     public $changedToFixedRateBecauseItYieldedMore = false;
-
-    /**
-     * An array showing the total time per day.
-     *
-     * @return Collection
-     */
-    public $timePerDay;
-
-    /**
-     * An array showing the total visits per day.
-     *
-     * @return bool
-     */
-    public $visitsPerDayAvailable;
-
-    public $totalTimeAfterCcmInHours;
-    public $totalTimeTowardsCcmInHours;
 
     /**
      * @var float the total pay with fixed rate algorithm
@@ -85,6 +53,21 @@ class Invoice extends ViewModel
     public $nurseHourlyRate;
     public $nurseLowRate;
     public $nurseVisitFee;
+
+    /**
+     * @var array A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay]
+     */
+    public $pcmVisits;
+
+    /**
+     * An array showing the total time per day.
+     *
+     * @return Collection
+     */
+    public $timePerDay;
+
+    public $totalTimeAfterCcmInHours;
+    public $totalTimeTowardsCcmInHours;
     /**
      * @var bool
      */
@@ -93,6 +76,23 @@ class Invoice extends ViewModel
      * @var float the total pay with variable rate algorithm
      */
     public $variableRatePay = 0.0;
+
+    /**
+     * @var array A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay]
+     */
+    public $visits;
+
+    /**
+     * @var int the total number of visits when option 1 algo is enabled
+     */
+    public $visitsCount;
+
+    /**
+     * An array showing the total visits per day.
+     *
+     * @return bool
+     */
+    public $visitsPerDayAvailable;
     /**
      * @var Carbon
      */
@@ -138,7 +138,7 @@ class Invoice extends ViewModel
      */
     private $user;
 
-    /** @var VariablePayCalculator $variablePayCalculator */
+    /** @var VariablePayCalculator */
     private $variablePayCalculator;
 
     /**
@@ -155,7 +155,7 @@ class Invoice extends ViewModel
         $this->startDate             = $startDate;
         $this->endDate               = $endDate;
         $this->aggregatedTotalTime   = $aggregatedTotalTime->flatten();
-        $this->variablePay           = (bool)$user->nurseInfo->is_variable_rate;
+        $this->variablePay           = (bool) $user->nurseInfo->is_variable_rate;
         $this->totalSystemTime       = $this->totalSystemTimeInSeconds();
         $this->bonus                 = $this->getBonus($user->nurseBonuses);
         $this->extraTime             = $this->getAddedDuration($user->nurseBonuses);
@@ -272,7 +272,7 @@ class Invoice extends ViewModel
      */
     public function formattedInvoiceTotalAmount()
     {
-        return '$' . number_format(round($this->invoiceTotalAmount(), 2), 2);
+        return '$'.number_format(round($this->invoiceTotalAmount(), 2), 2);
     }
 
     /**
@@ -367,7 +367,6 @@ class Invoice extends ViewModel
         if ( ! $this->variablePay) {
             $this->baseSalary = $this->fixedRatePay;
         } else {
-
             $this->variableRatePay = $this->getVariableRatePay();
 
             if ($this->fixedRatePay > $this->variableRatePay) {
@@ -425,8 +424,9 @@ class Invoice extends ViewModel
      * 4.3 get successful call in each range
      * 4.4 pay percentage of time in range * VF.
      *
-     * @return float
      * @throws \Exception
+     *
+     * @return float
      */
     private function getVariableRatePay()
     {
@@ -440,18 +440,6 @@ class Invoice extends ViewModel
         $this->visitsPerDayAvailable = true;
 
         return round($calculationResult->totalPay, 2);
-    }
-
-    /**
-     * Total system time in seconds.
-     *
-     * @return int
-     */
-    private function totalSystemTimeInSeconds()
-    {
-        return (int)$this->aggregatedTotalTime
-            ->where('is_billable', false)
-            ->sum('total_time');
     }
 
     private function setViewModelVariables()
@@ -477,11 +465,10 @@ class Invoice extends ViewModel
 
                 if ('accrued_towards_ccm' === $log->ccm_type) {
                     $totalTimeTowardsCcm += $log->increment;
-                    $current['towards']  = $current['towards'] + $log->increment;
-
+                    $current['towards'] = $current['towards'] + $log->increment;
                 } elseif ('accrued_after_ccm' === $log->ccm_type) {
                     $totalTimeAfterCcm += $log->increment;
-                    $current['after']  = $current['after'] + $log->increment;
+                    $current['after'] = $current['after'] + $log->increment;
                 }
 
                 $variablePayPerDay->put($dateStr, $current);
@@ -496,7 +483,6 @@ class Invoice extends ViewModel
             $visitsCountForDay = 0.0;
             $allVisits->each(function (Collection $coll) use (&$visitsCountForDay, $dateStr) {
                 $coll->each(function (array $perPatient, $key) use (&$visitsCountForDay, $dateStr) {
-
                     if ($key !== $dateStr) {
                         return;
                     }
@@ -517,13 +503,11 @@ class Invoice extends ViewModel
                 ? round($dataForDay->total_time / 60, 2)
                 : 0;
 
-
             $row = [
                 'formatted_time' => minutesToHhMm($minutes),
             ];
 
             if ($this->variablePay) {
-
                 $variablePayForDay = $variablePayPerDay->get($dateStr, [
                     'towards' => 0,
                     'after'   => 0,
@@ -544,5 +528,17 @@ class Invoice extends ViewModel
         $this->timePerDay                 = $table;
         $this->totalTimeTowardsCcmInHours = round($totalTimeTowardsCcm / 3600, 1);
         $this->totalTimeAfterCcmInHours   = round($totalTimeAfterCcm / 3600, 1);
+    }
+
+    /**
+     * Total system time in seconds.
+     *
+     * @return int
+     */
+    private function totalSystemTimeInSeconds()
+    {
+        return (int) $this->aggregatedTotalTime
+            ->where('is_billable', false)
+            ->sum('total_time');
     }
 }

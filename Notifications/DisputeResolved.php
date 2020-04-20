@@ -23,8 +23,7 @@ class DisputeResolved extends Notification
     /**
      * Create a new notification instance.
      *
-     * @param mixed   $startDate
-     * @param Dispute $dispute
+     * @param mixed $startDate
      */
     public function __construct(Dispute $dispute)
     {

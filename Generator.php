@@ -75,8 +75,11 @@ class Generator
                 $delay = 10;
 
                 foreach ($nurseUsers as $nurseUser) {
-                    GenerateNurseInvoice::dispatch($nurseUser, $this->startDate,
-                        $this->endDate)->delay(now()->addSeconds($delay));
+                    GenerateNurseInvoice::dispatch(
+                        $nurseUser,
+                        $this->startDate,
+                        $this->endDate
+                    )->delay(now()->addSeconds($delay));
                     $delay = $delay + 10;
                 }
             }
@@ -91,17 +94,17 @@ class Generator
     private function nurseUsers()
     {
         return User::withTrashed()
-                   ->careCoaches()
-                   ->has('nurseInfo')
-                   ->when(
-                       is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
-                       function ($q) {
+            ->careCoaches()
+            ->has('nurseInfo')
+            ->when(
+                is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
+                function ($q) {
                            $q->whereIn('id', $this->nurseUserIds);
                        }
-                   )
-                   ->when(
-                       empty($this->nurseUserIds),
-                       function ($q) {
+            )
+            ->when(
+                empty($this->nurseUserIds),
+                function ($q) {
                            $q->whereHas(
                                'pageTimersAsProvider',
                                function ($s) {
@@ -114,13 +117,13 @@ class Generator
                                    );
                                }
                            )
-                             ->whereHas(
-                                 'nurseInfo',
-                                 function ($s) {
+                               ->whereHas(
+                                   'nurseInfo',
+                                   function ($s) {
                                      $s->where('is_demo', false);
                                  }
-                             );
+                               );
                        }
-                   );
+            );
     }
 }

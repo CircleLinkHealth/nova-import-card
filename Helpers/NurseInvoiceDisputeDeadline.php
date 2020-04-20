@@ -82,8 +82,6 @@ class NurseInvoiceDisputeDeadline
     }
 
     /**
-     * @param Carbon $invoiceMonth
-     *
      * @return Carbon
      */
     public static function for(Carbon $invoiceMonth)
@@ -201,8 +199,6 @@ class NurseInvoiceDisputeDeadline
 
     /**
      * Get a validator instance for the preferredOrDefaultDeadline.
-     *
-     * @param array $deadline
      *
      * @return \Illuminate\Validation\Validator
      */

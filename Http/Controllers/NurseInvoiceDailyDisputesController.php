@@ -10,7 +10,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSuggestedTime;
 use App\Services\NurseInvoiceDailyDisputeTimeService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Request;
 
 class NurseInvoiceDailyDisputesController extends Controller
 {
@@ -21,8 +20,6 @@ class NurseInvoiceDailyDisputesController extends Controller
 
     /**
      * NurseInvoiceDailyDisputesController constructor.
-     *
-     * @param NurseInvoiceDailyDisputeTimeService $service
      */
     public function __construct(NurseInvoiceDailyDisputeTimeService $service)
     {
@@ -48,8 +45,6 @@ class NurseInvoiceDailyDisputesController extends Controller
     }
 
     /**
-     * @param StoreSuggestedTime $request
-     *
      * @return JsonResponse
      */
     public function storeSuggestedWorkTime(StoreSuggestedTime $request)

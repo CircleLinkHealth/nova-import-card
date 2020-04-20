@@ -75,10 +75,6 @@ class TotalTimeAggregator
     /**
      * Get the aggregate time.
      *
-     * @param array  $userIds
-     * @param Carbon $startDate
-     * @param Carbon $endDate
-     *
      * @return Collection
      */
     public static function get(array $userIds, Carbon $startDate, Carbon $endDate)
@@ -122,12 +118,7 @@ class TotalTimeAggregator
     /**
      * A helper method to construct queries for tables Activities and PageTimer.
      *
-     * @param array  $nurseUserIds
-     * @param string $table
-     * @param string $dateTimeField
-     * @param Carbon $start
-     * @param Carbon $end
-     * @param mixed  $isBillable
+     * @param mixed $isBillable
      *
      * @return \Illuminate\Database\Query\Builder
      */
@@ -161,8 +152,6 @@ class TotalTimeAggregator
     /**
      * Query to get offline time as "non billable" so we can add it to "system time" sum to compensate the nurse.
      *
-     * @param array $nurseUserIds
-     *
      * @return \Illuminate\Database\Query\Builder
      */
     private function offlineSystemTime(array $nurseUserIds)
@@ -180,8 +169,6 @@ class TotalTimeAggregator
     /**
      * Query to get system time ("non billable"). This is non-patient related time the nurse spends in the system.
      *
-     * @param array $nurseUserIds
-     *
      * @return \Illuminate\Database\Query\Builder
      */
     private function systemTimeFromPageTimer(array $nurseUserIds)
@@ -198,8 +185,6 @@ class TotalTimeAggregator
 
     /**
      * Query to get billable (ccm) time. This is time a nurse spends working on a patient.
-     *
-     * @param array $nurseUserIds
      *
      * @return \Illuminate\Database\Query\Builder
      */

@@ -50,8 +50,7 @@ class NurseInvoicesDeferredBindingsServiceProvider extends ServiceProvider
                     SendResolveInvoiceDisputeReminder::class,
                 ]
             );
-        }
-        else {
+        } else {
             $this->commands(
                 [
                     GenerateMonthlyInvoicesForNonDemoNurses::class,

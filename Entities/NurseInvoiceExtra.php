@@ -13,16 +13,17 @@ use CircleLinkHealth\Customer\Entities\User;
 /**
  * CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra.
  *
- * @property int                                                                            $id
- * @property int                                                                            $user_id
- * @property \Illuminate\Support\Carbon|null                                                $date
- * @property string|null                                                                    $unit
- * @property int|null                                                                       $value
- * @property \Illuminate\Support\Carbon|null                                                $created_at
- * @property \Illuminate\Support\Carbon|null                                                $updated_at
- * @property \CircleLinkHealth\Customer\Entities\Nurse                                      $nurse
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
- * @property \CircleLinkHealth\Customer\Entities\User                                       $user
+ * @property int                                                                                         $id
+ * @property int                                                                                         $user_id
+ * @property \Illuminate\Support\Carbon|null                                                             $date
+ * @property string|null                                                                                 $unit
+ * @property int|null                                                                                    $value
+ * @property \Illuminate\Support\Carbon|null                                                             $created_at
+ * @property \Illuminate\Support\Carbon|null                                                             $updated_at
+ * @property \CircleLinkHealth\Customer\Entities\Nurse                                                   $nurse
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ * @property \CircleLinkHealth\Customer\Entities\User                                                    $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra query()
@@ -34,6 +35,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra whereValue($value)
  * @mixin \Eloquent
+ *
  * @property int|null $revision_history_count
  */
 class NurseInvoiceExtra extends BaseModel

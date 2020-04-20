@@ -40,10 +40,6 @@ class GenerateNurseInvoice implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param User $nurseUser
-     * @param Carbon $startDate
-     * @param Carbon $endDate
      */
     public function __construct(User $nurseUser, Carbon $startDate, Carbon $endDate)
     {
@@ -98,10 +94,6 @@ class GenerateNurseInvoice implements ShouldQueue
     }
 
     /**
-     * @param User $nurse
-     * @param Collection $aggregatedTotalTime
-     * @param VariablePayCalculator $variablePayCalculator
-     *
      * @return Invoice
      */
     private function createViewModel(
@@ -121,8 +113,6 @@ class GenerateNurseInvoice implements ShouldQueue
     /**
      * @param $nurseInfoId
      * @param $viewModel
-     *
-     * @param Carbon $startDate
      *
      * @return mixed
      */

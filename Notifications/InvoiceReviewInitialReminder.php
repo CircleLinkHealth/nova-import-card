@@ -26,8 +26,6 @@ class InvoiceReviewInitialReminder extends Notification implements ShouldQueue, 
 
     /**
      * Create a new notification instance.
-     *
-     * @param NurseInvoice $invoice
      */
     public function __construct(NurseInvoice $invoice)
     {
@@ -36,8 +34,6 @@ class InvoiceReviewInitialReminder extends Notification implements ShouldQueue, 
 
     /**
      * Returns an Eloquent model.
-     *
-     * @return Model|null
      */
     public function getAttachment(): ?Model
     {

@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\NurseInvoices\Traits;
 
-use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Console\Input\InputArgument;
 
