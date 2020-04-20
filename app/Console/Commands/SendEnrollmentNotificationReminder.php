@@ -6,8 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\SendEnrollmentPatientsReminder;
-use App\Jobs\SendEnrollmentUnreachablePatientsReminder;
+use App\Jobs\SelfEnrollmentPatientsReminder;
 use Illuminate\Console\Command;
 
 class SendEnrollmentNotificationReminder extends Command
@@ -42,8 +41,6 @@ class SendEnrollmentNotificationReminder extends Command
      */
     public function handle()
     {
-//        At this point Enrollees and Unreachable Patients are both User model
-//        @todo:Here, after Constantinos implementation will have to: this should change to ENROLLEE
-        SendEnrollmentPatientsReminder::dispatch();
+        SelfEnrollmentPatientsReminder::dispatch();
     }
 }

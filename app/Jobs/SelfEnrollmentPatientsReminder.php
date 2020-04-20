@@ -8,7 +8,7 @@ namespace App\Jobs;
 
 // This file is part of CarePlan Manager by CircleLink Health.
 
-use App\Events\UnreachablePatientInvited;
+use App\Events\AutoEnrollablesCollected;
 use App\Notifications\SendEnrollmentEmail;
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
@@ -21,7 +21,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 
-class SendEnrollmentPatientsReminder implements ShouldQueue
+class SelfEnrollmentPatientsReminder implements ShouldQueue
 {
     use Dispatchable;
     use EnrollableManagement;
@@ -78,7 +78,7 @@ class SendEnrollmentPatientsReminder implements ShouldQueue
                 // $hasRequestedInfoOnInvitation & hasSurveyCompleted should never be used for 'surveyOnlyUsers' cause if
                 // patient requested info or completed survey the user model would be deleted, hence it will never be collected
                 if (!$hasRequestedInfoOnInvitation || !$this->hasSurveyInProgress($enrollable) || $this->hasSurveyCompleted($enrollable)) {
-                    event(new UnreachablePatientInvited($enrollable));
+                    event(new AutoEnrollablesCollected($enrollable, true));
                 }
             });
     }

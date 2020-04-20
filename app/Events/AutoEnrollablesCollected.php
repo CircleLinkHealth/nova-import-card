@@ -11,7 +11,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class UnreachablePatientInvited
+class AutoEnrollablesCollected
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -19,15 +19,21 @@ class UnreachablePatientInvited
      * @var User
      */
     public $user;
+    /**
+     * @var bool
+     */
+    public $isReminder;
 
     /**
      * Create a new event instance.
      *
      * @param User $user
+     * @param bool $isReminder
      */
-    public function __construct(User $user)
+    public function __construct(User $user, $isReminder = false)
     {
         $this->user = $user;
+        $this->isReminder = $isReminder;
     }
 
     /**

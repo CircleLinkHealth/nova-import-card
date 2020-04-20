@@ -11,7 +11,7 @@ use App\EnrollableInvitationLink;
 use App\Http\Controllers\Controller;
 use App\Jobs\EnrollableSurveyCompleted;
 use App\Jobs\FinalActionOnNonResponsivePatients;
-use App\Jobs\SendEnrollmentPatientsReminder;
+use App\Jobs\SelfEnrollmentPatientsReminder;
 use App\Notifications\SendEnrollmentEmail;
 use App\Services\Enrollment\AttachEnrolleeFamilyMembers;
 use App\Services\Enrollment\EnrolleeCallQueue;
@@ -484,7 +484,7 @@ class EnrollmentCenterController extends Controller
     public function sendEnrollmentReminderTestMethod()
     {
         try {
-            SendEnrollmentPatientsReminder::dispatch();
+            SelfEnrollmentPatientsReminder::dispatch();
         } catch (\Exception $e) {
             return 'Something went wrong';
         }

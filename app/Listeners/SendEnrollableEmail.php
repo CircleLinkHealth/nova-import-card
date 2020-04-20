@@ -29,11 +29,11 @@ class SendEnrollableEmail implements ShouldQueue
      */
     public function handle($event)
     {
-        $this->sendEmail($event->user);
+        $this->sendEmail($event);
     }
 
-    private function sendEmail($notifiable)
+    private function sendEmail($event)
     {
-        $notifiable->notify(new SendEnrollmentEmail());
+        $event->user->notify(new SendEnrollmentEmail($event->isReminder));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\AutoEnrollablesCollected;
 use App\Events\UserFromEnrolleeCreated;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -82,7 +83,7 @@ class CreateUserFromEnrollee implements ShouldQueue
         $userCreatedFromEnrollee->setBillingProviderId($this->enrollee->provider->id);
         $this->enrollee->update(['user_id' => $userCreatedFromEnrollee->id]);
 
-        event(new UserFromEnrolleeCreated($userCreatedFromEnrollee));
+        event(new AutoEnrollablesCollected($userCreatedFromEnrollee));
 
     }
 }

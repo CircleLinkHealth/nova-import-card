@@ -24,6 +24,7 @@ class SendEnrollableSms implements ShouldQueue
      * Handle the event.
      *
      * @param $event
+     * @param $isReminder
      * @return void
      */
     public function handle($event)
