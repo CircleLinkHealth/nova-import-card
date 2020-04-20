@@ -878,8 +878,8 @@ class EligibilityChecker
                     )->whereHas(
                         'patientInfo',
                         function ($q) use ($args) {
-                                                     $q->withTrashed()->whereBirthDate($args['dob']);
-                                                 }
+                            $q->withTrashed()->whereBirthDate($args['dob']);
+                        }
                     );
                 }
             )->first();
