@@ -36,6 +36,15 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SupplementalPatientData\NBI\SupplementalPatientData whereSecondaryInsurance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SupplementalPatientData\NBI\SupplementalPatientData whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int $practice_id
+ * @property int|null $location_id
+ * @property int|null $billing_provider_user_id
+ * @property string|null $location
+ * @property-read \CircleLinkHealth\Customer\Entities\Practice $practice
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\SupplementalPatientData whereBillingProviderUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\SupplementalPatientData whereLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\SupplementalPatientData whereLocationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\SupplementalPatientData wherePracticeId($value)
  */
 class SupplementalPatientData extends Model
 {
