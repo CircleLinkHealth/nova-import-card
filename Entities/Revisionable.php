@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Revisionable\Entities;
 
 use CircleLinkHealth\Revisionable\Jobs\StoreRevisions;
 use Illuminate\Database\Eloquent\Model as Eloquent;
+use Illuminate\Support\Arr;
 
 /*
  * This file is part of the Revisionable package by Venture Craft
@@ -247,7 +248,7 @@ class Revisionable extends Eloquent
                     'revisionable_type' => $this->getMorphClass(),
                     'revisionable_id'   => $this->getKey(),
                     'key'               => $key,
-                    'old_value'         => array_get($this->originalData, $key),
+                    'old_value'         => Arr::get($this->originalData, $key),
                     'new_value'         => $this->updatedData[$key],
                     'user_id'           => $this->getSystemUserId(),
                     'created_at'        => new \DateTime(),
