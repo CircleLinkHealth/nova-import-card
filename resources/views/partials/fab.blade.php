@@ -1,12 +1,12 @@
-<meta name="route.patient.note.create" content="{{ route('patient.note.create', ['patient' => $patient->id]) }}">
+<meta name="route.patient.note.create" content="{{ route('patient.note.create', [$patient->id]) }}">
 <meta name="route.patient.observation.create"
-      content="{{ route('patient.observation.create', ['patient' => $patient->id]) }}">
+      content="{{ route('patient.observation.create', [$patient->id]) }}">
 <meta name="route.patient.activity.create"
-      content="{{ route('patient.activity.create', ['patient' => $patient->id]) }}">
+      content="{{ route('patient.activity.create', [$patient->id]) }}">
 <meta name="route.offline-activity-time-request.create"
-      content="{{ route('offline-activity-time-requests.create', ['patient' => $patient->id]) }}">
+      content="{{ route('offline-activity-time-requests.create', [$patient->id]) }}">
 <meta name="route.patient.appointment.create"
-      content="{{ route('patient.appointment.create', ['patientId' => $patient->id]) }}">
+      content="{{ route('patient.appointment.create', [$patient->id]) }}">
 <meta name="provider-update-route" content="{{ route('user.care-team.update', [$patient->id]) }}">
 <meta name="patient_id" content="{{$patient->id}}">
 @if($patient->carePlan)
