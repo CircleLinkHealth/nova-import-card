@@ -1,10 +1,12 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CareDirectorPanel extends TestCase
 {
@@ -13,7 +15,7 @@ class CareDirectorPanel extends TestCase
      *
      * @return void
      */
-    public function testExample()
+    public function test_example()
     {
         $response = $this->get('/');
 

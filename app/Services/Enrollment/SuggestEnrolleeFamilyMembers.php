@@ -15,33 +15,6 @@ class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
         return (new static($enrolleeId))->generate();
     }
 
-    private function getSuggestions()
-    {
-        //Exact phone number match is the best indicator for a family member
-        $matchingPhones = Enrollee::shouldSuggestAsFamilyForEnrollee($this->enrolleeId)
-            ->searchPhones($this->enrollee->getPhonesE164AsString())->get();
-
-        $matchingAddressAndSurname = Enrollee::shouldSuggestAsFamilyForEnrollee($this->enrolleeId)
-            ->searchAddresses($this->enrollee->getAddressesAsString())
-        ->get()
-        ->map(function ($e){
-            //If there is a similar address but not the same phone number, we can take into account if the person with a similar address has the same last name.
-            // That is another indicator our care ambassadors use to determine if someone is related.
-            if ($e->relevance_score < (int)suggestedFamilyMemberAcceptableRelevanceScore()){
-                return null;
-            }
-
-            if ($e->last_name !== $this->enrollee->last_name){
-                return null;
-            }
-
-            return $e;
-        })
-        ->filter();
-
-        return $matchingPhones->merge($matchingAddressAndSurname)->unique('id');
-    }
-
     private function formatForView($family)
     {
         return $family->map(function (Enrollee $e) {
@@ -67,5 +40,32 @@ class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
         $results = $this->getSuggestions();
 
         return $this->formatForView($results);
+    }
+
+    private function getSuggestions()
+    {
+        //Exact phone number match is the best indicator for a family member
+        $matchingPhones = Enrollee::shouldSuggestAsFamilyForEnrollee($this->enrolleeId)
+            ->searchPhones($this->enrollee->getPhonesE164AsString())->get();
+
+        $matchingAddressAndSurname = Enrollee::shouldSuggestAsFamilyForEnrollee($this->enrolleeId)
+            ->searchAddresses($this->enrollee->getAddressesAsString())
+            ->get()
+            ->map(function ($e) {
+            //If there is a similar address but not the same phone number, we can take into account if the person with a similar address has the same last name.
+            // That is another indicator our care ambassadors use to determine if someone is related.
+            if ($e->relevance_score < (int) suggestedFamilyMemberAcceptableRelevanceScore()) {
+                return null;
+            }
+
+            if ($e->last_name !== $this->enrollee->last_name) {
+                return null;
+            }
+
+            return $e;
+        })
+            ->filter();
+
+        return $matchingPhones->merge($matchingAddressAndSurname)->unique('id');
     }
 }

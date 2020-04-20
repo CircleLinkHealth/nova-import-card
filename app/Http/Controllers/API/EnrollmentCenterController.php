@@ -8,13 +8,13 @@ namespace App\Http\Controllers\API;
 
 use App\CareAmbassadorLog;
 use App\Http\Resources\Enrollable;
+use App\SafeRequest as Request;
 use App\Services\Enrollment\AttachEnrolleeFamilyMembers;
 use App\Services\Enrollment\EnrollableCallQueue;
 use App\Services\Enrollment\SuggestEnrolleeFamilyMembers;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
-use App\SafeRequest as Request;
 
 class EnrollmentCenterController extends ApiController
 {
@@ -79,7 +79,7 @@ class EnrollmentCenterController extends ApiController
 
         if (is_array($request->input('days'))) {
             $enrollee->preferred_days = collect($request->input('days'))->reject(function ($d) {
-                return $d == 'all';
+                return 'all' == $d;
             })->implode(', ');
         }
 
@@ -228,5 +228,4 @@ class EnrollmentCenterController extends ApiController
             'ca_total_time_updated_to' => $totalTimeInSystem,
         ]);
     }
-
 }

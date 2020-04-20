@@ -6,7 +6,6 @@
 
 namespace App\Services\Enrollment;
 
-
 use App\SafeRequest;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
@@ -19,6 +18,23 @@ class AttachEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
         }
 
         return (new static($request->input('enrollable_id')))->attachFamilyMembers($request);
+    }
+
+    private function assignToCareAmbassador(SafeRequest $request, $ids)
+    {
+        //per CPM-2256 make sure to update confirmed family member statuses, to be able to pre-fill their data on CA-panel.
+        //pre-fill status as well. Enrollee should still come next in queue, since we're not checking for status on Confirmed FamilyMembers Queue
+        Enrollee::whereIn('id', $ids)->update([
+            'care_ambassador_user_id'  => auth()->user()->id,
+            'status'                   => $request->input('status') ?? Enrollee::TO_CALL,
+            'last_call_outcome'        => $request->input('reason'),
+            'last_call_outcome_reason' => $request->input('reason_other'),
+            'other_note'               => $request->input('extra'),
+            'preferred_window'         => $request->input('times') ? createTimeRangeFromEarliestAndLatest($request->input('times')) : null,
+            'preferred_days'           => is_array($request->input('days')) ? collect($request->input('days'))->reject(function ($d) {
+                return 'all' == $d;
+            })->implode(', ') : null,
+        ]);
     }
 
     private function attachFamilyMembers(SafeRequest $request)
@@ -44,28 +60,11 @@ class AttachEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
         $this->attachInverseRelationship($ids);
     }
 
-    private function assignToCareAmbassador(SafeRequest $request, $ids)
-    {
-        //per CPM-2256 make sure to update confirmed family member statuses, to be able to pre-fill their data on CA-panel.
-        //pre-fill status as well. Enrollee should still come next in queue, since we're not checking for status on Confirmed FamilyMembers Queue
-        Enrollee::whereIn('id', $ids)->update([
-            'care_ambassador_user_id'  => auth()->user()->id,
-            'status'                   => $request->input('status') ?? Enrollee::TO_CALL,
-            'last_call_outcome'        => $request->input('reason'),
-            'last_call_outcome_reason' => $request->input('reason_other'),
-            'other_note'               => $request->input('extra'),
-            'preferred_window'         => $request->input('times') ? createTimeRangeFromEarliestAndLatest($request->input('times')) : null,
-            'preferred_days'           => is_array($request->input('days')) ? collect($request->input('days'))->reject(function ($d) {
-                return $d == 'all';
-            })->implode(', ') : null,
-        ]);
-    }
-
     private function attachInverseRelationship($ids)
     {
         Enrollee::whereIn('id', $ids)
-                ->get()
-                ->each(function (Enrollee $e) {
+            ->get()
+            ->each(function (Enrollee $e) {
                     if ( ! $e->confirmedFamilyMembers()->where('id', $this->enrollee->id)->exists()) {
                         $e->attachFamilyMembers($this->enrollee->id);
                     }

@@ -1077,11 +1077,11 @@ if ( ! function_exists('validProblemName')) {
                 'check',
             ]
         ) && ! in_array(
-                strtolower($name),
-                [
-                    'fu',
-                ]
-            );
+            strtolower($name),
+            [
+                'fu',
+            ]
+        );
     }
 }
 
@@ -1888,7 +1888,7 @@ if ( ! function_exists('usStatesArrayForDropdown')) {
 }
 
 if ( ! function_exists('genericDiabetes')) {
-    function genericDiabetes(): \CircleLinkHealth\SharedModels\Entities\CpmProblem
+    function genericDiabetes(): CircleLinkHealth\SharedModels\Entities\CpmProblem
     {
         return \Cache::remember('cpm_problem_diabetes', 2, function () {
             return \CircleLinkHealth\SharedModels\Entities\CpmProblem::where('name', 'Diabetes')->first();
