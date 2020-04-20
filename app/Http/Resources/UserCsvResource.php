@@ -22,6 +22,11 @@ class UserCsvResource extends Resource
     public function toArray($request)
     {
         $practice      = $this->primaryPractice;
+
+        if (!$practice){
+            \Log::critical("Patient with id:{$this->id} does not have Practice attached.");
+        }
+
         $patient       = $this->patientInfo;
         $careplan      = $this->carePlan;
         $ccmStatusDate = '';
@@ -37,7 +42,7 @@ class UserCsvResource extends Resource
 
         return ('"'.$this->display_name ?? $this->name()).'",'.
                '"'.$this->getBillingProviderName().'",'.
-               '"'.$practice->display_name.'",'.
+               '"'.optional($practice)->display_name.'",'.
                '"'.$patient->ccm_status.'",'.
                '"'.optional($careplan)->status.'",'.
                '"'.$patient->withdrawn_reason.'",'.
