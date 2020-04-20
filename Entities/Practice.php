@@ -319,23 +319,23 @@ class Practice extends BaseModel implements HasMedia
                         function ($query) use ($chargeableServiceCode, $month) {
                             $query->where('is_billable', true)
                                 ->where(
-                                                'billable_at',
-                                                '>=',
-                                                $month->copy()->startOfMonth()->startOfDay()
-                                            )
+                                    'billable_at',
+                                    '>=',
+                                    $month->copy()->startOfMonth()->startOfDay()
+                                )
                                 ->where('billable_at', '<=', $month->copy()->endOfMonth()->endOfDay())
                                 ->when(
-                                                'AWV: G0438' == $chargeableServiceCode,
-                                                function ($query) {
+                                    'AWV: G0438' == $chargeableServiceCode,
+                                    function ($query) {
                                                     $query->where('is_initial_visit', 1);
                                                 }
-                                            )
+                                )
                                 ->when(
-                                                'AWV: G0439' == $chargeableServiceCode,
-                                                function ($query) {
+                                    'AWV: G0439' == $chargeableServiceCode,
+                                    function ($query) {
                                                     $query->where('is_initial_visit', 0);
                                                 }
-                                            );
+                                );
                         }
                     )
                     ->count() ?? 0;
@@ -348,22 +348,22 @@ class Practice extends BaseModel implements HasMedia
                             $query->whereHas(
                                 'chargeableServices',
                                 function ($query) use ($chargeableServiceId) {
-                                                $query->where('id', $chargeableServiceId);
-                                            }
+                                    $query->where('id', $chargeableServiceId);
+                                }
                             )
                                 ->where('month_year', $month->toDateString())
                                 ->where('approved', '=', true)
                                 ->when(
-                                                ! $isSoftwareOnly,
-                                                function ($q) {
+                                    ! $isSoftwareOnly,
+                                    function ($q) {
                                                     $q->whereDoesntHave(
                                                         'chargeableServices',
                                                         function ($query) {
-                                                              $query->where('code', 'Software-Only');
-                                                          }
+                                                            $query->where('code', 'Software-Only');
+                                                        }
                                                     );
                                                 }
-                                            );
+                                );
                         }
                     )
                     ->count() ?? 0;

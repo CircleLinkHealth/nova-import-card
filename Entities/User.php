@@ -2363,13 +2363,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                         ]
                     )
                         ->when(
-                                   ! $approveOwnCarePlans,
-                                   function ($q) {
+                            ! $approveOwnCarePlans,
+                            function ($q) {
                                        $q->orWhere(
                                            function ($q) {
-                                             $q->whereHas(
-                                                 'user',
-                                                 function ($q) {
+                                               $q->whereHas(
+                                                   'user',
+                                                   function ($q) {
                                                      $q->whereHas(
                                                          'forwardAlertsTo',
                                                          function ($q) {
@@ -2384,8 +2384,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                                          }
                                                      );
                                                  }
-                                             )
-                                                 ->when($this->canApproveCarePlans(), function ($q) {
+                                               )
+                                                   ->when($this->canApproveCarePlans(), function ($q) {
                                                      $q->orWhereHas(
                                                          'user',
                                                          function ($q) {
@@ -2394,10 +2394,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                                      );
                                                  })
                                              ;
-                                         }
+                                           }
                                        );
                                    }
-                               );
+                        );
                 }
             )
             ->with(
@@ -2502,15 +2502,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     return $query->whereHas(
                         'patients',
                         function ($innerQuery) {
-                                    //$innerQuery -> User Model
-                                    return $innerQuery->whereHas(
-                                        'patientInfo',
-                                        function ($innerInnerQuery) {
+                            //$innerQuery -> User Model
+                            return $innerQuery->whereHas(
+                                'patientInfo',
+                                function ($innerInnerQuery) {
                                             //$innerInnerQuery -> Patient model
                                             return $innerInnerQuery->where('ccm_status', '=', 'enrolled');
                                         }
-                                    );
-                                }
+                            );
+                        }
                     );
                 }
             )
