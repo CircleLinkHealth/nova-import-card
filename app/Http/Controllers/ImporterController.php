@@ -120,14 +120,14 @@ class ImporterController extends Controller
                         $isUpg0506Incomplete = Ccda::whereHas(
                             'media',
                             function ($q) {
-                                                        $q->where('custom_properties->is_upg0506_complete', '!=', 'true');
-                                                    }
-                        )->whereHas(
-                                                    'directMessage',
-                                                    function ($q) {
-                                $q->where('from', 'like', '%@upg.ssdirect.aprima.com');
+                                $q->where('custom_properties->is_upg0506_complete', '!=', 'true');
                             }
-                                                )->where('id', $ccda->id)->exists();
+                        )->whereHas(
+                            'directMessage',
+                            function ($q) {
+                                                        $q->where('from', 'like', '%@upg.ssdirect.aprima.com');
+                                                    }
+                        )->where('id', $ccda->id)->exists();
 
                         if ($isUpg0506Incomplete) {
                             return false;

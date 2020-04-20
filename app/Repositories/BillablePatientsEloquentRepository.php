@@ -107,8 +107,8 @@ class BillablePatientsEloquentRepository
                         $q->where('id', '=', $practiceId);
                     })
                         ->orWhereHas('primaryPractice', function ($q) use ($practiceId) {
-                                                    $q->where('id', '=', $practiceId);
-                                                });
+                            $q->where('id', '=', $practiceId);
+                        });
                 }
             );
     }

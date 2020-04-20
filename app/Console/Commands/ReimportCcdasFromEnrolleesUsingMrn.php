@@ -49,11 +49,11 @@ class ReimportCcdasFromEnrolleesUsingMrn extends Command
                 function ($enrollees) {
                     $enrollees->each(
                         function (Enrollee $e) {
-                                $this->showPreMessage($e);
-                                $this->updateOrCreateCarePlan(
-                                    $this->medicalRecord($e)
-                                );
-                            }
+                            $this->showPreMessage($e);
+                            $this->updateOrCreateCarePlan(
+                                $this->medicalRecord($e)
+                            );
+                        }
                     );
                 }
             );
