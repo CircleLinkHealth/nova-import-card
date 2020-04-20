@@ -49,7 +49,7 @@ class ImportMedications extends BaseCcdaImportTask
                 $ccdMedication = Medication::updateOrCreate(
                     [
                         'patient_id' => $this->patient->id,
-                        'name'       => $new['cons_name'],
+                        'name'       => ucwords(strtolower($new['cons_name'])),
                         'sig'        => $sig,
                     ],
                     [
