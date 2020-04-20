@@ -228,6 +228,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $tokens_count
  * @property \App\CPRulesUCP[]|\Illuminate\Database\Eloquent\Collection                                                      $ucp
  * @property int|null                                                                                                        $ucp_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User careCoaches()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User exceptType($type)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User filter(\App\Filters\QueryFilters $filters)
@@ -2358,14 +2359,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                         ->when(
                             ! $approveOwnCarePlans,
                             function ($q) {
-                                       $q->orWhere(
-                                           function ($q) {
+                                $q->orWhere(
+                                    function ($q) {
                                                $q->whereHas(
                                                    'user',
                                                    function ($q) {
-                                                     $q->whereHas(
-                                                         'forwardAlertsTo',
-                                                         function ($q) {
+                                                       $q->whereHas(
+                                                           'forwardAlertsTo',
+                                                           function ($q) {
                                                              $q->where('contactable_id', $this->id)
                                                                  ->orWhereIn(
                                                                      'name',
@@ -2375,21 +2376,21 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                                                      ]
                                                                  );
                                                          }
-                                                     );
-                                                 }
+                                                       );
+                                                   }
                                                )
                                                    ->when($this->canApproveCarePlans(), function ($q) {
-                                                     $q->orWhereHas(
-                                                         'user',
-                                                         function ($q) {
+                                                       $q->orWhereHas(
+                                                           'user',
+                                                           function ($q) {
                                                              $q->intersectPracticesWith($this);
                                                          }
-                                                     );
-                                                 })
+                                                       );
+                                                   })
                                              ;
                                            }
-                                       );
-                                   }
+                                );
+                            }
                         );
                 }
             )
@@ -2499,9 +2500,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                             return $innerQuery->whereHas(
                                 'patientInfo',
                                 function ($innerInnerQuery) {
-                                            //$innerInnerQuery -> Patient model
-                                            return $innerInnerQuery->where('ccm_status', '=', 'enrolled');
-                                        }
+                                    //$innerInnerQuery -> Patient model
+                                    return $innerInnerQuery->where('ccm_status', '=', 'enrolled');
+                                }
                             );
                         }
                     );

@@ -20,6 +20,7 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * @property string|null $hra_status
  * @property string|null $vitals_status
  * @property int|null    $year
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus query()
@@ -32,12 +33,16 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus whereVitalsStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus whereYear($value)
  * @mixin \Eloquent
+ *
  * @property string|null $hra_display_date
  * @property string|null $v_display_date
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus whereHraDisplayDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus whereVDisplayDate($value)
+ *
  * @property string|null $mrn
  * @property string|null $appointment
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus whereAppointment($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus whereMrn($value)
  */

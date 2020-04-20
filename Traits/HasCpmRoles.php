@@ -28,7 +28,7 @@ trait HasCpmRoles
     {
         return "cpm_roles:user_id:$this->id";
     }
-    
+
     /**
      * Returns whether the user is an administrator.
      */

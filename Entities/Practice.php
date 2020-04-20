@@ -58,6 +58,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \App\CPRulesPCP[]|\Illuminate\Database\Eloquent\Collection                                          $pcp
  * @property \CircleLinkHealth\Customer\Entities\Settings[]|\Illuminate\Database\Eloquent\Collection             $settings
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                 $users
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|Practice active()
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|Practice onlyTrashed()
@@ -87,6 +88,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Query\Builder|Practice withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Practice withoutTrashed()
  * @mixin \Eloquent
+ *
  * @property int|null                                                          $saas_account_id
  * @property \App\CareAmbassadorLog[]|\Illuminate\Database\Eloquent\Collection $careAmbassadorLogs
  * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection
@@ -99,6 +101,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *     $notifications
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\SaasAccount|null                                        $saasAccount
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice activeBillable()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
  *     authUserCanAccess($softwareOnly = false)
@@ -112,6 +115,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice query()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
  *     whereSaasAccountId($value)
+ *
  * @property int|null $care_ambassador_logs_count
  * @property int|null $careplan_count
  * @property int|null $chargeable_services_count
@@ -124,12 +128,15 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null $settings_count
  * @property int|null $users_count
  * @property int      $is_demo
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
  *     whereIsDemo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice opsDashboardQuery(\Carbon\Carbon $startOfMonth, \Carbon\Carbon $revisionsFromDate)
+ *
  * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Nova\Actions\ActionEvent[] $actions
  * @property int|null                                                                     $actions_count
  * @property \Illuminate\Support\Collection|null                                          $importing_hooks
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice whereImportingHooks($value)
  */
 class Practice extends BaseModel implements HasMedia
@@ -320,14 +327,14 @@ class Practice extends BaseModel implements HasMedia
                                 ->when(
                                     'AWV: G0438' == $chargeableServiceCode,
                                     function ($query) {
-                                                    $query->where('is_initial_visit', 1);
-                                                }
+                                        $query->where('is_initial_visit', 1);
+                                    }
                                 )
                                 ->when(
                                     'AWV: G0439' == $chargeableServiceCode,
                                     function ($query) {
-                                                    $query->where('is_initial_visit', 0);
-                                                }
+                                        $query->where('is_initial_visit', 0);
+                                    }
                                 );
                         }
                     )
@@ -349,13 +356,13 @@ class Practice extends BaseModel implements HasMedia
                                 ->when(
                                     ! $isSoftwareOnly,
                                     function ($q) {
-                                                    $q->whereDoesntHave(
-                                                        'chargeableServices',
-                                                        function ($query) {
+                                        $q->whereDoesntHave(
+                                            'chargeableServices',
+                                            function ($query) {
                                                             $query->where('code', 'Software-Only');
                                                         }
-                                                    );
-                                                }
+                                        );
+                                    }
                                 );
                         }
                     )

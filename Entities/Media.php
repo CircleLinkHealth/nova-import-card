@@ -32,6 +32,7 @@ use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
  * @property mixed                                                                                $human_readable_size
  * @property mixed                                                                                $type
  * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection $model
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Media newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Media newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SpatieMedia ordered()

@@ -27,6 +27,7 @@ namespace CircleLinkHealth\Customer\Entities;
  * @property \Carbon\Carbon|null                           $created_at
  * @property \Carbon\Carbon|null                           $updated_at
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $settingsable
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Settings whereAutoApproveCareplans($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Settings whereCareplanMode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Settings whereCreatedAt($value)
@@ -46,6 +47,7 @@ namespace CircleLinkHealth\Customer\Entities;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Settings whereSettingsableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Settings whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property int                                                                                         $dm_careplan_approval_reminders
  * @property float|null                                                                                  $note_font_size
  * @property string                                                                                      $bill_to
@@ -54,6 +56,7 @@ namespace CircleLinkHealth\Customer\Entities;
  * @property int                                                                                         $twilio_enabled
  * @property int                                                                                         $twilio_recordings_enabled
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings query()
@@ -64,13 +67,16 @@ namespace CircleLinkHealth\Customer\Entities;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings whereNoteFontSize($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings whereTwilioEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings whereTwilioRecordingsEnabled($value)
+ *
  * @property int $dm_awv_reports
  * @property int $email_awv_reports
  * @property int $efax_awv_reports
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings forPractice($practiceId)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings whereDmAwvReports($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings whereEfaxAwvReports($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings whereEmailAwvReports($value)
+ *
  * @property int|null $revision_history_count
  */
 class Settings extends \CircleLinkHealth\Core\Entities\BaseModel
