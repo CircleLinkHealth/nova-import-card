@@ -16,6 +16,7 @@ namespace CircleLinkHealth\Customer\Entities;
  * @property \Carbon\Carbon|null                           $created_at
  * @property \Carbon\Carbon|null                           $updated_at
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $emrDirectable
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress whereEmrDirectableId($value)
@@ -23,10 +24,13 @@ namespace CircleLinkHealth\Customer\Entities;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress query()
+ *
  * @property int|null $revision_history_count
  */
 class EmrDirectAddress extends \CircleLinkHealth\Core\Entities\BaseModel

@@ -13,7 +13,7 @@ use Laravel\Scout\Searchable;
 
 /**
  * CircleLinkHealth\Customer\Entities\Location.
- * 
+ *
  * CircleLinkHealth\Customer\Entities\Location.
  *
  * @property int                                                                                             $id
@@ -43,6 +43,7 @@ use Laravel\Scout\Searchable;
  * @property \CircleLinkHealth\Customer\Entities\Practice                                                    $program
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection             $providers
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection             $user
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Location onlyTrashed()
  * @method static bool|null restore()
@@ -67,12 +68,15 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Query\Builder|\App\Location withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Location withoutTrashed()
  * @mixin \Eloquent
+ *
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection                     $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location query()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location whereClinicalEscalationPhone($value)
+ *
  * @property int|null $clinical_emergency_contact_count
  * @property int|null $emr_direct_count
  * @property int|null $notifications_count
