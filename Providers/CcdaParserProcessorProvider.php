@@ -40,6 +40,7 @@ class CcdaParserProcessorProvider extends ServiceProvider
     {
         return [
             CcdaParse::class,
+            'ccd:parse',
         ];
     }
 
