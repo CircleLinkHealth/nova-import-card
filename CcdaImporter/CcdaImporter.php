@@ -28,6 +28,7 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CcdaImporter
@@ -64,12 +65,19 @@ class CcdaImporter
         $this->enrollee = $enrollee;
     }
 
-    public function attemptCreateCarePlan()
+    public function attemptCreateCarePlan(): Ccda
     {
         \DB::transaction(
             function () {
                 if (is_null($this->patient)) {
-                    $this->createNewPatient();
+                    try {
+                        $this->createNewPatient();
+                    } catch (ValidationException $e) {
+                        $this->ccda->validation_checks = $e->errors();
+                        $this->ccda->save();
+
+                        return $this->ccda;
+                    }
                 }
 
                 $this->patient->loadMissing(['primaryPractice', 'patientInfo']);
@@ -116,7 +124,7 @@ class CcdaImporter
             }
         );
 
-        return $this->carePlan;
+        return $this->ccda;
     }
 
     /**
