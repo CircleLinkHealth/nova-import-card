@@ -102,9 +102,11 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
 
         $cpmProblems = CpmProblem::get();
         $ccdProblems = $this->patient()->ccdProblems()->createMany([
-            ['name' => 'test'.str_random(5)],
-            ['name' => 'test'.str_random(5)],
-            ['name' => 'test'.str_random(5)],
+            ['name' => 'test'.str_random(5), 'cpm_problem_id' => $cpmProblems->random()->id, 'is_monitored' => true],
+            ['name' => 'test'.str_random(5), 'cpm_problem_id' => $cpmProblems->random()->id, 'is_monitored' => true],
+            ['name' => 'test'.str_random(5), 'cpm_problem_id' => $cpmProblems->random()->id, 'is_monitored' => true],
+            ['name' => 'test'.str_random(5), 'cpm_problem_id' => $cpmProblems->random()->id, 'is_monitored' => true],
+            ['name' => 'test'.str_random(5), 'cpm_problem_id' => $cpmProblems->random()->id, 'is_monitored' => true],
         ]);
 
         foreach ($ccdProblems as $problem) {
@@ -128,7 +130,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
 
         $validator = $this->carePlan->validator();
 
-        $this->assertTrue($validator->passes());
+        $this->assertTrue($validator->passes(), $validator->errors()->toJson());
     }
 
     /**
