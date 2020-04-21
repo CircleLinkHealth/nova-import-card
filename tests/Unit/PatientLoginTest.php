@@ -105,10 +105,12 @@ class PatientLoginTest extends CustomerTestCase
     {
         $this->qaApproveCarePlan();
 
+        $this->flushSession();
         $this->actingAs($this->patient);
 
-        $this->call('GET', route('home'))
-            ->assertRedirect(route('patient-user.careplan'));
+        $resp = $this->call('GET', route('home'));
+
+        $resp->assertRedirect(route('patient-user.careplan'));
 
         $this->call('GET', route('patient-user.careplan'))
             ->assertSeeText(sanitizeString('This Care Plan is pending Dr. approval'))
