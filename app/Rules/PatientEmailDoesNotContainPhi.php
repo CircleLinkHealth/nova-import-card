@@ -74,7 +74,7 @@ class PatientEmailDoesNotContainPhi implements Rule
             $string = $this->getSanitizedAndTransformedAttribute($this->patientUser, $phi);
 
             if ($string) {
-                $this->phiFound[] = preg_match("/\b{$string}\b/", $value)
+                $this->phiFound[] = $this->stringsMatch($string, $value)
                     ? $phi
                     : null;
             }
@@ -85,7 +85,7 @@ class PatientEmailDoesNotContainPhi implements Rule
             foreach ($relation->phi as $phi) {
                 $string = $this->getSanitizedAndTransformedAttribute($relation, $phi);
                 if ($string) {
-                    $this->phiFound[] = preg_match("/\b".preg_quote($string, '/')."\b/", $value)
+                    $this->phiFound[] = $this->stringsMatch($string, $value)
                         ? $phi
                         : null;
                 }
@@ -108,5 +108,9 @@ class PatientEmailDoesNotContainPhi implements Rule
         }
 
         return $string;
+    }
+
+    private function stringsMatch(string $string1, string $string2){
+        return preg_match("/\b".preg_quote($string1, '/')."\b/", $string2);
     }
 }
