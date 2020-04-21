@@ -450,15 +450,17 @@ class CarePlan extends BaseModel implements PdfReport
             Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
         );
     }
-
+    
     /**
      * Validate that the recently created CarePlan has all the data CLH needs to provide services to a patient.
      *
+     * @param bool $confirmDiabetesConditions
      * @return \Illuminate\Validation\Validator
+     * @throws \Exception
      */
-    public function validator(bool $confirmDiabetesConditions = false)
+    public function validator(bool $confirmDiabetesConditions = false):\Illuminate\Validation\Validator
     {
-        $patient = $this->patient->load(
+        $patient = $this->patient->loadMissing(
             [
                 'patientInfo',
                 'phoneNumbers',
@@ -490,7 +492,7 @@ class CarePlan extends BaseModel implements PdfReport
             $data,
             [
                 'conditions' => [
-                    new HasEnoughProblems(),
+                    new HasEnoughProblems($this->patient),
                     //If Approver has confirmed that Diabetes Conditions are correct or if Care Plan has already been approved, bypass check
                     //todo: move rule to this module (currently did not because CarePlan exists both in Shared Models and eligibility)
                     ! $confirmDiabetesConditions && self::DRAFT === $this->status
