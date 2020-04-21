@@ -146,7 +146,7 @@ class Practice extends BaseModel implements HasMedia
     protected $casts = [
         'importing_hooks' => 'collection'
     ];
-    
+
     protected $fillable = [
         'importing_hooks',
         'saas_account_id',

@@ -46,12 +46,12 @@ class PhoneNumber extends \CircleLinkHealth\Core\Entities\BaseModel
     const HOME   = 'home';
     const MOBILE = 'mobile';
     const WORK   = 'work';
-    
+
     public $phi = [
         'number',
         'extension',
     ];
-    
+
     /**
      * The attributes that are mass assignable.
      *

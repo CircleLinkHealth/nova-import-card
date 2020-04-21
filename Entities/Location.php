@@ -111,12 +111,12 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
         'ehr_login',
         'ehr_password',
     ];
-    
+
     protected $hidden = [
         'ehr_login',
         'ehr_password',
     ];
-    
+
     public function clinicalEmergencyContact()
     {
         return $this->morphToMany(User::class, 'contactable', 'contacts')

@@ -106,7 +106,7 @@ class Settings extends \CircleLinkHealth\Core\Entities\BaseModel
         'twilio_recordings_enabled',
     ];
     protected $table = 'cpm_settings';
-    
+
     protected $attributes = [
         'careplan_mode' => 'web',
         'bill_to' => 'practice',
