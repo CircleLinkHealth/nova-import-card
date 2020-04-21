@@ -57,6 +57,7 @@ class AutoApproveValidCarePlansAs extends Command
                 if (!$needsQA) {
                     $patient->carePlan->status = CarePlan::QA_APPROVED;
                     $patient->carePlan->qa_approver_id = $this->argument('userId');
+                    $patient->carePlan->qa_date = now()->toDateTimeString();
                     
                     if (! $this->option('dry')) $patient->carePlan->save();
                 }
