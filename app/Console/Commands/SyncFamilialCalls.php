@@ -27,8 +27,6 @@ class SyncFamilialCalls extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param SchedulerService $schedulerService
      */
     public function __construct(SchedulerService $schedulerService)
     {

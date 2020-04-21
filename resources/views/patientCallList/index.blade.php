@@ -253,7 +253,7 @@ function formatTime($time)
 
                                                 $route = route(
                                                     'patient.note.index',
-                                                    ['patient' => $call->patient_id]
+                                                    ['patientId' => $call->patient_id]
                                                 );
 
                                                 if ('addendum_response' === $call->type) {
@@ -401,7 +401,7 @@ function formatTime($time)
     @if (count($calls) > 0)
         @foreach($calls as $call)
             <?php
-            $route      = route('patient.note.index', ['patient' => $call->patient_id]);
+            $route      = route('patient.note.index', ['patientId' => $call->patient_id]);
             $buttonName = 'Continue to notes';
 
             if ('addendum_response' === $call->type) {

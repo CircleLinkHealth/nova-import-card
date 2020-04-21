@@ -7,7 +7,6 @@
 namespace Tests\Helpers;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmWeight;

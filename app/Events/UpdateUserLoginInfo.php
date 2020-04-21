@@ -13,8 +13,6 @@ class UpdateUserLoginInfo
 {
     /**
      * Handle the event.
-     *
-     * @param Login $event
      */
     public function handle(Login $event)
     {

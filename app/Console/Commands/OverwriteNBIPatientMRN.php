@@ -59,10 +59,10 @@ class OverwriteNBIPatientMRN extends Command
     private function lookupAndReplaceMrn(Patient $patientInfo)
     {
         $dataFromPractice = SupplementalPatientData::where('first_name', 'like', "{$patientInfo->user->first_name}%")
-                                                   ->where('last_name', $patientInfo->user->last_name)
-                                                   ->where('dob', $patientInfo->birth_date)
-                                                   ->where('practice_id', Practice::whereName(ReplaceFieldsFromSupplementaryData::NBI_PRACTICE_NAME)->value('id'))
-                                                   ->first();
+            ->where('last_name', $patientInfo->user->last_name)
+            ->where('dob', $patientInfo->birth_date)
+            ->where('practice_id', Practice::whereName(ReplaceFieldsFromSupplementaryData::NBI_PRACTICE_NAME)->value('id'))
+            ->first();
 
         if (optional($dataFromPractice)->mrn) {
             $patientInfo->mrn_number = $dataFromPractice->mrn;

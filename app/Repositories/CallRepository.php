@@ -32,7 +32,6 @@ class CallRepository
      * Get the number of calls for a patient for a month.
      *
      * @param $patientUserId
-     * @param Carbon|null $monthYear
      *
      * @return mixed
      */
@@ -55,7 +54,6 @@ class CallRepository
      * Get the number of successful calls for a patient for a month.
      *
      * @param $patientUserId
-     * @param Carbon|null $monthYear
      *
      * @return mixed
      */

@@ -12,8 +12,7 @@ use Illuminate\Contracts\Validation\Rule;
 
 class HasEnoughProblems implements Rule
 {
-
-    /** @var User $patient */
+    /** @var User */
     private $patient;
 
     /**
@@ -58,7 +57,7 @@ class HasEnoughProblems implements Rule
         // if we reach here, it means that we have no $bhiProblems.
         // so, if only one ccm problem, we check if PCM is enabled for the practice
         // otherwise, we return true only if ccm problems are equal or more than two
-        if ($cpmProblems === 1) {
+        if (1 === $cpmProblems) {
             return $this->patient->primaryPractice->hasServiceCode(ChargeableService::PCM);
         }
 

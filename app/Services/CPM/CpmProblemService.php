@@ -8,14 +8,13 @@ namespace App\Services\CPM;
 
 use App\Contracts\Services\CpmModel;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 
 class CpmProblemService implements CpmModel
 {
     public function all()
     {
-        $problems = $this->noDiabetesFilter()->withLatestCpmInstruction()->withIcd10Codes()->get([
+        return $this->noDiabetesFilter()->withLatestCpmInstruction()->withIcd10Codes()->get([
             'id',
             'name',
             'default_icd_10_code',
@@ -23,8 +22,6 @@ class CpmProblemService implements CpmModel
         ])->map(function ($value) {
             return $this->setupProblem($value);
         });
-
-        return $problems;
     }
 
     /**

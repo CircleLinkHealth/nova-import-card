@@ -7,7 +7,6 @@
 namespace App\Listeners;
 
 use App\Events\CarePlanWasQAApproved;
-use App\Events\PdfableCreated;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;

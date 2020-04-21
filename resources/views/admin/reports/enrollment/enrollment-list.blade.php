@@ -41,6 +41,9 @@
                                             Status
                                         </th>
                                         <th>
+                                            Total Time Spent
+                                        </th>
+                                        <th>
                                             Last Call Outcome
                                         </th>
                                         <th>
@@ -111,6 +114,7 @@
                             {data: 'has_copay', name: 'has_copay'},
                             {data: 'care_ambassador', name: 'care_ambassador'},
                             {data: 'status', name: 'status'},
+                            {data: 'total_time_spent', name: 'total_time_spent'},
                             {data: 'last_call_outcome', name: 'last_call_outcome'},
                             {data: 'last_call_outcome_reason', name: 'last_call_outcome_reason'},
                             {data: 'mrn_number', name: 'mrn_number'},

@@ -17,6 +17,8 @@
 #
 ###########################################################################q.w-,e
 
+exit 0
+
 # Plugin title
 title="PHP Code Fixer"
 
@@ -33,7 +35,7 @@ source $DIR/helpers/welcome.sh
 source $DIR/helpers/locate.sh
 
 # Get modified files, staged for commit
-declare -a CHANGED_FILES=$(git diff --name-only --cached)
+declare -a CHANGED_FILES=$(git diff-index HEAD --name-only | grep ".php")
 
 printf '%s\n' "${CHANGED_FILES}"
 

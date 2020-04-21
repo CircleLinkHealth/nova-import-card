@@ -47,7 +47,7 @@ if (isset($patient)) {
                                     <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
                                         @if (isset($disableTimeTracking) && $disableTimeTracking)
                                             <div class="color-grey">
-                                                <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
+                                                <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', [$patient->id]) }}">
                                                     <server-time-display url="{{config('services.ws.server-url')}}"
                                                                          patient-id="{{$patient->id}}"
                                                                          provider-id="{{Auth::user()->id}}"
@@ -70,7 +70,7 @@ if (isset($patient)) {
                                             </div>
                                             <div class="padding-top-print">
                                                  <a id="monthly-time-static"
-                                                    href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
+                                                    href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', [$patient->id]) }}">
                                                     {{$monthlyTime}}
                                                 </a>
                                             </div>
@@ -82,7 +82,7 @@ if (isset($patient)) {
                                                 </div>
                                                 <div class="padding-top-print">
                                                      <a id="monthly-bhi-time-static"
-                                                        href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
+                                                        href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', [$patient->id]) }}">
                                                         {{$monthlyBhiTime}}
                                                      </a>
                                                 </div>

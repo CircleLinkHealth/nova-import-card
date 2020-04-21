@@ -90,9 +90,7 @@ class OnSuccessfulDeployment extends Command
                 }
 
                 if ( ! isset($channel)) {
-                    throw new \Exception(
-                        'Unable to resolve Slack channel. Check that environment is allowed to run this command.'
-                    );
+                    throw new \Exception('Unable to resolve Slack channel. Check that environment is allowed to run this command.');
                 }
 
                 sendSlackMessage($channel, $message, true);

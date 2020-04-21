@@ -28,9 +28,6 @@ class PracticeReportable implements Reportable
     /**
      * Sum of activity time for this Reportable.
      *
-     * @param Carbon $start
-     * @param Carbon $end
-     *
      * @return mixed
      */
     public function activitiesDuration(Carbon $start, Carbon $end)
@@ -46,8 +43,6 @@ class PracticeReportable implements Reportable
     /**
      * Total eligible-to-be-billed patients count (for given month) for this Reportable.
      *
-     * @param Carbon $month
-     *
      * @return mixed
      */
     public function billablePatientsCountForMonth(Carbon $month)
@@ -58,9 +53,7 @@ class PracticeReportable implements Reportable
     /**
      * Call count for this Reportable.
      *
-     * @param Carbon $start
-     * @param Carbon $end
-     * @param null   $status
+     * @param null $status
      *
      * @return mixed
      */
@@ -86,9 +79,6 @@ class PracticeReportable implements Reportable
     /**
      * Forwarded emergency notes count for this Reportable.
      *
-     * @param Carbon $start
-     * @param Carbon $end
-     *
      * @return mixed
      */
     public function forwardedEmergencyNotesCount(Carbon $start, Carbon $end)
@@ -101,9 +91,6 @@ class PracticeReportable implements Reportable
 
     /**
      * Forwarded notes count for this Reportable.
-     *
-     * @param Carbon $start
-     * @param Carbon $end
      *
      * @return mixed
      */
@@ -126,9 +113,6 @@ class PracticeReportable implements Reportable
 
     /**
      * Observation count for this Reportable.
-     *
-     * @param Carbon $start
-     * @param Carbon $end
      *
      * @return mixed
      */
@@ -156,8 +140,6 @@ class PracticeReportable implements Reportable
 
     /**
      * Total billed patients count (since the beginning of time) for this Reportable.
-     *
-     * @param Carbon|null $month
      *
      * @return mixed
      */

@@ -6,7 +6,6 @@
 
 namespace App\Services\Enrollment;
 
-
 use App\SafeRequest;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
@@ -18,21 +17,7 @@ class AttachEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
             return false;
         }
 
-
         return (new static($request->input('enrollee_id')))->attachFamilyMembers($request->input('confirmed_family_members'));
-    }
-
-    private function attachFamilyMembers($ids)
-    {
-        $this->getModel();
-
-        $this->assignToCareAmbassador($ids);
-
-        //make sure to check if duplicate entry exists,
-        //also attach the inverse for each on
-        $this->enrollee->attachFamilyMembers($ids);
-
-        $this->attachInverseRelationship($ids);
     }
 
     private function assignToCareAmbassador($ids)
@@ -49,6 +34,19 @@ class AttachEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
         ]);
     }
 
+    private function attachFamilyMembers($ids)
+    {
+        $this->getModel();
+
+        $this->assignToCareAmbassador($ids);
+
+        //make sure to check if duplicate entry exists,
+        //also attach the inverse for each on
+        $this->enrollee->attachFamilyMembers($ids);
+
+        $this->attachInverseRelationship($ids);
+    }
+
     private function attachInverseRelationship($ids)
     {
         if (empty($ids)) {
@@ -59,11 +57,11 @@ class AttachEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
         }
 
         Enrollee::whereIn('id', $ids)
-                ->get()
-                ->each(function (Enrollee $e) {
-                    if (! $e->confirmedFamilyMembers()->where('id', $this->enrollee->id)->exists()) {
-                        $e->attachFamilyMembers($this->enrollee->id);
-                    }
-                });
+            ->get()
+            ->each(function (Enrollee $e) {
+                if ( ! $e->confirmedFamilyMembers()->where('id', $this->enrollee->id)->exists()) {
+                    $e->attachFamilyMembers($this->enrollee->id);
+                }
+            });
     }
 }

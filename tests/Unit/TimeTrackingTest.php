@@ -84,7 +84,7 @@ class TimeTrackingTest extends CustomerTestCase
         $response->assertStatus(201);
 
         //if we pass an empty string as program ID, the app will store a 0in the DB
-        $programId = '' === $args['programId'] ? 0 : $args['programId'];
+        $programId = '' === $args['programId'] ? null : $args['programId'];
 
         foreach ($args['activities'] as $activity) {
             $this->assertDatabaseHas(

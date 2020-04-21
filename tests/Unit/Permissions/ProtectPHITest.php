@@ -30,7 +30,7 @@ class ProtectPHITest extends TestCase
 
     private $facadeMocks = [];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         //could not make it work at the moment
@@ -60,7 +60,6 @@ class ProtectPHITest extends TestCase
     {
         //login
         auth()->login($this->admin);
-
 
         //care-plan
         $this->assertAuthUserCannotSeePatientPhi(
@@ -193,7 +192,7 @@ class ProtectPHITest extends TestCase
     private function disablePHIForUser(User $user)
     {
         $user->setCanSeePhi(false);
-        $this->assertTrue(! $user->hasPermission('phi.read'));
+        $this->assertTrue( ! $user->hasPermission('phi.read'));
     }
 
     private function getExpectedValueForKey($model, $phiField)

@@ -6,6 +6,7 @@
 
 namespace App\Nova\Importers;
 
+use Illuminate\Support\Str;
 use Validator;
 
 abstract class ReportsErrorsToSlack
@@ -35,7 +36,7 @@ abstract class ReportsErrorsToSlack
 
     protected function reportToChannel(): string
     {
-        if ( ! starts_with($this->channel, '#')) {
+        if ( ! Str::startsWith($this->channel, '#')) {
             $this->channel = '#'.$this->channel;
         }
 

@@ -7,16 +7,13 @@
 namespace App\Listeners;
 
 use App\DirectMailMessage;
-use App\Jobs\DecorateUPG0506CcdaWithPdfData;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use App\Services\PhiMail\Incoming\Handlers\Pdf;
 use App\UPG\UPGPdfCarePlan;
-use Carbon\Carbon;
-use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Media;
-use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Str;
 
 class UPG0506DirectMailListener implements ShouldQueue
 {
@@ -98,6 +95,6 @@ class UPG0506DirectMailListener implements ShouldQueue
 
     private function shouldBail(string $sender)
     {
-        return ! str_contains($sender, '@upg.ssdirect.aprima.com') || ! upg0506IsEnabled();
+        return ! Str::contains($sender, '@upg.ssdirect.aprima.com') || ! upg0506IsEnabled();
     }
 }

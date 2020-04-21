@@ -25,9 +25,6 @@ class InvoiceReminder extends Notification
 
     /**
      * Create a new notification instance.
-     *
-     * @param Carbon $deadline
-     * @param Carbon $invoiceMonth
      */
     public function __construct(Carbon $deadline, Carbon $invoiceMonth)
     {

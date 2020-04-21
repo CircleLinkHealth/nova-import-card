@@ -10,14 +10,10 @@ use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\Helpers\CustomerTestCaseHelper;
 
 class CustomerTestCase extends TestCase
 {
     use UserHelpers;
-    use WithFaker;
     /**
      * @var array|User
      */
@@ -27,6 +23,7 @@ class CustomerTestCase extends TestCase
      * @var Location
      */
     private $location;
+    private $medicalAssistant;
     /**
      * @var array|User
      */
@@ -43,15 +40,8 @@ class CustomerTestCase extends TestCase
      * @var array|User
      */
     private $superadmin;
-    private $medicalAssistant;
-    /**
-     * @var Enrollee
-     */
-    private $enrollee;
 
     /**
-     * @param int $number
-     *
      * @return array|User
      */
     protected function careCoach(int $number = 1)
@@ -64,38 +54,30 @@ class CustomerTestCase extends TestCase
     }
 
     /**
-     * @param int $number
-     *
-     * @return array|User
-     */
-    protected function superadmin(int $number = 1)
-    {
-        if ( ! $this->superadmin) {
-            $this->superadmin = $this->createUsersOfType('administrator', $number);
-        }
-
-        return $this->superadmin;
-    }
-
-    /**
      * @return Location
      */
     protected function location()
     {
         if ( ! $this->location) {
-            $this->location = Location::firstOrCreate(
-                [
-                    'practice_id' => $this->practice()->id,
-                ]
-            );
+            $this->location = Location::where('practice_id', $this->practice()->id)->first();
+            if ( ! $this->location) {
+                $this->location = factory(Location::class)->create(['practice_id' => $this->practice()->id]);
+            }
         }
 
         return $this->location;
     }
 
+    protected function medicalAssistant(int $number = 1)
+    {
+        if ( ! $this->medicalAssistant) {
+            $this->medicalAssistant = $this->createUsersOfType('med_assistant', $number);
+        }
+
+        return $this->medicalAssistant;
+    }
+
     /**
-     * @param int $number
-     *
      * @return array|User
      */
     protected function patient(int $number = 1)
@@ -114,14 +96,13 @@ class CustomerTestCase extends TestCase
     {
         if ( ! $this->practice) {
             $this->practice = factory(Practice::class)->create();
+            $this->location();
         }
 
         return $this->practice;
     }
 
     /**
-     * @param int $number
-     *
      * @return array|User
      */
     protected function provider(int $number = 1)
@@ -133,13 +114,16 @@ class CustomerTestCase extends TestCase
         return $this->provider;
     }
 
-    protected function medicalAssistant(int $number = 1)
+    /**
+     * @return array|User
+     */
+    protected function superadmin(int $number = 1)
     {
-        if ( ! $this->medicalAssistant) {
-            $this->medicalAssistant = $this->createUsersOfType('med_assistant', $number);
+        if ( ! $this->superadmin) {
+            $this->superadmin = $this->createUsersOfType('administrator', $number);
         }
 
-        return $this->medicalAssistant;
+        return $this->superadmin;
     }
 
     /**
@@ -156,20 +140,5 @@ class CustomerTestCase extends TestCase
         }
 
         return $users;
-    }
-
-    protected function enrollee(int $number = 1)
-    {
-        if (! $this->enrollee) {
-            $this->enrollee = factory(Enrollee::class)->create([
-                'practice_id' => $this->practice()->id,
-                'dob' => \Carbon\Carbon::parse('1901-01-01'),
-                'referring_provider_name' => 'Dr. Demo',
-                'mrn' => mt_rand(100000, 999999),
-                'email'=> $this->faker->safeEmail,
-            ]);
-        }
-
-        return $this->enrollee;
     }
 }

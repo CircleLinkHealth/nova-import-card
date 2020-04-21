@@ -42,7 +42,7 @@ class OpsDashboardPatientEloquentRepository
                     $patient->whereIn(
                         'ccm_status',
                         [Patient::PAUSED, Patient::WITHDRAWN, Patient::ENROLLED]
-                                );
+                    );
                 })
                 ->get();
         }

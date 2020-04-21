@@ -16,7 +16,6 @@ class ProviderDashboardACL
      * Handle an incoming request.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
      * @param mixed                    $role
      *
      * @return mixed

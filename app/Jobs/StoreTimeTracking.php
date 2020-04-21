@@ -42,11 +42,9 @@ class StoreTimeTracking implements ShouldQueue
      * @var ParameterBag
      */
     protected $params;
-    
+
     /**
      * Create a new job instance.
-     *
-     * @param ParameterBag $params
      */
     public function __construct(ParameterBag $params)
     {
@@ -58,11 +56,13 @@ class StoreTimeTracking implements ShouldQueue
      */
     public function handle()
     {
-        $provider = User::with('nurseInfo')
+        $provider = User::with(['nurseInfo'])
             ->findOrFail($this->params->get('providerId', null));
 
-        $isPatientBhi = User::isBhiChargeable()
-            ->where('id', $this->params->get('patientId'))
+        $patientId = $this->params->get('patientId', 0);
+
+        $isPatientBhi = ! empty($patientId) && User::isBhiChargeable()
+            ->where('id', $patientId)
             ->exists();
 
         foreach ($this->params->get('activities', []) as $activity) {
@@ -74,8 +74,12 @@ class StoreTimeTracking implements ShouldQueue
 
             if ($this->isBillableActivity($pageTimer, $provider)) {
                 $newActivity = $this->createActivity($pageTimer, $isBehavioral);
-                ProcessMonthltyPatientTime::dispatchNow($this->params->get('patientId'));
+                ProcessMonthltyPatientTime::dispatchNow($patientId);
                 ProcessNurseMonthlyLogs::dispatchNow($newActivity);
+            }
+
+            if (isset($activity['enrolleeId'])) {
+                ProcessCareAmbassadorTime::dispatchNow($provider->id, $activity);
             }
         }
     }
@@ -87,7 +91,11 @@ class StoreTimeTracking implements ShouldQueue
      */
     public function tags()
     {
-        return ['storetime', 'patient:'.$this->params->get('patientId'), 'provider:'.$this->params->get('providerId', null)];
+        return [
+            'storetime',
+            'patient:'.$this->params->get('patientId'),
+            'provider:'.$this->params->get('providerId', null),
+        ];
     }
 
     /**
@@ -135,12 +143,13 @@ class StoreTimeTracking implements ShouldQueue
         $pageTimer->duration          = $duration;
         $pageTimer->duration_unit     = 'seconds';
         $pageTimer->patient_id        = $this->params->get('patientId');
+        $pageTimer->enrollee_id       = empty($activity['enrolleeId']) ? null : $activity['enrolleeId']; //0 is null
         $pageTimer->provider_id       = $this->params->get('providerId', null);
         $pageTimer->start_time        = $startTime->toDateTimeString();
         $pageTimer->end_time          = $endTime->toDateTimeString();
         $pageTimer->url_full          = $activity['url'];
         $pageTimer->url_short         = $activity['url_short'];
-        $pageTimer->program_id        = $this->params->get('programId', null);
+        $pageTimer->program_id        = empty($this->params->get('programId', null)) ? null : $this->params->get('programId', null);
         $pageTimer->ip_addr           = $this->params->get('ipAddr');
         $pageTimer->activity_type     = $activity['name'];
         $pageTimer->title             = $activity['title'];

@@ -12,6 +12,7 @@ use App\Services\PhiMail\Incoming\Handlers\Plain;
 use App\Services\PhiMail\Incoming\Handlers\Unknown;
 use App\Services\PhiMail\Incoming\Handlers\XML;
 use App\Services\PhiMail\ShowResult;
+use Illuminate\Support\Str;
 
 class Factory
 {
@@ -46,8 +47,8 @@ class Factory
     private function getHandlerMethodName(string $mimeType)
     {
         foreach (self::SUPPORTED_MIME_TYPE_WILDCARDS as $supportedMime) {
-            if (str_contains($mimeType, $supportedMime)) {
-                return 'handle'.camel_case($supportedMime).'MimeType';
+            if (Str::contains($mimeType, $supportedMime)) {
+                return 'handle'.Str::camel($supportedMime).'MimeType';
             }
         }
 

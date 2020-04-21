@@ -6,16 +6,22 @@
 
 namespace App\Notifications;
 
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Password;
 
+/**
+ * This notification is sent to the patient both when Careplan is QA approved by CLH, and when it's Provider
+ * approved. The first case we send the patient a button link to the password reset page, while on the second we
+ * send them a link to CPM, with a hyperlink of the reset page below.
+ */
 class NotifyPatientCarePlanApproved extends Notification
 {
     use Queueable;
+
+    public $url;
 
     /**
      * @var CarePlan
@@ -28,22 +34,9 @@ class NotifyPatientCarePlanApproved extends Notification
     private $channels = ['database'];
 
     /**
-     * Only sent to patients (Users).
-     *
-     * @var User
-     */
-    private $notifiable;
-
-    /**
      * @var
      */
     private $token;
-
-    /**
-     * This notification is sent to the patient both when Careplan is QA approved by CLH, and when it's Provider
-     * approved. The first case we send the patient a button link to the password reset page, while on the second we
-     * send them a link to CPM, with a hyperlink of the reset page below.
-     */
 
     /**
      * Create a new notification instance.
@@ -52,7 +45,6 @@ class NotifyPatientCarePlanApproved extends Notification
     {
         $this->channels = array_merge($channels, $this->channels);
         $this->carePlan = $carePlan;
-        $this->token    = Password::broker('patient_users')->createToken($carePlan->patient);
     }
 
     /**
@@ -120,11 +112,15 @@ class NotifyPatientCarePlanApproved extends Notification
      */
     public function resetUrl($notifiable)
     {
-        return route('password.reset', [
-            'token'       => $this->token,
-            'practice_id' => $notifiable->getPrimaryPracticeId(),
-            'email'       => $notifiable->email,
-        ]);
+        if ( ! $this->url) {
+            $this->url = route('password.reset', [
+                'token'       => Password::broker('patient_users')->createToken($this->carePlan->patient),
+                'practice_id' => $notifiable->getPrimaryPracticeId(),
+                'email'       => $notifiable->email,
+            ]);
+        }
+
+        return $this->url;
     }
 
     /**

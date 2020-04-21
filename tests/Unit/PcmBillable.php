@@ -16,10 +16,10 @@ use Tests\Helpers\Users\Patient\Problems;
 
 class PcmBillable extends CustomerTestCase
 {
-    use UserHelpers;
     use PracticeHelpers;
-    use TimeHelpers;
     use Problems;
+    use TimeHelpers;
+    use UserHelpers;
 
     /**
      * Patient with 2 problems from practice that has both CCM and PCM enabled.

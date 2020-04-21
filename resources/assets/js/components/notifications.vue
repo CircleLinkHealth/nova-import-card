@@ -1,10 +1,10 @@
 <template>
     <div class="row" :class="componentName">
-        <div class="col-sm-12" v-for="(note, index) in notes" :key="index">
-            <div class="alert" :class="{ 
-                                    'alert-success': types.success.includes(note.type), 
-                                    'alert-warning': types.warning.includes(note.type), 
-                                    'alert-info': !types.all().includes(note.type), 
+        <div class="col-sm-12 toast-container" v-for="(note, index) in notes" :key="index">
+            <div class="alert toast" :class="{
+                                    'alert-success': types.success.includes(note.type),
+                                    'alert-warning': types.warning.includes(note.type),
+                                    'alert-info': !types.all().includes(note.type),
                                     'alert-danger': types.error.includes(note.type)
                                 }">
                 <slot :note="note">

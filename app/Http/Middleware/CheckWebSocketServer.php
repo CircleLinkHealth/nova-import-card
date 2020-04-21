@@ -15,7 +15,6 @@ class CheckWebSocketServer
      * Handle an incoming request.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
      *
      * @return mixed
      */
@@ -30,7 +29,7 @@ class CheckWebSocketServer
                 $status = $res->getStatusCode();
                 $body   = $res->getBody();
                 if (200 == $status) {
-                    cache()->put('ws:server:working', true, 5);
+                    cache()->put('ws:server:working', true, 300);
                 } else {
                     cache()->forget('ws:server:working');
                 }

@@ -16,11 +16,9 @@ class CcdService
      * @var AthenaApiImplementation
      */
     private $athenaApi;
-    
+
     /**
      * CcdService constructor.
-     *
-     * @param AthenaApiImplementation $athenaApi
      */
     public function __construct(AthenaApiImplementation $athenaApi)
     {

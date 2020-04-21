@@ -6,11 +6,11 @@
 
 namespace App\Jobs;
 
-use CircleLinkHealth\Core\StringManipulation;
 use App\Contracts\DirectMail;
 use App\Contracts\Efax;
 use App\Reports\PatientDailyAuditReport;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

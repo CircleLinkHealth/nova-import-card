@@ -15,14 +15,14 @@ class TestPatients extends CreatesTestPatients
         return [
             'patient_1' => [
                 //user
-                'first_name' => 'CBT',
-                'last_name'  => 'Automation 1',
-                'email'      => 'cbtAutomation1@test.com',
-                'password'                   => bcrypt('secret'),
-                'is_auto_generated'          => true,
+                'first_name'        => 'CBT',
+                'last_name'         => 'Automation 1',
+                'email'             => 'cbtAutomation1@test.com',
+                'password'          => bcrypt('secret'),
+                'is_auto_generated' => true,
 
-                'program_id'                 => $this->getPracticeId(),
-                'billing_provider_id'        => $this->getProvider(13242)->id,
+                'program_id'          => $this->getPracticeId(),
+                'billing_provider_id' => $this->getProvider(13242)->id,
 
                 //patient_info
                 'gender'                     => 'M',
@@ -33,7 +33,7 @@ class TestPatients extends CreatesTestPatients
                 'preferred_contact_timezone' => 'America/New_York',
                 'mrn_number'                 => 236025386923,
 
-                'conditions'  => [
+                'conditions' => [
                     'all',
                 ],
                 //number of dummy medications
@@ -45,8 +45,8 @@ class TestPatients extends CreatesTestPatients
                 'last_name'  => 'Automation 2',
                 'email'      => 'cbtAutomation2@test.com',
 
-                'program_id'                 => $this->getPracticeId(),
-                'billing_provider_id'        => $this->getProvider(13242)->id,
+                'program_id'          => $this->getPracticeId(),
+                'billing_provider_id' => $this->getProvider(13242)->id,
 
                 //patient_info
                 'gender'                     => 'F',
@@ -57,7 +57,7 @@ class TestPatients extends CreatesTestPatients
                 'preferred_contact_timezone' => 'America/New_York',
                 'mrn_number'                 => 186027387923,
 
-                'conditions'  => [
+                'conditions' => [
                     'Hypertension',
                     'Dementia',
                     'Diabetes Type 2',

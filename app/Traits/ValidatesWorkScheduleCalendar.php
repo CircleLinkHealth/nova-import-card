@@ -12,6 +12,19 @@ use Validator;
 
 trait ValidatesWorkScheduleCalendar
 {
+    /**
+     * @param $date
+     *
+     * @return bool
+     */
+    public function checkIfIsNotWeekend($date)
+    {
+        $dayOfWeek = Carbon::parse($date)->dayOfWeek;
+
+        return self::SATURDAY !== $dayOfWeek
+            && self::SUNDAY !== $dayOfWeek;
+    }
+
     public function invalidWorkHoursValidator($workHoursRangeSum, $committedWorkHours)
     {
         return $committedWorkHours > $workHoursRangeSum ? true : false;
@@ -46,27 +59,26 @@ trait ValidatesWorkScheduleCalendar
             );
         }
 
-
         return $validator;
     }
 
     public function validatorScheduleData($workScheduleData)
     {
         return Validator::make($workScheduleData, [
-            'day_of_week' => 'required',
+            'day_of_week'       => 'required',
             'window_time_start' => 'required|date_format:H:i',
-            'window_time_end' => 'required|date_format:H:i',
-            'work_hours' => 'required|numeric',
-            'date' => 'required|date',
+            'window_time_end'   => 'required|date_format:H:i',
+            'work_hours'        => 'required|numeric',
+            'date'              => 'required|date',
         ]);
     }
 
     public function windowsExistsValidator($workScheduleData, $updateCollisions = false)
     {
-        $nurseInfoId = $workScheduleData['nurse_info_id'];
+        $nurseInfoId     = $workScheduleData['nurse_info_id'];
         $windowTimeStart = $workScheduleData['window_time_start'];
-        $windowTimeEnd = $workScheduleData['window_time_end'];
-        $windowDate = $workScheduleData['date'];
+        $windowTimeEnd   = $workScheduleData['window_time_end'];
+        $windowDate      = $workScheduleData['date'];
 
         $windowExists = NurseContactWindow::where([
             [
@@ -91,19 +103,6 @@ trait ValidatesWorkScheduleCalendar
             ],
         ])->first();
 
-        return !$updateCollisions ? $windowExists : false;
+        return ! $updateCollisions ? $windowExists : false;
     }
-
-    /**
-     * @param $date
-     * @return bool
-     */
-    public function checkIfIsNotWeekend($date)
-    {
-        $dayOfWeek = Carbon::parse($date)->dayOfWeek;
-
-        return $dayOfWeek !== self::SATURDAY
-            && $dayOfWeek !== self::SUNDAY;
-    }
-
 }

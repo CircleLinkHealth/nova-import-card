@@ -18,7 +18,6 @@ $finders = PhpCsFixer\Finder::create()
             __DIR__.'/routes',
             __DIR__.'/tests',
             __DIR__.'/Modules',
-            __DIR__.'/CLHPackages',
         ]
     );
 
@@ -96,7 +95,8 @@ $config = PhpCsFixer\Config::create()
             'phpdoc_add_missing_param_annotation'           => true,
             'php_unit_method_casing'                        => ['case' => 'snake_case'],
             'phpdoc_order'                                  => true,
-            'phpdoc_trim_consecutive_blank_line_separation' => true,
+            'phpdoc_separation'                             => false,
+            'phpdoc_trim_consecutive_blank_line_separation' => false,
             'phpdoc_types_order'                            => [
                 'null_adjustment' => 'always_last',
                 'sort_algorithm'  => 'alpha',

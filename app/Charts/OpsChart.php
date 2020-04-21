@@ -6,7 +6,6 @@
 
 namespace App\Charts;
 
-use App\Constants;
 use Carbon\CarbonPeriod;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\SaasAccount;

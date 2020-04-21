@@ -20,14 +20,15 @@ use Tests\CustomerTestCase;
 
 class ImportPcmCcd extends CustomerTestCase
 {
-    use UserHelpers;
     use PracticeHelpers;
+    use UserHelpers;
 
     /**
      * Import ccd with only one problem from practice that has PCM enabled.
      *
-     * @return void
      * @throws \Exception
+     *
+     * @return void
      */
     public function test_import_pcm_ccd()
     {
@@ -64,6 +65,17 @@ class ImportPcmCcd extends CustomerTestCase
         $this->assertTrue($patient->isPcm());
     }
 
+    private function getPractice(
+        bool $addCcmService = false,
+        bool $addCcmPlusServices = false,
+        bool $addBhiService = false,
+        bool $addPcmService = false
+    ): Practice {
+        $practice = Practice::find($this->practice()->id);
+
+        return $this->setupExistingPractice($practice, true, false, true, true);
+    }
+
     private function importPcmPatientFromXml($xmlName, $xmlPath, $practiceId): User
     {
         Config::set('ccda-parser.store_results_in_db', false);
@@ -79,7 +91,7 @@ class ImportPcmCcd extends CustomerTestCase
 
         $result = $uploadCcdResponse->json();
         self::assertNotEmpty($result);
-        
+
         $ccda = Ccda::findOrFail($result['ccdas'][0]);
 
         $confirmCcdResponse = $this->json('POST', 'api/ccd-importer/records/confirm', [
@@ -98,17 +110,5 @@ class ImportPcmCcd extends CustomerTestCase
         self::assertNotNull($patient);
 
         return $patient;
-    }
-
-    private function getPractice(
-        bool $addCcmService = false,
-        bool $addCcmPlusServices = false,
-        bool $addBhiService = false,
-        bool $addPcmService = false
-    ): Practice {
-        $practice = Practice::find($this->practice()->id);
-        $practice = $this->setupExistingPractice($practice, true, false, true, true);
-
-        return $practice;
     }
 }

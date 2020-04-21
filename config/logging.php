@@ -4,10 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
-use Zwijn\Monolog\Formatter\LogdnaFormatter;
-use Zwijn\Monolog\Handler\LogdnaHandler;
 
 return [
     /*
@@ -56,6 +55,11 @@ return [
             'path'   => storage_path('logs/laravel-'.php_sapi_name().'.log'),
             'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
             'days'   => 14,
+        ],
+
+        'null' => [
+            'driver'  => 'monolog',
+            'handler' => NullHandler::class,
         ],
 
         'slack' => [

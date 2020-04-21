@@ -21,8 +21,6 @@ class NurseInvoicesCreated extends Notification
 
     /**
      * Create a new notification instance.
-     *
-     * @param string $link
      */
     public function __construct(string $link)
     {

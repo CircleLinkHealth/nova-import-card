@@ -109,7 +109,7 @@ class EmailRNDailyReportToDeprecate extends Command
                             $carbonDate = Carbon::parse($nextUpcomingWindow->date);
                             $nextUpcomingWindowLabel = clhDayOfWeekToDayName(
                                 $nextUpcomingWindow->day_of_week
-                                                       )." {$carbonDate->format('m/d/Y')}";
+                            )." {$carbonDate->format('m/d/Y')}";
                         }
 
                         $hours = $nurse->nurseInfo->workhourables

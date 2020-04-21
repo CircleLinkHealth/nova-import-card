@@ -7,8 +7,6 @@
 namespace App\Nova\Actions;
 
 use App\Jobs\FaxPatientCarePlansToLocation;
-use App\Notifications\CarePlanProviderApproved;
-use App\Notifications\Channels\FaxChannel;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Bus\Queueable;
@@ -37,20 +35,17 @@ class FaxApprovedCarePlans extends Action implements ShouldQueue
             Text::make('Fax Number'),
         ];
     }
-    
+
     /**
      * Validate models and input,
      * then if location exists with the given Fax number, get enrolled practice patients with provider approved careplans and fax them to Practice.
-     *
-     * @param ActionFields $fields
-     * @param Collection $models
      *
      * @return mixed
      */
     public function handle(ActionFields $fields, Collection $models)
     {
         $practice = $models->first();
-        
+
         if ($models->count() > 1) {
             $this->markAsFailed(
                 $practice,
@@ -61,7 +56,7 @@ class FaxApprovedCarePlans extends Action implements ShouldQueue
         }
 
         try {
-            $number = formatPhoneNumberE164($fields->fax_number);
+            $number   = formatPhoneNumberE164($fields->fax_number);
             $location = $practice->locations()->where('fax', $number)->first();
 
             if ( ! $location) {
@@ -69,7 +64,7 @@ class FaxApprovedCarePlans extends Action implements ShouldQueue
                     $practice,
                     'Could not find a location with fax '.$number
                 );
-    
+
                 return;
             }
 

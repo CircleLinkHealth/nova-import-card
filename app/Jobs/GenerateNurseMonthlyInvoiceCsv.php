@@ -6,10 +6,10 @@
 
 namespace App\Jobs;
 
-use CircleLinkHealth\Core\Entities\AppConfig;
 use App\Exports\NurseInvoiceCsv;
 use App\Notifications\SendMonthlyInvoicesToAccountant;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -33,8 +33,6 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param Carbon $month
      */
     public function __construct(Carbon $month)
     {

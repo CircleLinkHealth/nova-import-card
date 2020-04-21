@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Nova\Filters;
 
 use Carbon\Carbon;
@@ -31,39 +35,28 @@ class TimestampFilter extends DateFilter
      *
      * @param $name
      * @param string $column
-     * @param string $type Either 'from' or 'to'
+     * @param string $type    Either 'from' or 'to'
      * @param Carbon $default
      */
     public function __construct($name, $column, $type, Carbon $default = null)
     {
-        $this->name = $name;
-        $this->column = $column;
-        $this->type = $type;
+        $this->name    = $name;
+        $this->column  = $column;
+        $this->type    = $type;
         $this->default = $default;
     }
 
     /**
      * Apply the filter to the given query.
      *
-     * @param Request $request
      * @param Builder $query
-     * @param mixed $value
+     * @param mixed   $value
      *
      * @return Builder
      */
     public function apply(Request $request, $query, $value)
     {
-        return $query->where($this->column, $this->type === 'from' ? '>=' : '<', Carbon::parse($value));
-    }
-
-    /**
-     * Get the key for the filter.
-     *
-     * @return string
-     */
-    public function key()
-    {
-        return 'timestamp_' . $this->column . $this->type;
+        return $query->where($this->column, 'from' === $this->type ? '>=' : '<', Carbon::parse($value));
     }
 
     /**
@@ -74,5 +67,13 @@ class TimestampFilter extends DateFilter
         return ($this->default)->toDateTimeString() ?? parent::default();
     }
 
-
+    /**
+     * Get the key for the filter.
+     *
+     * @return string
+     */
+    public function key()
+    {
+        return 'timestamp_'.$this->column.$this->type;
+    }
 }

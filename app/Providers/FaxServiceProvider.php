@@ -9,13 +9,12 @@ namespace App\Providers;
 use App\Contracts\Efax;
 use App\Services\Phaxio\PhaxioFaxService;
 use App\Services\Phaxio\PhaxioFaxServiceLogger;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 use Phaxio;
 
-class FaxServiceProvider extends ServiceProvider
+class FaxServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    protected $defer = true;
-
     /**
      * Bootstrap the application services.
      */

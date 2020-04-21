@@ -92,8 +92,6 @@ class TwilioClientService implements TwilioClientable
     /**
      * Generates new token based on credentials and permissions set
      * in the constructor.
-     *
-     * @return string
      */
     public function generateCapabilityToken(): string
     {

@@ -27,8 +27,6 @@ abstract class FormRequest
      *
      * @param mixed $count
      * @param mixed $params
-     *
-     * @return array
      */
     abstract public function delete(
         $count = 1,
@@ -40,8 +38,6 @@ abstract class FormRequest
      *
      * @param mixed $count
      * @param mixed $params
-     *
-     * @return array
      */
     abstract public function get(
         $count = 1,
@@ -53,8 +49,6 @@ abstract class FormRequest
      *
      * @param mixed $count
      * @param mixed $params
-     *
-     * @return array
      */
     abstract public function patch(
         $count = 1,
@@ -66,8 +60,6 @@ abstract class FormRequest
      *
      * @param mixed $count
      * @param mixed $params
-     *
-     * @return array
      */
     abstract public function post(
         $count = 1,

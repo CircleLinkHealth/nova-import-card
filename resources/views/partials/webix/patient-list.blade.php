@@ -55,8 +55,8 @@
                         id: "first_name",
                         header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
                         template: "<a href='<?php echo route(
-    'patient.summary',
-    ['patient' => '#key#']
+    'patient.careplan.print',
+    ['#key#']
 ); ?>'>#first_name# #last_name#</a>",
                         width: 200,
                         sort: 'string'
@@ -65,8 +65,8 @@
                         id: "last_name",
                         header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
                         template: "<a href='<?php echo route(
-    'patient.summary',
-    ['patient' => '#key#']
+    'patient.careplan.print',
+    ['#key#']
 ); ?>'>#last_name#, #first_name#</a>",
                         width: 200,
                         sort: 'string'

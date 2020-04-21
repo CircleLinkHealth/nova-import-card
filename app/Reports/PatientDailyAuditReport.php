@@ -6,10 +6,10 @@
 
 namespace App\Reports;
 
-use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
 use App\Note;
-use CircleLinkHealth\Core\PdfService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
+use CircleLinkHealth\Core\PdfService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;

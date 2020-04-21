@@ -64,70 +64,70 @@ class ImporterController extends Controller
             });
         })->whereNotNull('json')->where('status', Ccda::QA)
             ->with(
-                                        [
-                                            'patient.billingProvider.user' => function ($q) {
-                                                $q->select(
-                                                    [
-                                                        'users.id',
-                                                        'saas_account_id',
-                                                        'program_id',
-                                                        'display_name',
-                                                        'first_name',
-                                                        'last_name',
-                                                        'suffix',
-                                                    ]
-                                                );
-                                            },
-                                            'patient.patientNurseAsPatient.permanentNurse' => function ($q) {
-                                                $q->select(
-                                                    [
-                                                        'users.id',
-                                                        'saas_account_id',
-                                                        'program_id',
-                                                        'display_name',
-                                                        'first_name',
-                                                        'last_name',
-                                                        'suffix',
-                                                    ]
-                                                );
-                                            },
-                                            'patient.locations' => function ($q) {
-                                                $q->select(
-                                                    [
-                                                        'locations.id',
-                                                        'practice_id',
-                                                        'is_primary',
-                                                        'name',
-                                                    ]
-                                                );
-                                            },
-                                            'patient.patientInfo',
-                                            'patient.primaryPractice',
-                                        ]
-                                    )
+                [
+                    'patient.billingProvider.user' => function ($q) {
+                        $q->select(
+                            [
+                                'users.id',
+                                'saas_account_id',
+                                'program_id',
+                                'display_name',
+                                'first_name',
+                                'last_name',
+                                'suffix',
+                            ]
+                        );
+                    },
+                    'patient.patientNurseAsPatient.permanentNurse' => function ($q) {
+                        $q->select(
+                            [
+                                'users.id',
+                                'saas_account_id',
+                                'program_id',
+                                'display_name',
+                                'first_name',
+                                'last_name',
+                                'suffix',
+                            ]
+                        );
+                    },
+                    'patient.locations' => function ($q) {
+                        $q->select(
+                            [
+                                'locations.id',
+                                'practice_id',
+                                'is_primary',
+                                'name',
+                            ]
+                        );
+                    },
+                    'patient.patientInfo',
+                    'patient.primaryPractice',
+                ]
+            )
             ->where(function ($q) {
-                                        $q->whereIn('practice_id', auth()->user()->viewableProgramIds())
-                                            ->when(auth()->user()->isAdmin(), function ($q) {
-                                                $q->orWhereNull('practice_id');
-                                            });
-                                    })
+                $q->whereIn('practice_id', auth()->user()->viewableProgramIds())
+                    ->when(auth()->user()->isAdmin(), function ($q) {
+                        $q->orWhereNull('practice_id');
+                    });
+            })
             ->get()
             ->transform(
-                                        function (Ccda $ccda) {
+                function (Ccda $ccda) {
                     if (upg0506IsEnabled()) {
                         $isUpg0506Incomplete = false;
 
                         $isUpg0506Incomplete = Ccda::whereHas(
                             'media',
                             function ($q) {
-                                    $q->where('custom_properties->is_upg0506_complete', '!=', 'true');
-                                }
+                                $q->where('custom_properties->is_upg0506_complete', '!=', 'true');
+                            }
                         )->whereHas(
-                                'directMessage',
-                                function ($q) {
-                                    $q->where('from', 'like', '%@upg.ssdirect.aprima.com');
-                                }
-                            )->where('id', $ccda->id)->exists();
+                            'directMessage',
+                            function ($q) {
+                                $q->where('from', 'like', '%@upg.ssdirect.aprima.com');
+                            }
+                        )->where('id', $ccda->id)->exists();
 
                         if ($isUpg0506Incomplete) {
                             return false;
@@ -154,7 +154,7 @@ class ImporterController extends Controller
                         'nurse_user'          => $ccda->patient->patientNurseAsPatient->permanentNurse ?? null,
                     ];
                 }
-                                    )->filter()->unique('patient_id')
+            )->filter()->unique('patient_id')
             ->values();
     }
 

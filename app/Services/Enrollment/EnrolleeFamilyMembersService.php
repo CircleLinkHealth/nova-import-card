@@ -6,21 +6,18 @@
 
 namespace App\Services\Enrollment;
 
-
-use App\SafeRequest;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
 abstract class EnrolleeFamilyMembersService
 {
     /**
-     * @var integer
-     */
-    protected $enrolleeId;
-
-    /**
      * @var Enrollee
      */
     protected $enrollee;
+    /**
+     * @var int
+     */
+    protected $enrolleeId;
 
     public function __construct($enrolleeId)
     {

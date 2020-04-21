@@ -7,9 +7,8 @@
 namespace App\Nova\Importers;
 
 use App\Notifications\NotifyDownloadMediaCollection;
-use CircleLinkHealth\Core\PdfService;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Core\PdfService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;

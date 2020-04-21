@@ -18,19 +18,20 @@ use Illuminate\Queue\SerializesModels;
 
 class FaxPatientCarePlansToLocation implements ShouldQueue
 {
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     const ALLOCATED_TIME_TO_SEND_ONE_FAX = 120;
-    
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    
-    protected $pdfService;
-    public $patients;
     public $location;
+    public $patients;
+
+    protected $pdfService;
 
     /**
      * Create a new job instance.
      *
      * @param $patients
-     * @param Location $location
      */
     public function __construct($patients, Location $location)
     {
@@ -47,7 +48,7 @@ class FaxPatientCarePlansToLocation implements ShouldQueue
     public function handle()
     {
         $counter = 1;
-        
+
         foreach ($this->patients as $patient) {
             $this->location->notify(
                 (new CarePlanProviderApproved($patient->carePlan, [FaxChannel::class]))
@@ -57,11 +58,11 @@ class FaxPatientCarePlansToLocation implements ShouldQueue
                         ]
                     )->delay($this->delayUntil($counter))
             );
-            
-            $counter++;
+
+            ++$counter;
         }
     }
-    
+
     private function delayUntil(int $counter)
     {
         return now()->addSeconds($counter * self::ALLOCATED_TIME_TO_SEND_ONE_FAX);

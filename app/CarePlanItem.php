@@ -16,11 +16,11 @@ namespace App;
  * @property \App\CarePlanItem                                            $parents
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem query()
- * @property int|null $children_count
- * @property int|null $revision_history_count
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem newModelQuery()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem newQuery()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem query()
+ * @property int|null                                                                                    $children_count
+ * @property int|null                                                                                    $revision_history_count
  */
 class CarePlanItem extends \CircleLinkHealth\Core\Entities\BaseModel
 {
@@ -59,16 +59,16 @@ class CarePlanItem extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function careSection()
     {
-        return $this->belongsTo('App\CareSection', 'section_id', 'id');
+        return $this->belongsTo(\App\CareSection::class, 'section_id', 'id');
     }
 
     public function children()
     {
-        return $this->hasMany('App\CarePlanItem', 'parent_id');
+        return $this->hasMany(\App\CarePlanItem::class, 'parent_id');
     }
 
     public function parents()
     {
-        return $this->belongsTo('App\CarePlanItem', 'parent_id');
+        return $this->belongsTo(\App\CarePlanItem::class, 'parent_id');
     }
 }

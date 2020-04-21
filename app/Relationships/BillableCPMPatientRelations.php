@@ -68,10 +68,10 @@ class BillableCPMPatientRelations
         return function ($query) {
             $query->where('month_year', $this->month)
                 ->where(
-                      'total_time',
-                      '>=',
-                      AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS
-                  )
+                    'total_time',
+                    '>=',
+                    AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS
+                )
                 ->where('no_of_successful_calls', '>=', 1)
                 ->with('chargeableServices')
                 ->with('attestedProblems.cpmProblem')

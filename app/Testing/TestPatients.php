@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
@@ -12,16 +13,15 @@ class TestPatients extends CreatesTestPatients
     protected $noOfPatients = 5;
 
     /**
-     * Data complements factory User (see ModelFactory)
+     * Data complements factory User (see ModelFactory).
      *
      * @return array
      */
     protected function data()
     {
-
-        $patientData = [];
+        $patientData   = [];
         $saasAccountId = SaasAccount::firstOrFail()->id;
-        for ($i = $this->noOfPatients; $i > 0; $i--) {
+        for ($i = $this->noOfPatients; $i > 0; --$i) {
             $patientData[] = $this->getPatientFakeData($saasAccountId);
         }
 
@@ -31,16 +31,16 @@ class TestPatients extends CreatesTestPatients
     private function getPatientFakeData(int $saasAccountId): array
     {
         return [
-            'saas_account_id' => $saasAccountId,
-            'first_name' => $this->faker->firstName,
-            'last_name'  => $this->faker->lastName,
-            'email'      => $this->faker->email,
-            'username'      => $this->faker->email.now()->timestamp,
-            'password'                   => bcrypt('secret'),
-            'is_auto_generated'          => true,
+            'saas_account_id'   => $saasAccountId,
+            'first_name'        => $this->faker->firstName,
+            'last_name'         => $this->faker->lastName,
+            'email'             => $this->faker->email,
+            'username'          => $this->faker->email.now()->timestamp,
+            'password'          => bcrypt('secret'),
+            'is_auto_generated' => true,
 
-            'program_id'                 => $this->getPracticeId(),
-            'billing_provider_id'        => $this->getProvider()->id,
+            'program_id'          => $this->getPracticeId(),
+            'billing_provider_id' => $this->getProvider()->id,
 
             //patient_info
             'gender'                     => 'M',
@@ -51,7 +51,7 @@ class TestPatients extends CreatesTestPatients
             'preferred_contact_timezone' => 'America/New_York',
             'mrn_number'                 => $this->faker->numberBetween(1, 10000),
 
-            'conditions'  => [
+            'conditions' => [
                 'all',
             ],
             //number of dummy medications

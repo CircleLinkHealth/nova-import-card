@@ -6,11 +6,10 @@
 
 namespace Tests\Unit;
 
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
-use App\Traits\Tests\UserHelpers;
-use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;
 
 class CsvEligibilityValidationTest extends TestCase
@@ -24,7 +23,7 @@ class CsvEligibilityValidationTest extends TestCase
      */
     private $service;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->service  = new ProcessEligibilityService();

@@ -6,9 +6,9 @@
 
 namespace App\Repositories;
 
-use CircleLinkHealth\SharedModels\Entities\CpmMiscUser;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
+use CircleLinkHealth\SharedModels\Entities\CpmMiscUser;
 use Illuminate\Support\Collection;
 
 class CpmMiscUserRepository
