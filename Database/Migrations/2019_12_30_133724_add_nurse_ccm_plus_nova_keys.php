@@ -30,32 +30,32 @@ class AddNurseCcmPlusNovaKeys extends Migration
     {
         DB::table('app_config')
             ->updateOrInsert(
-              [
-                  'config_key' => self::NURSE_CCM_PLUS_ENABLED_FOR_ALL,
-              ],
-              [
-                  'config_value' => 'false',
-              ]
-          );
+                [
+                    'config_key' => self::NURSE_CCM_PLUS_ENABLED_FOR_ALL,
+                ],
+                [
+                    'config_value' => 'false',
+                ]
+            );
 
         DB::table('app_config')
             ->updateOrInsert(
-              [
-                  'config_key' => self::NURSE_CCM_PLUS_ENABLED_FOR_USER_IDS,
-              ],
-              [
-                  'config_value' => '',
-              ]
-          );
+                [
+                    'config_key' => self::NURSE_CCM_PLUS_ENABLED_FOR_USER_IDS,
+                ],
+                [
+                    'config_value' => '',
+                ]
+            );
 
         DB::table('app_config')
             ->updateOrInsert(
-              [
-                  'config_key' => self::NURSE_CCM_PLUS_PAY_ALGO,
-              ],
-              [
-                  'config_value' => 'option_1',
-              ]
-          );
+                [
+                    'config_key' => self::NURSE_CCM_PLUS_PAY_ALGO,
+                ],
+                [
+                    'config_value' => 'option_1',
+                ]
+            );
     }
 }

@@ -1,21 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 
 class MakeJsonNullable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        DB::statement("ALTER TABLE ccdas CHANGE COLUMN json json longtext NULL");
-    }
-
     /**
      * Reverse the migrations.
      *
@@ -23,6 +15,15 @@ class MakeJsonNullable extends Migration
      */
     public function down()
     {
-        //
+    }
+
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        DB::statement('ALTER TABLE ccdas CHANGE COLUMN json json longtext NULL');
     }
 }

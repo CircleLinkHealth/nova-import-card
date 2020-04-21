@@ -37,28 +37,28 @@ class SetPatientUserIdFromDecember2019InNurseCareLogs extends Migration
         DB::table('nurse_care_rate_logs')
             ->where('created_at', '>=', \Carbon\Carbon::parse(self::QUERY_FROM_DATE))
             ->orderBy('created_at')
-            ->chunk(50, function (\Illuminate\Support\Collection $list) {
-              $list->each(function ($record) {
-                  $activityId = $record->activity_id;
-                  $activity = DB::table('lv_activities')->whereExists(function ($query) {
-                      $query->select('id')
-                          ->from('users')
-                          ->whereRaw('lv_activities.patient_id = users.id');
-                  })->find($activityId);
-                  if ( ! $activity) {
-                      return;
-                  }
+            ->chunk(50, function (Illuminate\Support\Collection $list) {
+                $list->each(function ($record) {
+                    $activityId = $record->activity_id;
+                    $activity = DB::table('lv_activities')->whereExists(function ($query) {
+                        $query->select('id')
+                            ->from('users')
+                            ->whereRaw('lv_activities.patient_id = users.id');
+                    })->find($activityId);
+                    if ( ! $activity) {
+                        return;
+                    }
 
-                  $isSuccessfulCall = $this->isActivityForSuccessfulCall($activity);
+                    $isSuccessfulCall = $this->isActivityForSuccessfulCall($activity);
 
-                  DB::table('nurse_care_rate_logs')
-                      ->where('id', '=', $record->id)
-                      ->update([
-                          'patient_user_id'    => $activity->patient_id,
-                          'is_successful_call' => $isSuccessfulCall,
-                      ]);
-              });
-          });
+                    DB::table('nurse_care_rate_logs')
+                        ->where('id', '=', $record->id)
+                        ->update([
+                            'patient_user_id'    => $activity->patient_id,
+                            'is_successful_call' => $isSuccessfulCall,
+                        ]);
+                });
+            });
     }
 
     /**

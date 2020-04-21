@@ -13,7 +13,7 @@ class AddIdentifierFieldInQuestionsTable extends Migration
     private const HRA_SURVEY_NAME    = 'HRA';
     private const VITALS_SURVEY_NAME = 'Vitals';
 
-    /** @var \Illuminate\Database\Query\Builder $hraQuestions */
+    /** @var \Illuminate\Database\Query\Builder */
     private $hraQuestions;
 
     private $hraQuestionsMap = [
@@ -78,7 +78,7 @@ class AddIdentifierFieldInQuestionsTable extends Migration
         'Q_COMMENTS'                   => ['order' => 46, 'sub_order' => null],
     ];
 
-    /** @var \Illuminate\Support\Collection $vitalsQuestions */
+    /** @var \Illuminate\Support\Collection */
     private $vitalsQuestions;
 
     private $vitalsQuestionsMap = [
@@ -176,8 +176,8 @@ class AddIdentifierFieldInQuestionsTable extends Migration
 
         return $this->$variable->where('order', '=', $order)
             ->when($subOrder, function ($q) use ($subOrder) {
-                                   return $q->where('sub_order', '=', $subOrder);
-                               })
+                return $q->where('sub_order', '=', $subOrder);
+            })
             ->first();
     }
 

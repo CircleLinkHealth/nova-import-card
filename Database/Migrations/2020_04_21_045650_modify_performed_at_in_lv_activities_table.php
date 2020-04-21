@@ -6,7 +6,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class UpdateRolesAndPermissions1578249558 extends Migration
+class ModifyPerformedAtInLvActivitiesTable extends Migration
 {
     /**
      * Reverse the migrations.
@@ -24,10 +24,7 @@ class UpdateRolesAndPermissions1578249558 extends Migration
      */
     public function up()
     {
-        if ( ! isUnitTestingEnv()) {
-            Artisan::call('db:seed', [
-                '--class' => \CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder::class,
-            ]);
-        }
+        DB::statement('ALTER TABLE lv_activities CHANGE performed_at performed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP');
+        DB::statement('ALTER TABLE lv_activities CHANGE performed_at_gmt performed_at_gmt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP');
     }
 }

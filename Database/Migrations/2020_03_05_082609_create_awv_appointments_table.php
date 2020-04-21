@@ -1,11 +1,25 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class CreateAwvAppointmentsTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('awv_appointments');
+    }
+
     /**
      * Run the migrations.
      *
@@ -21,20 +35,10 @@ class CreateAwvAppointmentsTable extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')
-                  ->references('id')
-                  ->on('users')
-                  ->onUpdate('CASCADE')
-                  ->onDelete('CASCADE');
+                ->references('id')
+                ->on('users')
+                ->onUpdate('CASCADE')
+                ->onDelete('CASCADE');
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('awv_appointments');
     }
 }

@@ -5,9 +5,10 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class RenameSoftRejectedCallbackToRequestedCallback extends Migration
+class MakeMedicalRecordIdIntoCcdaIdOnEnrollees extends Migration
 {
     /**
      * Reverse the migrations.
@@ -25,10 +26,8 @@ class RenameSoftRejectedCallbackToRequestedCallback extends Migration
      */
     public function up()
     {
-        if (Schema::hasColumn('enrollees', 'soft_rejected_callback')) {
-            Schema::table('enrollees', function (Illuminate\Database\Schema\Blueprint $table) {
-                $table->renameColumn('soft_rejected_callback', 'requested_callback');
-            });
-        }
+        Schema::table('enrollees', function (Blueprint $table) {
+            $table->foreign('medical_record_id')->references('id')->on('ccdas')->onDelete('set null')->onUpdate('set null');
+        });
     }
 }

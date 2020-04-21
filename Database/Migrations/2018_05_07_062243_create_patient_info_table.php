@@ -58,7 +58,7 @@ class CreatePatientInfoTable extends Migration
             $table->string('hospital_reminder_areas')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->text('general_comment', 65535)->nullable();
+            $table->text('general_comment')->nullable();
             $table->integer('preferred_calls_per_month')->default(2);
             $table->dateTime('last_successful_contact_time')->nullable();
             $table->integer('no_call_attempts_since_last_success')->nullable();

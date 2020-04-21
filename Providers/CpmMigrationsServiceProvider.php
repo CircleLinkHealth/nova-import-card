@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\CpmMigrations\Providers;
 
-use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
 
 class CpmMigrationsServiceProvider extends ServiceProvider

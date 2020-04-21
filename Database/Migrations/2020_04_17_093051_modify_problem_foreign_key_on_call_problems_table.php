@@ -8,7 +8,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class MakeCarePlanSoftDeletable extends Migration
+class ModifyProblemForeignKeyOnCallProblemsTable extends Migration
 {
     /**
      * Reverse the migrations.
@@ -26,8 +26,14 @@ class MakeCarePlanSoftDeletable extends Migration
      */
     public function up()
     {
-        Schema::table('care_plans', function (Blueprint $table) {
-            $table->softDeletes();
+        Schema::table('call_problems', function (Blueprint $table) {
+            $table->dropForeign(['ccd_problem_id']);
+
+            $table->foreign('ccd_problem_id')
+                ->references('id')
+                ->on('ccd_problems')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\WorkHours;
@@ -10,23 +14,34 @@ use Illuminate\Support\Facades\Schema;
 class UpdateOrphanWorkHours extends Migration
 {
     /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('', function (Blueprint $table) {
+        });
+    }
+
+    /**
      * Run the migrations.
      *
      * @return void
      */
     public function up()
     {
-        $today = now();
+        $today     = now();
         $endOfYear = $today->copy()->endOfYear();
 
         WorkHours::where([
             ['work_week_start', '>', $today->copy()->startOfWeek()],
-            ['work_week_start', '<', $endOfYear]
+            ['work_week_start', '<', $endOfYear],
         ])->chunk(50, function ($workHours) use (&$windows, $today) {
-            /** @var WorkHours $workHours */
+            // @var WorkHours $workHours
             $workHours->each(function ($week) use (&$windows, $today) {
                 $nurse = Nurse::whereId($week->workhourable_id)->firstOrFail();
-                $nurseActiveAndNonDemo = $nurse->status === 'active' && !$nurse->is_demo;
+                $nurseActiveAndNonDemo = 'active' === $nurse->status && ! $nurse->is_demo;
                 $dates = createWeekMap($week->work_week_start);
                 if ($nurseActiveAndNonDemo) {
                     foreach ($dates as $date) {
@@ -40,29 +55,17 @@ class UpdateOrphanWorkHours extends Migration
                                 ->first();
 
                             if (empty($window)) {
-                                /** @var WorkHours $week */
+                                // @var WorkHours $week
                                 $week->update(
                                     [
-                                        $day => 0
-                                    ]);
+                                        $day => 0,
+                                    ]
+                                );
                             }
                         }
-
                     }
                 }
             });
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::table('', function (Blueprint $table) {
-
         });
     }
 }

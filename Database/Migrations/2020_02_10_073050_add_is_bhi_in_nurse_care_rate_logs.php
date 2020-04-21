@@ -49,26 +49,26 @@ class AddIsBhiInNurseCareRateLogs extends Migration
             ->where('created_at', '>=', \Carbon\Carbon::parse(self::QUERY_FROM_DATE))
             ->orderBy('created_at')
             ->chunk(
-              50,
-              function (\Illuminate\Support\Collection $list) {
-                  $list->each(
-                      function ($record) {
-                          $activityId = $record->activity_id;
-                          $activity = DB::table('lv_activities')->find($activityId);
-                          if ( ! $activity) {
-                              return;
-                          }
+                50,
+                function (Illuminate\Support\Collection $list) {
+                    $list->each(
+                        function ($record) {
+                            $activityId = $record->activity_id;
+                            $activity = DB::table('lv_activities')->find($activityId);
+                            if ( ! $activity) {
+                                return;
+                            }
 
-                          DB::table('nurse_care_rate_logs')
-                              ->where('id', '=', $record->id)
-                              ->update(
-                                [
-                                    'is_behavioral' => $activity->is_behavioral,
-                                ]
-                            );
-                      }
-                  );
-              }
-          );
+                            DB::table('nurse_care_rate_logs')
+                                ->where('id', '=', $record->id)
+                                ->update(
+                                    [
+                                        'is_behavioral' => $activity->is_behavioral,
+                                    ]
+                                );
+                        }
+                    );
+                }
+            );
     }
 }
