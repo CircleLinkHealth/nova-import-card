@@ -23,7 +23,7 @@ class PostDeploymentTasks extends Command
      * @var string
      */
     protected $signature = 'deploy:post';
-
+    
     /**
      * Create a new command instance.
      */
@@ -31,7 +31,7 @@ class PostDeploymentTasks extends Command
     {
         parent::__construct();
     }
-
+    
     /**
      * Execute the console command.
      *
@@ -41,7 +41,7 @@ class PostDeploymentTasks extends Command
     {
         if (app()->environment(['local', 'testing'])) {
             echo 'Not running because env is '.app()->environment().PHP_EOL;
-
+            
             return;
         }
         echo \Config::get('opcache.url');
@@ -51,19 +51,19 @@ class PostDeploymentTasks extends Command
                 'view:cache',
                 'route:cache',
                 'config:cache',
-                //                'opcache:clear',
-                'opcache:optimize',
+                'opcache:clear',
+                'opcache:compile',
                 'horizon:terminate',
                 'queue:restart',
             ]
         )->each(
             function ($command) {
                 $this->output->note("Running ${command}");
-
+                
                 Artisan::call($command, [
                     '-vvv' => true,
                 ]);
-
+                
                 $this->output->success("Finished running ${command}");
             }
         );
