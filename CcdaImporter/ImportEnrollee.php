@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
+use App\Nova\Actions\ClearAndReimportCcda;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
@@ -106,13 +107,7 @@ class ImportEnrollee
         }
 
         if ($user->restore()) {
-            Artisan::call(
-                ReimportPatientMedicalRecord::class,
-                [
-                    'patientUserId'   => $user->id,
-                    'initiatorUserId' => auth()->id(),
-                ]
-            );
+            ClearAndReimportCcda::for($user->id, auth()->id(), 'call');
 
             $this->enrolleeMedicalRecordImported($enrollee);
 
