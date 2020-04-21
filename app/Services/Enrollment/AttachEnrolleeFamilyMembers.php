@@ -65,9 +65,9 @@ class AttachEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
         Enrollee::whereIn('id', $ids)
             ->get()
             ->each(function (Enrollee $e) {
-                    if ( ! $e->confirmedFamilyMembers()->where('id', $this->enrollee->id)->exists()) {
-                        $e->attachFamilyMembers($this->enrollee->id);
-                    }
-                });
+                if ( ! $e->confirmedFamilyMembers()->where('id', $this->enrollee->id)->exists()) {
+                    $e->attachFamilyMembers($this->enrollee->id);
+                }
+            });
     }
 }
