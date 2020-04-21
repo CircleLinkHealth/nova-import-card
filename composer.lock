@@ -983,7 +983,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "83aaaa40c94076b2beac5d542af2352bb28d3c89"
+                "reference": "3c0c69cd9df81aa93207a927c6fef585ce186495"
             },
             "type": "laravel-module",
             "extra": {
@@ -1005,7 +1005,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-20T17:14:01+00:00"
+            "time": "2020-04-21T08:57:45+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
