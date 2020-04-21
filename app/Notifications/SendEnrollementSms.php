@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Notifications;
 
 use App\Traits\EnrollableManagement;
@@ -34,6 +38,14 @@ class SendEnrollementSms extends Notification
     }
 
     /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return [];
+    }
+
+    /**
      * The phone number to send text is in Notifiable Model->routeNotificationForTwilio().
      *
      * @param $notifiable
@@ -44,9 +56,9 @@ class SendEnrollementSms extends Notification
     {
 //        at this point will always exist only one active link from the mail notif send
         $receiver = $this->getEnrollableModelType($notifiable);
-        $practiceNumber = $receiver->primaryPractice->outgoing_phone_number;
+//        $practiceNumber = $receiver->primaryPractice->outgoing_phone_number;
         $invitationUrl = $receiver->getLastEnrollmentInvitationLink();
-        $shortenUrl = null;
+        $shortenUrl    = null;
 
         try {
             $shortenUrl = shortenUrl($invitationUrl->url);
@@ -55,19 +67,11 @@ class SendEnrollementSms extends Notification
         }
 
         $notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
-        $smsSubject = $notificationContent['line1'] . $notificationContent['line2'] . $shortenUrl ?? $invitationUrl->url;
+        $smsSubject          = $notificationContent['line1'].$notificationContent['line2'].$shortenUrl ?? $invitationUrl->url;
 
         return (new TwilioSmsMessage())
-            ->from($practiceNumber)
+//            ->from($practiceNumber)
             ->content($smsSubject);
-    }
-
-    /**
-     * @return array
-     */
-    public function toArray()
-    {
-        return [];
     }
 
     /**
