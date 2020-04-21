@@ -34,10 +34,12 @@ class WebixFormatter implements ReportFormatter
         $notes = $patient->notes->sortByDesc('id')->map(
             function (Note $note) use ($patient, $billingProvider) {
                 $result = [
-                    'id'               => $note->id,
-                    'logger_id'        => $note->author_id,
-                    'logger_name'      => $note->author->getFullName(),
-                    'comment'          => empty($note->summary) ? $note->body : $note->summary,
+                    'id'          => $note->id,
+                    'logger_id'   => $note->author_id,
+                    'logger_name' => $note->author->getFullName(),
+                    'comment'     => empty($note->summary)
+                        ? $note->body
+                        : $note->summary,
                     'logged_from'      => 'note',
                     'type_name'        => $note->type,
                     'performed_at'     => presentDate($note->performed_at, false),
@@ -593,7 +595,12 @@ class WebixFormatter implements ReportFormatter
             } else {
                 $program = $foundPrograms[$patient->program_id];
             }
-            $programName = $program->display_name;
+
+            if ( ! $program) {
+                \Log::critical("Patient with id:{$patient->id} does not have Practice attached.");
+            }
+
+            $programName = optional($program)->display_name ?? '';
 
             $bpCareTeamMember = $patient->careTeamMembers->first();
 
