@@ -2383,6 +2383,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasOne(PatientNurse::class, 'patient_user_id');
     }
 
+    
+    /**
+     * @return \Illuminate\Database\Query\Builder
+     */
     public function patientsPendingCLHApproval()
     {
         return User::intersectPracticesWith($this, false)
