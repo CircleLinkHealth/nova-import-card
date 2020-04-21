@@ -19,6 +19,8 @@ class StoreRevisions implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    
+    public $queue = 'low';
 
     /**
      * @var array

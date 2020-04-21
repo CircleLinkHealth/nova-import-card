@@ -204,7 +204,7 @@ class Revisionable extends Eloquent
                 'updated_at'        => now(),
             ];
 
-            StoreRevisions::dispatch($revisions);
+            StoreRevisions::dispatch($revisions)->onQueue('low');
         }
     }
 
@@ -226,7 +226,7 @@ class Revisionable extends Eloquent
                 'created_at'        => now(),
                 'updated_at'        => now(),
             ];
-            StoreRevisions::dispatch($revisions);
+            StoreRevisions::dispatch($revisions)->onQueue('low');
         }
     }
 
@@ -257,7 +257,7 @@ class Revisionable extends Eloquent
             }
 
             if (count($revisions) > 0) {
-                StoreRevisions::dispatch($revisions);
+                StoreRevisions::dispatch($revisions)->onQueue('low');
             }
         }
     }

@@ -241,7 +241,7 @@ trait RevisionableTrait
                 'updated_at'        => now(),
             ];
 
-            StoreRevisions::dispatch($revision);
+            StoreRevisions::dispatch($revision)->onQueue('low');
         }
     }
 
@@ -266,7 +266,7 @@ trait RevisionableTrait
                 'updated_at'        => now(),
             ];
 
-            StoreRevisions::dispatch($revision);
+            StoreRevisions::dispatch($revision)->onQueue('low');
         }
     }
 
@@ -315,7 +315,7 @@ trait RevisionableTrait
                         $delete->delete();
                     }
                 }
-                StoreRevisions::dispatch($revisions);
+                StoreRevisions::dispatch($revisions)->onQueue('low');
             }
         }
     }
