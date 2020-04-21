@@ -23,35 +23,35 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon|null                       $deleted_at
  * @property mixed                                     $day_name
  * @property \CircleLinkHealth\Customer\Entities\Nurse $nurse
- * @method   static                                    bool|null forceDelete()
- * @method   static                                    \Illuminate\Database\Query\Builder|\App\NurseContactWindow onlyTrashed()
- * @method   static                                    bool|null restore()
- * @method   static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow upcoming()
- * @method   static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow whereCreatedAt($value)
- * @method   static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow whereDate($value)
- * @method   static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow whereDayOfWeek($value)
- * @method   static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow whereDeletedAt($value)
- * @method   static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow whereId($value)
- * @method   static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow whereNurseInfoId($value)
- * @method   static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow whereUpdatedAt($value)
- * @method   static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow whereWindowTimeEnd($value)
- * @method   static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow whereWindowTimeStart($value)
- * @method   static                                    \Illuminate\Database\Query\Builder|\App\NurseContactWindow withTrashed()
- * @method   static                                    \Illuminate\Database\Query\Builder|\App\NurseContactWindow withoutTrashed()
+ * @method static                                    bool|null forceDelete()
+ * @method static                                    \Illuminate\Database\Query\Builder|\App\NurseContactWindow onlyTrashed()
+ * @method static                                    bool|null restore()
+ * @method static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow upcoming()
+ * @method static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow whereCreatedAt($value)
+ * @method static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow whereDate($value)
+ * @method static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow whereDayOfWeek($value)
+ * @method static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow whereDeletedAt($value)
+ * @method static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow whereId($value)
+ * @method static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow whereNurseInfoId($value)
+ * @method static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow whereUpdatedAt($value)
+ * @method static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow whereWindowTimeEnd($value)
+ * @method static                                    \Illuminate\Database\Eloquent\Builder|\App\NurseContactWindow whereWindowTimeStart($value)
+ * @method static                                    \Illuminate\Database\Query\Builder|\App\NurseContactWindow withTrashed()
+ * @method static                                    \Illuminate\Database\Query\Builder|\App\NurseContactWindow withoutTrashed()
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseContactWindow newModelQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseContactWindow newQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseContactWindow query()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseContactWindow newModelQuery()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseContactWindow newQuery()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseContactWindow query()
  * @property int|null                                                                                    $revision_history_count
  * @property string                                                                                      $repeat_start
  * @property string|null                                                                                 $repeat_frequency
  * @property string|null                                                                                 $until
  * @property string                                                                                      $validated
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseContactWindow whereRepeatFrequency($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseContactWindow whereRepeatStart($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseContactWindow whereUntil($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseContactWindow whereValidated($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseContactWindow whereRepeatFrequency($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseContactWindow whereRepeatStart($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseContactWindow whereUntil($value)
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseContactWindow whereValidated($value)
  */
 class NurseContactWindow extends \CircleLinkHealth\Core\Entities\BaseModel
 {
