@@ -16,7 +16,6 @@ use CircleLinkHealth\Eligibility\ValidatesEligibility;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Storage;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 class EhrReportWriterController extends Controller
 {
@@ -121,18 +120,9 @@ class EhrReportWriterController extends Controller
          * */
         $user = auth()->user();
 
-        if ( ! $user->ehrReportWriterInfo) {
-            $params = new ParameterBag([
-                'user_id' => $user->id,
-            ]);
+        if ( ! $user->ehrReportWriterInfo || empty(optional($user->ehrReportWriterInfo)->google_drive_folder_path)) {
+            $this->repo->saveOrUpdateEhrReportWriterInfo($user);
 
-            $this->repo->saveOrUpdateEhrReportWriterInfo($user, $params);
-
-            $user->load('ehrReportWriterInfo');
-        }
-
-        if (empty($user->ehrReportWriterInfo->google_drive_folder_path)) {
-            $this->repo->saveEhrReportWriterFolder($user);
             $user->load('ehrReportWriterInfo');
         }
 
@@ -154,8 +144,8 @@ class EhrReportWriterController extends Controller
             return redirect()->back()->withErrors($messages);
         }
 
-        if ( ! $user->ehrReportWriterInfo->google_drive_folder_path) {
-            $messages['errors'][] = 'You need to have a google drive folder for your EHR report Writer User to use this feature.';
+        if (empty($user->ehrReportWriterInfo->google_drive_folder_path)) {
+            $messages['errors'][] = 'You do not have a google folder. Please click at "My Google Drive Folder" - this will create a folder for you and redirect you to it.';
 
             return redirect()->back()->withErrors($messages);
         }
@@ -280,6 +270,10 @@ class EhrReportWriterController extends Controller
      */
     private function getUnprocessedFilesFromGoogleFolder(EhrReportWriterInfo $info)
     {
+        if (empty($info->google_drive_folder_path)) {
+            return null;
+        }
+
         try {
             $files    = [];
             $contents = $this->googleDrive->getContents($info->google_drive_folder_path);

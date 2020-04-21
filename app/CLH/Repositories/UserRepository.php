@@ -160,7 +160,7 @@ class UserRepository
 
         // ehr report writer info
         if ($user->hasRole('ehr-report-writer')) {
-            $this->saveOrUpdateEhrReportWriterInfo($user, $params);
+            $this->saveOrUpdateEhrReportWriterInfo($user);
         }
 
         if ($user->isAdmin() && $user->authyUser) {
@@ -211,7 +211,7 @@ class UserRepository
         }
 
         if ($user->hasRole('ehr-report-writer')) {
-            $this->saveOrUpdateEhrReportWriterInfo($user, $params);
+            $this->saveOrUpdateEhrReportWriterInfo($user);
         }
 
         return $user;
@@ -348,8 +348,7 @@ class UserRepository
     }
 
     public function saveOrUpdateEhrReportWriterInfo(
-        User $user,
-        ParameterBag $params
+        User $user
     ) {
         $folderPath = $this->saveEhrReportWriterFolder($user);
 
