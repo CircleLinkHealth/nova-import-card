@@ -22,7 +22,6 @@ namespace App;
  * @property \App\CPRulesItemMeta[]|\Illuminate\Database\Eloquent\Collection $meta
  * @property \App\CPRulesPCP|null                                            $pcp
  * @property \App\CPRulesQuestions|null                                      $question
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereCareItemId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereDescription($value)
@@ -34,13 +33,10 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem wherePcpId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereQid($value)
  * @mixin \Eloquent
- *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem query()
- *
  * @property int|null $meta_count
  * @property int|null $revision_history_count
  */

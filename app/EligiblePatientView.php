@@ -42,7 +42,6 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * @property string|null $ccm_status
  * @property string|null $patient_nurse_id
  * @property string|null $patient_nurse
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView newQuery()
@@ -74,15 +73,11 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereTimezone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereType($value)
  * @mixin \Eloquent
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereCcmStatus($value)
- *
  * @property int $asap
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereAsap($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView wherePatientNurse($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView wherePatientNurseId($value)
- *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection
  *     $revisionHistory
  * @property int|null    $revision_history_count
@@ -109,7 +104,6 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * @property string|null $email
  * @property string|null $medical_record_type
  * @property string|null $medical_record_id
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereAddress2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligiblePatientView whereCellPhone($value)

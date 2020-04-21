@@ -21,9 +21,9 @@ class UserCsvResource extends Resource
      */
     public function toArray($request)
     {
-        $practice      = $this->primaryPractice;
+        $practice = $this->primaryPractice;
 
-        if (!$practice){
+        if ( ! $practice) {
             \Log::critical("Patient with id:{$this->id} does not have Practice attached.");
         }
 

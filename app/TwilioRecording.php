@@ -22,7 +22,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property \Illuminate\Support\Carbon|null                                                             $created_at
  * @property \Illuminate\Support\Carbon|null                                                             $updated_at
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRecording newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRecording newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRecording query()
@@ -37,7 +36,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRecording whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRecording whereUrl($value)
  * @mixin \Eloquent
- *
  * @property int|null $revision_history_count
  */
 class TwilioRecording extends BaseModel

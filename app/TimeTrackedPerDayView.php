@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $date
  * @property int         $user_id
  * @property bool        $is_billable
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TimeTrackedPerDayView newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TimeTrackedPerDayView newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TimeTrackedPerDayView query()

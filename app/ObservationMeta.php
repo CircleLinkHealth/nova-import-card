@@ -22,7 +22,6 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \Carbon\Carbon   $created_at
  * @property \Carbon\Carbon   $updated_at
  * @property \App\Observation $observationMeta
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereCommentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereId($value)
@@ -34,13 +33,10 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereProgramId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta query()
- *
  * @property int|null $revision_history_count
  */
 class ObservationMeta extends \CircleLinkHealth\Core\Entities\BaseModel

@@ -25,7 +25,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property \CircleLinkHealth\TimeTracking\Entities\PageTimer[]|\Illuminate\Database\Eloquent\Collection $activities
  * @property int|null                                                                                     $activities_count
  * @property \CircleLinkHealth\Customer\Entities\User|null                                                $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\LoginLogout newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\LoginLogout newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\LoginLogout query()

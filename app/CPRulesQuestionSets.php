@@ -21,7 +21,6 @@ namespace App;
  * @property string|null           $action
  * @property \App\CPRulesAnswers   $answer
  * @property \App\CPRulesQuestions $question
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets whereAction($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets whereAid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets whereAnswerResponse($value)
@@ -33,13 +32,10 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets whereQsType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets whereQsid($value)
  * @mixin \Eloquent
- *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets query()
- *
  * @property int|null $revision_history_count
  */
 class CPRulesQuestionSets extends \CircleLinkHealth\Core\Entities\BaseModel

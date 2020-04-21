@@ -110,7 +110,8 @@ class PatientEmailDoesNotContainPhi implements Rule
         return $string;
     }
 
-    private function stringsMatch(string $string1, string $string2){
+    private function stringsMatch(string $string1, string $string2)
+    {
         return preg_match("/\b".preg_quote($string1, '/')."\b/", $string2);
     }
 }

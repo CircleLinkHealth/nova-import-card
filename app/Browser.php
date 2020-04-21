@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string                     $warning_version
  * @property string|null                $required_version
  * @property \Illuminate\Support\Carbon $release_date
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Browser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Browser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Browser query()
