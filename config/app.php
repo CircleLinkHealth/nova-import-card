@@ -12,6 +12,7 @@ use CircleLinkHealth\Eligibility\Providers\RouteServiceProvider as EligibilityRo
 use CircleLinkHealth\ImportPracticeStaffCsv\CardServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesDeferredBindingsServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
+use Illuminate\Support\Arr;
 
 $appUrl = env('APP_URL', 'http://cpm.dev');
 
@@ -197,7 +198,7 @@ return [
 
         \App\Providers\NovaServiceProvider::class,
 
-        CircleLinkHealth\Raygun\Providers\RaygunServiceProvider::class,
+        \CircleLinkHealth\Raygun\Providers\RaygunServiceProvider::class,
 
         App\Providers\AppServiceProvider::class,
         App\Providers\AppDeferredServiceProvider::class,
@@ -224,7 +225,7 @@ return [
         CardServiceProvider::class,
         CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,
-        \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class
+        \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class,
     ],
 
     /*
@@ -273,7 +274,6 @@ return [
         'Validator'    => Illuminate\Support\Facades\Validator::class,
         'View'         => Illuminate\Support\Facades\View::class,
 
-        'Input'     => Illuminate\Support\Facades\Input::class,
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
 
         'DataTables'   => Yajra\DataTables\Facades\DataTables::class,
@@ -303,7 +303,7 @@ return [
     'debug_blacklist' => [
         '_COOKIE' => array_keys($_COOKIE),
         '_SERVER' => array_keys($_SERVER),
-        '_ENV'    => array_except(array_keys($_ENV), [
+        '_ENV'    => Arr::except(array_keys($_ENV), [
             'APP_ENV',
             'SCOUT_DRIVER',
             'BROADCAST_DRIVER',
