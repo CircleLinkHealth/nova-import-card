@@ -199,7 +199,8 @@
         "waavi/url-shortener": "dev-master",
         "waynestate/nova-ckeditor4-field": "^0.4.0",
         "circlelinkhealth/clh-nova-theme": "*",
-        "yajra/laravel-datatables-oracle": "~9.0"
+        "yajra/laravel-datatables-oracle": "~9.0",
+        "laravel/ui": "^2.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "*",
