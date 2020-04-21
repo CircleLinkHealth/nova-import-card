@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 1/10/20
- * Time: 7:10 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace CircleLinkHealth\Customer\AppConfig;
@@ -18,7 +16,12 @@ class PracticesWithUPGG0506Workflow
      * See ticket https://circlelinkhealth.atlassian.net/browse/CPM-1784
      */
     const UPG_G0506_WORKFLOW = 'enable_upg_g0506_workflow';
-    
+
+    public static function isEnabledFor($practiceName): bool
+    {
+        return in_array($practiceName, (new static())->getAndCachePracticeNames());
+    }
+
     /**
      * Returns db field "name" of Practices that have UPG G0506 workflow enabled.
      *
@@ -32,21 +35,17 @@ class PracticesWithUPGG0506Workflow
     {
         return (new static())->getAndCachePracticeNames();
     }
-    
-    public static function isEnabledFor($practiceName): bool {
-        return in_array($practiceName, (new static())->getAndCachePracticeNames());
-    }
-    
+
     private function getAndCachePracticeNames()
     {
         return \Cache::remember(self::UPG_G0506_WORKFLOW, 2, function () {
             return AppConfig::where('config_key', '=', self::UPG_G0506_WORKFLOW)
-                            ->get()
-                            ->map(
-                                function ($practiceName) {
-                                    return $practiceName->config_value;
-                                }
-                            )->all();
+                ->get()
+                ->map(
+                    function ($practiceName) {
+                        return $practiceName->config_value;
+                    }
+                )->all();
         });
     }
 }

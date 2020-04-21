@@ -30,10 +30,10 @@ class PracticesRequiringSpecialBhiConsent
             return AppConfig::where('config_key', '=', self::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY)
                 ->get()
                 ->map(
-                            function ($practiceName) {
-                                return $practiceName->config_value;
-                            }
-                        )->all();
+                    function ($practiceName) {
+                        return $practiceName->config_value;
+                    }
+                )->all();
         });
     }
 }

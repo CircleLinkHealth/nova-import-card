@@ -11,11 +11,13 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 trait HasChargeableServices
 {
+    private $byCode;
+
     public function chargeableServices()
     {
         return $this->morphToMany(ChargeableService::class, 'chargeable')
-                    ->withPivot(['amount'])
-                    ->withTimestamps();
+            ->withPivot(['amount'])
+            ->withTimestamps();
     }
 
     public function hasAWVServiceCode()
@@ -53,7 +55,12 @@ trait HasChargeableServices
         return $this->byCode()->has($code);
     }
 
-    private $byCode = null;
+    public function scopeHasServiceCode($builder, $code)
+    {
+        return $builder->whereHas('chargeableServices', function ($q) use ($code) {
+            $q->whereCode($code);
+        });
+    }
 
     private function byCode()
     {
@@ -62,12 +69,5 @@ trait HasChargeableServices
         }
 
         return $this->byCode;
-    }
-
-    public function scopeHasServiceCode($builder, $code)
-    {
-        return $builder->whereHas('chargeableServices', function ($q) use ($code) {
-            $q->whereCode($code);
-        });
     }
 }

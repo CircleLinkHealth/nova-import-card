@@ -12,26 +12,26 @@ use Michalisantoniou6\Cerberus\CerberusRole;
 /**
  * CircleLinkHealth\Customer\Entities\Role.
  *
- * @property int $id
- * @property string $name
- * @property string|null $display_name
- * @property string|null $description
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property int                                                                                       $id
+ * @property string                                                                                    $name
+ * @property string|null                                                                               $display_name
+ * @property string|null                                                                               $description
+ * @property \Carbon\Carbon                                                                            $created_at
+ * @property \Carbon\Carbon                                                                            $updated_at
  * @property \CircleLinkHealth\Customer\Entities\Permission[]|\Illuminate\Database\Eloquent\Collection $perms
- * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $users
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereDisplayName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereUpdatedAt($value)
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection       $users
+ * @method   static                                                                                    \Illuminate\Database\Eloquent\Builder|\App\Role whereCreatedAt($value)
+ * @method   static                                                                                    \Illuminate\Database\Eloquent\Builder|\App\Role whereDescription($value)
+ * @method   static                                                                                    \Illuminate\Database\Eloquent\Builder|\App\Role whereDisplayName($value)
+ * @method   static                                                                                    \Illuminate\Database\Eloquent\Builder|\App\Role whereId($value)
+ * @method   static                                                                                    \Illuminate\Database\Eloquent\Builder|\App\Role whereName($value)
+ * @method   static                                                                                    \Illuminate\Database\Eloquent\Builder|\App\Role whereUpdatedAt($value)
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role query()
- * @property-read int|null $perms_count
- * @property-read int|null $users_count
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role newModelQuery()
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role newQuery()
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role query()
+ * @property int|null $perms_count
+ * @property int|null $users_count
  */
 class Role extends CerberusRole
 {
@@ -43,6 +43,7 @@ class Role extends CerberusRole
         'med_assistant',
         'provider',
     ];
+
     /**
      * Cache roles for 24 Hours.
      *
@@ -50,12 +51,6 @@ class Role extends CerberusRole
      */
     private const CACHE_ROLES_MINUTES = 3;
 
-//@todo:    Heroku Review app breaks without out fillable. Shall remove after testing?
-    protected $fillable = [
-        'name',
-        'display_name',
-        'description'
-    ];
     /**
      * The database table used by the model.
      *
@@ -65,8 +60,6 @@ class Role extends CerberusRole
 
     /**
      * Get the IDs of Roles from names.
-     *
-     * @param array $roleNames
      *
      * @return array
      */
@@ -82,6 +75,16 @@ class Role extends CerberusRole
             ->whereIn('name', $roleNames)
             ->pluck('id')
             ->all();
+    }
+
+    /**
+     * Get the value used to index the model.
+     *
+     * @return mixed
+     */
+    public function getScoutKey()
+    {
+        return $this->id;
     }
 
     /**
@@ -102,18 +105,8 @@ class Role extends CerberusRole
     public function toSearchableArray()
     {
         return [
-            'name' => $this->name,
+            'name'         => $this->name,
             'display_name' => $this->display_name,
         ];
-    }
-
-    /**
-     * Get the value used to index the model.
-     *
-     * @return mixed
-     */
-    public function getScoutKey()
-    {
-        return $this->id;
     }
 }

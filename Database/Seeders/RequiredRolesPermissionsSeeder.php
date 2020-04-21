@@ -13,50 +13,34 @@ use Illuminate\Database\Seeder;
 class RequiredRolesPermissionsSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Grant CLH Super Admin permissions to a Role, after you make sure you know what you are doing :).
      *
-     * Seeds only default permissions for roles
+     * @param $roleName
      */
-    public function run()
+    public function grantSuperAdminPermissionsToRole($roleName)
     {
-        $this->call(RequiredPermissionsTableSeeder::class);
+        $adminRole = Role::whereName($roleName)->first();
 
-        foreach ($this->roles() as $role) {
-            $permissionsArr = $role['permissions'];
+        $permissions = Permission::whereNotIn('name', $this->doNotGrantThesePermissionsToSuperAdmins())
+            ->get();
 
-            unset($role['permissions']);
-
-            $role = Role::updateOrCreate(['name' => $role['name']], $role);
-
-            $permissionIds = Permission::whereIn('name', $permissionsArr)
-                ->pluck('id')->all();
-
-            $role->perms()->sync($permissionIds);
-
-            $name = $role['name'];
-            $this->command->info("role ${name} created");
-        }
-
-        $this->grantSuperAdminPermissionsToRole('administrator');
-        $this->grantSuperAdminPermissionsToRole('saas-admin');
-
-        $this->command->info('all roles and permissions created');
+        $adminRole->perms()->sync($permissions->pluck('id')->all());
     }
 
     public function roles()
     {
         return [
             [
-                'name' => 'administrator',
+                'name'         => 'administrator',
                 'display_name' => 'CLH Super Admin',
-                'description' => 'Admins can see and do it all. Only CLH employees can have this Role.',
-                'permissions' => [],
+                'description'  => 'Admins can see and do it all. Only CLH employees can have this Role.',
+                'permissions'  => [],
             ],
             [
-                'name' => 'participant',
+                'name'         => 'participant',
                 'display_name' => 'Participant',
-                'description' => 'A patient at a practice.',
-                'permissions' => [
+                'description'  => 'A patient at a practice.',
+                'permissions'  => [
                     'users-view-self',
                     'patient.read',
                     'activity.read',
@@ -67,14 +51,14 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'observation.create',
                     'observation.update',
                     'observation.read',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
-                'name' => 'api-ccd-vendor',
+                'name'         => 'api-ccd-vendor',
                 'display_name' => 'API CCD Vendor',
-                'description' => 'Is able to post CCDs to our API',
-                'permissions' => [
+                'description'  => 'Is able to post CCDs to our API',
+                'permissions'  => [
                     'post-ccd-to-api',
                     'patient.create',
                     'patient.read',
@@ -85,14 +69,14 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'location.read',
                     'practice.read',
                     'careplan-pdf.create',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
-                'name' => 'api-data-consumer',
+                'name'         => 'api-data-consumer',
                 'display_name' => 'API Data Consumer',
-                'description' => 'Is able to receive PDF Reports and CCM Time from our API',
-                'permissions' => [
+                'description'  => 'Is able to receive PDF Reports and CCM Time from our API',
+                'permissions'  => [
                     'patient.create',
                     'patient.read',
                     'patient.update',
@@ -102,14 +86,14 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'location.read',
                     'practice.read',
                     'careplan-pdf.create',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
-                'name' => 'viewer',
+                'name'         => 'viewer',
                 'display_name' => 'Viewer',
-                'description' => '',
-                'permissions' => [
+                'description'  => '',
+                'permissions'  => [
                     'users-view-all',
                     'users-view-self',
                     'user.read',
@@ -135,14 +119,14 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'careplan-pdf.create',
                     'careplan-pdf.read',
                     'carePerson.read',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
-                'name' => 'office_admin',
+                'name'         => 'office_admin',
                 'display_name' => 'Office Admin',
-                'description' => 'Non medical staff that work at a Practice. Not CCM countable.',
-                'permissions' => [
+                'description'  => 'Non medical staff that work at a Practice. Not CCM countable.',
+                'permissions'  => [
                     'medication.create',
                     'medication.read',
                     'medication.update',
@@ -238,14 +222,14 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'offlineActivity.create',
                     'change-patient-enrollment-status',
                     'vitals-survey-complete',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
-                'name' => 'no-ccm-care-center',
+                'name'         => 'no-ccm-care-center',
                 'display_name' => 'Non CCM Care Center',
-                'description' => 'Care Center',
-                'permissions' => [
+                'description'  => 'Care Center',
+                'permissions'  => [
                     'ccd-import',
                     'post-ccd-to-api',
                     'users-edit-self',
@@ -305,20 +289,20 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'comment.create',
                     'comment.read',
                     'comment.update',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
-                'name' => 'no-access',
+                'name'         => 'no-access',
                 'display_name' => 'No Access',
-                'description' => '',
-                'permissions' => [],
+                'description'  => '',
+                'permissions'  => [],
             ],
             [
-                'name' => 'administrator-view-only',
+                'name'         => 'administrator-view-only',
                 'display_name' => 'Administrator - View Only',
-                'description' => 'A special administrative account where you can view the admin but not perform actions',
-                'permissions' => [
+                'description'  => 'A special administrative account where you can view the admin but not perform actions',
+                'permissions'  => [
                     'admin-access',
                     'users-edit-self',
                     'users-view-all',
@@ -381,20 +365,20 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'medicationGroup.read',
                     'nurseReport.read',
                     'careplan.read',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
-                'name' => 'no-access',
+                'name'         => 'no-access',
                 'display_name' => 'No Access',
-                'description' => '',
-                'permissions' => [],
+                'description'  => '',
+                'permissions'  => [],
             ],
             [
-                'name' => 'practice-lead',
+                'name'         => 'practice-lead',
                 'display_name' => 'Program Lead',
-                'description' => 'The provider that created the practice.',
-                'permissions' => [
+                'description'  => 'The provider that created the practice.',
+                'permissions'  => [
                     'users-view-all',
                     'users-view-self',
                     'call.create',
@@ -474,14 +458,14 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'comment.read',
                     'comment.update',
                     'comment.delete',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
-                'name' => 'registered-nurse',
+                'name'         => 'registered-nurse',
                 'display_name' => 'Registered Nurse',
-                'description' => 'A nurse that belongs to a practice and not our care center.',
-                'permissions' => [
+                'description'  => 'A nurse that belongs to a practice and not our care center.',
+                'permissions'  => [
                     'medication.create',
                     'medication.read',
                     'medication.update',
@@ -576,14 +560,14 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'role.read',
                     'offlineActivity.create',
                     'vitals-survey-complete',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
-                'name' => 'specialist',
+                'name'         => 'specialist',
                 'display_name' => 'Specialist',
-                'description' => 'An outside specialist doctor.',
-                'permissions' => [
+                'description'  => 'An outside specialist doctor.',
+                'permissions'  => [
                     'users-view-all',
                     'users-view-self',
                     'patient.create',
@@ -616,14 +600,14 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'user.read',
                     'role.read',
                     'offlineActivity.create',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
-                'name' => 'salesperson',
+                'name'         => 'salesperson',
                 'display_name' => 'Salesperson',
-                'description' => 'A Salesperson',
-                'permissions' => [
+                'description'  => 'A Salesperson',
+                'permissions'  => [
                     'use-onboarding',
                     'patient.create',
                     'patient.read',
@@ -634,14 +618,14 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'location.read',
                     'practice.read',
                     'careplan-pdf.create',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
-                'name' => 'care-ambassador',
+                'name'         => 'care-ambassador',
                 'display_name' => 'Care Ambassador',
-                'description' => 'People hired by CLH to call patients and enroll them to CarePlan Manager.',
-                'permissions' => [
+                'description'  => 'People hired by CLH to call patients and enroll them to CarePlan Manager.',
+                'permissions'  => [
                     'careplan.read',
                     'careplan.update',
                     'careplanAssessment.read',
@@ -651,14 +635,14 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'practice.read',
                     'provider.read',
                     'ambassador.read',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
-                'name' => 'care-ambassador-view-only',
+                'name'         => 'care-ambassador-view-only',
                 'display_name' => 'Care Ambassador - View Only',
-                'description' => 'Makes calls to enroll patients, and can see patient data for specific Practices',
-                'permissions' => [
+                'description'  => 'Makes calls to enroll patients, and can see patient data for specific Practices',
+                'permissions'  => [
                     'careplan.read',
                     'careplan.update',
                     'careplanAssessment.read',
@@ -683,14 +667,14 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'appointment.read',
                     'careplan-pdf.create',
                     'users-view-all',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
-                'name' => 'med_assistant',
+                'name'         => 'med_assistant',
                 'display_name' => 'Medical Assistant',
-                'description' => 'Medical staff that work at a Practice, and are not Doctors or Registered Nurses. CCM Countable.',
-                'permissions' => [
+                'description'  => 'Medical staff that work at a Practice, and are not Doctors or Registered Nurses. CCM Countable.',
+                'permissions'  => [
                     'carePerson.read',
                     'carePerson.create',
                     'carePerson.update',
@@ -778,14 +762,14 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'role.read',
                     'offlineActivity.create',
                     'care-plan-approve',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
-                'name' => 'provider',
+                'name'         => 'provider',
                 'display_name' => 'Provider',
-                'description' => 'Doctors at a Practice.',
-                'permissions' => [
+                'description'  => 'Doctors at a Practice.',
+                'permissions'  => [
                     'allergy.create',
                     'allergy.read',
                     'allergy.update',
@@ -900,14 +884,14 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'offlineActivity.create',
                     'change-patient-enrollment-status',
                     'vitals-survey-complete',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
-                'name' => 'care-center',
+                'name'         => 'care-center',
                 'display_name' => 'CLH Care Coach',
-                'description' => 'Care Coaches (Nurses) who work for CLH. They place calls to patients (participants) regularly. CCM/BHI countable.',
-                'permissions' => [
+                'description'  => 'Care Coaches (Nurses) who work for CLH. They place calls to patients (participants) regularly. CCM/BHI countable.',
+                'permissions'  => [
                     'legacy-bhi-consent-decision.create',
                     'allergy.create',
                     'allergy.read',
@@ -1031,10 +1015,10 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 ],
             ],
             [
-                'name' => 'care-center-external',
+                'name'         => 'care-center-external',
                 'display_name' => 'Care Coach',
-                'description' => 'Care Coaches (Nurses) not employed by CLH. They place calls to patients (participants) regularly. CCM/BHI countable.',
-                'permissions' => [
+                'description'  => 'Care Coaches (Nurses) not employed by CLH. They place calls to patients (participants) regularly. CCM/BHI countable.',
+                'permissions'  => [
                     'legacy-bhi-consent-decision.create',
                     'allergy.create',
                     'allergy.read',
@@ -1150,29 +1134,29 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'offlineActivityRequest.read',
                     'has-schedule',
                     'vitals-survey-complete',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
-                'name' => 'ehr-report-writer',
+                'name'         => 'ehr-report-writer',
                 'display_name' => 'EHR Report Writer',
-                'description' => 'A user that can upload CSVs or Json files for eligibility to be processed by our system',
-                'permissions' => [
-                    'ehr-report-writer-access'
+                'description'  => 'A user that can upload CSVs or Json files for eligibility to be processed by our system',
+                'permissions'  => [
+                    'ehr-report-writer-access',
                 ],
             ],
             [
-                'name' => 'saas-admin',
+                'name'         => 'saas-admin',
                 'display_name' => 'SAAS Admin',
-                'description' => 'An admin for CPM Software-As-A-Service.',
-                'permissions' => [
+                'description'  => 'An admin for CPM Software-As-A-Service.',
+                'permissions'  => [
                 ],
             ],
             [
-                'name' => 'saas-admin-view-only',
+                'name'         => 'saas-admin-view-only',
                 'display_name' => 'Saas Admin - View Only',
-                'description' => 'Created for MDAlly, a partner which white-labels our CCM service to their customers',
-                'permissions' => [
+                'description'  => 'Created for MDAlly, a partner which white-labels our CCM service to their customers',
+                'permissions'  => [
                     'admin-access',
                     'users-edit-self',
                     'users-view-all',
@@ -1273,14 +1257,14 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'ccd-import',
                     'use-onboarding',
                     'nurseReport.read',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
-                'name' => 'software-only',
+                'name'         => 'software-only',
                 'display_name' => 'CCM Admin',
-                'description' => 'Uses only the software solution of CLH (CPM)',
-                'permissions' => [
+                'description'  => 'Uses only the software solution of CLH (CPM)',
+                'permissions'  => [
                     'practice-admin',
                     'patientSummary.read',
                     'patientSummary.create',
@@ -1294,43 +1278,50 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'call.create',
                     'call.update',
                     'call.delete',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
-                'name' => 'developer',
+                'name'         => 'developer',
                 'display_name' => 'CLH Developer',
-                'description' => 'Access to Horizon and Ops report. Access to PHI is forbidden.',
-                'permissions' => [
+                'description'  => 'Access to Horizon and Ops report. Access to PHI is forbidden.',
+                'permissions'  => [
                     'opsReport.read',
-                    'nurseReport.read'
+                    'nurseReport.read',
                 ],
             ],
-
-            [
-                'name' => 'survey-only',
-                'display_name' => 'Survey User',
-                'description' => 'Became Users just to be enrolled in AWV survey',
-                'permissions' => [
-                    'phi.read'
-                ],
-            ]
         ];
     }
 
     /**
-     * Grant CLH Super Admin permissions to a Role, after you make sure you know what you are doing :).
+     * Run the database seeds.
      *
-     * @param $roleName
+     * Seeds only default permissions for roles
      */
-    public function grantSuperAdminPermissionsToRole($roleName)
+    public function run()
     {
-        $adminRole = Role::whereName($roleName)->first();
+        $this->call(RequiredPermissionsTableSeeder::class);
 
-        $permissions = Permission::whereNotIn('name', $this->doNotGrantThesePermissionsToSuperAdmins())
-            ->get();
+        foreach ($this->roles() as $role) {
+            $permissionsArr = $role['permissions'];
 
-        $adminRole->perms()->sync($permissions->pluck('id')->all());
+            unset($role['permissions']);
+
+            $role = Role::updateOrCreate(['name' => $role['name']], $role);
+
+            $permissionIds = Permission::whereIn('name', $permissionsArr)
+                ->pluck('id')->all();
+
+            $role->perms()->sync($permissionIds);
+
+            $name = $role['name'];
+            $this->command->info("role ${name} created");
+        }
+
+        $this->grantSuperAdminPermissionsToRole('administrator');
+        $this->grantSuperAdminPermissionsToRole('saas-admin');
+
+        $this->command->info('all roles and permissions created');
     }
 
     /**

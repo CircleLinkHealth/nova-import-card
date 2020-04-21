@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\Customer\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -7,18 +11,17 @@ use Illuminate\Console\Command;
 class CreateOrReplacePatientAWVSurveyInstanceStatusTable extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'view:CreateOrReplacePatientAWVSurveyInstanceStatusViewTable';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Create Or Replace Patient AWV Survey Instance Status ViewTable. This will allow us to retrieve data from AWV in CPM regarding Survey Instances';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'view:CreateOrReplacePatientAWVSurveyInstanceStatusViewTable';
 
     /**
      * Create a new command instance.

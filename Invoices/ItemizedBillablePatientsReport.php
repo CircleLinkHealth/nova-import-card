@@ -1,8 +1,10 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 namespace CircleLinkHealth\Customer\Invoices;
-
 
 use App\Repositories\BillablePatientsEloquentRepository;
 use App\Repositories\PatientSummaryEloquentRepository;
@@ -18,10 +20,6 @@ use Illuminate\Support\Collection;
 class ItemizedBillablePatientsReport
 {
     /**
-     * @var int
-     */
-    protected $practiceId;
-    /**
      * @var Carbon
      */
     protected $month;
@@ -30,121 +28,22 @@ class ItemizedBillablePatientsReport
      */
     protected $practice;
     /**
+     * @var int
+     */
+    protected $practiceId;
+    /**
      * @var string
      */
     protected $practiceName;
 
     /**
      * ItemizedBillablePatientsReport constructor.
-     *
-     * @param int $practiceId
-     * @param string $practiceName
-     * @param Carbon $month
      */
     public function __construct(int $practiceId, string $practiceName, Carbon $month)
     {
         $this->practiceId   = $practiceId;
         $this->month        = $month;
         $this->practiceName = $practiceName;
-    }
-
-    public function toArrayForCsv(): array
-    {
-        $billablePatientsRepo = app(BillablePatientsEloquentRepository::class);
-
-        $data = [];
-
-        $billablePatientsRepo->billablePatients($this->practiceId, $this->month, null, true)
-                             ->with(
-                                 [
-                                     'billingProvider.user',
-                                     'patientInfo.location',
-                                     'patientAWVSummaries' => function ($q) {
-                                         $q->where('is_billable', true)
-                                           ->where('year', $this->month->year);
-                                     },
-                                     'ccdProblems'         => function ($p) {
-                                         $p->with(['cpmProblem', 'icd10Codes']);
-                                     },
-                                 ]
-                             )
-                             ->has('billingProvider.user')
-                             ->has('patientInfo.location')
-                             ->chunkById(
-                                 100,
-                                 function ($summaries) use (&$data) {
-                                     $summaries->each(
-                                         function (User $patientUser) use (&$data) {
-                                             $summary = $patientUser->patientSummaries->sortByDesc('id')->first();
-
-                                             if ( ! $summary->approved) {
-                                                 return;
-                                             }
-
-                                             $patientData = new PatientReportData();
-                                             $patientData->setCcmTime(
-                                                 round($summary->ccm_time / 60, 2)
-                                             );
-                                             $patientData->setBhiTime(
-                                                 round($summary->bhi_time / 60, 2)
-                                             );
-                                             $patientData->setName($patientUser->getFullName());
-                                             $patientData->setDob($patientUser->getBirthDate());
-                                             $patientData->setProvider(
-                                                 $patientUser->getBillingProviderName()
-                                             );
-                                             $patientData->setBillingCodes(
-                                                 $patientUser->billingCodes($this->month)
-                                             );
-                                             $patientData->setCcmProblemCodes($this->getCcmAttestedConditions($summary));
-
-                                             $patientData->setAllCcmProblemCodes($this->getAllCcmConditions($patientUser,
-                                                 $summary));
-
-                                             $patientData->setBhiCodes($this->getBhiAttestedConditions($summary));
-
-                                             $patientData->setAllBhiCodes($this->getAllBhiConditions($patientUser,
-                                                 $summary));
-
-                                             $patientData->setLocationName($patientUser->getPreferredLocationName());
-
-                                             $newRow = [
-                                                 'Provider Name'        => $patientData->getProvider(),
-                                                 'Location'             => $patientData->getLocationName(),
-                                                 'Patient Name'         => $patientData->getName(),
-                                                 'DOB'                  => $patientData->getDob(),
-                                                 'Billing Code(s)'      => $patientData->getBillingCodes(),
-                                                 'CCM Mins'             => $patientData->getCcmTime(),
-                                                 'BHI Mins'             => $patientData->getBhiTime(),
-                                                 'CCM Issue(s) Treated' => $patientData->getCcmProblemCodes(),
-                                                 'All CCM Conditions'   => $patientData->getAllCcmProblemCodes(),
-                                                 'BHI Issue(s) Treated' => $patientData->getBhiCodes(),
-                                                 'All BHI Conditions'   => $patientData->getAllBhiCodes(),
-                                             ];
-
-                                             if ($patientUser->primaryPractice->hasAWVServiceCode() && $awvSummary = $patientUser->patientAWVSummaries->sortByDesc(
-                                                     'id'
-                                                 )->first()) {
-                                                 $patientData->setAwvDate($awvSummary->billable_at);
-                                                 $newRow['AWV Date'] = $patientData->getAwvDate();
-                                             };
-
-                                             $data[] = $newRow;
-                                         }
-                                     );
-                                 }
-                             );
-
-        return $data;
-    }
-
-    private function practice()
-    {
-        if ( ! $this->practice) {
-            $this->practice = Practice::findOrFail($this->practiceId);
-        }
-
-        return $this->practice;
     }
 
     public function toArray()
@@ -157,57 +56,59 @@ class ItemizedBillablePatientsReport
         $billablePatientsRepo = app(BillablePatientsEloquentRepository::class);
 
         $billablePatientsRepo->billablePatientSummaries($this->practiceId, $this->month, true)
-                             ->where([
-                                 ['approved', '=', true],
-                                 ['rejected', '=', false],
-                             ])
-                             ->with(
-                                 [
-                                     'patient.billingProvider.user',
-                                     'patient.patientInfo.location',
-                                     'patient.ccdProblems' => function ($p) {
-                                         $p->with('cpmProblem', 'icd10Codes');
-                                     },
-                                 ]
-                             )
-                             ->has('patient.billingProvider.user')
-                             ->has('patient.patientInfo.location')
-                             ->chunkById(
-                                 100,
-                                 function ($summaries) use (&$data, $repo) {
-                                     $summaries->each(
-                                         function (PatientMonthlySummary $summary) use (&$data, $repo) {
-                                             $u = $summary->patient;
+            ->where([
+                ['approved', '=', true],
+                ['rejected', '=', false],
+            ])
+            ->with(
+                [
+                    'patient.billingProvider.user',
+                    'patient.patientInfo.location',
+                    'patient.ccdProblems' => function ($p) {
+                        $p->with('cpmProblem', 'icd10Codes');
+                    },
+                ]
+            )
+            ->has('patient.billingProvider.user')
+            ->has('patient.patientInfo.location')
+            ->chunkById(
+                100,
+                function ($summaries) use (&$data, $repo) {
+                    $summaries->each(
+                        function (PatientMonthlySummary $summary) use (&$data, $repo) {
+                            $u = $summary->patient;
 
-                                             $patientData = new PatientReportData();
-                                             $patientData->setCcmTime(round($summary->ccm_time / 60, 2));
-                                             $patientData->setBhiTime(round($summary->bhi_time / 60, 2));
-                                             $patientData->setName($u->getFullName());
-                                             $patientData->setDob($u->getBirthDate());
-                                             $patientData->setPractice($u->program_id);
-                                             $patientData->setProvider($u->getBillingProviderName());
-                                             $patientData->setBillingCodes($u->billingCodes($this->month));
+                            $patientData = new PatientReportData();
+                            $patientData->setCcmTime(round($summary->ccm_time / 60, 2));
+                            $patientData->setBhiTime(round($summary->bhi_time / 60, 2));
+                            $patientData->setName($u->getFullName());
+                            $patientData->setDob($u->getBirthDate());
+                            $patientData->setPractice($u->program_id);
+                            $patientData->setProvider($u->getBillingProviderName());
+                            $patientData->setBillingCodes($u->billingCodes($this->month));
 
-                                             $patientData->setCcmProblemCodes(
-                                                 $this->getCcmAttestedConditions($summary)
-                                             );
+                            $patientData->setCcmProblemCodes(
+                                $this->getCcmAttestedConditions($summary)
+                            );
 
-                                             $patientData->setAllCcmProblemCodes($summary);
+                            $patientData->setAllCcmProblemCodes($summary);
 
-                                             $patientData->setBhiCodes($this->getBhiAttestedConditions($summary));
+                            $patientData->setBhiCodes($this->getBhiAttestedConditions($summary));
 
-                                             $patientData->setAllCcmProblemCodes($this->getAllCcmConditions($u,
-                                                 $summary));
+                            $patientData->setAllCcmProblemCodes($this->getAllCcmConditions(
+                                $u,
+                                $summary
+                            ));
 
-                                             $patientData->setAllBhiCodes($this->getAllBhiConditions($u, $summary));
+                            $patientData->setAllBhiCodes($this->getAllBhiConditions($u, $summary));
 
-                                             $patientData->setLocationName($u->getPreferredLocationName());
+                            $patientData->setLocationName($u->getPreferredLocationName());
 
-                                             $data['patientData'][$u->id] = $patientData;
-                                         }
-                                     );
-                                 }
-                             );
+                            $data['patientData'][$u->id] = $patientData;
+                        }
+                    );
+                }
+            );
 
         $data['patientData'] = array_key_exists('patientData', $data)
             ? collect($data['patientData'])->sortBy(
@@ -218,40 +119,40 @@ class ItemizedBillablePatientsReport
             : null;
 
         $awvPatients = User::ofType('participant')
-                           ->ofPractice($this->practiceId)
-                           ->whereHas(
-                               'patientAWVSummaries',
-                               function ($query) {
-                                   $query->where('is_billable', true)
-                                         ->where('year', $this->month->year);
-                               }
-                           )
-                           ->with(
-                               [
-                                   'patientAWVSummaries' => function ($q) {
-                                       $q->where('is_billable', true)
-                                         ->where('year', $this->month->year);
-                                   },
-                                   'billingProvider',
-                               ]
-                           )
-                           ->chunk(
-                               100,
-                               function ($patients) use (&$data) {
-                                   foreach ($patients as $u) {
-                                       $summary = $u->patientAWVSummaries->first();
+            ->ofPractice($this->practiceId)
+            ->whereHas(
+                'patientAWVSummaries',
+                function ($query) {
+                    $query->where('is_billable', true)
+                        ->where('year', $this->month->year);
+                }
+            )
+            ->with(
+                [
+                    'patientAWVSummaries' => function ($q) {
+                        $q->where('is_billable', true)
+                            ->where('year', $this->month->year);
+                    },
+                    'billingProvider',
+                ]
+            )
+            ->chunk(
+                100,
+                function ($patients) use (&$data) {
+                    foreach ($patients as $u) {
+                        $summary = $u->patientAWVSummaries->first();
 
-                                       $patientData = new PatientReportData();
-                                       $patientData->setName($u->getFullName());
-                                       $patientData->setDob($u->getBirthDate());
-                                       $patientData->setPractice($u->program_id);
-                                       $patientData->setProvider($u->getBillingProviderName());
-                                       $patientData->setAwvDate($summary->billable_at);
+                        $patientData = new PatientReportData();
+                        $patientData->setName($u->getFullName());
+                        $patientData->setDob($u->getBirthDate());
+                        $patientData->setPractice($u->program_id);
+                        $patientData->setProvider($u->getBillingProviderName());
+                        $patientData->setAwvDate($summary->billable_at);
 
-                                       $data['awvPatientData'][$u->id] = $patientData;
-                                   }
-                               }
-                           );
+                        $data['awvPatientData'][$u->id] = $patientData;
+                    }
+                }
+            );
 
         $data['awvPatientData'] = array_key_exists('awvPatientData', $data)
             ? collect($data['awvPatientData'])->sortBy(
@@ -264,42 +165,98 @@ class ItemizedBillablePatientsReport
         return $data;
     }
 
-    private function getCcmAttestedConditions(PatientMonthlySummary $summary)
+    public function toArrayForCsv(): array
     {
-        return $this->formatProblemCodesForReport($summary->ccmAttestedProblems()->filter());
-    }
+        $billablePatientsRepo = app(BillablePatientsEloquentRepository::class);
 
-    private function getBhiAttestedConditions(PatientMonthlySummary $summary)
-    {
-        if ( ! $summary->hasServiceCode(ChargeableService::BHI)) {
-            return 'N/A';
-        }
+        $data = [];
 
-        return $this->formatProblemCodesForReport($summary->bhiAttestedProblems()->filter());
-    }
+        $billablePatientsRepo->billablePatients($this->practiceId, $this->month, null, true)
+            ->with(
+                [
+                    'billingProvider.user',
+                    'patientInfo.location',
+                    'patientAWVSummaries' => function ($q) {
+                        $q->where('is_billable', true)
+                            ->where('year', $this->month->year);
+                    },
+                    'ccdProblems' => function ($p) {
+                        $p->with(['cpmProblem', 'icd10Codes']);
+                    },
+                ]
+            )
+            ->has('billingProvider.user')
+            ->has('patientInfo.location')
+            ->chunkById(
+                100,
+                function ($summaries) use (&$data) {
+                    $summaries->each(
+                        function (User $patientUser) use (&$data) {
+                            $summary = $patientUser->patientSummaries->sortByDesc('id')->first();
 
-    private function getAllCcmConditions(User $patient, PatientMonthlySummary $summary)
-    {
-        $problems = $patient->ccdProblems->where('cpm_problem_id', '!=',
-            genericDiabetes()->id);
+                            if ( ! $summary->approved) {
+                                return;
+                            }
 
-        if ($summary->hasServiceCode(ChargeableService::BHI)) {
-            $problems = $problems->where('cpmProblem.is_behavioral', '=', false);
-        }
+                            $patientData = new PatientReportData();
+                            $patientData->setCcmTime(
+                                round($summary->ccm_time / 60, 2)
+                            );
+                            $patientData->setBhiTime(
+                                round($summary->bhi_time / 60, 2)
+                            );
+                            $patientData->setName($patientUser->getFullName());
+                            $patientData->setDob($patientUser->getBirthDate());
+                            $patientData->setProvider(
+                                $patientUser->getBillingProviderName()
+                            );
+                            $patientData->setBillingCodes(
+                                $patientUser->billingCodes($this->month)
+                            );
+                            $patientData->setCcmProblemCodes($this->getCcmAttestedConditions($summary));
 
-        return $this->formatProblemCodesForReport($problems);
-    }
+                            $patientData->setAllCcmProblemCodes($this->getAllCcmConditions(
+                                $patientUser,
+                                $summary
+                            ));
 
-    private function getAllBhiConditions(User $patient, PatientMonthlySummary $summary)
-    {
-        if ( ! $summary->hasServiceCode(ChargeableService::BHI)) {
-            return 'N/A';
-        }
+                            $patientData->setBhiCodes($this->getBhiAttestedConditions($summary));
 
-        return $this->formatProblemCodesForReport(
-            $patient->ccdProblems->where('cpmProblem.is_behavioral', '=',
-                true)
-        );
+                            $patientData->setAllBhiCodes($this->getAllBhiConditions(
+                                $patientUser,
+                                $summary
+                            ));
+
+                            $patientData->setLocationName($patientUser->getPreferredLocationName());
+
+                            $newRow = [
+                                'Provider Name'        => $patientData->getProvider(),
+                                'Location'             => $patientData->getLocationName(),
+                                'Patient Name'         => $patientData->getName(),
+                                'DOB'                  => $patientData->getDob(),
+                                'Billing Code(s)'      => $patientData->getBillingCodes(),
+                                'CCM Mins'             => $patientData->getCcmTime(),
+                                'BHI Mins'             => $patientData->getBhiTime(),
+                                'CCM Issue(s) Treated' => $patientData->getCcmProblemCodes(),
+                                'All CCM Conditions'   => $patientData->getAllCcmProblemCodes(),
+                                'BHI Issue(s) Treated' => $patientData->getBhiCodes(),
+                                'All BHI Conditions'   => $patientData->getAllBhiCodes(),
+                            ];
+
+                            if ($patientUser->primaryPractice->hasAWVServiceCode() && $awvSummary = $patientUser->patientAWVSummaries->sortByDesc(
+                                'id'
+                            )->first()) {
+                                $patientData->setAwvDate($awvSummary->billable_at);
+                                $newRow['AWV Date'] = $patientData->getAwvDate();
+                            }
+
+                            $data[] = $newRow;
+                        }
+                    );
+                }
+            );
+
+        return $data;
     }
 
     private function formatProblemCodesForReport(Collection $problems)
@@ -311,8 +268,61 @@ class ItemizedBillablePatientsReport
                     return $problem->icd10Code();
                 }
             )->filter()
-                     ->unique()
-                     ->implode(', ')
+                ->unique()
+                ->implode(', ')
             : 'N/A';
+    }
+
+    private function getAllBhiConditions(User $patient, PatientMonthlySummary $summary)
+    {
+        if ( ! $summary->hasServiceCode(ChargeableService::BHI)) {
+            return 'N/A';
+        }
+
+        return $this->formatProblemCodesForReport(
+            $patient->ccdProblems->where(
+                'cpmProblem.is_behavioral',
+                '=',
+                true
+            )
+        );
+    }
+
+    private function getAllCcmConditions(User $patient, PatientMonthlySummary $summary)
+    {
+        $problems = $patient->ccdProblems->where(
+            'cpm_problem_id',
+            '!=',
+            genericDiabetes()->id
+        );
+
+        if ($summary->hasServiceCode(ChargeableService::BHI)) {
+            $problems = $problems->where('cpmProblem.is_behavioral', '=', false);
+        }
+
+        return $this->formatProblemCodesForReport($problems);
+    }
+
+    private function getBhiAttestedConditions(PatientMonthlySummary $summary)
+    {
+        if ( ! $summary->hasServiceCode(ChargeableService::BHI)) {
+            return 'N/A';
+        }
+
+        return $this->formatProblemCodesForReport($summary->bhiAttestedProblems()->filter());
+    }
+
+    private function getCcmAttestedConditions(PatientMonthlySummary $summary)
+    {
+        return $this->formatProblemCodesForReport($summary->ccmAttestedProblems()->filter());
+    }
+
+    private function practice()
+    {
+        if ( ! $this->practice) {
+            $this->practice = Practice::findOrFail($this->practiceId);
+        }
+
+        return $this->practice;
     }
 }

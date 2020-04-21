@@ -20,8 +20,6 @@ trait HasSettings
 
     /**
      * Sync settings.
-     *
-     * @param Settings $settings
      */
     public function syncSettings(Settings $settings)
     {
