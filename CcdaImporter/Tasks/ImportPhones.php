@@ -1,8 +1,10 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
-
 
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
@@ -15,85 +17,47 @@ use Illuminate\Validation\Rule;
 class ImportPhones extends BaseCcdaImportTask
 {
     /**
-     * @var StringManipulation
-     */
-    private $str;
-    
-    public function __construct(User $patient, Ccda $ccda)
-    {
-        parent::__construct($patient, $ccda);
-        $this->str   = new StringManipulation();
-    }
-    
-    /**
      * @var Enrollee
      */
     private $enrollee;
-    private function validatePhoneNumber($phoneNumber)
-    {
-        $validator = \Validator::make(
-            ['number' => $phoneNumber],
-            [
-                'number' => ['required', Rule::phone()->country(['US'])],
-            ]
-        );
-        
-        return $validator->passes();
-    }
-    
     /**
-     * @param object $demographics
-     *
-     * @return array
+     * @var StringManipulation
      */
-    private function transform(object $demographics): array
+    private $str;
+
+    public function __construct(User $patient, Ccda $ccda)
     {
-        return $this->getTransformer()->demographics($demographics);
+        parent::__construct($patient, $ccda);
+        $this->str = new StringManipulation();
     }
-    
-    private function enrollee(): ?Enrollee
-    {
-        if ( ! $this->enrollee) {
-            $this->enrollee = Enrollee::where(
-                [
-                    ['user_id', '=', $this->patient->id],
-                    ['practice_id', '=', $this->patient->program_id],
-                    ['first_name', '=', $this->patient->first_name],
-                    ['last_name', '=', $this->patient->last_name],
-                ]
-            )->first();
-        }
-        
-        return $this->enrollee;
-    }
-    
+
     protected function import()
     {
         $demographics = $this->transform($this->ccda->bluebuttonJson()->demographics);
-        
-        $pPhone      = optional($this->enrollee())->primary_phone ?? $this->str->extractNumbers(
-                $demographics['primary_phone']
-            );
+
+        $pPhone = optional($this->enrollee())->primary_phone ?? $this->str->extractNumbers(
+            $demographics['primary_phone']
+        );
         $homePhone   = null;
         $mobilePhone = null;
         $workPhone   = null;
-        
+
         //primary_phone` may be a phone number or phone type
         $primaryPhone = ! empty($pPhone)
             ? $this->str->formatPhoneNumberE164($pPhone)
             : $demographics['primary_phone'];
-        
+
         $homeNumber = optional($this->enrollee())->home_phone ?? $demographics['home_phone'] ?? $primaryPhone;
-        
+
         if ( ! empty($homeNumber)) {
             if ($this->validatePhoneNumber($homeNumber)) {
                 $number = $this->str->formatPhoneNumberE164($homeNumber);
-                
+
                 $makePrimary = 0 == strcasecmp(
-                        $primaryPhone,
-                        PhoneNumber::HOME
-                    ) || $primaryPhone == $number || ! $primaryPhone;
-                
+                    $primaryPhone,
+                    PhoneNumber::HOME
+                ) || $primaryPhone == $number || ! $primaryPhone;
+
                 $homePhone = PhoneNumber::updateOrCreate(
                     [
                         'user_id' => $this->patient->id,
@@ -104,7 +68,7 @@ class ImportPhones extends BaseCcdaImportTask
                         'is_primary' => $makePrimary,
                     ]
                 );
-                
+
                 /**
                  * Band-aid solution to avoid making all phones primary, if there is no primary phone.
                  * In `$makePrimary = strcasecmp($primaryPhone, PhoneNumber::HOME) == 0 || $primaryPhone == $number || ! $primaryPhone;`, `! $primaryPhone`
@@ -115,17 +79,17 @@ class ImportPhones extends BaseCcdaImportTask
                 }
             }
         }
-        
+
         $mobileNumber = optional($this->enrollee())->cell_phone ?? $demographics['cell_phone'];
         if ( ! empty($mobileNumber)) {
             if ($this->validatePhoneNumber($mobileNumber)) {
                 $number = $this->str->formatPhoneNumberE164($mobileNumber);
-                
+
                 $makePrimary = 0 == strcasecmp($primaryPhone, PhoneNumber::MOBILE) || 0 == strcasecmp(
-                        $primaryPhone,
-                        'cell'
-                    ) || $primaryPhone == $number || ! $primaryPhone;
-                
+                    $primaryPhone,
+                    'cell'
+                ) || $primaryPhone == $number || ! $primaryPhone;
+
                 $mobilePhone = PhoneNumber::updateOrCreate(
                     [
                         'user_id' => $this->patient->id,
@@ -138,14 +102,14 @@ class ImportPhones extends BaseCcdaImportTask
                 );
             }
         }
-        
+
         $workNumber = $demographics['work_phone'];
         if ( ! empty($workNumber)) {
             if ($this->validatePhoneNumber($mobileNumber)) {
                 $number = $this->str->formatPhoneNumberE164($workNumber);
-                
+
                 $makePrimary = PhoneNumber::WORK == $primaryPhone || $primaryPhone == $number || ! $primaryPhone;
-                
+
                 $workPhone = PhoneNumber::updateOrCreate(
                     [
                         'user_id' => $this->patient->id,
@@ -158,7 +122,7 @@ class ImportPhones extends BaseCcdaImportTask
                 );
             }
         }
-        
+
         if ( ! $primaryPhone) {
             $primaryPhone = empty($mobileNumber)
                 ? empty($homeNumber)
@@ -167,12 +131,12 @@ class ImportPhones extends BaseCcdaImportTask
                         : $workPhone
                     : $homePhone
                 : $mobilePhone;
-            
+
             if ($primaryPhone) {
                 $primaryPhone->setAttribute('is_primary', true);
                 $primaryPhone->save();
             }
-            
+
             if ( ! $primaryPhone && $demographics['primary_phone']) {
                 PhoneNumber::updateOrCreate(
                     [
@@ -188,12 +152,12 @@ class ImportPhones extends BaseCcdaImportTask
         } else {
             if ($this->validatePhoneNumber($primaryPhone)) {
                 $number = $this->str->formatPhoneNumberE164($primaryPhone);
-                
+
                 foreach (
                     [
-                        PhoneNumber::HOME   => $homePhone,
+                        PhoneNumber::HOME => $homePhone,
                         PhoneNumber::MOBILE => $mobilePhone,
-                        PhoneNumber::WORK   => $workPhone,
+                        PhoneNumber::WORK => $workPhone,
                     ] as $type => $phone
                 ) {
                     if ( ! $phone) {
@@ -207,7 +171,7 @@ class ImportPhones extends BaseCcdaImportTask
                                 'is_primary' => true,
                             ]
                         );
-                        
+
                         break;
                     }
                     if ($phone->number == $number) {
@@ -217,5 +181,38 @@ class ImportPhones extends BaseCcdaImportTask
                 }
             }
         }
+    }
+
+    private function enrollee(): ?Enrollee
+    {
+        if ( ! $this->enrollee) {
+            $this->enrollee = Enrollee::where(
+                [
+                    ['user_id', '=', $this->patient->id],
+                    ['practice_id', '=', $this->patient->program_id],
+                    ['first_name', '=', $this->patient->first_name],
+                    ['last_name', '=', $this->patient->last_name],
+                ]
+            )->first();
+        }
+
+        return $this->enrollee;
+    }
+
+    private function transform(object $demographics): array
+    {
+        return $this->getTransformer()->demographics($demographics);
+    }
+
+    private function validatePhoneNumber($phoneNumber)
+    {
+        $validator = \Validator::make(
+            ['number' => $phoneNumber],
+            [
+                'number' => ['required', Rule::phone()->country(['US'])],
+            ]
+        );
+
+        return $validator->passes();
     }
 }

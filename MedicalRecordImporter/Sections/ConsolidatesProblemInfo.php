@@ -14,8 +14,6 @@ trait ConsolidatesProblemInfo
      *
      * Overwrite the problem section with the preferred one.
      *
-     * @param object $problemLog
-     *
      * @return mixed
      */
     private function consolidateProblemInfo(object $problemLog)
@@ -26,6 +24,9 @@ trait ConsolidatesProblemInfo
         $consolidatedProblem->cons_code_system      = null;
         $consolidatedProblem->cons_code_system_name = null;
         $consolidatedProblem->cons_name             = $problemLog->name;
+        $consolidatedProblem->status                = $problemLog->status ?? null;
+        $consolidatedProblem->start                 = $problemLog->start ?? null;
+        $consolidatedProblem->end                   = $problemLog->end ?? null;
 
         if ( ! empty($problemLog->code)) {
             $consolidatedProblem->cons_code             = $problemLog->code;
@@ -46,8 +47,8 @@ trait ConsolidatesProblemInfo
                 $consolidatedProblem->cons_name = $problemLog->name;
             }
         }
-        
-        if (!$this->isSensible($consolidatedProblem->cons_name)) {
+
+        if ( ! $this->isSensible($consolidatedProblem->cons_name)) {
             $consolidatedProblem->cons_name = null;
         }
 
@@ -57,24 +58,24 @@ trait ConsolidatesProblemInfo
 
         return $consolidatedProblem;
     }
-    
-    /**
-     * Determine whether the problem name is a valid one.
-     *
-     * @param $problemName
-     *
-     * @return bool
-     */
-    private function isSensible($problemName) :bool {
-        return !empty($problemName) && ! in_array(strtolower(trim($problemName)), $this->invalidNames());
-    }
-    
+
     /**
      * Invalid problem names. Use small caps only.
      *
      * @return array
      */
-    private function invalidNames() {
+    private function invalidNames()
+    {
         return ['condition'];
+    }
+
+    /**
+     * Determine whether the problem name is a valid one.
+     *
+     * @param $problemName
+     */
+    private function isSensible($problemName): bool
+    {
+        return ! empty($problemName) && ! in_array(strtolower(trim($problemName)), $this->invalidNames());
     }
 }

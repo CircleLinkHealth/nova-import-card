@@ -6,8 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
-use CircleLinkHealth\Eligibility\Jobs\CheckCcdaEnrollmentEligibility;
-use CircleLinkHealth\Eligibility\Jobs\ProcessCcda;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\SharedModels\Entities\Ccda;

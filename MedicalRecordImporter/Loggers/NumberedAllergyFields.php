@@ -6,6 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers;
 
+use Illuminate\Support\Str;
+
 class NumberedAllergyFields
 {
     public function handle(&$patient): array
@@ -22,7 +24,7 @@ class NumberedAllergyFields
                 break;
             }
 
-            if ( ! empty($patient["allergy_${i}"]) && ! str_contains(
+            if ( ! empty($patient["allergy_${i}"]) && ! Str::contains(
                 strtolower($patient["allergy_${i}"]),
                 ['#n/a', 'no known']
             )) {

@@ -13,8 +13,6 @@ class JsonMedicalRecordInsurancePlansAdapter
      * https://gist.github.com/michalisantoniou6/853740eff3ed58814a89d12c922840c3 to primary, secondary and tertiary
      * insurance.
      *
-     * @param array $record
-     *
      * @return array
      */
     public function adapt(array $record)
@@ -22,7 +20,7 @@ class JsonMedicalRecordInsurancePlansAdapter
         collect($record['insurance_plans'] ?? $record['insurance_plan'])
             ->each(function ($plan, $key) use (&$record) {
                 $concatString = null;
-    
+
                 $planName = $plan['plan'] ?? '';
                 $groupNumber = $plan['group_number'] ?? '';
                 $policyNumber = $plan['policy_number'] ?? '';

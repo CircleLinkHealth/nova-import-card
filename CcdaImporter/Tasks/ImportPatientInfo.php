@@ -1,54 +1,95 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
-
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use  Illuminate\Support\Str;
 
 class ImportPatientInfo extends BaseCcdaImportTask
 {
     use FiresImportingHooks;
-    
+    const HOOK_IMPORTED_PATIENT_INFO = 'IMPORTED_PATIENTINFO';
+
     const HOOK_IMPORTING_PATIENT_INFO = 'IMPORTING_PATIENTINFO';
-    const HOOK_IMPORTED_PATIENT_INFO  = 'IMPORTED_PATIENTINFO';
-    
+
     /**
      * @var Enrollee
      */
     private $enrollee;
-    
+
     /**
-     * @param object $demographics
+     * @param $dob
      *
-     * @return array
+     * @throws \Exception
+     *
+     * @return Carbon|null
      */
-    private function transform(object $demographics): array
+    public static function parseDOBDate($dob)
     {
-        return $this->getTransformer()->demographics($demographics);
+        if ($dob instanceof Carbon) {
+            return self::correctCenturyIfNeeded($dob);
+        }
+
+        try {
+            $date = Carbon::parse($dob);
+
+            if ($date->isToday()) {
+                throw new \InvalidArgumentException('date note parsed correctly');
+            }
+
+            return self::correctCenturyIfNeeded($date);
+        } catch (\InvalidArgumentException $e) {
+            if ( ! $dob) {
+                return null;
+            }
+
+            if (Str::contains($dob, '/')) {
+                $delimiter = '/';
+            } elseif (Str::contains($dob, '-')) {
+                $delimiter = '-';
+            }
+            $date = explode($delimiter, $dob);
+
+            if (count($date) < 3) {
+                throw new \Exception("Invalid date $dob");
+            }
+
+            $year = $date[2];
+
+            if (2 == strlen($year)) {
+                //if date is two digits we are assuming it's from the 1900s
+                $year = (int) $year + 1900;
+            }
+
+            return Carbon::createFromDate($year, $date[0], $date[1]);
+        }
     }
-    
+
     protected function import()
     {
         $this->patient->load('patientInfo');
-        
+
         $demographics = $this->transform($this->ccda->bluebuttonJson()->demographics);
-        
+
         $mrn = $demographics['mrn_number'];
-        
+
         $agentDetails = $this->getEnrolleeAgentDetailsIfExist();
-        
+
         $args = array_merge(
             [
-                'ccda_id'                    => $this->ccda->id,
-                'birth_date'                 => self::parseDOBDate($demographics['dob']),
-                'ccm_status'                 => Patient::ENROLLED,
-                'consent_date'               => now()->toDateString(),
-                'gender'                     => call_user_func(function () use (
+                'ccda_id'      => $this->ccda->id,
+                'birth_date'   => self::parseDOBDate($demographics['dob']),
+                'ccm_status'   => Patient::ENROLLED,
+                'consent_date' => now()->toDateString(),
+                'gender'       => call_user_func(function () use (
                     $demographics
                 ) {
                     $maleVariations = [
@@ -56,13 +97,13 @@ class ImportPatientInfo extends BaseCcdaImportTask
                         'male',
                         'man',
                     ];
-    
+
                     $femaleVariations = [
                         'f',
                         'female',
                         'woman',
                     ];
-    
+
                     if (in_array(strtolower($demographics['gender']), $maleVariations)) {
                         $gender = 'M';
                     } else {
@@ -70,7 +111,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
                             $gender = 'F';
                         }
                     }
-    
+
                     return empty($gender)
                         ?: $gender;
                 }),
@@ -85,14 +126,14 @@ class ImportPatientInfo extends BaseCcdaImportTask
                             'en',
                             'e',
                         ];
-                        
+
                         $spanishVariations = [
                             'spanish',
                             'es',
                         ];
-                        
+
                         $default = 'EN';
-                        
+
                         if (in_array(strtolower($demographics['language']), $englishVariations)) {
                             $language = 'EN';
                         } else {
@@ -100,105 +141,120 @@ class ImportPatientInfo extends BaseCcdaImportTask
                                 $language = 'ES';
                             }
                         }
-                        
+
                         return empty($language)
                             ? $default
                             : $language;
                     }
                 ),
-                'preferred_contact_location' => $this->ccda->location_id,
-                'preferred_contact_method'   => 'CCT',
-                'registration_date'          => $this->patient->user_registered->toDateString(),
-                'general_comment'            => $this->enrollee()
+                'preferred_contact_method' => 'CCT',
+                'registration_date'        => $this->patient->user_registered->toDateString(),
+                'general_comment'          => $this->enrollee()
                     ? $this->enrollee()->last_call_outcome_reason
                     : null,
             ],
             $agentDetails
         );
-    
+
         $hook = $this->fireImportingHook(self::HOOK_IMPORTING_PATIENT_INFO, $this->patient, $this->ccda, $args);
-        
+
         if (is_array($hook)) {
             $args = $hook;
         }
-        
+
         $patientInfo = Patient::updateOrCreate(
             [
                 'user_id' => $this->patient->id,
             ],
             $args
         );
-        
+
         if ( ! $patientInfo->mrn_number) {
             $patientInfo->mrn_number = $args['mrn_number'];
         }
-        
+
         if ( ! $patientInfo->birth_date) {
             $patientInfo->birth_date = $args['birth_date'];
         }
-        
+
         if ( ! $patientInfo->ccda_id) {
             $patientInfo->ccda_id = $args['ccda_id'];
         }
-        
+
         if ( ! $patientInfo->ccm_status) {
             $patientInfo->ccm_status = $args['ccm_status'];
         }
-        
+
         if ( ! $patientInfo->consent_date) {
             $patientInfo->consent_date = $args['consent_date'];
         }
-        
+
         if ( ! $patientInfo->gender) {
             $patientInfo->gender = $args['gender'];
         }
-        
+
         if ( ! $patientInfo->preferred_contact_language) {
             $patientInfo->preferred_contact_language = $args['preferred_contact_language'];
         }
-        
-        if ( ! $patientInfo->preferred_contact_location) {
-            $patientInfo->preferred_contact_location = $args['preferred_contact_location'];
+
+        if ( ! $patientInfo->preferred_contact_location && $this->ccda->location_id) {
+            $patientInfo->preferred_contact_location = $this->ccda->location_id;
         }
-        
+
         if ( ! $patientInfo->preferred_contact_method) {
             $patientInfo->preferred_contact_method = $args['preferred_contact_method'];
         }
-        
+
         if ( ! $patientInfo->agent_name) {
             $patientInfo->agent_name = $args['agent_name'] ?? null;
         }
-        
+
         if ( ! $patientInfo->agent_telephone) {
             $patientInfo->agent_telephone = $args['agent_telephone'] ?? null;
         }
-        
+
         if ( ! $patientInfo->agent_email) {
             $patientInfo->agent_email = $args['agent_email'] ?? null;
         }
-        
+
         if ( ! $patientInfo->agent_relationship) {
             $patientInfo->agent_relationship = $args['agent_relationship'] ?? null;
         }
-        
+
         if ( ! $patientInfo->registration_date) {
             $patientInfo->registration_date = $args['registration_date'];
         }
-        
+
         if ( ! $patientInfo->general_comment) {
             $patientInfo->general_comment = $this->enrollee()
                 ? $this->enrollee()->last_call_outcome_reason
                 : null;
         }
-        
-        
+
         if ($patientInfo->isDirty()) {
             $patientInfo->save();
         }
-        
+
         $this->fireImportingHook(self::HOOK_IMPORTED_PATIENT_INFO, $this->patient, $this->ccda, $patientInfo);
     }
-    
+
+    /**
+     * Subtracts 100 years off date if it's after 1/1/2000.
+     *
+     * @return Carbon
+     */
+    private static function correctCenturyIfNeeded(Carbon &$date)
+    {
+        //If a DOB is after 2000 it's because at some point the date incorrectly assumed to be in the 2000's, when it was actually in the 1900's. For example, this date 10/05/04.
+        $cutoffDate = Carbon::createFromDate(2000, 1, 1);
+
+        if ($date->gte($cutoffDate)) {
+            $date->subYears(100);
+        }
+
+        return $date;
+    }
+
     private function enrollee(): ?Enrollee
     {
         if ( ! $this->enrollee) {
@@ -211,10 +267,10 @@ class ImportPatientInfo extends BaseCcdaImportTask
                 ]
             )->first();
         }
-        
+
         return $this->enrollee;
     }
-    
+
     /**
      * If Enrollee exists and if agent details are set,
      * Get array to save in patient info.
@@ -229,7 +285,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
         if (empty($this->enrollee()->agent_details)) {
             return [];
         }
-        
+
         return [
             'agent_name'         => $this->enrollee()->getAgentAttribute(Enrollee::AGENT_NAME_KEY),
             'agent_telephone'    => $this->enrollee()->getAgentAttribute(Enrollee::AGENT_PHONE_KEY),
@@ -237,71 +293,9 @@ class ImportPatientInfo extends BaseCcdaImportTask
             'agent_relationship' => $this->enrollee()->getAgentAttribute(Enrollee::AGENT_RELATIONSHIP_KEY),
         ];
     }
-    
-    /**
-     * @param $dob
-     *
-     * @throws \Exception
-     *
-     * @return Carbon|null
-     */
-    public static function parseDOBDate($dob)
+
+    private function transform(object $demographics): array
     {
-        if ($dob instanceof Carbon) {
-            return self::correctCenturyIfNeeded($dob);
-        }
-        
-        try {
-            $date = Carbon::parse($dob);
-            
-            if ($date->isToday()) {
-                throw new \InvalidArgumentException('date note parsed correctly');
-            }
-            
-            return self::correctCenturyIfNeeded($date);
-        } catch (\InvalidArgumentException $e) {
-            if ( ! $dob) {
-                return null;
-            }
-            
-            if (str_contains($dob, '/')) {
-                $delimiter = '/';
-            } elseif (str_contains($dob, '-')) {
-                $delimiter = '-';
-            }
-            $date = explode($delimiter, $dob);
-            
-            if (count($date) < 3) {
-                throw new \Exception("Invalid date $dob");
-            }
-            
-            $year = $date[2];
-            
-            if (2 == strlen($year)) {
-                //if date is two digits we are assuming it's from the 1900s
-                $year = (int) $year + 1900;
-            }
-            
-            return Carbon::createFromDate($year, $date[0], $date[1]);
-        }
-    }
-    
-    /**
-     * Subtracts 100 years off date if it's after 1/1/2000.
-     *
-     * @param Carbon $date
-     *
-     * @return Carbon
-     */
-    private static function correctCenturyIfNeeded(Carbon &$date)
-    {
-        //If a DOB is after 2000 it's because at some point the date incorrectly assumed to be in the 2000's, when it was actually in the 1900's. For example, this date 10/05/04.
-        $cutoffDate = Carbon::createFromDate(2000, 1, 1);
-        
-        if ($date->gte($cutoffDate)) {
-            $date->subYears(100);
-        }
-        
-        return $date;
+        return $this->getTransformer()->demographics($demographics);
     }
 }

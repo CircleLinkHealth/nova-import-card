@@ -6,13 +6,13 @@
 
 namespace CircleLinkHealth\Eligibility\Adapters;
 
-use CircleLinkHealth\Eligibility\Contracts\EligibilityCheckAdapter;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\CcdToLogTranformer;
-use CircleLinkHealth\Eligibility\Entities\Problem;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Contracts\EligibilityCheckAdapter;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\Problem;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\CcdToLogTranformer;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Collection;
 
@@ -119,9 +119,9 @@ class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
 
         $this->ccda->referring_provider_name = $providerFullName;
         $this->ccda->practice_id             = $this->practice->id;
-        
+
         $patient['medical_record_type'] = Ccda::class;
-        $patient['medical_record_id'] = $this->ccda->id;
+        $patient['medical_record_id']   = $this->ccda->id;
 
         return $this->createEligibilityJob($patient);
     }
@@ -186,7 +186,7 @@ class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
         $lastEncounter = $encounters->sortByDesc(function ($el) {
             return $el->date;
         })->first();
-        
+
         if (is_object($lastEncounter) && property_exists($lastEncounter, 'date')) {
             $v = \Validator::make(['date' => $lastEncounter->date], ['date' => 'required|date']);
 

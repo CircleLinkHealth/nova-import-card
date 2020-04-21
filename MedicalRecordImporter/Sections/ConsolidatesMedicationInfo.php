@@ -12,12 +12,10 @@ trait ConsolidatesMedicationInfo
     {
         return $this->containsExact($field, $this->sigKeywords());
     }
-    
+
     /**
      * Consolidate Medication info from BB Medication Product and BB Medication Product Translation sections.
      * Sometimes info is in product, or translation or both.
-     *
-     * @param object $medicationLog
      *
      * @return mixed
      */
@@ -30,6 +28,9 @@ trait ConsolidatesMedicationInfo
         $consolidatedMedication->cons_code_system_name = null;
         $consolidatedMedication->cons_name             = null;
         $consolidatedMedication->cons_text             = null;
+        $consolidatedMedication->status                = $medicationLog->status ?? null;
+        $consolidatedMedication->start                 = $medicationLog->start ?? null;
+        $consolidatedMedication->end                   = $medicationLog->end ?? null;
 
         if ( ! empty($medicationLog->translation_code)) {
             $consolidatedMedication->cons_code             = $medicationLog->translation_code;

@@ -27,8 +27,6 @@ class ImportPHXEnrollee implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param \CircleLinkHealth\Eligibility\Entities\Enrollee $enrollee
      */
     public function __construct(Enrollee $enrollee)
     {

@@ -15,7 +15,7 @@ use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 class EncountersFromAthena implements MedicalRecordDecorator
 {
     use ValidatesDates;
-    
+
     /**
      * @var AthenaApiImplementation
      */
@@ -23,34 +23,30 @@ class EncountersFromAthena implements MedicalRecordDecorator
     /**
      * @var string|null
      */
-    protected $startDate;
+    protected $endDate;
     /**
      * @var string|null
      */
-    protected $endDate;
-    
+    protected $startDate;
+
     /**
      * EncountersFromAthena constructor.
      *
-     * @param AthenaApiImplementation $api
      * @param string|null $startDate
      * @param string|null $endDate
      */
     public function __construct(AthenaApiImplementation $api)
     {
-        $this->api       = $api;
+        $this->api = $api;
     }
-    
+
     /**
-     * @param EligibilityJob $eligibilityJob
-     *
-     * @return EligibilityJob
      * @throws \Exception
      */
     public function decorate(EligibilityJob $eligibilityJob): EligibilityJob
     {
         $eligibilityJob->loadMissing('targetPatient');
-        
+
         $data               = $eligibilityJob->data;
         $data['encounters'] = $this->api->getEncounters(
             $eligibilityJob->targetPatient->ehr_patient_id,
@@ -59,71 +55,55 @@ class EncountersFromAthena implements MedicalRecordDecorator
             $this->getStartDate(),
             $this->getEndDate()
         );
-        
+
         $lastEncounter = $this->carbon(
             collect($data['encounters']['encounters'])->sortByDesc(
                 'appointmentstartdate'
             )->pluck('appointmentstartdate')->first()
         );
-        
+
         if ($lastEncounter instanceof Carbon) {
             $data['last_encounter']         = $lastEncounter->toDateString();
             $eligibilityJob->last_encounter = $lastEncounter;
         }
-        
+
         $eligibilityJob->data = $data;
-        
+
         if ($eligibilityJob->isDirty()) {
             $eligibilityJob->save();
         }
-        
+
         return $eligibilityJob;
     }
-    
+
+    public function getEndDate(): ?string
+    {
+        return $this->endDate;
+    }
+
+    public function getStartDate(): ?string
+    {
+        return $this->startDate;
+    }
+
+    public function setEndDate(?string $endDate): EncountersFromAthena
+    {
+        $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    public function setStartDate(?string $startDate): EncountersFromAthena
+    {
+        $this->startDate = $startDate;
+
+        return $this;
+    }
+
     private function carbon($lastEncounter)
     {
         if ($this->isValidDate($lastEncounter)) {
             return Carbon::createFromFormat(Carbon::ATOM, $lastEncounter);
         }
-    }
-    
-    /**
-     * @return string|null
-     */
-    public function getStartDate(): ?string
-    {
-        return $this->startDate;
-    }
-    
-    /**
-     * @param string|null $startDate
-     *
-     * @return EncountersFromAthena
-     */
-    public function setStartDate(?string $startDate): EncountersFromAthena
-    {
-        $this->startDate = $startDate;
-        
-        return $this;
-}
-    
-    /**
-     * @param string|null $endDate
-     *
-     * @return EncountersFromAthena
-     */
-    public function setEndDate(?string $endDate): EncountersFromAthena
-    {
-        $this->endDate = $endDate;
-        
-        return $this;
-}
-    
-    /**
-     * @return string|null
-     */
-    public function getEndDate(): ?string
-    {
-        return $this->endDate;
     }
 }

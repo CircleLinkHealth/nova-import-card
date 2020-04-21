@@ -6,42 +6,41 @@
 
 namespace CircleLinkHealth\Eligibility\Entities;
 
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 
 /**
  * CircleLinkHealth\Eligibility\Entities\EligibilityBatch.
  *
- * @property int                                                                            $id
- * @property int|null                                                                       $initiator_id
- * @property int|null                                                                       $practice_id
- * @property string                                                                         $type
- * @property int                                                                            $status
- * @property array                                                                          $options
- * @property array                                                                          $stats
- * @property \Illuminate\Support\Carbon|null                                                $created_at
- * @property \Illuminate\Support\Carbon|null                                                $updated_at
- * @property string|null                                                                    $deleted_at
- * @property \CircleLinkHealth\Eligibility\Entities\EligibilityJob[]|\Illuminate\Database\Eloquent\Collection                 $eligibilityJobs
- * @property \CircleLinkHealth\Customer\Entities\User                                       $initiatorUser
- * @property \CircleLinkHealth\Customer\Entities\Practice|null                              $practice
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch query()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereInitiatorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereOptions($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch wherePracticeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereStats($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereUpdatedAt($value)
+ * @property int                                                                                              $id
+ * @property int|null                                                                                         $initiator_id
+ * @property int|null                                                                                         $practice_id
+ * @property string                                                                                           $type
+ * @property int                                                                                              $status
+ * @property array                                                                                            $options
+ * @property array                                                                                            $stats
+ * @property \Illuminate\Support\Carbon|null                                                                  $created_at
+ * @property \Illuminate\Support\Carbon|null                                                                  $updated_at
+ * @property string|null                                                                                      $deleted_at
+ * @property \CircleLinkHealth\Eligibility\Entities\EligibilityJob[]|\Illuminate\Database\Eloquent\Collection $eligibilityJobs
+ * @property \CircleLinkHealth\Customer\Entities\User                                                         $initiatorUser
+ * @property \CircleLinkHealth\Customer\Entities\Practice|null                                                $practice
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection      $revisionHistory
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch newModelQuery()
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch newQuery()
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch query()
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereCreatedAt($value)
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereDeletedAt($value)
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereId($value)
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereInitiatorId($value)
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereOptions($value)
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch wherePracticeId($value)
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereStats($value)
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereStatus($value)
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereType($value)
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EligibilityBatch whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property int|null $eligibility_jobs_count
  * @property int|null $revision_history_count
@@ -50,7 +49,9 @@ class EligibilityBatch extends BaseModel
 {
     const ATHENA_API                  = 'athena_csv';
     const CLH_MEDICAL_RECORD_TEMPLATE = 'clh_medical_record_template';
-    const REPROCESS_FROM_SCRATCH      = 'from_scratch';
+
+    const OUTCOME_NOT_PROCESSED_YET = 'Not processed yet.';
+    const REPROCESS_FROM_SCRATCH    = 'from_scratch';
 
     const REPROCESS_SAFE = 'safe';
 
@@ -63,8 +64,6 @@ class EligibilityBatch extends BaseModel
     const TYPE_GOOGLE_DRIVE_CCDS = 'google_drive_ccds';
     const TYPE_ONE_CSV           = 'one_csv';
     const TYPE_PHX_DB_TABLES     = 'phoenix_heart_db_tables';
-
-    const OUTCOME_NOT_PROCESSED_YET = 'Not processed yet.';
 
     protected $attributes = [
         'status' => 0,
@@ -283,7 +282,7 @@ class EligibilityBatch extends BaseModel
             ->orWhere([
                 ['status', '=', 1],
                 ['updated_at', '>', now()->subMinutes(10)],
-                      ])
+            ])
             ->chunkById($pageSize, function ($ejs) use ($onQueue) {
                 $ejs->each(function ($job) use ($onQueue) {
                     ProcessSinglePatientEligibility::dispatch(

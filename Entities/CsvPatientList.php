@@ -72,8 +72,6 @@ class CsvPatientList
     }
 
     /**
-     * @param PatientListValidator $validator
-     *
      * @return CsvPatientList
      */
     public function setValidator(PatientListValidator $validator)

@@ -52,10 +52,10 @@ class HasValidNbiMrn implements Rule
             return true;
         }
         $dataFromPractice = SupplementalPatientData::where('first_name', 'like', "{$this->patientUser->first_name}%")
-                                                   ->where('last_name', $this->patientUser->last_name)
-                                                   ->where('practice_id', $this->patientUser->primaryPractice->id)
-                                                   ->where('dob', $this->patientUser->getBirthDate())
-                                                   ->first();
+            ->where('last_name', $this->patientUser->last_name)
+            ->where('practice_id', $this->patientUser->primaryPractice->id)
+            ->where('dob', $this->patientUser->getBirthDate())
+            ->first();
         if ( ! $dataFromPractice) {
             return false;
         }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\Eligibility\Jobs;
 
 use CircleLinkHealth\Eligibility\Decorators\PcmChargeableServices;
@@ -12,26 +16,25 @@ use Illuminate\Queue\SerializesModels;
 
 class ProcessCommonwealthPatientForPcm implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     /**
      * @var EligibilityJob
      */
     public $eligibilityJob;
-    
+
     /**
      * Create a new job instance.
-     *
-     * @param EligibilityJob $eligibilityJob
      */
     public function __construct(EligibilityJob $eligibilityJob)
     {
         $this->eligibilityJob = $eligibilityJob;
     }
-    
+
     /**
      * Execute the job.
-     *
-     * @param PcmChargeableServices $addPcmChargeableServices
      *
      * @return void
      */

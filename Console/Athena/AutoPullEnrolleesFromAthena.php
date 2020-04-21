@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\Eligibility\Console\Athena;
 
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 

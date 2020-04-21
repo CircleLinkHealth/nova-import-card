@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\ValueObjects;
 
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 
 class BlueButtonMedicalRecord
 {

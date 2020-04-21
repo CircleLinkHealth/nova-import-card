@@ -7,10 +7,10 @@
 namespace CircleLinkHealth\Eligibility\Jobs\Athena;
 
 use App\Constants;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

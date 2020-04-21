@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Eligibility\Decorators;
 
 use App\Traits\ValidatesDates;
-use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Contracts\MedicalRecordDecorator;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
@@ -15,16 +14,15 @@ use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 class MedicalHistoryFromAthena implements MedicalRecordDecorator
 {
     use ValidatesDates;
-    
+
     /**
      * @var AthenaApiImplementation
      */
     protected $api;
-    
+
     /**
      * EncountersFromAthena constructor.
      *
-     * @param AthenaApiImplementation $api
      * @param string|null $startDate
      * @param string|null $endDate
      */
@@ -32,17 +30,14 @@ class MedicalHistoryFromAthena implements MedicalRecordDecorator
     {
         $this->api = $api;
     }
-    
+
     /**
-     * @param EligibilityJob $eligibilityJob
-     *
-     * @return EligibilityJob
      * @throws \Exception
      */
     public function decorate(EligibilityJob $eligibilityJob): EligibilityJob
     {
         $eligibilityJob->loadMissing('targetPatient');
-        
+
         $data = $eligibilityJob->data;
         if ( ! array_key_exists('medical_history', $data)) {
             $data['medical_history'] = $this->api->getMedicalHistory(
@@ -64,11 +59,11 @@ class MedicalHistoryFromAthena implements MedicalRecordDecorator
             }
         );
         $eligibilityJob->data = $data;
-        
+
         if ($eligibilityJob->isDirty()) {
             $eligibilityJob->save();
         }
-        
+
         return $eligibilityJob;
     }
 }

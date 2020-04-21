@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\Contracts;
 
-use App\Services\AthenaAPI\Calls;
 use App\Services\AthenaAPI\Connection;
 use App\ValueObjects\Athena\Patient;
 use App\ValueObjects\Athena\Problem;
@@ -155,6 +154,8 @@ interface AthenaApiImplementation
      */
     public function getDemographics($patientId, $practiceId);
 
+    public function getDepartmentInfo($practiceId, $departmentId, $providerList = false);
+
     /**
      * Get all departments for a practice.
      *
@@ -167,7 +168,32 @@ interface AthenaApiImplementation
      */
     public function getDepartments($practiceId, $showAllDepartments = true);
 
-    public function getDepartmentInfo($practiceId, $departmentId, $providerList = false);
+    /**
+     * Get a patient's medical history.
+     *
+     * @param string $startDate
+     * @param string $endDate
+     *
+     * @throws \Exception
+     *
+     * @return mixed
+     */
+    public function getEncounters(
+        int $patientId,
+        int $practiceId,
+        int $departmentId,
+        string $startDate = null,
+        string $endDate = null
+    );
+
+    /**
+     * Get a patient's medical history.
+     *
+     * @throws \Exception
+     *
+     * @return mixed
+     */
+    public function getMedicalHistory(int $patientId, int $practiceId, int $departmentId);
 
     /**
      * Get the next paginated result set.
@@ -247,7 +273,7 @@ interface AthenaApiImplementation
         $workphone = null,
         $departmentId = null
     );
-    
+
     /**
      * Get problems for a patient.
      *
@@ -255,7 +281,6 @@ interface AthenaApiImplementation
      * @param $practiceId
      * @param $departmentId
      * @param bool $showDiagnosisInfo
-     *
      * @param bool $showinactive
      *
      * @return mixed
@@ -270,6 +295,14 @@ interface AthenaApiImplementation
      * @return mixed
      */
     public function getPracticeCustomFields($practiceId);
+
+    /**
+     * @param $practiceId
+     * @param $providerId
+     *
+     * @return mixed
+     */
+    public function getProvider($practiceId, $providerId);
 
     /**
      * Add a note for an appointment.
@@ -308,46 +341,5 @@ interface AthenaApiImplementation
         $appointmentId = null,
         $documentSubClass = 'CLINICALDOCUMENT',
         $contentType = 'multipart/form-data'
-    );
-    
-    /**
-     * @param $practiceId
-     * @param $providerId
-     *
-     * @return mixed
-     */
-    public function getProvider($practiceId, $providerId);
-    
-    /**
-     * Get a patient's medical history
-     *
-     * @param int $patientId
-     * @param int $practiceId
-     * @param int $departmentId
-     *
-     * @return mixed
-     * @throws \Exception
-     */
-    public function getMedicalHistory(int $patientId, int $practiceId, int $departmentId);
-    
-    /**
-     * Get a patient's medical history
-     *
-     * @param int $patientId
-     * @param int $practiceId
-     * @param int $departmentId
-     *
-     * @param string $startDate
-     * @param string $endDate
-     *
-     * @return mixed
-     * @throws \Exception
-     */
-    public function getEncounters(
-        int $patientId,
-        int $practiceId,
-        int $departmentId,
-        string $startDate = null,
-        string $endDate = null
     );
 }

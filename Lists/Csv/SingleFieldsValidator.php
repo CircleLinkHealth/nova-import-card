@@ -6,8 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\Lists\Csv;
 
-use CircleLinkHealth\Eligibility\Lists\Csv\BaseValidator;
-
 class SingleFieldsValidator extends BaseValidator
 {
     /**
@@ -31,7 +29,7 @@ class SingleFieldsValidator extends BaseValidator
             //            'home_phone',
             //            'other_phone',
             'primary_phone',
-//            'email',
+            //            'email',
             'street',
             //            'street2',
             'city',

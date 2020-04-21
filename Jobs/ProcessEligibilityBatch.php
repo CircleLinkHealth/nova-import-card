@@ -25,17 +25,18 @@ class ProcessEligibilityBatch implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    /**
-     * @var EligibilityBatch
-     */
-    protected $batch;
-    
+
     /**
      * The number of seconds the job can run before timing out.
      *
      * @var int
      */
     public $timeout = 900;
+
+    /**
+     * @var EligibilityBatch
+     */
+    protected $batch;
 
     /**
      * @var \CircleLinkHealth\Eligibility\ProcessEligibilityService
@@ -49,14 +50,13 @@ class ProcessEligibilityBatch implements ShouldQueue
     {
         $this->batch = $batch;
     }
-    
+
     /**
      * Execute the job.
      *
-     * @param ProcessEligibilityService $processEligibilityService
+     * @throws \League\Flysystem\FileNotFoundException
      *
      * @return void
-     * @throws \League\Flysystem\FileNotFoundException
      */
     public function handle(ProcessEligibilityService $processEligibilityService)
     {
@@ -64,7 +64,7 @@ class ProcessEligibilityBatch implements ShouldQueue
         ini_set('post_max_size', '200M');
         ini_set('max_input_time', 900);
         ini_set('max_execution_time', 900);
-        
+
         $this->processEligibilityService = $processEligibilityService;
 
         switch ($this->batch->type) {
@@ -97,11 +97,8 @@ class ProcessEligibilityBatch implements ShouldQueue
                 ->notify($batch);
         }
     }
-    
+
     /**
-     * @param EligibilityBatch $batch
-     *
-     * @return EligibilityBatch
      * @throws \Exception
      */
     private function createEligibilityJobsFromJsonFile(EligibilityBatch $batch): EligibilityBatch
@@ -119,7 +116,7 @@ class ProcessEligibilityBatch implements ShouldQueue
             $batch->status = EligibilityBatch::STATUSES['error'];
             $batch->save();
 
-            return null;
+            return $batch;
         }
 
         $localDisk = Storage::disk('local');
@@ -134,14 +131,18 @@ class ProcessEligibilityBatch implements ShouldQueue
         }
 
         try {
-            \Log::debug("BEGIN creating eligibility jobs from json file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]");
+            \Log::debug(
+                "BEGIN creating eligibility jobs from json file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]"
+            );
 
             //Reading the file using a generator is expected to consume less memory.
             //implemented both to experiment
 //            $this->readWithoutUsingGenerator($pathToFile, $batch);
             $this->readUsingGenerator($pathToFile, $batch);
 
-            \Log::debug("FINISH creating eligibility jobs from json file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]");
+            \Log::debug(
+                "FINISH creating eligibility jobs from json file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]"
+            );
 
             $mem = format_bytes(memory_get_peak_usage());
 
@@ -176,16 +177,21 @@ class ProcessEligibilityBatch implements ShouldQueue
     private function queueAthenaJobs(EligibilityBatch $batch): EligibilityBatch
     {
         ini_set('memory_limit', '200M');
-        
-        $query          = TargetPatient::whereBatchId($batch->id)->whereStatus(TargetPatient::STATUS_TO_PROCESS);
-        $targetPatients = $query->with('batch')->chunkById(30, function ($targetPatients) use ($batch) {
-            $batch->status = EligibilityBatch::STATUSES['processing'];
-            $batch->save();
 
-            $targetPatients->each(function (TargetPatient $targetPatient) use ($batch) {
-                ProcessTargetPatientForEligibility::dispatch($targetPatient);
-            });
-        });
+        $query          = TargetPatient::whereBatchId($batch->id)->whereStatus(TargetPatient::STATUS_TO_PROCESS);
+        $targetPatients = $query->with('batch')->chunkById(
+            30,
+            function ($targetPatients) use ($batch) {
+                $batch->status = EligibilityBatch::STATUSES['processing'];
+                $batch->save();
+
+                $targetPatients->each(
+                    function (TargetPatient $targetPatient) use ($batch) {
+                        ProcessTargetPatientForEligibility::dispatch($targetPatient);
+                    }
+                );
+            }
+        );
 
         $batch->processPendingJobs(50);
 
@@ -207,7 +213,13 @@ class ProcessEligibilityBatch implements ShouldQueue
      */
     private function queueClhMedicalRecordTemplateJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        if ( ! (bool) $batch->options['finishedReadingFile'] ?? false) {
+        if ( ! array_key_exists('finishedReadingFile', $batch->options)) {
+            $options                        = $batch->options;
+            $options['finishedReadingFile'] = false;
+            $batch->options                 = $options;
+        }
+
+        if ( ! (bool) $batch->options['finishedReadingFile']) {
             ini_set('memory_limit', '1000M');
 
             $created = $this->createEligibilityJobsFromJsonFile($batch);
@@ -219,13 +231,21 @@ class ProcessEligibilityBatch implements ShouldQueue
             ->where('status', '<', 2)
             ->count();
 
+        //@todo: if for some reason there is a delay in creating eligibility jobs
+        //$jobsToBeProcessedCount will be 0, and that may cause the batch to be set as complete when it's not
+        //Adding the total number of files expected in each batch will help here
         if (0 == $jobsToBeProcessedCount) {
-            $batch->status = EligibilityBatch::STATUSES['complete'];
+            $batch->status                  = EligibilityBatch::STATUSES['complete'];
+            $options                        = $batch->options;
+            $options['finishedReadingFile'] = true;
+            $batch->options                 = $options;
         } else {
             $batch->status = EligibilityBatch::STATUSES['processing'];
         }
 
-        $batch->save();
+        if ($batch->isDirty()) {
+            $batch->save();
+        }
 
         return $batch;
     }
@@ -279,32 +299,35 @@ class ProcessEligibilityBatch implements ShouldQueue
 
         return $batch;
     }
-    
+
     private function queueSingleCsvJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        if (array_keys_exist(['folder', 'fileName'], $batch->options) && !! $batch->options['finishedReadingFile'] !== true) {
+        if (array_keys_exist(
+            ['folder', 'fileName'],
+            $batch->options
+        ) && true !== (bool) $batch->options['finishedReadingFile']) {
             $result = $this->processEligibilityService->processGoogleDriveCsvForEligibility($batch);
-            
+
             if ($result) {
                 $batch->status = EligibilityBatch::STATUSES['processing'];
                 $batch->save();
-        
+
                 return $batch;
             }
         }
 
-        
-
         $unprocessedQuery = EligibilityJob::whereBatchId($batch->id)
             ->where('status', '<', 2);
 
-        $unprocessedQuery->take(200)->get()->each(function ($job) use ($batch) {
-            ProcessSinglePatientEligibility::dispatchNow(
-                $job,
-                $batch,
-                $batch->practice
-            );
-        });
+        $unprocessedQuery->take(200)->get()->each(
+            function ($job) use ($batch) {
+                ProcessSinglePatientEligibility::dispatchNow(
+                    $job,
+                    $batch,
+                    $batch->practice
+                );
+            }
+        );
 
         if ( ! $unprocessedQuery->exists()) {
             $batch->status = EligibilityBatch::STATUSES['complete'];
@@ -350,7 +373,7 @@ class ProcessEligibilityBatch implements ShouldQueue
             if ( ! $iteration) {
                 continue;
             }
-    
+
             CreateEligibilityJobFromJsonMedicalRecord::dispatch($batch, $iteration)->onQueue('low');
         }
     }

@@ -15,6 +15,32 @@ use Validator;
 
 trait ValidatesEligibility
 {
+    public function addAtLeastOnePhoneRule(&$rules)
+    {
+        $rules['primary_phone'] = 'required_without_all:cell_phone,work_phone,home_phone';
+        $rules['cell_phone']    = 'required_without_all:primary_phone,work_phone,home_phone';
+        $rules['work_phone']    = 'required_without_all:primary_phone,cell_phone,home_phone';
+        $rules['home_phone']    = 'required_without_all:primary_phone,cell_phone,work_phone';
+    }
+
+    /**
+     * @return array
+     */
+    public function getCsvStructureErrors(EligibilityJob $job)
+    {
+        $csvPatientList = new CsvPatientList(collect([$job->data]));
+        $isValid        = $csvPatientList->guessValidatorAndValidate() ?? null;
+
+        $errors = [];
+        if ( ! $isValid) {
+            $errors[] = 'structure';
+        }
+        $errors = array_merge($this->validateRow($job->data)->errors()->keys(), $errors);
+        $this->saveErrorsOnEligibilityJob($job, collect($errors));
+
+        return $errors;
+    }
+
     public function saveErrorsOnEligibilityJob(EligibilityJob $job, Collection $errors)
     {
         //check keys and update job
@@ -46,21 +72,14 @@ trait ValidatesEligibility
         foreach ($this->validJsonKeys() as $name) {
             $rules[$name] = 'required|filled|same:'.$name;
         }
-        
-        if (!$this->filterLastEncounter) {
+
+        if ( ! $this->filterLastEncounter) {
             unset($rules['last_visit']);
         }
-    
+
         $this->addAtLeastOnePhoneRule($rules);
 
         return Validator::make($toValidate, $rules);
-    }
-
-    public function addAtLeastOnePhoneRule(&$rules) {
-        $rules['primary_phone'] = 'required_without_all:cell_phone,work_phone,home_phone';
-        $rules['cell_phone'] = 'required_without_all:primary_phone,work_phone,home_phone';
-        $rules['work_phone'] = 'required_without_all:primary_phone,cell_phone,home_phone';
-        $rules['home_phone'] = 'required_without_all:primary_phone,cell_phone,work_phone';
     }
 
     public function validatePatient(array $array)
@@ -148,24 +167,5 @@ trait ValidatesEligibility
         }
 
         return $row;
-    }
-    
-    /**
-     * @param EligibilityJob $job
-     *
-     * @return array
-     */
-    public function getCsvStructureErrors(EligibilityJob $job) {
-        $csvPatientList = new CsvPatientList(collect([$job->data]));
-        $isValid        = $csvPatientList->guessValidatorAndValidate() ?? null;
-    
-        $errors = [];
-        if ( ! $isValid) {
-            $errors[]         = 'structure';
-        }
-        $errors = array_merge($this->validateRow($job->data)->errors()->keys(), $errors);
-        $this->saveErrorsOnEligibilityJob($job, collect($errors));
-        
-        return $errors;
     }
 }

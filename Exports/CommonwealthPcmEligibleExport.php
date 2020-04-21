@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 2/15/20
- * Time: 12:27 AM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace CircleLinkHealth\Eligibility\Exports;
@@ -15,22 +13,16 @@ use Illuminate\Database\Eloquent\Builder;
 
 class CommonwealthPcmEligibleExport extends BasePracticeReport
 {
-    /**
-     * @return string
-     */
     public function filename(): string
     {
         if ( ! $this->filename) {
             $generatedAt    = now()->toDateTimeString();
             $this->filename = "Commonwealth Pain PCM Eligible Patients export generated at $generatedAt.csv";
         }
-    
+
         return $this->filename;
     }
-    
-    /**
-     * @return array
-     */
+
     public function headings(): array
     {
         return [
@@ -65,11 +57,9 @@ class CommonwealthPcmEligibleExport extends BasePracticeReport
             'all_pcm_problems',
         ];
     }
-    
+
     /**
      * @param mixed $eligibilityJob
-     *
-     * @return array
      */
     public function map($eligibilityJob): array
     {
@@ -77,7 +67,7 @@ class CommonwealthPcmEligibleExport extends BasePracticeReport
             'id',
             $eligibilityJob->data['chargeable_services_codes_and_problems']['G2065']
         )->get();
-    
+
         return [
             'pcm_problem_code'        => optional($problems->first())->code,
             'pcm_problem_code_type'   => optional($problems->first())->code_type,
@@ -107,14 +97,16 @@ class CommonwealthPcmEligibleExport extends BasePracticeReport
             'tertiary_insurance'      => $eligibilityJob->data['tertiary_insurance'],
             'last_encounter'          => $eligibilityJob->data['last_encounter'] ?? '',
             'referring_provider_name' => $eligibilityJob->data['referring_provider_name'],
-        
-            'all_pcm_problems'        => $problems->toJson(),
+
+            'all_pcm_problems' => $problems->toJson(),
         ];
     }
-    
-    /**
-     * @return Builder
-     */
+
+    public function mediaCollectionName(): string
+    {
+        return 'pcm_eligible_patients_report_from_all_batches';
+    }
+
     public function query(): Builder
     {
         return EligibilityJob::whereJsonLength(
@@ -127,10 +119,5 @@ class CommonwealthPcmEligibleExport extends BasePracticeReport
                 $q->where('practice_id', $this->practice->id);
             }
         )->with('targetPatient');
-    }
-    
-    public function mediaCollectionName(): string
-    {
-        return 'pcm_eligible_patients_report_from_all_batches';
     }
 }
