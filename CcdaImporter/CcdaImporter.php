@@ -65,7 +65,7 @@ class CcdaImporter
         $this->enrollee = $enrollee;
     }
 
-    public function attemptCreateCarePlan():Ccda
+    public function attemptCreateCarePlan(): Ccda
     {
         \DB::transaction(
             function () {
@@ -75,7 +75,7 @@ class CcdaImporter
                     } catch (ValidationException $e) {
                         $this->ccda->validation_checks = $e->errors();
                         $this->ccda->save();
-                        
+
                         return $this->ccda;
                     }
                 }

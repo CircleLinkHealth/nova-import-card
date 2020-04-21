@@ -21,7 +21,6 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeDiabetesAndEndocrineCcda;
-use Illuminate\Validation\ValidationException;
 use Tests\CustomerTestCase;
 
 class CcdaImporterTest extends CustomerTestCase
