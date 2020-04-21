@@ -6,7 +6,7 @@ use App\CcdaView;
 use App\Constants;
 use App\Nova\Actions\ClearAndReimportCcda;
 use App\Nova\Actions\ImportCcdaAction;
-use App\Nova\Filters\CreatedAfterDateFilter;
+use App\Nova\Filters\OnOrAfterDateFilter;
 use App\Nova\Filters\PracticeFilter;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Code;
@@ -97,7 +97,7 @@ class Ccda extends Resource
     {
         return [
             new PracticeFilter(),
-            new CreatedAfterDateFilter(),
+            new OnOrAfterDateFilter('created_at'),
         ];
     }
     
