@@ -9,7 +9,6 @@ namespace App\Http;
 use App\Http\Middleware\ACL\ProviderDashboardACL;
 use App\Http\Middleware\AdminOrPracticeStaff;
 use App\Http\Middleware\CheckCarePlanMode;
-use App\Http\Middleware\CheckForMaintenanceMode;
 use App\Http\Middleware\CheckOnboardingInvite;
 use App\Http\Middleware\CheckPatientUserData;
 use App\Http\Middleware\CheckWebSocketServer;
@@ -18,7 +17,6 @@ use App\Http\Middleware\EnrollmentCenter;
 use App\Http\Middleware\LogoutIfAccessDisabled;
 use App\Http\Middleware\PatientProgramSecurity;
 use App\Http\Middleware\SentryContext;
-use App\Http\Middleware\TrustProxies;
 use App\Http\Middleware\VerifyCsrfToken;
 use CircleLinkHealth\TwoFA\Http\Middleware\AuthyMiddleware;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -40,8 +38,9 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
-        TrustProxies::class,
-        CheckForMaintenanceMode::class,
+        \App\Http\Middleware\TrustProxies::class,
+        \Fruitcake\Cors\HandleCors::class,
+        \App\Http\Middleware\CheckForMaintenanceMode::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
