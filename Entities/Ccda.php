@@ -397,15 +397,15 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     {
         $this
             ->guessPracticeLocationProvider();
-    
+
         $ccda = $this->updateOrCreateCarePlan($enrollee);
-    
-        if (! $ccda->patient || ! $ccda->patient->carePlan) {
+
+        if ( ! $ccda->patient || ! $ccda->patient->carePlan) {
             return $ccda;
         }
-        
+
         $ccda->raiseConcerns();
-        
+
         if ($ccda->isDirty()) {
             $ccda->save();
         }
@@ -453,17 +453,17 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     public function raiseConcerns()
     {
         $this->load(['patient.carePlan']);
-    
-        if (! $this->patient || ! $this->patient->carePlan) {
+
+        if ( ! $this->patient || ! $this->patient->carePlan) {
             return $this;
         }
-    
-        $validator = $this->patient->carePlan->validator();
+
+        $validator               = $this->patient->carePlan->validator();
         $this->validation_checks = null;
         if ($validator->fails()) {
             $this->validation_checks = $validator->errors();
         }
-        
+
         return $this;
     }
 
@@ -590,7 +590,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         return $this->hasOne(TargetPatient::class);
     }
 
-    public function updateOrCreateCarePlan(Enrollee $enrollee = null):Ccda
+    public function updateOrCreateCarePlan(Enrollee $enrollee = null): Ccda
     {
         if ( ! $this->json) {
             $this->bluebuttonJson();
