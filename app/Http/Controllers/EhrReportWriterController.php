@@ -147,6 +147,12 @@ class EhrReportWriterController extends Controller
             return redirect()->back()->withErrors($messages);
         }
 
+        if ( ! $user->ehrReportWriterInfo->google_drive_folder_path) {
+            $messages['errors'][] = 'You need to have a google drive folder for your EHR report Writer User to use this feature.';
+
+            return redirect()->back()->withErrors($messages);
+        }
+
         if ( ! $practiceId) {
             $messages['warnings'][] = 'Please select a Practice!';
 
