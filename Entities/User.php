@@ -2661,7 +2661,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function routeNotificationForTwilio()
     {
-        if (App::environment(['review', 'staging', 'local'])) {
+        if (App::environment(['review', 'local'])) {
             return '+35799952761'; // tester
         } else {
             return $this->getPhone();
@@ -2674,7 +2674,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function routeNotificationForMail($notification)
     {
-        if (App::environment(['review', 'staging', 'local'])) {
+        if (App::environment(['review', 'local'])) {
             return 'kountouris7@gmail.com';
 //            return 'nektariosx01@gmail.com'; // tester
         } else {
