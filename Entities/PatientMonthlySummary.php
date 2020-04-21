@@ -172,9 +172,9 @@ class PatientMonthlySummary extends BaseModel
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      * @todo: Deprecate in favor of billableProblems()
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function billableProblem1()
     {
@@ -182,9 +182,9 @@ class PatientMonthlySummary extends BaseModel
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      * @todo: Deprecate in favor of billableProblems()
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function billableProblem2()
     {
@@ -313,7 +313,7 @@ class PatientMonthlySummary extends BaseModel
             : $this->attestedProblems->where('cpmProblem.is_behavioral', '=', false);
     }
 
-    public function practiceHasServiceCode($code) : bool
+    public function practiceHasServiceCode($code): bool
     {
         return (bool)optional($this->patient->primaryPractice)->hasServiceCode($code);
     }
@@ -501,6 +501,13 @@ class PatientMonthlySummary extends BaseModel
                           ->first())
                 ->id,
         ];
+    }
+
+    public static function existsForCurrentMonthForPatient($patientId) : bool
+    {
+        return (new static())->where('patient_id', $patientId)
+                             ->where('month_year', Carbon::now()->startOfMonth())
+                             ->exists();
     }
 }
 
