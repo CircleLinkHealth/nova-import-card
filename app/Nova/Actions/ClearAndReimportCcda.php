@@ -32,6 +32,7 @@ class ClearAndReimportCcda extends Action implements ShouldQueue
             [
                 'patientUserId'   => $patientUserId,
                 'initiatorUserId' => $notifiableUserId,
+                '--clear' => true,
             ]
         );
     }
