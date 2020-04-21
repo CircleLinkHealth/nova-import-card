@@ -12,15 +12,16 @@ use Illuminate\Contracts\Validation\Rule;
 
 class HasEnoughProblems implements Rule
 {
-
     /** @var User $patient */
     private $patient;
-
+    
     /**
      * Create a new rule instance.
+     * @param User $patient
      */
-    public function __construct()
+    public function __construct(User $patient)
     {
+        $this->patient = $patient;
     }
 
     /**
