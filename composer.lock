@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6362b9dfe2d53cff924e630622f31a4c",
+    "content-hash": "61eeea1da9b9c7e35a0a6bb9a28197f5",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -793,11 +793,11 @@
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
-            "version": "v3.1.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git",
-                "reference": "9aa62b16a2f457849bf0d4e0a732088bd964fba3"
+                "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper-module.git",
+                "reference": "cb497f0d6f3adfec7ee41179c1c0c425093100d9"
             },
             "require": {
                 "illuminate/cache": "~5.0|~6.0|~7.0",
@@ -870,7 +870,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2020-04-21T10:23:17+00:00"
+            "time": "2020-01-17T06:47:22+00:00"
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
@@ -15287,6 +15287,7 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/ccda-parser-processor-php-module": 20,
+        "circlelinkhealth/cerberus-gatekeeper-module": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
