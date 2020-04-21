@@ -92,7 +92,7 @@ class CcdaImporterTest extends CustomerTestCase
 
         $meds = $this->patient()->ccdMedications()->get();
 
-        $this->assertCount(18, $meds);
+        $this->assertCount(17, $meds);
     }
 
     public function test_it_imports_csv_ccda_problems()
