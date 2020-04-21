@@ -194,12 +194,13 @@
         "spatie/pdf-to-text": "^1.2",
         "subzero10/condition-code-lookup-module": "dev-master",
         "titasgailius/search-relations": "^1.0",
-        "twilio/sdk": "5.7",
+        "twilio/sdk": "~5.16",
         "vink/nova-cache-card": "^1.0",
         "waavi/url-shortener": "dev-master",
         "waynestate/nova-ckeditor4-field": "^0.4.0",
         "circlelinkhealth/clh-nova-theme": "*",
-        "yajra/laravel-datatables-oracle": "~9.0"
+        "yajra/laravel-datatables-oracle": "~9.0",
+        "laravel-notification-channels/twilio": "^2.1"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "*",

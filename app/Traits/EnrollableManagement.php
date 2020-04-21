@@ -6,7 +6,7 @@
 
 namespace App\Traits;
 
-use App\Http\Controllers\Enrollment\EnrollmentCenterController;
+use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -86,6 +86,16 @@ trait EnrollableManagement
     }
 
     /**
+     * @return \App\User|Enrollee|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
+     */
+    public function getEnrollableModelType(User $user)
+    {
+        return $user->checkForSurveyOnlyRole()
+            ? $this->getEnrollee($user->id)
+            : $this->getUserModelEnrollee($user->id);
+    }
+
+    /**
      * @param $isSurveyOnlyUser
      *
      * @return \CircleLinkHealth\Customer\Entities\ProviderInfo|mixed|User|null
@@ -98,19 +108,27 @@ trait EnrollableManagement
     }
 
     /**
+     * @return Enrollee|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
+     */
+    public function getEnrollee(string $enrollableId)
+    {
+        return Enrollee::whereUserId($enrollableId)->first();
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Query\Builder|object|null
      */
     public function getEnrolleesSurveyInstance()
     {
         return DB::table('surveys')
             ->join('survey_instances', 'surveys.id', '=', 'survey_instances.survey_id')
-            ->where('name', '=', EnrollmentCenterController::ENROLLEES)->first();
+            ->where('name', '=', AutoEnrollmentCenterController::ENROLLEES)->first();
     }
 
     public function getEnrolleeSurvey()
     {
         return DB::table('surveys')
-            ->where('name', '=', EnrollmentCenterController::ENROLLEES)
+            ->where('name', '=', AutoEnrollmentCenterController::ENROLLEES)
             ->first();
     }
 
@@ -139,6 +157,14 @@ trait EnrollableManagement
             ->firstOrFail();
 
         return $enrollee->provider;
+    }
+
+    /**
+     * @return \App\User|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
+     */
+    public function getUserModelEnrollee(string $enrollableId)
+    {
+        return User::whereId($enrollableId)->first();
     }
 
     /**
@@ -244,34 +270,5 @@ trait EnrollableManagement
                 'start_date' => Carbon::parse(now())->toDateTimeString(),
             ]
         );
-    }
-
-    /**
-     * @param string $enrollableId
-     * @return Enrollee|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
-     */
-    public function getEnrollee(string $enrollableId)
-    {
-        return Enrollee::whereUserId($enrollableId)->first();
-    }
-
-    /**
-     * @param string $enrollableId
-     * @return \App\User|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
-     */
-    public function getUserModelEnrollee(string $enrollableId)
-    {
-        return User::whereId($enrollableId)->first();
-    }
-
-    /**
-     * @param User $user
-     * @return \App\User|Enrollee|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
-     */
-    public function getEnrollableModelType(User $user)
-    {
-        return $user->checkForSurveyOnlyRole()
-            ? $this->getEnrollee($user->id)
-            : $this->getUserModelEnrollee($user->id);
     }
 }

@@ -2170,60 +2170,60 @@ Route::prefix('admin')->group(
 
 // TESTING ROUTES - DELETE AFTER TEST
 Route::get('/send-enrollment-reminder-test', [
-    'uses' => 'Enrollment\EnrollmentCenterController@sendEnrollmentReminderTestMethod',
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@sendEnrollmentReminderTestMethod',
     'as' => 'send.reminder.qa',
 ])->middleware('auth');
 
 Route::get('/final-action-unreachables-test', [
-    'uses' => 'Enrollment\EnrollmentCenterController@finalActionTest',
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@finalActionTest',
     'as' => 'final.action.qa',
 ])->middleware('auth');
 
 Route::get('/evaluate-enrolled-from-survey', [
-    'uses' => 'Enrollment\EnrollmentCenterController@evaluateEnrolledForSurveyTest',
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@evaluateEnrolledForSurveyTest',
     'as' => 'evaluate.survey.completed',
 ])->middleware('auth');
 
 Route::get('/reset-enrollment-test', [
-    'uses' => 'Enrollment\EnrollmentCenterController@resetEnrollmentTest',
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@resetEnrollmentTest',
     'as' => 'reset.test.qa',
 ])->middleware('auth');
 
 Route::get('/send-enrollment-invites', [
-    'uses' => 'Enrollment\EnrollmentCenterController@inviteUnreachablesToEnrollTest',
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@inviteUnreachablesToEnrollTest',
     'as' => 'send.enrollment.invitations',
 ])->middleware('auth');
 
 Route::get('/trigger-enrolldata-test', [
-    'uses' => 'Enrollment\EnrollmentCenterController@triggerEnrollmentSeederTest',
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@triggerEnrollmentSeederTest',
     'as' => 'trigger.enrolldata.test',
 ])->middleware('auth');
 
 Route::get('/invite-unreachable', [
-    'uses' => 'Enrollment\EnrollmentCenterController@sendInvitesPanelTest',
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@sendInvitesPanelTest',
     'as' => 'send.invitates.panel',
 ])->middleware('auth');
 //---------------------------------------
 
 // TEMPORARY SIGNED ROUTE
 Route::get('/patient-self-enrollment', [
-    'uses' => 'Enrollment\EnrollmentCenterController@enrolleesInvitationLetterBoard',
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrolleesInvitationLetterBoard',
     'as' => 'invitation.enrollment',
 ]);
 
 Route::get('/enrollment-survey', [
-    'uses' => 'Enrollment\EnrollmentCenterController@enrollNow',
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrollNow',
     'as' => 'patient.self.enroll.now',
 ]);
 
 Route::get('/enrollment-info', [
-    'uses' => 'Enrollment\EnrollmentCenterController@enrolleeRequestsInfo',
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrolleeRequestsInfo',
     'as' => 'patient.requests.enroll.info',
 ]);
 
 // Redirects to view with enrollees details to contact.
 Route::get('/enrollee-contact-details', [
-    'uses' => 'Enrollment\EnrollmentCenterController@enrolleeContactDetails',
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrolleeContactDetails',
     'as' => 'enrollee.to.call.details',
 ])->middleware('auth');
 
@@ -2247,7 +2247,7 @@ Route::post('nurses/nurse-calendar-data', [
     'as' => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');
 
-Route::get('login-enrollees-survey/{user}/{survey}', 'EnrollmentCenterController@sendToSurvey')
+Route::get('login-enrollees-survey/{user}/{survey}', 'AutoEnrollmentCenterController@sendToSurvey')
     ->name('enrollee.login.signed')
     ->middleware('signed');
 

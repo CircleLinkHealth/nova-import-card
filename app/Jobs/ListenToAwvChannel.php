@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
@@ -10,12 +14,14 @@ use Illuminate\Queue\SerializesModels;
 
 class ListenToAwvChannel implements ShouldQueue
 {
-    const AWV_REPORT_CREATED = 'awv-patient-report-created';
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    const AWV_REPORT_CREATED          = 'awv-patient-report-created';
     const ENROLLMENT_SURVEY_COMPLETED = 'enrollable-survey-completed';
-
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    private $data;
     private $channel;
+    private $data;
 
     /**
      * ListenToAwvChannel constructor.
@@ -24,7 +30,7 @@ class ListenToAwvChannel implements ShouldQueue
      */
     public function __construct($data, $channel)
     {
-        $this->data = $data;
+        $this->data    = $data;
         $this->channel = $channel;
     }
 
@@ -35,11 +41,11 @@ class ListenToAwvChannel implements ShouldQueue
      */
     public function handle()
     {
-        if ($this->channel === self::AWV_REPORT_CREATED) {
+        if (self::AWV_REPORT_CREATED === $this->channel) {
             AwvPatientReportNotify::dispatch($this->data);
         }
 
-        if ($this->channel === self::ENROLLMENT_SURVEY_COMPLETED) {
+        if (self::ENROLLMENT_SURVEY_COMPLETED === $this->channel) {
             EnrollableSurveyCompleted::dispatch($this->data);
         }
     }

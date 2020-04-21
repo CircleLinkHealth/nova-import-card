@@ -10,10 +10,13 @@ use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use Illuminate\Foundation\Testing\WithFaker;
 
 class CustomerTestCase extends TestCase
 {
     use UserHelpers;
+    use WithFaker;
     /**
      * @var array|User
      */
@@ -41,6 +44,10 @@ class CustomerTestCase extends TestCase
      */
     private $superadmin;
 
+    /**
+     * @var Enrollee
+     */
+    private $enrollee;
     /**
      * @return array|User
      */
@@ -140,5 +147,20 @@ class CustomerTestCase extends TestCase
         }
 
         return $users;
+    }
+
+    protected function enrollee(int $number = 1)
+    {
+        if (! $this->enrollee) {
+            $this->enrollee = factory(Enrollee::class)->create([
+                'practice_id' => $this->practice()->id,
+                'dob' => \Carbon\Carbon::parse('1901-01-01'),
+                'referring_provider_name' => 'Dr. Demo',
+                'mrn' => mt_rand(100000, 999999),
+                'email'=> $this->faker->safeEmail,
+            ]);
+        }
+
+        return $this->enrollee;
     }
 }

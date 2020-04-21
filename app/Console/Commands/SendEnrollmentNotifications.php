@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
@@ -7,9 +8,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\SelfEnrollmentEnrollees;
 use App\Jobs\SelfEnrollmentUnreachablePatients;
-use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\App;
 
 class SendEnrollmentNotifications extends Command
 {
@@ -41,9 +40,8 @@ class SendEnrollmentNotifications extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
      * @throws \ReflectionException
-     *
+     * @return mixed
      */
     public function handle()
     {
@@ -52,4 +50,3 @@ class SendEnrollmentNotifications extends Command
         ])->dispatch();
     }
 }
-

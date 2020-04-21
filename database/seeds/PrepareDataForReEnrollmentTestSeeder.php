@@ -13,8 +13,8 @@ use Illuminate\Database\Seeder;
 
 class PrepareDataForReEnrollmentTestSeeder extends Seeder
 {
-    use UserHelpers;
     use SeedEligibilityJobsForEnrollees;
+    use UserHelpers;
 
     const CCM_STATUS_UNREACHABLE = 'unreachable';
 
@@ -30,16 +30,16 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 'name' => 'demo',
             ],
             [
-                'active' => 1,
-                'display_name' => 'Demo',
-                'is_demo' => 1,
-                'clh_pppm' => 0,
-                'term_days' => 30,
+                'active'                => 1,
+                'display_name'          => 'Demo',
+                'is_demo'               => 1,
+                'clh_pppm'              => 0,
+                'term_days'             => 30,
                 'outgoing_phone_number' => +18886958537,
             ]
         );
         $mothStart = Carbon::parse(now())->copy()->startOfMonth()->toDateTimeString();
-        $monthEnd = Carbon::parse($mothStart)->copy()->endOfMonth()->toDateTimeString();
+        $monthEnd  = Carbon::parse($mothStart)->copy()->endOfMonth()->toDateTimeString();
 
         $enrollees = Enrollee::where('dob', \Carbon\Carbon::parse('1901-01-01'))
             ->where('practice_id', $practice->id)
@@ -47,19 +47,18 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
 
         if ($enrollees->count() < 5) {
             $enrollees->delete(); //Just to be sure
-            $n = 1;
+            $n     = 1;
             $limit = 5;
             while ($n <= $limit) {
                 $enrolleesForTesting = factory(Enrollee::class, 1)->create([
-                    'practice_id' => $practice->id,
-                    'dob' => \Carbon\Carbon::parse('1901-01-01'),
+                    'practice_id'             => $practice->id,
+                    'dob'                     => \Carbon\Carbon::parse('1901-01-01'),
                     'referring_provider_name' => 'Dr. Demo',
-                    'mrn' => mt_rand(100000, 999999),
+                    'mrn'                     => mt_rand(100000, 999999),
                 ]);
                 $this->seedEligibilityJobs(collect($enrolleesForTesting));
                 ++$n;
             }
-
         }
 
         $unreachablePatients = User::with('patientInfo')
@@ -75,12 +74,12 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
 
         if ($unreachablePatients->count() < 5) {
             $unreachablePatients->forceDelete(); //Just to be sure
-            $n = 1;
+            $n     = 1;
             $limit = 5;
             while ($n <= $limit) {
                 $user = $this->createUser($practice->id, 'participant', self::CCM_STATUS_UNREACHABLE);
                 $user->patientInfo()->update([
-                    'birth_date' => \Carbon\Carbon::parse('1901-01-01'),
+                    'birth_date'       => \Carbon\Carbon::parse('1901-01-01'),
                     'date_unreachable' => now(),
                 ]);
                 ++$n;
