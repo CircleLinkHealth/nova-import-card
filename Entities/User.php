@@ -1473,17 +1473,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->patientInfo->ccm_status;
     }
 
-    public function getCcmTime()
-    {
-        return optional(
-            $this->patientSummaries()
-                ->select(['ccm_time', 'id'])
-                ->orderBy('id', 'desc')
-                ->whereMonthYear(Carbon::now()->startOfMonth())
-                ->first()
-        )->ccm_time ?? 0;
-    }
-
     public function getConsentDate()
     {
         if (!$this->patientInfo) {
@@ -1727,73 +1716,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
 
         return $output;
-    }
-
-    /**
-     * Get the CarePeople who have subscribed to receive alerts for this Patient.
-     * Returns a Collection of User objects, or an Empty Collection.
-     *
-     * @return Collection
-     */
-    public function getCareTeamReceivesAlerts()
-    {
-        if (!$this->primaryPractice->send_alerts) {
-            return new Collection();
-        }
-
-        $careTeam = $this->careTeamMembers->where('alert', '=', true)
-            ->keyBy('member_user_id')
-            ->unique()
-            ->values();
-
-        $users = new Collection();
-
-        //Get email forwarding
-        foreach ($careTeam as $carePerson) {
-            $forwardsTo = optional($carePerson->user)->forwardAlertsTo;
-            if ($forwardsTo) {
-                $forwards = $forwardsTo->whereIn(
-                    'pivot.name',
-                    [
-                        User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
-                        User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER,
-                    ]
-                );
-
-                if ($forwards->isEmpty() && $carePerson->user) {
-                    $users->push($carePerson->user);
-                }
-
-                foreach ($forwards as $forwardee) {
-                    if (User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER == $forwardee->pivot->name) {
-                        $users->push($carePerson->user);
-                        $users->push($forwardee);
-                    }
-
-                    if (User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER == $forwardee->pivot->name) {
-                        $users->push($forwardee);
-                    }
-                }
-            }
-        }
-
-        //Get clinical emergency contacts from locations
-        foreach ($this->locations as $location) {
-            if (!$location->clinicalEmergencyContact->isEmpty()) {
-                $contact = $location->clinicalEmergencyContact->first();
-
-                if (CarePerson::INSTEAD_OF_BILLING_PROVIDER == $contact->pivot->name) {
-                    $users = new Collection();
-                    $users->push($contact);
-
-                    return $users;
-                }
-
-                $users->push($contact);
-            }
-        }
-
-        return $users;
     }
 
     public function getNpiNumber()
@@ -2126,11 +2048,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->where('called_date', '=', null);
     }
 
-    public function inboundActivities()
-    {
-        return $this->hasMany(Call::class, 'inbound_cpm_id', 'id');
-    }
-
     public function inboundScheduledCalls(Carbon $after = null)
     {
         return $this->inboundCalls()
@@ -2228,15 +2145,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function isEhrReportWriter(): bool
     {
         return $this->hasRole('ehr-report-writer');
-    }
-
-    public function getCcmStatus()
-    {
-        if (!$this->patientInfo) {
-            return '';
-        }
-
-        return $this->patientInfo->ccm_status;
     }
 
     /**
