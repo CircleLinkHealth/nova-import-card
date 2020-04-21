@@ -11,7 +11,7 @@ use App\CareAmbassador;
 use App\CareplanAssessment;
 use App\Constants;
 use App\ForeignId;
-use App\Jobs\SendSelfEnrollmentEnrollees;
+use App\Jobs\SelfEnrollmentEnrollees;
 use App\Message;
 use App\Models\EmailSettings;
 use App\Notifications\CarePlanApprovalReminder;
@@ -3988,7 +3988,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function checkForSurveyOnlyRole()
     {
-        return $this->roles()->where('name', SendSelfEnrollmentEnrollees::SURVEY_ONLY)->exists();
+        return $this->roles()->where('name', SelfEnrollmentEnrollees::SURVEY_ONLY)->exists();
     }
 
     public function patientNurseAsPatient() {
