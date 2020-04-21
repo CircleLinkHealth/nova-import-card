@@ -224,6 +224,28 @@ trait CerberusSiteUserTrait
         return $this->rolesCache[$cacheKey];
     }
 
+    public function clearRolesCache()
+    {
+        $keys = [
+            'cerberus_roles_for_user_'.$this->id,
+            'cerberus_permissions_for_user_'.$this->id,
+        ];
+        if (\Cache::getStore() instanceof TaggableStore) {
+            $store = \Cache::tags(Config::get('cerberus.role_user_site_table'));
+        } else {
+            $store = \Cache::getStore();
+        }
+
+        foreach ($keys as $key) {
+            unset($this->rolesCache[$key], $this->permissionsCache[$key]);
+
+            $store->forget($key);
+            Cache::forget($key);
+        }
+
+        $this->unsetRelation('roles');
+    }
+
     /**
      * Detach permission from current user.
      *
@@ -549,26 +571,5 @@ trait CerberusSiteUserTrait
         }
 
         return true;
-    }
-
-    public function clearRolesCache() {
-        $keys = [
-            'cerberus_roles_for_user_'.$this->id,
-            'cerberus_permissions_for_user_'.$this->id,
-        ];
-        if (\Cache::getStore() instanceof TaggableStore) {
-            $store = \Cache::tags(Config::get('cerberus.role_user_site_table'));
-        } else {
-            $store = \Cache::getStore();
-        }
-
-        foreach ($keys as $key) {
-            unset($this->rolesCache[$key]);
-            unset($this->permissionsCache[$key]);
-            $store->forget($key);
-            Cache::forget($key);
-        }
-
-        $this->unsetRelation('roles');
     }
 }
