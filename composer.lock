@@ -1057,7 +1057,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "eb10b9d4062523bfe49ea1c755957234f2e07260"
+                "reference": "ac4617a257b24cae7f5264e9b10c546bf9930db2"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1082,7 +1082,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-21T01:35:31+00:00"
+            "time": "2020-04-21T13:07:38+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1336,7 +1336,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "12383fd0e6a0c5ea5447befba7a2c623cb3b3627"
+                "reference": "c4f0ea7d393854ad6ff3ceb0a48c1c35d3d34d4a"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1350,7 +1350,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-21T01:35:31+00:00"
+            "time": "2020-04-21T13:07:38+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -8626,23 +8626,30 @@
         },
         {
             "name": "sparclex/nova-import-card",
-            "version": "v2.1.0",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/nova-import-card.git",
-                "reference": "8dede08d87097e3180fc3814a0076290c2d558b3"
+                "url": "https://github.com/Sparclex/nova-import-card.git",
+                "reference": "00bd39fdcef5546095a722dc09fab6ac7e247b38"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sparclex/nova-import-card/zipball/00bd39fdcef5546095a722dc09fab6ac7e247b38",
+                "reference": "00bd39fdcef5546095a722dc09fab6ac7e247b38",
+                "shasum": ""
             },
             "require": {
-                "illuminate/support": "^5.6|^6.0",
+                "illuminate/support": "^5.6",
                 "laravel/nova": "~2.0",
                 "maatwebsite/excel": "^3.1",
                 "php": ">=7.1"
             },
             "require-dev": {
                 "mockery/mockery": "~1.0",
-                "orchestra/database": "^3.8|^4.0",
-                "orchestra/testbench": "^3.8|^4.0",
-                "phpunit/phpunit": "^8.0"
+                "orchestra/database": "^3.8",
+                "orchestra/testbench": "^3.8",
+                "phpunit/phpunit": "^8.0",
+                "predis/predis": "^1.1"
             },
             "type": "library",
             "extra": {
@@ -8657,16 +8664,7 @@
                     "Sparclex\\NovaImportCard\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Sparclex\\NovaImportCard\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "vendor/bin/phpunit"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -8675,7 +8673,8 @@
                 "laravel",
                 "nova"
             ],
-            "time": "2019-10-28T20:30:15+00:00"
+            "abandoned": "anaseqal/nova-import",
+            "time": "2019-03-12T22:34:40+00:00"
         },
         {
             "name": "spatie/image",
