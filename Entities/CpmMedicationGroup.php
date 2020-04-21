@@ -20,16 +20,16 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection   $cpmInstructions
  * @property \CircleLinkHealth\SharedModels\Entities\Medication[]|\Illuminate\Database\Eloquent\Collection       $medications
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                 $patient
- * @method static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereCareItemId($value)
- * @method static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereCreatedAt($value)
- * @method static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereId($value)
- * @method static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereName($value)
- * @method static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereUpdatedAt($value)
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereCareItemId($value)
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereCreatedAt($value)
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereId($value)
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereName($value)
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup newModelQuery()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup newQuery()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup query()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup query()
  * @property int|null                                                                                    $care_plan_templates_count
  * @property int|null                                                                                    $cpm_instructions_count
  * @property int|null                                                                                    $medications_count

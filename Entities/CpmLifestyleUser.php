@@ -21,19 +21,19 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property App\Models\CPM\CpmInstruction            $cpmInstruction
  * @property App\Models\CPM\CpmLifestyle              $cpmLifestyle
  * @property \CircleLinkHealth\Customer\Entities\User $user
- * @method static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmLifestyle whereCreatedAt($value)
- * @method static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmLifestyle whereId($value)
- * @method static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmLifestyle whereName($value)
- * @method static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmLifestyle whereUpdatedAt($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmLifestyle whereCreatedAt($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmLifestyle whereId($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmLifestyle whereName($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmLifestyle whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection $cpmInstructions
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection       $revisionHistory
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser newModelQuery()
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser newQuery()
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser query()
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser whereCpmInstructionId($value)
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser whereCpmLifestyleId($value)
- * @method static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser wherePatientId($value)
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser newModelQuery()
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser newQuery()
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser query()
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser whereCpmInstructionId($value)
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser whereCpmLifestyleId($value)
+ * @method   static                                                                                            \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser wherePatientId($value)
  * @property int|null                                                                                          $cpm_instructions_count
  * @property int|null                                                                                          $revision_history_count
  */
