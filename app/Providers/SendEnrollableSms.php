@@ -2,14 +2,14 @@
 
 namespace App\Providers;
 
-use App\Events\UserFromEnrolleeCreated;
 use App\Notifications\SendEnrollementSms;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 
 class SendEnrollableSms implements ShouldQueue
 {
     use InteractsWithQueue;
+
     /**
      * Create the event listener.
      *
@@ -29,11 +29,11 @@ class SendEnrollableSms implements ShouldQueue
      */
     public function handle($event)
     {
-        $this->sendSms($event->user);
+        $this->sendSms($event);
     }
 
-    private function sendSms($notifiable)
+    private function sendSms($event)
     {
-        $notifiable->notify(new SendEnrollementSms());
+        $event->user->notify(new SendEnrollementSms($event->isReminder));
     }
 }

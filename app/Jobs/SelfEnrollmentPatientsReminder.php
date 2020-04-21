@@ -24,7 +24,6 @@ use Illuminate\Support\Facades\App;
 class SelfEnrollmentPatientsReminder implements ShouldQueue
 {
     use Dispatchable;
-    use EnrollableManagement;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
@@ -69,17 +68,7 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
             })
             ->get()
             ->each(function (User $enrollable) {
-                $isSurveyOnly = $enrollable->checkForSurveyOnlyRole();
-//                Currently only Enrollees can request Info but ... covers both.
-                $hasRequestedInfoOnInvitation = $isSurveyOnly
-                    ? Enrollee::whereUserId($enrollable->id)->first()->statusRequestsInfo()->exists()
-                    : $enrollable->statusRequestsInfo()->exists();
-
-                // $hasRequestedInfoOnInvitation & hasSurveyCompleted should never be used for 'surveyOnlyUsers' cause if
-                // patient requested info or completed survey the user model would be deleted, hence it will never be collected
-                if (!$hasRequestedInfoOnInvitation || !$this->hasSurveyInProgress($enrollable) || $this->hasSurveyCompleted($enrollable)) {
-                    event(new AutoEnrollableCollected($enrollable, true));
-                }
+                SendEnrollmentReminders::dispatch($enrollable);
             });
     }
 }

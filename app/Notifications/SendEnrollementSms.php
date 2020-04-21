@@ -44,7 +44,7 @@ class SendEnrollementSms extends Notification
     {
 //        at this point will always exist only one active link from the mail notif send
         $receiver = $this->getEnrollableModelType($notifiable);
-
+        $practiceNumber = $receiver->primaryPractice->outgoing_phone_number;
         $invitationUrl = $receiver->getLastEnrollmentInvitationLink();
         $shortenUrl = null;
 
@@ -58,6 +58,7 @@ class SendEnrollementSms extends Notification
         $smsSubject = $notificationContent['line1'] . $notificationContent['line2'] . $shortenUrl ?? $invitationUrl->url;
 
         return (new TwilioSmsMessage())
+            ->from($practiceNumber)
             ->content($smsSubject);
     }
 
