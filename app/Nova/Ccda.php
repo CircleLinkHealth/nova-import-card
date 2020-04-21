@@ -50,6 +50,9 @@ class Ccda extends Resource
         'last_name',
         'dm_from',
         'created_at',
+        'source',
+        'nurse_user_name',
+        'practice_display_name',
     ];
     
     /**
