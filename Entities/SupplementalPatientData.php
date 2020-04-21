@@ -51,7 +51,7 @@ class SupplementalPatientData extends Model
     protected $dates = [
         'dob',
     ];
-    
+
     protected $fillable = [
         'practice_id',
         'location_id',
@@ -66,7 +66,7 @@ class SupplementalPatientData extends Model
         'location',
     ];
     protected $table = 'supplemental_patient_data';
-    
+
     public function practice() {
         return $this->belongsTo(Practice::class);
     }

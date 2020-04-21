@@ -63,7 +63,7 @@ class EligibilityBatch extends BaseModel
     const TYPE_GOOGLE_DRIVE_CCDS = 'google_drive_ccds';
     const TYPE_ONE_CSV           = 'one_csv';
     const TYPE_PHX_DB_TABLES     = 'phoenix_heart_db_tables';
-    
+
     const OUTCOME_NOT_PROCESSED_YET = 'Not processed yet.';
 
     protected $attributes = [
