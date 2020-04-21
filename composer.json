@@ -205,7 +205,6 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "*",
         "barryvdh/laravel-ide-helper": "^2.6.7",
-        "darkaonline/l5-swagger": "^7.0",
         "facade/ignition": "^2.0",
         "friendsofphp/php-cs-fixer": "^2.16.3",
         "fzaninotto/faker": "^1.4",
