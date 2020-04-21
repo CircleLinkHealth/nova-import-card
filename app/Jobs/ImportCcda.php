@@ -7,7 +7,7 @@
 namespace App\Jobs;
 
 use App\Notifications\CcdaImportedNotification;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -49,7 +49,7 @@ class ImportCcda implements ShouldQueue
         $this->ccda = $ccda;
         $this->notifyUploaderUser = $notifyUploaderUser;
     }
-
+    
     /**
      * Execute the job.
      */
@@ -59,7 +59,7 @@ class ImportCcda implements ShouldQueue
             $this->sendCcdaUploadedNotification();
         }
     }
-
+    
     /**
      * Get the tags that should be assigned to the job.
      *
@@ -67,13 +67,15 @@ class ImportCcda implements ShouldQueue
      */
     public function tags()
     {
-        return ['import', 'ccda:'.$this->ccda->id];
+        return ['import', 'ccda:' . $this->ccda->id];
     }
     
     private function sendCcdaUploadedNotification()
     {
         if (!$this->notifyUploaderUser) return;
         
-        User::findOrFail($this->ccda->user_id)->notify(new CcdaImportedNotification($this->ccda));
+        if ($u = User::find($this->ccda->user_id)) {
+            $u->notify(new CcdaImportedNotification($this->ccda));
+        }
     }
 }
