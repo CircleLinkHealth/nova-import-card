@@ -101,6 +101,10 @@
         },
         {
             "type": "git",
+            "url": "git@github.com:CircleLinkHealth/slack-laravel.git"
+        },
+        {
+            "type": "git",
             "url": "git@github.com:subzero10/condition-code-lookup-module.git"
         },
         {
@@ -165,7 +169,7 @@
         "guzzlehttp/guzzle": "^6.3",
         "hubertnnn/laravel-nova-field-dynamic-select": "^0.2.0",
         "jenssegers/agent": "^2.5",
-        "jeremykenedy/slack-laravel": "^2.4",
+        "jeremykenedy/slack-laravel": "^7.0.0",
         "joshbrw/laravel-module-installer": "^0.1.5",
         "jubeki/nova-card-linkable": "^1.0",
         "kreitje/nova-horizon-stats": "^0.3.0",
