@@ -84,6 +84,8 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  */
 class CcdaView extends SqlViewModel
 {
+    protected $primaryKey = 'ccda_id';
+    
     public $phi = [
         'mrn',
         'patient_first_name',

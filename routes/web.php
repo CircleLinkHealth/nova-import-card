@@ -3,7 +3,7 @@
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
-
+//auth()->loginUsingId(357);
 Route::get('/debug-sentry', 'DemoController@sentry');
 Route::get('/debug-sentry-log', 'DemoController@sentryLog');
 
