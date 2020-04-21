@@ -946,7 +946,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "e66e5b2f55b15e7d4bd786ef9e097a49e5f67601"
+                "reference": "1341d9f347cd3148b5540f266f1c3be5210ddbcc"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -975,7 +975,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-20T23:09:31+00:00"
+            "time": "2020-04-21T04:09:45+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
