@@ -816,4 +816,5 @@ class Enrollee extends BaseModel
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
 }
