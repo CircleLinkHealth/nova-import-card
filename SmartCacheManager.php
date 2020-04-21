@@ -8,10 +8,11 @@ namespace CircleLinkHealth\Core;
 
 use Carbon\Carbon;
 use Closure;
-use Illuminate\Cache\CacheManager as CacheManager;
+use Illuminate\Cache\CacheManager;
+use Illuminate\Contracts\Cache\Repository;
 
 /**
- * @mixin \Illuminate\Contracts\Cache\Repository
+ * @mixin Repository
  */
 class SmartCacheManager extends CacheManager
 {

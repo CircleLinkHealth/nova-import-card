@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BaseModel extends Model
 {
-    use ProtectsPhi;
+//    use ProtectsPhi;
     use RevisionableTrait;
 
     /**
