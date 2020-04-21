@@ -1,12 +1,7 @@
 <?php
 
-/*
- * This file is part of CarePlan Manager by CircleLink Health.
- */
-
-use CircleLinkHealth\Customer\Entities\User;
-
 return [
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Defaults
@@ -19,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard'     => 'web',
+        'guard' => 'web',
         'passwords' => 'users',
     ],
 
@@ -42,14 +37,14 @@ return [
 
     'guards' => [
         'web' => [
-            'driver'   => 'session',
+            'driver' => 'session',
             'provider' => 'users',
         ],
 
         'api' => [
-            'driver'   => 'passport',
+            'driver' => 'token',
             'provider' => 'users',
-            'hash'     => false,
+            'hash' => false,
         ],
     ],
 
@@ -73,7 +68,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model'  => User::class,
+            'model' => App\User::class,
         ],
 
         // 'users' => [
@@ -100,18 +95,9 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
-            'email'    => 'emails.password',
-            'table'    => 'lv_password_resets',
-            'expire'   => 60,
+            'table' => 'password_resets',
+            'expire' => 60,
             'throttle' => 60,
-        ],
-        //token for patients, CPM 2081 patient-login
-        'patient_users' => [
-            'provider' => 'users',
-            'email'    => 'emails.password',
-            'table'    => 'lv_password_resets',
-            'expire'   => \App\Constants::THIRTY_DAYS_IN_MINUTES,
-            'throttle' => \App\Constants::THIRTY_DAYS_IN_MINUTES,
         ],
     ],
 
@@ -128,16 +114,4 @@ return [
 
     'password_timeout' => 10800,
 
-    /*
-   |--------------------------------------------------------------------------
-   | Enable 2 Factor Authentication (2FA)
-   |--------------------------------------------------------------------------
-   |
-   | Set this to true if you want 2FA enabled.
-   |
-   */
-
-    'two_fa_enabled' => env('TWO_FA_ENABLED', false),
-
-    'force_password_change' => env('FORCE_PASSWORD_CHANGE', true),
 ];
