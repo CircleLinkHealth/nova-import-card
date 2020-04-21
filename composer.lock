@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3b38827fb6fb75ed00cd7a183a83359e",
+    "content-hash": "6362b9dfe2d53cff924e630622f31a4c",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -793,22 +793,22 @@
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
-            "version": "v3.0.9",
+            "version": "v3.1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git",
-                "reference": "37d47afc9cd27b4142d099bd51d1f53271c19e6a"
+                "reference": "9aa62b16a2f457849bf0d4e0a732088bd964fba3"
             },
             "require": {
-                "illuminate/cache": "~5.0|~6.0",
-                "illuminate/console": "~5.0|~6.0",
-                "illuminate/support": "~5.0|~6.0",
+                "illuminate/cache": "~5.0|~6.0|~7.0",
+                "illuminate/console": "~5.0|~6.0|~7.0",
+                "illuminate/support": "~5.0|~6.0|~7.0",
                 "php": ">=5.5.0"
             },
             "require-dev": {
-                "illuminate/database": "~5.0|~6.0",
+                "illuminate/database": "~5.0|~6.0|~7.0",
                 "mockery/mockery": "~1.0",
-                "phpunit/phpunit": "~6.0",
+                "phpunit/phpunit": "~6.0|~7.0",
                 "sami/sami": "dev-master"
             },
             "type": "laravel-module",
@@ -870,7 +870,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2020-04-20T17:23:27+00:00"
+            "time": "2020-04-21T10:23:17+00:00"
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
@@ -1013,7 +1013,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "79c4ef04bce68b3e776bbd6c2f3d6b58d82cb310"
+                "reference": "096502a5b72d1f70b0282b2419d45f2ccc863300"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1047,7 +1047,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-21T09:07:30+00:00"
+            "time": "2020-04-21T10:23:17+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
