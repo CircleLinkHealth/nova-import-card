@@ -4,6 +4,7 @@ namespace App\Nova;
 
 use App\CcdaView;
 use App\Constants;
+use App\Nova\Actions\ClearAndReimportCcda;
 use App\Nova\Actions\ImportCcdaAction;
 use App\Nova\Filters\PracticeFilter;
 use Illuminate\Http\Request;
@@ -119,6 +120,7 @@ class Ccda extends Resource
     {
         return [
             new ImportCcdaAction,
+            new ClearAndReimportCcda,
         ];
     }
     
