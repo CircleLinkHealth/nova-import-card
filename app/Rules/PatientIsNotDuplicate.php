@@ -6,7 +6,6 @@
 
 namespace App\Rules;
 
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
@@ -83,14 +82,14 @@ class PatientIsNotDuplicate implements Rule
         $this->duplicatePatientUserId = User::whereFirstName($this->firstName)
             ->whereLastName($this->lastName)
             ->whereHas(
-                                                'patientInfo',
-                                                function ($q) {
+                'patientInfo',
+                function ($q) {
                                                     $q->where('birth_date', $this->dob);
                                                 }
-                                            )->where('program_id', $this->practiceId)
+            )->where('program_id', $this->practiceId)
             ->when($this->patientUserId, function ($q) {
-                                                 $q->where('id', '!=', $this->patientUserId);
-                                             })
+                $q->where('id', '!=', $this->patientUserId);
+            })
             ->value('id');
 
         if ($this->duplicatePatientUserId) {
