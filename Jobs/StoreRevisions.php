@@ -19,8 +19,6 @@ class StoreRevisions implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    
-    public $queue = 'low';
 
     /**
      * @var array
@@ -32,6 +30,7 @@ class StoreRevisions implements ShouldQueue
      */
     public function __construct(array $revisions)
     {
+        $this->queue = 'low';
         $this->revisions = $revisions;
     }
 
