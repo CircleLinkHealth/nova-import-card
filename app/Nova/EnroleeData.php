@@ -54,6 +54,7 @@ class EnroleeData extends Resource
         'dob',
         'primary_insurance',
         'secondary_insurance',
+        'id',
     ];
 
     /**
