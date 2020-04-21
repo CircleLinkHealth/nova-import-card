@@ -46,7 +46,7 @@ class ClearAndReimportCcda extends Action implements ShouldQueue
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        $models->pluck('patient_user_id')->each(function ($patientUserId) {
+        $models->pluck('patient_user_id')->filter()->values()->each(function ($patientUserId) {
             self::for($patientUserId, auth()->id(), 'queue');
         });
     
