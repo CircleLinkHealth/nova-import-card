@@ -6,9 +6,9 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class CallView extends Resource
+class CallView extends JsonResource
 {
     /**
      * Transform the resource into an array.

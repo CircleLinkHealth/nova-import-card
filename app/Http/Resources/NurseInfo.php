@@ -6,10 +6,10 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
 
-class NurseInfo extends Resource
+class NurseInfo extends JsonResource
 {
     /**
      * Transform the resource into an array.

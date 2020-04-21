@@ -6,9 +6,9 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserSafeResource extends Resource
+class UserSafeResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

@@ -10,9 +10,9 @@ use App\CareAmbassadorLog;
 use App\TrixField;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class Enrollable extends Resource
+class Enrollable extends JsonResource
 {
     /**
      * Transform the resource into an array.

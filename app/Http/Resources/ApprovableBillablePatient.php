@@ -8,9 +8,9 @@ namespace App\Http\Resources;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class ApprovableBillablePatient extends Resource
+class ApprovableBillablePatient extends JsonResource
 {
     public function allCcdProblems(User $patient)
     {
