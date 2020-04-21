@@ -21,15 +21,15 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property \Illuminate\Database\Eloquent\Collection|Practice[]                                         $practices
  * @property \Illuminate\Database\Eloquent\Collection|User[]                                             $providers
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService newModelQuery()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService newQuery()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService query()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService whereAmount($value)
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService whereCode($value)
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService whereCreatedAt($value)
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService whereDescription($value)
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService whereId($value)
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService whereUpdatedAt($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService query()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService whereAmount($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService whereCode($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService whereCreatedAt($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService whereDescription($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService whereId($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property int|null $patient_summaries_count
  * @property int|null $practices_count
@@ -37,15 +37,15 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property int|null $revision_history_count
  * @property int|null $order
  * @property int      $is_enabled
- * @method static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService whereIsEnabled($value)
- * @method static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService whereOrder($value)
- * @method static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService awvInitial()
- * @method static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService awvSubsequent()
- * @method static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService bhi()
- * @method static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService ccm()
- * @method static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService generalCareManagement()
- * @method static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService pcm()
- * @method static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService softwareOnly()
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService whereIsEnabled($value)
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService whereOrder($value)
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService awvInitial()
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService awvSubsequent()
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService bhi()
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService ccm()
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService generalCareManagement()
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService pcm()
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService softwareOnly()
  */
 class ChargeableService extends BaseModel
 {

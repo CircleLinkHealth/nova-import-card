@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Customer\Console;
 
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Customer\Tasks\ClearUserCache;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -34,7 +33,8 @@ class ClearUserRolesCache extends Command
      */
     public function handle()
     {
-        ClearUserCache::roles(User::findOrFail($this->argument('userId')));
+        $user = User::findOrFail($this->argument('userId'));
+        $user->clearRolesCache();
     }
 
     /**
