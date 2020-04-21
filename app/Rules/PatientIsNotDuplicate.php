@@ -6,6 +6,7 @@
 
 namespace App\Rules;
 
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
@@ -37,6 +38,10 @@ class PatientIsNotDuplicate implements Rule
      * @var int
      */
     private $duplicatePatientUserId;
+    /**
+     * @var int|null
+     */
+    private $patientUserId;
 
     /**
      * Create a new rule instance.
@@ -45,13 +50,14 @@ class PatientIsNotDuplicate implements Rule
      *
      * @throws \Exception
      */
-    public function __construct(int $practiceId, string $firstName, string $lastName, string $dob, $mrn = null)
+    public function __construct(int $practiceId, string $firstName, string $lastName, string $dob, $mrn = null, int $patientUserId = null)
     {
-        $this->practiceId = $practiceId;
-        $this->firstName  = $firstName;
-        $this->lastName   = $lastName;
-        $this->mrn        = $mrn;
-        $this->dob        = ImportPatientInfo::parseDOBDate($dob);
+        $this->practiceId    = $practiceId;
+        $this->firstName     = $firstName;
+        $this->lastName      = $lastName;
+        $this->mrn           = $mrn;
+        $this->dob           = ImportPatientInfo::parseDOBDate($dob);
+        $this->patientUserId = $patientUserId;
     }
 
     /**
@@ -77,11 +83,15 @@ class PatientIsNotDuplicate implements Rule
         $this->duplicatePatientUserId = User::whereFirstName($this->firstName)
             ->whereLastName($this->lastName)
             ->whereHas(
-                'patientInfo',
-                function ($q) {
-                    $q->where('birth_date', $this->dob);
-                }
-            )->where('program_id', $this->practiceId)->value('id');
+                                                'patientInfo',
+                                                function ($q) {
+                                                    $q->where('birth_date', $this->dob);
+                                                }
+                                            )->where('program_id', $this->practiceId)
+            ->when($this->patientUserId, function ($q) {
+                                                 $q->where('id', '!=', $this->patientUserId);
+                                             })
+            ->value('id');
 
         if ($this->duplicatePatientUserId) {
             return false;
@@ -94,6 +104,9 @@ class PatientIsNotDuplicate implements Rule
                     $q->where('program_id', $this->practiceId);
                 }
             )->whereMrnNumber($this->mrn)->whereNotNull('mrn_number')
+                ->when($this->patientUserId, function ($q) {
+                    $q->where('user_id', '!=', $this->patientUserId);
+                })
                 ->value('user_id');
 
             if ($this->duplicatePatientUserId) {
