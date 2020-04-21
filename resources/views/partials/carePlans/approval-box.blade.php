@@ -5,7 +5,7 @@
                 <i class="fas fa-exclamation" style="color: red"></i> This Care Plan is pending Dr. approval
             </div>
         </div>
-    @elseif($patient->carePlan->provider_approver_id && $patient->carePlan->provider_date)
+    @elseif($patient->carePlan->status === CircleLinkHealth\SharedModels\Entities\CarePlan::PROVIDER_APPROVED && $patient->carePlan->provider_approver_id && $patient->carePlan->provider_date)
         <div class="col-xs-12">
             <div class="pull-right print-row text-right">
                 {{ $patient->getCcmStatus() == 'patient_rejected' ? 'Rejected' : ($patient->patientIsUPG0506() ? 'Created' : 'Approved') }}

@@ -136,7 +136,7 @@
         "appstract/laravel-opcache": "^3.2.1",
         "barryvdh/laravel-snappy": "0.4.7",
         "circlelinkhealth/ccda-parser-processor-php-module": "dev-master",
-        "circlelinkhealth/cerberus-gatekeeper-module": "3.0.9",
+        "circlelinkhealth/cerberus-gatekeeper-module": "3.1.2",
         "circlelinkhealth/clh-import-card-extended": "*",
         "circlelinkhealth/core-module": "dev-laravel-6-upgrade",
         "circlelinkhealth/cpm-migrations-module": "dev-master",
@@ -276,7 +276,9 @@
             "php artisan --env=testing migrate:fresh",
             "php artisan --env=testing migrate:views",
             "php artisan --env=testing db:seed --class=TestSuiteSeeder",
-            "./vendor/phpunit/phpunit/phpunit --testsuite=EligibilityModule,Feature,Unit --colors --testdox"
+            "./vendor/phpunit/phpunit/phpunit --testsuite=EligibilityModule --colors --testdox",
+            "./vendor/phpunit/phpunit/phpunit --testsuite=Feature --colors --testdox",
+            "./vendor/phpunit/phpunit/phpunit --testsuite=Unit --colors --testdox"
         ],
         "clear": [
             "php artisan clear-compiled",
@@ -296,7 +298,7 @@
         "github-oauth": {
             "github.com": "e0e31db02693e426dc2be482ecbee4daeafd8196"
         },
-        "process-timeout": 500
+        "process-timeout": 1000
     },
     "extra": {
         "laravel": {

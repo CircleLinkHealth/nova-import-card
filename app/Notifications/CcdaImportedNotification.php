@@ -123,6 +123,6 @@ class CcdaImportedNotification extends Notification implements ShouldBroadcast, 
      */
     public function via($notifiable)
     {
-        return ['database', 'broadcast', 'mail'];
+        return ['database', 'broadcast'];
     }
 }

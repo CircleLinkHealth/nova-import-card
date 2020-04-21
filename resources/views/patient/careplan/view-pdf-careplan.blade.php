@@ -44,7 +44,7 @@ if (isset($patient)) {
                     <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
                         @if (isset($disableTimeTracking) && $disableTimeTracking)
                             <div class="color-grey">
-                                <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
+                                <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patientId' => $patient->id]) }}">
                                     <server-time-display url="{{config('services.ws.server-url')}}"
                                                          patient-id="{{$patient->id}}"
                                                          provider-id="{{Auth::user()->id}}"

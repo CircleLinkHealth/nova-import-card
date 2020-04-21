@@ -34,32 +34,29 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\Customer\Entities\User|null         $patient
  * @property \CircleLinkHealth\SharedModels\Entities\CarePlan|null $carePlan
  * @mixin \Eloquent
- *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereAlcoholMisuseCounseling($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereCareplanId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereDiabetesScreeningInterval($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereDiabetesScreeningLastDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereDiabetesScreeningNextDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereDiabetesScreeningRisk($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereEyeScreeningLastDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereEyeScreeningNextDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereKeyTreatment($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment wherePatientFunctionalAssistanceAreas($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment wherePatientPsychosocialAreasToWatch($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereProviderApproverId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereRisk($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereRiskFactors($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereTobaccoMisuseCounseling($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereUpdatedAt($value)
- *
- * @property int|null $revision_history_count
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment query()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereAlcoholMisuseCounseling($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereCareplanId($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereCreatedAt($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereDiabetesScreeningInterval($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereDiabetesScreeningLastDate($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereDiabetesScreeningNextDate($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereDiabetesScreeningRisk($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereEyeScreeningLastDate($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereEyeScreeningNextDate($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereId($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereKeyTreatment($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment wherePatientFunctionalAssistanceAreas($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment wherePatientPsychosocialAreasToWatch($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereProviderApproverId($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereRisk($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereRiskFactors($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereTobaccoMisuseCounseling($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereUpdatedAt($value)
+ * @property int|null                                                                                    $revision_history_count
  */
 class CareplanAssessment extends \CircleLinkHealth\Core\Entities\BaseModel
 {

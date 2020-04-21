@@ -253,7 +253,7 @@ function formatTime($time)
 
                                                 $route = route(
                                                     'patient.note.index',
-                                                    ['patient' => $call->patient_id]
+                                                    ['patientId' => $call->patient_id]
                                                 );
 
                                                 if ('addendum_response' === $call->type) {

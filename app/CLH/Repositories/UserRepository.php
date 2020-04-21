@@ -22,7 +22,6 @@ use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
-use CircleLinkHealth\Customer\Tasks\ClearUserCache;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
@@ -661,7 +660,15 @@ class UserRepository
     private function checkPatientForDupes(ParameterBag $params)
     {
         return [
-            'mrn_number' => [new PatientIsNotDuplicate($params->get('program_id'), $params->get('first_name'), $params->get('last_name'), $params->get('birth_date'), $params->get('mrn_number'))],
+            'mrn_number' => [
+                new PatientIsNotDuplicate(
+                    $params->get('program_id'),
+                    $params->get('first_name'),
+                    $params->get('last_name'),
+                    $params->get('birth_date'),
+                    $params->get('mrn_number')
+                ),
+            ],
         ];
     }
 
@@ -670,7 +677,7 @@ class UserRepository
      */
     private function clearRolesCache(User $user)
     {
-        ClearUserCache::roles($user);
+        $user->clearRolesCache();
     }
 
     private function createNewPatientRules()

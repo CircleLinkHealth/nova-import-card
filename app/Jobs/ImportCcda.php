@@ -72,6 +72,8 @@ class ImportCcda implements ShouldQueue
         if ( ! $this->notifyUploaderUser) {
             return;
         }
-        User::findOrFail($this->ccda->user_id)->notify(new CcdaImportedNotification($this->ccda));
+        if ($u = User::find($this->ccda->user_id)) {
+            $u->notify(new CcdaImportedNotification($this->ccda));
+        }
     }
 }
