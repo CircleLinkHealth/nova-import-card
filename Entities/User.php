@@ -727,12 +727,24 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasPermissionForSite('care-plan-qa-approve', $this->getPrimaryPracticeId());
     }
 
+    private static $canSeePhi = [];
+
     /**
+     * This function is called for every record of a model.
+     * It is very important to cache at all levels:
+     * - Roles (cerberus)
+     * - Permissions (cerberus)
+     * - User Model (here)
+     * - ProtectsPHI trait (see ProtectsPHI.php)
+     *
      * @return mixed
      */
     public function canSeePhi()
     {
-        return $this->hasPermission('phi.read');
+        if (!isset(self::$canSeePhi[$this->id])) {
+            self::$canSeePhi[$this->id] = $this->hasPermission('phi.read');
+        }
+        return self::$canSeePhi[$this->id];
     }
 
     public function careAmbassador()
