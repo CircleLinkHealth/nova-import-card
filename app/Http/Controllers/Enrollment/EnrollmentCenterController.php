@@ -510,6 +510,7 @@ class EnrollmentCenterController extends Controller
                     'dob'             => '',
                 ];
             }
+
             $patientInfo = $isEnrolleeClass
                 ? $invitationable->user()->withTrashed()->first()->patientInfo()->withTrashed()->first()
                 : $invitationable->patientInfo()->withTrashed()->first();
