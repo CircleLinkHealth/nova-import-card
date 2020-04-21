@@ -399,6 +399,11 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             ->guessPracticeLocationProvider();
 
         $this->updateOrCreateCarePlan($enrollee);
+    
+        if (! $this->patient || ! $this->patient->carePlan) {
+            return $this;
+        }
+        
         $this->raiseConcerns();
         
         if ($this->isDirty()) {
@@ -448,7 +453,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     public function raiseConcerns()
     {
         $this->load(['patient.carePlan']);
-        
+    
         if (! $this->patient || ! $this->patient->carePlan) {
             return $this;
         }
@@ -585,7 +590,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         return $this->hasOne(TargetPatient::class);
     }
 
-    public function updateOrCreateCarePlan(Enrollee $enrollee = null): CarePlan
+    public function updateOrCreateCarePlan(Enrollee $enrollee = null): ?CarePlan
     {
         if ( ! $this->json) {
             $this->bluebuttonJson();
