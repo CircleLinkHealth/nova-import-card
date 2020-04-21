@@ -17,12 +17,12 @@ use InvalidArgumentException;
 trait CerberusSiteUserTrait
 {
     private $permissionsCache = [];
-    private $rolesCache = [];
+    private $rolesCache       = [];
 
     /**
      * Checks role(s) and permission(s).
      *
-     * @param array|string $roles Array of roles or comma separated string
+     * @param array|string $roles       Array of roles or comma separated string
      * @param array|string $permissions array of permissions or comma separated string
      * @param $site
      * @param array $options validate_all (true|false) or return_type (boolean|array|both)
@@ -94,7 +94,7 @@ trait CerberusSiteUserTrait
      * Attach permission to current user.
      *
      * @param array|object $permission
-     * @param mixed $isActive
+     * @param mixed        $isActive
      *
      * @return void
      */
@@ -186,7 +186,7 @@ trait CerberusSiteUserTrait
 
     public function cachedPermissions()
     {
-        $cacheKey = 'cerberus_permissions_for_user_' . $this->id;
+        $cacheKey = 'cerberus_permissions_for_user_'.$this->id;
         if ( ! isset($this->permissionsCache[$cacheKey])) {
             if (Cache::getStore() instanceof TaggableStore) {
                 $this->permissionsCache[$cacheKey] = Cache::tags(Config::get('cerberus.permissibles_table'))->remember(
@@ -206,7 +206,7 @@ trait CerberusSiteUserTrait
 
     public function cachedRoles()
     {
-        $cacheKey = 'cerberus_roles_for_user_' . $this->id;
+        $cacheKey = 'cerberus_roles_for_user_'.$this->id;
         if ( ! isset($this->rolesCache[$cacheKey])) {
             if (Cache::getStore() instanceof TaggableStore) {
                 $this->rolesCache[$cacheKey] = Cache::tags(Config::get('cerberus.role_user_site_table'))->remember(
@@ -332,7 +332,7 @@ trait CerberusSiteUserTrait
      * Check if user has a permission by its name.
      *
      * @param array|string $permission permission string or array of permissions
-     * @param bool $requireAll all permissions in the array are required
+     * @param bool         $requireAll all permissions in the array are required
      *
      * @return bool
      */
@@ -380,8 +380,8 @@ trait CerberusSiteUserTrait
      * Check if user has a permission by its name.
      *
      * @param array|string $permission permission string or array of permissions
-     * @param bool $requireAll all permissions in the array are required
-     * @param mixed $site
+     * @param bool         $requireAll all permissions in the array are required
+     * @param mixed        $site
      *
      * @return bool
      */
@@ -435,8 +435,8 @@ trait CerberusSiteUserTrait
     /**
      * Checks if the user has a role by its name.
      *
-     * @param array|string $name role name or array of role names
-     * @param bool $requireAll all roles in the array are required
+     * @param array|string $name       role name or array of role names
+     * @param bool         $requireAll all roles in the array are required
      *
      * @return bool
      */
@@ -471,8 +471,8 @@ trait CerberusSiteUserTrait
     /**
      * Checks if the user has a role by its name for a site.
      *
-     * @param array|string $name role name or array of role names
-     * @param bool $requireAll all roles in the array are required
+     * @param array|string $name       role name or array of role names
+     * @param bool         $requireAll all roles in the array are required
      * @param $site
      *
      * @return bool
@@ -514,8 +514,8 @@ trait CerberusSiteUserTrait
             'permissible_id',
             Config::get('cerberus.permission_foreign_key')
         )
-                    ->withPivot(['is_active'])
-                    ->withTimestamps();
+            ->withPivot(['is_active'])
+            ->withTimestamps();
     }
 
     /**
@@ -531,7 +531,7 @@ trait CerberusSiteUserTrait
             Config::get('cerberus.user_foreign_key'),
             Config::get('cerberus.role_foreign_key')
         )
-                    ->withPivot(Config::get('cerberus.site_foreign_key'));
+            ->withPivot(Config::get('cerberus.site_foreign_key'));
     }
 
     /**
@@ -539,9 +539,8 @@ trait CerberusSiteUserTrait
      *
      * @param $site
      *
-     * @return bool
      * @throws \Exception
-     *
+     * @return bool
      */
     public function validateSite($site)
     {
@@ -550,5 +549,26 @@ trait CerberusSiteUserTrait
         }
 
         return true;
+    }
+
+    public function clearRolesCache() {
+        $keys = [
+            'cerberus_roles_for_user_'.$this->id,
+            'cerberus_permissions_for_user_'.$this->id,
+        ];
+        if (\Cache::getStore() instanceof TaggableStore) {
+            $store = \Cache::tags(Config::get('cerberus.role_user_site_table'));
+        } else {
+            $store = \Cache::getStore();
+        }
+
+        foreach ($keys as $key) {
+            unset($this->rolesCache[$key]);
+            unset($this->permissionsCache[$key]);
+            $store->forget($key);
+            Cache::forget($key);
+        }
+
+        $this->unsetRelation('roles');
     }
 }
