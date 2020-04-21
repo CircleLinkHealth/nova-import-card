@@ -448,12 +448,18 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     public function raiseConcerns()
     {
         $this->load(['patient.carePlan']);
+        
+        if (! $this->patient || ! $this->patient->carePlan) {
+            return $this;
+        }
     
         $validator = $this->patient->carePlan->validator();
         $this->validation_checks = null;
         if ($validator->fails()) {
             $this->validation_checks = $validator->errors();
         }
+        
+        return $this;
     }
 
     public function scopeExclude($query, $value = [])
