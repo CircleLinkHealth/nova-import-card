@@ -6,6 +6,7 @@ use App\CcdaView;
 use App\Constants;
 use App\Nova\Actions\ClearAndReimportCcda;
 use App\Nova\Actions\ImportCcdaAction;
+use App\Nova\Filters\CreatedAfterDateFilter;
 use App\Nova\Filters\PracticeFilter;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Code;
@@ -96,6 +97,7 @@ class Ccda extends Resource
     {
         return [
             new PracticeFilter(),
+            new CreatedAfterDateFilter(),
         ];
     }
     
@@ -143,13 +145,5 @@ class Ccda extends Resource
     public function authorizedToDelete(Request $request)
     {
         return false;
-    }
-    
-    /**
-     * @return bool
-     */
-    public function authorizedToUpdate(Request $request)
-    {
-        return strtolower((app(ImportCcdaAction::class))->name) === strtolower($request->input('action'));
     }
 }
