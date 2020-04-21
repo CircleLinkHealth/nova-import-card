@@ -460,7 +460,7 @@ class CarePlan extends BaseModel implements PdfReport
      */
     public function validator(bool $confirmDiabetesConditions = false):\Illuminate\Validation\Validator
     {
-        $patient = $this->patient->loadMissing(
+        $patient = $this->patient->load(
             [
                 'patientInfo',
                 'phoneNumbers',
