@@ -51,6 +51,10 @@ class Role extends CerberusRole
      */
     private const CACHE_ROLES_MINUTES = 3;
 
+    protected $fillable = [
+        'name',
+    ];
+
     /**
      * The database table used by the model.
      *

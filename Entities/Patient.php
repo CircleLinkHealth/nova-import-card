@@ -141,6 +141,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method   static                                                                                              \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\Patient withTrashed()
  * @method   static                                                                                              \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\Patient withoutTrashed()
  * @mixin \Eloquent
+ * @property int $auto_enrollment_triggered
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereAutoEnrollmentTriggered($value)
  */
 class Patient extends BaseModel
 {
