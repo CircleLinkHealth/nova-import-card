@@ -851,7 +851,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
     }
 
-
     public function clinicalEmergencyContactLocations()
     {
         return $this->morphedByMany(Location::class, 'contactable', 'contacts')
