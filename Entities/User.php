@@ -2445,12 +2445,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                                     function ($q) {
                                                         $q->where('contactable_id', $this->id)
                                                             ->orWhereIn(
-                                                                       'name',
-                                                                       [
-                                                                           'forward_careplan_approval_emails_instead_of_provider',
-                                                                           'forward_careplan_approval_emails_in_addition_to_provider',
-                                                                       ]
-                                                                   );
+                                                                'name',
+                                                                [
+                                                                    'forward_careplan_approval_emails_instead_of_provider',
+                                                                    'forward_careplan_approval_emails_in_addition_to_provider',
+                                                                ]
+                                                            );
                                                     }
                                                 );
                                             }
