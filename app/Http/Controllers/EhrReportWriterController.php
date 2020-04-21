@@ -24,9 +24,12 @@ class EhrReportWriterController extends Controller
 
     private $googleDrive;
 
-    public function __construct(GoogleDrive $googleDrive)
+    private $repo;
+
+    public function __construct(GoogleDrive $googleDrive, UserRepository $repo)
     {
         $this->googleDrive = $googleDrive;
+        $this->repo        = $repo;
     }
 
     public function downloadCsvTemplate($name)
@@ -123,9 +126,13 @@ class EhrReportWriterController extends Controller
                 'user_id' => $user->id,
             ]);
 
-            $repo = new UserRepository();
-            $repo->saveOrUpdateEhrReportWriterInfo($user, $params);
+            $this->repo->saveOrUpdateEhrReportWriterInfo($user, $params);
 
+            $user->load('ehrReportWriterInfo');
+        }
+
+        if (empty($user->ehrReportWriterInfo->google_drive_folder_path)) {
+            $this->repo->saveEhrReportWriterFolder($user);
             $user->load('ehrReportWriterInfo');
         }
 
@@ -206,7 +213,11 @@ class EhrReportWriterController extends Controller
         }
         if (empty($messages)) {
             if (auth()->user()->isAdmin()) {
-                $messages['success'][] = link_to_route('eligibility.batch.show', 'Click here to view Batch', [$batch->id]);
+                $messages['success'][] = link_to_route(
+                    'eligibility.batch.show',
+                    'Click here to view Batch',
+                    [$batch->id]
+                );
             } else {
                 $messages['success'][] = 'Thanks! CLH will review the file and get back to you. This may take a few business days.';
             }
