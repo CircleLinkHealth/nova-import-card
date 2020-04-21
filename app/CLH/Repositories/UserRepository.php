@@ -272,7 +272,7 @@ class UserRepository
             ->where('filename', '=', "report-writer-{$user->id}")
             ->first();
 
-        if ( ! $writerFolder) {
+        if (empty($writerFolder)) {
             $cloudDisk->makeDirectory($ehrPath."/report-writer-{$user->id}");
 
             return $this->saveEhrReportWriterFolder($user);
