@@ -1,8 +1,10 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Traits;
-
 
 trait SeedEligibilityJobsForEnrollees
 {
@@ -13,51 +15,51 @@ trait SeedEligibilityJobsForEnrollees
     {
         foreach ($enrollees as $enrollee) {
             //create eligibility job
-            $job = factory(\CircleLinkHealth\Eligibility\Entities\EligibilityJob::class)->create();
-            $job->hash = $enrollee->practice->name . $enrollee->first_name . $enrollee->last_name . $enrollee->mrn . $enrollee->city . $enrollee->state . $enrollee->zip;
+            $job       = factory(\CircleLinkHealth\Eligibility\Entities\EligibilityJob::class)->create();
+            $job->hash = $enrollee->practice->name.$enrollee->first_name.$enrollee->last_name.$enrollee->mrn.$enrollee->city.$enrollee->state.$enrollee->zip;
 
             $job->data = [
-                'patient_id' => $enrollee->mrn,
-                'last_name' => $enrollee->last_name,
-                'first_name' => $enrollee->first_name,
-                'dob' => $enrollee->dob->toDateString(), // its dob in importer v-3
-                'gender' => collect(['M', 'F'])->random(),
-                'lang' => $enrollee->lang,
-                'preferred_provider' => $enrollee->providerFullName,
-                'cell_phone' => $enrollee->cell_phone,
-                'home_phone' => $enrollee->home_phone,
-                'other_phone' => $enrollee->other_phone,
-                'primary_phone' => null,
-                'email' => $enrollee->email,
-                'street' => $enrollee->address,
-                'address_line_1' => $enrollee->address,
-                'street2' => $enrollee->address_2,
-                'address_line_2' => $enrollee->address_2,
-                'city' => $enrollee->city,
-                'state' => $enrollee->state,
-                'zip' => $enrollee->zip,
-                'postal_code' => $enrollee->zip,
-                'primary_insurance' => $enrollee->primary_insurance,
-                'secondary_insurance' => $enrollee->secondary_insturance,
+                'patient_id'              => $enrollee->mrn,
+                'last_name'               => $enrollee->last_name,
+                'first_name'              => $enrollee->first_name,
+                'dob'                     => $enrollee->dob->toDateString(), // its dob in importer v-3
+                'gender'                  => collect(['M', 'F'])->random(),
+                'lang'                    => $enrollee->lang,
+                'preferred_provider'      => $enrollee->providerFullName,
+                'cell_phone'              => $enrollee->cell_phone,
+                'home_phone'              => $enrollee->home_phone,
+                'other_phone'             => $enrollee->other_phone,
+                'primary_phone'           => null,
+                'email'                   => $enrollee->email,
+                'street'                  => $enrollee->address,
+                'address_line_1'          => $enrollee->address,
+                'street2'                 => $enrollee->address_2,
+                'address_line_2'          => $enrollee->address_2,
+                'city'                    => $enrollee->city,
+                'state'                   => $enrollee->state,
+                'zip'                     => $enrollee->zip,
+                'postal_code'             => $enrollee->zip,
+                'primary_insurance'       => $enrollee->primary_insurance,
+                'secondary_insurance'     => $enrollee->secondary_insturance,
                 'referring_provider_name' => $enrollee->referring_provider_name,
-                'mrn' => $enrollee->mrn,
-                'problems' => [
+                'mrn'                     => $enrollee->mrn,
+                'problems'                => [
                     [
-                        'name' => 'Hypertension',
+                        'name'       => 'Hypertension',
                         'start_date' => \Carbon\Carbon::now()->toDateString(),
-                        'code' => 'I10',
-                        'code_type' => 'ICD-10',
+                        'code'       => 'I10',
+                        'code_type'  => 'ICD-10',
                     ],
                     [
-                        'name' => 'Asthma',
+                        'name'       => 'Asthma',
                         'start_date' => \Carbon\Carbon::now()->toDateString(),
-                        'code' => 'J45.901',
-                        'code_type' => 'ICD-10',
+                        'code'       => 'J45.901',
+                        'code_type'  => 'ICD-10',
                     ],
                 ],
-                'allergies' => [['name' => 'peanut']],
+                'allergies'   => [['name' => 'peanut']],
                 'medications' => [],
-                'is_demo' => 'true',
+                'is_demo'     => 'true',
             ];
             $job->save();
 
@@ -71,7 +73,7 @@ trait SeedEligibilityJobsForEnrollees
             return $enrollees->search($e) < 3;
         });
 
-        if (!empty($enrollees)) {
+        if ( ! empty($enrollees)) {
             $fakeSuggestedFamilyMembers->each(function ($e) use ($enrollees) {
                 $family = $enrollees->random();
 
