@@ -15,9 +15,9 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\BaseModel newModelQuery()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\BaseModel newQuery()
- * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\BaseModel query()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\BaseModel newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\BaseModel newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\BaseModel query()
  * @property int|null                                                                                    $revision_history_count
  */
 class BaseModel extends Model

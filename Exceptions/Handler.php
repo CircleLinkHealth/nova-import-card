@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Core\Exceptions;
 
+use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException as ModelNotFoundException;
@@ -15,7 +16,6 @@ use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Exception;
 
 class Handler extends ExceptionHandler
 {
