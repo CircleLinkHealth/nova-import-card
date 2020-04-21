@@ -17,6 +17,7 @@ use CircleLinkHealth\Eligibility\Notifications\PatientReimportedNotification;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
 
 class ReimportPatientMedicalRecord extends Command
 {
@@ -69,26 +70,24 @@ class ReimportPatientMedicalRecord extends Command
 
         \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id}");
 
-        if ( ! $user->hasCcda() && $this->attemptTemplate($user)) {
-            return;
-        }
-
-        if ($this->option('clear')) {
-            $user->ccdMedications()->delete();
-            $user->ccdProblems()->delete();
-            $user->ccdAllergies()->delete();
-        }
-
-        if ($this->attemptCcda($user)) {
-            $this->line('Ccda imported.');
-
-            return;
-        }
-
-        $this->notifyFailure($user);
+        DB::transaction(function (User $user) {
+            if ( ! $user->hasCcda()) {
+                $this->attemptCreateCcdaFromMrTemplate($user);
+            }
+    
+            $this->clearExistingCarePlanData($user);
+    
+            if ($this->attemptImportCcda($user)) {
+                $this->line('Ccda imported.');
+        
+                return;
+            }
+    
+            $this->notifyFailure($user);
+        });
     }
 
-    private function attemptCcda(User $user)
+    private function attemptImportCcda(User $user)
     {
         $ccda = $this->attemptFetchCcda($user);
 
@@ -142,7 +141,7 @@ class ReimportPatientMedicalRecord extends Command
         }
     }
 
-    private function attemptTemplate(User $user)
+    private function attemptCreateCcdaFromMrTemplate(User $user)
     {
         if (in_array($user->primaryPractice->name, ['marillac-clinic-inc', 'calvary-medical-clinic'])) {
             $this->warn(
@@ -323,5 +322,16 @@ class ReimportPatientMedicalRecord extends Command
             $this->warn("Notifying user:$initiatorId");
             User::findOrFail($initiatorId)->notify(new PatientReimportedNotification($user->id));
         }
+    }
+    
+    private function clearExistingCarePlanData(User $user)
+    {
+        if (! $this->option('clear')) {
+            return;
+        }
+    
+        $user->ccdMedications()->delete();
+        $user->ccdProblems()->delete();
+        $user->ccdAllergies()->delete();
     }
 }
