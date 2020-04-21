@@ -82,14 +82,17 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  *     $revisionHistory
  * @property int|null $revision_history_count
  */
-class EligiblePatientView extends SqlViewModel
+class CcdaView extends SqlViewModel
 {
     public $phi = [
-        'first_name',
-        'last_name',
         'mrn',
-        'dob',
+        'patient_first_name',
+        'enrollee_first_name',
+        'first_name',
+        'patient_last_name',
+        'enrolleet_last_name',
+        'last_name',
     ];
     
-    protected $table = 'eligible_patients';
+    protected $table = 'ccdas_view';
 }
