@@ -59,8 +59,8 @@ class CcdaImporterTest extends CustomerTestCase
 
     public function test_it_does_not_import_ccd_without_practice_id()
     {
-        $this->expectException(ValidationException::class);
-        FakeDiabetesAndEndocrineCcda::create()->import();
+        $ccda = FakeDiabetesAndEndocrineCcda::create()->import();
+        $this->assertTrue($ccda->validation_checks->has('program_id'));
     }
 
     public function test_it_imports_csv_ccda_allergies()
