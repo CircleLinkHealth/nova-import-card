@@ -15,7 +15,7 @@ use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Throwable;
+use Exception;
 
 class Handler extends ExceptionHandler
 {
@@ -61,7 +61,7 @@ class Handler extends ExceptionHandler
      */
     public function render(
         $request,
-        Throwable $e
+        Exception $e
     ) {
         if ($e instanceof ModelNotFoundException) {
             return response($e->getMessage(), 400);
@@ -80,7 +80,7 @@ class Handler extends ExceptionHandler
      *
      * @return mixed|void
      */
-    public function report(Throwable $e)
+    public function report(Exception $e)
     {
         if ( ! $this->shouldReport($e)) {
             return;
