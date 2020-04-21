@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3eb06e8f232dcd4bd753af453f76596c",
+    "content-hash": "382af0e9edad57420bf684913196f3e1",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -934,7 +934,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "40831283ddcceb4f3955669249345ebaee9c4d91"
+                "reference": "d5e202bb68eb25fe644c5cd2503a92b812911bab"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -963,7 +963,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-21T06:24:56+00:00"
+            "time": "2020-04-21T06:27:07+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -3503,17 +3503,11 @@
         },
         {
             "name": "jeremykenedy/slack-laravel",
-            "version": "v2.4.0",
+            "version": "v7.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/jeremykenedy/slack-laravel.git",
-                "reference": "208d0afc3ed38d2fd11bfbb6f99821e6293e897b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/jeremykenedy/slack-laravel/zipball/208d0afc3ed38d2fd11bfbb6f99821e6293e897b",
-                "reference": "208d0afc3ed38d2fd11bfbb6f99821e6293e897b",
-                "shasum": ""
+                "url": "git@github.com:CircleLinkHealth/slack-laravel.git",
+                "reference": "c93248a892480df0a1f8c76c65e5f41fa958f0e6"
             },
             "require": {
                 "jeremykenedy/slack": "~2.0",
@@ -3535,7 +3529,6 @@
                     "jeremykenedy\\Slack\\Laravel\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3554,7 +3547,7 @@
                 "laravel",
                 "slack"
             ],
-            "time": "2020-04-14T20:21:07+00:00"
+            "time": "2020-04-21T06:33:14+00:00"
         },
         {
             "name": "joshbrw/laravel-module-installer",
