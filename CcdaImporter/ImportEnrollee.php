@@ -8,14 +8,12 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
 use App\Nova\Actions\ClearAndReimportCcda;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 
 class ImportEnrollee

@@ -74,71 +74,17 @@ class ReimportPatientMedicalRecord extends Command
             if ( ! $user->hasCcda()) {
                 $this->attemptCreateCcdaFromMrTemplate($user);
             }
-    
+
             $this->clearExistingCarePlanData($user);
-    
+
             if ($this->attemptImportCcda($user)) {
                 $this->line('Ccda imported.');
-        
+
                 return;
             }
-    
+
             $this->notifyFailure($user);
         });
-    }
-
-    private function attemptImportCcda(User $user)
-    {
-        $ccda = $this->attemptFetchCcda($user);
-
-        if ( ! $ccda) {
-            return false;
-        }
-
-        if ($mr = $this->attemptDecorator($user, $ccda)) {
-            if ( ! is_null($mr)) {
-                $ccda->json = $mr->toJson();
-                $ccda->save();
-            }
-        }
-
-        $this->importCcdaAndFillCarePlan($ccda, $user);
-
-        $this->notifySuccess($user);
-
-        return true;
-    }
-
-    private function attemptDecorator(User $user, Ccda $ccda)
-    {
-        if ($mr = MedicalRecordFactory::create($user, $ccda)) {
-            $this->warn("Running '{$user->primaryPractice->name}' decorator");
-
-            return $mr;
-        }
-
-        return null;
-    }
-
-    private function attemptFetchCcda(User $user)
-    {
-        if ($ccda = $this->getUser()->latestCcda()) {
-            \Log::debug(
-                "ReimportPatientMedicalRecord:user_id:{$user->id} Fetched latest CCDA ccda_id:{$ccda->id}:ln:".__LINE__
-            );
-
-            return $ccda;
-        }
-
-        $this->correctMrnIfWrong($user);
-
-        if ($ccda = $this->getCcdaFromMrn($user->patientInfo->mrn_number, $user->program_id)) {
-            return $ccda;
-        }
-
-        if ($ccda = $this->getCcdaFromAthenaAPI($user)) {
-            return $ccda;
-        }
     }
 
     private function attemptCreateCcdaFromMrTemplate(User $user)
@@ -186,6 +132,71 @@ class ReimportPatientMedicalRecord extends Command
         }
 
         return null;
+    }
+
+    private function attemptDecorator(User $user, Ccda $ccda)
+    {
+        if ($mr = MedicalRecordFactory::create($user, $ccda)) {
+            $this->warn("Running '{$user->primaryPractice->name}' decorator");
+
+            return $mr;
+        }
+
+        return null;
+    }
+
+    private function attemptFetchCcda(User $user)
+    {
+        if ($ccda = $this->getUser()->latestCcda()) {
+            \Log::debug(
+                "ReimportPatientMedicalRecord:user_id:{$user->id} Fetched latest CCDA ccda_id:{$ccda->id}:ln:".__LINE__
+            );
+
+            return $ccda;
+        }
+
+        $this->correctMrnIfWrong($user);
+
+        if ($ccda = $this->getCcdaFromMrn($user->patientInfo->mrn_number, $user->program_id)) {
+            return $ccda;
+        }
+
+        if ($ccda = $this->getCcdaFromAthenaAPI($user)) {
+            return $ccda;
+        }
+    }
+
+    private function attemptImportCcda(User $user)
+    {
+        $ccda = $this->attemptFetchCcda($user);
+
+        if ( ! $ccda) {
+            return false;
+        }
+
+        if ($mr = $this->attemptDecorator($user, $ccda)) {
+            if ( ! is_null($mr)) {
+                $ccda->json = $mr->toJson();
+                $ccda->save();
+            }
+        }
+
+        $this->importCcdaAndFillCarePlan($ccda, $user);
+
+        $this->notifySuccess($user);
+
+        return true;
+    }
+
+    private function clearExistingCarePlanData(User $user)
+    {
+        if ( ! $this->option('clear')) {
+            return;
+        }
+
+        $user->ccdMedications()->delete();
+        $user->ccdProblems()->delete();
+        $user->ccdAllergies()->delete();
     }
 
     private function correctMrnIfWrong(User $user)
@@ -322,16 +333,5 @@ class ReimportPatientMedicalRecord extends Command
             $this->warn("Notifying user:$initiatorId");
             User::findOrFail($initiatorId)->notify(new PatientReimportedNotification($user->id));
         }
-    }
-    
-    private function clearExistingCarePlanData(User $user)
-    {
-        if (! $this->option('clear')) {
-            return;
-        }
-    
-        $user->ccdMedications()->delete();
-        $user->ccdProblems()->delete();
-        $user->ccdAllergies()->delete();
     }
 }
