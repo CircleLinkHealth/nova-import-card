@@ -52,7 +52,7 @@ class PatientCcmStatusUpdateTest extends TestCase
      * @param array  $server
      * @param string $content
      *
-     * @return \Illuminate\Foundation\Testing\TestResponse
+     * @return \Illuminate\Testing\TestResponse
      */
     public function call($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
     {
