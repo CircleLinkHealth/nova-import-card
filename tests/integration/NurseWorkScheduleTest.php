@@ -119,7 +119,7 @@ class NurseWorkScheduleTest extends DuskTestCase
             $browser->loginAs($nurse)
                 ->visit(route('patients.dashboard'))
                 ->assertPathIs('/manage-patients/dashboard')
-                ->assertSee(sanitizeString($nurse->getFullName()))
+                ->assertSee($nurse->getFullName())
                 ->assertSee('Create/Edit Schedule');
         });
     }
@@ -139,7 +139,7 @@ class NurseWorkScheduleTest extends DuskTestCase
             $browser->loginAs($provider)
                 ->visit(route('patients.dashboard'))
                 ->assertPathIs('/manage-patients/dashboard')
-                ->assertSee(sanitizeString($provider->getFullName()))
+                ->assertSee($provider->getFullName())
                 ->assertDontSee('Create/Edit Schedule');
         });
     }
