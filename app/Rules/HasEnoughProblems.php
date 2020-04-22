@@ -17,9 +17,12 @@ class HasEnoughProblems implements Rule
 
     /**
      * Create a new rule instance.
+     *
+     * @param User $patient
      */
-    public function __construct()
+    public function __construct(User $patient)
     {
+        $this->patient = $patient;
     }
 
     /**
