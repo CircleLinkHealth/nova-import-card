@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8e88433089cb76a6a9f354d9d4e0a2f5",
+    "content-hash": "e04b72153a7d645aafc7af74043397c6",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -939,6 +939,42 @@
                 "laravel",
                 "nova"
             ]
+        },
+        {
+            "name": "circlelinkhealth/condition-code-lookup-module",
+            "version": "v1.1.2",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/condition-code-lookup-module.git",
+                "reference": "526a5817c90e2c88c42bdcd1f22adffab07752ef"
+            },
+            "require": {
+                "ext-curl": "*",
+                "laravel/framework": "*",
+                "php": "*"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "subzero10\\ConditionCodeLookup\\Providers\\ConditionCodeLookupServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "subzero10\\ConditionCodeLookup\\": ""
+                },
+                "files": []
+            },
+            "authors": [
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pagcosma@gmail.com"
+                }
+            ],
+            "time": "2020-04-22T06:16:32+00:00"
         },
         {
             "name": "circlelinkhealth/core-module",
@@ -8778,42 +8814,6 @@
             "time": "2019-12-15T18:52:09+00:00"
         },
         {
-            "name": "subzero10/condition-code-lookup-module",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:subzero10/condition-code-lookup-module.git",
-                "reference": "526a5817c90e2c88c42bdcd1f22adffab07752ef"
-            },
-            "require": {
-                "ext-curl": "*",
-                "laravel/framework": "*",
-                "php": "*"
-            },
-            "type": "laravel-module",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "subzero10\\ConditionCodeLookup\\Providers\\ConditionCodeLookupServiceProvider"
-                    ],
-                    "aliases": []
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "subzero10\\ConditionCodeLookup\\": ""
-                },
-                "files": []
-            },
-            "authors": [
-                {
-                    "name": "Pangratios Cosma",
-                    "email": "pagcosma@gmail.com"
-                }
-            ],
-            "time": "2020-04-22T06:16:32+00:00"
-        },
-        {
             "name": "swiftmailer/swiftmailer",
             "version": "v6.2.3",
             "source": {
@@ -15300,7 +15300,6 @@
         "circlelinkhealth/timetracking-module": 20,
         "circlelinkhealth/twofa-module": 20,
         "daltcore/lara-pdf-merger": 20,
-        "subzero10/condition-code-lookup-module": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20
     },

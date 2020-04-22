@@ -101,7 +101,7 @@
         },
         {
             "type": "git",
-            "url": "git@github.com:subzero10/condition-code-lookup-module.git"
+            "url": "git@github.com:CircleLinkHealth/condition-code-lookup-module.git"
         },
         {
             "type": "git",
@@ -138,6 +138,8 @@
         "circlelinkhealth/ccda-parser-processor-php-module": "dev-master",
         "circlelinkhealth/cerberus-gatekeeper-module": "3.1.2",
         "circlelinkhealth/clh-import-card-extended": "*",
+        "circlelinkhealth/clh-nova-theme": "*",
+        "circlelinkhealth/condition-code-lookup-module": "^1.1",
         "circlelinkhealth/core-module": "dev-laravel-6-upgrade",
         "circlelinkhealth/cpm-migrations-module": "dev-master",
         "circlelinkhealth/customer-module": "dev-master",
@@ -192,13 +194,11 @@
         "spatie/laravel-medialibrary": "^7.12",
         "spatie/laravel-view-models": "^1.2",
         "spatie/pdf-to-text": "^1.2",
-        "subzero10/condition-code-lookup-module": "dev-master",
         "titasgailius/search-relations": "^1.0",
         "twilio/sdk": "5.7",
         "vink/nova-cache-card": "^1.0",
         "waavi/url-shortener": "dev-master",
         "waynestate/nova-ckeditor4-field": "^0.4.0",
-        "circlelinkhealth/clh-nova-theme": "*",
         "yajra/laravel-datatables-oracle": "~9.0"
     },
     "require-dev": {
