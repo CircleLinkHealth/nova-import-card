@@ -105,7 +105,7 @@ class ImportProblems extends BaseCcdaImportTask
             return null;
         }
 
-        $codes = collect($itemLog['codes'] ?? [])->pluck('code')->all();
+        $codes = collect($itemLog['codes'] ?? [])->pluck('code')->filter()->values()->all();
 
         $problemMap = SnomedToCpmIcdMap::with('cpmProblem')
             ->has('cpmProblem')
@@ -144,9 +144,7 @@ class ImportProblems extends BaseCcdaImportTask
                 break;
             }
 
-            $keywords = array_filter(array_merge(explode(',', $cpmProblem->contains), [$cpmProblem->name]));
-
-            foreach ($keywords as $keyword) {
+            foreach (array_filter(array_merge(explode(',', $cpmProblem->contains), [$cpmProblem->name])) as $keyword) {
                 if ( ! $keyword || empty($keyword)) {
                     continue;
                 }
