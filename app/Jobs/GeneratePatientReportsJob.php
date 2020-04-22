@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use Illuminate\Support\Str;
 use App\CPM\PatientReportCreatedEvent;
 use App\Notifications\SendReport;
 use App\PersonalizedPreventionPlan;
@@ -248,7 +249,7 @@ class GeneratePatientReportsJob implements ShouldQueue
             'providerName' => $doctorsName,
         ]);
 
-        $title = snake_case($reportTitle);
+        $title = Str::snake($reportTitle);
         $coverPath = storage_path("{$title}_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_temp_cover.pdf");
         $coverSaved = file_put_contents($coverPath, $cover->output());
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -70,7 +71,7 @@ class LoginController extends Controller
             $referer = $request->header('referer', null);
             if ($referer) {
                 $mixed = parse_url($referer);
-                if (isset($mixed['query']) && str_contains($mixed['query'], 'redirectTo')) {
+                if (isset($mixed['query']) && Str::contains($mixed['query'], 'redirectTo')) {
                     $redirectTo = str_replace('redirectTo=', '', $mixed['query']);
                     if ($redirectTo) {
                         $redirectTo = urldecode($redirectTo);

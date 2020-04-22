@@ -2,6 +2,7 @@
 
 namespace Tests\Helpers;
 
+use Illuminate\Support\Str;
 use App\Question;
 use App\QuestionGroup;
 use App\QuestionType;
@@ -37,7 +38,7 @@ trait SetupTestSurveyData
             'email'             => $this->faker->unique()->safeEmail,
             'email_verified_at' => $this->date,
             'password'          => bcrypt('secret'),
-            'remember_token'    => str_random(10),
+            'remember_token'    => Str::random(10),
         ]);
 
         $this->assertNotNull($this->user);

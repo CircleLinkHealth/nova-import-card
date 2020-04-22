@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Str;
 use App\Filters\PatientListFilters;
 use App\Http\Requests\StorePatientRequest;
 use App\Patient;
@@ -116,7 +117,7 @@ class PatientController extends Controller
      */
     private function getRandomEmail()
     {
-        return 'awv_'.str_random(20).'@careplanmanager.com';
+        return 'awv_'.Str::random(20).'@careplanmanager.com';
     }
 
     private function formatPhoneNumber(string $numberString)
@@ -157,7 +158,7 @@ class PatientController extends Controller
         $user->access_disabled = 1;
         $user->setFirstName($input['firstName']);
         $user->setLastName($input['lastName']);
-        $user->createNewUser($input['email'], str_random());
+        $user->createNewUser($input['email'], Str::random());
         if (! empty($input['phoneNumber'])) {
             $phoneNumber = new PhoneNumber();
             $phoneNumber->setRawAttributes([
