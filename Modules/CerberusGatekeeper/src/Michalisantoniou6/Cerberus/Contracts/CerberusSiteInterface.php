@@ -1,7 +1,10 @@
 <?php
 
-namespace Michalisantoniou6\Cerberus\Contracts;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+namespace Michalisantoniou6\Cerberus\Contracts;
 
 interface CerberusSiteInterface
 {

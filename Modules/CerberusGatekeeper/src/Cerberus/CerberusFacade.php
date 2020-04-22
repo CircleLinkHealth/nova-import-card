@@ -1,6 +1,12 @@
-<?php namespace Michalisantoniou6\Cerberus;
+<?php
 
-/**
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace Michalisantoniou6\Cerberus;
+
+/*
  * This file is part of Cerberus,
  * a role & permission management solution for Laravel.
  *
