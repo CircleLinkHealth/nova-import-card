@@ -6,6 +6,7 @@
 
 namespace App\Providers;
 
+use App\Events\AutoEnrollableCollected;
 use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Events\CarePlanWasApproved;
 use App\Events\CarePlanWasProviderApproved;
@@ -13,12 +14,8 @@ use App\Events\CarePlanWasQAApproved;
 use App\Events\NoteFinalSaved;
 use App\Events\PatientUserCreated;
 use App\Events\PdfableCreated;
-use App\Events\AutoEnrollableCollected;
 use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
-use App\Events\UserFromEnrolleCreated;
-use App\Events\UserFromEnrolleeCreated;
-use App\Jobs\UnrechablePatientInvited;
 use App\Listeners\AddPatientConsentNote;
 use App\Listeners\AssignPatientToStandByNurse;
 use App\Listeners\AttachAttestedProblemsToCall;
@@ -120,7 +117,7 @@ class CpmEventServiceProvider extends ServiceProvider
 
         AutoEnrollableCollected::class => [
             SendEnrollableEmail::class,
-            SendEnrollableSms::class
+            SendEnrollableSms::class,
         ],
     ];
 

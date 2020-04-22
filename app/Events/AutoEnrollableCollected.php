@@ -1,45 +1,47 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Events;
 
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
 class AutoEnrollableCollected
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
-
-    /**
-     * @var User
-     */
-    public $user;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
     /**
      * @var bool
      */
     public $isReminder;
 
     /**
+     * @var User
+     */
+    public $user;
+
+    /**
      * Create a new event instance.
      *
-     * @param User $user
      * @param bool $isReminder
      */
     public function __construct(User $user, $isReminder = false)
     {
-        $this->user = $user;
+        $this->user       = $user;
         $this->isReminder = $isReminder;
     }
 
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return array|\Illuminate\Broadcasting\Channel
      */
     public function broadcastOn()
     {

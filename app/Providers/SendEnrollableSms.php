@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Providers;
 
 use App\Notifications\SendEnrollementSms;
@@ -17,7 +21,6 @@ class SendEnrollableSms implements ShouldQueue
      */
     public function __construct()
     {
-        //
     }
 
     /**

@@ -19,10 +19,10 @@ use Illuminate\Queue\SerializesModels;
 class SendEnrollmentReminders implements ShouldQueue
 {
     use Dispatchable;
+    use EnrollableManagement;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    use EnrollableManagement;
 
     /**
      * @var User

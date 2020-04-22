@@ -212,6 +212,8 @@ namespace App;
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\User whereZip($value)
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User withCareTeamOfType($type)
  * @mixin \Eloquent
+ * @property \App\EnrollableInvitationLink|null $enrollmentInvitationLink
+ * @property \App\EnrollableRequestInfo|null    $statusRequestsInfo
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {

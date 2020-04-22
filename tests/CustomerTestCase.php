@@ -23,6 +23,11 @@ class CustomerTestCase extends TestCase
     private $careCoach;
 
     /**
+     * @var Enrollee
+     */
+    private $enrollee;
+
+    /**
      * @var Location
      */
     private $location;
@@ -45,10 +50,6 @@ class CustomerTestCase extends TestCase
     private $superadmin;
 
     /**
-     * @var Enrollee
-     */
-    private $enrollee;
-    /**
      * @return array|User
      */
     protected function careCoach(int $number = 1)
@@ -58,6 +59,21 @@ class CustomerTestCase extends TestCase
         }
 
         return $this->careCoach;
+    }
+
+    protected function enrollee(int $number = 1)
+    {
+        if ( ! $this->enrollee) {
+            $this->enrollee = factory(Enrollee::class)->create([
+                'practice_id'             => $this->practice()->id,
+                'dob'                     => \Carbon\Carbon::parse('1901-01-01'),
+                'referring_provider_name' => 'Dr. Demo',
+                'mrn'                     => mt_rand(100000, 999999),
+                'email'                   => $this->faker->safeEmail,
+            ]);
+        }
+
+        return $this->enrollee;
     }
 
     /**
@@ -147,20 +163,5 @@ class CustomerTestCase extends TestCase
         }
 
         return $users;
-    }
-
-    protected function enrollee(int $number = 1)
-    {
-        if (! $this->enrollee) {
-            $this->enrollee = factory(Enrollee::class)->create([
-                'practice_id' => $this->practice()->id,
-                'dob' => \Carbon\Carbon::parse('1901-01-01'),
-                'referring_provider_name' => 'Dr. Demo',
-                'mrn' => mt_rand(100000, 999999),
-                'email'=> $this->faker->safeEmail,
-            ]);
-        }
-
-        return $this->enrollee;
     }
 }

@@ -41,12 +41,12 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
      */
     public function handle()
     {
-        $twoDaysAgo = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
+        $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
-        $testingMode = App::environment(['review', 'staging', 'local']);
+        $testingMode   = App::environment(['review', 'staging', 'local']);
 
         if ($testingMode) {
-            $twoDaysAgo = Carbon::parse(now())->startOfMonth()->toDateTimeString();
+            $twoDaysAgo    = Carbon::parse(now())->startOfMonth()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfMonth()->toDateTimeString();
         }
 

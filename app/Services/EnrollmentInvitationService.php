@@ -48,25 +48,30 @@ class EnrollmentInvitationService
             '[CUSTOMER_SIGNATURE_PIC]',
         ];
 
-        $letter = json_decode($practiceLetter->letter);
+        $letter      = json_decode($practiceLetter->letter);
         $letterPages = [];
         foreach ($letter as $page) {
-            $body = $page->body;
+            $body          = $page->body;
             $letterPages[] = str_replace($varsToBeReplaced, $replacementVars, $body);
         }
 
         return $letterPages;
     }
 
-    /**
-     * @param Enrollee $enrollee
-     */
+    public function markAsNonResponsive(Enrollee $enrollee)
+    {
+        $enrollee->update([
+            'enrollment_non_responsive' => true,
+            'auto_enrollment_triggered' => true,
+        ]);
+    }
+
     public function putIntoCallQueue(Enrollee $enrollee)
     {
         $enrollee->update(
             [
-                'status' => 'call_queue',
-                'auto_enrollment_triggered' => true
+                'status'                    => 'call_queue',
+                'auto_enrollment_triggered' => true,
             ]
         );
     }
@@ -87,29 +92,13 @@ class EnrollmentInvitationService
         return redirect($surveyLink->url);
     }
 
-    /**
-     * @param Enrollee $enrollee
-     */
     public function setEnrollmentCallOnDelivery(Enrollee $enrollee)
     {
         $enrollee->update(
             [
-                'status' => 'call_queue',
+                'status'             => 'call_queue',
                 'requested_callback' => Carbon::parse(now())->toDate(),
             ]
         );
     }
-
-    /**
-     * @param Enrollee $enrollee
-     */
-    public function markAsNonResponsive(Enrollee $enrollee)
-    {
-        $enrollee->update([
-            'enrollment_non_responsive' => true,
-            'auto_enrollment_triggered' => true,
-        ]);
-
-    }
-
 }

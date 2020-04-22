@@ -9,22 +9,22 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\EnrollableRequestInfo
+ * App\EnrollableRequestInfo.
  *
- * @property int $id
- * @property int|null $enrollable_id
- * @property string|null $enrollable_type
+ * @property int                             $id
+ * @property int|null                        $enrollable_id
+ * @property string|null                     $enrollable_type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\EnrollableRequestInfo|null $enrollable
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableRequestInfo newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableRequestInfo newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableRequestInfo query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableRequestInfo whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableRequestInfo whereEnrollableId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableRequestInfo whereEnrollableType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableRequestInfo whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableRequestInfo whereUpdatedAt($value)
+ * @property \App\EnrollableRequestInfo|null $enrollable
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\EnrollableRequestInfo newModelQuery()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\EnrollableRequestInfo newQuery()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\EnrollableRequestInfo query()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\EnrollableRequestInfo whereCreatedAt($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\EnrollableRequestInfo whereEnrollableId($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\EnrollableRequestInfo whereEnrollableType($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\EnrollableRequestInfo whereId($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\EnrollableRequestInfo whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class EnrollableRequestInfo extends Model

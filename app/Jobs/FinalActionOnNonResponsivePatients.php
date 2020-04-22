@@ -80,11 +80,11 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
                 ->where('data->is_reminder', true);
         })   //            If still unreachable means user did not choose to "Enroll Now" in invitation mail.
             ->whereHas('patientInfo', function ($patient) use ($twoDaysAgo, $untilEndOfDay) {
-            $patient->where('ccm_status', 'unreachable')->where([
-                ['date_unreachable', '>=', $twoDaysAgo],
-                ['date_unreachable', '<=', $untilEndOfDay], // This ensures will not collect older unreachable
-            ]);
-        })->get()
+                $patient->where('ccm_status', 'unreachable')->where([
+                    ['date_unreachable', '>=', $twoDaysAgo],
+                    ['date_unreachable', '<=', $untilEndOfDay], // This ensures will not collect older unreachable
+                ]);
+            })->get()
             ->each(function (User $noResponsivePatient) {
                 $isSurveyOnlyUser = $noResponsivePatient->hasRole('survey-only');
 //                Notice: Getting the Enrollee model from $noResponsivePatient User

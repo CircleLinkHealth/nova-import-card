@@ -10,7 +10,6 @@ use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
 trait CustomerTestCaseHelper
 {
@@ -47,7 +46,7 @@ trait CustomerTestCaseHelper
      */
     protected function careCoach(int $number = 1)
     {
-        if (!$this->careCoach) {
+        if ( ! $this->careCoach) {
             $this->careCoach = $this->createUsersOfType('care-center', $number);
         }
 
@@ -59,7 +58,7 @@ trait CustomerTestCaseHelper
      */
     protected function location()
     {
-        if (!$this->location) {
+        if ( ! $this->location) {
             $this->location = Location::firstOrCreate(
                 [
                     'practice_id' => $this->practice()->id,
@@ -75,7 +74,7 @@ trait CustomerTestCaseHelper
      */
     protected function patient(int $number = 1)
     {
-        if (!$this->patient) {
+        if ( ! $this->patient) {
             $this->patient = $this->createUsersOfType('participant', $number);
         }
 
@@ -87,7 +86,7 @@ trait CustomerTestCaseHelper
      */
     protected function practice()
     {
-        if (!$this->practice) {
+        if ( ! $this->practice) {
             $this->practice = factory(Practice::class)->create();
         }
 
@@ -99,7 +98,7 @@ trait CustomerTestCaseHelper
      */
     protected function provider(int $number = 1)
     {
-        if (!$this->provider) {
+        if ( ! $this->provider) {
             $this->provider = $this->createUsersOfType('provider', $number);
         }
 
@@ -111,7 +110,7 @@ trait CustomerTestCaseHelper
      */
     protected function superadmin(int $number = 1)
     {
-        if (!$this->superadmin) {
+        if ( ! $this->superadmin) {
             $this->superadmin = $this->createUsersOfType('administrator', $number);
         }
 
@@ -133,5 +132,4 @@ trait CustomerTestCaseHelper
 
         return $users;
     }
-
 }

@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Jobs;
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+namespace App\Jobs;
+
+// This file is part of CarePlan Manager by CircleLink Health.
 
 use App\Console\Commands\SendEnrollmentNotifications;
 use Carbon\Carbon;
@@ -27,12 +29,12 @@ class SelfEnrollmentEnrollees implements ShouldQueue
     use SerializesModels;
 
     const SURVEY_ONLY = 'survey-only';
+    private $enrollee;
 
     /**
      * @var Role
      */
     private $surveyRole;
-    private $enrollee;
 
     public function __construct(Enrollee $enrollee = null)
     {
@@ -40,20 +42,38 @@ class SelfEnrollmentEnrollees implements ShouldQueue
     }
 
     /**
+     * First we create temporary user from Enrollee.
+     *
+     * @param $enrollees
+     */
+    public function createSurveyOnlyUserFromEnrollees(iterable $enrollees)
+    {
+        foreach ($enrollees as $enrollee) {
+            $this->createUserFromEnrolleeAndInvite($enrollee);
+        }
+    }
+
+    public function createUserFromEnrolleeAndInvite(Enrollee $enrollee)
+    {
+        $surveyRole = $this->surveyRole();
+        CreateUserFromEnrollee::dispatch($enrollee, $surveyRole->id);
+    }
+
+    /**
      * Execute the job.
      *
-     * @param Enrollee|null $enrollee
+     * @param  Enrollee|null $enrollee
      * @return void
      */
     public function handle()
     {
-        if (!is_null($this->enrollee)) {
+        if ( ! is_null($this->enrollee)) {
             return $this->createUserFromEnrolleeAndInvite($this->enrollee);
         }
 
         if (App::environment(['local', 'review'])) {
             $practiceId = Practice::whereName('demo')->firstOrFail()->id;
-            $enrollees = $this->getEnrollees()
+            $enrollees  = $this->getEnrollees()
                 ->where('practice_id', $practiceId)
                 ->where('dob', Carbon::parse('1901-01-01'))
                 ->get()
@@ -65,32 +85,6 @@ class SelfEnrollmentEnrollees implements ShouldQueue
                 $this->createSurveyOnlyUserFromEnrollees($enrollees);
             });
         }
-    }
-
-    /**
-     * @param Enrollee $enrollee
-     */
-    public function createUserFromEnrolleeAndInvite(Enrollee $enrollee)
-    {
-        $surveyRole = $this->surveyRole();
-        CreateUserFromEnrollee::dispatch($enrollee, $surveyRole->id);
-    }
-
-    private function surveyRole(): Role
-    {
-        if (!$this->surveyRole) {
-            $this->surveyRole = Role::firstOrCreate(
-                [
-                    'name' => 'survey-only'
-                ],
-                [
-                    'display_name' => 'Survey User',
-                    'description' => 'Became Users just to be enrolled in AWV survey'
-                ]
-            );
-        }
-
-        return $this->surveyRole;
     }
 
     /**
@@ -107,15 +101,20 @@ class SelfEnrollmentEnrollees implements ShouldQueue
             ]);
     }
 
-    /**
-     * First we create temporary user from Enrollee.
-     *
-     * @param $enrollees
-     */
-    public function createSurveyOnlyUserFromEnrollees(iterable $enrollees)
+    private function surveyRole(): Role
     {
-        foreach ($enrollees as $enrollee) {
-            $this->createUserFromEnrolleeAndInvite($enrollee);
+        if ( ! $this->surveyRole) {
+            $this->surveyRole = Role::firstOrCreate(
+                [
+                    'name' => 'survey-only',
+                ],
+                [
+                    'display_name' => 'Survey User',
+                    'description'  => 'Became Users just to be enrolled in AWV survey',
+                ]
+            );
         }
+
+        return $this->surveyRole;
     }
 }

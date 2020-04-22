@@ -33,8 +33,6 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param User|null $user
      */
     public function __construct(User $user = null)
     {
@@ -50,18 +48,19 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
      */
     public function handle()
     {
-        if (!is_null($this->user)) {
+        if ( ! is_null($this->user)) {
             $this->user->notify(new SendEnrollmentEmail());
+
             return;
         }
 
         $mothStart = Carbon::parse(now())->copy()->startOfMonth()->toDateTimeString();
-        $monthEnd = Carbon::parse($mothStart)->copy()->endOfMonth()->toDateTimeString();
+        $monthEnd  = Carbon::parse($mothStart)->copy()->endOfMonth()->toDateTimeString();
 
         //    Just for testing
         if (App::environment(['local', 'review'])) {
             $practiceId = Practice::where('name', '=', 'demo')->firstOrFail()->id;
-            $patients = $this->getUnreachablePatients($mothStart, $monthEnd)
+            $patients   = $this->getUnreachablePatients($mothStart, $monthEnd)
                 ->whereHas('patientInfo', function ($patientInfo) {
                     $patientInfo->where('birth_date', Carbon::parse('1901-01-01'));
                 })
@@ -70,7 +69,7 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
                 ->take(SendEnrollmentNotifications::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING);
             foreach ($patients->all() as $patient) {
                 /** @var User $patient */
-                if (!$patient->checkForSurveyOnlyRole()) {
+                if ( ! $patient->checkForSurveyOnlyRole()) {
                     event(new AutoEnrollableCollected($patient));
                 }
             }
@@ -78,7 +77,7 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
             $this->getUnreachablePatients($mothStart, $monthEnd)->chunk(50, function ($patients) {
                 foreach ($patients as $patient) {
                     /** @var User $patient */
-                    if (!$patient->checkForSurveyOnlyRole()) {
+                    if ( ! $patient->checkForSurveyOnlyRole()) {
                         event(new AutoEnrollableCollected($patient));
                     }
                 }
