@@ -1996,7 +1996,7 @@ if ( ! function_exists('suggestedFamilyMemberAcceptableRelevanceScore')) {
         $key = 'suggested_family_members_relevance_score';
 
         return \Cache::remember($key, 2, function () use ($key) {
-            $val = AppConfig::pull($key, 30);
+            return AppConfig::pull($key, 30);
         });
     }
 }
