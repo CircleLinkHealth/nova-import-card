@@ -66,7 +66,7 @@ if (getenv('REDIS_URL')) {
 $mysqlDBName = env('DB_DATABASE', 'nothing');
 
 if ('nothing' === $mysqlDBName) {
-    $mysqlDBName = snake_case(getenv('HEROKU_BRANCH'));
+    $mysqlDBName = Str::snake(getenv('HEROKU_BRANCH'));
 }
 
 if (getenv('CI')) {
