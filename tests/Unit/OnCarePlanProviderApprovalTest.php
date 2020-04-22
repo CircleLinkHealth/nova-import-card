@@ -56,9 +56,9 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
     {
         parent::setUp();
 
-        $settings                    = $this->practice()->cpmSettings();
+        $settings = $this->practice()->cpmSettings();
         $settings->efax_pdf_careplan = true;
-        $settings->dm_pdf_careplan   = true;
+        $settings->dm_pdf_careplan = true;
         $settings->save();
 
         $this->patient()->setPreferredContactLocation($this->location()->id);
@@ -103,11 +103,11 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
 
         $cpmProblems = CpmProblem::get();
         $ccdProblems = $this->patient()->ccdProblems()->createMany([
-            ['name' => 'test'.str_random(5), 'cpm_problem_id' => $cpmProblems->random()->id, 'is_monitored' => true],
-            ['name' => 'test'.str_random(5), 'cpm_problem_id' => $cpmProblems->random()->id, 'is_monitored' => true],
-            ['name' => 'test'.str_random(5), 'cpm_problem_id' => $cpmProblems->random()->id, 'is_monitored' => true],
-            ['name' => 'test'.str_random(5), 'cpm_problem_id' => $cpmProblems->random()->id, 'is_monitored' => true],
-            ['name' => 'test'.str_random(5), 'cpm_problem_id' => $cpmProblems->random()->id, 'is_monitored' => true],
+            ['name' => 'test' . Str::random(5), 'cpm_problem_id' => $cpmProblems->random()->id, 'is_monitored' => true],
+            ['name' => 'test' . Str::random(5), 'cpm_problem_id' => $cpmProblems->random()->id, 'is_monitored' => true],
+            ['name' => 'test' . Str::random(5), 'cpm_problem_id' => $cpmProblems->random()->id, 'is_monitored' => true],
+            ['name' => 'test' . Str::random(5), 'cpm_problem_id' => $cpmProblems->random()->id, 'is_monitored' => true],
+            ['name' => 'test' . Str::random(5), 'cpm_problem_id' => $cpmProblems->random()->id, 'is_monitored' => true],
         ]);
 
         foreach ($ccdProblems as $problem) {
@@ -122,7 +122,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
 
         $this->patient()->careTeamMembers()->create([
             'member_user_id' => $this->provider()->id,
-            'type'           => CarePerson::BILLING_PROVIDER,
+            'type' => CarePerson::BILLING_PROVIDER,
         ]);
 
         $this->patient()->setPhone('+1-541-754-3010');
@@ -161,7 +161,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
 
         $response->assertStatus(302);
         $response->assertRedirect(route('patient.careplan.print', [
-            'patientId'    => $this->patient()->id,
+            'patientId' => $this->patient()->id,
             'clearSession' => false,
         ]));
 
@@ -231,7 +231,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
         $this->patient()->setMRN(rand());
         $this->patient()->careTeamMembers()->create([
             'member_user_id' => $this->provider()->id,
-            'type'           => CarePerson::BILLING_PROVIDER,
+            'type' => CarePerson::BILLING_PROVIDER,
         ]);
         $this->patient()->setPhone('+1-541-754-3010');
         $this->patient()->save();
@@ -239,11 +239,11 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
         //add both diabetes problems
         $this->patient()->ccdProblems()->createMany([
             [
-                'name'           => 'diabetes1',
+                'name' => 'diabetes1',
                 'cpm_problem_id' => CpmProblem::whereName(CpmProblem::DIABETES_TYPE_1)->first()->id,
             ],
             [
-                'name'           => 'diabetes2',
+                'name' => 'diabetes2',
                 'cpm_problem_id' => CpmProblem::whereName(CpmProblem::DIABETES_TYPE_2)->first()->id,
             ],
         ]);
