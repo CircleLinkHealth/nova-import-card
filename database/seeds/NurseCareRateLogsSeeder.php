@@ -4,7 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use Illuminate\Support\Str;
 use App\Call;
 use App\Jobs\StoreTimeTracking;
 use App\Note;
@@ -17,6 +16,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class NurseCareRateLogsSeeder extends Seeder
