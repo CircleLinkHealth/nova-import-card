@@ -237,6 +237,7 @@ trait EnrollableManagement
     public function saveTemporaryInvitationLink(User $notifiable, $urlToken, $url)
     {
         $receiver = $notifiable;
+//        @todo:Handle this...
         if ($receiver->checkForSurveyOnlyRole()) {
             $receiver = Enrollee::whereUserId($receiver->id)->firstOrFail();
         }
