@@ -188,6 +188,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         if ( ! $this->json) {
             if ($parsedJson = $this->getParsedJson()) {
                 $this->json = $parsedJson;
+                if (!$this->mrn) $this->patientMrn();
                 $this->save();
             } else {
                 $this->parseToJson();
