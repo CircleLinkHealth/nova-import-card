@@ -99,9 +99,8 @@ class ProcessEligibilityBatch implements ShouldQueue
     }
 
     /**
-     * @return EligibilityBatch|null
-     *
      * @throws \Exception
+     * @return EligibilityBatch|null
      */
     private function createEligibilityJobsFromJsonFile(EligibilityBatch $batch)
     {
