@@ -727,9 +727,9 @@ class Enrollee extends BaseModel
                 self::LEGACY,
             ])
             ->where(function ($q) {
-                         $q->whereDate('last_attempt_at', '<', Carbon::now()->startOfDay())
-                             ->orWhereNull('last_attempt_at');
-                     });
+                $q->whereDate('last_attempt_at', '<', Carbon::now()->startOfDay())
+                    ->orWhereNull('last_attempt_at');
+            });
     }
 
     public function scopeToCall($query)
