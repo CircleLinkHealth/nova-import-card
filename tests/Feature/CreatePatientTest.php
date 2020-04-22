@@ -14,7 +14,7 @@ class CreatePatientTest extends TestCase
     use UserHelpers;
     use PatientHelpers;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->setAdminUser();

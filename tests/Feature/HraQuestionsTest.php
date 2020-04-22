@@ -18,7 +18,7 @@ class HraQuestionsTest extends TestCase
     /** @var SurveyInstance */
     private $hraSurvey;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->createTestSurveyData();

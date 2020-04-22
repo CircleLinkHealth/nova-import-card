@@ -26,7 +26,7 @@ class ProviderReportTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

@@ -17,7 +17,7 @@ class HraSurveyReminderTest extends TestCase
     use UserHelpers;
     use PatientHelpers;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         (new \SurveySeeder())->run();

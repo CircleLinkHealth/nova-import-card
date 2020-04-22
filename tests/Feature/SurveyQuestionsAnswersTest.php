@@ -52,7 +52,7 @@ class SurveyQuestionsAnswersTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->createTestSurveyData();

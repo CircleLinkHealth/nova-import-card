@@ -18,7 +18,7 @@ class VitalsQuestionsTest extends TestCase
     /** @var SurveyInstance */
     private $vitalsSurvey;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->createTestSurveyData();
