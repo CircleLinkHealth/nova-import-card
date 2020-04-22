@@ -105,6 +105,9 @@ class CcdaImporter
                 } else {
                     $this->ccda->status = Ccda::QA;
                 }
+                if (! $this->ccda->mrn) {
+                    $this->ccda->mrn = $this->patient->patientInfo->mrn_number;
+                }
                 $this->ccda->save();
 
                 if ($this->enrollee) {

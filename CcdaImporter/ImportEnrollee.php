@@ -139,8 +139,11 @@ class ImportEnrollee
 
     private function importFromEligibilityJob(Enrollee $enrollee, EligibilityJob $job)
     {
+        $mr = new CsvWithJsonMedicalRecord($job->data);
+        
         $ccda = Ccda::create([
-            'json'        => (new CsvWithJsonMedicalRecord($job->data))->toJson(),
+            'json'        => $mr->toJson(),
+            'mrn'         => $mr->getMrn(),
             'practice_id' => $enrollee->practice_id,
         ]);
 
