@@ -452,7 +452,7 @@ class AutoEnrollmentCenterController extends Controller
             return 'Somethings Wrong. Please try one more time...';
         }
 
-        return 'All good to go...you can go back and refresh the page before you go to next step';
+        return 'All good to go. You can go back and invite some test patients';
     }
 
     /**
