@@ -15,6 +15,7 @@ use App\Notifications\SendEnrollmentEmail;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
@@ -118,7 +119,7 @@ class AutoEnrollmentCenterController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      */
-    public function enrolleesInvitationLetterBoard(Request $request)
+    public function enrollableInvitationLetterBoard(Request $request)
     {
 //        Remember all enrollees at this point have user model also
         if (!$request->hasValidSignature()) {
@@ -137,8 +138,16 @@ class AutoEnrollmentCenterController extends Controller
         //        If user is deleted and enrollee is null = Enrollable has been enrolled and his temporary user is deleted.
         //        Enrollee user_id is detached when user model is deleted.
         //        @todo: Not great/clear solution. Come back to this
-        if (is_null($enrollee) && is_null($userModelEnrollee)) {
-            return 'Return view with info...You have been enrolled';
+        if (!$isSurveyOnlyUser && is_null($enrollee) && is_null($userModelEnrollee)) {
+            $notification = DatabaseNotification::where('type', SendEnrollmentEmail::class)
+                ->where('notifiable_id', $enrollableId)
+                ->first();
+
+            $enrollee = Enrollee::whereId($notification->data['enrollee_id'])->first();
+            $practiceNumber = $enrollee->practice->outgoing_phone_number;
+            $doctorName = $enrollee->provider->last_name;
+
+            return view('enrollment-consent.enrolledMessagePage', compact('practiceNumber', 'doctorName'));
         }
 
         if ($isSurveyOnlyUser) {
@@ -225,7 +234,9 @@ class AutoEnrollmentCenterController extends Controller
         }
 
         if ($this->hasSurveyCompleted($unrechablePatient)) {
-            return 'return a view with message you are enrolled';
+            $practiceNumber = $unrechablePatient->primaryPractice->outgoing_phone_number;
+            $doctorName = $unrechablePatient->getBillingProviderName();
+            return view('enrollment-consent.enrolledMessagePage', compact('practiceNumber', 'doctorName'));
         }
 
         $this->expirePastInvitationLink($unrechablePatient);

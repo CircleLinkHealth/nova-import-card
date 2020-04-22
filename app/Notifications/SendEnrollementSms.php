@@ -69,9 +69,9 @@ class SendEnrollementSms extends Notification
         $notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
         $smsSubject          = $notificationContent['line1'].$notificationContent['line2'].$shortenUrl ?? $invitationUrl->url;
 
-//        return (new TwilioSmsMessage())
+        return (new TwilioSmsMessage())
 //            ->from($practiceNumber)
-//            ->content($smsSubject);
+            ->content($smsSubject);
     }
 
     /**

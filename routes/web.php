@@ -2207,7 +2207,7 @@ Route::get('/invite-unreachable', [
 
 // TEMPORARY SIGNED ROUTE
 Route::get('/patient-self-enrollment', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrolleesInvitationLetterBoard',
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrollableInvitationLetterBoard',
     'as' => 'invitation.enrollment',
 ]);
 
