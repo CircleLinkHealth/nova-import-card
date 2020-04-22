@@ -84,7 +84,7 @@ class AutoEnrollmentCenterController extends Controller
             $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
             //            Delete User Created from Enrollee
             if ($isSurveyOnly) {
-                $enrollee->upate(['user_id' => null]);
+                $enrollee->update(['user_id' => null]);
                 $userModelEnrollee->delete();
             }
 
