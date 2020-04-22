@@ -288,7 +288,9 @@
         "ide": [
             "php artisan ide-helper:generate",
             "php artisan -vvv ide-helper:models -W",
-            "php artisan ide-helper:meta"
+            "php artisan ide-helper:meta",
+            "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --using-cache=no --show-progress=dots --diff --verbose --config=.php_cs.dist",
+            "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --using-cache=no --show-progress=dots --diff --verbose --config=.php_cs_views.php"
         ]
     },
     "config": {

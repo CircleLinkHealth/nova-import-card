@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e04b72153a7d645aafc7af74043397c6",
+    "content-hash": "06b7566e0afc60ae6835cdf3f026050b",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -417,16 +417,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.135.1",
+            "version": "3.135.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "59587a4f3fc88b36ce7f2e1a102bfcd7a816b27c"
+                "reference": "1810725052836683d0cfd2907d515173058e710e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/59587a4f3fc88b36ce7f2e1a102bfcd7a816b27c",
-                "reference": "59587a4f3fc88b36ce7f2e1a102bfcd7a816b27c",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1810725052836683d0cfd2907d515173058e710e",
+                "reference": "1810725052836683d0cfd2907d515173058e710e",
                 "shasum": ""
             },
             "require": {
@@ -497,7 +497,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-04-21T18:14:29+00:00"
+            "time": "2020-04-22T18:11:15+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -874,12 +874,11 @@
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
-            "version": "dev-CPM-2256-ca-improvements",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
-                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8",
-                "shasum": null
+                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -908,12 +907,11 @@
         },
         {
             "name": "circlelinkhealth/clh-nova-theme",
-            "version": "dev-CPM-2256-ca-improvements",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
-                "reference": "6ecab1c47b37727c17819ad31972bbd437c4a44a",
-                "shasum": null
+                "reference": "6ecab1c47b37727c17819ad31972bbd437c4a44a"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1015,11 +1013,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-master",
+            "version": "dev-CPM-1919",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "9057136b4b1fcaacf8c137460f58fe4f6818e210"
+                "reference": "240dd1e7189c3ac80e607c593815e8007e675ad1"
             },
             "type": "laravel-module",
             "extra": {
@@ -1041,15 +1039,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-21T09:05:59+00:00"
+            "time": "2020-04-22T17:51:33+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-master",
+            "version": "dev-CPM-1919_v2_fresh",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "ed79919e95d61970d3a4b866c09fd21417ca6d82"
+                "reference": "b82505d5eb1e66acbb084e9eef03f0db87c6a3b5"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1083,15 +1081,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-21T21:34:20+00:00"
+            "time": "2020-04-22T16:54:55+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-lavavel-6",
+            "version": "dev-CPM-1919_fresh_start_eligibility",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "a538d61ba3c99d870a9e02a97fa6853c049c63f8"
+                "reference": "fa2088235cf7321aeb0344b46843a11163daa62e"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1116,16 +1114,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-22T10:59:24+00:00"
+            "time": "2020-04-22T16:48:18+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-CPM-2256-ca-improvements",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
-                "reference": "8b21629514943da628f3f5acb602c7610c2d9167",
-                "shasum": null
+                "reference": "8b21629514943da628f3f5acb602c7610c2d9167"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1154,12 +1151,11 @@
         },
         {
             "name": "circlelinkhealth/generate-success-stories-report",
-            "version": "dev-CPM-2256-ca-improvements",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
-                "reference": "647bc07cacc81615878d4210f947957280127fdc",
-                "shasum": null
+                "reference": "647bc07cacc81615878d4210f947957280127fdc"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1188,12 +1184,11 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-CPM-2256-ca-improvements",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "f0df8eb877194dea1489f870e9d57de695feff3b",
-                "shasum": null
+                "reference": "f0df8eb877194dea1489f870e9d57de695feff3b"
             },
             "require": {
                 "php": ">=7.1.0",
@@ -2597,16 +2592,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.12.1",
+            "version": "8.12.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "198dffa12831e17320207ce1bd3b121402d2cc8d"
+                "reference": "030682bc4fcdc0c6fb85b68aec2ffeff6978768a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/198dffa12831e17320207ce1bd3b121402d2cc8d",
-                "reference": "198dffa12831e17320207ce1bd3b121402d2cc8d",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/030682bc4fcdc0c6fb85b68aec2ffeff6978768a",
+                "reference": "030682bc4fcdc0c6fb85b68aec2ffeff6978768a",
                 "shasum": ""
             },
             "require": {
@@ -2661,7 +2656,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2020-03-30T08:29:12+00:00"
+            "time": "2020-04-22T19:37:04+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -3982,6 +3977,68 @@
                 "laravel"
             ],
             "time": "2020-03-03T16:07:08+00:00"
+        },
+        {
+            "name": "laravel-notification-channels/twilio",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel-notification-channels/twilio.git",
+                "reference": "f424ebce4fd587ffecf653246564899e930f9b4f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel-notification-channels/twilio/zipball/f424ebce4fd587ffecf653246564899e930f9b4f",
+                "reference": "f424ebce4fd587ffecf653246564899e930f9b4f",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/events": "^5.5 || ^6.0 || ^7.0",
+                "illuminate/notifications": "^5.5 || ^6.0 || ^7.0",
+                "illuminate/queue": "^5.5 || ^6.0 || ^7.0",
+                "illuminate/support": "^5.5 || ^6.0 || ^7.0",
+                "php": ">=7.2",
+                "twilio/sdk": "~5.16"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.3",
+                "phpunit/phpunit": "^8.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "NotificationChannels\\Twilio\\TwilioProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "NotificationChannels\\Twilio\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gregorio Hernández Caso",
+                    "email": "gregoriohc@gmail.com",
+                    "homepage": "https://github.com/gregoriohc",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Provides Twilio notification channel for Laravel.",
+            "keywords": [
+                "call",
+                "laravel",
+                "mms",
+                "notification",
+                "sms",
+                "twilio"
+            ],
+            "time": "2020-03-07T01:23:03+00:00"
         },
         {
             "name": "laravel/framework",
@@ -10640,29 +10697,33 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "5.7.0",
+            "version": "5.42.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "29306b582c461e300e85d18877cf4a9b67fb6175"
+                "reference": "0cfcb871b18a9c427dd9e8f0ed7458d43009b48a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/29306b582c461e300e85d18877cf4a9b67fb6175",
-                "reference": "29306b582c461e300e85d18877cf4a9b67fb6175",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/0cfcb871b18a9c427dd9e8f0ed7458d43009b48a",
+                "reference": "0cfcb871b18a9c427dd9e8f0ed7458d43009b48a",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=5.5.0"
             },
             "require-dev": {
                 "apigen/apigen": "^4.1",
-                "phpunit/phpunit": "4.5.*"
+                "guzzlehttp/guzzle": "^6.3",
+                "phpunit/phpunit": ">=4.5"
+            },
+            "suggest": {
+                "guzzlehttp/guzzle": "An HTTP client to execute the API requests"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Twilio\\": "Twilio/"
+                    "Twilio\\": "src/Twilio/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -10682,7 +10743,7 @@
                 "sms",
                 "twilio"
             ],
-            "time": "2017-03-13T22:00:13+00:00"
+            "time": "2020-02-05T19:55:13+00:00"
         },
         {
             "name": "vink/nova-cache-card",

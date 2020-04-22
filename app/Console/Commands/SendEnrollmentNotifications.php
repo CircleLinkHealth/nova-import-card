@@ -41,6 +41,8 @@ class SendEnrollmentNotifications extends Command
      * Execute the console command.
      *
      * @throws \ReflectionException
+     *
+     *
      * @return mixed
      */
     public function handle()
