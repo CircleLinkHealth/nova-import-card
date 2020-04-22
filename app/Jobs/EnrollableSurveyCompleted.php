@@ -149,7 +149,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
         return collect($enrolleesQuestions)->where('identifier', '=', $identifier)
             ->transform(function ($question) use ($enrollableSurveyData) {
                 $answer = collect($enrollableSurveyData)->where('question_id', $question->id)->first();
-
                 return $this->sanitizedValue($answer);
             })->toArray();
     }

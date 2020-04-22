@@ -82,9 +82,9 @@ class AutoEnrollmentCenterController extends Controller
             $this->expirePastInvitationLink($enrollee);
             $this->createEnrollStatusRequestsInfo($enrollee);
             $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
-            $this->expirePastInvitationLink($enrollee);
             //            Delete User Created from Enrollee
             if ($isSurveyOnly) {
+                $enrollee->upate(['user_id' => null]);
                 $userModelEnrollee->delete();
             }
 
@@ -128,42 +128,35 @@ class AutoEnrollmentCenterController extends Controller
         $enrollableId = $request->input('enrollable_id');
         $isSurveyOnlyUser = $request->input('is_survey_only');
 
+        if ($isSurveyOnlyUser) {
+            return $this->manageEnrolleeInvitation($enrollableId);
+        }
+
+        return $this->manageUnreachablePatientInvitation($enrollableId);
+    }
+
+    /**
+     * @param $enrollableId
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
+     */
+    private function manageEnrolleeInvitation($enrollableId)
+    {
         /** @var Enrollee $enrollee */
         $enrollee = $this->getEnrollee($enrollableId);
-
         /** @var User $userModelEnrollee */
 //        Note: this can be either Unreachable patient Or User created from enrollee
-        $userModelEnrollee = $this->getUserModelEnrollee($enrollableId);
+        $userCreatedFromEnrollee = $this->getUserModelEnrollee($enrollableId);
 
         //        If user is deleted and enrollee is null = Enrollable has been enrolled and his temporary user is deleted.
         //        Enrollee user_id is detached when user model is deleted.
         //        @todo: Not great/clear solution. Come back to this
-        if (!$isSurveyOnlyUser && is_null($enrollee) && is_null($userModelEnrollee)) {
-            $notification = DatabaseNotification::where('type', SendEnrollmentEmail::class)
-                ->where('notifiable_id', $enrollableId)
-                ->first();
-
-            $enrollee = Enrollee::whereId($notification->data['enrollee_id'])->first();
+        if (is_null($enrollee) && is_null($userCreatedFromEnrollee)) {
+            $enrollee = $this->getEnrolleeFromNotification($enrollableId);
             $practiceNumber = $enrollee->practice->outgoing_phone_number;
-            $doctorName = $enrollee->provider->last_name;
-
+            $doctorName = optional($enrollee->provider)->last_name;
             return view('enrollment-consent.enrolledMessagePage', compact('practiceNumber', 'doctorName'));
         }
 
-        if ($isSurveyOnlyUser) {
-            return $this->manageEnrolleeInvitation($enrollee, $userModelEnrollee);
-        }
-
-        return $this->manageUnreachablePatientInvitation($userModelEnrollee);
-    }
-
-    /**
-     * @param Enrollee $enrollee
-     * @param User $userCreatedFromEnrollee
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View|string
-     */
-    private function manageEnrolleeInvitation(Enrollee $enrollee, User $userCreatedFromEnrollee)
-    {
         $linkIsManuallyExpired = $enrollee->getLastEnrollmentInvitationLink()->manually_expired;
 
         if ($this->hasSurveyInProgress($userCreatedFromEnrollee) && !$linkIsManuallyExpired) {
@@ -175,6 +168,15 @@ class AutoEnrollmentCenterController extends Controller
         }
 
         return $this->enrollmentLetterView($userCreatedFromEnrollee, true, $enrollee, false);
+    }
+
+    private function getEnrolleeFromNotification($enrollableId)
+    {
+        $notification = DatabaseNotification::where('type', SendEnrollmentEmail::class)
+            ->where('notifiable_id', $enrollableId)
+            ->first();
+
+        return Enrollee::whereId($notification->data['enrollee_id'])->first();
     }
 
     public function getAwvInvitationLinkForUser($user)
@@ -227,8 +229,12 @@ class AutoEnrollmentCenterController extends Controller
         return $this->enrollmentInvitationService->createLetter($practiceName, $practiceLetter, $careAmbassadorPhoneNumber, $provider);
     }
 
-    public function manageUnreachablePatientInvitation(User $unrechablePatient)
+    public function manageUnreachablePatientInvitation($enrollableId)
     {
+        /** @var User $userModelEnrollee */
+//        Note: this can be either Unreachable patient Or User created from enrollee
+        $unrechablePatient = $this->getUserModelEnrollee($enrollableId);
+
         if ($this->hasSurveyInProgress($unrechablePatient)) {
             return redirect($this->getAwvInvitationLinkForUser($unrechablePatient)->url);
         }
