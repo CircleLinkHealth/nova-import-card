@@ -8,14 +8,12 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
 use App\Nova\Actions\ClearAndReimportCcda;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 
 class ImportEnrollee
@@ -141,8 +139,11 @@ class ImportEnrollee
 
     private function importFromEligibilityJob(Enrollee $enrollee, EligibilityJob $job)
     {
+        $mr = new CsvWithJsonMedicalRecord($job->data);
+        
         $ccda = Ccda::create([
-            'json'        => (new CsvWithJsonMedicalRecord($job->data))->toJson(),
+            'json'        => $mr->toJson(),
+            'mrn'         => $mr->getMrn(),
             'practice_id' => $enrollee->practice_id,
         ]);
 

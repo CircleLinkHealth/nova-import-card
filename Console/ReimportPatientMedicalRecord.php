@@ -17,6 +17,7 @@ use CircleLinkHealth\Eligibility\Notifications\PatientReimportedNotification;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
 
 class ReimportPatientMedicalRecord extends Command
 {
@@ -69,80 +70,24 @@ class ReimportPatientMedicalRecord extends Command
 
         \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id}");
 
-        if ( ! $user->hasCcda() && $this->attemptTemplate($user)) {
-            return;
-        }
-
-        if ($this->option('clear')) {
-            $user->ccdMedications()->delete();
-            $user->ccdProblems()->delete();
-            $user->ccdAllergies()->delete();
-        }
-
-        if ($this->attemptCcda($user)) {
-            $this->line('Ccda imported.');
-
-            return;
-        }
-
-        $this->notifyFailure($user);
-    }
-
-    private function attemptCcda(User $user)
-    {
-        $ccda = $this->attemptFetchCcda($user);
-
-        if ( ! $ccda) {
-            return false;
-        }
-
-        if ($mr = $this->attemptDecorator($user, $ccda)) {
-            if ( ! is_null($mr)) {
-                $ccda->json = $mr->toJson();
-                $ccda->save();
+        DB::transaction(function (User $user) {
+            if ( ! $user->hasCcda()) {
+                $this->attemptCreateCcdaFromMrTemplate($user);
             }
-        }
 
-        $this->importCcdaAndFillCarePlan($ccda, $user);
+            $this->clearExistingCarePlanData($user);
 
-        $this->notifySuccess($user);
+            if ($this->attemptImportCcda($user)) {
+                $this->line('Ccda imported.');
 
-        return true;
+                return;
+            }
+
+            $this->notifyFailure($user);
+        });
     }
 
-    private function attemptDecorator(User $user, Ccda $ccda)
-    {
-        if ($mr = MedicalRecordFactory::create($user, $ccda)) {
-            $this->warn("Running '{$user->primaryPractice->name}' decorator");
-
-            return $mr;
-        }
-
-        return null;
-    }
-
-    private function attemptFetchCcda(User $user)
-    {
-        if ($ccda = $this->getUser()->latestCcda()) {
-            \Log::debug(
-                "ReimportPatientMedicalRecord:user_id:{$user->id} Fetched latest CCDA ccda_id:{$ccda->id}:ln:".__LINE__
-            );
-
-            return $ccda;
-        }
-
-        $this->correctMrnIfWrong($user);
-
-        if ($ccda = $this->getCcdaFromMrn($user->patientInfo->mrn_number, $user->program_id)) {
-            return $ccda;
-        }
-
-        if ($ccda = $this->getCcdaFromAthenaAPI($user)) {
-            return $ccda;
-        }
-    }
-
-    private function attemptTemplate(User $user)
+    private function attemptCreateCcdaFromMrTemplate(User $user)
     {
         if (in_array($user->primaryPractice->name, ['marillac-clinic-inc', 'calvary-medical-clinic'])) {
             $this->warn(
@@ -187,6 +132,71 @@ class ReimportPatientMedicalRecord extends Command
         }
 
         return null;
+    }
+
+    private function attemptDecorator(User $user, Ccda $ccda)
+    {
+        if ($mr = MedicalRecordFactory::create($user, $ccda)) {
+            $this->warn("Running '{$user->primaryPractice->name}' decorator");
+
+            return $mr;
+        }
+
+        return null;
+    }
+
+    private function attemptFetchCcda(User $user)
+    {
+        if ($ccda = $this->getUser()->latestCcda()) {
+            \Log::debug(
+                "ReimportPatientMedicalRecord:user_id:{$user->id} Fetched latest CCDA ccda_id:{$ccda->id}:ln:".__LINE__
+            );
+
+            return $ccda;
+        }
+
+        $this->correctMrnIfWrong($user);
+
+        if ($ccda = $this->getCcdaFromMrn($user->patientInfo->mrn_number, $user->program_id)) {
+            return $ccda;
+        }
+
+        if ($ccda = $this->getCcdaFromAthenaAPI($user)) {
+            return $ccda;
+        }
+    }
+
+    private function attemptImportCcda(User $user)
+    {
+        $ccda = $this->attemptFetchCcda($user);
+
+        if ( ! $ccda) {
+            return false;
+        }
+
+        if ($mr = $this->attemptDecorator($user, $ccda)) {
+            if ( ! is_null($mr)) {
+                $ccda->json = $mr->toJson();
+                $ccda->save();
+            }
+        }
+
+        $this->importCcdaAndFillCarePlan($ccda, $user);
+
+        $this->notifySuccess($user);
+
+        return true;
+    }
+
+    private function clearExistingCarePlanData(User $user)
+    {
+        if ( ! $this->option('clear')) {
+            return;
+        }
+
+        $user->ccdMedications()->delete();
+        $user->ccdProblems()->delete();
+        $user->ccdAllergies()->delete();
     }
 
     private function correctMrnIfWrong(User $user)

@@ -150,7 +150,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
                 'preferred_contact_method' => 'CCT',
                 'registration_date'        => $this->patient->user_registered->toDateString(),
                 'general_comment'          => $this->enrollee()
-                    ? $this->enrollee()->last_call_outcome_reason
+                    ? $this->enrollee()->other_note
                     : null,
             ],
             $agentDetails
@@ -226,9 +226,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
         }
 
         if ( ! $patientInfo->general_comment) {
-            $patientInfo->general_comment = $this->enrollee()
-                ? $this->enrollee()->last_call_outcome_reason
-                : null;
+            $patientInfo->general_comment = $args['general_comment'] ?? null;
         }
 
         if ($patientInfo->isDirty()) {
