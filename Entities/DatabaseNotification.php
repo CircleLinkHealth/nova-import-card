@@ -21,23 +21,25 @@ namespace CircleLinkHealth\Core\Entities;
  * @property \Illuminate\Support\Carbon|null               $updated_at
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $attachment
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $notifiable
- * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification hasAttachmentType($type)
- * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification hasNotifiableType($type)
- * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification newModelQuery()
- * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification newQuery()
- * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification query()
- * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereAttachmentId($value)
- * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereAttachmentType($value)
- * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereCreatedAt($value)
- * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereData($value)
- * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereId($value)
- * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereNotifiableId($value)
- * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereNotifiableType($value)
- * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereReadAt($value)
- * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereType($value)
- * @method static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereUpdatedAt($value)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification hasAttachmentType($type)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification hasNotifiableType($type)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification newModelQuery()
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification newQuery()
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification query()
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereAttachmentId($value)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereAttachmentType($value)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereCreatedAt($value)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereData($value)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereId($value)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereNotifiableId($value)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereNotifiableType($value)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereReadAt($value)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereType($value)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereUpdatedAt($value)
  * @mixin \Eloquent
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification liveNotification()
+ * @method static \Illuminate\Notifications\DatabaseNotificationCollection|static[] all($columns = ['*'])
+ * @method static \Illuminate\Notifications\DatabaseNotificationCollection|static[] get($columns = ['*'])
  */
 class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotification
 {
