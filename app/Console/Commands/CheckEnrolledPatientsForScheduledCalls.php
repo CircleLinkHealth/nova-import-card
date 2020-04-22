@@ -84,7 +84,7 @@ class CheckEnrolledPatientsForScheduledCalls extends Command
     {
         $patient->loadMissing(['carePlan', 'patientInfo']);
 
-        if (Patient::ENROLLED != $patient->patientInfo->ccm_status) {
+        if (Patient::ENROLLED != $patient->patientInfo->ccm_status || ! $patient->carePlan) {
             return false;
         }
 
