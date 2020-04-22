@@ -1943,3 +1943,60 @@ if ( ! function_exists('getPatientListDropdown')) {
         });
     }
 }
+
+if ( ! function_exists('createTimeRangeFromEarliestAndLatest')) {
+    /**
+     * Used in CA:
+     * Example:
+     * Create string '09:00-18:00' from array:.
+     *
+     * [
+     * '09:00-11:00',
+     * '11:00-13:00',
+     * '13:00-18:00
+     * ]
+     */
+    function createTimeRangeFromEarliestAndLatest(array $times): ?string
+    {
+        $times = collect($times);
+
+        if (1 == $times->count()) {
+            return $times->first();
+        }
+
+        $start = collect(explode('-', $times->first()))->first();
+
+        if ( ! $start) {
+            return null;
+        }
+
+        $end = collect(explode('-', $times->last()))->last();
+
+        if ( ! $end) {
+            //if more than 2 entries get second to last and try to parse
+            $secondToLastEnd = collect(explode('-', $times[$times->count() - 2]))->last();
+            if (2 == $times->count() || ! $secondToLastEnd) {
+                return $times->first();
+            }
+            $end = $secondToLastEnd;
+        }
+
+        return $start.'-'.$end;
+    }
+}
+
+if ( ! function_exists('suggestedFamilyMemberAcceptableRelevanceScore')) {
+    /**
+     * @param array $times
+     *
+     * @return string|null
+     */
+    function suggestedFamilyMemberAcceptableRelevanceScore(): int
+    {
+        $key = 'suggested_family_members_relevance_score';
+
+        return \Cache::remember($key, 2, function () use ($key) {
+            $val = AppConfig::pull($key, 30);
+        });
+    }
+}
