@@ -37,7 +37,7 @@ return [
     | may even configure multiple disks of the same driver. Defaults have
     | been setup for each driver as an example of the required options.
     |
-    | Supported Drivers: "local", "ftp", "sftp", "s3", "rackspace"
+    | Supported Drivers: "local", "ftp", "sftp", "s3"
     |
     */
 
@@ -62,13 +62,7 @@ return [
             'region' => env('AWS_DEFAULT_REGION'),
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
-        ],
-        'media' => [
-            'driver' => 's3',
-            'key'    => env('S3_CPM_STORAGE_KEY'),
-            'secret' => env('S3_CPM_STORAGE_SECRET'),
-            'region' => env('S3_CPM_STORAGE_REGION'),
-            'bucket' => env('S3_CPM_STORAGE_BUCKET_NAME'),
+            'endpoint' => env('AWS_ENDPOINT'),
         ],
 
     ],
