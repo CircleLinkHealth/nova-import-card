@@ -64,11 +64,11 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
     public function handle()
     {
         //        Two days after the last reminder - (the "SendEnrollmentNotificationsReminder")
-        $twoDaysAgo = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
+        $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
 
         if (App::environment(['local', 'review'])) {
-            $twoDaysAgo = Carbon::parse(now())->startOfMonth()->toDateTimeString();
+            $twoDaysAgo    = Carbon::parse(now())->startOfMonth()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfMonth()->toDateTimeString();
         }
 
@@ -79,7 +79,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
             ])->where('type', SendEnrollmentEmail::class)
                 ->where('data->is_reminder', true);
         })   //            If still unreachable means user did not choose to "Enroll Now" in invitation mail.
-        ->whereHas('patientInfo', function ($patient) use ($twoDaysAgo, $untilEndOfDay) {
+            ->whereHas('patientInfo', function ($patient) use ($twoDaysAgo, $untilEndOfDay) {
             $patient->where('ccm_status', 'unreachable')->where([
                 ['date_unreachable', '>=', $twoDaysAgo],
                 ['date_unreachable', '<=', $untilEndOfDay], // This ensures will not collect older unreachable
@@ -92,7 +92,6 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
 //                Does unreachable patient always has an enrollee model?
                 $enrollee = Enrollee::whereUserId($noResponsivePatient->id)->firstOrFail();
                 if ($isSurveyOnlyUser) {
-
 //                    Keeping this maybe we need the letter to be printed from nova
 
 //                    $practice = $noResponsivePatient->primaryPractice;
