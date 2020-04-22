@@ -10,6 +10,7 @@ use App\Services\Calls\SchedulerService;
 use App\User;
 use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class CheckEnrolledPatientsForScheduledCalls extends Command
 {
@@ -84,7 +85,13 @@ class CheckEnrolledPatientsForScheduledCalls extends Command
     {
         $patient->loadMissing(['carePlan', 'patientInfo']);
 
-        if (Patient::ENROLLED != $patient->patientInfo->ccm_status || ! $patient->carePlan) {
+        if (Patient::ENROLLED != $patient->patientInfo->ccm_status) {
+            return false;
+        }
+
+        if ( ! $patient->carePlan) {
+            Log::error("Patient[$patient->id] does not have care plan but is enrolled!");
+
             return false;
         }
 
