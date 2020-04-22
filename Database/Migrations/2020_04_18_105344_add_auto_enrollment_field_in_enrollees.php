@@ -1,26 +1,15 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddAutoEnrollmentFieldInEnrollees extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        if (!Schema::hasColumn('enrollees', 'auto_enrollment_triggered')) {
-            Schema::table('enrollees', function (Blueprint $table) {
-                $table->boolean('auto_enrollment_triggered')->default(false);
-            });
-
-        }
-    }
-
     /**
      * Reverse the migrations.
      *
@@ -33,5 +22,19 @@ class AddAutoEnrollmentFieldInEnrollees extends Migration
                 $table->dropColumn('auto_enrollment_triggered');
             }
         });
+    }
+
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        if ( ! Schema::hasColumn('enrollees', 'auto_enrollment_triggered')) {
+            Schema::table('enrollees', function (Blueprint $table) {
+                $table->boolean('auto_enrollment_triggered')->default(false);
+            });
+        }
     }
 }
