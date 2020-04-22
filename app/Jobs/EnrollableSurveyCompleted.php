@@ -46,17 +46,88 @@ class EnrollableSurveyCompleted implements ShouldQueue
     }
 
     /**
-     * @param $address
-     * @return array
+     * @param $val
+     *
+     * @return mixed
      */
-    public function getAddressData($address)
+    public function getArrayValue($val)
     {
-        $addressData = [];
-        foreach ($address as $value) {
-            $addressData[array_keys(get_object_vars($value))[0]] = array_values(get_object_vars($value))[0];
+        return $val[0];
+    }
+
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    public function handle()
+    {
+        $enrollableId = is_json($this->data) ? json_decode($this->data)->enrollable_id : $this->data['enrollable_id'];
+        $surveyInstanceId = is_json($this->data) ? json_decode($this->data)->survey_instance_id : $this->data['survey_instance_id'];
+        $surveyAnswers = $this->getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId);
+        $user = User::withTrashed()->whereId($enrollableId)->firstOrFail();
+        $isSurveyOnly = $user->hasRole('survey-only');
+        $addressData = $this->getAddressData($surveyAnswers['address']);
+        $dob = Carbon::parse($surveyAnswers['dob'])->toDateString();
+
+        if ($isSurveyOnly) {
+            $enrollee = Enrollee::whereUserId($user->id)->firstOrFail();
+            $enrollee->update([
+                'dob' => $dob,
+                'primary_phone' => $surveyAnswers['preferred_number'],
+                'preferred_days' => $this->getPreferredDaysToString($surveyAnswers['preferred_days']),
+                'preferred_window' => $this->getPreferredTimesToString($surveyAnswers['preferred_time']),
+                'address' => $addressData['address'],
+                'city' => $addressData['city'],
+                'state' => $addressData['state'],
+                'zip' => $addressData['zip'],
+                'email' => $surveyAnswers['email'],
+                'status' => Enrollee::ENROLLED,
+                'auto_enrollment_triggered' => true,
+                'user_id' => null,
+            ]);
+
+            $this->importEnrolleeSurveyOnly($enrollee, $user);
+
+            $patientType = 'Initial';
+            $id = $enrollee->id;
+        } else {
+            $preferredContactDays = $this->getPreferredDaysToString($surveyAnswers['preferred_days']);
+            $preferredContactDaysToArray = explode(',', $preferredContactDays);
+            $patientContactTimeStart = Carbon::parse($surveyAnswers['preferred_time'][0]->from)->toTimeString();
+            $patientContactTimeEnd = Carbon::parse($surveyAnswers['preferred_time'][0]->to)->toTimeString();
+            $this->updateUserModel($user, $addressData);
+            $this->updatePatientPhoneNumber($user, $surveyAnswers['preferred_number']);
+            $this->upatePatientInfo($user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd, $dob);
+            $this->updatePatientContactWindow($user, $preferredContactDaysToArray, $patientContactTimeStart, $patientContactTimeEnd);
+            $this->reEnrollUnreachablePatient($user);
+
+            $patientType = 'Unreachable';
+            $id = $user->id;
         }
 
-        return $addressData;
+        return info("$patientType patient $id has been enrolled");
+    }
+
+    /**
+     * @param $enrollableId
+     * @param $surveyInstanceId
+     *
+     * @return array
+     */
+    public function getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId)
+    {
+        return [
+            'email' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_EMAIL')[0],
+            'preferred_number' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_NUMBER')[1],
+            'preferred_days' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_DAYS')[2],
+            'preferred_time' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_TIME')[3],
+            'requests_info' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_REQUESTS_INFO')[4],
+            'address' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_ADDRESS')[5],
+            'dob' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_DOB')[6],
+            'confirm_letter_read' => !empty($this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER')[7])
+                ? $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER')[7][0]
+                : '',
+        ];
     }
 
     /**
@@ -68,7 +139,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
      */
     public function getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, $identifier)
     {
-        $surveyInstance     = DB::table('survey_instances')->where('id', '=', $surveyInstanceId)->first();
+        $surveyInstance = DB::table('survey_instances')->where('id', '=', $surveyInstanceId)->first();
         $enrolleesQuestions = DB::table('questions')->where('survey_id', '=', $surveyInstance->survey_id)->get();
 
         $enrollableSurveyData = DB::table('answers')
@@ -84,166 +155,19 @@ class EnrollableSurveyCompleted implements ShouldQueue
     }
 
     /**
-     * @param $val
-     *
-     * @return mixed
-     */
-    public function getArrayValue($val)
-    {
-        return $val[0];
-    }
-
-    /**
-     * @param $days
-     *
-     * @return string
-     */
-    public function getPreferredDaysToString($days)
-    {
-        $dow = [];
-        if (is_array($days)) {
-            foreach ($days as $day) {
-                $dow[] = clhToCarbonDayOfWeek(Carbon::parse($day)->dayOfWeek);
-            }
-        } else {
-            return Carbon::parse($days)->dayOfWeek;
-        }
-
-        return implode(', ', $dow);
-    }
-
-    /**
-     * @param $times
-     *
-     * @return string
-     */
-    public function getPreferredTimesToString($times)
-    {
-        return $times[0]->from.'-'.$times[0]->to;
-    }
-
-    /**
-     * @param $enrollableId
-     * @param $surveyInstanceId
-     *
-     * @return array
-     */
-    public function getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId)
-    {
-        return [
-            'email'               => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_EMAIL')[0],
-            'preferred_number'    => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_NUMBER')[1],
-            'preferred_days'      => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_DAYS')[2],
-            'preferred_time'      => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_TIME')[3],
-            'requests_info'       => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_REQUESTS_INFO')[4],
-            'address'             => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_ADDRESS')[5],
-            'dob'                 => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_DOB')[6],
-            'confirm_letter_read' => ! empty($this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER')[7])
-                ? $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER')[7][0]
-                : '',
-        ];
-    }
-
-    /**
-     * @throws \Exception
-     * @return string
-     */
-    public function handle()
-    {
-        $enrollableId     = is_json($this->data) ? json_decode($this->data)->enrollable_id : $this->data['enrollable_id'];
-        $surveyInstanceId = is_json($this->data) ? json_decode($this->data)->survey_instance_id : $this->data['survey_instance_id'];
-        $surveyAnswers    = $this->getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId);
-        $user             = User::withTrashed()->whereId($enrollableId)->firstOrFail();
-        $isSurveyOnly     = $user->hasRole('survey-only');
-        $addressData      = $this->getAddressData($surveyAnswers['address']);
-        $dob              = Carbon::parse($surveyAnswers['dob'])->toDateString();
-
-        if ($isSurveyOnly) {
-            $enrollee = Enrollee::whereUserId($user->id)->firstOrFail();
-            $enrollee->update([
-                'dob'                       => $dob,
-                'primary_phone'             => $surveyAnswers['preferred_number'],
-                'preferred_days'            => $this->getPreferredDaysToString($surveyAnswers['preferred_days']),
-                'preferred_window'          => $this->getPreferredTimesToString($surveyAnswers['preferred_time']),
-                'address'                   => $addressData['address'],
-                'city'                      => $addressData['city'],
-                'state'                     => $addressData['state'],
-                'zip'                       => $addressData['zip'],
-                'email'                     => $surveyAnswers['email'],
-                'status'                    => Enrollee::ENROLLED,
-                'auto_enrollment_triggered' => true,
-                'user_id'                   => null,
-            ]);
-
-            $this->importEnrolleeSurveyOnly($enrollee, $user);
-
-            $patientType = 'Initial';
-            $id          = $enrollee->id;
-        } else {
-            $preferredContactDays        = $this->getPreferredDaysToString($surveyAnswers['preferred_days']);
-            $preferredContactDaysToArray = explode(',', $preferredContactDays);
-            $patientContactTimeStart     = Carbon::parse($surveyAnswers['preferred_time'][0]->from)->toTimeString();
-            $patientContactTimeEnd       = Carbon::parse($surveyAnswers['preferred_time'][0]->to)->toTimeString();
-            $this->updateUserModel($user, $addressData);
-            $this->updatePatientPhoneNumber($user, $surveyAnswers['preferred_number']);
-            $this->upatePatientInfo($user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd, $dob);
-            $this->updatePatientContactWindow($user, $preferredContactDaysToArray, $patientContactTimeStart, $patientContactTimeEnd);
-            $this->reEnrollUnreachablePatient($user);
-
-            $patientType = 'Unreachable';
-            $id          = $user->id;
-        }
-
-        return info("$patientType patient $id has been enrolled");
-    }
-
-    /**
-     * @param $enrollee
-     *
-     * @throws \Exception
-     */
-    public function importEnrolleeSurveyOnly($enrollee, User $user)
-    {
-        $user->delete();
-        ImportConsentedEnrollees::dispatch([$enrollee->id]);
-        $user->forceDelete();
-
-//        $job = new EligibilityJob();
-//        $practice = Practice::whereId($enrollee->practice_id)->first();
-//        $medicalRecord = (new SurveyOnlyEnrolleeMedicalRecord($job, $practice))->createFromSurveyOnlyUser($enrollee);
-//        $eligibilityBatch = $this->updateOrCreateBatch($user, $practice);
-//        $hash = $this->createHash($enrollee);
-//        $this->updateOrCreateEligibilityJob($eligibilityBatch, $medicalRecord, $hash);
-//
-//        $user->delete();
-//        ImportConsEnrolleesJustForQa::dispatch([$enrollee->id]);
-//        $this->deleteBatch($user->id);
-//        $user->forceDelete();
-    }
-
-    public function reEnrollUnreachablePatient(User $user)
-    {
-//        Im no showing this info anywhere. Do i need to show them anywhere?
-        // @todo:Ask Ethan should i assign this to nurse Ethan ()
-        $user->patientInfo->update([
-            'ccm_status' => Patient::ENROLLED,
-        ]);
-    }
-
-    /**
-     * @param null  $answer
+     * @param null $answer
      * @param array $default
      *
      * @return array|mixed
      */
     public function sanitizedValue($answer = null, $default = [])
     {
-        if ( ! $answer) {
+        if (!$answer) {
             return $default;
         }
 
         $answerVal = json_decode($answer->value);
-        $answers   = [];
+        $answers = [];
 
         if (is_string($answerVal)) {
             return $answerVal;
@@ -276,31 +200,83 @@ class EnrollableSurveyCompleted implements ShouldQueue
     }
 
     /**
-     * @param $preferredContactDays
-     * @param $patientContactTimeStart
-     * @param $patientContactTimeEnd
-     * @param $dob
+     * @param $address
+     * @return array
      */
-    private function upatePatientInfo(User $user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd, $dob)
+    public function getAddressData($address)
     {
-        $user->patientInfo->update([
-            'birth_date'                 => $dob,
-            'preferred_cc_contact_days'  => $preferredContactDays,
-            'daily_contact_window_start' => $patientContactTimeStart,
-            'daily_contact_window_end'   => $patientContactTimeEnd,
-            'auto_enrollment_triggered'  => true,
-        ]);
+        $addressData = [];
+        foreach ($address as $value) {
+            $addressData[array_keys(get_object_vars($value))[0]] = array_values(get_object_vars($value))[0];
+        }
+
+        return $addressData;
     }
 
-    private function updatePatientContactWindow(User $user, $preferredContactDaysToArray, $patientContactTimeStart, $patientContactTimeEnd)
+    /**
+     * @param $days
+     *
+     * @return string
+     */
+    public function getPreferredDaysToString($days)
     {
-        foreach ($preferredContactDaysToArray as $dayOfWeek) {
-            $user->patientInfo->contactWindows()->updateOrCreate([
-                'day_of_week'       => $dayOfWeek,
-                'window_time_start' => $patientContactTimeStart,
-                'window_time_end'   => $patientContactTimeEnd,
-            ]);
+        $dow = [];
+        if (is_array($days)) {
+            foreach ($days as $day) {
+                $dow[] = clhToCarbonDayOfWeek(Carbon::parse($day)->dayOfWeek);
+            }
+        } else {
+            return Carbon::parse($days)->dayOfWeek;
         }
+
+        return implode(', ', $dow);
+    }
+
+    /**
+     * @param $times
+     *
+     * @return string
+     */
+    public function getPreferredTimesToString($times)
+    {
+        return $times[0]->from . '-' . $times[0]->to;
+    }
+
+    /**
+     * @param $enrollee
+     *
+     * @throws \Exception
+     */
+    public function importEnrolleeSurveyOnly($enrollee, User $user)
+    {
+        $user->delete();
+        ImportConsentedEnrollees::dispatch([$enrollee->id]);
+        $user->forceDelete();
+
+//        $job = new EligibilityJob();
+//        $practice = Practice::whereId($enrollee->practice_id)->first();
+//        $medicalRecord = (new SurveyOnlyEnrolleeMedicalRecord($job, $practice))->createFromSurveyOnlyUser($enrollee);
+//        $eligibilityBatch = $this->updateOrCreateBatch($user, $practice);
+//        $hash = $this->createHash($enrollee);
+//        $this->updateOrCreateEligibilityJob($eligibilityBatch, $medicalRecord, $hash);
+//
+//        $user->delete();
+//        ImportConsEnrolleesJustForQa::dispatch([$enrollee->id]);
+//        $this->deleteBatch($user->id);
+//        $user->forceDelete();
+    }
+
+    /**
+     * @param $addressData
+     */
+    private function updateUserModel(User $user, $addressData)
+    {
+        $user->update([
+            'address' => $addressData['address'],
+            'city' => $addressData['city'],
+            'state' => $addressData['state'],
+            'zip' => $addressData['zip'],
+        ]);
     }
 
     /**
@@ -312,21 +288,45 @@ class EnrollableSurveyCompleted implements ShouldQueue
             ['user_id' => $user->id],
             [
                 'is_primary' => true,
-                'number'     => $preferredNumber,
+                'number' => $preferredNumber,
             ]
         );
     }
 
     /**
-     * @param $addressData
+     * @param $preferredContactDays
+     * @param $patientContactTimeStart
+     * @param $patientContactTimeEnd
+     * @param $dob
      */
-    private function updateUserModel(User $user, $addressData)
+    private function upatePatientInfo(User $user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd, $dob)
     {
-        $user->update([
-            'address' => $addressData['address'],
-            'city'    => $addressData['city'],
-            'state'   => $addressData['state'],
-            'zip'     => $addressData['zip'],
+        $user->patientInfo->update([
+            'birth_date' => $dob,
+            'preferred_cc_contact_days' => $preferredContactDays,
+            'daily_contact_window_start' => $patientContactTimeStart,
+            'daily_contact_window_end' => $patientContactTimeEnd,
+            'auto_enrollment_triggered' => true,
+        ]);
+    }
+
+    private function updatePatientContactWindow(User $user, $preferredContactDaysToArray, $patientContactTimeStart, $patientContactTimeEnd)
+    {
+        foreach ($preferredContactDaysToArray as $dayOfWeek) {
+            $user->patientInfo->contactWindows()->updateOrCreate([
+                'day_of_week' => $dayOfWeek,
+                'window_time_start' => $patientContactTimeStart,
+                'window_time_end' => $patientContactTimeEnd,
+            ]);
+        }
+    }
+
+    public function reEnrollUnreachablePatient(User $user)
+    {
+//        Im no showing this info anywhere. Do i need to show them anywhere?
+        // @todo:Ask Ethan should i assign this to nurse Ethan ()
+        $user->patientInfo->update([
+            'ccm_status' => Patient::ENROLLED,
         ]);
     }
 }

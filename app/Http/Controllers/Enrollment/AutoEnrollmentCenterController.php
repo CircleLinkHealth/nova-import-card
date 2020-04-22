@@ -42,38 +42,17 @@ class AutoEnrollmentCenterController extends Controller
         $this->enrollmentInvitationService = $enrollmentInvitationService;
     }
 
-    /**
-     * @param $enrollable
-     * @param $responseStatus
-     *
-     * @return mixed
-     */
-    public function createEnrollStatusRequestsInfo($enrollable)
-    {
-        return $enrollable->statusRequestsInfo()->create();
-    }
-
-    /**
-     * @param $enrollable
-     *
-     * @return bool
-     */
-    public function enrollableHasRequestedInfo($enrollable)
-    {
-        return $enrollable->statusRequestsInfo()->exists();
-    }
-
     public function enrolleeContactDetails(Request $request)
     {
         $enrollableId = $request->input('enrollee_id');
-        $enrollee     = Enrollee::whereId($enrollableId)->firstOrFail();
+        $enrollee = Enrollee::whereId($enrollableId)->firstOrFail();
 
         $enrolleeData = [
             'enrolleeFirstName' => $enrollee->first_name,
-            'enrolleeLastName'  => $enrollee->last_name,
-            'cellPhone'         => $enrollee->cell_phone,
-            'homePhone'         => $cellPhone = $enrollee->home_phone,
-            'otherPhone'        => $cellPhone = $enrollee->other_phone,
+            'enrolleeLastName' => $enrollee->last_name,
+            'cellPhone' => $enrollee->cell_phone,
+            'homePhone' => $cellPhone = $enrollee->home_phone,
+            'otherPhone' => $cellPhone = $enrollee->other_phone,
         ];
 
         return view('enrollment-consent.enrolleeDetails', compact('enrolleeData'));
@@ -82,15 +61,15 @@ class AutoEnrollmentCenterController extends Controller
     /**
      * NOTE: Currently ONLY Enrollee model have the option to request info.
      *
-     * @throws \Exception
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
+     * @throws \Exception
      */
     public function enrolleeRequestsInfo(Request $request)
     {
         /** @var Enrollee $enrollee */
-        $enrollableId      = $request->input('enrollable_id');
-        $isSurveyOnly      = $request->input('is_survey_only');
-        $enrollee          = $this->getEnrollee($enrollableId);
+        $enrollableId = $request->input('enrollable_id');
+        $isSurveyOnly = $request->input('is_survey_only');
+        $enrollee = $this->getEnrollee($enrollableId);
         $userModelEnrollee = $this->getUserModelEnrollee($enrollableId);
 
         if ($enrollee->statusRequestsInfo()->exists()
@@ -115,90 +94,78 @@ class AutoEnrollmentCenterController extends Controller
     }
 
     /**
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function enrolleesInvitationLetterBoard(Request $request)
+    private function returnEnrolleeRequestedInfoMessage(Enrollee $enrollee)
     {
-//        Remember all enrollees at this point have user model also
-        if ( ! $request->hasValidSignature()) {
-            abort(401);
-        }
-        $enrollableId     = $request->input('enrollable_id');
-        $isSurveyOnlyUser = $request->input('is_survey_only');
-//        for future: This can be either "user created from enrolle" or user (unreachable patient)
-//        but we dont mind for now  - * see NOTE:on top of enrolleeRequestsInfo().
-//        anyhow Seperation is done by $isSurveyOnly - "enrollees that became users ar survey onlys"
-        $userEnrollee = $this->getUserModelEnrollee($enrollableId);
-        /** @var Enrollee $enrollee */
-        $enrollee = $this->getEnrollee($enrollableId);
-//        @todo: if completed redirect to end of survey?
-        if ( ! $isSurveyOnlyUser && ($this->hasSurveyInProgress($userEnrollee)
-                || $this->hasSurveyCompleted($userEnrollee))) {
-            return redirect($this->getAwvInvitationLinkForUser($userEnrollee)->url);
-        }
+        $practiceNumber = $enrollee->practice->outgoing_phone_number;
+        $providerName = $enrollee->provider->last_name;
 
-        // If enrollable is not survey only then create link AND redirect to survey
-        if ( ! $isSurveyOnlyUser) {
-            $this->expirePastInvitationLink($userEnrollee);
+        return view('enrollment-consent.enrollmentInfoRequested', compact('practiceNumber', 'providerName'));
+    }
 
-            return $this->createUrlAndRedirectToSurvey($enrollableId);
-        }
-
-        // IF $userForEnrollment is empty means that ENROLLEE has already enrolled and his user model is deleted
-        if (empty($userEnrollee)
-            && $isSurveyOnlyUser
-            && ! $enrollee->statusRequestsInfo()->exists()) {
-            return 'This enrollment invitation link has expired';
-        }
-
-        //Enrolle requested info before, so just taking him to the info
-        if ($enrollee->getLastEnrollmentInvitationLink()->manually_expired
-            && $enrollee->statusRequestsInfo()->exists()) {
-            return $this->returnEnrolleeRequestedInfoMessage($enrollee);
-        }
-
-        return $this->enrollmentLetterView($userEnrollee, $isSurveyOnlyUser, $enrollee, false);
+    /**
+     * @param $enrollable
+     * @param $responseStatus
+     *
+     * @return mixed
+     */
+    public function createEnrollStatusRequestsInfo($enrollable)
+    {
+        return $enrollable->statusRequestsInfo()->create();
     }
 
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      */
-    public function enrollNow(Request $request)
+    public function enrolleesInvitationLetterBoard(Request $request)
     {
-        $enrollableId      = $request->input('enrollable_id');
-        $userForEnrollment = $this->getUserModelEnrollee($enrollableId);
-        $enrollable        = $this->getEnrollableModelType($userForEnrollment);
+//        Remember all enrollees at this point have user model also
+        if (!$request->hasValidSignature()) {
+            abort(401);
+        }
+        $enrollableId = $request->input('enrollable_id');
+        $isSurveyOnlyUser = $request->input('is_survey_only');
 
-        //      This can happen only on the first redirect and if page is refreshed
-        if ($this->enrollableHasRequestedInfo($enrollable)) {
-            return 'Action Not Allowed';
+        /** @var Enrollee $enrollee */
+        $enrollee = $this->getEnrollee($enrollableId);
+
+        /** @var User $userModelEnrollee */
+//        Note: this can be either Unreachable patient Or User created from enrollee
+        $userModelEnrollee = $this->getUserModelEnrollee($enrollableId);
+
+        //        If user is deleted and enrollee is null = Enrollable has been enrolled and his temporary user is deleted.
+        //        Enrollee user_id is detached when user model is deleted.
+        //        @todo: Not great/clear solution. Come back to this
+        if (is_null($enrollee) && is_null($userModelEnrollee)) {
+            return 'Return view with info...You have been enrolled';
         }
 
-        $this->expirePastInvitationLink($enrollable);
-        $pastActiveSurveyLink = $this->getSurveyInvitationLink($userForEnrollment->patientInfo->id);
-        if (empty($pastActiveSurveyLink)) {
-            return $this->createUrlAndRedirectToSurvey($enrollableId);
+        if ($isSurveyOnlyUser) {
+            return $this->manageEnrolleeInvitation($enrollee, $userModelEnrollee);
         }
 
-        return redirect($pastActiveSurveyLink->url);
+        return $this->manageUnreachablePatientInvitation($userModelEnrollee);
     }
 
-    public function evaluateEnrolledForSurveyTest(Request $request)
+    /**
+     * @param Enrollee $enrollee
+     * @param User $userCreatedFromEnrollee
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View|string
+     */
+    private function manageEnrolleeInvitation(Enrollee $enrollee, User $userCreatedFromEnrollee)
     {
-        $data = [
-            'enrollable_id' => $request->input('enrolleeId'), 'survey_instance_id' => $this->getEnrolleesSurveyInstance()->id,
-        ];
+        $linkIsManuallyExpired = $enrollee->getLastEnrollmentInvitationLink()->manually_expired;
 
-        EnrollableSurveyCompleted::dispatch($data);
+        if ($this->hasSurveyInProgress($userCreatedFromEnrollee) && !$linkIsManuallyExpired) {
+            return redirect($this->getAwvInvitationLinkForUser($enrollee)->url);
+        }
 
-        return 'enrolled successfully';
-    }
+        if ($linkIsManuallyExpired && $enrollee->statusRequestsInfo()->exists()) {
+            return $this->returnEnrolleeRequestedInfoMessage($enrollee);
+        }
 
-    public function finalActionTest()
-    {
-        FinalActionOnNonResponsivePatients::dispatch(new EnrollmentInvitationService());
-
-        return 'Done!';
+        return $this->enrollmentLetterView($userCreatedFromEnrollee, true, $enrollee, false);
     }
 
     public function getAwvInvitationLinkForUser($user)
@@ -209,23 +176,21 @@ class AutoEnrollmentCenterController extends Controller
     }
 
     /**
-     * @param $enrollable
-     * @param $isSurveyOnly
+     * @param $isSurveyOnlyUser
+     * @param $hideButtons
      *
-     * @return \App\User|array|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getCareAmbassador($enrollable, $isSurveyOnly)
+    private function enrollmentLetterView(User $userEnrollee, $isSurveyOnlyUser, Enrollee $enrollee, $hideButtons)
     {
-        if ($isSurveyOnly) {
-            $enrollee               = Enrollee::whereUserId($enrollable->id)->firstOrFail();
-            $careAmbassadorIdExists = ! empty($enrollee->care_ambassador_user_id);
+        $enrollablePrimaryPractice = $userEnrollee->primaryPractice;
+        $provider = $this->getEnrollableProvider($isSurveyOnlyUser, $userEnrollee);
+        $letterPages = $this->getEnrollmentLetter($userEnrollee, $enrollablePrimaryPractice, $isSurveyOnlyUser, $provider);
+        $practiceName = $enrollablePrimaryPractice->name;
+        $signatoryNameForHeader = $provider->display_name;
+        $dateLetterSent = Carbon::parse($enrollee->getLastEnrollmentInvitationLink()->updated_at)->toDateString();
 
-            return $careAmbassadorIdExists
-                ? User::whereId($enrollee->care_ambassador_user_id)->firstOrFail()
-                : [];
-        }
-
-        return $enrollable->careAmbassador;
+        return view('enrollment-consent.enrollmentInvitation', compact('userEnrollee', 'isSurveyOnlyUser', 'letterPages', 'practiceName', 'signatoryNameForHeader', 'dateLetterSent', 'hideButtons'));
     }
 
     /**
@@ -251,6 +216,92 @@ class AutoEnrollmentCenterController extends Controller
         $practiceName = $enrollablePrimaryPractice->name;
 
         return $this->enrollmentInvitationService->createLetter($practiceName, $practiceLetter, $careAmbassadorPhoneNumber, $provider);
+    }
+
+    public function manageUnreachablePatientInvitation(User $unrechablePatient)
+    {
+        if ($this->hasSurveyInProgress($unrechablePatient)) {
+            return redirect($this->getAwvInvitationLinkForUser($unrechablePatient)->url);
+        }
+
+        if ($this->hasSurveyCompleted($unrechablePatient)) {
+            return 'return a view with message you are enrolled';
+        }
+
+        $this->expirePastInvitationLink($unrechablePatient);
+        return $this->createUrlAndRedirectToSurvey($unrechablePatient->id);
+
+    }
+
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
+     */
+    public function enrollNow(Request $request)
+    {
+        $enrollableId = $request->input('enrollable_id');
+        $userForEnrollment = $this->getUserModelEnrollee($enrollableId);
+        $enrollable = $this->getEnrollableModelType($userForEnrollment);
+
+        //      This can happen only on the first redirect and if page is refreshed
+        if ($this->enrollableHasRequestedInfo($enrollable)) {
+            return 'Action Not Allowed';
+        }
+
+        $this->expirePastInvitationLink($enrollable);
+        $pastActiveSurveyLink = $this->getSurveyInvitationLink($userForEnrollment->patientInfo->id);
+        if (empty($pastActiveSurveyLink)) {
+            return $this->createUrlAndRedirectToSurvey($enrollableId);
+        }
+
+        return redirect($pastActiveSurveyLink->url);
+    }
+
+    /**
+     * @param $enrollable
+     *
+     * @return bool
+     */
+    public function enrollableHasRequestedInfo($enrollable)
+    {
+        return $enrollable->statusRequestsInfo()->exists();
+    }
+
+    public function evaluateEnrolledForSurveyTest(Request $request)
+    {
+        $data = [
+            'enrollable_id' => $request->input('enrolleeId'), 'survey_instance_id' => $this->getEnrolleesSurveyInstance()->id,
+        ];
+
+        EnrollableSurveyCompleted::dispatch($data);
+
+        return 'enrolled successfully';
+    }
+
+    public function finalActionTest()
+    {
+        FinalActionOnNonResponsivePatients::dispatch(new EnrollmentInvitationService());
+
+        return 'Done!';
+    }
+
+    /**
+     * @param $enrollable
+     * @param $isSurveyOnly
+     *
+     * @return \App\User|array|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+     */
+    public function getCareAmbassador($enrollable, $isSurveyOnly)
+    {
+        if ($isSurveyOnly) {
+            $enrollee = Enrollee::whereUserId($enrollable->id)->firstOrFail();
+            $careAmbassadorIdExists = !empty($enrollee->care_ambassador_user_id);
+
+            return $careAmbassadorIdExists
+                ? User::whereId($enrollee->care_ambassador_user_id)->firstOrFail()
+                : [];
+        }
+
+        return $enrollable->careAmbassador;
     }
 
     public function inviteUnreachablesToEnrollTest()
@@ -346,10 +397,10 @@ class AutoEnrollmentCenterController extends Controller
 
             if ($isManuallyExpired || empty($invitationable)) {
                 return [
-                    'invitationUrl'   => '',
+                    'invitationUrl' => '',
                     'isEnrolleeClass' => '',
-                    'name'            => '',
-                    'dob'             => '',
+                    'name' => '',
+                    'dob' => '',
                 ];
             }
 
@@ -362,10 +413,10 @@ class AutoEnrollmentCenterController extends Controller
                 : $invitationable->display_name;
 
             return [
-                'invitationUrl'   => $url->url,
+                'invitationUrl' => $url->url,
                 'isEnrolleeClass' => $isEnrolleeClass,
-                'name'            => $name,
-                'dob'             => Carbon::parse($patientInfo->birth_date)->toDateString(),
+                'name' => $name,
+                'dob' => Carbon::parse($patientInfo->birth_date)->toDateString(),
             ];
         });
 
@@ -395,56 +446,27 @@ class AutoEnrollmentCenterController extends Controller
                 'user_id' => $user->id,
             ],
             [
-                'practice_id'               => $user->primary_practice_id,
-                'mrn'                       => mt_rand(111111, 999999),
-                'first_name'                => $user->first_name,
-                'last_name'                 => $user->last_name,
-                'address'                   => $user->address,
-                'city'                      => $user->city,
-                'state'                     => $user->state,
-                'zip'                       => 44508,
-                'primary_phone'             => $faker->phoneNumber,
-                'other_phone'               => $faker->phoneNumber,
-                'home_phone'                => $faker->phoneNumber,
-                'cell_phone'                => $faker->phoneNumber,
-                'dob'                       => \Carbon\Carbon::parse('1901-01-01'),
-                'lang'                      => 'EN',
-                'status'                    => Enrollee::ENROLLED, // tis should be call_gueue
-                'primary_insurance'         => 'test',
-                'secondary_insurance'       => 'test',
-                'email'                     => $user->email,
-                'referring_provider_name'   => 'Dr. Demo',
+                'practice_id' => $user->primary_practice_id,
+                'mrn' => mt_rand(111111, 999999),
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'address' => $user->address,
+                'city' => $user->city,
+                'state' => $user->state,
+                'zip' => 44508,
+                'primary_phone' => $faker->phoneNumber,
+                'other_phone' => $faker->phoneNumber,
+                'home_phone' => $faker->phoneNumber,
+                'cell_phone' => $faker->phoneNumber,
+                'dob' => \Carbon\Carbon::parse('1901-01-01'),
+                'lang' => 'EN',
+                'status' => Enrollee::ENROLLED, // tis should be call_gueue
+                'primary_insurance' => 'test',
+                'secondary_insurance' => 'test',
+                'email' => $user->email,
+                'referring_provider_name' => 'Dr. Demo',
                 'auto_enrollment_triggered' => true,
             ]
         );
-    }
-
-    /**
-     * @param $isSurveyOnlyUser
-     * @param $hideButtons
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    private function enrollmentLetterView(User $userEnrollee, $isSurveyOnlyUser, Enrollee $enrollee, $hideButtons)
-    {
-        $enrollablePrimaryPractice = $userEnrollee->primaryPractice;
-        $provider                  = $this->getEnrollableProvider($isSurveyOnlyUser, $userEnrollee);
-        $letterPages               = $this->getEnrollmentLetter($userEnrollee, $enrollablePrimaryPractice, $isSurveyOnlyUser, $provider);
-        $practiceName              = $enrollablePrimaryPractice->name;
-        $signatoryNameForHeader    = $provider->display_name;
-        $dateLetterSent            = Carbon::parse($enrollee->getLastEnrollmentInvitationLink()->updated_at)->toDateString();
-
-        return view('enrollment-consent.enrollmentInvitation', compact('userEnrollee', 'isSurveyOnlyUser', 'letterPages', 'practiceName', 'signatoryNameForHeader', 'dateLetterSent', 'hideButtons'));
-    }
-
-    /**
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    private function returnEnrolleeRequestedInfoMessage(Enrollee $enrollee)
-    {
-        $practiceNumber = $enrollee->practice->outgoing_phone_number;
-        $providerName   = $enrollee->provider->last_name;
-
-        return view('enrollment-consent.enrollmentInfoRequested', compact('practiceNumber', 'providerName'));
     }
 }
