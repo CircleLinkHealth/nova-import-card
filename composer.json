@@ -208,7 +208,7 @@
     "barryvdh/laravel-ide-helper": "^2.4",
     "darkaonline/l5-swagger": "^5.5",
     "filp/whoops": "~2.0",
-    "friendsofphp/php-cs-fixer": "^2.13",
+    "friendsofphp/php-cs-fixer": "^2.16",
     "itsgoingd/clockwork": "^4.0",
     "jkocik/laravel-profiler": "^1.2",
     "laravel/dusk": "^3.0",
