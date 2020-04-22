@@ -117,7 +117,7 @@
 
                             @if(isset($stats) && !empty($stats))
                                 @forelse($stats as $key => $value)
-                                    <b>{{snakeToSentenceCase(snake_case($key))}}</b>: {{$value}}<br>
+                                    <b>{{snakeToSentenceCase(\Illuminate\Support\Str::snake($key))}}</b>: {{$value}}<br>
                                 @empty
                                     <p>No stats found</p>
                                 @endforelse
@@ -161,7 +161,7 @@
                                         @if($k == "filePath") @continue
                                         @endif
                                         @if(!is_array($option))
-                                            <b>{{snakeToSentenceCase(snake_case($k))}}</b>
+                                            <b>{{snakeToSentenceCase(\Illuminate\Support\Str::snake($k))}}</b>
                                             : @if(is_bool($option)) {{!!$option ? 'Yes' : 'No'}} @else {{$option}} @endif<br>
                                         @endif
                                     @empty
