@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fbd94fa1a4fcb4a6d75702dbc974d20e",
+    "content-hash": "157e9b5c0a6de95d2b866e7cb14eec27",
     "packages": [
         {
             "name": "appstract/laravel-opcache",
@@ -725,11 +725,11 @@
         },
         {
             "name": "circlelinkhealth/revisionable-module",
-            "version": "v1.4.2",
+            "version": "dev-laravel-5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/revisionable-module.git",
-                "reference": "43c236f93491ae4815d389979663ff7165035bcd"
+                "reference": "e2b7458d9612d3f3dcbf56c806a384348f75d930"
             },
             "require": {
                 "laravel/framework": "~5.7",
@@ -768,7 +768,7 @@
                 "model",
                 "revision"
             ],
-            "time": "2020-03-06T13:18:01+00:00"
+            "time": "2020-04-22T12:10:53+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -2185,6 +2185,7 @@
                     "email": "jakub.onderka@gmail.com"
                 }
             ],
+            "abandoned": "php-parallel-lint/php-console-color",
             "time": "2018-09-29T17:23:10+00:00"
         },
         {
@@ -2231,6 +2232,7 @@
                 }
             ],
             "description": "Highlight PHP code in terminal",
+            "abandoned": "php-parallel-lint/php-console-highlighter",
             "time": "2018-09-29T18:48:56+00:00"
         },
         {
@@ -8676,9 +8678,9 @@
             "authors": [
                 {
                     "name": "Marcel Pociot",
-                    "role": "Developer",
                     "email": "marcel@beyondco.de",
-                    "homepage": "https://beyondco.de"
+                    "homepage": "https://beyondco.de",
+                    "role": "Developer"
                 }
             ],
             "description": "Symfony Var-Dump Server for Laravel",
@@ -10851,6 +10853,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "circlelinkhealth/revisionable-module": 20,
         "michalisantoniou6/laravel-cerberus": 20,
         "waavi/url-shortener": 20
     },
