@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Notifications;
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+namespace App\Notifications;
+
+// This file is part of CarePlan Manager by CircleLink Health.
 
 use App\Traits\EnrollableManagement;
 use App\Traits\EnrollableNotificationContent;
@@ -22,7 +24,10 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     use Queueable;
 
     const USER = User::class;
-
+    /**
+     * @var array
+     */
+    public $notificationContent;
     /**
      * @var null
      */
@@ -33,11 +38,6 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     private $isReminder;
 
     /**
-     * @var array
-     */
-    public $notificationContent;
-
-    /**
      * Create a new notification instance.
      *
      * @param bool $isReminder
@@ -45,6 +45,13 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     public function __construct($isReminder = false)
     {
         $this->isReminder = $isReminder;
+    }
+
+    public function getNotificationContent(User $notifiable)
+    {
+        $this->notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
+
+        return $this->notificationContent;
     }
 
     /**
@@ -69,8 +76,8 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
             $enrollee = Enrollee::whereUserId($notifiable->id)->first();
 
             return [
-                'enrollee_id' => $enrollee->id,
-                'is_reminder' => $this->isReminder,
+                'enrollee_id'    => $enrollee->id,
+                'is_reminder'    => $this->isReminder,
                 'is_survey_only' => true,
             ];
         }
@@ -94,12 +101,6 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
             ->line($this->notificationContent['line1'])
             ->line($this->notificationContent['line2'])
             ->action('Get More Info', url($this->createInvitationLink($notifiable)));
-    }
-
-    public function getNotificationContent(User $notifiable)
-    {
-        $this->notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
-        return $this->notificationContent;
     }
 
     /**

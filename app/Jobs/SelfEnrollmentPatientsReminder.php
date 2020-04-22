@@ -8,12 +8,9 @@ namespace App\Jobs;
 
 // This file is part of CarePlan Manager by CircleLink Health.
 
-use App\Events\AutoEnrollableCollected;
 use App\Notifications\SendEnrollmentEmail;
-use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

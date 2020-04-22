@@ -8,7 +8,6 @@ namespace App\Jobs;
 
 use App\Console\Commands\SendEnrollmentNotifications;
 use App\Events\AutoEnrollableCollected;
-use App\Notifications\SendEnrollementSms;
 use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;

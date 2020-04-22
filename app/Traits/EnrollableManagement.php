@@ -236,14 +236,12 @@ trait EnrollableManagement
 
     public function saveTemporaryInvitationLink(User $notifiable, $urlToken, $url)
     {
-        $receiver = $notifiable;
-//        @todo:Handle this...
-        if ($receiver->checkForSurveyOnlyRole()) {
-            $receiver = Enrollee::whereUserId($receiver->id)->firstOrFail();
+        if ($notifiable->checkForSurveyOnlyRole()) {
+            $notifiable = Enrollee::whereUserId($notifiable->id)->firstOrFail();
         }
 //        Expire previous INVITATION link if exists
         $this->expirePastInvitationLink($notifiable);
-        $receiver->enrollmentInvitationLink()->create([
+        $notifiable->enrollmentInvitationLink()->create([
             'link_token'       => $urlToken,
             'url'              => $url,
             'manually_expired' => false,

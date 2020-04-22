@@ -7,7 +7,6 @@
 namespace App\Jobs;
 
 use App\Notifications\SendEnrollmentEmail;
-use App\Notifications\SendEnrollmentLetterToNonResponsivePatients;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
