@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Str;
 use App\Services\SurveyService;
 use App\Survey;
 use App\SurveyInstance;
@@ -9,6 +8,7 @@ use Carbon\Carbon;
 use Faker\Factory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class PatientSurveyAnswersSeeder extends Seeder
 {

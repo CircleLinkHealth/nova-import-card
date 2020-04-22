@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
-use Illuminate\Support\Str;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ProviderReportTest extends TestCase

@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-use Illuminate\Support\Str;
 use App\Question;
 use App\QuestionGroup;
 use App\QuestionType;
@@ -12,6 +11,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class UserSurveyTest extends TestCase

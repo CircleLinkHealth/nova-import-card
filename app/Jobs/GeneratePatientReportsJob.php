@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use Illuminate\Support\Str;
 use App\CPM\PatientReportCreatedEvent;
 use App\Notifications\SendReport;
 use App\PersonalizedPreventionPlan;
@@ -22,6 +21,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
 
 class GeneratePatientReportsJob implements ShouldQueue
 {

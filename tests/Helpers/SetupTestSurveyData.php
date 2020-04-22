@@ -2,7 +2,6 @@
 
 namespace Tests\Helpers;
 
-use Illuminate\Support\Str;
 use App\Question;
 use App\QuestionGroup;
 use App\QuestionType;
@@ -12,6 +11,7 @@ use App\User;
 use Carbon\Carbon;
 use Faker\Factory;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 trait SetupTestSurveyData
 {
