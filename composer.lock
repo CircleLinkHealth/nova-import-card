@@ -8783,7 +8783,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:subzero10/condition-code-lookup-module.git",
-                "reference": "e84a22c945523bf39035ffe8576949516e24e8cc"
+                "reference": "526a5817c90e2c88c42bdcd1f22adffab07752ef"
             },
             "require": {
                 "ext-curl": "*",
@@ -8811,7 +8811,7 @@
                     "email": "pagcosma@gmail.com"
                 }
             ],
-            "time": "2020-04-21T09:05:59+00:00"
+            "time": "2020-04-22T06:16:32+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
