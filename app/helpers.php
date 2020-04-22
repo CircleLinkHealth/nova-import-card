@@ -1663,11 +1663,11 @@ if ( ! function_exists('measureTime')) {
 
 if ( ! function_exists('stripNonTrixTags')) {
     /**
-     * @param string
+     * @param string|null
      *
      * @return string
      */
-    function stripNonTrixTags(string $trixString)
+    function stripNonTrixTags($trixString)
     {
         return strip_tags($trixString, Constants::TRIX_ALLOWABLE_TAGS_STRING);
     }
