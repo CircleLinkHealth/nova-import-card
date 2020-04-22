@@ -2,6 +2,7 @@
 /node_modules/
 /bower_components/
 .idea/shelf/
+.idea/workspace.xml
 .env
 _ide_helper.php
 _ide_helper_models.php
