@@ -28,8 +28,8 @@ class SurveyOnlyEnrolleeMedicalRecord
 
     public function __construct(EligibilityJob $job, Practice $practice)
     {
-        $this->job = $job;
-        $this->data = $job->data;
+        $this->job      = $job;
+        $this->data     = $job->data;
         $this->practice = $practice;
     }
 
@@ -45,71 +45,137 @@ class SurveyOnlyEnrolleeMedicalRecord
         $demographics = $this->fillDemographicsSection($enrollee);
 
         return [
-            'type' => 'surveyOnly-medical-record',
-            'document' => $this->fillDocumentSection($providerName),
-            'allergies' => $this->fillAllergiesSection(),
+            'type'         => 'surveyOnly-medical-record',
+            'document'     => $this->fillDocumentSection($providerName),
+            'allergies'    => $this->fillAllergiesSection(),
             'demographics' => $demographics,
-            'medications' => $this->fillMedicationsSection(),
-            'payers' => [
+            'medications'  => $this->fillMedicationsSection(),
+            'payers'       => [
             ],
-            'problems' => $this->fillProblemsSection(),
-            'vitals' => $this->fillVitals(),
-            'mrn_number' => $enrollee->id,
+            'problems'           => $this->fillProblemsSection(),
+            'vitals'             => $this->fillVitals(),
+            'mrn_number'         => $enrollee->id,
             'preferred_provider' => $providerName,
         ];
     }
 
+    public function toArray()
+    {
+        return [
+            'type'         => 'bluebutton-medical-record',
+            'document'     => $this->fillDocumentSection(),
+            'allergies'    => $this->fillAllergiesSection(),
+            'demographics' => $this->fillDemographicsSection(),
+            'medications'  => $this->fillMedicationsSection(),
+            'payers'       => [
+            ],
+            'problems' => $this->fillProblemsSection(),
+            'vitals'   => $this->fillVitals(),
+        ];
+    }
+
+    /**
+     * @return string
+     */
+    public function toJson()
+    {
+        return json_encode($this->toArray());
+    }
+
+    private function fillAllergiesSection()
+    {
+        return collect($this->data['allergies'] ?? $this->data['Allergies'])
+            ->map(function ($allergy) {
+                if ( ! validAllergyName($allergy['name'])) {
+                    return false;
+                }
+
+                return [
+                    'date_range' => [
+                        'start' => '',
+                        'end'   => null,
+                    ],
+                    'name'             => null,
+                    'code'             => '',
+                    'code_system'      => '',
+                    'code_system_name' => '',
+                    'status'           => null,
+                    'severity'         => '',
+                    'reaction'         => [
+                        'name'        => '',
+                        'code'        => '',
+                        'code_system' => '',
+                    ],
+                    'reaction_type' => [
+                        'name'             => '',
+                        'code'             => '',
+                        'code_system'      => '',
+                        'code_system_name' => '',
+                    ],
+                    'allergen' => [
+                        'name'             => $allergy['name'],
+                        'code'             => '',
+                        'code_system'      => '',
+                        'code_system_name' => '',
+                    ],
+                ];
+            })
+            ->filter()
+            ->values()
+            ->toArray();
+    }
+
     private function fillDemographicsSection(Enrollee $enrollee = null)
     {
-        $patientId = !empty($enrollee)
+        $patientId = ! empty($enrollee)
             ? $enrollee->id
             : $this->data['patient_id'];
 
-        $patientFirstName = !empty($enrollee)
+        $patientFirstName = ! empty($enrollee)
             ? $enrollee->first_name
             : $this->data['first_name'];
 
-        $patientLastName = !empty($enrollee)
+        $patientLastName = ! empty($enrollee)
             ? $enrollee->last_name
             : $this->data['last_name'];
 
-        $dob = !empty($enrollee)
+        $dob = ! empty($enrollee)
             ? Carbon::parse($enrollee->dob)->toDateString()
             : $this->data['date_of_birth'];
 
-        $address1 = !empty($enrollee)
+        $address1 = ! empty($enrollee)
             ? $enrollee->address
             : $this->data['address_line_1'];
 
-        $address2 = !empty($enrollee)
+        $address2 = ! empty($enrollee)
             ? $enrollee->address_2
             : $this->data['address_line_2'];
 
-        $city = !empty($enrollee)
+        $city = ! empty($enrollee)
             ? $enrollee->city
             : $this->data['city'];
 
-        $state = !empty($enrollee)
+        $state = ! empty($enrollee)
             ? $enrollee->state
             : $this->data['state'];
 
-        $gender = !empty($enrollee)
+        $gender = ! empty($enrollee)
             ? ''
             : $this->data['gender'];
 
-        $postalCode = !empty($enrollee)
+        $postalCode = ! empty($enrollee)
             ? ''
             : $this->data['postal_code'];
 
-        $homePhone = !empty($enrollee)
+        $homePhone = ! empty($enrollee)
             ? $enrollee->home_phone
             : $this->data['home_phone'];
 
-        $primaryPhone = !empty($enrollee)
+        $primaryPhone = ! empty($enrollee)
             ? $enrollee->primary_phone
             : $this->data['primary_phone'];
 
-        $cellPhone = !empty($enrollee)
+        $cellPhone = ! empty($enrollee)
             ? $enrollee->cell_phone
             : $this->data['cell_phone'];
 
@@ -119,48 +185,48 @@ class SurveyOnlyEnrolleeMedicalRecord
             ],
             'name' => [
                 'prefix' => null,
-                'given' => [
+                'given'  => [
                     $patientFirstName,
                 ],
                 'family' => $patientLastName,
                 'suffix' => null,
             ],
-            'dob' => $dob,
-            'gender' => $gender,
-            'mrn_number' => $patientId,
+            'dob'            => $dob,
+            'gender'         => $gender,
+            'mrn_number'     => $patientId,
             'marital_status' => '',
-            'address' => [
+            'address'        => [
                 'street' => [
                     $address1,
                     $address2,
                 ],
-                'city' => $city,
-                'state' => $state,
-                'zip' => $postalCode,
+                'city'    => $city,
+                'state'   => $state,
+                'zip'     => $postalCode,
                 'country' => '',
             ],
             'phones' => [
                 0 => [
-                    'type' => 'home',
+                    'type'   => 'home',
                     'number' => $homePhone ?? '',
                 ],
                 1 => [
-                    'type' => 'primary_phone',
+                    'type'   => 'primary_phone',
                     'number' => $primaryPhone,
                 ],
                 2 => [
-                    'type' => 'mobile',
+                    'type'   => 'mobile',
                     'number' => $cellPhone,
                 ],
             ],
-            'email' => null,
-            'language' => null,
-            'race' => null,
-            'ethnicity' => null,
-            'religion' => null,
+            'email'      => null,
+            'language'   => null,
+            'race'       => null,
+            'ethnicity'  => null,
+            'religion'   => null,
             'birthplace' => [
-                'state' => null,
-                'zip' => null,
+                'state'   => null,
+                'zip'     => null,
                 'country' => null,
             ],
             'guardian' => [
@@ -169,14 +235,14 @@ class SurveyOnlyEnrolleeMedicalRecord
                     ],
                     'family' => null,
                 ],
-                'relationship' => null,
+                'relationship'      => null,
                 'relationship_code' => null,
-                'address' => [
+                'address'           => [
                     'street' => [
                     ],
-                    'city' => null,
-                    'state' => null,
-                    'zip' => null,
+                    'city'    => null,
+                    'state'   => null,
+                    'zip'     => null,
                     'country' => null,
                 ],
                 'phone' => [
@@ -189,14 +255,14 @@ class SurveyOnlyEnrolleeMedicalRecord
                 'ids' => [
                 ],
                 'organization' => null,
-                'phones' => [
+                'phones'       => [
                 ],
                 'address' => [
                     'street' => [
                     ],
-                    'city' => null,
-                    'state' => null,
-                    'zip' => null,
+                    'city'    => null,
+                    'state'   => null,
+                    'zip'     => null,
                     'country' => null,
                 ],
             ],
@@ -205,7 +271,7 @@ class SurveyOnlyEnrolleeMedicalRecord
 
     private function fillDocumentSection($providerName = null)
     {
-        $prefProvider = !empty($providerName)
+        $prefProvider = ! empty($providerName)
             ? $providerName
             : $this->data['preferred_provider'];
 
@@ -213,13 +279,13 @@ class SurveyOnlyEnrolleeMedicalRecord
             'custodian' => [
                 'name' => $prefProvider,
             ],
-            'date' => '',
-            'title' => '',
+            'date'   => '',
+            'title'  => '',
             'author' => [
-                'npi' => '',
+                'npi'  => '',
                 'name' => [
                     'prefix' => null,
-                    'given' => [],
+                    'given'  => [],
                     'family' => null,
                     'suffix' => null,
                 ],
@@ -227,14 +293,14 @@ class SurveyOnlyEnrolleeMedicalRecord
                     'street' => [
                         0 => '',
                     ],
-                    'city' => '',
-                    'state' => '',
-                    'zip' => '',
+                    'city'    => '',
+                    'state'   => '',
+                    'zip'     => '',
                     'country' => '',
                 ],
                 'phones' => [
                     0 => [
-                        'type' => '',
+                        'type'   => '',
                         'number' => '',
                     ],
                 ],
@@ -242,9 +308,9 @@ class SurveyOnlyEnrolleeMedicalRecord
             'documentation_of' => [
                 0 => [
                     'provider_id' => null,
-                    'name' => [
+                    'name'        => [
                         'prefix' => null,
-                        'given' => [
+                        'given'  => [
                             0 => $prefProvider,
                         ],
                         'family' => '',
@@ -252,7 +318,7 @@ class SurveyOnlyEnrolleeMedicalRecord
                     ],
                     'phones' => [
                         0 => [
-                            'type' => '',
+                            'type'   => '',
                             'number' => '',
                         ],
                     ],
@@ -260,42 +326,42 @@ class SurveyOnlyEnrolleeMedicalRecord
                         'street' => [
                             0 => '',
                         ],
-                        'city' => '',
-                        'state' => '',
-                        'zip' => '',
+                        'city'    => '',
+                        'state'   => '',
+                        'zip'     => '',
                         'country' => '',
                     ],
                 ],
             ],
             'legal_authenticator' => [
-                'date' => null,
-                'ids' => [],
+                'date'            => null,
+                'ids'             => [],
                 'assigned_person' => [
                     'prefix' => null,
-                    'given' => [],
+                    'given'  => [],
                     'family' => null,
                     'suffix' => null,
                 ],
                 'representedOrganization' => [
-                    'ids' => [],
-                    'name' => null,
-                    'phones' => [],
+                    'ids'     => [],
+                    'name'    => null,
+                    'phones'  => [],
                     'address' => [
-                        'street' => [],
-                        'city' => null,
-                        'state' => null,
-                        'zip' => null,
+                        'street'  => [],
+                        'city'    => null,
+                        'state'   => null,
+                        'zip'     => null,
                         'country' => null,
                     ],
                 ],
             ],
             'location' => [
-                'name' => null,
+                'name'    => null,
                 'address' => [
-                    'street' => [],
-                    'city' => null,
-                    'state' => null,
-                    'zip' => null,
+                    'street'  => [],
+                    'city'    => null,
+                    'state'   => null,
+                    'zip'     => null,
                     'country' => null,
                 ],
                 'encounter_date' => null,
@@ -303,119 +369,76 @@ class SurveyOnlyEnrolleeMedicalRecord
         ];
     }
 
-    private function fillAllergiesSection()
-    {
-        return collect($this->data['allergies'] ?? $this->data['Allergies'])
-            ->map(function ($allergy) {
-                if (!validAllergyName($allergy['name'])) {
-                    return false;
-                }
-
-                return [
-                    'date_range' => [
-                        'start' => '',
-                        'end' => null,
-                    ],
-                    'name' => null,
-                    'code' => '',
-                    'code_system' => '',
-                    'code_system_name' => '',
-                    'status' => null,
-                    'severity' => '',
-                    'reaction' => [
-                        'name' => '',
-                        'code' => '',
-                        'code_system' => '',
-                    ],
-                    'reaction_type' => [
-                        'name' => '',
-                        'code' => '',
-                        'code_system' => '',
-                        'code_system_name' => '',
-                    ],
-                    'allergen' => [
-                        'name' => $allergy['name'],
-                        'code' => '',
-                        'code_system' => '',
-                        'code_system_name' => '',
-                    ],
-                ];
-            })
-            ->filter()
-            ->values()
-            ->toArray();
-    }
-
     private function fillMedicationsSection()
     {
         return collect($this->data['medications'])
             ->map(function ($medication) {
                 return [
-                    'reference' => null,
+                    'reference'       => null,
                     'reference_title' => null,
-                    'reference_sig' => null,
-                    'date_range' => [
+                    'reference_sig'   => null,
+                    'date_range'      => [
                         'start' => $medication['startdate'] ?? $medication['start_date'] ?? null,
-                        'end' => $medication['enddate'] ?? $medication['end_date'] ?? null,
+                        'end'   => $medication['enddate'] ?? $medication['end_date'] ?? null,
                     ],
-                    'status' => '',
-                    'text' => null,
+                    'status'  => '',
+                    'text'    => null,
                     'product' => [
-                        'name' => $medication['name'],
-                        'code' => '',
+                        'name'        => $medication['name'],
+                        'code'        => '',
                         'code_system' => '',
-                        'text' => $medication['sig'],
+                        'text'        => $medication['sig'],
                         'translation' => [
-                            'name' => null,
-                            'code' => null,
-                            'code_system' => null,
+                            'name'             => null,
+                            'code'             => null,
+                            'code_system'      => null,
                             'code_system_name' => null,
                         ],
                     ],
                     'dose_quantity' => [
                         'value' => null,
-                        'unit' => null,
+                        'unit'  => null,
                     ],
                     'rate_quantity' => [
                         'value' => null,
-                        'unit' => null,
+                        'unit'  => null,
                     ],
                     'precondition' => [
-                        'name' => null,
-                        'code' => null,
+                        'name'        => null,
+                        'code'        => null,
                         'code_system' => null,
                     ],
                     'reason' => [
-                        'name' => null,
-                        'code' => null,
+                        'name'        => null,
+                        'code'        => null,
                         'code_system' => null,
                     ],
                     'route' => [
-                        'name' => null,
-                        'code' => null,
-                        'code_system' => null,
+                        'name'             => null,
+                        'code'             => null,
+                        'code_system'      => null,
                         'code_system_name' => null,
                     ],
                     'schedule' => [
-                        'type' => null,
+                        'type'         => null,
                         'period_value' => null,
-                        'period_unit' => null,
+                        'period_unit'  => null,
                     ],
                     'vehicle' => [
-                        'name' => null,
-                        'code' => null,
-                        'code_system' => null,
+                        'name'             => null,
+                        'code'             => null,
+                        'code_system'      => null,
                         'code_system_name' => null,
                     ],
                     'administration' => [
-                        'name' => null,
-                        'code' => null,
-                        'code_system' => null,
+                        'name'             => null,
+                        'code'             => null,
+                        'code_system'      => null,
                         'code_system_name' => null,
                     ],
                     'prescriber' => [
                         'organization' => null,
-                        'person' => null,
+                        'person'       => null,
                     ],
                 ];
             })
@@ -428,28 +451,28 @@ class SurveyOnlyEnrolleeMedicalRecord
     {
         return collect($this->data['problems'])
             ->map(function ($problem) {
-                if (!validProblemName($problem['name'])) {
+                if ( ! validProblemName($problem['name'])) {
                     return false;
                 }
 
                 return [
-                    'reference' => null,
+                    'reference'       => null,
                     'reference_title' => null,
-                    'date_range' => [
+                    'date_range'      => [
                         'start' => $problem['start_date'],
-                        'end' => null,
+                        'end'   => null,
                     ],
-                    'name' => $problem['name'],
-                    'status' => null,
-                    'age' => null,
-                    'code' => $problem['code'],
-                    'code_system' => null,
+                    'name'             => $problem['name'],
+                    'status'           => null,
+                    'age'              => null,
+                    'code'             => $problem['code'],
+                    'code_system'      => null,
                     'code_system_name' => $problem['code_type'],
-                    'translations' => [
+                    'translations'     => [
                         [
-                            'name' => null,
-                            'code' => null,
-                            'code_system' => null,
+                            'name'             => null,
+                            'code'             => null,
+                            'code_system'      => null,
                             'code_system_name' => null,
                         ],
                     ],
@@ -465,41 +488,18 @@ class SurveyOnlyEnrolleeMedicalRecord
     {
         return [
             [
-                'date' => null,
+                'date'    => null,
                 'results' => [
                     [
-                        'name' => null,
-                        'code' => null,
-                        'code_system' => null,
+                        'name'             => null,
+                        'code'             => null,
+                        'code_system'      => null,
                         'code_system_name' => null,
-                        'value' => null,
-                        'unit' => null,
+                        'value'            => null,
+                        'unit'             => null,
                     ],
                 ],
             ],
-        ];
-    }
-
-    /**
-     * @return string
-     */
-    public function toJson()
-    {
-        return json_encode($this->toArray());
-    }
-
-    public function toArray()
-    {
-        return [
-            'type' => 'bluebutton-medical-record',
-            'document' => $this->fillDocumentSection(),
-            'allergies' => $this->fillAllergiesSection(),
-            'demographics' => $this->fillDemographicsSection(),
-            'medications' => $this->fillMedicationsSection(),
-            'payers' => [
-            ],
-            'problems' => $this->fillProblemsSection(),
-            'vitals' => $this->fillVitals(),
         ];
     }
 }

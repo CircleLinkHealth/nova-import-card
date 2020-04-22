@@ -22,11 +22,11 @@ class EnrollmentInvitationLetterSeeder extends Seeder
         $enrollmentInvitationLetters = EnrollmentInvitationLetter::first();
 //        Run only if table is empty.
         if (empty($enrollmentInvitationLetters)) {
-            $providerLastName = EnrollmentInvitationLetter::PROVIDER_LAST_NAME;
+            $providerLastName     = EnrollmentInvitationLetter::PROVIDER_LAST_NAME;
             $locationEnrollButton = EnrollmentInvitationLetter::LOCATION_ENROLL_BUTTON;
-            $careAmbassadorPhone = EnrollmentInvitationLetter::CARE_AMBASSADOR_NUMBER;
-            $signatoryName = EnrollmentInvitationLetter::SIGNATORY_NAME;
-            $practiceName = EnrollmentInvitationLetter::PRACTICE_NAME;
+            $careAmbassadorPhone  = EnrollmentInvitationLetter::CARE_AMBASSADOR_NUMBER;
+            $signatoryName        = EnrollmentInvitationLetter::SIGNATORY_NAME;
+            $practiceName         = EnrollmentInvitationLetter::PRACTICE_NAME;
             $customerSignaturePic = EnrollmentInvitationLetter::CUSTOMER_SIGNATURE_PIC;
 
             $practices = Practice::get();
@@ -38,7 +38,7 @@ class EnrollmentInvitationLetterSeeder extends Seeder
                         'letter' => json_encode([
                             'page_1' => [
                                 'identifier' => 'letter_main_subject',
-                                'body' => "<p>Please note that Dr. $providerLastName invested in a new wellness program called the
+                                'body'       => "<p>Please note that Dr. $providerLastName invested in a new wellness program called the
                         <strong>Personalized<br>
                             Care Program.</strong></p>
                     <p>It was created to help people living with conditions like diabetes, heart disease and kidney
@@ -90,7 +90,7 @@ class EnrollmentInvitationLetterSeeder extends Seeder
 
                             'page_2' => [
                                 'identifier' => 'faq',
-                                'body' => " <p style=\"text-decoration: underline;\"><strong>Frequently Asked Questions</strong></p>
+                                'body'       => " <p style=\"text-decoration: underline;\"><strong>Frequently Asked Questions</strong></p>
                         <p><strong>What is a chronic illness?</strong></p>
                         <p>A chronic illness is a long-lasting health problem that can often be controlled with proper treatment and management. A few examples include asthma, diabetes, arthritis, hypertension, and heart disease.</p>
                         <p><strong>What is the Personalized Care Program?</strong></p>
@@ -107,7 +107,7 @@ class EnrollmentInvitationLetterSeeder extends Seeder
 
                             'page_3' => [
                                 'identifier' => 'faq',
-                                'body' => " <p><strong>What are the benefits of signing up for the Personalized Care Program?</strong></p>
+                                'body'       => " <p><strong>What are the benefits of signing up for the Personalized Care Program?</strong></p>
                         <p>When you sign up, you will be taking an important step toward living a healthier life. Benefits of the program include:</p>
                         <ul>
                             <li>Access to a 24 hours a day / 7 days a week care hotline</li>
