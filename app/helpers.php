@@ -1663,11 +1663,12 @@ if ( ! function_exists('measureTime')) {
 
 if ( ! function_exists('stripNonTrixTags')) {
     /**
-     * @param string
+     * @param string|null
+     * @param mixed $trixString
      *
      * @return string
      */
-    function stripNonTrixTags(string $trixString)
+    function stripNonTrixTags($trixString)
     {
         return strip_tags($trixString, Constants::TRIX_ALLOWABLE_TAGS_STRING);
     }
@@ -1996,7 +1997,7 @@ if ( ! function_exists('suggestedFamilyMemberAcceptableRelevanceScore')) {
         $key = 'suggested_family_members_relevance_score';
 
         return \Cache::remember($key, 2, function () use ($key) {
-            $val = AppConfig::pull($key, 30);
+            return AppConfig::pull($key, 30);
         });
     }
 }

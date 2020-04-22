@@ -8,11 +8,10 @@ namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Jobs\ImportCcda;
-use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
+use App\Nova\Actions\ClearAndReimportCcda;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
 
 class ImporterController extends Controller
 {
@@ -245,15 +244,7 @@ class ImporterController extends Controller
 
     public function reImportPatient(Request $request, $userId)
     {
-        $args = [
-            'patientUserId'   => $userId,
-            'initiatorUserId' => auth()->id(),
-        ];
-
-        Artisan::queue(
-            ReimportPatientMedicalRecord::class,
-            $args
-        );
+        ClearAndReimportCcda::for($userId, auth()->id());
 
         return redirect()->back();
     }
