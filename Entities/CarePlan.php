@@ -99,13 +99,13 @@ use Validator;
  * @property int|null    $pdfs_count
  * @property int|null    $revision_history_count
  * @property string|null $deleted_at
- * @method static      bool|null forceDelete()
- * @method static      \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan onlyTrashed()
- * @method static      bool|null restore()
- * @method static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereDeletedAt($value)
- * @method static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withNurseApprovedVia()
- * @method static      \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withTrashed()
- * @method static      \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withoutTrashed()
+ * @method   static      bool|null forceDelete()
+ * @method   static      \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan onlyTrashed()
+ * @method   static      bool|null restore()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereDeletedAt($value)
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withNurseApprovedVia()
+ * @method   static      \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withTrashed()
+ * @method   static      \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withoutTrashed()
  */
 class CarePlan extends BaseModel implements PdfReport
 {
@@ -450,15 +450,13 @@ class CarePlan extends BaseModel implements PdfReport
             Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
         );
     }
-    
+
     /**
      * Validate that the recently created CarePlan has all the data CLH needs to provide services to a patient.
      *
-     * @param bool $confirmDiabetesConditions
-     * @return \Illuminate\Validation\Validator
      * @throws \Exception
      */
-    public function validator(bool $confirmDiabetesConditions = false):\Illuminate\Validation\Validator
+    public function validator(bool $confirmDiabetesConditions = false): \Illuminate\Validation\Validator
     {
         $patient = $this->patient->load(
             [
