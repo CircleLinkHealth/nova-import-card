@@ -1952,16 +1952,3 @@ if (!function_exists('getPatientListDropdown')) {
         });
     }
 }
-
-if (!function_exists('complexAttestationRequirementsEnabledForPractice')) {
-    function complexAttestationRequirementsEnabledForPractice(int $practiceId) : bool
-    {
-        $key = 'complex_attestation_requirements_for_practice';
-
-        return \Cache::remember($key, 2, function () use ($key, $practiceId) {
-            return AppConfig::whereConfigKey($key)
-                ->whereIn('config_value', [$practiceId, 'all'])
-                ->exists();
-        });
-    }
-}

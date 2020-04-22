@@ -53,10 +53,22 @@ class AttachAttestedProblemsToCall implements ShouldQueue
         $attestedProblems = $event->getProblems();
 
         //We should not have problems attested only on call and not on PMS
-        if ( ! PatientMonthlySummary::existsForCurrentMonthForPatient($call->inbound_cpm_id)) {
+        if ( ! $this->summaryExistsForCurrentMonthForPatient($call->inbound_cpm_id)) {
             PatientMonthlySummary::createFromPatient($call->inbound_cpm_id, Carbon::now()->startOfMonth());
         }
 
         $call->attachAttestedProblems($attestedProblems);
+    }
+
+    /**
+     * @param $patientId
+     *
+     * @return bool
+     */
+    private function summaryExistsForCurrentMonthForPatient($patientId)
+    {
+        return PatientMonthlySummary::where('patient_id', $patientId)
+            ->where('month_year', Carbon::now()->startOfMonth())
+            ->exists();
     }
 }
