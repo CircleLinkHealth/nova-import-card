@@ -150,8 +150,12 @@ class AutoEnrollmentCenterController extends Controller
         //        If user is deleted and enrollee is null = Enrollable has been enrolled and his temporary user is deleted.
         //        Enrollee user_id is detached when user model is deleted.
         //        @todo: Not great/clear solution. Come back to this
+
         if (is_null($enrollee) && is_null($userCreatedFromEnrollee)) {
             $enrollee = $this->getEnrolleeFromNotification($enrollableId);
+        }
+
+        if (!$this->enrollableHasRequestedInfo($enrollee) && is_null($userCreatedFromEnrollee)) {
             $practiceNumber = $enrollee->practice->outgoing_phone_number;
             $doctorName = optional($enrollee->provider)->last_name;
             return view('enrollment-consent.enrolledMessagePage', compact('practiceNumber', 'doctorName'));
@@ -159,12 +163,12 @@ class AutoEnrollmentCenterController extends Controller
 
         $linkIsManuallyExpired = $enrollee->getLastEnrollmentInvitationLink()->manually_expired;
 
-        if ($this->hasSurveyInProgress($userCreatedFromEnrollee) && !$linkIsManuallyExpired) {
-            return redirect($this->getAwvInvitationLinkForUser($enrollee)->url);
-        }
-
         if ($linkIsManuallyExpired && $enrollee->statusRequestsInfo()->exists()) {
             return $this->returnEnrolleeRequestedInfoMessage($enrollee);
+        }
+
+        if ($this->hasSurveyInProgress($userCreatedFromEnrollee) && !$linkIsManuallyExpired) {
+            return redirect($this->getAwvInvitationLinkForUser($enrollee)->url);
         }
 
         return $this->enrollmentLetterView($userCreatedFromEnrollee, true, $enrollee, false);
@@ -177,6 +181,16 @@ class AutoEnrollmentCenterController extends Controller
             ->first();
 
         return Enrollee::whereId($notification->data['enrollee_id'])->first();
+    }
+
+    /**
+     * @param $enrollable
+     *
+     * @return bool
+     */
+    public function enrollableHasRequestedInfo($enrollable)
+    {
+        return $enrollable->statusRequestsInfo()->exists();
     }
 
     public function getAwvInvitationLinkForUser($user)
@@ -271,16 +285,6 @@ class AutoEnrollmentCenterController extends Controller
         }
 
         return redirect($pastActiveSurveyLink->url);
-    }
-
-    /**
-     * @param $enrollable
-     *
-     * @return bool
-     */
-    public function enrollableHasRequestedInfo($enrollable)
-    {
-        return $enrollable->statusRequestsInfo()->exists();
     }
 
     public function evaluateEnrolledForSurveyTest(Request $request)
