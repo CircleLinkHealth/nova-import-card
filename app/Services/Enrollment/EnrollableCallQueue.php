@@ -61,8 +61,10 @@ class EnrollableCallQueue
                 $enrollee = $engagedEnrollee;
             }
 
-            //mark as engaged to prevent double dipping
-            $enrollee->status = Enrollee::ENGAGED;
+            if ($enrollee) {
+                //mark as engaged to prevent double dipping
+                $enrollee->status = Enrollee::ENGAGED;
+            }
         }
 
         if ($enrollee) {
