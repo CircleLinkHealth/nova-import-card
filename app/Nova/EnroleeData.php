@@ -125,8 +125,8 @@ class EnroleeData extends Resource
                 ->sortable()
                 ->creationRules('required', 'string')
                 ->updateRules('string'),
-            
-            ID::make('Eligible Pt ID','id')->sortable(),
+
+            ID::make('Eligible Pt ID', 'id')->sortable(),
 
             Text::make('Address')
                 ->sortable()

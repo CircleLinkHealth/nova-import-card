@@ -1664,6 +1664,7 @@ if ( ! function_exists('measureTime')) {
 if ( ! function_exists('stripNonTrixTags')) {
     /**
      * @param string|null
+     * @param mixed $trixString
      *
      * @return string
      */

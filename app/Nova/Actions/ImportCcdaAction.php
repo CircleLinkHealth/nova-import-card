@@ -50,7 +50,7 @@ class ImportCcdaAction extends Action implements ShouldQueue
                 ImportCcda::dispatch($ccda, true);
             });
         });
-    
+
         return Action::message('CCDAs queued to import. We will send you a notification in CPM when done.');
     }
 }

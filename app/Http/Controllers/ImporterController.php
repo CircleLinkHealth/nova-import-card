@@ -9,12 +9,9 @@ namespace App\Http\Controllers;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Jobs\ImportCcda;
 use App\Nova\Actions\ClearAndReimportCcda;
-use App\Nova\Actions\ImportCcdaAction;
-use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
 
 class ImporterController extends Controller
 {
@@ -244,11 +241,11 @@ class ImporterController extends Controller
     {
         return $this::getImportedRecords();
     }
-    
+
     public function reImportPatient(Request $request, $userId)
     {
         ClearAndReimportCcda::for($userId, auth()->id());
-        
+
         return redirect()->back();
     }
 

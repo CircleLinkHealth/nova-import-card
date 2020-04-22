@@ -8,7 +8,6 @@ namespace App\Nova;
 
 use App\CcdaView;
 use App\Constants;
-use App\Nova\Actions\ClearAndReimportCcda;
 use App\Nova\Actions\ImportCcdaAction;
 use App\Nova\Filters\OnOrAfterDateFilter;
 use App\Nova\Filters\PracticeFilter;
@@ -114,8 +113,10 @@ class Ccda extends Resource
     {
         return [
             Text::make('CarePlan', function ($row) {
-                if (!$row->patient_user_id) return '';
-                
+                if ( ! $row->patient_user_id) {
+                    return '';
+                }
+
                 return link_to_route('patient.careplan.print', 'View', [$row->patient_user_id])->toHtml();
             })
                 ->asHtml(),
