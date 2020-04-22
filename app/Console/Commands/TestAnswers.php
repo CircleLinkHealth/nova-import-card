@@ -48,8 +48,7 @@ class TestAnswers extends Command
                             'sub_title'           => 'Poor diet (fruits/veggies)',
                             'task_body'           => 'Fruits and vegetables are important part of healthy eating and provide a source of many nutrients, including potassium, fiber, folate (folic acid) and vitamins A, E and C. People who eat fruit and vegetables as part of their daily diet have a reduced risk of many chronic diseases. Your doctor may recommend:',
                             'recommendation_body' => ['Getting 4-5 servings of fruits and vegetables a day'],
-                            'trigger_conditions'  =>
-                                [
+                            'trigger_conditions'  => [
                                     [
                                         'logical_operator' => 'and',
                                         'expressions'      => [
@@ -71,8 +70,7 @@ class TestAnswers extends Command
                             'sub_title'           => ' Poor diet (whole grain)',
                             'task_body'           => 'Foods made from grains (wheat, rice, and oats) help form the foundation of a nutritious diet. They provide vitamins, minerals, carbohydrates (starch and dietary fiber), and other substances that are important for good health. Eating plenty of whole grains, such as whole wheat bread or oatmeals may help protect you against many chronic diseases. Experts recommend that all adults eat at least half their grains as whole grains. Your doctor may suggest:',
                             'recommendation_body' => ['Aiming for at least 3-5 servings of whole grains a day'],
-                            'trigger_conditions'  =>
-                                [
+                            'trigger_conditions'  => [
                                     [
                                         'logical_operator' => 'and',
                                         'expressions'      => [
@@ -303,12 +301,10 @@ class TestAnswers extends Command
         $query = Answer::query();
 
         $triggerConditions->each(function ($triggerCondition) use ($query) {
-
             foreach ($triggerCondition as $condition) {
                 $operator = $condition['logical_operator'] === 'and'
                     ? 'where'
                     : 'orWhere';
-
 
                 $expressions = collect($condition['expressions']);
                 $expressions->each(function ($e) use ($query, $operator) {
@@ -317,7 +313,6 @@ class TestAnswers extends Command
 
                 $this->info($query->get());
             }
-
         });
         /*  $triggerConditions = collect();
           foreach ($conditions['data'] as $condition) {
@@ -345,7 +340,5 @@ class TestAnswers extends Command
               }
 
           });*/
-
-
     }
 }

@@ -17,15 +17,15 @@ class Authenticate extends Middleware
      */
     protected function redirectTo($request)
     {
-        if ( ! $request->expectsJson()) {
-            Log::debug("Authenticate Middleware -> route login");
+        if (! $request->expectsJson()) {
+            Log::debug('Authenticate Middleware -> route login');
 
             $redirectTo = $this->getRedirectPath($request);
             $redirectUrl = route('login', $request->query->all());
 
-            return $redirectUrl . (! empty($redirectTo)
+            return $redirectUrl.(! empty($redirectTo)
                     ? "?redirectTo=$redirectTo"
-                    : "");
+                    : '');
         }
     }
 
@@ -33,7 +33,7 @@ class Authenticate extends Middleware
     {
         $path = $request->path();
         if ($path === '/') {
-            return null;
+            return;
         }
 
         return urlencode($request->path());

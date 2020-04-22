@@ -33,7 +33,6 @@ class CalculateSuggestedAnswers extends Command
 
     /**
      * Execute the console command.
-     *
      */
     public function handle()
     {
@@ -48,6 +47,6 @@ class CalculateSuggestedAnswers extends Command
             SurveyAnswersCalculateSuggestionsJob::dispatch($patientId)->onQueue('awv-high');
         }
 
-        $this->info("Done.");
+        $this->info('Done.');
     }
 }

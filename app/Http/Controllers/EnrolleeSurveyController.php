@@ -33,8 +33,8 @@ class EnrolleeSurveyController extends Controller
     {
         $surveyData = $this->enrolleesSurveyService->getSurveyData($patientId, $surveyId);
 
-        if (!$surveyData) {
-            throw new \Error("Survey not found for patient " . $patientId);
+        if (! $surveyData) {
+            throw new \Error('Survey not found for patient '.$patientId);
         }
 
         return view('survey.Enrollees.index', [

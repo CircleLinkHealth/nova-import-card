@@ -22,7 +22,7 @@ class CreatePatientTest extends TestCase
 
     /**
      * Test that we can create a patient with an existing provider
-     * Test that created patient has is_awv = true
+     * Test that created patient has is_awv = true.
      */
     public function testCreatePatientWithProviderId()
     {
@@ -31,7 +31,7 @@ class CreatePatientTest extends TestCase
 
     /**
      * Test that we can create a patient along
-     * with a new provider user
+     * with a new provider user.
      */
     public function testCreatePatientWithNewProvider()
     {
@@ -71,15 +71,14 @@ class CreatePatientTest extends TestCase
         $this->assertTrue(User::whereEmail($providerUser->email)->count() === 1,
             'provider with this email should be exactly one');
 
-        $createdUser     = User::whereEmail($patient->email)->first();
+        $createdUser = User::whereEmail($patient->email)->first();
         $createdProvider = User::whereEmail($providerUser->email)->first();
         $this->assertTrue($createdUser->billingProviderUser()->id === $createdProvider->id);
         $this->assertTrue($createdUser->patientInfo->is_awv === 1, 'user must have is_awv = true');
     }
 
-
     /**
-     * Become an admin user for the session
+     * Become an admin user for the session.
      */
     private function setAdminUser()
     {

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Tests\Helpers;
-
 
 use App\User;
 use Carbon\Carbon;
@@ -12,7 +10,7 @@ trait PatientHelpers
 {
     /**
      * Create an AWV Patient.
-     * Will have to call as an admin user ($this->be($adminUser))
+     * Will have to call as an admin user ($this->be($adminUser)).
      */
     public function createPatient(): User
     {
@@ -50,5 +48,4 @@ trait PatientHelpers
 
         return $createdUser;
     }
-
 }

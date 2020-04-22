@@ -53,14 +53,14 @@ class EnrolUserToAWV extends Command
             ->where('id', '=', $userId)
             ->first();
 
-        if ( ! $user) {
+        if (! $user) {
             $this->warn("Could not find user with id $userId");
 
             return;
         }
 
         $forYear = $this->argument('forYear');
-        if ( ! $forYear) {
+        if (! $forYear) {
             $forYear = Carbon::now()->year;
         }
 
@@ -73,7 +73,7 @@ class EnrolUserToAWV extends Command
 
         try {
             $service->enrolUser($user, $forYear);
-            $this->info("Done");
+            $this->info('Done');
         } catch (\Exception $e) {
             $this->warn($e);
         }

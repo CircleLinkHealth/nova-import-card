@@ -16,18 +16,17 @@ trait SetupTestSurveyData
 {
     protected $faker;
 
-    /** @var Carbon $date */
+    /** @var Carbon */
     protected $date;
 
-    /** @var \App\User $user */
+    /** @var \App\User */
     protected $user;
 
-    /** @var Collection $surveys */
+    /** @var Collection */
     protected $surveys;
 
-
     /**
-     * Creates User
+     * Creates User.
      */
     public function createUser()
     {
@@ -45,7 +44,7 @@ trait SetupTestSurveyData
     }
 
     /**
-     *  Creates Surveys
+     *  Creates Surveys.
      */
     public function createSurveys()
     {
@@ -63,9 +62,6 @@ trait SetupTestSurveyData
         $this->assertEquals(2, $this->surveys->count());
     }
 
-    /**
-     *
-     */
     public function createAndAttachSurveyInstances()
     {
         foreach ($this->surveys as $survey) {
@@ -93,7 +89,6 @@ trait SetupTestSurveyData
                         'status'             => SurveyInstance::PENDING,
                     ]
                 );
-
             }
         }
     }
@@ -109,7 +104,6 @@ trait SetupTestSurveyData
             $questions = [];
 
             for ($i = 0; $i < 10; $i++) {
-
                 $group = QuestionGroup::create([
                     'body' => $this->faker->text,
                 ]);
@@ -139,7 +133,7 @@ trait SetupTestSurveyData
                     $this->assertNull($question->questionGroup);
                 }
 
-                $type         = $questionTypes->random();
+                $type = $questionTypes->random();
                 $questionType = $question->type()->create([
                     'type' => $type,
                 ]);
@@ -158,10 +152,10 @@ trait SetupTestSurveyData
             }
             $this->assertEquals(10, count($questions));
             foreach ($survey->instances as $instance) {
-                $order    = 1;
+                $order = 1;
                 $subOrder = 1;
                 foreach ($questions as $question) {
-                    if ( ! is_null($question->questionGroup)) {
+                    if (! is_null($question->questionGroup)) {
                         $instance->questions()->attach(
                             $question->id,
                             [
@@ -182,7 +176,6 @@ trait SetupTestSurveyData
                         );
                         $order += 1;
                     }
-
                 }
                 $this->assertEquals($instance->questions()->whereNotNull('sub_order')->count(), 4);
             }
@@ -192,7 +185,7 @@ trait SetupTestSurveyData
     public function createTestSurveyData()
     {
         $this->faker = $faker = Factory::create();
-        $this->date  = Carbon::now();
+        $this->date = Carbon::now();
 
         $this->createUser();
 
@@ -207,7 +200,8 @@ trait SetupTestSurveyData
         */
     }
 
-    public function createAndAttachSurveysNew() {
+    public function createAndAttachSurveysNew()
+    {
         (new \SurveySeeder())->run();
 
         $this->surveys = Survey::whereIn('name', [Survey::HRA, Survey::VITALS])->get();
@@ -225,9 +219,7 @@ trait SetupTestSurveyData
                         'status'             => SurveyInstance::PENDING,
                     ]
                 );
-
             }
         }
-
     }
 }

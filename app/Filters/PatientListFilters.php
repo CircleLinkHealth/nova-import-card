@@ -23,7 +23,7 @@ class PatientListFilters extends QueryFilters
             return $this->builder;
         }
 
-        return $this->builder->where('mrn', 'like', '%' . $value . '%');
+        return $this->builder->where('mrn', 'like', '%'.$value.'%');
     }
 
     public function patient_name($name)
@@ -32,7 +32,7 @@ class PatientListFilters extends QueryFilters
             return $this->builder;
         }
 
-        return $this->builder->where('patient_name', 'like', '%' . $name . '%');
+        return $this->builder->where('patient_name', 'like', '%'.$name.'%');
     }
 
     public function provider_name($name)
@@ -41,7 +41,7 @@ class PatientListFilters extends QueryFilters
             return $this->builder;
         }
 
-        return $this->builder->where('provider_name', 'like', '%' . $name . '%');
+        return $this->builder->where('provider_name', 'like', '%'.$name.'%');
     }
 
     public function hra_status($status)
@@ -50,7 +50,7 @@ class PatientListFilters extends QueryFilters
             return $this->builder;
         }
 
-        if ("null" === $status) {
+        if ('null' === $status) {
             return $this->builder->whereNull('hra_status');
         }
 
@@ -63,7 +63,7 @@ class PatientListFilters extends QueryFilters
             return $this->builder;
         }
 
-        if ("null" === $status) {
+        if ('null' === $status) {
             return $this->builder->whereNull('vitals_status');
         }
 
@@ -71,7 +71,7 @@ class PatientListFilters extends QueryFilters
     }
 
     /**
-     * TODO: not implemented yet
+     * TODO: not implemented yet.
      *
      * @param $status
      *
@@ -80,8 +80,7 @@ class PatientListFilters extends QueryFilters
      */
     public function eligibility($status)
     {
-        throw new \Exception("not implemented");
-
+        throw new \Exception('not implemented');
         if (empty($status)) {
             return $this->builder;
         }
@@ -107,7 +106,7 @@ class PatientListFilters extends QueryFilters
             return $this->builder;
         }
 
-        return $this->builder->where('dob', 'like', '%' . $value . '%');
+        return $this->builder->where('dob', 'like', '%'.$value.'%');
     }
 
     public function year($value)
@@ -144,17 +143,17 @@ class PatientListFilters extends QueryFilters
     {
         $query = $this->request->get('query');
 
-        $decoded  = json_decode($query, true);
+        $decoded = json_decode($query, true);
         $filtered = collect($decoded)->filter();
 
         //do not set years if year was set in query
-        if ( ! isset($filtered['year'])) {
-            $now               = Carbon::now();
+        if (! isset($filtered['year'])) {
+            $now = Carbon::now();
             $filtered['years'] = [$now->year - 1, $now->year, $now->year + 1];
         }
 
         /** @var User $user */
-        $user                    = auth()->user();
+        $user = auth()->user();
         $filtered['practiceIds'] = $user->viewableProgramIds();
 
         return $filtered->all();

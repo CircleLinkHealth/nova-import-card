@@ -11,7 +11,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property array $options
  *
  * Class QuestionTypesAnswer
- * @package App
  */
 class QuestionTypesAnswer extends BaseModel
 {

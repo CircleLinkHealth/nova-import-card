@@ -15,7 +15,7 @@ class StoreVitalsAnswer extends FormRequest
     public function authorize()
     {
         //user should already be authenticated to reach here
-        if ( ! Auth::check()) {
+        if (! Auth::check()) {
             return false;
         }
 

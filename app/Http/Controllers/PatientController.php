@@ -3,7 +3,7 @@
  * Created by IntelliJ IDEA.
  * User: pangratioscosma
  * Date: 01/07/2019
- * Time: 1:06 PM
+ * Time: 1:06 PM.
  */
 
 namespace App\Http\Controllers;
@@ -45,8 +45,8 @@ class PatientController extends Controller
     public function store(StorePatientRequest $request, SurveyInvitationLinksService $service)
     {
         $providerUserId = $this->getPatientProvider($request);
-        $result         = $this->createPatient($request, $service);
-        $patientUserId  = $result['user_id'];
+        $result = $this->createPatient($request, $service);
+        $patientUserId = $result['user_id'];
 
         CarePerson::updateOrCreate([
             'user_id'        => $patientUserId,
@@ -70,10 +70,10 @@ class PatientController extends Controller
     {
         $providerInput = $request->input('provider');
 
-        if ( ! empty($providerInput['id'])) {
+        if (! empty($providerInput['id'])) {
             $providerUserId = $providerInput['id'];
         } else {
-            $providerUser   = $this->createUser($providerInput, 'provider', $providerInput['primaryPracticeId']);
+            $providerUser = $this->createUser($providerInput, 'provider', $providerInput['primaryPracticeId']);
             $providerUserId = $providerUser->id;
         }
 
@@ -90,16 +90,16 @@ class PatientController extends Controller
      */
     private function createPatient(StorePatientRequest $request, SurveyInvitationLinksService $service)
     {
-        $patientInput      = $request->input('patient');
+        $patientInput = $request->input('patient');
         $primaryPracticeId = $request->input('provider')['primaryPracticeId'];
-        $user              = $this->createUser($patientInput, 'participant', $primaryPracticeId);
+        $user = $this->createUser($patientInput, 'participant', $primaryPracticeId);
 
         $enrollSuccess = true;
         try {
             $service->enrolUserId($user->id);
         } catch (\Exception $e) {
             $enrollSuccess = false;
-            $msg           = $e->getMessage();
+            $msg = $e->getMessage();
             \Log::error("Patient created successfully, but there was an error enrolling user[$user->id] to AWV. ERROR: $msg");
         }
 
@@ -116,7 +116,7 @@ class PatientController extends Controller
      */
     private function getRandomEmail()
     {
-        return 'awv_' . str_random(20) . '@careplanmanager.com';
+        return 'awv_'.str_random(20).'@careplanmanager.com';
     }
 
     private function formatPhoneNumber(string $numberString)
@@ -131,7 +131,7 @@ class PatientController extends Controller
             $sanitized = substr($sanitized, -10);
         }
 
-        return substr($sanitized, 0, 3) . '-' . substr($sanitized, 3, 3) . '-' . substr($sanitized, 6, 4);
+        return substr($sanitized, 0, 3).'-'.substr($sanitized, 3, 3).'-'.substr($sanitized, 6, 4);
     }
 
     private function createUser(array $input, string $roleName, $primaryPracticeId): User
@@ -153,12 +153,12 @@ class PatientController extends Controller
             'program_id'           => $primaryPracticeId,
         ]);
 
-        $user->status          = 'Active';
+        $user->status = 'Active';
         $user->access_disabled = 1;
         $user->setFirstName($input['firstName']);
         $user->setLastName($input['lastName']);
         $user->createNewUser($input['email'], str_random());
-        if ( ! empty($input['phoneNumber'])) {
+        if (! empty($input['phoneNumber'])) {
             $phoneNumber = new PhoneNumber();
             $phoneNumber->setRawAttributes([
                 'user_id'     => $user->id,
@@ -173,7 +173,7 @@ class PatientController extends Controller
             $phoneNumber->save();
         }
 
-        if ( ! empty($input['emrDirect'])) {
+        if (! empty($input['emrDirect'])) {
             $user->emr_direct_address = $input['emrDirect'];
         }
 
@@ -192,11 +192,10 @@ class PatientController extends Controller
                 'is_awv'          => true,
             ]);
 
-            if ( ! empty($input['appointment'])) {
+            if (! empty($input['appointment'])) {
                 $appointment = Carbon::parse($input['appointment']);
                 $user->addAppointment($appointment);
             }
-
         } else {
             $isClinical = $input['suffix'] === 'non-clinical';
             ProviderInfo::updateOrCreate([
@@ -214,10 +213,10 @@ class PatientController extends Controller
     {
         $fields = ['*'];
 
-        $limit     = $request->get('limit');
-        $orderBy   = $request->get('orderBy');
+        $limit = $request->get('limit');
+        $orderBy = $request->get('orderBy');
         $ascending = $request->get('ascending');
-        $page      = $request->get('page');
+        $page = $request->get('page');
 
         $data = PatientAwvSurveyInstanceStatusView::filter($filters)->select($fields);
 
@@ -260,7 +259,6 @@ class PatientController extends Controller
 
     public function getPatientReport($patienId, $reportType, $year)
     {
-
         if ($reportType == 'ppp') {
             return redirect()->route('get-ppp-report', [
                 'userId' => $patienId,
@@ -278,6 +276,5 @@ class PatientController extends Controller
         }
 
         throw new \Exception("Report type : [$reportType] does not exist.");
-
     }
 }

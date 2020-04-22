@@ -47,18 +47,18 @@ class LoginController extends Controller
         $request->session()->invalidate();
 
         $redirect = $request->input('redirectTo', null);
-        $query    = '';
+        $query = '';
         if ($redirect) {
             $query = "?redirectTo=$redirect";
         }
 
         return $this->loggedOut($request)
-            ?: redirect('/' . $query);
+            ?: redirect('/'.$query);
     }
 
     protected function redirectTo()
     {
-        Log::debug("LoginController -> redirectTo");
+        Log::debug('LoginController -> redirectTo');
         $redirectTo = null;
 
         $request = request();

@@ -31,14 +31,12 @@ Route::group([
 
     Route::post('login-survey', 'Auth\PatientLoginController@login')
         ->name('auth.login.with.signed');
-
 });
 
 Route::group([
     'prefix' => 'manage-patients',
     'middleware' => ['auth', 'permission:vitals-survey-complete'],
 ], function () {
-
     Route::get('', [
         'uses' => 'PatientController@index',
         'as' => 'patient.list',
@@ -88,7 +86,6 @@ Route::group([
     Route::group([
         'prefix' => 'providers',
     ], function () {
-
         Route::post('add', [
             'uses' => 'ProviderController@add',
             'as' => 'provider.add',
@@ -98,18 +95,15 @@ Route::group([
             'uses' => 'ProviderController@search',
             'as' => 'provider.search',
         ]);
-
     });
 
     Route::group([
         'prefix' => 'practices',
     ], function () {
-
         Route::get('search', [
             'uses' => 'PracticeController@search',
             'as' => 'practice.search',
         ]);
-
     });
 });
 
@@ -117,7 +111,6 @@ Route::group([
     'prefix' => 'survey',
     'middleware' => ['auth'],
 ], function () {
-
     Route::group([
         'prefix' => 'enrollees',
     ], function () {
@@ -135,7 +128,6 @@ Route::group([
     Route::group([
         'prefix' => 'hra',
     ], function () {
-
         Route::get('{patientId}', [
             'uses' => 'SurveyController@getCurrentSurvey',
             'as' => 'survey.hra',
@@ -150,7 +142,6 @@ Route::group([
             'uses' => 'SurveyController@storeAnswer',
             'as' => 'survey.hra.store.answer',
         ]);
-
     });
 
     Route::group([
@@ -166,13 +157,11 @@ Route::group([
             'uses' => 'VitalsSurveyController@storeAnswer',
             'as' => 'survey.vitals.store.answer',
         ]);
-
     });
 
     Route::group([
         'prefix' => 'vitals',
     ], function () {
-
         Route::get('{patientId}/welcome', [
             'uses' => 'VitalsSurveyController@showWelcome',
             'as' => 'survey.vitals.welcome',
@@ -182,7 +171,6 @@ Route::group([
             'uses' => 'VitalsSurveyController@showNotAuthorized',
             'as' => 'survey.vitals.not.authorized',
         ]);
-
     });
 });
 
@@ -190,7 +178,6 @@ Route::group([
     'prefix' => 'reports',
     'middleware' => ['auth'],
 ], function () {
-
     Route::get('get-patient-report/{userId}/{reportType}/{year}', [
         'uses' => 'PatientController@getPatientReport',
         'as' => 'patient.get-report',
@@ -201,8 +188,6 @@ Route::group([
 
     Route::get('get-ppp-data/{userId}/{year?}', 'PersonalizedPreventionPlanController@getPppForUser')
         ->name('get-ppp-report');
-
-
 });
 
 Route::group([
@@ -224,6 +209,3 @@ Route::group([
 });
 Route::post('twilio/sms/status', 'TwilioController@smsStatusCallback')
     ->name('twilio.sms.status');
-
-
-

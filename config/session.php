@@ -126,7 +126,7 @@ return [
 
     'cookie' => env(
         'SESSION_COOKIE',
-        'cpm_' . env('APP_ENV') . '_laravel_session'
+        'cpm_'.env('APP_ENV').'_laravel_session'
     ),
 
     /*

@@ -6,18 +6,15 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use Illuminate\Support\Collection;
 
 /**
- * Class Survey
+ * Class Survey.
  *
  * @property int id
  * @property string name
  * @property string description
  * @property-read SurveyInstance[]|Collection instances
- *
- * @package App
  */
 class Survey extends BaseModel
 {
-
     const HRA = 'HRA';
 
     const VITALS = 'Vitals';
@@ -42,7 +39,7 @@ class Survey extends BaseModel
                         'last_question_answered_id',
                         'status',
                         'start_date',
-                        'completed_at'
+                        'completed_at',
                     ])
                     ->withTimestamps();
     }
@@ -55,7 +52,7 @@ class Survey extends BaseModel
                         'status',
                         'last_question_answered_id',
                         'start_date',
-                        'completed_at'
+                        'completed_at',
                     ])
                     ->withTimestamps();
     }
@@ -67,12 +64,11 @@ class Survey extends BaseModel
 
     public function scopeHRA($query)
     {
-        $query->where('name', Survey::HRA);
+        $query->where('name', self::HRA);
     }
 
     public function scopeVitals($query)
     {
-        $query->where('name', Survey::VITALS);
+        $query->where('name', self::VITALS);
     }
-
 }

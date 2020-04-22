@@ -50,10 +50,10 @@ class SendInvitationLinkUsingSMS extends Command
      */
     public function handle(SurveyInvitationLinksService $service)
     {
-        $userId     = $this->argument('userId');
+        $userId = $this->argument('userId');
         $surveyName = $this->argument('surveyName');
-        if ( ! ($surveyName === Survey::HRA || $surveyName === Survey::VITALS)) {
-            $hra    = Survey::HRA;
+        if (! ($surveyName === Survey::HRA || $surveyName === Survey::VITALS)) {
+            $hra = Survey::HRA;
             $vitals = Survey::VITALS;
             $this->warn("surveyName must be $hra or $vitals");
 
@@ -74,7 +74,7 @@ class SendInvitationLinkUsingSMS extends Command
             ->where('id', '=', $userId)
             ->first();
 
-        if ( ! $user) {
+        if (! $user) {
             $this->warn("Could not find user with id $userId");
 
             return;
@@ -91,11 +91,11 @@ class SendInvitationLinkUsingSMS extends Command
         }
 
         $phoneNumber = $this->argument('phoneNumber');
-        if ( ! $phoneNumber) {
+        if (! $phoneNumber) {
             $phoneNumber = $user->phoneNumbers->first();
         }
 
-        if ( ! $phoneNumber) {
+        if (! $phoneNumber) {
             $this->warn("Could not find a phone number for user $userId");
 
             return;
@@ -104,13 +104,13 @@ class SendInvitationLinkUsingSMS extends Command
         /** @var User $targetNotifiable */
         $targetNotifiable = User::find($userId);
 
-        if ( ! $targetNotifiable) {
+        if (! $targetNotifiable) {
             throw new \Exception("Could not find user[$phoneNumber] in the system.");
         }
 
         //in case notifiable user is not the patient
-        $providerFullName = "PROVIDER";
-        if ( ! $targetNotifiable->is($user)) {
+        $providerFullName = 'PROVIDER';
+        if (! $targetNotifiable->is($user)) {
             $practiceName = $user->primaryPractice->display_name;
 
             $billingProviderUser = $user->billingProviderUser();
@@ -118,7 +118,7 @@ class SendInvitationLinkUsingSMS extends Command
                 $providerFullName = $billingProviderUser->getFullName();
             }
         } else {
-            $practiceName        = $targetNotifiable->primaryPractice->display_name;
+            $practiceName = $targetNotifiable->primaryPractice->display_name;
             $billingProviderUser = $targetNotifiable->billingProviderUser();
             if ($billingProviderUser) {
                 $providerFullName = $billingProviderUser->getFullName();
@@ -126,7 +126,7 @@ class SendInvitationLinkUsingSMS extends Command
         }
 
         $notifiableUser = new NotifiableUser($targetNotifiable, null, $phoneNumber);
-        $invitation     = new SurveyInvitationLink($url, $surveyName, 'sms', $practiceName, $providerFullName,
+        $invitation = new SurveyInvitationLink($url, $surveyName, 'sms', $practiceName, $providerFullName,
             $appointment);
 
         try {
@@ -137,10 +137,9 @@ class SendInvitationLinkUsingSMS extends Command
                 $notifiableUser->notify($invitation);
                 $this->info('Sending notification');
             }
-            $this->info("Done");
+            $this->info('Done');
         } catch (\Exception $e) {
             $this->error($e->getMessage());
         }
-
     }
 }

@@ -15,7 +15,7 @@ class VitalsQuestionsTest extends TestCase
     use DatabaseTransactions,
         SetupTestSurveyData;
 
-    /** @var SurveyInstance $vitalsSurvey */
+    /** @var SurveyInstance */
     private $vitalsSurvey;
 
     public function setUp()
@@ -99,7 +99,8 @@ class VitalsQuestionsTest extends TestCase
         $this->assertNull($nextQuestion);
     }
 
-    public function test_vitals_survey_complete() {
+    public function test_vitals_survey_complete()
+    {
         $this->test_vitals_q_order_1();
         $this->test_vitals_q_order_2();
         $this->test_vitals_q_order_3();
@@ -130,7 +131,7 @@ class VitalsQuestionsTest extends TestCase
     private function postAnswer($value, $questionId, $questionTypeAnswerId = null)
     {
         $patientId = $this->user->id;
-        $req       = [
+        $req = [
             'patient_id'         => $this->user->id,
             'survey_instance_id' => $this->vitalsSurvey->id,
             'question_id'        => $questionId,
@@ -157,5 +158,4 @@ class VitalsQuestionsTest extends TestCase
         $this->assertNotNull($answer);
         $this->assertEquals($value, $answer->value);
     }
-
 }

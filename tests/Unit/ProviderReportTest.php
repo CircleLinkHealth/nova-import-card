@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
 use Tests\TestCase;
 
@@ -14,6 +14,7 @@ class ProviderReportTest extends TestCase
     protected $user;
 
     protected $date;
+
     /**
      * A basic unit test example.
      *
@@ -42,7 +43,5 @@ class ProviderReportTest extends TestCase
             'remember_token'    => str_random(10),
         ]);
         $this->assertNotNull($this->user);
-
-
     }
 }

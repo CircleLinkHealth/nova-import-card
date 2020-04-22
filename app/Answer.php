@@ -13,7 +13,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property array $suggested_value
  *
  * Class Answer
- * @package App
  */
 class Answer extends BaseModel
 {

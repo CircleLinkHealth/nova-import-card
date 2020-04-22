@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\DB;
  * @property Collection questions
  *
  * Class SurveyInstance
- * @package App
  */
 class SurveyInstance extends BaseModel
 {
@@ -66,7 +65,7 @@ class SurveyInstance extends BaseModel
     }
 
     /**
-     * Scope most recent per survey id
+     * Scope most recent per survey id.
      *
      * @param Builder $query
      */
@@ -84,9 +83,8 @@ class SurveyInstance extends BaseModel
          * ON survey_instances.survey_id = group_max.survey_id
          * # FIND_IN_SET is called to find the year in first of position of the list of years (which means the most recent)
          * AND FIND_IN_SET(year, grouped_year) = 1
-         * ORDER BY survey_instances.year DESC;
+         * ORDER BY survey_instances.year DESC;.
          */
-
         $table = $this->getTable();
         $query->join(DB::raw("
                     (SELECT
@@ -96,7 +94,7 @@ class SurveyInstance extends BaseModel
                       $table
                     GROUP BY survey_id) group_max"),
             "$table.survey_id", '=', 'group_max.survey_id')
-            ->whereRaw("FIND_IN_SET(year, grouped_year) = 1")
+            ->whereRaw('FIND_IN_SET(year, grouped_year) = 1')
             ->orderByDesc("$table.year");
     }
 
@@ -110,9 +108,7 @@ class SurveyInstance extends BaseModel
         $query->whereHas('survey', function ($survey) use ($surveyName) {
             $survey->where('name', $surveyName);
         });
-
     }
-
 
     public function scopeForYear($query, $year)
     {
@@ -121,12 +117,11 @@ class SurveyInstance extends BaseModel
         }
 
         $query->where('year', $year);
-
     }
 
     public function scopeIsCompletedForPatient($query)
     {
-        $query->where('users_surveys.status', SurveyInstance::COMPLETED);
+        $query->where('users_surveys.status', self::COMPLETED);
     }
 
     public function calculateCurrentStatusForUser(User $user)
@@ -143,8 +138,8 @@ class SurveyInstance extends BaseModel
         $next = $this->getNextUnansweredQuestion($user);
 
         return $next
-            ? ['status' => SurveyInstance::IN_PROGRESS, 'next_question_id' => $next->id]
-            : ['status' => SurveyInstance::COMPLETED, 'next_question_id' => null];
+            ? ['status' => self::IN_PROGRESS, 'next_question_id' => $next->id]
+            : ['status' => self::COMPLETED, 'next_question_id' => null];
     }
 
     public function getNextUnansweredQuestion(User $user, $currentIndex = -1, $skipOptionals = true)
@@ -153,19 +148,19 @@ class SurveyInstance extends BaseModel
 
         /** @var Question $nextQuestion */
         $nextQuestion = $this->questions->get($newIndex);
-        if (!$nextQuestion) {
-            return null;
+        if (! $nextQuestion) {
+            return;
         }
 
         if ($user->hasRole('survey-only')
             && $nextQuestion->optional
-            && !empty($nextQuestion->conditions)
+            && ! empty($nextQuestion->conditions)
             && array_key_exists('nonAwvCheck', $nextQuestion->conditions[0])) {
             $answer = $this->getAnswerForQuestion($user, $nextQuestion->id);
+
             return empty($answer)
                 ? $nextQuestion
                 : null;
-
         }
 
         // 1. first check if the question is optional
@@ -184,10 +179,9 @@ class SurveyInstance extends BaseModel
         }
 
         $isDisabled = false;
-        if (!empty($nextQuestion->conditions)) {
+        if (! empty($nextQuestion->conditions)) {
             foreach ($nextQuestion->conditions as $condition) {
-
-                if (!isset($condition['related_question_order_number'])) {
+                if (! isset($condition['related_question_order_number'])) {
                     continue;
                 }
 
@@ -199,25 +193,24 @@ class SurveyInstance extends BaseModel
 
                 /** @var Answer $firstQuestionAnswer */
                 $firstQuestionAnswer = $this->getAnswerForQuestion($user, $firstQuestion->id);
-                if (!$firstQuestionAnswer) {
+                if (! $firstQuestionAnswer) {
                     $isDisabled = true;
                     break;
                 }
 
                 //If conditions needs to be compared against to "gte" or "lte"
                 if (isset($condition['operator'])) {
-
                     $valueToCheck = $firstQuestionAnswer->value['value'];
                     $valueToCheck = $this->getValue($valueToCheck);
 
                     if ($condition['operator'] === 'greater_or_equal_than') {
                         //Again we use only the first Question of the related Questions, which is OK for now.
-                        $isDisabled = !($valueToCheck >= $condition['related_question_expected_answer']);
+                        $isDisabled = ! ($valueToCheck >= $condition['related_question_expected_answer']);
                         break;
                     }
 
                     if ($condition['operator'] === 'less_or_equal_than') {
-                        $isDisabled = !($valueToCheck <= $condition['related_question_expected_answer']);
+                        $isDisabled = ! ($valueToCheck <= $condition['related_question_expected_answer']);
                         break;
                     }
                 }
@@ -234,7 +227,7 @@ class SurveyInstance extends BaseModel
                     }
                 } else {
                     //we are looking for any answer
-                    if (!isset($firstQuestionAnswer->value['value'])) {
+                    if (! isset($firstQuestionAnswer->value['value'])) {
                         if (is_array($firstQuestionAnswer->value) && empty($firstQuestionAnswer->value)) {
                             $isDisabled = true;
                         }
@@ -246,7 +239,7 @@ class SurveyInstance extends BaseModel
                         } else {
                             if (is_array($firstQuestionAnswer->value['value']) && empty($firstQuestionAnswer->value['value'])) {
                                 $isDisabled = true;
-                            } else if (is_string($firstQuestionAnswer->value['value']) && empty($firstQuestionAnswer->value['value'])) {
+                            } elseif (is_string($firstQuestionAnswer->value['value']) && empty($firstQuestionAnswer->value['value'])) {
                                 $isDisabled = true;
                             }
                         }
@@ -280,8 +273,7 @@ class SurveyInstance extends BaseModel
         if (is_array($val)) {
             return $this->getValue(reset($val));
         }
+
         return $val;
     }
-
-
 }

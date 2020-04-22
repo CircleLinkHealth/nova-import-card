@@ -3,7 +3,7 @@
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
-if ( ! function_exists('is_json')) {
+if (! function_exists('is_json')) {
     /**
      * Determine whether the given string is json.
      *
@@ -18,7 +18,7 @@ if ( ! function_exists('is_json')) {
     function is_json($string)
     {
         if ('' === $string || ! is_string($string)) {
-            return null;
+            return;
         }
 
         \json_decode($string);
@@ -30,7 +30,7 @@ if ( ! function_exists('is_json')) {
     }
 }
 
-if ( ! function_exists('sortSurveyQuestions')) {
+if (! function_exists('sortSurveyQuestions')) {
     /**
      * Sort survey questions using the pivot table, taking into account sub_order.
      *
@@ -49,9 +49,8 @@ if ( ! function_exists('sortSurveyQuestions')) {
         ];
 
         return $questions->sortBy(function ($question) use ($ordering) {
-
             $subOrder = 0;
-            $pivot    = $question->pivot;
+            $pivot = $question->pivot;
 
             if ($pivot->sub_order) {
                 $subOrder = is_numeric($pivot->sub_order)
@@ -59,25 +58,24 @@ if ( ! function_exists('sortSurveyQuestions')) {
                     : $ordering[strtolower($pivot->sub_order)];
             }
 
-            return floatval("{$pivot->order}" . "." . "{$subOrder}");
+            return floatval("{$pivot->order}".'.'."{$subOrder}");
         });
     }
 }
 
-if ( ! function_exists('getCpmCallerToken')) {
+if (! function_exists('getCpmCallerToken')) {
 
     /**
-     * naive authentication for the CPM Caller Service
+     * naive authentication for the CPM Caller Service.
      * @return string
      */
     function getCpmCallerToken()
     {
-        return \Hash::make(config('app.key') . Carbon::today()->toDateString());
+        return \Hash::make(config('app.key').Carbon::today()->toDateString());
     }
-
 }
 
-if ( ! function_exists('getStringValueFromAnswer')) {
+if (! function_exists('getStringValueFromAnswer')) {
     function getStringValueFromAnswer($val, $default = '')
     {
         if (empty($val)) {
@@ -89,7 +87,6 @@ if ( ! function_exists('getStringValueFromAnswer')) {
         }
 
         if (is_array($val)) {
-
             if (array_key_exists('name', $val)) {
                 return getStringValueFromAnswer($val['name']);
             }
@@ -105,21 +102,21 @@ if ( ! function_exists('getStringValueFromAnswer')) {
     }
 }
 
-if ( ! function_exists('sendSlackMessage')) {
+if (! function_exists('sendSlackMessage')) {
     /**
      * Sends a message to Slack.
      *
      * @param Illuminate\Notifications\Notification $notification - must have a toSlack method
      * @param bool $force - in case you really want the message to go to slack (testing | debugging)
      */
-    function sendSlackMessage(Illuminate\Notifications\Notification  $notification, $force = false)
+    function sendSlackMessage(Illuminate\Notifications\Notification $notification, $force = false)
     {
         $isProduction = config('app.env') === 'production';
-        if ( ! $force && ! $isProduction) {
+        if (! $force && ! $isProduction) {
             return;
         }
         $endpoint = env('SLACK_DEFAULT_ENDPOINT', null);
-        if ( ! $endpoint) {
+        if (! $endpoint) {
             return;
         }
         $notifiable = new \Illuminate\Notifications\AnonymousNotifiable();

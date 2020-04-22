@@ -1,7 +1,7 @@
 <?php
 
-use Faker\Generator as Faker;
 use App\User;
+use Faker\Generator as Faker;
 
 $factory->define(CircleLinkHealth\Customer\Entities\PhoneNumber::class, function (Faker $faker) {
     return [

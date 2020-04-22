@@ -46,9 +46,9 @@ class SendHraSurveyReminder extends Command
         $daysPrior = $this->argument('daysPrior');
         // $notifyClh = $this->option('notifyClh');
 
-        $date      = now()->addDays($daysPrior);
+        $date = now()->addDays($daysPrior);
         $dateStart = $date->copy()->startOfDay();
-        $dateEnd   = $date->copy()->endOfDay();
+        $dateEnd = $date->copy()->endOfDay();
 
         $service = app(SurveyInvitationLinksService::class);
 
@@ -63,7 +63,6 @@ class SendHraSurveyReminder extends Command
             ])
             ->get()
             ->each(function (User $user) use ($service) {
-
                 if ($user->surveyInstances->isNotEmpty() &&
                     $user->surveyInstances->first()->pivot->status === SurveyInstance::COMPLETED) {
                     return;
@@ -75,10 +74,10 @@ class SendHraSurveyReminder extends Command
                     throw $e;
                 }
 
-                $practiceName     = optional($user->primaryPractice)->display_name;
+                $practiceName = optional($user->primaryPractice)->display_name;
                 $providerFullName = optional($user->billingProviderUser())->getFullName();
-                $appointment      = $user->latestAwvAppointment()->appointment;
-                $notifiableUser   = new NotifiableUser($user);
+                $appointment = $user->latestAwvAppointment()->appointment;
+                $notifiableUser = new NotifiableUser($user);
                 $notifiableUser->notify(new SurveyInvitationLink($url, Survey::HRA, null, $practiceName,
                     $providerFullName,
                     $appointment));

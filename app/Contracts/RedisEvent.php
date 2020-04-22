@@ -5,7 +5,6 @@
 
 namespace App\Contracts;
 
-
 interface RedisEvent
 {
     public function publish(array $data);

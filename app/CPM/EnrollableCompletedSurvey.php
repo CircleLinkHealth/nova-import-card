@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\CPM;
-
 
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -25,14 +23,14 @@ class EnrollableCompletedSurvey extends AwvToCpmRedisEvent
     }
 
     /**
-     * Emits event to CPM through Redis Channel
+     * Emits event to CPM through Redis Channel.
      * @param $surveyInstanceId
      */
-    public function publishEnrollableCompletedSurvey($surveyInstanceId){
-
+    public function publishEnrollableCompletedSurvey($surveyInstanceId)
+    {
         $this->publish([
             'enrollable_id' => $this->enrollable->id,
-            'survey_instance_id' => $surveyInstanceId
+            'survey_instance_id' => $surveyInstanceId,
         ]);
     }
 }

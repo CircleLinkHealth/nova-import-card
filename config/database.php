@@ -1,6 +1,5 @@
 <?php
 
-
 // for heroku
 if (getenv('REDIS_URL')) {
     $redisUrl = parse_url(getenv('REDIS_URL'));

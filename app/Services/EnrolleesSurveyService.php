@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Services;
-
 
 use App\Survey;
 use Carbon\Carbon;
@@ -23,7 +21,7 @@ class EnrolleesSurveyService
     public function enrolleesQuestionsData(User $user)
     {
         $birthDate = $user->patientInfo->birth_date;
-        if (!empty($birthDate)) {
+        if (! empty($birthDate)) {
             /** @var Carbon $birthDate */
             $birthDate = $birthDate->toDateString();
         }
@@ -45,14 +43,13 @@ class EnrolleesSurveyService
             $letterLink = $letter->url;
         }
 
-
         return [
             'dob' => $birthDate,
             'address' => $user->address,
             'patientEmail' => $user->email,
-            'preferredContactNumber' => !empty($primaryPhoneNumber) ? $primaryPhoneNumber : [],
+            'preferredContactNumber' => ! empty($primaryPhoneNumber) ? $primaryPhoneNumber : [],
             'isSurveyOnlyRole' => $isSurveyOnly,
-            'letterLink' => $letterLink
+            'letterLink' => $letterLink,
         ];
     }
 }

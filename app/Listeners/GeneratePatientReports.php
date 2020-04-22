@@ -51,7 +51,6 @@ class GeneratePatientReports
                     GenerateReports::dispatch($patient->id, $instance->year)->onQueue('awv-high');
                 }
             }
-
         }
     }
 }

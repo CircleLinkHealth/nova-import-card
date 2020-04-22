@@ -61,7 +61,7 @@ class QueueGenerateProviderReports extends Command
         }
 
         $this->patientIds = $patientIds;
-        $this->year       = $this->argument('year')
+        $this->year = $this->argument('year')
             ? intval($this->argument('year'))
             : Carbon::now()->year;
 

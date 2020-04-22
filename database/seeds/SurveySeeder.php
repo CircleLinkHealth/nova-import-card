@@ -44,7 +44,6 @@ class SurveySeeder extends Seeder
         $questionsData = $this->hraQuestionData();
 
         $this->createQuestions($currentInstance, $questionsData);
-
     }
 
     private function hraQuestionData(): Collection
@@ -104,8 +103,7 @@ class SurveySeeder extends Seeder
                 'question_type' => QuestionType::NUMBER,
                 'question_type_answers' => [
                     [
-                        'options' =>
-                            [
+                        'options' => [
                                 'sub_parts' => [
                                     [
                                         'placeholder' => "Feet'",
@@ -1571,7 +1569,6 @@ class SurveySeeder extends Seeder
     public function createQuestions($instance, $questionsData)
     {
         foreach ($questionsData as $questionData) {
-
             if (array_key_exists('question_group', $questionData)) {
                 $groupId = QuestionGroup::firstOrCreate([
                     'body' => $questionData['question_group'],
@@ -1594,7 +1591,6 @@ class SurveySeeder extends Seeder
                     : null,
             ]);
 
-
             $questionType = $question->type()->create([
                 'type' => $questionData['question_type'],
             ]);
@@ -1612,7 +1608,6 @@ class SurveySeeder extends Seeder
                 }
             }
 
-
             $instance->questions()->attach(
                 $question->id,
                 [
@@ -1623,7 +1618,6 @@ class SurveySeeder extends Seeder
                 ]
             );
         }
-
     }
 
     private function createVitalsSurvey()
@@ -1641,7 +1635,6 @@ class SurveySeeder extends Seeder
         $questionsData = $this->vitalsQuestionData();
 
         $this->createQuestions($currentInstance, $questionsData);
-
     }
 
     private function vitalsQuestionData(): Collection
@@ -1688,8 +1681,7 @@ class SurveySeeder extends Seeder
                 'question_type' => QuestionType::NUMBER,
                 'question_type_answers' => [
                     [
-                        'options' =>
-                            [
+                        'options' => [
                                 'sub_parts' => [
                                     [
                                         'placeholder' => "Feet'",
@@ -1849,7 +1841,7 @@ class SurveySeeder extends Seeder
                 'question_type_answers' => [
                     [
                         'options' => [
-                            'input_format' => 'phone'
+                            'input_format' => 'phone',
                         ],
                     ],
                 ],
@@ -1877,7 +1869,7 @@ class SurveySeeder extends Seeder
                 'question_body' => 'Choose preferred contact time:',
                 'question_type' => QuestionType::TIME,
                 'conditions' => [
-                    'required_regex' => 'time'
+                    'required_regex' => 'time',
                 ],
                 'question_type_answers' => [
                     [
@@ -1951,12 +1943,12 @@ class SurveySeeder extends Seeder
                 'question_type' => QuestionType::CONFIRMATION,
                 'conditions' => [
                     [
-                        "nonAwvCheck" => "isSurveyOnlyUser"
-                    ]
+                        'nonAwvCheck' => 'isSurveyOnlyUser',
+                    ],
                 ],
                 'question_type_answers' => [
                     [
-                        'type_answer_body' => 'Confirm'
+                        'type_answer_body' => 'Confirm',
                     ],
                 ],
             ],
