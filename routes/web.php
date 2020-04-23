@@ -2231,7 +2231,7 @@ Route::get('/enrollee-contact-details', [
 Route::get('/review-letter/{userId}', [
     'uses' => 'Enrollment\AutoEnrollmentCenterController@reviewLetter',
     'as'   => 'enrollee.to.review.letter',
-])->middleware('auth');
+]);
 
 Route::get('/notification-unsubscribe', [
     'uses' => 'NotificationsMailSubscriptionController@unsubscribe',

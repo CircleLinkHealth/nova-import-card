@@ -41,11 +41,11 @@ class ListenToAwvChannel implements ShouldQueue
      */
     public function handle()
     {
-        if (self::AWV_REPORT_CREATED === $this->channel) {
+        if ('enrollable-survey-completed' === $this->channel) {
             AwvPatientReportNotify::dispatch($this->data);
         }
 
-        if (self::ENROLLMENT_SURVEY_COMPLETED === $this->channel) {
+        if ('enrollable-survey-completed' === $this->channel) {
             EnrollableSurveyCompleted::dispatch($this->data);
         }
     }

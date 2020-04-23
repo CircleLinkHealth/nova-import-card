@@ -71,7 +71,7 @@ class AutoEnrollmentCenterController extends Controller
     {
 //        Remember all enrollees at this point have user model also
         if ( ! $request->hasValidSignature()) {
-            abort(401);
+            abort(403, 'Unauthorized action.');
         }
         $enrollableId     = $request->input('enrollable_id');
         $isSurveyOnlyUser = $request->input('is_survey_only');
@@ -179,7 +179,10 @@ class AutoEnrollmentCenterController extends Controller
         return 'Done!';
     }
 
-    public function getAwvInvitationLinkForUser($user)
+    /**
+     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Query\Builder|object|null
+     */
+    public function getAwvInvitationLinkForUser(User $user)
     {
         return DB::table('invitation_links')
             ->where('patient_info_id', $user->patientInfo->id)
@@ -501,8 +504,8 @@ class AutoEnrollmentCenterController extends Controller
             return $this->returnEnrolleeRequestedInfoMessage($enrollee);
         }
 
-        if ($this->hasSurveyInProgress($userCreatedFromEnrollee) && ! $linkIsManuallyExpired) {
-            return redirect($this->getAwvInvitationLinkForUser($enrollee)->url);
+        if ($this->hasSurveyInProgress($userCreatedFromEnrollee)) {
+            return redirect($this->getAwvInvitationLinkForUser($userCreatedFromEnrollee)->url);
         }
 
         return $this->enrollmentLetterView($userCreatedFromEnrollee, true, $enrollee, false);
