@@ -184,7 +184,6 @@ class EnrollmentCenterController extends ApiController
         $report              = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
         $report->no_utc      = $report->no_utc + 1;
         $report->total_calls = $report->total_calls + 1;
-//        $report->total_time_in_system = $request->input('total_time_in_system');
         $report->save();
 
         $enrollee->last_call_outcome = $request->input('reason');
@@ -192,6 +191,8 @@ class EnrollmentCenterController extends ApiController
         if ($request->input('reason_other')) {
             $enrollee->last_call_outcome_reason = $request->input('reason_other');
         }
+
+        $enrollee->other_note = $request->input('utc_note');
 
         $enrollee->care_ambassador_user_id = $careAmbassador->user_id;
 
@@ -206,7 +207,6 @@ class EnrollmentCenterController extends ApiController
 
         $enrollee->attempt_count   = $enrollee->attempt_count + 1;
         $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
-//        $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
 
         $enrollee->save();
 

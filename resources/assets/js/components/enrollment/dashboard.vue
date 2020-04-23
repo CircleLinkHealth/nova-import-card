@@ -31,6 +31,18 @@
                 </div>
             </div>
         </div>
+        <div id="error" class="modal confirm" style="width: 40% !important">
+            <div class="modal-content">
+                <div><i
+                        class="material-icons left modal-error-icon">error</i></div>
+                <div class="error-header">
+                    <span>Oops! Something went wrong... </span>
+                </div>
+                <div class="error-message">
+                    <span>{{this.error}}</span>
+                </div>
+            </div>
+        </div>
         <div v-if="!loading">
             <div v-if="patientExists">
                 <patient-to-enroll :patient-data="patientData" :time-tracker="$refs.timeTracker" :debug="debug"></patient-to-enroll>
@@ -42,7 +54,7 @@
                        style="background: red;  margin-top: 1%; margin-left: 50%; position: fixed"><i
                             class="material-icons left">call_end</i>Hang Up</a>
                 </div>
-                <div class="row">
+                <div v-if="shouldShowCookie" class="row">
                     <div class="col cookie">
                         <div class="card horizontal">
                             <div class="card-image">
@@ -59,6 +71,10 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div v-if="this.error" class="row">
+                    <i
+                            class="material-icons left error-image">error_outline</i>
                 </div>
             </div>
         </div>
@@ -96,12 +112,17 @@
         computed: {
             patientExists: function () {
                 return this.patientData.enrollable_id;
+            },
+            shouldShowCookie: function(){
+                return ! this.patientExists && !this.error
             }
+
         },
         data: function () {
             return {
                 patientData: [],
                 loading: false,
+                error: null,
                 phone: null,
                 callError: null,
                 onCall: false,
@@ -113,7 +134,8 @@
                 device: null,
                 log: null,
                 phone_type: null,
-                loading_modal: null
+                loading_modal: null,
+                error_modal: null
             };
         },
         mounted: function () {
@@ -123,7 +145,14 @@
                 preventScrolling: true,
                 dismissible: false
             });
+
+            M.Modal.init($('#error'), {
+                preventScrolling: true,
+                dismissible: true
+            });
             this.loading_modal = M.Modal.getInstance(document.getElementById('loading'));
+            this.error_modal = M.Modal.getInstance(document.getElementById('error'));
+
             this.loading_modal.open();
 
             this.retrievePatient();
@@ -195,6 +224,9 @@
                     .catch(err => {
                         //to implement
                         this.loading = false;
+                        this.loading_modal.close()
+                        this.error = 'Something went wrong while retrieving patient. Please contact support.';
+                        this.error_modal.open()
                         console.error(err);
                     });
             },
@@ -238,7 +270,10 @@
                 this.onCall = false;
                 this.callStatus = "Ended Call";
                 M.toast({html: this.callStatus, displayLength: 3000});
-                this.device.disconnectAll();
+                //if anything goes wrong with twilio, prevent page from falsely showing  message: 'Calling...'
+                if (this.device){
+                    this.device.disconnectAll();
+                }
             },
             initTwilio: function () {
                 const self = this;
@@ -304,6 +339,23 @@
         font-size: large;
     }
 
+    .error-header {
+        margin-top: 25%;
+        margin-bottom: 10%;
+        text-align: center;
+    }
+
+    .error-header span {
+        color: darkgray;
+        font-size: large;
+    }
+
+    .error-message {
+        text-align: center;
+        font-size: medium;
+        padding-bottom: 10%;
+    }
+
     .cookie {
         margin-top: 10%;
         margin-left: 15%;
@@ -341,6 +393,18 @@
 
     .on-call-info ul li {
         text-align: center;
+    }
+    .error-image {
+        color:red;
+        margin-left:44%;
+        margin-top:15%;
+        font-size: 190px;
+    }
+    .modal-error-icon {
+        margin-top:10%;
+        margin-left: 45%;
+        color: red;
+        font-size: 50px;
     }
 </style>
 

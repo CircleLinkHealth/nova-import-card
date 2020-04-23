@@ -263,7 +263,11 @@
                         <span v-if="last_call_outcome_reason !== ''">
                         <br/>
                         Last Call Comment: {{ last_call_outcome_reason }}
-                    </span>
+                        </span>
+                        <span v-if="utc_note !== ''">
+                        <br/>
+                        Note: {{ utc_note }}
+                        </span>
                     </blockquote>
 
                     <div class="enrollment-script font-size-20">
@@ -530,6 +534,11 @@
                                 <input name="utc_callback" id="utc_callback">
                             </div>
 
+                            <div class="col s12 m12">
+                                <label for="utc-note" class="label">Note:</label>
+                                <input class="input-field" v-model="utc_note" name="utc_note" id="utc-note">
+                            </div>
+
                         </div>
 
                         <input type="hidden" name="status" value="utc">
@@ -625,8 +634,8 @@
                                                v-model="confirmed_family_members">
                                         <span>{{member.first_name}} {{member.last_name}}</span>
                                         <ul style="padding-left: 10px">
-                                            <li><strong>Addresses:</strong>{{member.addresses.value}}</li>
-                                            <li><strong>Phones:</strong>{{member.phones.value}}</li>
+                                            <li><strong>Addresses:</strong><span v-html="member.addresses.value"></span></li>
+                                            <li><strong>Phones:</strong><span v-html="member.phones.value"></span></li>
                                         </ul>
                                     </label>
                                 </li>
@@ -927,6 +936,7 @@
                 last_call_outcome: '',
                 last_call_outcome_reason: '',
                 extra: '',
+                utc_note: '',
                 name: '',
                 lang: '',
                 home_phone: '',
@@ -1201,7 +1211,7 @@
                 this.callError = null;
                 this.onCall = true;
                 this.callHasBeenPerformed = true;
-                this.callStatus = "Calling " + type + "..." + phoneSanitized;
+                this.callStatus = "Calling " + type + "..." + phone;
                 M.toast({html: this.callStatus, displayLength: 3000});
 
                 App.$emit('enrollable:call', {

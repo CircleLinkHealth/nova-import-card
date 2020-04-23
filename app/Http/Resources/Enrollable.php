@@ -11,7 +11,6 @@ use App\TrixField;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Resources\Json\Resource;
-use Illuminate\Support\Str;
 
 class Enrollable extends Resource
 {
@@ -62,19 +61,22 @@ class Enrollable extends Resource
                 : $enrollable->getOriginal('home_phone'),
 
             //we need to prefill these per CPM-2256 for confirmed family members
-            'utc_reason' => Enrollee::UNREACHABLE === $enrollable->status && $enrollable->last_call_outcome
+            'utc_reason' => Enrollee::TO_CONFIRM_UNREACHABLE === $enrollable->status && ! empty($enrollable->last_call_outcome)
                 ? $enrollable->last_call_outcome
                 : '',
-            'reason' => Enrollee::UNREACHABLE !== $enrollable->status && $enrollable->last_call_outcome
+            'reason' => in_array($enrollable->status, [Enrollee::TO_CONFIRM_REJECTED, Enrollee::TO_CONFIRM_SOFT_REJECTED]) && ! empty($enrollable->last_call_outcome)
                 ? $enrollable->last_call_outcome
                 : '',
-            'utc_reason_other' => Enrollee::UNREACHABLE === $enrollable->status && $enrollable->last_call_outcome_reason
+            'utc_reason_other' => Enrollee::TO_CONFIRM_UNREACHABLE === $enrollable->status && ! empty($enrollable->last_call_outcome_reason)
                 ? $enrollable->last_call_outcome_reason
                 : '',
-            'reason_other' => Enrollee::UNREACHABLE !== $enrollable->status && $enrollable->last_call_outcome_reason
+            'reason_other' => in_array($enrollable->status, [Enrollee::TO_CONFIRM_REJECTED, Enrollee::TO_CONFIRM_SOFT_REJECTED]) && ! empty($enrollable->last_call_outcome_reason)
                 ? $enrollable->last_call_outcome_reason
                 : '',
-            'extra'           => $enrollable->other_note,
+            //extra is the field for note on consented modal - we need this in case Enrollable is TO_CONFIRM_CONSENTED (pre-filling consented options from previous family member)
+            'extra' => Enrollee::TO_CONFIRM_CONSENTED === $enrollable->status && ! empty($enrollable->other_note) ? $enrollable->other_note : '',
+            //extra field on UTC modal
+            'utc_note'        => in_array($enrollable->status, [Enrollee::TO_CONFIRM_UNREACHABLE, Enrollee::UNREACHABLE]) && ! empty($enrollable->other_note) ? $enrollable->other_note : '',
             'last_encounter'  => $enrollable->last_encounter ?? 'N/A',
             'attempt_count'   => $enrollable->attempt_count ?? 0,
             'last_attempt_at' => optional($enrollable->last_attempt_at)->toDateString() ?? 'N/A',
@@ -95,7 +97,7 @@ class Enrollable extends Resource
             'provider'            => $this->provider->toArray(),
             'provider_phone'      => (new StringManipulation())->formatPhoneNumber($this->provider->getPhone()),
             'has_tips'            => (bool) $this->practice->enrollmentTips,
-            'is_confirmed_family' => Str::startsWith($enrollable->status, 'to_confirm'),
+            'is_confirmed_family' => Enrollee::statusIsToConfirm($enrollable->status),
         ];
     }
 
