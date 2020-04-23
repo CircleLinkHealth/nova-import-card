@@ -474,7 +474,7 @@
                     </div>
                     <div class="modal-footer">
                         <button name="btnSubmit" type="submit"
-                                :disabled="home_is_invalid || cell_is_invalid || other_is_invalid || preferred_phone_empty || contact_day_or_time_empty"
+                                :disabled="home_is_invalid || cell_is_invalid || other_is_invalid || preferred_phone_empty || contact_day_or_time_empty || should_not_perform_action"
                                 class="modal-action waves-effect waves-light btn">Confirm and call next patient
                         </button>
                         <div v-if="onCall === true" style="text-align: center">
@@ -539,7 +539,7 @@
                     </div>
                     <div class="modal-footer">
                         <button name="btnSubmit" type="submit"
-                                :disabled="utc_reason_empty"
+                                :disabled="utc_reason_empty || should_not_perform_action"
                                 class="modal-action waves-effect waves-light btn">Call Next Patient
                         </button>
                         <div v-if="onCall === true" style="text-align: center">
@@ -593,7 +593,7 @@
                     </div>
                     <div class="modal-footer" style="padding-right: 60px">
                         <button name="btnSubmit" type="submit"
-                                :disabled="reason_empty"
+                                :disabled="reason_empty || should_not_perform_action"
                                 class="modal-action waves-effect waves-light btn">Call Next Patient
                         </button>
                         <div v-if="onCall === true" style="text-align: center">
@@ -895,6 +895,14 @@
             reason_empty() {
                 return this.reason.length <= 1;
             },
+            should_not_perform_action(){
+                //Inverse of (because it's used on :disable): allow performing of actions without a call only when enrollable is confirmed family member of other enrollable.
+                //It means that CA may only have called the first enrollable, and may perform actions on confirmed family members without calling them.
+                if (! this.is_confirmed_family){
+                    return ! this.callHasBeenPerformed;
+                }
+                return false;
+            }
         },
         data: function () {
             return {
@@ -943,6 +951,7 @@
                 callStatus: 'Summoning Calling Gods...',
                 toCall: '',
                 callError: null,
+                callHasBeenPerformed: false,
 
                 //urls
                 consentedUrl: rootUrl('enrollment/consented'),
@@ -970,6 +979,7 @@
 
                 suggested_family_members: [],
                 confirmed_family_members: [],
+                is_confirmed_family: false,
 
                 pending_form: null,
                 pending_form_url: null,
@@ -1190,6 +1200,7 @@
                 //phone number now come sanitized from Enrollable Resource, in E164 format
                 this.callError = null;
                 this.onCall = true;
+                this.callHasBeenPerformed = true;
                 this.callStatus = "Calling " + type + "..." + phoneSanitized;
                 M.toast({html: this.callStatus, displayLength: 3000});
 

@@ -11,6 +11,7 @@ use App\TrixField;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Support\Str;
 
 class Enrollable extends Resource
 {
@@ -91,9 +92,10 @@ class Enrollable extends Resource
             'days'  => $enrollable->preferred_days ? explode(', ', $enrollable->preferred_days) : [],
             'times' => $enrollable->preferred_window ? $this->timeRangeToPanelWindows($enrollable->preferred_window) : [],
 
-            'provider'       => $this->provider->toArray(),
-            'provider_phone' => (new StringManipulation())->formatPhoneNumber($this->provider->getPhone()),
-            'has_tips'       => (bool) $this->practice->enrollmentTips,
+            'provider'            => $this->provider->toArray(),
+            'provider_phone'      => (new StringManipulation())->formatPhoneNumber($this->provider->getPhone()),
+            'has_tips'            => (bool) $this->practice->enrollmentTips,
+            'is_confirmed_family' => Str::startsWith($enrollable->status, 'to_confirm'),
         ];
     }
 

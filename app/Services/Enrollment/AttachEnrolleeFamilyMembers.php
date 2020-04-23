@@ -26,7 +26,7 @@ class AttachEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
         //pre-fill status as well. Enrollee should still come next in queue, since we're not checking for status on Confirmed FamilyMembers Queue
         Enrollee::whereIn('id', $ids)->update([
             'care_ambassador_user_id'  => auth()->user()->id,
-            'status'                   => $request->input('status') ?? Enrollee::TO_CALL,
+            'status'                   => $request->input('status') ? Enrollee::getEquivalentToConfirmStatus($request->input('status')) : Enrollee::TO_CALL,
             'last_call_outcome'        => $request->input('reason'),
             'last_call_outcome_reason' => $request->input('reason_other'),
             'other_note'               => $request->input('extra'),
