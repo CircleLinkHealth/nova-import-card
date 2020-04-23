@@ -66,6 +66,7 @@ class Ccda extends Resource
     {
         return [
             new ImportCcdaAction(),
+            new ClearAndReimportCcda(),
         ];
     }
 
@@ -83,14 +84,6 @@ class Ccda extends Resource
     public function authorizedToDelete(Request $request)
     {
         return false;
-    }
-
-    /**
-     * @return bool
-     */
-    public function authorizedToUpdate(Request $request)
-    {
-        return strtolower((app(ImportCcdaAction::class))->name) === strtolower($request->input('action'));
     }
 
     /**
