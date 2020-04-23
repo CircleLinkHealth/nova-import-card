@@ -64,28 +64,28 @@ class ProcessBillablePatients implements ShouldQueue
             ->chunk(
                 100,
                 function ($users) {
-                                     foreach ($users as $user) {
-                                         $pms = $user->patientSummaries->first();
+                    foreach ($users as $user) {
+                        $pms = $user->patientSummaries->first();
 
-                                         if ($this->fromScratch) {
-                                             $pms->reset();
-                                             $pms->save();
-                                         }
+                        if ($this->fromScratch) {
+                            $pms->reset();
+                            $pms->save();
+                        }
 
-                                         if ($this->resetActor) {
-                                             $pms->actor_id = null;
-                                             $pms->save();
-                                         }
+                        if ($this->resetActor) {
+                            $pms->actor_id = null;
+                            $pms->save();
+                        }
 
-                                         if ($this->autoAttest) {
-                                             $pms->autoAttestConditionsIfYouShould();
-                                         }
+                        if ($this->autoAttest) {
+                            $pms->autoAttestConditionsIfYouShould();
+                        }
 
-                                         ProcessApprovableBillablePatientSummary::dispatch(
-                                             $pms
-                                         );
-                                     }
-                                 }
+                        ProcessApprovableBillablePatientSummary::dispatch(
+                            $pms
+                        );
+                    }
+                }
             );
     }
 }

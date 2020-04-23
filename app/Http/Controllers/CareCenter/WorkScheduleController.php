@@ -263,16 +263,16 @@ class WorkScheduleController extends Controller
                     'H:i:s',
                     $window->window_time_end
                 )->diffInHours(Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_start
-                    ));
+                    'H:i:s',
+                    $window->window_time_start
+                ));
             }) + Carbon::createFromFormat(
                 'H:i',
                 $workScheduleData['window_time_end']
             )->diffInHours(Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_start']
-                ));
+                'H:i',
+                $workScheduleData['window_time_start']
+            ));
     }
 
     public function getSelectedNurseCalendarData(Request $request)

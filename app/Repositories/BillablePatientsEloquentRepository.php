@@ -31,22 +31,22 @@ class BillablePatientsEloquentRepository
             ->whereHas(
                 'patientSummaries',
                 function ($query) use ($month, $showApprovedOnly) {
-                           $wheres = [
-                               ['month_year', '=', $month],
-                               [
-                                   'total_time',
-                                   '>=',
-                                   AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS,
-                               ],
-                               ['no_of_successful_calls', '>=', 1],
-                           ];
+                    $wheres = [
+                        ['month_year', '=', $month],
+                        [
+                            'total_time',
+                            '>=',
+                            AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS,
+                        ],
+                        ['no_of_successful_calls', '>=', 1],
+                    ];
 
-                           if (true === $showApprovedOnly) {
-                               $wheres[] = ['approved', '=', true];
-                           }
+                    if (true === $showApprovedOnly) {
+                        $wheres[] = ['approved', '=', true];
+                    }
 
-                           $query->where($wheres);
-                       }
+                    $query->where($wheres);
+                }
             )
             ->ofType('participant')
             ->ofPractice($practiceId);
@@ -67,10 +67,10 @@ class BillablePatientsEloquentRepository
                     AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS
                 )
                     ->orWhere(
-                                                'bhi_time',
-                                                '>=',
-                                                AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS
-                                            );
+                        'bhi_time',
+                        '>=',
+                        AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS
+                    );
             })
             ->when(false === $ignoreWith, function ($q) use ($month, $practiceId) {
                 return $q->with([
@@ -103,13 +103,13 @@ class BillablePatientsEloquentRepository
             ->whereHas(
                 'patient',
                 function ($q) use ($practiceId) {
-                                            $q->whereHas('practices', function ($q) use ($practiceId) {
-                                                $q->where('id', '=', $practiceId);
-                                            })
-                                                ->orWhereHas('primaryPractice', function ($q) use ($practiceId) {
-                                                    $q->where('id', '=', $practiceId);
-                                                });
-                                        }
+                    $q->whereHas('practices', function ($q) use ($practiceId) {
+                        $q->where('id', '=', $practiceId);
+                    })
+                        ->orWhereHas('primaryPractice', function ($q) use ($practiceId) {
+                            $q->where('id', '=', $practiceId);
+                        });
+                }
             );
     }
 }

@@ -51,28 +51,28 @@ class CreateApprovableBillablePatientsReport extends Command
             ->when(
                 $practiceIds,
                 function ($q) use ($practiceIds) {
-                        $q->whereIn('id', $practiceIds);
-                    }
+                    $q->whereIn('id', $practiceIds);
+                }
             )
             ->chunk(
                 1,
                 function ($practices) use ($month) {
-                        foreach ($practices as $practice) {
-                            $this->comment("BEGIN CreateApprovableBillablePatientsReport for $practice->display_name for {$month->toDateString()}");
+                    foreach ($practices as $practice) {
+                        $this->comment("BEGIN CreateApprovableBillablePatientsReport for $practice->display_name for {$month->toDateString()}");
 
-                            ProcessBillablePatients::dispatch(
-                                $practice->id,
-                                $month,
-                                (bool) $this->option('from-scratch'),
-                                (bool) $this->option('reset-actor'),
-                                (bool) $this->option('auto-attest')
-                            );
+                        ProcessBillablePatients::dispatch(
+                            $practice->id,
+                            $month,
+                            (bool) $this->option('from-scratch'),
+                            (bool) $this->option('reset-actor'),
+                            (bool) $this->option('auto-attest')
+                        );
 
-                            $this->output->success(
-                                "END CreateApprovableBillablePatientsReport for $practice->display_name for {$month->toDateString()}"
-                            );
-                        }
+                        $this->output->success(
+                            "END CreateApprovableBillablePatientsReport for $practice->display_name for {$month->toDateString()}"
+                        );
                     }
+                }
             );
     }
 }

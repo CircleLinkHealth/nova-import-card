@@ -84,8 +84,8 @@ class PatientIsNotDuplicate implements Rule
             ->whereHas(
                 'patientInfo',
                 function ($q) {
-                                                    $q->where('birth_date', $this->dob);
-                                                }
+                    $q->where('birth_date', $this->dob);
+                }
             )->where('program_id', $this->practiceId)
             ->when($this->patientUserId, function ($q) {
                 $q->where('id', '!=', $this->patientUserId);
