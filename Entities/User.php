@@ -2707,6 +2707,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if (App::environment(['review', 'local'])) {
             return '+35799018718'; // tester
         }
+
         return $this->getPhone();
     }
 
