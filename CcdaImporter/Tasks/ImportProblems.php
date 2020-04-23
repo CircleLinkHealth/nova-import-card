@@ -103,25 +103,31 @@ class ImportProblems extends BaseCcdaImportTask
     private function fetchNamesFromApi(Collection &$problemsGroups)
     {
         return $problemsGroups->transform(function ($problem) {
-            if ((new NameNotNull())->isValid($problem) || ! $problem['code']) {
+            if ((new NameNotNull())->isValid($problem)) {
                 return $problem;
             }
+            
+            $translationCodes = collect($problem['codes'] ?? []);
 
+            //do not import problem if it does not have a name nor a code
+            if ( ! $problem['code'] && $translationCodes->pluck('code')->filter()->isEmpty()) {
+                return false;
+            }
             $lookup = LookupCondition::lookup($problem['code'], 'any');
 
             $problem['name'] = $lookup['name'];
             $problem['code_system_name'] = $lookup['type'];
-            $problem['codes'] = collect($problem['codes'] ?? [])->transform(function ($code) use ($lookup, $problem) {
+            $problem['codes'] = $translationCodes->transform(function ($code) use ($lookup, $problem) {
                 if ($code['code'] == $problem['code']) {
                     $code['code_system_name'] = $lookup['type'];
                     $code['name'] = $lookup['name'];
                 }
 
                 return $code;
-            })->all();
+            })->filter()->values()->all();
 
             return $problem;
-        });
+        })->filter()->values();
     }
 
     private function getCpmProblem($itemLog, $problemName)
@@ -311,7 +317,7 @@ class ImportProblems extends BaseCcdaImportTask
                     ? false
                     : $name;
             }
-        )
+        )->filter()
             ->values();
     }
 
