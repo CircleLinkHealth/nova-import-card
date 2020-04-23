@@ -124,8 +124,8 @@ class ImporterController extends Controller
                         )->whereHas(
                             'directMessage',
                             function ($q) {
-                                                        $q->where('from', 'like', '%@upg.ssdirect.aprima.com');
-                                                    }
+                                $q->where('from', 'like', '%@upg.ssdirect.aprima.com');
+                            }
                         )->where('id', $ccda->id)->exists();
 
                         if ($isUpg0506Incomplete) {
