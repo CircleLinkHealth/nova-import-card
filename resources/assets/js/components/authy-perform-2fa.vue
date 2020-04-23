@@ -90,6 +90,7 @@
         name: 'authy-perform-2fa',
         props: [
             'authyUser',
+            'redirectTo'
         ],
         components: {
             'loader': LoaderComponent,
@@ -295,13 +296,13 @@
                 self.errors.clear();
                 self.startLoader();
 
-                console.log("2FA successful! Redirecting to homepage.");
+                console.log(`2FA successful! Redirecting to ${self.redirectTo}.`);
 
-                self.bannerText = '2FA successful! Redirecting to homepage.';
+                self.bannerText = '2FA successful! Redirecting...';
                 self.bannerType = 'success';
                 self.showBanner = true;
 
-                window.location.href = '/';
+                window.location.href = self.redirectTo || '/';
             },
             denied() {
                 let self = this;
