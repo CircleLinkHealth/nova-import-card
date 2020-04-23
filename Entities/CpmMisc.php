@@ -22,15 +22,15 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                 $patient
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection         $revisionHistory
  * @property \CircleLinkHealth\SharedModels\Entities\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection      $users
- * @method static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc newModelQuery()
- * @method static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc newQuery()
- * @method static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc query()
- * @method static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereCareItemId($value)
- * @method static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereCreatedAt($value)
- * @method static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereDetailsCareItemId($value)
- * @method static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereId($value)
- * @method static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereName($value)
- * @method static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereUpdatedAt($value)
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc newModelQuery()
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc newQuery()
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc query()
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereCareItemId($value)
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereCreatedAt($value)
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereDetailsCareItemId($value)
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereId($value)
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereName($value)
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property int|null $care_plan_templates_count
  * @property int|null $cpm_instructions_count
