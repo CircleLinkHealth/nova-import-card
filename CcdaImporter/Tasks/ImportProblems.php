@@ -108,15 +108,15 @@ class ImportProblems extends BaseCcdaImportTask
             }
 
             $lookup = LookupCondition::lookup($problem['code'], 'any');
-    
+
             $problem['name'] = $lookup['name'];
             $problem['code_system_name'] = $lookup['type'];
-            $problem['codes'] = collect($problem['codes'] ?? [])->transform(function ($code) use ($lookup, $problem){
+            $problem['codes'] = collect($problem['codes'] ?? [])->transform(function ($code) use ($lookup, $problem) {
                 if ($code['code'] == $problem['code']) {
                     $code['code_system_name'] = $lookup['type'];
                     $code['name'] = $lookup['name'];
                 }
-                
+
                 return $code;
             })->all();
 
