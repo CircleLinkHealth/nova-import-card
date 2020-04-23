@@ -26,8 +26,7 @@ class PopulateEnrollmentLetter extends Migration
      */
     public function up()
     {
-        $enrollmentInvitationLetters = EnrollmentInvitationLetter::first();
-        if (! isUnitTestingEnv() && empty($enrollmentInvitationLetters)) {
+        if (! isUnitTestingEnv()) {
             Artisan::call('db:seed', [
                 '--class' => EnrollmentInvitationLetterSeeder::class,
             ]);
