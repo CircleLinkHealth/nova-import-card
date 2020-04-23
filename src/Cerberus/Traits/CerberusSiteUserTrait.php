@@ -562,6 +562,7 @@ trait CerberusSiteUserTrait
      * @param $site
      *
      * @throws \Exception
+     *
      * @return bool
      */
     public function validateSite($site)
