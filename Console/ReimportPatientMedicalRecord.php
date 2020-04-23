@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 
 class ReimportPatientMedicalRecord extends Command
 {
+    private const ATTEMPTS = 3;
     /**
      * The console command description.
      *
@@ -41,8 +42,6 @@ class ReimportPatientMedicalRecord extends Command
      * @var Enrollee
      */
     private $enrollee;
-    
-    private const ATTEMPTS = 3;
 
     /**
      * Create a new command instance.
