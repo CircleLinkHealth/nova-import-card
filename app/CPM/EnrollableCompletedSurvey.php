@@ -11,17 +11,17 @@ class EnrollableCompletedSurvey extends AwvToCpmRedisEvent
     /**
      * @var User
      */
-    private $enrollable;
+    private $enrollableId;
 
     protected $channel = 'enrollable-survey-completed';
 
     /**
      * EnrollableCompletedSurvey constructor.
-     * @param User $enrollable
+     * @param $enrollableId
      */
-    public function __construct(User $enrollable)
+    public function __construct($enrollableId)
     {
-        $this->enrollable = $enrollable;
+        $this->enrollableId = $enrollableId;
     }
 
     /**
@@ -31,7 +31,7 @@ class EnrollableCompletedSurvey extends AwvToCpmRedisEvent
     public function publishEnrollableCompletedSurvey($surveyInstanceId){
 
         $this->publish([
-            'enrollable_id' => $this->enrollable->id,
+            'enrollable_id' => $this->enrollableId,
             'survey_instance_id' => $surveyInstanceId
         ]);
     }
