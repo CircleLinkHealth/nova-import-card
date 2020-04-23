@@ -20,18 +20,18 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \Carbon\Carbon                           $created_at
  * @property \Carbon\Carbon                           $updated_at
  * @property \CircleLinkHealth\Customer\Entities\User $patient
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight whereCreatedAt($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight whereId($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight whereMonitorChangesForChf($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight wherePatientId($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight whereStarting($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight whereTarget($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight whereUpdatedAt($value)
+ * @method static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight whereCreatedAt($value)
+ * @method static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight whereId($value)
+ * @method static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight whereMonitorChangesForChf($value)
+ * @method static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight wherePatientId($value)
+ * @method static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight whereStarting($value)
+ * @method static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight whereTarget($value)
+ * @method static                                   \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight newModelQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight newQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight query()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight newModelQuery()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight newQuery()
+ * @method static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight query()
  * @property int|null                                                                                    $revision_history_count
  */
 class CpmWeight extends \CircleLinkHealth\Core\Entities\BaseModel implements Biometric
