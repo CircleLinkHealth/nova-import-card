@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\Raygun;
 
 use CircleLinkHealth\Raygun\PsrLogger\RaygunLogger;
@@ -12,35 +16,30 @@ use Raygun4php\RaygunClient;
 class LaravelLogger extends RaygunLogger
 {
     use EventTrait;
-    
+
     /**
      * Create a new laravel logger instance.
      *
-     * @param \Bugsnag\Client                              $client
-     * @param \Illuminate\Contracts\Events\Dispatcher|null $dispatcher
+     * @param \Bugsnag\Client $client
      *
      * @return void
      */
     public function __construct(RaygunClient $client, Dispatcher $dispatcher = null)
     {
         parent::__construct($client);
-        
+
         $this->dispatcher = $dispatcher;
     }
-    
+
     /**
-     * Register a file log handler.
+     * Get the underlying Monolog instance.
      *
-     * @param string $path
-     * @param string $level
-     *
-     * @return void
+     * @return \Monolog\Logger
      */
-    public function useFiles($path, $level = 'debug')
+    public function getMonolog()
     {
-        //
     }
-    
+
     /**
      * Register a daily file log handler.
      *
@@ -52,19 +51,20 @@ class LaravelLogger extends RaygunLogger
      */
     public function useDailyFiles($path, $days = 0, $level = 'debug')
     {
-        //
     }
-    
+
     /**
-     * Get the underlying Monolog instance.
+     * Register a file log handler.
      *
-     * @return \Monolog\Logger
+     * @param string $path
+     * @param string $level
+     *
+     * @return void
      */
-    public function getMonolog()
+    public function useFiles($path, $level = 'debug')
     {
-        //
     }
-    
+
     /**
      * Format the parameters for the logger.
      *
@@ -77,15 +77,15 @@ class LaravelLogger extends RaygunLogger
         if (is_array($message)) {
             return var_export($message, true);
         }
-        
+
         if ($message instanceof Jsonable) {
             return $message->toJson();
         }
-        
+
         if ($message instanceof Arrayable) {
             return var_export($message->toArray(), true);
         }
-        
+
         return $message;
     }
 }

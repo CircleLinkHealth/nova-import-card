@@ -1,9 +1,13 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\Raygun\PsrLogger;
 
-use Illuminate\Support\Facades\App;
 use Exception;
+use Illuminate\Support\Facades\App;
 use Psr\Log\LogLevel;
 use Raygun4php\RaygunClient;
 use Throwable;
@@ -16,47 +20,27 @@ class RaygunLogger extends AbstractLogger
      * @var \Raygun4php\RaygunClient
      */
     protected $client;
-    
+
     /**
      * The minimum level required to notify Raygun.
      *
      * @var string
      */
     protected $notifyLevel = LogLevel::DEBUG;
-    
+
     /**
      * Create a new raygun logger instance.
-     *
-     *
-     * @param RaygunClient $client
      */
     public function __construct(RaygunClient $client)
     {
         $this->client = $client;
     }
-    
-    /**
-     * Set the notifyLevel of the logger, as defined in Psr\Log\LogLevel.
-     *
-     * @param string $notifyLevel
-     *
-     * @return void
-     */
-    public function setNotifyLevel($notifyLevel)
-    {
-        if (!in_array($notifyLevel, $this->getLogLevelOrder())) {
-            syslog(LOG_WARNING, 'Raygun Warning: Invalid notify level supplied to Raygun Logger');
-        } else {
-            $this->notifyLevel = $notifyLevel;
-        }
-    }
-    
+
     /**
      * Log a message to the logs.
      *
      * @param string $level
      * @param mixed  $message
-     * @param array  $context
      *
      * @return void
      */
@@ -67,7 +51,7 @@ class RaygunLogger extends AbstractLogger
             $title = $context['title'];
             unset($context['title']);
         }
-        
+
         $exception = null;
         if (isset($context['exception']) && ($context['exception'] instanceof Exception || $context['exception'] instanceof Throwable)) {
             $exception = $context['exception'];
@@ -75,44 +59,68 @@ class RaygunLogger extends AbstractLogger
         } elseif ($message instanceof Exception || $message instanceof Throwable) {
             $exception = $message;
         }
-        
+
         // Below theshold, do not send a notification
-        if (!$this->aboveLevel($level, $this->notifyLevel)) {
+        if ( ! $this->aboveLevel($level, $this->notifyLevel)) {
             return;
         }
-    
+
         if (config('cpm-module-raygun.enable_crash_reporting')) {
-            if ($exception !== null) {
+            if (null !== $exception) {
                 $this->client->SendException($exception, $this->getTagsFor($exception), array_merge($context, ['on' => $exception->getFile().':'.$exception->getLine()]));
             } else {
-                $this->client->SendError(500, $title. $this->formatMessage($message), $context['file'] ?? __FILE__, $context['line'] ?? __LINE__, [$level]);
+                $this->client->SendError(500, $title.$this->formatMessage($message), $context['file'] ?? __FILE__, $context['line'] ?? __LINE__, [$level]);
             }
         }
     }
-    
+
     /**
-     * Gets the tags to store with the exception.
+     * Set the notifyLevel of the logger, as defined in Psr\Log\LogLevel.
      *
-     * @param Exception|Throwable $exception
+     * @param string $notifyLevel
      *
-     * @return array
+     * @return void
      */
-    protected function getTagsFor($exception) {
-        return [get_class($exception), $exception->getMessage(), 'env:'.App::environment()];
+    public function setNotifyLevel($notifyLevel)
+    {
+        if ( ! in_array($notifyLevel, $this->getLogLevelOrder())) {
+            syslog(LOG_WARNING, 'Raygun Warning: Invalid notify level supplied to Raygun Logger');
+        } else {
+            $this->notifyLevel = $notifyLevel;
+        }
     }
-    
+
     /**
      * Checks whether the selected level is above another level.
+     *
+     * @param mixed $level
+     * @param mixed $base
      */
     protected function aboveLevel($level, $base)
     {
         $levelOrder = $this->getLogLevelOrder();
-        $baseIndex = array_search($base, $levelOrder);
+        $baseIndex  = array_search($base, $levelOrder);
         $levelIndex = array_search($level, $levelOrder);
-        
+
         return $levelIndex >= $baseIndex;
     }
-    
+
+    /**
+     * Format the parameters for the logger.
+     *
+     * @param mixed $message
+     *
+     * @return string
+     */
+    protected function formatMessage($message)
+    {
+        if (is_array($message)) {
+            return var_export($message, true);
+        }
+
+        return $message;
+    }
+
     /**
      * Returns a list of log levels in order.
      */
@@ -129,7 +137,7 @@ class RaygunLogger extends AbstractLogger
             LogLevel::EMERGENCY,
         ];
     }
-    
+
     /**
      * Get the severity for the logger.
      *
@@ -139,31 +147,28 @@ class RaygunLogger extends AbstractLogger
      */
     protected function getSeverity($level)
     {
-        if (!$this->aboveLevel($level, 'notice')) {
+        if ( ! $this->aboveLevel($level, 'notice')) {
             return 'info';
-        } elseif (!$this->aboveLevel($level, 'warning')) {
+        }
+        if ( ! $this->aboveLevel($level, 'warning')) {
             return 'warning';
-        } else {
-            return 'error';
         }
+
+        return 'error';
     }
-    
+
     /**
-     * Format the parameters for the logger.
+     * Gets the tags to store with the exception.
      *
-     * @param mixed $message
+     * @param Exception|Throwable $exception
      *
-     * @return string
+     * @return array
      */
-    protected function formatMessage($message)
+    protected function getTagsFor($exception)
     {
-        if (is_array($message)) {
-            return var_export($message, true);
-        }
-        
-        return $message;
+        return [get_class($exception), $exception->getMessage(), 'env:'.App::environment()];
     }
-    
+
     /**
      * Ensure the given string is less than 100 characters.
      *
@@ -176,7 +181,7 @@ class RaygunLogger extends AbstractLogger
         if (strlen($str) <= 100) {
             return $str;
         }
-        
+
         return rtrim(substr($str, 0, 97)).'...';
     }
 }

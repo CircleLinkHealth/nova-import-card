@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 3/26/19
- * Time: 9:05 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace CircleLinkHealth\Raygun\Entities;
-
 
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -20,7 +17,7 @@ class RaygunUser
     {
         /** @var User $user */
         $user = auth()->user();
-        
+
         return
             [
                 'identifier'  => $user->id,

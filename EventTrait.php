@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\Raygun;
 
 use Closure;
@@ -15,7 +19,7 @@ trait EventTrait
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
     protected $dispatcher;
-    
+
     /**
      * Get the event dispatcher instance.
      *
@@ -25,23 +29,9 @@ trait EventTrait
     {
         return $this->dispatcher;
     }
-    
-    /**
-     * Set the event dispatcher instance.
-     *
-     * @param \Illuminate\Contracts\Events\Dispatcher $dispatcher
-     *
-     * @return void
-     */
-    public function setEventDispatcher(Dispatcher $dispatcher)
-    {
-        $this->dispatcher = $dispatcher;
-    }
-    
+
     /**
      * Register a new callback handler for when a log event is triggered.
-     *
-     * @param \Closure $callback
      *
      * @throws \RuntimeException
      *
@@ -49,35 +39,43 @@ trait EventTrait
      */
     public function listen(Closure $callback)
     {
-        if (!isset($this->dispatcher)) {
+        if ( ! isset($this->dispatcher)) {
             throw new RuntimeException('Events dispatcher has not been set.');
         }
-        
+
         $this->dispatcher->listen(class_exists(MessageLogged::class) ? MessageLogged::class : 'illuminate.log', $callback);
     }
-    
+
     /**
      * Log a message to the logs.
      *
      * @param string $level
      * @param mixed  $message
-     * @param array  $context
      *
      * @return void
      */
     public function log($level, $message, array $context = [])
     {
         parent::log($level, $message, $context);
-        
+
         $this->fireLogEvent($level, $message, $context);
     }
-    
+
+    /**
+     * Set the event dispatcher instance.
+     *
+     * @return void
+     */
+    public function setEventDispatcher(Dispatcher $dispatcher)
+    {
+        $this->dispatcher = $dispatcher;
+    }
+
     /**
      * Fires a log event.
      *
      * @param string $level
      * @param string $message
-     * @param array  $context
      *
      * @return void
      */
@@ -86,10 +84,10 @@ trait EventTrait
         // If the event dispatcher is set, we will pass along the parameters to the
         // log listeners. These are useful for building profilers or other tools
         // that aggregate all of the log messages for a given "request" cycle.
-        if (!isset($this->dispatcher)) {
+        if ( ! isset($this->dispatcher)) {
             return;
         }
-        
+
         if (class_exists(MessageLogged::class)) {
             $this->dispatcher->dispatch(new MessageLogged($level, $message, $context));
         } else {
