@@ -16,9 +16,9 @@ use Tests\TestCase;
 
 class PracticePcmBillingTest extends TestCase
 {
-    use UserHelpers;
     use PracticeHelpers;
     use TimeHelpers;
+    use UserHelpers;
 
     /** @var ApproveBillablePatientsService */
     protected $service;
@@ -29,11 +29,11 @@ class PracticePcmBillingTest extends TestCase
         $this->service = $this->app->make(ApproveBillablePatientsService::class);
     }
 
-    public function test_pcm_not_charged_when_not_enabled_for_practice()
+    public function test_pcm_charged_only()
     {
-        $practice = $this->setupPractice(true);
+        $practice = $this->setupPractice(false, false, false, true);
         $nurse    = $this->getNurse($practice->id);
-        $patient  = $this->setupPatient($practice);
+        $patient  = $this->setupPatient($practice, false, true);
 
         $this->addTime($nurse, $patient, 35, true, 1);
 
@@ -50,17 +50,17 @@ class PracticePcmBillingTest extends TestCase
             }
 
             $arr['chargeable_services']->collection->each(function ($service) use (&$billedForCcm, &$billedForPcm) {
-                if ($service->code === ChargeableService::CCM) {
+                if (ChargeableService::CCM === $service->code) {
                     $billedForCcm = true;
                 }
-                if ($service->code === ChargeableService::PCM) {
+                if (ChargeableService::PCM === $service->code) {
                     $billedForPcm = true;
                 }
             });
         });
 
-        $this->assertEquals(true, $billedForCcm);
-        $this->assertEquals(false, $billedForPcm);
+        $this->assertEquals(false, $billedForCcm);
+        $this->assertEquals(true, $billedForPcm);
     }
 
     public function test_pcm_not_charged_when_ccm_eligible()
@@ -84,10 +84,10 @@ class PracticePcmBillingTest extends TestCase
             }
 
             $arr['chargeable_services']->collection->each(function ($service) use (&$billedForCcm, &$billedForPcm) {
-                if ($service->code === ChargeableService::CCM) {
+                if (ChargeableService::CCM === $service->code) {
                     $billedForCcm = true;
                 }
-                if ($service->code === ChargeableService::PCM) {
+                if (ChargeableService::PCM === $service->code) {
                     $billedForPcm = true;
                 }
             });
@@ -118,10 +118,10 @@ class PracticePcmBillingTest extends TestCase
             }
 
             $arr['chargeable_services']->collection->each(function ($service) use (&$billedForCcm, &$billedForPcm) {
-                if ($service->code === ChargeableService::CCM) {
+                if (ChargeableService::CCM === $service->code) {
                     $billedForCcm = true;
                 }
-                if ($service->code === ChargeableService::PCM) {
+                if (ChargeableService::PCM === $service->code) {
                     $billedForPcm = true;
                 }
             });
@@ -131,11 +131,11 @@ class PracticePcmBillingTest extends TestCase
         $this->assertEquals(false, $billedForPcm);
     }
 
-    public function test_pcm_charged_only()
+    public function test_pcm_not_charged_when_not_enabled_for_practice()
     {
-        $practice = $this->setupPractice(false, false, false, true);
+        $practice = $this->setupPractice(true);
         $nurse    = $this->getNurse($practice->id);
-        $patient  = $this->setupPatient($practice, false, true);
+        $patient  = $this->setupPatient($practice);
 
         $this->addTime($nurse, $patient, 35, true, 1);
 
@@ -152,17 +152,17 @@ class PracticePcmBillingTest extends TestCase
             }
 
             $arr['chargeable_services']->collection->each(function ($service) use (&$billedForCcm, &$billedForPcm) {
-                if ($service->code === ChargeableService::CCM) {
+                if (ChargeableService::CCM === $service->code) {
                     $billedForCcm = true;
                 }
-                if ($service->code === ChargeableService::PCM) {
+                if (ChargeableService::PCM === $service->code) {
                     $billedForPcm = true;
                 }
             });
         });
 
-        $this->assertEquals(false, $billedForCcm);
-        $this->assertEquals(true, $billedForPcm);
+        $this->assertEquals(true, $billedForCcm);
+        $this->assertEquals(false, $billedForPcm);
     }
 
     private function getNurse($practiceId)
@@ -176,5 +176,4 @@ class PracticePcmBillingTest extends TestCase
 
         return $this->setupNurse($nurse, $variableRate, $hourlyRate, $enableCcmPlus, $visitFee);
     }
-
 }

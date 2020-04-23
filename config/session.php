@@ -22,9 +22,9 @@ return [
     |            "memcached", "redis", "array"
     |
     */
-    
+
     'driver' => env('SESSION_DRIVER', 'file'),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Session Lifetime
@@ -35,11 +35,11 @@ return [
     | to immediately expire on the browser closing, set that option.
     |
     */
-    
+
     'lifetime' => env('SESSION_LIFETIME', 120),
-    
+
     'expire_on_close' => true,
-    
+
     /*
     |--------------------------------------------------------------------------
     | Session Encryption
@@ -50,9 +50,9 @@ return [
     | automatically by Laravel and you can use the Session like normal.
     |
     */
-    
+
     'encrypt' => true,
-    
+
     /*
     |--------------------------------------------------------------------------
     | Session File Location
@@ -63,9 +63,9 @@ return [
     | location may be specified. This is only needed for file sessions.
     |
     */
-    
+
     'files' => storage_path('framework/sessions'),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Session Database Connection
@@ -76,9 +76,9 @@ return [
     | correspond to a connection in your database configuration options.
     |
     */
-    
+
     'connection' => env('SESSION_CONNECTION', null),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Session Database Table
@@ -89,9 +89,9 @@ return [
     | provided for you; however, you are free to change this as needed.
     |
     */
-    
+
     'table' => 'sessions',
-    
+
     /*
     |--------------------------------------------------------------------------
     | Session Cache Store
@@ -102,9 +102,9 @@ return [
     | correspond with one of the application's configured cache stores.
     |
     */
-    
+
     'store' => env('SESSION_STORE', null),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Session Sweeping Lottery
@@ -115,9 +115,9 @@ return [
     | happen on a given request. By default, the odds are 2 out of 100.
     |
     */
-    
+
     'lottery' => [2, 100],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Session Cookie Name
@@ -128,12 +128,12 @@ return [
     | new session cookie is created by the framework for every driver.
     |
     */
-    
+
     'cookie' => env(
         'SESSION_COOKIE',
         'cpm_'.env('APP_ENV').'_laravel_session'
     ),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Session Cookie Path
@@ -144,9 +144,9 @@ return [
     | your application but you are free to change this when necessary.
     |
     */
-    
+
     'path' => '/',
-    
+
     /*
     |--------------------------------------------------------------------------
     | Session Cookie Domain
@@ -157,9 +157,9 @@ return [
     | available to in your application. A sensible default has been set.
     |
     */
-    
+
     'domain' => $sessionDomain,
-    
+
     /*
     |--------------------------------------------------------------------------
     | HTTPS Only Cookies
@@ -170,9 +170,9 @@ return [
     | the cookie from being sent to you if it can not be done securely.
     |
     */
-    
+
     'secure' => env('SESSION_SECURE_COOKIE', 'local' != env('APP_ENV')),
-    
+
     /*
     |--------------------------------------------------------------------------
     | HTTP Access Only
@@ -183,9 +183,9 @@ return [
     | the HTTP protocol. You are free to modify this option if needed.
     |
     */
-    
+
     'http_only' => true,
-    
+
     /*
     |--------------------------------------------------------------------------
     | Same-Site Cookies
@@ -198,6 +198,6 @@ return [
     | Supported: "lax", "strict"
     |
     */
-    
+
     'same_site' => null,
 ];

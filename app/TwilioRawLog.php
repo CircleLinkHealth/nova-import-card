@@ -21,21 +21,19 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property \Illuminate\Support\Carbon|null                                                             $created_at
  * @property \Illuminate\Support\Carbon|null                                                             $updated_at
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereAccountSid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereApplicationSid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereCallSid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereCallStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereLog($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereUpdatedAt($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog query()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereAccountSid($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereApplicationSid($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereCallSid($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereCallStatus($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereCreatedAt($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereId($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereLog($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereType($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property int|null $revision_history_count
  */
 class TwilioRawLog extends BaseModel

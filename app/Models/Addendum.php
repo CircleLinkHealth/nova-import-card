@@ -26,22 +26,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Carbon\Carbon|null                           $updated_at
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $addendumable
  * @property \CircleLinkHealth\Customer\Entities\User      $author
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereAddendumableId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereAddendumableType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereAuthorUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereBody($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereUpdatedAt($value)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereAddendumableId($value)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereAddendumableType($value)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereAuthorUserId($value)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereBody($value)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereCreatedAt($value)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereId($value)
+ * @method   static                                        \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereUpdatedAt($value)
  * @mixin \Eloquent
- *
- * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum query()
- *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection                     $revisionHistory
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum newModelQuery()
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum newQuery()
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum query()
  * @property int|null                                                                                                        $revision_history_count
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count

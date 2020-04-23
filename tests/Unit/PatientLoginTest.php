@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
 use App\Notifications\NotifyPatientCarePlanApproved;
@@ -17,21 +21,17 @@ class PatientLoginTest extends CustomerTestCase
     /**
      * @var User
      */
-    protected $patient;
-
+    protected $nurse;
     /**
      * @var User
      */
-    protected $nurse;
+    protected $patient;
 
     /**
      * @var User
      */
     protected $provider;
 
-    /**
-     *
-     */
     protected function setUp()
     {
         parent::setUp();
@@ -47,38 +47,6 @@ class PatientLoginTest extends CustomerTestCase
         $this->setupPatientEssentialDetails();
     }
 
-    /**
-     * Test notification is sent to patient upon both QA and Provider Care Plan Approvals
-     *
-     * @return void
-     */
-    public function test_notification_is_sent_after_cp_qa_approval()
-    {
-        Notification::fake();
-
-        //Nurse QA approves patient Care plan
-        $this->qaApproveCarePlan();
-
-        Notification::assertSentTo(
-            $this->patient,
-            NotifyPatientCarePlanApproved::class,
-            function ($notification, $channels) {
-                $this->call('GET', $notification->resetUrl($this->patient))
-                     ->assertOk();
-
-                $mailData = $notification->toMail($this->patient)->toArray();
-
-                $this->assertEquals("Your Care Plan has been sent to your doctor for approval", $mailData['subject']);
-
-                return true;
-            }
-        );
-
-    }
-
-    /**
-     *
-     */
     public function test_notification_is_sent_after_cp_provider_approval()
     {
         $this->patient->carePlan->status = CarePlan::QA_APPROVED;
@@ -94,7 +62,7 @@ class PatientLoginTest extends CustomerTestCase
             NotifyPatientCarePlanApproved::class,
             function ($notification, $channels) {
                 $this->call('GET', $notification->resetUrl($this->patient))
-                     ->assertOk();
+                    ->assertOk();
 
                 $mailData = $notification->toMail($this->patient)->toArray();
 
@@ -106,23 +74,66 @@ class PatientLoginTest extends CustomerTestCase
     }
 
     /**
+     * Test notification is sent to patient upon both QA and Provider Care Plan Approvals.
      *
+     * @return void
      */
-    public function test_provider_cannot_go_to_patient_page()
+    public function test_notification_is_sent_after_cp_qa_approval()
     {
-        $this->actingAs($this->provider);
+        Notification::fake();
 
-        $this->call('GET', route('patient-user.careplan'))
-             ->assertStatus(302)
-             ->assertRedirect(url('/login'))
-             ->assertSessionHasErrors();
+        //Nurse QA approves patient Care plan
+        $this->qaApproveCarePlan();
 
-        $this->assertEquals(session('errors')->get(0)[0], 'This page can be accessed only by patients.');
+        Notification::assertSentTo(
+            $this->patient,
+            NotifyPatientCarePlanApproved::class,
+            function ($notification, $channels) {
+                $this->call('GET', $notification->resetUrl($this->patient))
+                    ->assertOk();
+
+                $mailData = $notification->toMail($this->patient)->toArray();
+
+                $this->assertEquals('Your Care Plan has been sent to your doctor for approval', $mailData['subject']);
+
+                return true;
+            }
+        );
     }
 
-    /**
-     *
-     */
+    public function test_patient_can_login_and_see_their_care_plan()
+    {
+        $this->qaApproveCarePlan();
+
+        $this->actingAs($this->patient);
+
+        $this->call('GET', route('home'))
+            ->assertRedirect(route('patient-user.careplan'));
+
+        $this->call('GET', route('patient-user.careplan'))
+            ->assertSeeText(sanitizeString('This Care Plan is pending Dr. approval'))
+            ->assertSeeText(sanitizeString($this->patient->first_name))
+            ->assertSeeText(sanitizeString($this->patient->first_name));
+    }
+
+    public function test_patient_cannot_go_to_page_if_careplan_is_draft()
+    {
+        $this->actingAs($this->patient);
+
+        $this->enableFeatureForPatient();
+
+        $this->assertEquals($this->patient->carePlan->status, CarePlan::DRAFT);
+
+        $this->call('GET', route('patient-user.careplan'))
+            ->assertRedirect(url('/login'))
+            ->assertSessionHasErrors();
+
+        $this->assertEquals(
+            session('errors')->get('careplan-error')[0],
+            "Your Care Plan is being reviewed. <br> For details, please contact CircleLink Health Support at <a href='mailto:contact@circlelinkhealth.com'>contact@circlelinkhealth.com</a>."
+        );
+    }
+
     public function test_patient_cannot_login_if_feature_disabled()
     {
         $this->disableFeatureForPatient();
@@ -133,52 +144,99 @@ class PatientLoginTest extends CustomerTestCase
         $this->assertFalse(patientLoginIsEnabledForPractice($this->patient->program_id));
 
         $this->call('GET', route('patient-user.careplan'))
-             ->assertRedirect(url('/login'))
-             ->assertSessionHasErrors();
+            ->assertRedirect(url('/login'))
+            ->assertSessionHasErrors();
 
         $this->assertEquals(session('errors')->get(0)[0], 'This feature has not been enabled by your Provider yet.');
     }
 
-    /**
-     *
-     */
-    public function test_patient_cannot_go_to_page_if_careplan_is_draft()
+    public function test_provider_cannot_go_to_patient_page()
     {
-        $this->actingAs($this->patient);
-
-        $this->enableFeatureForPatient();
-
-        $this->assertEquals($this->patient->carePlan->status, CarePlan::DRAFT);
+        $this->actingAs($this->provider);
 
         $this->call('GET', route('patient-user.careplan'))
-             ->assertRedirect(url('/login'))
-             ->assertSessionHasErrors();
+            ->assertStatus(302)
+            ->assertRedirect(url('/login'))
+            ->assertSessionHasErrors();
 
-        $this->assertEquals(session('errors')->get('careplan-error')[0],
-            "Your Care Plan is being reviewed. <br> For details, please contact CircleLink Health Support at <a href='mailto:contact@circlelinkhealth.com'>contact@circlelinkhealth.com</a>.");
+        $this->assertEquals(session('errors')->get(0)[0], 'This page can be accessed only by patients.');
     }
 
     /**
-     *
+     * Tests feature flag.
      */
-    public function test_patient_can_login_and_see_their_care_plan()
+    private function disableFeatureForPatient()
     {
-        $this->qaApproveCarePlan();
-
-        $this->actingAs($this->patient);
-
-        $this->call('GET', route('home'))
-             ->assertRedirect(route('patient-user.careplan'));
-
-        $this->call('GET', route('patient-user.careplan'))
-             ->assertSeeText(sanitizeString('This Care Plan is pending Dr. approval'))
-             ->assertSeeText(sanitizeString($this->patient->first_name))
-             ->assertSeeText(sanitizeString($this->patient->first_name));
-
+        AppConfig::whereConfigKey('enable_patient_login_for_practice')
+            ->whereConfigValue($this->patient->program_id)
+            ->delete();
     }
 
     /**
-     * Add patient details so it can pass care plan approval
+     * Tests feature flag.
+     */
+    private function enableFeatureForPatient()
+    {
+        AppConfig::create([
+            'config_key'   => 'enable_patient_login_for_practice',
+            'config_value' => $this->patient->program_id,
+        ]);
+    }
+
+    /**
+     * @return mixed
+     */
+    private function featureIsEnabledForPatient()
+    {
+        return AppConfig::whereConfigKey('enable_patient_login_for_practice')
+            ->whereConfigValue($this->patient->program_id)
+            ->exists();
+    }
+
+    /**
+     * Log in as provider and approve careplan.
+     */
+    private function providerApprovesCarePlan()
+    {
+        $this->actingAs($this->provider)->call('POST', route('patient.careplan.approve', [
+            'patientId' => $this->patient->id,
+        ]))
+            ->assertSessionHasNoErrors()
+            ->assertRedirect(route('patient.careplan.print', [
+                'patientId'    => $this->patient->id,
+                'clearSession' => false,
+            ]));
+
+        auth()->logout();
+
+        $this->patient->load('carePlan');
+
+        $this->assertEquals($this->patient->carePlan->status, CarePlan::PROVIDER_APPROVED);
+    }
+
+    private function qaApproveCarePlan()
+    {
+        $this->actingAs($this->nurse);
+
+        $this->assertEquals(CarePlan::DRAFT, $this->patient->carePlan->status);
+
+        $this->call('POST', route('patient.careplan.approve', [
+            'patientId' => $this->patient->id,
+        ]), [
+            //in case patient has both types of diabetes
+            'confirm_diabetes_conditions' => 1,
+        ])
+            ->assertSessionHasNoErrors();
+
+        auth()->logout();
+
+        $this->patient->load('carePlan');
+        //assert careplan has been QA approved
+        $this->assertEquals($this->patient->carePlan->status, CarePlan::QA_APPROVED);
+    }
+
+    /**
+     * Add patient details so it can pass care plan approval.
      */
     private function setupPatientEssentialDetails()
     {
@@ -195,7 +253,6 @@ class PatientLoginTest extends CustomerTestCase
 
         $this->patient->save();
 
-
         $problemsToAdd = CpmProblem::get()->random(5)->transform(function ($p) {
             return [
                 'name'           => $p->name,
@@ -204,81 +261,5 @@ class PatientLoginTest extends CustomerTestCase
         })->toArray();
 
         $this->patient->ccdProblems()->createMany($problemsToAdd);
-    }
-
-    /**
-     * Tests feature flag.
-     */
-    private function enableFeatureForPatient()
-    {
-        AppConfig::create([
-            'config_key'   => 'enable_patient_login_for_practice',
-            'config_value' => $this->patient->program_id,
-        ]);
-    }
-
-    /**
-     * Tests feature flag.
-     */
-    private function disableFeatureForPatient()
-    {
-        AppConfig::whereConfigKey('enable_patient_login_for_practice')
-                 ->whereConfigValue($this->patient->program_id)
-                 ->delete();
-    }
-
-    /**
-     * @return mixed
-     */
-    private function featureIsEnabledForPatient()
-    {
-        return AppConfig::whereConfigKey('enable_patient_login_for_practice')
-                        ->whereConfigValue($this->patient->program_id)
-                        ->exists();
-    }
-
-    /**
-     *
-     */
-    private function qaApproveCarePlan()
-    {
-        $this->actingAs($this->nurse);
-
-        $this->assertEquals(CarePlan::DRAFT, $this->patient->carePlan->status);
-
-        $this->call('POST', route('patient.careplan.approve', [
-            'patientId' => $this->patient->id,
-        ]), [
-            //in case patient has both types of diabetes
-            'confirm_diabetes_conditions' => 1,
-        ])
-             ->assertSessionHasNoErrors();
-
-        auth()->logout();
-
-        $this->patient->load('carePlan');
-        //assert careplan has been QA approved
-        $this->assertEquals($this->patient->carePlan->status, CarePlan::QA_APPROVED);
-    }
-
-    /**
-     * Log in as provider and approve careplan
-     */
-    private function providerApprovesCarePlan()
-    {
-        $this->actingAs($this->provider)->call('POST', route('patient.careplan.approve', [
-            'patientId' => $this->patient->id,
-        ]))
-             ->assertSessionHasNoErrors()
-             ->assertRedirect(route('patient.careplan.print', [
-                 'patientId'    => $this->patient->id,
-                 'clearSession' => false,
-             ]));
-
-        auth()->logout();
-
-        $this->patient->load('carePlan');
-
-        $this->assertEquals($this->patient->carePlan->status, CarePlan::PROVIDER_APPROVED);
     }
 }

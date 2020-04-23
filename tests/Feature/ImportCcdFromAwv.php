@@ -10,7 +10,6 @@ use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Tests\CustomerTestCase;
-use Tests\TestCase;
 
 class ImportCcdFromAwv extends CustomerTestCase
 {

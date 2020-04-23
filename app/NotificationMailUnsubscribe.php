@@ -19,27 +19,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null                     $deleted_at
- *
- * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe newQuery()
- * @method static \Illuminate\Database\Query\Builder|\App\NotificationMailUnsubscribe onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe query()
- * @method static bool|null restore()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe whereNotificationType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe whereUnsubscribedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe whereUserId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\NotificationMailUnsubscribe withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\NotificationMailUnsubscribe withoutTrashed()
+ * @method   static                          bool|null forceDelete()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe newModelQuery()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe newQuery()
+ * @method   static                          \Illuminate\Database\Query\Builder|\App\NotificationMailUnsubscribe onlyTrashed()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe query()
+ * @method   static                          bool|null restore()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe whereCreatedAt($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe whereDeletedAt($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe whereId($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe whereNotificationType($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe whereUnsubscribedAt($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe whereUpdatedAt($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe whereUserId($value)
+ * @method   static                          \Illuminate\Database\Query\Builder|\App\NotificationMailUnsubscribe withTrashed()
+ * @method   static                          \Illuminate\Database\Query\Builder|\App\NotificationMailUnsubscribe withoutTrashed()
  * @mixin \Eloquent
- *
  * @property int|null $channel
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe whereChannel($value)
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\App\NotificationMailUnsubscribe whereChannel($value)
  */
 class NotificationMailUnsubscribe extends Model
 {

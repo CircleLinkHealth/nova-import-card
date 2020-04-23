@@ -27,7 +27,7 @@ class BHIReconsentTest extends CustomerTestCase
     {
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, true);
-        
+
         //Create 2 calls for today
         $c1 = $this->createCall($this->careCoach(), $bhiPatient, Carbon::now());
         $c2 = $this->createCall($this->careCoach(), $bhiPatient, Carbon::now());

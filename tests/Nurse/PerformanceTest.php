@@ -8,11 +8,7 @@ namespace Tests\Nurse;
 
 use App\Services\NursesPerformanceReportService;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Tests\CustomerTestCase;
-use Tests\TestCase;
 
 class PerformanceTest extends CustomerTestCase
 {
