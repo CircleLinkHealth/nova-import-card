@@ -21,7 +21,7 @@ class EnrollmentInvitationService
      * @param mixed $practiceNumber
      *
      * @param $provider
-     * @param bool $hideButtons
+     * @param  bool  $hideButtons
      * @return array
      */
     public function createLetter($practiceName, $practiceLetter, $practiceNumber, $provider, $hideButtons = false)
