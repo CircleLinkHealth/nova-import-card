@@ -123,6 +123,10 @@ class EnrollableCallQueue
     private function getRequestedCallbackToday()
     {
         return $this->builder->where('requested_callback', Carbon::now()->toDateString())
+            ->whereIn('status', [
+                Enrollee::TO_CALL,
+                Enrollee::UNREACHABLE,
+            ])
             ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
             ->orderBy('attempt_count')
             ->first();
