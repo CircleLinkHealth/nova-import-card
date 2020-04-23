@@ -75,13 +75,16 @@ class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
 
     private function levenshteinValidAddressExists(Enrollee $e)
     {
-        return 0 !== collect([
-            levenshteinPercent($e->address, $this->enrollee->address),
-            levenshteinPercent($e->address, $this->enrollee->address_2),
-            levenshteinPercent($e->address_2, $this->enrollee->address),
-            levenshteinPercent($e->address_2, $this->enrollee->address_2),
-        ])->filter(function ($l) {
-            //if less than 7 characters need to change to match strings. See Levenshtein Distance
+        $levenshteinDistances = [];
+
+        foreach (collect([$this->enrollee->address, $this->enrollee->address_2])->filter() as $currentAddress) {
+            foreach (collect([$e->address, $e->address_2])->filter() as $address) {
+                $levenshteinDistances[] = levenshteinPercent($currentAddress, $address);
+            }
+        }
+
+        return 0 !== collect($levenshteinDistances)->filter(function ($l) {
+            //Levenshtein Distance transformed to relevance percent
             return $l >= 90;
         })->count();
     }
