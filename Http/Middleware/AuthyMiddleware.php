@@ -7,9 +7,12 @@
 namespace CircleLinkHealth\TwoFA\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
 
 class AuthyMiddleware
 {
+    public const SESSION_REDIRECT_KEY = 'url.2fa.success';
+
     /**
      * This middleware will be applied to all routes, except the ones below.
      *
@@ -56,6 +59,8 @@ class AuthyMiddleware
         $authyUser = optional($user->authyUser);
 
         if (isAllowedToSee2FA() && ! $authyUser->is_authy_enabled && ! \Route::is('user.settings.manage')) {
+            $this->storeRedirect($request);
+
             return redirect()->route('user.settings.manage');
         }
 
@@ -68,6 +73,8 @@ class AuthyMiddleware
         }
 
         if ( ! $this->hasPassed2FA()) {
+            $this->storeRedirect($request);
+
             return redirect()->route('user.2fa.show.token.form');
         }
 
@@ -75,11 +82,26 @@ class AuthyMiddleware
             return redirect()->back();
         }
 
+        $this->clearRedirect($request);
         return $next($request);
+    }
+
+    private function clearRedirect(Request $request)
+    {
+        $request->session()->remove(self::SESSION_REDIRECT_KEY);
     }
 
     private function hasPassed2FA()
     {
         return 'approved' == session('authy_status');
+    }
+
+    private function storeRedirect(Request $request)
+    {
+        $session = $request->session();
+        if ($session->has(self::SESSION_REDIRECT_KEY)) {
+            return;
+        }
+        $session->put(self::SESSION_REDIRECT_KEY, $request->url());
     }
 }
