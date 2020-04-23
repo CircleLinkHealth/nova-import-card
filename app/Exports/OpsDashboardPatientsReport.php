@@ -8,8 +8,8 @@ namespace App\Exports;
 
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\Services\OpsDashboardService;
-use CircleLinkHealth\Core\Traits\AttachableAsMedia;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Traits\AttachableAsMedia;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Collection;
@@ -89,17 +89,11 @@ class OpsDashboardPatientsReport implements FromCollection, Responsable, WithHea
         return $data;
     }
 
-    /**
-     * @return string
-     */
     public function getFilename(): string
     {
         return $this->filename;
     }
 
-    /**
-     * @return array
-     */
     public function headings(): array
     {
         return [
@@ -126,10 +120,6 @@ class OpsDashboardPatientsReport implements FromCollection, Responsable, WithHea
     }
 
     /**
-     * @param User   $patient
-     * @param Carbon $fromDate
-     * @param Carbon $toDate
-     *
      * @return Collection
      */
     private function makeExcelRow(User $patient, Carbon $fromDate, Carbon $toDate)

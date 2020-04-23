@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Nova\Actions;
 
 use App\Jobs\ImportCcda;
@@ -13,33 +17,15 @@ use Laravel\Nova\Fields\ActionFields;
 
 class ImportCcdaAction extends Action implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable;
-    
+    use InteractsWithQueue;
+    use Queueable;
+
     /**
      * The displayable name of the action.
      *
      * @var string
      */
     public $name = 'Import';
-
-    /**
-     * Perform the action on the given models.
-     *
-     * @param  \Laravel\Nova\Fields\ActionFields  $fields
-     * @param  \Illuminate\Support\Collection  $models
-     * @return mixed
-     */
-    public function handle(ActionFields $fields, Collection $models)
-    {
-        Ccda::whereIn('id', $models->pluck('ccda_id')->all())->chunkById(50, function ($ccdas) {
-            $ccdas->each(function (Ccda $ccda){
-                $ccda->user_id = auth()->id();
-                ImportCcda::dispatch($ccda, true);
-            });
-        });
-    
-        return Action::message('CCDAs queued to import. We will send you a notification in CPM when done.');
-    }
 
     /**
      * Get the fields available on the action.
@@ -49,5 +35,22 @@ class ImportCcdaAction extends Action implements ShouldQueue
     public function fields()
     {
         return [];
+    }
+
+    /**
+     * Perform the action on the given models.
+     *
+     * @return mixed
+     */
+    public function handle(ActionFields $fields, Collection $models)
+    {
+        Ccda::whereIn('id', $models->pluck('ccda_id')->all())->chunkById(50, function ($ccdas) {
+            $ccdas->each(function (Ccda $ccda) {
+                $ccda->user_id = auth()->id();
+                ImportCcda::dispatch($ccda, true);
+            });
+        });
+
+        return Action::message('CCDAs queued to import. We will send you a notification in CPM when done.');
     }
 }

@@ -959,14 +959,14 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "subzero10\\ConditionCodeLookup\\Providers\\ConditionCodeLookupServiceProvider"
+                        "CircleLinkHealth\\ConditionCodeLookup\\Providers\\ConditionCodeLookupServiceProvider"
                     ],
                     "aliases": []
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "subzero10\\ConditionCodeLookup\\": ""
+                    "CircleLinkHealth\\ConditionCodeLookup\\": ""
                 },
                 "files": []
             },

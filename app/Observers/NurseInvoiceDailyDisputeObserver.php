@@ -13,8 +13,6 @@ class NurseInvoiceDailyDisputeObserver
 {
     /**
      * Handle the nurse invoice daily dispute "updated" event.
-     *
-     * @param NurseInvoiceDailyDispute $nurseInvoiceDailyDispute
      */
     public function saved(NurseInvoiceDailyDispute $nurseInvoiceDailyDispute)
     {

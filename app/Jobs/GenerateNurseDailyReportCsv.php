@@ -30,8 +30,6 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param Carbon|null $forDate
      */
     public function __construct(Carbon $forDate = null)
     {
@@ -40,8 +38,6 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @param NotificationService $notificationService
      *
      * @throws \Exception
      */

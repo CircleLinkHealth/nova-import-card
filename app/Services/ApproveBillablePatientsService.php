@@ -76,7 +76,6 @@ class ApproveBillablePatientsService
         return $this->patientSummaryRepo->detachChargeableService($summary, $defaultCodeId);
     }
 
-
     /**
      * Returns a collection containing information about billable patients for a practice for a month.
      *
@@ -85,8 +84,6 @@ class ApproveBillablePatientsService
      *  is_closed Boolean
      *
      * @param $practiceId
-     *
-     * @param Carbon $date
      *
      * @return \Illuminate\Support\Collection
      */
@@ -101,17 +98,16 @@ class ApproveBillablePatientsService
             function ($summary) {
                 if ( ! $summary->actor_id) {
                     $aSummary = $this->patientSummaryRepo->attachChargeableServices($summary);
-                    $summary  = $this->patientSummaryRepo->setApprovalStatusAndNeedsQA($aSummary);
+                    $summary = $this->patientSummaryRepo->setApprovalStatusAndNeedsQA($aSummary);
                 }
 
                 return ApprovableBillablePatient::make($summary);
             }
         );
 
-
-        $isClosed = (bool)$summaries->getCollection()->every(
+        $isClosed = (bool) $summaries->getCollection()->every(
             function ($summary) {
-                return (bool)$summary->actor_id;
+                return (bool) $summary->actor_id;
             }
         );
 

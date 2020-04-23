@@ -14,7 +14,6 @@ use App\ValueObjects\SAAS\Admin\InternalUser;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
-use Illuminate\Http\Request;
 
 class SaasAccountController extends Controller
 {

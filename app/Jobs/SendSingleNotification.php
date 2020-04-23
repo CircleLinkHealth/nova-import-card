@@ -27,8 +27,6 @@ class SendSingleNotification implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param SendsNotification $service
      */
     public function __construct(SendsNotification $service)
     {

@@ -54,12 +54,11 @@ class DirectMailServiceProvider extends ServiceProvider
 
                         /**
                          * @param $outboundRecipient
-                         * @param null                                          $binaryAttachmentFilePath
-                         * @param null                                          $binaryAttachmentFileName
-                         * @param null                                          $ccdaAttachmentPath
-                         * @param \CircleLinkHealth\Customer\Entities\User|null $patient
-                         * @param null                                          $body
-                         * @param null                                          $subject
+                         * @param null $binaryAttachmentFilePath
+                         * @param null $binaryAttachmentFileName
+                         * @param null $ccdaAttachmentPath
+                         * @param null $body
+                         * @param null $subject
                          *
                          * @return mixed
                          */

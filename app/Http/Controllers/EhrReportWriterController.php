@@ -199,7 +199,7 @@ class EhrReportWriterController extends Controller
         }
         if (empty($messages)) {
             if (auth()->user()->isAdmin()) {
-                $messages['success'][] = link_to_route('eligibility.batch.show', 'Click here to view Batch',[$batch->id]);
+                $messages['success'][] = link_to_route('eligibility.batch.show', 'Click here to view Batch', [$batch->id]);
             } else {
                 $messages['success'][] = 'Thanks! CLH will review the file and get back to you. This may take a few business days.';
             }

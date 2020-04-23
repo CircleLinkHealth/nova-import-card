@@ -31,7 +31,6 @@ use App\Observers\RevisionObserver;
 use App\Observers\SaasAccountObserver;
 use App\Observers\UserObserver;
 use CircleLinkHealth\Core\Entities\AppConfig;
-use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\Holiday;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\Patient;

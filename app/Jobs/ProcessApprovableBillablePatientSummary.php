@@ -24,8 +24,6 @@ class ProcessApprovableBillablePatientSummary implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param PatientMonthlySummary $summary
      */
     public function __construct(PatientMonthlySummary $summary)
     {
@@ -34,13 +32,11 @@ class ProcessApprovableBillablePatientSummary implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @param PatientSummaryEloquentRepository $repo
      */
     public function handle(PatientSummaryEloquentRepository $repo)
     {
         $summary = $repo->setApprovalStatusAndNeedsQA($this->summary);
-        
+
         if (is_a($summary, PatientMonthlySummary::class)) {
             $summary->save();
         }

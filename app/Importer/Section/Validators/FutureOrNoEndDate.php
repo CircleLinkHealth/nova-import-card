@@ -6,8 +6,8 @@
 
 namespace App\Importer\Section\Validators;
 
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\Validator as SectionValidator;
 use Carbon\Carbon;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\Validator as SectionValidator;
 
 class FutureOrNoEndDate implements SectionValidator
 {

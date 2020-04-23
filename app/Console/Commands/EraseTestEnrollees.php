@@ -1,13 +1,13 @@
 <?php
-/**
+
+/*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Console\Commands;
 
-
-use Illuminate\Console\Command;
 use App\Jobs\EraseTestEnrollees as EraseTestEnrolleesJob;
+use Illuminate\Console\Command;
 
 class EraseTestEnrollees extends Command
 {

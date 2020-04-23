@@ -69,29 +69,20 @@ class TimeTracker extends Resource
     /**
      * Get the actions available for the resource.
      *
-     * @param Request $request
-     *
      * @return array
      */
     public function actions(Request $request)
     {
         return [
-            (new Actions\ModifyTimeTracker)
+            (new Actions\ModifyTimeTracker())
                 ->confirmText("Modifying the duration may have side-effects on patient's ccm/bhi time and care coach's compensation. Are you sure you want to proceed?")
                 ->confirmButtonText('Done')
-                ->cancelButtonText("Cancel")
+                ->cancelButtonText('Cancel')
                 ->onlyOnDetail(true),
         ];
     }
 
-    public static function label()
-    {
-        return "Time Tracking";
-    }
-
     /**
-     * @param Request $request
-     *
      * @return bool
      */
     public static function authorizedToCreate(Request $request)
@@ -100,8 +91,6 @@ class TimeTracker extends Resource
     }
 
     /**
-     * @param Request $request
-     *
      * @return bool
      */
     public function authorizedToDelete(Request $request)
@@ -110,8 +99,6 @@ class TimeTracker extends Resource
     }
 
     /**
-     * @param Request $request
-     *
      * @return bool
      */
     public function authorizedToUpdate(Request $request)
@@ -120,8 +107,6 @@ class TimeTracker extends Resource
     }
 
     /**
-     * @param Request $request
-     *
      * @return bool
      */
     public function authorizedToView(Request $request)
@@ -162,14 +147,15 @@ class TimeTracker extends Resource
                 ->readonly(true),
 
             Number::make('Duration (seconds)', 'duration')
-                  ->sortable()
-                  ->readonly(true),
+                ->sortable()
+                ->readonly(true),
 
             DateTime::make('Date Time', 'start_time')
-                    ->sortable()
-                    ->readonly(true),
+                ->sortable()
+                ->readonly(true),
 
-            Boolean::make('Is CCM',
+            Boolean::make(
+                'Is CCM',
                 function () {
                     /** @var PageTimer $entry */
                     $entry = $this->resource;
@@ -179,10 +165,12 @@ class TimeTracker extends Resource
                     }
 
                     return false;
-                })
-                   ->readonly(true),
+                }
+            )
+                ->readonly(true),
 
-            Boolean::make('Is BHI',
+            Boolean::make(
+                'Is BHI',
                 function () {
                     /** @var PageTimer $entry */
                     $entry = $this->resource;
@@ -192,8 +180,9 @@ class TimeTracker extends Resource
                     }
 
                     return false;
-                })
-                   ->readonly(true),
+                }
+            )
+                ->readonly(true),
         ];
     }
 
@@ -209,6 +198,11 @@ class TimeTracker extends Resource
             new TimestampFilter('From', 'start_time', 'from', Carbon::now()->startOfMonth()),
             new TimestampFilter('To', 'start_time', 'to', Carbon::now()->endOfMonth()),
         ];
+    }
+
+    public static function label()
+    {
+        return 'Time Tracking';
     }
 
     /**

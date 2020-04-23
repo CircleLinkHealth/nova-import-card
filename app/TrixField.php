@@ -11,12 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * App\TrixField.
  *
- * @property int $id
- * @property string $type
- * @property string $language
- * @property string $body
+ * @property int                             $id
+ * @property string                          $type
+ * @property string                          $language
+ * @property string                          $body
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TrixField careAmbassador($language)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TrixField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TrixField newQuery()
@@ -56,32 +57,32 @@ class TrixField extends Model
         $scriptLanguage = '';
 
         if (in_array(strtolower($language), [
-                'en',
-                'eng',
-                'english',
-            ]) ||
+            'en',
+            'eng',
+            'english',
+        ]) ||
             starts_with(strtolower($language), 'en')
         ) {
             $scriptLanguage = self::ENGLISH_LANGUAGE;
         }
 
         if (in_array(strtolower($language), [
-                'sp',
-                'es',
-                'spanish',
-                'spa',
-            ]) ||
+            'sp',
+            'es',
+            'spanish',
+            'spa',
+        ]) ||
             starts_with(strtolower($language), ['es', 'sp'])
         ) {
             $scriptLanguage = self::SPANISH_LANGUAGE;
         }
 
         $builder->where('type', TrixField::CARE_AMBASSADOR_SCRIPT)
-                ->where(function ($q) use ($scriptLanguage) {
-                    $q->where('language', $scriptLanguage)
+            ->where(function ($q) use ($scriptLanguage) {
+                $q->where('language', $scriptLanguage)
                         //Default to english language. We don't want cases where enrollee has something unexpected in language field,
                         // and we do not bring any script because of that
-                      ->orWhere('language', self::ENGLISH_LANGUAGE);
-                });
+                    ->orWhere('language', self::ENGLISH_LANGUAGE);
+            });
     }
 }

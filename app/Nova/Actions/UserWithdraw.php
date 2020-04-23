@@ -117,14 +117,14 @@ class UserWithdraw extends Action implements ShouldQueue
             ->select('id')
             ->withCount(['inboundCalls'])
             ->whereHas(
-                                  'patientInfo',
-                                  function ($query) {
-                                      $query->whereNotIn(
-                                          'ccm_status',
-                                          [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL]
-                                      );
-                                  }
-                              )
+                'patientInfo',
+                function ($query) {
+                    $query->whereNotIn(
+                        'ccm_status',
+                        [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL]
+                    );
+                }
+            )
             ->whereIn('id', $userIds)
             ->pluck('id', 'inbound_calls_count');
 
@@ -137,21 +137,21 @@ class UserWithdraw extends Action implements ShouldQueue
 
         Patient::whereIn('user_id', $withdrawn)
             ->update(
-                   [
-                       'ccm_status'       => Patient::WITHDRAWN,
-                       'withdrawn_reason' => $withdrawnReason,
-                       'date_withdrawn'   => Carbon::now()->toDateTimeString(),
-                   ]
-               );
+                [
+                    'ccm_status'       => Patient::WITHDRAWN,
+                    'withdrawn_reason' => $withdrawnReason,
+                    'date_withdrawn'   => Carbon::now()->toDateTimeString(),
+                ]
+            );
 
         Patient::whereIn('user_id', $withdrawn1stCall)
             ->update(
-                   [
-                       'ccm_status'       => Patient::WITHDRAWN_1ST_CALL,
-                       'withdrawn_reason' => $withdrawnReason,
-                       'date_withdrawn'   => Carbon::now()->toDateTimeString(),
-                   ]
-               );
+                [
+                    'ccm_status'       => Patient::WITHDRAWN_1ST_CALL,
+                    'withdrawn_reason' => $withdrawnReason,
+                    'date_withdrawn'   => Carbon::now()->toDateTimeString(),
+                ]
+            );
 
         $this->createWithdrawNotes($participantIds, $withdrawnReason);
     }

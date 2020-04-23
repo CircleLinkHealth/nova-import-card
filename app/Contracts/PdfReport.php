@@ -17,8 +17,6 @@ interface PdfReport extends Pdfable
 
     /**
      * Get the PDF dispatcher.
-     *
-     * @return PdfReportHandler
      */
     public function pdfReportHandler(): PdfReportHandler;
 }

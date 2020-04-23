@@ -32,24 +32,21 @@ class ImportCcda implements ShouldQueue
      * @var bool
      */
     protected $notifyUploaderUser;
-    
+
     /**
      * @var \CircleLinkHealth\SharedModels\Entities\Ccda
      */
     private $ccda;
-    
+
     /**
      * Create a new job instance.
-     *
-     * @param Ccda $ccda
-     * @param bool $notifyUploaderUser
      */
     public function __construct(Ccda $ccda, bool $notifyUploaderUser = false)
     {
-        $this->ccda = $ccda;
+        $this->ccda               = $ccda;
         $this->notifyUploaderUser = $notifyUploaderUser;
     }
-    
+
     /**
      * Execute the job.
      */
@@ -59,7 +56,7 @@ class ImportCcda implements ShouldQueue
             $this->sendCcdaUploadedNotification();
         }
     }
-    
+
     /**
      * Get the tags that should be assigned to the job.
      *
@@ -67,13 +64,14 @@ class ImportCcda implements ShouldQueue
      */
     public function tags()
     {
-        return ['import', 'ccda:' . $this->ccda->id];
+        return ['import', 'ccda:'.$this->ccda->id];
     }
-    
+
     private function sendCcdaUploadedNotification()
     {
-        if (!$this->notifyUploaderUser) return;
-        
+        if ( ! $this->notifyUploaderUser) {
+            return;
+        }
         if ($u = User::find($this->ccda->user_id)) {
             $u->notify(new CcdaImportedNotification($this->ccda));
         }

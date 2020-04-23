@@ -7,7 +7,6 @@
 namespace App\Http\Resources;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceEloquent;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Resources\Json\Resource;
 
@@ -50,11 +49,11 @@ class ApprovableBillablePatient extends Resource
         }
 
         return [
-            'id'                     => $this->patient->id,
-            'mrn'                    => $this->patient->getMRN(),
-            'name'                   => $name,
-            'url'                    => $url,
-            'provider'               => $bP
+            'id'       => $this->patient->id,
+            'mrn'      => $this->patient->getMRN(),
+            'name'     => $name,
+            'url'      => $url,
+            'provider' => $bP
                 ? optional($bP->user)->getFullName()
                 : '',
             'practice'               => $this->patient->primaryPractice->display_name,

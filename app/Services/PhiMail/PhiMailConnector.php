@@ -245,12 +245,12 @@ class ShowResult
 
 class AttachmentInfo
 {
-    /** @var string $description */
+    /** @var string */
     public $description;
 
-    /** @var string $filename */
+    /** @var string */
     public $filename;
-    /** @var string $mimeType */
+    /** @var string */
     public $mimeType;
 
     public function __construct($filename, $mimeType, $description)
@@ -846,8 +846,7 @@ class PhiMailConnector
         @fflush($this->socket);
         $response = $this->readLine();
         if (null == $response || 'OK' != $response) {
-            throw new \Exception('Add '.$dataType.' failed: '
-                .(null == $response ? '' : $response));
+            throw new \Exception('Add '.$dataType.' failed: '.(null == $response ? '' : $response));
         }
     }
 

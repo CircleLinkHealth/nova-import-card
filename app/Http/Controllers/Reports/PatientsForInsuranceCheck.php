@@ -6,9 +6,9 @@
 
 namespace App\Http\Controllers\Reports;
 
-use CircleLinkHealth\Core\Exports\FromArray;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\User;
 
 class PatientsForInsuranceCheck extends Controller

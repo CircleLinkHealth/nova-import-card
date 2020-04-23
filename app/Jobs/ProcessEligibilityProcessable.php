@@ -27,8 +27,6 @@ class ProcessEligibilityProcessable implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param EligibilityProcessable $processable
      */
     public function __construct(EligibilityProcessable $processable)
     {

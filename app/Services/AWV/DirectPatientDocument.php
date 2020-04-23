@@ -33,10 +33,6 @@ class DirectPatientDocument extends SendsNotification
 
     /**
      * DirectPatientDocument constructor.
-     *
-     * @param User $patient
-     * @param Media $document
-     * @param string $address
      */
     public function __construct(User $patient, Media $document, string $address)
     {

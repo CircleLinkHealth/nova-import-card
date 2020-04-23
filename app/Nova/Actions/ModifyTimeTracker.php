@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Nova\Actions;
 
 use Carbon\Carbon;
@@ -18,7 +22,21 @@ use Laravel\Nova\Fields\Number;
 
 class ModifyTimeTracker extends Action implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    /**
+     * Get the fields available on the action.
+     *
+     * @return array
+     */
+    public function fields()
+    {
+        return [
+            Number::make('Enter new duration (seconds)', 'duration'),
+        ];
+    }
 
     /**
      * Perform the action on the given models.
@@ -30,9 +48,6 @@ class ModifyTimeTracker extends Action implements ShouldQueue
      *  nurse_care_rate_logs - anything that relates to billable (towards care coach) time tracked
      *  patient_monthly_summaries - match new ccm_time or bhi_time
      *
-     * @param \Laravel\Nova\Fields\ActionFields $fields
-     * @param \Illuminate\Support\Collection $models
-     *
      * @return void
      */
     public function handle(ActionFields $fields, Collection $models)
@@ -40,7 +55,7 @@ class ModifyTimeTracker extends Action implements ShouldQueue
         $durationStr = $fields->get('duration', null);
         $duration    = intval($durationStr);
         if ( ! $duration || $duration < 1) {
-            $this->markAsFailed($models->first(), "Need to supply a valid number for duration. Minimum 1.");
+            $this->markAsFailed($models->first(), 'Need to supply a valid number for duration. Minimum 1.');
 
             return;
         }
@@ -54,8 +69,10 @@ class ModifyTimeTracker extends Action implements ShouldQueue
             }
 
             if ($duration > $timeRecord->duration) {
-                $this->markAsFailed($timeRecord,
-                    "Only decreasing duration is supported at the moment. Please supply a lower value than the existing or choose another record.");
+                $this->markAsFailed(
+                    $timeRecord,
+                    'Only decreasing duration is supported at the moment. Please supply a lower value than the existing or choose another record.'
+                );
 
                 return;
             }
@@ -73,21 +90,6 @@ class ModifyTimeTracker extends Action implements ShouldQueue
     }
 
     /**
-     * Get the fields available on the action.
-     *
-     * @return array
-     */
-    public function fields()
-    {
-        return [
-            Number::make('Enter new duration (seconds)', 'duration'),
-        ];
-    }
-
-    /**
-     * @param PageTimer $timeRecord
-     * @param int $duration
-     *
      * @throws Exception
      */
     private function modifyRecords(PageTimer $timeRecord, int $duration)
@@ -107,12 +109,12 @@ class ModifyTimeTracker extends Action implements ShouldQueue
 
             /** @var NurseCareRateLog $careRateLog */
             $careRateLog = NurseCareRateLog::whereActivityId($timeRecord->activity->id)
-                                           ->where('ccm_type', '=', 'accrued_after_ccm')
-                                           ->first();
+                ->where('ccm_type', '=', 'accrued_after_ccm')
+                ->first();
 
             //some more validation here, simply because the current implementation supports simple use cases
             if ( ! $careRateLog) {
-                throw new Exception("Cannot modify activity. Please choose a different one. [no accrued_after_ccm]");
+                throw new Exception('Cannot modify activity. Please choose a different one. [no accrued_after_ccm]');
             }
 
             if ($duration > $careRateLog->increment) {

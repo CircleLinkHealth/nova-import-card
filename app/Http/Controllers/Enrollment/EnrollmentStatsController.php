@@ -204,12 +204,12 @@ class EnrollmentStatsController extends Controller
                 ->where('last_attempt_at', '>=', $start)
                 ->where('last_attempt_at', '<=', $end)
                 ->where(function ($q) {
-                                                                         $q->where('status', Enrollee::UNREACHABLE)
-                                                                             ->orWhere('status', Enrollee::CONSENTED)
-                                                                             ->orWhere('status', Enrollee::ENROLLED)
-                                                                             ->orWhere('status', Enrollee::REJECTED)
-                                                                             ->orWhere('status', Enrollee::SOFT_REJECTED);
-                                                                     })
+                    $q->where('status', Enrollee::UNREACHABLE)
+                        ->orWhere('status', Enrollee::CONSENTED)
+                        ->orWhere('status', Enrollee::ENROLLED)
+                        ->orWhere('status', Enrollee::REJECTED)
+                        ->orWhere('status', Enrollee::SOFT_REJECTED);
+                })
                 ->count();
 
             $data[$practice->id]['consented'] = Enrollee
@@ -250,9 +250,9 @@ class EnrollmentStatsController extends Controller
                     ->where('last_attempt_at', '<=', $end)
                     ->where('attempt_count', '>=', 3)
                     ->whereNotIn(
-                    'status',
-                    [Enrollee::ENROLLED, Enrollee::CONSENTED, Enrollee::SOFT_REJECTED, Enrollee::REJECTED]
-                )
+                        'status',
+                        [Enrollee::ENROLLED, Enrollee::CONSENTED, Enrollee::SOFT_REJECTED, Enrollee::REJECTED]
+                    )
                     ->count();
 
             $enrollers = Enrollee::select(DB::raw('care_ambassador_user_id, sum(total_time_spent) as total'))

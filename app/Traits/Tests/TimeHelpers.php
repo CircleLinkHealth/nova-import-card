@@ -1,8 +1,10 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 namespace App\Traits\Tests;
-
 
 use App\Call;
 use App\Jobs\StoreTimeTracking;
@@ -16,13 +18,7 @@ trait TimeHelpers
     /**
      * Add billable or not to a patient and credit nurse.
      *
-     * @param User $nurse
      * @param User|null $patient
-     * @param int $minutes
-     * @param bool $billable
-     * @param bool $withSuccessfulCall
-     * @param bool $bhiTime
-     * @param Carbon|null $startTime
      */
     private function addTime(
         User $nurse,
@@ -65,13 +61,13 @@ trait TimeHelpers
                     'name'          => $withSuccessfulCall
                         ? 'Patient Note Creation'
                         : 'test',
-                    'title'         => 'test',
-                    'url'           => 'test',
-                    'url_short'     => 'test',
+                    'title'     => 'test',
+                    'url'       => 'test',
+                    'url_short' => 'test',
                 ],
             ],
         ]);
-        
+
         StoreTimeTracking::dispatchNow($bag);
     }
 }

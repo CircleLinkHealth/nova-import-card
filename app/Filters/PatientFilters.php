@@ -62,15 +62,15 @@ class PatientFilters extends QueryFilters
                     ->where('date_paused', 'LIKE', "%${date}%");
             })
                 ->orWhere(function ($subQuery) use ($date) {
-                      $subQuery->where('ccm_status', Patient::UNREACHABLE)
-                          ->where('date_unreachable', 'LIKE', "%${date}%");
-                  })
+                    $subQuery->where('ccm_status', Patient::UNREACHABLE)
+                        ->where('date_unreachable', 'LIKE', "%${date}%");
+                })
                 ->orWhere(
-                      function ($subQuery) use ($date) {
-                          $subQuery->where('ccm_status', Patient::WITHDRAWN)
-                              ->where('date_withdrawn', 'LIKE', "%${date}%");
-                      }
-                  );
+                    function ($subQuery) use ($date) {
+                        $subQuery->where('ccm_status', Patient::WITHDRAWN)
+                            ->where('date_withdrawn', 'LIKE', "%${date}%");
+                    }
+                );
         });
     }
 

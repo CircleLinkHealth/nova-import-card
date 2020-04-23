@@ -48,15 +48,9 @@ class StoreReportAsMedia implements ShouldQueue
      * @var int
      */
     protected $userId;
-    
+
     /**
      * Create a new job instance.
-     *
-     * @param string $filename
-     * @param string $filesystemName
-     * @param int $practiceId
-     * @param string $mediaCollectionName
-     * @param int $userId
      */
     public function __construct(
         string $filename,

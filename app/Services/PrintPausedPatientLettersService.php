@@ -58,8 +58,7 @@ class PrintPausedPatientLettersService
     /**
      * Make paused letters for the user id's provided.
      *
-     * @param array $userIdsToPrint
-     * @param bool  $viewOnly       | If true, it doesn't update paused letter printed date
+     * @param bool $viewOnly | If true, it doesn't update paused letter printed date
      *
      * @return string|null
      */

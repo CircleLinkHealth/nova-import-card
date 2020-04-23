@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\Repositories\BillablePatientsEloquentRepository;
@@ -12,11 +16,14 @@ use Illuminate\Queue\SerializesModels;
 
 class ProcessBillablePatients implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     /**
-     * @var int
+     * @var bool
      */
-    protected $practiceId;
+    protected $autoAttest;
     /**
      * @var Carbon
      */
@@ -26,21 +33,16 @@ class ProcessBillablePatients implements ShouldQueue
      */
     protected $fromScratch;
     /**
+     * @var int
+     */
+    protected $practiceId;
+    /**
      * @var bool
      */
     protected $resetActor;
-    /**
-     * @var bool
-     */
-    protected $autoAttest;
 
     /**
      * Create a new job instance.
-     *
-     * @param int $practiceId
-     * @param Carbon $date
-     * @param bool $fromScratch
-     * @param bool $resetActor
      */
     public function __construct(int $practiceId, Carbon $date, bool $fromScratch, bool $resetActor, bool $autoAttest)
     {
@@ -54,16 +56,14 @@ class ProcessBillablePatients implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @param BillablePatientsEloquentRepository $billablePatientsRepo
-     *
      * @return void
      */
     public function handle(BillablePatientsEloquentRepository $billablePatientsRepo)
     {
         $billablePatientsRepo->billablePatients($this->practiceId, $this->date)
-                             ->chunk(
-                                 100,
-                                 function ($users) {
+            ->chunk(
+                100,
+                function ($users) {
                                      foreach ($users as $user) {
                                          $pms = $user->patientSummaries->first();
 
@@ -86,6 +86,6 @@ class ProcessBillablePatients implements ShouldQueue
                                          );
                                      }
                                  }
-                             );
+            );
     }
 }

@@ -15,11 +15,11 @@ class ValidStatus implements SectionValidator
         if (is_array($item)) {
             $item = (object) $item;
         }
-        
+
         if ( ! $this->shouldValidate($item)) {
             return false;
         }
-        
+
         if (in_array(strtolower($item->status), [
             'active',
             'chronic',
@@ -29,7 +29,7 @@ class ValidStatus implements SectionValidator
         ])) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -38,14 +38,14 @@ class ValidStatus implements SectionValidator
         if (is_array($item)) {
             $item = (object) $item;
         }
-        
+
         return empty($item->status)
             ? false
             : in_array(strtolower($item->status), [
                 'active',
                 'inactive',
                 'chronic',
-                
+
                 'taking',
                 'continue',
                 'refill',

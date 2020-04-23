@@ -7,8 +7,8 @@
 namespace App\Nova;
 
 use App\Constants;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Nova\Importers\EnroleeStatus as EnroleeStatusImporter;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Jubeki\Nova\Cards\Linkable\LinkableAway;
 use Laravel\Nova\Fields\Date;
@@ -60,8 +60,6 @@ class EnroleeStatus extends Resource
     /**
      * Get the actions available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function actions(Request $request)
@@ -92,8 +90,6 @@ class EnroleeStatus extends Resource
     /**
      * Get the cards available for the request.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function cards(Request $request)
@@ -110,8 +106,6 @@ class EnroleeStatus extends Resource
 
     /**
      * Get the fields displayed by the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -163,8 +157,6 @@ class EnroleeStatus extends Resource
     /**
      * Get the filters available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function filters(Request $request)
@@ -182,8 +174,6 @@ class EnroleeStatus extends Resource
 
     /**
      * Get the lenses available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */

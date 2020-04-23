@@ -9,7 +9,6 @@ namespace App\Notifications;
 use App\Contracts\HasAttachment;
 use App\Contracts\LiveNotification;
 use App\Traits\ArrayableNotification;
-use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
