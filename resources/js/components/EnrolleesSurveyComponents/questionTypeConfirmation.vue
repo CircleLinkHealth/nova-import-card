@@ -4,7 +4,7 @@
             <div>
                 <a style="color: #50b2e2; text-underline: #50b2e2"
                    @click="openInNewWindow()">
-                    Click here to read letter again
+                    Click here to review letter
                 </a>
             </div>
 
@@ -37,7 +37,16 @@
 
     export default {
         name: "questionTypeConfirmation",
-        props: ['question', 'enrollmentSurveyPatients', 'isActive', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
+        props: [
+            'question',
+            'enrollmentSurveyPatients',
+            'isActive',
+            'onDoneFunc',
+            'isLastQuestion',
+            'waiting',
+            'readOnly',
+            'userId'
+        ],
         components: {mdbBtn, mdbIcon},
 
         data() {
