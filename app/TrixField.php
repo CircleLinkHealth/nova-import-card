@@ -7,7 +7,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 /**
  * App\TrixField.
@@ -56,24 +55,11 @@ class TrixField extends Model
     {
         $scriptLanguage = '';
 
-        if (in_array(strtolower($language), [
-            'en',
-            'eng',
-            'english',
-        ]) ||
-            Str::startsWith(strtolower($language), 'en')
-        ) {
+        if (stringMeansEnglish($language)) {
             $scriptLanguage = self::ENGLISH_LANGUAGE;
         }
 
-        if (in_array(strtolower($language), [
-            'sp',
-            'es',
-            'spanish',
-            'spa',
-        ]) ||
-            Str::startsWith(strtolower($language), ['es', 'sp'])
-        ) {
+        if (stringMeansSpanish($language)) {
             $scriptLanguage = self::SPANISH_LANGUAGE;
         }
 

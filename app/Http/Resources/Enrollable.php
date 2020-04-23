@@ -23,7 +23,6 @@ class Enrollable extends Resource
      */
     public function toArray($request)
     {
-        //enrollable is Eligibiliy\Entities\Erollee at this point in time
         /**
          * @var Enrollee
          */
@@ -34,8 +33,6 @@ class Enrollable extends Resource
         }
 
         $careAmbassador = $this->careAmbassador->careAmbassador;
-
-        $enrollable->load(['practice', 'confirmedFamilyMembers']);
 
         $family = $enrollable->confirmedFamilyMembers;
 

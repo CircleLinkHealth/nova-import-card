@@ -164,13 +164,17 @@ class EnrollmentCenterController extends ApiController
         ]);
     }
 
-    public function show()
+    public function show($enrollableId = null)
     {
-        return Enrollable::make(
-            EnrollableCallQueue::getNext(
+        $enrollable = $enrollableId ? Enrollee::find($enrollableId) : null;
+
+        if ( ! $enrollable) {
+            $enrollable = EnrollableCallQueue::getNext(
                 auth()->user()->careAmbassador
-            )
-        );
+            );
+        }
+
+        return Enrollable::make($enrollable);
     }
 
     public function unableToContact(Request $request)
