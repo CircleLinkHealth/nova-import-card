@@ -106,7 +106,7 @@ class ImportProblems extends BaseCcdaImportTask
             if ((new NameNotNull())->isValid($problem)) {
                 return $problem;
             }
-            
+
             $translationCodes = collect($problem['codes'] ?? []);
 
             //do not import problem if it does not have a name nor a code
