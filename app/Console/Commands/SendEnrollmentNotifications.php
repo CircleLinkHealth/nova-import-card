@@ -12,7 +12,7 @@ use Illuminate\Console\Command;
 
 class SendEnrollmentNotifications extends Command
 {
-    const SEND_NOTIFICATIONS_LIMIT_FOR_TESTING = 2;
+    const SEND_NOTIFICATIONS_LIMIT_FOR_TESTING = 1;
     /**
      * The console command description.
      *
@@ -41,7 +41,6 @@ class SendEnrollmentNotifications extends Command
      * Execute the console command.
      *
      * @throws \ReflectionException
-     *
      *
      * @return mixed
      */

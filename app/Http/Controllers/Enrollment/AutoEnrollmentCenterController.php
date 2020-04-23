@@ -67,7 +67,7 @@ class AutoEnrollmentCenterController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      */
-    public function enrollableInvitationLetterBoard(Request $request)
+    public function enrollableInvitationManager(Request $request)
     {
 //        Remember all enrollees at this point have user model also
         if ( ! $request->hasValidSignature()) {
@@ -103,6 +103,7 @@ class AutoEnrollmentCenterController extends Controller
      * NOTE: Currently ONLY Enrollee model have the option to request info.
      *
      * @throws \Exception
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      */
     public function enrolleeRequestsInfo(Request $request)
@@ -113,8 +114,10 @@ class AutoEnrollmentCenterController extends Controller
         $enrollee          = $this->getEnrollee($enrollableId);
         $userModelEnrollee = $this->getUserModelEnrollee($enrollableId);
 
-        if ($enrollee->statusRequestsInfo()->exists()
-            && $enrollee->getLastEnrollmentInvitationLink()->manually_expired) {
+        if (
+            $enrollee->statusRequestsInfo()->exists()
+            && $enrollee->getLastEnrollmentInvitationLink()->manually_expired
+        ) {
             return $this->returnEnrolleeRequestedInfoMessage($enrollee);
         }
 
@@ -160,7 +163,8 @@ class AutoEnrollmentCenterController extends Controller
     public function evaluateEnrolledForSurveyTest(Request $request)
     {
         $data = [
-            'enrollable_id' => $request->input('enrolleeId'), 'survey_instance_id' => $this->getEnrolleesSurveyInstance()->id,
+            'enrollable_id'      => $request->input('enrolleeId'),
+            'survey_instance_id' => $this->getEnrolleesSurveyInstance()->id,
         ];
 
         EnrollableSurveyCompleted::dispatch($data);
@@ -319,6 +323,28 @@ class AutoEnrollmentCenterController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * @param $userId
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function reviewLetter($userId)
+    {
+        $prevUrlHost = parse_url(url()->previous(), PHP_URL_HOST);
+        $awvHost     = parse_url(config('services.awv.url'), PHP_URL_HOST);
+        if ($prevUrlHost !== $awvHost) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $user = User::whereId($userId)->firstOrFail();
+        if ($user->hasRole('survey-only')) {
+            $enrollee = $this->getEnrollee($userId);
+
+            return $this->enrollmentLetterView($user, true, $enrollee, true);
+        }
+        abort(403, 'Unauthorized action.');
+    }
+
     public function sendEnrollmentReminderTestMethod()
     {
         try {
@@ -444,6 +470,7 @@ class AutoEnrollmentCenterController extends Controller
 
     /**
      * @param $enrollableId
+     *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
     private function manageEnrolleeInvitation($enrollableId)
@@ -453,11 +480,10 @@ class AutoEnrollmentCenterController extends Controller
         /** @var User $userModelEnrollee */
 //        Note: this can be either Unreachable patient Or User created from enrollee
         $userCreatedFromEnrollee = $this->getUserModelEnrollee($enrollableId);
-
-        //        If user is deleted and enrollee is null = Enrollable has been enrolled and his temporary user is deleted.
+        //        If user is deleted and enrollee is null
+        //         Then Enrollable has been enrolled and his temporary user is deleted.
         //        Enrollee user_id is detached when user model is deleted.
         //        @todo: Not great/clear solution. Come back to this
-
         if (is_null($enrollee) && is_null($userCreatedFromEnrollee)) {
             $enrollee = $this->getEnrolleeFromNotification($enrollableId);
         }

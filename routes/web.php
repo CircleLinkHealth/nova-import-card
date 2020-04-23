@@ -2207,7 +2207,7 @@ Route::get('/invite-unreachable', [
 
 // TEMPORARY SIGNED ROUTE
 Route::get('/patient-self-enrollment', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrollableInvitationLetterBoard',
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrollableInvitationManager',
     'as'   => 'invitation.enrollment',
 ]);
 
@@ -2225,6 +2225,12 @@ Route::get('/enrollment-info', [
 Route::get('/enrollee-contact-details', [
     'uses' => 'Enrollment\AutoEnrollmentCenterController@enrolleeContactDetails',
     'as'   => 'enrollee.to.call.details',
+])->middleware('auth');
+
+// Incoming from AWV
+Route::get('/review-letter/{userId}', [
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@reviewLetter',
+    'as'   => 'enrollee.to.review.letter',
 ])->middleware('auth');
 
 Route::get('/notification-unsubscribe', [
