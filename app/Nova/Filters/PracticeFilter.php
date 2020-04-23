@@ -29,7 +29,7 @@ class PracticeFilter extends Filter
      */
     public function apply(Request $request, $query, $value)
     {
-        return $query->where('id', $value);
+        return $query->where('practice_id', $value);
     }
 
     /**
@@ -39,6 +39,6 @@ class PracticeFilter extends Filter
      */
     public function options(Request $request)
     {
-        return auth()->user()->practices->pluck('id', 'display_name')->all();
+        return auth()->user()->practices->sortBy('display_name')->pluck('id', 'display_name')->all();
     }
 }

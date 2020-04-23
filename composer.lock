@@ -8881,11 +8881,11 @@
             "time": "2019-12-15T18:52:09+00:00"
         },
         {
-            "name": "subzero10/condition-code-lookup-module",
+            "name": "CircleLinkHealth/condition-code-lookup-module",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:subzero10/condition-code-lookup-module.git",
+                "url": "git@github.com:CircleLinkHealth/condition-code-lookup-module.git",
                 "reference": "4dccc56c356048c6e75f6f580e93addc55489678"
             },
             "require": {
@@ -8897,14 +8897,14 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "subzero10\\ConditionCodeLookup\\Providers\\ConditionCodeLookupServiceProvider"
+                        "CircleLinkHealth\\ConditionCodeLookup\\Providers\\ConditionCodeLookupServiceProvider"
                     ],
                     "aliases": []
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "subzero10\\ConditionCodeLookup\\": ""
+                    "CircleLinkHealth\\ConditionCodeLookup\\": ""
                 },
                 "files": []
             },
@@ -15190,7 +15190,7 @@
         "circlelinkhealth/timetracking-module": 20,
         "circlelinkhealth/twofa-module": 20,
         "daltcore/lara-pdf-merger": 20,
-        "subzero10/condition-code-lookup-module": 20,
+        "CircleLinkHealth/condition-code-lookup-module": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20
     },

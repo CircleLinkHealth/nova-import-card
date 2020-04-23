@@ -133,9 +133,9 @@
                                                             >
                                                             <span>{{member.first_name}} {{member.last_name}}</span>
                                                             <div style="padding-left: 10px">
-                                                                <div><strong>Addresses:</strong>{{member.addresses.value}}
+                                                                <div><strong>Addresses:</strong><span v-html="member.addresses.value"></span>
                                                                 </div>
-                                                                <div><strong>Phones:</strong>{{member.phones.value}}
+                                                                <div><strong>Phones:</strong><span v-html="member.phones.value"></span>
                                                                 </div>
                                                             </div>
                                                         </label>
@@ -417,7 +417,6 @@
                                 <label for="days[]" class="label">Day</label>
                                 <select class="do-not-close" v-model="days" name="days[]" id="days[]" @change="setDays"
                                         multiple>
-                                    <option disabled selected>Days:</option>
                                     <option value="1">Monday</option>
                                     <option value="2">Tuesday</option>
                                     <option value="3">Wednesday</option>
@@ -428,8 +427,7 @@
                             </div>
                             <div class="col s12 m3">
                                 <label for="times[]" class="label">Times</label>
-                                <select v-model="times" class="do-not-close" name="times[]" id="times[]">
-                                    <option disabled selected>Times:</option>
+                                <select v-model="times" class="do-not-close" name="times[]" id="times[]" multiple>
                                     <option value="09:00-12:00">9AM - Noon</option>
                                     <option value="12:00-15:00">Noon - 3PM</option>
                                     <option value="15:00-18:00">3PM - 6PM</option>
@@ -437,7 +435,7 @@
                             </div>
                             <div class="col s12 m6 select-custom">
                                 <label for="extra" class="label">Optional additional information</label>
-                                <input class="input-field" name="extra" id="extra"/>
+                                <input v-model="extra" class="input-field" name="extra" id="extra"/>
                             </div>
                         </div>
 
@@ -920,6 +918,7 @@
                 has_tips: null,
                 last_call_outcome: '',
                 last_call_outcome_reason: '',
+                extra: '',
                 name: '',
                 lang: '',
                 home_phone: '',
@@ -975,8 +974,8 @@
                 pending_form: null,
                 pending_form_url: null,
 
-                days: ['Days:'],
-                times: ['Times:'],
+                days: [],
+                times: [],
 
                 provider: [],
                 provider_phone: ''

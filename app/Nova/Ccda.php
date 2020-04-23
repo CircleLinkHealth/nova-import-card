@@ -9,6 +9,7 @@ namespace App\Nova;
 use App\CcdaView;
 use App\Constants;
 use App\Nova\Actions\ImportCcdaAction;
+use App\Nova\Filters\OnOrAfterDateFilter;
 use App\Nova\Filters\PracticeFilter;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Code;
@@ -44,6 +45,9 @@ class Ccda extends Resource
         'last_name',
         'dm_from',
         'created_at',
+        'source',
+        'nurse_user_name',
+        'practice_display_name',
     ];
 
     /**
@@ -62,6 +66,7 @@ class Ccda extends Resource
     {
         return [
             new ImportCcdaAction(),
+            new ClearAndReimportCcda(),
         ];
     }
 
@@ -79,14 +84,6 @@ class Ccda extends Resource
     public function authorizedToDelete(Request $request)
     {
         return false;
-    }
-
-    /**
-     * @return bool
-     */
-    public function authorizedToUpdate(Request $request)
-    {
-        return strtolower((app(ImportCcdaAction::class))->name) === strtolower($request->input('action'));
     }
 
     /**
@@ -108,6 +105,14 @@ class Ccda extends Resource
     public function fields(Request $request)
     {
         return [
+            Text::make('CarePlan', function ($row) {
+                if ( ! $row->patient_user_id) {
+                    return '';
+                }
+
+                return link_to_route('patient.careplan.print', 'View', [$row->patient_user_id])->toHtml();
+            })
+                ->asHtml(),
             ID::make('ccda_id')->sortable(),
             ID::make('patient_user_id')->sortable(),
             Text::make('Nurse', 'nurse_user_name')->sortable(),
@@ -131,6 +136,7 @@ class Ccda extends Resource
     {
         return [
             new PracticeFilter(),
+            new OnOrAfterDateFilter('created_at'),
         ];
     }
 

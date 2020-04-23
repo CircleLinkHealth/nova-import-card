@@ -60,11 +60,14 @@ class EnrollableCallQueue
             if ($engagedEnrollee) {
                 $enrollee = $engagedEnrollee;
             }
+
+            if ($enrollee) {
+                //mark as engaged to prevent double dipping
+                $enrollee->status = Enrollee::ENGAGED;
+            }
         }
 
         if ($enrollee) {
-            //mark as engaged to prevent double dipping
-            $enrollee->status = Enrollee::ENGAGED;
             //re-assign care ambassador, in case patient has been retrieved as a confirmed family member
             $enrollee->care_ambassador_user_id = $careAmbassador->user_id;
             $enrollee->save();

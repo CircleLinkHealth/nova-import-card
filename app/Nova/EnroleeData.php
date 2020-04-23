@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Jubeki\Nova\Cards\Linkable\LinkableAway;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
+use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
@@ -53,6 +54,7 @@ class EnroleeData extends Resource
         'dob',
         'primary_insurance',
         'secondary_insurance',
+        'id',
     ];
 
     /**
@@ -123,6 +125,8 @@ class EnroleeData extends Resource
                 ->sortable()
                 ->creationRules('required', 'string')
                 ->updateRules('string'),
+
+            ID::make('Eligible Pt ID', 'id')->sortable(),
 
             Text::make('Address')
                 ->sortable()

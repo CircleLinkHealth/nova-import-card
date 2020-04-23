@@ -40,31 +40,85 @@ return [
     | may even configure multiple disks of the same driver. Defaults have
     | been setup for each driver as an example of the required options.
     |
-    | Supported Drivers: "local", "ftp", "sftp", "s3"
-    |
+    | Supported Drivers: "local", "ftp", "sftp", "s3", "rackspace"
     */
 
     'disks' => [
+        'google' => [
+            'driver'       => 'google',
+            'clientId'     => env('GOOGLE_DRIVE_CLIENT_ID'),
+            'clientSecret' => env('GOOGLE_DRIVE_CLIENT_SECRET'),
+            'refreshToken' => env('GOOGLE_DRIVE_REFRESH_TOKEN'),
+            'folderId'     => env('GOOGLE_DRIVE_FOLDER_ID'),
+        ],
+
         'local' => [
             'driver' => 'local',
             'root'   => storage_path('app'),
         ],
 
+        'storage' => [
+            'driver' => 'local',
+            'root'   => storage_path(),
+        ],
+
+        'cloud' => [
+            'driver' => 's3',
+            'key'    => env('S3_CPM_STORAGE_KEY'),
+            'secret' => env('S3_CPM_STORAGE_SECRET'),
+            'region' => env('S3_CPM_STORAGE_REGION'),
+            'bucket' => env('S3_CPM_STORAGE_BUCKET_NAME'),
+        ],
+
         'public' => [
             'driver'     => 'local',
             'root'       => storage_path('app/public'),
-            'url'        => env('APP_URL').'/storage',
+            'url'        => env('OPCACHE_URL').'/storage',
             'visibility' => 'public',
         ],
 
         's3' => [
-            'driver'   => 's3',
-            'key'      => env('AWS_ACCESS_KEY_ID'),
-            'secret'   => env('AWS_SECRET_ACCESS_KEY'),
-            'region'   => env('AWS_DEFAULT_REGION'),
-            'bucket'   => env('AWS_BUCKET'),
-            'url'      => env('AWS_URL'),
-            'endpoint' => env('AWS_ENDPOINT'),
+            'driver' => 's3',
+            'key'    => env('AWS_KEY'),
+            'secret' => env('AWS_SECRET'),
+            'region' => env('AWS_REGION'),
+            'bucket' => env('AWS_BUCKET'),
+            'url'    => env('AWS_URL'),
+        ],
+
+        'secrets' => [
+            'driver' => 's3',
+            'key'    => env('S3_SECRETS_KEY'),
+            'secret' => env('S3_SECRETS_SECRET'),
+            'region' => env('S3_SECRETS_REGION'),
+            'bucket' => env('S3_SECRETS_BUCKET'),
+        ],
+
+        'rackspace' => [
+            'driver'    => 'rackspace',
+            'username'  => 'your-username',
+            'key'       => 'your-key',
+            'container' => 'your-container',
+            'endpoint'  => 'https://identity.api.rackspacecloud.com/v2.0/',
+            'region'    => 'IAD',
+            'url_type'  => 'publicURL',
+        ],
+
+        'media' => [
+            'driver' => 's3',
+            'key'    => env('S3_CPM_STORAGE_KEY'),
+            'secret' => env('S3_CPM_STORAGE_SECRET'),
+            'region' => env('S3_CPM_STORAGE_REGION'),
+            'bucket' => env('S3_CPM_STORAGE_BUCKET_NAME'),
+        ],
+
+        'backup' => [
+            'driver' => 's3',
+            'key'    => env('S3_CPM_STORAGE_KEY'),
+            'secret' => env('S3_CPM_STORAGE_SECRET'),
+            'region' => env('S3_CPM_STORAGE_REGION'),
+            'bucket' => env('S3_CPM_STORAGE_BUCKET_NAME'),
+            'root'   => 'backup',
         ],
     ],
 

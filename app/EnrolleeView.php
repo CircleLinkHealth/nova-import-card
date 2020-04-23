@@ -150,6 +150,10 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * @property int|null $location_id
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereLocationId($value)
+ *
+ * @property string|null $other_note
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereOtherNote($value)
  */
 class EnrolleeView extends SqlViewModel
 {
