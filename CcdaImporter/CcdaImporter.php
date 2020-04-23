@@ -34,6 +34,10 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 class CcdaImporter
 {
     /**
+     * How many times to try the importing process.
+     */
+    private const ATTEMPTS = 3;
+    /**
      * @var CarePlan|\Illuminate\Database\Eloquent\Model
      */
     protected $carePlan;
@@ -65,67 +69,65 @@ class CcdaImporter
         $this->enrollee = $enrollee;
     }
 
-    public function attemptCreateCarePlan(): Ccda
+    public function attemptImport(): Ccda
     {
-        \DB::transaction(
-            function () {
-                if (is_null($this->patient)) {
-                    try {
-                        $this->createNewPatient();
-                    } catch (ValidationException $e) {
-                        $this->ccda->validation_checks = $e->errors();
-                        $this->ccda->save();
+        \DB::transaction(function () {
+            if (is_null($this->patient)) {
+                try {
+                    $this->createNewPatient();
+                } catch (ValidationException $e) {
+                    $this->ccda->validation_checks = $e->errors();
+                    $this->ccda->save();
 
-                        return $this->ccda;
-                    }
+                    return $this->ccda;
                 }
+            }
 
-                $this->patient->loadMissing(['primaryPractice', 'patientInfo']);
-                $this->ccda->loadMissing(['location', 'patient']);
+            $this->patient->loadMissing(['primaryPractice', 'patientInfo']);
+            $this->ccda->loadMissing(['location', 'patient']);
 
-                $this->handleEnrollees()
-                    ->createNewCarePlan()
-                    ->storeAllergies()
-                    ->storeProblemsList()
-                    ->storeMedications()
-                    ->storeBillingProvider()
-                    ->storeLocation()
-                    ->storePractice()
-                    ->storePatientInfo()
-                    ->storeContactWindows()
-                    ->storePhones()
-                    ->storeInsurance()
+            $this->handleEnrollees()
+                ->createNewCarePlan()
+                ->storeAllergies()
+                ->storeProblemsList()
+                ->storeMedications()
+                ->storeBillingProvider()
+                ->storeLocation()
+                ->storePractice()
+                ->storePatientInfo()
+                ->storeContactWindows()
+                ->storePhones()
+                ->storeInsurance()
 //                     ->storeVitals()
                 ;
 
-                //This CarePlan is now ready to be QA'ed by a CLH Admin
-                $this->ccda->imported = true;
-                if (in_array($this->patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::PROVIDER_APPROVED])) {
-                    $this->ccda->status = Ccda::CAREPLAN_CREATED;
-                } else {
-                    $this->ccda->status = Ccda::QA;
-                }
-                if ( ! $this->ccda->mrn) {
-                    $this->ccda->mrn = $this->patient->patientInfo->mrn_number;
-                }
-                $this->ccda->save();
-
-                if ($this->enrollee) {
-                    $this->enrollee->medical_record_type = get_class($this->ccda);
-                    $this->enrollee->medical_record_id = $this->ccda->id;
-                    $this->enrollee->user_id = $this->ccda->patient_id;
-                    $this->enrollee->provider_id = $this->ccda->billing_provider_id;
-                    $this->enrollee->location_id = $this->ccda->location_id;
-                    $this->enrollee->save();
-                }
-
-                if ($this->patient->isDirty()) {
-                    $this->patient->save();
-                }
-
-                event(new PatientUserCreated($this->patient));
+            //This CarePlan is now ready to be QA'ed by a CLH Admin
+            $this->ccda->imported = true;
+            if (in_array($this->patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::PROVIDER_APPROVED])) {
+                $this->ccda->status = Ccda::CAREPLAN_CREATED;
+            } else {
+                $this->ccda->status = Ccda::QA;
             }
-        );
+            if ( ! $this->ccda->mrn) {
+                $this->ccda->mrn = $this->patient->patientInfo->mrn_number;
+            }
+            $this->ccda->save();
+
+            if ($this->enrollee) {
+                $this->enrollee->medical_record_type = get_class($this->ccda);
+                $this->enrollee->medical_record_id = $this->ccda->id;
+                $this->enrollee->user_id = $this->ccda->patient_id;
+                $this->enrollee->provider_id = $this->ccda->billing_provider_id;
+                $this->enrollee->location_id = $this->ccda->location_id;
+                $this->enrollee->save();
+            }
+
+            if ($this->patient->isDirty()) {
+                $this->patient->save();
+            }
+
+            event(new PatientUserCreated($this->patient));
+        }, self::ATTEMPTS);
 
         return $this->ccda;
     }

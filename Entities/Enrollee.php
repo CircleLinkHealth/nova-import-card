@@ -164,17 +164,11 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
  *     searchPhones($term)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
  *     shouldSuggestAsFamilyForEnrollee($enrolleeId)
- * @property int|null                                                                                                        $location_id
- * @property \CircleLinkHealth\SharedModels\Entities\Ccda|null                                                               $ccda
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee duplicates(\CircleLinkHealth\Customer\Entities\User $patient, \CircleLinkHealth\SharedModels\Entities\Ccda $ccda)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee whereLocationId($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee hasPhone($phone)
- * @property int|null                                                                                                        $enrollment_non_responsive
- * @property int                                                                                                             $auto_enrollment_triggered
- * @property \App\EnrollableInvitationLink|null                                                                              $enrollmentInvitationLink
- * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
- * @property int|null                                                                                                        $notifications_count
- * @property \App\EnrollableRequestInfo|null                                                                                 $statusRequestsInfo
+ * @property int|null                                          $location_id
+ * @property \CircleLinkHealth\SharedModels\Entities\Ccda|null $ccda
+ * @method static                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee duplicates(\CircleLinkHealth\Customer\Entities\User $patient, \CircleLinkHealth\SharedModels\Entities\Ccda $ccda)
+ * @method static                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee whereLocationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee hasPhone($phone)
  */
 class Enrollee extends BaseModel
 {

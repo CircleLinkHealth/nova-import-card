@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 
 class ReimportPatientMedicalRecord extends Command
 {
+    private const ATTEMPTS = 3;
     /**
      * The console command description.
      *
@@ -70,7 +71,7 @@ class ReimportPatientMedicalRecord extends Command
 
         \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id}");
 
-        DB::transaction(function (User $user) {
+        DB::transaction(function () use ($user) {
             if ( ! $user->hasCcda()) {
                 $this->attemptCreateCcdaFromMrTemplate($user);
             }
@@ -84,7 +85,7 @@ class ReimportPatientMedicalRecord extends Command
             }
 
             $this->notifyFailure($user);
-        });
+        }, self::ATTEMPTS);
     }
 
     private function attemptCreateCcdaFromMrTemplate(User $user)
