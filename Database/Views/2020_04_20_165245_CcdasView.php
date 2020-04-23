@@ -54,7 +54,6 @@ class CcdasView extends BaseSqlView
         LEFT JOIN users as nurse_user on patients_nurses.nurse_user_id = nurse_user.id
         LEFT JOIN enrollees on ccdas.id = enrollees.medical_record_id
         LEFT JOIN direct_mail_messages on direct_mail_messages.id = ccdas.direct_mail_message_id and direct_mail_messages.direction = 'received'
-        WHERE ccdas.created_at > '2020-03-25 00:00:00'
         ORDER BY ccda_id DESC
       ");
     }
