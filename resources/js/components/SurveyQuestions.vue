@@ -251,6 +251,7 @@
                                 :is-last-question="isLastQuestion(question)"
                                 :waiting="waiting"
                                 :read-only="readOnlyMode"
+                                :user-id="userId"
                                 v-if="question.type.type === 'confirmation'">
                             </question-type-confirmation>
 
