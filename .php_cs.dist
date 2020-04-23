@@ -18,7 +18,6 @@ $finders = PhpCsFixer\Finder::create()
             __DIR__.'/routes',
             __DIR__.'/tests',
             __DIR__.'/Modules',
-            __DIR__.'/CLHPackages',
         ]
     );
 
