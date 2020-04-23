@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "58999f331046651b3bac3a9fa29e73c0",
+    "content-hash": "f487134488bee5a155399e86070ff24e",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -944,11 +944,11 @@
         },
         {
             "name": "circlelinkhealth/condition-code-lookup-module",
-            "version": "v1.1.2",
+            "version": "v1.1.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/condition-code-lookup-module.git",
-                "reference": "526a5817c90e2c88c42bdcd1f22adffab07752ef"
+                "reference": "4d2fe650285c461d84811307da4823d1fe950384"
             },
             "require": {
                 "ext-curl": "*",
@@ -976,7 +976,7 @@
                     "email": "pagcosma@gmail.com"
                 }
             ],
-            "time": "2020-04-22T06:16:32+00:00"
+            "time": "2020-04-23T01:51:46+00:00"
         },
         {
             "name": "circlelinkhealth/core-module",
@@ -1093,7 +1093,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "019afd2b7da12804c57f57293a020143d464d775"
+                "reference": "8b850da4dc7758f643e91bba175ae3841d0efd49"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1118,7 +1118,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-22T06:22:59+00:00"
+            "time": "2020-04-23T01:47:29+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
