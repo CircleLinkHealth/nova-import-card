@@ -9,6 +9,7 @@ namespace CircleLinkHealth\TwoFA\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAuthyPhoneNumber;
 use App\Http\Requests\VerifyAuthyTokenRequest;
+use CircleLinkHealth\TwoFA\Http\Middleware\AuthyMiddleware;
 use CircleLinkHealth\TwoFA\Services\AuthyService;
 
 class AuthyController extends Controller
@@ -136,7 +137,10 @@ class AuthyController extends Controller
 
     public function showVerificationTokenForm()
     {
-        return view('twofa::authy');
+        return view('twofa::authy', [
+            'authyUser'  => auth()->user()->authyUser,
+            'redirectTo' => app('session.store')->get(AuthyMiddleware::SESSION_REDIRECT_KEY, '/'),
+        ]);
     }
 
     /**
