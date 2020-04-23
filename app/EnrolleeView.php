@@ -146,6 +146,10 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * @property int|null                                                                                    $enrollment_non_responsive
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereEnrollmentNonResponsive($value)
+ *
+ * @property int|null $location_id
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereLocationId($value)
  */
 class EnrolleeView extends SqlViewModel
 {

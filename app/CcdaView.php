@@ -85,7 +85,50 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection
  *     $revisionHistory
- * @property int|null $revision_history_count
+ * @property int|null                   $revision_history_count
+ * @property int                        $ccda_id
+ * @property int|null                   $patient_user_id
+ * @property int|null                   $enrollee_id
+ * @property int|null                   $location_id
+ * @property int|null                   $billing_provider_id
+ * @property string                     $source
+ * @property mixed|null                 $validation_errors
+ * @property int|null                   $nurse_user_id
+ * @property string|null                $nurse_user_name
+ * @property string|null                $practice_display_name
+ * @property string|null                $practice_name
+ * @property int|null                   $dm_id
+ * @property string|null                $dm_from
+ * @property string|null                $mrn
+ * @property string|null                $patient_first_name
+ * @property string|null                $enrollee_first_name
+ * @property string|null                $first_name
+ * @property string|null                $patient_last_name
+ * @property string|null                $enrolleet_last_name
+ * @property string|null                $last_name
+ * @property \Illuminate\Support\Carbon $created_at
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView whereBillingProviderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView whereCcdaId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView whereDmFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView whereDmId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView whereEnrolleeFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView whereEnrolleeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView whereEnrolleetLastName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView whereFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView whereLastName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView whereLocationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView whereMrn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView whereNurseUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView whereNurseUserName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView wherePatientFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView wherePatientLastName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView wherePatientUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView wherePracticeDisplayName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView wherePracticeName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView whereSource($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CcdaView whereValidationErrors($value)
  */
 class CcdaView extends SqlViewModel
 {
