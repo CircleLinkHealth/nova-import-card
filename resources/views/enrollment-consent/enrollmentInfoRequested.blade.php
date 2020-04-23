@@ -1,4 +1,4 @@
-@extends('layouts.EnrollmentSurvey.enrollmentSurveyMaster')
+@extends('layouts.EnrollmentSurvey.enrollmentLetterMaster')
 @section('title', 'Enrollment requested info')
 @section('activity', 'Enrollment requested info')
 @section('content')

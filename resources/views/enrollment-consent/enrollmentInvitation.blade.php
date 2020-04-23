@@ -1,4 +1,4 @@
-@extends('layouts.EnrollmentSurvey.enrollmentSurveyMaster')
+@extends('layouts.EnrollmentSurvey.enrollmentLetterMaster')
 @section('title', 'Enrollment Invitation')
 @section('activity', 'Enrollment Invitation')
 @section('content')
@@ -13,6 +13,7 @@
                 </div>
                 <br>
                 <hr>
+            </div>
                 <div class="letter">
                     <div class="header">
                         {{$signatoryNameForHeader}}
@@ -24,7 +25,7 @@
                         {{$dateLetterSent}}
                     </div>
                     <div class="letter-head">
-                        Dear {{$userEnrollee->first_name}},
+                        Dear {{$userEnrollee->first_name . ' ' . $userEnrollee->last_name}}
                     </div>
                     <div class="letter-body">
                         <div class="body">
@@ -76,7 +77,7 @@
     .letter-sent {
         float: right;
         font-weight: 500;
-        margin-right: 17em;
+        margin-right: 8em;
         font-size: 20px;
     }
 

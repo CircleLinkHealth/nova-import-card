@@ -215,23 +215,36 @@ class AutoEnrollmentCenterController extends Controller
      * @param $enrollablePrimaryPractice
      * @param $isSurveyOnlyUser
      * @param mixed|null $provider
+     * @param mixed      $hideButtons
      *
      * @return array
      */
-    public function getEnrollmentLetter(User $userForEnrollment, $enrollablePrimaryPractice, $isSurveyOnlyUser, $provider = null)
-    {
-        $practiceLetter = EnrollmentInvitationLetter::where('practice_id', $enrollablePrimaryPractice->id)->firstOrFail();
+    public function getEnrollmentLetter(
+        User $userForEnrollment,
+        $enrollablePrimaryPractice,
+        $isSurveyOnlyUser,
+        $provider = null,
+        $hideButtons = false
+    ) {
+        $practiceLetter = EnrollmentInvitationLetter::where('practice_id', $enrollablePrimaryPractice->id)
+            ->firstOrFail();
 
         // CA's phone numbers is the practice number
-        $careAmbassadorPhoneNumber = $enrollablePrimaryPractice->outgoing_phone_number;
+        $practiceNumber = $enrollablePrimaryPractice->outgoing_phone_number;
 
         if (null === $provider) {
             $provider = $this->getEnrollableProvider($isSurveyOnlyUser, $userForEnrollment);
         }
 
-        $practiceName = $enrollablePrimaryPractice->name;
+        $practiceName = $enrollablePrimaryPractice->display_name;
 
-        return $this->enrollmentInvitationService->createLetter($practiceName, $practiceLetter, $careAmbassadorPhoneNumber, $provider);
+        return $this->enrollmentInvitationService->createLetter(
+            $practiceName,
+            $practiceLetter,
+            $practiceNumber,
+            $provider,
+            $hideButtons
+        );
     }
 
     public function inviteUnreachablesToEnrollTest()
@@ -454,10 +467,16 @@ class AutoEnrollmentCenterController extends Controller
     {
         $enrollablePrimaryPractice = $userEnrollee->primaryPractice;
         $provider                  = $this->getEnrollableProvider($isSurveyOnlyUser, $userEnrollee);
-        $letterPages               = $this->getEnrollmentLetter($userEnrollee, $enrollablePrimaryPractice, $isSurveyOnlyUser, $provider);
-        $practiceName              = $enrollablePrimaryPractice->name;
-        $signatoryNameForHeader    = $provider->display_name;
-        $dateLetterSent            = Carbon::parse($enrollee->getLastEnrollmentInvitationLink()->updated_at)->toDateString();
+        $letterPages               = $this->getEnrollmentLetter(
+            $userEnrollee,
+            $enrollablePrimaryPractice,
+            $isSurveyOnlyUser,
+            $provider,
+            $hideButtons
+        );
+        $practiceName           = $enrollablePrimaryPractice->name;
+        $signatoryNameForHeader = $provider->display_name;
+        $dateLetterSent         = Carbon::parse($enrollee->getLastEnrollmentInvitationLink()->updated_at)->toDateString();
 
         return view('enrollment-consent.enrollmentInvitation', compact('userEnrollee', 'isSurveyOnlyUser', 'letterPages', 'practiceName', 'signatoryNameForHeader', 'dateLetterSent', 'hideButtons'));
     }

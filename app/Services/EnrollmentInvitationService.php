@@ -18,34 +18,54 @@ class EnrollmentInvitationService
     /**
      * @param $practiceName
      * @param $practiceLetter
-     * @param $careAmbassadorPhoneNumber
-     * @param $provider
-     * @param bool $hasButtons
+     * @param mixed $practiceNumber
      *
+     * @param $provider
+     * @param bool $hideButtons
      * @return array
      */
-    public function createLetter($practiceName, $practiceLetter, $careAmbassadorPhoneNumber, $provider, $hasButtons = true)
+    public function createLetter($practiceName, $practiceLetter, $practiceNumber, $provider, $hideButtons = false)
     {
         $varsToBeReplaced = [
             EnrollmentInvitationLetter::PROVIDER_LAST_NAME,
-            EnrollmentInvitationLetter::CARE_AMBASSADOR_NUMBER,
+            EnrollmentInvitationLetter::PRACTICE_NUMBER,
             EnrollmentInvitationLetter::SIGNATORY_NAME,
             EnrollmentInvitationLetter::PRACTICE_NAME,
             EnrollmentInvitationLetter::LOCATION_ENROLL_BUTTON,
             EnrollmentInvitationLetter::CUSTOMER_SIGNATURE_PIC,
+            EnrollmentInvitationLetter::OPTIONAL_PARAGRAPH,
+            EnrollmentInvitationLetter::LOCATION_ENROLL_BUTTON_SECOND,
+            EnrollmentInvitationLetter::OPTIONAL_TITLE,
         ];
 
-        $buttonsLocation = $hasButtons
+        $buttonsLocation = ! $hideButtons
             ? 'To enroll, click the enroll button at the top/bottom of this letter.'
             : '';
 
+        $optionalParagraph = ! $hideButtons
+            ? "If you would like additional information, or are interested in enrolling today,
+             please call $practiceNumber."
+            : '';
+
+        $buttonsSecondVersion = ! $hideButtons
+        ? 'or click the enroll button top/bottom of this letter.'
+        : '';
+
+        $optionalTitle = ! $hideButtons
+            ? 'How do I sign up?'
+            : '';
+
+        // order has to be the same as the $varsToBeReplaced
         $replacementVars = [
             $provider->last_name,
-            $careAmbassadorPhoneNumber,
+            $practiceNumber,
             $provider->display_name,
             $practiceName,
             $buttonsLocation,
             '[CUSTOMER_SIGNATURE_PIC]',
+            $optionalParagraph,
+            $buttonsSecondVersion,
+            $optionalTitle,
         ];
 
         $letter      = json_decode($practiceLetter->letter);
