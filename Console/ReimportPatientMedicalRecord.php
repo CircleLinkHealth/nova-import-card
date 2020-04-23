@@ -41,6 +41,8 @@ class ReimportPatientMedicalRecord extends Command
      * @var Enrollee
      */
     private $enrollee;
+    
+    private const ATTEMPTS = 3;
 
     /**
      * Create a new command instance.
@@ -84,7 +86,7 @@ class ReimportPatientMedicalRecord extends Command
             }
 
             $this->notifyFailure($user);
-        });
+        }, self::ATTEMPTS);
     }
 
     private function attemptCreateCcdaFromMrTemplate(User $user)
