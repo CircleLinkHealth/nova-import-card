@@ -54,7 +54,8 @@
                                     <ul>
                                         <li class="sidebar-demo-list"><span :title="name"><b>Name:</b> {{name}}</span>
                                         </li>
-                                        <li class="sidebar-demo-list"><span :title="dob"><b>Date of Birth:</b> {{dob}}</span>
+                                        <li class="sidebar-demo-list"><span
+                                                :title="dob"><b>Date of Birth:</b> {{dob}}</span>
                                         </li>
                                         <li class="sidebar-demo-list"><span
                                                 :title="lang"><b>Language:</b> {{lang}}</span>
@@ -133,9 +134,11 @@
                                                             >
                                                             <span>{{member.first_name}} {{member.last_name}}</span>
                                                             <div style="padding-left: 10px">
-                                                                <div><strong>Addresses:</strong><span v-html="member.addresses.value"></span>
+                                                                <div><strong>Addresses:</strong><span
+                                                                        v-html="member.addresses.value"></span>
                                                                 </div>
-                                                                <div><strong>Phones:</strong><span v-html="member.phones.value"></span>
+                                                                <div><strong>Phones:</strong><span
+                                                                        v-html="member.phones.value"></span>
                                                                 </div>
                                                             </div>
                                                         </label>
@@ -258,7 +261,17 @@
 
                 <div class="padding-top-5" style="font-size: 16px;">
 
-                    <blockquote v-if="last_call_outcome !== ''">
+                    <blockquote v-if="is_confirmed_family">
+                        <span v-if="family_member_names != ''">
+                        Family member of: {{ family_member_names }}
+                        </span>
+                        <span v-if="family_confirmed_at != ''">
+                            <br/>
+                            Confirmed at: {{ family_confirmed_at }}
+                        </span>
+                        <br/>
+                    </blockquote>
+                    <blockquote v-if="last_call_outcome !== '' && ! is_confirmed_family">
                         Last Call Outcome: {{ last_call_outcome }}
                         <span v-if="last_call_outcome_reason !== ''">
                         <br/>
@@ -634,7 +647,8 @@
                                                v-model="confirmed_family_members">
                                         <span>{{member.first_name}} {{member.last_name}}</span>
                                         <ul style="padding-left: 10px">
-                                            <li><strong>Addresses:</strong><span v-html="member.addresses.value"></span></li>
+                                            <li><strong>Addresses:</strong><span v-html="member.addresses.value"></span>
+                                            </li>
                                             <li><strong>Phones:</strong><span v-html="member.phones.value"></span></li>
                                         </ul>
                                     </label>
@@ -868,7 +882,7 @@
                 }
                 let ca_script = this.script.body;
 
-                if (! ca_script){
+                if (!ca_script) {
                     return 'Script not found.'
                 }
                 return ca_script.replace(/{doctor}/gi, this.provider_name_for_enrollment_script)
@@ -896,7 +910,7 @@
                 return !this.preferred_phone;
             },
             contact_day_or_time_empty() {
-                return this.days.length <= 1 || this.times.length <= 1
+                return this.days.length < 1 || this.times.length < 1
             },
             utc_reason_empty() {
                 return this.utc_reason.length <= 1;
@@ -904,11 +918,11 @@
             reason_empty() {
                 return this.reason.length <= 1;
             },
-            should_not_perform_action(){
+            should_not_perform_action() {
                 //Inverse of (because it's used on :disable): allow performing of actions without a call only when enrollable is confirmed family member of other enrollable.
                 //It means that CA may only have called the first enrollable, and may perform actions on confirmed family members without calling them.
-                if (! this.is_confirmed_family){
-                    return ! this.callHasBeenPerformed;
+                if (!this.is_confirmed_family) {
+                    return !this.callHasBeenPerformed;
                 }
                 return false;
             }
@@ -990,6 +1004,8 @@
                 suggested_family_members: [],
                 confirmed_family_members: [],
                 is_confirmed_family: false,
+                family_member_names: '',
+                family_confirmed_at: '',
 
                 pending_form: null,
                 pending_form_url: null,
@@ -1098,7 +1114,7 @@
                     this.pending_form_url = url
                     let modal = M.Modal.getInstance(document.getElementById('suggested-family-members-modal'));
                     modal.open();
-                }else{
+                } else {
                     this.submitForm(event.target, url)
                 }
             },

@@ -109,12 +109,11 @@ class EnrollmentDirectorController extends Controller
                 : 'DESC';
             $data->orderBy($orderBy, $direction);
         } else {
+            //todo: fix this
             $data->orderByRaw("CASE
-   WHEN status = 'engaged' THEN 1
-   WHEN status = 'call_queue' THEN 2
-   WHEN status = 'utc' THEN 3
-   WHEN status = 'soft_rejected' THEN 4
-   ELSE 5
+   WHEN status = 'call_queue' THEN 1
+   WHEN status = 'utc' THEN 2
+   ELSE 3
 END ASC, attempt_count ASC");
         }
 

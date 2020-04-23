@@ -22,10 +22,27 @@ class EnrollableCallQueue
         //per CPM-2256 we will be applying the same statuses on confirmed family members, so that we can pre-fill their data on the page.
         if ( ! empty($queue)) {
             $nextEnrolleeId = collect($queue)->first();
-            $enrollee       = Enrollee::find($nextEnrolleeId);
+            //maybe add specific
+            $enrollee = Enrollee::find($nextEnrolleeId);
         }
 
         if ( ! isset($enrollee) || is_null($enrollee)) {
+            //get all careAmbassador enrollees / do not prioritize speaks spanish
+
+            //get all CA enrollees.
+
+            //TOP PRIO - patients in queue (confirmed family members)
+
+            //1st prio - Confirmed family members whom statuses have not been confirmed - edge case - add UI
+
+            //2nd prio - utc patients where attempt count 1 && last attempt > 3 days ago
+
+            //3nd prio - >> attempt count 2
+
+            //4th prio - call queue
+
+            //Post conditions - never bring enrolled, consented, soft or hard decline, utc x3, ineligible, legacy
+
             //if logged in ambassador is spanish, pick up a spanish patient
             if ($careAmbassador->speaks_spanish) {
                 $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
@@ -49,21 +66,6 @@ class EnrollableCallQueue
                     ->orderBy('attempt_count')
                     ->with(['practice.enrollmentTips', 'provider.providerInfo'])
                     ->first();
-            }
-
-            $engagedEnrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
-                ->where('status', '=', Enrollee::ENGAGED)
-                ->orderBy('attempt_count')
-                ->with(['practice.enrollmentTips', 'provider.providerInfo'])
-                ->first();
-
-            if ($engagedEnrollee) {
-                $enrollee = $engagedEnrollee;
-            }
-
-            if ($enrollee) {
-                //mark as engaged to prevent double dipping
-                $enrollee->status = Enrollee::ENGAGED;
             }
         }
 
@@ -91,6 +93,6 @@ class EnrollableCallQueue
             unset($queue[array_search($enrollee->id, $queue)]);
         }
 
-        \Cache::put("care_ambassador_{$careAmbassador->id}_queue", $queue, 10);
+        \Cache::put("care_ambassador_{$careAmbassador->id}_queue", $queue, 600);
     }
 }

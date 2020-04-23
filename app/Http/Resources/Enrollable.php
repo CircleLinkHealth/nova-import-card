@@ -23,7 +23,10 @@ class Enrollable extends Resource
      */
     public function toArray($request)
     {
-        //enrollable is enrollee at this point
+        //enrollable is Eligibiliy\Entities\Erollee at this point in time
+        /**
+         * @var Enrollee
+         */
         $enrollable = $this->resource;
 
         if ( ! $enrollable) {
@@ -32,9 +35,23 @@ class Enrollable extends Resource
 
         $careAmbassador = $this->careAmbassador->careAmbassador;
 
-        $enrollable->load(['practice']);
+        $enrollable->load(['practice', 'confirmedFamilyMembers']);
 
-        return [
+        $family = $enrollable->confirmedFamilyMembers;
+
+        $familyAttributes = [];
+        if ($family->isNotEmpty()) {
+            $familyAttributes['family_member_names'] = $family->unique()->map(function (Enrollee $e) {
+                return $e->first_name.' '.$e->last_name;
+            })->filter()->implode(', ');
+
+            $createdAt = $family->first()->pivot->created_at;
+            if ($createdAt) {
+                $familyAttributes['family_confirmed_at'] = $createdAt->toDateString();
+            }
+        }
+
+        return array_merge([
             'enrollable_id'            => $enrollable->id,
             'enrollable_user_id'       => optional($enrollable->user)->id,
             'practice'                 => $enrollable->practice->toArray(),
@@ -49,7 +66,8 @@ class Enrollable extends Resource
             'cell_phone'               => $enrollable->cell_phone,
             'home_phone'               => $enrollable->home_phone,
 
-            //these phone numbers will be used to call by Twilio. This will allow us to use custom numbers on non-prod environments
+            //These phone numbers will be used to call by Twilio.
+            //This will allow us to use custom numbers on non-prod environments
             'other_phone_sanitized' => isProductionEnv()
                 ? $enrollable->other_phone_e164
                 : $enrollable->getOriginal('other_phone'),
@@ -61,22 +79,38 @@ class Enrollable extends Resource
                 : $enrollable->getOriginal('home_phone'),
 
             //we need to prefill these per CPM-2256 for confirmed family members
-            'utc_reason' => Enrollee::TO_CONFIRM_UNREACHABLE === $enrollable->status && ! empty($enrollable->last_call_outcome)
+            'utc_reason' => Enrollee::TO_CONFIRM_UNREACHABLE === $enrollable->status &&
+            ! empty($enrollable->last_call_outcome)
                 ? $enrollable->last_call_outcome
                 : '',
-            'reason' => in_array($enrollable->status, [Enrollee::TO_CONFIRM_REJECTED, Enrollee::TO_CONFIRM_SOFT_REJECTED]) && ! empty($enrollable->last_call_outcome)
+            'reason' => in_array($enrollable->status, [
+                Enrollee::TO_CONFIRM_REJECTED,
+                Enrollee::TO_CONFIRM_SOFT_REJECTED,
+            ]) &&
+            ! empty($enrollable->last_call_outcome)
                 ? $enrollable->last_call_outcome
                 : '',
-            'utc_reason_other' => Enrollee::TO_CONFIRM_UNREACHABLE === $enrollable->status && ! empty($enrollable->last_call_outcome_reason)
+            'utc_reason_other' => Enrollee::TO_CONFIRM_UNREACHABLE === $enrollable->status &&
+            ! empty($enrollable->last_call_outcome_reason)
                 ? $enrollable->last_call_outcome_reason
                 : '',
-            'reason_other' => in_array($enrollable->status, [Enrollee::TO_CONFIRM_REJECTED, Enrollee::TO_CONFIRM_SOFT_REJECTED]) && ! empty($enrollable->last_call_outcome_reason)
+            'reason_other' => in_array($enrollable->status, [
+                Enrollee::TO_CONFIRM_REJECTED, Enrollee::TO_CONFIRM_SOFT_REJECTED,
+            ]) &&
+            ! empty($enrollable->last_call_outcome_reason)
                 ? $enrollable->last_call_outcome_reason
                 : '',
-            //extra is the field for note on consented modal - we need this in case Enrollable is TO_CONFIRM_CONSENTED (pre-filling consented options from previous family member)
-            'extra' => Enrollee::TO_CONFIRM_CONSENTED === $enrollable->status && ! empty($enrollable->other_note) ? $enrollable->other_note : '',
+            //extra is the field for note on consented modal
+            //we need this in case Enrollable is TO_CONFIRM_CONSENTED
+            //(pre-filling consented options from previous family member)
+            'extra' => Enrollee::TO_CONFIRM_CONSENTED === $enrollable->status && ! empty($enrollable->other_note)
+                ? $enrollable->other_note
+                : '',
             //extra field on UTC modal
-            'utc_note'        => in_array($enrollable->status, [Enrollee::TO_CONFIRM_UNREACHABLE, Enrollee::UNREACHABLE]) && ! empty($enrollable->other_note) ? $enrollable->other_note : '',
+            'utc_note' => in_array($enrollable->status, [Enrollee::TO_CONFIRM_UNREACHABLE, Enrollee::UNREACHABLE])
+            && ! empty($enrollable->other_note)
+                ? $enrollable->other_note
+                : '',
             'last_encounter'  => $enrollable->last_encounter ?? 'N/A',
             'attempt_count'   => $enrollable->attempt_count ?? 0,
             'last_attempt_at' => optional($enrollable->last_attempt_at)->toDateString() ?? 'N/A',
@@ -92,13 +126,16 @@ class Enrollable extends Resource
             'script' => TrixField::careAmbassador($this->lang)->first(),
 
             'days'  => $enrollable->preferred_days ? explode(', ', $enrollable->preferred_days) : [],
-            'times' => $enrollable->preferred_window ? $this->timeRangeToPanelWindows($enrollable->preferred_window) : [],
+            'times' => $enrollable->preferred_window
+                ? $this->timeRangeToPanelWindows($enrollable->preferred_window)
+                : [],
 
-            'provider'            => $this->provider->toArray(),
-            'provider_phone'      => (new StringManipulation())->formatPhoneNumber($this->provider->getPhone()),
-            'has_tips'            => (bool) $this->practice->enrollmentTips,
+            'provider'       => $this->provider->toArray(),
+            'provider_phone' => (new StringManipulation())->formatPhoneNumber($this->provider->getPhone()),
+            'has_tips'       => (bool) $this->practice->enrollmentTips,
+
             'is_confirmed_family' => Enrollee::statusIsToConfirm($enrollable->status),
-        ];
+        ], $familyAttributes);
     }
 
     private function timeRangeToPanelWindows(string $timeRange)

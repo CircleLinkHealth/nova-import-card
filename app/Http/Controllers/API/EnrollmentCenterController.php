@@ -216,16 +216,4 @@ class EnrollmentCenterController extends ApiController
             'status' => 200,
         ]);
     }
-
-    public function updateCareAmbassadorDailyTime(Request $request)
-    {
-        $reportId          = $request->input('report_id');
-        $totalTimeInSystem = $request->input('total_time_in_system');
-
-        CareAmbassadorLog::whereId($reportId)->update(['total_time_in_system' => $totalTimeInSystem]);
-
-        return $this->json([
-            'ca_total_time_updated_to' => $totalTimeInSystem,
-        ]);
-    }
 }
