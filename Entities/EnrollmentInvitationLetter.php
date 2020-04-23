@@ -34,13 +34,16 @@ use Illuminate\Database\Eloquent\Model;
  */
 class EnrollmentInvitationLetter extends Model
 {
-    const CARE_AMBASSADOR_NUMBER = 'care ambassador phone number';
-    const CUSTOMER_SIGNATURE_PIC = 'customer signature (picture)';
-    const LOCATION_ENROLL_BUTTON = 'location of enroll button on screen';
-    const PATIENT_FIRST_NAME     = 'patient first name';
-    const PRACTICE_NAME          = 'Practice Name';
-    const PROVIDER_LAST_NAME     = 'provider last name';
-    const SIGNATORY_NAME         = 'Signatory Name';
+    public const CUSTOMER_SIGNATURE_PIC        = 'customer signature (picture)';
+    public const LOCATION_ENROLL_BUTTON        = 'location of enroll button on screen';
+    public const LOCATION_ENROLL_BUTTON_SECOND = 'button on screen two';
+    public const OPTIONAL_PARAGRAPH            = 'Optional Paragraph';
+    public const OPTIONAL_TITLE                = 'Optional Title';
+    public const PATIENT_FIRST_NAME            = 'patient first name';
+    public const PRACTICE_NAME                 = 'Practice Name';
+    public const PRACTICE_NUMBER               = 'Practice Specific CircleLink Number';
+    public const PROVIDER_LAST_NAME            = 'provider last name';
+    public const SIGNATORY_NAME                = 'Signatory Name';
 
     protected $fillable = [
         'practice_id',
