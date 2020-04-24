@@ -8,7 +8,6 @@ namespace App\Console\Commands;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\PracticePatientsView;
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
 class GetPracticePatients extends Command

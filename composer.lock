@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f46c7600a2466f0b9c5ae00e1ff7c7f2",
+    "content-hash": "05bd35c86cc50fed1bd7036234178230",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -793,11 +793,11 @@
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
-            "version": "v3.1.2",
+            "version": "dev-optimizations",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git",
-                "reference": "76ecd1afee5e3556c5d75168358f36da22d4def8"
+                "reference": "c5f68d32aa91fc246f781f2c854a8716b9514410"
             },
             "require": {
                 "illuminate/cache": "~5.0|~6.0|~7.0",
@@ -870,7 +870,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2020-04-21T12:03:37+00:00"
+            "time": "2020-04-24T12:58:28+00:00"
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
@@ -982,7 +982,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "8fc013e7ae1ca9f41863c034fbee7ac4edaf2872"
+                "reference": "cbd9441925cdb8319d86bbd0d15190804a5aa4be"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1011,7 +1011,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-22T23:11:11+00:00"
+            "time": "2020-04-24T13:04:35+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -15287,6 +15287,7 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/ccda-parser-processor-php-module": 20,
+        "circlelinkhealth/cerberus-gatekeeper-module": 20,
         "circlelinkhealth/condition-code-lookup-module": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
