@@ -83,6 +83,7 @@ class AuthyMiddleware
         }
 
         $this->clearRedirect($request);
+
         return $next($request);
     }
 
