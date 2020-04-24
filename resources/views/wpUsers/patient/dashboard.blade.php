@@ -90,10 +90,15 @@ $hasAwv              = in_array('awv', $patientListDropdown);
     </div>
 
         @if($showPatientsPendingApprovalBox)
-            @if($seesAutoApprovalButton)
-                {{link_to_action('Patient\PatientController@autoQAApprove', 'Auto QA', ['userId' => auth()->id()], ['class' => 'btn btn-success pull-right'])}}
-            @endif
             <div class="container-fluid">
+                @if($seesAutoApprovalButton)
+                    <div class="row">
+                        <div class="col-lg-11">
+                            {{link_to_action('Patient\PatientController@autoQAApprove', 'Auto QA', ['userId' => auth()->id()], ['class' => 'btn btn-success pull-right'])}}
+                        </div>
+                    </div>
+                @endif
+
                 @include('partials.provider.patients-pending-approval')
             </div>
 
