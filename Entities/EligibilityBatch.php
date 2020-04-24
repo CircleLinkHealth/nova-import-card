@@ -105,8 +105,13 @@ class EligibilityBatch extends BaseModel
         return EligibilityBatch::firstOrCreate( [
             'type'        => self::RUNNING,
             'practice_id' => $practice->id,
+        ], [
             'status'      => EligibilityBatch::STATUSES['runs_infinitely'],
-            'options'     => [],
+            'options'     => [
+                'filterLastEncounter' => false,
+                'filterInsurance'     => false,
+                'filterProblems'      => true,
+            ],
         ]);
     }
     
