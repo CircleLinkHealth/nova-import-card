@@ -59,13 +59,13 @@ appointment scheduling, transportation assistance, and any general questions.</s
 <li><span>You can disenroll at any time. This is a voluntary program meant to provide assistance and benefits 
 outside of our physical office.</span></li>
 </ul>
-<p><span>What's the Cost?</span></p>
+<p style=\"text-decoration: underline;\"><span>What's the Cost?</span></p>
 <p><span>The program is covered by Medicare. If you have Medicaid or a supplemental insurance, 
 it will likely cover the copay, which means you'll have $0 out-of-pocket costs. 
 In addition, during this crisis, your Dr. may waive co-pays for this kind of remote care. 
 Medicare has invested in this program because it saves them money by keeping people like you healthy.</span></p>
 <p><span>&nbsp;</span></p>
-<p><span>What's Next?</span></p>
+<p style=\"text-decoration: underline;\"><span>What's Next?</span></p>
 <p><span>$locationEnrollButton For more information, please see below Frequently Asked Questions 
 or call $practiceNumber</span><span> to be connected with one of our care coordinators</span><strong>.</strong></p>
 <p><span>&nbsp;</span></p>
@@ -80,7 +80,7 @@ keeping you healthy between office visits.</span></p>
 <p><span>$practiceName</span></p>";
 
         $bodyPageTwo = "<p style=\"text-decoration: underline;\"><strong>Frequently Asked Questions</strong></p>
-                        <p><strong>What is a chronic illness?</strong></p>
+                        <p><strong>What is the Personalized Care Program?</strong></p>
                         <p>The Personalized Care Program provides support and care between doctor visits to eligible 
                         patients. Services include access to a care team who can answer your healthcare questions and 
                         help you get the information, appointments, treatments, 
@@ -99,11 +99,7 @@ keeping you healthy between office visits.</span></p>
                         to participate in this program is to help you get and stay as healthy as possible. 
                         The program also focuses on things like helping you keep on top of preventive care and 
                         helping you find valuable healthcare resources and community services.</p>
-                        <p><strong>But what if I feel fine?</strong></p>
-                        <p>Great. Let's keep it that way. One of the reasons your doctor is inviting you to participate
-                         in this program is to help you get and stay as healthy as possible. The program also focuses 
-                         on things like helping you keep on top of preventive care and helping you find valuable 
-                         healthcare resources and community services.&nbsp;</p>
+                     
                         <p><strong>What does the program cost?</strong></p>
                         <p>The Personalized Care Program is a benefit under Medicare Part B. However, 
                         there may be a co-payment for this benefit. If you have a secondary health plan, 
@@ -132,6 +128,8 @@ keeping you healthy between office visits.</span></p>
                             <li>Greater access to services and support that may help you avoid medical problems, 
                             expensive emergency department visits, and hospital stays</li>
                         </ul>
+                        <p>Your doctor can count on them to look out for you between visits and make sure that 
+                        you get the information, appointments, treatments and care you need when you need it.</p>
                         <p><strong>Can I cancel these services if I change my mind?</strong></p>
                         <p>Yes. You can discontinue the services at any time for any reason. 
                         To do so, just call <strong>$practiceNumber</strong> and the services will stop at the end of 
