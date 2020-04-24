@@ -1075,6 +1075,13 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix' => 'admin',
     ], function () {
+        Route::get(
+            'autoQAApprove/{userId}',
+            [
+                'uses' => 'Patient\PatientController@autoQAApprove',
+                'as'   => 'admin.autoqaapprove.careplans',
+            ]
+        );
         Route::group(['prefix' => 'offline-activity-time-requests'], function () {
             Route::get('', [
                 'uses' => 'OfflineActivityTimeRequestController@adminIndex',

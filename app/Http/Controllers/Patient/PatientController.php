@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Patient;
 
+use App\Console\Commands\AutoApproveValidCarePlansAs;
 use App\Contracts\ReportFormatter;
 use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
@@ -13,9 +14,11 @@ use App\Services\CarePlanViewService;
 use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\PdfService;
+use CircleLinkHealth\Customer\AppConfig\SeesAutoQAButton;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
 class PatientController extends Controller
@@ -33,6 +36,17 @@ class PatientController extends Controller
     {
         $this->formatter           = $formatter;
         $this->fullCalendarService = $fullCalendarService;
+    }
+
+    public function autoQAApprove($userId)
+    {
+        if (SeesAutoQAButton::userId($userId)) {
+            Artisan::queue(AutoApproveValidCarePlansAs::class, [
+                'userId' => $userId,
+            ]);
+        }
+
+        return 'Cpm will QA valid CarePlans in your queue on your behalf. Give it ~5 minutes and refresh your homepage. Any patients still showing on the table need human QA.';
     }
 
     public function createCBTTestPatient(Request $request)
@@ -171,6 +185,7 @@ class PatientController extends Controller
         $nurse                          = null;
         $patientsPendingApproval        = [];
         $showPatientsPendingApprovalBox = false;
+        $seesAutoApprovalButton         = false;
 
         /** @var User $user */
         $user = auth()->user();
@@ -189,6 +204,7 @@ class PatientController extends Controller
             $patients                       = $user->patientsPendingCLHApproval()->get();
             $patientsPendingApproval        = $this->formatter->patientListing($patients);
             $pendingApprovals               = $patients->count();
+            $seesAutoApprovalButton         = SeesAutoQAButton::userId(auth()->id());
         }
 
         $noLiveCountTimeTracking = true;
@@ -203,6 +219,7 @@ class PatientController extends Controller
                     'showPatientsPendingApprovalBox',
                     'noLiveCountTimeTracking',
                     'authData',
+                    'seesAutoApprovalButton',
                 ]),
                 $patientsPendingApproval
             )
