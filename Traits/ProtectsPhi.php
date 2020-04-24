@@ -49,7 +49,16 @@ trait ProtectsPhi
     {
         $value = parent::getAttribute($key);
 
-        if ('id' === $key || ($this instanceof User && ! $this->isParticipant())) {
+        if ('id' === $key) {
+            return $value;
+        }
+
+        if ( ! in_array($key, $this->phi)) {
+            return $value;
+        }
+
+        $isUser = $this instanceof User;
+        if ($isUser && ! $this->isParticipant()) {
             return $value;
         }
 
