@@ -64,7 +64,7 @@
                     <div v-else-if="isEnrollees"
                          class="survey-sub-welcome-text"
                          style="text-align: center;">
-                        Dear {{this.surveyData.last_name}},<br>
+                        Dear {{this.surveyData.first_name}},<br>
                         Almost done! Just need some information.
                     </div>
                     <div v-else class="survey-sub-welcome-text">
@@ -290,7 +290,7 @@
                         <br>
                         <br>
                         <div style="font-weight: bold">
-                            Dr's. {{this.doctorsLastName}}'s care team.
+                            Dr. {{this.doctorsLastName}}'s care team.
                         </div>
                     </div>
                     <br/>
