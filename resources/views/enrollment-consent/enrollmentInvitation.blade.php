@@ -25,7 +25,7 @@
                         {{$dateLetterSent}}
                     </div>
                     <div class="letter-head">
-                        Dear {{$userEnrollee->first_name . ' ' . $userEnrollee->last_name}}
+                        Dear {{$userEnrollee->first_name . ' ' . $userEnrollee->last_name}},
                     </div>
                     <div class="letter-body">
                         <div class="body">

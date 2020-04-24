@@ -19,9 +19,9 @@ class EnrollmentInvitationService
      * @param $practiceName
      * @param $practiceLetter
      * @param mixed $practiceNumber
-     *
      * @param $provider
-     * @param  bool  $hideButtons
+     * @param bool $hideButtons
+     *
      * @return array
      */
     public function createLetter($practiceName, $practiceLetter, $practiceNumber, $provider, $hideButtons = false)
@@ -44,7 +44,7 @@ class EnrollmentInvitationService
 
         $optionalParagraph = ! $hideButtons
             ? "If you would like additional information, or are interested in enrolling today,
-             please call $practiceNumber."
+             please call <strong>$practiceNumber</strong>."
             : '';
 
         $buttonsSecondVersion = ! $hideButtons
