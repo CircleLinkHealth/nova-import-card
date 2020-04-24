@@ -148,7 +148,7 @@ class CcdaImporter
     {
         $newUserId = Str::random(25);
 
-        $email = empty($email = $this->ccda->patientEmail())
+        $email = empty($email = $this->patientEmail())
             ? $newUserId.'@careplanmanager.com'
             : $email;
 
@@ -338,5 +338,14 @@ class CcdaImporter
         ImportVitals::for($this->patient, $this->ccda);
 
         return $this;
+    }
+    
+    private function patientEmail()
+    {
+        $email = $this->ccda->patientEmail();
+        
+        if (strtolower($email) === 'noemail@noemail.com') return null;
+        
+        return $email;
     }
 }
