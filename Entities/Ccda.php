@@ -10,6 +10,7 @@ use App\DirectMailMessage;
 use App\Entities\CcdaRequest;
 use App\Search\ProviderByName;
 use App\Traits\Relationships\BelongsToPatientUser;
+use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidCcdaException;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -18,9 +19,11 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Adapters\CcdaToEligibilityJobAdapter;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporter;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
@@ -351,7 +354,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
     public function getReferringProviderName()
     {
-        return $this->referring_provider_name;
+        return $this->referring_provider_name ?? $this->ccdaAuthor();
     }
 
     public function getType(): ?string
@@ -370,6 +373,8 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
     public function guessPracticeLocationProvider(): MedicalRecord
     {
+        if ($this->billing_provider_id && $this->location_id) return $this;
+        
         if ($term = $this->getReferringProviderName()) {
             $this->setAllPracticeInfoFromProvider($term);
         }
@@ -390,6 +395,28 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             $this->bluebuttonJson()->procedures ?? []
         )->pluck('code')->contains($code);
     }
+    
+    public function fillInSupplementaryData() {
+        $supp = SupplementalPatientData::forPatient($this->practice_id, $this->patientFirstName(), $this->patientLastName(), $this->patientDob());
+        
+        if (! $supp) {
+            return  $this;
+        }
+    
+        if (! $this->location_id) {
+            $this->location_id = $supp->location_id;
+        }
+        
+        if (! $this->billing_provider_id) {
+            $this->billing_provider_id = $supp->billing_provider_user_id;
+        }
+        
+        if ($this->isDirty()) {
+            $this->save();
+        }
+        
+        return $this;
+    }
 
     /**
      * Handles importing a MedicalRecordForEligibilityCheck for QA.
@@ -399,6 +426,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     public function import(Enrollee $enrollee = null)
     {
         $this
+            ->fillInSupplementaryData()
             ->guessPracticeLocationProvider();
 
         $ccda = $this->updateOrCreateCarePlan($enrollee);
@@ -423,9 +451,9 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         return $this->belongsTo(Location::class);
     }
 
-    public function patientDob()
+    public function patientDob():?Carbon
     {
-        return $this->bluebuttonJson()->demographics->dob;
+        return ImportPatientInfo::parseDOBDate($this->bluebuttonJson()->demographics->dob);
     }
 
     public function patientEmail()
@@ -672,5 +700,16 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
         $this->setBillingProviderId($searchProvider->id);
         $this->setLocationId(optional($searchProvider->loadMissing('locations')->locations->first())->id);
+    }
+    
+    private function ccdaAuthor()
+    {
+        $fName = $this->bluebuttonJson()->document->author->name->given[0] ?? '';
+        $lName = $this->bluebuttonJson()->document->author->name->family?? '';
+        $name = "$fName $lName";
+        
+        if (empty($name)) return null;
+        
+        return $name;
     }
 }
