@@ -11,6 +11,10 @@ use Illuminate\Support\Collection;
 
 class NurseInfo extends Resource
 {
+    public static $time1 = 0;
+    public static $time2 = 0;
+    public static $time3 = 0;
+
     /**
      * Transform the resource into an array.
      *
@@ -26,9 +30,19 @@ class NurseInfo extends Resource
             $nurse['states'] = (new Collection($nurse['states']))->map(function ($s) {
                 return $s['code'];
             });
-            $this->loadMissing('user.practices');
+            //$this->loadMissing('user.practices');
             if ($this->user) {
-                $nurse['practices'] = $this->user->practices->pluck('id');
+                $start = microtime(true);
+                $dummy = $this->user->isParticipant();
+                self::$time1 += microtime(true) - $start;
+
+                $start = microtime(true);
+                $bla   = $this->user->allPracticeIds->pluck('id');
+                self::$time2 += microtime(true) - $start;
+
+                $start              = microtime(true);
+                $nurse['practices'] = $bla;
+                self::$time3 += microtime(true) - $start;
             }
         }
 
