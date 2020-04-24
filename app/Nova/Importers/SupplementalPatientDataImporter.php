@@ -118,6 +118,7 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
             'N/A',
             '########',
             '#N/A',
+            '-',
         ];
     }
 
