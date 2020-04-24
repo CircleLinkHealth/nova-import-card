@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bca82e42563ec8e1a458f8d88437e84d",
+    "content-hash": "5923961cd48d9a0e931118545b79ba24",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1368,7 +1368,7 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.4.3",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
@@ -15212,6 +15212,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/shared-models-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
