@@ -731,6 +731,19 @@ class Enrollee extends BaseModel
             }
         );
     }
+    
+    public function scopeShouldBeCalled($query)
+    {
+        $canBeCalledStatuses = array_merge([
+            self::TO_CALL,
+            self::UNREACHABLE
+        ], self::TO_CONFIRM_STATUSES);
+        
+        return $query->whereIn('status',
+           $canBeCalledStatuses
+        )
+            ->where('attempt_count', '<', 3);
+    }
 
     public function scopeSearchAddresses($query, string $term)
     {
