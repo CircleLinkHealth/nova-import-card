@@ -185,6 +185,11 @@
                 this.hangUp()
                 this.updateCallStatus()
             })
+
+            App.$on('enrollable:load-from-search-bar', () =>{
+                this.retrievePatient();
+                this.loading_modal.open();
+            })
         },
         methods: {
             getTimeTrackerInfo() {
@@ -203,8 +208,16 @@
             },
             retrievePatient() {
                 this.loading = true;
+                let url = rootUrl('/enrollment/show');
+
+                let href = window.location.href
+                let tags = href.split('#')
+                if (tags[1]){
+                    url = url + '/' + tags[1]
+                }
+
                 return this.axios
-                    .get(rootUrl('/enrollment/show'))
+                    .get(url)
                     .then(response => new Promise(resolve => setTimeout(() => {
                         this.loading = false
                         this.loading_modal.close()
@@ -225,7 +238,7 @@
                         //to implement
                         this.loading = false;
                         this.loading_modal.close()
-                        this.error = 'Something went wrong while retrieving patient. Please contact support.';
+                        this.error = 'Something went wrong while retrieving patient. Please contact CLH support.';
                         this.error_modal.open()
                         console.error(err);
                     });

@@ -118,6 +118,49 @@ class EnrollmentCenterController extends ApiController
         ]);
     }
 
+    public function queryEnrollables(Request $request)
+    {
+        $input = $request->all();
+
+        if ( ! array_key_exists('enrollables', $input)) {
+            return response()->json([], 400);
+        }
+
+        $searchTerms = explode(' ', $input['enrollables']);
+
+        $query = Enrollee::with(['practice.enrollmentTips', 'provider.providerInfo']);
+
+        foreach ($searchTerms as $term) {
+            $query->where(function ($q) use ($term) {
+                $q->where('first_name', 'like', "%${term}%")
+                    ->orWhere('last_name', 'like', "%${term}%")
+                    ->orWhere('id', 'like', "%${term}%")
+                    ->orWhere('mrn', 'like', "%${term}%")
+                    ->orWhere('dob', 'like', "%${term}%")
+                    ->orWhere(function ($query) use ($term) {
+                        $query->hasPhone($term);
+                    });
+            });
+        }
+
+        $results     = $query->get();
+        $enrollables = [];
+        $i           = 0;
+        foreach ($results as $e) {
+            $enrollables[$i]['id']   = $e->id;
+            $enrollables[$i]['name'] = $e->first_name.' '.$e->last_name;
+            $enrollables[$i]['dob']  = Carbon::parse($e->dob)->format('m-d-Y');
+            $enrollables[$i]['mrn']  = $e->mrn;
+            $enrollables[$i]['link'] = 'test';
+
+            $enrollables[$i]['program'] = optional($e->practice)->display_name ?? '';
+            $enrollables[$i]['hint']    = $enrollables[$i]['name'].' DOB:'.$enrollables[$i]['dob'].' ['.$enrollables[$i]['program']."] MRN: {$enrollables[$i]['mrn']} ID: {$e->id} PRIMARY PHONE: {$e->primary_phone}";
+            ++$i;
+        }
+
+        return response()->json($enrollables);
+    }
+
     public function rejected(Request $request)
     {
         $enrollee       = Enrollee::find($request->input('enrollable_id'));

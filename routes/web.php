@@ -480,7 +480,12 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'enrollment-center.family-members',
             ])->middleware('permission:enrollee.read');
 
-            Route::get('/show', [
+            Route::get('queryEnrollable', [
+                'uses' => 'API\EnrollmentCenterController@queryEnrollables',
+                'as'   => 'enrollables.query',
+            ]);
+
+            Route::get('/show/{enrollableId?}', [
                 'uses' => 'API\EnrollmentCenterController@show',
                 'as'   => 'enrollment-center.show',
             ])->middleware('permission:enrollee.read');

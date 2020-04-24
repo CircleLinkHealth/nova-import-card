@@ -141,7 +141,7 @@
         "circlelinkhealth/clh-nova-theme": "*",
         "circlelinkhealth/condition-code-lookup-module": "^1.1",
         "circlelinkhealth/core-module": "dev-laravel-6-upgrade",
-        "circlelinkhealth/cpm-migrations-module": "dev-master",
+        "circlelinkhealth/cpm-migrations-module": "1.6.5",
         "circlelinkhealth/customer-module": "dev-master",
         "circlelinkhealth/eligibility-module": "dev-CPM-2256-2019-2286-2287-CA-L6",
         "circlelinkhealth/generate-patient-call-data-csv": "*",

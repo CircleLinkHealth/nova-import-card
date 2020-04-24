@@ -7,6 +7,8 @@
     <meta id="token" name="csrf-token" content="{{ csrf_token() }}">
     <meta name="base-url" content="{{ url('/') }}">
 
+    <link href="{{ mix('/css/enrollablesearch.css') }}" rel="stylesheet">
+
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
@@ -20,7 +22,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <style>
+        span.twitter-typeahead .twitter-typeahead {
+            position: absolute !important;
+        }
+    </style>
 </head>
+<body>
+@stack('prescripts')
+
+<script type="text/javascript" src="{{ mix('compiled/js/issue-688.js') }}"></script>
+
+@stack('scripts')
+
 
 <!-- Dropdown Structure -->
 <ul id="dropdown1" class="dropdown-content">
@@ -31,6 +47,11 @@
 <nav style="position: fixed">
     <div class="nav-wrapper" style="background: #4fb2e2;">
         <a href="#!" style="padding-left: 10px" class="brand-logo">CircleLink Health Enrollment Center</a>
+
+        <div id="search-bar-container">
+            @include('enrollment-ui.search')
+        </div>
+
         <ul class="right hide-on-med-and-down">
             @if(auth()->user()->hasRole('care-ambassador-view-only'))
                 <li><a href="{{route('patients.dashboard')}}">Patient Dashboard</a></li>
@@ -46,7 +67,8 @@
             @endif
 
             <li>
-                <a href="https://circlelinkhealth.zendesk.com/hc/en-us/categories/360002207051-Care-Ambassador-Support" target="_blank">
+                <a href="https://circlelinkhealth.zendesk.com/hc/en-us/categories/360002207051-Care-Ambassador-Support"
+                   target="_blank">
                     Enrollment Resources
                 </a>
             </li>
@@ -69,5 +91,7 @@
 </script>
 
 @yield('content')
+
+</body>
 
 </html>
