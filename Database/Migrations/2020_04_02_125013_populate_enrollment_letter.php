@@ -5,7 +5,6 @@
  */
 
 use CircleLinkHealth\Eligibility\Database\Seeders\EnrollmentInvitationLetterSeeder;
-use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Illuminate\Database\Migrations\Migration;
 
 class PopulateEnrollmentLetter extends Migration
@@ -26,7 +25,7 @@ class PopulateEnrollmentLetter extends Migration
      */
     public function up()
     {
-        if (! isUnitTestingEnv()) {
+        if ( ! isUnitTestingEnv()) {
             Artisan::call('db:seed', [
                 '--class' => EnrollmentInvitationLetterSeeder::class,
             ]);
