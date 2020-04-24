@@ -11,7 +11,7 @@
         <br>
         <br>
         <div style="font-weight: bold">
-            Dr's {{$doctorName}}'s care team.
+            Dr {{$doctorName}}'s care team.
         </div>
     </div>
 @endsection

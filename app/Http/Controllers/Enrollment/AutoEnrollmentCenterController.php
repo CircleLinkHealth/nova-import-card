@@ -510,7 +510,7 @@ class AutoEnrollmentCenterController extends Controller
             $enrollee = $this->getEnrolleeFromNotification($enrollableId);
         }
 
-        if ( ! $this->enrollableHasRequestedInfo($enrollee) && is_null($userCreatedFromEnrollee)) {
+        if ( ! $this->enrollableHasRequestedInfo($enrollee) && 'enrolled' === $enrollee->status) {
             $practiceNumber = $enrollee->practice->outgoing_phone_number;
             $doctorName     = optional($enrollee->provider)->last_name;
 
