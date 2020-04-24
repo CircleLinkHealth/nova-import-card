@@ -712,22 +712,22 @@ class Enrollee extends BaseModel
 
     /**
      * Assume DB format (e164).
-     * For typeahead searching
+     * For typeahead searching.
      *
      * @param $query
      * @param $phone
      */
     public function scopeHasPhone($query, $phone)
     {
-        if (Str::contains($phone, '-')){
+        if (Str::contains($phone, '-')) {
             $phone = str_replace('-', '', $phone);
         }
-        
+
         return $query->where(
             function ($q) use ($phone) {
-                $q->where('home_phone','like', "%${phone}%")
-                    ->orWhere('cell_phone','like', "%${phone}%")
-                    ->orWhere('other_phone','like', "%${phone}%");
+                $q->where('home_phone', 'like', "%${phone}%")
+                    ->orWhere('cell_phone', 'like', "%${phone}%")
+                    ->orWhere('other_phone', 'like', "%${phone}%");
             }
         );
     }
