@@ -15,6 +15,7 @@ use App\Services\Enrollment\SuggestEnrolleeFamilyMembers;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
+use Illuminate\Support\Str;
 
 class EnrollmentCenterController extends ApiController
 {
@@ -128,15 +129,14 @@ class EnrollmentCenterController extends ApiController
 
         $searchTerms = explode(' ', $input['enrollables']);
 
-        $query = Enrollee::with(['practice.enrollmentTips', 'provider.providerInfo']);
+        $query = Enrollee::with(['practice.enrollmentTips', 'provider.providerInfo'])
+            ->shouldBeCalled()
+            ->where('care_ambassador_user_id', auth()->user()->id);
 
         foreach ($searchTerms as $term) {
             $query->where(function ($q) use ($term) {
                 $q->where('first_name', 'like', "%${term}%")
                     ->orWhere('last_name', 'like', "%${term}%")
-                    ->orWhere('id', 'like', "%${term}%")
-                    ->orWhere('mrn', 'like', "%${term}%")
-                    ->orWhere('dob', 'like', "%${term}%")
                     ->orWhere(function ($query) use ($term) {
                         $query->hasPhone($term);
                     });
@@ -147,14 +147,30 @@ class EnrollmentCenterController extends ApiController
         $enrollables = [];
         $i           = 0;
         foreach ($results as $e) {
-            $enrollables[$i]['id']   = $e->id;
-            $enrollables[$i]['name'] = $e->first_name.' '.$e->last_name;
-            $enrollables[$i]['dob']  = Carbon::parse($e->dob)->format('m-d-Y');
-            $enrollables[$i]['mrn']  = $e->mrn;
-            $enrollables[$i]['link'] = 'test';
+            $matchingPhones = collect([]);
+            $phones         = [
+                $e->home_phone_e164,
+                $e->cell_phone_e164,
+                $e->other_phone_e164,
+            ];
+            foreach ($phones as $phone) {
+                foreach ($searchTerms as $term) {
+                    //remove dashes for e164 format
+                    $sanitizedTerm = trim(str_replace('-', '', $term));
+                    if (Str::contains($phone, $term)) {
+                        $matchingPhones->push($phone);
+                    }
+                }
+            }
+            $matchingPhonesString = $matchingPhones->unique()->implode(', ');
 
-            $enrollables[$i]['program'] = optional($e->practice)->display_name ?? '';
-            $enrollables[$i]['hint']    = $enrollables[$i]['name'].' DOB:'.$enrollables[$i]['dob'].' ['.$enrollables[$i]['program']."] MRN: {$enrollables[$i]['mrn']} ID: {$e->id} PRIMARY PHONE: {$e->primary_phone}";
+            $enrollables[$i]['id']       = $e->id;
+            $enrollables[$i]['name']     = $e->first_name.' '.$e->last_name;
+            $enrollables[$i]['mrn']      = $e->mrn;
+            $enrollables[$i]['program']  = optional($e->practice)->display_name ?? '';
+            $enrollables[$i]['provider'] = optional($e->provider)->getFullName() ?? '';
+            $enrollables[$i]['hint']     = $enrollables[$i]['name'].'PROVIDER:  ['.$enrollables[$i]['program']."] HOME PHONE: {$e->home_phone}";
+            $enrollables[$i]['hint']     = "{$enrollables[$i]['name']} {$matchingPhonesString} PROVIDER: [{$enrollables[$i]['provider']}] [{$enrollables[$i]['program']}]";
             ++$i;
         }
 
