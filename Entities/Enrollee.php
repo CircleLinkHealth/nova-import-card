@@ -169,6 +169,7 @@ use Illuminate\Support\Str;
  * @method   static                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee whereLocationId($value)
  * @method   static                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee hasPhone($phone)
  * @property string|null                                       $other_note
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee shouldBeCalled()
  */
 class Enrollee extends BaseModel
 {
