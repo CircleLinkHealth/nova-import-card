@@ -148,21 +148,30 @@ class EnrollmentCenterController extends ApiController
         $i           = 0;
         foreach ($results as $e) {
             $matchingPhones = collect([]);
-            $phones         = [
-                $e->home_phone_e164,
-                $e->cell_phone_e164,
-                $e->other_phone_e164,
-            ];
-            foreach ($phones as $phone) {
-                foreach ($searchTerms as $term) {
-                    //remove dashes for e164 format
-                    $sanitizedTerm = trim(str_replace('-', '', $term));
-                    if (Str::contains($phone, $term)) {
-                        $matchingPhones->push($phone);
-                    }
+
+            foreach ($searchTerms as $term) {
+                //remove dashes for e164 format
+                $sanitizedTerm = trim(str_replace('-', '', $term));
+                if (Str::contains($e->home_phone_e164, $sanitizedTerm)) {
+                    $matchingPhones->push($e->home_phone);
+                }
+                if (Str::contains($e->cell_phone_e164, $sanitizedTerm)) {
+                    $matchingPhones->push($e->cell_phone);
+                }
+                if (Str::contains($e->other_phone_e164, $sanitizedTerm)) {
+                    $matchingPhones->push($e->other_phone);
                 }
             }
-            $matchingPhonesString = $matchingPhones->unique()->implode(', ');
+
+            if ($matchingPhones->isEmpty()) {
+                $matchingPhones = collect([
+                    $e->home_phone,
+                    $e->cell_phone,
+                    $e->other_phone,
+                ]);
+            }
+
+            $phonesString = $matchingPhones->unique()->implode(', ');
 
             $enrollables[$i]['id']       = $e->id;
             $enrollables[$i]['name']     = $e->first_name.' '.$e->last_name;
@@ -170,7 +179,7 @@ class EnrollmentCenterController extends ApiController
             $enrollables[$i]['program']  = optional($e->practice)->display_name ?? '';
             $enrollables[$i]['provider'] = optional($e->provider)->getFullName() ?? '';
             $enrollables[$i]['hint']     = $enrollables[$i]['name'].'PROVIDER:  ['.$enrollables[$i]['program']."] HOME PHONE: {$e->home_phone}";
-            $enrollables[$i]['hint']     = "{$enrollables[$i]['name']} {$matchingPhonesString} PROVIDER: [{$enrollables[$i]['provider']}] [{$enrollables[$i]['program']}]";
+            $enrollables[$i]['hint']     = "{$enrollables[$i]['name']} {$phonesString} PROVIDER: [{$enrollables[$i]['provider']}] [{$enrollables[$i]['program']}]";
             ++$i;
         }
 
