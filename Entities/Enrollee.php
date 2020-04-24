@@ -15,6 +15,7 @@ use CircleLinkHealth\Core\Traits\MySQLSearchable;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use Illuminate\Support\Str;
 
 /**
  * CircleLinkHealth\Eligibility\Entities\Enrollee.
@@ -123,7 +124,7 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
  * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereUpdatedAt($value)
  * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereUserId($value)
  * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereZip($value)
- * @mixin \Eloquent
+ * @mixin    \Eloquent
  * @property int|null                                                   $batch_id
  * @property int|null                                                   $eligibility_job_id
  * @property int|null                                                   $care_ambassador_user_id
@@ -154,13 +155,13 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
  * @property \CircleLinkHealth\Eligibility\Entities\Enrollee[]|\Illuminate\Database\Eloquent\Collection
  *     $confirmedFamilyMembers
  * @property int|null $confirmed_family_members_count
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
+ * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
  *     mySQLSearch($columns, $term, $mode = 'BOOLEAN', $shouldRequireAll = true, $shouldRequireIntegers = true)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
+ * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
  *     searchAddresses($term)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
+ * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
  *     searchPhones($term)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
+ * @method   static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
  *     shouldSuggestAsFamilyForEnrollee($enrolleeId)
  * @property int|null                                          $location_id
  * @property \CircleLinkHealth\SharedModels\Entities\Ccda|null $ccda
@@ -191,11 +192,6 @@ class Enrollee extends BaseModel
     const ELIGIBLE = 'eligible';
 
     /**
-     * status = engaged. When a care ambassador has viewed an enrollee but hasn't actually performed any action on them.
-     */
-    const ENGAGED = 'engaged';
-
-    /**
      * status = enrolled.
      */
     const ENROLLED = 'enrolled';
@@ -209,7 +205,39 @@ class Enrollee extends BaseModel
      * status = legacy. These are enrolees who have existed in our system before releasing the care ambassador channel.
      */
     const LEGACY = 'legacy';
-
+    
+    /**
+     * status = consented.
+     */
+    const TO_CONFIRM_CONSENTED = 'to_confirm_consented';
+    
+    /**
+     * status = unreachable.
+     */
+    const TO_CONFIRM_UNCREACHABLE = 'to_confirm_utc';
+    
+    /**
+     * status = unreachable.
+     */
+    const TO_CONFIRM_SOFT_REJECTED = 'to_confirm_soft_rejected';
+    
+    /**
+     * status = unreachable.
+     */
+    const TO_CONFIRM_REJECTED = 'to_confirm_rejected';
+    
+    /**
+     * For confirmed family members
+     * We are setting their statuses at the time of the status update of the initial/original
+     * Family member, so as to pre-fill their data according to the initial/original family member
+     */
+    const TO_CONFIRM_STATUSES = [
+        self::TO_CONFIRM_CONSENTED,
+        self::TO_CONFIRM_REJECTED,
+        self::TO_CONFIRM_SOFT_REJECTED,
+        self::TO_CONFIRM_UNCREACHABLE
+    ];
+    
     /**
      * status = rejected.
      *
@@ -364,12 +392,12 @@ class Enrollee extends BaseModel
         if (empty($input)) {
             return false;
         }
-        if ( ! is_array($input)) {
+        if (! is_array($input)) {
             $input = explode(',', $input);
         }
         foreach ($input as $id) {
             //todo: try/change to syncWithoutDetaching
-            if ( ! $this->confirmedFamilyMembers()->where('id', $id)->exists()) {
+            if (! $this->confirmedFamilyMembers()->where('id', $id)->exists()) {
                 $this->confirmedFamilyMembers()->attach($input);
             }
         }
@@ -392,7 +420,7 @@ class Enrollee extends BaseModel
             'enrollee_family_members',
             'enrollee_id',
             'family_member_enrollee_id'
-        );
+        )->withTimestamps();
     }
 
     public function eligibilityJob()
@@ -413,11 +441,11 @@ class Enrollee extends BaseModel
             if ($compareAgainstEnrollee) {
                 $shouldHighlight = false;
 
-                if ( ! empty(trim($compareAgainstEnrollee->address))) {
+                if (! empty(trim($compareAgainstEnrollee->address))) {
                     $shouldHighlight = levenshtein($attr, $compareAgainstEnrollee->address) <= 7;
                 }
 
-                if ( ! $shouldHighlight && ! empty(trim($compareAgainstEnrollee->address_2))) {
+                if (! $shouldHighlight && ! empty(trim($compareAgainstEnrollee->address_2))) {
                     $shouldHighlight = levenshtein($attr, $compareAgainstEnrollee->address_2) <= 7;
                 }
 
@@ -442,7 +470,7 @@ class Enrollee extends BaseModel
             return null;
         }
 
-        if ( ! array_key_exists($key, $this->agent_details)) {
+        if (! array_key_exists($key, $this->agent_details)) {
             return null;
         }
 
@@ -470,7 +498,16 @@ class Enrollee extends BaseModel
     {
         return (new StringManipulation())->formatPhoneNumberE164($this->cell_phone);
     }
-
+    
+    public static function getEquivalentToConfirmStatus($status)
+    {
+        return collect(self::TO_CONFIRM_STATUSES)->filter(
+            function ($toConfirmStatus) use ($status) {
+                return Str::endsWith($toConfirmStatus, $status);
+            }
+        )->first();
+    }
+    
     /**
      * Get Home Phone.
      *
@@ -528,11 +565,14 @@ class Enrollee extends BaseModel
         foreach ($this->phoneAttributes as $attribute) {
             $attr = $this->$attribute;
             if ($compareAgainstEnrollee) {
-                if (in_array($attr, [
+                if (in_array(
+                    $attr, [
                     $compareAgainstEnrollee->home_phone,
                     $compareAgainstEnrollee->cell_phone,
                     $compareAgainstEnrollee->other_phone,
-                ])) {
+                    ]
+                )
+                ) {
                     //if it matches, highlight it.
                     $attr = "<span style='background-color: #26a69a; color: white; padding-left: 5px; padding-right: 5px; border-radius: 3px;'>{$attr}</span>";
                 }
@@ -587,7 +627,7 @@ class Enrollee extends BaseModel
 
     public function getProviderInfo()
     {
-        if ( ! $this->provider) {
+        if (! $this->provider) {
             return null;
         }
 
@@ -677,11 +717,13 @@ class Enrollee extends BaseModel
      */
     public function scopeHasPhone($query, $phone)
     {
-        return $query->where(function ($q) use ($phone) {
-            $q->where('home_phone', $phone)
-                ->orWhere('cell_phone', $phone)
-                ->orWhere('other_phone', $phone);
-        });
+        return $query->where(
+            function ($q) use ($phone) {
+                $q->where('home_phone', $phone)
+                    ->orWhere('cell_phone', $phone)
+                    ->orWhere('other_phone', $phone);
+            }
+        );
     }
 
     public function scopeSearchAddresses($query, string $term)
@@ -703,16 +745,20 @@ class Enrollee extends BaseModel
     public function scopeShouldSuggestAsFamilyForEnrollee($query, $enrolleeId)
     {
         return $query->where('id', '!=', $enrolleeId)
-            ->whereNotIn('status', [
+            ->whereNotIn(
+                'status', [
                 self::CONSENTED,
                 self::ENROLLED,
                 self::INELIGIBLE,
                 self::LEGACY,
-            ])
-            ->where(function ($q) {
-                $q->whereDate('last_attempt_at', '<', Carbon::now()->startOfDay())
-                    ->orWhereNull('last_attempt_at');
-            });
+                ]
+            )
+            ->where(
+                function ($q) {
+                    $q->whereDate('last_attempt_at', '<', Carbon::now()->startOfDay())
+                        ->orWhereNull('last_attempt_at');
+                }
+            );
     }
 
     public function scopeToCall($query)
@@ -798,6 +844,11 @@ class Enrollee extends BaseModel
     {
         $this->attributes['other_phone'] = (new StringManipulation())->formatPhoneNumberE164($homePhone);
     }
+    
+    public function speaksSpanish()
+    {
+        return stringMeansSpanish($this->lang);
+    }
 
     /**
      * Set Primary Phone.
@@ -807,6 +858,11 @@ class Enrollee extends BaseModel
     public function setPrimaryPhoneNumberAttribute($primaryPhone)
     {
         $this->attributes['primary_phone'] = (new StringManipulation())->formatPhoneNumberE164($primaryPhone);
+    }
+    
+    public static function statusIsToConfirm($status)
+    {
+        return in_array($status, self::TO_CONFIRM_STATUSES);
     }
 
     public function targetPatient()
