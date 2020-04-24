@@ -9,7 +9,6 @@ namespace App\Http\Controllers\API;
 use App\Filters\NurseFilters;
 use App\Http\Resources\NurseInfo;
 use CircleLinkHealth\Customer\Entities\Nurse;
-use Illuminate\Http\Request;
 
 class NurseController extends ApiController
 {
@@ -27,19 +26,8 @@ class NurseController extends ApiController
      *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index(Request $request, NurseFilters $filters)
+    public function index(NurseFilters $filters)
     {
-        $start    = microtime(true);
-        $filtered = Nurse::filter($filters)->get();
-        $time1    = microtime(true) - $start;
-        $start    = microtime(true);
-        $result   = NurseInfo::collection($filtered);
-        $time2    = microtime(true) - $start;
-
-        $start = microtime(true);
-        json_encode($result);
-        $time3 = microtime(true) - $start;
-
-        return $result;
+        return NurseInfo::collection(Nurse::filter($filters)->get());
     }
 }

@@ -10,7 +10,6 @@ use App\Filters\UserFilters;
 use App\Http\Controllers\Controller;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\PracticePatientsView;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
@@ -93,8 +92,8 @@ class PracticeController extends Controller
                 $info = $nurse->nurseInfo;
                 $states = (
                     $info
-                    ? $info->states
-                    : new Collection()
+                              ? $info->states
+                              : new Collection()
                 )
                     ->map(function ($state) {
                         return $state->code;
@@ -126,27 +125,27 @@ class PracticeController extends Controller
 
     public function getPatients($practiceId)
     {
-        $patients = PracticePatientsView::where('program_id', '=', $practiceId)
-            ->get()
-            ->map(function ($patient) {
-                $firstName = ucfirst(strtolower($patient->first_name));
-                $lastName = ucfirst(strtolower($patient->last_name));
-                $suffix = $patient->suffix ?? '';
-                $fullName = trim(ucwords("${firstName} ${lastName} ${suffix}"));
-
-                return [
-                    'id'         => $patient->id,
-                    'first_name' => $firstName,
-                    'last_name'  => $lastName,
-                    'suffix'     => $suffix,
-                    'full_name'  => $fullName,
-                    'city'       => $patient->city,
-                    'state'      => $patient->state,
-                    'status'     => $patient->status,
-                    'ccm_status' => $patient->ccm_status,
-                ];
-            })
-            ->toArray();
+        $practice = Practice::find($practiceId);
+        $patients = $practice->patients()->with(['carePlan', 'patientInfo'])->get([
+            'id',
+            'first_name',
+            'last_name',
+            'suffix',
+            'city',
+            'state',
+        ])->map(function ($patient) {
+            return [
+                'id'         => $patient->id,
+                'first_name' => $patient->getFirstName(),
+                'last_name'  => $patient->getLastName(),
+                'suffix'     => $patient->getSuffix(),
+                'full_name'  => $patient->getFullName(),
+                'city'       => $patient->city,
+                'state'      => $patient->state,
+                'status'     => optional($patient->carePlan)->status,
+                'ccm_status' => optional($patient->patientInfo)->ccm_status,
+            ];
+        })->toArray();
 
         return response()->json($patients);
     }
@@ -203,8 +202,8 @@ class PracticeController extends Controller
         //HTTP_REFERER is not always set by web servers, so we use the param in admin pages on client side
         $practicesIAmAdmin = $request->input('admin-only', false);
         if ( ! $practicesIAmAdmin
-            && isset($_SERVER['HTTP_REFERER'])
-            && Str::contains($_SERVER['HTTP_REFERER'], '/admin/')) {
+             && isset($_SERVER['HTTP_REFERER'])
+             && Str::contains($_SERVER['HTTP_REFERER'], '/admin/')) {
             $practicesIAmAdmin = true;
         }
         $user = auth()->user();
