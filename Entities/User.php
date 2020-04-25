@@ -2695,8 +2695,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function routeNotificationForMail($notification)
     {
         if (App::environment(['review', 'local'])) {
-//            return 'kountouris7@gmail.com';
-            return 'nektariosx01@gmail.com'; // tester
+            return 'kountouris7@gmail.com';
+//            return 'nektariosx01@gmail.com'; // tester
         }
 
         return $this->email;
