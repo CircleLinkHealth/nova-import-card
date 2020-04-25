@@ -67,11 +67,13 @@ class SupplementalPatientData extends Model
         'location',
     ];
     protected $table = 'supplemental_patient_data';
-    
-    public static function forPatient(int $practiceId, string $firstName, string $lastName, Carbon $dob = null)
+
+    public static function forPatient(?int $practiceId, string $firstName, string $lastName, ?Carbon $dob)
     {
-        if (!$dob) return null;
-        
+        if ( ! $dob || !$practiceId) {
+            return null;
+        }
+
         return SupplementalPatientData::where(
             'first_name',
             'like',
@@ -83,7 +85,7 @@ class SupplementalPatientData extends Model
                 $lastName
             )->where('dob', $dob)->first();
     }
-    
+
     public function practice()
     {
         return $this->belongsTo(Practice::class);
