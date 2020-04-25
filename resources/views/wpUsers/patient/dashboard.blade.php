@@ -83,34 +83,24 @@ $hasAwv              = in_array('awv', $patientListDropdown);
                             </a>
                         </li>
                     @endif
-                    @if( auth()->user()->hasPermission(['ccd-import']) )
-                        <li class="menu-item">
-                            <a id="patient-list" href="{{ route('import.ccd.remix') }}">
-                                <div class="icon-container column-centered">
-                                    <i class="icon--menu" aria-hidden="true">
-                                        <img src="{{mix('/img/icon--download.png')}}"
-                                             style="
-                                            max-width: 61px;
-                                            position: absolute;
-                                            left: 15px;
-                                            bottom: 12px;">
-                                    </i>
-                                </div>
-                                <div>
-                                    <p class="text-medium-big text--menu text-serif">Import CCDs<BR><BR><br></p>
-                                </div>
-                            </a>
-                        </li>
-                    @endif
                 </ul>
             </div>
         </div>
         @include('errors.errors')
     </div>
 
-    <div class="container-fluid">
         @if($showPatientsPendingApprovalBox)
-            @include('partials.provider.patients-pending-approval')
+            <div class="container-fluid">
+                @if($seesAutoApprovalButton)
+                    <div class="row">
+                        <div class="col-lg-11">
+                            {{link_to_action('Patient\PatientController@autoQAApprove', 'Auto QA', ['userId' => auth()->id()], ['class' => 'btn btn-success pull-right'])}}
+                        </div>
+                    </div>
+                @endif
+
+                @include('partials.provider.patients-pending-approval')
+            </div>
+
         @endif
-    </div>
 @endsection

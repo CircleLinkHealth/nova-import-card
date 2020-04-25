@@ -230,7 +230,6 @@
       <path value="$PROJECT_DIR$/vendor/sentry/sentry-laravel" />
       <path value="$PROJECT_DIR$/vendor/http-interop/http-factory-guzzle" />
       <path value="$PROJECT_DIR$/vendor/jean85/pretty-package-versions" />
-      <path value="$PROJECT_DIR$/vendor/ocramius/package-versions" />
       <path value="$PROJECT_DIR$/vendor/fico7489/laravel-pivot" />
       <path value="$PROJECT_DIR$/vendor/spatie/pdf-to-text" />
       <path value="$PROJECT_DIR$/vendor/setasign/fpdi" />
