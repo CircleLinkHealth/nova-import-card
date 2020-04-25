@@ -2213,10 +2213,19 @@ Route::get('/invite-unreachable', [
 //---------------------------------------
 
 // TEMPORARY SIGNED ROUTE
-Route::get('/patient-self-enrollment', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrollableInvitationManager',
-    'as'   => 'invitation.enrollment',
-]);
+//Route::get('/patient-self-enrollment', [
+//    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrollableInvitationManager',
+//    'as'   => 'invitation.enrollment',
+//])->middleware('signed');
+
+// TEMPORARY SIGNED ROUTE
+Route::get(
+    '/patient-self-enrollment-auth',
+    [
+        'uses' => 'Enrollment\Auth\AutoEnrollmentLogin@enrollmentloginForm',
+        'as'   => 'invitation.enrollment.login',
+    ]
+)->middleware('signed');
 
 Route::get('/enrollment-survey', [
     'uses' => 'Enrollment\AutoEnrollmentCenterController@enrollNow',

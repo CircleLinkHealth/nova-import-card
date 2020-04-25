@@ -25,7 +25,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
             SendEnrollmentEmail::class,
             function (SendEnrollmentEmail $notification, $channels, $notifiable) use ($user) {
                 $notification->createInvitationLink($notifiable);
-                $this->assertEquals(['database', 'mail'], $channels);
+                self::assertEquals(['database', 'mail'], $channels);
 
                 return (int) $notifiable->id === (int) $user->id;
             }
@@ -38,7 +38,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
             $enrollable,
             SendEnrollementSms::class,
             function (SendEnrollementSms $notification, $channels, $notifiable) use ($enrollable) {
-                $this->assertEquals(['database', TwilioChannel::class], $channels);
+                self::assertEquals(['database', TwilioChannel::class], $channels);
 
                 return (int) $notifiable->id === (int) $enrollable->id;
             }
@@ -67,7 +67,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
         $this->check_notification_mail_has_been_sent($enrollle->fresh()->user);
         $this->check_notification_sms_has_been_sent($enrollle->fresh()->user);
 
-        $this->assertTrue($enrollle->enrollmentInvitationLink()->exists());
+        self::assertTrue($enrollle->enrollmentInvitationLink()->exists());
         $this->assertDatabaseHas('enrollables_invitation_links', [
             'invitationable_type' => get_class($enrollle),
             'invitationable_id'   => $enrollle->id,
@@ -83,7 +83,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
         $this->check_notification_mail_has_been_sent($patient);
 //        $this->check_notification_sms_has_been_sent($patient);
 
-        $this->assertTrue($this->patient()->enrollmentInvitationLink()->exists());
+        self::assertTrue($this->patient()->enrollmentInvitationLink()->exists());
         $this->assertDatabaseHas('enrollables_invitation_links', [
             'invitationable_type' => get_class($patient),
             'invitationable_id'   => $patient->id,
@@ -110,7 +110,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
             'manually_expired'    => false,
         ]);
 
-        $this->assertTrue($enrollee->enrollmentInvitationLink()->exists());
+        self::assertTrue($enrollee->enrollmentInvitationLink()->exists());
     }
 
     public function test_it_sends_reminder_to_non_responding_patient()
@@ -128,6 +128,10 @@ class AutoEnrollmentProcess extends CustomerTestCase
             'manually_expired'    => false,
         ]);
 
-        $this->assertTrue($patient->enrollmentInvitationLink()->exists());
+        self::assertTrue($patient->enrollmentInvitationLink()->exists());
+    }
+
+    public function test_patient_logins_before_redirect()
+    {
     }
 }
