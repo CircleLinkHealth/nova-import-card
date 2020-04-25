@@ -306,6 +306,29 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         return $this->belongsTo(DirectMailMessage::class, 'direct_mail_message_id');
     }
 
+    public function fillInSupplementaryData()
+    {
+        $supp = SupplementalPatientData::forPatient($this->practice_id, $this->patientFirstName(), $this->patientLastName(), $this->patientDob());
+
+        if ( ! $supp) {
+            return  $this;
+        }
+
+        if ( ! $this->location_id) {
+            $this->location_id = $supp->location_id;
+        }
+
+        if ( ! $this->billing_provider_id) {
+            $this->billing_provider_id = $supp->billing_provider_user_id;
+        }
+
+        if ($this->isDirty()) {
+            $this->save();
+        }
+
+        return $this;
+    }
+
     /**
      * @return mixed
      */
@@ -373,8 +396,9 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
     public function guessPracticeLocationProvider(): MedicalRecord
     {
-        if ($this->billing_provider_id && $this->location_id) return $this;
-        
+        if ($this->billing_provider_id && $this->location_id) {
+            return $this;
+        }
         if ($term = $this->getReferringProviderName()) {
             $this->setAllPracticeInfoFromProvider($term);
         }
@@ -394,28 +418,6 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         return collect(
             $this->bluebuttonJson()->procedures ?? []
         )->pluck('code')->contains($code);
-    }
-    
-    public function fillInSupplementaryData() {
-        $supp = SupplementalPatientData::forPatient($this->practice_id, $this->patientFirstName(), $this->patientLastName(), $this->patientDob());
-        
-        if (! $supp) {
-            return  $this;
-        }
-    
-        if (! $this->location_id) {
-            $this->location_id = $supp->location_id;
-        }
-        
-        if (! $this->billing_provider_id) {
-            $this->billing_provider_id = $supp->billing_provider_user_id;
-        }
-        
-        if ($this->isDirty()) {
-            $this->save();
-        }
-        
-        return $this;
     }
 
     /**
@@ -451,7 +453,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         return $this->belongsTo(Location::class);
     }
 
-    public function patientDob():?Carbon
+    public function patientDob(): ?Carbon
     {
         return ImportPatientInfo::parseDOBDate($this->bluebuttonJson()->demographics->dob);
     }
@@ -676,6 +678,19 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         $this->save();
     }
 
+    private function ccdaAuthor()
+    {
+        $fName = $this->bluebuttonJson()->document->author->name->given[0] ?? '';
+        $lName = $this->bluebuttonJson()->document->author->name->family ?? '';
+        $name  = "$fName $lName";
+
+        if (empty($name)) {
+            return null;
+        }
+
+        return $name;
+    }
+
     /**
      * Gets the parsed json from the parser's table, if it was already parsed.
      *
@@ -700,16 +715,5 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
         $this->setBillingProviderId($searchProvider->id);
         $this->setLocationId(optional($searchProvider->loadMissing('locations')->locations->first())->id);
-    }
-    
-    private function ccdaAuthor()
-    {
-        $fName = $this->bluebuttonJson()->document->author->name->given[0] ?? '';
-        $lName = $this->bluebuttonJson()->document->author->name->family?? '';
-        $name = "$fName $lName";
-        
-        if (empty($name)) return null;
-        
-        return $name;
     }
 }
