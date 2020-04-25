@@ -6,6 +6,11 @@ Jira Ticket: https://circlelinkhealth.atlassian.net/browse/CPM-
 ### Why is this change necessary?
 -
 
+### Which User Roles does this change affect?
+- [ ] Nurses (Notify Ethan well ahead of release to prepare instructions for nurses)
+- [ ] Providers (or other practice staff) (Notify Zach well ahead of release to prepare instructions for nurses)
+- [ ] CLH Admins (Notify #productchat on slack)
+
 ### Development Milestones
 - [ ] Create migration
 - [ ] Change billing logic to not account for appointments

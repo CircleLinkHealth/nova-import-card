@@ -180,7 +180,7 @@ class Kernel extends ConsoleKernel
             ->monthlyOn(1, '02:00')->onOneServer();
 
         $schedule->command(CheckEmrDirectInbox::class)
-            ->everyFiveMinutes()
+            ->everyMinute()
             ->withoutOverlapping()->onOneServer();
 
         //uncomment when ready
