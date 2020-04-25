@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 use App\Constants;
 use App\Importer\Section\Validators\NameNotNull;
 use App\Importer\Section\Validators\ValidStatus;
+use CircleLinkHealth\ConditionCodeLookup\Console\Commands\LookupCondition;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\GetProblemInstruction;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
@@ -18,7 +19,7 @@ use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\SharedModels\Entities\ProblemCode;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class ImportProblems extends BaseCcdaImportTask
@@ -99,6 +100,36 @@ class ImportProblems extends BaseCcdaImportTask
         }
     }
 
+    private function fetchNamesFromApi(Collection &$problemsGroups)
+    {
+        return $problemsGroups->transform(function ($problem) {
+            if ((new NameNotNull())->isValid($problem)) {
+                return $problem;
+            }
+
+            $translationCodes = collect($problem['codes'] ?? []);
+
+            //do not import problem if it does not have a name nor a code
+            if ( ! $problem['code'] && $translationCodes->pluck('code')->filter()->isEmpty()) {
+                return false;
+            }
+            $lookup = LookupCondition::lookup($problem['code'], 'any');
+
+            $problem['name'] = $lookup['name'];
+            $problem['code_system_name'] = $lookup['type'];
+            $problem['codes'] = $translationCodes->transform(function ($code) use ($lookup, $problem) {
+                if ($code['code'] == $problem['code']) {
+                    $code['code_system_name'] = $lookup['type'];
+                    $code['name'] = $lookup['name'];
+                }
+
+                return $code;
+            })->filter()->values()->all();
+
+            return $problem;
+        })->filter()->values();
+    }
+
     private function getCpmProblem($itemLog, $problemName)
     {
         if ( ! validProblemName($problemName)) {
@@ -174,16 +205,8 @@ class ImportProblems extends BaseCcdaImportTask
         return $instructions;
     }
 
-    private function processProblems()
+    private function majorityHasName(Collection $problemsGroups): bool
     {
-        $problemsGroups = collect($this->ccda->bluebuttonJson()->problems ?? [])->map(
-            function ($problem) use (&$medicationGroups) {
-                return $this->transform($problem);
-            }
-        );
-
-        $shouldValidate = true;
-
         $haveName = $problemsGroups->reject(
             function (array $p) {
                 if ( ! (new NameNotNull())->isValid($p)) {
@@ -205,29 +228,33 @@ class ImportProblems extends BaseCcdaImportTask
             }
         )->filter()->count();
 
-        if ($haveCode > $haveName) {
-            $shouldValidate = false;
+        return $haveName > $haveCode;
+    }
+
+    private function processProblems()
+    {
+        $problemsGroups = collect($this->ccda->bluebuttonJson()->problems ?? [])->map(
+            function ($problem) use (&$medicationGroups) {
+                return $this->transform($problem);
+            }
+        );
+
+        $shouldValidateName = $this->majorityHasName($problemsGroups);
+
+        if ( ! $shouldValidateName) {
+            $problemsGroups     = $this->fetchNamesFromApi($problemsGroups);
+            $shouldValidateName = $this->majorityHasName($problemsGroups);
         }
 
-        if ($shouldValidate) {
-            $problemsGroups = $problemsGroups->unique(
-                function ($itemLog) {
-                    $itemLog = (object) $itemLog;
-                    $name = $itemLog->name ?? $itemLog->reference_title ?? $itemLog->translation_name ?? null;
-
-                    return empty($name)
-                        ? false
-                        : $name;
-                }
-            )
-                ->values();
+        if ($shouldValidateName) {
+            $problemsGroups = $this->rejectProblemsWithoutName($problemsGroups);
         }
 
         return $problemsGroups->mapToGroups(
             function ($itemLog) use (
-                $shouldValidate
+                $shouldValidateName
             ) {
-                if ($shouldValidate && ! $this->validate($itemLog)) {
+                if ($shouldValidateName && ! $this->validate($itemLog)) {
                     return ['do_not_import' => $itemLog];
                 }
 
@@ -243,14 +270,14 @@ class ImportProblems extends BaseCcdaImportTask
                 $cpmProblem = $this->getCpmProblem($itemLog, $problemCodes->cons_name);
                 $cpmProblemId = optional($cpmProblem)->id;
 
-                //if problem is Diabetes and string contains 2, it's probably diabetes type 2
+                //if problem is Diabetes and string contains 2, we assume diabetes type 2
                 if (1 == $cpmProblemId && Str::contains($problemCodes->cons_name, ['2'])) {
                     $cpmProblem = $this->cpmProblems->firstWhere(
                         'name',
                         'Diabetes Type 2'
                     );
                 }
-                //if problem is Diabetes and string contains 1, it's probably diabetes type 1
+                //if problem is Diabetes and string contains 1, we assume diabetes type 1
                 elseif (1 == $cpmProblemId && Str::contains(
                     $problemCodes->cons_name,
                     ['1']
@@ -277,6 +304,21 @@ class ImportProblems extends BaseCcdaImportTask
                 return ['not_monitored' => $problem];
             }
         );
+    }
+
+    private function rejectProblemsWithoutName(Collection $problemsGroups): Collection
+    {
+        return $problemsGroups->unique(
+            function ($itemLog) {
+                $itemLog = (object) $itemLog;
+                $name = $itemLog->name ?? $itemLog->reference_title ?? $itemLog->translation_name ?? null;
+
+                return empty($name)
+                    ? false
+                    : $name;
+            }
+        )->filter()
+            ->values();
     }
 
     private function transform(object $problem): array

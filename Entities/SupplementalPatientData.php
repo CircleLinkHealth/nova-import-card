@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Entities;
 
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Database\Eloquent\Model;
 
@@ -66,6 +67,24 @@ class SupplementalPatientData extends Model
         'location',
     ];
     protected $table = 'supplemental_patient_data';
+
+    public static function forPatient(?int $practiceId, string $firstName, string $lastName, ?Carbon $dob)
+    {
+        if ( ! $dob || !$practiceId) {
+            return null;
+        }
+
+        return SupplementalPatientData::where(
+            'first_name',
+            'like',
+            "$firstName%"
+        )
+            ->where('practice_id', $practiceId)
+            ->where(
+                'last_name',
+                $lastName
+            )->where('dob', $dob)->first();
+    }
 
     public function practice()
     {
