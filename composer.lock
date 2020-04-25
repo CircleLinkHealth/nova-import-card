@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5923961cd48d9a0e931118545b79ba24",
+    "content-hash": "4f73aafa998476306e3a2b1734080a85",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1089,11 +1089,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.2.9",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "fcb8a483dcaab9024ba0d39d6872c301d368568c"
+                "reference": "f7b4189d4250a49916111084cb316d8d4847c6eb"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1118,7 +1118,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-24T23:12:33+00:00"
+            "time": "2020-04-25T00:00:44+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -14630,16 +14630,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.25.0",
+            "version": "v3.25.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "e8a451a4cb1d774c62492ef44211f7589649e529"
+                "reference": "b38203e21a5cee3b093d50af413b47841d858b5f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/e8a451a4cb1d774c62492ef44211f7589649e529",
-                "reference": "e8a451a4cb1d774c62492ef44211f7589649e529",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/b38203e21a5cee3b093d50af413b47841d858b5f",
+                "reference": "b38203e21a5cee3b093d50af413b47841d858b5f",
                 "shasum": ""
             },
             "type": "library",
@@ -14683,7 +14683,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2020-01-17T21:39:28+00:00"
+            "time": "2020-04-24T23:50:57+00:00"
         },
         {
             "name": "symfony/dom-crawler",
@@ -15212,6 +15212,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/shared-models-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
