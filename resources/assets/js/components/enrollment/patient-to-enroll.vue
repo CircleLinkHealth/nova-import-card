@@ -491,7 +491,7 @@
                     </div>
                     <div class="modal-footer">
                         <button name="btnSubmit" type="submit"
-                                :disabled="home_is_invalid || cell_is_invalid || other_is_invalid || preferred_phone_empty || contact_day_or_time_empty || should_not_perform_action"
+                                :disabled="disable_consented_submit"
                                 class="modal-action waves-effect waves-light btn">Confirm and call next patient
                         </button>
                         <div v-if="onCall === true" style="text-align: center">
@@ -837,6 +837,9 @@
                 }
 
                 return name.trim();
+            },
+            disable_consented_submit(){
+                return this.home_is_invalid || this.cell_is_invalid || this.other_is_invalid || this.preferred_phone_empty || this.contact_day_or_time_empty || this.should_not_perform_action;
             },
             provider_name_for_side_bar() {
                 let suffix = this.provider.suffix;
