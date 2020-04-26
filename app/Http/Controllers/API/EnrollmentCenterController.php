@@ -234,12 +234,16 @@ class EnrollmentCenterController extends ApiController
 
     public function show($enrollableId = null)
     {
-        $enrollable = $enrollableId ? Enrollee::find($enrollableId) : null;
-
-        if ( ! $enrollable) {
+        $enrollable = $enrollableId ?
+            Enrollee::whereCareAmbassadorUserId(auth()->user()->id)->find($enrollableId) :
             $enrollable = EnrollableCallQueue::getNext(
                 auth()->user()->careAmbassador
             );
+
+        if ( ! $enrollable) {
+            return response()->json([
+                'message' => 'No enrollables exist.',
+            ]);
         }
 
         return Enrollable::make($enrollable);
