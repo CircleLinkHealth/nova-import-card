@@ -46,7 +46,8 @@
 </ul>
 <nav style="position: fixed">
     <div class="nav-wrapper" style="background: #4fb2e2;">
-        <a href="#!" style="padding-left: 10px" class="brand-logo">CircleLink Health Enrollment Center</a>
+        <a href="javascript:void(0)" onclick="location.reload()" style="padding-left: 10px" class="brand-logo">CircleLink
+            Health Enrollment Center</a>
 
         <div style="width: 100%; height: 64px;">
             <ul class="right hide-on-med-and-down">
@@ -55,14 +56,12 @@
                     <li><a href="{{route('patients.dashboard')}}">Patient Dashboard</a></li>
                 @endif
 
-                @if(isset($enrollee) && ($enrollee->practice->enrollmentTips() ?? collect())->count() > 0)
-                    <li>
-                        <!-- #tips is a modal in dashboard.blade -->
-                        <a href="#tips" id="tips-link" class="modal-trigger">
-                            Tips
-                        </a>
-                    </li>
-                @endif
+                <li id="has_tips" style="display: none">
+                    <!-- #tips is a modal in patient-to-enroll.vue -->
+                    <a href="#tips" id="tips-link" class="modal-trigger">
+                        Tips
+                    </a>
+                </li>
 
                 <li>
                     <a href="https://circlelinkhealth.zendesk.com/hc/en-us/categories/360002207051-Care-Ambassador-Support"
@@ -89,7 +88,11 @@
             coverTrigger: false,
         });
 
-        App.$on()
+        App.$on('enrollable:loaded', (data) => {
+            if (data.has_tips) {
+                $('#has_tips').show();
+            }
+        })
     });
 </script>
 

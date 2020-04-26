@@ -23,7 +23,7 @@ class EnrollableCallQueue
     /**
      * get all careAmbassador enrollees / do not prioritize speaks spanish
      * get all CA enrollees.
-     * TOP PRIO - patients in queue (confirmed family members)
+     * TOP PRIO - patients in qache (confirmed family members)
      * 1st prio - Confirmed family members whom statuses have not been confirmed - edge case - add UI
      * 2nd prio - utc patients where attempt count 1 && last attempt > 3 days ago
      * 3nd prio - >> attempt count 2
@@ -122,7 +122,8 @@ class EnrollableCallQueue
     {
         //today or earliest/past
         return Enrollee::withCaPanelRelationships()
-            ->where('requested_callback', Carbon::now()->toDateString())
+            ->lessThanThreeAttempts()
+            ->where('requested_callback', '<=', Carbon::now()->toDateString())
             ->whereIn('status', [
                 Enrollee::TO_CALL,
                 Enrollee::UNREACHABLE,
@@ -138,7 +139,7 @@ class EnrollableCallQueue
     private function getUtcAttemptCount()
     {
         return Enrollee::withCaPanelRelationships()
-            //does it need status here? Yes it does. What if it's rejected on 2 attempt
+            ->lessThanThreeAttempts()
             ->whereStatus(Enrollee::UNREACHABLE)
             ->when( ! isProductionEnv(), function ($q) {
                 $q->where('last_attempt_at', '<', Carbon::now()->subDays(minDaysPastForCareAmbassadorNextAttempt()));

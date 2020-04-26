@@ -736,7 +736,7 @@
                 return this.report.total_calls || 0;
             },
             enrollmentTips: function () {
-                return this.enrollable_practice && this.enrollable_practice.enrollment_tips ? this.enrollable_practice.enrollment_tips.content : '';
+                return this.practice && this.practice.enrollment_tips ? this.practice.enrollment_tips.content : '';
             },
             //other phone computer vars
             other_phone_label: function () {

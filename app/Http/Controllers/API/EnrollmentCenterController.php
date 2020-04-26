@@ -206,7 +206,6 @@ class EnrollmentCenterController extends ApiController
         }
 
         $report->total_calls = $report->total_calls + 1;
-//        $report->total_time_in_system = $request->input('total_time_in_system');
         $report->save();
 
         $enrollee->last_call_outcome = $request->input('reason');
@@ -221,7 +220,6 @@ class EnrollmentCenterController extends ApiController
 
         $enrollee->attempt_count   = $enrollee->attempt_count + 1;
         $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
-//        $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
 
         $enrollee->save();
 
@@ -234,11 +232,15 @@ class EnrollmentCenterController extends ApiController
 
     public function show($enrollableId = null)
     {
-        $enrollable = $enrollableId ?
-            Enrollee::whereCareAmbassadorUserId(auth()->user()->id)->find($enrollableId) :
+        if ($enrollableId) {
+            $enrollable = Enrollee::withCaPanelRelationships()
+                ->whereCareAmbassadorUserId(auth()->user()->id)
+                ->find($enrollableId);
+        } else {
             $enrollable = EnrollableCallQueue::getNext(
                 auth()->user()->careAmbassador
             );
+        }
 
         if ( ! $enrollable) {
             return response()->json([

@@ -233,6 +233,10 @@
                         this.enrollable_id = patientData.enrollable_id;
 
                         this.notifyTimeTracker();
+
+                        App.$emit('enrollable:loaded', {
+                            has_tips : this.patientData.has_tips
+                        })
                     }, 2000)))
                     .catch(err => {
                         //to implement
