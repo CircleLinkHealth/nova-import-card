@@ -121,7 +121,7 @@ class EnrollmentCenterController extends ApiController
 
     public function queryEnrollables(Request $request)
     {
-        $input = $request->all();
+        $input = $request->allSafe();
 
         if ( ! array_key_exists('enrollables', $input)) {
             return response()->json([], 400);
@@ -129,7 +129,7 @@ class EnrollmentCenterController extends ApiController
 
         $searchTerms = explode(' ', $input['enrollables']);
 
-        $query = Enrollee::with(['practice.enrollmentTips', 'provider.providerInfo'])
+        $query = Enrollee::withCaPanelRelationships()
             ->shouldBeCalled()
             ->where('care_ambassador_user_id', auth()->user()->id);
 

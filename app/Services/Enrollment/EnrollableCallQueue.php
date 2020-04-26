@@ -16,10 +16,6 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 class EnrollableCallQueue
 {
     /**
-     * @var
-     */
-    protected $builder;
-    /**
      * @var CareAmbassador
      */
     protected $careAmbassadorInfo;
@@ -90,7 +86,8 @@ class EnrollableCallQueue
         if ( ! empty($queue)) {
             $nextEnrolleeId = collect($queue)->first();
 
-            return $this->builder->find($nextEnrolleeId);
+            return Enrollee::withCaPanelRelationships()
+                ->find($nextEnrolleeId);
         }
 
         return null;
@@ -101,7 +98,8 @@ class EnrollableCallQueue
      */
     private function getFromCallQueue()
     {
-        return $this->builder->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
+        return Enrollee::withCaPanelRelationships()
+            ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
             ->where('status', Enrollee::TO_CALL)
             ->first();
     }
@@ -111,7 +109,7 @@ class EnrollableCallQueue
      */
     private function getPendingConfirmedFamilyMembers()
     {
-        return $this->builder
+        return Enrollee::withCaPanelRelationships()
             ->whereIn('status', Enrollee::TO_CONFIRM_STATUSES)
             ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
             ->first();
@@ -122,7 +120,9 @@ class EnrollableCallQueue
      */
     private function getRequestedCallbackToday()
     {
-        return $this->builder->where('requested_callback', Carbon::now()->toDateString())
+        //today or earliest/past
+        return Enrollee::withCaPanelRelationships()
+            ->where('requested_callback', Carbon::now()->toDateString())
             ->whereIn('status', [
                 Enrollee::TO_CALL,
                 Enrollee::UNREACHABLE,
@@ -137,8 +137,8 @@ class EnrollableCallQueue
      */
     private function getUtcAttemptCount()
     {
-        return $this->builder
-            //does it need status here?
+        return Enrollee::withCaPanelRelationships()
+            //does it need status here? Yes it does. What if it's rejected on 2 attempt
             ->whereStatus(Enrollee::UNREACHABLE)
             ->when( ! isProductionEnv(), function ($q) {
                 $q->where('last_attempt_at', '<', Carbon::now()->subDays(minDaysPastForCareAmbassadorNextAttempt()));
@@ -152,8 +152,6 @@ class EnrollableCallQueue
      */
     private function retrieve()
     {
-        $this->builder = Enrollee::with(['practice.enrollmentTips', 'provider.providerInfo', 'confirmedFamilyMembers']);
-
         foreach ($this->priority as $function) {
             /**
              * @var Enrollee
