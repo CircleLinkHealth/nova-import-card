@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c46e37306a83aa094827115cd6a01013",
+    "content-hash": "a863d0f3a71965bca54f4e32b8ab5879",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -940,11 +940,11 @@
         },
         {
             "name": "circlelinkhealth/condition-code-lookup-module",
-            "version": "v1.1.3",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/condition-code-lookup-module.git",
-                "reference": "4d2fe650285c461d84811307da4823d1fe950384"
+                "reference": "799ad39c167f1fdcb84313bc09fc3596d707b01b"
             },
             "require": {
                 "ext-curl": "*",
@@ -972,7 +972,7 @@
                     "email": "pagcosma@gmail.com"
                 }
             ],
-            "time": "2020-04-23T01:51:46+00:00"
+            "time": "2020-04-23T05:01:44+00:00"
         },
         {
             "name": "circlelinkhealth/core-module",
@@ -1089,7 +1089,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "fb330006a659cacd1632a1de4c7dac671570c10f"
+                "reference": "fb26d826079e2c030cacd49fc334e60bd4186df4"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1114,7 +1114,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-24T23:28:13+00:00"
+            "time": "2020-04-26T10:55:13+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1363,7 +1363,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "e22ae626b897e57209ef340d67c01d1f91682f95"
+                "reference": "6250875a4649afded522e5cb9cc4fdce313eb4f2"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1377,7 +1377,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-24T22:51:19+00:00"
+            "time": "2020-04-25T00:14:39+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -14830,16 +14830,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.25.0",
+            "version": "v3.25.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "e8a451a4cb1d774c62492ef44211f7589649e529"
+                "reference": "b38203e21a5cee3b093d50af413b47841d858b5f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/e8a451a4cb1d774c62492ef44211f7589649e529",
-                "reference": "e8a451a4cb1d774c62492ef44211f7589649e529",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/b38203e21a5cee3b093d50af413b47841d858b5f",
+                "reference": "b38203e21a5cee3b093d50af413b47841d858b5f",
                 "shasum": ""
             },
             "type": "library",
@@ -14883,7 +14883,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2020-01-17T21:39:28+00:00"
+            "time": "2020-04-24T23:50:57+00:00"
         },
         {
             "name": "symfony/dom-crawler",
@@ -15374,6 +15374,7 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/ccda-parser-processor-php-module": 20,
+        "circlelinkhealth/condition-code-lookup-module": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
