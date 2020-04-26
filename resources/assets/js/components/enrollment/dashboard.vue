@@ -51,7 +51,7 @@
                 <div v-show="onCall">
                     <a v-on:click="hangUp"
                        class="waves-effect waves-light btn"
-                       style="background: red;  margin-top: 1%; margin-left: 50%; position: fixed"><i
+                       style="background: red;  margin-top: 1%; margin-left: 40%; position: fixed"><i
                             class="material-icons left">call_end</i>Hang Up</a>
                 </div>
                 <div v-if="shouldShowCookie" class="row">
