@@ -67,6 +67,10 @@
                                         calls.</p>
                                     <br>
                                     <p>In the meantime, enjoy this cookie.</p>
+                                    <br>
+                                    <p v-if="pendingPatientsExist">
+                                        You have {{patients_pending}} pending patient(s). Next call attempt will be at {{next_attempt_at}}.
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -115,8 +119,10 @@
             },
             shouldShowCookie: function(){
                 return ! this.patientExists && !this.error
+            },
+            pendingPatientsExist: function(){
+                return this.patients_pending > 0;
             }
-
         },
         data: function () {
             return {
@@ -135,7 +141,9 @@
                 log: null,
                 phone_type: null,
                 loading_modal: null,
-                error_modal: null
+                error_modal: null,
+                patients_pending: 0,
+                next_attempt_at: null
             };
         },
         mounted: function () {
@@ -224,6 +232,11 @@
 
                         let patientData = response.data.data;
 
+                        if (response.data.patients_pending !== undefined){
+                            this.patients_pending = response.data.patients_pending
+                            this.next_attempt_at = response.data.next_attempt_at
+                            return;
+                        }
                         patientData.onCall = this.onCall
                         patientData.callStatus = this.callStatus
                         patientData.log = this.log
@@ -242,7 +255,12 @@
                         //to implement
                         this.loading = false;
                         this.loading_modal.close()
-                        this.error = 'Something went wrong while retrieving patient. Please contact CLH support.';
+                        if (err.response.status == 404){
+                            this.error = err.response.data.message;
+                        }else{
+                            this.error = 'Something went wrong while retrieving patient. Please contact CLH support.';
+                        }
+
                         this.error_modal.open()
                         console.error(err);
                     });

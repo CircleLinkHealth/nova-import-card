@@ -46,8 +46,24 @@ class EnrollableCallQueue
         $this->careAmbassadorInfo = $careAmbassadorInfo;
     }
 
+    public static function getCareAmbassadorPendingCallStatus(int $careAmbassadorUserId): array
+    {
+        $patientsPending = Enrollee::whereCareAmbassadorUserId($careAmbassadorUserId)
+            ->lessThanThreeAttempts()
+            ->where('status', Enrollee::UNREACHABLE)
+            ->where('last_attempt_at', '>', Carbon::now()->startOfDay()->subDays(3))
+            ->get();
+
+        $lastAttempt = optional($patientsPending->sortBy('last_attempt_at')->first())->last_attempt_at;
+
+        return [
+            'patients_pending' => $patientsPending->count(),
+            'next_attempt_at'  => $lastAttempt ? $lastAttempt->addDays(3)->toDateString() : null,
+        ];
+    }
+
     /**
-     * @return |null
+     * @return Enrollee | null
      */
     public static function getNext(CareAmbassador $careAmbassadorInfo)
     {
@@ -99,6 +115,7 @@ class EnrollableCallQueue
     private function getFromCallQueue()
     {
         return Enrollee::withCaPanelRelationships()
+            ->lessThanThreeAttempts()
             ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
             ->where('status', Enrollee::TO_CALL)
             ->first();
@@ -142,7 +159,7 @@ class EnrollableCallQueue
             ->lessThanThreeAttempts()
             ->whereStatus(Enrollee::UNREACHABLE)
             ->when( ! isProductionEnv(), function ($q) {
-                $q->where('last_attempt_at', '<', Carbon::now()->subDays(minDaysPastForCareAmbassadorNextAttempt()));
+                $q->where('last_attempt_at', '<', Carbon::now()->startOfDay()->subDays(minDaysPastForCareAmbassadorNextAttempt()));
             })
             ->orderBy('attempt_count')
             ->first();

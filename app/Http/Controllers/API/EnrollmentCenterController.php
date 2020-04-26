@@ -236,6 +236,13 @@ class EnrollmentCenterController extends ApiController
             $enrollable = Enrollee::withCaPanelRelationships()
                 ->whereCareAmbassadorUserId(auth()->user()->id)
                 ->find($enrollableId);
+
+            if ( ! $enrollable) {
+                return response()
+                    ->json([
+                        'message' => 'Patient not found.',
+                    ], 404);
+            }
         } else {
             $enrollable = EnrollableCallQueue::getNext(
                 auth()->user()->careAmbassador
@@ -243,8 +250,11 @@ class EnrollmentCenterController extends ApiController
         }
 
         if ( ! $enrollable) {
+            $stats = EnrollableCallQueue::getCareAmbassadorPendingCallStatus(auth()->user()->id);
+
             return response()->json([
-                'message' => 'No enrollables exist.',
+                'patients_pending' => $stats['patients_pending'],
+                'next_attempt_at'  => $stats['next_attempt_at'],
             ]);
         }
 
