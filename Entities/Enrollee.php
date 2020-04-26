@@ -760,7 +760,7 @@ class Enrollee extends BaseModel
             'status',
             $canBeCalledStatuses
         )
-            ->where(function ($q){
+            ->where(function ($q) {
                 $q->whereNull('attempt_count')
                     ->orWhere('attempt_count', '<', 3);
             });
@@ -798,7 +798,7 @@ class Enrollee extends BaseModel
             ->where('status', self::TO_SMS)
             ->whereNotNull('cell_phone');
     }
-    
+
     public function scopeWithCaPanelRelationships($query)
     {
         return $query->with(['practice.enrollmentTips', 'provider.providerInfo', 'confirmedFamilyMembers']);
