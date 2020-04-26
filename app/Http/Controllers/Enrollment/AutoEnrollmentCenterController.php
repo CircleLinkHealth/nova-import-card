@@ -37,7 +37,6 @@ class AutoEnrollmentCenterController extends Controller
 
     /**
      * EnrollmentCenterController constructor.
-     * @param EnrollmentInvitationService $enrollmentInvitationService
      */
     public function __construct(EnrollmentInvitationService $enrollmentInvitationService)
     {
@@ -152,7 +151,7 @@ class AutoEnrollmentCenterController extends Controller
         if (empty($pastActiveSurveyLink)) {
             return $this->createUrlAndRedirectToSurvey($enrollableId);
         }
-//
+
         return redirect($pastActiveSurveyLink->url);
     }
 

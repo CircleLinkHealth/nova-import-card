@@ -16,6 +16,7 @@ trait EnrollmentAuthLink
         if ( ! $request->hasValidSignature()) {
             abort(403, 'Unauthorized action.');
         }
+
         return true;
     }
 
