@@ -37,6 +37,7 @@ class AutoEnrollmentCenterController extends Controller
 
     /**
      * EnrollmentCenterController constructor.
+     * @param EnrollmentInvitationService $enrollmentInvitationService
      */
     public function __construct(EnrollmentInvitationService $enrollmentInvitationService)
     {
@@ -65,17 +66,12 @@ class AutoEnrollmentCenterController extends Controller
     }
 
     /**
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
+     * @param $enrollableId
+     * @param $isSurveyOnlyUser
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
-    public function enrollableInvitationManager(Request $request)
+    public function enrollableInvitationManager($enrollableId, $isSurveyOnlyUser)
     {
-//        Remember all enrollees at this point have user model also
-        if ( ! $request->hasValidSignature()) {
-            abort(403, 'Unauthorized action.');
-        }
-        $enrollableId     = $request->input('enrollable_id');
-        $isSurveyOnlyUser = $request->input('is_survey_only');
-
         if ($isSurveyOnlyUser) {
             return $this->manageEnrolleeInvitation($enrollableId);
         }
@@ -152,11 +148,11 @@ class AutoEnrollmentCenterController extends Controller
         }
 
         $this->expirePastInvitationLink($enrollable);
-        $pastActiveSurveyLink = $this->getSurveyInvitationLink($userForEnrollment->patientInfo->id);
+//        $pastActiveSurveyLink = $this->getSurveyInvitationLink($userForEnrollment->patientInfo->id);
         if (empty($pastActiveSurveyLink)) {
             return $this->createUrlAndRedirectToSurvey($enrollableId);
         }
-
+//
         return redirect($pastActiveSurveyLink->url);
     }
 
@@ -525,6 +521,7 @@ class AutoEnrollmentCenterController extends Controller
 
         if ($this->hasSurveyInProgress($userCreatedFromEnrollee)) {
             return redirect($this->getAwvInvitationLinkForUser($userCreatedFromEnrollee)->url);
+//            return redirect($this->createUrlAndRedirectToSurvey($enrollableId));
         }
 
         return $this->enrollmentLetterView($userCreatedFromEnrollee, true, $enrollee, false);

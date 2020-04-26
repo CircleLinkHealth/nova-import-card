@@ -2213,24 +2213,30 @@ Route::get('/invite-unreachable', [
 //---------------------------------------
 
 // TEMPORARY SIGNED ROUTE
-Route::get('/patient-self-enrollment', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrollableInvitationManager',
-    'as'   => 'invitation.enrollment',
-])->middleware('signed');
+//Route::get('/patient-self-enrollment', [
+//    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrollableInvitationManager',
+//    'as'   => 'invitation.enrollment',
+//]);
 
+Route::group([
+    'prefix'     => 'auth',
+    'middleware' => ['web'],
+], function () {
+    Auth::routes();
+    Route::get(
+        '/patient-self-enrollment',
+        [
+            'uses' => 'Enrollment\Auth\AutoEnrollmentAuthentication@enrollmentAuthForm',
+            'as'   => 'invitation.enrollment.loginForm',
+        ]
+    )->middleware('signed');
+
+    Route::post('login-enrollment-survey', [
+        'uses' => 'Enrollment\Auth\AutoEnrollmentAuthentication@authenticate',
+        'as'   => 'invitation.enrollment.login',
+    ]);
+});
 // TEMPORARY SIGNED ROUTE
-//Route::get(
-//    '/patient-self-enrollment-auth',
-//    [
-//        'uses' => 'Enrollment\Auth\AutoEnrollmentLogin@enrollmentloginForm',
-//        'as'   => 'invitation.enrollment.loginForm',
-//    ]
-//)->middleware('signed');
-//
-//Route::post('login-enrollment-survey', [
-//    'uses' => 'Enrollment\Auth\AutoEnrollmentLogin@sex',
-//    'as'   => 'invitation.enrollment.login',
-//])->middleware('auth');
 
 Route::get('/enrollment-survey', [
     'uses' => 'Enrollment\AutoEnrollmentCenterController@enrollNow',
