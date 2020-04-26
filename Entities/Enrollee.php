@@ -765,6 +765,13 @@ class Enrollee extends BaseModel
                     ->orWhere('attempt_count', '<', 3);
             });
     }
+    
+    public function scopeLessThanThreeAttempts($query){
+        $query->where(function ($q) {
+            $q->whereNull('attempt_count')
+                ->orWhere('attempt_count', '<', 3);
+        });
+    }
 
     public function scopeShouldSuggestAsFamilyForEnrollee($query, $enrolleeId)
     {
