@@ -48,6 +48,64 @@ class Enrollable extends Resource
             }
         }
 
+        //These phone numbers will be used to call by Twilio.
+        //This will allow us to use custom numbers on non-prod environments
+        $otherPhoneSanitized = isProductionEnv()
+            ? $enrollable->other_phone_e164
+            : $enrollable->getOriginal('other_phone');
+
+        $cellPhoneSanitized = isProductionEnv()
+            ? $enrollable->cell_phone_e164
+            : $enrollable->getOriginal('cell_phone');
+
+        $homePhoneSanitized = isProductionEnv()
+            ? $enrollable->home_phone_e164
+            : $enrollable->getOriginal('home_phone');
+
+        //we need to prefill these per CPM-2256 for confirmed family members
+        $utcReason                     = '';
+        $reason                        = '';
+        $enrollableIsToConfirmRejected = in_array($enrollable->status, [
+            Enrollee::TO_CONFIRM_REJECTED,
+            Enrollee::TO_CONFIRM_SOFT_REJECTED,
+        ]);
+
+        if ( ! empty($enrollable->last_call_outcome)) {
+            if (Enrollee::TO_CONFIRM_UNREACHABLE === $enrollable->status) {
+                $utcReason = $enrollable->last_call_outcome;
+            }
+            if ($enrollableIsToConfirmRejected) {
+                $reason = $enrollable->last_call_outcome;
+            }
+        }
+
+        $utcReasonOther = '';
+        $reasonOther    = '';
+        if ( ! empty($enrollable->last_call_outcome_reason)) {
+            if (Enrollee::TO_CONFIRM_UNREACHABLE === $enrollable->status) {
+                $utcReasonOther = $enrollable->last_call_outcome_reason;
+            }
+            if ($enrollableIsToConfirmRejected) {
+                $reasonOther = $enrollable->last_call_outcome_reason;
+            }
+        }
+
+        //extra is the field for note on consented modal
+        //we need this in case Enrollable is TO_CONFIRM_CONSENTED
+        //(pre-filling consented options from previous family member)
+        $extra = '';
+
+        if (Enrollee::TO_CONFIRM_CONSENTED === $enrollable->status && ! empty($enrollable->other_note)) {
+            $extra = $enrollable->other_note;
+        }
+
+        //extra field on UTC modal
+        $utcNote = '';
+        if (in_array($enrollable->status, [Enrollee::TO_CONFIRM_UNREACHABLE, Enrollee::UNREACHABLE])
+            && ! empty($enrollable->other_note)) {
+            $utcNote = $enrollable->other_note;
+        }
+
         return array_merge([
             'enrollable_id'            => $enrollable->id,
             'enrollable_user_id'       => optional($enrollable->user)->id,
@@ -63,51 +121,18 @@ class Enrollable extends Resource
             'cell_phone'               => $enrollable->cell_phone,
             'home_phone'               => $enrollable->home_phone,
 
-            //These phone numbers will be used to call by Twilio.
-            //This will allow us to use custom numbers on non-prod environments
-            'other_phone_sanitized' => isProductionEnv()
-                ? $enrollable->other_phone_e164
-                : $enrollable->getOriginal('other_phone'),
-            'cell_phone_sanitized' => isProductionEnv()
-                ? $enrollable->cell_phone_e164
-                : $enrollable->getOriginal('cell_phone'),
-            'home_phone_sanitized' => isProductionEnv()
-                ? $enrollable->home_phone_e164
-                : $enrollable->getOriginal('home_phone'),
+            'other_phone_sanitized' => $otherPhoneSanitized,
+            'cell_phone_sanitized'  => $cellPhoneSanitized,
+            'home_phone_sanitized'  => $homePhoneSanitized,
 
-            //we need to prefill these per CPM-2256 for confirmed family members
-            'utc_reason' => Enrollee::TO_CONFIRM_UNREACHABLE === $enrollable->status &&
-            ! empty($enrollable->last_call_outcome)
-                ? $enrollable->last_call_outcome
-                : '',
-            'reason' => in_array($enrollable->status, [
-                Enrollee::TO_CONFIRM_REJECTED,
-                Enrollee::TO_CONFIRM_SOFT_REJECTED,
-            ]) &&
-            ! empty($enrollable->last_call_outcome)
-                ? $enrollable->last_call_outcome
-                : '',
-            'utc_reason_other' => Enrollee::TO_CONFIRM_UNREACHABLE === $enrollable->status &&
-            ! empty($enrollable->last_call_outcome_reason)
-                ? $enrollable->last_call_outcome_reason
-                : '',
-            'reason_other' => in_array($enrollable->status, [
-                Enrollee::TO_CONFIRM_REJECTED, Enrollee::TO_CONFIRM_SOFT_REJECTED,
-            ]) &&
-            ! empty($enrollable->last_call_outcome_reason)
-                ? $enrollable->last_call_outcome_reason
-                : '',
-            //extra is the field for note on consented modal
-            //we need this in case Enrollable is TO_CONFIRM_CONSENTED
-            //(pre-filling consented options from previous family member)
-            'extra' => Enrollee::TO_CONFIRM_CONSENTED === $enrollable->status && ! empty($enrollable->other_note)
-                ? $enrollable->other_note
-                : '',
-            //extra field on UTC modal
-            'utc_note' => in_array($enrollable->status, [Enrollee::TO_CONFIRM_UNREACHABLE, Enrollee::UNREACHABLE])
-            && ! empty($enrollable->other_note)
-                ? $enrollable->other_note
-                : '',
+            'utc_reason'       => $utcReason,
+            'reason'           => $reason,
+            'utc_reason_other' => $utcReasonOther,
+            'reason_other'     => $reasonOther,
+
+            'extra' => $extra,
+
+            'utc_note'        => $utcNote,
             'last_encounter'  => $enrollable->last_encounter ?? 'N/A',
             'attempt_count'   => $enrollable->attempt_count ?? 0,
             'last_attempt_at' => optional($enrollable->last_attempt_at)->toDateString() ?? 'N/A',

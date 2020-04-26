@@ -75,17 +75,21 @@ class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
 
     private function levenshteinValidAddressExists(Enrollee $e)
     {
-        $levenshteinDistances = [];
+        $levenshteinDistances          = collect([]);
+        $enrolleeAddresses             = collect([$this->enrollee->address, $this->enrollee->address_2])->filter();
+        $possibleFamilyMemberAddresses = collect([$e->address, $e->address_2])->filter();
 
-        foreach (collect([$this->enrollee->address, $this->enrollee->address_2])->filter() as $currentAddress) {
-            foreach (collect([$e->address, $e->address_2])->filter() as $address) {
-                $levenshteinDistances[] = levenshteinPercent($currentAddress, $address);
+        foreach ($enrolleeAddresses as $address) {
+            foreach ($possibleFamilyMemberAddresses as $possibleMatchingAddress) {
+                $levenshteinDistances->push(levenshteinPercent($address, $possibleMatchingAddress));
             }
         }
 
-        return 0 !== collect($levenshteinDistances)->filter(function ($l) {
+        $levenshteinValidAddresses = $levenshteinDistances->filter(function ($l) {
             //Levenshtein Distance transformed to relevance percent
             return $l >= 90;
-        })->count();
+        });
+
+        return 0 !== $levenshteinValidAddresses->count();
     }
 }
