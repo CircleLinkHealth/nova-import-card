@@ -760,7 +760,10 @@ class Enrollee extends BaseModel
             'status',
             $canBeCalledStatuses
         )
-            ->where('attempt_count', '<', 3);
+            ->where(function ($q){
+                $q->whereNull('attempt_count')
+                    ->orWhere('attempt_count', '<', 3);
+            });
     }
 
     public function scopeShouldSuggestAsFamilyForEnrollee($query, $enrolleeId)
@@ -794,6 +797,11 @@ class Enrollee extends BaseModel
         return $query
             ->where('status', self::TO_SMS)
             ->whereNotNull('cell_phone');
+    }
+    
+    public function scopeWithCaPanelRelationships($query)
+    {
+        return $query->with(['practice.enrollmentTips', 'provider.providerInfo', 'confirmedFamilyMembers']);
     }
 
     public function sendEnrollmentConsentReminderSMS()
