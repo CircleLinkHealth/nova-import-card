@@ -472,7 +472,11 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::group(
         [
-            'prefix' => 'enrollment',
+            'prefix'     => 'enrollment',
+            'middleware' => [
+                'auth',
+                'careAmbassadorAPI',
+            ],
         ],
         function () {
             Route::get('/get-suggested-family-members/{enrolleeId}', [
@@ -504,11 +508,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'API\EnrollmentCenterController@rejected',
                 'as'   => 'enrollment-center.rejected',
             ])->middleware('permission:enrollee.update');
-
-            Route::post('/update-ca-daily-time', [
-                'uses' => 'API\EnrollmentCenterController@updateCareAmbassadorDailyTime',
-                'as'   => 'enrollment-center.update-ca-daily-time',
-            ]);
         }
     );
 
