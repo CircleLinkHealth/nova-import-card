@@ -305,7 +305,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use MakesOrReceivesCalls;
     use Notifiable;
     use PivotEventTrait;
-    use PivotEventTrait;
     use SaasAccountable;
     use Searchable;
     use SoftDeletes;
