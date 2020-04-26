@@ -212,7 +212,7 @@
 
                 let href = window.location.href
                 let tags = href.split('#')
-                if (tags[1]){
+                if (tags[1] && tags[1] !== '!'){
                     url = url + '/' + tags[1]
                 }
 

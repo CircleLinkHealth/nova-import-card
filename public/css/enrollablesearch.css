@@ -1,9 +1,8 @@
 #bloodhound {
-    position: fixed;
-    width: 300px;
-    top: 5%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 40px;
+    padding-top: 10px;
+    margin: auto;
 }
 
 #bloodhound li {
@@ -11,10 +10,11 @@
 }
 
 #bloodhound input {
+    /*margin: auto;*/
     padding-left: 3px;
     padding-right: 3px;
-    border-radius: 10px;
-    background-color: #fff;
+    border-radius: 8px;
+    background-color: aliceblue;
 }
 
 #bloodhound li.active {
@@ -35,13 +35,13 @@
     /*border-radius: 8px;*/
     outline: none;
 }
-
 .typeahead {
     background-color: #fff;
 }
 
 .twitter-typeahead {
     width: 100%;
+    height: 40px;
 }
 
 .typeahead:focus {
@@ -76,6 +76,8 @@
     -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
     -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
     box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+    top: 110% !important;
+    width: 205px !important;
 }
 
 .tt-suggestion {
@@ -100,4 +102,9 @@
 
 .tt-suggestion p {
     margin: 0;
+}
+
+.empty-message{
+    color: black !important;
+    padding-left: 25px !important;
 }

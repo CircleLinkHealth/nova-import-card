@@ -48,38 +48,39 @@
     <div class="nav-wrapper" style="background: #4fb2e2;">
         <a href="#!" style="padding-left: 10px" class="brand-logo">CircleLink Health Enrollment Center</a>
 
-        <div id="search-bar-container">
-            @include('enrollment-ui.search')
-        </div>
+        <div style="width: 100%; height: 64px;">
+            <ul class="right hide-on-med-and-down">
+                <li> @include('enrollment-ui.search')</li>
+                @if(auth()->user()->hasRole('care-ambassador-view-only'))
+                    <li><a href="{{route('patients.dashboard')}}">Patient Dashboard</a></li>
+                @endif
 
-        <ul class="right hide-on-med-and-down">
-            @if(auth()->user()->hasRole('care-ambassador-view-only'))
-                <li><a href="{{route('patients.dashboard')}}">Patient Dashboard</a></li>
-            @endif
-
-            @if(isset($enrollee) && ($enrollee->practice->enrollmentTips() ?? collect())->count() > 0)
+                {{--                    @if(isset($enrollee) && ($enrollee->practice->enrollmentTips() ?? collect())->count() > 0)--}}
                 <li>
                     <!-- #tips is a modal in dashboard.blade -->
                     <a href="#tips" id="tips-link" class="modal-trigger">
                         Tips
                     </a>
                 </li>
-            @endif
+                {{--                    @endif--}}
 
-            <li>
-                <a href="https://circlelinkhealth.zendesk.com/hc/en-us/categories/360002207051-Care-Ambassador-Support"
-                   target="_blank">
-                    Enrollment Resources
-                </a>
-            </li>
-            <!-- Dropdown Trigger -->
-            <li>
-                <a class="dropdown-trigger" href="#" data-target="dropdown1">
-                    {{ auth()->user()->getFullName() }}
-                    <i class="material-icons right">settings</i></a>
-            </li>
-        </ul>
+                <li>
+                    <a href="https://circlelinkhealth.zendesk.com/hc/en-us/categories/360002207051-Care-Ambassador-Support"
+                       target="_blank">
+                        Enrollment Resources
+                    </a>
+                </li>
+                <!-- Dropdown Trigger -->
+                <li>
+                    <a class="dropdown-trigger" href="#" data-target="dropdown1">
+                        {{ auth()->user()->getFullName() }}
+                        <i class="material-icons right">settings</i></a>
+                </li>
+            </ul>
+        </div>
+
     </div>
+
 </nav>
 
 <script>
@@ -87,6 +88,8 @@
         M.Dropdown.init($('.dropdown-trigger'), {
             coverTrigger: false,
         });
+
+        App.$on()
     });
 </script>
 

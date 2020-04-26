@@ -1,12 +1,15 @@
 <div id="bloodhound">
     <?php
-$route = route('home');
-?>
-
-    <input id="patient-search-text-box" class="typeahead center-align" type="text"
-           name="users" autofocus="autofocus"
-           placeholder="{{'Enter a Patient Name, MRN or DOB (mm-dd-yyyy)' }}">
-    <div class="search loader" style="display: none;"></div>
+    $route = route('home');
+    ?>
+    <div>
+            <input onclick="this.select()" id="patient-search-text-box" class="typeahead center-align" type="text"
+                                    name="users" autofocus="autofocus"
+                                    placeholder="{{'Search Patients...' }}">
+            <div class="progress search" style="display: none; margin-left:3.5px; background-color: lightskyblue">
+                <div class="indeterminate" style="background-color: deepskyblue"></div>
+            </div>
+    </div>
 
 
     <script>
@@ -43,20 +46,20 @@ $route = route('home');
             });
 
             searchBox.on('typeahead:selected', function (e, datum) {
-                window.location.href = @json($route) + '#'+datum.id;
+                window.location.href = @json($route) +'#' + datum.id;
                 App.$emit('enrollable:load-from-search-bar')
             });
 
             searchBox.on('typeahead:asyncrequest', function (e, datum) {
-                $('.search.loader').show();
+                $('.search').show();
             });
 
             searchBox.on('typeahead:asynccancel', function (e, datum) {
-                $('.search.loader').hide();
+                $('.search').hide();
             });
 
             searchBox.on('typeahead:asyncreceive', function (e, datum) {
-                $('.search.loader').hide();
+                $('.search').hide();
             });
         });
 
@@ -69,29 +72,8 @@ $route = route('home');
         #bloodhound {
             position: relative;
             display: inline-block;
-            width: 100%;
         }
 
-        .search.loader {
-            border: 5px solid #31C6F9;
-            -webkit-animation: spin 1s linear infinite;
-            animation: spin 1s linear infinite;
-            border-top: 5px solid #555;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            position: absolute;
-            right: 20px;
-            top: 16px;
-        }
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
     </style>
 @endpush
