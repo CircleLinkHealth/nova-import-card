@@ -55,14 +55,14 @@
                     <li><a href="{{route('patients.dashboard')}}">Patient Dashboard</a></li>
                 @endif
 
-                {{--                    @if(isset($enrollee) && ($enrollee->practice->enrollmentTips() ?? collect())->count() > 0)--}}
-                <li>
-                    <!-- #tips is a modal in dashboard.blade -->
-                    <a href="#tips" id="tips-link" class="modal-trigger">
-                        Tips
-                    </a>
-                </li>
-                {{--                    @endif--}}
+                @if(isset($enrollee) && ($enrollee->practice->enrollmentTips() ?? collect())->count() > 0)
+                    <li>
+                        <!-- #tips is a modal in dashboard.blade -->
+                        <a href="#tips" id="tips-link" class="modal-trigger">
+                            Tips
+                        </a>
+                    </li>
+                @endif
 
                 <li>
                     <a href="https://circlelinkhealth.zendesk.com/hc/en-us/categories/360002207051-Care-Ambassador-Support"
