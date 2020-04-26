@@ -212,7 +212,7 @@ Route::group([
         'prefix' => 'enrollees',
     ], function () {
         Route::get('create-url/{userId}/{surveyId}', [
-            'uses' => 'InvitationLinksController@createEnrolleesSurveyUrl',
+            'uses' => 'EnrolleeSurveyController@createEnrolleesSurveyUrl',
             'as' => 'create.enrollees.survey.url',
         ]);
 

@@ -12,6 +12,7 @@ use App\Services\TwilioClientService;
 use App\Survey;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class InvitationLinksController extends Controller
 {
@@ -188,22 +189,5 @@ class InvitationLinksController extends Controller
             ->notify(new SurveyInvitationLink($url, $surveyName, $channel, $practiceName, $providerFullName, $appointment));
 
         return true;
-    }
-
-    /**
-     * @param $userId
-     * @param $surveyId
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     * @throws \Exception
-     */
-    public function createEnrolleesSurveyUrl($userId, $surveyId)
-    {
-        $user = User::whereId($userId)->firstOrFail();
-        $survey = Survey::whereId($surveyId)->firstOrFail();
-        $url = $this->service->createAndSaveUrl($user, $survey->name, true);
-
-//        $user->notify(new SendSurveyLinkToEnrollable($url));
-
-        return redirect($url);
     }
 }

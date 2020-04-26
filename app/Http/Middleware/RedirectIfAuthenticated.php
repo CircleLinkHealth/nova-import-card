@@ -69,6 +69,13 @@ class RedirectIfAuthenticated
                         'patientId' => $patientId,
                         'surveyId'  => $surveyId,
                     ]);
+        } else if (Survey::ENROLLEES === $name) {
+            Log::debug("RedirectIfAuthenticated -> redirecting to Enrollees Survey");
+            return redirect()->route('survey.enrollees',
+                [
+                    'patientId' => $user->id,
+                    'surveyId' => $surveyId,
+                ]);
         } else if (Survey::VITALS === $name) {
             if ($isParticipant) {
                 Log::debug("RedirectIfAuthenticated -> user is patient, redirecting to Vitals - Not Authorized");

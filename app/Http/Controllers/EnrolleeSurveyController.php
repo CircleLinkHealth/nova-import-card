@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAnswer;
 use App\Services\EnrolleesSurveyService;
+use App\Services\SurveyInvitationLinksService;
 use App\Services\SurveyService;
-use CircleLinkHealth\Customer\Entities\User;
+use App\Survey;
+use App\User;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EnrolleeSurveyController extends Controller
 {
@@ -14,14 +18,20 @@ class EnrolleeSurveyController extends Controller
      * @var SurveyService
      */
     private $enrolleesSurveyService;
+    /**
+     * @var SurveyInvitationLinksService
+     */
+    private $surveyInvitationLinksService;
 
     /**
      * EnrolleeSurveyController constructor.
      * @param EnrolleesSurveyService $enrolleesSurveyService
+     * @param SurveyInvitationLinksService $surveyInvitationLinksService
      */
-    public function __construct(EnrolleesSurveyService $enrolleesSurveyService)
+    public function __construct(EnrolleesSurveyService $enrolleesSurveyService, SurveyInvitationLinksService $surveyInvitationLinksService)
     {
         $this->enrolleesSurveyService = $enrolleesSurveyService;
+        $this->surveyInvitationLinksService = $surveyInvitationLinksService;
     }
 
     /**
@@ -67,5 +77,21 @@ class EnrolleeSurveyController extends Controller
             'success' => true,
             'data' => $data,
         ], 200);
+    }
+
+    /**
+     * @param $userId
+     * @param $surveyId
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Exception
+     */
+    public function createEnrolleesSurveyUrl($userId, $surveyId)
+    {
+        $user = User::whereId($userId)->firstOrFail();
+        $survey = Survey::whereId($surveyId)->firstOrFail();
+        $url = $this->surveyInvitationLinksService->createAndSaveUrl($user, $survey->name, true);
+        Auth::loginUsingId($userId, true);
+//        $user->notify(new SendSurveyLinkToEnrollable($url));
+        return redirect($url);
     }
 }
