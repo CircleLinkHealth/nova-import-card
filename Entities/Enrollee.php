@@ -733,6 +733,14 @@ class Enrollee extends BaseModel
         );
     }
 
+    public function scopeLessThanThreeAttempts($query)
+    {
+        $query->where(function ($q) {
+            $q->whereNull('attempt_count')
+                ->orWhere('attempt_count', '<', 3);
+        });
+    }
+
     public function scopeSearchAddresses($query, string $term)
     {
         return $query->mySQLSearch($this->addressAttributes, $term, 'BOOLEAN', false, true, true);
@@ -764,13 +772,6 @@ class Enrollee extends BaseModel
                 $q->whereNull('attempt_count')
                     ->orWhere('attempt_count', '<', 3);
             });
-    }
-    
-    public function scopeLessThanThreeAttempts($query){
-        $query->where(function ($q) {
-            $q->whereNull('attempt_count')
-                ->orWhere('attempt_count', '<', 3);
-        });
     }
 
     public function scopeShouldSuggestAsFamilyForEnrollee($query, $enrolleeId)
