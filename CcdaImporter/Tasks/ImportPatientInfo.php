@@ -29,13 +29,15 @@ class ImportPatientInfo extends BaseCcdaImportTask
      * @param $dob
      *
      * @throws \Exception
-     *
-     * @return Carbon|null
      */
-    public static function parseDOBDate($dob)
+    public static function parseDOBDate($dob): ?Carbon
     {
         if ($dob instanceof Carbon) {
             return self::correctCenturyIfNeeded($dob);
+        }
+
+        if (empty($dob)) {
+            return null;
         }
 
         try {
@@ -47,10 +49,6 @@ class ImportPatientInfo extends BaseCcdaImportTask
 
             return self::correctCenturyIfNeeded($date);
         } catch (\InvalidArgumentException $e) {
-            if ( ! $dob) {
-                return null;
-            }
-
             if (Str::contains($dob, '/')) {
                 $delimiter = '/';
             } elseif (Str::contains($dob, '-')) {

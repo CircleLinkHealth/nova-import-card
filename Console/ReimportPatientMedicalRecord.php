@@ -71,7 +71,7 @@ class ReimportPatientMedicalRecord extends Command
 
         \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id}");
 
-        DB::transaction(function (User $user) {
+        DB::transaction(function () use ($user) {
             if ( ! $user->hasCcda()) {
                 $this->attemptCreateCcdaFromMrTemplate($user);
             }
