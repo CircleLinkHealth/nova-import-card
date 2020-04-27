@@ -39,6 +39,12 @@ class CarePlanObserver
 
     public function creating(CarePlan $carePlan)
     {
+        if ( ! $carePlan->patient) {
+            \Log::critical("CarePlan with id:{$carePlan->id} has no patient");
+
+            return;
+        }
+
         if ($carePlan->patient->practice('upg')) {
             $cpmMisc = CpmMisc::whereName('Other')->first();
 
