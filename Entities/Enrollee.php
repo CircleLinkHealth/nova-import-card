@@ -170,6 +170,8 @@ use Illuminate\Support\Str;
  * @method   static                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee hasPhone($phone)
  * @property string|null                                       $other_note
  * @method   static                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee shouldBeCalled()
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee lessThanThreeAttempts()
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee withCaPanelRelationships()
  */
 class Enrollee extends BaseModel
 {
