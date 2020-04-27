@@ -8,6 +8,7 @@ namespace App\Notifications;
 
 // This file is part of CarePlan Manager by CircleLink Health.
 
+use App\Notifications\Channels\AutoEnrollmentMailChannel;
 use App\Traits\EnrollableManagement;
 use App\Traits\EnrollableNotificationContent;
 use CircleLinkHealth\Customer\Entities\User;
@@ -68,6 +69,7 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
 
     /**
      * @param $notifiable
+     *
      * @return array
      */
     public function toArrayData($notifiable)
@@ -94,13 +96,12 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-//        @todo: refactor this to split methods.
         $this->getNotificationContent($notifiable);
 
-        return (new MailMessage())
+        return (new AutoEnrollmentMailChannel())
             ->line($this->notificationContent['line1'])
             ->line($this->notificationContent['line2'])
-            ->action('Get More Info', url($this->createInvitationLink($notifiable)));
+            ->action('Get my Care Coach', url($this->createInvitationLink($notifiable)));
     }
 
     /**
