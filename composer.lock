@@ -946,7 +946,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/condition-code-lookup-module.git",
-                "reference": "d8a49932bdefbf8298a7262e0a661d088f445952"
+                "reference": "bbbac89b73490f29b4587fe101d06dadf5918ba8"
             },
             "require": {
                 "ext-curl": "*",
@@ -974,7 +974,7 @@
                     "email": "pagcosma@gmail.com"
                 }
             ],
-            "time": "2020-04-27T13:56:03+00:00"
+            "time": "2020-04-27T15:03:03+00:00"
         },
         {
             "name": "circlelinkhealth/core-module",
@@ -1390,7 +1390,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "67c67c7427ed908ff725d4b8fa6c919eaa7093e7"
+                "reference": "e65fdbaca71294aa7c66876b9174f3b26656695e"
             },
             "type": "laravel-module",
             "extra": {
@@ -1415,7 +1415,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-24T12:48:22+00:00"
+            "time": "2020-04-27T14:08:01+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
