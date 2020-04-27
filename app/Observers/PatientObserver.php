@@ -7,6 +7,7 @@
 namespace App\Observers;
 
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
+use App\Listeners\AssignPatientToStandByNurse;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -53,19 +54,26 @@ class PatientObserver
 
     public function saved(Patient $patient)
     {
-        if ($patient->isDirty('ccm_status') && in_array(
-            $patient->ccm_status,
-            [
-                Patient::WITHDRAWN_1ST_CALL,
-                Patient::WITHDRAWN,
-                Patient::PAUSED,
-                Patient::UNREACHABLE,
-            ]
-        )) {
-            Artisan::queue(
-                RemoveScheduledCallsForWithdrawnAndPausedPatients::class,
-                ['patientUserIds' => [$patient->user_id]]
-            );
+        if ($patient->isDirty('ccm_status')) {
+            if (in_array(
+                $patient->ccm_status,
+                [
+                    Patient::WITHDRAWN_1ST_CALL,
+                    Patient::WITHDRAWN,
+                    Patient::PAUSED,
+                    Patient::UNREACHABLE,
+                ]
+            )) {
+                Artisan::queue(
+                    RemoveScheduledCallsForWithdrawnAndPausedPatients::class,
+                    ['patientUserIds' => [$patient->user_id]]
+                );
+            }
+            
+            if ($this->statusChangedToEnrolled($patient)) {
+                $patient->load('user');
+                AssignPatientToStandByNurse::assignToStandByNurse($patient->user);
+            }
         }
     }
 
@@ -102,9 +110,7 @@ class PatientObserver
         }
 
         if ($patient->isDirty('ccm_status')) {
-            $oldValue = $patient->getOriginal('ccm_status');
-            $newValue = $patient->ccm_status;
-            if ($this->shouldScheduleCall($patient, $oldValue, $newValue)) {
+            if ($this->statusChangedToEnrolled($patient)) {
                 /** @var SchedulerService $schedulerService */
                 $schedulerService = app()->make(SchedulerService::class);
                 $schedulerService->ensurePatientHasScheduledCall($patient->user);
@@ -134,15 +140,16 @@ class PatientObserver
             }
         }
     }
-
+    
     /**
-     * @param $oldValue
-     * @param $newValue
+     * @param Patient $patient
+     * @return bool
      */
-    private function shouldScheduleCall(Patient $patient, $oldValue, $newValue): bool
+    private function statusChangedToEnrolled(Patient $patient): bool
     {
-        $patient->loadMissing('user.carePlan');
-
+        $oldValue = $patient->getOriginal('ccm_status');
+        $newValue = $patient->ccm_status;
+        
         if (Patient::ENROLLED != $newValue) {
             return false;
         }

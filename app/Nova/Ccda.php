@@ -10,13 +10,15 @@ use App\CcdaView;
 use App\Constants;
 use App\Nova\Actions\ClearAndReimportCcda;
 use App\Nova\Actions\ImportCcdaAction;
-use App\Nova\Filters\OnOrAfterDateFilter;
+use App\Nova\Filters\CpmDateFilter;
 use App\Nova\Filters\PracticeFilter;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\Date;
+use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
+use Maatwebsite\LaravelNovaExcel\Actions\DownloadExcel;
 
 class Ccda extends Resource
 {
@@ -49,6 +51,8 @@ class Ccda extends Resource
         'source',
         'nurse_user_name',
         'practice_display_name',
+        'dob',
+        'provider',
     ];
 
     /**
@@ -68,6 +72,7 @@ class Ccda extends Resource
         return [
             new ImportCcdaAction(),
             new ClearAndReimportCcda(),
+            new DownloadExcel()
         ];
     }
 
@@ -112,19 +117,20 @@ class Ccda extends Resource
                 }
 
                 return link_to_route('patient.careplan.print', 'View', [$row->patient_user_id])->toHtml();
-            })
-                ->asHtml(),
-            ID::make('ccda_id')->sortable(),
-            ID::make('patient_user_id')->sortable(),
-            Text::make('Nurse', 'nurse_user_name')->sortable(),
-            Text::make('Practice', 'practice_display_name')->sortable(),
-            Text::make('Mrn', 'mrn')->sortable(),
+            })->asHtml(),
             Text::make('First Name', 'first_name')->sortable(),
             Text::make('Last Name', 'last_name')->sortable(),
-            Text::make('Source', 'source')->sortable(),
+            Date::make('DOB', 'dob')->sortable(),
+            Text::make('Mrn', 'mrn')->sortable(),
+            Text::make('Provider', 'provider_name')->sortable(),
+            Text::make('Practice', 'practice_display_name')->sortable(),
+            Text::make('Nurse', 'nurse_user_name')->sortable(),
             Text::make('From (DM)', 'dm_from')->sortable(),
-            Date::make('Created', 'created_at')->sortable(),
+            DateTime::make('Created At', 'created_at')->sortable(),
             Code::make('Errors', 'validation_errors')->json(),
+            Text::make('Source', 'source')->sortable(),
+            ID::make('patient_user_id')->sortable(),
+            ID::make('ccda_id')->sortable(),
         ];
     }
 
@@ -137,7 +143,8 @@ class Ccda extends Resource
     {
         return [
             new PracticeFilter(),
-            new OnOrAfterDateFilter('created_at'),
+            (new CpmDateFilter('created_at'))->setName('Created on or after')->setOperator('>=')->setDefaultDate(now()->subWeeks(2)->toDateTimeString()),
+            (new CpmDateFilter('created_at'))->setName('Created before or on')->setOperator('<=')->setDefaultDate(now()->addDay()->toDateTimeString()),
         ];
     }
 

@@ -9,6 +9,7 @@ namespace App\Listeners;
 use App\Events\CarePlanWasQAApproved;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
+use CircleLinkHealth\Customer\Entities\User;
 
 class AssignPatientToStandByNurse
 {
@@ -20,7 +21,25 @@ class AssignPatientToStandByNurse
     public function __construct()
     {
     }
-
+    
+    public static function assignToStandByNurse(User $patient)
+    {
+        if ( ! $standByNurseId = StandByNurseUser::id()) {
+            return null;
+        }
+    
+        return PatientNurse::updateOrCreate(
+            ['patient_user_id' => $patient->id],
+            [
+                'patient_user_id'         => $patient->id,
+                'nurse_user_id'           => $standByNurseId,
+                'temporary_nurse_user_id' => null,
+                'temporary_from'          => null,
+                'temporary_to'            => null,
+            ]
+        );
+    }
+    
     /**
      * Handle the event.
      *
@@ -30,19 +49,6 @@ class AssignPatientToStandByNurse
      */
     public function handle(CarePlanWasQAApproved $event)
     {
-        if ( ! $standByNurseId = StandByNurseUser::id()) {
-            return;
-        }
-
-        PatientNurse::updateOrCreate(
-            ['patient_user_id' => $event->patient->id],
-            [
-                'patient_user_id'         => $event->patient->id,
-                'nurse_user_id'           => $standByNurseId,
-                'temporary_nurse_user_id' => null,
-                'temporary_from'          => null,
-                'temporary_to'            => null,
-            ]
-        );
+        self::assignToStandByNurse($event->patient);
     }
 }

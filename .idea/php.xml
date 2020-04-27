@@ -246,8 +246,6 @@
       <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
       <path value="$PROJECT_DIR$/vendor/epartment/nova-dependency-container" />
       <path value="$PROJECT_DIR$/vendor/circlelinkhealth/clh-nova-theme" />
-      <path value="$PROJECT_DIR$/vendor/laminas/laminas-diactoros" />
-      <path value="$PROJECT_DIR$/vendor/laminas/laminas-zendframework-bridge" />
       <path value="$PROJECT_DIR$/vendor/laravel/nova" />
       <path value="$PROJECT_DIR$/vendor/appstract/lush-http" />
       <path value="$PROJECT_DIR$/vendor/laravel/slack-notification-channel" />
@@ -272,6 +270,8 @@
       <path value="$PROJECT_DIR$/vendor/nexmo/client" />
       <path value="$PROJECT_DIR$/vendor/nexmo/client-core" />
       <path value="$PROJECT_DIR$/vendor/itsgoingd/clockwork" />
+      <path value="$PROJECT_DIR$/vendor/zendframework/zend-diactoros" />
+      <path value="$PROJECT_DIR$/vendor/maatwebsite/laravel-nova-excel" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.3" />
