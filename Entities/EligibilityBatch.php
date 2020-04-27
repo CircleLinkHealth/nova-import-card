@@ -47,10 +47,6 @@ use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
  */
 class EligibilityBatch extends BaseModel
 {
-    /**
-     * A batch that is always open to add more ptients to
-     */
-    const RUNNING                     = 'running';
     const ATHENA_API                  = 'athena_csv';
     const CLH_MEDICAL_RECORD_TEMPLATE = 'clh_medical_record_template';
 
@@ -58,13 +54,17 @@ class EligibilityBatch extends BaseModel
     const REPROCESS_FROM_SCRATCH    = 'from_scratch';
 
     const REPROCESS_SAFE = 'safe';
+    /**
+     * A batch that is always open to add more ptients to.
+     */
+    const RUNNING = 'running';
 
     const STATUSES = [
-        'not_started'        => 0,
-        'processing'         => 1,
-        'error'              => 2,
-        'complete'           => 3,
-        'runs_infinitely'    => 4,
+        'not_started'     => 0,
+        'processing'      => 1,
+        'error'           => 2,
+        'complete'        => 3,
+        'runs_infinitely' => 4,
     ];
     const TYPE_GOOGLE_DRIVE_CCDS = 'google_drive_ccds';
     const TYPE_ONE_CSV           = 'one_csv';
@@ -93,28 +93,7 @@ class EligibilityBatch extends BaseModel
         'status',
         'initiator_id',
     ];
-    
-    /**
-     * Get the Practice's "running batch", or create one if it does not exist.
-     * A "running batch" is always open, and its purpose is to attach medical records when they are sent to us one by one instead of in a batch.
-     *
-     * @param Practice $practice
-     */
-    public static function runningBatch(Practice $practice)
-    {
-        return EligibilityBatch::firstOrCreate( [
-            'type'        => self::RUNNING,
-            'practice_id' => $practice->id,
-        ], [
-            'status'      => EligibilityBatch::STATUSES['runs_infinitely'],
-            'options'     => [
-                'filterLastEncounter' => false,
-                'filterInsurance'     => false,
-                'filterProblems'      => true,
-            ],
-        ]);
-    }
-    
+
     public function eligibilityJobs()
     {
         return $this->hasMany(EligibilityJob::class, 'batch_id');
@@ -318,6 +297,25 @@ class EligibilityBatch extends BaseModel
                     )->onQueue($onQueue);
                 });
             });
+    }
+
+    /**
+     * Get the Practice's "running batch", or create one if it does not exist.
+     * A "running batch" is always open, and its purpose is to attach medical records when they are sent to us one by one instead of in a batch.
+     */
+    public static function runningBatch(Practice $practice)
+    {
+        return EligibilityBatch::firstOrCreate([
+            'type'        => self::RUNNING,
+            'practice_id' => $practice->id,
+        ], [
+            'status'  => EligibilityBatch::STATUSES['runs_infinitely'],
+            'options' => [
+                'filterLastEncounter' => false,
+                'filterInsurance'     => false,
+                'filterProblems'      => true,
+            ],
+        ]);
     }
 
     public function shouldFilterInsurance()

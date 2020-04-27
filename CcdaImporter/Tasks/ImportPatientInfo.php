@@ -29,15 +29,13 @@ class ImportPatientInfo extends BaseCcdaImportTask
      * @param $dob
      *
      * @throws \Exception
-     *
-     * @return Carbon|null
      */
-    public static function parseDOBDate($dob):?Carbon
+    public static function parseDOBDate($dob): ?Carbon
     {
         if ($dob instanceof Carbon) {
             return self::correctCenturyIfNeeded($dob);
         }
-    
+
         if (empty($dob)) {
             return null;
         }
