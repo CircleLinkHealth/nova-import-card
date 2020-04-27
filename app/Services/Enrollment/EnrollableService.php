@@ -12,6 +12,10 @@ use Illuminate\Support\Collection;
 abstract class EnrollableService
 {
     /**
+     * @var Collection|null
+     */
+    protected $data;
+    /**
      * @var Enrollee
      */
     protected $enrollee;
@@ -19,16 +23,11 @@ abstract class EnrollableService
      * @var int
      */
     protected $enrolleeId;
-    
-    /**
-     * @var Collection|null
-     */
-    protected $data;
-    
+
     public function __construct($enrolleeId, Collection $data = null)
     {
         $this->enrolleeId = $enrolleeId;
-        $this->data = $data ?? collect([]);
+        $this->data       = $data ?? collect([]);
     }
 
     protected function getModel()

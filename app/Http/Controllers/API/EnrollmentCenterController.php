@@ -9,10 +9,9 @@ namespace App\Http\Controllers\API;
 use App\CareAmbassadorLog;
 use App\Http\Resources\Enrollable;
 use App\SafeRequest as Request;
-use App\Services\Enrollment\AttachEnrolleeFamilyMembers;
 use App\Services\Enrollment\EnrollableCallQueue;
-use App\Services\Enrollment\SuggestEnrolleeFamilyMembers;
-use Carbon\Carbon;
+use App\Services\Enrollment\SuggestEnrollable;
+use App\Services\Enrollment\UpdateEnrollable;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use Illuminate\Support\Str;
@@ -22,18 +21,18 @@ class EnrollmentCenterController extends ApiController
     public function consented(Request $request)
     {
         $careAmbassador = auth()->user()->careAmbassador;
-        
+
         $enrollable = UpdateEnrollable::update($request->input('enrollable_id'), collect($request->allSafe()));
-        
+
         //update report for care ambassador:
         $report              = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
         $report->no_enrolled = $report->no_enrolled + 1;
         $report->total_calls = $report->total_calls + 1;
         $report->save();
-        
+
         ImportConsentedEnrollees::dispatch([$enrollable->id], $enrollable->batch);
         EnrollableCallQueue::update($careAmbassador, $enrollable, $request->input('confirmed_family_members'));
-        
+
         return response()->json([
             'status' => 200,
         ]);
@@ -42,7 +41,7 @@ class EnrollmentCenterController extends ApiController
     public function getSuggestedFamilyMembers($enrolleeId)
     {
         return $this->json([
-            'suggested_family_members' => SuggestEnrollable::get((int)$enrolleeId),
+            'suggested_family_members' => SuggestEnrollable::get((int) $enrolleeId),
         ]);
     }
 
@@ -116,12 +115,12 @@ class EnrollmentCenterController extends ApiController
     public function rejected(Request $request)
     {
         $careAmbassador = auth()->user()->careAmbassador;
-        
+
         $enrollable = UpdateEnrollable::update($request->input('enrollable_id'), collect($request->allSafe()));
-        
+
         //update report for care ambassador:
         $report = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
-        
+
         //soft_rejected or rejected
         $status = $request->input('status', Enrollee::REJECTED);
         if (Enrollee::REJECTED === $status) {
@@ -131,10 +130,9 @@ class EnrollmentCenterController extends ApiController
         }
         $report->total_calls = $report->total_calls + 1;
         $report->save();
-        
-        
+
         EnrollableCallQueue::update($careAmbassador, $enrollable, $request->input('confirmed_family_members'));
-        
+
         return response()->json([
             'status' => 200,
         ]);
@@ -174,18 +172,17 @@ class EnrollmentCenterController extends ApiController
     public function unableToContact(Request $request)
     {
         $careAmbassador = auth()->user()->careAmbassador;
-        
+
         $enrollable = UpdateEnrollable::update($request->input('enrollable_id'), collect($request->allSafe()));
-        
+
         //update report for care ambassador:
         $report              = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
         $report->no_utc      = $report->no_utc + 1;
         $report->total_calls = $report->total_calls + 1;
         $report->save();
-        
-        
+
         EnrollableCallQueue::update($careAmbassador, $enrollable, $request->input('confirmed_family_members'));
-        
+
         return response()->json([
             'status' => 200,
         ]);

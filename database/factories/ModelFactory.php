@@ -210,11 +210,11 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factor
         'zip'        => $faker->randomNumber(5),
 
         'lang' => 'EN',
-        
-        'cell_phone' => $str->formatPhoneNumberE164($phones->random()),
-        'home_phone' => $str->formatPhoneNumberE164($phones->random()),
+
+        'cell_phone'  => $str->formatPhoneNumberE164($phones->random()),
+        'home_phone'  => $str->formatPhoneNumberE164($phones->random()),
         'other_phone' => $str->formatPhoneNumberE164($phones->random()),
-        
+
         'status' => Enrollee::TO_CALL,
 
         'primary_insurance'   => $faker->company,
