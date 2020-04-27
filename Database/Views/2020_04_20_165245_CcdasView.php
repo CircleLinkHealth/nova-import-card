@@ -37,6 +37,7 @@ class CcdasView extends BaseSqlView
         direct_mail_messages.id as dm_id,
         direct_mail_messages.from as dm_from,
        
+        JSON_UNQUOTE(JSON_EXTRACT(json, \"$.demographics.dob\")) AS dob,
         JSON_UNQUOTE(JSON_EXTRACT(json, \"$.demographics.mrn_number\")) AS mrn,
         patient_user.first_name as patient_first_name,
         enrollees.first_name as enrollee_first_name,
