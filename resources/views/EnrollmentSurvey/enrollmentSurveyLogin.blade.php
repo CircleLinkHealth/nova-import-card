@@ -4,8 +4,7 @@
 @section('content')
     <div class="container">
             <br>
-
-            <main>
+        <main>
                 <center>
                     <div class="container">
                             <div class="z-depth-3 y-depth-3 x-depth-3 grey green-text lighten-4 row"
