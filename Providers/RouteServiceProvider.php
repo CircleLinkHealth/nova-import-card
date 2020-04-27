@@ -32,9 +32,8 @@ class RouteServiceProvider extends ServiceProvider
             //we need to make sure that at least one Service Provider will
             //load from cache (see app/Providers/RouteServiceProvider.php)
             return;
-        } else {
-            $this->loadRoutes();
         }
+        $this->loadRoutes();
     }
 
     /**
