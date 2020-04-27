@@ -16,8 +16,8 @@ use InvalidArgumentException;
 
 trait CerberusSiteUserTrait
 {
-    private $permissionsCache = [];
-    private $rolesCache       = [];
+    private static $permissionsCache = [];
+    private static $rolesCache       = [];
 
     /**
      * Checks role(s) and permission(s).
@@ -186,10 +186,10 @@ trait CerberusSiteUserTrait
 
     public function cachedPermissions()
     {
-        $cacheKey = 'cerberus_permissions_for_user_'.$this->id;
-        if ( ! isset($this->permissionsCache[$cacheKey])) {
+        $cacheKey = $this->getPermissionsCacheKey();
+        if ( ! isset(static::$permissionsCache[$cacheKey])) {
             if (Cache::getStore() instanceof TaggableStore) {
-                $this->permissionsCache[$cacheKey] = Cache::tags(Config::get('cerberus.permissibles_table'))->remember(
+                static::$permissionsCache[$cacheKey] = Cache::tags(Config::get('cerberus.permissibles_table'))->remember(
                     $cacheKey,
                     Config::get('cache.ttl', 60),
                     function () {
@@ -197,19 +197,19 @@ trait CerberusSiteUserTrait
                     }
                 );
             } else {
-                $this->permissionsCache[$cacheKey] = $this->perms()->get();
+                static::$permissionsCache[$cacheKey] = $this->perms()->get();
             }
         }
 
-        return $this->permissionsCache[$cacheKey];
+        return static::$permissionsCache[$cacheKey];
     }
 
     public function cachedRoles()
     {
-        $cacheKey = 'cerberus_roles_for_user_'.$this->id;
-        if ( ! isset($this->rolesCache[$cacheKey])) {
+        $cacheKey = $this->getRolesCacheKey();
+        if ( ! isset(static::$rolesCache[$cacheKey])) {
             if (Cache::getStore() instanceof TaggableStore) {
-                $this->rolesCache[$cacheKey] = Cache::tags(Config::get('cerberus.role_user_site_table'))->remember(
+                static::$rolesCache[$cacheKey] = Cache::tags(Config::get('cerberus.role_user_site_table'))->remember(
                     $cacheKey,
                     Config::get('cache.ttl'),
                     function () {
@@ -217,11 +217,11 @@ trait CerberusSiteUserTrait
                     }
                 );
             } else {
-                $this->rolesCache[$cacheKey] = $this->roles()->get();
+                static::$rolesCache[$cacheKey] = $this->roles()->get();
             }
         }
 
-        return $this->rolesCache[$cacheKey];
+        return static::$rolesCache[$cacheKey];
     }
 
     public function clearRolesCache()
@@ -237,7 +237,7 @@ trait CerberusSiteUserTrait
         }
 
         foreach ($keys as $key) {
-            unset($this->rolesCache[$key], $this->permissionsCache[$key]);
+            unset(static::$rolesCache[$key], static::$permissionsCache[$key]);
 
             $store->forget($key);
             Cache::forget($key);
@@ -556,6 +556,23 @@ trait CerberusSiteUserTrait
             ->withPivot(Config::get('cerberus.site_foreign_key'));
     }
 
+    public function setRelation($relation, $value)
+    {
+        parent::setRelation($relation, $value);
+        if ('roles' === $relation) {
+            static::$rolesCache[$this->getRolesCacheKey()] = $value;
+        } elseif ('perms' === $relation) {
+            static::$permissionsCache[$this->getPermissionsCacheKey()] = $value;
+        }
+    }
+
+    public function setRelations(array $relations)
+    {
+        foreach ($relations as $relation => $value) {
+            $this->setRelation($relation, $value);
+        }
+    }
+
     /**
      * Checks whether $site is required and $site is empty.
      *
@@ -572,5 +589,15 @@ trait CerberusSiteUserTrait
         }
 
         return true;
+    }
+
+    private function getPermissionsCacheKey()
+    {
+        return 'cerberus_permissions_for_user_'.$this->id;
+    }
+
+    private function getRolesCacheKey()
+    {
+        return 'cerberus_roles_for_user_'.$this->id;
     }
 }
