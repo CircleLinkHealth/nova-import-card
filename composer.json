@@ -182,6 +182,7 @@
         "league/flysystem-aws-s3-v3": "^1.0",
         "league/fractal": "0.19.2",
         "maatwebsite/excel": "^3.1.16",
+        "moontoast/math": "1.1.2 as 1.999.999",
         "nao-pon/flysystem-google-drive": "~1.1",
         "nvanheuverzwijn/monolog-logdna": "^2.1",
         "phaxio/phaxio": "^2.0",
