@@ -50,7 +50,7 @@
                 </div>
                 @include('partials.userheader')
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                    <form id="save" name="save" method="post"
+                    <form id="save" name="save" method="post" class="form-prevent-multi-submit"
                           action="{{route('patient.appointment.store', array('patientId' => $patient->id))}}">
                         {{ csrf_field() }}
 
@@ -129,7 +129,7 @@
                                                value="{{ $patient->id }}">
                                     </div>
                                     <div class="col-sm-12 form-group margin-20">
-                                        {!! Form::submit('Save', array('name' => 'save','class' => 'btn btn-primary save-btn')) !!}
+                                        {!! Form::submit('Save', array('name' => 'save','class' => 'btn btn-primary save-btn btn-prevent-multi-submit')) !!}
                                     </div>
                                 </div>
 
