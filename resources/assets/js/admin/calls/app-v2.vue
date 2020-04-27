@@ -227,7 +227,7 @@
                         name: row.Patient,
                         nurse: {
                             id: row.NurseId,
-                            name: nurse.display_name
+                            name: nurse ? nurse.display_name : 'Unassigned'
                         },
                         nextCall: row['Activity Day'],
                         callTimeStart: row['Activity Start'],
