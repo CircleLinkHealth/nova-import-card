@@ -57,7 +57,7 @@ class CallsView extends BaseSqlView
             u9.patient_nurse
         FROM
             calls c
-            left join (select u.id as patient_id, CONCAT(u.display_name) as patient, u.timezone from users u where u.deleted_at is null) as u1 on c.inbound_cpm_id = u1.patient_id
+            join (select u.id as patient_id, CONCAT(u.display_name) as patient, u.timezone from users u where u.deleted_at is null) as u1 on c.inbound_cpm_id = u1.patient_id
 
             left join (select u.id as nurse_id, CONCAT(u.first_name, ' ', u.last_name, ' ', (if (u.suffix is null, '', u.suffix))) as nurse from users u where u.deleted_at is null) as u2 on c.outbound_cpm_id = u2.nurse_id
 
