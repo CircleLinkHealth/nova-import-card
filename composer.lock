@@ -1423,7 +1423,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "674f7e45d5ab6b7ccfeab7bcb2b60f6b31031792"
+                "reference": "f30c62ed46056838286456ee2947f73cd78df540"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1448,7 +1448,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-27T09:05:01+00:00"
+            "time": "2020-04-27T09:25:18+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
