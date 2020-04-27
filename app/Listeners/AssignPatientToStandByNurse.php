@@ -21,13 +21,13 @@ class AssignPatientToStandByNurse
     public function __construct()
     {
     }
-    
+
     public static function assignToStandByNurse(User $patient)
     {
         if ( ! $standByNurseId = StandByNurseUser::id()) {
             return null;
         }
-    
+
         return PatientNurse::updateOrCreate(
             ['patient_user_id' => $patient->id],
             [
@@ -39,7 +39,7 @@ class AssignPatientToStandByNurse
             ]
         );
     }
-    
+
     /**
      * Handle the event.
      *

@@ -72,7 +72,7 @@ class Ccda extends Resource
         return [
             new ImportCcdaAction(),
             new ClearAndReimportCcda(),
-            new DownloadExcel()
+            new DownloadExcel(),
         ];
     }
 

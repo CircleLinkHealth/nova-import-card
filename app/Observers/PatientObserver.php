@@ -69,7 +69,7 @@ class PatientObserver
                     ['patientUserIds' => [$patient->user_id]]
                 );
             }
-            
+
             if ($this->statusChangedToEnrolled($patient)) {
                 $patient->load('user');
                 AssignPatientToStandByNurse::assignToStandByNurse($patient->user);
@@ -140,16 +140,12 @@ class PatientObserver
             }
         }
     }
-    
-    /**
-     * @param Patient $patient
-     * @return bool
-     */
+
     private function statusChangedToEnrolled(Patient $patient): bool
     {
         $oldValue = $patient->getOriginal('ccm_status');
         $newValue = $patient->ccm_status;
-        
+
         if (Patient::ENROLLED != $newValue) {
             return false;
         }

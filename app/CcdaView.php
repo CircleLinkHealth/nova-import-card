@@ -126,7 +126,6 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  */
 class CcdaView extends SqlViewModel
 {
-    protected $dates = ['dob'];
     public $phi = [
         'dob',
         'mrn',
@@ -138,6 +137,7 @@ class CcdaView extends SqlViewModel
         'last_name',
         'provider_name',
     ];
+    protected $dates      = ['dob'];
     protected $primaryKey = 'ccda_id';
 
     protected $table = 'ccdas_view';
