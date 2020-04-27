@@ -26,7 +26,7 @@
                 class="next-btn"
                 :disabled="!checked"
                 @click="handleAnswers">
-            {{isLastQuestion ? 'Complete' : 'Next'}}
+            {{buttonText}}
             <mdb-icon v-show="waiting" icon="spinner" :spin="true"/>
         </mdbBtn>
     </div>
@@ -56,7 +56,19 @@
             }
         },
 
-        computed: {},
+        computed: {
+            buttonText(){
+                if (this.enrollmentSurveyPatients.isSurveyOnlyRole && this.isLastQuestion){
+                    return 'Enroll';
+                }
+                if (this.isLastQuestion){
+                    return 'Complete';
+                }
+
+                return 'Next';
+
+            }
+        },
         methods: {
             handleAnswers() {
                 const answer = this.checked;

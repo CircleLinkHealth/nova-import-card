@@ -3,6 +3,7 @@
         <div v-if="!isMultiInput" class="col-md-12 active">
             <input type="text"
                    class="address-field"
+                   :placeholder="placeholderValue"
                    v-model="singleInputHasText"
                    :disabled="readOnly"/>
         </div>
@@ -30,7 +31,7 @@
                     id="number"
                     :disabled="!(isOptional || singeInputHasValue || hasTypedInAllInputs)"
                     @click="handleAnswer()">
-                {{isLastQuestion ? 'Complete' : 'Next'}}
+                {{buttonText}}
                 <mdb-icon v-show="waiting" icon="spinner" :spin="true"/>
             </mdbBtn>
         </div>
@@ -76,6 +77,20 @@
             },
         },
         computed: {
+            placeholderValue(){
+              return this.singleInputHasText !== '' ? '' : 'Enter you email'
+            },
+
+            buttonText(){
+                if (this.isLastQuestion){
+                    return  'Complete';
+                }
+                if (this.singleInputHasText === '' && ! this.isMultiInput){
+                    return "I don't have an email";
+                }
+                return 'Next';
+            },
+
             singeInputHasValue() {
                 const input = this.singleInputHasText;
                 return input !== undefined ? input.length !== 0 : false;
