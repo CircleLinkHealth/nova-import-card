@@ -9,6 +9,7 @@ namespace App\Nova;
 use App\CcdaView;
 use App\Constants;
 use App\Nova\Actions\ClearAndReimportCcda;
+use App\Nova\Actions\DownloadCsv;
 use App\Nova\Actions\ImportCcdaAction;
 use App\Nova\Filters\CpmDateFilter;
 use App\Nova\Filters\PracticeFilter;
@@ -18,7 +19,6 @@ use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
-use Maatwebsite\LaravelNovaExcel\Actions\DownloadExcel;
 
 class Ccda extends Resource
 {
@@ -72,7 +72,19 @@ class Ccda extends Resource
         return [
             new ImportCcdaAction(),
             new ClearAndReimportCcda(),
-            new DownloadExcel(),
+            (new DownloadCsv())->setOnlyColumns([
+                'first_name',
+                'last_name',
+                'mrn',
+                'dob',
+                'provider',
+                'practice_display_name',
+                'patient_user_id',
+            ])->canSee(function () {
+                return true;
+            })->canRun(function () {
+                return true;
+            }),
         ];
     }
 
