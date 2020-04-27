@@ -90,7 +90,7 @@ class EnrollmentInvitationService
     {
         $enrollee->update(
             [
-                'status'                    => 'call_queue',
+                'status'                    => Enrollee::TO_CALL,
                 'auto_enrollment_triggered' => true,
             ]
         );

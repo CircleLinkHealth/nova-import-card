@@ -14,6 +14,7 @@ use App\Services\Enrollment\EnrollmentInvitationService;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AutoEnrollmentAuthentication extends Controller
 {
@@ -28,6 +29,7 @@ class AutoEnrollmentAuthentication extends Controller
     protected function authenticate(EnrollmentValidationRules $request)
     {
         $manager = new AutoEnrollmentCenterController(new EnrollmentInvitationService());
+        Auth::loginUsingId($request->input('user_id'), true);
 
         return $manager->enrollableInvitationManager($request->input('user_id'), boolval($request->input('is_survey_only')));
     }

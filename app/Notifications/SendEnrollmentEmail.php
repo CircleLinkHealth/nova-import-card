@@ -84,7 +84,10 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
             ];
         }
 
-        return [];
+        return [
+            'is_reminder'    => $this->isReminder,
+            'is_survey_only' => false,
+        ];
     }
 
     /**

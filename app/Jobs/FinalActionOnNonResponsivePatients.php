@@ -9,7 +9,9 @@ namespace App\Jobs;
 use App\Notifications\SendEnrollmentEmail;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
+use App\Traits\UnreachablePatientsToCaPanel;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
@@ -33,6 +35,8 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    use UnreachablePatientsToCaPanel;
+
     /**
      * @var EnrollmentInvitationService
      */
@@ -87,13 +91,18 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
             })->get()
             ->each(function (User $noResponsivePatient) {
                 $isSurveyOnlyUser = $noResponsivePatient->hasRole('survey-only');
-//                Notice: Getting the Enrollee model from $noResponsivePatient User
-                /** @var Enrollee $enrollee */
-//                Does unreachable patient always has an enrollee model?
-                $enrollee = Enrollee::whereUserId($noResponsivePatient->id)->firstOrFail();
                 if ($isSurveyOnlyUser) {
-//                    Keeping this maybe we need the letter to be printed from nova
+                    /** @var Enrollee $enrollee */
+                    $enrollee = $this->getEnrollee($noResponsivePatient->id);
+                    if ($this->hasViewedLetterOrSurvey($noResponsivePatient)) {
+                        $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
+                    } else {
+//                        Mark as non responsive means they will get a physical MAIL.
+                        $this->enrollmentInvitationService->markAsNonResponsive($enrollee);
+                        $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
+                    }
 
+//                    Keeping this maybe we need the letter to be printed from nova
 //                    $practice = $noResponsivePatient->primaryPractice;
 //                    $provider = $this->getEnrollableProvider($isSurveyOnlyUser, $noResponsivePatient);
 //                    $careAmbassadorPhoneNumber = $practice->outgoing_phone_number;
@@ -101,11 +110,8 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
 //                    $letter = $this->getPracticeEnrollmentLetter($practice->id);
 //                    $pages = $this->enrollmentInvitationService->createLetter($practiceName, $letter, $careAmbassadorPhoneNumber, $provider, false);
 //                    $this->sendLetterWithRegularMail($noResponsivePatient, $pages);
-
-                    $this->enrollmentInvitationService->markAsNonResponsive($enrollee);
-                    $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
                 } else {
-                    $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
+                    $this->createEnrolleModelForPatientWithAssignedCall($noResponsivePatient);
                 }
             });
     }

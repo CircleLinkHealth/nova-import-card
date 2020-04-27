@@ -131,7 +131,12 @@ class AutoEnrollmentProcess extends CustomerTestCase
         self::assertTrue($patient->enrollmentInvitationLink()->exists());
     }
 
-    public function test_patient_logins_before_redirect()
-    {
-    }
+//    public function test_patient_logins_before_redirect()
+//    {
+//    }
+
+//    Meaning they will get physical mail.
+//    public function test_only_patients_taken_no_action_will_be_marked_as_unresponsive()
+//    {
+//    }
 }

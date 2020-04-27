@@ -50,7 +50,7 @@ class SendEnrollmentReminders implements ShouldQueue
             ? Enrollee::whereUserId($this->enrollable->id)->first()->statusRequestsInfo()->exists()
             : $this->enrollable->statusRequestsInfo()->exists();
 
-        if ( ! $hasRequestedInfoOnInvitation || ! $this->hasSurveyInProgress($this->enrollable) || $this->hasSurveyCompleted($this->enrollable)) {
+        if ( ! $hasRequestedInfoOnInvitation || ! $this->hasSurveyInProgress($this->enrollable) || ! $this->hasSurveyCompleted($this->enrollable)) {
             event(new AutoEnrollableCollected($this->enrollable, true));
         }
     }

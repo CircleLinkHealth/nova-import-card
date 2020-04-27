@@ -123,6 +123,7 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\CcdaView wherePracticeName($value)
  * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\CcdaView whereSource($value)
  * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\CcdaView whereValidationErrors($value)
+ * @property string|null                     $dob
  */
 class CcdaView extends SqlViewModel
 {

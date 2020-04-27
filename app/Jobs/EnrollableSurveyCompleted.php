@@ -223,8 +223,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
     public function reEnrollUnreachablePatient(User $user)
     {
-//        Im no showing this info anywhere. Do i need to show them anywhere?
-        // @todo:Ask Ethan should i assign this to nurse Ethan ()
         $user->patientInfo->update([
             'ccm_status' => Patient::ENROLLED,
         ]);
