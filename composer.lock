@@ -946,7 +946,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/condition-code-lookup-module.git",
-                "reference": "7e8cfe690da28b7ffab463dc85a68bf17a08b115"
+                "reference": "d8a49932bdefbf8298a7262e0a661d088f445952"
             },
             "require": {
                 "ext-curl": "*",
@@ -974,7 +974,7 @@
                     "email": "pagcosma@gmail.com"
                 }
             ],
-            "time": "2020-04-27T13:45:11+00:00"
+            "time": "2020-04-27T13:56:03+00:00"
         },
         {
             "name": "circlelinkhealth/core-module",
