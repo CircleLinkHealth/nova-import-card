@@ -15,7 +15,7 @@ class AddOtherNoteColumnToEnrolleesTable extends Migration
     {
         if (!Schema::hasColumn('enrollees', 'other_note')) {
             Schema::table('enrollees', function (Blueprint $table) {
-                $table->string('text')->nullable()->after('last_call_outcome_reason');
+                $table->string('other_note')->nullable()->after('last_call_outcome_reason');
             });
         }
         
