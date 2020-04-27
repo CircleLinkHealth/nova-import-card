@@ -1123,6 +1123,7 @@
             },
             submitForm(form, url) {
 
+                window.location.href = rootUrl('/home')
                 let formData = new FormData(form)
 
                 this.axios
