@@ -10,10 +10,16 @@ use App\DirectMailMessage;
 use App\Jobs\DecorateUPG0506CcdaWithPdfData;
 use App\Jobs\ImportCcda;
 use CircleLinkHealth\Customer\Entities\EmrDirectAddress;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Jobs\CheckCcdaEnrollmentEligibility;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use Illuminate\Support\Str;
 
 class XML extends BaseHandler
 {
+    const KEYWORD_TO_PROCESS_FOR_ELIGIBILITY = '#eligibility';
+
     /**
      * @throws \Exception
      */
@@ -106,6 +112,13 @@ class XML extends BaseHandler
         if ($practiceId = self::guessPractice($dm->from)) {
             $ccda->practice_id = $practiceId;
             $ccda->save();
+        }
+
+        if (Str::contains(strtolower($dm->body), strtolower(self::KEYWORD_TO_PROCESS_FOR_ELIGIBILITY))) {
+            $practice = Practice::findOrFail($practiceId);
+            CheckCcdaEnrollmentEligibility::dispatch($ccda, $practice, EligibilityBatch::runningBatch($practice));
+
+            return;
         }
 
         ImportCcda::withChain(

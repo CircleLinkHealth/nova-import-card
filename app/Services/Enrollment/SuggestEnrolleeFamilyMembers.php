@@ -10,6 +10,8 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
 class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
 {
+    const NINETY_PERCENT = 90;
+
     public static function get($enrolleeId)
     {
         return (new static($enrolleeId))->generate();
@@ -87,7 +89,7 @@ class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
 
         $levenshteinValidAddresses = $levenshteinDistances->filter(function ($l) {
             //Levenshtein Distance transformed to relevance percent
-            return $l >= 90;
+            return $l >= self::NINETY_PERCENT;
         });
 
         return 0 !== $levenshteinValidAddresses->count();
