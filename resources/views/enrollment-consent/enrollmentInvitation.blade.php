@@ -5,7 +5,9 @@
     <div class="container">
         <div class="letter-view">
             @if(!$hideButtons)
-                @include('enrollment-consent.enrollableInvitationButtons')
+                <div class="header-buttons">
+                    @include('enrollment-consent.enrollableInvitationButtons')
+                </div>
             @endif
             <div class="headers">
                 <div class="logo">
@@ -33,10 +35,14 @@
                         </div>
                     </div>
                     <div class="logo">
-                        @include('enrollment-consent.practiceLogo')
+                        <div class="logo">
+                            @include('enrollment-consent.practiceLogo')
+                        </div>
                     </div>
                     @if(!$hideButtons)
-                        @include('enrollment-consent.enrollableInvitationButtons')
+                        <div class="header-buttons">
+                            @include('enrollment-consent.enrollableInvitationButtons')
+                        </div>
                     @endif
                 </div>
             </div>
@@ -48,20 +54,13 @@
 
 <style>
     .logo {
-        margin-left: 33em;
-    }
-    .enroll-now-href {
-        padding: 4px;
-        margin-left: 420px;
+        text-align: center;
     }
 
     .request-info-href {
-        padding: 4px;
-        padding-left: 20px;
-    }
-
-    .buttons {
-        /*padding-bottom: 10px;*/
+        padding: 10px;
+        text-decoration: underline;
+        font-size: 17px;
     }
 
     .letter {
@@ -94,36 +93,20 @@
         font-size: 20px;
     }
 
-    .body {
-
-    }
-
     .letter-view {
-        /*width: 520px;*/
         padding-top: 20px;
         padding-bottom: 20px;
-    }
-
-    .footer {
-        margin-top: 40px;
     }
 
     .header {
         padding-bottom: 30px;
     }
 
+    .header-buttons{
+        text-align: center;
+    }
+
     @media (max-width: 490px) {
-        .headers {
-            padding-top: 10px;
-            width: 504px;
-        }
-
-        .enroll-now-href {
-            padding: 4px;
-            margin-left: 130px;
-            padding-right: 20px;
-        }
-
         .letter-view {
             width: 504px;
         }
@@ -138,9 +121,6 @@
             margin-right: 2em;
         }
 
-        .logo {
-            margin-left: 14em;
-        }
     }
 
 </style>

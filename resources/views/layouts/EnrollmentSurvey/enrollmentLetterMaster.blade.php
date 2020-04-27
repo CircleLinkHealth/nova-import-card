@@ -20,14 +20,12 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Get a Care Coach</title>
-    {{--    <link href="{{ mix('css/enrollmentSurveyAuth') }}" rel="stylesheet">--}}
-
     @stack('styles')
 </head>
 
-<div id="app" class="enrollment-survey" style="background-color: #f2f6f9; min-height: 100%;">
+<body style="background-color: #f2f6f9;">
     @yield('content')
-</div>
+</body>
 
 
 </html>
