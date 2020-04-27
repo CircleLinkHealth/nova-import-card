@@ -25,9 +25,10 @@ class EnrollableCallQueue
      * get all CA enrollees.
      * TOP PRIO - patients in qache (confirmed family members)
      * 1st prio - Confirmed family members whom statuses have not been confirmed - edge case - add UI
-     * 2nd prio - utc patients where attempt count 1 && last attempt > 3 days ago
-     * 3nd prio - >> attempt count 2
-     * 4th prio - call queue
+     * 2th prio - call queue, patients that haven't been called yet
+     * 3nd prio - utc patients where attempt count 1 && last attempt > 3 days ago
+     * 4nd prio - >> attempt count 2.
+     *
      * Post conditions - never bring enrolled, consented, soft or hard decline, utc x3, ineligible, legacy
      * if patient is spanish and CA does not speak spanish, re-assign.
      *
@@ -37,8 +38,8 @@ class EnrollableCallQueue
         'getFromCache',
         'getPendingConfirmedFamilyMembers',
         'getRequestedCallbackToday',
-        'getUtcAttemptCount',
         'getFromCallQueue',
+        'getUtcAttemptCount',
     ];
 
     public function __construct(CareAmbassador $careAmbassadorInfo)
