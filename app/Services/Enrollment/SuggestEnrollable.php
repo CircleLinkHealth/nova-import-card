@@ -8,7 +8,7 @@ namespace App\Services\Enrollment;
 
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
-class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
+class SuggestEnrollable extends EnrollableService
 {
     const NINETY_PERCENT = 90;
 
