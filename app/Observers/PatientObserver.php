@@ -82,6 +82,10 @@ class PatientObserver
         if ($patient->isDirty('mrn_number')) {
             $this->attachTargetPatient($patient);
         }
+
+        if ($this->statusChangedToEnrolled($patient)) {
+            $patient->no_call_attempts_since_last_success = 0;
+        }
     }
 
     public function sendPatientConsentedNote(Patient $patient)
