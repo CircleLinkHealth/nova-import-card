@@ -448,7 +448,7 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'API\CareTeamController@destroy',
         'as'   => 'user.care-team.destroy',
     ])->middleware('permission:carePerson.delete');
-    Route::patch('user/{userId}/care-team', [
+    Route::patch('user/{userId}/care-team/{id?}', [
         'uses' => 'API\CareTeamController@update',
         'as'   => 'user.care-team.update',
     ])->middleware('permission:carePerson.update');
