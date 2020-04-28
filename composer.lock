@@ -626,7 +626,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "6d398c02ffdbea7dca91d8b6990143605268d4a3"
+                "reference": "341ddfb8c56e55ef5bf9894e7b53d763047b47d0"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -660,7 +660,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-28T19:11:03+00:00"
+            "time": "2020-04-28T19:14:13+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -668,7 +668,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "e461b7d5c86d64e063e3d7802c599f69146403b9"
+                "reference": "92caf09d5293dfbb98782033944e5626cf2aaa6b"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -693,7 +693,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-27T09:25:18+00:00"
+            "time": "2020-04-28T19:14:11+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
