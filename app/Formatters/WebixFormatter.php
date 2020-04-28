@@ -568,7 +568,7 @@ class WebixFormatter implements ReportFormatter
                     if ($canApproveCarePlans) {
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
                             'patient.careplan.print',
-                            ['patient' => $patient->id]
+                            ['patientId' => $patient->id]
                         ).'"><strong>Approve Now</strong></a>';
                     }
                 } else {
