@@ -54,14 +54,44 @@ class EnrollableCallQueue
         $patientsPending = Enrollee::whereCareAmbassadorUserId($careAmbassadorUserId)
             ->lessThanThreeAttempts()
             ->where('status', Enrollee::UNREACHABLE)
-            ->where('last_attempt_at', '>', Carbon::now()->startOfDay()->subDays(3))
+            ->where('last_attempt_at', '>', Carbon::now()->startOfDay()->subDays(self::DAYS_FOR_NEXT_ATTEMPT))
             ->get();
 
-        $lastAttempt = optional($patientsPending->sortBy('last_attempt_at')->first())->last_attempt_at;
+        $patientsPendingCount = $patientsPending->count();
+        $nextAttempt          = null;
+
+        if (0 !== $patientsPendingCount) {
+            $lastAttempt = $patientsPending
+                ->sortBy('last_attempt_at')
+                ->first()
+                ->last_attempt_at;
+
+            /**
+             * @var Carbon
+             */
+            $nextAttempt = $lastAttempt->addDays(self::DAYS_FOR_NEXT_ATTEMPT);
+
+            $patientWithRequestedCallback = $patientsPending->filter(function ($p) {
+                return ! empty(trim($p->requested_callback));
+            })
+                ->sortBy('requested_callback')
+                ->first();
+
+            if ($patientWithRequestedCallback) {
+                /**
+                 * @var Carbon
+                 */
+                $callback = $patientWithRequestedCallback->requested_callback;
+
+                if ($callback && $callback->lt($nextAttempt)) {
+                    $nextAttempt = $callback;
+                }
+            }
+        }
 
         return [
-            'patients_pending' => $patientsPending->count(),
-            'next_attempt_at'  => $lastAttempt ? $lastAttempt->addDays(3)->toDateString() : null,
+            'patients_pending' => $patientsPendingCount,
+            'next_attempt_at'  => $nextAttempt ? $nextAttempt->toDateString() : null,
         ];
     }
 

@@ -8,6 +8,7 @@ namespace App\Services\Enrollment;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use Illuminate\Support\Collection;
 
 class UpdateEnrollable extends EnrollableService
@@ -132,8 +133,6 @@ class UpdateEnrollable extends EnrollableService
         if (Enrollee::UNREACHABLE === $status) {
             $this->updateOnUnreachable();
         }
-
-        $this->enrollee->save();
     }
 
     private function updateOnConsent()
@@ -197,6 +196,10 @@ class UpdateEnrollable extends EnrollableService
         $this->enrollee->status          = Enrollee::CONSENTED;
         $this->enrollee->consented_at    = Carbon::now()->toDateTimeString();
         $this->enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
+
+        $this->enrollee->save();
+
+        ImportConsentedEnrollees::dispatch([$this->enrollee->id], $this->enrollee->batch);
     }
 
     private function updateOnRejected()
@@ -213,6 +216,8 @@ class UpdateEnrollable extends EnrollableService
 
         $this->enrollee->attempt_count   = $this->enrollee->attempt_count + 1;
         $this->enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
+
+        $this->enrollee->save();
     }
 
     private function updateOnUnreachable()
@@ -240,5 +245,7 @@ class UpdateEnrollable extends EnrollableService
         $this->enrollee->status          = Enrollee::UNREACHABLE;
         $this->enrollee->attempt_count   = $this->enrollee->attempt_count + 1;
         $this->enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
+
+        $this->enrollee->save();
     }
 }

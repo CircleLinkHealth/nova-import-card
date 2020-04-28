@@ -13,7 +13,6 @@ use App\Services\Enrollment\EnrollableCallQueue;
 use App\Services\Enrollment\SuggestEnrollable;
 use App\Services\Enrollment\UpdateEnrollable;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use Illuminate\Support\Str;
 
 class EnrollmentCenterController extends ApiController
@@ -30,7 +29,6 @@ class EnrollmentCenterController extends ApiController
         $report->total_calls = $report->total_calls + 1;
         $report->save();
 
-        ImportConsentedEnrollees::dispatch([$enrollable->id], $enrollable->batch);
         EnrollableCallQueue::update($careAmbassador, $enrollable, $request->input('confirmed_family_members'));
 
         return response()->json([
