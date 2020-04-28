@@ -42,7 +42,7 @@ class AttachDefaultPatientContactWindows extends BaseCcdaImportTask
         if ( ! $this->patient->timezone) {
             $this->patient->timezone = optional($this->ccda->location)->timezone ?? 'America/New_York';
         }
-        
+
         $preferredCallDays  = $this->getEnrolleePreferredCallDays();
         $preferredCallTimes = $this->getEnrolleePreferredCallTimes();
 

@@ -31,6 +31,18 @@ class ImportPhones extends BaseCcdaImportTask
         $this->str = new StringManipulation();
     }
 
+    public static function validatePhoneNumber($phoneNumber)
+    {
+        $validator = \Validator::make(
+            ['number' => $phoneNumber],
+            [
+                'number' => ['required', Rule::phone()->country(['US'])],
+            ]
+        );
+
+        return $validator->passes();
+    }
+
     protected function import()
     {
         $demographics = $this->transform($this->ccda->bluebuttonJson()->demographics);
@@ -202,17 +214,5 @@ class ImportPhones extends BaseCcdaImportTask
     private function transform(object $demographics): array
     {
         return $this->getTransformer()->demographics($demographics);
-    }
-
-    public static function validatePhoneNumber($phoneNumber)
-    {
-        $validator = \Validator::make(
-            ['number' => $phoneNumber],
-            [
-                'number' => ['required', Rule::phone()->country(['US'])],
-            ]
-        );
-
-        return $validator->passes();
     }
 }
