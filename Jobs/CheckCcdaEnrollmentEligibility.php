@@ -33,11 +33,13 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
     private $filterInsurance;
     private $filterLastEncounter;
     private $filterProblems;
-
+    
     /**
      * Create a new job instance.
      *
      * @param $ccda
+     * @param Practice $practice
+     * @param EligibilityBatch $batch
      */
     public function __construct(
         $ccda,
