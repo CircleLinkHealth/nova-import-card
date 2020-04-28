@@ -142,12 +142,11 @@ class UpdateEnrollable extends EnrollableService
         $this->shouldUpdateAddress   = $this->enrollee->address !== $this->data->get('address');
         $this->shouldUpdateAddress_2 = $this->enrollee->address_2 !== $this->data->get('address_2');
 
-        //consented
         $this->enrollee->setHomePhoneAttribute($this->data->get('home_phone'));
         $this->enrollee->setCellPhoneAttribute($this->data->get('cell_phone'));
         $this->enrollee->setOtherPhoneAttribute($this->data->get('other_phone'));
 
-        //set preferred phone
+        //set preferred(primary) phone
         switch ($this->data->get('preferred_phone')) {
             case 'home':
                 $this->enrollee->setPrimaryPhoneNumberAttribute($this->data->get('home_phone'));
@@ -218,7 +217,11 @@ class UpdateEnrollable extends EnrollableService
 
     private function updateOnUnreachable()
     {
-        $this->enrollee->last_call_outcome = $this->data->get('reason');
+        //action is performed on patient, thus reset callback date
+        //EnrollableQueue only gets Unreachable patients at the day they requested callback (to avoid calling them at any other time)
+        //Thus reset requested_callback here. If they request another date it will be added below.
+        $this->enrollee->requested_callback = null;
+        $this->enrollee->last_call_outcome  = $this->data->get('reason');
 
         if ($this->data->get('reason_other')) {
             $this->enrollee->last_call_outcome_reason = $this->data->get('reason_other');

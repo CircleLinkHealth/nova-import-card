@@ -140,9 +140,9 @@ class EnrollableCallQueue
      */
     private function getRequestedCallbackToday()
     {
-        //today or earliest/past
         return Enrollee::withCaPanelRelationships()
             ->lessThanThreeAttempts()
+            //added < just in case CA missed them/did not work etc.
             ->where('requested_callback', '<=', Carbon::now()->toDateString())
             ->whereIn('status', [
                 Enrollee::TO_CALL,
@@ -164,6 +164,9 @@ class EnrollableCallQueue
             ->lessThanThreeAttempts()
             ->whereStatus(Enrollee::UNREACHABLE)
             ->where('last_attempt_at', '<', Carbon::now()->subDays($days))
+            //important. Patient has 1 attempt and has been called 3 days ago. However then they requested that they be called in 10 days
+            //thus they will be picked up by method 'getRequestedCallbackToday' in 10 days.
+            ->whereIn('requested_callback', [null, '', ' '])
             ->orderBy('attempt_count')
             ->first();
     }
