@@ -1820,15 +1820,14 @@ class SurveySeeder extends Seeder
     {
         return collect([
             [
-                'identifier' => EnrolleesSurveyIdentifier::DOB,
+                'identifier' => EnrolleesSurveyIdentifier::CONFIRM_EMAIL,
                 'order' => 1,
-                'question_body' => 'Please update or confirm your date of birth',
-                'question_type' => QuestionType::DOB,
-                'conditions' => [
-                    'is_auto_generated' => true,
-                    'generated_from' => [
-                        [
-                            'key' => 'dob',
+                'question_body' => 'Please confirm or update your email address:',
+                'question_type' => QuestionType::ADDRESS,
+                'question_type_answers' => [
+                    [
+                        'options' => [
+                            'placeholder' => 'Known email if exists',
                         ],
                     ],
                 ],
@@ -1920,21 +1919,20 @@ class SurveySeeder extends Seeder
                     ],
                 ],
             ],
-
             [
-                'identifier' => EnrolleesSurveyIdentifier::CONFIRM_EMAIL,
+                'identifier' => EnrolleesSurveyIdentifier::DOB,
                 'order' => 6,
-                'question_body' => 'Please confirm or update your email address:',
-                'question_type' => QuestionType::ADDRESS,
-                'question_type_answers' => [
-                    [
-                        'options' => [
-                            'placeholder' => 'Known email if exists',
+                'question_body' => 'Please update or confirm your date of birth',
+                'question_type' => QuestionType::DOB,
+                'conditions' => [
+                    'is_auto_generated' => true,
+                    'generated_from' => [
+                        [
+                            'key' => 'dob',
                         ],
                     ],
                 ],
             ],
-
             [
                 'identifier' => EnrolleesSurveyIdentifier::CONFIRM_LETTER,
                 'order' => 7,

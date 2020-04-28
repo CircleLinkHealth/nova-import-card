@@ -33,14 +33,7 @@ class EnrolleesSurveyService
         $letterLink = '';
 
         if ($isSurveyOnly) {
-            $id = DB::table('enrollees')->where('user_id', $user->id)->select('id')->first()->id;
-
-            $letter = DB::table('enrollables_invitation_links')
-                ->where('invitationable_id', $id)
-                ->select('url')
-                ->first();
-
-            $letterLink = $letter->url;
+            $letterLink = url(config('services.cpm.url')."/review-letter/{$user->id}");
         }
 
         return [

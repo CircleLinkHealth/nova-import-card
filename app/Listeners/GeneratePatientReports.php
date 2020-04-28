@@ -43,7 +43,7 @@ class GeneratePatientReports
 
             if (Survey::ENROLLEES === $surveyName) {
                 //Instantiate Redis Event class to emit report created events to CPM
-                $redisSurveyCompletedEvent = new EnrollableCompletedSurvey($patient);
+                $redisSurveyCompletedEvent = new EnrollableCompletedSurvey($patient->id);
                 $redisSurveyCompletedEvent->publishEnrollableCompletedSurvey($instance->id);
             } else {
                 $otherInstance = $patient->surveyInstances->first();
