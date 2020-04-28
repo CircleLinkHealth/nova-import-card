@@ -85,7 +85,7 @@ class PatientCallListController extends Controller
         $addendum->markActivitiesAsDone();
         $addendum->markAllAttachmentNotificationsAsRead();
 
-        return redirect(route('patient.note.view', ['patient_id' => $call->inbound_cpm_id, 'note_id' => $noteId]));
+        return redirect(route('patient.note.view', ['patientId' => $call->inbound_cpm_id, 'noteId' => $noteId]));
     }
 
     /**

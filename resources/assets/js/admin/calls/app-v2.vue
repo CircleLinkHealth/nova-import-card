@@ -32,6 +32,7 @@
             <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
                 <template slot="selected" slot-scope="props">
                     <input class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)"
+                           :disabled="loaders.nurses"
                            type="checkbox"/>
                 </template>
                 <template slot="h__selected" slot-scope="props">
@@ -226,7 +227,7 @@
                         name: row.Patient,
                         nurse: {
                             id: row.NurseId,
-                            name: nurse.display_name
+                            name: nurse ? nurse.display_name : 'Unassigned'
                         },
                         nextCall: row['Activity Day'],
                         callTimeStart: row['Activity Start'],

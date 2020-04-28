@@ -187,8 +187,8 @@
                                                 width: 140,
                                                 sort: 'string',
                                                 template: "<a href='<?php echo route('patient.note.view', [
-                                                    'patient' => '#patient_id#',
-                                                    'noteId'  => '#id#',
+                                                    'patientId' => '#patient_id#',
+                                                    'noteId'    => '#id#',
                                                 ]); ?>'>#patient_name#</a>"
 
 
@@ -226,8 +226,8 @@
                                                 tooltip: ['#comment#'],
                                                 fillspace: true,
                                                 template: "<a href='<?php echo route('patient.note.view', [
-                                                    'patient' => '#patient_id#',
-                                                    'noteId'  => '#id#',
+                                                    'patientId' => '#patient_id#',
+                                                    'noteId'    => '#id#',
                                                 ]); ?>'>#comment#</a>"
                                             },
                                             // This is hidden but it holds the summary value above.
@@ -240,8 +240,8 @@
                                                 tooltip: ['#comment#'],
                                                 fillspace: true,
                                                 template: "<a href='<?php echo route('patient.note.view', [
-                                                    'patient' => '#patient_id#',
-                                                    'noteId'  => '#id#',
+                                                    'patientId' => '#patient_id#',
+                                                    'noteId'    => '#id#',
                                                 ]); ?>'>#comment#</a>"
                                             },
                                             {

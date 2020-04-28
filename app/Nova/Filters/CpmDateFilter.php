@@ -8,9 +8,10 @@ namespace App\Nova\Filters;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Laravel\Nova\Filters\DateFilter;
 
-class OnOrAfterDateFilter extends DateFilter
+class CpmDateFilter extends DateFilter
 {
     public $name = 'Created on or after';
     /**
@@ -19,6 +20,8 @@ class OnOrAfterDateFilter extends DateFilter
      * @var string
      */
     protected $column;
+    protected $defaultDate;
+    protected $operator = '>';
 
     /**
      * Create a new filter instance.
@@ -46,12 +49,12 @@ class OnOrAfterDateFilter extends DateFilter
             $date = $value['date'];
         }
 
-        return $query->where($this->column, '>', Carbon::parse($date));
+        return $query->where($this->column, $this->operator, Carbon::parse($date));
     }
 
     public function default()
     {
-        return now()->subWeeks(2)->toDateString();
+        return $this->defaultDate;
     }
 
     /**
@@ -61,6 +64,31 @@ class OnOrAfterDateFilter extends DateFilter
      */
     public function key()
     {
-        return 'created_on_or_after_'.$this->column;
+        return Str::slug($this->name).'_'.$this->column;
+    }
+
+    /**
+     * @param  null          $defaultDate
+     * @return CpmDateFilter
+     */
+    public function setDefaultDate($defaultDate)
+    {
+        $this->defaultDate = $defaultDate;
+
+        return $this;
+    }
+
+    public function setName(string $name): CpmDateFilter
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function setOperator(string $operator): CpmDateFilter
+    {
+        $this->operator = $operator;
+
+        return $this;
     }
 }

@@ -444,11 +444,11 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'API\CareTeamController@index',
         'as'   => 'user.care-team.index',
     ])->middleware(['permission:carePerson.read']);
-    Route::delete('user/{userId}/care-team', [
+    Route::delete('user/{userId}/care-team/{id?}', [
         'uses' => 'API\CareTeamController@destroy',
         'as'   => 'user.care-team.destroy',
     ])->middleware('permission:carePerson.delete');
-    Route::patch('user/{userId}/care-team', [
+    Route::patch('user/{userId}/care-team/{id?}', [
         'uses' => 'API\CareTeamController@update',
         'as'   => 'user.care-team.update',
     ])->middleware('permission:carePerson.update');

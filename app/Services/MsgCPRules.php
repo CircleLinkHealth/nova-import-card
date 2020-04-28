@@ -579,35 +579,37 @@ query;
         // print_r($tmpArray);
 
         $qdata = $this->getQuestion($strMsgID, 0, '', '16');
-        $log[] = 'MsgCPRules->getValidAnswer() obs_key = '.$qdata->obs_key;
+        if ($qdata) {
+            $log[] = 'MsgCPRules->getValidAnswer() obs_key = '.$qdata->obs_key;
 
-        if ($debug) {
-            foreach ($log as $logMsg) {
-                echo "<br>${logMsg}";
+            if ($debug) {
+                foreach ($log as $logMsg) {
+                    echo "<br>${logMsg}";
+                }
             }
-        }
-        //dd($qdata);
-        // check for Blood Pressure format
-        if ('Blood_Pressure' == $qdata->obs_key) {
-            // make sure both halves contain numbers else reject
-            if ( ! is_numeric($tmpArray[0]) || empty($tmpArray[1]) || ! is_numeric($tmpArray[1])) {
-                return [];
-            }
-        }
-
-        // check for mm/dd format
-        if ('HSP' == $qdata->obs_key) {
-            $question = CPRulesQuestions::where('msg_id', '=', $strMsgID)->first();
-            if ($question) {
-                $questionSet = CPRulesQuestionSets::where('qid', '=', $question->qid)
-                    ->where('provider_id', '=', $pid)
-                    ->first();
-                if ( ! empty($questionSet)) {
-                    return $questionSet;
+            //dd($qdata);
+            // check for Blood Pressure format
+            if ('Blood_Pressure' == $qdata->obs_key) {
+                // make sure both halves contain numbers else reject
+                if ( ! is_numeric($tmpArray[0]) || empty($tmpArray[1]) || ! is_numeric($tmpArray[1])) {
+                    return [];
                 }
             }
 
-            return [];
+            // check for mm/dd format
+            if ('HSP' == $qdata->obs_key) {
+                $question = CPRulesQuestions::where('msg_id', '=', $strMsgID)->first();
+                if ($question) {
+                    $questionSet = CPRulesQuestionSets::where('qid', '=', $question->qid)
+                        ->where('provider_id', '=', $pid)
+                        ->first();
+                    if ( ! empty($questionSet)) {
+                        return $questionSet;
+                    }
+                }
+
+                return [];
+            }
         }
 
         if ('CF_HSP_30' == $strMsgID) {
