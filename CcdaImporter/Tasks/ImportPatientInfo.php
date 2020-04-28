@@ -85,7 +85,6 @@ class ImportPatientInfo extends BaseCcdaImportTask
             [
                 'ccda_id'      => $this->ccda->id,
                 'birth_date'   => self::parseDOBDate($demographics['dob']),
-                'ccm_status'   => Patient::ENROLLED,
                 'consent_date' => now()->toDateString(),
                 'gender'       => call_user_func(function () use (
                     $demographics
@@ -180,7 +179,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
         }
 
         if ( ! $patientInfo->ccm_status) {
-            $patientInfo->ccm_status = $args['ccm_status'];
+            $patientInfo->ccm_status = Patient::ENROLLED;
         }
 
         if ( ! $patientInfo->consent_date) {
