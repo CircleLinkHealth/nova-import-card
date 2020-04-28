@@ -119,12 +119,12 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'     => EnrolleesSurveyIdentifier::PREFERRED_TIME,
-                'order'          => 3,
-                'sub_order'      => 'b',
-                'question_group' => 'Please choose preferred days and time to contact:',
-                'question_body'  => 'Choose preferred contact time:',
-                'question_type'  => QuestionType::CHECKBOX,
+                'identifier'            => EnrolleesSurveyIdentifier::PREFERRED_TIME,
+                'order'                 => 3,
+                'sub_order'             => 'b',
+                'question_group'        => 'Please choose preferred days and time to contact:',
+                'question_body'         => 'Choose preferred contact time:',
+                'question_type'         => QuestionType::CHECKBOX,
                 'question_type_answers' => [
                     ['type_answer_body' => '9am - 12pm'],
                     ['type_answer_body' => '12pm - 3pm '],
