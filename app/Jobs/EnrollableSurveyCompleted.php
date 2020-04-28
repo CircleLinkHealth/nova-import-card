@@ -218,7 +218,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
     {
         $user->delete();
         ImportConsentedEnrollees::dispatch([$enrollee->id]);
-        $user->forceDelete();
+//        $user->forceDelete();
 
 //        $job = new EligibilityJob();
 //        $practice = Practice::whereId($enrollee->practice_id)->first();
