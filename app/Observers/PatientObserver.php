@@ -73,6 +73,7 @@ class PatientObserver
             if ($this->statusChangedToEnrolled($patient)) {
                 $patient->load('user');
                 AssignPatientToStandByNurse::makeStandByNursePrimary($patient->user);
+                AssignPatientToStandByNurse::assignCallToStandByNurse($patient->user);
             }
         }
     }

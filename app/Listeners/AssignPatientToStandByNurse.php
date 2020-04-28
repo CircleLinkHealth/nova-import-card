@@ -23,6 +23,15 @@ class AssignPatientToStandByNurse
     {
     }
 
+    public static function assignCallToStandByNurse(User $patient)
+    {
+        if ( ! $standByNurseId = StandByNurseUser::id()) {
+            return null;
+        }
+
+        return (app(SchedulerService::class))->storeScheduledCall($patient->id, '09:00', '17:00', now(), 'system - patient status changed to enrolled', $standByNurseId);
+    }
+
     /**
      * Handle the event.
      *
@@ -52,14 +61,5 @@ class AssignPatientToStandByNurse
                 'temporary_to'            => null,
             ]
         );
-    }
-
-    private static function assignCallToStandByNurse(User $patient)
-    {
-        if ( ! $standByNurseId = StandByNurseUser::id()) {
-            return null;
-        }
-
-        return (app(SchedulerService::class))->storeScheduledCall($patient->id, '09:00', '17:00', now(), 'system - patient status changed to enrolled', $standByNurseId);
     }
 }
