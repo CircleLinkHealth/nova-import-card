@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c569f0419feb43a492672505ba52e874",
+    "content-hash": "e85c73ccccc803269098e9c9bbe57881",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -793,11 +793,11 @@
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
-            "version": "v3.1.3",
+            "version": "3.1.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git",
-                "reference": "9bb4dd6e2bdafbca547334932980c124f45890b7"
+                "reference": "8612c5c646ee5ce8f823a713aa940ff444c27247"
             },
             "require": {
                 "illuminate/cache": "~5.0|~6.0|~7.0",
@@ -870,7 +870,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2020-04-27T14:50:24+00:00"
+            "time": "2020-04-28T09:26:47+00:00"
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
