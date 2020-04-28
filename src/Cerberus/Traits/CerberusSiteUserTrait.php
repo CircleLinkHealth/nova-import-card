@@ -16,8 +16,8 @@ use InvalidArgumentException;
 
 trait CerberusSiteUserTrait
 {
-    private static $permissionsCache = [];
-    private static $rolesCache       = [];
+    protected static $permissionsCache = [];
+    protected static $rolesCache       = [];
 
     /**
      * Checks role(s) and permission(s).
