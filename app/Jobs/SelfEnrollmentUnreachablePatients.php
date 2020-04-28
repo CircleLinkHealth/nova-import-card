@@ -54,13 +54,13 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
             return;
         }
 
-        $mothStart = Carbon::parse(now())->copy()->startOfMonth()->toDateTimeString();
-        $monthEnd  = Carbon::parse($mothStart)->copy()->endOfMonth()->toDateTimeString();
+        $monthStart = Carbon::parse(now())->copy()->startOfMonth()->toDateTimeString();
+        $monthEnd   = Carbon::parse($monthStart)->copy()->endOfMonth()->toDateTimeString();
 
         //    Just for testing
         if (App::environment(['local', 'review'])) {
             $practiceId = Practice::where('name', '=', 'demo')->firstOrFail()->id;
-            $patients   = $this->getUnreachablePatients($mothStart, $monthEnd)
+            $patients   = $this->getUnreachablePatients($monthStart, $monthEnd)
                 ->whereHas('patientInfo', function ($patientInfo) {
                     $patientInfo->where('birth_date', Carbon::parse('1901-01-01'));
                 })
@@ -74,7 +74,7 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
                 }
             }
         } else {
-            $this->getUnreachablePatients($mothStart, $monthEnd)->chunk(50, function ($patients) {
+            $this->getUnreachablePatients($monthStart, $monthEnd)->chunk(50, function ($patients) {
                 foreach ($patients as $patient) {
                     /** @var User $patient */
                     if ( ! $patient->checkForSurveyOnlyRole()) {
