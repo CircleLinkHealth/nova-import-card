@@ -95,6 +95,14 @@ class Ccda extends Resource
     {
         return false;
     }
+    
+    /**
+     * @return bool
+     */
+    public function authorizedToUpdate(Request $request)
+    {
+        return true;
+    }
 
     /**
      * @return bool
@@ -141,7 +149,7 @@ class Ccda extends Resource
             DateTime::make('Created At', 'created_at')->sortable(),
             Code::make('Errors', 'validation_errors')->json(),
             Text::make('Source', 'source')->sortable(),
-            ID::make('patient_user_id')->sortable(),
+            Text::make('patient_user_id')->sortable(),
             ID::make('ccda_id')->sortable(),
         ];
     }
