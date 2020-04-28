@@ -124,27 +124,11 @@ class SurveySeeder extends Seeder
                 'sub_order'      => 'b',
                 'question_group' => 'Please choose preferred days and time to contact:',
                 'question_body'  => 'Choose preferred contact time:',
-                'question_type'  => QuestionType::TIME,
-                'conditions'     => [
-                    'required_regex' => 'time',
-                ],
+                'question_type'  => QuestionType::CHECKBOX,
                 'question_type_answers' => [
-                    [
-                        'options' => [
-                            'sub_parts' => [
-                                [
-                                    'title'       => 'From:',
-                                    'key'         => 'from',
-                                    'placeholder' => 'From',
-                                ],
-                                [
-                                    'title'       => 'To',
-                                    'key'         => 'to',
-                                    'placeholder' => 'To',
-                                ],
-                            ],
-                        ],
-                    ],
+                    ['type_answer_body' => '9am - 12pm'],
+                    ['type_answer_body' => '12pm - 3pm '],
+                    ['type_answer_body' => '3pm - 6pm'],
                 ],
             ],
 
@@ -176,23 +160,23 @@ class SurveySeeder extends Seeder
                     ],
                 ],
             ],
-            [
-                'identifier'    => EnrolleesSurveyIdentifier::DOB,
-                'order'         => 6,
-                'question_body' => 'Please update or confirm your date of birth',
-                'question_type' => QuestionType::DOB,
-                'conditions'    => [
-                    'is_auto_generated' => true,
-                    'generated_from'    => [
-                        [
-                            'key' => 'dob',
-                        ],
-                    ],
-                ],
-            ],
+            //            [
+            //                'identifier'    => EnrolleesSurveyIdentifier::DOB,
+            //                'order'         => 6,
+            //                'question_body' => 'Please update or confirm your date of birth',
+            //                'question_type' => QuestionType::DOB,
+            //                'conditions'    => [
+            //                    'is_auto_generated' => true,
+            //                    'generated_from'    => [
+            //                        [
+            //                            'key' => 'dob',
+            //                        ],
+            //                    ],
+            //                ],
+            //            ],
             [
                 'identifier'    => EnrolleesSurveyIdentifier::CONFIRM_LETTER,
-                'order'         => 7,
+                'order'         => 6,
                 'optional'      => true,
                 'question_body' => 'Please confirm you have read the letter',
                 'question_type' => QuestionType::CONFIRMATION,
