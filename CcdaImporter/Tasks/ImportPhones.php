@@ -50,7 +50,7 @@ class ImportPhones extends BaseCcdaImportTask
         $homeNumber = optional($this->enrollee())->home_phone ?? $demographics['home_phone'] ?? $primaryPhone;
 
         if ( ! empty($homeNumber)) {
-            if ($this->validatePhoneNumber($homeNumber)) {
+            if (self::validatePhoneNumber($homeNumber)) {
                 $number = $this->str->formatPhoneNumberE164($homeNumber);
 
                 $makePrimary = 0 == strcasecmp(
@@ -82,7 +82,7 @@ class ImportPhones extends BaseCcdaImportTask
 
         $mobileNumber = optional($this->enrollee())->cell_phone ?? $demographics['cell_phone'];
         if ( ! empty($mobileNumber)) {
-            if ($this->validatePhoneNumber($mobileNumber)) {
+            if (self::validatePhoneNumber($mobileNumber)) {
                 $number = $this->str->formatPhoneNumberE164($mobileNumber);
 
                 $makePrimary = 0 == strcasecmp($primaryPhone, PhoneNumber::MOBILE) || 0 == strcasecmp(
@@ -105,7 +105,7 @@ class ImportPhones extends BaseCcdaImportTask
 
         $workNumber = $demographics['work_phone'];
         if ( ! empty($workNumber)) {
-            if ($this->validatePhoneNumber($mobileNumber)) {
+            if (self::validatePhoneNumber($mobileNumber)) {
                 $number = $this->str->formatPhoneNumberE164($workNumber);
 
                 $makePrimary = PhoneNumber::WORK == $primaryPhone || $primaryPhone == $number || ! $primaryPhone;
@@ -150,7 +150,7 @@ class ImportPhones extends BaseCcdaImportTask
                 );
             }
         } else {
-            if ($this->validatePhoneNumber($primaryPhone)) {
+            if (self::validatePhoneNumber($primaryPhone)) {
                 $number = $this->str->formatPhoneNumberE164($primaryPhone);
 
                 foreach (
@@ -204,7 +204,7 @@ class ImportPhones extends BaseCcdaImportTask
         return $this->getTransformer()->demographics($demographics);
     }
 
-    private function validatePhoneNumber($phoneNumber)
+    public static function validatePhoneNumber($phoneNumber)
     {
         $validator = \Validator::make(
             ['number' => $phoneNumber],
