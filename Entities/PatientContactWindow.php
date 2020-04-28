@@ -327,8 +327,10 @@ class PatientContactWindow extends BaseModel
         $windowEnd = '17:00:00'
     ) {
         $created = [];
-        
-        if (!$days) $days = [];
+
+        if ( ! $days) {
+            $days = [];
+        }
 
         //first delete all call windows
         $info->contactWindows()->delete();
