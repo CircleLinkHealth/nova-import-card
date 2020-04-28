@@ -161,7 +161,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
             $args = $hook;
         }
 
-        $patientInfo = Patient::firstOrNew(
+        $patientInfo = Patient::updateOrCreate(
             [
                 'user_id' => $this->patient->id,
             ],
