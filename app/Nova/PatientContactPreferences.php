@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 
-class UploadPatientPreferences extends Resource
+class PatientContactPreferences extends Resource
 {
     public static $group = \App\Constants::NOVA_GROUP_ENROLLMENT;
 
@@ -73,6 +73,9 @@ class UploadPatientPreferences extends Resource
             Text::make('Last Name'),
             Text::make('Preferred Window'),
             Text::make('Preferred Days'),
+            Text::make('Other Note'),
+            Text::make('Mrn'),
+            Text::make('DOB'),
             ID::make('Eligible Pt ID', 'id')->sortable(),
         ];
     }
