@@ -2226,13 +2226,13 @@ Route::group([
     Route::get(
         '/patient-self-enrollment',
         [
-            'uses' => 'Enrollment\Auth\AutoEnrollmentAuthentication@enrollmentAuthForm',
+            'uses' => 'Enrollment\Auth\AutoEnrollmentLogin@enrollmentAuthForm',
             'as'   => 'invitation.enrollment.loginForm',
         ]
     )->middleware('signed');
 
     Route::post('login-enrollment-survey', [
-        'uses' => 'Enrollment\Auth\AutoEnrollmentAuthentication@authenticate',
+        'uses' => 'Enrollment\Auth\AutoEnrollmentLogin@authenticate',
         'as'   => 'invitation.enrollment.login',
     ]);
 });

@@ -16,7 +16,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class AutoEnrollmentAuthentication extends Controller
+class AutoEnrollmentLogin extends Controller
 {
     use AuthenticatesUsers;
     use EnrollmentAuthLink;

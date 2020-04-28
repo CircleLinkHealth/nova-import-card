@@ -520,7 +520,6 @@ class AutoEnrollmentCenterController extends Controller
 
         if ($this->hasSurveyInProgress($userCreatedFromEnrollee)) {
             return redirect($this->getAwvInvitationLinkForUser($userCreatedFromEnrollee)->url);
-//            return redirect($this->createUrlAndRedirectToSurvey($enrollableId));
         }
 
         return $this->enrollmentLetterView($userCreatedFromEnrollee, true, $enrollee, false);
