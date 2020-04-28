@@ -113,9 +113,9 @@
                 selectedEnrolleeIds: [],
                 hideStatus: ['ineligible', 'consented'],
                 hideAssigned: true,
-                columns: ['select', 'edit', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'eligibility_job_id', 'medical_record_id', 'practice_name', 'provider_name', 'total_time_spent', 'attempt_count', 'last_attempt_at',
-                    'last_call_outcome', 'last_call_outcome_reason', 'requested_callback', 'address', 'address_2', 'city', 'state', 'zip', 'primary_phone', 'other_phone', 'home_phone', 'cell_phone', 'dob', 'preferred_days', 'preferred_window',
-                    'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'has_copay', 'email', 'cpm_problem_1', 'cpm_problem_2', 'provider_pronunciation', 'provider_sex', 'last_encounter', 'created_at'],
+                columns: ['select', 'edit', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'practice_name', 'provider_name', 'requested_callback','total_time_spent', 'attempt_count', 'last_attempt_at',
+                    'last_call_outcome', 'last_call_outcome_reason', 'address', 'address_2', 'city', 'state', 'zip', 'primary_phone', 'other_phone', 'home_phone', 'cell_phone', 'dob', 'preferred_days', 'preferred_window',
+                    'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'has_copay', 'email','provider_pronunciation', 'provider_sex', 'last_encounter', 'eligibility_job_id', 'medical_record_id','created_at'],
                 options: {
                     requestAdapter(data) {
                         if (typeof (self) !== 'undefined') {
@@ -344,6 +344,10 @@
 
     .btn-selected {
         background-color: #0d47a1;
+    }
+
+    tr.v-server-table__selected {
+        background: #7d92f5 !important;
     }
 
     .panel-body {
