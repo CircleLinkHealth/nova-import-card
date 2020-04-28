@@ -2062,7 +2062,7 @@ if ( ! function_exists('minDaysPastForCareAmbassadorNextAttempt')) {
         $key = 'min_days_past_for_care_ambassador_next_attempt';
 
         return \Cache::remember($key, 2, function () use ($key) {
-            return AppConfig::pull($key, 3);
+            return (int) AppConfig::pull($key, 3);
         });
     }
 }

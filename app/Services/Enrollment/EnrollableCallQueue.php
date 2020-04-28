@@ -15,6 +15,8 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
  */
 class EnrollableCallQueue
 {
+    const DAYS_FOR_NEXT_ATTEMPT = 3;
+
     /**
      * @var CareAmbassador
      */
@@ -156,12 +158,12 @@ class EnrollableCallQueue
      */
     private function getUtcAttemptCount()
     {
+        $days = isProductionEnv() ? self::DAYS_FOR_NEXT_ATTEMPT : minDaysPastForCareAmbassadorNextAttempt();
+
         return Enrollee::withCaPanelRelationships()
             ->lessThanThreeAttempts()
             ->whereStatus(Enrollee::UNREACHABLE)
-            ->when( ! isProductionEnv(), function ($q) {
-                $q->where('last_attempt_at', '<', Carbon::now()->startOfDay()->subDays(minDaysPastForCareAmbassadorNextAttempt()));
-            })
+            ->where('last_attempt_at', '<', Carbon::now()->subDays($days))
             ->orderBy('attempt_count')
             ->first();
     }

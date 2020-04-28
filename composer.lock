@@ -1385,7 +1385,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "e65fdbaca71294aa7c66876b9174f3b26656695e"
+                "reference": "c6ba551e059068c5b79d3dee21d837bb0386094d"
             },
             "type": "laravel-module",
             "extra": {
@@ -1410,7 +1410,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-27T14:08:01+00:00"
+            "time": "2020-04-27T22:24:23+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
