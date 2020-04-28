@@ -70,7 +70,7 @@ class SupplementalPatientData extends Model
 
     public static function forPatient(?int $practiceId, string $firstName, string $lastName, ?Carbon $dob)
     {
-        if ( ! $dob || !$practiceId) {
+        if ( ! $dob || ! $practiceId) {
             return null;
         }
 

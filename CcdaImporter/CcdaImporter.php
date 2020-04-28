@@ -211,6 +211,17 @@ class CcdaImporter
         return $this;
     }
 
+    private function patientEmail()
+    {
+        $email = $this->ccda->patientEmail();
+
+        if ('noemail@noemail.com' === strtolower($email)) {
+            return null;
+        }
+
+        return $email;
+    }
+
     /**
      * Store AllergyImports as Allergy Models.
      *
@@ -338,14 +349,5 @@ class CcdaImporter
         ImportVitals::for($this->patient, $this->ccda);
 
         return $this;
-    }
-    
-    private function patientEmail()
-    {
-        $email = $this->ccda->patientEmail();
-        
-        if (strtolower($email) === 'noemail@noemail.com') return null;
-        
-        return $email;
     }
 }
