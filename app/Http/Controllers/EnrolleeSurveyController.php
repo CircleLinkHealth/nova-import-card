@@ -87,10 +87,12 @@ class EnrolleeSurveyController extends Controller
      */
     public function createEnrolleesSurveyUrl($userId, $surveyId)
     {
-        $user = User::whereId($userId)->firstOrFail();
-        $survey = Survey::whereId($surveyId)->firstOrFail();
+//        $user = User::whereId($userId)->firstOrFail();
+//        $survey = Survey::whereId($surveyId)->firstOrFail();
+        $user = User::findOrFail($userId);
+        $survey = Survey::findOrFail($surveyId);
         $url = $this->surveyInvitationLinksService->createAndSaveUrl($user, $survey->name, true);
-//        Auth::loginUsingId($userId, true);
+        Auth::loginUsingId($userId, true);
         return redirect($url);
     }
 }
