@@ -15,13 +15,13 @@ axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
  */
 if (window && document) {
     let token = document.head.querySelector('meta[name="csrf-token"]');
-    
+
     if (token) {
         axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
     } else {
         console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
     }
-    
+
     axios.default.interceptors.response.use(response => {
         return response
     }, error => {
@@ -31,7 +31,7 @@ if (window && document) {
             return;
         }
 
-        if (error.response.status === 419) {
+        if (error && error.response && error.response.status === 419) {
             window.location.href = '/auth/inactivity-logout'
         }
         else {

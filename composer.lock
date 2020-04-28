@@ -4,7 +4,9 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c04ac42ffbbae7e51c00694784f73eba",
+
+    "content-hash": "c569f0419feb43a492672505ba52e874",
+
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -793,11 +795,11 @@
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
-            "version": "v3.1.2",
+            "version": "v3.1.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git",
-                "reference": "76ecd1afee5e3556c5d75168358f36da22d4def8"
+                "reference": "9bb4dd6e2bdafbca547334932980c124f45890b7"
             },
             "require": {
                 "illuminate/cache": "~5.0|~6.0|~7.0",
@@ -870,7 +872,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2020-04-21T12:03:37+00:00"
+            "time": "2020-04-27T14:50:24+00:00"
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
@@ -1047,7 +1049,9 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "03c648ee5b4f21e06325d46657cd709c116dfc67"
+
+                "reference": "16acd2687a53c777e0b669ae6aaf6092e420e9a1"
+
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1081,7 +1085,9 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-28T11:05:16+00:00"
+
+            "time": "2020-04-27T12:49:08+00:00"
+
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1089,7 +1095,9 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "1a38073ce8275b8fdf48646a29a1e649fd6e47d9"
+
+                "reference": "e461b7d5c86d64e063e3d7802c599f69146403b9"
+
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1114,7 +1122,9 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-28T11:04:59+00:00"
+
+            "time": "2020-04-27T09:25:18+00:00"
+
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1385,7 +1395,9 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "5efaec86b2c25ca56ec53694441ee05b77edd999"
+
+                "reference": "c6ba551e059068c5b79d3dee21d837bb0386094d"
+
             },
             "type": "laravel-module",
             "extra": {
@@ -1410,7 +1422,9 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-28T03:25:38+00:00"
+
+            "time": "2020-04-27T22:24:23+00:00"
+
         },
         {
             "name": "circlelinkhealth/timetracking-module",
@@ -5744,33 +5758,32 @@
         },
         {
             "name": "moontoast/math",
-            "version": "1.2.1",
+            "version": "1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ramsey/moontoast-math.git",
-                "reference": "5f47d34c87767dbcc08b30377a9827df71de91fa"
+                "reference": "c2792a25df5cad4ff3d760dd37078fc5b6fccc79"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/moontoast-math/zipball/5f47d34c87767dbcc08b30377a9827df71de91fa",
-                "reference": "5f47d34c87767dbcc08b30377a9827df71de91fa",
+                "url": "https://api.github.com/repos/ramsey/moontoast-math/zipball/c2792a25df5cad4ff3d760dd37078fc5b6fccc79",
+                "reference": "c2792a25df5cad4ff3d760dd37078fc5b6fccc79",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3",
-                "phpseclib/bcmath_compat": ">=1.0.3"
+                "ext-bcmath": "*",
+                "php": ">=5.3.3"
             },
             "require-dev": {
                 "jakub-onderka/php-parallel-lint": "^0.9.0",
-                "phpunit/phpunit": "^4.8 || ^5.5 || ^6.5 || ^7.0",
+                "phpunit/phpunit": "^4.7|>=5.0 <5.4",
                 "satooshi/php-coveralls": "^0.6.1",
                 "squizlabs/php_codesniffer": "^2.3"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Moontoast\\Math\\": "src/Moontoast/Math",
-                    "Moontoast\\Math\\Exception\\": "src/Moontoast/Math/Exception"
+                    "Moontoast\\Math\\": "src/Moontoast/Math/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -5791,7 +5804,7 @@
                 "math"
             ],
             "abandoned": "brick/math",
-            "time": "2020-01-05T04:49:34+00:00"
+            "time": "2017-02-16T16:54:46+00:00"
         },
         {
             "name": "mremi/url-shortener",
@@ -7106,63 +7119,7 @@
             "time": "2020-03-21T18:07:53+00:00"
         },
         {
-            "name": "phpseclib/bcmath_compat",
-            "version": "1.0.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpseclib/bcmath_compat.git",
-                "reference": "89cbb63742a32730b7187773a60b6b12b9db4479"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/bcmath_compat/zipball/89cbb63742a32730b7187773a60b6b12b9db4479",
-                "reference": "89cbb63742a32730b7187773a60b6b12b9db4479",
-                "shasum": ""
-            },
-            "require": {
-                "phpseclib/phpseclib": ">=2.0.19"
-            },
-            "provide": {
-                "ext-bcmath": "7.3.5"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.8.35|^5.7|^6.0",
-                "squizlabs/php_codesniffer": "^3.0"
-            },
-            "suggest": {
-                "ext-gmp": "Will enable faster math operations"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "lib/bcmath.php"
-                ],
-                "psr-4": {
-                    "bcmath_compat\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jim Wigginton",
-                    "email": "terrafrost@php.net",
-                    "homepage": "http://phpseclib.sourceforge.net"
-                }
-            ],
-            "description": "PHP 5.x/7.x polyfill for bcmath extension",
-            "keywords": [
-                "BigInteger",
-                "bcmath",
-                "bigdecimal",
-                "math",
-                "polyfill"
-            ],
-            "time": "2020-04-26T16:34:33+00:00"
-        },
-        {
+
             "name": "phpseclib/phpseclib",
             "version": "2.0.27",
             "source": {
@@ -15350,7 +15307,14 @@
             "time": "2019-11-30T13:35:44+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "alias": "1.999.999",
+            "alias_normalized": "1.999.999.0",
+            "version": "1.1.2.0",
+            "package": "moontoast/math"
+        }
+    ],
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
