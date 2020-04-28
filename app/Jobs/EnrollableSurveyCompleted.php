@@ -63,8 +63,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
      * @param $enrollableId
      * @param $surveyInstanceId
      * @param $identifier
-     *
-     * @return array
+     * @return \Collection|\Illuminate\Support\Collection
      */
     public function getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, $identifier)
     {
@@ -80,7 +79,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 $answer = collect($enrollableSurveyData)->where('question_id', $question->id)->first();
 
                 return $this->sanitizedValue($answer);
-            })->toArray();
+            })->flatten();
     }
 
     /**
@@ -93,6 +92,15 @@ class EnrollableSurveyCompleted implements ShouldQueue
         return $val[0];
     }
 
+    public function getPreferredContactHoursToString($preferredTime)
+    {
+        if (is_object($preferredTime)) {
+            $preferredTime = $preferredTime->toArray();
+        }
+
+        return createTimeRangeFromEarliestAndLatest($preferredTime);
+    }
+
     /**
      * @param $days
      *
@@ -101,6 +109,10 @@ class EnrollableSurveyCompleted implements ShouldQueue
     public function getPreferredDaysToString($days)
     {
         $dow = [];
+        if (is_object($days)) {
+            $days = $days->toArray();
+        }
+
         if (is_array($days)) {
             foreach ($days as $day) {
                 $dow[] = clhToCarbonDayOfWeek(Carbon::parse($day)->dayOfWeek);
@@ -131,15 +143,15 @@ class EnrollableSurveyCompleted implements ShouldQueue
     public function getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId)
     {
         return [
-            'email'               => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_EMAIL')[0],
-            'preferred_number'    => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_NUMBER')[1],
-            'preferred_days'      => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_DAYS')[2],
-            'preferred_time'      => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_TIME')[3],
-            'requests_info'       => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_REQUESTS_INFO')[4],
-            'address'             => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_ADDRESS')[5],
-            'dob'                 => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_DOB')[6],
-            'confirm_letter_read' => ! empty($this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER')[7])
-                ? $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER')[7][0]
+            'email'            => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_EMAIL'),
+            'preferred_number' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_NUMBER'),
+            'preferred_days'   => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_DAYS'),
+            'preferred_time'   => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_TIME'),
+            'requests_info'    => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_REQUESTS_INFO'),
+            'address'          => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_ADDRESS'),
+            //            'dob'                 => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_DOB')[6],
+            'confirm_letter_read' => ! empty($this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER'))
+                ? $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER')
                 : '',
         ];
     }
@@ -156,15 +168,13 @@ class EnrollableSurveyCompleted implements ShouldQueue
         $user             = User::withTrashed()->whereId($enrollableId)->firstOrFail();
         $isSurveyOnly     = $user->hasRole('survey-only');
         $addressData      = $this->getAddressData($surveyAnswers['address']);
-        $dob              = Carbon::parse($surveyAnswers['dob'])->toDateString();
 
         if ($isSurveyOnly) {
             $enrollee = Enrollee::whereUserId($user->id)->firstOrFail();
             $enrollee->update([
-                'dob'                       => $dob,
                 'primary_phone'             => $surveyAnswers['preferred_number'],
                 'preferred_days'            => $this->getPreferredDaysToString($surveyAnswers['preferred_days']),
-                'preferred_window'          => $this->getPreferredTimesToString($surveyAnswers['preferred_time']),
+                'preferred_window'          => $this->getPreferredContactHoursToString($surveyAnswers['preferred_time']),
                 'address'                   => $addressData['address'],
                 'city'                      => $addressData['city'],
                 'state'                     => $addressData['state'],
@@ -182,11 +192,13 @@ class EnrollableSurveyCompleted implements ShouldQueue
         } else {
             $preferredContactDays        = $this->getPreferredDaysToString($surveyAnswers['preferred_days']);
             $preferredContactDaysToArray = explode(',', $preferredContactDays);
-            $patientContactTimeStart     = Carbon::parse($surveyAnswers['preferred_time'][0]->from)->toTimeString();
-            $patientContactTimeEnd       = Carbon::parse($surveyAnswers['preferred_time'][0]->to)->toTimeString();
+            $patientContactTimesToString = $this->getPreferredContactHoursToString($surveyAnswers['preferred_time']);
+            $patientContactTimesArray    = explode(' ', $patientContactTimesToString);
+            $patientContactTimeStart     = Carbon::parse($patientContactTimesArray[0])->toTimeString();
+            $patientContactTimeEnd       = Carbon::parse($patientContactTimesArray[2])->toTimeString();
             $this->updateUserModel($user, $addressData);
             $this->updatePatientPhoneNumber($user, $surveyAnswers['preferred_number']);
-            $this->upatePatientInfo($user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd, $dob);
+            $this->upatePatientInfo($user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd);
             $this->updatePatientContactWindow($user, $preferredContactDaysToArray, $patientContactTimeStart, $patientContactTimeEnd);
             $this->reEnrollUnreachablePatient($user);
 
@@ -279,10 +291,9 @@ class EnrollableSurveyCompleted implements ShouldQueue
      * @param $patientContactTimeEnd
      * @param $dob
      */
-    private function upatePatientInfo(User $user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd, $dob)
+    private function upatePatientInfo(User $user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd)
     {
         $user->patientInfo->update([
-            'birth_date'                 => $dob,
             'preferred_cc_contact_days'  => $preferredContactDays,
             'daily_contact_window_start' => $patientContactTimeStart,
             'daily_contact_window_end'   => $patientContactTimeEnd,
