@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-
 use App\HraQuestionIdentifier;
 use App\Survey;
 use App\SurveyInstance;
@@ -37,7 +36,6 @@ class GeneratePersonalizedPreventionPlanService extends GenerateReportService
                     'answers_for_eval' => $this->getAnswersToEvaluate(),
                 ]
             );
-
     }
 
     private function getAnswersToEvaluate()
@@ -100,5 +98,3 @@ class GeneratePersonalizedPreventionPlanService extends GenerateReportService
         return $answers;
     }
 }
-
-

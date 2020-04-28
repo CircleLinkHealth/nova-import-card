@@ -25,7 +25,7 @@ class SurveyAuthLoginRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'birth_date'=> 'required|date'
+            'birth_date'=> 'required|date',
         ];
     }
 }

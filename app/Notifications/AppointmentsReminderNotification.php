@@ -22,7 +22,7 @@ class AppointmentsReminderNotification extends Notification implements ShouldQue
      */
     public function __construct($to, $url)
     {
-        $this->to  = $to;
+        $this->to = $to;
         $this->url = $url;
     }
 

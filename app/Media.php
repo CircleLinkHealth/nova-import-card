@@ -101,7 +101,7 @@ class Media extends \Spatie\MediaLibrary\Models\Media
      */
     public function guessFileExtension()
     {
-        $type    = $this->mime_type;
+        $type = $this->mime_type;
         $guesser = ExtensionGuesser::getInstance();
 
         return $guesser->guess($type);

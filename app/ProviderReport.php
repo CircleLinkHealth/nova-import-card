@@ -52,7 +52,7 @@ class ProviderReport extends BaseModel
 
     protected $dates = [
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     public function patient()
@@ -72,7 +72,6 @@ class ProviderReport extends BaseModel
 
     public function scopeForYear($query, $year)
     {
-
         if (is_a($year, 'Carbon\Carbon')) {
             $year = $year->year;
         }
@@ -84,6 +83,4 @@ class ProviderReport extends BaseModel
                          $vitals->where('year', $year);
                      });
     }
-
-
 }

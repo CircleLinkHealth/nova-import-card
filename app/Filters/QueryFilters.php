@@ -45,7 +45,7 @@ abstract class QueryFilters
     {
         $this->builder = $builder;
         foreach (array_merge($this->filters(), $this->globalFilters()) as $name => $value) {
-            if ( ! method_exists($this, $name)) {
+            if (! method_exists($this, $name)) {
                 continue;
             }
             if (isset($value)) {

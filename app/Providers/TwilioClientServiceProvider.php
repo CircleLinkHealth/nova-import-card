@@ -3,7 +3,7 @@
  * Created by IntelliJ IDEA.
  * User: pangratioscosma
  * Date: 01/07/2019
- * Time: 4:30 PM
+ * Time: 4:30 PM.
  */
 
 namespace App\Providers;

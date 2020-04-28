@@ -2,6 +2,7 @@
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
+
 namespace App\CPM;
 
 use App\User;
@@ -18,11 +19,11 @@ class PatientReportCreatedEvent extends AwvToCpmRedisEvent
         $this->patient = $patient;
     }
 
-    public function publishReportCreated(Media $report){
-
+    public function publishReportCreated(Media $report)
+    {
         $this->publish([
             'patient_id' => $this->patient->id,
-            'report_media_id' => $report->id
+            'report_media_id' => $report->id,
         ]);
     }
 }

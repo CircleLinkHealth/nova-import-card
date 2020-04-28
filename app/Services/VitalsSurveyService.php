@@ -14,11 +14,9 @@ class VitalsSurveyService
 
     public function updateOrCreateAnswer(StoreVitalsAnswer $request)
     {
-        $input            = $request->all();
+        $input = $request->all();
         $input['user_id'] = $input['patient_id'];
 
         return SurveyService::updateOrCreateAnswer($input);
-
     }
-
 }

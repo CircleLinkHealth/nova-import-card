@@ -14,11 +14,23 @@
         },
         {
             "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-core.git"
+            "url": "git@github.com:subzero10/url-shortener.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/opcache-gui.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/module-raygun.git"
         },
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/module-time-tracking.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/lara-pdf-merger.git"
         },
         {
             "type": "git",
@@ -30,11 +42,26 @@
         },
         {
             "type": "git",
-            "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git"
+            "url": "git@github.com:CircleLinkHealth/module-core.git"
+        },
+        {
+            "type": "composer",
+            "url": "https://packagist.org"
+        },
+        {
+            "packagist": false
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/ImportPracticeStaffCsv"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/GeneratePatientCallDataCsv"
         },
         {
             "type": "git",
-            "url": "git@github.com:subzero10/url-shortener.git"
+            "url": "git@github.com:circlelinkhealth/revisionable-module.git"
         },
         {
             "type": "git",
@@ -45,16 +72,52 @@
             "url": "git@github.com:CircleLinkHealth/sqlviews-module.git"
         },
         {
-            "type": "vcs",
-            "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git"
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/eligibility-module.git"
         },
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/shared-models-module.git"
         },
         {
+            "type": "path",
+            "url": "./nova-components/ClhImportCardExtended"
+        },
+        {
             "type": "git",
-            "url": "git@github.com:CircleLinkHealth/revisionable-module.git"
+            "url": "git@github.com:CircleLinkHealth/ccda-parser-module.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/patient-api-module.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/condition-code-lookup-module.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/nova-import-card.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/GenerateSuccessStoriesReport"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/ClhNovaTheme"
         }
     ],
     "require": {
@@ -66,18 +129,21 @@
         "ext-pdo": "*",
         "ext-redis": "*",
         "ext-simplexml": "*",
-        "appstract/laravel-opcache": "^2",
-        "barryvdh/laravel-cors": "^0.11.3",
-        "barryvdh/laravel-snappy": "^0.4.5",
-        "circlelinkhealth/core-module": "1.5.0",
+        "appstract/laravel-opcache": "^3.2.1",
+        "barryvdh/laravel-snappy": "0.4.7",
+        "circlelinkhealth/cerberus-gatekeeper-module": "3.1.4",
+        "circlelinkhealth/core-module": "dev-laravel-6-upgrade",
         "circlelinkhealth/cpm-migrations-module": "dev-master",
-        "circlelinkhealth/customer-module": "1.9.7",
-        "circlelinkhealth/revisionable-module": "dev-laravel-5",
-        "circlelinkhealth/shared-models-module": "1.1.5",
-        "circlelinkhealth/sqlviews-module": "1.1.0",
-        "circlelinkhealth/timetracking-module": "1.1.7",
+        "circlelinkhealth/customer-module": "dev-master",
+        "circlelinkhealth/eligibility-module": "dev-lavavel-6",
+        "circlelinkhealth/revisionable-module": "dev-master",
+        "circlelinkhealth/shared-models-module": "dev-master",
+        "circlelinkhealth/sqlviews-module": "dev-master",
+        "circlelinkhealth/timetracking-module": "dev-master",
         "doctrine/dbal": "^2.9",
         "fideloper/proxy": "^4.0",
+        "friendsofphp/php-cs-fixer": "^2.16",
+        "fruitcake/laravel-cors": "^0.11.4",
         "fzaninotto/faker": "^1.4",
         "grofgraf/laravel-pdf-merger": "^1.0",
         "guzzlehttp/guzzle": "^6.5",
@@ -85,26 +151,25 @@
         "joshbrw/laravel-module-installer": "^0.1.5",
         "lab404/laravel-impersonate": "^1.2",
         "laravel-notification-channels/twilio": "^2.0",
-        "laravel/framework": "5.7.*",
-        "laravel/horizon": "^3.4",
-        "laravel/nova": "^2.10",
-        "laravel/tinker": "^1.0",
+        "laravel/framework": "^6.18",
+        "laravel/horizon": "^3.2.7",
+        "laravel/nova": "^2.3",
+        "laravel/tinker": "^2.0",
         "league/flysystem-aws-s3-v3": "^1.0",
-        "michalisantoniou6/laravel-cerberus": "dev-master",
         "nvanheuverzwijn/monolog-logdna": "^2.1",
         "nwidart/laravel-modules": "^6.2",
-        "sentry/sentry-laravel": "1.6.1",
+        "sentry/sentry-laravel": "^1.6",
+        "squizlabs/php_codesniffer": "^3.5",
         "twilio/sdk": "^5.28",
         "waavi/url-shortener": "dev-master"
     },
     "require-dev": {
         "ext-xdebug": "*",
         "barryvdh/laravel-ide-helper": "^2.6",
-        "beyondcode/laravel-dump-server": "^1.0",
-        "filp/whoops": "^2.0",
         "mockery/mockery": "^1.0",
-        "nunomaduro/collision": "^2.0",
-        "phpunit/phpunit": "^7.0"
+        "nunomaduro/collision": "^3.0",
+        "phpunit/phpunit": "^8.0",
+        "facade/ignition": "^1.4"
     },
     "config": {
         "optimize-autoloader": true,
@@ -165,7 +230,15 @@
         "ide": [
             "php artisan ide-helper:generate",
             "php artisan -vvv ide-helper:models --dir='app/' --dir='Modules/'",
-            "php artisan ide-helper:meta"
+            "php artisan ide-helper:meta",
+            "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --using-cache=no --show-progress=dots --diff --verbose --config=.php_cs.dist",
+            "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --using-cache=no --show-progress=dots --diff --verbose --config=.php_cs_views.php"
+        ],
+        "lint-php": [
+            "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --show-progress=dots --diff --verbose --config=.php_cs.dist"
+        ],
+        "lint-views": [
+            "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --show-progress=dots --diff --verbose --config=.php_cs_views.php"
         ]
     }
 }

@@ -9,17 +9,15 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property string identifier
  * @property int survey_id
  * @property string body
- * @property boolean optional
+ * @property bool optional
  * @property array|null conditions
  * @property int question_group_id
  * @property QuestionType type
  *
  * Class Question
- * @package App
  */
 class Question extends BaseModel
 {
-
     /**
      * The attributes that are mass assignable.
      *
@@ -31,7 +29,7 @@ class Question extends BaseModel
         'body',
         'optional',
         'conditions',
-        'question_group_id'
+        'question_group_id',
     ];
 
     /**
@@ -48,7 +46,7 @@ class Question extends BaseModel
         return $this->belongsToMany(SurveyInstance::class, 'survey_questions', 'question_id',
             'survey_instance_id')->withPivot([
             'order',
-            'sub_order'
+            'sub_order',
         ]);
     }
 
@@ -62,12 +60,13 @@ class Question extends BaseModel
         return $this->hasOne(QuestionType::class, 'question_id', 'id');
     }
 
-    public function questionGroup(){
+    public function questionGroup()
+    {
         return $this->belongsTo(QuestionGroup::class, 'question_group_id');
     }
 
-    public function scopeNotOptional($query){
+    public function scopeNotOptional($query)
+    {
         $query->where('optional', false);
     }
-
 }

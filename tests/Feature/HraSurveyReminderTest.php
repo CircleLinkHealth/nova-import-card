@@ -17,14 +17,14 @@ class HraSurveyReminderTest extends TestCase
     use UserHelpers;
     use PatientHelpers;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         (new \SurveySeeder())->run();
     }
 
     /**
-     * Test that reminder is sent to both phone and email 10 days prior
+     * Test that reminder is sent to both phone and email 10 days prior.
      *
      * @return void
      */
@@ -35,7 +35,7 @@ class HraSurveyReminderTest extends TestCase
     }
 
     /**
-     * Test that reminder is sent to both phone and email 8 days prior
+     * Test that reminder is sent to both phone and email 8 days prior.
      *
      * @return void
      */
@@ -51,12 +51,12 @@ class HraSurveyReminderTest extends TestCase
 
         $service = app(SurveyInvitationLinksService::class);
 
-        $date    = now()->addDays($days);
+        $date = now()->addDays($days);
         $patient = $this->createPatient();
         $patient->addAppointment($date);
 
         $appointment = $patient->latestAwvAppointment()->appointment;
-        $isIn10Days  = $appointment->isBetween($date->copy()->startOfDay(), $date->copy()->endOfDay());
+        $isIn10Days = $appointment->isBetween($date->copy()->startOfDay(), $date->copy()->endOfDay());
         $this->assertTrue($isIn10Days);
 
         User::ofType('participant', false)
@@ -77,9 +77,9 @@ class HraSurveyReminderTest extends TestCase
                     throw $e;
                 }
 
-                $practiceName     = optional($user->primaryPractice)->display_name;
+                $practiceName = optional($user->primaryPractice)->display_name;
                 $providerFullName = optional($user->billingProviderUser())->getFullName();
-                $appointment      = $user->latestAwvAppointment()->appointment;
+                $appointment = $user->latestAwvAppointment()->appointment;
                 $notifiableUser = new NotifiableUser($user);
                 $notifiableUser->notify(new SurveyInvitationLink($url, Survey::HRA, null, $practiceName, $providerFullName,
                     $appointment));
@@ -87,7 +87,7 @@ class HraSurveyReminderTest extends TestCase
                 Notification::assertSentTo($notifiableUser, SurveyInvitationLink::class,
                     function ($notification, $channels) {
                         //Twilio and Email
-                        return sizeof($channels) === 2;
+                        return count($channels) === 2;
                     });
             });
     }

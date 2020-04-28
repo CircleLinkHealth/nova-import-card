@@ -24,13 +24,13 @@ class InvitationLinksController extends Controller
         SurveyService $surveyService,
         TwilioClientService $twilioService
     ) {
-        $this->service       = $service;
+        $this->service = $service;
         $this->surveyService = $surveyService;
         $this->twilioService = $twilioService;
     }
 
     /**
-     * Send HRA survey link to patient
+     * Send HRA survey link to patient.
      *
      * @param SendSurveyLinkRequest $request
      *
@@ -44,7 +44,7 @@ class InvitationLinksController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
 
-        if ( ! $sent) {
+        if (! $sent) {
             return response()->json(['error' => 'Could not send survey link'], 400);
         }
 
@@ -52,7 +52,7 @@ class InvitationLinksController extends Controller
     }
 
     /**
-     * Send Vitals link to practice staff
+     * Send Vitals link to practice staff.
      *
      * @param SendSurveyLinkRequest $request
      *
@@ -66,7 +66,7 @@ class InvitationLinksController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
 
-        if ( ! $sent) {
+        if (! $sent) {
             return response()->json(['error' => 'Could not send survey link'], 400);
         }
 
@@ -75,7 +75,6 @@ class InvitationLinksController extends Controller
 
     public function showEnrollUserForm(Request $request, $userId)
     {
-
         $patient = User::findOrFail($userId);
 
         return view('enrollUser', [
@@ -119,8 +118,8 @@ class InvitationLinksController extends Controller
         string $surveyName
     ) {
         $target_user_id = $request->get('target_patient_id');
-        $channel        = $request->get('channel');
-        $channelValue   = $request->get('channel_value');
+        $channel = $request->get('channel');
+        $channelValue = $request->get('channel_value');
 
         $user = User
             ::with([
@@ -137,7 +136,7 @@ class InvitationLinksController extends Controller
             ->firstOrFail();
 
         $appointment = optional($user->latestAwvAppointment())->appointment;
-        $url         = $this->service->createAndSaveUrl($user, $surveyName, true);
+        $url = $this->service->createAndSaveUrl($user, $surveyName, true);
 
         /** @var User $targetNotifiable */
         $targetNotifiable = null;
@@ -157,27 +156,27 @@ class InvitationLinksController extends Controller
             throw new \Exception("Could not find user[$channelValue] in the system.");
         }
 
-        if ( ! $targetNotifiable) {
+        if (! $targetNotifiable) {
             //just mock it
-            $targetNotifiable     = new User();
+            $targetNotifiable = new User();
             $targetNotifiable->id = 999;
         }
 
         //in case notifiable user is not the patient
-        if ( ! $targetNotifiable->is($user)) {
-            $practiceName     = optional($user->primaryPractice)->display_name;
+        if (! $targetNotifiable->is($user)) {
+            $practiceName = optional($user->primaryPractice)->display_name;
             $providerFullName = optional($user->billingProviderUser())->getFullName();
         } else {
-            $practiceName     = optional($targetNotifiable->primaryPractice)->display_name;
+            $practiceName = optional($targetNotifiable->primaryPractice)->display_name;
             $providerFullName = optional($targetNotifiable->billingProviderUser())->getFullName();
         }
 
-        if ( ! $practiceName) {
+        if (! $practiceName) {
             $practiceName = "your physician's office";
         }
 
-        if ( ! $providerFullName) {
-            $providerFullName = "provider";
+        if (! $providerFullName) {
+            $providerFullName = 'provider';
         }
 
         (new NotifiableUser($targetNotifiable, $channel === 'mail'

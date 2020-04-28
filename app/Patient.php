@@ -5,15 +5,14 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Patient
- * @package App
+ * Class Patient.
  *
  * @property bool $is_awv
  */
 class Patient extends \CircleLinkHealth\Customer\Entities\Patient
 {
     /**
-     * CCM_STATUS for AWV
+     * CCM_STATUS for AWV.
      */
     const NA = 'n/a';
 
@@ -21,5 +20,4 @@ class Patient extends \CircleLinkHealth\Customer\Entities\Patient
     {
         return $this->hasMany(InvitationLink::class, 'patient_info_id');
     }
-
 }

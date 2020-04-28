@@ -11,7 +11,7 @@ return [
     | to accept any value.
     |
     */
-   
+
     'supportsCredentials' => false,
     'allowedOrigins'         => (env('APP_ENV', 'production') === 'production' || env('APP_ENV',
             'production') === 'worker' || env('APP_ENV', 'production') === 'staging')

@@ -7,7 +7,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
 
 /**
- * Class Survey
+ * Class Survey.
  *
  * @property-read int patient_id
  * @property-read int practice_id
@@ -19,8 +19,6 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * @property-read string year
  * @property-read Carbon appointment
  * @property-read string mrn
- *
- * @package App
  */
 class PatientAwvSurveyInstanceStatusView extends BaseModel
 {

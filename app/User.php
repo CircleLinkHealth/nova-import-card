@@ -6,8 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
- * Class User
- * @package App
+ * Class User.
  *
  * @property-read SurveyInstance[]|Collection surveyInstances
  * @property-read Survey[]|Collection surveys
@@ -16,7 +15,6 @@ use Illuminate\Database\Eloquent\Collection;
  * @property-read InvitationLink url
  * @property-read PersonalizedPreventionPlan personalizedPreventionPlan
  * @property Patient $patientInfo
- *
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {

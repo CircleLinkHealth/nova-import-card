@@ -24,29 +24,29 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if ( ! Auth::guard($guard)->check()) {
-            Log::debug("RedirectIfAuthenticated Middleware -> route login");
+        if (! Auth::guard($guard)->check()) {
+            Log::debug('RedirectIfAuthenticated Middleware -> route login');
 
             return $next($request);
         }
 
-        Log::debug("RedirectIfAuthenticated -> ready to route somewhere");
+        Log::debug('RedirectIfAuthenticated -> ready to route somewhere');
 
         /** @var User $user */
-        $user          = auth()->user();
+        $user = auth()->user();
         $isParticipant = $user->hasRole('participant');
 
         $isSignedLogin = Route::is('auth.login.signed');
-        $isHome        = Route::is('home');
+        $isHome = Route::is('home');
 
-        if ( ! $isSignedLogin) {
+        if (! $isSignedLogin) {
             if ($isParticipant) {
-                Log::debug("RedirectIfAuthenticated -> not a signed login, user is patient and redirecting going home");
+                Log::debug('RedirectIfAuthenticated -> not a signed login, user is patient and redirecting going home');
 
                 //show a welcome message and ask patient to open AWV with the link provided
                 return redirect()->route('home');
             } else {
-                Log::debug("RedirectIfAuthenticated -> not a signed login, user is not patient and redirecting going to patient list");
+                Log::debug('RedirectIfAuthenticated -> not a signed login, user is not patient and redirecting going to patient list');
 
                 return redirect()->route('patient.list');
             }
@@ -54,24 +54,25 @@ class RedirectIfAuthenticated
 
         $patientId = SurveyInvitationLinksService::getPatientIdFromSignedUrl($request->url());
         if ($isParticipant && $patientId != $user->id) {
-            Log::debug("RedirectIfAuthenticated -> patient id does not match auth user id, aborting with 401");
+            Log::debug('RedirectIfAuthenticated -> patient id does not match auth user id, aborting with 401');
             abort(401);
         }
 
         $surveyId = SurveyInvitationLinksService::getSurveyIdFromSignedUrl($request->url());
-        $name     = Survey::find($surveyId, ['name'])->name;
+        $name = Survey::find($surveyId, ['name'])->name;
 
         if (Survey::HRA === $name) {
-            Log::debug("RedirectIfAuthenticated -> redirecting to HRA");
+            Log::debug('RedirectIfAuthenticated -> redirecting to HRA');
+
             return redirect()
                 ->route('survey.hra',
                     [
                         'patientId' => $patientId,
                         'surveyId'  => $surveyId,
                     ]);
-        } else if (Survey::VITALS === $name) {
+        } elseif (Survey::VITALS === $name) {
             if ($isParticipant) {
-                Log::debug("RedirectIfAuthenticated -> user is patient, redirecting to Vitals - Not Authorized");
+                Log::debug('RedirectIfAuthenticated -> user is patient, redirecting to Vitals - Not Authorized');
                 //should not reach here because it will be stopped from the permissions middleware,
                 //see web.php
                 return redirect()
@@ -80,21 +81,22 @@ class RedirectIfAuthenticated
                             'patientId' => $patientId,
                         ]);
             } else {
-                Log::debug("RedirectIfAuthenticated -> user is not patient, redirecting to Vitals");
+                Log::debug('RedirectIfAuthenticated -> user is not patient, redirecting to Vitals');
+
                 return redirect()
                     ->route('survey.vitals',
                         [
                             'patientId' => $patientId,
                         ]);
             }
-
         } else {
             if ($isParticipant) {
-                Log::debug("RedirectIfAuthenticated -> user is patient, redirecting to home");
+                Log::debug('RedirectIfAuthenticated -> user is patient, redirecting to home');
                 //show a welcome message and ask patient to open AWV with the link provided
                 return redirect()->route('home');
             } else {
-                Log::debug("RedirectIfAuthenticated -> user is not patient, redirecting to patient list");
+                Log::debug('RedirectIfAuthenticated -> user is not patient, redirecting to patient list');
+
                 return redirect()->route('patient.list');
             }
         }

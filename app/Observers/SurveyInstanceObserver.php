@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Observers;
-
 
 use App\SurveyInstance;
 
@@ -17,6 +15,5 @@ class SurveyInstanceObserver
     {
 
         //replaced by event and listener, keeping class in case we need
-
     }
 }

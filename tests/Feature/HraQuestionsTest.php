@@ -15,10 +15,10 @@ class HraQuestionsTest extends TestCase
     use DatabaseTransactions,
         SetupTestSurveyData;
 
-    /** @var SurveyInstance $hraSurvey */
+    /** @var SurveyInstance */
     private $hraSurvey;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->createTestSurveyData();
@@ -343,7 +343,8 @@ class HraQuestionsTest extends TestCase
         $this->assertNull($nextQuestion->pivot->sub_order);
     }
 
-    public function test_hra_q_order_35_enabled() {
+    public function test_hra_q_order_35_enabled()
+    {
         $question = $this->getQuestion(4);
 
         /** @var QuestionTypesAnswer $answerType */
@@ -368,7 +369,8 @@ class HraQuestionsTest extends TestCase
         $this->assertNull($nextQuestion->pivot->sub_order);
     }
 
-    public function test_hra_q_order_35_disabled() {
+    public function test_hra_q_order_35_disabled()
+    {
         $question = $this->getQuestion(4);
 
         /** @var QuestionTypesAnswer $answerType */
@@ -411,7 +413,7 @@ class HraQuestionsTest extends TestCase
     private function postAnswer($value, $questionId, $questionTypeAnswerId = null)
     {
         $patientId = $this->user->id;
-        $req       = [
+        $req = [
             'patient_id'         => $this->user->id,
             'survey_instance_id' => $this->hraSurvey->id,
             'question_id'        => $questionId,

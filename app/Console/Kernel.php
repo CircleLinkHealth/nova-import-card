@@ -51,8 +51,8 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__ . '/Commands');
-        $this->load(__DIR__ . '/PersonalizedPreventionPlanController');
+        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__.'/PersonalizedPreventionPlanController');
 
         require base_path('routes/console.php');
     }

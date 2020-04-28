@@ -1,36 +1,31 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 namespace App\Services;
-
 
 use App\Survey;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Support\Facades\DB;
 
 class EnrolleesSurveyService
 {
-    public function getSurveyData($patientId)
-    {
-        return SurveyService::getCurrentSurveyData($patientId, Survey::ENROLLEES);
-    }
-
     /**
-     * @param User $user
      * @return array
      */
     public function enrolleesQuestionsData(User $user)
     {
         $birthDate = $user->patientInfo->birth_date;
-        if (!empty($birthDate)) {
+        if ( ! empty($birthDate)) {
             /** @var Carbon $birthDate */
             $birthDate = $birthDate->toDateString();
         }
 
         // It can be empty. Its ok.
         $primaryPhoneNumber = $user->getPhone();
-        $isSurveyOnly = $user->hasRole('survey-only');
+        $isSurveyOnly       = $user->hasRole('survey-only');
 
         $letterLink = '';
 
@@ -39,12 +34,17 @@ class EnrolleesSurveyService
         }
 
         return [
-            'dob' => $birthDate,
-            'address' => $user->address,
-            'patientEmail' => $user->email,
-            'preferredContactNumber' => !empty($primaryPhoneNumber) ? $primaryPhoneNumber : [],
-            'isSurveyOnlyRole' => $isSurveyOnly,
-            'letterLink' => $letterLink
+            'dob'                    => $birthDate,
+            'address'                => $user->address,
+            'patientEmail'           => $user->email,
+            'preferredContactNumber' => ! empty($primaryPhoneNumber) ? $primaryPhoneNumber : [],
+            'isSurveyOnlyRole'       => $isSurveyOnly,
+            'letterLink'             => $letterLink,
         ];
+    }
+
+    public function getSurveyData($patientId)
+    {
+        return SurveyService::getCurrentSurveyData($patientId, Survey::ENROLLEES);
     }
 }
