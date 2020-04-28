@@ -322,11 +322,13 @@ class PatientContactWindow extends BaseModel
      */
     public static function sync(
         Patient $info,
-        array $days = [],
+        ?array $days = [],
         $windowStart = '09:00:00',
         $windowEnd = '17:00:00'
     ) {
         $created = [];
+        
+        if (!$days) $days = [];
 
         //first delete all call windows
         $info->contactWindows()->delete();
