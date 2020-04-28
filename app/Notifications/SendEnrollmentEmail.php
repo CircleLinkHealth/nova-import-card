@@ -77,17 +77,10 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
         if ($notifiable->checkForSurveyOnlyRole()) {
             $enrollee = Enrollee::whereUserId($notifiable->id)->first();
 
-            return [
-                'enrollee_id'    => $enrollee->id,
-                'is_reminder'    => $this->isReminder,
-                'is_survey_only' => true,
-            ];
+            return $this->enrolleeArraData($enrollee->id);
         }
 
-        return [
-            'is_reminder'    => $this->isReminder,
-            'is_survey_only' => false,
-        ];
+        return $this->patientArrayData();
     }
 
     /**
@@ -117,5 +110,29 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     public function via($notifiable)
     {
         return ['database', 'mail'];
+    }
+
+    /**
+     * @param $enrolleeId
+     * @return array
+     */
+    private function enrolleeArraData($enrolleeId)
+    {
+        return [
+            'enrollee_id'    => $enrolleeId,
+            'is_reminder'    => $this->isReminder,
+            'is_survey_only' => true,
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    private function patientArrayData()
+    {
+        return [
+            'is_reminder'    => $this->isReminder,
+            'is_survey_only' => false,
+        ];
     }
 }
