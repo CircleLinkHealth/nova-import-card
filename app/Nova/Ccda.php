@@ -70,8 +70,16 @@ class Ccda extends Resource
     public function actions(Request $request)
     {
         return [
-            new ImportCcdaAction(),
-            new ClearAndReimportCcda(),
+            (new ImportCcdaAction())->canSee(function () {
+                return true;
+            })->canRun(function () {
+                return true;
+            }),
+            (new ClearAndReimportCcda())->canSee(function () {
+                return true;
+            })->canRun(function () {
+                return true;
+            }),
             (new DownloadCsv())->setOnlyColumns([
                 'first_name',
                 'last_name',
@@ -95,19 +103,19 @@ class Ccda extends Resource
     {
         return false;
     }
-    
-    /**
-     * @return bool
-     */
-    public function authorizedToUpdate(Request $request)
-    {
-        return true;
-    }
 
     /**
      * @return bool
      */
     public function authorizedToDelete(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function authorizedToUpdate(Request $request)
     {
         return false;
     }
