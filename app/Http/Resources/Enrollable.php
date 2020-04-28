@@ -9,6 +9,7 @@ namespace App\Http\Resources;
 use App\CareAmbassadorLog;
 use App\TrixField;
 use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Resources\Json\Resource;
 
@@ -34,6 +35,14 @@ class Enrollable extends Resource
 
         $careAmbassador = $this->careAmbassador->careAmbassador;
 
+        //get script
+        $enrollableIsUnreachableUser = $enrollable->user()->whereHas('patientInfo', function ($p) {
+            $p->where('ccm_status', Patient::UNREACHABLE);
+        })->exists();
+
+        $script = TrixField::careAmbassador($this->lang, $enrollableIsUnreachableUser)->first();
+
+        //family information if exists
         $family = $enrollable->confirmedFamilyMembers;
 
         $familyAttributes = [];
@@ -148,7 +157,7 @@ class Enrollable extends Resource
             'dob'             => optional($enrollable->dob)->toDateString() ?? 'N/A',
 
             'report' => CareAmbassadorLog::createOrGetLogs($careAmbassador->id),
-            'script' => TrixField::careAmbassador($this->lang)->first(),
+            'script' => $script,
 
             'days'  => $enrollable->preferred_days ? explode(', ', $enrollable->preferred_days) : [],
             'times' => $enrollable->preferred_window
