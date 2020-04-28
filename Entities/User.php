@@ -2224,7 +2224,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
 
         if ($this->isParticipant()) {
-            return route('patient.careplan.print', ['id' => $this->id]);
+            return route('patient.careplan.print', ['patientId' => $this->id]);
         }
 
         if ($this->isPracticeStaff()) {
