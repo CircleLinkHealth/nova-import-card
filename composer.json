@@ -134,6 +134,8 @@
     "circlelinkhealth/ccda-parser-processor-php-module": "1.1.1",
     "circlelinkhealth/cerberus-gatekeeper-module": "3.0.6",
     "circlelinkhealth/clh-import-card-extended": "*",
+    "circlelinkhealth/clh-nova-theme": "*",
+    "circlelinkhealth/condition-code-lookup-module": "^1.1",
     "circlelinkhealth/core-module": "1.5.1",
     "circlelinkhealth/cpm-migrations-module": "1.5.8",
     "circlelinkhealth/customer-module": "2.2.5",
@@ -177,6 +179,7 @@
     "league/flysystem-aws-s3-v3": "~1.0",
     "league/fractal": "0.12.*",
     "maatwebsite/excel": "^3.1",
+    "moontoast/math": "1.1.2 as 1.999.999",
     "nao-pon/flysystem-google-drive": "~1.1",
     "nvanheuverzwijn/monolog-logdna": "^2.1",
     "phaxio/phaxio": "^2.0",
@@ -190,14 +193,12 @@
     "spatie/laravel-medialibrary": "^7.0.0",
     "spatie/laravel-view-models": "^1.1",
     "spatie/pdf-to-text": "^1.2",
-    "circlelinkhealth/condition-code-lookup-module": "^1.1",
     "titasgailius/search-relations": "^1.0",
     "twilio/sdk": "5.7",
     "vink/nova-cache-card": "^1.0",
     "waavi/url-shortener": "dev-master",
     "waynestate/nova-ckeditor4-field": "^0.4.0",
-    "yajra/laravel-datatables-oracle": "~8.0",
-    "circlelinkhealth/clh-nova-theme": "*"
+    "yajra/laravel-datatables-oracle": "~8.0"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",
