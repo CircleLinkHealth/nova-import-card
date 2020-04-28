@@ -1,15 +1,8 @@
 <?php
 
 /*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 Route::get('/', 'HomeController@index')
     ->name('home');
@@ -23,7 +16,6 @@ Route::post('/logout', 'Auth\LoginController@logout')
 Route::group([
     'prefix' => 'auth',
 ], function () {
-
     //this is a signed route
     Route::get('login-survey/{user}/{survey}', 'Auth\PatientLoginController@showLoginForm')
         ->name('auth.login.signed')
@@ -34,52 +26,54 @@ Route::group([
 });
 
 Route::group([
-    'prefix' => 'manage-patients',
+    'prefix'     => 'manage-patients',
     'middleware' => ['auth', 'permission:vitals-survey-complete'],
 ], function () {
     Route::get('', [
         'uses' => 'PatientController@index',
-        'as' => 'patient.list',
+        'as'   => 'patient.list',
     ]);
 
     Route::post('store', [
         'uses' => 'PatientController@store',
-        'as' => 'patient.store',
+        'as'   => 'patient.store',
     ]);
 
     Route::get('list', [
         'uses' => 'PatientController@getPatientList',
-        'as' => 'patient.list.ajax',
+        'as'   => 'patient.list.ajax',
     ]);
 
     Route::get('{userId}/contact-info', [
         'uses' => 'PatientController@getPatientContactInfo',
-        'as' => 'patient.contact.info',
+        'as'   => 'patient.contact.info',
     ]);
 
     Route::post('{userId}/send-link/hra', [
         'uses' => 'InvitationLinksController@sendHraLink',
-        'as' => 'patient.send.link.hra',
+        'as'   => 'patient.send.link.hra',
     ]);
 
     Route::post('{userId}/send-link/vitals', [
         'uses' => 'InvitationLinksController@sendVitalsLink',
-        'as' => 'patient.send.link.vitals',
+        'as'   => 'patient.send.link.vitals',
     ]);
 
     Route::get('{userId}/enroll', [
         'uses' => 'InvitationLinksController@showEnrollUserForm',
-        'as' => 'patient.enroll',
+        'as'   => 'patient.enroll',
     ]);
 
     Route::post('{userId}/enroll', [
         'uses' => 'InvitationLinksController@enrollUser',
-        'as' => 'patient.enroll',
+        'as'   => 'patient.enroll',
     ]);
 
-    Route::get('{userId}/{surveyName}/{channel}/send-assessment-link', [
+    Route::get(
+        '{userId}/{surveyName}/{channel}/send-assessment-link',
+        [
             'uses' => 'InvitationLinksController@showSendAssessmentLinkForm',
-            'as' => 'patient.assessment-link-form',
+            'as'   => 'patient.assessment-link-form',
         ]
     );
 
@@ -88,12 +82,12 @@ Route::group([
     ], function () {
         Route::post('add', [
             'uses' => 'ProviderController@add',
-            'as' => 'provider.add',
+            'as'   => 'provider.add',
         ]);
 
         Route::get('search', [
             'uses' => 'ProviderController@search',
-            'as' => 'provider.search',
+            'as'   => 'provider.search',
         ]);
     });
 
@@ -102,13 +96,13 @@ Route::group([
     ], function () {
         Route::get('search', [
             'uses' => 'PracticeController@search',
-            'as' => 'practice.search',
+            'as'   => 'practice.search',
         ]);
     });
 });
 
 Route::group([
-    'prefix' => 'survey',
+    'prefix'     => 'survey',
     'middleware' => ['auth'],
 ], function () {
     Route::group([
@@ -116,12 +110,12 @@ Route::group([
     ], function () {
         Route::get('{patientId}/{surveyId}', [
             'uses' => 'EnrolleeSurveyController@getSurvey',
-            'as' => 'survey.enrollees',
+            'as'   => 'survey.enrollees',
         ]);
 
         Route::post('{patientId}/save-answer', [
             'uses' => 'EnrolleeSurveyController@storeAnswer',
-            'as' => 'survey.enrollees.store.answer',
+            'as'   => 'survey.enrollees.store.answer',
         ]);
     });
 
@@ -130,32 +124,32 @@ Route::group([
     ], function () {
         Route::get('{patientId}', [
             'uses' => 'SurveyController@getCurrentSurvey',
-            'as' => 'survey.hra',
+            'as'   => 'survey.hra.current',
         ]);
 
         Route::get('{patientId}/{surveyId}', [
             'uses' => 'SurveyController@getSurvey',
-            'as' => 'survey.hra',
+            'as'   => 'survey.hra',
         ]);
 
         Route::post('{patientId}/save-answer', [
             'uses' => 'SurveyController@storeAnswer',
-            'as' => 'survey.hra.store.answer',
+            'as'   => 'survey.hra.store.answer',
         ]);
     });
 
     Route::group([
-        'prefix' => 'vitals',
+        'prefix'     => 'vitals',
         'middleware' => ['auth', 'permission:vitals-survey-complete'],
     ], function () {
         Route::get('{patientId}', [
             'uses' => 'VitalsSurveyController@getCurrentSurvey',
-            'as' => 'survey.vitals',
+            'as'   => 'survey.vitals',
         ]);
 
         Route::post('{patientId}/save-answer', [
             'uses' => 'VitalsSurveyController@storeAnswer',
-            'as' => 'survey.vitals.store.answer',
+            'as'   => 'survey.vitals.store.answer',
         ]);
     });
 
@@ -164,23 +158,23 @@ Route::group([
     ], function () {
         Route::get('{patientId}/welcome', [
             'uses' => 'VitalsSurveyController@showWelcome',
-            'as' => 'survey.vitals.welcome',
+            'as'   => 'survey.vitals.welcome',
         ]);
 
         Route::get('{patientId}/not-auth', [
             'uses' => 'VitalsSurveyController@showNotAuthorized',
-            'as' => 'survey.vitals.not.authorized',
+            'as'   => 'survey.vitals.not.authorized',
         ]);
     });
 });
 
 Route::group([
-    'prefix' => 'reports',
+    'prefix'     => 'reports',
     'middleware' => ['auth'],
 ], function () {
     Route::get('get-patient-report/{userId}/{reportType}/{year}', [
         'uses' => 'PatientController@getPatientReport',
-        'as' => 'patient.get-report',
+        'as'   => 'patient.get-report',
     ]);
 
     Route::get('/provider-report/{userId}/{year?}', 'ProviderReportController@getProviderReport')
@@ -198,12 +192,12 @@ Route::group([
     ], function () {
         Route::get('create-url/{userId}/{surveyId}', [
             'uses' => 'InvitationLinksController@createEnrolleesSurveyUrl',
-            'as' => 'create.enrollees.survey.url',
+            'as'   => 'create.enrollees.survey.url',
         ]);
 
         Route::post('get-enrollable-data', [
             'uses' => 'EnrolleeSurveyController@getEnrollableQuestionsData',
-            'as' => 'get.enrollable.data',
+            'as'   => 'get.enrollable.data',
         ]);
     });
 });

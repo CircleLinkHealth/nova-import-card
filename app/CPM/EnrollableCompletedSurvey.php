@@ -1,17 +1,20 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\CPM;
 
 use CircleLinkHealth\Customer\Entities\User;
 
 class EnrollableCompletedSurvey extends AwvToCpmRedisEvent
 {
+    protected $channel = 'enrollable-survey-completed';
     /**
      * @var User
      */
     private $enrollableId;
-
-    protected $channel = 'enrollable-survey-completed';
 
     /**
      * EnrollableCompletedSurvey constructor.
@@ -29,8 +32,8 @@ class EnrollableCompletedSurvey extends AwvToCpmRedisEvent
     public function publishEnrollableCompletedSurvey($surveyInstanceId)
     {
         $this->publish([
-            'enrollable_id' => $this->enrollableId,
-            'survey_instance_id' => $surveyInstanceId
+            'enrollable_id'      => $this->enrollableId,
+            'survey_instance_id' => $surveyInstanceId,
         ]);
     }
 }

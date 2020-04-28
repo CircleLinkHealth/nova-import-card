@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Listeners;
 
 use App\CPM\EnrollableCompletedSurvey;
@@ -18,21 +22,19 @@ class GeneratePatientReports
      */
     public function __construct()
     {
-        //
     }
 
     /**
      * Handle the event.
      *
-     * @param SurveyInstancePivotSaved $event
      *
      * @return void
      */
     public function handle(SurveyInstancePivotSaved $event)
     {
-        $instance = $event->surveyInstance;
+        $instance   = $event->surveyInstance;
         $surveyName = Survey::whereId($event->surveyInstance->survey_id)->first()->name;
-        if ($instance->pivot->status === SurveyInstance::COMPLETED) {
+        if (SurveyInstance::COMPLETED === $instance->pivot->status) {
             $patient = User::with([
                 'surveyInstances' => function ($i) use ($instance) {
                     $i->forYear($instance->year)
