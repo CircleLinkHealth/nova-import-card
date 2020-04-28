@@ -8,24 +8,24 @@ use Illuminate\Database\Seeder;
 
 class CreateEnrolleesSurveySeeder extends Seeder
 {
-    const ADDRESS           = 'address';
-    const CHECKBOX          = 'checkbox';
-    const CONFIRM_ADDRESS   = 'Q_CONFIRM_ADDRESS';
-    const CONFIRM_EMAIL     = 'Q_CONFIRM_EMAIL';
-    const CONFIRM_LETTER    = 'Q_CONFIRM_LETTER';
-    const CONFIRMATION      = 'confirmation';
-    const DATE              = 'date';
-    const DOB               = 'Q_DOB';
-    const NUMBER            = 'number';
-    const PHONE             = 'phone';
-    const PREFERRED_DAYS    = 'Q_PREFERRED_DAYS';
-    const PREFERRED_NUMBER  = 'Q_PREFERRED_NUMBER';
-    const PREFERRED_TIME    = 'Q_PREFERRED_TIME';
-    const QUESTION_TYPE_DOB = 'dob';
-    const REQUESTS_INFO     = 'Q_REQUESTS_INFO';
-    const SELECT            = 'select';
-    const TEXT              = 'text';
-    const TIME              = 'time';
+    const ADDRESS          = 'address';
+    const CHECKBOX         = 'checkbox';
+    const CONFIRM_ADDRESS  = 'Q_CONFIRM_ADDRESS';
+    const CONFIRM_EMAIL    = 'Q_CONFIRM_EMAIL';
+    const CONFIRM_LETTER   = 'Q_CONFIRM_LETTER';
+    const CONFIRMATION     = 'confirmation';
+    const DATE             = 'date';
+    const DOB              = 'Q_DOB';
+    const NUMBER           = 'number';
+    const PHONE            = 'phone';
+    const PREFERRED_DAYS   = 'Q_PREFERRED_DAYS';
+    const PREFERRED_NUMBER = 'Q_PREFERRED_NUMBER';
+    const PREFERRED_TIME   = 'Q_PREFERRED_TIME';
+//    const QUESTION_TYPE_DOB = 'dob';
+    const REQUESTS_INFO = 'Q_REQUESTS_INFO';
+    const SELECT        = 'select';
+    const TEXT          = 'text';
+    const TIME          = 'time';
 
     public function createQuestions($instance, $questionsData)
     {
@@ -54,23 +54,23 @@ class CreateEnrolleesSurveySeeder extends Seeder
                     : null,
             ]);
 
-            $questionTypeId = DB::table('question_types')->insertGetId([
+            $selfId = DB::table('question_types')->insertGetId([
                 'type'        => $questionData['question_type'],
                 'question_id' => $questionId,
             ]);
 
             if (array_key_exists('question_type_answers', $questionData)) {
-                foreach ($questionData['question_type_answers'] as $questionTypeAnswer) {
+                foreach ($questionData['question_type_answers'] as $selfAnswer) {
                     DB::table('question_types_answers')->insert(
                         [
-                            'question_type_id' => ! empty($questionTypeAnswer)
-                                ? $questionTypeId
+                            'question_type_id' => ! empty($selfAnswer)
+                                ? $selfId
                                 : null,
-                            'value' => array_key_exists('type_answer_body', $questionTypeAnswer)
-                                ? $questionTypeAnswer['type_answer_body']
+                            'value' => array_key_exists('type_answer_body', $selfAnswer)
+                                ? $selfAnswer['type_answer_body']
                                 : null,
-                            'options' => array_key_exists('options', $questionTypeAnswer)
-                                ? json_encode($questionTypeAnswer['options'])
+                            'options' => array_key_exists('options', $selfAnswer)
+                                ? json_encode($selfAnswer['options'])
                                 : null,
                         ]
                     );
@@ -137,32 +137,16 @@ class CreateEnrolleesSurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'     => self::PREFERRED_TIME,
-                'order'          => 3,
-                'sub_order'      => 'b',
-                'question_group' => 'Please choose preferred days and time to contact:',
-                'question_body'  => 'Choose preferred contact time:',
-                'question_type'  => self::TIME,
-                'conditions'     => [
-                    'required_regex' => 'time',
-                ],
+                'identifier'            => self::PREFERRED_TIME,
+                'order'                 => 3,
+                'sub_order'             => 'b',
+                'question_group'        => 'Please choose preferred days and time to contact:',
+                'question_body'         => 'Choose preferred contact time:',
+                'question_type'         => self::CHECKBOX,
                 'question_type_answers' => [
-                    [
-                        'options' => [
-                            'sub_parts' => [
-                                [
-                                    'title'       => 'From:',
-                                    'key'         => 'from',
-                                    'placeholder' => 'From',
-                                ],
-                                [
-                                    'title'       => 'To',
-                                    'key'         => 'to',
-                                    'placeholder' => 'To',
-                                ],
-                            ],
-                        ],
-                    ],
+                    ['type_answer_body' => '9am - 12pm'],
+                    ['type_answer_body' => '12pm - 3pm '],
+                    ['type_answer_body' => '3pm - 6pm'],
                 ],
             ],
 
@@ -194,25 +178,23 @@ class CreateEnrolleesSurveySeeder extends Seeder
                     ],
                 ],
             ],
-
-            [
-                'identifier'    => self::DOB,
-                'order'         => 6,
-                'question_body' => 'Please update or confirm your date of birth',
-                'question_type' => self::QUESTION_TYPE_DOB,
-                'conditions'    => [
-                    'is_auto_generated' => true,
-                    'generated_from'    => [
-                        [
-                            'key' => 'dob',
-                        ],
-                    ],
-                ],
-            ],
-
+            //            [
+            //                'identifier'    => self::DOB,
+            //                'order'         => 6,
+            //                'question_body' => 'Please update or confirm your date of birth',
+            //                'question_type' => self::DOB,
+            //                'conditions'    => [
+            //                    'is_auto_generated' => true,
+            //                    'generated_from'    => [
+            //                        [
+            //                            'key' => 'dob',
+            //                        ],
+            //                    ],
+            //                ],
+            //            ],
             [
                 'identifier'    => self::CONFIRM_LETTER,
-                'order'         => 7,
+                'order'         => 6,
                 'optional'      => true,
                 'question_body' => 'Please confirm you have read the letter',
                 'question_type' => self::CONFIRMATION,
