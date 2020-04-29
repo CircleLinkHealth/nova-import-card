@@ -140,8 +140,7 @@ class PatientObserver
         if ($patient->isDirty('ccm_status')) {
             if ($this->statusChangedToEnrolled($patient)) {
                 $patient->loadMissing('user');
-                AssignPatientToStandByNurse::makeStandByNursePrimary($patient->user);
-                AssignPatientToStandByNurse::assignCallToStandByNurse($patient->user);
+                AssignPatientToStandByNurse::assign($patient->user);
             }
         }
     }

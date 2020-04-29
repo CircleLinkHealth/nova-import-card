@@ -11,32 +11,30 @@ use App\Services\Calls\SchedulerService;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Database\QueryException;
 
 class AssignPatientToStandByNurse
 {
-    /**
-     * Create the event listener.
-     *
-     * @return void
-     */
-    public function __construct()
+    public static function assign(User $patient)
     {
-    }
-
-    public static function assignCallToStandByNurse(User $patient)
-    {
-        if ( ! $standByNurseId = StandByNurseUser::id()) {
+        if (self::shouldBail($patient)) {
             return null;
         }
-
+        
+        self::makeStandByNursePrimary($patient);
+        self::assignCallToStandByNurse($patient);
+    }
+    
+    private static function assignCallToStandByNurse(User $patient)
+    {
         $scheduler = app()->make(SchedulerService::class);
 
         if ($scheduler->hasScheduledCall($patient)) {
             return null;
         }
 
-        return $scheduler->storeScheduledCall($patient->id, '09:00', '17:00', now(), 'system - patient status changed to enrolled', $standByNurseId);
+        return $scheduler->storeScheduledCall($patient->id, '09:00', '17:00', now(), 'system - patient status changed to enrolled', StandByNurseUser::id());
     }
 
     /**
@@ -48,21 +46,16 @@ class AssignPatientToStandByNurse
      */
     public function handle(CarePlanWasQAApproved $event)
     {
-        self::makeStandByNursePrimary($event->patient);
-        self::assignCallToStandByNurse($event->patient);
+        return self::assign($event->patient);
     }
 
-    public static function makeStandByNursePrimary(User $patient)
+    private static function makeStandByNursePrimary(User $patient)
     {
-        if ( ! $standByNurseId = StandByNurseUser::id()) {
-            return null;
-        }
-
         try {
             return PatientNurse::updateOrCreate(
                 ['patient_user_id' => $patient->id],
                 [
-                    'nurse_user_id'           => $standByNurseId,
+                    'nurse_user_id'           => StandByNurseUser::id(),
                     'temporary_nurse_user_id' => null,
                     'temporary_from'          => null,
                     'temporary_to'            => null,
@@ -76,5 +69,24 @@ class AssignPatientToStandByNurse
 
             \Log::error('Attempted to create duplicate PatientNurse for patientid:'.$patient->id);
         }
+    }
+    
+    private static function shouldBail(User $patient)
+    {
+        $patient->loadMissing('carePlan');
+        
+        if (! $patient->carePlan) {
+            return true;
+        }
+    
+        if (! in_array($patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::PROVIDER_APPROVED])) {
+            return true;
+        }
+    
+        if ( ! StandByNurseUser::id()) {
+            return true;
+        }
+        
+        return false;
     }
 }
