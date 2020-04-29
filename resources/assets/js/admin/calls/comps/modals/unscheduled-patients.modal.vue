@@ -83,7 +83,7 @@
             },
             patientUrl() {
                 const practice_addendum = this.practiceId ? `practices/${this.practiceId}/` : '';
-                return rootUrl(`api/${practice_addendum}patients/without-scheduled-activities?autocomplete`);
+                return rootUrl(`api/${practice_addendum}patients/without-scheduled-activities?autocomplete=true`);
             }
         },
         methods: {
