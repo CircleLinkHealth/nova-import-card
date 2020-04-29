@@ -6,7 +6,6 @@
 
 namespace App\Console\Commands;
 
-use App\Call;
 use Illuminate\Console\Command;
 
 class RemoveDuplicateScheduledCalls extends Command
@@ -25,44 +24,18 @@ class RemoveDuplicateScheduledCalls extends Command
     protected $signature = 'calls:rm-dp-sch';
 
     /**
-     * Create a new command instance.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
      * @return mixed
      */
     public function handle()
     {
-        $delCount = 0;
+        $success = \DB::statement('DELETE n1 FROM calls n1, calls n2 WHERE n1.id < n2.id AND n1.inbound_cpm_id = n2.inbound_cpm_id AND n1.status = \'scheduled\' AND n1.status = n2.status AND n1.`type` = \'call\' AND n1.`type` = n2.`type` AND n1.`is_cpm_outbound` = 1 AND n1.`is_cpm_outbound` = n2.`is_cpm_outbound`');
 
-        $users = \DB::select('select inbound_cpm_id, count(*) as c
-from calls
-where status = \'scheduled\'
-group by inbound_cpm_id
-having c > 1
-');
-
-        foreach ($users as $u) {
-            $calls = Call::scheduled()->where(
-                'inbound_cpm_id',
-                $u->inbound_cpm_id
-            )->orderByDesc('updated_at')->get();
-
-            for ($i = 1; $i < $calls->count(); ++$i) {
-                $deleted = $calls[$i]->delete();
-
-                if ($deleted) {
-                    ++$delCount;
-                }
-            }
+        if (true === (bool) $success) {
+            $this->line('Duplicate scheduled calls deleted');
+        } else {
+            $this->error('Duplicate scheduled calls were not deleted');
         }
-
-        echo "${delCount} rows deleted.";
     }
 }
