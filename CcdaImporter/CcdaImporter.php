@@ -68,13 +68,12 @@ class CcdaImporter
         $this->patient  = $patient;
         $this->enrollee = $enrollee;
     }
-    
+
     /**
      * Attempt to Import a CCDA.
      *
      * This calls the importing process wrapped in a DB transaction.
      *
-     * @return Ccda
      * @throws \Throwable
      */
     public function attemptImport(): Ccda
@@ -161,17 +160,6 @@ class CcdaImporter
         }
 
         return $this;
-    }
-
-    private function patientEmail()
-    {
-        $email = $this->ccda->patientEmail();
-
-        if ('noemail@noemail.com' === strtolower($email)) {
-            return null;
-        }
-
-        return $email;
     }
 
     /**
@@ -349,6 +337,17 @@ class CcdaImporter
         ImportVitals::for($this->patient, $this->ccda);
 
         return $this;
+    }
+
+    private function patientEmail()
+    {
+        $email = $this->ccda->patientEmail();
+
+        if ('noemail@noemail.com' === strtolower($email)) {
+            return null;
+        }
+
+        return $email;
     }
 
     private function updateCcdaPostImport()
