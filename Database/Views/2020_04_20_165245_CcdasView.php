@@ -42,8 +42,17 @@ class CcdasView extends BaseSqlView
         JSON_UNQUOTE(JSON_EXTRACT(json, \"$.demographics.mrn_number\")) AS mrn,
         patient_user.first_name as patient_first_name,
         enrollees.first_name as enrollee_first_name,
-        REPLACE(JSON_UNQUOTE(REPLACE(JSON_EXTRACT(json, \"$.demographics.name.given\"),'[\"', '')), '\"]', '') AS first_name,
-        patient_user.last_name as patient_last_name,
+REPLACE(
+                REPLACE(
+                   REPLACE(
+                       JSON_UNQUOTE(json->\"$.demographics.name.given\"),
+                       '[', ''
+                   ),
+                   ']', ''
+                ),
+                '\"', ''
+            ) AS first_name,
+                    patient_user.last_name as patient_last_name,
         enrollees.last_name as enrollee_last_name,
         JSON_UNQUOTE(JSON_EXTRACT(json, \"$.demographics.name.family\")) AS last_name,
         
