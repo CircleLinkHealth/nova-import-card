@@ -6,13 +6,13 @@
 
 namespace Modules\Eligibility\Providers;
 
-use App\Http\Controllers\Enrollment\Auth\EnrollmentAuthLink;
+use App\Http\Controllers\Enrollment\Auth\EnrollmentAuthentication;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 
 class AutoEnrollmentLoginProvider extends EloquentUserProvider
 {
-    use EnrollmentAuthLink;
+    use EnrollmentAuthentication;
 
     /**
      * AutoEnrollmentLoginProvider constructor.
