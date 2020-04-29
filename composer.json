@@ -142,7 +142,7 @@
     "circlelinkhealth/condition-code-lookup-module": "dev-master",
     "circlelinkhealth/core-module": "dev-laravel-6-upgrade",
     "circlelinkhealth/cpm-migrations-module": "dev-master",
-    "circlelinkhealth/customer-module": "dev-master",
+    "circlelinkhealth/customer-module": "dev-CPM-2259-attestation-complex-conditions",
     "circlelinkhealth/eligibility-module": "dev-lavavel-6",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/generate-success-stories-report": "*",
