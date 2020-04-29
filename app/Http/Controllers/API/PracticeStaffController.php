@@ -18,6 +18,17 @@ use CircleLinkHealth\Customer\Entities\User;
 
 class PracticeStaffController extends Controller
 {
+    public const PRACTICE_STAFF_ROLES = [
+        'practice-lead',
+        'med_assistant',
+        'office_admin',
+        'provider',
+        'registered-nurse',
+        'specialist',
+        'software-only',
+        'care-center-external',
+    ];
+
     /**
      * Remove the specified resource from storage.
      *
@@ -56,20 +67,8 @@ class PracticeStaffController extends Controller
     {
         $primaryPractice = Practice::find($primaryPracticeId);
 
-        $relevantRoles = [
-            'med_assistant',
-            'office_admin',
-            'provider',
-            'registered-nurse',
-            'specialist',
-            'software-only',
-            'care-center-external',
-        ];
-
-        $practiceUsers = User::ofType(array_merge($relevantRoles, ['practice-lead']))
-            ->whereHas('practices', function ($q) use (
-                                 $primaryPractice
-                             ) {
+        $practiceUsers = User::ofType(self::PRACTICE_STAFF_ROLES)
+            ->whereHas('practices', function ($q) use ($primaryPractice) {
                 $q->where('practices.id', '=', $primaryPractice->id);
             })
             ->with('roles')

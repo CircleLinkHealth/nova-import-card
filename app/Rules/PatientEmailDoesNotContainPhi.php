@@ -64,8 +64,6 @@ class PatientEmailDoesNotContainPhi implements Rule
     {
         $this->field = 'patient_email_body' == $attribute ? 'body' : 'subject';
 
-        $this->patientUser->loadMissing(Constants::PATIENT_PHI_RELATIONSHIPS);
-
         //check if string contains and just add fields that are found. Looping over each one individually, so we can report back to the user which phi exist in the message
         $value = strtolower($value);
 
@@ -81,9 +79,10 @@ class PatientEmailDoesNotContainPhi implements Rule
         }
 
         //For Relationships
-        foreach ($this->patientUser->getRelations() as $relation) {
-            foreach ($relation->phi as $phi) {
-                $string = $this->getSanitizedAndTransformedAttribute($relation, $phi);
+        $this->patientUser->loadMissing(Constants::PATIENT_PHI_RELATIONSHIPS);
+        foreach (Constants::PATIENT_PHI_RELATIONSHIPS as $relation) {
+            foreach ($this->patientUser->{$relation}->phi as $phi) {
+                $string = $this->getSanitizedAndTransformedAttribute($this->patientUser->{$relation}, $phi);
                 if ($string) {
                     $this->phiFound[] = $this->stringsMatch($string, $value)
                         ? $phi

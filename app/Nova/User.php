@@ -6,6 +6,7 @@
 
 namespace App\Nova;
 
+use App\Http\Controllers\API\PracticeStaffController;
 use App\Nova\Actions\UserEnroll;
 use App\Nova\Actions\UserUnreachable;
 use App\Nova\Actions\UserWithdraw;
@@ -154,12 +155,11 @@ class User extends Resource
             }),
 
             Text::make('Edit', function () {
-                if ($this->isAdmin() || $this->isParticipant()) {
-                    //this automatically redirects admins and participants to their pages
-                    $url = route('admin.users.edit', ['id' => $this->id]);
-                } else {
+                if ($this->hasRole(PracticeStaffController::PRACTICE_STAFF_ROLES)) {
                     $practiceSlug = $this->primaryPractice->name;
                     $url = route('provider.dashboard.manage.staff', ['practiceSlug' => $practiceSlug]);
+                } else {
+                    $url = route('admin.users.edit', ['id' => $this->id]);
                 }
 
                 return $this->getEditButton($url);
@@ -238,10 +238,10 @@ class User extends Resource
     private function getEditButton($url)
     {
         //this is a hack to hide the edit button of the resource, so that only the custom one below will be visible
-        $styleHack = "<style> 
+        $styleHack = "<style>
 a[dusk='{$this->id}-edit-button'], a[dusk='edit-resource-button'] {
     display: none;
-} 
+}
 </style>";
 
         return $styleHack.'<a target="_blank" href="'.$url.'" class="inline-flex cursor-pointer text-70 hover:text-primary mr-3 has-tooltip">
