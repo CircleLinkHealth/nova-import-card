@@ -79,7 +79,8 @@ class PatientSummaryEloquentRepository
      */
     public function attachChargeableServices(PatientMonthlySummary $summary)
     {
-        if ($this->shouldNotTouch($summary) && $summary->chargeableServices->isNotEmpty()) {
+        //summary attachment process check should come first because it needs to detach last month's services if it has to
+        if ( ! $summary->shouldGoThroughChargeableServiceAttachmentProcess() && $this->shouldNotTouch($summary)) {
             return $summary;
         }
 
