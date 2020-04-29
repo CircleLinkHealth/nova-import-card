@@ -52,7 +52,7 @@ class Ccda extends Resource
         'nurse_user_name',
         'practice_display_name',
         'dob',
-        'provider',
+        'provider_name',
     ];
 
     /**
