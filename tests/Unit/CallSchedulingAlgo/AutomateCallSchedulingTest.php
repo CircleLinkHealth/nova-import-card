@@ -4,9 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Tests\Feature;
+namespace Tests\Unit\CallSchedulingAlgo;
 
 use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -153,8 +154,12 @@ class AutomateCallSchedulingTest extends TestCase
     public function test_system_schedules_call_for_patient_status_change_to_enrolled()
     {
         $practice = $this->createPractice(false);
-        $patient  = $this->createPatient($practice->id, false, false, false, false);
-        $updated  = CarePlan::where('user_id', $patient->id)->update([
+
+        $nurse = $this->createUser($practice->id, 'care-center');
+        setAppConfig(StandByNurseUser::STAND_BY_NURSE_USER_ID_NOVA_KEY, $nurse->id);
+
+        $patient = $this->createPatient($practice->id, false, false, false, false);
+        $updated = CarePlan::where('user_id', $patient->id)->update([
             'status' => CarePlan::QA_APPROVED,
         ]);
         $callsCount = $patient->inboundScheduledCalls->count();

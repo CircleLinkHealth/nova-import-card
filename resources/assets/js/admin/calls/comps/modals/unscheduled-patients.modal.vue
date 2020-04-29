@@ -109,6 +109,9 @@
             getPatients() {
                 this.loaders.patients = true
                 this.cache().get(this.patientUrl).then(patients => {
+                    if (patients.data) {
+                        patients = patients.data;
+                    }
                     if (!Array.isArray(patients)) {
                         patients = Object.values(patients);
                     }
