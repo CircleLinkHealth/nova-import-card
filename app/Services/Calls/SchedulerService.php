@@ -175,25 +175,8 @@ class SchedulerService
     //Get scheduled call
     public function getScheduledCallForPatient($patient)
     {
-        $call = Call::where(
-            function ($q) {
-                $q->whereNull('type')
-                    ->orWhere('type', '=', SchedulerService::CALL_TYPE);
-            }
-        )
-            ->where(
-                function ($q) use (
-                            $patient
-                        ) {
-                    $q->where('outbound_cpm_id', $patient->id)
-                        ->orWhere('inbound_cpm_id', $patient->id);
-                }
-            )
-            ->where('status', '=', 'scheduled')
-            ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
+        return $this->scheduledCallQuery($patient)
             ->first();
-
-        return $call;
     }
 
     /**
@@ -231,6 +214,11 @@ class SchedulerService
         }
 
         return $query->first();
+    }
+
+    public function hasScheduledCall(User $patient)
+    {
+        return $this->scheduledCallQuery($patient)->exists();
     }
 
     public function importCallsFromCsv($csv)
@@ -724,6 +712,26 @@ class SchedulerService
         $prediction['successful'] = Call::REACHED == $callStatus;
 
         return $prediction;
+    }
+
+    private function scheduledCallQuery(User $patient)
+    {
+        return Call::where(
+            function ($q) {
+                $q->whereNull('type')
+                    ->orWhere('type', '=', SchedulerService::CALL_TYPE);
+            }
+        )
+            ->where(
+                function ($q) use (
+                    $patient
+                ) {
+                    $q->where('outbound_cpm_id', $patient->id)
+                        ->orWhere('inbound_cpm_id', $patient->id);
+                }
+            )
+            ->where('status', '=', 'scheduled')
+            ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
     }
 
     /**

@@ -8,7 +8,6 @@ namespace App\Observers;
 
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Listeners\AssignPatientToStandByNurse;
-use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -70,11 +69,7 @@ class PatientObserver
                 );
             }
 
-            if ($this->statusChangedToEnrolled($patient)) {
-                $patient->load('user');
-                AssignPatientToStandByNurse::makeStandByNursePrimary($patient->user);
-                AssignPatientToStandByNurse::assignCallToStandByNurse($patient->user);
-            }
+            $this->assignToStandByNurseIfChangedToEnrolled($patient);
         }
     }
 
@@ -114,13 +109,7 @@ class PatientObserver
             $this->sendPatientConsentedNote($patient);
         }
 
-        if ($patient->isDirty('ccm_status')) {
-            if ($this->statusChangedToEnrolled($patient)) {
-                /** @var SchedulerService $schedulerService */
-                $schedulerService = app()->make(SchedulerService::class);
-                $schedulerService->ensurePatientHasScheduledCall($patient->user);
-            }
-        }
+        $this->assignToStandByNurseIfChangedToEnrolled($patient);
     }
 
     /**
@@ -142,6 +131,17 @@ class PatientObserver
                 if (Patient::UNREACHABLE == $oldValue) {
                     $patient->no_call_attempts_since_last_success = 0;
                 }
+            }
+        }
+    }
+
+    private function assignToStandByNurseIfChangedToEnrolled(Patient $patient)
+    {
+        if ($patient->isDirty('ccm_status')) {
+            if ($this->statusChangedToEnrolled($patient)) {
+                $patient->loadMissing('user');
+                AssignPatientToStandByNurse::makeStandByNursePrimary($patient->user);
+                AssignPatientToStandByNurse::assignCallToStandByNurse($patient->user);
             }
         }
     }
