@@ -291,6 +291,13 @@ class PatientMonthlySummary extends BaseModel
         $newSummary->save();
     }
 
+    public static function existsForCurrentMonthForPatient($patientId): bool
+    {
+        return (new static())->where('patient_id', $patientId)
+            ->where('month_year', Carbon::now()->startOfMonth())
+            ->exists();
+    }
+
     public static function getPatientQACountForPracticeForMonth(
         Practice $practice,
         Carbon $month
