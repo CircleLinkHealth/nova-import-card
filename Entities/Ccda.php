@@ -512,7 +512,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         return $query->whereHas(
             'media',
             function ($q) {
-                $q->where('custom_properties->is_ccda', 'true')->where('custom_properties->is_upg0506', 'true');
+                $q->where('is_ccda', true)->where('is_upg0506', true);
             }
         );
     }
@@ -523,10 +523,10 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             function ($query) {
                 $query->select('id')
                     ->from('media')
-                    ->where('custom_properties->is_pdf', 'true')->where(
-                        'custom_properties->is_upg0506',
-                        'true'
-                    )->where('custom_properties->care_plan->demographics->mrn_number', (string) $this->mrn);
+                    ->where('is_pdf', true)->where(
+                        'is_upg0506',
+                        true
+                    )->where('mrn', (string) $this->mrn);
             }
         );
     }
