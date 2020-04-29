@@ -161,6 +161,34 @@ class PatientMonthlySummary extends BaseModel
             );
     }
 
+    public function attachLastMonthsChargeableServicesIfYouShould(PatientMonthlySummary $lastMonthsSummary = null)
+    {
+        if ($this->chargeableServices->isNotEmpty()) {
+            return;
+        }
+
+        if ( ! $lastMonthsSummary) {
+            $lastMonthsSummary = PatientMonthlySummary::with('chargeableServices')
+                ->where('patient_id', $this->patient_id)
+                ->where('month_year', Carbon::now()->startOfMonth()->subMonth())
+                ->first();
+        }
+
+        if ( ! $lastMonthsSummary) {
+            return;
+        }
+
+        if ($lastMonthsSummary->chargeableServices->isEmpty()) {
+            return;
+        }
+
+        $chargeableServiceIds = $lastMonthsSummary->chargeableServices->pluck('id')->toArray();
+
+        $this->chargeableServices()->attach($chargeableServiceIds);
+
+        $this->load('chargeableServices');
+    }
+
     public function attestedProblems()
     {
         return $this->belongsToMany(Problem::class, 'call_problems', 'patient_monthly_summary_id', 'ccd_problem_id');
@@ -197,9 +225,8 @@ class PatientMonthlySummary extends BaseModel
     }
 
     /**
-     * @todo: Deprecate in favor of billableProblems()
-     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @todo: Deprecate in favor of billableProblems()
      */
     public function billableProblem1()
     {
@@ -207,9 +234,8 @@ class PatientMonthlySummary extends BaseModel
     }
 
     /**
-     * @todo: Deprecate in favor of billableProblems()
-     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @todo: Deprecate in favor of billableProblems()
      */
     public function billableProblem2()
     {
@@ -273,6 +299,9 @@ class PatientMonthlySummary extends BaseModel
         if ($summary) {
             //clone record
             $newSummary = $summary->replicate();
+
+            //get last month's services
+            $newSummary->attachLastMonthsChargeableServicesIfYouShould($summary);
         } else {
             $newSummary             = new self();
             $newSummary->patient_id = $userId;
@@ -289,6 +318,13 @@ class PatientMonthlySummary extends BaseModel
         $newSummary->actor_id               = null;
         $newSummary->needs_qa               = null;
         $newSummary->save();
+    }
+
+    public static function existsForCurrentMonthForPatient($patientId): bool
+    {
+        return (new static())->where('patient_id', $patientId)
+            ->where('month_year', Carbon::now()->startOfMonth())
+            ->exists();
     }
 
     public static function getPatientQACountForPracticeForMonth(
@@ -322,9 +358,9 @@ class PatientMonthlySummary extends BaseModel
             }
 
             $emptyProblemOrCode = ('' == $report->billable_problem1_code)
-                                  || ('' == $report->billable_problem2_code)
-                                  || ('' == $report->billable_problem2)
-                                  || ('' == $report->billable_problem1);
+                || ('' == $report->billable_problem2_code)
+                || ('' == $report->billable_problem2)
+                || ('' == $report->billable_problem1);
 
             if ((0 == $report->rejected && 0 == $report->approved) || $emptyProblemOrCode) {
                 ++$count['toQA'];
