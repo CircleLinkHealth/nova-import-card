@@ -224,7 +224,7 @@
                 return false;
             },
             validateAttestedConditions(){
-                if (! this.attestationRequirements){
+                if (! this.attestationRequirements || this.attestationRequirements.disabled){
                     return true;
                 }
                 let self = this;

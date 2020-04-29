@@ -857,6 +857,7 @@ class NotesController extends Controller
     private function getAttestationRequirementsIfYouShould(User $patient)
     {
         $requirements = [
+            'disabled'   => true,
             'ccm_2'      => false,
             'bhi_1'      => false,
             'is_complex' => false,
@@ -865,6 +866,8 @@ class NotesController extends Controller
         if ( ! complexAttestationRequirementsEnabledForPractice($patient->primaryPractice->id)) {
             return $requirements;
         }
+
+        $requirements['disabled'] = false;
 
         if ( ! PatientMonthlySummary::existsForCurrentMonthForPatient($patient->id)) {
             PatientMonthlySummary::createFromPatient($patient->id, Carbon::now()->startOfMonth());
