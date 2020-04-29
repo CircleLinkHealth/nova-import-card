@@ -65,7 +65,8 @@
                          class="survey-sub-welcome-text"
                          style="text-align: center;">
                         Dear {{this.surveyData.last_name}},<br>
-                        Almost done! Just need some information.
+                        Almost done! Just confirm/edit some information to make sure <br>
+                        we call the right number at the right time.
                     </div>
                     <div v-else class="survey-sub-welcome-text">
                         Here is the form to fill out {{patientName}}'s Vitals. Once completed, a PPP will be
