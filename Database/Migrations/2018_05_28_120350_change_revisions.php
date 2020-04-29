@@ -25,8 +25,12 @@ class ChangeRevisions extends Migration
     public function up()
     {
         Schema::table('revisions', function (Blueprint $table) {
-            $table->dateTime('created_at')->nullable()->default(null)->change();
-            $table->dateTime('updated_at')->nullable()->default(null)->change();
+            if (Schema::hasColumn('revisions', 'created_at')) {
+                $table->dateTime('created_at')->nullable()->default(null)->change();
+            }
+            if (Schema::hasColumn('revisions', 'updated_at')) {
+                $table->dateTime('updated_at')->nullable()->default(null)->change();
+            }
         });
     }
 }
