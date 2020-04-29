@@ -29,17 +29,17 @@
                                     <form method="POST" action="{{route('invitation.enrollment.login')}}">
                                         {{csrf_field()}}
 
+{{--                                        <div class='row' style="margin-top: 70px;">--}}
+{{--                                            <div class='input-field col s12'>--}}
+{{--                                                <label for="display_name" class="full-name" style="font-size: 20px; color:black">Full Name</label>--}}
+{{--                                                <input type="text" name="display_name"--}}
+{{--                                                       class="login-inputs"--}}
+{{--                                                       value="{{old('display_name')}}"--}}
+{{--                                                       placeholder="Enter your full Name"--}}
+{{--                                                       required>--}}
+{{--                                            </div>--}}
+{{--                                        </div>--}}
                                         <div class='row' style="margin-top: 70px;">
-                                            <div class='input-field col s12'>
-                                                <label for="display_name" class="full-name" style="font-size: 20px; color:black">Full Name</label>
-                                                <input type="text" name="display_name"
-                                                       class="login-inputs"
-                                                       value="{{old('display_name')}}"
-                                                       placeholder="Enter your full Name"
-                                                       required>
-                                            </div>
-                                        </div>
-                                        <div class='row'>
                                             <div class='input-field col s12'>
                                                 <label for="birth-date" class="birth-date" style="font-size: 20px; color:black">Date of Birth (DOB)</label>
                                                 <input type="date" name="birth_date"
@@ -63,6 +63,7 @@
 
                                                 <input type="hidden" name="user_id" value="{{$userId}}">
                                                 <input type="hidden" name="is_survey_only" value="{{$isSurveyOnly}}">
+                                                <input type="hidden" name="url_with_token" value="{{$urlWithToken}}">
                                                 <button type="submit" class="waves-effect waves-light btn-large" style="background-color: #4CB2E1">Continue</button>
                                             </div>
                                         </center>

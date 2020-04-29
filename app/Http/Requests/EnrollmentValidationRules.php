@@ -7,6 +7,7 @@
 namespace App\Http\Requests;
 
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 
@@ -23,6 +24,19 @@ class EnrollmentValidationRules extends FormRequest
     }
 
     /**
+     * @param $url
+     *
+     * @return mixed
+     */
+    public function parseUrl($url)
+    {
+        $parsedUrl = parse_url($url);
+        parse_str($parsedUrl['query'], $output);
+
+        return $output['signature'];
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -30,8 +44,8 @@ class EnrollmentValidationRules extends FormRequest
     public function rules()
     {
         return [
-            'display_name' => 'required|string',
-            'birth_date'   => 'required|date',
+            'url_with_token' => 'required|string',
+            'birth_date'     => 'required|date',
         ];
     }
 
@@ -47,7 +61,17 @@ class EnrollmentValidationRules extends FormRequest
     private function inputIsInvalid($input)
     {
         $user = User::with('patientInfo')->where('id', $input['user_id'])->firstOrFail();
-        if ($user->display_name !== $input['display_name']
+        if ($input['is_survey_only']) {
+            $enrollee = Enrollee::where('user_id', $input['user_id'])->firstOrFail();
+            /** @var Enrollee $enrollee */
+            $dbToken = $enrollee->getLastEnrollmentInvitationLink()->link_token;
+        } else {
+            /** @var User $user */
+            $dbToken = $user->getLastEnrollmentInvitationLink()->link_token;
+        }
+
+        $inputToken = $this->parseUrl($input['url_with_token']);
+        if ($dbToken !== $inputToken
             || Carbon::parse($input['birth_date'])->startOfDay()->ne($user->patientInfo->birth_date)) {
             return true;
         }

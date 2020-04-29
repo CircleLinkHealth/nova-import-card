@@ -139,4 +139,6 @@ class AutoEnrollmentProcess extends CustomerTestCase
 //    public function test_only_patients_taken_no_action_will_be_marked_as_unresponsive()
 //    {
 //    }
+
+// test authentication
 }

@@ -11,7 +11,6 @@ use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\Http\Requests\EnrollmentLinkValidation;
 use App\Http\Requests\EnrollmentValidationRules;
 use App\Services\Enrollment\EnrollmentInvitationService;
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +18,7 @@ use Illuminate\Support\Facades\Auth;
 class AutoEnrollmentLogin extends Controller
 {
     use AuthenticatesUsers;
-    use EnrollmentAuthLink;
+    use EnrollmentAuthentication;
 
     public function __construct()
     {
@@ -31,12 +30,16 @@ class AutoEnrollmentLogin extends Controller
         $manager = new AutoEnrollmentCenterController(new EnrollmentInvitationService());
         Auth::loginUsingId($request->input('user_id'), true);
 
-        return $manager->enrollableInvitationManager($request->input('user_id'), boolval($request->input('is_survey_only')));
+        return $manager->enrollableInvitationManager(
+            $request->input('user_id'),
+            boolval($request->input('is_survey_only'))
+        );
     }
 
     protected function enrollmentAuthForm(EnrollmentLinkValidation $request)
     {
         $loginFormData   = $this->getLoginFormData($request);
+        $urlWithToken    = $loginFormData['url_with_token'];
         $practiceName    = $loginFormData['practiceName'];
         $doctorsLastName = $loginFormData['doctorsLastName'];
         $userId          = intval($request->input('enrollable_id'));
@@ -44,7 +47,7 @@ class AutoEnrollmentLogin extends Controller
 
         return view(
             'EnrollmentSurvey.enrollmentSurveyLogin',
-            compact('userId', 'isSurveyOnly', 'doctorsLastName', 'practiceName')
+            compact('userId', 'isSurveyOnly', 'doctorsLastName', 'practiceName', 'urlWithToken')
         );
     }
 
@@ -58,8 +61,8 @@ class AutoEnrollmentLogin extends Controller
         }
 
         return [
-            'isSurveyOnly' => $user->hasRole('survey-only'),
-            //            'user'            => $user,
+            'isSurveyOnly'    => $user->hasRole('survey-only'),
+            'url_with_token'  => $request->getRequestUri(),
             'practiceName'    => $user->getPrimaryPracticeName(),
             'doctor'          => $doctor,
             'doctorsLastName' => $doctorsLastName,

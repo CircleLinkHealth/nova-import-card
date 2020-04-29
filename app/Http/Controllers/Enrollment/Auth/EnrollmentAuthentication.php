@@ -9,7 +9,7 @@ namespace App\Http\Controllers\Enrollment\Auth;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 
-trait EnrollmentAuthLink
+trait EnrollmentAuthentication
 {
     private function authenticateLink(Request $request)
     {
