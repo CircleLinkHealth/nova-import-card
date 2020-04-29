@@ -98,7 +98,8 @@ class Call extends BaseModel implements AttachableToNotification
     const OTHER = 'other call';
 
     //patient was reached
-    const REACHED = 'reached';
+    const REACHED   = 'reached';
+    const SCHEDULED = 'scheduled';
 
     const WELCOME = 'welcome call';
 
