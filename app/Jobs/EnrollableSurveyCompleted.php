@@ -218,19 +218,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
     {
         $user->delete();
         ImportConsentedEnrollees::dispatch([$enrollee->id]);
-//        $user->forceDelete();
-
-//        $job = new EligibilityJob();
-//        $practice = Practice::whereId($enrollee->practice_id)->first();
-//        $medicalRecord = (new SurveyOnlyEnrolleeMedicalRecord($job, $practice))->createFromSurveyOnlyUser($enrollee);
-//        $eligibilityBatch = $this->updateOrCreateBatch($user, $practice);
-//        $hash = $this->createHash($enrollee);
-//        $this->updateOrCreateEligibilityJob($eligibilityBatch, $medicalRecord, $hash);
-//
-//        $user->delete();
-//        ImportConsEnrolleesJustForQa::dispatch([$enrollee->id]);
-//        $this->deleteBatch($user->id);
-//        $user->forceDelete();
     }
 
     public function reEnrollUnreachablePatient(User $user)

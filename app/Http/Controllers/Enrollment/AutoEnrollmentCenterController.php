@@ -305,7 +305,8 @@ class AutoEnrollmentCenterController extends Controller
                     ->where('user_id', $user->id)
                     ->where('survey_instance_id', $surveyInstance->id)
                     ->delete();
-
+//                Just for live testing
+                $user->loggingActivity->delete();
                 $user->forceDelete();
             } else {
                 $this->getAwvUserSurvey($user, $surveyInstance)->delete();
