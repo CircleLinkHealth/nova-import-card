@@ -1,5 +1,5 @@
 @foreach($letterPages as $page)
-    <div class="pagination">
+    <div class="browser-default">
         {!! $page !!}
     </div>
 @endforeach

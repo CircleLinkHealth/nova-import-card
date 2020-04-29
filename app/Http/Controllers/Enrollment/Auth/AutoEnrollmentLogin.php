@@ -42,7 +42,10 @@ class AutoEnrollmentLogin extends Controller
         $userId          = intval($request->input('enrollable_id'));
         $isSurveyOnly    = $request->input('is_survey_only');
 
-        return view('enrollmentSurvey.enrollmentSurveyLogin', compact('userId', 'isSurveyOnly', 'doctorsLastName', 'practiceName'));
+        return view(
+            'EnrollmentSurvey.enrollmentSurveyLogin',
+            compact('userId', 'isSurveyOnly', 'doctorsLastName', 'practiceName')
+        );
     }
 
     private function getLoginFormData(Request $request)

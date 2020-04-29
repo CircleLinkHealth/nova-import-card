@@ -16,7 +16,7 @@
                 <br>
                 <hr>
             </div>
-                <div class="letter">
+                <div class="flow-text">
                     <div class="header">
                         {{$signatoryNameForHeader}}
                         <br>
