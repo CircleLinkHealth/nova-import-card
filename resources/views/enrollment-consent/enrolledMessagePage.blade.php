@@ -3,7 +3,7 @@
 @section('activity', 'Enrolled Page View')
 @section('content')
     <div class="survey-main-title">
-        <label>Thank for signing up!</label>
+        <label>Thanks for signing up!</label>
     </div>
     <div class="survey-sub-welcome-text" style="text-align: center;">
         Your care coach will contact you in the next few days from {{$practiceNumber}}.<br>

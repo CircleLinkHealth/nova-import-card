@@ -16,7 +16,7 @@
                 <br>
                 <hr>
             </div>
-                <div class="flow-text">
+                <div class="flow-text" style="max-height: 590px; overflow-y: scroll;">
                     <div class="header">
                         {{$signatoryNameForHeader}}
                         <br>
