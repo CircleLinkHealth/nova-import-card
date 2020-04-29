@@ -1,87 +1,85 @@
+@extends('layouts.EnrollmentSurvey.enrollmentLetterMaster')
+@section('title', 'Enrollment Test Panel')
+@section('activity', 'Enrollment Test Panel')
+@section('content')
 <div class="container">
     <div class="content">
-        <ul>
+        <h4 style="text-align: center">Test Dashboard</h4>
+        <ul class="browser-default">
             <li>
-                <a href="https://app.moqups.com/veE6z3eVLS/view/page/aa9df7b72" target="_blank">Follow this flow
+                <a href="https://app.moqups.com/veE6z3eVLS/view/page/aa9df7b72" target="_blank">You should follow this flow
                     chart</a>
-                should be enough as test workflow guide (it's 2 pages):
-            </li>
-
-            <li>
-                Click <strong>"Invite Patients to Enroll"</strong> to invite 2 Initial AND 2 Unreachable Patients for
-                testing.
-            </li>
-            <li>
-                Check you email. You should have received all the invitations 2 initial plus 2 unreachable patients.
-                I have setup the app to send everything to your email account.
-            </li>
-            <li>
-                Same goes for the SMS but they are disabled for first round of QA.
-            </li>
-        </ul>
-        <ul>
-            <li>
-                Note: if you click <strong>"Invite Patients to Enroll"</strong> and take no action (enroll now or
-                request info), then you can
-                fast forward 2 days after the first invitation to send the FIRST reminder to non responsive patients.
-            </li>
-            <li>
-                Only AFTER you clicked the <strong>"Send Reminder to non responding patients (2 days after first
-                    invite)"</strong>, then you can fast forward 4 days to
-                test the button "Final Action on Non..."
-            </li>
-            <li>
-                You can reset and recreate the test unlimited times
+               as guide (it's 2 pages):
             </li>
         </ul>
     </div>
     <div class="buttons col-lg-12">
         <div class="row">
-            <div class="enroll-now-href">
-                <h4>Step 1. Use this again if you dont have 4 invited patients in total</h4>
-                <a href="{{route('trigger.enrolldata.test')}}">
-                    <button type="button" class="btn btn-success">Create Test Conditions first</button>
-                </a>
-            </div>
+   <div style="display: inline-flex; text-align: center;">
+       <div class="enroll-now-href" style="text-align: center;">
+           <h5>Step 1.</h5>
+           <a href="{{route('trigger.enrolldata.test')}}">
+               <button type="button" class="btn btn-success">Create Test Patients</button>
+           </a>
+       </div>
+
+       <br>
+
+       <div class="enroll-now-href" style="padding-left: 379px;">
+           <h5>Step 2</h5>
+           <a href="{{route('send.enrollment.invitations')}}">
+               <button type="button" class="btn btn-success">Invite Test Patients to Enroll</button>
+           </a>
+       </div>
+   </div>
 
             <br>
 
-            <div class="enroll-now-href">
-                <h4>Step 2</h4>
-                <a href="{{route('send.enrollment.invitations')}}">
-                    <button type="button" class="btn btn-success">Invite Patients to Enroll</button>
-                </a>
-            </div>
+      <div style="display: inline-flex;">
+          <div class="request-info-href">
+              <h5>Test Case 1.</h5>
+              <p>Send 1st. Reminder to non responding patients</p>
+              <ul class="browser-default">
+                  <li>
+                      For this to work,<br> you should just invite test patients and take no action after.
+                  </li>
+              </ul>
+              <a href="{{route('send.reminder.qa')}}" target="_blank">
+                  <button type="button" class="btn btn-warning">
+                      Fast Forward 2 days and send reminders
+                  </button>
+              </a>
+          </div>
+
+          <br>
+
+          <div class="request-info-href" style="padding-left: 135px;">
+              <h5>Test Case 2</h5>
+              <p>Take Final Action on Non Responding Patients</p>
+              <ul class="browser-default">
+                  <li>
+                      For this to work, you should just invite test patients and take no action after.
+                  </li>
+                  <li>
+                      Should go through "Test Case 1." first
+                  </li>
+              </ul>
+              <a href="{{route('final.action.qa')}}" target="_blank">
+                  <button type="button" class="btn btn-warning">
+                      Fast forward 4 days and send reminders
+                  </button>
+              </a>
+          </div>
+      </div>
 
             <br>
 
-            <div class="request-info-href">
-                <h4>Test Case 1</h4>
-                <a href="{{route('send.reminder.qa')}}" target="_blank">
-                    <button type="button" class="btn btn-warning">Send Reminder to non responding patients (2 days after
-                        first invitation)
-                    </button>
-                </a>
-            </div>
-
-            <br>
-
-            <div class="request-info-href">
-                <h4>Test Case 2</h4>
-                <a href="{{route('final.action.qa')}}" target="_blank">
-                    <button type="button" class="btn btn-warning">Take Final Action on Non Reponding Patients (4 days
-                        after first invite)
-                    </button>
-                </a>
-            </div>
-
-            <br>
-
-            <div class="request-info-href">
-                <h4>Test Case 3 - User Completed Enrollment Survey</h4>
+            <div class="request-info-href" style="padding-top: 20px;">
+                <h5>Enter patient's / enrolee's 'ID' that got enrolled</h5>
+                <p>This will update patient or enrollee fields and display them where they should be (see. flow)</p>
+                <strong>This will be automated on production</strong>
                 <form action="{{route('evaluate.survey.completed')}}" target="_blank">
-                    <label for="enrolleeId">Enter ID of patient that Completed Survey(Enrolled)
-                        - Only use if did not import automatically after survey completion:</label><br>
+                    <label for="enrolleeId">Enter Id:</label><br>
                     <input type="text" id="enrolleeId" name="enrolleeId" placeholder="ex.1616"><br>
                     <input type="submit" value="Submit">
                 </form>
@@ -97,6 +95,7 @@
     </div>
 
     <div>
+        <h5>Invited Patients credentials</h5>
         @foreach($invitationData as $data)
             @if($data['isEnrolleeClass'])
                 <ul>
@@ -118,11 +117,11 @@
                     <a href="{{$data['invitationUrl']}}" target="_blank">Invitation for Unreachable Patient</a>
                 </ul>
             @endif
-
         @endforeach
     </div>
 
 </div>
+@endsection
 
 
 

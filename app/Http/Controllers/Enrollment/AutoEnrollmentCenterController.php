@@ -67,6 +67,7 @@ class AutoEnrollmentCenterController extends Controller
     /**
      * @param $enrollableId
      * @param $isSurveyOnlyUser
+     *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
     public function enrollableInvitationManager($enrollableId, $isSurveyOnlyUser)
@@ -414,7 +415,7 @@ class AutoEnrollmentCenterController extends Controller
             return 'Somethings Wrong. Please try one more time...';
         }
 
-        return 'All good to go. You can go back and invite some test patients';
+        return 'You can go back and proceed to Step 2.';
     }
 
     /**
