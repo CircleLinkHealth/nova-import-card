@@ -48,8 +48,6 @@ trait MakesOrReceivesCalls
     /**
      * Returns a count of the calls that were scheduled on a given day.
      *
-     * @param Carbon $date
-     *
      * @return int
      */
     public function countScheduledCallsFor(Carbon $date)
@@ -64,8 +62,6 @@ trait MakesOrReceivesCalls
 
     /**
      * Returns a count of the successful calls on a given day.
-     *
-     * @param Carbon $date
      *
      * @return int
      */
@@ -87,8 +83,6 @@ trait MakesOrReceivesCalls
     /**
      * Returns a count of the unsuccessful calls on a given day.
      *
-     * @param Carbon $date
-     *
      * @return int
      */
     public function countUnSuccessfulCallsFor(Carbon $date)
@@ -99,8 +93,6 @@ trait MakesOrReceivesCalls
     /**
      * Get the calls that were scheduled for a certain day, regardless of status.
      * In other words, a call may have ben scheduled for a certain date, but it actually happened earlier.
-     *
-     * @param Carbon $date
      *
      * @return mixed
      */
@@ -139,8 +131,6 @@ trait MakesOrReceivesCalls
     }
 
     /**
-     * @param Carbon $date
-     *
      * @return mixed
      */
     public function successfulCallsFor(Carbon $date)
@@ -175,4 +165,3 @@ trait MakesOrReceivesCalls
             ]);
     }
 }
-

@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Customer\Database\Seeders;
 
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Permission;
 use Illuminate\Database\Seeder;
 
@@ -95,12 +94,12 @@ class RequiredPermissionsTableSeeder extends Seeder
             ],
             [
                 'name'         => 'ehr-report-writer-access',
-                'display_name' => 'Has access to EHR Report Writer panel.'
+                'display_name' => 'Has access to EHR Report Writer panel.',
             ],
             [
                 'name'         => 'phi.read',
-                'display_name' => 'Can view PHI.'
-            ]
+                'display_name' => 'Can view PHI.',
+            ],
         ];
 
         return array_merge($perms, $old);
@@ -122,8 +121,6 @@ class RequiredPermissionsTableSeeder extends Seeder
      * Create CRUD permissions for a Resource.
      *
      * @param $resource
-     *
-     * @return array
      */
     private function crudPermission($resource): array
     {
@@ -212,7 +209,7 @@ class RequiredPermissionsTableSeeder extends Seeder
             'nurseReport',
             'offlineActivityRequest',
             'offlineActivity',
-            'attestedProblems'
+            'attestedProblems',
         ]);
     }
 }

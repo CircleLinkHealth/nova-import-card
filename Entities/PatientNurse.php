@@ -10,20 +10,20 @@ use Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 
 /**
- * CircleLinkHealth\Customer\Entities\PatientNurse
+ * CircleLinkHealth\Customer\Entities\PatientNurse.
  *
- * @property int $id
- * @property int $patient_user_id
- * @property int|null $nurse_user_id
- * @property int|null $temporary_nurse_user_id
- * @property \Illuminate\Support\Carbon|null $temporary_from
- * @property \Illuminate\Support\Carbon|null $temporary_to
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \CircleLinkHealth\Customer\Entities\User|null $nurse
- * @property-read \CircleLinkHealth\Customer\Entities\User $patient
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
- * @property-read int|null $revision_history_count
+ * @property int                                                                                         $id
+ * @property int                                                                                         $patient_user_id
+ * @property int|null                                                                                    $nurse_user_id
+ * @property int|null                                                                                    $temporary_nurse_user_id
+ * @property \Illuminate\Support\Carbon|null                                                             $temporary_from
+ * @property \Illuminate\Support\Carbon|null                                                             $temporary_to
+ * @property \Illuminate\Support\Carbon|null                                                             $created_at
+ * @property \Illuminate\Support\Carbon|null                                                             $updated_at
+ * @property \CircleLinkHealth\Customer\Entities\User|null                                               $nurse
+ * @property \CircleLinkHealth\Customer\Entities\User                                                    $patient
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ * @property int|null                                                                                    $revision_history_count
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse
  *     newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse newQuery()
@@ -45,8 +45,8 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse
  *     whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property-read \CircleLinkHealth\Customer\Entities\User|null $permanentNurse
- * @property-read \CircleLinkHealth\Customer\Entities\User|null $temporaryNurse
+ * @property \CircleLinkHealth\Customer\Entities\User|null $permanentNurse
+ * @property \CircleLinkHealth\Customer\Entities\User|null $temporaryNurse
  */
 class PatientNurse extends BaseModel
 {
@@ -65,6 +65,21 @@ class PatientNurse extends BaseModel
 
     protected $table = 'patients_nurses';
 
+    /**
+     * Get a patient's permanent nurse.
+     */
+    public static function getPermanentNurse(int $patientUserId): ?User
+    {
+        return optional((new static())->where('patient_user_id', $patientUserId)->with('permanentNurse')->has('permanentNurse')->first())->permanentNurse;
+    }
+
+    public function hasTemporaryNurse()
+    {
+        $now = Carbon::now();
+
+        return $this->temporary_nurse_user_id && $now->isBetween($this->temporary_from, $this->temporary_to);
+    }
+
     public function nurse()
     {
         if ($this->hasTemporaryNurse()) {
@@ -78,42 +93,24 @@ class PatientNurse extends BaseModel
         return $this->permanentNurse();
     }
 
-    public function temporaryNurse()
-    {
-        return $this->belongsTo(User::class, 'temporary_nurse_user_id', 'id')
-                    ->whereHas('nurseInfo', function ($q) {
-                        $q->where('status', 'active');
-                    });
-    }
-
-    public function permanentNurse()
-    {
-        return $this->belongsTo(User::class, 'nurse_user_id', 'id')
-                    ->whereHas('nurseInfo', function ($q) {
-                        $q->where('status', 'active');
-                    });
-    }
-
     public function patient()
     {
         return $this->belongsTo(User::class, 'patient_user_id', 'id');
     }
 
-    public function hasTemporaryNurse()
+    public function permanentNurse()
     {
-        $now = Carbon::now();
-
-        return $this->temporary_nurse_user_id && $now->isBetween($this->temporary_from, $this->temporary_to);
+        return $this->belongsTo(User::class, 'nurse_user_id', 'id')
+            ->whereHas('nurseInfo', function ($q) {
+                $q->where('status', 'active');
+            });
     }
-    
-    /**
-     * Get a patient's permanent nurse.
-     *
-     * @param int $patientUserId
-     *
-     * @return User|null
-     */
-    public static function getPermanentNurse(int $patientUserId): ?User {
-        return optional((new static())->where('patient_user_id', $patientUserId)->with('permanentNurse')->has('permanentNurse')->first())->permanentNurse;
+
+    public function temporaryNurse()
+    {
+        return $this->belongsTo(User::class, 'temporary_nurse_user_id', 'id')
+            ->whereHas('nurseInfo', function ($q) {
+                $q->where('status', 'active');
+            });
     }
 }

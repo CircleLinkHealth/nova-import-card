@@ -51,7 +51,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'observation.create',
                     'observation.update',
                     'observation.read',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
@@ -69,7 +69,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'location.read',
                     'practice.read',
                     'careplan-pdf.create',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
@@ -86,7 +86,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'location.read',
                     'practice.read',
                     'careplan-pdf.create',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
@@ -119,7 +119,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'careplan-pdf.create',
                     'careplan-pdf.read',
                     'carePerson.read',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
@@ -222,7 +222,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'offlineActivity.create',
                     'change-patient-enrollment-status',
                     'vitals-survey-complete',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
@@ -289,7 +289,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'comment.create',
                     'comment.read',
                     'comment.update',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
@@ -365,7 +365,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'medicationGroup.read',
                     'nurseReport.read',
                     'careplan.read',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
@@ -458,7 +458,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'comment.read',
                     'comment.update',
                     'comment.delete',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
@@ -560,7 +560,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'role.read',
                     'offlineActivity.create',
                     'vitals-survey-complete',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
@@ -600,7 +600,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'user.read',
                     'role.read',
                     'offlineActivity.create',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
@@ -618,7 +618,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'location.read',
                     'practice.read',
                     'careplan-pdf.create',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
@@ -635,7 +635,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'practice.read',
                     'provider.read',
                     'ambassador.read',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
@@ -667,7 +667,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'appointment.read',
                     'careplan-pdf.create',
                     'users-view-all',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
@@ -762,7 +762,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'role.read',
                     'offlineActivity.create',
                     'care-plan-approve',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
@@ -884,7 +884,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'offlineActivity.create',
                     'change-patient-enrollment-status',
                     'vitals-survey-complete',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
@@ -1134,7 +1134,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'offlineActivityRequest.read',
                     'has-schedule',
                     'vitals-survey-complete',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
@@ -1142,7 +1142,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'EHR Report Writer',
                 'description'  => 'A user that can upload CSVs or Json files for eligibility to be processed by our system',
                 'permissions'  => [
-                    'ehr-report-writer-access'
+                    'ehr-report-writer-access',
                 ],
             ],
             [
@@ -1257,7 +1257,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'ccd-import',
                     'use-onboarding',
                     'nurseReport.read',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
@@ -1278,7 +1278,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'call.create',
                     'call.update',
                     'call.delete',
-                    'phi.read'
+                    'phi.read',
                 ],
             ],
             [
@@ -1287,10 +1287,9 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'description'  => 'Access to Horizon and Ops report. Access to PHI is forbidden.',
                 'permissions'  => [
                     'opsReport.read',
-                    'nurseReport.read'
+                    'nurseReport.read',
                 ],
             ],
-
         ];
     }
 
