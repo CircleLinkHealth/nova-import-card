@@ -14,7 +14,7 @@ class OptimizeSlowRevisionableQueries extends Migration
     public function up()
     {
         Schema::table('revisions', function (Blueprint $table){
-//            $table->index('updated_at');
+            $table->index('updated_at');
             $table->index(['updated_at', 'is_phi']);
         });
     }
