@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Tests\Unit\CallsAlgo;
+namespace Tests\Unit\CallSchedulingAlgo;
 
 use App\Repositories\PatientWriteRepository;
 use Carbon\Carbon;
