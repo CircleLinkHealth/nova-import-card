@@ -17,6 +17,10 @@ class AddVirtualColumnToCcda extends Migration
      */
     public function down()
     {
+        if ( ! Schema::hasColumn('ccdas', 'patient_first_name')) {
+            return;
+        }
+
         Schema::table('ccdas', function (Blueprint $table) {
             $table->dropColumn('patient_first_name');
             $table->dropColumn('patient_last_name');
@@ -33,6 +37,10 @@ class AddVirtualColumnToCcda extends Migration
      */
     public function up()
     {
+        if (Schema::hasColumn('ccdas', 'patient_first_name')) {
+            return;
+        }
+
         Schema::table('ccdas', function (Blueprint $table) {
             $table->string('patient_first_name')->virtualAs('REPLACE(
                  REPLACE(
