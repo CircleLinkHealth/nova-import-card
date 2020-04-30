@@ -174,7 +174,8 @@ class PatientMonthlySummary extends BaseModel
         if ( ! $lastMonthsSummary) {
             $lastMonthsSummary = PatientMonthlySummary::with('chargeableServices')
                 ->where('patient_id', $this->patient_id)
-                ->where('month_year', Carbon::now()->startOfMonth()->subMonth())
+                ->where('month_year', '!=', Carbon::now()->startOfMonth())
+                ->orderBy('id', 'desc')
                 ->first();
         }
 
@@ -198,7 +199,7 @@ class PatientMonthlySummary extends BaseModel
             /**
              * @var Collection
              */
-            $practiceCodes = $practice->chargeableServices->get();
+            $practiceCodes = $practice->chargeableServices()->get();
 
             if ($practiceCodes->isEmpty()) {
                 return;
