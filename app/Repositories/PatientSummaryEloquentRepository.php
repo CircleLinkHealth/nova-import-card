@@ -61,9 +61,16 @@ class PatientSummaryEloquentRepository
         if ( ! is_array($chargeableServiceId)) {
             $chargeableServiceId = [$chargeableServiceId];
         }
+        $toSync = [];
+
+        foreach ($chargeableServiceId as $id) {
+            $toSync[$id] = [
+                'is_fulfilled' => true,
+            ];
+        }
 
         $sync = $summary->chargeableServices()
-            ->sync($chargeableServiceId, $detach);
+            ->sync($toSync, $detach);
 
         if ($sync['attached'] || $sync['detached'] || $sync['updated']) {
             $class = PatientMonthlySummary::class;
@@ -79,8 +86,8 @@ class PatientSummaryEloquentRepository
      */
     public function attachChargeableServices(PatientMonthlySummary $summary)
     {
-        //summary attachment process check should come first because it needs to detach last month's services if it has to
-        if ( ! $summary->shouldGoThroughChargeableServiceAttachmentProcess() && $this->shouldNotTouch($summary)) {
+        //Unfulfilled chargeable services are not included in chargeableServices relationship, so it should be empty.
+        if ($this->shouldNotTouch($summary) && $summary->chargeableServices->isNotEmpty()) {
             return $summary;
         }
 

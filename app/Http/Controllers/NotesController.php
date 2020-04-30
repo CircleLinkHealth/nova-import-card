@@ -878,23 +878,27 @@ class NotesController extends Controller
          */
         $pms = $patient->patientSummaries()
             ->with([
-                'chargeableServices',
+                //all chargeable services includes un-fulfilled service codes as well as fulfilled.
+                'allChargeableServices',
                 'attestedProblems',
             ])
             ->getCurrent()
             ->first();
 
         //if this hasn't had last month's chargeable services attach for some reason, try here
-        if ($pms->chargeableServices->isEmpty()) {
-            $pms->attachLastMonthsChargeableServicesIfYouShould();
+        if ($pms->allchargeableServices->isEmpty()) {
+            $pms->attachChargeableServicesToFulfill();
+            $pms->load('allChargeableServices');
         }
 
-        if ($pms->hasServiceCode(ChargeableService::CCM)) {
+        $services = $pms->allChargeableServices;
+
+        if ($services->where('code', ChargeableService::CCM)->isNotEmpty()) {
             if ($pms->ccmAttestedProblems()->count() < 2) {
                 $requirements['ccm_2'] = true;
             }
 
-            if ($pms->hasServiceCode(ChargeableService::BHI) && $pms->bhiAttestedProblems()->count() < 1) {
+            if ($services->where('code', ChargeableService::BHI)->isNotEmpty() && $pms->bhiAttestedProblems()->count() < 1) {
                 $requirements['is_complex'] = true;
                 $requirements['bhi_1']      = true;
             }
