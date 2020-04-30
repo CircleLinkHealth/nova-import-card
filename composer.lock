@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c47fbe39e90c0cda7dfb4e362b1a7809",
+    "content-hash": "b9190fd1ebbdd49f289eb807eaf28e44",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1223,11 +1223,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "dev-master",
+            "version": "dev-laravel-6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "ab1ab51d1aa13068c66396217613dca92a6606a8"
+                "reference": "faa45274ec256d3a3baae83917c02ad89d221eca"
             },
             "type": "laravel-module",
             "extra": {
@@ -1250,7 +1250,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-27T09:25:18+00:00"
+            "time": "2020-04-30T18:39:46+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
