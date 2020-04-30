@@ -197,7 +197,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             if ($parsedJson = $this->getParsedJson()) {
                 $this->json = $parsedJson;
                 if ( ! $this->mrn) {
-                    $this->patientMrn();
+                    $this->patient_mrn;
                 }
                 $this->save();
             } else {
@@ -223,8 +223,8 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     {
         $this->duplicate_id = null;
 
-        $user = User::whereFirstName($this->patientFirstName())
-            ->whereLastName($this->patientLastName())
+        $user = User::whereFirstName($this->patient_first_name)
+            ->whereLastName($this->patient_last_name)
             ->whereHas(
                 'patientInfo',
                 function ($q) {
@@ -247,7 +247,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             function ($q) {
                 $q->where('program_id', $this->practice_id);
             }
-        )->whereMrnNumber($this->patientMrn())->whereNotNull('mrn_number')
+        )->whereMrnNumber($this->patient_mrn)->whereNotNull('mrn_number')
             ->when($this->patient_id, function ($q) {
                 $q->where('user_id', '!=', $this->patient_id);
             })
@@ -313,7 +313,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
     public function fillInSupplementaryData()
     {
-        $supp = SupplementalPatientData::forPatient($this->practice_id, $this->patientFirstName(), $this->patientLastName(), $this->patientDob());
+        $supp = SupplementalPatientData::forPatient($this->practice_id, $this->patient_first_name, $this->patient_last_name, $this->patientDob());
 
         if ( ! $supp) {
             return  $this;
@@ -438,10 +438,6 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
         $ccda = $this->updateOrCreateCarePlan($enrollee);
 
-        if ( ! $ccda->patient || ! $ccda->patient->carePlan) {
-            return $ccda;
-        }
-
         $ccda->raiseConcerns();
 
         if ($ccda->isDirty()) {
@@ -461,26 +457,6 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     public function patientDob(): ?Carbon
     {
         return ImportPatientInfo::parseDOBDate($this->patient_dob);
-    }
-
-    public function patientEmail()
-    {
-        return $this->patient_email;
-    }
-
-    public function patientFirstName()
-    {
-        return $this->patient_first_name;
-    }
-
-    public function patientLastName()
-    {
-        return $this->patient_last_name;
-    }
-
-    public function patientMrn()
-    {
-        return $this->patient_mrn;
     }
 
     public function practice()
@@ -679,7 +655,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         $decoded = json_decode($json);
 
         $this->json = $json;
-        $this->mrn  = $this->patientMrn();
+        $this->mrn  = $this->patient_mrn;
         $this->save();
     }
 
