@@ -33,7 +33,7 @@ class Invoice extends ViewModel
     public $baseSalary;
 
     /**
-     * @var array A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay]
+     * @var Collection A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay]
      */
     public $bhiVisits;
 
@@ -55,7 +55,7 @@ class Invoice extends ViewModel
     public $nurseVisitFee;
 
     /**
-     * @var array A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay]
+     * @var Collection A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay]
      */
     public $pcmVisits;
 
@@ -78,7 +78,7 @@ class Invoice extends ViewModel
     public $variableRatePay = 0.0;
 
     /**
-     * @var array A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay]
+     * @var Collection A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay]
      */
     public $visits;
 
@@ -442,6 +442,22 @@ class Invoice extends ViewModel
         return round($calculationResult->totalPay, 2);
     }
 
+    private function getVisitsForDay(Collection $coll, string $dateStr)
+    {
+        $visitsCountForDay = 0.0;
+        $coll->each(function (Collection $patientsPerDayColl) use (&$visitsCountForDay, $dateStr) {
+            $patientsPerDayColl->each(function (array $perPatient, $key) use (&$visitsCountForDay, $dateStr) {
+                if ($key !== $dateStr) {
+                    return;
+                }
+
+                $visitsCountForDay += $perPatient['count'];
+            });
+        });
+
+        return $visitsCountForDay;
+    }
+
     private function setViewModelVariables()
     {
         $table  = collect();
@@ -475,21 +491,13 @@ class Invoice extends ViewModel
             });
         }
 
-        $allVisits = collect($this->visits, $this->bhiVisits, $this->pcmVisits);
         foreach ($period as $date) {
             $dateStr = $date->toDateString();
 
             //region visits per day
-            $visitsCountForDay = 0.0;
-            $allVisits->each(function (Collection $coll) use (&$visitsCountForDay, $dateStr) {
-                $coll->each(function (array $perPatient, $key) use (&$visitsCountForDay, $dateStr) {
-                    if ($key !== $dateStr) {
-                        return;
-                    }
-
-                    $visitsCountForDay += $perPatient['count'];
-                });
-            });
+            $visitsCountForDay = $this->getVisitsForDay($this->visits, $dateStr) +
+                $this->getVisitsForDay($this->bhiVisits, $dateStr) +
+                $this->getVisitsForDay($this->pcmVisits, $dateStr);
             //endregion
 
             //region time per day
