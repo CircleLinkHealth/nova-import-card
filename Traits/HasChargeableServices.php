@@ -13,11 +13,32 @@ trait HasChargeableServices
 {
     private $byCode;
 
+    /**
+     * Include unfulfilled ChargeableServices - services added at the start of month,
+     * based on last month's services if last month pms exists, or based on logic seen in:
+     * PatientMonthlySummary@.
+     *
+     * @return mixed
+     */
+    public function allChargeableServices()
+    {
+        return $this->morphToMany(ChargeableService::class, 'chargeable')
+            ->withPivot([
+                'amount',
+                'is_fulfilled',
+            ])
+            ->withTimestamps();
+    }
+
     public function chargeableServices()
     {
         return $this->morphToMany(ChargeableService::class, 'chargeable')
-            ->withPivot(['amount'])
-            ->withTimestamps();
+            ->withPivot([
+                'amount',
+                'is_fulfilled',
+            ])
+            ->withTimestamps()
+            ->where('is_fulfilled', true);
     }
 
     public function hasAWVServiceCode()

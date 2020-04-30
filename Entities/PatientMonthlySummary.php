@@ -165,7 +165,7 @@ class PatientMonthlySummary extends BaseModel
      * Attach service codes in a summary before the billable process,
      * So that we can perform complex validation on nurse attestation where it's enabled.
      */
-    public function attachLastMonthsChargeableServicesIfYouShould(PatientMonthlySummary $lastMonthsSummary = null)
+    public function attachChargeableServicesToFulfill(PatientMonthlySummary $lastMonthsSummary = null)
     {
         if ($this->chargeableServices->isNotEmpty()) {
             return;
@@ -175,7 +175,7 @@ class PatientMonthlySummary extends BaseModel
             $lastMonthsSummary = PatientMonthlySummary::with('chargeableServices')
                 ->where('patient_id', $this->patient_id)
                 ->where('month_year', '!=', Carbon::now()->startOfMonth())
-                ->orderBy('id', 'desc')
+                ->orderBy('month_year', 'desc')
                 ->first();
         }
 
@@ -207,7 +207,7 @@ class PatientMonthlySummary extends BaseModel
             }
 
             if (1 === $practiceCodes->count()) {
-                $this->chargeableServices()->attach($practiceCodes->first()->id);
+                $this->chargeableServices()->attach($practiceCodes->first()->id, ['is_fulfilled' => false]);
 
                 return;
             }
@@ -223,12 +223,12 @@ class PatientMonthlySummary extends BaseModel
             //If patient does have BHI 20 mins and BHI problems it will get automatically attahed by job using PMS->autoAttestConditionsIfYouShould()
             $patientOnlyHasBhiProblems = $patientProblems->where('cpmProblem.is_behavioral', true)->count() === $patientProblems->count();
             if ($patientOnlyHasBhiProblems && $practiceBhiCode) {
-                $this->chargeableServices()->attach($practiceBhiCode->id);
-            }
-
-            $practiceCcmCode = $practiceCodes->where('code', ChargeableService::CCM)->first();
-            if ($patientProblems->count() >= 2 && $practiceCcmCode) {
-                $this->chargeableServices()->attach($practiceCcmCode->id);
+                $this->chargeableServices()->attach($practiceBhiCode->id, ['is_fulfilled' => false]);
+            } else {
+                $practiceCcmCode = $practiceCodes->where('code', ChargeableService::CCM)->first();
+                if ($patientProblems->count() >= 2 && $practiceCcmCode) {
+                    $this->chargeableServices()->attach($practiceCcmCode->id, ['is_fulfilled' => false]);
+                }
             }
 
             //only check for CCM and BHI here, since they are the only ones making a difference in validation
@@ -238,9 +238,7 @@ class PatientMonthlySummary extends BaseModel
 
         $chargeableServiceIds = $lastMonthsSummary->chargeableServices->pluck('id')->toArray();
 
-        $this->chargeableServices()->attach($chargeableServiceIds);
-
-        $this->load('chargeableServices');
+        $this->chargeableServices()->attach($chargeableServiceIds, ['is_fulfilled' => false]);
     }
 
     public function attestedProblems()
@@ -343,7 +341,7 @@ class PatientMonthlySummary extends BaseModel
         $month->startOfMonth();
 
         $summary = PatientMonthlySummary::where('patient_id', '=', $userId)
-            ->orderBy('id', 'desc')->first();
+            ->orderBy('month_year', 'desc')->first();
 
         //if we have already summary for this month, then we skip this
         if ($summary && $month->isSameMonth($summary->month_year)) {
@@ -353,9 +351,7 @@ class PatientMonthlySummary extends BaseModel
         if ($summary) {
             //clone record
             $newSummary = $summary->replicate();
-
-            //get last month's services
-            $newSummary->attachLastMonthsChargeableServicesIfYouShould($summary);
+            $newSummary->attachChargeableServicesToFulfill($summary);
         } else {
             $newSummary             = new self();
             $newSummary->patient_id = $userId;
