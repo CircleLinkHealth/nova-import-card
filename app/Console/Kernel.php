@@ -193,7 +193,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(
             NursesPerformanceDailyReport::class,
             [now()->yesterday()->startOfDay()->toDateString(), '--notify']
-        )->dailyAt('00:03')->onOneServer();
+        )->dailyAt('00:55')->onOneServer(); // Dont really know if that will help the prob. #CPM-2303
 
         $schedule->command(CheckForMissingLogoutsAndInsert::class)->dailyAt('04:00')->onOneServer();
 
