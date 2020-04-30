@@ -34,6 +34,6 @@ class EnrolleesInvitationAction extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        return Action::push('/resources/enrollees-invitation-panel');
+        return Action::push('/resources/enrollees-invitation-panels');
     }
 }

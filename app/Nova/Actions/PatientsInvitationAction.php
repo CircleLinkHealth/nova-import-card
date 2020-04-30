@@ -34,6 +34,6 @@ class PatientsInvitationAction extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        return Action::push('/resources/patients-invitation-panel');
+        return Action::push('/resources/patients-invitation-panels');
     }
 }
