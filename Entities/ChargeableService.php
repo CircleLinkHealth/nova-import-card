@@ -75,7 +75,6 @@ class ChargeableService extends BaseModel
         'code',
         'description',
         'amount',
-        'is_fulfilled',
     ];
 
     public static function defaultServices()

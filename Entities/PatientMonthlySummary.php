@@ -238,7 +238,14 @@ class PatientMonthlySummary extends BaseModel
 
         $chargeableServiceIds = $lastMonthsSummary->chargeableServices->pluck('id')->toArray();
 
-        $this->chargeableServices()->attach($chargeableServiceIds, ['is_fulfilled' => false]);
+        $toSync = [];
+        foreach ($chargeableServiceIds as $id) {
+            $toSync[$id] = [
+                'is_fulfilled' => false,
+            ];
+        }
+
+        $this->chargeableServices()->sync($toSync);
     }
 
     public function attestedProblems()
@@ -351,7 +358,6 @@ class PatientMonthlySummary extends BaseModel
         if ($summary) {
             //clone record
             $newSummary = $summary->replicate();
-            $newSummary->attachChargeableServicesToFulfill($summary);
         } else {
             $newSummary             = new self();
             $newSummary->patient_id = $userId;
@@ -368,6 +374,8 @@ class PatientMonthlySummary extends BaseModel
         $newSummary->actor_id               = null;
         $newSummary->needs_qa               = null;
         $newSummary->save();
+
+        $newSummary->attachChargeableServicesToFulfill($summary);
     }
 
     public static function existsForCurrentMonthForPatient($patientId): bool
