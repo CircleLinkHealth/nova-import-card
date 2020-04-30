@@ -494,23 +494,6 @@ class PatientMonthlySummary extends BaseModel
         return $q->whereMonthYear(Carbon::parse($month)->firstOfMonth()->toDateString());
     }
 
-    public function shouldGoThroughChargeableServiceAttachmentProcess(): bool
-    {
-        //process so we can add services depending on time.
-        if ($this->chargeableServices->isEmpty()) {
-            return true;
-        }
-
-        //Just so we can reprocess summary, to remove auto-attached last month's chargeable services and reprocess
-        if ( ! $this->approved && ! $this->rejected && ! $this->needs_qa) {
-            $this->chargeableServices()->sync([]);
-
-            return true;
-        }
-
-        return false;
-    }
-
     public function syncAttestedProblems(array $attestedProblems)
     {
         //remove summary id without detaching. We may still need the association of the problem with the call
