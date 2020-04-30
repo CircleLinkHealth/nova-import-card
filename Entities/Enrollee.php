@@ -166,6 +166,7 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
  * @property \CircleLinkHealth\SharedModels\Entities\Ccda|null $ccda
  * @method   static                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee duplicates(\CircleLinkHealth\Customer\Entities\User $patient, \CircleLinkHealth\SharedModels\Entities\Ccda $ccda)
  * @method   static                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee whereLocationId($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee hasPhone($phone)
  */
 class Enrollee extends BaseModel
 {
@@ -332,6 +333,7 @@ class Enrollee extends BaseModel
         'status',
         'last_call_outcome_reason',
         'last_call_outcome',
+        'other_note',
 
         'preferred_window',
         'preferred_days',
@@ -397,11 +399,34 @@ class Enrollee extends BaseModel
         return $this->belongsTo(EligibilityJob::class);
     }
 
-    public function getAddressesAsString()
+    public function getAddressesAsString(Enrollee $compareAgainstEnrollee = null)
     {
         $addresses = [];
         foreach ($this->addressAttributes as $attribute) {
-            $addresses[] = $this->$attribute;
+            $attr = trim($this->$attribute);
+
+            if (empty($attr)) {
+                continue;
+            }
+
+            if ($compareAgainstEnrollee) {
+                $shouldHighlight = false;
+
+                if ( ! empty(trim($compareAgainstEnrollee->address))) {
+                    $shouldHighlight = levenshtein($attr, $compareAgainstEnrollee->address) <= 7;
+                }
+
+                if ( ! $shouldHighlight && ! empty(trim($compareAgainstEnrollee->address_2))) {
+                    $shouldHighlight = levenshtein($attr, $compareAgainstEnrollee->address_2) <= 7;
+                }
+
+                if ($shouldHighlight) {
+                    //if it matches, highlight it.
+                    $attr = "<span style='background-color: #4fb2e2; color: white; padding-left: 5px; padding-right: 5px; border-radius: 3px;'>{$attr}</span>";
+                }
+            }
+
+            $addresses[] = $attr;
         }
 
         return collect($addresses)->filter()->implode(', ');
@@ -496,11 +521,22 @@ class Enrollee extends BaseModel
         return (new StringManipulation())->formatPhoneNumberE164($this->other_phone);
     }
 
-    public function getPhonesAsString()
+    public function getPhonesAsString(Enrollee $compareAgainstEnrollee = null)
     {
         $phones = [];
         foreach ($this->phoneAttributes as $attribute) {
-            $phones[] = $this->{$attribute};
+            $attr = $this->$attribute;
+            if ($compareAgainstEnrollee) {
+                if (in_array($attr, [
+                    $compareAgainstEnrollee->home_phone,
+                    $compareAgainstEnrollee->cell_phone,
+                    $compareAgainstEnrollee->other_phone,
+                ])) {
+                    //if it matches, highlight it.
+                    $attr = "<span style='background-color: #26a69a; color: white; padding-left: 5px; padding-right: 5px; border-radius: 3px;'>{$attr}</span>";
+                }
+            }
+            $phones[] = trim($attr);
         }
 
         return collect($phones)->filter()->implode(', ');
@@ -632,9 +668,24 @@ class Enrollee extends BaseModel
         );
     }
 
+    /**
+     * Assume DB format (e164).
+     *
+     * @param $query
+     * @param $phone
+     */
+    public function scopeHasPhone($query, $phone)
+    {
+        return $query->where(function ($q) use ($phone) {
+            $q->where('home_phone', $phone)
+                ->orWhere('cell_phone', $phone)
+                ->orWhere('other_phone', $phone);
+        });
+    }
+
     public function scopeSearchAddresses($query, string $term)
     {
-        return $query->mySQLSearch($this->addressAttributes, $term, 'BOOLEAN', false, true);
+        return $query->mySQLSearch($this->addressAttributes, $term, 'BOOLEAN', false, true, true);
     }
 
     /**

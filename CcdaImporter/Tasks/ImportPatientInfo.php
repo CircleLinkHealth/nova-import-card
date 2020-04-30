@@ -32,10 +32,14 @@ class ImportPatientInfo extends BaseCcdaImportTask
      *
      * @return Carbon|null
      */
-    public static function parseDOBDate($dob)
+    public static function parseDOBDate($dob):?Carbon
     {
         if ($dob instanceof Carbon) {
             return self::correctCenturyIfNeeded($dob);
+        }
+    
+        if (empty($dob)) {
+            return null;
         }
 
         try {
@@ -47,10 +51,6 @@ class ImportPatientInfo extends BaseCcdaImportTask
 
             return self::correctCenturyIfNeeded($date);
         } catch (\InvalidArgumentException $e) {
-            if ( ! $dob) {
-                return null;
-            }
-
             if (Str::contains($dob, '/')) {
                 $delimiter = '/';
             } elseif (Str::contains($dob, '-')) {
@@ -87,7 +87,6 @@ class ImportPatientInfo extends BaseCcdaImportTask
             [
                 'ccda_id'      => $this->ccda->id,
                 'birth_date'   => self::parseDOBDate($demographics['dob']),
-                'ccm_status'   => Patient::ENROLLED,
                 'consent_date' => now()->toDateString(),
                 'gender'       => call_user_func(function () use (
                     $demographics
@@ -150,7 +149,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
                 'preferred_contact_method' => 'CCT',
                 'registration_date'        => $this->patient->user_registered->toDateString(),
                 'general_comment'          => $this->enrollee()
-                    ? $this->enrollee()->last_call_outcome_reason
+                    ? $this->enrollee()->other_note
                     : null,
             ],
             $agentDetails
@@ -182,7 +181,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
         }
 
         if ( ! $patientInfo->ccm_status) {
-            $patientInfo->ccm_status = $args['ccm_status'];
+            $patientInfo->ccm_status = Patient::ENROLLED;
         }
 
         if ( ! $patientInfo->consent_date) {
@@ -226,9 +225,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
         }
 
         if ( ! $patientInfo->general_comment) {
-            $patientInfo->general_comment = $this->enrollee()
-                ? $this->enrollee()->last_call_outcome_reason
-                : null;
+            $patientInfo->general_comment = $args['general_comment'] ?? null;
         }
 
         if ($patientInfo->isDirty()) {

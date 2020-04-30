@@ -108,6 +108,7 @@ class ProcessEligibilityBatch implements ShouldQueue
 
             return null;
         }
+
         $driveFolder   = $batch->options['folder'];
         $driveFileName = $batch->options['fileName'];
         $driveFilePath = $batch->options['filePath'] ?? null;

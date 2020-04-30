@@ -34,6 +34,10 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 class CcdaImporter
 {
     /**
+     * How many times to try the importing process.
+     */
+    private const ATTEMPTS = 3;
+    /**
      * @var CarePlan|\Illuminate\Database\Eloquent\Model
      */
     protected $carePlan;
@@ -64,65 +68,18 @@ class CcdaImporter
         $this->patient  = $patient;
         $this->enrollee = $enrollee;
     }
-
-    public function attemptCreateCarePlan(): Ccda
+    
+    /**
+     * Attempt to Import a CCDA.
+     *
+     * This calls the importing process wrapped in a DB transaction.
+     *
+     * @return Ccda
+     * @throws \Throwable
+     */
+    public function attemptImport(): Ccda
     {
-        \DB::transaction(
-            function () {
-                if (is_null($this->patient)) {
-                    try {
-                        $this->createNewPatient();
-                    } catch (ValidationException $e) {
-                        $this->ccda->validation_checks = $e->errors();
-                        $this->ccda->save();
-
-                        return $this->ccda;
-                    }
-                }
-
-                $this->patient->loadMissing(['primaryPractice', 'patientInfo']);
-                $this->ccda->loadMissing(['location', 'patient']);
-
-                $this->handleEnrollees()
-                    ->createNewCarePlan()
-                    ->storeAllergies()
-                    ->storeProblemsList()
-                    ->storeMedications()
-                    ->storeBillingProvider()
-                    ->storeLocation()
-                    ->storePractice()
-                    ->storePatientInfo()
-                    ->storeContactWindows()
-                    ->storePhones()
-                    ->storeInsurance()
-//                     ->storeVitals()
-                ;
-
-                //This CarePlan is now ready to be QA'ed by a CLH Admin
-                $this->ccda->imported = true;
-                if (in_array($this->patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::PROVIDER_APPROVED])) {
-                    $this->ccda->status = Ccda::CAREPLAN_CREATED;
-                } else {
-                    $this->ccda->status = Ccda::QA;
-                }
-                $this->ccda->save();
-
-                if ($this->enrollee) {
-                    $this->enrollee->medical_record_type = get_class($this->ccda);
-                    $this->enrollee->medical_record_id = $this->ccda->id;
-                    $this->enrollee->user_id = $this->ccda->patient_id;
-                    $this->enrollee->provider_id = $this->ccda->billing_provider_id;
-                    $this->enrollee->location_id = $this->ccda->location_id;
-                    $this->enrollee->save();
-                }
-
-                if ($this->patient->isDirty()) {
-                    $this->patient->save();
-                }
-
-                event(new PatientUserCreated($this->patient));
-            }
-        );
+        \DB::transaction(\Closure::fromCallable([$this, 'importCcda']), self::ATTEMPTS);
 
         return $this->ccda;
     }
@@ -143,7 +100,7 @@ class CcdaImporter
     {
         $newUserId = Str::random(25);
 
-        $email = empty($email = $this->ccda->patientEmail())
+        $email = empty($email = $this->patientEmail())
             ? $newUserId.'@careplanmanager.com'
             : $email;
 
@@ -177,7 +134,7 @@ class CcdaImporter
         );
     }
 
-    private function handleEnrollees()
+    private function handleDuplicateEnrollees()
     {
         $enrollee = Enrollee::duplicates($this->patient, $this->ccda)->when(
             $this->enrollee instanceof Enrollee,
@@ -211,7 +168,7 @@ class CcdaImporter
      *
      * @return $this
      */
-    private function storeAllergies()
+    private function importAllergies()
     {
         ImportAllergies::for($this->patient, $this->ccda);
 
@@ -223,7 +180,7 @@ class CcdaImporter
      *
      * @return $this
      */
-    private function storeBillingProvider()
+    private function importBillingProvider()
     {
         AttachBillingProvider::for($this->patient, $this->ccda);
 
@@ -231,15 +188,51 @@ class CcdaImporter
     }
 
     /**
-     * Store Contact Windows.
+     * Outlines the procedure of creating a Care Plan from a CCDA.
      *
-     * @return $this
+     * @throws \Exception
+     * @return Ccda
      */
-    private function storeContactWindows()
+    private function importCcda()
     {
-        AttachDefaultPatientContactWindows::for($this->patient, $this->ccda, $this->enrollee);
+        if (is_null($this->patient)) {
+            try {
+                $this->createNewPatient();
+            } catch (ValidationException $e) {
+                $this->ccda->validation_checks = $e->errors();
+                $this->ccda->save();
 
-        return $this;
+                return $this->ccda;
+            }
+        }
+
+        $this->patient->loadMissing(['primaryPractice', 'patientInfo']);
+        $this->ccda->loadMissing(['location', 'patient']);
+
+        $this->handleDuplicateEnrollees()
+            ->createNewCarePlan()
+            ->importAllergies()
+            ->importProblems()
+            ->importMedications()
+            ->importBillingProvider()
+            ->importLocation()
+            ->importPractice()
+            ->importPatientInfo()
+            ->importPatientContactWindows()
+            ->importPhones()
+            ->importInsurance()
+//            Commented out because the Vitals we were importing were either
+//                 - Not relevant to us (eg. height)
+//                 - Outdated and removed by nurses post import
+//                 - Not useful because in the case of BP we don't have a starting value.
+//            Uncomment after we have refactored vitals/observations.
+//            ->importVitals()
+            ->updateCcdaPostImport()
+            ->updateEnrolleePostImport()
+            ->updatePatientUserPostImport()
+        ;
+
+        event(new PatientUserCreated($this->patient));
     }
 
     /**
@@ -247,7 +240,7 @@ class CcdaImporter
      *
      * @return $this
      */
-    private function storeInsurance()
+    private function importInsurance()
     {
         ImportInsurances::for($this->patient, $this->ccda);
 
@@ -259,7 +252,7 @@ class CcdaImporter
      *
      * @return $this
      */
-    private function storeLocation()
+    private function importLocation()
     {
         AttachLocation::for($this->patient, $this->ccda);
 
@@ -271,9 +264,21 @@ class CcdaImporter
      *
      * @return $this
      */
-    private function storeMedications()
+    private function importMedications()
     {
         ImportMedications::for($this->patient, $this->ccda);
+
+        return $this;
+    }
+
+    /**
+     * Store Contact Windows.
+     *
+     * @return $this
+     */
+    private function importPatientContactWindows()
+    {
+        AttachDefaultPatientContactWindows::for($this->patient, $this->ccda, $this->enrollee);
 
         return $this;
     }
@@ -283,7 +288,7 @@ class CcdaImporter
      *
      * @return $this
      */
-    private function storePatientInfo()
+    private function importPatientInfo()
     {
         ImportPatientInfo::for($this->patient, $this->ccda);
 
@@ -295,14 +300,14 @@ class CcdaImporter
      *
      * @return $this
      */
-    private function storePhones()
+    private function importPhones()
     {
         ImportPhones::for($this->patient, $this->ccda);
 
         return $this;
     }
 
-    private function storePractice()
+    private function importPractice()
     {
         AttachPractice::for($this->patient, $this->ccda);
 
@@ -314,7 +319,7 @@ class CcdaImporter
      *
      * @return $this
      */
-    private function storeProblemsList()
+    private function importProblems()
     {
         ImportProblems::for($this->patient, $this->ccda);
 
@@ -328,9 +333,65 @@ class CcdaImporter
      *
      * @return $this
      */
-    private function storeVitals()
+    private function importVitals()
     {
         ImportVitals::for($this->patient, $this->ccda);
+
+        return $this;
+    }
+
+    private function patientEmail()
+    {
+        $email = $this->ccda->patientEmail();
+
+        if ('noemail@noemail.com' === strtolower($email)) {
+            return null;
+        }
+
+        return $email;
+    }
+
+    private function updateCcdaPostImport()
+    {
+        //This CarePlan is now ready to be QA'ed by a CLH Admin
+        $this->ccda->imported = true;
+        if (in_array($this->patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::PROVIDER_APPROVED])) {
+            $this->ccda->status = Ccda::CAREPLAN_CREATED;
+        } else {
+            $this->ccda->status = Ccda::QA;
+        }
+        if ( ! $this->ccda->mrn) {
+            $this->ccda->mrn = $this->patient->patientInfo->mrn_number;
+        }
+        if ($this->ccda->isDirty()) {
+            $this->ccda->save();
+        }
+
+        return $this;
+    }
+
+    private function updateEnrolleePostImport()
+    {
+        if ( ! $this->enrollee) {
+            return $this;
+        }
+        $this->enrollee->medical_record_type = get_class($this->ccda);
+        $this->enrollee->medical_record_id   = $this->ccda->id;
+        $this->enrollee->user_id             = $this->ccda->patient_id;
+        $this->enrollee->provider_id         = $this->ccda->billing_provider_id;
+        $this->enrollee->location_id         = $this->ccda->location_id;
+        if ($this->enrollee->isDirty()) {
+            $this->enrollee->save();
+        }
+
+        return $this;
+    }
+
+    private function updatePatientUserPostImport()
+    {
+        if ($this->patient->isDirty()) {
+            $this->patient->save();
+        }
 
         return $this;
     }
