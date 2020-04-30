@@ -324,6 +324,11 @@ class Call extends BaseModel implements AttachableToNotification
             'note',
         ]);
     }
+    
+    public function scopeUnassigned($builder)
+    {
+        $builder->whereNull('outbound_cpm_id');
+    }
 
     public function shouldSendLiveNotification(): bool
     {
