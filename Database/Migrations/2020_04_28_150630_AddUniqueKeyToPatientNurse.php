@@ -26,8 +26,12 @@ class AddUniqueKeyToPatientNurse extends Migration
      */
     public function up()
     {
-        Schema::table('patients_nurses', function (Blueprint $table) {
-            $table->unique('patient_user_id');
-        });
+        try {
+            Schema::table('patients_nurses', function (Blueprint $table) {
+                $table->unique('patient_user_id');
+            });
+        } catch (Exception $e) {
+            //in case index already exists
+        }
     }
 }
