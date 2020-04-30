@@ -289,6 +289,50 @@ class PatientAttestedConditionsTest extends DuskTestCase
         }
     }
 
+    /**
+     * This is to test passing null on PMS::attachLastMonthsChargeableServicesIfYouShould.
+     *
+     * In Notes controller, if PMS for current month exists and no services attach
+     * It will call the method without passing a previous month summary.
+     */
+    public function test_patient_summaries_have_services_according_to_practice_and_patient_problems_if_not_last_month_pms_and_existing_pms_no_services()
+    {
+        AppConfig::create([
+            'config_key'   => 'complex_attestation_requirements_for_practice',
+            'config_value' => $this->practice->id,
+        ]);
+
+        $charggeableServiceIds = ChargeableService::whereIn('code', [
+            ChargeableService::CCM,
+        ])->pluck('id')->toArray();
+
+        //patient already has more than 2 ccm problems on setup, attach only CCM to practice
+        $this->practice->chargeableServices()->sync($charggeableServiceIds);
+
+        //create current month summary with no codes
+        $this->setupPms([]);
+
+        $responseData = $this->actingAs($this->nurse)->call('GET', route('patient.note.create', ['patientId' => $this->patient->id]))
+            ->assertOk()
+            ->getOriginalContent()->getData();
+
+        $this->assertFalse($responseData['attestationRequirements']['disabled']);
+
+        $currentPms = PatientMonthlySummary::where('patient_id', $this->patient->id)
+            ->where('month_year', Carbon::now()->startOfMonth())
+            ->first();
+
+        $this->assertNotNull($currentPms);
+
+        $currentChargeableServices = $currentPms->chargeableServices;
+
+        $this->assertEquals(collect($charggeableServiceIds)->count(), $currentChargeableServices->count());
+
+        foreach ($charggeableServiceIds as $id) {
+            $this->assertNotNull($currentChargeableServices->where('id', $id));
+        }
+    }
+
     public function test_problems_are_automatically_attested_to_pms_if_they_should_bhi()
     {
         $bhiCsId       = ChargeableService::bhi()->first()->id;
