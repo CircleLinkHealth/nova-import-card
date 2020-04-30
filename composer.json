@@ -147,7 +147,7 @@
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/generate-success-stories-report": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
-    "circlelinkhealth/nurseinvoices-module": "dev-master",
+    "circlelinkhealth/nurseinvoices-module": "dev-laravel-6",
     "circlelinkhealth/patientapi-module": "dev-master",
     "circlelinkhealth/raygun-module": "dev-laravel-5.6",
     "circlelinkhealth/revisionable-module": "dev-master",

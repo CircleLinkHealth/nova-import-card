@@ -62,7 +62,7 @@ class ReimportCcdasFromEnrolleesUsingMrn extends Command
     private function linkCcdaUsingMrn(Enrollee $e): ?Ccda
     {
         $ccda = Ccda::withTrashed()->where('practice_id', $this->argument('practiceId'))->where(
-            'json->demographics->mrn_number',
+            'patient_mrn',
             $e->mrn
         )->orderBy('deleted_at')->first();
 
