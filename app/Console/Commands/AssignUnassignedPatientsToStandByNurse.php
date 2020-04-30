@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Call;
@@ -9,18 +13,17 @@ use Illuminate\Console\Command;
 class AssignUnassignedPatientsToStandByNurse extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'assign:unassigned-patients-to-stand-by-nurse';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Assign unassigned patients to standby nurse';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'assign:unassigned-patients-to-stand-by-nurse';
 
     /**
      * Create a new command instance.
@@ -39,14 +42,14 @@ class AssignUnassignedPatientsToStandByNurse extends Command
      */
     public function handle()
     {
-        $updated = Call::whereHas('inboundUser', function ($q){
-            $q->isNotDemo()->whereHas('patientInfo', function($q) {
+        $updated = Call::whereHas('inboundUser', function ($q) {
+            $q->isNotDemo()->whereHas('patientInfo', function ($q) {
                 return $q->enrolled();
             });
         })->where('status', Call::SCHEDULED)->unassigned()->update([
-            'outbound_cpm_id' => StandByNurseUser::id()
+            'outbound_cpm_id' => StandByNurseUser::id(),
         ]);
-        
-        $this->line($updated. ' rows updated.');
+
+        $this->line($updated.' rows updated.');
     }
 }
