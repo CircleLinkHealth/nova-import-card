@@ -21,20 +21,9 @@ class AssignPatientToStandByNurse
         if (self::shouldBail($patient)) {
             return null;
         }
-        
+
         self::makeStandByNursePrimary($patient);
         self::assignCallToStandByNurse($patient);
-    }
-    
-    private static function assignCallToStandByNurse(User $patient)
-    {
-        $scheduler = app()->make(SchedulerService::class);
-
-        if ($scheduler->hasScheduledCall($patient)) {
-            return null;
-        }
-
-        return $scheduler->storeScheduledCall($patient->id, '09:00', '17:00', now(), 'system - patient status changed to enrolled', StandByNurseUser::id());
     }
 
     /**
@@ -47,6 +36,17 @@ class AssignPatientToStandByNurse
     public function handle(CarePlanWasQAApproved $event)
     {
         return self::assign($event->patient);
+    }
+
+    private static function assignCallToStandByNurse(User $patient)
+    {
+        $scheduler = app()->make(SchedulerService::class);
+
+        if ($scheduler->hasScheduledCall($patient)) {
+            return null;
+        }
+
+        return $scheduler->storeScheduledCall($patient->id, '09:00', '17:00', now(), 'system - patient status changed to enrolled', StandByNurseUser::id());
     }
 
     private static function makeStandByNursePrimary(User $patient)
@@ -70,23 +70,23 @@ class AssignPatientToStandByNurse
             \Log::error('Attempted to create duplicate PatientNurse for patientid:'.$patient->id);
         }
     }
-    
+
     private static function shouldBail(User $patient)
     {
         $patient->loadMissing('carePlan');
-        
-        if (! $patient->carePlan) {
+
+        if ( ! $patient->carePlan) {
             return true;
         }
-    
-        if (! in_array($patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::PROVIDER_APPROVED])) {
+
+        if ( ! in_array($patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::PROVIDER_APPROVED])) {
             return true;
         }
-    
+
         if ( ! StandByNurseUser::id()) {
             return true;
         }
-        
+
         return false;
     }
 }

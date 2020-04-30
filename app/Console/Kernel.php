@@ -227,7 +227,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(CheckUserTotalTimeTracked::class)
             ->dailyAt('01:10')
             ->onOneServer();
-    
+
         $schedule->command(AssignUnassignedPatientsToStandByNurse::class)->twiceDaily(8, 14);
         $schedule->command(RemoveDuplicateScheduledCalls::class)->twiceDaily(8, 14);
     }
