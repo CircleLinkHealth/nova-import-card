@@ -187,8 +187,9 @@ class PatientMonthlySummary extends BaseModel
 
                 return;
             }
+            $patient->loadMissing(['primaryPractice.chargeableServices', 'ccdProblems.cpmProblem']);
 
-            $practice = optional($patient)->primaryPractice;
+            $practice = $patient->primaryPractice;
 
             if ( ! $practice) {
                 \Log::critical("Patient with id:{$patient->id} does not have Practice attached.");
@@ -199,7 +200,7 @@ class PatientMonthlySummary extends BaseModel
             /**
              * @var Collection
              */
-            $practiceCodes = $practice->chargeableServices()->get();
+            $practiceCodes = $practice->chargeableServices;
 
             if ($practiceCodes->isEmpty()) {
                 return;
@@ -211,7 +212,7 @@ class PatientMonthlySummary extends BaseModel
                 return;
             }
 
-            $patientProblems = $patient->ccdProblems()->with('cpmProblem')->get();
+            $patientProblems = $patient->ccdProblems;
 
             $practiceBhiCode = $practiceCodes->where('code', ChargeableService::BHI)->first();
 
