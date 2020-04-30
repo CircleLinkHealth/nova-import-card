@@ -2010,10 +2010,17 @@ if ( ! function_exists('complexAttestationRequirementsEnabledForPractice')) {
     {
         $key = 'complex_attestation_requirements_for_practice';
 
-        return \Cache::remember($key, 2, function () use ($key, $practiceId) {
-            return AppConfig::whereConfigKey($key)
-                ->whereIn('config_value', [$practiceId, 'all'])
-                ->exists();
+        $practiceIds = \Cache::remember($key, 2, function () use ($key) {
+            $val = AppConfig::pull($key, null);
+            if (null === $val) {
+                setAppConfig($key, '');
+
+                return [];
+            }
+
+            return explode(',', $val);
         });
+
+        return in_array($practiceId, $practiceIds) || in_array('all', $practiceIds);
     }
 }
