@@ -161,6 +161,10 @@ class PatientMonthlySummary extends BaseModel
             );
     }
 
+    /**
+     * Attach service codes in a summary before the billable process,
+     * So that we can perform complex validation on nurse attestation where it's enabled.
+     */
     public function attachLastMonthsChargeableServicesIfYouShould(PatientMonthlySummary $lastMonthsSummary = null)
     {
         if ($this->chargeableServices->isNotEmpty()) {
@@ -174,11 +178,59 @@ class PatientMonthlySummary extends BaseModel
                 ->first();
         }
 
-        if ( ! $lastMonthsSummary) {
-            return;
-        }
+        if ( ! $lastMonthsSummary || $lastMonthsSummary->chargeableServices->isEmpty()) {
+            $patient = $this->patient;
 
-        if ($lastMonthsSummary->chargeableServices->isEmpty()) {
+            if ( ! $patient) {
+                \Log::critical("PMS with id:{$this->id} does not have Patient attached.");
+
+                return;
+            }
+
+            $practice = optional($patient)->primaryPractice;
+
+            if ( ! $practice) {
+                \Log::critical("Patient with id:{$patient->id} does not have Practice attached.");
+
+                return;
+            }
+
+            /**
+             * @var Collection
+             */
+            $practiceCodes = $practice->chargeableServices->get();
+
+            if ($practiceCodes->isEmpty()) {
+                return;
+            }
+
+            if (1 === $practiceCodes->count()) {
+                $this->chargeableServices()->attach($practiceCodes->first()->id);
+
+                return;
+            }
+
+            $patientProblems = $patient->ccdProblems()->with('cpmProblem')->get();
+
+            $practiceBhiCode = $practiceCodes->where('code', ChargeableService::BHI)->first();
+
+            //Opting for this instead of "if patient has 1+ BHI problem and practice has BHI, attach BHI code"
+            //There have been cases of Practice having BHI code, and patient having BHI problems,
+            //But not a BHI code. Avoiding this here (for patients with no last month summaries case)
+            //so that we can nurses being wrongly blocked on attestation
+            //If patient does have BHI 20 mins and BHI problems it will get automatically attahed by job using PMS->autoAttestConditionsIfYouShould()
+            $patientOnlyHasBhiProblems = $patientProblems->where('cpmProblem.is_behavioral', true)->count() === $patientProblems->count();
+            if ($patientOnlyHasBhiProblems && $practiceBhiCode) {
+                $this->chargeableServices()->attach($practiceBhiCode->id);
+            }
+
+            $practiceCcmCode = $practiceCodes->where('code', ChargeableService::CCM)->first();
+            if ($patientProblems->count() >= 2 && $practiceCcmCode) {
+                $this->chargeableServices()->attach($practiceCcmCode->id);
+            }
+
+            //only check for CCM and BHI here, since they are the only ones making a difference in validation
+            //all other codes fall under the default validation (at least 1 problem attested)
             return;
         }
 
