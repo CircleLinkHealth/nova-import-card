@@ -68,9 +68,9 @@ class SupplementalPatientData extends Model
     ];
     protected $table = 'supplemental_patient_data';
 
-    public static function forPatient(?int $practiceId, string $firstName, string $lastName, ?Carbon $dob)
+    public static function forPatient(?int $practiceId, ?string $firstName, ?string $lastName, ?Carbon $dob)
     {
-        if ( ! $dob || ! $practiceId) {
+        if ( ! $dob || ! $practiceId || ! $firstName || ! $lastName) {
             return null;
         }
 
