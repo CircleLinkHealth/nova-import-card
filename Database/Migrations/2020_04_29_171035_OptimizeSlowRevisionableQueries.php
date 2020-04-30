@@ -31,10 +31,8 @@ class OptimizeSlowRevisionableQueries extends Migration
                 $table->index('updated_at');
                 $table->index(['updated_at', 'is_phi']);
             });
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             //in case index already exists
         }
-        
     }
 }
