@@ -161,6 +161,93 @@ class PatientMonthlySummary extends BaseModel
             );
     }
 
+    /**
+     * Attach service codes in a summary before the billable process,
+     * So that we can perform complex validation on nurse attestation where it's enabled.
+     */
+    public function attachChargeableServicesToFulfill(PatientMonthlySummary $lastMonthsSummary = null)
+    {
+        if ($this->chargeableServices->isNotEmpty()) {
+            return;
+        }
+
+        if ( ! $lastMonthsSummary) {
+            $lastMonthsSummary = PatientMonthlySummary::with('chargeableServices')
+                ->where('patient_id', $this->patient_id)
+                ->where('month_year', '!=', Carbon::now()->startOfMonth())
+                ->orderBy('month_year', 'desc')
+                ->first();
+        }
+
+        if ( ! $lastMonthsSummary || $lastMonthsSummary->chargeableServices->isEmpty()) {
+            $patient = $this->patient;
+
+            if ( ! $patient) {
+                \Log::critical("PMS with id:{$this->id} does not have Patient attached.");
+
+                return;
+            }
+            $patient->loadMissing(['primaryPractice.chargeableServices', 'ccdProblems.cpmProblem']);
+
+            $practice = $patient->primaryPractice;
+
+            if ( ! $practice) {
+                \Log::critical("Patient with id:{$patient->id} does not have Practice attached.");
+
+                return;
+            }
+
+            /**
+             * @var Collection
+             */
+            $practiceCodes = $practice->chargeableServices;
+
+            if ($practiceCodes->isEmpty()) {
+                return;
+            }
+
+            if (1 === $practiceCodes->count()) {
+                $this->chargeableServices()->attach($practiceCodes->first()->id, ['is_fulfilled' => false]);
+
+                return;
+            }
+
+            $patientProblems = $patient->ccdProblems;
+
+            $practiceBhiCode = $practiceCodes->where('code', ChargeableService::BHI)->first();
+
+            //Opting for this instead of "if patient has 1+ BHI problem and practice has BHI, attach BHI code"
+            //There have been cases of Practice having BHI code, and patient having BHI problems,
+            //But not a BHI code. Avoiding this here (for patients with no last month summaries case)
+            //so that we can nurses being wrongly blocked on attestation
+            //If patient does have BHI 20 mins and BHI problems it will get automatically attahed by job using PMS->autoAttestConditionsIfYouShould()
+            $patientOnlyHasBhiProblems = $patientProblems->where('cpmProblem.is_behavioral', true)->count() === $patientProblems->count();
+            if ($patientOnlyHasBhiProblems && $practiceBhiCode) {
+                $this->chargeableServices()->attach($practiceBhiCode->id, ['is_fulfilled' => false]);
+            } else {
+                $practiceCcmCode = $practiceCodes->where('code', ChargeableService::CCM)->first();
+                if ($patientProblems->count() >= 2 && $practiceCcmCode) {
+                    $this->chargeableServices()->attach($practiceCcmCode->id, ['is_fulfilled' => false]);
+                }
+            }
+
+            //only check for CCM and BHI here, since they are the only ones making a difference in validation
+            //all other codes fall under the default validation (at least 1 problem attested)
+            return;
+        }
+
+        $chargeableServiceIds = $lastMonthsSummary->chargeableServices->pluck('id')->toArray();
+
+        $toSync = [];
+        foreach ($chargeableServiceIds as $id) {
+            $toSync[$id] = [
+                'is_fulfilled' => false,
+            ];
+        }
+
+        $this->chargeableServices()->sync($toSync);
+    }
+
     public function attestedProblems()
     {
         return $this->belongsToMany(Problem::class, 'call_problems', 'patient_monthly_summary_id', 'ccd_problem_id');
@@ -197,9 +284,8 @@ class PatientMonthlySummary extends BaseModel
     }
 
     /**
-     * @todo: Deprecate in favor of billableProblems()
-     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @todo: Deprecate in favor of billableProblems()
      */
     public function billableProblem1()
     {
@@ -207,9 +293,8 @@ class PatientMonthlySummary extends BaseModel
     }
 
     /**
-     * @todo: Deprecate in favor of billableProblems()
-     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @todo: Deprecate in favor of billableProblems()
      */
     public function billableProblem2()
     {
@@ -263,7 +348,7 @@ class PatientMonthlySummary extends BaseModel
         $month->startOfMonth();
 
         $summary = PatientMonthlySummary::where('patient_id', '=', $userId)
-            ->orderBy('id', 'desc')->first();
+            ->orderBy('month_year', 'desc')->first();
 
         //if we have already summary for this month, then we skip this
         if ($summary && $month->isSameMonth($summary->month_year)) {
@@ -289,6 +374,15 @@ class PatientMonthlySummary extends BaseModel
         $newSummary->actor_id               = null;
         $newSummary->needs_qa               = null;
         $newSummary->save();
+
+        $newSummary->attachChargeableServicesToFulfill($summary);
+    }
+
+    public static function existsForCurrentMonthForPatient($patientId): bool
+    {
+        return (new static())->where('patient_id', $patientId)
+            ->where('month_year', Carbon::now()->startOfMonth())
+            ->exists();
     }
 
     public static function getPatientQACountForPracticeForMonth(
@@ -322,9 +416,9 @@ class PatientMonthlySummary extends BaseModel
             }
 
             $emptyProblemOrCode = ('' == $report->billable_problem1_code)
-                                  || ('' == $report->billable_problem2_code)
-                                  || ('' == $report->billable_problem2)
-                                  || ('' == $report->billable_problem1);
+                || ('' == $report->billable_problem2_code)
+                || ('' == $report->billable_problem2)
+                || ('' == $report->billable_problem1);
 
             if ((0 == $report->rejected && 0 == $report->approved) || $emptyProblemOrCode) {
                 ++$count['toQA'];
