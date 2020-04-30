@@ -436,7 +436,15 @@ class PracticeInvoiceController extends Controller
             return $this->badRequest("Report with id ${reportId} not found.");
         }
 
-        $summary->chargeableServices()->sync($chargeableIDs);
+        $toSync = [];
+
+        foreach ($chargeableIDs as $id) {
+            $toSync[$id] = [
+                'is_fulfilled' => true,
+            ];
+        }
+
+        $summary->chargeableServices()->sync($toSync);
 
         return $this->ok($summary);
     }
