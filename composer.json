@@ -137,7 +137,7 @@
     "circlelinkhealth/clh-nova-theme": "*",
     "circlelinkhealth/condition-code-lookup-module": "^1.1",
     "circlelinkhealth/core-module": "1.5.1",
-    "circlelinkhealth/cpm-migrations-module": "1.6.7",
+    "circlelinkhealth/cpm-migrations-module": "1.6.8",
     "circlelinkhealth/customer-module": "2.2.5",
     "circlelinkhealth/eligibility-module": "dev-master",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
