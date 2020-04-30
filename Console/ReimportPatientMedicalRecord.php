@@ -253,7 +253,7 @@ class ReimportPatientMedicalRecord extends Command
             $this->ccda = Ccda::where('practice_id', $practiceId)->where(
                 function ($q) use ($mrn) {
                     $q->where('patient_id', $this->argument('patientUserId'))
-                        ->orWhere('json->demographics->mrn_number', $mrn);
+                        ->orWhere('patient_mrn', $mrn);
                 }
             )->first();
         }
