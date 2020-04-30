@@ -182,6 +182,42 @@ class PatientAttestedConditionsTest extends DuskTestCase
         $this->assertTrue($responseData['attestationRequirements']['disabled']);
     }
 
+    public function test_patient_summaries_are_created_with_any_previous_months_services_from_notes_create_route()
+    {
+        AppConfig::create([
+            'config_key'   => 'complex_attestation_requirements_for_practice',
+            'config_value' => $this->practice->id,
+        ]);
+
+        $charggeableServiceIds = ChargeableService::whereIn('code', [
+            ChargeableService::CCM,
+            ChargeableService::BHI,
+            ChargeableService::GENERAL_CARE_MANAGEMENT,
+        ])->pluck('id')->toArray();
+
+        $previousMonthsPms = $this->setupPms($charggeableServiceIds, Carbon::now()->startOfMonth()->subMonth(3));
+
+        $responseData = $this->actingAs($this->nurse)->call('GET', route('patient.note.create', ['patientId' => $this->patient->id]))
+            ->assertOk()
+            ->getOriginalContent()->getData();
+
+        $this->assertFalse($responseData['attestationRequirements']['disabled']);
+
+        $currentPms = PatientMonthlySummary::where('patient_id', $this->patient->id)
+            ->where('month_year', Carbon::now()->startOfMonth())
+            ->first();
+
+        $this->assertNotNull($currentPms);
+
+        $currentChargeableServices = $currentPms->chargeableServices;
+
+        $this->assertEquals(collect($charggeableServiceIds)->count(), $currentChargeableServices->count());
+
+        foreach ($charggeableServiceIds as $id) {
+            $this->assertNotNull($currentChargeableServices->where('id', $id));
+        }
+    }
+
     public function test_patient_summaries_are_created_with_last_months_services_from_notes_create_route()
     {
         AppConfig::create([
@@ -196,6 +232,41 @@ class PatientAttestedConditionsTest extends DuskTestCase
         ])->pluck('id')->toArray();
 
         $lastMonthsPms = $this->setupPms($charggeableServiceIds, Carbon::now()->startOfMonth()->subMonth());
+
+        $responseData = $this->actingAs($this->nurse)->call('GET', route('patient.note.create', ['patientId' => $this->patient->id]))
+            ->assertOk()
+            ->getOriginalContent()->getData();
+
+        $this->assertFalse($responseData['attestationRequirements']['disabled']);
+
+        $currentPms = PatientMonthlySummary::where('patient_id', $this->patient->id)
+            ->where('month_year', Carbon::now()->startOfMonth())
+            ->first();
+
+        $this->assertNotNull($currentPms);
+
+        $currentChargeableServices = $currentPms->chargeableServices;
+
+        $this->assertEquals(collect($charggeableServiceIds)->count(), $currentChargeableServices->count());
+
+        foreach ($charggeableServiceIds as $id) {
+            $this->assertNotNull($currentChargeableServices->where('id', $id));
+        }
+    }
+
+    public function test_patient_summaries_have_services_according_to_practice_and_patient_problems_if_not_last_month_pms()
+    {
+        AppConfig::create([
+            'config_key'   => 'complex_attestation_requirements_for_practice',
+            'config_value' => $this->practice->id,
+        ]);
+
+        $charggeableServiceIds = ChargeableService::whereIn('code', [
+            ChargeableService::CCM,
+        ])->pluck('id')->toArray();
+
+        //patient already has more than 2 ccm problems on setup, attach only CCM to practice
+        $this->practice->chargeableServices()->sync($charggeableServiceIds);
 
         $responseData = $this->actingAs($this->nurse)->call('GET', route('patient.note.create', ['patientId' => $this->patient->id]))
             ->assertOk()
