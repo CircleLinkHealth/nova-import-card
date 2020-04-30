@@ -31,7 +31,7 @@ class PatientsForInsuranceCheck extends Controller
                     'name'             => $user->getFullName(),
                     'dob'              => $user->getBirthDate(),
                     'billing_provider' => optional($user->billingProviderUser())->getFullName(),
-                    'practice'         => $user->primaryPractice->display_name,
+                    'practice'         => optional($user->primaryPractice)->display_name,
                     'insurance_1'      => $user->ccdInsurancePolicies[0]->name ?? '',
                     'insurance_2'      => $user->ccdInsurancePolicies[1]->name ?? '',
                     'insurance_3'      => $user->ccdInsurancePolicies[2]->name ?? '',

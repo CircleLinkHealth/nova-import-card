@@ -21,7 +21,7 @@
                 </label>
                 <loader class="absolute" v-if="loaders.calls"></loader>
             </div>
-            <div class="col-sm-6 text-right" v-if="itemsAreSelected">
+            <div class="col-sm-6 text-right" v-if="selectedPatients.length > 0">
                 <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Care Coach</button>
                 <button class="btn btn-success btn-xs" @click="assignTimesForSelected">Assign Activity Date</button>
                 <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
@@ -32,6 +32,7 @@
             <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
                 <template slot="selected" slot-scope="props">
                     <input class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)"
+                           :disabled="loaders.nurses"
                            type="checkbox"/>
                 </template>
                 <template slot="h__selected" slot-scope="props">
@@ -73,7 +74,8 @@
                 <template slot="Care Coach" slot-scope="props">
                     <div>
                         <select-editable v-model="props.row.NurseId" :display-text="props.row['Care Coach']"
-                                         :values="props.row.nurses()" :class-name="isAssignedToPatientsCareCoach(props.row) ? 'blue' : 'orange'"
+                                         :values="props.row.nurses()"
+                                         :class-name="isAssignedToPatientsCareCoach(props.row) ? 'blue' : 'orange'"
                                          :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
                         <loader class="relative" v-if="props.row.loaders.nurse"></loader>
                     </div>
@@ -157,7 +159,7 @@
 
 
     import {library} from '@fortawesome/fontawesome-svg-core'
-    import {faHandPointUp, faCalendarCheck, faPhone} from '@fortawesome/free-solid-svg-icons'
+    import {faCalendarCheck, faHandPointUp, faPhone} from '@fortawesome/free-solid-svg-icons'
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
     library.add(faPhone);
@@ -206,39 +208,24 @@
                 },
                 showOnlyUnassigned: false,
                 showOnlyCompletedTasks: false,
-                showPatientNames: !this.isAdmin
+                showPatientNames: !this.isAdmin,
+
+                selectedPatients: [],
+                selectedPatientsNew: [],
             }
         },
         computed: {
             patientNamesClass() {
                 return this.showPatientNames ? '' : 'hidden';
             },
-            itemsAreSelected() {
-                return !!this.tableData.find(row => !!row.selected)
-            },
-            selectedPatients() {
-                return this.tableData.filter(row => row.selected && row.Patient).map(row => {
 
-                    const nurse = this.nurses.find(n => n.id === row.NurseId);
-                    return {
-                        id: row['Patient ID'],
-                        callId: row.id,
-                        name: row.Patient,
-                        nurse: {
-                            id: row.NurseId,
-                            name: nurse.display_name
-                        },
-                        nextCall: row['Activity Day'],
-                        callTimeStart: row['Activity Start'],
-                        callTimeEnd: row['Activity End'],
-                        loaders: row.loaders
-                    };
-                });
+            nursesForSelect() {
+                return this.nurses.filter(n => !!n.display_name).map(nurse => ({
+                    text: nurse.display_name,
+                    value: nurse.id
+                }));
             },
-            selectedPatientsNew() {
-                return this.tableData.filter(row => row.selected && row.Patient);
-            }
-            ,
+
             options() {
                 return {
                     columnsClasses: {
@@ -270,14 +257,7 @@
                         Scheduler: (ascending) => (a, b) => 0,
                         'Patient\'s Care Coach': (ascending) => (a, b) => 0,
                     }
-                }
-            }
-            ,
-            nursesForSelect() {
-                return this.nurses.filter(n => !!n.display_name).map(nurse => ({
-                    text: nurse.display_name,
-                    value: nurse.id
-                }))
+                };
             }
         },
         methods: {
@@ -363,8 +343,7 @@
                 const rowsFilterSuffix = this.$refs.tblCalls.limit ? `rows=${this.$refs.tblCalls.limit}` : ''
                 if (this.pagination) {
                     return rootUrl(`api/admin/calls-v2?page=${this.$refs.tblCalls.page}&${rowsFilterSuffix}${this.urlFilterSuffix()}`)
-                }
-                else {
+                } else {
                     return rootUrl(`api/admin/calls-v2?${rowsFilterSuffix}${this.urlFilterSuffix()}`)
                 }
             },
@@ -382,13 +361,17 @@
                 this.tableData = this.tableData.map(row => {
                     if (fiteredDataIDs.indexOf(row.id) >= 0) row.selected = this.selected;
                     return row;
-                })
+                });
+                this.setSelectedPatients();
+                this.setSelectedPatientsNew();
             },
             toggleSelect(id) {
                 const row = this.tableData.find(row => row.id === id)
                 if (row) {
                     row.selected = !row.selected
                 }
+                this.setSelectedPatients();
+                this.setSelectedPatientsNew();
             },
             deleteSelected(e, overrideConfirmation = false) {
                 const count = this.tableData.filter(row => !!row.selected).length;
@@ -405,10 +388,8 @@
                         }).catch(err => {
                             console.error('calls:delete', err)
                         })
-                    }
-                    else return Promise.reject('no confirmation')
-                }
-                else return Promise.reject('no selected items')
+                    } else return Promise.reject('no confirmation')
+                } else return Promise.reject('no selected items')
             },
             clearSelected() {
                 this.selected = false
@@ -423,13 +404,11 @@
                 let showModal = false;
                 if (manualCalls.length === 0) {
                     showModal = true;
-                }
-                else if (selectedCalls.length === 1 && manualCalls.length === 1) {
+                } else if (selectedCalls.length === 1 && manualCalls.length === 1) {
                     if (confirm(this.getEditDateTimeConfirmMessage(manualCalls[0]))) {
                         showModal = true;
                     }
-                }
-                else if (confirm(editCallDateTimeMessageForCalls)) {
+                } else if (confirm(editCallDateTimeMessageForCalls)) {
                     showModal = true;
                 }
 
@@ -447,8 +426,7 @@
             getEditDateTimeConfirmMessage(call) {
                 if (call['Manual']) {
                     return editCallDateTimeMessageForCall.replace('$CARE_COACH$', call['Scheduler']);
-                }
-                else {
+                } else {
                     return undefined;
                 }
             },
@@ -650,8 +628,7 @@
                                     },
                                     loaders: {}
                                 }))]
-                            }
-                            else {
+                            } else {
                                 const from = ((this.pagination || {}).from || 0)
                                 const to = ((this.pagination || {}).to || 0)
                                 for (let i = from - 1; i < to; i++) {
@@ -661,8 +638,7 @@
                             setTimeout(() => {
                                 if ($vm.pagination) {
                                     $vm.$refs.tblCalls.count = $vm.pagination.total;
-                                }
-                                else {
+                                } else {
                                     $vm.$refs.tblCalls.count = 0;
                                 }
 
@@ -675,7 +651,31 @@
                     console.error('calls:response', err)
                     $vm.loaders.calls = false
                 })
-            }
+            },
+
+            setSelectedPatients() {
+                this.selectedPatients = this.tableData.filter(row => row.selected && row.Patient).map(row => {
+
+                    const nurse = this.nurses.find(n => n.id === row.NurseId);
+                    return {
+                        id: row['Patient ID'],
+                        callId: row.id,
+                        name: row.Patient,
+                        nurse: {
+                            id: row.NurseId,
+                            name: nurse ? nurse.display_name : 'Unassigned'
+                        },
+                        nextCall: row['Activity Day'],
+                        callTimeStart: row['Activity Start'],
+                        callTimeEnd: row['Activity End'],
+                        loaders: row.loaders
+                    };
+                });
+            },
+
+            setSelectedPatientsNew() {
+                this.selectedPatientsNew = this.tableData.filter(row => row.selected && row.Patient);
+            },
         },
         mounted() {
             BindAppEvents(this, Event);

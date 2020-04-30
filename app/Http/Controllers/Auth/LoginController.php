@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Traits\ManagesPatientCookies;
 use App\Traits\PasswordLessAuth;
 use Carbon\Carbon;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -136,6 +137,13 @@ class LoginController extends Controller
      */
     public function showLoginForm(Request $request)
     {
+        /** @var Session $session */
+        $session  = $request->session();
+        $previous = $session->previousUrl();
+        if (empty($session->get('url.intended')) && ! Str::contains($previous, ['login', 'logout'])) {
+            $session->put('url.intended', $session->previousUrl());
+        }
+
         $this->checkPracticeNameCookie($request);
 
         if (auth()->check()) {
@@ -201,8 +209,8 @@ class LoginController extends Controller
         $messages = [];
         if ('IE' == $browser) {
             $messages = [
-                'invalid-browser' => "I'm sorry, you may be using a version of Internet Explorer (IE) that we don't support. 
-            Please use Chrome browser instead. 
+                'invalid-browser' => "I'm sorry, you may be using a version of Internet Explorer (IE) that we don't support.
+            Please use Chrome browser instead.
             <br>If you must use IE, please use IE11 or later.
             <br>If you must use IE v10 or earlier, please e-mail <a href='mailto:contact@circlelinkhealth.com'>contact@circlelinkhealth.com</a>",
             ];

@@ -98,7 +98,8 @@ class Call extends BaseModel implements AttachableToNotification
     const OTHER = 'other call';
 
     //patient was reached
-    const REACHED = 'reached';
+    const REACHED   = 'reached';
+    const SCHEDULED = 'scheduled';
 
     const WELCOME = 'welcome call';
 
@@ -322,6 +323,11 @@ class Call extends BaseModel implements AttachableToNotification
             'outboundUser.nurseInfo',
             'note',
         ]);
+    }
+    
+    public function scopeUnassigned($builder)
+    {
+        $builder->whereNull('outbound_cpm_id');
     }
 
     public function shouldSendLiveNotification(): bool

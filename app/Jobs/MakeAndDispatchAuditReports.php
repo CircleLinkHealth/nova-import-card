@@ -66,7 +66,7 @@ class MakeAndDispatchAuditReports implements ShouldQueue
     public function handle()
     {
         $fileName = (new PatientDailyAuditReport(
-            $this->patient->patientInfo,
+            $this->patient,
             $this->date->startOfMonth()
         ))
             ->renderPDF();

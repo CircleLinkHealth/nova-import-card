@@ -95,7 +95,7 @@
                     header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
                     template: "<a href='<?php echo route(
             'patient.summary',
-            ['patient' => '#key#']
+            ['patientId' => '#key#']
         ); ?>'>#first_name# #last_name#</a>",
                     width: 100,
                     sort: 'string',
@@ -107,7 +107,7 @@
                     header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
                     template: "<a href='<?php echo route(
             'patient.summary',
-            ['patient' => '#key#']
+            ['patientId' => '#key#']
         ); ?>'>#last_name#, #first_name#</a>",
                     width: 120,
                     sort: 'string',

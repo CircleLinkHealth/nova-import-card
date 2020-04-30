@@ -88,6 +88,9 @@
                         @push('scripts')
 
                             <script>
+
+                                const patientId = {{$patient->id}};
+
                                 function startCompare(value, filter) {
                                     value = value.toString().toLowerCase();
                                     filter = '<' + filter.toString().toLowerCase();
@@ -190,10 +193,7 @@
 
                                             template: function (obj) {
                                                 if (obj.logged_from == "manual_input" || obj.logged_from == "activity")
-                                                    return "<a href='{!! route('patient.activity.view', [
-                                                        'patientId' => $patient->id,
-                                                        'atcId'     => '',
-                                                    ]) !!}/" + obj.id + "'>" + obj.type + "</a>";
+                                                    return `<a href="/manage-patients/${patientId}/view/${obj.id}">${obj.type}</a>`;
                                                 else
                                                     return obj.type;
                                             },
