@@ -25,23 +25,13 @@ class PatientCarePlanController extends Controller
 
     public function downloadPdf($fileName)
     {
-        $path = storage_path("patient/pdf-careplans/${fileName}");
+        $pdf = Pdf::whereFilename($fileName)->first();
 
-        if ( ! file_exists($path)) {
-            $pdf = Pdf::whereFilename($fileName)->first();
-
-            if ( ! $pdf) {
-                return "Could not find PDF with filename: ${fileName}";
-            }
-
-            file_put_contents($path, base64_decode($pdf->file));
+        if ( ! $pdf) {
+            return "Could not find PDF with filename: ${fileName}";
         }
 
-        if ( ! file_exists($path)) {
-            return "Could not locate file with name: ${fileName}";
-        }
-
-        return response(file_get_contents($path), 200, [
+        return response(base64_decode($pdf->file), 200, [
             'Content-Type'        => 'application/pdf',
             'Content-Disposition' => 'inline; filename="'.$fileName.'"',
         ]);
