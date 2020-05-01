@@ -51,8 +51,8 @@ class PostDeploymentTasks extends Command
                 'view:cache',
                 'route:cache',
                 'config:cache',
-                //                'opcache:clear',
-                'opcache:optimize',
+                'opcache:clear',
+                'opcache:compile',
                 'horizon:terminate',
                 'queue:restart',
             ]
