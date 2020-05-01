@@ -456,6 +456,11 @@ class Practice extends BaseModel implements HasMedia
         return array_map('trim', explode(',', $this->weekly_report_recipients));
     }
 
+    public function isARealBillableCustomer(): bool
+    {
+        return ! $this->is_demo && $this->active;
+    }
+
     public function isTwilioEnabled()
     {
         $settings = $this->cpmSettings();
