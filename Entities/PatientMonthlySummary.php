@@ -255,6 +255,11 @@ class PatientMonthlySummary extends BaseModel
 
     public function autoAttestConditionsIfYouShould()
     {
+        //Auto attest only for past months, to not mess with real attestations
+        if ($this->month_year && $this->month_year->gt(now()->subMonth()->endOfMonth())) {
+            return;
+        }
+
         $this->loadMissing('attestedProblems');
 
         if ($this->unAttestedPcm() || $this->unAttestedCcm()) {
