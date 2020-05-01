@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c2fb02f6f133c124a0099ac2b808e655",
+    "content-hash": "b57803a0bb8d6c4a0de3e60039fca837",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1015,11 +1015,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.7.0",
+            "version": "dev-test_db_seeders",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "b4592ab16160e91455f2f93501847a3eb7e3ed87"
+                "reference": "963a724b56587fb47b4bbc71ebbd08772d843b40"
             },
             "type": "laravel-module",
             "extra": {
@@ -1041,15 +1041,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-01T14:40:33+00:00"
+            "time": "2020-05-01T19:08:46+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.2.9",
+            "version": "dev-test_db_seeders",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "e2f37eaa7f7f6a9c9ce8c173f3f96b6cc32a8159"
+                "reference": "4aaef64010af4a4099c4005dad49228c9e35fdab"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1083,7 +1083,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-01T01:48:55+00:00"
+            "time": "2020-05-01T17:30:10+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1223,11 +1223,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.3.9",
+            "version": "dev-test_db_seeders",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "18fc88c4e5a2f90a6121012baa89cba59095ac47"
+                "reference": "6d5bad42979a24705c3332bd5565f21f351d29d9"
             },
             "type": "laravel-module",
             "extra": {
@@ -1250,7 +1250,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-30T19:04:59+00:00"
+            "time": "2020-05-01T18:33:41+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -1364,11 +1364,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.4.6",
+            "version": "dev-test_db_seeders",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "c2f19d7d70972d83ad3c973419aac2801dfd2002"
+                "reference": "465dc234042aaaa7f4fba09da13855acd32b87fd"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1382,7 +1382,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-01T16:22:51+00:00"
+            "time": "2020-05-01T18:32:58+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -15296,6 +15296,10 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/nurseinvoices-module": 20,
+        "circlelinkhealth/shared-models-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20
