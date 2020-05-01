@@ -467,6 +467,7 @@ class CarePlan extends BaseModel implements PdfReport
                     return $q->has('cpmProblem')
                         ->with('cpmProblem');
                 },
+                'ccdMedications',
                 //before enabling insurance validation, we have to store all insurance info in CPM
                 //            'ccdInsurancePolicies',
             ]
@@ -476,6 +477,7 @@ class CarePlan extends BaseModel implements PdfReport
             'conditions' => $patient->ccdProblems,
             //before enabling insurance validation, we have to store all insurance info in CPM
             //            'insurances' => $patient->ccdInsurancePolicies,
+            'medications'     => $patient->ccdMedications,
             'phoneNumber'     => optional($patient->phoneNumbers->first())->number,
             'dob'             => $patient->getBirthDate(),
             'mrn'             => $patient->getMRN(),
@@ -497,6 +499,7 @@ class CarePlan extends BaseModel implements PdfReport
                         ? new DoesNotHaveBothTypesOfDiabetes()
                         : null,
                 ],
+                'medications'     => 'required|filled',
                 'phoneNumber'     => 'required|phone:AUTO,US',
                 'dob'             => 'required|date',
                 'mrn'             => ['required', new HasValidNbiMrn($patient)],
