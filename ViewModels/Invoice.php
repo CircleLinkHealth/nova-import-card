@@ -442,9 +442,12 @@ class Invoice extends ViewModel
         return round($calculationResult->totalPay, 2);
     }
 
-    private function getVisitsForDay(Collection $coll, string $dateStr)
+    private function getVisitsForDay(string $dateStr, Collection $coll = null)
     {
         $visitsCountForDay = 0.0;
+        if ( ! $coll) {
+            return $visitsCountForDay;
+        }
         $coll->each(function (Collection $patientsPerDayColl) use (&$visitsCountForDay, $dateStr) {
             $patientsPerDayColl->each(function (array $perPatient, $key) use (&$visitsCountForDay, $dateStr) {
                 if ($key !== $dateStr) {
@@ -495,9 +498,9 @@ class Invoice extends ViewModel
             $dateStr = $date->toDateString();
 
             //region visits per day
-            $visitsCountForDay = $this->getVisitsForDay($this->visits, $dateStr) +
-                $this->getVisitsForDay($this->bhiVisits, $dateStr) +
-                $this->getVisitsForDay($this->pcmVisits, $dateStr);
+            $visitsCountForDay = $this->getVisitsForDay($dateStr, $this->visits) +
+                $this->getVisitsForDay($dateStr, $this->bhiVisits) +
+                $this->getVisitsForDay($dateStr, $this->pcmVisits);
             //endregion
 
             //region time per day
