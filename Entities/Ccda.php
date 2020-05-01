@@ -464,7 +464,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
     public function patientDob(): ?Carbon
     {
-        return ImportPatientInfo::parseDOBDate($this->patient_dob);
+        return ImportPatientInfo::parseDOBDate($this->patient_dob ?? $this->bluebuttonJson()->demographics->dob ?? null);
     }
 
     public function practice()
