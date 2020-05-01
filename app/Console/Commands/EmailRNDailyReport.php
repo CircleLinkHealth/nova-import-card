@@ -75,46 +75,48 @@ class EmailRNDailyReport extends Command
         $emailsSent   = [];
         $dataNotFound = [];
 
-        User::ofType('care-center')
-            ->when(
-                null != $userIds,
-                function ($q) use ($userIds) {
-                    $userIds = explode(',', $userIds);
-                    $q->whereIn('id', $userIds);
-                }
-            )
-            ->whereHas(
-                'nurseInfo',
-                function ($info) {
-                    $info->where('status', 'active');
-                }
-            )
-            ->chunk(
-                50,
-                function ($nurses) use (&$counter, &$emailsSent, $date, $report, &$dataNotFound) {
-                    foreach ($nurses as $nurseUser) {
-                        $this->warn("Processing $nurseUser->id");
+//        User::ofType('care-center')
+//            ->when(
+//                null != $userIds,
+//                function ($q) use ($userIds) {
+//                    $userIds = explode(',', $userIds);
+//                    $q->whereIn('id', $userIds);
+//                }
+//            )
+//            ->whereHas(
+//                'nurseInfo',
+//                function ($info) {
+//                    $info->where('status', 'active');
+//                }
+//            )
+//            ->chunk(
+//                50,
+//                function ($nurses) use (&$counter, &$emailsSent, $date, $report, &$dataNotFound) {
+//                    foreach ($nurses as $nurseUser) {
+//                        $this->warn("Processing $nurseUser->id");
+//
+//                        $reportDataForNurse = $report->where('nurse_id', $nurseUser->id)->first();
+//
+//                        if ( ! is_array($reportDataForNurse)) {
+//                            array_push($dataNotFound, $nurseUser->id);
+//                            continue;
+//                        }
+//
+//                        SendDailyReportToRN::dispatch($nurseUser, $date, $reportDataForNurse);
+//
+//                        $this->warn("Notified $nurseUser->id");
+//
+//                        $emailsSent[] = [
+//                            'nurse' => $nurseUser->getFullName(),
+//                            'email' => $nurseUser->email,
+//                        ];
+//
+//                        ++$counter;
+//                    }
+//                }
+//            );
 
-                        $reportDataForNurse = $report->where('nurse_id', $nurseUser->id)->first();
-
-                        if ( ! is_array($reportDataForNurse)) {
-                            array_push($dataNotFound, $nurseUser->id);
-                            continue;
-                        }
-
-                        SendDailyReportToRN::dispatch($nurseUser, $date, $reportDataForNurse);
-
-                        $this->warn("Notified $nurseUser->id");
-
-                        $emailsSent[] = [
-                            'nurse' => $nurseUser->getFullName(),
-                            'email' => $nurseUser->email,
-                        ];
-
-                        ++$counter;
-                    }
-                }
-            );
+        $this->info($date->toDateString());
 
         $this->table(
             [
