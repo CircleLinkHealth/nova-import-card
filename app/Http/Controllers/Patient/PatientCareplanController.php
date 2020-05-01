@@ -30,6 +30,7 @@ use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -473,6 +474,13 @@ class PatientCareplanController extends Controller
             //Update patient info changes
             $info = $patient->patientInfo;
 
+            if ($user->first_name) {
+                $params->set('first_name', $user->first_name);
+            }
+            if ($user->last_name) {
+                $params->set('last_name', $user->last_name);
+            }
+
             if ( ! $patient->patientInfo) {
                 $info = new Patient(
                     [
@@ -506,8 +514,10 @@ class PatientCareplanController extends Controller
                 'required'                   => 'The :attribute field is required.',
                 'home_phone_number.required' => 'The patient phone number field is required.',
             ];
-            $this->validate($request, $user->getPatientRules(), $messages);
-
+            $v = Validator::make($params->all(), $user->getPatientRules(), $messages);
+            if ($v->fails()) {
+                return redirect()->back()->withErrors($v->errors())->withInput($request->input());
+            }
             $userRepo->editUser($user, $params);
             if ($params->get('direction')) {
                 return redirect($params->get('direction'))->with(
@@ -523,7 +533,10 @@ class PatientCareplanController extends Controller
             'required'                   => 'The :attribute field is required.',
             'home_phone_number.required' => 'The patient phone number field is required.',
         ];
-        $this->validate($request, $user->getPatientRules(), $messages);
+        $v = Validator::make($params->all(), $user->getPatientRules(), $messages);
+        if ($v->fails()) {
+            return redirect()->back()->withErrors($v->errors())->withInput($request->input());
+        }
         $role      = Role::whereName('participant')->first();
         $newUserId = Str::random(15);
 
