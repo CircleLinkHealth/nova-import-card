@@ -93,13 +93,14 @@ class ReimportPatientMedicalRecord extends Command
     {
         if (in_array($user->primaryPractice->name, ['diabetes-texas-pa'])) {
             $ccda = Ccda::where('practice_id', $user->primaryPractice->id)->where('patient_first_name', $user->first_name)->where('patient_last_name', $user->last_name)->where('patient_mrn', 'like', "%{$user->getMRN()}")->first();
-            
+
             if ($ccda) {
                 $ccda->patient_id = $user->id;
                 $ccda->save();
+
                 return;
             }
-            
+
             $eJ = EligibilityJob::whereHas('batch', function ($q) use ($user) {
                 $q->where('practice_id', $user->primaryPractice->id);
             })->where('patient_first_name', $user->first_name)->where('patient_last_name', $user->last_name)->where('patient_mrn', 'like', "%{$user->getMRN()}")->first();
@@ -237,7 +238,7 @@ class ReimportPatientMedicalRecord extends Command
         }
 
         $user->ccdMedications()->delete();
-        
+
         //practices whose careplans do not contain CCDs
         if ( ! in_array($user->primaryPractice->name, ['diabetes-texas-pa'])) {
             $user->ccdProblems()->delete();

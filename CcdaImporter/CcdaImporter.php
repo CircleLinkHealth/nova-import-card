@@ -99,7 +99,7 @@ class CcdaImporter
     {
         $newUserId = Str::random(25);
 
-        $email = empty($email = $this->ccda->patient_email)
+        $email = empty($email = $this->patientEmail())
             ? $newUserId.'@careplanmanager.com'
             : $email;
 
@@ -339,7 +339,7 @@ class CcdaImporter
     {
         $email = $this->ccda->patient_email;
 
-        if ('noemail@noemail.com' === strtolower($email)) {
+        if (in_array(strtolower($email), ['noemail@noemail.com', 'null'])) {
             return null;
         }
 
