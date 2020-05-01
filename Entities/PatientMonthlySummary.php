@@ -505,6 +505,10 @@ class PatientMonthlySummary extends BaseModel
             ->delete();
 
         $this->attestedProblems()->attach($attestedProblems);
+
+        if ( ! empty($attestedProblems)) {
+            $this->load('attestedProblems');
+        }
     }
 
     /**
