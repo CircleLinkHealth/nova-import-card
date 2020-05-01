@@ -26,10 +26,10 @@ class ChangeDefaultValueForVisitFeeInNurseInfoTable extends Migration
     {
         Schema::table('nurse_info', function (Illuminate\Database\Schema\Blueprint $table) {
             $table->float('visit_fee_2')->default(12.00)->change();
-            $table->float('visit_fee_2')->default(11.50)->change();
+            $table->float('visit_fee_3')->default(11.50)->change();
         });
 
         DB::table('nurse_info')
-            ->update(['visit_fee_2' => 12.00, 'visit_fee' => 11.50]);
+            ->update(['visit_fee_2' => 12.00, 'visit_fee_3' => 11.50]);
     }
 }
