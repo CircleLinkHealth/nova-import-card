@@ -37,11 +37,11 @@ class ImportService
             }
         }
 
-        if ($ccda->patientMrn() && $ccda->practice_id) {
+        if ($ccda->patient_mrn && $ccda->practice_id) {
             $exists = User::whereHas(
                 'patientInfo',
                 function ($q) use ($ccda) {
-                    $q->where('mrn_number', $ccda->patientMrn());
+                    $q->where('mrn_number', $ccda->patient_mrn);
                 }
             )->whereProgramId($ccda->practice_id)->with('carePlan')
                 ->first();

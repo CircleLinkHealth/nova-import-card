@@ -68,13 +68,12 @@ class CcdaImporter
         $this->patient  = $patient;
         $this->enrollee = $enrollee;
     }
-    
+
     /**
      * Attempt to Import a CCDA.
      *
      * This calls the importing process wrapped in a DB transaction.
      *
-     * @return Ccda
      * @throws \Throwable
      */
     public function attemptImport(): Ccda
@@ -100,7 +99,7 @@ class CcdaImporter
     {
         $newUserId = Str::random(25);
 
-        $email = empty($email = $this->patientEmail())
+        $email = empty($email = $this->ccda->patient_email)
             ? $newUserId.'@careplanmanager.com'
             : $email;
 
@@ -110,11 +109,11 @@ class CcdaImporter
                     'email'        => $email,
                     'password'     => Str::random(30),
                     'display_name' => ucwords(
-                        strtolower($this->ccda->patientFirstName().' '.$this->ccda->patientLastName())
+                        strtolower($this->ccda->patient_first_name.' '.$this->ccda->patient_last_name)
                     ),
-                    'first_name' => $this->ccda->patientFirstName(),
-                    'last_name'  => $this->ccda->patientLastName(),
-                    'mrn_number' => $this->ccda->patientMrn(),
+                    'first_name' => $this->ccda->patient_first_name,
+                    'last_name'  => $this->ccda->patient_last_name,
+                    'mrn_number' => $this->ccda->patient_mrn,
                     'birth_date' => $this->ccda->patientDob(),
                     'username'   => empty($email)
                         ? $newUserId
@@ -127,11 +126,7 @@ class CcdaImporter
             )
         );
 
-        Ccda::where('id', $this->ccda->id)->update(
-            [
-                'patient_id' => $this->patient->id,
-            ]
-        );
+        $this->ccda->patient_id = $this->patient->id;
     }
 
     private function handleDuplicateEnrollees()
@@ -342,7 +337,7 @@ class CcdaImporter
 
     private function patientEmail()
     {
-        $email = $this->ccda->patientEmail();
+        $email = $this->ccda->patient_email;
 
         if ('noemail@noemail.com' === strtolower($email)) {
             return null;

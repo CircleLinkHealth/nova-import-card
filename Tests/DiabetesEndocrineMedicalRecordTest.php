@@ -1474,6 +1474,6 @@ class DiabetesEndocrineMedicalRecordTest extends CustomerTestCase
 
         $newPatient = $ccda->fresh()->patient()->firstOrFail();
 
-        $this->assertTrue($ccda->patientFirstName() === $newPatient->first_name);
+        $this->assertTrue($ccda->patient_first_name === $newPatient->first_name);
     }
 }
