@@ -218,7 +218,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
     /**
      * @return int|mixed|null
-     * @todo: duplicate of Importer/MedicalRecordEloquent.php @ raiseConcerns()
+     * @todo: duplicate of Importer/MedicalRecordEloquent.php @ raiseConcernsOrAutoQAApprove()
      */
     public function checkDuplicity()
     {
@@ -439,17 +439,10 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
         $ccda = $this->updateOrCreateCarePlan($enrollee);
 
-        $ccda->raiseConcerns();
+        $ccda->raiseConcernsOrAutoQAApprove();
 
         if ($ccda->isDirty()) {
             $ccda->save();
-        }
-
-        if (CarePlanAutoApprover::id() && ! $ccda->patient->carePlan->validator()->fails()) {
-            $ccda->patient->carePlan->status         = CarePlan::QA_APPROVED;
-            $ccda->patient->carePlan->qa_approver_id = CarePlanAutoApprover::id();
-            $ccda->patient->carePlan->qa_date        = now()->toDateTimeString();
-            $ccda->patient->carePlan->save();
         }
 
         event(new CcdaImported($ccda->getId()));
@@ -472,7 +465,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         return $this->belongsTo(Practice::class);
     }
 
-    public function raiseConcerns()
+    public function raiseConcernsOrAutoQAApprove()
     {
         $this->load(['patient.carePlan']);
 
@@ -484,6 +477,15 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         $this->validation_checks = null;
         if ($validator->fails()) {
             $this->validation_checks = $validator->errors();
+
+            return $this;
+        }
+
+        if (CarePlanAutoApprover::id()) {
+            $this->patient->carePlan->status         = CarePlan::QA_APPROVED;
+            $this->patient->carePlan->qa_approver_id = CarePlanAutoApprover::id();
+            $this->patient->carePlan->qa_date        = now()->toDateTimeString();
+            $this->patient->carePlan->save();
         }
 
         return $this;
