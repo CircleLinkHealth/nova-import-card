@@ -162,7 +162,7 @@ class RaygunServiceProvider extends ServiceProvider
                     function ($path) {
                         return $path.'/modules/raygun';
                     },
-                    Config::get('view.paths')
+                    \Config::get('view.paths')
                 ),
                 [$sourcePath]
             ),
