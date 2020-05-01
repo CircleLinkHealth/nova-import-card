@@ -17,6 +17,10 @@ class OptimizeHasUPG0506PdfCareplanMediaQuery extends Migration
      */
     public function down()
     {
+        if ( ! Schema::hasColumn('media', 'is_pdf')) {
+            return;
+        }
+
         Schema::table('media', function (Blueprint $table) {
             $table->dropColumn('is_pdf');
             $table->dropColumn('is_ccda');
@@ -33,6 +37,10 @@ class OptimizeHasUPG0506PdfCareplanMediaQuery extends Migration
      */
     public function up()
     {
+        if (Schema::hasColumn('media', 'is_pdf')) {
+            return;
+        }
+
         Schema::table('media', function (Blueprint $table) {
             $table->boolean('is_pdf')->virtualAs('IF(JSON_UNQUOTE(custom_properties->"$.is_pdf") = "true", TRUE, FALSE)')->before('created_at')->index();
             $table->boolean('is_ccda')->virtualAs('IF(JSON_UNQUOTE(custom_properties->"$.is_ccda") = "true", TRUE, FALSE)')->before('created_at')->index();
