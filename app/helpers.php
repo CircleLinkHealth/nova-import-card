@@ -2073,18 +2073,18 @@ if ( ! function_exists('complexAttestationRequirementsEnabledForPractice')) {
     function complexAttestationRequirementsEnabledForPractice($practiceId): bool
     {
         $key = 'complex_attestation_requirements_for_practice';
-        
+
         $practiceIds = \Cache::remember($key, 2, function () use ($key) {
             $val = AppConfig::pull($key, null);
             if (null === $val) {
                 setAppConfig($key, '');
-                
+
                 return [];
             }
-            
+
             return explode(',', $val);
         });
-        
+
         return in_array($practiceId, $practiceIds) || in_array('all', $practiceIds);
     }
 }
