@@ -19,9 +19,11 @@ trait PracticeHelpers
         bool $addBhiService = false,
         bool $addPcmService = false
     ) {
-        $this->location = Location::firstOrCreate([
-            'practice_id' => $practice->id,
-        ]);
+        $this->location = Location::where('practice_id', $practice->id)->first();
+
+        if ( ! $this->location) {
+            $this->location = factory(Location::class)->create(['practice_id' => $practice->id]);
+        }
 
         $sync = [];
 

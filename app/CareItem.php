@@ -89,6 +89,6 @@ class CareItem extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function question() // rules prefix because ->items is a protect class var on parent
     {
-        return $this->belongsTo('App\CPRulesQuestions', 'qid', 'qid');
+        return $this->belongsTo(\App\CPRulesQuestions::class, 'qid', 'qid');
     }
 }

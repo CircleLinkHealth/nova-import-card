@@ -19,7 +19,7 @@
                                             type="checkbox"
                                             name="subscriptionTypes[]"
                                             value="{{$subscriptionType}}" {{$status}}>
-                                    {{str_plural($subscriptionType)}}
+                                    {{\Illuminate\Support\Str::plural($subscriptionType)}}
                                 </label>
 
                             </div>

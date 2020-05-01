@@ -23,6 +23,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 trait UserHelpers
@@ -336,13 +337,13 @@ trait UserHelpers
         //$pcmOnly means one ccm condition only
         if ($pcmOnly) {
             $ccdProblems = $patient->ccdProblems()->createMany([
-                ['name' => 'test'.str_random(5)],
+                ['name' => 'test'.Str::random(5)],
             ]);
         } else {
             $ccdProblems = $patient->ccdProblems()->createMany([
-                ['name' => 'test'.str_random(5), 'is_monitored' => 1],
-                ['name' => 'test'.str_random(5)],
-                ['name' => 'test'.str_random(5)],
+                ['name' => 'test'.Str::random(5), 'is_monitored' => 1],
+                ['name' => 'test'.Str::random(5)],
+                ['name' => 'test'.Str::random(5)],
             ]);
         }
 

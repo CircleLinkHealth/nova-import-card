@@ -10,11 +10,13 @@ use App\Http\Controllers\Controller;
 use App\Traits\ManagesPatientCookies;
 use App\Traits\PasswordLessAuth;
 use Carbon\Carbon;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Jenssegers\Agent\Agent;
 
@@ -135,6 +137,13 @@ class LoginController extends Controller
      */
     public function showLoginForm(Request $request)
     {
+        /** @var Session $session */
+        $session  = $request->session();
+        $previous = $session->previousUrl();
+        if (empty($session->get('url.intended')) && ! Str::contains($previous, ['login', 'logout'])) {
+            $session->put('url.intended', $session->previousUrl());
+        }
+
         $this->checkPracticeNameCookie($request);
 
         if (auth()->check()) {
@@ -184,7 +193,7 @@ class LoginController extends Controller
 
     protected function getBrowsers(): Collection
     {
-        return \Cache::remember('supported-browsers', 30, function () {
+        return \Cache::remember('supported-browsers', 1800, function () {
             return DB::table('browsers')->get();
         });
     }
@@ -200,8 +209,8 @@ class LoginController extends Controller
         $messages = [];
         if ('IE' == $browser) {
             $messages = [
-                'invalid-browser' => "I'm sorry, you may be using a version of Internet Explorer (IE) that we don't support. 
-            Please use Chrome browser instead. 
+                'invalid-browser' => "I'm sorry, you may be using a version of Internet Explorer (IE) that we don't support.
+            Please use Chrome browser instead.
             <br>If you must use IE, please use IE11 or later.
             <br>If you must use IE v10 or earlier, please e-mail <a href='mailto:contact@circlelinkhealth.com'>contact@circlelinkhealth.com</a>",
             ];
@@ -252,7 +261,7 @@ class LoginController extends Controller
 
         $request->merge(array_map('trim', $request->input()));
 
-        if ( ! str_contains($request->input('email'), '@')) {
+        if ( ! Str::contains($request->input('email'), '@')) {
             $this->username = 'username';
 
             $request->merge([

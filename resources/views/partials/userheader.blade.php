@@ -45,12 +45,12 @@
             @endpush
             <div class="col-sm-8" style="line-height: 22px;">
                 <span style="font-size: 30px;">
-                    <a href="{{ route('patient.summary', array('patient' => $patient->id)) }}">
+                    <a href="{{ route('patient.summary', [$patient->id]) }}">
                     {{$patient->getFullName()}}
                     </a>
                 </span>
 
-                <a href="{{ route('patient.demographics.show', array('patient' => $patient->id)) }}"
+                <a href="{{ route('patient.demographics.show', [$patient->id]) }}"
                    style="padding-right: 5px; vertical-align: top">
                     <span class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span>
                 </a>
@@ -118,7 +118,10 @@
                                 :patient-preferences="{{json_encode($patient->patientInfo()->exists() ? $patient->patientInfo->getPreferences() : new stdClass,JSON_HEX_QUOT)}}"
                                 :is-care-center="{{json_encode(Auth::user()->isCareCoach()), JSON_HEX_QUOT}}">
                         </patient-next-call>
-                        <attest-call-conditions-modal patient-id="{{$patient->id}}"></attest-call-conditions-modal>
+                        <attest-call-conditions-modal
+                                patient-id="{{$patient->id}}"
+                                @if(isset($attestationRequirements)) :attestation-requirements="{{json_encode($attestationRequirements)}}" @endif
+                        ></attest-call-conditions-modal>
                     </li>
                 </ul>
                 <?php
@@ -157,7 +160,7 @@
                     <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
                         @if (isset($disableTimeTracking) && $disableTimeTracking)
                             <div class="color-grey">
-                                <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
+                                <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', [$patient->id]) }}">
                                     <server-time-display url="{{config('services.ws.server-url')}}"
                                                          patient-id="{{$patient->id}}"
                                                          provider-id="{{auth()->id()}}"
@@ -180,7 +183,7 @@
                                             </div>
                                             <div>
                                                  <a id="monthly-time-static"
-                                                    href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
+                                                    href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', [$patient->id]) }}">
                                                     {{$monthlyTime}}
                                                 </a>
                                             </div>
@@ -192,7 +195,7 @@
                                                 </div>
                                                 <div>
                                                      <a id="monthly-bhi-time-static"
-                                                        href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
+                                                        href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', [$patient->id]) }}">
                                                         {{$monthlyBhiTime}}
                                                      </a>
                                                 </div>

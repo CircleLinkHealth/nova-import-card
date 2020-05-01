@@ -21,6 +21,7 @@ use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use Illuminate\Support\Str;
 use Tests\CustomerTestCase;
 
 class ApproveCPViaDM extends CustomerTestCase
@@ -130,7 +131,7 @@ class ApproveCPViaDM extends CustomerTestCase
         $this->assertEquals(CarePlan::QA_APPROVED, $patient->carePlan->status);
         $patient->setBillingProviderId($this->provider()->id);
 
-        $this->provider()->emr_direct_address = 'drtest'.self::TEST_DM_DOMAIN.str_random(5);
+        $this->provider()->emr_direct_address = 'drtest'.self::TEST_DM_DOMAIN.Str::random(5);
 
         $changeCode = "#change{$patient->carePlan->id}";
         $body       = "Please make the following changes for this patient $changeCode";
@@ -208,7 +209,7 @@ class ApproveCPViaDM extends CustomerTestCase
         $this->assertEquals(CarePlan::QA_APPROVED, $patient->carePlan->status);
         $patient->setBillingProviderId($this->provider()->id);
 
-        $this->provider()->emr_direct_address = 'drtest'.self::TEST_DM_DOMAIN.str_random(5);
+        $this->provider()->emr_direct_address = 'drtest'.self::TEST_DM_DOMAIN.Str::random(5);
 
         $approvalCode = "#approve{$patient->carePlan->id}";
         $directMail   = factory(DirectMailMessage::class)->create(
@@ -250,7 +251,7 @@ class ApproveCPViaDM extends CustomerTestCase
         $this->assertEquals(CarePlan::QA_APPROVED, $patient->carePlan->status);
         $patient->setBillingProviderId($this->provider()->id);
 
-        $this->provider()->emr_direct_address = 'drtest'.self::TEST_DM_DOMAIN.str_random(5);
+        $this->provider()->emr_direct_address = 'drtest'.self::TEST_DM_DOMAIN.Str::random(5);
 
         $changeCode = "#change{$patient->carePlan->id}";
         $taskBody   = "Please make the following changes for this patient $changeCode";

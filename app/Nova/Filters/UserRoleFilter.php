@@ -16,6 +16,7 @@ class UserRoleFilter extends Filter
         'participant'               => 'Participant',
         'api-ccd-vendor'            => 'API CCD Vendor',
         'api-data-consumer'         => 'API Data Consumer',
+        'aprima-api-location'       => 'API Data Consumer and CCD Vendor',
         'viewer'                    => 'Viewer',
         'office_admin'              => 'Office Admin',
         'no-ccm-care-center'        => 'Non CCM Care Center',
@@ -37,6 +38,7 @@ class UserRoleFilter extends Filter
         'software-only'             => 'CCM Admin',
         'developer'                 => 'CLH Developer',
     ];
+
     /**
      * The filter's component.
      *

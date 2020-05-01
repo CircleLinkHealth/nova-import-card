@@ -13,30 +13,30 @@ namespace App;
  * @property int|null                                                                                                        $saas_account_id
  * @property int                                                                                                             $skip_browser_checks                                                                                                                                                    Skip compatible browser checks when the user logs in
  * @property int                                                                                                             $count_ccm_time
- * @property string                                                                                                          $username
- * @property string                                                                                                          $program_id
- * @property string                                                                                                          $password
+ * @property string|null                                                                                                     $username
+ * @property int|null                                                                                                        $program_id
+ * @property string|null                                                                                                     $password
  * @property string                                                                                                          $email
  * @property \Illuminate\Support\Carbon|null                                                                                 $user_registered
  * @property int|null                                                                                                        $user_status
- * @property int                                                                                                             $auto_attach_programs
- * @property string                                                                                                          $display_name
- * @property string                                                                                                          $first_name
- * @property string                                                                                                          $last_name
+ * @property int|null                                                                                                        $auto_attach_programs
+ * @property string|null                                                                                                     $display_name
+ * @property string|null                                                                                                     $first_name
+ * @property string|null                                                                                                     $last_name
  * @property string|null                                                                                                     $suffix
- * @property string                                                                                                          $address
- * @property string                                                                                                          $address2
- * @property string                                                                                                          $city
- * @property string                                                                                                          $state
- * @property string                                                                                                          $zip
+ * @property string|null                                                                                                     $address
+ * @property string|null                                                                                                     $address2
+ * @property string|null                                                                                                     $city
+ * @property string|null                                                                                                     $state
+ * @property string|null                                                                                                     $zip
  * @property string|null                                                                                                     $timezone
- * @property string                                                                                                          $status
+ * @property string|null                                                                                                     $status
  * @property int                                                                                                             $access_disabled
- * @property int|null                                                                                                        $is_auto_generated
+ * @property int                                                                                                             $is_auto_generated
  * @property string|null                                                                                                     $remember_token
  * @property \Illuminate\Support\Carbon|null                                                                                 $created_at
  * @property \Illuminate\Support\Carbon|null                                                                                 $updated_at
- * @property string|null                                                                                                     $deleted_at
+ * @property \Illuminate\Support\Carbon|null                                                                                 $deleted_at
  * @property string|null                                                                                                     $last_login
  * @property int                                                                                                             $is_online
  * @property string|null                                                                                                     $last_session_id
@@ -48,10 +48,10 @@ namespace App;
  * @property int|null                                                                                                        $activities_as_provider_count
  * @property \CircleLinkHealth\Customer\Entities\Appointment[]|\Illuminate\Database\Eloquent\Collection                      $appointments
  * @property int|null                                                                                                        $appointments_count
- * @property \CircleLinkHealth\TwoFA\Entities\AuthyUser|null                                                                 $authyUser
- * @property \App\CareAmbassador|null                                                                                        $careAmbassador
- * @property \CircleLinkHealth\SharedModels\Entities\CarePlan|null                                                           $carePlan
- * @property \App\CareplanAssessment|null                                                                                    $carePlanAssessment
+ * @property \CircleLinkHealth\TwoFA\Entities\AuthyUser                                                                      $authyUser
+ * @property \App\CareAmbassador                                                                                             $careAmbassador
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlan                                                                $carePlan
+ * @property \App\CareplanAssessment                                                                                         $carePlanAssessment
  * @property \CircleLinkHealth\Customer\Entities\CarePerson[]|\Illuminate\Database\Eloquent\Collection                       $careTeamMembers
  * @property int|null                                                                                                        $care_team_members_count
  * @property \CircleLinkHealth\SharedModels\Entities\Allergy[]|\Illuminate\Database\Eloquent\Collection                      $ccdAllergies
@@ -74,8 +74,8 @@ namespace App;
  * @property int|null                                                                                                        $comment_count
  * @property \CircleLinkHealth\SharedModels\Entities\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection                 $cpmBiometrics
  * @property int|null                                                                                                        $cpm_biometrics_count
- * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodPressure|null                                                   $cpmBloodPressure
- * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodSugar|null                                                      $cpmBloodSugar
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodPressure                                                        $cpmBloodPressure
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodSugar                                                           $cpmBloodSugar
  * @property \CircleLinkHealth\SharedModels\Entities\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection                 $cpmLifestyles
  * @property int|null                                                                                                        $cpm_lifestyles_count
  * @property \CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection           $cpmMedicationGroups
@@ -86,15 +86,15 @@ namespace App;
  * @property int|null                                                                                                        $cpm_miscs_count
  * @property \CircleLinkHealth\SharedModels\Entities\CpmProblem[]|\Illuminate\Database\Eloquent\Collection                   $cpmProblems
  * @property int|null                                                                                                        $cpm_problems_count
- * @property \CircleLinkHealth\SharedModels\Entities\CpmSmoking|null                                                         $cpmSmoking
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmSmoking                                                              $cpmSmoking
  * @property \CircleLinkHealth\SharedModels\Entities\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection                   $cpmSymptoms
  * @property int|null                                                                                                        $cpm_symptoms_count
- * @property \CircleLinkHealth\SharedModels\Entities\CpmWeight|null                                                          $cpmWeight
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmWeight                                                               $cpmWeight
  * @property \CircleLinkHealth\NurseInvoices\Entities\Dispute[]|\Illuminate\Database\Eloquent\Collection                     $disputes
  * @property int|null                                                                                                        $disputes_count
- * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient|null                                                       $ehrInfo
- * @property \CircleLinkHealth\Customer\Entities\EhrReportWriterInfo|null                                                    $ehrReportWriterInfo
- * @property \App\Models\EmailSettings|null                                                                                  $emailSettings
+ * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient                                                            $ehrInfo
+ * @property \CircleLinkHealth\Customer\Entities\EhrReportWriterInfo                                                         $ehrReportWriterInfo
+ * @property \App\Models\EmailSettings                                                                                       $emailSettings
  * @property \CircleLinkHealth\Customer\Entities\EmrDirectAddress[]|\Illuminate\Database\Eloquent\Collection                 $emrDirect
  * @property int|null                                                                                                        $emr_direct_count
  * @property \App\ForeignId[]|\Illuminate\Database\Eloquent\Collection                                                       $foreignId
@@ -127,7 +127,7 @@ namespace App;
  * @property int|null                                                                                                        $notifications_count
  * @property \CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra[]|\Illuminate\Database\Eloquent\Collection           $nurseBonuses
  * @property int|null                                                                                                        $nurse_bonuses_count
- * @property \CircleLinkHealth\Customer\Entities\Nurse|null                                                                  $nurseInfo
+ * @property \CircleLinkHealth\Customer\Entities\Nurse                                                                       $nurseInfo
  * @property \App\Observation[]|\Illuminate\Database\Eloquent\Collection                                                     $observations
  * @property int|null                                                                                                        $observations_count
  * @property \App\Call[]|\Illuminate\Database\Eloquent\Collection                                                            $outboundCalls
@@ -136,21 +136,21 @@ namespace App;
  * @property int|null                                                                                                        $outbound_messages_count
  * @property \CircleLinkHealth\TimeTracking\Entities\PageTimer[]|\Illuminate\Database\Eloquent\Collection                    $pageTimersAsProvider
  * @property int|null                                                                                                        $page_timers_as_provider_count
- * @property \CircleLinkHealth\Customer\Entities\UserPasswordsHistory|null                                                   $passwordsHistory
+ * @property \CircleLinkHealth\Customer\Entities\UserPasswordsHistory                                                        $passwordsHistory
  * @property \CircleLinkHealth\Customer\Entities\PatientAWVSummary[]|\Illuminate\Database\Eloquent\Collection                $patientAWVSummaries
  * @property int|null                                                                                                        $patient_a_w_v_summaries_count
  * @property \CircleLinkHealth\TimeTracking\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection                     $patientActivities
  * @property int|null                                                                                                        $patient_activities_count
- * @property \CircleLinkHealth\Customer\Entities\Patient|null                                                                $patientInfo
- * @property \CircleLinkHealth\Customer\Entities\PatientNurse|null                                                           $patientNurseAsPatient
+ * @property \CircleLinkHealth\Customer\Entities\Patient                                                                     $patientInfo
+ * @property \CircleLinkHealth\Customer\Entities\PatientNurse                                                                $patientNurseAsPatient
  * @property \CircleLinkHealth\Customer\Entities\PatientMonthlySummary[]|\Illuminate\Database\Eloquent\Collection            $patientSummaries
  * @property int|null                                                                                                        $patient_summaries_count
  * @property \CircleLinkHealth\Customer\Entities\Permission[]|\Illuminate\Database\Eloquent\Collection                       $perms
  * @property int|null                                                                                                        $perms_count
  * @property \CircleLinkHealth\Customer\Entities\PhoneNumber[]|\Illuminate\Database\Eloquent\Collection                      $phoneNumbers
  * @property int|null                                                                                                        $phone_numbers_count
- * @property \CircleLinkHealth\Customer\Entities\Practice                                                                    $primaryPractice
- * @property \CircleLinkHealth\Customer\Entities\ProviderInfo|null                                                           $providerInfo
+ * @property \CircleLinkHealth\Customer\Entities\Practice|null                                                               $primaryPractice
+ * @property \CircleLinkHealth\Customer\Entities\ProviderInfo                                                                $providerInfo
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection                     $revisionHistory
  * @property int|null                                                                                                        $revision_history_count
  * @property \CircleLinkHealth\Customer\Entities\Role[]|\Illuminate\Database\Eloquent\Collection                             $roles

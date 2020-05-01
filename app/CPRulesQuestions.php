@@ -95,16 +95,16 @@ class CPRulesQuestions extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function observations()
     {
-        return $this->hasMany('App\Observation', 'msg_id', 'obs_message_id');
+        return $this->hasMany(\App\Observation::class, 'msg_id', 'obs_message_id');
     }
 
     public function questionSets()
     {
-        return $this->hasMany('App\CPRulesQuestionSets', 'qid', 'qid');
+        return $this->hasMany(\App\CPRulesQuestionSets::class, 'qid', 'qid');
     }
 
     public function rulesItems() // rules prefix because ->items is a protect class var on parent
     {
-        return $this->hasMany('App\CPRulesItem', 'qid', 'qid');
+        return $this->hasMany(\App\CPRulesItem::class, 'qid', 'qid');
     }
 }

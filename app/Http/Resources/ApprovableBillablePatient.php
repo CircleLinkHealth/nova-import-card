@@ -40,7 +40,7 @@ class ApprovableBillablePatient extends Resource
 
         $name = $this->patient->getFullName();
         $url  = route('patient.note.index', [
-            'patient' => $this->patient->id,
+            $this->patient->id,
         ]);
 
         $status = $this->closed_ccm_status;

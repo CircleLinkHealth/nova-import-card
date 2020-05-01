@@ -10,12 +10,11 @@ use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
 use App\Services\SnappyPdfWrapper;
 use CircleLinkHealth\Core\HtmlToPdfService;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class AppDeferredServiceProvider extends ServiceProvider
+class AppDeferredServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    protected $defer = true;
-
     public function provides()
     {
         return [

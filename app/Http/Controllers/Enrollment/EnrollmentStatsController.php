@@ -125,28 +125,31 @@ class EnrollmentStatsController extends Controller
 
             $hourCost = $ambassador->hourly_rate ?? 'Not Set';
 
+            $totalTimeInSystemSeconds = $base->sum('total_time_in_system');
+
             $data[$ambassador->id]['hourly_rate'] = $hourCost;
 
             $data[$ambassador->id]['name'] = User::find($ambassadorUser)->getFullName();
 
-            $data[$ambassador->id]['total_hours'] = floatval(round($base->sum('total_time_in_system') / 3600, 2));
+            $data[$ambassador->id]['total_hours'] = floatval(round($totalTimeInSystemSeconds / 3600, 2));
 
-            $data[$ambassador->id]['no_enrolled']         = $base->sum('no_enrolled');
+            $data[$ambassador->id]['no_enrolled'] = $base->sum('no_enrolled');
+
             $data[$ambassador->id]['mins_per_enrollment'] = (0 != $base->sum('no_enrolled'))
                 ?
-                number_format(($base->sum('total_time_in_system') / 60) / $base->sum('no_enrolled'), 2)
+                number_format(($totalTimeInSystemSeconds / 60) / $base->sum('no_enrolled'), 2)
                 : 0;
 
             $data[$ambassador->id]['total_calls'] = $base->sum('total_calls');
 
             if (0 != $base->sum('total_calls') && 0 != $base->sum('no_enrolled') && 'Not Set' != $hourCost) {
                 $data[$ambassador->id]['earnings'] = '$'.number_format(
-                    $hourCost * ($base->sum('total_time_in_system') / 3600),
+                    $hourCost * ($totalTimeInSystemSeconds / 3600),
                     2
                 );
 
                 $data[$ambassador->id]['calls_per_hour'] = number_format(
-                    $base->sum('total_calls') / ($base->sum('total_time_in_system') / 3600),
+                    $base->sum('total_calls') / ($totalTimeInSystemSeconds / 3600),
                     2
                 );
 
@@ -156,7 +159,7 @@ class EnrollmentStatsController extends Controller
                 ).'%';
 
                 $data[$ambassador->id]['per_cost'] = '$'.number_format(
-                    (($base->sum('total_time_in_system') / 3600) * $hourCost) / $base->sum('no_enrolled'),
+                    (($totalTimeInSystemSeconds / 3600) * $hourCost) / $base->sum('no_enrolled'),
                     2
                 );
             } else {

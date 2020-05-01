@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Jobs\ImportCcda;
 use App\Nova\Actions\ClearAndReimportCcda;
+use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\Request;
@@ -136,9 +137,9 @@ class ImporterController extends Controller
                     $ccda->checkDuplicity();
 
                     return [
-                        'display_name'        => $ccda->patientFirstName().' '.$ccda->patientLastName(),
+                        'display_name'        => $ccda->patient_first_name.' '.$ccda->patient_last_name,
                         'dob'                 => $ccda->patientDob(),
-                        'mrn'                 => $ccda->patientMrn(),
+                        'mrn'                 => $ccda->patient_mrn,
                         'id'                  => $ccda->id,
                         'patient'             => $ccda->patient,
                         'practice'            => $ccda->practice,
@@ -208,21 +209,31 @@ class ImporterController extends Controller
                         continue;
                     }
 
-                    $ccda['location_id']         = $record['location_id'];
-                    $ccda['practice_id']         = $record['practice_id'];
-                    $ccda['billing_provider_id'] = $record['billing_provider_id'];
-                    $ccda['nurse_user_id']       = $record['nurse_user_id'] ?? null;
-                    $carePlan                    = $ccda->updateOrCreateCarePlan();
+                    $ccda->location_id         = $record['location_id'];
+                    $ccda->practice_id         = $record['practice_id'];
+                    $ccda->billing_provider_id = $record['billing_provider_id'];
+                    $ccda                      = $ccda->updateOrCreateCarePlan();
                     array_push(
                         $importedRecords,
                         [
                             'id'        => $id,
                             'completed' => true,
-                            'patient'   => $carePlan->patient()->first(),
+                            'patient'   => $ccda->patient,
                         ]
                     );
-                    $ccda->imported = true;
-                    $ccda->save();
+
+                    if ($record['nurse_user_id']) {
+                        PatientNurse::updateOrCreate(
+                            ['patient_user_id' => $ccda->patient->id],
+                            [
+                                'patient_user_id'         => $ccda->patient->id,
+                                'nurse_user_id'           => $record['nurse_user_id'],
+                                'temporary_nurse_user_id' => null,
+                                'temporary_from'          => null,
+                                'temporary_to'            => null,
+                            ]
+                        );
+                    }
                 }
             }
 

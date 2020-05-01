@@ -15,12 +15,14 @@
         Session::forget('messages');
     @endphp
 
+    @push('styles')
     <style>
         .patient-user {
             font-size: x-large;
             line-height: 30px;
         }
     </style>
+    @endpush
 
 @endif
 

@@ -88,7 +88,7 @@ class DownloadController extends Controller
     {
         $collection = Media::where('collection_name', $collectionName)
             ->where('model_id', auth()->user()->id)
-            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
+            ->whereIn('model_type', [\App\User::class, 'CircleLinkHealth\Customer\Entities\User'])
             ->get();
 
         if ($collection->isEmpty()) {

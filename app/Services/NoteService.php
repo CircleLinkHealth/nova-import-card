@@ -21,6 +21,7 @@ use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 class NoteService
 {
@@ -308,13 +309,13 @@ class NoteService
                         ->where('model_id', $n->notifiable_id)
                         ->whereIn(
                             'model_type',
-                            ['App\User', 'CircleLinkHealth\Customer\Entities\User']
+                            [\App\User::class, 'CircleLinkHealth\Customer\Entities\User']
                         )
                         ->find($attachment['media_id']);
 
                     $a['url'] = $media->getUrl();
                     $a['file_name'] = $media->file_name;
-                    $a['is_image'] = str_contains($media->mime_type, 'image')
+                    $a['is_image'] = Str::contains($media->mime_type, 'image')
                         ?: false;
 
                     $email['attachments'][] = $a;

@@ -20,6 +20,7 @@ use CircleLinkHealth\Customer\Entities\Settings;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class DashboardController extends Controller
 {
@@ -187,7 +188,7 @@ class DashboardController extends Controller
             'email'      => $request->input('email'),
             'subject'    => $request->input('subject'),
             'message'    => $request->input('message'),
-            'code'       => str_random(20),
+            'code'       => Str::random(20),
         ]);
     }
 

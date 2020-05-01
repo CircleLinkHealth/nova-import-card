@@ -23,7 +23,7 @@ class NursePcmPaymentAlgoTest extends TestCase
     use TimeHelpers;
     use UserHelpers;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         (new \ChargeableServiceSeeder())->run();

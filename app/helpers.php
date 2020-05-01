@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 if ( ! function_exists('sanitize_array_keys')) {
     function sanitize_array_keys(array $array)
@@ -74,7 +75,7 @@ if ( ! function_exists('abort_if_str_contains_unsafe_characters')) {
 if ( ! function_exists('str_contains_unsafe_characters')) {
     function str_contains_unsafe_characters(string $string)
     {
-        return str_contains($string, ['<', '>', '&', '=']);
+        return Str::contains($string, ['<', '>', '&', '=']);
     }
 }
 
@@ -114,7 +115,7 @@ if ( ! function_exists('parseIds')) {
             )->values()->toArray();
         }
 
-        if (is_string($value) && str_contains($value, ',')) {
+        if (is_string($value) && Str::contains($value, ',')) {
             return explode(',', $value);
         }
 
@@ -830,7 +831,8 @@ if ( ! function_exists('authUserCanSendPatientEmail')) {
 
         return \Cache::remember($key, 2, function () use ($key) {
             return AppConfig::where('config_key', $key)
-                ->where('config_value', auth()->user()->id)->exists();
+                ->whereIn('config_value', [auth()->user()->id, 'all'])
+                ->exists();
         });
     }
 }
@@ -925,17 +927,17 @@ if ( ! function_exists('linkToCachedView')) {
 if ( ! function_exists('parseCallDays')) {
     function parseCallDays($preferredCallDays)
     {
-        if ( ! $preferredCallDays || str_contains(strtolower($preferredCallDays), ['any'])) {
+        if ( ! $preferredCallDays || Str::contains(strtolower($preferredCallDays), ['any'])) {
             return [1, 2, 3, 4, 5];
         }
 
         $days = [];
 
-        if (str_contains($preferredCallDays, [','])) {
+        if (Str::contains($preferredCallDays, [','])) {
             foreach (explode(',', $preferredCallDays) as $dayName) {
                 $days[] = dayNameToClhDayOfWeek($dayName);
             }
-        } elseif (str_contains($preferredCallDays, ['-'])) {
+        } elseif (Str::contains($preferredCallDays, ['-'])) {
             $exploded = explode('-', $preferredCallDays);
 
             $from = array_search($exploded[0], weekDays());
@@ -964,11 +966,11 @@ if ( ! function_exists('parseCallTimes')) {
 
         $times = [];
 
-        if (str_contains($preferredCallTimes, ['-'])) {
+        if (Str::contains($preferredCallTimes, ['-'])) {
             $delimiter = '-';
         }
 
-        if (str_contains($preferredCallTimes, ['to'])) {
+        if (Str::contains($preferredCallTimes, ['to'])) {
             $delimiter = 'to';
         }
 
@@ -997,17 +999,17 @@ if ( ! function_exists('getProblemCodeSystemName')) {
     {
         foreach ($clues as $clue) {
             if ('2.16.840.1.113883.6.96' == $clue
-                || str_contains(strtolower($clue), ['snomed'])) {
+                || Str::contains(strtolower($clue), ['snomed'])) {
                 return Constants::SNOMED_NAME;
             }
 
             if ('2.16.840.1.113883.6.103' == $clue
-                || str_contains(strtolower($clue), ['9'])) {
+                || Str::contains(strtolower($clue), ['9'])) {
                 return Constants::ICD9_NAME;
             }
 
             if ('2.16.840.1.113883.6.3' == $clue
-                || str_contains(strtolower($clue), ['10'])) {
+                || Str::contains(strtolower($clue), ['10'])) {
                 return Constants::ICD10_NAME;
             }
         }
@@ -1046,7 +1048,7 @@ if ( ! function_exists('validProblemName')) {
      */
     function validProblemName($name)
     {
-        return ! str_contains(
+        return ! Str::contains(
             strtolower($name),
             [
                 'screening',
@@ -1094,7 +1096,7 @@ if ( ! function_exists('validAllergyName')) {
      */
     function validAllergyName($name)
     {
-        return ! str_contains(
+        return ! Str::contains(
             strtolower($name),
             [
                 'no known',
@@ -1661,11 +1663,12 @@ if ( ! function_exists('measureTime')) {
 
 if ( ! function_exists('stripNonTrixTags')) {
     /**
-     * @param string
+     * @param string|null
+     * @param mixed $trixString
      *
      * @return string
      */
-    function stripNonTrixTags(string $trixString)
+    function stripNonTrixTags($trixString)
     {
         return strip_tags($trixString, Constants::TRIX_ALLOWABLE_TAGS_STRING);
     }
@@ -1939,5 +1942,85 @@ if ( ! function_exists('getPatientListDropdown')) {
 
             return collect($result)->unique()->toArray();
         });
+    }
+}
+
+if ( ! function_exists('createTimeRangeFromEarliestAndLatest')) {
+    /**
+     * Used in CA:
+     * Example:
+     * Create string '09:00-18:00' from array:.
+     *
+     * [
+     * '09:00-11:00',
+     * '11:00-13:00',
+     * '13:00-18:00
+     * ]
+     */
+    function createTimeRangeFromEarliestAndLatest(array $times): ?string
+    {
+        $times = collect($times);
+
+        if (1 == $times->count()) {
+            return $times->first();
+        }
+
+        $start = collect(explode('-', $times->first()))->first();
+
+        if ( ! $start) {
+            return null;
+        }
+
+        $end = collect(explode('-', $times->last()))->last();
+
+        if ( ! $end) {
+            //if more than 2 entries get second to last and try to parse
+            $secondToLastEnd = collect(explode('-', $times[$times->count() - 2]))->last();
+            if (2 == $times->count() || ! $secondToLastEnd) {
+                return $times->first();
+            }
+            $end = $secondToLastEnd;
+        }
+
+        return $start.'-'.$end;
+    }
+}
+
+if ( ! function_exists('suggestedFamilyMemberAcceptableRelevanceScore')) {
+    /**
+     * @param array $times
+     *
+     * @return string|null
+     */
+    function suggestedFamilyMemberAcceptableRelevanceScore(): int
+    {
+        $key = 'suggested_family_members_relevance_score';
+
+        return \Cache::remember($key, 2, function () use ($key) {
+            return AppConfig::pull($key, 30);
+        });
+    }
+}
+
+if ( ! function_exists('complexAttestationRequirementsEnabledForPractice')) {
+    /**
+     * @param mixed $practiceId
+     */
+    function complexAttestationRequirementsEnabledForPractice($practiceId): bool
+    {
+        $key = 'complex_attestation_requirements_for_practice';
+
+        $practiceIds = \Cache::remember($key, 2, function () use ($key) {
+            $val = AppConfig::pull($key, null);
+            if (null === $val) {
+                setAppConfig($key, '');
+
+                return [];
+            }
+
+            return explode(',', $val);
+        });
+
+        return in_array($practiceId, $practiceIds) || in_array('all', $practiceIds);
     }
 }

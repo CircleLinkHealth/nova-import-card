@@ -26,7 +26,7 @@ class AthenaApiCallsTest extends TestCase
     private $athenaPracticeId;
     private $fakePatient;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

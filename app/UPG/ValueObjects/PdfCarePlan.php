@@ -6,6 +6,8 @@
 
 namespace App\UPG\ValueObjects;
 
+use Illuminate\Support\Str;
+
 class PdfCarePlan
 {
     protected $chargeableServices;
@@ -35,7 +37,7 @@ class PdfCarePlan
             //add problems with instructions array. Template ['name' => problem name, 'value' => instruction]
             'instructions'        => $this->data['problems'],
             'chargeable_services' => $this->data['chargeable_services'],
-            'is_g0506'            => str_contains(collect($this->data['chargeable_services'])->transform(function (
+            'is_g0506'            => Str::contains(collect($this->data['chargeable_services'])->transform(function (
                 $cs
             ) {
                 return isset($cs['subject'])
@@ -297,7 +299,7 @@ class PdfCarePlan
                         $currentChargeableService = [];
                     }
 
-                    if (str_contains(collect($chargeableServices)->transform(function ($cs) {
+                    if (Str::contains(collect($chargeableServices)->transform(function ($cs) {
                         return isset($cs['provider'])
                             ? $cs['provider']
                             : 'N/A';
@@ -310,11 +312,11 @@ class PdfCarePlan
                     $array = explode(':', $string);
 
                     if (2 == count($array)) {
-                        $key   = snake_case(strtolower(trim($array[0])));
+                        $key   = Str::snake(strtolower(trim($array[0])));
                         $value = trim($array[1]);
 
                         if ('subject' == $key) {
-                            $currentChargeableService['is_g0506'] = str_contains(strtolower($value), 'g0506');
+                            $currentChargeableService['is_g0506'] = Str::contains(strtolower($value), 'g0506');
                         }
 
                         $currentChargeableService[$key] = $value;
@@ -357,7 +359,7 @@ class PdfCarePlan
                 foreach ($types as $type) {
                     if ( ! isset($phones[$type['key']]) || empty($phones[$type['key']])) {
                         $phones[$type['key']] = null;
-                        if (str_contains($string, $type['search'])) {
+                        if (Str::contains($string, $type['search'])) {
                             $phones[$type['key']] = trim(str_replace($type['search'], ' ', $string));
                         }
                     }

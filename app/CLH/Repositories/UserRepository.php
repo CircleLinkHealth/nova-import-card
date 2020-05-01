@@ -22,7 +22,6 @@ use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
-use CircleLinkHealth\Customer\Tasks\ClearUserCache;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
@@ -161,7 +160,7 @@ class UserRepository
 
         // ehr report writer info
         if ($user->hasRole('ehr-report-writer')) {
-            $this->saveOrUpdateEhrReportWriterInfo($user, $params);
+            $this->saveOrUpdateEhrReportWriterInfo($user);
         }
 
         if ($user->isAdmin() && $user->authyUser) {
@@ -212,7 +211,7 @@ class UserRepository
         }
 
         if ($user->hasRole('ehr-report-writer')) {
-            $this->saveOrUpdateEhrReportWriterInfo($user, $params);
+            $this->saveOrUpdateEhrReportWriterInfo($user);
         }
 
         return $user;
@@ -273,7 +272,7 @@ class UserRepository
             ->where('filename', '=', "report-writer-{$user->id}")
             ->first();
 
-        if ( ! $writerFolder) {
+        if (empty($writerFolder)) {
             $cloudDisk->makeDirectory($ehrPath."/report-writer-{$user->id}");
 
             return $this->saveEhrReportWriterFolder($user);
@@ -349,8 +348,7 @@ class UserRepository
     }
 
     public function saveOrUpdateEhrReportWriterInfo(
-        User $user,
-        ParameterBag $params
+        User $user
     ) {
         $folderPath = $this->saveEhrReportWriterFolder($user);
 
@@ -661,7 +659,15 @@ class UserRepository
     private function checkPatientForDupes(ParameterBag $params)
     {
         return [
-            'mrn_number' => [new PatientIsNotDuplicate($params->get('program_id'), $params->get('first_name'), $params->get('last_name'), ImportPatientInfo::parseDOBDate($params->get('birth_date')), $params->get('mrn_number'))],
+            'mrn_number' => [
+                new PatientIsNotDuplicate(
+                    $params->get('program_id'),
+                    $params->get('first_name'),
+                    $params->get('last_name'),
+                    $params->get('birth_date'),
+                    $params->get('mrn_number')
+                ),
+            ],
         ];
     }
 
@@ -670,7 +676,7 @@ class UserRepository
      */
     private function clearRolesCache(User $user)
     {
-        ClearUserCache::roles($user);
+        $user->clearRolesCache();
     }
 
     private function createNewPatientRules()

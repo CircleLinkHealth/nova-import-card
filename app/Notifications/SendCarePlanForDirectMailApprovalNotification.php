@@ -13,6 +13,7 @@ use App\ValueObjects\SimpleNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
 use URL;
 
 class SendCarePlanForDirectMailApprovalNotification extends Notification implements DirectMailableNotification
@@ -107,7 +108,7 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
         if ( ! $this->passwordlessLoginToken) {
             do {
                 $saved = false;
-                $token = str_random(6);
+                $token = Str::random(6);
 
                 if ( ! PasswordlessLoginToken::where('token', $token)->exists()) {
                     $this->passwordlessLoginToken = PasswordlessLoginToken::create(

@@ -7,7 +7,7 @@
 namespace App\Jobs;
 
 use App\Notifications\CcdaImportedNotification;
-use CircleLinkHealth\Customer\Entities\User;
+use App\User;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

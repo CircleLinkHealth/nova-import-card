@@ -64,7 +64,7 @@ class ObservationMeta extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function observationMeta()
     {
-        return $this->belongsTo('App\Observation', 'obs_id');
+        return $this->belongsTo(\App\Observation::class, 'obs_id');
     }
 
     public function save(array $params = [])

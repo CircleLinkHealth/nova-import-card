@@ -23,7 +23,7 @@ class PracticePcmBillingTest extends TestCase
     /** @var ApproveBillablePatientsService */
     protected $service;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->service = $this->app->make(ApproveBillablePatientsService::class);

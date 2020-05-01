@@ -139,6 +139,7 @@ class NurseController extends Controller
         }
 
         $nurses = User::select(['id', 'first_name', 'last_name'])
+            ->with(['nurseInfo'])
             ->has('nurseInfo')
             ->ofType('care-center')
             ->where('access_disabled', 0)

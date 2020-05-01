@@ -12,6 +12,7 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Str;
 
 class UPG0506CcdaImporterListener implements ShouldQueue
 {
@@ -61,7 +62,7 @@ class UPG0506CcdaImporterListener implements ShouldQueue
 
     private function shouldBail(Ccda $ccda): bool
     {
-        return ! (str_contains(
+        return ! (Str::contains(
             optional(DirectMailMessage::find($ccda->direct_mail_message_id))->from,
             '@upg.ssdirect.aprima.com'
         ) && $ccda->hasProcedureCode('G0506'));

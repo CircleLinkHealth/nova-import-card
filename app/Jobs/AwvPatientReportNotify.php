@@ -65,7 +65,7 @@ class AwvPatientReportNotify implements ShouldQueue
 
         $media = Media::where('collection_name', 'patient-care-documents')
             ->where('model_id', $patient->id)
-            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
+            ->whereIn('model_type', [\App\User::class, 'CircleLinkHealth\Customer\Entities\User'])
             ->find($this->patientReportData['report_media_id']);
 
         if ( ! $media) {

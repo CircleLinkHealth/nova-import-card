@@ -30,7 +30,7 @@ class ProtectPHITest extends TestCase
 
     private $facadeMocks = [];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         //could not make it work at the moment
@@ -50,7 +50,13 @@ class ProtectPHITest extends TestCase
         //admin has the phi.read permission so we have to deactivate
         $this->disablePHIForUser($this->admin);
 
-        $this->patient    = $this->createUser($this->practice->id, 'participant');
+        $this->patient = $this->createUser($this->practice->id, 'participant');
+
+        //add fixed names to prevent random failures
+        $this->patient->first_name = 'Testfirstname';
+        $this->patient->last_name  = 'Testlastname';
+        $this->patient->save();
+
         $this->patientPhi = $this->collectPatientPhiValues();
 
         $this->enrollee = factory(Enrollee::class)->create();

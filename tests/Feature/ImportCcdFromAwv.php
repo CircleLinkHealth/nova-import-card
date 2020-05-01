@@ -13,7 +13,7 @@ use Tests\CustomerTestCase;
 
 class ImportCcdFromAwv extends CustomerTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->setAdminUser();

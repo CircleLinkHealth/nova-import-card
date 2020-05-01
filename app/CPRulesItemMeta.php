@@ -52,6 +52,6 @@ class CPRulesItemMeta extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function CPRulesItem()
     {
-        return $this->belongsTo('App\CPRulesItem', 'items_id');
+        return $this->belongsTo(\App\CPRulesItem::class, 'items_id');
     }
 }

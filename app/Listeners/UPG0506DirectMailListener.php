@@ -13,6 +13,7 @@ use App\UPG\UPGPdfCarePlan;
 use CircleLinkHealth\Customer\Entities\Media;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Str;
 
 class UPG0506DirectMailListener implements ShouldQueue
 {
@@ -94,6 +95,6 @@ class UPG0506DirectMailListener implements ShouldQueue
 
     private function shouldBail(string $sender)
     {
-        return ! str_contains($sender, '@upg.ssdirect.aprima.com') || ! upg0506IsEnabled();
+        return ! Str::contains($sender, '@upg.ssdirect.aprima.com') || ! upg0506IsEnabled();
     }
 }

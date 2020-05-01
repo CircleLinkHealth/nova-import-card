@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Tests\Unit\CallsAlgo;
+namespace Tests\Unit\CallSchedulingAlgo;
 
 use App\Algorithms\Calls\SuccessfulHandler;
 use Carbon\Carbon;
@@ -21,7 +21,7 @@ class SuccessfulCallHandlerTest extends TestCase
     private $nurse;
     private $practice;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

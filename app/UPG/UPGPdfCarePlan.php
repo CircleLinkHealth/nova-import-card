@@ -8,6 +8,7 @@ namespace App\UPG;
 
 use App\UPG\ValueObjects\PdfCarePlan;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use setasign\Fpdi\Fpdi;
 use Spatie\PdfToText\Pdf;
 
@@ -141,7 +142,7 @@ class UPGPdfCarePlan
                 'key'      => 'instructions',
                 'callback' => function ($string) {
                     //Usually actual instructions exist below a string containing recommendations and/or care plan, and the name of the condition is above that
-                    if (str_contains(strtolower($string), 'recommendations:') || str_contains(strtolower($string), 'care plan')) {
+                    if (Str::contains(strtolower($string), 'recommendations:') || Str::contains(strtolower($string), 'care plan')) {
                         $this->carePlan['instructions'][] = ['problem_name' => $this->array[$this->count - 1]];
 
                         return;
@@ -213,7 +214,7 @@ class UPGPdfCarePlan
 
             //if the search term exists in the string remove it. If nothing is left after that, get next string
             foreach ($searches as $search) {
-                if (str_contains($string, $search)) {
+                if (Str::contains($string, $search)) {
                     $string = trim(str_replace($search, ' ', $string));
                 }
             }
@@ -231,7 +232,7 @@ class UPGPdfCarePlan
             $nextCheckpoint = $this->currentCheckpoint + 1;
             if (isset($this->array[$this->count + 1], $this->checkpoints[$nextCheckpoint])) {
                 foreach ($this->checkpoints[$nextCheckpoint]['search'] as $search) {
-                    if (str_contains($this->array[$this->count + 1], $search)) {
+                    if (Str::contains($this->array[$this->count + 1], $search)) {
                         $this->currentCheckpoint = $nextCheckpoint;
                     }
                 }

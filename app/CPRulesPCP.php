@@ -64,7 +64,7 @@ class CPRulesPCP extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function items()
     {
-        return $this->hasMany('App\CPRulesItem', 'pcp_id');
+        return $this->hasMany(\App\CPRulesItem::class, 'pcp_id');
     }
 
     public function program()

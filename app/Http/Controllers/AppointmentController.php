@@ -16,20 +16,16 @@ class AppointmentController extends Controller
 {
     public function create(Request $request, $patientId)
     {
-        $patient = User::find($patientId);
-
-        $providers    = [];
-        $providerList = User::whereHas('roles', function ($q) {
+        $patient   = User::find($patientId);
+        $providers = User::whereHas('roles', function ($q) {
             $q->where('name', '=', 'provider');
-        })->get();
-
-        foreach ($providerList as $provider) {
-            if ($provider->getFullName()) {
-                $providers[$provider->id] = $provider->getFullName();
-            }
-        }
-
-        asort($providers);
+        })
+            ->orderBy('display_name')
+            ->get(['id', 'display_name'])
+            ->mapWithKeys(function ($provider) {
+                return [$provider->id => $provider->display_name];
+            })
+            ->toArray();
 
         $data = [
             'providers' => $providers,
@@ -71,7 +67,7 @@ class AppointmentController extends Controller
             'was_completed' => $was_completed,
         ]);
 
-        return redirect()->route('patient.note.index', ['patient' => $input['patientId']])->with(
+        return redirect()->route('patient.note.index', ['patientId' => $input['patientId']])->with(
             'messages',
             ['Successfully Stored Appointment']
         );
