@@ -9,6 +9,7 @@ namespace App\Jobs;
 // This file is part of CarePlan Manager by CircleLink Health.
 
 use App\Console\Commands\SendEnrollmentNotifications;
+use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
@@ -24,6 +25,7 @@ use Illuminate\Support\Facades\App;
 class SelfEnrollmentEnrollees implements ShouldQueue
 {
     use Dispatchable;
+    use EnrollableManagement;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
@@ -85,20 +87,6 @@ class SelfEnrollmentEnrollees implements ShouldQueue
                 $this->createSurveyOnlyUserFromEnrollees($enrollees);
             });
         }
-    }
-
-    /**
-     * NOTE: "whereDoesntHave" makes sure we dont invite Unreachable/Non responded - Enrollees second time.
-     *
-     * @return Enrollee|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
-     */
-    private function getEnrollees()
-    {
-        return Enrollee::whereDoesntHave('enrollmentInvitationLink')
-            ->whereIn('status', [
-                'call_queue',
-                'utc',
-            ]);
     }
 
     private function surveyRole(): Role

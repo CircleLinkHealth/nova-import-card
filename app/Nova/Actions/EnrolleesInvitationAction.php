@@ -24,7 +24,8 @@ class EnrolleesInvitationAction extends Action
      */
     public function fields()
     {
-        return [];
+        return [
+        ];
     }
 
     /**
@@ -34,6 +35,12 @@ class EnrolleesInvitationAction extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        return Action::push('/resources/enrollees-invitation-panels');
+        if ($models->count() > 1) {
+            return Action::danger('Please select just one Practice!');
+        }
+        // Allowing just one $model from AutoEnrollmentInvitationsPanel
+        return Action::push('/resources/enrollees-invitation-panels', [
+            'id' => $models->first()->id,
+        ]);
     }
 }

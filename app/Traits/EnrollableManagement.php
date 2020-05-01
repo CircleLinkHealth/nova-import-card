@@ -117,6 +117,19 @@ trait EnrollableManagement
     }
 
     /**
+     * NOTE: "whereDoesntHave" makes sure we dont invite Unreachable/Non responded - Enrollees second time.
+     * @return Enrollee|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
+     */
+    public function getEnrollees()
+    {
+        return Enrollee::whereDoesntHave('enrollmentInvitationLink')
+            ->whereIn('status', [
+                'call_queue',
+                'utc',
+            ]);
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Query\Builder|object|null
      */
     public function getEnrolleesSurveyInstance()
