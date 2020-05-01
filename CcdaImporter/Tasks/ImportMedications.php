@@ -70,7 +70,7 @@ class ImportMedications extends BaseCcdaImportTask
         $this->patient->load('ccdMedications');
 
         if ($this->patient->ccdMedications->isEmpty()) {
-            $this->importAllAsInactive();
+            $this->importAll();
             $this->patient->load('ccdMedications');
         }
 
@@ -88,7 +88,7 @@ class ImportMedications extends BaseCcdaImportTask
         }
     }
 
-    private function importAllAsInactive()
+    private function importAll()
     {
         collect($this->ccda->bluebuttonJson()->medications ?? [])->each(
             function ($medication) use (&$medicationGroups) {
@@ -123,7 +123,6 @@ class ImportMedications extends BaseCcdaImportTask
                         'code_system'         => $new['cons_code_system'],
                         'code_system_name'    => $new['cons_code_system_name'],
                         'ccda_id'             => $this->ccda->id,
-                        'active'              => 0,
                     ]
                 );
 
