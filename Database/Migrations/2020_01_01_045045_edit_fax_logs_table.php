@@ -4,7 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\FaxLog;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -27,7 +26,7 @@ class EditFaxLogsTable extends Migration
      */
     public function up()
     {
-        $tableName = (new FaxLog())->getTable();
+        $tableName = 'fax_logs';
         if ( ! Schema::hasColumn($tableName, 'event_type')) {
             Schema::table(
                 $tableName,
@@ -36,13 +35,15 @@ class EditFaxLogsTable extends Migration
                 }
             );
 
-            FaxLog::orderBy('id')->chunkById(30, function ($faxes) {
-                foreach ($faxes as $fax) {
-                    $fax->event_type = $fax->status;
-                    $fax->status = $fax->response['status'];
-                    $fax->save();
-                }
-            });
+            if (class_exists('App\FaxLog')) {
+                App\FaxLog::orderBy('id')->chunkById(30, function ($faxes) {
+                    foreach ($faxes as $fax) {
+                        $fax->event_type = $fax->status;
+                        $fax->status = $fax->response['status'];
+                        $fax->save();
+                    }
+                });
+            }
         }
     }
 }

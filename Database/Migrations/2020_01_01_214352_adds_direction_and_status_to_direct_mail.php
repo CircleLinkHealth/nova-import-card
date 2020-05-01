@@ -4,7 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\DirectMailMessage;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,7 +17,7 @@ class AddsDirectionAndStatusToDirectMail extends Migration
      */
     public function down()
     {
-        $tblName = (new DirectMailMessage())->getTable();
+        $tblName = 'direct_mail_messages';
 
         Schema::table($tblName, function (Blueprint $table) {
             $table->dropColumn('direction');
@@ -34,13 +33,13 @@ class AddsDirectionAndStatusToDirectMail extends Migration
      */
     public function up()
     {
-        $tblName = (new DirectMailMessage())->getTable();
+        $tblName = 'direct_mail_messages';
 
         if ( ! Schema::hasColumn($tblName, 'direction')) {
             Schema::table($tblName, function (Blueprint $table) {
                 $table->string('error_text')->nullable()->after('id');
-                $table->enum('status', [DirectMailMessage::STATUS_SUCCESS, DirectMailMessage::STATUS_FAIL])->after('id');
-                $table->enum('direction', [DirectMailMessage::DIRECTION_SENT, DirectMailMessage::DIRECTION_RECEIVED])->after('id');
+                $table->enum('status', ['success', 'fail'])->after('id');
+                $table->enum('direction', ['sent', 'received'])->after('id');
             });
 
             DB::table($tblName)->update(['direction' => 'received', 'status' => 'success']);
