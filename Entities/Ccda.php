@@ -13,6 +13,7 @@ use App\Traits\Relationships\BelongsToPatientUser;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidCcdaException;
+use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -442,6 +443,13 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
         if ($ccda->isDirty()) {
             $ccda->save();
+        }
+
+        if (CarePlanAutoApprover::id() && ! $ccda->patient->carePlan->validator()->fails()) {
+            $ccda->patient->carePlan->status         = CarePlan::QA_APPROVED;
+            $ccda->patient->carePlan->qa_approver_id = CarePlanAutoApprover::id();
+            $ccda->patient->carePlan->qa_date        = now()->toDateTimeString();
+            $ccda->patient->carePlan->save();
         }
 
         event(new CcdaImported($ccda->getId()));
