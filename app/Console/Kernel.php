@@ -145,7 +145,7 @@ class Kernel extends ConsoleKernel
             ->everyThirtyMinutes()->onOneServer();
 
         $schedule->command(CountPatientMonthlySummaryCalls::class, [now()->startOfMonth()->toDateString()])
-            ->everyThirtyMinutes()->onOneServer();
+            ->twiceDaily(7, 21)->onOneServer();
 
 //        $schedule->command(
 //            SendCareCoachInvoices::class,
