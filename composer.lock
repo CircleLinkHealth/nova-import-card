@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c2fb02f6f133c124a0099ac2b808e655",
+    "content-hash": "f93ab809d831d9d59bde26ac2423189d",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -417,16 +417,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.137.0",
+            "version": "3.137.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "e92ed36668dd546041714d3d1c520d6206423ab3"
+                "reference": "935060ae3d64f2bfeab7a6ba46bebe525047446c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e92ed36668dd546041714d3d1c520d6206423ab3",
-                "reference": "e92ed36668dd546041714d3d1c520d6206423ab3",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/935060ae3d64f2bfeab7a6ba46bebe525047446c",
+                "reference": "935060ae3d64f2bfeab7a6ba46bebe525047446c",
                 "shasum": ""
             },
             "require": {
@@ -497,7 +497,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-04-30T18:16:22+00:00"
+            "time": "2020-05-01T18:13:22+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1045,11 +1045,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.2.9",
+            "version": "v2.3.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "e2f37eaa7f7f6a9c9ce8c173f3f96b6cc32a8159"
+                "reference": "dae45a601d4ae6cbcdab9b4246147fddeb4782af"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1083,7 +1083,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-01T01:48:55+00:00"
+            "time": "2020-05-01T18:49:26+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
