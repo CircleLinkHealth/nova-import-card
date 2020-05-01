@@ -105,6 +105,7 @@ class ProviderInfo extends Resource
                 ->hideWhenCreating()
                 ->hideFromIndex()
                 ->sortable(),
+
             Text::make('Name', 'user.display_name')
                 ->hideFromDetail()
                 ->hideWhenCreating()
@@ -112,19 +113,19 @@ class ProviderInfo extends Resource
 
             Text::make('Prefix')
                 ->sortable()
-                ->updateRules('string'),
+                ->updateRules('nullable', 'string'),
 
             Text::make('Pronunciation')
                 ->sortable()
-                ->updateRules('string'),
+                ->updateRules('nullable', 'string'),
 
             Text::make('Sex')
                 ->sortable()
-                ->updateRules('string'),
+                ->updateRules('nullable', 'string'),
 
             Text::make('Specialty')
                 ->sortable()
-                ->updateRules('string'),
+                ->updateRules('nullable', 'string'),
         ];
     }
 
