@@ -19,8 +19,10 @@ class EnrolleeFilters extends QueryFilters
     public function attempt_count($count)
     {
         if (empty($count)) {
-            return $this->builder->where('attempt_count', '<', 3)
-                ->orWhere('attempt_count', null);
+            return $this->builder->where(function ($subQuery) {
+                $subQuery->where('attempt_count', '<', 3)
+                    ->orWhere('attempt_count', null);
+            });
         }
 
         return $this->builder->where('attempt_count', 'like', '%'.$count.'%');
