@@ -40,7 +40,9 @@ class EnrolleesInvitationAction extends Action
         }
         // Allowing just one $model from AutoEnrollmentInvitationsPanel
         return Action::push('/resources/enrollees-invitation-panels', [
-            'id' => $models->first()->id,
+            //            'viaResource'   => $models->first(),
+            //            'practice_id'   => $models->first()->id,
+            'viaResourceId' => $models->first()->id,
         ]);
     }
 }

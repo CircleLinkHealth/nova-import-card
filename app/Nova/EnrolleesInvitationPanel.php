@@ -36,11 +36,6 @@ class EnrolleesInvitationPanel extends Resource
      */
     public static $title = 'id';
 
-//    public function __construct($resource)
-//    {
-//        parent::__construct($resource);
-//    }
-
     /**
      * Get the actions available for the resource.
      *
