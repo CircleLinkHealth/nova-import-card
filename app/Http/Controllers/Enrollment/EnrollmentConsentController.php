@@ -80,7 +80,9 @@ class EnrollmentConsentController extends Controller
                 ? 'N/A'
                 : $enrollee->preferred_window;
 
-            $careAmbassador = optional($enrollee->careAmbassador)->user;
+            $careAmbassador = $enrollee->careAmbassador;
+
+            $totalTimeSpent = secondsToHMS($enrollee->total_time_spent);
 
             $formatted[$count] = [
                 'name'      => $enrollee->first_name.' '.$enrollee->last_name,
@@ -90,12 +92,12 @@ class EnrollmentConsentController extends Controller
                     ? 'Yes'
                     : 'No',
                 'status'                   => $status,
-                'total_time_spent'         => $enrollee->total_time_spent ?? 0,
+                'total_time_spent'         => $totalTimeSpent,
                 'care_ambassador'          => ucwords(optional($careAmbassador)->getFullName() ?? null),
                 'last_call_outcome'        => ucwords($enrollee->last_call_outcome),
                 'last_call_outcome_reason' => ucwords($enrollee->last_call_outcome_reason),
                 'mrn_number'               => ucwords($enrollee->mrn_number),
-                'dob'                      => ucwords($enrollee->dob),
+                'dob'                      => $enrollee->dob->toDateString(),
                 'phone'                    => ucwords($enrollee->primary_phone),
                 'invite_sent_at'           => ucwords($enrollee->invite_sent_at),
                 'invite_opened_at'         => ucwords($enrollee->invite_opened_at),
