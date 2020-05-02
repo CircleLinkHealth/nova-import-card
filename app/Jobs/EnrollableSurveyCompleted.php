@@ -297,7 +297,8 @@ class EnrollableSurveyCompleted implements ShouldQueue
     {
         $enrolleAvatar = $this->getUserModelEnrollee($userId);
         $enrolleAvatar->update([
-            'status' => Enrollee::ENROLLED,
+            'status'                    => Enrollee::ENROLLED,
+            'auto_enrollment_triggered' => true,
         ]);
     }
 

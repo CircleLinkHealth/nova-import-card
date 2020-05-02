@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\EnrollableSurveyCompleted;
 use App\Jobs\FinalActionOnNonResponsivePatients;
 use App\Jobs\SelfEnrollmentPatientsReminder;
+use App\LoginLogout;
 use App\Notifications\SendEnrollmentEmail;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
@@ -307,8 +308,12 @@ class AutoEnrollmentCenterController extends Controller
                     ->where('user_id', $user->id)
                     ->where('survey_instance_id', $surveyInstance->id)
                     ->delete();
-//                Just for live testing
-                $user->loggingActivity->delete();
+
+                $hasLoggedIn = $this->hasViewedLetterOrSurvey($user->id);
+                //                Just for live testing so i can reset the test
+                if ($hasLoggedIn) {
+                    LoginLogout::where('user_id', $user->id)->delete();
+                }
                 $user->forceDelete();
             } else {
                 $this->getAwvUserSurvey($user, $surveyInstance)->delete();
