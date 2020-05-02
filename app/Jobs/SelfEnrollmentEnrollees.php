@@ -8,7 +8,7 @@ namespace App\Jobs;
 
 // This file is part of CarePlan Manager by CircleLink Health.
 
-use App\Console\Commands\SendEnrollmentNotifications;
+use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
@@ -77,7 +77,7 @@ class SelfEnrollmentEnrollees implements ShouldQueue
                 ->where('practice_id', $practiceId)
                 ->where('dob', Carbon::parse('1901-01-01'))
                 ->get()
-                ->take(SendEnrollmentNotifications::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING)
+                ->take(AutoEnrollmentCenterController::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING)
                 ->all();
             $this->createSurveyOnlyUserFromEnrollees($enrollees);
         } else {

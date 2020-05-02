@@ -2196,9 +2196,14 @@ Route::get('/reset-enrollment-test', [
     'as'   => 'reset.test.qa',
 ])->middleware('auth');
 
-Route::get('/send-enrollment-invites', [
+Route::get('/send-enrollee-invites', [
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@inviteEnrolleesToEnrollTest',
+    'as'   => 'send.enrollee.invitations',
+])->middleware('auth');
+
+Route::get('/send-unreachable-invites', [
     'uses' => 'Enrollment\AutoEnrollmentCenterController@inviteUnreachablesToEnrollTest',
-    'as'   => 'send.enrollment.invitations',
+    'as'   => 'send.unreachable.invitations',
 ])->middleware('auth');
 
 Route::get('/trigger-enrolldata-test', [

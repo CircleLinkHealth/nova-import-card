@@ -10,7 +10,9 @@ use App\EnrollableInvitationLink;
 use App\Http\Controllers\Controller;
 use App\Jobs\EnrollableSurveyCompleted;
 use App\Jobs\FinalActionOnNonResponsivePatients;
+use App\Jobs\SelfEnrollmentEnrollees;
 use App\Jobs\SelfEnrollmentPatientsReminder;
+use App\Jobs\SelfEnrollmentUnreachablePatients;
 use App\LoginLogout;
 use App\Notifications\SendEnrollmentEmail;
 use App\Services\Enrollment\EnrollmentInvitationService;
@@ -30,7 +32,8 @@ class AutoEnrollmentCenterController extends Controller
 {
     use EnrollableManagement;
 
-    const ENROLLEES = 'Enrollees';
+    const ENROLLEES                            = 'Enrollees';
+    const SEND_NOTIFICATIONS_LIMIT_FOR_TESTING = 1;
 
     /**
      * @var EnrollmentInvitationService
@@ -245,9 +248,16 @@ class AutoEnrollmentCenterController extends Controller
         );
     }
 
+    public function inviteEnrolleesToEnrollTest()
+    {
+        SelfEnrollmentEnrollees::dispatchNow();
+
+        return redirect()->back();
+    }
+
     public function inviteUnreachablesToEnrollTest()
     {
-        Artisan::call('command:sendEnrollmentNotifications');
+        SelfEnrollmentUnreachablePatients::dispatchNow();
 
         return redirect()->back();
     }

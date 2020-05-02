@@ -6,8 +6,8 @@
 
 namespace App\Jobs;
 
-use App\Console\Commands\SendEnrollmentNotifications;
 use App\Events\AutoEnrollableCollected;
+use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -66,7 +66,7 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
                 })
                 ->where('program_id', $practiceId)
                 ->get()
-                ->take(SendEnrollmentNotifications::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING);
+                ->take(AutoEnrollmentCenterController::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING);
             foreach ($patients->all() as $patient) {
                 /** @var User $patient */
                 if ( ! $patient->checkForSurveyOnlyRole()) {
