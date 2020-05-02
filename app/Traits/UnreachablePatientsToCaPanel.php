@@ -34,6 +34,9 @@ trait UnreachablePatientsToCaPanel
                 'home_phone'                => $user->getHomePhoneNumber(),
                 'cell_phone'                => $user->getMobilePhoneNumber(),
                 'status'                    => Enrollee::UNREACHABLE, // Setting STATUS here
+                'requested_callback'        => null,
+                'attempt_count'             => 0,
+                'care_ambassador_user_id'   => null,
                 'enrollment_non_responsive' => true,
                 'auto_enrollment_triggered' => true,
             ]
