@@ -196,7 +196,7 @@ class EnrollableCallQueue
             ->where('last_attempt_at', '<', Carbon::now()->subDays($days))
             //important. Patient has 1 attempt and has been called 3 days ago. However then they requested that they be called in 10 days
             //thus they will be picked up by method 'getRequestedCallbackToday' in 10 days.
-            ->whereIn('requested_callback', [null, '', ' '])
+            ->whereNull('requested_callback')
             ->orderBy('attempt_count')
             ->first();
     }
