@@ -123,8 +123,9 @@
                     <br>
                     DOB: {{$data['dob']}}
                     <br>
-                    Open this link in incognito window
-                    <a href="{{$data['invitationUrl']}}" target="_blank">Invitation for Unreachable Patient</a>
+                    You can <a href="{{$data['invitationUrl']}}" target="_blank">click here</a>
+                    or the link in Sms / Email. <br>
+                    In any case open in incognito window or log out from this browser.
                 </ul>
             @endif
         @endforeach

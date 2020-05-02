@@ -127,10 +127,11 @@ class AutoEnrollmentCenterController extends Controller
             $this->createEnrollStatusRequestsInfo($enrollee);
             $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
             //            Delete User Created from Enrollee
-            if ($isSurveyOnly) {
-                $enrollee->update(['user_id' => null]);
-                $userModelEnrollee->delete();
-            }
+//            Unreachables cant request info yet.
+//            if ($isSurveyOnly) {
+//                $enrollee->update(['user_id' => null]);
+//                $userModelEnrollee->delete();
+//            }
 
             return $this->returnEnrolleeRequestedInfoMessage($enrollee);
         }
