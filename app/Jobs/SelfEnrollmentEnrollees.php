@@ -94,7 +94,8 @@ class SelfEnrollmentEnrollees implements ShouldQueue
      */
     private function getEnrollees()
     {
-        return Enrollee::whereDoesntHave('enrollmentInvitationLink')
+        return Enrollee::where('user_id', null)
+            ->whereDoesntHave('enrollmentInvitationLink')
             ->whereIn('status', [
                 'call_queue',
                 'utc',
