@@ -31,7 +31,6 @@ class EnrollmentConsentController extends Controller
      */
     public function index()
     {
-        //todo change to Enrollee
         $enrollees = Enrollee::with('careAmbassador', 'practice', 'provider')
             ->where('status', '!=', 'enrolled')
             ->where('attempt_count', '<', 3)
@@ -46,20 +45,23 @@ class EnrollmentConsentController extends Controller
             //if the patient has a ca_id, then it's a phone call
             if (null != $enrollee->care_ambassador_user_id) {
                 //if the patient wasn't reached, show how many attempts were made
-                if ('utc' == $enrollee->status) {
+                if (Enrollee::UNREACHABLE == $enrollee->status) {
                     $status = 'Call:'.$enrollee->attempt_count.'x';
-                } elseif ('rejected' == $enrollee->status) {
+                } elseif (in_array($enrollee->status, [
+                    Enrollee::REJECTED,
+                    Enrollee::SOFT_REJECTED,
+                ])) {
                     $status = 'Call: Declined';
-                } elseif ('consented' == $enrollee->status) {
+                } elseif (Enrollee::CONSENTED == $enrollee->status) {
                     $status = 'Call: Consented';
                 }
             }
 
-            if ('call_queue' == $enrollee->status) {
+            if (Enrollee::TO_CALL == $enrollee->status) {
                 $status = 'Call: To Call';
             }
 
-            if ('sms_queue' == $enrollee->status) {
+            if (Enrollee::TO_SMS == $enrollee->status) {
                 if (null == $enrollee->invite_sent_at) {
                     $status = 'SMS: To SMS';
                 } else {

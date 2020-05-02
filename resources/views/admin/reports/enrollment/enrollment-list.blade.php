@@ -100,6 +100,16 @@
     </div>
         @push('scripts')
             <script>
+                var buttonCommon = {
+                    exportOptions: {
+                        format: {
+                            body: function ( data, row, column, node ) {
+                                //just in case we want to format data
+                                return data;
+                            }
+                        }
+                    }
+                };
 
                 $(function() {
                     $('#enrollment_list').DataTable({
@@ -107,6 +117,22 @@
                         serverSide: false,
                         "scrollX": true,
                         ajax: '{!! url('/admin/enrollment/list/data') !!}',
+                        dom: 'Bfrtip',
+                        buttons: [
+                            $.extend( true, {}, buttonCommon, {
+                                extend: 'copyHtml5',
+                            } ),
+                            $.extend( true, {}, buttonCommon, {
+                                extend: 'excelHtml5',
+                                title: 'Enrollment List CSV Export'
+                            } ),
+                            $.extend( true, {}, buttonCommon, {
+                                extend: 'pdfHtml5',
+                                orientation: 'landscape',
+                                pageSize: 'A2',
+                                title: 'Enrollment List PDF Export'
+                            } )
+                        ],
                         columns: [
                             {data: 'name', name: 'name'},
                             {data: 'program', name: 'program'},
@@ -143,6 +169,11 @@
 
             </script>
             <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+            <script src="//cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+            <script src="//cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js"></script>
         @endpush
 
 

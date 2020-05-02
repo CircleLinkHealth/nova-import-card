@@ -31,6 +31,7 @@ class EnrollmentStatsController extends Controller
 
     /**
      * Get an excel representation of ambassador stats.
+     *TO DEPRECATE: Using Jquery exports is better.
      *
      * @return mixed
      */
@@ -77,6 +78,7 @@ class EnrollmentStatsController extends Controller
 
     /**
      * Get an excel representation of practice stats.
+     * TO DEPRECATE: Using Jquery exports is better.
      *
      * @return mixed
      */
