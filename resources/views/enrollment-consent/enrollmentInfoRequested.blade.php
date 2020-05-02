@@ -21,7 +21,7 @@
                 </p>
             </div>
             <div class="logout">
-                <a href="{{route('user.enrollee.logout')}}" onclick="window.close()">
+                <a href="{{route('user.enrollee.logout')}}">
                     <button type="button" class="btn btn-med" style="border-radius: 40px; background-color: #2bbce3">Close window</button>
                 </a>
             </div>

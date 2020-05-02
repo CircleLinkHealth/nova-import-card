@@ -53,8 +53,9 @@ class AutoEnrollmentLogin extends Controller
 
     protected function logoutEnrollee()
     {
-        $auth = auth()->user();
         Auth::logout();
+
+        return '<script>window.close();</script>';
     }
 
     private function getLoginFormData(Request $request)
