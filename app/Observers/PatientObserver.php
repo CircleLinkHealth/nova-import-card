@@ -57,7 +57,8 @@ class PatientObserver
     public function saved(Patient $patient)
     {
         if ($patient->isDirty('ccm_status')) {
-            if (Patient::UNREACHABLE === $patient->ccm_status) {
+            if (Patient::UNREACHABLE === $patient->ccm_status
+            && ! $patient->user->hasRole('survey-only')) {
                 $this->createEnrolleModelForPatient($patient->user);
             }
 

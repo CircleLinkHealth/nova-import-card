@@ -18,6 +18,11 @@
 
           <div>
               <h5>Step 1</h5>
+              <ul class="browser-default">
+                  <li>
+                      Will create 5 Unreachable Patients and 5 Enrollees to invite.
+                  </li>
+              </ul>
               <a href="{{route('trigger.enrolldata.test')}}">
                   <button type="button" class="btn btn-success">Create Test Patients</button>
               </a>
@@ -28,18 +33,17 @@
           <div class="enroll-now-href">
               <h5>Step 2</h5>
               <a href="{{route('send.enrollee.invitations')}}">
-                  <button type="button" class="btn btn-success">Invite Test Enrollee</button>
+                  <button type="button" class="btn btn-success">Invite 1 Test Enrollee</button>
               </a>
           </div>
 <br>
           <div class="enroll-now-href">
               <a href="{{route('send.unreachable.invitations')}}">
-                  <button type="button" class="btn btn-success">Invite Test Unreachable Patient</button>
+                  <button type="button" class="btn btn-success">Invite 1 Test Unreachable Patient</button>
               </a>
           </div>
 
   </div>
-
         <div class="row">
             <div style="display: inline-flex;">
           <div class="request-info-href">
