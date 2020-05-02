@@ -204,6 +204,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
             $this->upatePatientInfo($user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd);
             $this->updatePatientContactWindow($user, $preferredContactDaysToArray, $patientContactTimeStart, $patientContactTimeEnd);
             $this->reEnrollUnreachablePatient($user);
+            $this->updateEnrolleAvatarModel($user->id);
 
             $patientType = 'Unreachable';
             $id          = $user->id;
@@ -228,8 +229,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
         $user->patientInfo->update([
             'ccm_status' => Patient::ENROLLED,
         ]);
-
-        $this->updateEnrolleAvatarModel($user->id);
     }
 
     /**
