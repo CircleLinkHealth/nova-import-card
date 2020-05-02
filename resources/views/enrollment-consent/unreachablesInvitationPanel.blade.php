@@ -30,17 +30,18 @@
 
           <br>
 
-          <div class="enroll-now-href">
-              <h5>Step 2</h5>
-              <a href="{{route('send.enrollee.invitations')}}">
-                  <button type="button" class="btn btn-success">Invite 1 Test Enrollee</button>
-              </a>
-          </div>
-<br>
-          <div class="enroll-now-href">
-              <a href="{{route('send.unreachable.invitations')}}">
-                  <button type="button" class="btn btn-success">Invite 1 Test Unreachable Patient</button>
-              </a>
+          <div class="row" style="display: inline-flex">
+              <div class="enroll-now-href">
+                  <h5>Step 2</h5>
+                  <a href="{{route('send.enrollee.invitations')}}">
+                      <button type="button" class="btn btn-success">Invite 1 Test Enrollee</button>
+                  </a>
+              </div>
+              <div class="enroll-now-href" style="padding-top: 53px; padding-left: 10px;">
+                  <a href="{{route('send.unreachable.invitations')}}">
+                      <button type="button" class="btn btn-success">Invite 1 Test Unreachable Patient</button>
+                  </a>
+              </div>
           </div>
 
   </div>
