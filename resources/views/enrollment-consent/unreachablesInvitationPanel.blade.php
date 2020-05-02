@@ -109,25 +109,30 @@
         <h5>Invited Patients credentials</h5>
         @foreach($invitationData as $data)
             @if($data['isEnrolleeClass'])
-                <ul>
+                <ol>
+                    <strong> Type: Enrollee.</strong>
+                    <br>
                     Invited Name: {{$data['name']}}
                     <br>
                     DOB: {{$data['dob']}}
                     <br>
-                    Open this link in incognito window
-                    <a href="{{$data['invitationUrl']}}" target="_blank">Invitation for Enrollee</a>
-                </ul>
+                    <a href="{{$data['invitationUrl']}}" target="_blank">click here</a>
+                    or the link in Sms / Email. <br>
+                    Open in incognito window or log out from this browser.
+                </ol>
             @endif
             @if($data['isEnrolleeClass'] === false)
-                <ul>
+                <ol>
+                    <strong>Type: Unreachable Patient.</strong>
+                    <br>
                     Invited Name: {{$data['name']}}
                     <br>
                     DOB: {{$data['dob']}}
                     <br>
                     You can <a href="{{$data['invitationUrl']}}" target="_blank">click here</a>
                     or the link in Sms / Email. <br>
-                    In any case open in incognito window or log out from this browser.
-                </ul>
+                    Open in incognito window or log out from this browser.
+                </ol>
             @endif
         @endforeach
     </div>
