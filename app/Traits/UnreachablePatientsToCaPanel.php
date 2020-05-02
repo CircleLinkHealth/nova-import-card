@@ -14,7 +14,7 @@ trait UnreachablePatientsToCaPanel
     /**
      * We are doing this so we can assign enrollmet call and show the enrolle model on CA PANEL.
      */
-    public function createEnrolleModelForPatientWithAssignedCall(User $user)
+    public function createEnrolleModelForPatient(User $user)
     {
         Enrollee::updateOrCreate(
             [
@@ -33,7 +33,7 @@ trait UnreachablePatientsToCaPanel
                 'primary_phone'             => $user->getPrimaryPhone(),
                 'home_phone'                => $user->getHomePhoneNumber(),
                 'cell_phone'                => $user->getMobilePhoneNumber(),
-                'status'                    => Enrollee::TO_CALL,
+                'status'                    => Enrollee::UNREACHABLE, // Setting STATUS here
                 'enrollment_non_responsive' => true,
                 'auto_enrollment_triggered' => true,
             ]

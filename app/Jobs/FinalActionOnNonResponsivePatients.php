@@ -35,7 +35,6 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    use UnreachablePatientsToCaPanel;
 
     /**
      * @var EnrollmentInvitationService
@@ -111,7 +110,11 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
 //                    $pages = $this->enrollmentInvitationService->createLetter($practiceName, $letter, $careAmbassadorPhoneNumber, $provider, false);
 //                    $this->sendLetterWithRegularMail($noResponsivePatient, $pages);
                 } else {
-                    $this->createEnrolleModelForPatientWithAssignedCall($noResponsivePatient);
+//                    We need the enrolle model created when patient became "unreachable"......
+//                    (see.PatientObserver & UnreachablePatientsToCaPanel)
+                    $enrollee = $this->getEnrollee($noResponsivePatient->id);
+//                   ...to set call_queue - doing this as temp. solution in order to be displayed on CA PANEL
+                    $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
                 }
             });
     }

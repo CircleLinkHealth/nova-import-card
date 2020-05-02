@@ -47,6 +47,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
     /**
      * @param $address
+     *
      * @return array
      */
     public function getAddressData($address)
@@ -63,6 +64,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
      * @param $enrollableId
      * @param $surveyInstanceId
      * @param $identifier
+     *
      * @return \Collection|\Illuminate\Support\Collection
      */
     public function getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, $identifier)
@@ -158,6 +160,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
     /**
      * @throws \Exception
+     *
      * @return string
      */
     public function handle()
@@ -225,6 +228,8 @@ class EnrollableSurveyCompleted implements ShouldQueue
         $user->patientInfo->update([
             'ccm_status' => Patient::ENROLLED,
         ]);
+
+        $this->updateEnrolleAvatarModel($user->id);
     }
 
     /**
@@ -285,6 +290,14 @@ class EnrollableSurveyCompleted implements ShouldQueue
             'daily_contact_window_start' => $patientContactTimeStart,
             'daily_contact_window_end'   => $patientContactTimeEnd,
             'auto_enrollment_triggered'  => true,
+        ]);
+    }
+
+    private function updateEnrolleAvatarModel($userId)
+    {
+        $enrolleAvatar = $this->getUserModelEnrollee($userId);
+        $enrolleAvatar->update([
+            'status' => Enrollee::ENROLLED,
         ]);
     }
 

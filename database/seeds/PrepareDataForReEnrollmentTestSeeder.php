@@ -35,7 +35,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 'is_demo'               => 1,
                 'clh_pppm'              => 0,
                 'term_days'             => 30,
-                'outgoing_phone_number' => +18886958537,
+                'outgoing_phone_number' => 2025550196,
             ]
         );
         $mothStart = Carbon::parse(now())->copy()->startOfMonth()->toDateTimeString();
