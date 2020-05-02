@@ -61,6 +61,7 @@
         props: {
             'patientId': String,
             'cpmProblems': Array,
+            'attestationRequirements': Object
         },
         created(){
             self = this;
@@ -178,6 +179,14 @@
                 this.$refs['attest-call-conditions-modal'].visible = false;
             },
             submitForm() {
+                if (this.isNotesPage){
+                    //validate and set error messages if you should
+                    if (! this.validateAttestedConditions()){
+                        return;
+                    }
+                }
+
+                //default - still run even if custom requirements get passed in. There's no scenario in which we would allow no problem to be attested on a call.
                 if (this.attestedProblems.length == 0) {
                     this.error = "Please select at least one condition."
                     return;
@@ -187,6 +196,9 @@
                     this.error = "It looks like you are still trying to enter a condition manually. Please press 'Add Condition' when you are finished, or 'Close Other Condition Section' if you are not adding a condition manually."
                     return;
                 }
+
+                this.error = null;
+
                 App.$emit('call-conditions-attested', {
                     attested_problems: this.attestedProblems,
                     patient_id: this.patient_id,
@@ -195,6 +207,77 @@
             },
             toggleAddCondition() {
                 this.addCondition = !this.addCondition;
+            },
+            problemIsBehavioral(pId){
+                let p = this.problems.find(function (p) {
+                    return p.id === pId;
+                })
+                if (! p.cpm_id){
+                    return false;
+                }
+                let cpmProblem = this.cpm_problems.find(function (cpm) {
+                    return cpm.id === p.cpm_id
+                })
+                if (cpmProblem){
+                    return cpmProblem.is_behavioral
+                }
+                return false;
+            },
+            validateAttestedConditions(){
+                if (! this.attestationRequirements || this.attestationRequirements.disabled){
+                    return true;
+                }
+                let self = this;
+                let ccmError;
+                let bhiError;
+                //if ccm 2
+                //if complex require 2 CCM attested
+                //else require any 2
+                if (this.attestationRequirements.ccm_2){
+                    if(this.attestationRequirements.is_complex){
+                        let attestedCcm = 0;
+                        this.attestedProblems.forEach(function (p) {
+                            if (! self.problemIsBehavioral(p)){
+                                attestedCcm++;
+                            }
+                        })
+                        if (attestedCcm < 2){
+                            ccmError = true;
+                        }
+                    }else {
+                        if (this.attestedProblems.length < 2) {
+                            this.error = "Please select at least two conditions."
+                            return false;
+                        }
+                    }
+                }
+                if (this.attestationRequirements.is_complex && this.attestationRequirements.bhi_1){
+                    let attestedBhi = 0;
+                    this.attestedProblems.forEach(function (p) {
+                        if (self.problemIsBehavioral(p)){
+                            attestedBhi++;
+                        }
+                    })
+                    if (attestedBhi === 0){
+                        bhiError = true;
+                    }
+                }
+                if (! ccmError && ! bhiError){
+                    return true
+                }
+                let error;
+                if (ccmError){
+                    error = 'Please select at least two CCM conditions'
+                }
+                if (bhiError){
+                    if (!error){
+                        error = 'Please select at least one BHI condition';
+                    }else{
+                        error = error + ' and at least one BHI condition';
+                    }
+                }
+                this.error = error +'.';
+                return false;
             }
         },
     }

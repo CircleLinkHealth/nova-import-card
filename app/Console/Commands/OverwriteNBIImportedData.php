@@ -78,7 +78,7 @@ class OverwriteNBIImportedData extends Command
             return;
         }
 
-        $datas = SupplementalPatientData::forPatient($this->nbiPractice()->id, $ccda->patientFirstName(), $ccda->patientLastName(), $ccda->patientDob());
+        $datas = SupplementalPatientData::forPatient($this->nbiPractice()->id, $ccda->patient_first_name, $ccda->patient_last_name, $ccda->patientDob());
 
         if ($datas) {
             $map = [

@@ -31,7 +31,7 @@
                 <td>
                     <?php
                         $status = $patient['careplan_status'];
-                        if ($status && Str::contains($status, '{')) {
+                        if ($status && \Illuminate\Support\Str::contains($status, '{')) {
                             $status = ((object) json_decode($status))->status;
                         }
                         echo $status;
