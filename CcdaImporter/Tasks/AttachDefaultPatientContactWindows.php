@@ -43,10 +43,6 @@ class AttachDefaultPatientContactWindows extends BaseCcdaImportTask
             $this->patient->timezone = optional($this->ccda->location)->timezone ?? 'America/New_York';
         }
 
-        if (PatientContactWindow::where('patient_info_id', $this->patient->patientInfo->id)->exists()) {
-            return;
-        }
-
         $preferredCallDays  = $this->getEnrolleePreferredCallDays();
         $preferredCallTimes = $this->getEnrolleePreferredCallTimes();
 
@@ -83,7 +79,7 @@ class AttachDefaultPatientContactWindows extends BaseCcdaImportTask
             return null;
         }
 
-        return explode(', ', $this->enrollee->preferred_days);
+        return parseCallDays($this->enrollee->preferred_days);
     }
 
     private function getEnrolleePreferredCallTimes()
