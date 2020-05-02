@@ -51,6 +51,12 @@ class AutoEnrollmentLogin extends Controller
         );
     }
 
+    protected function logoutEnrollee()
+    {
+        $auth = auth()->user();
+        Auth::logout();
+    }
+
     private function getLoginFormData(Request $request)
     {
         $user            = $this->getUserValidated($request);

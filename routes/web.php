@@ -72,6 +72,11 @@ Route::group([
         'uses' => 'Auth\LoginController@inactivityLogout',
         'as'   => 'user.inactivity-logout',
     ]);
+
+    Route::get('enrollment-logout', [
+        'uses' => 'Enrollment\Auth\AutoEnrollmentLogin@logoutEnrollee',
+        'as'   => 'user.enrollee.logout',
+    ]);
 });
 
 //
