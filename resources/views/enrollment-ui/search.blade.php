@@ -28,7 +28,7 @@
             var searchBox = $('#patient-search-text-box');
 
             searchBox.typeahead({
-                hint: true,
+                hint: false,
                 highlight: true,
                 minLength: 3
             }, {
