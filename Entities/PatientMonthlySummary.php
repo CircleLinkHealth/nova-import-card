@@ -109,11 +109,13 @@ use Illuminate\Support\Facades\DB;
  *     whereProblem2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
  *     whereTotalTime($value)
- * @property int|null                                                           $billable_problems_count
- * @property int|null                                                           $chargeable_services_count
- * @property int|null                                                           $revision_history_count
- * @property \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection $attestedProblems
- * @property int|null                                                           $attested_problems_count
+ * @property int|null                                                                                         $billable_problems_count
+ * @property int|null                                                                                         $chargeable_services_count
+ * @property int|null                                                                                         $revision_history_count
+ * @property \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection                               $attestedProblems
+ * @property int|null                                                                                         $attested_problems_count
+ * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $allChargeableServices
+ * @property int|null                                                                                         $all_chargeable_services_count
  */
 class PatientMonthlySummary extends BaseModel
 {
@@ -250,7 +252,8 @@ class PatientMonthlySummary extends BaseModel
 
     public function attestedProblems()
     {
-        return $this->belongsToMany(Problem::class, 'call_problems', 'patient_monthly_summary_id', 'ccd_problem_id');
+        return $this->belongsToMany(Problem::class, 'call_problems', 'patient_monthly_summary_id', 'ccd_problem_id')
+            ->withTimestamps();
     }
 
     public function autoAttestConditionsIfYouShould()

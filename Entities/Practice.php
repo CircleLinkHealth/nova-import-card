@@ -126,11 +126,13 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int      $is_demo
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
  *     whereIsDemo($value)
- * @method   static                                                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice opsDashboardQuery(\Carbon\Carbon $startOfMonth, \Carbon\Carbon $revisionsFromDate)
- * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Nova\Actions\ActionEvent[] $actions
- * @property int|null                                                                     $actions_count
- * @property \Illuminate\Support\Collection|null                                          $importing_hooks
- * @method   static                                                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice whereImportingHooks($value)
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice opsDashboardQuery(\Carbon\Carbon $startOfMonth, \Carbon\Carbon $revisionsFromDate)
+ * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Nova\Actions\ActionEvent[]                     $actions
+ * @property int|null                                                                                         $actions_count
+ * @property \Illuminate\Support\Collection|null                                                              $importing_hooks
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice whereImportingHooks($value)
+ * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $allChargeableServices
+ * @property int|null                                                                                         $all_chargeable_services_count
  */
 class Practice extends BaseModel implements HasMedia
 {
