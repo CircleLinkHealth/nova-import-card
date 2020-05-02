@@ -186,9 +186,11 @@ class Enrollable extends Resource
 
         $preferredPhone = isset($phones[$enrollable->primary_phone]) ? $phones[$enrollable->primary_phone] : null;
 
-        //edge case - add primary as other phone?
+        //edge case - add primary as other phone
         if ( ! $preferredPhone) {
-            return '';
+            $enrollable->other_phone = $enrollable->primary_phone_e164;
+            $enrollable->save();
+            $preferredPhone = 'other';
         }
 
         return $preferredPhone;
