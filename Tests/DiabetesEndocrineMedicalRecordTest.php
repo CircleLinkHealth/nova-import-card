@@ -1463,8 +1463,8 @@ class DiabetesEndocrineMedicalRecordTest extends CustomerTestCase
     public function test_it_creates_medical_record_from_array()
     {
         $ccda = FakeDiabetesAndEndocrineCcda::create([
-            'practice_id' => $this->patient()->program_id,
-        ]);
+            'practice_id' => $this->practice()->id,
+        ])->fresh();
 
         try {
             $ccda->import();
@@ -1474,6 +1474,6 @@ class DiabetesEndocrineMedicalRecordTest extends CustomerTestCase
 
         $newPatient = $ccda->fresh()->patient()->firstOrFail();
 
-        $this->assertTrue($ccda->patientFirstName() === $newPatient->first_name);
+        $this->assertTrue($ccda->patient_first_name === $newPatient->first_name);
     }
 }

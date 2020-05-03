@@ -97,6 +97,6 @@ class PatientReimportedNotification extends Notification implements ShouldBroadc
      */
     public function via($notifiable)
     {
-        return ['database', 'mail', 'broadcast'];
+        return ['database'];
     }
 }

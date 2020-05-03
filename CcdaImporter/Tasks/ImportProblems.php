@@ -51,7 +51,7 @@ class ImportProblems extends BaseCcdaImportTask
 
                     $new = $problem['attributes'];
 
-                    $instruction = $this->getInstruction($problem);
+                    $instruction = $this->getInstruction($new);
 
                     $ccdProblem = Problem::updateOrCreate(
                         [

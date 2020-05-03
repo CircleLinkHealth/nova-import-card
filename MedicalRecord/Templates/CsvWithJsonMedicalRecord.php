@@ -18,7 +18,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 
     public function __construct(array $medicalRecord)
     {
-        $this->data = $medicalRecord;
+        $this->data = sanitize_array_keys($medicalRecord);
     }
 
     public function fillAllergiesSection(): array

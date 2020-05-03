@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Console;
 
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
 use CircleLinkHealth\Eligibility\MedicalRecord\MedicalRecordFactory;
@@ -90,6 +91,47 @@ class ReimportPatientMedicalRecord extends Command
 
     private function attemptCreateCcdaFromMrTemplate(User $user)
     {
+        if (in_array($user->primaryPractice->name, ['diabetes-texas-pa'])) {
+            $ccda = Ccda::where('practice_id', $user->primaryPractice->id)->where('patient_first_name', $user->first_name)->where('patient_last_name', $user->last_name)->where('patient_mrn', 'like', "%{$user->getMRN()}")->first();
+
+            if ($ccda) {
+                $ccda->patient_id = $user->id;
+                $ccda->save();
+
+                return;
+            }
+
+            $eJ = EligibilityJob::whereHas('batch', function ($q) use ($user) {
+                $q->where('practice_id', $user->primaryPractice->id);
+            })->where('patient_first_name', $user->first_name)->where('patient_last_name', $user->last_name)->where('patient_mrn', 'like', "%{$user->getMRN()}")->first();
+
+            if ( ! $eJ) {
+                return;
+            }
+            $mr = new CsvWithJsonMedicalRecord(
+                tap(
+                    sanitize_array_keys($eJ->data),
+                    function ($data) use ($eJ) {
+                        $eJ->data = $data;
+                        $eJ->save();
+                    }
+                )
+            );
+
+            $ccda = Ccda::create(
+                [
+                    'source'      => $mr->getType(),
+                    'json'        => $mr->toJson(),
+                    'practice_id' => (int) $user->program_id,
+                    'patient_id'  => $user->id,
+                    'mrn'         => $user->getMRN(),
+                ]
+            );
+            \Log::debug(
+                "ReimportPatientMedicalRecord:user_id:{$user->id} Created CCDA ccda_id:{$ccda->id}:ln:".__LINE__
+            );
+        }
+
         if (in_array($user->primaryPractice->name, ['marillac-clinic-inc', 'calvary-medical-clinic'])) {
             $this->warn(
                 "ReimportPatientMedicalRecord:user_id:{$user->id}:enrollee_id:{$this->getEnrollee($user)->id} Running 'csv-with-json' decorator:ln:".__LINE__
@@ -196,7 +238,11 @@ class ReimportPatientMedicalRecord extends Command
         }
 
         $user->ccdMedications()->delete();
-        $user->ccdProblems()->delete();
+
+        //practices whose careplans do not contain CCDs
+        if ( ! in_array($user->primaryPractice->name, ['diabetes-texas-pa'])) {
+            $user->ccdProblems()->delete();
+        }
         $user->ccdAllergies()->delete();
     }
 
@@ -253,7 +299,7 @@ class ReimportPatientMedicalRecord extends Command
             $this->ccda = Ccda::where('practice_id', $practiceId)->where(
                 function ($q) use ($mrn) {
                     $q->where('patient_id', $this->argument('patientUserId'))
-                        ->orWhere('json->demographics->mrn_number', $mrn);
+                        ->orWhere('patient_mrn', $mrn);
                 }
             )->first();
         }
