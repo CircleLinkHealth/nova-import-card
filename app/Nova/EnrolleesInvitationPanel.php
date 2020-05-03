@@ -83,8 +83,10 @@ class EnrolleesInvitationPanel extends Resource
      */
     public function filters(Request $request)
     {
+        $practiceId = $this->getPracticeId();
+
         return [
-            new EnrolleeInvitationFilter(),
+            new EnrolleeInvitationFilter($practiceId),
         ];
     }
 
@@ -104,5 +106,13 @@ class EnrolleesInvitationPanel extends Resource
     public function lenses(Request $request)
     {
         return [];
+    }
+
+    private function getPracticeId()
+    {
+        $url = parse_url($_SERVER['HTTP_REFERER']);
+        parse_str($url['query'], $params);
+
+        return $params['practice_id'];
     }
 }

@@ -18,6 +18,16 @@ class EnrolleeInvitationFilter extends Filter
      * @var string
      */
     public $component = 'select-filter';
+    public $practiceId;
+
+    /**
+     * EnrolleeInvitationFilter constructor.
+     * @param $practiceId
+     */
+    public function __construct($practiceId)
+    {
+        $this->practiceId = $practiceId;
+    }
 
     /**
      * Apply the filter to the given query.
@@ -28,7 +38,16 @@ class EnrolleeInvitationFilter extends Filter
      */
     public function apply(Request $request, $query, $value)
     {
-        return $query->where('status', $value);
+        return $query->whereIn('status', [
+            Enrollee::TO_CALL,
+            Enrollee::UNREACHABLE,
+        ])->where('practice_id', $value)
+            ->where('user_id', '=', null);
+    }
+
+    public function default()
+    {
+        return $this->practiceId;
     }
 
     /**

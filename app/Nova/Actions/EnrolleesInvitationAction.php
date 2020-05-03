@@ -36,13 +36,12 @@ class EnrolleesInvitationAction extends Action
     public function handle(ActionFields $fields, Collection $models)
     {
         if ($models->count() > 1) {
+            // Allowing just one $model from AutoEnrollmentInvitationsPanel
             return Action::danger('Please select just one Practice!');
         }
-        // Allowing just one $model from AutoEnrollmentInvitationsPanel
+
         return Action::push('/resources/enrollees-invitation-panels', [
-            //            'viaResource'   => $models->first(),
-            //            'practice_id'   => $models->first()->id,
-            'viaResourceId' => $models->first()->id,
+            'practice_id' => $models->first()->id,
         ]);
     }
 }
