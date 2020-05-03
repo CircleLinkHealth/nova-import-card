@@ -37,7 +37,7 @@ class EnrolleesInvitationAction extends Action
     {
         if ($models->count() > 1) {
             // Allowing just one $model from AutoEnrollmentInvitationsPanel
-            return Action::danger('Please select just one Practice!');
+            return Action::danger('Please select just one Practice to send Sms/Email for Auto Enrollment!');
         }
 
         return Action::push('/resources/enrollees-invitation-panels', [
