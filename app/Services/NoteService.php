@@ -113,6 +113,10 @@ class NoteService
             $note->status = $requestInput['status'];
         }
 
+        if (empty($requestInput['type'])) {
+            $requestInput['type'] = $note->type;
+        }
+
         $note->logger_id = $requestInput['logger_id'];
         $note->isTCM     = isset($requestInput['tcm'])
             ? 'true' === $requestInput['tcm']

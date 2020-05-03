@@ -235,7 +235,7 @@ trait EnrollableManagement
      */
     public function hasViewedLetterOrSurvey($enrollableId)
     {
-//        Dont move this to User as a relationship
+//       Move this to User as a relationship??
         return LoginLogout::whereUserId($enrollableId)->exists();
     }
 

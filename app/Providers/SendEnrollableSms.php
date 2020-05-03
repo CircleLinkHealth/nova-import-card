@@ -9,6 +9,7 @@ namespace App\Providers;
 use App\Notifications\SendEnrollementSms;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\App;
 
 class SendEnrollableSms implements ShouldQueue
 {
@@ -37,6 +38,8 @@ class SendEnrollableSms implements ShouldQueue
 
     private function sendSms($event)
     {
-        $event->user->notify(new SendEnrollementSms($event->isReminder));
+        if ( ! App::environment(['local'])) {
+            $event->user->notify(new SendEnrollementSms($event->isReminder));
+        }
     }
 }

@@ -35,7 +35,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 'is_demo'               => 1,
                 'clh_pppm'              => 0,
                 'term_days'             => 30,
-                'outgoing_phone_number' => +18886958537,
+                'outgoing_phone_number' => 2025550196,
             ]
         );
         $mothStart = Carbon::parse(now())->copy()->startOfMonth()->toDateTimeString();
@@ -55,6 +55,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                     'dob'                     => \Carbon\Carbon::parse('1901-01-01'),
                     'referring_provider_name' => 'Dr. Demo',
                     'mrn'                     => mt_rand(100000, 999999),
+                    'primary_phone'           => '8759355561',
                 ]);
                 $this->seedEligibilityJobs(collect($enrolleesForTesting));
                 ++$n;

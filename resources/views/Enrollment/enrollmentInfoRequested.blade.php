@@ -9,7 +9,7 @@
                     @include('enrollment-consent.practiceLogo')
                 </div>
             </div>
-            <div style="">
+            <div>
                 <hr>
                 <p style="text-align: center">
                     Thanks for requesting a call to discuss our Personalized Care Program!<br>
@@ -20,7 +20,10 @@
                     <strong>Dr. {{$providerName}}'s care team</strong>
                 </p>
             </div>
-            <div>
+            <div class="logout">
+                <a href="{{route('user.enrollee.logout')}}">
+                    <button type="button" class="btn btn-med" style="border-radius: 40px; background-color: #2bbce3">Logout</button>
+                </a>
             </div>
 
         </div>
@@ -33,13 +36,17 @@
         padding-bottom: 20px;
     }
 
-    .logo {
-        margin-left: 35em;
+    .practice-logo {
+        text-align: center;
+    }
+
+    .logout{
+        text-align: center;
     }
 
     @media (max-width: 490px) {
-        .logo {
-            margin-left: 10em;
-        }
+        /*.logo {*/
+        /*    margin-left: 10em;*/
+        /*}*/
     }
 </style>

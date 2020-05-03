@@ -14,28 +14,39 @@
         </ul>
     </div>
     <div class="buttons col-lg-12">
+  <div class="row">
+
+          <div>
+              <h5>Step 1</h5>
+              <ul class="browser-default">
+                  <li>
+                      Will create 5 Unreachable Patients and 5 Enrollees to invite.
+                  </li>
+              </ul>
+              <a href="{{route('trigger.enrolldata.test')}}">
+                  <button type="button" class="btn btn-success">Create Test Patients</button>
+              </a>
+          </div>
+
+          <br>
+
+          <div class="row" style="display: inline-flex">
+              <div class="enroll-now-href">
+                  <h5>Step 2</h5>
+                  <a href="{{route('send.enrollee.invitations')}}">
+                      <button type="button" class="btn btn-success">Invite 1 Test Enrollee</button>
+                  </a>
+              </div>
+              <div class="enroll-now-href" style="padding-top: 53px; padding-left: 10px;">
+                  <a href="{{route('send.unreachable.invitations')}}">
+                      <button type="button" class="btn btn-success">Invite 1 Test Unreachable Patient</button>
+                  </a>
+              </div>
+          </div>
+
+  </div>
         <div class="row">
-   <div style="display: inline-flex; text-align: center;">
-       <div class="enroll-now-href" style="text-align: center;">
-           <h5>Step 1.</h5>
-           <a href="{{route('trigger.enrolldata.test')}}">
-               <button type="button" class="btn btn-success">Create Test Patients</button>
-           </a>
-       </div>
-
-       <br>
-
-       <div class="enroll-now-href" style="padding-left: 379px;">
-           <h5>Step 2</h5>
-           <a href="{{route('send.enrollment.invitations')}}">
-               <button type="button" class="btn btn-success">Invite Test Patients to Enroll</button>
-           </a>
-       </div>
-   </div>
-
-            <br>
-
-      <div style="display: inline-flex;">
+            <div style="display: inline-flex;">
           <div class="request-info-href">
               <h5>Test Case 1.</h5>
               <p>Send 1st. Reminder to non responding patients</p>
@@ -98,24 +109,30 @@
         <h5>Invited Patients credentials</h5>
         @foreach($invitationData as $data)
             @if($data['isEnrolleeClass'])
-                <ul>
+                <ol>
+                    <strong> Type: Enrollee.</strong>
+                    <br>
                     Invited Name: {{$data['name']}}
                     <br>
                     DOB: {{$data['dob']}}
                     <br>
-                    Open this link in incognito window
-                    <a href="{{$data['invitationUrl']}}" target="_blank">Invitation for Enrollee</a>
-                </ul>
+                    <a href="{{$data['invitationUrl']}}" target="_blank">click here</a>
+                    or the link in Sms / Email. <br>
+                    Open in incognito window or log out from this browser.
+                </ol>
             @endif
             @if($data['isEnrolleeClass'] === false)
-                <ul>
+                <ol>
+                    <strong>Type: Unreachable Patient.</strong>
+                    <br>
                     Invited Name: {{$data['name']}}
                     <br>
                     DOB: {{$data['dob']}}
                     <br>
-                    Open this link in incognito window
-                    <a href="{{$data['invitationUrl']}}" target="_blank">Invitation for Unreachable Patient</a>
-                </ul>
+                    You can <a href="{{$data['invitationUrl']}}" target="_blank">click here</a>
+                    or the link in Sms / Email. <br>
+                    Open in incognito window or log out from this browser.
+                </ol>
             @endif
         @endforeach
     </div>

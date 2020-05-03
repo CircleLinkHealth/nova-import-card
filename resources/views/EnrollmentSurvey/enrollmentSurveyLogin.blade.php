@@ -39,9 +39,9 @@
 {{--                                                       required>--}}
 {{--                                            </div>--}}
 {{--                                        </div>--}}
-                                        <div class='row' style="margin-top: 70px;">
+                                        <div class='row' style="margin-top: 80px;">
                                             <div class='input-field col s12'>
-                                                <label for="birth-date" class="birth-date" style="font-size: 20px; color:black">Date of Birth (DOB)</label>
+                                                <label for="birth-date" class="birth-date" style="font-size: 20px; color:black">Please Enter Your Date of Birth</label>
                                                 <input type="date" name="birth_date"
                                                        class="login-inputs"
                                                        placeholder="1950-01-15"

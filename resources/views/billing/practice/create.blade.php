@@ -42,20 +42,11 @@
                                         <select id="practices" name="practices[]"
                                                 class="practices dropdown Valid form-control" multiple required>
                                             @foreach($readyToBill as $practice)
-                                                <option value="{{$practice->id}}">{{$practice->display_name}}</option>
+                                                <option value="{{$practice->id}}" @if(auth()->user()->isAdmin() && $practice->isARealBillableCustomer()) selected @endif>{{$practice->display_name}}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
-
-                                {{--<div class="form-group">--}}
-                                    {{--<label class="col-md-2 control-label" for="invoice_no">--}}
-                                        {{--Custom Invoice#<br></label>--}}
-                                    {{--<div class="col-md-6">--}}
-                                        {{--<input class="form-control" value="{{$invoice_no}}" name="invoice_no"--}}
-                                               {{--id="invoice_no">--}}
-                                    {{--</div>--}}
-                                {{--</div>--}}
 
                                 <div class="form-group">
                                     <label class="col-md-2 control-label" for="date">Month</label>

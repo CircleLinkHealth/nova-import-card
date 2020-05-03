@@ -51,6 +51,13 @@ class AutoEnrollmentLogin extends Controller
         );
     }
 
+    protected function logoutEnrollee()
+    {
+        Auth::logout();
+
+        return view('EnrollmentSurvey.enrollableLogout');
+    }
+
     private function getLoginFormData(Request $request)
     {
         $user            = $this->getUserValidated($request);

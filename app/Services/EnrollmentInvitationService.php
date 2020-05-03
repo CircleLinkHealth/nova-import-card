@@ -116,8 +116,9 @@ class EnrollmentInvitationService
     {
         $enrollee->update(
             [
-                'status'             => 'call_queue',
-                'requested_callback' => Carbon::now()->toDate(),
+                'status'                    => 'call_queue',
+                'requested_callback'        => Carbon::now()->toDate(),
+                'auto_enrollment_triggered' => true,
             ]
         );
     }
