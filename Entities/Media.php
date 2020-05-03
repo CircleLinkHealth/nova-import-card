@@ -52,6 +52,11 @@ use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
  * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media whereSize($value)
  * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int|null    $is_pdf
+ * @property int|null    $is_ccda
+ * @property int|null    $is_upg0506
+ * @property int|null    $is_upg0506_complete
+ * @property string|null $mrn
  */
 class Media extends SpatieMedia
 {
