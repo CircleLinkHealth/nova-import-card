@@ -28,11 +28,14 @@ class AutoEnrollmentTestDashboard extends Controller
 {
     use EnrollableManagement;
 
-    public function evaluateEnrolledForSurveyTest(Request $request, AutoEnrollmentCenterController $autoEnrollmentCenterController)
+    /**
+     * @return string
+     */
+    public function evaluateEnrolledForSurveyTest(Request $request)
     {
         $data = [
             'enrollable_id'      => $request->input('enrolleeId'),
-            'survey_instance_id' => $autoEnrollmentCenterController->getEnrolleesSurveyInstance()->id,
+            'survey_instance_id' => $this->getEnrolleesSurveyInstance()->id,
         ];
 
         EnrollableSurveyCompleted::dispatch($data);
@@ -40,6 +43,9 @@ class AutoEnrollmentTestDashboard extends Controller
         return 'enrolled successfully';
     }
 
+    /**
+     * @return string
+     */
     public function finalActionTest()
     {
         FinalActionOnNonResponsivePatients::dispatch(new EnrollmentInvitationService());
@@ -47,6 +53,9 @@ class AutoEnrollmentTestDashboard extends Controller
         return 'Done!';
     }
 
+    /**
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function inviteEnrolleesToEnrollTest()
     {
         SelfEnrollmentEnrollees::dispatchNow();
@@ -54,6 +63,9 @@ class AutoEnrollmentTestDashboard extends Controller
         return redirect()->back();
     }
 
+    /**
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function inviteUnreachablesToEnrollTest()
     {
         SelfEnrollmentUnreachablePatients::dispatchNow();
@@ -61,7 +73,10 @@ class AutoEnrollmentTestDashboard extends Controller
         return redirect()->back();
     }
 
-    public function resetEnrollmentTest(AutoEnrollmentCenterController $autoEnrollmentCenterController)
+    /**
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function resetEnrollmentTest()
     {
         // TEST ONLY
         $users = User::withTrashed()
@@ -72,7 +87,7 @@ class AutoEnrollmentTestDashboard extends Controller
             ->whereHas('patientInfo')
             ->get();
 
-        $survey = $autoEnrollmentCenterController->getEnrolleeSurvey();
+        $survey = $this->getEnrolleeSurvey();
 
         foreach ($users as $user) {
             $surveyInstance = DB::table('survey_instances')
@@ -81,8 +96,8 @@ class AutoEnrollmentTestDashboard extends Controller
 
             if ($user->checkForSurveyOnlyRole()) {
                 /** @var Enrollee $enrollee */
-                $enrollee = $autoEnrollmentCenterController->getEnrollee($user->id);
-                $autoEnrollmentCenterController->getAwvUserSurvey($user, $surveyInstance)->delete();
+                $enrollee = $this->getEnrollee($user->id);
+                $this->getAwvUserSurvey($user, $surveyInstance)->delete();
                 $user->notifications()->delete();
                 $enrollee->enrollmentInvitationLink()->delete();
                 $enrollee->statusRequestsInfo()->delete();
@@ -96,14 +111,14 @@ class AutoEnrollmentTestDashboard extends Controller
                     ->where('survey_instance_id', $surveyInstance->id)
                     ->delete();
 
-                $hasLoggedIn = $autoEnrollmentCenterController->hasViewedLetterOrSurvey($user->id);
+                $hasLoggedIn = $this->hasViewedLetterOrSurvey($user->id);
                 //                Just for live testing so i can reset the test
                 if ($hasLoggedIn) {
                     LoginLogout::where('user_id', $user->id)->delete();
                 }
                 $user->forceDelete();
             } else {
-                $autoEnrollmentCenterController->getAwvUserSurvey($user, $surveyInstance)->delete();
+                $this->getAwvUserSurvey($user, $surveyInstance)->delete();
                 $user->notifications()->delete();
                 $user->enrollmentInvitationLink()->delete();
                 $user->statusRequestsInfo()->delete();
@@ -129,6 +144,9 @@ class AutoEnrollmentTestDashboard extends Controller
         return redirect()->back();
     }
 
+    /**
+     * @return string
+     */
     public function sendEnrollmentReminderTestMethod()
     {
         try {
@@ -140,6 +158,9 @@ class AutoEnrollmentTestDashboard extends Controller
         return 'Please check your email';
     }
 
+    /**
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function sendInvitesPanelTest()
     {
         $invitedPatientsUrls = EnrollableInvitationLink::select(['url', 'invitationable_id', 'invitationable_type', 'manually_expired'])->get();
@@ -178,6 +199,9 @@ class AutoEnrollmentTestDashboard extends Controller
         return view('enrollment-consent.unreachablesInvitationPanel', compact('invitedPatientsUrls', 'invitationData'));
     }
 
+    /**
+     * @return string
+     */
     public function triggerEnrollmentSeederTest()
     {
         try {
