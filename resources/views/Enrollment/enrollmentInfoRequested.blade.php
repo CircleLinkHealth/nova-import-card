@@ -22,7 +22,7 @@
             </div>
             <div class="logout">
                 <a href="{{route('user.enrollee.logout')}}">
-                    <button type="button" class="btn btn-med" style="border-radius: 40px; background-color: #2bbce3">Close window</button>
+                    <button type="button" class="btn btn-med" style="border-radius: 40px; background-color: #2bbce3">Logout</button>
                 </a>
             </div>
 

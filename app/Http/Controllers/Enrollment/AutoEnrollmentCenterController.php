@@ -552,6 +552,6 @@ class AutoEnrollmentCenterController extends Controller
         $practiceNumber = $enrollee->practice->outgoing_phone_number;
         $providerName   = $enrollee->provider->last_name;
 
-        return view('enrollment-consent.enrollmentInfoRequested', compact('practiceNumber', 'providerName'));
+        return view('Enrollment.enrollmentInfoRequested', compact('practiceNumber', 'providerName'));
     }
 }

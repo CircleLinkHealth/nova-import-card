@@ -55,7 +55,7 @@ class AutoEnrollmentLogin extends Controller
     {
         Auth::logout();
 
-        return '<script>window.close();</script>';
+        return view('EnrollmentSurvey.enrollableLogout');
     }
 
     private function getLoginFormData(Request $request)
