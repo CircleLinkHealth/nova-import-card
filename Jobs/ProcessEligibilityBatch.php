@@ -100,8 +100,9 @@ class ProcessEligibilityBatch implements ShouldQueue
 
     /**
      * @throws \Exception
+     * @return EligibilityBatch|null
      */
-    private function createEligibilityJobsFromJsonFile(EligibilityBatch $batch): EligibilityBatch
+    private function createEligibilityJobsFromJsonFile(EligibilityBatch $batch)
     {
         if ( ! isset($batch->options['folder'])) {
             \Log::critical("Batch with id:{$batch->id} does not have a folder path.");

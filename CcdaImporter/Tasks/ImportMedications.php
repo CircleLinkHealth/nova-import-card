@@ -69,6 +69,11 @@ class ImportMedications extends BaseCcdaImportTask
 
         $this->patient->load('ccdMedications');
 
+        if ($this->patient->ccdMedications->isEmpty()) {
+            $this->importAll();
+            $this->patient->load('ccdMedications');
+        }
+
         $unique = $this->patient->ccdMedications->unique('name')->pluck('id')->all();
 
         $deleted = $this->patient->ccdMedications()->whereNotIn('id', $unique)->delete();
@@ -81,6 +86,51 @@ class ImportMedications extends BaseCcdaImportTask
         if ( ! $this->hasMisc($this->patient, $misc)) {
             $this->patient->cpmMiscs()->attach(optional($misc)->id);
         }
+    }
+
+    private function importAll()
+    {
+        collect($this->ccda->bluebuttonJson()->medications ?? [])->each(
+            function ($medication) use (&$medicationGroups) {
+                $new = (array) $this->consolidateMedicationInfo((object) $this->transform($medication));
+
+                if ($this->containsSigKeywords($new['cons_name'])) {
+                    return null;
+                }
+
+                if ( ! $new['cons_name'] && ! $new['cons_text']) {
+                    return null;
+                }
+
+                $sig = ucfirst(
+                    (new StringManipulation())->stringDiff(
+                        $new['cons_name'],
+                        $new['cons_text']
+                    )
+                );
+
+                $medicationGroupId = MedicationGroupsMap::getGroup($new['cons_name']) ?? MedicationGroupsMap::getGroup($sig);
+
+                $ccdMedication = Medication::updateOrCreate(
+                    [
+                        'patient_id' => $this->patient->id,
+                        'name'       => ucwords(strtolower($new['cons_name'])),
+                        'sig'        => $sig,
+                    ],
+                    [
+                        'medication_group_id' => $medicationGroupId,
+                        'code'                => $new['cons_code'],
+                        'code_system'         => $new['cons_code_system'],
+                        'code_system_name'    => $new['cons_code_system_name'],
+                        'ccda_id'             => $this->ccda->id,
+                    ]
+                );
+
+                if ($medicationGroupId) {
+                    $medicationGroups[] = $medicationGroupId;
+                }
+            }
+        );
     }
 
     private function transform(object $medication): array
