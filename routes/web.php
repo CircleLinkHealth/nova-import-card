@@ -2181,46 +2181,52 @@ Route::prefix('admin')->group(
 );
 
 // TESTING ROUTES - DELETE AFTER TEST
-Route::get('/send-enrollment-reminder-test', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@sendEnrollmentReminderTestMethod',
-    'as'   => 'send.reminder.qa',
-])->middleware('auth');
 
-Route::get('/final-action-unreachables-test', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@finalActionTest',
-    'as'   => 'final.action.qa',
-])->middleware('auth');
+Route::group([
+    'prefix'     => 'admin',
+    'middleware' => ['auth'],
+], function () {
+    Route::get('/send-enrollment-reminder-test', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendEnrollmentReminderTestMethod',
+        'as'   => 'send.reminder.qa',
+    ])->middleware('auth');
 
-Route::get('/evaluate-enrolled-from-survey', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@evaluateEnrolledForSurveyTest',
-    'as'   => 'evaluate.survey.completed',
-])->middleware('auth');
+    Route::get('/final-action-unreachables-test', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@finalActionTest',
+        'as'   => 'final.action.qa',
+    ])->middleware('auth');
 
-Route::get('/reset-enrollment-test', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@resetEnrollmentTest',
-    'as'   => 'reset.test.qa',
-])->middleware('auth');
+    Route::get('/evaluate-enrolled-from-survey', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@evaluateEnrolledForSurveyTest',
+        'as'   => 'evaluate.survey.completed',
+    ])->middleware('auth');
 
-Route::get('/send-enrollee-invites', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@inviteEnrolleesToEnrollTest',
-    'as'   => 'send.enrollee.invitations',
-])->middleware('auth');
+    Route::get('/reset-enrollment-test', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@resetEnrollmentTest',
+        'as'   => 'reset.test.qa',
+    ])->middleware('auth');
 
-Route::get('/send-unreachable-invites', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@inviteUnreachablesToEnrollTest',
-    'as'   => 'send.unreachable.invitations',
-])->middleware('auth');
+    Route::get('/send-enrollee-invites', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@inviteEnrolleesToEnrollTest',
+        'as'   => 'send.enrollee.invitations',
+    ])->middleware('auth');
 
-Route::get('/trigger-enrolldata-test', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@triggerEnrollmentSeederTest',
-    'as'   => 'trigger.enrolldata.test',
-])->middleware('auth');
+    Route::get('/send-unreachable-invites', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@inviteUnreachablesToEnrollTest',
+        'as'   => 'send.unreachable.invitations',
+    ])->middleware('auth');
 
-Route::get('/invite-unreachable', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@sendInvitesPanelTest',
-    'as'   => 'send.invitates.panel',
-])->middleware('auth');
-//---------------------------------------
+    Route::get('/trigger-enrolldata-test', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@triggerEnrollmentSeederTest',
+        'as'   => 'trigger.enrolldata.test',
+    ])->middleware('auth');
+
+    Route::get('/invite-unreachable', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendInvitesPanelTest',
+        'as'   => 'send.invitates.panel',
+    ])->middleware('auth');
+    //---------------------------------------
+});
 
 // TEMPORARY SIGNED ROUTE
 //Route::get('/patient-self-enrollment', [
