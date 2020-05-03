@@ -84,6 +84,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \App\EligibilityJob                                  $eligibilityJob
  * @property int|null                                             $revision_history_count
  * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient $targetPatient
+ * @property string|null                                          $patient_first_name
+ * @property string|null                                          $patient_last_name
+ * @property string|null                                          $patient_mrn
+ * @property string|null                                          $patient_dob
+ * @property string|null                                          $patient_email
  */
 class EligibilityJob extends BaseModel
 {
