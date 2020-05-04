@@ -24,8 +24,7 @@ class EnrolleesInvitationAction extends Action
      */
     public function fields()
     {
-        return [
-        ];
+        return [];
     }
 
     /**
