@@ -579,13 +579,16 @@ class PatientMonthlySummary extends BaseModel
             },
         ]);
 
-        return $this->patient->ccdProblems->sortByDesc(function ($problem) {
-            if ( ! $problem->cpmProblem) {
-                return null;
-            }
+        return $this->patient->ccdProblems->unique(function (Problem $p) {
+            return $p->icd10Code();
+        })
+            ->sortByDesc(function ($problem) {
+                if ( ! $problem->cpmProblem) {
+                    return null;
+                }
 
-            return $problem->cpmProblem->weight;
-        });
+                return $problem->cpmProblem->weight;
+            });
     }
 
     private function unAttestedBhi(): bool

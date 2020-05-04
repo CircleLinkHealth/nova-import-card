@@ -74,7 +74,7 @@ class CustomerServiceProvider extends ServiceProvider
     public function registerFactories()
     {
         if ( ! isProductionEnv()) {
-            app(Factory::class)->load(__DIR__.'/../Database/factories');
+            app(Factory::class)->load(__DIR__.'/../Database/Factories');
         }
     }
 
