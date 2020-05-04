@@ -89,7 +89,7 @@ use CircleLinkHealth\SharedModels\Entities\Problem;
  *
  * @property \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection $attestedProblems
  * @property int|null                                                           $attested_problems_count
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Call unassigned()
+ * @method   static                                                             \Illuminate\Database\Eloquent\Builder|\App\Call unassigned()
  */
 class Call extends BaseModel implements AttachableToNotification
 {
