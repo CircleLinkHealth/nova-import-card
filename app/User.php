@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
 use Carbon\Carbon;
@@ -8,45 +12,22 @@ use Illuminate\Database\Eloquent\Collection;
 /**
  * Class User.
  *
- * @property-read SurveyInstance[]|Collection surveyInstances
- * @property-read Survey[]|Collection surveys
- * @property-read Answer[]|Collection answers
- * @property-read ProviderReport[]|Collection providerReports
- * @property-read InvitationLink url
- * @property-read PersonalizedPreventionPlan personalizedPreventionPlan
+ * @property Collection|SurveyInstance[] surveyInstances
+ * @property Collection|Survey[] surveys
+ * @property Answer[]|Collection answers
+ * @property Collection|ProviderReport[] providerReports
+ * @property InvitationLink url
+ * @property PersonalizedPreventionPlan personalizedPreventionPlan
  * @property Patient $patientInfo
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {
-    public function url()
+    public function addAppointment(Carbon $date, $type = 'awv')
     {
-        return $this->hasOne(InvitationLink::class);
-    }
-
-    public function surveys()
-    {
-        return $this->belongsToMany(Survey::class, 'users_surveys', 'user_id', 'survey_id')
-                    ->withPivot([
-                        'survey_instance_id',
-                        'status',
-                        'last_question_answered_id',
-                        'start_date',
-                        'completed_at',
-                    ])
-                    ->withTimestamps();
-    }
-
-    public function surveyInstances()
-    {
-        return $this->belongsToMany(SurveyInstance::class, 'users_surveys', 'user_id', 'survey_instance_id')
-                    ->withPivot([
-                        'survey_id',
-                        'last_question_answered_id',
-                        'status',
-                        'start_date',
-                        'completed_at',
-                    ])
-                    ->withTimestamps();
+        $this->awvAppointments()->create([
+            'type'        => 'awv',
+            'appointment' => $date,
+        ]);
     }
 
     public function answers()
@@ -54,14 +35,9 @@ class User extends \CircleLinkHealth\Customer\Entities\User
         return $this->hasMany(Answer::class, 'user_id');
     }
 
-    public function providerReports()
+    public function awvAppointments()
     {
-        return $this->hasMany(ProviderReport::class, 'user_id');
-    }
-
-    public function getSurveys()
-    {
-        return $this->surveys->unique('id');
+        return $this->hasMany(AwvAppointment::class, 'user_id');
     }
 
     public function getHRAInstances()
@@ -71,26 +47,21 @@ class User extends \CircleLinkHealth\Customer\Entities\User
         })->get();
     }
 
-    public function getVitalsInstances()
-    {
-        return $this->surveyInstances()->whereHas('survey', function ($survey) {
-            $survey->vitals();
-        })->get();
-    }
-
     public function getSurveyInstancesBySurveyId($surveyId)
     {
         return $this->surveyInstances()->where('users_surveys.survey_id', $surveyId)->get();
     }
 
-    public function personalizedPreventionPlan()
+    public function getSurveys()
     {
-        return $this->hasMany(PersonalizedPreventionPlan::class, 'user_id');
+        return $this->surveys->unique('id');
     }
 
-    public function awvAppointments()
+    public function getVitalsInstances()
     {
-        return $this->hasMany(AwvAppointment::class, 'user_id');
+        return $this->surveyInstances()->whereHas('survey', function ($survey) {
+            $survey->vitals();
+        })->get();
     }
 
     /**
@@ -99,15 +70,48 @@ class User extends \CircleLinkHealth\Customer\Entities\User
     public function latestAwvAppointment()
     {
         return $this->awvAppointments()
-                    ->orderBy('appointment', 'desc')
-                    ->first();
+            ->orderBy('appointment', 'desc')
+            ->first();
     }
 
-    public function addAppointment(Carbon $date, $type = 'awv')
+    public function personalizedPreventionPlan()
     {
-        $this->awvAppointments()->create([
-            'type'        => 'awv',
-            'appointment' => $date,
-        ]);
+        return $this->hasMany(PersonalizedPreventionPlan::class, 'user_id');
+    }
+
+    public function providerReports()
+    {
+        return $this->hasMany(ProviderReport::class, 'user_id');
+    }
+
+    public function surveyInstances()
+    {
+        return $this->belongsToMany(SurveyInstance::class, 'users_surveys', 'user_id', 'survey_instance_id')
+            ->withPivot([
+                'survey_id',
+                'last_question_answered_id',
+                'status',
+                'start_date',
+                'completed_at',
+            ])
+            ->withTimestamps();
+    }
+
+    public function surveys()
+    {
+        return $this->belongsToMany(Survey::class, 'users_surveys', 'user_id', 'survey_id')
+            ->withPivot([
+                'survey_instance_id',
+                'status',
+                'last_question_answered_id',
+                'start_date',
+                'completed_at',
+            ])
+            ->withTimestamps();
+    }
+
+    public function url()
+    {
+        return $this->hasOne(InvitationLink::class);
     }
 }

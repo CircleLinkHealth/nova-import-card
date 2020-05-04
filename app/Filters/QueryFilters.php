@@ -26,8 +26,6 @@ abstract class QueryFilters
 
     /**
      * Create a new QueryFilters instance.
-     *
-     * @param Request $request
      */
     public function __construct(Request $request)
     {
@@ -37,7 +35,6 @@ abstract class QueryFilters
     /**
      * Apply the filters to the builder.
      *
-     * @param Builder $builder
      *
      * @return Builder
      */
@@ -45,7 +42,7 @@ abstract class QueryFilters
     {
         $this->builder = $builder;
         foreach (array_merge($this->filters(), $this->globalFilters()) as $name => $value) {
-            if (! method_exists($this, $name)) {
+            if ( ! method_exists($this, $name)) {
                 continue;
             }
             if (isset($value)) {

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -37,7 +41,6 @@ class LoginController extends Controller
     /**
      * Log the user out of the application.
      *
-     * @param \Illuminate\Http\Request $request
      *
      * @return \Illuminate\Http\Response
      */
@@ -48,7 +51,7 @@ class LoginController extends Controller
         $request->session()->invalidate();
 
         $redirect = $request->input('redirectTo', null);
-        $query = '';
+        $query    = '';
         if ($redirect) {
             $query = "?redirectTo=$redirect";
         }

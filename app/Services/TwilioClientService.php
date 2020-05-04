@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: pangratioscosma
- * Date: 01/07/2019
- * Time: 4:27 PM.
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services;
@@ -39,9 +37,11 @@ class TwilioClientService
      */
     public function __construct()
     {
-        $this->client = new Client(config('services.twilio.account_sid'), config('services.twilio.auth_token'));
-        $this->capability = new ClientToken(config('services.twilio.account_sid'),
-            config('services.twilio.auth_token'));
+        $this->client     = new Client(config('services.twilio.account_sid'), config('services.twilio.auth_token'));
+        $this->capability = new ClientToken(
+            config('services.twilio.account_sid'),
+            config('services.twilio.auth_token')
+        );
         $this->capability->allowClientOutgoing(config('services.twilio.twiml_app_sid'));
         $this->outgoingNumber = config('services.twilio.from');
     }
@@ -49,8 +49,6 @@ class TwilioClientService
     /**
      * Generates new token based on credentials and permissions set
      * in the constructor.
-     *
-     * @return string
      */
     public function generateCapabilityToken(): string
     {
@@ -64,10 +62,9 @@ class TwilioClientService
 
     /**
      * @param int $to
-     * @param string $text
      *
-     * @return string the message id
      * @throws TwilioException
+     * @return string          the message id
      */
     public function sendSMS(string $to, string $text)
     {
@@ -77,7 +74,7 @@ class TwilioClientService
                 'body' => $text,
             ];
 
-            if (! app()->isLocal()) {
+            if ( ! app()->isLocal()) {
                 $arr['statusCallback'] = route('twilio.sms.status');
             }
 

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Services;
 
 use App\Answer;
@@ -11,14 +15,28 @@ use Illuminate\Support\Collection;
 class GenerateReportService
 {
     /**
-     * @var \App\User
+     * @var Collection
      */
-    protected $patient;
+    protected $hraAnswers;
 
     /**
      * @var SurveyInstance
      */
     protected $hraInstance;
+
+    /**
+     * @var Collection
+     */
+    protected $hraQuestions;
+    /**
+     * @var \App\User
+     */
+    protected $patient;
+
+    /**
+     * @var Collection
+     */
+    protected $vitalsAnswers;
 
     /**
      * @var SurveyInstance
@@ -28,39 +46,22 @@ class GenerateReportService
     /**
      * @var Collection
      */
-    protected $hraQuestions;
-
-    /**
-     * @var Collection
-     */
     protected $vitalsQuestions;
 
     /**
-     * @var Collection
-     */
-    protected $hraAnswers;
-
-    /**
-     * @var Collection
-     */
-    protected $vitalsAnswers;
-
-    /**
      * GenerateReportService constructor.
-     *
-     * @param \App\User $patient
      */
     public function __construct(User $patient)
     {
         $this->patient = $patient;
 
-        $this->hraInstance = $this->patient->surveyInstances->where('survey.name', Survey::HRA)->first();
+        $this->hraInstance    = $this->patient->surveyInstances->where('survey.name', Survey::HRA)->first();
         $this->vitalsInstance = $this->patient->surveyInstances->where('survey.name', Survey::VITALS)->first();
 
-        $this->hraQuestions = $this->hraInstance->questions;
+        $this->hraQuestions    = $this->hraInstance->questions;
         $this->vitalsQuestions = $this->vitalsInstance->questions;
 
-        $this->hraAnswers = $patient->answers->where('survey_instance_id', $this->hraInstance->id);
+        $this->hraAnswers    = $patient->answers->where('survey_instance_id', $this->hraInstance->id);
         $this->vitalsAnswers = $patient->answers->where('survey_instance_id', $this->vitalsInstance->id);
     }
 
@@ -91,7 +92,7 @@ class GenerateReportService
      */
     protected function sanitizedValue(Answer $answer = null, $default = [])
     {
-        if (! $answer) {
+        if ( ! $answer) {
             return $default;
         }
 

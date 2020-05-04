@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\Services\SurveyAnswerSuggestionsCalculator;
@@ -13,7 +17,10 @@ use Illuminate\Queue\SerializesModels;
 
 class SurveyAnswersCalculateSuggestionsJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     protected $patientId;
 
@@ -35,18 +42,20 @@ class SurveyAnswersCalculateSuggestionsJob implements ShouldQueue
     public function handle()
     {
         $surveys = Survey::where('name', '=', Survey::HRA)
-                         ->orWhere('name', '=', Survey::VITALS)
-                         ->get()
-                         ->mapWithKeys(function ($survey) {
+            ->orWhere('name', '=', Survey::VITALS)
+            ->get()
+            ->mapWithKeys(function ($survey) {
                              return [$survey->name => $survey->id];
                          });
 
         //could optimise these, but I tried to re-use existing code
-        $userWithHraSurvey = SurveyService::getSurveyData($this->patientId, $surveys[Survey::HRA]);
+        $userWithHraSurvey    = SurveyService::getSurveyData($this->patientId, $surveys[Survey::HRA]);
         $userWithVitalsSurvey = SurveyService::getSurveyData($this->patientId, $surveys[Survey::VITALS]);
-        $calculator = new SurveyAnswerSuggestionsCalculator($userWithHraSurvey,
+        $calculator           = new SurveyAnswerSuggestionsCalculator(
+            $userWithHraSurvey,
             $userWithHraSurvey->surveyInstances->first(),
-            $userWithVitalsSurvey->surveyInstances->first());
+            $userWithVitalsSurvey->surveyInstances->first()
+        );
         $calculator->calculate();
     }
 

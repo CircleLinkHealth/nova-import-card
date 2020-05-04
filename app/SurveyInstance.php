@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
 use Carbon\Carbon;
@@ -20,9 +24,9 @@ use Illuminate\Support\Facades\DB;
  */
 class SurveyInstance extends BaseModel
 {
-    const PENDING = 'pending';
+    const COMPLETED   = 'completed';
     const IN_PROGRESS = 'in_progress';
-    const COMPLETED = 'completed';
+    const PENDING     = 'pending';
 
     /**
      * The attributes that are mass assignable.
@@ -33,96 +37,6 @@ class SurveyInstance extends BaseModel
         'survey_id',
         'year',
     ];
-
-    public function survey()
-    {
-        return $this->belongsTo(Survey::class, 'survey_id');
-    }
-
-    public function users()
-    {
-        return $this->belongsToMany(User::class, 'users_surveys', 'survey_instance_id', 'user_id')
-            ->withPivot([
-                'survey_id',
-                'last_question_answered_id',
-                'status',
-                'start_date',
-                'completed_at',
-            ])
-            ->withTimestamps();
-    }
-
-    public function questions()
-    {
-        return $this->belongsToMany(Question::class, 'survey_questions', 'survey_instance_id',
-            'question_id')
-            ->withPivot([
-                'order',
-                'sub_order',
-            ])
-            ->orderBy('pivot_order')
-            ->orderBy('pivot_sub_order');
-    }
-
-    /**
-     * Scope most recent per survey id.
-     *
-     * @param Builder $query
-     */
-    public function scopeMostRecent(Builder $query)
-    {
-        /**
-         * The raw query:
-         * SELECT survey_instances.*
-         * FROM survey_instances INNER JOIN (
-         * # this inner join creates a table with a field of the survey id and another field of the list of years
-         * # the list of years is ordered by most recent year (i.e. 2019, 2018, 2017)
-         * SELECT survey_id, GROUP_CONCAT(year order by year desc) grouped_year
-         * FROM survey_instances
-         * GROUP BY survey_id) group_max
-         * ON survey_instances.survey_id = group_max.survey_id
-         * # FIND_IN_SET is called to find the year in first of position of the list of years (which means the most recent)
-         * AND FIND_IN_SET(year, grouped_year) = 1
-         * ORDER BY survey_instances.year DESC;.
-         */
-        $table = $this->getTable();
-        $query->join(DB::raw("
-                    (SELECT
-                      survey_id,
-                      GROUP_CONCAT(year order by year desc) grouped_year
-                    FROM
-                      $table
-                    GROUP BY survey_id) group_max"),
-            "$table.survey_id", '=', 'group_max.survey_id')
-            ->whereRaw('FIND_IN_SET(year, grouped_year) = 1')
-            ->orderByDesc("$table.year");
-    }
-
-    public function scopeCurrent($query)
-    {
-        $query->where('year', Carbon::now()->year);
-    }
-
-    public function scopeOfSurvey($query, $surveyName)
-    {
-        $query->whereHas('survey', function ($survey) use ($surveyName) {
-            $survey->where('name', $surveyName);
-        });
-    }
-
-    public function scopeForYear($query, $year)
-    {
-        if (is_a($year, Carbon::class)) {
-            $year = $year->year;
-        }
-
-        $query->where('year', $year);
-    }
-
-    public function scopeIsCompletedForPatient($query)
-    {
-        $query->where('users_surveys.status', self::COMPLETED);
-    }
 
     public function calculateCurrentStatusForUser(User $user)
     {
@@ -148,7 +62,7 @@ class SurveyInstance extends BaseModel
 
         /** @var Question $nextQuestion */
         $nextQuestion = $this->questions->get($newIndex);
-        if (! $nextQuestion) {
+        if ( ! $nextQuestion) {
             return;
         }
 
@@ -172,16 +86,16 @@ class SurveyInstance extends BaseModel
             return $this->getNextUnansweredQuestion($user, $newIndex, $skipOptionals);
         }
 
-        $answer = $this->getAnswerForQuestion($user, $nextQuestion->id);
-        $isAnswered = $answer !== null;
+        $answer     = $this->getAnswerForQuestion($user, $nextQuestion->id);
+        $isAnswered = null !== $answer;
         if ($isAnswered) {
             return $this->getNextUnansweredQuestion($user, $newIndex, $skipOptionals);
         }
 
         $isDisabled = false;
-        if (! empty($nextQuestion->conditions)) {
+        if ( ! empty($nextQuestion->conditions)) {
             foreach ($nextQuestion->conditions as $condition) {
-                if (! isset($condition['related_question_order_number'])) {
+                if ( ! isset($condition['related_question_order_number'])) {
                     continue;
                 }
 
@@ -193,7 +107,7 @@ class SurveyInstance extends BaseModel
 
                 /** @var Answer $firstQuestionAnswer */
                 $firstQuestionAnswer = $this->getAnswerForQuestion($user, $firstQuestion->id);
-                if (! $firstQuestionAnswer) {
+                if ( ! $firstQuestionAnswer) {
                     $isDisabled = true;
                     break;
                 }
@@ -203,13 +117,13 @@ class SurveyInstance extends BaseModel
                     $valueToCheck = $firstQuestionAnswer->value['value'];
                     $valueToCheck = $this->getValue($valueToCheck);
 
-                    if ($condition['operator'] === 'greater_or_equal_than') {
+                    if ('greater_or_equal_than' === $condition['operator']) {
                         //Again we use only the first Question of the related Questions, which is OK for now.
                         $isDisabled = ! ($valueToCheck >= $condition['related_question_expected_answer']);
                         break;
                     }
 
-                    if ($condition['operator'] === 'less_or_equal_than') {
+                    if ('less_or_equal_than' === $condition['operator']) {
                         $isDisabled = ! ($valueToCheck <= $condition['related_question_expected_answer']);
                         break;
                     }
@@ -227,7 +141,7 @@ class SurveyInstance extends BaseModel
                     }
                 } else {
                     //we are looking for any answer
-                    if (! isset($firstQuestionAnswer->value['value'])) {
+                    if ( ! isset($firstQuestionAnswer->value['value'])) {
                         if (is_array($firstQuestionAnswer->value) && empty($firstQuestionAnswer->value)) {
                             $isDisabled = true;
                         }
@@ -251,6 +165,102 @@ class SurveyInstance extends BaseModel
         return $isDisabled
             ? $this->getNextUnansweredQuestion($user, $newIndex, $skipOptionals)
             : $nextQuestion;
+    }
+
+    public function questions()
+    {
+        return $this->belongsToMany(
+            Question::class,
+            'survey_questions',
+            'survey_instance_id',
+            'question_id'
+        )
+            ->withPivot([
+                'order',
+                'sub_order',
+            ])
+            ->orderBy('pivot_order')
+            ->orderBy('pivot_sub_order');
+    }
+
+    public function scopeCurrent($query)
+    {
+        $query->where('year', Carbon::now()->year);
+    }
+
+    public function scopeForYear($query, $year)
+    {
+        if (is_a($year, Carbon::class)) {
+            $year = $year->year;
+        }
+
+        $query->where('year', $year);
+    }
+
+    public function scopeIsCompletedForPatient($query)
+    {
+        $query->where('users_surveys.status', self::COMPLETED);
+    }
+
+    /**
+     * Scope most recent per survey id.
+     */
+    public function scopeMostRecent(Builder $query)
+    {
+        /**
+         * The raw query:
+         * SELECT survey_instances.*
+         * FROM survey_instances INNER JOIN (
+         * # this inner join creates a table with a field of the survey id and another field of the list of years
+         * # the list of years is ordered by most recent year (i.e. 2019, 2018, 2017)
+         * SELECT survey_id, GROUP_CONCAT(year order by year desc) grouped_year
+         * FROM survey_instances
+         * GROUP BY survey_id) group_max
+         * ON survey_instances.survey_id = group_max.survey_id
+         * # FIND_IN_SET is called to find the year in first of position of the list of years (which means the most recent)
+         * AND FIND_IN_SET(year, grouped_year) = 1
+         * ORDER BY survey_instances.year DESC;.
+         */
+        $table = $this->getTable();
+        $query->join(
+            DB::raw("
+                    (SELECT
+                      survey_id,
+                      GROUP_CONCAT(year order by year desc) grouped_year
+                    FROM
+                      $table
+                    GROUP BY survey_id) group_max"),
+            "$table.survey_id",
+            '=',
+            'group_max.survey_id'
+        )
+            ->whereRaw('FIND_IN_SET(year, grouped_year) = 1')
+            ->orderByDesc("$table.year");
+    }
+
+    public function scopeOfSurvey($query, $surveyName)
+    {
+        $query->whereHas('survey', function ($survey) use ($surveyName) {
+            $survey->where('name', $surveyName);
+        });
+    }
+
+    public function survey()
+    {
+        return $this->belongsTo(Survey::class, 'survey_id');
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'users_surveys', 'survey_instance_id', 'user_id')
+            ->withPivot([
+                'survey_id',
+                'last_question_answered_id',
+                'status',
+                'start_date',
+                'completed_at',
+            ])
+            ->withTimestamps();
     }
 
     private function getAnswerForQuestion(User $user, $questionId)

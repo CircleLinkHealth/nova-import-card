@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use App\Services\SurveyService;
 use App\Survey;
 use App\SurveyInstance;
@@ -13,93 +17,45 @@ use Illuminate\Support\Str;
 class PatientSurveyAnswersSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * use this to create test patient, currently not being used.
      *
-     * This seeder is currently used for testing.
-     * When the seeder runs it is going to create answers.
-     * SurveyService will automatically update survey_status, and eventually set both instance status to complete,
-     * That will trigger the generation of the 2 reports by Jobs/GeneratePatientReportsJob
-     *
-     * @return void
+     * @return $this|\Illuminate\Database\Eloquent\Model
      */
-    public function run()
+    public function createTestUser()
     {
-        $date = Carbon::now();
-        $service = new SurveyService();
+        $faker = Factory::create();
 
-        $user = User::ofType('participant')
-                    ->first();
+        $user = User::create([
+            'first_name'   => $faker->name,
+            'last_name'    => $faker->name,
+            'display_name' => $faker->name,
+            'email'        => $faker->unique()->safeEmail,
+            //'email_verified_at' => now(),
+            'username'             => $faker->userName,
+            'auto_attach_programs' => 1,
+            'password'             => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
+            'remember_token'       => Str::random(10),
+            'address'              => $faker->address,
+            'address2'             => $faker->address,
+            'city'                 => $faker->city,
+            'state'                => $faker->city,
+            'zip'                  => $faker->randomNumber(5),
+            'status'               => 'Active',
+            'access_disabled'      => 0,
+        ]);
 
-        if (! $user) {
-            $user = $this->createTestUser();
-        }
+        $user->patientInfo()->create([
+            'user_id'         => $user->id,
+            'birth_date'      => $faker->date('y-m-d'),
+            'general_comment' => $faker->text,
+        ]);
 
-        echo $user->id;
+        return $user;
+    }
 
-        $hraSurvey = Survey::with([
-            'instances' => function ($instance) use ($date) {
-                $instance->with('questions')
-                         ->forYear($date->year);
-            },
-        ])
-                           ->where('name', Survey::HRA)->first();
-
-        $vitalsSurvey = Survey::with([
-            'instances' => function ($instance) use ($date) {
-                $instance->with('questions')
-                         ->forYear($date->year);
-            },
-        ])
-                                ->where('name', Survey::VITALS)->first();
-        $hraInstance = $hraSurvey->instances->first();
-        $vitalsInstance = $vitalsSurvey->instances->first();
-
-        $user->surveys()->attach(
-            $hraSurvey->id,
-            [
-                'survey_instance_id' => $hraInstance->id,
-                'status'             => SurveyInstance::PENDING,
-
-            ]
-        );
-
-        $user->surveys()->attach(
-            $vitalsSurvey->id,
-            [
-                'survey_instance_id' => $vitalsInstance->id,
-                'status'             => SurveyInstance::PENDING,
-            ]
-        );
-
-        $hraAnswers = $this->hraAnswerData();
-
-        foreach ($hraAnswers as $answerData) {
-            $question = $this->getQuestionWithOrder($hraInstance, $answerData['order'], $answerData['subOrder']);
-
-            $service->updateOrCreateAnswer([
-                'user_id'            => $user->id,
-                'survey_instance_id' => $hraInstance->id,
-                'question_id'        => $question->id,
-                'value'              => $answerData['answer'],
-            ]);
-        }
-
-        $vitalsAnswers = $this->vitalsAnswerData();
-
-        foreach ($vitalsAnswers as $answerData) {
-            $question = $this->getQuestionWithOrder($vitalsInstance, $answerData['order'], $answerData['subOrder']);
-
-            $input = [
-                'user_id'            => $user->id,
-                'survey_instance_id' => $vitalsInstance->id,
-                'question_id'        => $question->id,
-                'value'              => $answerData['answer'],
-            ];
-
-            $service->updateOrCreateAnswer($input);
-            //fix to generate reports
-//            $service->updateSurveyInstanceStatus($input, true);
-        }
+    public function getQuestionWithOrder($instance, $order, $subOrder = null)
+    {
+        return $instance->questions->where('pivot.order', $order)->where('pivot.sub_order', $subOrder)->first();
     }
 
     public function hraAnswerData(): Collection
@@ -131,15 +87,15 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'order'    => 4,
                 'subOrder' => null,
                 'answer'   => [
-                        'value' => 'Female',
-                    ],
+                    'value' => 'Female',
+                ],
             ],
             [
                 'order'    => 5,
                 'subOrder' => null,
                 'answer'   => [
-                        'value' => 'Fair',
-                    ],
+                    'value' => 'Fair',
+                ],
             ],
             [
                 'order'    => 6,
@@ -147,7 +103,6 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'answer'   => [
                     'value' => '1-2',
                 ],
-
             ],
             [
                 'order'    => 7,
@@ -299,7 +254,6 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'answer'   => [
                     [
                         'name' => 'Tangyness',
-
                     ],
                     [
                         'name' => 'Arch-tangyness',
@@ -312,7 +266,6 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'answer'   => [
                     [
                         'name' => 'Colorectal Cancer',
-
                     ],
                     [
                         'name' => 'Depression',
@@ -376,7 +329,6 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'answer'   => [
                     [
                         'name' => 'peanuts',
-
                     ],
                     [
                         'name' => 'figs',
@@ -403,7 +355,6 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'answer'   => [
                     [
                         'name' => 'Bathing',
-
                     ],
                     [
                         'name' => 'Preparing a meal',
@@ -601,9 +552,93 @@ class PatientSurveyAnswersSeeder extends Seeder
         ]);
     }
 
-    public function getQuestionWithOrder($instance, $order, $subOrder = null)
+    /**
+     * Run the database seeds.
+     *
+     * This seeder is currently used for testing.
+     * When the seeder runs it is going to create answers.
+     * SurveyService will automatically update survey_status, and eventually set both instance status to complete,
+     * That will trigger the generation of the 2 reports by Jobs/GeneratePatientReportsJob
+     *
+     * @return void
+     */
+    public function run()
     {
-        return $instance->questions->where('pivot.order', $order)->where('pivot.sub_order', $subOrder)->first();
+        $date    = Carbon::now();
+        $service = new SurveyService();
+
+        $user = User::ofType('participant')
+            ->first();
+
+        if ( ! $user) {
+            $user = $this->createTestUser();
+        }
+
+        echo $user->id;
+
+        $hraSurvey = Survey::with([
+            'instances' => function ($instance) use ($date) {
+                $instance->with('questions')
+                    ->forYear($date->year);
+            },
+        ])
+            ->where('name', Survey::HRA)->first();
+
+        $vitalsSurvey = Survey::with([
+            'instances' => function ($instance) use ($date) {
+                $instance->with('questions')
+                    ->forYear($date->year);
+            },
+        ])
+            ->where('name', Survey::VITALS)->first();
+        $hraInstance    = $hraSurvey->instances->first();
+        $vitalsInstance = $vitalsSurvey->instances->first();
+
+        $user->surveys()->attach(
+            $hraSurvey->id,
+            [
+                'survey_instance_id' => $hraInstance->id,
+                'status'             => SurveyInstance::PENDING,
+            ]
+        );
+
+        $user->surveys()->attach(
+            $vitalsSurvey->id,
+            [
+                'survey_instance_id' => $vitalsInstance->id,
+                'status'             => SurveyInstance::PENDING,
+            ]
+        );
+
+        $hraAnswers = $this->hraAnswerData();
+
+        foreach ($hraAnswers as $answerData) {
+            $question = $this->getQuestionWithOrder($hraInstance, $answerData['order'], $answerData['subOrder']);
+
+            $service->updateOrCreateAnswer([
+                'user_id'            => $user->id,
+                'survey_instance_id' => $hraInstance->id,
+                'question_id'        => $question->id,
+                'value'              => $answerData['answer'],
+            ]);
+        }
+
+        $vitalsAnswers = $this->vitalsAnswerData();
+
+        foreach ($vitalsAnswers as $answerData) {
+            $question = $this->getQuestionWithOrder($vitalsInstance, $answerData['order'], $answerData['subOrder']);
+
+            $input = [
+                'user_id'            => $user->id,
+                'survey_instance_id' => $vitalsInstance->id,
+                'question_id'        => $question->id,
+                'value'              => $answerData['answer'],
+            ];
+
+            $service->updateOrCreateAnswer($input);
+            //fix to generate reports
+//            $service->updateSurveyInstanceStatus($input, true);
+        }
     }
 
     public function vitalsAnswerData(): Collection
@@ -661,42 +696,5 @@ class PatientSurveyAnswersSeeder extends Seeder
                 ],
             ],
         ]);
-    }
-
-    /**
-     * use this to create test patient, currently not being used.
-     *
-     * @return $this|\Illuminate\Database\Eloquent\Model
-     */
-    public function createTestUser()
-    {
-        $faker = Factory::create();
-
-        $user = User::create([
-            'first_name'           => $faker->name,
-            'last_name'            => $faker->name,
-            'display_name'         => $faker->name,
-            'email'                => $faker->unique()->safeEmail,
-            //'email_verified_at' => now(),
-            'username'             => $faker->userName,
-            'auto_attach_programs' => 1,
-            'password'             => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
-            'remember_token'       => Str::random(10),
-            'address'              => $faker->address,
-            'address2'             => $faker->address,
-            'city'                 => $faker->city,
-            'state'                => $faker->city,
-            'zip'                  => $faker->randomNumber(5),
-            'status'               => 'Active',
-            'access_disabled'      => 0,
-        ]);
-
-        $user->patientInfo()->create([
-            'user_id'         => $user->id,
-            'birth_date'      => $faker->date('y-m-d'),
-            'general_comment' => $faker->text,
-        ]);
-
-        return $user;
     }
 }

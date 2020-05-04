@@ -1,8 +1,10 @@
 <?php
 
-namespace App;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
-use Illuminate\Database\Eloquent\Model;
+namespace App;
 
 /**
  * Class Patient.

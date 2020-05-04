@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreVitalsAnswer;
@@ -16,38 +20,6 @@ class VitalsSurveyController extends Controller
         $this->service = $service;
     }
 
-    public function showWelcome($patientId)
-    {
-        $patient = User::with(['regularDoctor', 'billingProvider'])->findOrFail($patientId);
-
-        if (! empty($patient->regularDoctorUser())) {
-            $doctorsName = $patient->regularDoctorUser()->getFullName();
-        } elseif (! empty($patient->billingProviderUser())) {
-            $doctorsName = $patient->billingProviderUser()->getFullName();
-        }
-
-        return view('survey.vitals.welcome', [
-            'patientId' => $patient->id,
-            'patientName' => $patient->display_name,
-            'doctorName' => $doctorsName ?? '',
-        ]);
-    }
-
-    public function showNotAuthorized($patientId)
-    {
-        $patient = User::with(['regularDoctor', 'billingProvider'])->findOrFail($patientId);
-
-        if (! empty($patient->regularDoctorUser())) {
-            $doctorsName = $patient->regularDoctorUser()->getFullName();
-        } elseif (! empty($patient->billingProviderUser())) {
-            $doctorsName = $patient->billingProviderUser()->getFullName();
-        }
-
-        return view('survey.vitals.not-authorized', [
-            'doctorsName' => $doctorsName ?? '',
-        ]);
-    }
-
     /**
      * Patient cannot access this route.
      * User must have `vitals-survey-complete` permission.
@@ -59,7 +31,7 @@ class VitalsSurveyController extends Controller
     public function getCurrentSurvey($patientId)
     {
         //no need to have this check here
-        if (! Auth::check()) {
+        if ( ! Auth::check()) {
             return redirect()->route('survey.vitals.welcome', ['patientId' => $patientId]);
         }
 
@@ -69,7 +41,7 @@ class VitalsSurveyController extends Controller
 
         $userWithSurveyData = $this->service->getSurveyData($patientId);
 
-        if (! $userWithSurveyData) {
+        if ( ! $userWithSurveyData) {
             throw new \Error('Survey not found for patient '.$patientId);
         }
 
@@ -78,11 +50,42 @@ class VitalsSurveyController extends Controller
         ]);
     }
 
+    public function showNotAuthorized($patientId)
+    {
+        $patient = User::with(['regularDoctor', 'billingProvider'])->findOrFail($patientId);
+
+        if ( ! empty($patient->regularDoctorUser())) {
+            $doctorsName = $patient->regularDoctorUser()->getFullName();
+        } elseif ( ! empty($patient->billingProviderUser())) {
+            $doctorsName = $patient->billingProviderUser()->getFullName();
+        }
+
+        return view('survey.vitals.not-authorized', [
+            'doctorsName' => $doctorsName ?? '',
+        ]);
+    }
+
+    public function showWelcome($patientId)
+    {
+        $patient = User::with(['regularDoctor', 'billingProvider'])->findOrFail($patientId);
+
+        if ( ! empty($patient->regularDoctorUser())) {
+            $doctorsName = $patient->regularDoctorUser()->getFullName();
+        } elseif ( ! empty($patient->billingProviderUser())) {
+            $doctorsName = $patient->billingProviderUser()->getFullName();
+        }
+
+        return view('survey.vitals.welcome', [
+            'patientId'   => $patient->id,
+            'patientName' => $patient->display_name,
+            'doctorName'  => $doctorsName ?? '',
+        ]);
+    }
+
     /**
      * Patient cannot access this route.
      * User must have `vitals-survey-complete` permission.
      *
-     * @param StoreVitalsAnswer $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -90,13 +93,13 @@ class VitalsSurveyController extends Controller
     {
         $result = $this->service->updateOrCreateAnswer($request);
 
-        if (! $result) {
+        if ( ! $result) {
             return response()->json(['errors' => 'Answer was not created'], 400);
         }
 
         return response()->json([
-            'created'       => true,
-            'survey_status' => $result['status'],
+            'created'          => true,
+            'survey_status'    => $result['status'],
             'next_question_id' => $result['next_question_id'],
         ], 200);
     }

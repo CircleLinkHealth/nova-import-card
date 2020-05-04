@@ -4,8 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-//this is a dummy commit
-
 Route::get('/', 'HomeController@index')
     ->name('home');
 
@@ -193,7 +191,7 @@ Route::group([
         'prefix' => 'enrollees',
     ], function () {
         Route::get('create-url/{userId}/{surveyId}', [
-            'uses' => 'InvitationLinksController@createEnrolleesSurveyUrl',
+            'uses' => 'EnrolleeSurveyController@createEnrolleesSurveyUrl',
             'as'   => 'create.enrollees.survey.url',
         ]);
 

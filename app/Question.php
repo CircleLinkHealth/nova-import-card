@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
@@ -19,6 +23,14 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 class Question extends BaseModel
 {
     /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'conditions' => 'array',
+    ];
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -32,34 +44,6 @@ class Question extends BaseModel
         'question_group_id',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'conditions' => 'array',
-    ];
-
-    public function surveyInstance()
-    {
-        return $this->belongsToMany(SurveyInstance::class, 'survey_questions', 'question_id',
-            'survey_instance_id')->withPivot([
-            'order',
-            'sub_order',
-        ]);
-    }
-
-    public function survey()
-    {
-        return $this->belongsTo(Survey::class, 'survey_id');
-    }
-
-    public function type()
-    {
-        return $this->hasOne(QuestionType::class, 'question_id', 'id');
-    }
-
     public function questionGroup()
     {
         return $this->belongsTo(QuestionGroup::class, 'question_group_id');
@@ -68,5 +52,28 @@ class Question extends BaseModel
     public function scopeNotOptional($query)
     {
         $query->where('optional', false);
+    }
+
+    public function survey()
+    {
+        return $this->belongsTo(Survey::class, 'survey_id');
+    }
+
+    public function surveyInstance()
+    {
+        return $this->belongsToMany(
+            SurveyInstance::class,
+            'survey_questions',
+            'question_id',
+            'survey_instance_id'
+        )->withPivot([
+            'order',
+            'sub_order',
+        ]);
+    }
+
+    public function type()
+    {
+        return $this->hasOne(QuestionType::class, 'question_id', 'id');
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddProviderRequest;
@@ -10,8 +14,6 @@ class ProviderController
 {
     /**
      * Add a new provider.
-     *
-     * @param AddProviderRequest $request
      */
     public function add(AddProviderRequest $request)
     {
@@ -21,7 +23,6 @@ class ProviderController
      * Search for existing provider based on first name and last name.
      * NOTE: copied from CPM project: CareTeamController@searchProviders.
      *
-     * @param Request $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -31,13 +32,13 @@ class ProviderController
 
         $users = User
             ::ofType('provider')
-            ->where(function ($q) use ($searchTerm) {
-                $q->where('first_name', 'like', "%$searchTerm%")
-                  ->orWhere('last_name', 'like', "%$searchTerm%");
-            })
-            ->with('primaryPractice')
-            ->with('phoneNumbers')
-            ->get();
+                ->where(function ($q) use ($searchTerm) {
+                    $q->where('first_name', 'like', "%$searchTerm%")
+                        ->orWhere('last_name', 'like', "%$searchTerm%");
+                })
+                ->with('primaryPractice')
+                ->with('phoneNumbers')
+                ->get();
 
         return response()->json(['results' => $users]);
     }

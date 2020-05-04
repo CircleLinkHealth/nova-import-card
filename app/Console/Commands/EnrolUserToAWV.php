@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Services\SurveyInvitationLinksService;
@@ -10,18 +14,17 @@ use Illuminate\Console\Command;
 class EnrolUserToAWV extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'enrol:user {userId} {forYear?}';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Enrol a user to AWV Surveys (HRA and Vitals).';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'enrol:user {userId} {forYear?}';
 
     /**
      * Create a new command instance.
@@ -36,7 +39,6 @@ class EnrolUserToAWV extends Command
     /**
      * Execute the console command.
      *
-     * @param SurveyInvitationLinksService $service
      *
      * @return mixed
      */
@@ -50,17 +52,17 @@ class EnrolUserToAWV extends Command
                     $query->mostRecent();
                 },
             ])
-            ->where('id', '=', $userId)
-            ->first();
+                ->where('id', '=', $userId)
+                ->first();
 
-        if (! $user) {
+        if ( ! $user) {
             $this->warn("Could not find user with id $userId");
 
             return;
         }
 
         $forYear = $this->argument('forYear');
-        if (! $forYear) {
+        if ( ! $forYear) {
             $forYear = Carbon::now()->year;
         }
 

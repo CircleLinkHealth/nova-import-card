@@ -45,7 +45,7 @@
                 <div class="card-body">
                     <img :src="welcomeIcon"
                          class="welcome-icon" alt="welcome icon">
-                    <div class="survey-main-title"> <!--Should move the if isEnrollees to function-->
+                    <div class="survey-main-title">
                         <label v-if="!isEnrollees" id="sub-title">{{welcomeTitle}}</label>
                         <label v-else>Enrollment Survey</label>
                     </div>
@@ -64,8 +64,9 @@
                     <div v-else-if="isEnrollees"
                          class="survey-sub-welcome-text"
                          style="text-align: center;">
-                        Dear {{this.surveyData.first_name}},<br>
-                        Almost done! Just need some information.
+                        Dear {{this.surveyData.last_name}},<br>
+                        Almost done! Just confirm/edit some information to make sure <br>
+                        we call the right number at the right time.
                     </div>
                     <div v-else class="survey-sub-welcome-text">
                         Here is the form to fill out {{patientName}}'s Vitals. Once completed, a PPP will be
@@ -81,7 +82,7 @@
                             <span v-else>Continue</span>
                         </mdb-btn>
                     </div>
-                    <div class="by-circlelink">
+                    <div v-if="! isEnrollees" class="by-circlelink">
                         ⚡️ by CircleLink Health
                     </div>
                 </div>
@@ -303,10 +304,6 @@
                         <form id="logout-form" action="/logout" method="POST" style="display: none;">
                         </form>
                     </div>
-
-                    <div class="by-circlelink">
-                        ⚡️ by CircleLink Health
-                    </div>
                 </div>
             </template>
             <!-- Survey Completed - should only be shown in Vitals Survey -->
@@ -342,7 +339,7 @@
                         </form>
                     </div>
 
-                    <div class="by-circlelink">
+                    <div v-if="! isEnrollees" class="by-circlelink">
                         ⚡️ by CircleLink Health
                     </div>
                 </div>

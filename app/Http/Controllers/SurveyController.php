@@ -1,15 +1,16 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAnswer;
 use App\Services\SurveyService;
 use App\Survey;
 use Auth;
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class SurveyController extends Controller
 {
@@ -23,13 +24,13 @@ class SurveyController extends Controller
     public function getCurrentSurvey($patientId)
     {
         //no need to have this check here
-        if (! Auth::check()) {
+        if ( ! Auth::check()) {
             return redirect()->route('survey.vitals.welcome', ['patientId' => $patientId]);
         }
 
         $surveyData = $this->service->getCurrentSurveyData($patientId, Survey::HRA);
 
-        if (! $surveyData) {
+        if ( ! $surveyData) {
             throw new \Error('Survey not found for patient '.$patientId);
         }
 
@@ -41,7 +42,7 @@ class SurveyController extends Controller
     public function getSurvey($patientId, $surveyId)
     {
         //no need to have this check here
-        if (! Auth::check()) {
+        if ( ! Auth::check()) {
             return redirect()->route('survey.vitals.welcome', ['patientId' => $patientId]);
         }
 
@@ -51,7 +52,7 @@ class SurveyController extends Controller
 
         $surveyData = $this->service->getSurveyData($patientId, $surveyId);
 
-        if (! $surveyData) {
+        if ( ! $surveyData) {
             throw new \Error('Survey not found for patient '.$patientId);
         }
 
@@ -62,18 +63,18 @@ class SurveyController extends Controller
 
     public function storeAnswer(StoreAnswer $request)
     {
-        $input = $request->all();
+        $input            = $request->all();
         $input['user_id'] = $input['patient_id'];
 
         $result = $this->service->updateOrCreateAnswer($input);
 
-        if (! $result) {
+        if ( ! $result) {
             return response()->json(['errors' => 'Answer was not created'], 400);
         }
 
         return response()->json([
-            'created' => true,
-            'survey_status' => $result['status'],
+            'created'          => true,
+            'survey_status'    => $result['status'],
             'next_question_id' => $result['next_question_id'],
         ], 200);
     }
