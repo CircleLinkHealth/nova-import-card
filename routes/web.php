@@ -4,6 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+//this is a dummy commit
+
 Route::get('/', 'HomeController@index')
     ->name('home');
 

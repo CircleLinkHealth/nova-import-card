@@ -129,6 +129,7 @@
         "ext-pdo": "*",
         "ext-redis": "*",
         "ext-simplexml": "*",
+        "algolia/algoliasearch-client-php": "^2.6",
         "appstract/laravel-opcache": "^3.2.1",
         "barryvdh/laravel-snappy": "0.4.7",
         "circlelinkhealth/cerberus-gatekeeper-module": "3.1.4",
