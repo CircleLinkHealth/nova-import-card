@@ -6,11 +6,11 @@
 
 namespace App\Nova\Importers;
 
-use App\CLH\Repositories\UserRepository;
 use App\Search\LocationByName;
 use App\Search\RoleByName;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\UserRepository;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\Importable;
@@ -112,7 +112,7 @@ class PracticeStaff extends ReportsErrorsToSlack implements WithChunkReading, To
      */
     protected function getErrorMessageIntro(): string
     {
-        return "The following rows from queued job to import practice staff for practice '{$this->practice->display_name}', 
+        return "The following rows from queued job to import practice staff for practice '{$this->practice->display_name}',
             from file {$this->fileName} failed to import. See reasons below:";
     }
 

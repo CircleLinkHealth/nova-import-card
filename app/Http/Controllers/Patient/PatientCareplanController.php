@@ -7,7 +7,6 @@
 namespace App\Http\Controllers\Patient;
 
 use App\CarePlanPrintListView;
-use App\CLH\Repositories\UserRepository;
 use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
@@ -25,6 +24,7 @@ use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
 use DateTime;
