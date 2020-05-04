@@ -300,7 +300,9 @@
                                 obs_alerts_dtable.hideColumn("site");
 
                                 const debounced = _.debounce(() => {
-                                    obs_alerts_dtable.adjust();
+                                    if (typeof obs_alerts_dtable !== 'undefined') {
+                                        obs_alerts_dtable.adjust();
+                                    }
                                 }, 1000);
                                 webix.event(window, "resize", debounced);
                             </script>
@@ -390,7 +392,7 @@
                         @push('scripts')
                             <script type="text/javascript">
                                 function onLoad() {
-                                    if (typeof filterText === 'undefined') {
+                                    if (typeof filterText === 'undefined' || typeof obs_alerts_dtable === 'undefined') {
                                         setTimeout(() => onLoad(), 200);
                                         return;
                                     }
