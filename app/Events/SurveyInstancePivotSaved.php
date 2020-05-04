@@ -1,26 +1,26 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Events;
 
 use App\SurveyInstance;
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
 class SurveyInstancePivotSaved
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     public $surveyInstance;
 
     /**
      * Create a new event instance.
-     *
-     * @param SurveyInstance $surveyInstance
      */
     public function __construct(SurveyInstance $surveyInstance)
     {
@@ -30,10 +30,9 @@ class SurveyInstancePivotSaved
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return array|\Illuminate\Broadcasting\Channel
      */
     public function broadcastOn()
     {
-        //
     }
 }

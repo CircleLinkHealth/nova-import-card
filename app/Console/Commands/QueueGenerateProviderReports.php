@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Jobs\GeneratePatientReportsJob;
@@ -9,18 +13,17 @@ use Illuminate\Console\Command;
 class QueueGenerateProviderReports extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Generate Provider Report(s).';
+    /**
      * Patient Ids to attempt to create provider reports for.
      *
      * @var array
      */
     protected $patientIds;
-
-    /**
-     * Year to specify for which survey instances to generate Provider Reports for.
-     *
-     * @var int
-     */
-    protected $year;
 
     /**
      * The name and signature of the console command.
@@ -30,11 +33,11 @@ class QueueGenerateProviderReports extends Command
     protected $signature = 'generate:reports {patientIds : comma separated.} {year?} {--debug}';
 
     /**
-     * The console command description.
+     * Year to specify for which survey instances to generate Provider Reports for.
      *
-     * @var string
+     * @var int
      */
-    protected $description = 'Generate Provider Report(s).';
+    protected $year;
 
     /**
      * Create a new command instance.

@@ -1,23 +1,17 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: pangratioscosma
- * Date: 01/07/2019
- * Time: 6:06 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Http\Controllers;
-
 
 use Request;
 
 class TwilioController extends Controller
 {
-
     /**
-     * NOTE: make sure to white list this route in {@link \App\Http\Middleware\VerifyCsrfToken} middleware
-     *
-     * @param Request $request
+     * NOTE: make sure to white list this route in {@link \App\Http\Middleware\VerifyCsrfToken} middleware.
      */
     public function smsStatusCallback(Request $request)
     {
@@ -26,5 +20,4 @@ class TwilioController extends Controller
         $status = $request->input('MessageStatus');
         //todo: save in db
     }
-
 }

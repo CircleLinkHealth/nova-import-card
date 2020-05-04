@@ -1,12 +1,14 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
-use App\ProviderReport;
 use App\Services\ProviderReportService;
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Request;
 
 class ProviderReportController extends Controller
 {
@@ -19,7 +21,7 @@ class ProviderReportController extends Controller
 
     public function getProviderReport($userId, $year = null)
     {
-        if (! $year){
+        if ( ! $year) {
             $year = Carbon::now()->year;
         }
 
@@ -29,11 +31,11 @@ class ProviderReportController extends Controller
                 $report->forYear($year);
             },
         ])
-                       ->findOrFail($userId);
+            ->findOrFail($userId);
 
         $report = optional($patient->providerReports)->first();
 
-        if (! $report){
+        if ( ! $report) {
             throw new \Exception("This patient does not have a Provider Report for {$year}.");
         }
 

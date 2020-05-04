@@ -1,20 +1,31 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
 
 /**
- * @property int $id
- * @property int $question_type_id
+ * @property int    $id
+ * @property int    $question_type_id
  * @property string $value
- * @property array $options
+ * @property array  $options
  *
  * Class QuestionTypesAnswer
- * @package App
  */
 class QuestionTypesAnswer extends BaseModel
 {
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'options' => 'array',
+    ];
     /*
      *
      * The attributes that are mass assignable.
@@ -26,15 +37,6 @@ class QuestionTypesAnswer extends BaseModel
         'question_type_id',
         'value',
         'options',
-    ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'options' => 'array',
     ];
 
     public function questionType()

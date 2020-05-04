@@ -17,78 +17,6 @@ class PatientListFilters extends QueryFilters
         parent::__construct($request);
     }
 
-    public function mrn($value)
-    {
-        if (empty($value)) {
-            return $this->builder;
-        }
-
-        return $this->builder->where('mrn', 'like', '%' . $value . '%');
-    }
-
-    public function patient_name($name)
-    {
-        if (empty($name)) {
-            return $this->builder;
-        }
-
-        return $this->builder->where('patient_name', 'like', '%' . $name . '%');
-    }
-
-    public function provider_name($name)
-    {
-        if (empty($name)) {
-            return $this->builder;
-        }
-
-        return $this->builder->where('provider_name', 'like', '%' . $name . '%');
-    }
-
-    public function hra_status($status)
-    {
-        if (empty($status)) {
-            return $this->builder;
-        }
-
-        if ("null" === $status) {
-            return $this->builder->whereNull('hra_status');
-        }
-
-        return $this->builder->where('hra_status', '=', $status);
-    }
-
-    public function vitals_status($status)
-    {
-        if (empty($status)) {
-            return $this->builder;
-        }
-
-        if ("null" === $status) {
-            return $this->builder->whereNull('vitals_status');
-        }
-
-        return $this->builder->where('vitals_status', '=', $status);
-    }
-
-    /**
-     * TODO: not implemented yet
-     *
-     * @param $status
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     * @throws \Exception
-     */
-    public function eligibility($status)
-    {
-        throw new \Exception("not implemented");
-
-        if (empty($status)) {
-            return $this->builder;
-        }
-
-        return $this->builder->where('eligibility', '=', $status);
-    }
-
     public function appointment($value)
     {
         if (empty($value) || ! array_key_exists('start', $value) || ! array_key_exists('end', $value)) {
@@ -107,37 +35,25 @@ class PatientListFilters extends QueryFilters
             return $this->builder;
         }
 
-        return $this->builder->where('dob', 'like', '%' . $value . '%');
+        return $this->builder->where('dob', 'like', '%'.$value.'%');
     }
 
-    public function year($value)
+    /**
+     * TODO: not implemented yet.
+     *
+     * @param $status
+     *
+     * @throws \Exception
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function eligibility($status)
     {
-        if (empty($value)) {
+        throw new \Exception('not implemented');
+        if (empty($status)) {
             return $this->builder;
         }
 
-        return $this->builder->where('year', '=', $value);
-    }
-
-    public function years(array $value)
-    {
-        if (empty($value)) {
-            return $this->builder;
-        }
-
-        return $this->builder->where(function ($q) use ($value) {
-            $q->whereIn('year', $value)
-              ->orWhereNull('year');
-        });
-    }
-
-    public function practiceIds(array $value)
-    {
-        if (empty($value)) {
-            return $this->builder;
-        }
-
-        return $this->builder->whereIn('practice_id', $value);
+        return $this->builder->where('eligibility', '=', $status);
     }
 
     public function globalFilters(): array
@@ -158,5 +74,88 @@ class PatientListFilters extends QueryFilters
         $filtered['practiceIds'] = $user->viewableProgramIds();
 
         return $filtered->all();
+    }
+
+    public function hra_status($status)
+    {
+        if (empty($status)) {
+            return $this->builder;
+        }
+
+        if ('null' === $status) {
+            return $this->builder->whereNull('hra_status');
+        }
+
+        return $this->builder->where('hra_status', '=', $status);
+    }
+
+    public function mrn($value)
+    {
+        if (empty($value)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('mrn', 'like', '%'.$value.'%');
+    }
+
+    public function patient_name($name)
+    {
+        if (empty($name)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('patient_name', 'like', '%'.$name.'%');
+    }
+
+    public function practiceIds(array $value)
+    {
+        if (empty($value)) {
+            return $this->builder;
+        }
+
+        return $this->builder->whereIn('practice_id', $value);
+    }
+
+    public function provider_name($name)
+    {
+        if (empty($name)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('provider_name', 'like', '%'.$name.'%');
+    }
+
+    public function vitals_status($status)
+    {
+        if (empty($status)) {
+            return $this->builder;
+        }
+
+        if ('null' === $status) {
+            return $this->builder->whereNull('vitals_status');
+        }
+
+        return $this->builder->where('vitals_status', '=', $status);
+    }
+
+    public function year($value)
+    {
+        if (empty($value)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('year', '=', $value);
+    }
+
+    public function years(array $value)
+    {
+        if (empty($value)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where(function ($q) use ($value) {
+            $q->whereIn('year', $value)
+                ->orWhereNull('year');
+        });
     }
 }

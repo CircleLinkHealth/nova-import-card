@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
 use Carbon\Carbon;
@@ -7,20 +11,18 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
 
 /**
- * Class Survey
+ * Class Survey.
  *
- * @property-read int patient_id
- * @property-read int practice_id
- * @property-read string patient_name
- * @property-read Carbon dob
- * @property-read string provider_name
- * @property-read string hra_status
- * @property-read string vitals_status
- * @property-read string year
- * @property-read Carbon appointment
- * @property-read string mrn
- *
- * @package App
+ * @property int patient_id
+ * @property int practice_id
+ * @property string patient_name
+ * @property Carbon dob
+ * @property string provider_name
+ * @property string hra_status
+ * @property string vitals_status
+ * @property string year
+ * @property Carbon appointment
+ * @property string mrn
  */
 class PatientAwvSurveyInstanceStatusView extends BaseModel
 {

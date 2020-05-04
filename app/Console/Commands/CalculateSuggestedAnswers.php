@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Jobs\SurveyAnswersCalculateSuggestionsJob;
@@ -8,18 +12,17 @@ use Illuminate\Console\Command;
 class CalculateSuggestedAnswers extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'suggestAnswers {patientIds : comma separated}';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Calculate and suggest answers for current surveys of patients';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'suggestAnswers {patientIds : comma separated}';
 
     /**
      * Create a new command instance.
@@ -33,7 +36,6 @@ class CalculateSuggestedAnswers extends Command
 
     /**
      * Execute the console command.
-     *
      */
     public function handle()
     {
@@ -48,6 +50,6 @@ class CalculateSuggestedAnswers extends Command
             SurveyAnswersCalculateSuggestionsJob::dispatch($patientId)->onQueue('awv-high');
         }
 
-        $this->info("Done.");
+        $this->info('Done.');
     }
 }

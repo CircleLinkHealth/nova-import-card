@@ -11,7 +11,7 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="true"
-         stopOnFailure="true"
+         stopOnFailure="false"
          verbose="true">
     <testsuites>
         <testsuite name="Unit">

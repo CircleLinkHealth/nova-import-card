@@ -50,6 +50,28 @@
                     "size": "hobby"
                 }
             }
+        },
+        "review": {
+            "formation": {
+                "web": {
+                    "quantity": 1,
+                    "size": "hobby"
+                },
+                "worker": {
+                    "quantity": 1,
+                    "size": "hobby"
+                },
+                "scheduler": {
+                    "quantity": 1,
+                    "size": "hobby"
+                }
+            },
+            "scripts": {
+                "pr-predestroy": "php artisan reviewapp:predestroy"
+            },
+            "addons": [
+                "heroku-redis:premium-0"
+            ]
         }
     }
 }

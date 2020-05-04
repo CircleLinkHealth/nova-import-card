@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Feature;
 
 use App\NotifiableUser;
@@ -14,17 +18,17 @@ use Tests\TestCase;
 
 class HraSurveyReminderTest extends TestCase
 {
-    use UserHelpers;
     use PatientHelpers;
+    use UserHelpers;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         (new \SurveySeeder())->run();
     }
 
     /**
-     * Test that reminder is sent to both phone and email 10 days prior
+     * Test that reminder is sent to both phone and email 10 days prior.
      *
      * @return void
      */
@@ -35,7 +39,7 @@ class HraSurveyReminderTest extends TestCase
     }
 
     /**
-     * Test that reminder is sent to both phone and email 8 days prior
+     * Test that reminder is sent to both phone and email 8 days prior.
      *
      * @return void
      */
@@ -61,8 +65,10 @@ class HraSurveyReminderTest extends TestCase
 
         User::ofType('participant', false)
             ->whereHas('awvAppointments', function ($q) use ($date) {
-                $q->whereBetween('appointment',
-                    [$date->copy()->startOfDay(), $date->copy()->endOfDay()]);
+                $q->whereBetween(
+                    'appointment',
+                    [$date->copy()->startOfDay(), $date->copy()->endOfDay()]
+                );
             })
             ->with([
                 'surveyInstances' => function ($query) {
@@ -77,18 +83,27 @@ class HraSurveyReminderTest extends TestCase
                     throw $e;
                 }
 
-                $practiceName     = optional($user->primaryPractice)->display_name;
+                $practiceName = optional($user->primaryPractice)->display_name;
                 $providerFullName = optional($user->billingProviderUser())->getFullName();
-                $appointment      = $user->latestAwvAppointment()->appointment;
+                $appointment = $user->latestAwvAppointment()->appointment;
                 $notifiableUser = new NotifiableUser($user);
-                $notifiableUser->notify(new SurveyInvitationLink($url, Survey::HRA, null, $practiceName, $providerFullName,
-                    $appointment));
+                $notifiableUser->notify(new SurveyInvitationLink(
+                    $url,
+                    Survey::HRA,
+                    null,
+                    $practiceName,
+                    $providerFullName,
+                    $appointment
+                ));
 
-                Notification::assertSentTo($notifiableUser, SurveyInvitationLink::class,
+                Notification::assertSentTo(
+                    $notifiableUser,
+                    SurveyInvitationLink::class,
                     function ($notification, $channels) {
                         //Twilio and Email
-                        return sizeof($channels) === 2;
-                    });
+                        return 2 === count($channels);
+                    }
+                );
             });
     }
 }

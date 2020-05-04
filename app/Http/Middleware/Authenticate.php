@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Middleware;
 
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
@@ -18,22 +22,22 @@ class Authenticate extends Middleware
     protected function redirectTo($request)
     {
         if ( ! $request->expectsJson()) {
-            Log::debug("Authenticate Middleware -> route login");
+            Log::debug('Authenticate Middleware -> route login');
 
-            $redirectTo = $this->getRedirectPath($request);
+            $redirectTo  = $this->getRedirectPath($request);
             $redirectUrl = route('login', $request->query->all());
 
-            return $redirectUrl . (! empty($redirectTo)
+            return $redirectUrl.( ! empty($redirectTo)
                     ? "?redirectTo=$redirectTo"
-                    : "");
+                    : '');
         }
     }
 
     private function getRedirectPath(Request $request)
     {
         $path = $request->path();
-        if ($path === '/') {
-            return null;
+        if ('/' === $path) {
+            return;
         }
 
         return urlencode($request->path());

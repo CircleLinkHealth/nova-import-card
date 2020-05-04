@@ -1,8 +1,10 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 namespace App\Services;
-
 
 use App\Answer;
 use App\Survey;
@@ -13,14 +15,28 @@ use Illuminate\Support\Collection;
 class GenerateReportService
 {
     /**
-     * @var \App\User
+     * @var Collection
      */
-    protected $patient;
+    protected $hraAnswers;
 
     /**
      * @var SurveyInstance
      */
     protected $hraInstance;
+
+    /**
+     * @var Collection
+     */
+    protected $hraQuestions;
+    /**
+     * @var \App\User
+     */
+    protected $patient;
+
+    /**
+     * @var Collection
+     */
+    protected $vitalsAnswers;
 
     /**
      * @var SurveyInstance
@@ -30,29 +46,12 @@ class GenerateReportService
     /**
      * @var Collection
      */
-    protected $hraQuestions;
-
-    /**
-     * @var Collection
-     */
     protected $vitalsQuestions;
 
     /**
-     * @var Collection
-     */
-    protected $hraAnswers;
-
-    /**
-     * @var Collection
-     */
-    protected $vitalsAnswers;
-
-    /**
      * GenerateReportService constructor.
-     *
-     * @param \App\User $patient
      */
-    public function __construct(\App\User $patient)
+    public function __construct(User $patient)
     {
         $this->patient = $patient;
 

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SendSurveyLinkRequest;
@@ -28,10 +32,20 @@ class InvitationLinksController extends Controller
         $this->twilioService = $twilioService;
     }
 
+    public function enrollUser(Request $request, $userId)
+    {
+        try {
+            $this->service->enrolUserId($userId);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+
+        return response()->json(['message' => 'success']);
+    }
+
     /**
-     * Send HRA survey link to patient
+     * Send HRA survey link to patient.
      *
-     * @param SendSurveyLinkRequest $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -51,9 +65,8 @@ class InvitationLinksController extends Controller
     }
 
     /**
-     * Send Vitals link to practice staff
+     * Send Vitals link to practice staff.
      *
-     * @param SendSurveyLinkRequest $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -74,24 +87,12 @@ class InvitationLinksController extends Controller
 
     public function showEnrollUserForm(Request $request, $userId)
     {
-
         $patient = User::findOrFail($userId);
 
         return view('enrollUser', [
             'patientId'   => $patient->id,
             'patientName' => $patient->display_name,
         ]);
-    }
-
-    public function enrollUser(Request $request, $userId)
-    {
-        try {
-            $this->service->enrolUserId($userId);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
-        }
-
-        return response()->json(['message' => 'success']);
     }
 
     public function showSendAssessmentLinkForm(Request $request, $userId, $surveyName, $channel)
@@ -107,11 +108,8 @@ class InvitationLinksController extends Controller
     }
 
     /**
-     * @param SendSurveyLinkRequest $request
-     * @param string $surveyName
-     *
-     * @return string
      * @throws \Exception
+     * @return string
      */
     private function generateUrlAndSend(
         SendSurveyLinkRequest $request,
@@ -132,8 +130,8 @@ class InvitationLinksController extends Controller
                     $query->ofSurvey($surveyName)->mostRecent();
                 },
             ])
-            ->where('id', '=', $target_user_id)
-            ->firstOrFail();
+                ->where('id', '=', $target_user_id)
+                ->firstOrFail();
 
         $appointment = optional($user->latestAwvAppointment())->appointment;
         $url         = $this->service->createAndSaveUrl($user, $surveyName, true);
@@ -141,18 +139,18 @@ class InvitationLinksController extends Controller
         /** @var User $targetNotifiable */
         $targetNotifiable = null;
 
-        if ($channel === 'sms') {
+        if ('sms' === $channel) {
             $targetNotifiable = User
                 ::whereHas('phoneNumbers', function ($q) use ($channelValue) {
                     $q->where('number', '=', $channelValue);
                 })
-                ->first();
+                    ->first();
         } else {
             $targetNotifiable = User::whereEmail($channelValue)->first();
         }
 
         // we do not allow sending Vitals survey to channels not registered in the system
-        if ($surveyName === Survey::VITALS && ! $targetNotifiable) {
+        if (Survey::VITALS === $surveyName && ! $targetNotifiable) {
             throw new \Exception("Could not find user[$channelValue] in the system.");
         }
 
@@ -176,12 +174,12 @@ class InvitationLinksController extends Controller
         }
 
         if ( ! $providerFullName) {
-            $providerFullName = "provider";
+            $providerFullName = 'provider';
         }
 
-        (new NotifiableUser($targetNotifiable, $channel === 'mail'
+        (new NotifiableUser($targetNotifiable, 'mail' === $channel
             ? $channelValue
-            : null, $channel === 'sms'
+            : null, 'sms' === $channel
             ? $channelValue
             : null))
             ->notify(new SurveyInvitationLink($url, $surveyName, $channel, $practiceName, $providerFullName, $appointment));

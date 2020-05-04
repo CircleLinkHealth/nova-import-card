@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: pangratioscosma
- * Date: 15/07/2019
- * Time: 1:01 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App;
@@ -11,22 +9,16 @@ namespace App;
 use Illuminate\Notifications\AnonymousNotifiable;
 
 /**
- *
  * Use this class to define a 'user' at runtime,
  * with custom email / phone number.
  *
  * Class NotifiableUser
- * @package App
  *
  * @property string email
  * @property string phone_number
  */
 class NotifiableUser extends AnonymousNotifiable
 {
-    /**
-     * @var User
-     */
-    public $user;
     /**
      * @var string
      */
@@ -35,11 +27,14 @@ class NotifiableUser extends AnonymousNotifiable
      * @var string
      */
     public $phone_number;
+    /**
+     * @var User
+     */
+    public $user;
 
     /**
      * NotifiableUser constructor.
      *
-     * @param User $user
      * @param string $email
      * @param string $phoneNumber
      */
@@ -62,6 +57,4 @@ class NotifiableUser extends AnonymousNotifiable
     {
         return $this->user->id ?? 0;
     }
-
-
 }

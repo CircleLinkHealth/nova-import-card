@@ -1,21 +1,19 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Services;
 
-
 use App\HraQuestionIdentifier;
-use App\Survey;
-use App\SurveyInstance;
 use App\User;
 use App\VitalsQuestionIdentifier;
-use Illuminate\Support\Collection;
 
 class GeneratePersonalizedPreventionPlanService extends GenerateReportService
 {
     /**
      * GeneratePersonalizedPreventionPlanService constructor.
-     *
-     * @param User $patient
      */
     public function __construct(User $patient)
     {
@@ -37,43 +35,42 @@ class GeneratePersonalizedPreventionPlanService extends GenerateReportService
                     'answers_for_eval' => $this->getAnswersToEvaluate(),
                 ]
             );
-
     }
 
     private function getAnswersToEvaluate()
     {
-        $answers = [
-            /*vitals*/
-            'blood_pressure'                 => $this->answerForVitalsQuestionWithIdentifier(VitalsQuestionIdentifier::BLOOD_PRESSURE),
-            'weight'                         => $this->answerForVitalsQuestionWithIdentifier(VitalsQuestionIdentifier::WEIGHT),
-            'height'                         => $this->answerForVitalsQuestionWithIdentifier(VitalsQuestionIdentifier::HEIGHT),
-            'bmi'                            => $this->answerForVitalsQuestionWithIdentifier(VitalsQuestionIdentifier::BMI),
-            'cognitive_assessment'           => $this->answerForVitalsQuestionWithIdentifier(VitalsQuestionIdentifier::TOTAL_SCORE),
-            /*vitals*/
-            /*HRA*/
-            'race'                           => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::RACE),
-            'age'                            => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::AGE),
-            'sex'                            => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::SEX),
-            'fruit_veggies'                  => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::FRUIT),
-            'whole_grain'                    => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::FIBER),
-            'fatty_fried_foods'              => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::FATTY_FOOD),
-            'candy_sugary_beverages'         => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::SUGAR),
-            'current_smoker'                 => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::TOBACCO),
-            'smoker_interested_quitting'     => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::TOBACCO_QUIT),
-            'alcohol_use'                    => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::ALCOHOL_CONSUMPTION),
-            'recreational_drugs'             => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::RECREATIONAL_DRUGS),
-            'physical_activity'              => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::EXERCISE),
-            'sexually_active'                => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::SEXUALLY_ACTIVE),
-            'multiple_partners'              => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::SEXUALLY_ACTIVE_PARTNERS),
-            'safe_sex'                       => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::SEXUALLY_ACTIVE_SAFE),
-            'multipleQuestion16'             => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::CONDITIONS),
-            'family_conditions'              => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::CONDITIONS_FAMILY),
-            'family_members_with_condition'  => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::CONDITIONS_FAMILY_WHO),
-            'emotional_little_interest'      => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::INTEREST_DOING_THINGS),
-            'emotional_depressed'            => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::DEPRESSED),
-            'fall_risk'                      => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::FALL_INCIDENT),
-            'hearing_impairment'             => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::HEARING),
-            /*next two should be 26 & 26a according to the excel sheet*/
+        return [
+            // vitals
+            'blood_pressure'       => $this->answerForVitalsQuestionWithIdentifier(VitalsQuestionIdentifier::BLOOD_PRESSURE),
+            'weight'               => $this->answerForVitalsQuestionWithIdentifier(VitalsQuestionIdentifier::WEIGHT),
+            'height'               => $this->answerForVitalsQuestionWithIdentifier(VitalsQuestionIdentifier::HEIGHT),
+            'bmi'                  => $this->answerForVitalsQuestionWithIdentifier(VitalsQuestionIdentifier::BMI),
+            'cognitive_assessment' => $this->answerForVitalsQuestionWithIdentifier(VitalsQuestionIdentifier::TOTAL_SCORE),
+            // vitals
+            // HRA
+            'race'                          => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::RACE),
+            'age'                           => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::AGE),
+            'sex'                           => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::SEX),
+            'fruit_veggies'                 => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::FRUIT),
+            'whole_grain'                   => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::FIBER),
+            'fatty_fried_foods'             => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::FATTY_FOOD),
+            'candy_sugary_beverages'        => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::SUGAR),
+            'current_smoker'                => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::TOBACCO),
+            'smoker_interested_quitting'    => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::TOBACCO_QUIT),
+            'alcohol_use'                   => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::ALCOHOL_CONSUMPTION),
+            'recreational_drugs'            => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::RECREATIONAL_DRUGS),
+            'physical_activity'             => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::EXERCISE),
+            'sexually_active'               => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::SEXUALLY_ACTIVE),
+            'multiple_partners'             => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::SEXUALLY_ACTIVE_PARTNERS),
+            'safe_sex'                      => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::SEXUALLY_ACTIVE_SAFE),
+            'multipleQuestion16'            => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::CONDITIONS),
+            'family_conditions'             => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::CONDITIONS_FAMILY),
+            'family_members_with_condition' => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::CONDITIONS_FAMILY_WHO),
+            'emotional_little_interest'     => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::INTEREST_DOING_THINGS),
+            'emotional_depressed'           => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::DEPRESSED),
+            'fall_risk'                     => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::FALL_INCIDENT),
+            'hearing_impairment'            => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::HEARING),
+            // next two should be 26 & 26a according to the excel sheet
             'adl'                            => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::DIFFICULTIES),
             'assistance_in_daily_activities' => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::DIFFICULTIES_ASSISTANCE),
             'flu_influenza'                  => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::FLU_SHOT),
@@ -91,14 +88,10 @@ class GeneratePersonalizedPreventionPlanService extends GenerateReportService
             'glaukoma_screening'             => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::GLAUCOMA),
             'osteoporosis_screening'         => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::OSTEOPOROSIS),
             'domestic_violence_screen'       => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::INTIMATE_PARTNER_VIOLENCE),
-            /*this should be OrderId 43 according to excel sheet*/
-            'medical_attorney'               => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::MEDICAL_ATTORNEY),
-            /*this should be OrderId 44 according to excel sheet*/
-            'living_will'                    => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::LIVING_WILL),
+            // this should be OrderId 43 according to excel sheet
+            'medical_attorney' => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::MEDICAL_ATTORNEY),
+            // this should be OrderId 44 according to excel sheet
+            'living_will' => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::LIVING_WILL),
         ];
-
-        return $answers;
     }
 }
-
-

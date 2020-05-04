@@ -1,8 +1,10 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 namespace App\Services;
-
 
 use App\Answer;
 use App\SurveyInstance;
@@ -11,13 +13,36 @@ use Illuminate\Support\Facades\DB;
 
 class SurveyAnswerSuggestionsCalculator
 {
-    /** @var User $patient */
+    /**
+     * TODO: should get questions using a HUMAN-MADE IDENTIFIER, order can change at any time
+     *       see ticket CPM-1508
+     *  Raw data found in ccdas table
+     *  BMI - ccda vitals
+     *  find example ccdas in app-cpm-web/storage/ccdas/Samples.
+     */
+    const HRA_QUESTION_ORDERS = [
+        'race'            => ['order' => 1, 'sub_order' => 'a'], //-> race and ethnicity report ccd_demographics_logs
+        'hispanic-latino' => ['order' => 1, 'sub_order' => 'b'], //-> race and ethnicity report ccd_demographics_logs
+        'age'             => ['order' => 2, 'sub_order' => null], //patient_info
+        'height'          => ['order' => 3, 'sub_order' => null], //ccda - vitals section ?
+        'sex'             => ['order' => 4, 'sub_order' => null], //patient_info
+        'alcohol'         => ['order' => 12, 'sub_order' => null],
+        'conditions'      => ['order' => 16, 'sub_order' => null], //ccd_problems
+        'medications'     => ['order' => 20, 'sub_order' => null], //ccd_medications, ccd_instructions (?)
+        'allergies'       => ['order' => 21, 'sub_order' => null], //ccd_allergies
+    ];
+
+    const VITALS_QUESTIONS_ORDER = [
+        'weight' => ['order' => 2, 'sub_order' => null], //ccda - vitals
+        'height' => ['order' => 3, 'sub_order' => null], //ccda - vitals
+    ];
+
+    /** @var SurveyInstance */
+    protected $hraInstance;
+    /** @var User */
     protected $patient;
 
-    /** @var SurveyInstance $hraInstance */
-    protected $hraInstance;
-
-    /** @var SurveyInstance $vitalsInstance */
+    /** @var SurveyInstance */
     protected $vitalsInstance;
 
     public function __construct(User $patientWithSurvey, SurveyInstance $hraInstance, SurveyInstance $vitalsInstance)
@@ -41,16 +66,6 @@ class SurveyAnswerSuggestionsCalculator
         $this->suggestAnswerForWeight();
     }
 
-    private function suggestAnswerForRace()
-    {
-
-    }
-
-    private function suggestAnswerForHispanicLatino()
-    {
-
-    }
-
     private function suggestAnswerForAge()
     {
         $target = $this->hraInstance
@@ -63,36 +78,12 @@ class SurveyAnswerSuggestionsCalculator
             'survey_instance_id' => $this->hraInstance->id,
             'question_id'        => $target->id,
         ], [
-            'suggested_value' => ["value" => [$this->patient->getAge()]],
+            'suggested_value' => ['value' => [$this->patient->getAge()]],
         ]);
-    }
-
-    private function suggestAnswerForHeight()
-    {
-
-    }
-
-    private function suggestAnswerForSex()
-    {
-
     }
 
     private function suggestAnswerForAlcohol()
     {
-
-    }
-
-    private function suggestAnswerForConditions()
-    {
-
-    }
-
-    /**
-     * TODO: blocking ticket: CPM-1753
-     */
-    private function suggestAnswerForMedications()
-    {
-
     }
 
     private function suggestAnswerForAllergies()
@@ -104,11 +95,11 @@ class SurveyAnswerSuggestionsCalculator
 
         //can't do $this->patient->ccdAllergies because we do not have the model in AWV
         $allergies = DB::table('ccd_allergies')->where('patient_id', '=', $this->patient->id)
-                       ->whereNull('deleted_at')
-                       ->get()
-                       ->map(function ($a) {
-                           return ['name' => $a->allergen_name];
-                       });
+            ->whereNull('deleted_at')
+            ->get()
+            ->map(function ($a) {
+                return ['name' => $a->allergen_name];
+            });
 
         Answer::updateOrCreate([
             'user_id'            => $this->patient->id,
@@ -119,34 +110,34 @@ class SurveyAnswerSuggestionsCalculator
         ]);
     }
 
-    private function suggestAnswerForWeight()
+    private function suggestAnswerForConditions()
     {
+    }
 
+    private function suggestAnswerForHeight()
+    {
+    }
+
+    private function suggestAnswerForHispanicLatino()
+    {
     }
 
     /**
-     * TODO: should get questions using a HUMAN-MADE IDENTIFIER, order can change at any time
-     *       see ticket CPM-1508
-     *  Raw data found in ccdas table
-     *  BMI - ccda vitals
-     *  find example ccdas in app-cpm-web/storage/ccdas/Samples
-     *
+     * TODO: blocking ticket: CPM-1753.
      */
-    const HRA_QUESTION_ORDERS = [
-        'race'            => ['order' => 1, 'sub_order' => 'a'], //-> race and ethnicity report ccd_demographics_logs
-        'hispanic-latino' => ['order' => 1, 'sub_order' => 'b'], //-> race and ethnicity report ccd_demographics_logs
-        'age'             => ['order' => 2, 'sub_order' => null], //patient_info
-        'height'          => ['order' => 3, 'sub_order' => null], //ccda - vitals section ?
-        'sex'             => ['order' => 4, 'sub_order' => null], //patient_info
-        'alcohol'         => ['order' => 12, 'sub_order' => null],
-        'conditions'      => ['order' => 16, 'sub_order' => null], //ccd_problems
-        'medications'     => ['order' => 20, 'sub_order' => null], //ccd_medications, ccd_instructions (?)
-        'allergies'       => ['order' => 21, 'sub_order' => null], //ccd_allergies
-    ];
+    private function suggestAnswerForMedications()
+    {
+    }
 
-    const VITALS_QUESTIONS_ORDER = [
-        'weight' => ['order' => 2, 'sub_order' => null], //ccda - vitals
-        'height' => ['order' => 3, 'sub_order' => null], //ccda - vitals
-    ];
+    private function suggestAnswerForRace()
+    {
+    }
 
+    private function suggestAnswerForSex()
+    {
+    }
+
+    private function suggestAnswerForWeight()
+    {
+    }
 }

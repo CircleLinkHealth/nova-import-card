@@ -1,12 +1,14 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
-use Zwijn\Monolog\Formatter\LogdnaFormatter;
-use Zwijn\Monolog\Handler\LogdnaHandler;
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Default Log Channel
@@ -37,8 +39,9 @@ return [
 
     'channels' => [
         'stack' => [
-            'driver'   => 'stack',
-            'channels' => ['daily'],
+            'driver'            => 'stack',
+            'channels'          => ['single'],
+            'ignore_exceptions' => false,
         ],
 
         'single' => [
@@ -72,18 +75,6 @@ return [
             ],
         ],
 
-        'logdna' => [
-            'driver'       => 'monolog',
-            'level'        => env('LOG_DNA_LEVEl', \Monolog\Logger::DEBUG),
-            'handler'      => LogdnaHandler::class,
-            'handler_with' => [
-                'ingestion_key' => env('LOG_DNA_INGESTION_KEY'),
-                'hostname'      => env('APP_URL'),
-                'level'         => env('LOG_DNA_LEVEl', \Monolog\Logger::DEBUG),
-            ],
-            'formatter'    => LogdnaFormatter::class,
-        ],
-
         'stderr' => [
             'driver'    => 'monolog',
             'handler'   => StreamHandler::class,
@@ -102,6 +93,26 @@ return [
             'driver' => 'errorlog',
             'level'  => 'debug',
         ],
-    ],
 
+        'null' => [
+            'driver'  => 'monolog',
+            'handler' => NullHandler::class,
+        ],
+
+        'emergency' => [
+            'path' => storage_path('logs/laravel.log'),
+        ],
+
+        'logdna' => [
+            'driver'       => 'monolog',
+            'level'        => env('LOG_DNA_LEVEl', \Monolog\Logger::DEBUG),
+            'handler'      => LogdnaHandler::class,
+            'handler_with' => [
+                'ingestion_key' => env('LOG_DNA_INGESTION_KEY'),
+                'hostname'      => env('APP_URL'),
+                'level'         => env('LOG_DNA_LEVEl', \Monolog\Logger::DEBUG),
+            ],
+            'formatter' => LogdnaFormatter::class,
+        ],
+    ],
 ];

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
 use App\Survey;
@@ -9,9 +13,14 @@ use Tests\TestCase;
 
 class SurveyQuestionsAnswersTest extends TestCase
 {
-    use DatabaseTransactions,
-        SetupTestSurveyData;
+    use DatabaseTransactions;
+    use SetupTestSurveyData;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->createTestSurveyData();
+    }
 
     public function test_user_can_answer_and_update_question()
     {
@@ -33,8 +42,10 @@ class SurveyQuestionsAnswersTest extends TestCase
                 'created' => true,
             ]);
 
-        $answer = $this->user->answers()->where('survey_instance_id', $surveyInstance->id)->where('question_id',
-            $question->id)->first();
+        $answer = $this->user->answers()->where('survey_instance_id', $surveyInstance->id)->where(
+            'question_id',
+            $question->id
+        )->first();
 
         $this->assertNotNull($answer);
     }
@@ -51,11 +62,5 @@ class SurveyQuestionsAnswersTest extends TestCase
 
         $response = $this->actingAs($this->user)->get("/survey/$name/$patientId/$survey->id");
         $response->assertStatus(200);
-    }
-
-    public function setUp()
-    {
-        parent::setUp();
-        $this->createTestSurveyData();
     }
 }

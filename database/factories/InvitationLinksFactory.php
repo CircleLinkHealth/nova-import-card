@@ -1,11 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use App\InvitationLink;
 use Faker\Generator as Faker;
 
 $factory->define(InvitationLink::class, function (Faker $faker) {
     return [
-        'patient_info_id'     => function(){
+        'patient_info_id' => function () {
             return factory(App\Patient::class)->create()->id;
         },
         'survey_id'           => $this->faker->randomNumber('8'),

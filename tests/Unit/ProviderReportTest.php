@@ -1,30 +1,25 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ProviderReportTest extends TestCase
 {
+    protected $date;
     protected $faker;
 
     protected $user;
 
-    protected $date;
-    /**
-     * A basic unit test example.
-     *
-     * @return void
-     */
-    public function testExample()
-    {
-        $this->assertTrue(true);
-    }
-
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -39,10 +34,18 @@ class ProviderReportTest extends TestCase
             'email'             => $this->faker->unique()->safeEmail,
             'email_verified_at' => $this->date,
             'password'          => bcrypt('secret'),
-            'remember_token'    => str_random(10),
+            'remember_token'    => Str::random(10),
         ]);
         $this->assertNotNull($this->user);
+    }
 
-
+    /**
+     * A basic unit test example.
+     *
+     * @return void
+     */
+    public function test_example()
+    {
+        $this->assertTrue(true);
     }
 }

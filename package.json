@@ -23,6 +23,7 @@
         "moment": "^2.24.0",
         "twilio-client": "^1.10.0",
         "typeface-poppins": "0.0.72",
+        "vue-phone-number-input": "^1.1.6",
         "vue-progressbar": "^0.7.5",
         "vue-select": "^3.1.0",
         "vue-tables-2": "^1.4.70"
@@ -32,9 +33,9 @@
         "axios": "^0.18",
         "cross-env": "^5.1",
         "jquery": "^3.4.0",
-        "laravel-mix": "^5.0.0",
+        "laravel-mix": "^5.0.4",
         "lodash": "^4.17.5",
-        "node-sass": "^4.12.0",
+        "node-sass": "^4.13.1",
         "popper.js": "^1.12",
         "resolve-url-loader": "^2.3.1",
         "sass": "^1.15.2",
@@ -43,5 +44,9 @@
         "vue-cli-plugin-mdb": "^2.0.2",
         "vue-loader": "^15.7.0",
         "vue-template-compiler": "^2.6.10"
+    },
+    "engines": {
+        "node": "12.13.1",
+        "npm": "6.12.1"
     }
 }

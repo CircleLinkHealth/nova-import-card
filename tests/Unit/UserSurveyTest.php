@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
 use App\Question;
@@ -7,68 +11,62 @@ use App\QuestionGroup;
 use App\QuestionType;
 use App\Survey;
 use App\SurveyInstance;
-
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class UserSurveyTest extends TestCase
 {
-    private $faker;
-    private $date;
-    private $user;
-    private $surveys;
-
     use DatabaseTransactions;
+    private $date;
+    private $faker;
+    private $surveys;
+    private $user;
 
-    /**
-     * A user can have multiple surveys, and each survey can have multiple instances, with variable statuses of
-     * completion for that user. These relationships exist in the intermediary table 'users_survey', with pivot value
-     * 'status'.
-     *
-     *
-     * @return void
-     */
-    private function createSurveys()
+    protected function setUp(): void
     {
-        Survey::create(
-            [
-                'name'        => Survey::HRA,
-                'description' => 'Health Risk Assessment',
-            ]);
-        Survey::create(
-            [
-                'name'        => Survey::VITALS,
-                'description' => 'Vitals Report',
-            ]);
+        parent::setUp();
 
-        $this->surveys = Survey::get();
-        $this->assertEquals(2, $this->surveys->count());
+        $this->faker = Factory::create();
 
+        $this->date = Carbon::now();
+
+        $this->user = User::create([
+            'first_name'        => $this->faker->name,
+            'last_name'         => $this->faker->lastName,
+            'display_name'      => $this->faker->name,
+            'email'             => $this->faker->unique()->safeEmail,
+            'email_verified_at' => $this->date,
+            'password'          => bcrypt('secret'),
+            'remember_token'    => Str::random(10),
+        ]);
+        $this->assertNotNull($this->user);
+
+        $this->createSurveys();
+        $this->createAndAttachSurveyInstances();
     }
 
     /**
-     * A survey can have multiple instances
-     *
+     * A survey can have multiple instances.
      */
     public function createAndAttachSurveyInstances()
     {
-
         foreach ($this->surveys as $survey) {
             $instances = $survey->instances()->createMany([
                 [
-                    'survey_id'  => $survey->id,
-                    'year'       => $this->date->copy()->subYear(2)->year,
+                    'survey_id' => $survey->id,
+                    'year'      => $this->date->copy()->subYear(2)->year,
                 ],
                 [
-                    'survey_id'  => $survey->id,
-                    'year'       => $this->date->copy()->subYear(1)->year,
+                    'survey_id' => $survey->id,
+                    'year'      => $this->date->copy()->subYear(1)->year,
                 ],
                 [
-                    'survey_id'  => $survey->id,
-                    'year'       => $this->date->year,
+                    'survey_id' => $survey->id,
+                    'year'      => $this->date->year,
                 ],
             ]);
             $this->assertEquals(3, $instances->count());
@@ -86,11 +84,10 @@ class UserSurveyTest extends TestCase
         $this->assertEquals(2, $this->user->getSurveys()->count());
         $this->assertEquals(3, $this->user->getSurveys()->first()->instances()->count());
         $this->assertEquals(3, $this->user->getSurveys()->last()->instances()->count());
-
     }
 
     /**
-     *Testing inverse of relationship on survey instance
+     *Testing inverse of relationship on survey instance.
      */
     public function test_questions_can_be_created_for_each_survey()
     {
@@ -102,8 +99,7 @@ class UserSurveyTest extends TestCase
         foreach ($this->surveys as $survey) {
             $questions = [];
 
-            for ($i = 0; $i < 10; $i++) {
-
+            for ($i = 0; $i < 10; ++$i) {
                 $group = QuestionGroup::create([
                     'body' => $this->faker->text,
                 ]);
@@ -138,7 +134,7 @@ class UserSurveyTest extends TestCase
                 ]);
 
                 if ($type = QuestionType::CHECKBOX) {
-                    for ($a = 0; $a < 5; $a++) {
+                    for ($a = 0; $a < 5; ++$a) {
                         $questionType->questionTypeAnswers()->create([
                             'value'   => $this->faker->text,
                             'options' => [
@@ -162,9 +158,9 @@ class UserSurveyTest extends TestCase
                                 'sub_order' => $subOrder,
                             ]
                         );
-                        $subOrder += 1;
+                        ++$subOrder;
                         if ($subOrder = 4) {
-                            $order += 1;
+                            ++$order;
                         }
                     } else {
                         $instance->questions()->attach(
@@ -173,38 +169,38 @@ class UserSurveyTest extends TestCase
                                 'order' => $order,
                             ]
                         );
-                        $order += 1;
+                        ++$order;
                     }
-
                 }
                 $this->assertEquals($instance->questions()->whereNotNull('sub_order')->count(), 4);
             }
         }
-
     }
 
-    public function setUp()
+    /**
+     * A user can have multiple surveys, and each survey can have multiple instances, with variable statuses of
+     * completion for that user. These relationships exist in the intermediary table 'users_survey', with pivot value
+     * 'status'.
+     *
+     *
+     * @return void
+     */
+    private function createSurveys()
     {
-        parent::setUp();
+        Survey::create(
+            [
+                'name'        => Survey::HRA,
+                'description' => 'Health Risk Assessment',
+            ]
+        );
+        Survey::create(
+            [
+                'name'        => Survey::VITALS,
+                'description' => 'Vitals Report',
+            ]
+        );
 
-        $this->faker = Factory::create();
-
-        $this->date = Carbon::now();
-
-        $this->user = User::create([
-            'first_name'        => $this->faker->name,
-            'last_name'         => $this->faker->lastName,
-            'display_name'      => $this->faker->name,
-            'email'             => $this->faker->unique()->safeEmail,
-            'email_verified_at' => $this->date,
-            'password'          => bcrypt('secret'),
-            'remember_token'    => str_random(10),
-        ]);
-        $this->assertNotNull($this->user);
-
-        $this->createSurveys();
-        $this->createAndAttachSurveyInstances();
-
-
+        $this->surveys = Survey::get();
+        $this->assertEquals(2, $this->surveys->count());
     }
 }

@@ -1,5 +1,10 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+use App\EnrolleesSurveyIdentifier;
 use App\HraQuestionIdentifier;
 use App\Question;
 use App\QuestionGroup;
@@ -15,58 +20,9 @@ class SurveySeeder extends Seeder
 {
     protected $date;
 
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        $this->date = Carbon::now();
-        $this->createHraSurvey();
-        $this->createVitalsSurvey();
-    }
-
-    private function createVitalsSurvey()
-    {
-        $vitals = Survey::firstOrCreate([
-            'name'        => Survey::VITALS,
-            'description' => 'Vitals Survey',
-        ]);
-
-        $currentInstance = SurveyInstance::firstOrCreate([
-            'survey_id' => $vitals->id,
-            'year'      => $this->date->year,
-        ]);
-
-        $questionsData = $this->vitalsQuestionData();
-
-        $this->createQuestions($currentInstance, $questionsData);
-
-    }
-
-    private function createHraSurvey()
-    {
-        $hra = Survey::firstOrCreate([
-            'name'        => Survey::HRA,
-            'description' => 'Health Risk Assessment',
-        ]);
-
-        $currentInstance = SurveyInstance::firstOrCreate([
-            'survey_id' => $hra->id,
-            'year'      => $this->date->year,
-        ]);
-
-        $questionsData = $this->hraQuestionData();
-
-        $this->createQuestions($currentInstance, $questionsData);
-
-    }
-
-    private function createQuestions($instance, $questionsData)
+    public function createQuestions($instance, $questionsData)
     {
         foreach ($questionsData as $questionData) {
-
             if (array_key_exists('question_group', $questionData)) {
                 $groupId = QuestionGroup::firstOrCreate([
                     'body' => $questionData['question_group'],
@@ -84,11 +40,10 @@ class SurveySeeder extends Seeder
                 'optional'          => array_key_exists('optional', $questionData)
                     ? $questionData['optional']
                     : false,
-                'conditions'        => array_key_exists('conditions', $questionData)
+                'conditions' => array_key_exists('conditions', $questionData)
                     ? $questionData['conditions']
                     : null,
             ]);
-
 
             $questionType = $question->type()->create([
                 'type' => $questionData['question_type'],
@@ -97,7 +52,7 @@ class SurveySeeder extends Seeder
             if (array_key_exists('question_type_answers', $questionData)) {
                 foreach ($questionData['question_type_answers'] as $questionTypeAnswer) {
                     $questionType->questionTypeAnswers()->create([
-                        'value'   => array_key_exists('type_answer_body', $questionTypeAnswer)
+                        'value' => array_key_exists('type_answer_body', $questionTypeAnswer)
                             ? $questionTypeAnswer['type_answer_body']
                             : null,
                         'options' => array_key_exists('options', $questionTypeAnswer)
@@ -106,7 +61,6 @@ class SurveySeeder extends Seeder
                     ]);
                 }
             }
-
 
             $instance->questions()->attach(
                 $question->id,
@@ -118,176 +72,195 @@ class SurveySeeder extends Seeder
                 ]
             );
         }
-
     }
 
-    private function vitalsQuestionData(): Collection
+    public function enrolleesQuestionData()
     {
         return collect([
             [
-                'identifier'            => VitalsQuestionIdentifier::BLOOD_PRESSURE,
+                'identifier'            => EnrolleesSurveyIdentifier::CONFIRM_EMAIL,
                 'order'                 => 1,
-                'question_body'         => "What is the patient's blood pressure?",
-                'question_type'         => QuestionType::NUMBER,
+                'question_body'         => 'Please confirm or update your email address:',
+                'question_type'         => QuestionType::ADDRESS,
                 'question_type_answers' => [
                     [
                         'options' => [
-                            'sub-parts'               => [
-                                [
-                                    'key' => 'first_metric',
-                                ],
-                                [
-                                    'key' => 'second_metric',
-                                ],
-                            ],
-                            'separate_sub_parts_with' => 'dash',
+                            'placeholder' => 'Known email if exists',
                         ],
                     ],
                 ],
             ],
             [
-                'identifier'            => VitalsQuestionIdentifier::WEIGHT,
+                'identifier'            => EnrolleesSurveyIdentifier::PREFERRED_NUMBER,
                 'order'                 => 2,
-                'question_body'         => "What is the patient's weight?",
-                'question_type'         => QuestionType::NUMBER,
+                'question_body'         => 'Preferred phone number for nurse to call',
+                'question_type'         => QuestionType::PHONE,
                 'question_type_answers' => [
                     [
                         'options' => [
-                            'placeholder' => 'ex. 150 (lbs)',
+                            'input_format' => 'phone',
                         ],
                     ],
                 ],
             ],
             [
-                'identifier'            => VitalsQuestionIdentifier::HEIGHT,
+                'identifier'            => EnrolleesSurveyIdentifier::PREFERRED_DAYS,
                 'order'                 => 3,
-                'question_body'         => "What is the patient's height?",
-                'question_type'         => QuestionType::NUMBER,
-                'question_type_answers' => [
-                    [
-                        'options' =>
-                            [
-                                'sub_parts' => [
-                                    [
-                                        'placeholder' => "Feet'",
-                                        'key'         => 'feet',
-                                    ],
-                                    [
-                                        'placeholder' => 'Inches"',
-                                        'key'         => 'inches',
-                                    ],
-                                ],
-
-                            ],
-                    ],
-                ],
-            ],
-            [
-                'identifier'    => VitalsQuestionIdentifier::BMI,
-                'order'         => 4,
-                'question_body' => "What is the patient's body mass index (BMI)?",
-                'question_type' => QuestionType::NUMBER,
-                'conditions'    => [
-                    'is_auto_generated' => true,
-                    'generate_func'     => 'bmi_func',
-                    'generated_from'    => [
-                        [
-                            'order' => 2,
-                            'type'  => 'mass',
-                        ],
-                        [
-                            'order' => 3,
-                            'type'  => 'height',
-                        ],
-                    ],
-                ],
-            ],
-            [
-                'identifier'            => VitalsQuestionIdentifier::WORD_RECALL,
-                'order'                 => 5,
                 'sub_order'             => 'a',
-                'question_body'         => 'Word Recall (1 point for each word spontaneously recalled without cueing)',
-                'question_type'         => QuestionType::RADIO,
-                'question_group'        => 'Based off of the <a target="_blank" href="http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf">Mini-Cog(c) assessment</a>, how did your patient score?',
+                'question_group'        => 'Please choose preferred days and time to contact:',
+                'question_body'         => 'Choose preferred contact days:',
+                'question_type'         => QuestionType::CHECKBOX,
                 'question_type_answers' => [
-                    [
-                        'type_answer_body' => 0,
-                    ],
-                    [
-                        'type_answer_body' => 1,
-                    ],
-                    [
-                        'type_answer_body' => 2,
-                    ],
-                    [
-                        'type_answer_body' => 3,
-                    ],
+                    ['type_answer_body' => 'Monday'],
+                    ['type_answer_body' => 'Tuesday'],
+                    ['type_answer_body' => 'Wednesday'],
+                    ['type_answer_body' => 'Thursday'],
+                    ['type_answer_body' => 'Friday'],
                 ],
             ],
             [
-                'identifier'            => VitalsQuestionIdentifier::CLOCK_DRAW,
-                'order'                 => 5,
+                'identifier'            => EnrolleesSurveyIdentifier::PREFERRED_TIME,
+                'order'                 => 3,
                 'sub_order'             => 'b',
-                'question_body'         => 'Clock Draw (Normal clock = 2 points. A normal clock has all numbers placed in the cor-rect sequence and approximately correct position (e.g., 12, 3, 6 and 9 are in anchor positions) with no missing or duplicate numbers. Hands are point-ing to the 11 and 2 (11:10). Hand length is not scored.Inability or refusal to draw a clock (abnormal) = 0 points.)',
-                'question_type'         => QuestionType::RADIO,
-                'question_group'        => 'Based off of the <a target="_blank" href="http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf">Mini-Cog(c) assessment</a>, how did your patient score?',
+                'question_group'        => 'Please choose preferred days and time to contact:',
+                'question_body'         => 'Choose preferred contact time:',
+                'question_type'         => QuestionType::CHECKBOX,
+                'question_type_answers' => [
+                    ['type_answer_body' => '9am - 12pm'],
+                    ['type_answer_body' => '12pm - 3pm '],
+                    ['type_answer_body' => '3pm - 6pm'],
+                ],
+            ],
+
+            [
+                'identifier'            => EnrolleesSurveyIdentifier::REQUESTS_INFO,
+                'order'                 => 4,
+                'question_body'         => 'Anything you would like your nurse to know:',
+                'optional'              => true,
+                'question_type'         => QuestionType::TEXT,
                 'question_type_answers' => [
                     [
-                        'type_answer_body' => 0,
-                    ],
-                    [
-                        'type_answer_body' => 2,
+                        'options' => [
+                            'placeholder' => 'Type response here...',
+                        ],
                     ],
                 ],
             ],
+
             [
-                'identifier'            => VitalsQuestionIdentifier::TOTAL_SCORE,
+                'identifier'            => EnrolleesSurveyIdentifier::CONFIRM_ADDRESS,
                 'order'                 => 5,
-                'sub_order'             => 'c',
-                'question_body'         => 'Total Score (Total score = Word Recall score + Clock Draw score)',
-                'question_type'         => QuestionType::RADIO,
-                'conditions'            => [
-                    'is_auto_generated' => true,
-                    'generated_from'    => [
-                        [
-                            'order'     => 5,
-                            'sub_order' => 'a',
-                        ],
-                        [
-                            'order'     => 5,
-                            'sub_order' => 'b',
+                'question_body'         => 'Please confirm or update your address:',
+                'question_type'         => QuestionType::ADDRESS,
+                'question_type_answers' => [
+                    [
+                        'options' => [
+                            'placeholder' => 'Known addrees if exists',
                         ],
                     ],
                 ],
-                'question_group'        => 'Based off of the <a target="_blank" href="http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf">Mini-Cog(c) assessment</a>, how did your patient score?',
+            ],
+            //            [
+            //                'identifier'    => EnrolleesSurveyIdentifier::DOB,
+            //                'order'         => 6,
+            //                'question_body' => 'Please update or confirm your date of birth',
+            //                'question_type' => QuestionType::DOB,
+            //                'conditions'    => [
+            //                    'is_auto_generated' => true,
+            //                    'generated_from'    => [
+            //                        [
+            //                            'key' => 'dob',
+            //                        ],
+            //                    ],
+            //                ],
+            //            ],
+            [
+                'identifier'    => EnrolleesSurveyIdentifier::CONFIRM_LETTER,
+                'order'         => 6,
+                'optional'      => true,
+                'question_body' => 'Please confirm you have read the letter',
+                'question_type' => QuestionType::CONFIRMATION,
+                'conditions'    => [
+                    [
+                        'nonAwvCheck' => 'isSurveyOnlyUser',
+                    ],
+                ],
                 'question_type_answers' => [
                     [
-                        'type_answer_body' => 0,
-                    ],
-                    [
-                        'type_answer_body' => 1,
-                    ],
-                    [
-                        'type_answer_body' => 2,
-                    ],
-                    [
-                        'type_answer_body' => 3,
-                    ],
-                    [
-                        'type_answer_body' => 4,
-                    ],
-                    [
-                        'type_answer_body' => 5,
+                        'type_answer_body' => 'Confirm',
                     ],
                 ],
             ],
         ]);
     }
 
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $this->date = Carbon::now();
+        $this->createHraSurvey();
+        $this->createVitalsSurvey();
+        $this->createEnrolleesSurvey();
+    }
+
+    private function createEnrolleesSurvey()
+    {
+        $enrolleesSurvey = Survey::firstOrCreate([
+            'name'        => Survey::ENROLLEES,
+            'description' => 'Enrollees Survey',
+        ]);
+
+        $currentInstance = SurveyInstance::firstOrCreate([
+            'survey_id' => $enrolleesSurvey->id,
+            'year'      => $this->date->year,
+        ]);
+
+        $questionsData = $this->enrolleesQuestionData();
+
+        $this->createQuestions($currentInstance, $questionsData);
+    }
+
+    private function createHraSurvey()
+    {
+        $hra = Survey::firstOrCreate([
+            'name'        => Survey::HRA,
+            'description' => 'Health Risk Assessment',
+        ]);
+
+        $currentInstance = SurveyInstance::firstOrCreate([
+            'survey_id' => $hra->id,
+            'year'      => $this->date->year,
+        ]);
+
+        $questionsData = $this->hraQuestionData();
+
+        $this->createQuestions($currentInstance, $questionsData);
+    }
+
+    private function createVitalsSurvey()
+    {
+        $vitals = Survey::firstOrCreate([
+            'name'        => Survey::VITALS,
+            'description' => 'Vitals Survey',
+        ]);
+
+        $currentInstance = SurveyInstance::firstOrCreate([
+            'survey_id' => $vitals->id,
+            'year'      => $this->date->year,
+        ]);
+
+        $questionsData = $this->vitalsQuestionData();
+
+        $this->createQuestions($currentInstance, $questionsData);
+    }
+
     private function hraQuestionData(): Collection
     {
         return collect([
-
             [
                 'identifier'            => HraQuestionIdentifier::RACE,
                 'order'                 => 1,
@@ -341,20 +314,18 @@ class SurveySeeder extends Seeder
                 'question_type'         => QuestionType::NUMBER,
                 'question_type_answers' => [
                     [
-                        'options' =>
-                            [
-                                'sub_parts' => [
-                                    [
-                                        'placeholder' => "Feet'",
-                                        'key'         => 'feet',
-                                    ],
-                                    [
-                                        'placeholder' => 'Inches"',
-                                        'key'         => 'inches',
-                                    ],
+                        'options' => [
+                            'sub_parts' => [
+                                [
+                                    'placeholder' => "Feet'",
+                                    'key'         => 'feet',
                                 ],
-
+                                [
+                                    'placeholder' => 'Inches"',
+                                    'key'         => 'inches',
+                                ],
                             ],
+                        ],
                     ],
                 ],
             ],
@@ -523,12 +494,12 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'            => HraQuestionIdentifier::TOBACCO_YEARS,
-                'order'                 => 11,
-                'sub_order'             => 'a',
-                'question_body'         => 'How many years ago did you start smoking?',
-                'optional'              => false,
-                'conditions'            => [
+                'identifier'    => HraQuestionIdentifier::TOBACCO_YEARS,
+                'order'         => 11,
+                'sub_order'     => 'a',
+                'question_body' => 'How many years ago did you start smoking?',
+                'optional'      => false,
+                'conditions'    => [
                     [
                         'related_question_order_number'    => 11,
                         'related_question_expected_answer' => 'Yes',
@@ -549,12 +520,12 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'            => HraQuestionIdentifier::TOBACCO_LAST_TIME,
-                'order'                 => 11,
-                'sub_order'             => 'b',
-                'question_body'         => 'When was the last time you smoked or used any tobacco products?',
-                'optional'              => false,
-                'conditions'            => [
+                'identifier'    => HraQuestionIdentifier::TOBACCO_LAST_TIME,
+                'order'         => 11,
+                'sub_order'     => 'b',
+                'question_body' => 'When was the last time you smoked or used any tobacco products?',
+                'optional'      => false,
+                'conditions'    => [
                     [
                         'related_question_order_number'    => 11,
                         'related_question_expected_answer' => 'Yes',
@@ -575,12 +546,12 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'            => HraQuestionIdentifier::TOBACCO_PACKS,
-                'order'                 => 11,
-                'sub_order'             => 'c',
-                'question_body'         => 'On average, how many packs/day do or did you smoke?',
-                'optional'              => false,
-                'conditions'            => [
+                'identifier'    => HraQuestionIdentifier::TOBACCO_PACKS,
+                'order'         => 11,
+                'sub_order'     => 'c',
+                'question_body' => 'On average, how many packs/day do or did you smoke?',
+                'optional'      => false,
+                'conditions'    => [
                     [
                         'related_question_order_number'    => 11,
                         'related_question_expected_answer' => 'Yes',
@@ -607,12 +578,12 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'            => HraQuestionIdentifier::TOBACCO_QUIT,
-                'order'                 => 11,
-                'sub_order'             => 'd',
-                'question_body'         => 'Are you interested in quitting?',
-                'optional'              => false,
-                'conditions'            => [
+                'identifier'    => HraQuestionIdentifier::TOBACCO_QUIT,
+                'order'         => 11,
+                'sub_order'     => 'd',
+                'question_body' => 'Are you interested in quitting?',
+                'optional'      => false,
+                'conditions'    => [
                     [
                         'related_question_order_number'    => 11,
                         'related_question_expected_answer' => 'Yes',
@@ -652,12 +623,12 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'            => HraQuestionIdentifier::ALCOHOL_CONSUMPTION,
-                'order'                 => 12,
-                'sub_order'             => 'a',
-                'question_body'         => 'On average, how many alcoholic beverages do you consume per week? (One standard drink is defined as 12.0 oz of beer, 5.0 oz of wine, or 1.5 oz of liquor)',
-                'optional'              => true,
-                'conditions'            => [
+                'identifier'    => HraQuestionIdentifier::ALCOHOL_CONSUMPTION,
+                'order'         => 12,
+                'sub_order'     => 'a',
+                'question_body' => 'On average, how many alcoholic beverages do you consume per week? (One standard drink is defined as 12.0 oz of beer, 5.0 oz of wine, or 1.5 oz of liquor)',
+                'optional'      => true,
+                'conditions'    => [
                     [
                         'related_question_order_number'    => 12,
                         'related_question_expected_answer' => 'Yes',
@@ -703,12 +674,12 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'            => HraQuestionIdentifier::RECREATIONAL_DRUGS_WHICH,
-                'order'                 => 13,
-                'sub_order'             => 'a',
-                'question_body'         => 'Which recreational drugs, and how often?',
-                'optional'              => false,
-                'conditions'            => [
+                'identifier'    => HraQuestionIdentifier::RECREATIONAL_DRUGS_WHICH,
+                'order'         => 13,
+                'sub_order'     => 'a',
+                'question_body' => 'Which recreational drugs, and how often?',
+                'optional'      => false,
+                'conditions'    => [
                     [
                         'related_question_order_number'    => 13,
                         'related_question_expected_answer' => 'Yes',
@@ -718,7 +689,7 @@ class SurveySeeder extends Seeder
                 'question_type_answers' => [
                     [
                         'options' => [
-                            'sub_parts'                => [
+                            'sub_parts' => [
                                 [
                                     'title'       => 'Drug',
                                     'key'         => 'name',
@@ -778,12 +749,12 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'            => HraQuestionIdentifier::SEXUALLY_ACTIVE_PARTNERS,
-                'order'                 => 15,
-                'sub_order'             => 'a',
-                'question_body'         => 'Do you have multiple sexual partners',
-                'optional'              => true,
-                'conditions'            => [
+                'identifier'    => HraQuestionIdentifier::SEXUALLY_ACTIVE_PARTNERS,
+                'order'         => 15,
+                'sub_order'     => 'a',
+                'question_body' => 'Do you have multiple sexual partners',
+                'optional'      => true,
+                'conditions'    => [
                     [
                         'related_question_order_number'    => 15,
                         'related_question_expected_answer' => 'Yes',
@@ -806,12 +777,12 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'            => HraQuestionIdentifier::SEXUALLY_ACTIVE_SAFE,
-                'order'                 => 15,
-                'sub_order'             => 'b',
-                'question_body'         => 'Do you practice safe sex by using condoms or dental dams?',
-                'optional'              => true,
-                'conditions'            => [
+                'identifier'    => HraQuestionIdentifier::SEXUALLY_ACTIVE_SAFE,
+                'order'         => 15,
+                'sub_order'     => 'b',
+                'question_body' => 'Do you practice safe sex by using condoms or dental dams?',
+                'optional'      => true,
+                'conditions'    => [
                     [
                         'related_question_order_number'    => 15,
                         'related_question_expected_answer' => 'Yes',
@@ -1022,12 +993,12 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'            => HraQuestionIdentifier::CONDITIONS_FAMILY_WHO,
-                'order'                 => 18,
-                'sub_order'             => 'a',
-                'question_body'         => 'Who in your family has had:',
-                'question_type'         => QuestionType::MULTI_SELECT,
-                'conditions'            => [
+                'identifier'    => HraQuestionIdentifier::CONDITIONS_FAMILY_WHO,
+                'order'         => 18,
+                'sub_order'     => 'a',
+                'question_body' => 'Who in your family has had:',
+                'question_type' => QuestionType::MULTI_SELECT,
+                'conditions'    => [
                     [
                         'related_question_order_number' => 18,
                         //accept any answer
@@ -1039,8 +1010,8 @@ class SurveySeeder extends Seeder
                             'import_answers_from_question' => [
                                 'question_order' => 18,
                             ],
-                            'allow_multiple_from_answers'  => true,
-                            'multi_select_options'         => [
+                            'allow_multiple_from_answers' => true,
+                            'multi_select_options'        => [
                                 'Mother',
                                 'Father',
                                 'Sibling',
@@ -1050,10 +1021,9 @@ class SurveySeeder extends Seeder
                                 'Paternal Grandfather',
                                 'Child',
                             ],
-                            'placeholder'                  => 'Choose individuals here...',
-                            'multi_select_key'             => 'family',
-                            'key'                          => 'name',
-
+                            'placeholder'      => 'Choose individuals here...',
+                            'multi_select_key' => 'family',
+                            'key'              => 'name',
                         ],
                     ],
                 ],
@@ -1067,7 +1037,7 @@ class SurveySeeder extends Seeder
                 'question_type_answers' => [
                     [
                         'options' => [
-                            'sub_parts'                => [
+                            'sub_parts' => [
                                 [
                                     'title'       => 'Reason for Visit',
                                     'placeholder' => 'Type response here...',
@@ -1100,7 +1070,7 @@ class SurveySeeder extends Seeder
                 'question_type_answers' => [
                     [
                         'options' => [
-                            'sub_parts'                => [
+                            'sub_parts' => [
                                 [
                                     'title'       => 'Drug',
                                     'key'         => 'drug',
@@ -1227,13 +1197,13 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'            => HraQuestionIdentifier::DIFFICULTIES_ASSISTANCE,
-                'order'                 => 23,
-                'sub_order'             => 'a',
-                'question_body'         => 'If you answered yes to any of the above, do you have someone who can assist you?',
-                'question_type'         => QuestionType::RADIO,
-                'optional'              => true,
-                'conditions'            => [
+                'identifier'    => HraQuestionIdentifier::DIFFICULTIES_ASSISTANCE,
+                'order'         => 23,
+                'sub_order'     => 'a',
+                'question_body' => 'If you answered yes to any of the above, do you have someone who can assist you?',
+                'question_type' => QuestionType::RADIO,
+                'optional'      => true,
+                'conditions'    => [
                     [
                         'related_question_order_number' => 23,
                         //accept any answer
@@ -1397,11 +1367,11 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'            => HraQuestionIdentifier::PAPILLOMAVIRUS_VACCINATION,
-                'order'                 => 32,
-                'question_body'         => 'Have you received 2 doses of Human Papillomavirus (HPV) Vaccination before age 15 OR 3 doses between ages 15 and 26?',
-                'question_type'         => QuestionType::RADIO,
-                'conditions'            => [
+                'identifier'    => HraQuestionIdentifier::PAPILLOMAVIRUS_VACCINATION,
+                'order'         => 32,
+                'question_body' => 'Have you received 2 doses of Human Papillomavirus (HPV) Vaccination before age 15 OR 3 doses between ages 15 and 26?',
+                'question_type' => QuestionType::RADIO,
+                'conditions'    => [
                     [
                         'operator'                         => 'greater_or_equal_than',
                         'related_question_order_number'    => 2,
@@ -1455,11 +1425,11 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'            => HraQuestionIdentifier::MAMMOGRAM,
-                'order'                 => 35,
-                'question_body'         => 'When was the last time you had a Breast Cancer Screening (Mammogram)?',
-                'question_type'         => QuestionType::RADIO,
-                'conditions'            => [
+                'identifier'    => HraQuestionIdentifier::MAMMOGRAM,
+                'order'         => 35,
+                'question_body' => 'When was the last time you had a Breast Cancer Screening (Mammogram)?',
+                'question_type' => QuestionType::RADIO,
+                'conditions'    => [
                     [
                         'related_question_order_number'    => 4,
                         'related_question_expected_answer' => 'Female',
@@ -1492,11 +1462,11 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'            => HraQuestionIdentifier::PAP_SMEAR,
-                'order'                 => 36,
-                'question_body'         => 'When was the last time you had a Cervical cancer Screening (Pap Smear)?',
-                'question_type'         => QuestionType::RADIO,
-                'conditions'            => [
+                'identifier'    => HraQuestionIdentifier::PAP_SMEAR,
+                'order'         => 36,
+                'question_body' => 'When was the last time you had a Cervical cancer Screening (Pap Smear)?',
+                'question_type' => QuestionType::RADIO,
+                'conditions'    => [
                     [
                         'related_question_order_number'    => 4,
                         'related_question_expected_answer' => 'Female',
@@ -1575,11 +1545,11 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'            => HraQuestionIdentifier::PROSTATE_CANCER,
-                'order'                 => 39,
-                'question_body'         => 'When was the last time you had a Prostate Cancer Screening (Prostate specific antigen (PSA))?',
-                'question_type'         => QuestionType::RADIO,
-                'conditions'            => [
+                'identifier'    => HraQuestionIdentifier::PROSTATE_CANCER,
+                'order'         => 39,
+                'question_body' => 'When was the last time you had a Prostate Cancer Screening (Prostate specific antigen (PSA))?',
+                'question_type' => QuestionType::RADIO,
+                'conditions'    => [
                     [
                         'related_question_order_number'    => 4,
                         'related_question_expected_answer' => 'Male',
@@ -1658,11 +1628,11 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'            => HraQuestionIdentifier::INTIMATE_PARTNER_VIOLENCE,
-                'order'                 => 42,
-                'question_body'         => 'When was the last time you had an Intimate Partner Violence/Domestic Violence Screening?',
-                'question_type'         => QuestionType::RADIO,
-                'conditions'            => [
+                'identifier'    => HraQuestionIdentifier::INTIMATE_PARTNER_VIOLENCE,
+                'order'         => 42,
+                'question_body' => 'When was the last time you had an Intimate Partner Violence/Domestic Violence Screening?',
+                'question_type' => QuestionType::RADIO,
+                'conditions'    => [
                     [
                         'operator'                         => 'greater_or_equal_than',
                         'related_question_order_number'    => 2,
@@ -1695,7 +1665,7 @@ class SurveySeeder extends Seeder
                 'question_type_answers' => [
                     [
                         'options' => [
-                            'sub_parts'                => [
+                            'sub_parts' => [
                                 [
                                     'title'       => 'Provider Name',
                                     'key'         => 'provider_name',
@@ -1760,12 +1730,12 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'            => HraQuestionIdentifier::LIVING_WILL_AT_DOCTOR,
-                'order'                 => 45,
-                'sub_order'             => 'a',
-                'question_body'         => "Is a copy of your advance directive on file at your doctor's office?",
-                'optional'              => true,
-                'conditions'            => [
+                'identifier'    => HraQuestionIdentifier::LIVING_WILL_AT_DOCTOR,
+                'order'         => 45,
+                'sub_order'     => 'a',
+                'question_body' => "Is a copy of your advance directive on file at your doctor's office?",
+                'optional'      => true,
+                'conditions'    => [
                     [
                         'related_question_order_number'    => 45,
                         'related_question_expected_answer' => 'Yes',
@@ -1799,6 +1769,167 @@ class SurveySeeder extends Seeder
                             'allow_multiple' => false,
                             'key'            => 'name',
                         ],
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    private function vitalsQuestionData(): Collection
+    {
+        return collect([
+            [
+                'identifier'            => VitalsQuestionIdentifier::BLOOD_PRESSURE,
+                'order'                 => 1,
+                'question_body'         => "What is the patient's blood pressure?",
+                'question_type'         => QuestionType::NUMBER,
+                'question_type_answers' => [
+                    [
+                        'options' => [
+                            'sub-parts' => [
+                                [
+                                    'key' => 'first_metric',
+                                ],
+                                [
+                                    'key' => 'second_metric',
+                                ],
+                            ],
+                            'separate_sub_parts_with' => 'dash',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'identifier'            => VitalsQuestionIdentifier::WEIGHT,
+                'order'                 => 2,
+                'question_body'         => "What is the patient's weight?",
+                'question_type'         => QuestionType::NUMBER,
+                'question_type_answers' => [
+                    [
+                        'options' => [
+                            'placeholder' => 'ex. 150 (lbs)',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'identifier'            => VitalsQuestionIdentifier::HEIGHT,
+                'order'                 => 3,
+                'question_body'         => "What is the patient's height?",
+                'question_type'         => QuestionType::NUMBER,
+                'question_type_answers' => [
+                    [
+                        'options' => [
+                            'sub_parts' => [
+                                [
+                                    'placeholder' => "Feet'",
+                                    'key'         => 'feet',
+                                ],
+                                [
+                                    'placeholder' => 'Inches"',
+                                    'key'         => 'inches',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'identifier'    => VitalsQuestionIdentifier::BMI,
+                'order'         => 4,
+                'question_body' => "What is the patient's body mass index (BMI)?",
+                'question_type' => QuestionType::NUMBER,
+                'conditions'    => [
+                    'is_auto_generated' => true,
+                    'generate_func'     => 'bmi_func',
+                    'generated_from'    => [
+                        [
+                            'order' => 2,
+                            'type'  => 'mass',
+                        ],
+                        [
+                            'order' => 3,
+                            'type'  => 'height',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'identifier'            => VitalsQuestionIdentifier::WORD_RECALL,
+                'order'                 => 5,
+                'sub_order'             => 'a',
+                'question_body'         => 'Word Recall (1 point for each word spontaneously recalled without cueing)',
+                'question_type'         => QuestionType::RADIO,
+                'question_group'        => 'Based off of the <a target="_blank" href="http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf">Mini-Cog(c) assessment</a>, how did your patient score?',
+                'question_type_answers' => [
+                    [
+                        'type_answer_body' => 0,
+                    ],
+                    [
+                        'type_answer_body' => 1,
+                    ],
+                    [
+                        'type_answer_body' => 2,
+                    ],
+                    [
+                        'type_answer_body' => 3,
+                    ],
+                ],
+            ],
+            [
+                'identifier'            => VitalsQuestionIdentifier::CLOCK_DRAW,
+                'order'                 => 5,
+                'sub_order'             => 'b',
+                'question_body'         => 'Clock Draw (Normal clock = 2 points. A normal clock has all numbers placed in the cor-rect sequence and approximately correct position (e.g., 12, 3, 6 and 9 are in anchor positions) with no missing or duplicate numbers. Hands are point-ing to the 11 and 2 (11:10). Hand length is not scored.Inability or refusal to draw a clock (abnormal) = 0 points.)',
+                'question_type'         => QuestionType::RADIO,
+                'question_group'        => 'Based off of the <a target="_blank" href="http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf">Mini-Cog(c) assessment</a>, how did your patient score?',
+                'question_type_answers' => [
+                    [
+                        'type_answer_body' => 0,
+                    ],
+                    [
+                        'type_answer_body' => 2,
+                    ],
+                ],
+            ],
+            [
+                'identifier'    => VitalsQuestionIdentifier::TOTAL_SCORE,
+                'order'         => 5,
+                'sub_order'     => 'c',
+                'question_body' => 'Total Score (Total score = Word Recall score + Clock Draw score)',
+                'question_type' => QuestionType::RADIO,
+                'conditions'    => [
+                    'is_auto_generated' => true,
+                    'generated_from'    => [
+                        [
+                            'order'     => 5,
+                            'sub_order' => 'a',
+                        ],
+                        [
+                            'order'     => 5,
+                            'sub_order' => 'b',
+                        ],
+                    ],
+                ],
+                'question_group'        => 'Based off of the <a target="_blank" href="http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf">Mini-Cog(c) assessment</a>, how did your patient score?',
+                'question_type_answers' => [
+                    [
+                        'type_answer_body' => 0,
+                    ],
+                    [
+                        'type_answer_body' => 1,
+                    ],
+                    [
+                        'type_answer_body' => 2,
+                    ],
+                    [
+                        'type_answer_body' => 3,
+                    ],
+                    [
+                        'type_answer_body' => 4,
+                    ],
+                    [
+                        'type_answer_body' => 5,
                     ],
                 ],
             ],

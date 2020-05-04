@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Helpers;
 
 use App\Question;
@@ -11,61 +15,20 @@ use App\User;
 use Carbon\Carbon;
 use Faker\Factory;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 trait SetupTestSurveyData
 {
+    /** @var Carbon */
+    protected $date;
     protected $faker;
 
-    /** @var Carbon $date */
-    protected $date;
-
-    /** @var \App\User $user */
-    protected $user;
-
-    /** @var Collection $surveys */
+    /** @var Collection */
     protected $surveys;
 
+    /** @var \App\User */
+    protected $user;
 
-    /**
-     * Creates User
-     */
-    public function createUser()
-    {
-        $this->user = User::create([
-            'first_name'        => $this->faker->name,
-            'last_name'         => $this->faker->lastname,
-            'display_name'      => $this->faker->name,
-            'email'             => $this->faker->unique()->safeEmail,
-            'email_verified_at' => $this->date,
-            'password'          => bcrypt('secret'),
-            'remember_token'    => str_random(10),
-        ]);
-
-        $this->assertNotNull($this->user);
-    }
-
-    /**
-     *  Creates Surveys
-     */
-    public function createSurveys()
-    {
-        Survey::create(
-            [
-                'name'        => Survey::HRA,
-                'description' => 'Health Risk Assessment',
-            ]);
-        Survey::create(
-            [
-                'name'        => Survey::VITALS,
-                'description' => 'Vitals Report',
-            ]);
-        $this->surveys = Survey::get();
-        $this->assertEquals(2, $this->surveys->count());
-    }
-
-    /**
-     *
-     */
     public function createAndAttachSurveyInstances()
     {
         foreach ($this->surveys as $survey) {
@@ -93,7 +56,29 @@ trait SetupTestSurveyData
                         'status'             => SurveyInstance::PENDING,
                     ]
                 );
+            }
+        }
+    }
 
+    public function createAndAttachSurveysNew()
+    {
+        (new \SurveySeeder())->run();
+
+        $this->surveys = Survey::whereIn('name', [Survey::HRA, Survey::VITALS])->get();
+        $this->assertEquals(2, $this->surveys->count());
+
+        foreach ($this->surveys as $survey) {
+            $instances = $survey->instances;
+            $this->assertEquals(1, $instances->count());
+            foreach ($instances as $instance) {
+                //return true? test
+                $this->user->surveys()->attach(
+                    $survey->id,
+                    [
+                        'survey_instance_id' => $instance->id,
+                        'status'             => SurveyInstance::PENDING,
+                    ]
+                );
             }
         }
     }
@@ -108,8 +93,7 @@ trait SetupTestSurveyData
         foreach ($this->surveys as $survey) {
             $questions = [];
 
-            for ($i = 0; $i < 10; $i++) {
-
+            for ($i = 0; $i < 10; ++$i) {
                 $group = QuestionGroup::create([
                     'body' => $this->faker->text,
                 ]);
@@ -128,7 +112,7 @@ trait SetupTestSurveyData
                     'question_group_id' => $belongsToGroup
                         ? $group->id
                         : null,
-                    'optional'          => rand(0, 1),
+                    'optional' => rand(0, 1),
                 ]);
 
                 $this->assertNotNull($question);
@@ -145,7 +129,7 @@ trait SetupTestSurveyData
                 ]);
 
                 if ($type = QuestionType::CHECKBOX) {
-                    for ($a = 0; $a < 5; $a++) {
+                    for ($a = 0; $a < 5; ++$a) {
                         $questionType->questionTypeAnswers()->create([
                             'value'   => $this->faker->text,
                             'options' => [
@@ -169,9 +153,9 @@ trait SetupTestSurveyData
                                 'sub_order' => $subOrder,
                             ]
                         );
-                        $subOrder += 1;
+                        ++$subOrder;
                         if ($subOrder = 4) {
-                            $order += 1;
+                            ++$order;
                         }
                     } else {
                         $instance->questions()->attach(
@@ -180,13 +164,33 @@ trait SetupTestSurveyData
                                 'order' => $order,
                             ]
                         );
-                        $order += 1;
+                        ++$order;
                     }
-
                 }
                 $this->assertEquals($instance->questions()->whereNotNull('sub_order')->count(), 4);
             }
         }
+    }
+
+    /**
+     *  Creates Surveys.
+     */
+    public function createSurveys()
+    {
+        Survey::create(
+            [
+                'name'        => Survey::HRA,
+                'description' => 'Health Risk Assessment',
+            ]
+        );
+        Survey::create(
+            [
+                'name'        => Survey::VITALS,
+                'description' => 'Vitals Report',
+            ]
+        );
+        $this->surveys = Survey::get();
+        $this->assertEquals(2, $this->surveys->count());
     }
 
     public function createTestSurveyData()
@@ -207,27 +211,21 @@ trait SetupTestSurveyData
         */
     }
 
-    public function createAndAttachSurveysNew() {
-        (new \SurveySeeder())->run();
+    /**
+     * Creates User.
+     */
+    public function createUser()
+    {
+        $this->user = User::create([
+            'first_name'        => $this->faker->name,
+            'last_name'         => $this->faker->lastname,
+            'display_name'      => $this->faker->name,
+            'email'             => $this->faker->unique()->safeEmail,
+            'email_verified_at' => $this->date,
+            'password'          => bcrypt('secret'),
+            'remember_token'    => Str::random(10),
+        ]);
 
-        $this->surveys = Survey::whereIn('name', [Survey::HRA, Survey::VITALS])->get();
-        $this->assertEquals(2, $this->surveys->count());
-
-        foreach ($this->surveys as $survey) {
-            $instances = $survey->instances;
-            $this->assertEquals(1, $instances->count());
-            foreach ($instances as $instance) {
-                //return true? test
-                $this->user->surveys()->attach(
-                    $survey->id,
-                    [
-                        'survey_instance_id' => $instance->id,
-                        'status'             => SurveyInstance::PENDING,
-                    ]
-                );
-
-            }
-        }
-
+        $this->assertNotNull($this->user);
     }
 }

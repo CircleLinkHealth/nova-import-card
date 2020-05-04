@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: pangratioscosma
- * Date: 01/07/2019
- * Time: 4:30 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Providers;

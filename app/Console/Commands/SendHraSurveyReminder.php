@@ -1,29 +1,33 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\NotifiableUser;
 use App\Notifications\SurveyInvitationLink;
 use App\Services\SurveyInvitationLinksService;
 use App\Survey;
+use App\SurveyInstance;
 use App\User;
 use Illuminate\Console\Command;
 
 class SendHraSurveyReminder extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'survey:reminder {daysPrior}';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Send a reminder to AWV patients X days prior their appointment. Also notifies CLH.';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'survey:reminder {daysPrior}';
 
     /**
      * Create a new command instance.
@@ -62,18 +66,29 @@ class SendHraSurveyReminder extends Command
             ])
             ->get()
             ->each(function (User $user) use ($service) {
+                if ($user->surveyInstances->isNotEmpty() &&
+                    SurveyInstance::COMPLETED === $user->surveyInstances->first()->pivot->status) {
+                    return;
+                }
+
                 try {
                     $url = $service->createAndSaveUrl($user, Survey::HRA, true);
                 } catch (\Exception $e) {
                     throw $e;
                 }
 
-                $practiceName     = optional($user->primaryPractice)->display_name;
+                $practiceName = optional($user->primaryPractice)->display_name;
                 $providerFullName = optional($user->billingProviderUser())->getFullName();
-                $appointment      = $user->latestAwvAppointment()->appointment;
+                $appointment = $user->latestAwvAppointment()->appointment;
                 $notifiableUser = new NotifiableUser($user);
-                $notifiableUser->notify(new SurveyInvitationLink($url, Survey::HRA, null, $practiceName, $providerFullName,
-                    $appointment));
+                $notifiableUser->notify(new SurveyInvitationLink(
+                    $url,
+                    Survey::HRA,
+                    null,
+                    $practiceName,
+                    $providerFullName,
+                    $appointment
+                ));
             });
 
         /*

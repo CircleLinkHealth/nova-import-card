@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -7,6 +11,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 
 class LoginController extends Controller
 {
@@ -36,7 +41,6 @@ class LoginController extends Controller
     /**
      * Log the user out of the application.
      *
-     * @param \Illuminate\Http\Request $request
      *
      * @return \Illuminate\Http\Response
      */
@@ -53,12 +57,12 @@ class LoginController extends Controller
         }
 
         return $this->loggedOut($request)
-            ?: redirect('/' . $query);
+            ?: redirect('/'.$query);
     }
 
     protected function redirectTo()
     {
-        Log::debug("LoginController -> redirectTo");
+        Log::debug('LoginController -> redirectTo');
         $redirectTo = null;
 
         $request = request();
@@ -70,7 +74,7 @@ class LoginController extends Controller
             $referer = $request->header('referer', null);
             if ($referer) {
                 $mixed = parse_url($referer);
-                if (isset($mixed['query']) && str_contains($mixed['query'], 'redirectTo')) {
+                if (isset($mixed['query']) && Str::contains($mixed['query'], 'redirectTo')) {
                     $redirectTo = str_replace('redirectTo=', '', $mixed['query']);
                     if ($redirectTo) {
                         $redirectTo = urldecode($redirectTo);

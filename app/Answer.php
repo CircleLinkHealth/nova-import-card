@@ -1,22 +1,29 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
 
 /**
  * @property string $user_id
- * @property int $survey_instance_id
- * @property int $question_id
- * @property int $question_type_answer_id
- * @property array $value
- * @property array $suggested_value
+ * @property int    $survey_instance_id
+ * @property int    $question_id
+ * @property int    $question_type_answer_id
+ * @property array  $value
+ * @property array  $suggested_value
  *
  * Class Answer
- * @package App
  */
 class Answer extends BaseModel
 {
+    protected $casts = [
+        'value'           => 'array',
+        'suggested_value' => 'array',
+    ];
     /**
      * The attributes that are mass assignable.
      *
@@ -31,21 +38,6 @@ class Answer extends BaseModel
         'suggested_value',
     ];
 
-    protected $casts = [
-        'value' => 'array',
-        'suggested_value' => 'array',
-    ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function surveyInstance()
-    {
-        return $this->belongsTo(SurveyInstance::class, 'survey_instance_id');
-    }
-
     public function question()
     {
         return $this->belongsTo(Question::class, 'question_id');
@@ -54,5 +46,15 @@ class Answer extends BaseModel
     public function questionTypesAnswer()
     {
         return $this->belongsTo(QuestionTypesAnswer::class, 'question_type_answer_id');
+    }
+
+    public function surveyInstance()
+    {
+        return $this->belongsTo(SurveyInstance::class, 'survey_instance_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

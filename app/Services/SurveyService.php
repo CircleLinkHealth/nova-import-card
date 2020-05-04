@@ -1,7 +1,10 @@
 <?php
 
-namespace App\Services;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+namespace App\Services;
 
 use App\Answer;
 use App\Events\SurveyInstancePivotSaved;
@@ -12,7 +15,6 @@ use Carbon\Carbon;
 
 class SurveyService
 {
-
     public static function getCurrentSurveyData($patientId, $surveyName)
     {
         $surveyId = Survey::where('name', '=', $surveyName)->pluck('id')->first();
@@ -28,45 +30,43 @@ class SurveyService
                 'primaryPractice',
                 'surveyInstances' => function ($instance) use ($surveyId) {
                     $instance->mostRecent()
-                             ->wherePivot('survey_id', $surveyId)
-                             ->with([
-                                 'survey',
-                                 'questions' => function ($question) {
-                                     $question->with(['questionGroup', 'type.questionTypeAnswers']);
-                                 },
-                             ]);
-
+                        ->wherePivot('survey_id', $surveyId)
+                        ->with([
+                            'survey',
+                            'questions' => function ($question) {
+                                $question->with(['questionGroup', 'type.questionTypeAnswers']);
+                            },
+                        ]);
                 },
-                'answers'         => function ($answer) use ($surveyId) {
+                'answers' => function ($answer) use ($surveyId) {
                     $answer->whereHas('surveyInstance', function ($instance) use ($surveyId) {
                         $instance->where('survey_instances.survey_id', $surveyId)
-                                 ->mostRecent();
+                            ->mostRecent();
                     });
                 },
                 'patientAWVSummaries',
             ])
-            ->whereHas('surveys', function ($survey) use ($surveyId) {
-                $survey->where('survey_id', $surveyId);
-                //->where('status', '!=', SurveyInstance::COMPLETED);
-            })
-            ->whereHas('surveyInstances', function ($instance) use ($surveyId) {
-                $instance->where('users_surveys.survey_id', $surveyId);
-                $instance->mostRecent();
-            })
-            ->findOrFail($patientId);
+                ->whereHas('surveys', function ($survey) use ($surveyId) {
+                    $survey->where('survey_id', $surveyId);
+                    //->where('status', '!=', SurveyInstance::COMPLETED);
+                })
+                ->whereHas('surveyInstances', function ($instance) use ($surveyId) {
+                    $instance->where('users_surveys.survey_id', $surveyId);
+                    $instance->mostRecent();
+                })
+                ->findOrFail($patientId);
 
         self::updateOrCreatePatientAWVSummary($patientWithSurveyData);
 
         return $patientWithSurveyData;
-
     }
 
     /**
-     * Update or create an answer for a survey
+     * Update or create an answer for a survey.
      *
      * @param $input
      *
-     * @return bool|array false if could not create/update answer, array for new survey status
+     * @return array|bool false if could not create/update answer, array for new survey status
      */
     public static function updateOrCreateAnswer($input)
     {
@@ -78,19 +78,18 @@ class SurveyService
             'question_type_answer_id' => array_key_exists('question_type_answer_id', $input)
                 ? $input['question_type_answer_id']
                 : null,
-            'value'                   => $input['value'],
+            'value' => $input['value'],
         ]);
 
         if ( ! $answer) {
             return false;
         }
 
-        return SurveyService::updateSurveyInstanceStatus($input);
-
+        return self::updateSurveyInstanceStatus($input);
     }
 
     /**
-     * Update the status of a survey based on answered questions
+     * Update the status of a survey based on answered questions.
      *
      * @param $input
      *
@@ -104,19 +103,19 @@ class SurveyService
             ::with([
                 'surveyInstances' => function ($instance) use ($input) {
                     $instance->where('survey_instances.id', $input['survey_instance_id'])
-                             ->with([
-                                 'questions' => function ($question) {
-                                     $question->with(['questionGroup', 'type.questionTypeAnswers']);
-                                 },
-                             ]);
+                        ->with([
+                            'questions' => function ($question) {
+                                $question->with(['questionGroup', 'type.questionTypeAnswers']);
+                            },
+                        ]);
                 },
-                'answers'         => function ($answer) use ($input) {
+                'answers' => function ($answer) use ($input) {
                     $answer->whereHas('surveyInstance', function ($instance) use ($input) {
                         $instance->where('id', $input['survey_instance_id']);
                     });
                 },
             ])
-            ->findOrFail($input['user_id']);
+                ->findOrFail($input['user_id']);
 
         /** @var SurveyInstance $instance */
         $instance = $user->surveyInstances->first();
@@ -126,12 +125,12 @@ class SurveyService
         }
 
         $surveyStatusResult = $instance->calculateCurrentStatusForUser($user);
-        $surveyStatus = $surveyStatusResult['status'];
+        $surveyStatus       = $surveyStatusResult['status'];
 
         //change status only if not completed
         if ($instance->pivot->status !== $surveyStatus) {
             $instance->pivot->status = $surveyStatus;
-            if ($surveyStatus === SurveyInstance::COMPLETED) {
+            if (SurveyInstance::COMPLETED === $surveyStatus) {
                 $instance->pivot->completed_at = Carbon::now();
             }
         }
@@ -141,7 +140,7 @@ class SurveyService
         //save and then dispatch the event
         $instance->pivot->save();
 
-        if ($surveyStatus === SurveyInstance::COMPLETED) {
+        if (SurveyInstance::COMPLETED === $surveyStatus) {
             event(new SurveyInstancePivotSaved($instance));
         }
 
@@ -157,7 +156,7 @@ class SurveyService
         //fixme: this can break, what if user starts AWV on last day of month and completes next month?
         $date = Carbon::now();
 
-        $isInitial = $patient->patientAWVSummaries->count() === 0;
+        $isInitial = 0 === $patient->patientAWVSummaries->count();
 
         $summary = $patient->patientAWVSummaries->where('year', $date->year)->first();
 

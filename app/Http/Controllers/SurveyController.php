@@ -1,11 +1,16 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAnswer;
 use App\Services\SurveyService;
 use App\Survey;
 use Auth;
+use CircleLinkHealth\Customer\Entities\User;
 
 class SurveyController extends Controller
 {
@@ -26,7 +31,7 @@ class SurveyController extends Controller
         $surveyData = $this->service->getCurrentSurveyData($patientId, Survey::HRA);
 
         if ( ! $surveyData) {
-            throw new \Error("Survey not found for patient " . $patientId);
+            throw new \Error('Survey not found for patient '.$patientId);
         }
 
         return view('survey.hra.index', [
@@ -48,13 +53,7 @@ class SurveyController extends Controller
         $surveyData = $this->service->getSurveyData($patientId, $surveyId);
 
         if ( ! $surveyData) {
-            throw new \Error("Survey not found for patient " . $patientId);
-        }
-
-        if ($surveyData->surveyInstances[0]->survey->name === 'Enrollees'){
-            return view('survey.Enrollees.index', [
-                'data' => $surveyData->toArray(),
-            ]);
+            throw new \Error('Survey not found for patient '.$patientId);
         }
 
         return view('survey.hra.index', [
@@ -74,10 +73,9 @@ class SurveyController extends Controller
         }
 
         return response()->json([
-            'created'       => true,
-            'survey_status' => $result['status'],
+            'created'          => true,
+            'survey_status'    => $result['status'],
             'next_question_id' => $result['next_question_id'],
         ], 200);
-
     }
 }

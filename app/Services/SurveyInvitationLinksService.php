@@ -1,5 +1,8 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 namespace App\Services;
 
@@ -15,13 +18,10 @@ use Waavi\UrlShortener\Facades\UrlShortener;
 class SurveyInvitationLinksService
 {
     /**
-     * @param User $user
-     * @param string $surveyName
      * @param string $forYear
-     * @param bool $addUserToSurveyInstance
      *
-     * @return string
      * @throws \Exception
+     * @return string
      */
     public function createAndSaveUrl(
         User $user,
@@ -29,25 +29,22 @@ class SurveyInvitationLinksService
         bool $addUserToSurveyInstance = false
     ) {
         if ( ! $user->patientInfo) {
-            throw new \Exception("missing patient info from user");
+            throw new \Exception('missing patient info from user');
         }
 
         if ($user->surveyInstances->isEmpty()) {
-
             if ( ! $addUserToSurveyInstance) {
-                throw new \Exception("user does not belong to a survey instance");
+                throw new \Exception('user does not belong to a survey instance');
             }
 
             $ids      = $this->enrolUser($user);
             $surveyId = $ids[$surveyName];
-
         } else {
-
             /** @var SurveyInstance */
             $hraSurveyInstance = $user->surveyInstances->first();
 
-            if ($hraSurveyInstance->pivot->status === SurveyInstance::COMPLETED) {
-//                throw new \Exception("cannot create invitation link for a completed survey");
+            if (SurveyInstance::COMPLETED === $hraSurveyInstance->pivot->status) {
+                throw new \Exception('cannot create invitation link for a completed survey');
             }
 
             $surveyId = $hraSurveyInstance->survey_id;
@@ -55,19 +52,21 @@ class SurveyInvitationLinksService
 
         $url      = null;
         $shortUrl = null;
-        if (Survey::HRA === $surveyName) {
+        if (Survey::HRA === $surveyName || Survey::ENROLLEES === $surveyName) {
             $patientInfoId = $user->patientInfo->id;
             $this->expireAllPastUrls($patientInfoId, $surveyId);
 
             //APP_URL must be set correctly in .env for this to work
-            $url = URL::signedRoute('auth.login.signed',
+            $url = URL::signedRoute(
+                'auth.login.signed',
                 [
-                    'user'      => $user->id,
-                    'survey'    => $surveyId,
+                    'user'   => $user->id,
+                    'survey' => $surveyId,
 
                     //added this so it will generate a new url every time
                     'timestamp' => Carbon::now()->timestamp,
-                ]);
+                ]
+            );
 
             try {
                 $shortUrl = UrlShortener::shorten($url);
@@ -94,29 +93,60 @@ class SurveyInvitationLinksService
         return $shortUrl ?? $url;
     }
 
-    public function expireAllPastUrls($patientInfoId, $surveyId = null)
-    {
-        InvitationLink::where('patient_info_id', $patientInfoId)
-                      ->where('is_manually_expired', '=', 0)
-                      ->when($surveyId != null, function ($q) use ($surveyId) {
-                          $q->where('survey_id', '=', $surveyId);
-                      })
-                      ->update(['is_manually_expired' => true]);
-    }
-
     /**
-     * @param $url
-     *
-     * @return mixed
+     * @throws \Exception
+     * @return array
      */
-    public function parseUrl($url)
+    public function enrolUser(User $user)
     {
-        $parsedUrl = parse_url($url);
-        parse_str($parsedUrl['query'], $output);
+        $surveys = Survey
+            ::with([
+                'instances' => function ($instance) {
+                    $instance->mostRecent();
+                },
+            ])
+                ->get();
 
-        $urlToken = $output['signature'];
+        $hraSurvey = $surveys->firstWhere('name', Survey::HRA);
+        if ( ! $hraSurvey || $hraSurvey->instances->isEmpty()) {
+            throw new \Exception('There is no HRA survey instance.');
+        }
 
-        return $urlToken;
+        $vitalsSurvey = $surveys->firstWhere('name', Survey::VITALS);
+        if ( ! $vitalsSurvey || $vitalsSurvey->instances->isEmpty()) {
+            throw new \Exception('There is no VITALS survey instance.');
+        }
+
+        if ($user->surveyInstances->where('survey_id', '=', $vitalsSurvey->id)->isEmpty()) {
+            $user->surveys()
+                ->attach(
+                    $vitalsSurvey->id,
+                    [
+                        'survey_instance_id' => $vitalsSurvey->instances->first()->id,
+                        'status'             => SurveyInstance::PENDING,
+                    ]
+                );
+        }
+
+        if ($user->surveyInstances->where('survey_id', '=', $hraSurvey->id)->isEmpty()) {
+            $user->surveys()
+                ->attach($hraSurvey->id, [
+                    'survey_instance_id' => $hraSurvey->instances->first()->id,
+                    'status'             => SurveyInstance::PENDING,
+                ]);
+        }
+
+        //in case job runs synchronously
+        try {
+            SurveyAnswersCalculateSuggestionsJob::dispatch($user->id)->onQueue('awv-high');
+        } catch (\Exception $exception) {
+            \Log::error($exception->getMessage());
+        }
+
+        return [
+            Survey::HRA    => $hraSurvey->id,
+            Survey::VITALS => $vitalsSurvey->id,
+        ];
     }
 
     /**
@@ -133,66 +163,31 @@ class SurveyInvitationLinksService
                     $query->mostRecent();
                 },
             ])
-            ->where('id', '=', $userId)
-            ->firstOrFail();
+                ->where('id', '=', $userId)
+                ->firstOrFail();
 
         $this->enrolUser($user);
     }
 
-    /**
-     * @param User $user
-     *
-     * @return array
-     * @throws \Exception
-     */
-    public function enrolUser(User $user)
+    public function expireAllPastUrls($patientInfoId, $surveyId = null)
     {
-        $surveys = Survey
-            ::with([
-                'instances' => function ($instance) {
-                    $instance->mostRecent();
-                },
-            ])
-            ->get();
+        InvitationLink::where('patient_info_id', $patientInfoId)
+            ->where('is_manually_expired', '=', 0)
+            ->when(null != $surveyId, function ($q) use ($surveyId) {
+                $q->where('survey_id', '=', $surveyId);
+            })
+            ->update(['is_manually_expired' => true]);
+    }
 
-        $hraSurvey = $surveys->firstWhere('name', Survey::HRA);
-        if ( ! $hraSurvey || $hraSurvey->instances->isEmpty()) {
-            throw new \Exception("There is no HRA survey instance.");
-        }
+    public static function getPatientIdFromSignedUrl(string $url)
+    {
+        $parsed = parse_url($url);
 
-        $vitalsSurvey = $surveys->firstWhere('name', Survey::VITALS);
-        if ( ! $vitalsSurvey || $vitalsSurvey->instances->isEmpty()) {
-            throw new \Exception("There is no VITALS survey instance.");
-        }
+        //http://awv.clh.test/auth/login-survey/326/3
+        $path  = explode('/', $parsed['path']);
+        $count = count($path);
 
-        if ($user->surveyInstances->where('survey_id', '=', $vitalsSurvey->id)->isEmpty()) {
-            $user->surveys()
-                 ->attach($vitalsSurvey->id, [
-                         'survey_instance_id' => $vitalsSurvey->instances->first()->id,
-                         'status'             => SurveyInstance::PENDING,
-                     ]
-                 );
-        }
-
-        if ($user->surveyInstances->where('survey_id', '=', $hraSurvey->id)->isEmpty()) {
-            $user->surveys()
-                 ->attach($hraSurvey->id, [
-                     'survey_instance_id' => $hraSurvey->instances->first()->id,
-                     'status'             => SurveyInstance::PENDING,
-                 ]);
-        }
-
-        //in case job runs synchronously
-        try {
-            SurveyAnswersCalculateSuggestionsJob::dispatch($user->id)->onQueue('awv-high');
-        } catch (\Exception $exception) {
-            \Log::error($exception->getMessage());
-        }
-
-        return [
-            Survey::HRA    => $hraSurvey->id,
-            Survey::VITALS => $vitalsSurvey->id,
-        ];
+        return $path[$count - 2];
     }
 
     public static function getSurveyIdFromSignedUrl(string $url)
@@ -205,14 +200,16 @@ class SurveyInvitationLinksService
         return end($path);
     }
 
-    public static function getPatientIdFromSignedUrl(string $url)
+    /**
+     * @param $url
+     *
+     * @return mixed
+     */
+    public function parseUrl($url)
     {
-        $parsed = parse_url($url);
+        $parsedUrl = parse_url($url);
+        parse_str($parsedUrl['query'], $output);
 
-        //http://awv.clh.test/auth/login-survey/326/3
-        $path  = explode('/', $parsed['path']);
-        $count = sizeof($path);
-
-        return $path[$count - 2];
+        return $output['signature'];
     }
 }

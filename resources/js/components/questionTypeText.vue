@@ -102,7 +102,7 @@
                     id="number"
                     :disabled="!(isOptional ||hasTypedInAllInputs || hasTypedInSubParts)"
                     @click="handleAnswer()">
-                {{isLastQuestion ? 'Complete' : 'Next'}}
+                {{buttonText}}
                 <mdb-icon v-show="waiting" icon="spinner" :spin="true"/>
             </mdbBtn>
         </div>
@@ -134,6 +134,16 @@
             }
         },
         computed: {
+            buttonText(){
+                if (this.isLastQuestion){
+                    return 'Complete';
+                }
+                if (this.question.optional && this.inputHasText[0] === ''){
+                    return 'Skip';
+                }
+                return 'Next';
+            },
+
             hasTypedInAllInputs() {
                 return this.inputHasText.length > 0 && this.inputHasText.every(t => t.length > 0);
             },

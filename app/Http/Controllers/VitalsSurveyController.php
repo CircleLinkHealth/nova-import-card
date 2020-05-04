@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreVitalsAnswer;
@@ -14,38 +18,6 @@ class VitalsSurveyController extends Controller
     public function __construct(VitalsSurveyService $service)
     {
         $this->service = $service;
-    }
-
-    public function showWelcome($patientId)
-    {
-        $patient = User::with(['regularDoctor', 'billingProvider'])->findOrFail($patientId);
-
-        if ( ! empty($patient->regularDoctorUser())) {
-            $doctorsName = $patient->regularDoctorUser()->getFullName();
-        } else if ( ! empty($patient->billingProviderUser())) {
-            $doctorsName = $patient->billingProviderUser()->getFullName();
-        }
-
-        return view('survey.vitals.welcome', [
-            'patientId' => $patient->id,
-            'patientName' => $patient->display_name,
-            'doctorName' => $doctorsName ?? '',
-        ]);
-    }
-
-    public function showNotAuthorized($patientId)
-    {
-        $patient = User::with(['regularDoctor', 'billingProvider'])->findOrFail($patientId);
-
-        if ( ! empty($patient->regularDoctorUser())) {
-            $doctorsName = $patient->regularDoctorUser()->getFullName();
-        } else if ( ! empty($patient->billingProviderUser())) {
-            $doctorsName = $patient->billingProviderUser()->getFullName();
-        }
-
-        return view('survey.vitals.not-authorized', [
-            'doctorsName' => $doctorsName ?? '',
-        ]);
     }
 
     /**
@@ -70,7 +42,7 @@ class VitalsSurveyController extends Controller
         $userWithSurveyData = $this->service->getSurveyData($patientId);
 
         if ( ! $userWithSurveyData) {
-            throw new \Error("Survey not found for patient " . $patientId);
+            throw new \Error('Survey not found for patient '.$patientId);
         }
 
         return view('survey.vitals.index', [
@@ -78,11 +50,42 @@ class VitalsSurveyController extends Controller
         ]);
     }
 
+    public function showNotAuthorized($patientId)
+    {
+        $patient = User::with(['regularDoctor', 'billingProvider'])->findOrFail($patientId);
+
+        if ( ! empty($patient->regularDoctorUser())) {
+            $doctorsName = $patient->regularDoctorUser()->getFullName();
+        } elseif ( ! empty($patient->billingProviderUser())) {
+            $doctorsName = $patient->billingProviderUser()->getFullName();
+        }
+
+        return view('survey.vitals.not-authorized', [
+            'doctorsName' => $doctorsName ?? '',
+        ]);
+    }
+
+    public function showWelcome($patientId)
+    {
+        $patient = User::with(['regularDoctor', 'billingProvider'])->findOrFail($patientId);
+
+        if ( ! empty($patient->regularDoctorUser())) {
+            $doctorsName = $patient->regularDoctorUser()->getFullName();
+        } elseif ( ! empty($patient->billingProviderUser())) {
+            $doctorsName = $patient->billingProviderUser()->getFullName();
+        }
+
+        return view('survey.vitals.welcome', [
+            'patientId'   => $patient->id,
+            'patientName' => $patient->display_name,
+            'doctorName'  => $doctorsName ?? '',
+        ]);
+    }
+
     /**
      * Patient cannot access this route.
      * User must have `vitals-survey-complete` permission.
      *
-     * @param StoreVitalsAnswer $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -95,10 +98,9 @@ class VitalsSurveyController extends Controller
         }
 
         return response()->json([
-            'created'       => true,
-            'survey_status' => $result['status'],
+            'created'          => true,
+            'survey_status'    => $result['status'],
             'next_question_id' => $result['next_question_id'],
         ], 200);
-
     }
 }

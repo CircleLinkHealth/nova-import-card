@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Feature;
 
 use App\Answer;
@@ -12,13 +16,13 @@ use Tests\TestCase;
 
 class VitalsQuestionsTest extends TestCase
 {
-    use DatabaseTransactions,
-        SetupTestSurveyData;
+    use DatabaseTransactions;
+    use SetupTestSurveyData;
 
-    /** @var SurveyInstance $vitalsSurvey */
+    /** @var SurveyInstance */
     private $vitalsSurvey;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->createTestSurveyData();
@@ -99,7 +103,8 @@ class VitalsQuestionsTest extends TestCase
         $this->assertNull($nextQuestion);
     }
 
-    public function test_vitals_survey_complete() {
+    public function test_vitals_survey_complete()
+    {
         $this->test_vitals_q_order_1();
         $this->test_vitals_q_order_2();
         $this->test_vitals_q_order_3();
@@ -117,14 +122,14 @@ class VitalsQuestionsTest extends TestCase
         //when and wherePivot do not work. ???
         if ($subOrder) {
             return $this->vitalsSurvey->questions()
-                                      ->wherePivot('order', '=', $order)
-                                      ->wherePivot('sub_order', '=', $subOrder)
-                                      ->first();
-        } else {
-            return $this->vitalsSurvey->questions()
-                                      ->wherePivot('order', '=', $order)
-                                      ->first();
+                ->wherePivot('order', '=', $order)
+                ->wherePivot('sub_order', '=', $subOrder)
+                ->first();
         }
+
+        return $this->vitalsSurvey->questions()
+            ->wherePivot('order', '=', $order)
+            ->first();
     }
 
     private function postAnswer($value, $questionId, $questionTypeAnswerId = null)
@@ -150,12 +155,11 @@ class VitalsQuestionsTest extends TestCase
 
         /** @var Answer $answer */
         $answer = $this->user->answers()
-                             ->where('survey_instance_id', $this->vitalsSurvey->id)
-                             ->where('question_id', $questionId)
-                             ->first();
+            ->where('survey_instance_id', $this->vitalsSurvey->id)
+            ->where('question_id', $questionId)
+            ->first();
 
         $this->assertNotNull($answer);
         $this->assertEquals($value, $answer->value);
     }
-
 }

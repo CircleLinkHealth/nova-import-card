@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -29,8 +33,6 @@ class PatientLoginController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @param SurveyInvitationLinksService $service
      */
     public function __construct(SurveyInvitationLinksService $service)
     {
@@ -39,66 +41,81 @@ class PatientLoginController extends Controller
     }
 
     /**
-     * Show the login form for patients.
-     *
-     * @param Request $request
      * @param $userId
-     *
-     * @return \Illuminate\Http\Response
+     * @return string
      */
-    public function showLoginForm(Request $request, $userId)
+    public function checkIfEnrolleeSurvey($userId)
     {
-        $urlWithToken = $request->getRequestUri();
+        $survey          = Survey::whereName(Survey::ENROLLEES)->select('id')->first();
+        $isEnrolleSurvey = false;
+        if ( ! empty($survey)) {
+            $isEnrolleSurvey = $survey->users()
+                ->where('user_id', $userId)
+                ->wherePivot('survey_id', $survey->id)
+                ->exists();
+        }
 
-        $user         = User::with(['primaryPractice', 'billingProvider'])->where('id', '=', $userId)->firstOrFail();
-        $practiceName = $user->getPrimaryPracticeName();
+        return $isEnrolleSurvey;
+    }
 
+    /**
+     * @param $request
+     * @param $userId
+     * @return array
+     */
+    public function getLoginData($request, $userId)
+    {
+        $user            = User::with(['primaryPractice', 'billingProvider'])->where('id', '=', $userId)->firstOrFail();
         $doctor          = $user->billingProviderUser();
-        $doctorsLastName = "???";
+        $doctorsLastName = '???';
         if ($doctor) {
             $doctorsLastName = $doctor->display_name;
         }
 
-        return view('surveyUrlAuth.surveyLoginForm',
-            compact('userId', 'urlWithToken', 'practiceName', 'doctorsLastName'));
+        return [
+            'urlWithToken'    => $request->getRequestUri(),
+            'user'            => $user,
+            'practiceName'    => $user->getPrimaryPracticeName(),
+            'doctor'          => $doctor,
+            'doctorsLastName' => $doctorsLastName,
+        ];
     }
 
     /**
-     * Validate the user login request.
-     *
-     * @param  \Illuminate\Http\Request $request
-     *
-     * @return void
-     *
-     * @throws \Illuminate\Validation\ValidationException
+     * @param $userId
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    protected function validateLogin(Request $request)
+    public function showLoginForm(Request $request, $userId)
     {
-        $request->validate([
-            $this->username() => 'required|string',
-            'birth_date'      => 'required|date',
-            'url'             => 'required|string',
-        ]);
+        $loginFormData    = $this->getLoginData($request, $userId);
+        $urlWithToken     = $loginFormData['urlWithToken'];
+        $practiceName     = $loginFormData['practiceName'];
+        $doctorsLastName  = $loginFormData['doctorsLastName'];
+        $isEnrolleeSurvey = $this->checkIfEnrolleeSurvey($userId);
+
+        return view(
+            'surveyUrlAuth.surveyLoginForm',
+            compact('userId', 'urlWithToken', 'practiceName', 'doctorsLastName', 'isEnrolleeSurvey')
+        );
     }
 
     /**
      * Attempt to log the user into the application.
      *
-     * @param  \Illuminate\Http\Request $request
      *
      * @return bool
      */
     protected function attemptLogin(Request $request)
     {
         return $this->guard()->attempt(
-            $this->credentials($request), $request->filled('remember')
+            $this->credentials($request),
+            $request->filled('remember')
         );
     }
 
     /**
      * Get the needed authorization credentials from the request.
      *
-     * @param  Request $request
      *
      * @return array
      */
@@ -112,7 +129,6 @@ class PatientLoginController extends Controller
             'dob'          => Carbon::parse($input['birth_date'])->startOfDay(),
         ];
     }
-
 
     /**
      * Get the guard to be used during authentication.
@@ -132,27 +148,44 @@ class PatientLoginController extends Controller
         $user = auth()->user();
 
         $prevUrl = Session::previousUrl();
-        if (empty($prevUrl) || ! $user->hasRole('participant')) {
+        if (empty($prevUrl) || ! $user->hasRole(['participant', 'survey-only'])) {
             Log::debug("PatientLoginController: no prevUrl or no participant [$user->id]. Going `home`");
+
             return route('home');
         }
 
         $surveyId = $this->service->getSurveyIdFromSignedUrl($prevUrl);
         $name     = Survey::find($surveyId, ['name'])->name;
 
-        if (Survey::HRA === $name) {
-            Log::debug('PatientLoginController: should redirect to HRA');
-            $route = route('survey.hra',
+        if (Survey::ENROLLEES === $name) {
+            $route = route(
+                'survey.enrollees',
                 [
                     'patientId' => $user->id,
                     'surveyId'  => $surveyId,
-                ]);
-        } else {
-            Log::debug('PatientLoginController: should redirect to Vitals - Not Authorized');
-            $route = route('survey.vitals.not.authorized',
+                ]
+            );
+        }
+
+        if (Survey::HRA === $name) {
+            Log::debug('PatientLoginController: should redirect to HRA');
+            $route = route(
+                'survey.hra',
                 [
                     'patientId' => $user->id,
-                ]);
+                    'surveyId'  => $surveyId,
+                ]
+            );
+        }
+
+        if (Survey::VITALS === $name) {
+            Log::debug('PatientLoginController: should redirect to Vitals - Not Authorized');
+            $route = route(
+                'survey.vitals.not.authorized',
+                [
+                    'patientId' => $user->id,
+                ]
+            );
         }
 
         //make sure url.intended is not set
@@ -166,4 +199,19 @@ class PatientLoginController extends Controller
         return 'name';
     }
 
+    /**
+     * Validate the user login request.
+     *
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     * @return void
+     */
+    protected function validateLogin(Request $request)
+    {
+        $request->validate([
+            $this->username() => 'required|string',
+            'birth_date'      => 'required|date',
+            'url'             => 'required|string',
+        ]);
+    }
 }
