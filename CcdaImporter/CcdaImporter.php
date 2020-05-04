@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
-use App\CLH\Repositories\UserRepository;
 use App\Events\PatientUserCreated;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachDefaultPatientContactWindows;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachLocation;
