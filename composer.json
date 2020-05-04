@@ -132,14 +132,14 @@
         "appstract/laravel-opcache": "^3.2.1",
         "barryvdh/laravel-snappy": "0.4.7",
         "circlelinkhealth/cerberus-gatekeeper-module": "3.1.4",
-        "circlelinkhealth/core-module": "dev-laravel-6-upgrade",
-        "circlelinkhealth/cpm-migrations-module": "dev-master",
-        "circlelinkhealth/customer-module": "dev-master",
-        "circlelinkhealth/eligibility-module": "dev-lavavel-6",
-        "circlelinkhealth/revisionable-module": "dev-master",
-        "circlelinkhealth/shared-models-module": "dev-master",
-        "circlelinkhealth/sqlviews-module": "dev-master",
-        "circlelinkhealth/timetracking-module": "dev-master",
+        "circlelinkhealth/core-module": "1.5.4",
+        "circlelinkhealth/cpm-migrations-module": "dev-test_db_seeders",
+        "circlelinkhealth/customer-module": "dev-test_db_seeders",
+        "circlelinkhealth/eligibility-module": "2.3.1",
+        "circlelinkhealth/revisionable-module": "6.1.1",
+        "circlelinkhealth/shared-models-module": "dev-test_db_seeders",
+        "circlelinkhealth/sqlviews-module": "1.1.4",
+        "circlelinkhealth/timetracking-module": "1.2.2",
         "doctrine/dbal": "^2.9",
         "fideloper/proxy": "^4.0",
         "friendsofphp/php-cs-fixer": "^2.16",
@@ -159,6 +159,7 @@
         "moontoast/math": "1.1.2 as 1.999.999",
         "nvanheuverzwijn/monolog-logdna": "^2.1",
         "nwidart/laravel-modules": "^6.2",
+        "propaganistas/laravel-phone": "^4.2",
         "sentry/sentry-laravel": "^1.6",
         "squizlabs/php_codesniffer": "^3.5",
         "twilio/sdk": "^5.28",
@@ -210,10 +211,11 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
-        "test-not-working-at-the-moment": [
+        "test": [
             "php artisan --env=testing test:prepare-test_suite-db",
             "php artisan --env=testing migrate:fresh",
             "php artisan --env=testing migrate:views",
+            "php artisan --env=testing db:seed --class=TestSuiteSeeder",
             "./vendor/phpunit/phpunit/phpunit --testsuite=Feature,Unit --colors --testdox"
         ],
         "post-autoload-dump": [
