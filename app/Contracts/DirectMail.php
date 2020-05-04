@@ -11,7 +11,8 @@ use CircleLinkHealth\Customer\Entities\User;
 interface DirectMail
 {
     /**
-     * @param  mixed|null $dmUserAddress
+     * @param mixed|null $dmUserAddress
+     *
      * @return mixed
      */
     public function receive($dmUserAddress = null);

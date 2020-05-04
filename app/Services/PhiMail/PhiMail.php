@@ -40,8 +40,10 @@ class PhiMail implements DirectMail
     }
 
     /**
-     * @param  null                                                   $dmUserAddress
+     * @param null $dmUserAddress
+     *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     *
      * @return bool
      */
     public function receive($dmUserAddress = null)
@@ -244,7 +246,8 @@ class PhiMail implements DirectMail
     }
 
     /**
-     * @param  null                                                   $dmUserAddress
+     * @param null $dmUserAddress
+     *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     private function initPhiMailConnection($dmUserAddress = null)

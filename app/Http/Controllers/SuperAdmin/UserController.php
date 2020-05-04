@@ -6,7 +6,6 @@
 
 namespace App\Http\Controllers\SuperAdmin;
 
-use App\CLH\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Note;
 use Auth;
@@ -16,6 +15,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\UserRepository;
 use DateTimeZone;
 use Illuminate\Http\Request;
 use Response;

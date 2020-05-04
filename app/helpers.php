@@ -2024,3 +2024,10 @@ if ( ! function_exists('complexAttestationRequirementsEnabledForPractice')) {
         return in_array($practiceId, $practiceIds) || in_array('all', $practiceIds);
     }
 }
+
+if ( ! function_exists('isCpm')) {
+    function isCpm()
+    {
+        return 'CarePlan Manager' === config('app.name');
+    }
+}
