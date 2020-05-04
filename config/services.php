@@ -67,6 +67,7 @@ return [
 
     'emr-direct' => [
         'user'                 => env('EMR_DIRECT_USER'),
+        'test_user'            => env('EMR_DIRECT_TEST_USER'),
         'password'             => env('EMR_DIRECT_PASSWORD'),
         'conc-keys-pem-path'   => env('EMR_DIRECT_CONC_KEYS_PEM_PATH'),
         'pass-phrase'          => env('EMR_DIRECT_PASS_PHRASE'),

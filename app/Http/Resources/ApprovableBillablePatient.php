@@ -71,9 +71,9 @@ class ApprovableBillablePatient extends Resource
             'report_id'              => $this->id,
             'actor_id'               => $this->actor_id,
             'qa'                     => $this->needs_qa || ( ! $this->approved && ! $this->rejected),
-            'attested_ccm_problems'  => $this->ccmAttestedProblems()->pluck('id'),
+            'attested_ccm_problems'  => $this->ccmAttestedProblems()->unique()->pluck('id'),
             'chargeable_services'    => ChargeableService::collection($this->whenLoaded('chargeableServices')),
-            'attested_bhi_problems'  => $this->bhiAttestedProblems()->pluck('id'),
+            'attested_bhi_problems'  => $this->bhiAttestedProblems()->unique()->pluck('id'),
         ];
     }
 }
