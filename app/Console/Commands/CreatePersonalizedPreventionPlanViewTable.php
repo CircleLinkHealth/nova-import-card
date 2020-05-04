@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -8,18 +12,17 @@ use Illuminate\Support\Facades\DB;
 class CreatePersonalizedPreventionPlanViewTable extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'command:PersonalizedPreventionPlanController';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Create PPP View Table';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'command:PersonalizedPreventionPlanController';
 
     /**
      * Create a new command instance.

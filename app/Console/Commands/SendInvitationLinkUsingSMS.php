@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Console\Traits\DryRunnable;
@@ -16,18 +20,18 @@ class SendInvitationLinkUsingSMS extends Command
     use DryRunnable;
 
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'invite:sms {userId} {surveyName} {phoneNumber?} {{--dry-run}}';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Send SMS with invitation link to HRA or Vitals.';
+
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'invite:sms {userId} {surveyName} {phoneNumber?} {{--dry-run}}';
 
     /**
      * Create a new command instance.
@@ -42,18 +46,17 @@ class SendInvitationLinkUsingSMS extends Command
     /**
      * Execute the console command.
      *
-     * @param SurveyInvitationLinksService $service
      * @param TwilioClientService $twilioService
      *
-     * @return mixed
      * @throws \Exception
+     * @return mixed
      */
     public function handle(SurveyInvitationLinksService $service)
     {
-        $userId = $this->argument('userId');
+        $userId     = $this->argument('userId');
         $surveyName = $this->argument('surveyName');
-        if (! ($surveyName === Survey::HRA || $surveyName === Survey::VITALS)) {
-            $hra = Survey::HRA;
+        if ( ! (Survey::HRA === $surveyName || Survey::VITALS === $surveyName)) {
+            $hra    = Survey::HRA;
             $vitals = Survey::VITALS;
             $this->warn("surveyName must be $hra or $vitals");
 
@@ -71,10 +74,10 @@ class SendInvitationLinkUsingSMS extends Command
                     $query->ofSurvey($surveyName)->mostRecent();
                 },
             ])
-            ->where('id', '=', $userId)
-            ->first();
+                ->where('id', '=', $userId)
+                ->first();
 
-        if (! $user) {
+        if ( ! $user) {
             $this->warn("Could not find user with id $userId");
 
             return;
@@ -91,11 +94,11 @@ class SendInvitationLinkUsingSMS extends Command
         }
 
         $phoneNumber = $this->argument('phoneNumber');
-        if (! $phoneNumber) {
+        if ( ! $phoneNumber) {
             $phoneNumber = $user->phoneNumbers->first();
         }
 
-        if (! $phoneNumber) {
+        if ( ! $phoneNumber) {
             $this->warn("Could not find a phone number for user $userId");
 
             return;
@@ -104,13 +107,13 @@ class SendInvitationLinkUsingSMS extends Command
         /** @var User $targetNotifiable */
         $targetNotifiable = User::find($userId);
 
-        if (! $targetNotifiable) {
+        if ( ! $targetNotifiable) {
             throw new \Exception("Could not find user[$phoneNumber] in the system.");
         }
 
         //in case notifiable user is not the patient
         $providerFullName = 'PROVIDER';
-        if (! $targetNotifiable->is($user)) {
+        if ( ! $targetNotifiable->is($user)) {
             $practiceName = $user->primaryPractice->display_name;
 
             $billingProviderUser = $user->billingProviderUser();
@@ -118,7 +121,7 @@ class SendInvitationLinkUsingSMS extends Command
                 $providerFullName = $billingProviderUser->getFullName();
             }
         } else {
-            $practiceName = $targetNotifiable->primaryPractice->display_name;
+            $practiceName        = $targetNotifiable->primaryPractice->display_name;
             $billingProviderUser = $targetNotifiable->billingProviderUser();
             if ($billingProviderUser) {
                 $providerFullName = $billingProviderUser->getFullName();
@@ -126,8 +129,14 @@ class SendInvitationLinkUsingSMS extends Command
         }
 
         $notifiableUser = new NotifiableUser($targetNotifiable, null, $phoneNumber);
-        $invitation = new SurveyInvitationLink($url, $surveyName, 'sms', $practiceName, $providerFullName,
-            $appointment);
+        $invitation     = new SurveyInvitationLink(
+            $url,
+            $surveyName,
+            'sms',
+            $practiceName,
+            $providerFullName,
+            $appointment
+        );
 
         try {
             if ($this->isDryRun()) {

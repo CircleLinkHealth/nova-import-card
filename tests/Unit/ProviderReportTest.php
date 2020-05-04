@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
 use Carbon\Carbon;
@@ -10,21 +14,10 @@ use Tests\TestCase;
 
 class ProviderReportTest extends TestCase
 {
+    protected $date;
     protected $faker;
 
     protected $user;
-
-    protected $date;
-
-    /**
-     * A basic unit test example.
-     *
-     * @return void
-     */
-    public function testExample()
-    {
-        $this->assertTrue(true);
-    }
 
     protected function setUp(): void
     {
@@ -44,5 +37,15 @@ class ProviderReportTest extends TestCase
             'remember_token'    => Str::random(10),
         ]);
         $this->assertNotNull($this->user);
+    }
+
+    /**
+     * A basic unit test example.
+     *
+     * @return void
+     */
+    public function test_example()
+    {
+        $this->assertTrue(true);
     }
 }

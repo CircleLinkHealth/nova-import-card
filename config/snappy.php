@@ -1,6 +1,10 @@
 <?php
 
-$pdfBinary = null;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+$pdfBinary           = null;
 $pdfBinaryCandidates = [
     '/app/bin/wkhtmltopdf',
     '/usr/local/bin/wkhtmltopdf',
@@ -14,7 +18,7 @@ foreach ($pdfBinaryCandidates as $pdfPath) {
 //if ( ! $pdfBinary) {
 //    throw new \Exception('wkhtmltopdf binary was not found.', 500);
 //}
-$imgBinary = null;
+$imgBinary           = null;
 $imgBinaryCandidates = [
     '/app/bin/wkhtmltoimage',
     '/usr/local/bin/wkhtmltoimage',
@@ -30,7 +34,6 @@ foreach ($imgBinaryCandidates as $imgPath) {
 //}
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Snappy PDF / Image Configuration
@@ -77,5 +80,4 @@ return [
         'options' => [],
         'env'     => [],
     ],
-
 ];

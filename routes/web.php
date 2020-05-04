@@ -192,7 +192,7 @@ Route::group([
     ], function () {
         Route::get('create-url/{userId}/{surveyId}', [
             'uses' => 'EnrolleeSurveyController@createEnrolleesSurveyUrl',
-            'as' => 'create.enrollees.survey.url',
+            'as'   => 'create.enrollees.survey.url',
         ]);
 
         Route::post('get-enrollable-data', [

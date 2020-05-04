@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
@@ -15,8 +16,10 @@ abstract class AwvToCpmRedisEvent implements RedisEvent
     public function publish(array $data)
     {
         try {
-            Redis::publish($this->channel,
-                json_encode($data));
+            Redis::publish(
+                $this->channel,
+                json_encode($data)
+            );
         } catch (\Exception $exception) {
             \Log::error($exception->getMessage());
         }

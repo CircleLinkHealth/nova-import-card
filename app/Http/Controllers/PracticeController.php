@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -20,7 +24,7 @@ class PracticeController
             ])
             ->map(function ($p) {
                 return [
-                    'id' => $p->id,
+                    'id'           => $p->id,
                     'display_name' => $p->display_name,
                 ];
             });

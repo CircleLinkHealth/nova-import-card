@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Providers;
 
 use App\InvitationLink;
@@ -15,7 +19,6 @@ class AwvUserProvider extends EloquentUserProvider
     /**
      * Create a new AWV user provider.
      *
-     * @param HasherContract $hasher
      * @param $model
      */
     public function __construct(HasherContract $hasher, $model)
@@ -26,7 +29,6 @@ class AwvUserProvider extends EloquentUserProvider
     /**
      * Retrieve a user by the given credentials.
      *
-     * @param  array $credentials
      *
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
@@ -34,17 +36,17 @@ class AwvUserProvider extends EloquentUserProvider
     {
         //$credentials = [ signed_token, name, dob ]
 
-        if (! $this->isPatientLogin($credentials)) {
+        if ( ! $this->isPatientLogin($credentials)) {
             return parent::retrieveByCredentials($credentials);
         }
 
         $credentials = $this->sanitizeCredentialsArr($credentials);
-        if (! $credentials) {
+        if ( ! $credentials) {
             return;
         }
 
         $invitationLink = $this->getInvitationLink($credentials);
-        if (! $invitationLink) {
+        if ( ! $invitationLink) {
             return;
         }
 
@@ -54,8 +56,6 @@ class AwvUserProvider extends EloquentUserProvider
     /**
      * Validate a user against the given credentials.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable $user
-     * @param  array $credentials
      *
      * @return bool
      */
@@ -63,17 +63,17 @@ class AwvUserProvider extends EloquentUserProvider
     {
         //$credentials = [ signed_token, name, dob ]
 
-        if (! $this->isPatientLogin($credentials)) {
+        if ( ! $this->isPatientLogin($credentials)) {
             return parent::validateCredentials($user, $credentials);
         }
 
         $credentials = $this->sanitizeCredentialsArr($credentials);
-        if (! $credentials) {
+        if ( ! $credentials) {
             return false;
         }
 
         $invitationLink = $this->getInvitationLink($credentials);
-        if (! $invitationLink) {
+        if ( ! $invitationLink) {
             return false;
         }
 
@@ -81,7 +81,7 @@ class AwvUserProvider extends EloquentUserProvider
         $urlUpdatedAt = $invitationLink->updated_at;
         $isExpiredUrl = $invitationLink->is_manually_expired;
         if ($isExpiredUrl || $urlUpdatedAt->diffInDays(Carbon::now()) > self::LINK_EXPIRES_IN_DAYS) {
-            if (! $isExpiredUrl) {
+            if ( ! $isExpiredUrl) {
                 $invitationLink->is_manually_expired = true;
                 $invitationLink->save();
             }
@@ -92,50 +92,29 @@ class AwvUserProvider extends EloquentUserProvider
         return true;
     }
 
-    private function sanitizeCredentialsArr(array $credentials): ?array
-    {
-        //$credentials = [ signed_token, name, dob ]
-
-        if (empty($credentials) || count($credentials) !== 3) {
-            return null;
-        }
-
-        if (! isset($credentials['signed_token']) ||
-             ! isset($credentials['name']) ||
-             ! isset($credentials['dob'])) {
-            return null;
-        }
-
-        if (! ($credentials['dob'] instanceof Carbon)) {
-            $credentials['dob'] = Carbon::parse($credentials['dob'])->startOfDay();
-        }
-
-        return $credentials;
-    }
-
     private function getInvitationLink(array $credentials): ?InvitationLink
     {
         $token = $credentials['signed_token'];
-        $name = $credentials['name'];
-        $dob = $credentials['dob'];
+        $name  = $credentials['name'];
+        $dob   = $credentials['dob'];
 
         /** @var InvitationLink $invitationLink */
         $invitationLink = InvitationLink::with('patientInfo.user')
-                                        ->where('link_token', $token)
-                                        ->first();
+            ->where('link_token', $token)
+            ->first();
 
-        if (! $invitationLink) {
+        if ( ! $invitationLink) {
             return null;
         }
 
         $modelDob = $invitationLink->patientInfo->birth_date;
-        if (! ($modelDob instanceof Carbon)) {
+        if ( ! ($modelDob instanceof Carbon)) {
             $modelDob = Carbon::parse($modelDob)->startOfDay();
         }
 
         //check inputs
-        if (! $dob->equalTo($modelDob) ||
-             strcasecmp($invitationLink->patientInfo->user->display_name, $name) != 0) {
+        if ( ! $dob->equalTo($modelDob) ||
+             0 != strcasecmp($invitationLink->patientInfo->user->display_name, $name)) {
             return null;
         }
 
@@ -145,5 +124,26 @@ class AwvUserProvider extends EloquentUserProvider
     private function isPatientLogin(array $credentials): bool
     {
         return isset($credentials['signed_token']);
+    }
+
+    private function sanitizeCredentialsArr(array $credentials): ?array
+    {
+        //$credentials = [ signed_token, name, dob ]
+
+        if (empty($credentials) || 3 !== count($credentials)) {
+            return null;
+        }
+
+        if ( ! isset($credentials['signed_token']) ||
+             ! isset($credentials['name']) ||
+             ! isset($credentials['dob'])) {
+            return null;
+        }
+
+        if ( ! ($credentials['dob'] instanceof Carbon)) {
+            $credentials['dob'] = Carbon::parse($credentials['dob'])->startOfDay();
+        }
+
+        return $credentials;
     }
 }

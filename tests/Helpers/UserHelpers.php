@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Helpers;
 
 use App\User;
@@ -15,7 +19,7 @@ trait UserHelpers
     private function createAdminUser()
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user      = factory(User::class)->create();
         $adminRole = Role::getIdsFromNames(['administrator']);
         $user->attachGlobalRole($adminRole);
 

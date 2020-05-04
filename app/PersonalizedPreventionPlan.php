@@ -1,20 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
 
 class PersonalizedPreventionPlan extends BaseModel
 {
-    protected $fillable = [
-        'user_id',
-        'hra_instance_id',
-        'vitals_instance_id',
-        'hra_answers',
-        'vitals_answers',
-        'answers_for_eval',
-    ];
-
     protected $casts = [
         'vitals_answers'   => 'array',
         'hra_answers'      => 'array',
@@ -25,22 +20,25 @@ class PersonalizedPreventionPlan extends BaseModel
         'created_at',
         'updated_at',
     ];
+    protected $fillable = [
+        'user_id',
+        'hra_instance_id',
+        'vitals_instance_id',
+        'hra_answers',
+        'vitals_answers',
+        'answers_for_eval',
+    ];
 
     protected $table = 'personalized_prevention_plan';
-
-    public function patient()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
 
     public function hraSurveyInstance()
     {
         return $this->hasOne(SurveyInstance::class, 'id', 'hra_instance_id');
     }
 
-    public function vitalsSurveyInstance()
+    public function patient()
     {
-        return $this->hasOne(SurveyInstance::class, 'id', 'vitals_instance_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function scopeForYear($query, $year)
@@ -52,8 +50,13 @@ class PersonalizedPreventionPlan extends BaseModel
         return $query->whereHas('hraSurveyInstance', function ($hra) use ($year) {
             $hra->where('year', $year);
         })
-                     ->whereHas('vitalsSurveyInstance', function ($vitals) use ($year) {
-                         $vitals->where('year', $year);
-                     });
+            ->whereHas('vitalsSurveyInstance', function ($vitals) use ($year) {
+                $vitals->where('year', $year);
+            });
+    }
+
+    public function vitalsSurveyInstance()
+    {
+        return $this->hasOne(SurveyInstance::class, 'id', 'vitals_instance_id');
     }
 }

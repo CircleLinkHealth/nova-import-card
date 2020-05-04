@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -24,8 +28,8 @@ class SurveyAuthLoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'birth_date'=> 'required|date',
+            'name'       => 'required',
+            'birth_date' => 'required|date',
         ];
     }
 }

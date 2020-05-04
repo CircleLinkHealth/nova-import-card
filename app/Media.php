@@ -12,24 +12,24 @@ use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
 /**
  * CircleLinkHealth\Customer\Entities\Media.
  *
- * @property int                                                   $id
- * @property int                                                   $model_id
- * @property string                                                $model_type
- * @property string                                                $collection_name
- * @property string                                                $name
- * @property string                                                $file_name
- * @property string|null                                           $mime_type
- * @property string                                                $disk
- * @property int                                                   $size
- * @property array                                                 $manipulations
- * @property array                                                 $custom_properties
- * @property array                                                 $responsive_images
- * @property int|null                                              $order_column
- * @property \Illuminate\Support\Carbon|null                       $created_at
- * @property \Illuminate\Support\Carbon|null                       $updated_at
- * @property mixed                                                 $extension
- * @property mixed                                                 $human_readable_size
- * @property mixed                                                 $type
+ * @property int                                                                                  $id
+ * @property int                                                                                  $model_id
+ * @property string                                                                               $model_type
+ * @property string                                                                               $collection_name
+ * @property string                                                                               $name
+ * @property string                                                                               $file_name
+ * @property string|null                                                                          $mime_type
+ * @property string                                                                               $disk
+ * @property int                                                                                  $size
+ * @property array                                                                                $manipulations
+ * @property array                                                                                $custom_properties
+ * @property array                                                                                $responsive_images
+ * @property int|null                                                                             $order_column
+ * @property \Illuminate\Support\Carbon|null                                                      $created_at
+ * @property \Illuminate\Support\Carbon|null                                                      $updated_at
+ * @property mixed                                                                                $extension
+ * @property mixed                                                                                $human_readable_size
+ * @property mixed                                                                                $type
  * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection $model
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Media newModelQuery()
@@ -101,7 +101,7 @@ class Media extends \Spatie\MediaLibrary\Models\Media
      */
     public function guessFileExtension()
     {
-        $type = $this->mime_type;
+        $type    = $this->mime_type;
         $guesser = ExtensionGuesser::getInstance();
 
         return $guesser->guess($type);

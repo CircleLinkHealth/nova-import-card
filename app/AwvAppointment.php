@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
 use Carbon\Carbon;
@@ -8,7 +12,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 /**
  * Class AwvAppointment.
  *
- * @property int $user
+ * @property int    $user
  * @property string $type
  * @property Carbon $appointment
  * @property Carbon $created_at
@@ -16,8 +20,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  */
 class AwvAppointment extends BaseModel
 {
-    protected $table = 'awv_appointments';
-
     protected $dates = [
         'appointment',
         'created_at',
@@ -31,6 +33,7 @@ class AwvAppointment extends BaseModel
         'created_at',
         'updated_at',
     ];
+    protected $table = 'awv_appointments';
 
     public function user()
     {

@@ -1,31 +1,35 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
 
 class QuestionType extends BaseModel
 {
-    const CHECKBOX = 'checkbox';
-
-    const TEXT = 'text';
-
-    const RADIO = 'radio';
-
-    const NUMBER = 'number';
+    const ADDRESS      = 'address';
+    const CHECKBOX     = 'checkbox';
+    const CONFIRMATION = 'confirmation';
 
     const DATE = 'date';
 
-    const SELECT = 'select';
+    // Enrollmen Survey
+    const DOB = 'dob';
 
     const MULTI_SELECT = 'multi_select';
 
-    // Enrollmen Survey
-    const DOB = 'dob';
-    const PHONE = 'phone';
-    const ADDRESS = 'address';
+    const NUMBER = 'number';
+    const PHONE  = 'phone';
+
+    const RADIO = 'radio';
+
+    const SELECT = 'select';
+
+    const TEXT = 'text';
     const TIME = 'time';
-    const CONFIRMATION = 'confirmation';
     // Enrollmen Survey end
 
     /**
