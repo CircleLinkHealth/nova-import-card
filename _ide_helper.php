@@ -684,6 +684,9 @@ namespace Illuminate\Support\Facades {
 
         /**
          * @static
+         * @param mixed $request
+         * @param mixed $type
+         * @param mixed $catch
          */
         public static function handle($request, $type = 1, $catch = true)
         {
@@ -15717,6 +15720,7 @@ namespace Nwidart\Modules\Facades {
 
         /**
          * @static
+         * @param mixed $module
          */
         public static function assetPath($module)
         {
@@ -15751,6 +15755,8 @@ namespace Nwidart\Modules\Facades {
 
         /**
          * @static
+         * @param mixed      $key
+         * @param mixed|null $default
          */
         public static function config($key, $default = null)
         {
@@ -15774,6 +15780,7 @@ namespace Nwidart\Modules\Facades {
 
         /**
          * @static
+         * @param mixed $name
          */
         public static function delete($name)
         {
@@ -15814,6 +15821,7 @@ namespace Nwidart\Modules\Facades {
 
         /**
          * @static
+         * @param mixed $name
          */
         public static function find($name)
         {
@@ -15824,6 +15832,7 @@ namespace Nwidart\Modules\Facades {
 
         /**
          * @static
+         * @param mixed $alias
          */
         public static function findByAlias($alias)
         {
@@ -15849,6 +15858,7 @@ namespace Nwidart\Modules\Facades {
 
         /**
          * @static
+         * @param mixed $name
          */
         public static function findRequirements($name)
         {
@@ -16072,6 +16082,7 @@ namespace Nwidart\Modules\Facades {
 
         /**
          * @static
+         * @param mixed $name
          */
         public static function isDisabled($name)
         {
@@ -16082,6 +16093,7 @@ namespace Nwidart\Modules\Facades {
 
         /**
          * @static
+         * @param mixed $name
          */
         public static function isEnabled($name)
         {

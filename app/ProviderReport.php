@@ -78,8 +78,8 @@ class ProviderReport extends BaseModel
             $hra->where('year', $year);
         })
             ->whereHas('vitalsSurveyInstance', function ($vitals) use ($year) {
-                         $vitals->where('year', $year);
-                     });
+                $vitals->where('year', $year);
+            });
     }
 
     public function vitalsSurveyInstance()

@@ -47,13 +47,13 @@ class SurveyService
                 'patientAWVSummaries',
             ])
                 ->whereHas('surveys', function ($survey) use ($surveyId) {
-                $survey->where('survey_id', $surveyId);
-                //->where('status', '!=', SurveyInstance::COMPLETED);
-            })
+                    $survey->where('survey_id', $surveyId);
+                    //->where('status', '!=', SurveyInstance::COMPLETED);
+                })
                 ->whereHas('surveyInstances', function ($instance) use ($surveyId) {
-                $instance->where('users_surveys.survey_id', $surveyId);
-                $instance->mostRecent();
-            })
+                    $instance->where('users_surveys.survey_id', $surveyId);
+                    $instance->mostRecent();
+                })
                 ->findOrFail($patientId);
 
         self::updateOrCreatePatientAWVSummary($patientWithSurveyData);

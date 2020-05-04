@@ -45,8 +45,8 @@ class SurveyAnswersCalculateSuggestionsJob implements ShouldQueue
             ->orWhere('name', '=', Survey::VITALS)
             ->get()
             ->mapWithKeys(function ($survey) {
-                             return [$survey->name => $survey->id];
-                         });
+                return [$survey->name => $survey->id];
+            });
 
         //could optimise these, but I tried to re-use existing code
         $userWithHraSurvey    = SurveyService::getSurveyData($this->patientId, $surveys[Survey::HRA]);
