@@ -83,7 +83,7 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
     private function attemptApproval(DirectMailMessage $directMailMessage): bool
     {
         $careplanId = $this->getCareplanIdToApprove($directMailMessage->body);
-        if ($careplanId && $this->actionIsAuthorized($directMailMessage->from, $careplanId)) {
+        if ($careplanId && $this->actionIsAuthorized($directMailMessage->from, $careplanId) && DirectMailMessage::DIRECTION_RECEIVED === $directMailMessage->direction) {
             $cp = $this->getCarePlan($careplanId);
             event(new CarePlanWasApproved($cp->patient, $cp->patient->billingProviderUser()));
             $cp->patient->billingProviderUser()->notify(new CarePlanDMApprovalConfirmation($cp->patient));
@@ -101,7 +101,7 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
     private function attemptChange(DirectMailMessage $directMailMessage): bool
     {
         $careplanId = $this->getCareplanIdToChange($directMailMessage->body);
-        if ($careplanId && $this->actionIsAuthorized($directMailMessage->from, $careplanId)) {
+        if ($careplanId && $this->actionIsAuthorized($directMailMessage->from, $careplanId) && DirectMailMessage::DIRECTION_RECEIVED === $directMailMessage->direction) {
             $cp   = $this->getCarePlan($careplanId);
             $note = Note::create(
                 [

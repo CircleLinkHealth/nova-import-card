@@ -48,12 +48,11 @@ class NotifySlackChannel implements ShouldQueue
             return;
         }
 
-        $link        = route('import.ccd.remix');
         $messageLink = route('direct-mail.show', [$dm->id]);
 
         sendSlackMessage(
             '#ccd-file-status',
-            "We received a message from EMR Direct. \n Click here to see the message {$messageLink}. \n If a CCD was included in the message, it has been imported. Click here {$link} to QA and Import."
+            "We received a message from EMR Direct. \n Click here to see the message {$messageLink}."
         );
     }
 }
