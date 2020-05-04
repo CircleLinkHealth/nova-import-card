@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "68eb2a446df093fcdf095d912d0a52d7",
+    "content-hash": "9c891a808ebbc54050088cbf3eab5022",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1419,11 +1419,11 @@
         },
         {
             "name": "circlelinkhealth/timetracking-module",
-            "version": "v1.2.2",
+            "version": "v1.2.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "f30c62ed46056838286456ee2947f73cd78df540"
+                "reference": "cb81374d299dd012524173704ab313726a638b1f"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1448,7 +1448,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-27T09:25:18+00:00"
+            "time": "2020-05-04T20:39:47+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
