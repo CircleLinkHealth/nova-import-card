@@ -100,7 +100,7 @@ class ActivityController extends Controller
 
         $patient = User::with('patientInfo')->findOrFail($patientId);
 
-        $name = (new PatientDailyAuditReport($patient->patientInfo, $dateTime))->renderPDF();
+        $name = (new PatientDailyAuditReport($patient, $dateTime))->renderPDF();
         $path = storage_path("download{$name}");
 
         return response()->download($path)->deleteFileAfterSend();
