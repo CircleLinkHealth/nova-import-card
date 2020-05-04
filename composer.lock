@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7715453684e5fc1ec31aa698652c7194",
+    "content-hash": "c7f6d48913a5106497d284c4adace57a",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -662,11 +662,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-test_db_seeders",
+            "version": "v1.7.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "963a724b56587fb47b4bbc71ebbd08772d843b40"
+                "reference": "7dd0b2450356515157c586fc36624fec588b6ed6"
             },
             "type": "laravel-module",
             "extra": {
@@ -688,15 +688,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-01T19:08:46+00:00"
+            "time": "2020-05-04T15:53:33+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-test_db_seeders",
+            "version": "v2.3.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "e36a4b054c81b8ea41465ea4d053be24cfc51c82"
+                "reference": "81b9adfc79ed0a194fd8310139d15484ce49567c"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -730,7 +730,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-04T13:32:37+00:00"
+            "time": "2020-05-04T15:51:38+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -814,11 +814,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "dev-test_db_seeders",
+            "version": "v1.4.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "b131c81c36aca985b7cbfe7ba7fa4696e743c417"
+                "reference": "11f136605633439f8b1cebb0bfd10ccee10ef2c1"
             },
             "type": "laravel-module",
             "autoload": {
@@ -832,7 +832,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-04T11:50:22+00:00"
+            "time": "2020-05-04T15:52:54+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -11744,9 +11744,6 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "circlelinkhealth/cpm-migrations-module": 20,
-        "circlelinkhealth/customer-module": 20,
-        "circlelinkhealth/shared-models-module": 20,
         "waavi/url-shortener": 20
     },
     "prefer-stable": true,
