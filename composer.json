@@ -142,7 +142,7 @@
     "circlelinkhealth/condition-code-lookup-module": "1.1.4",
     "circlelinkhealth/core-module": "1.5.4",
     "circlelinkhealth/cpm-migrations-module": "1.7.0",
-    "circlelinkhealth/customer-module": "dev-lint",
+    "circlelinkhealth/customer-module": "dev-attestation-add-timestamps",
     "circlelinkhealth/eligibility-module": "2.3.2",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/generate-success-stories-report": "*",
