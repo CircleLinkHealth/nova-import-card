@@ -242,9 +242,15 @@
     @endif
     @push('scripts')
         <script type="text/javascript">
-            window.onload = function () {
+            function onLoad() {
+                if (typeof filterText === 'undefined') {
+                    setTimeout(() => onLoad(), 200);
+                    return;
+                }
                 filterText('');
             }
+
+            window.onload = onLoad;
             // obs_alerts_dtable.hideColumn("ccm_status");
         </script>
     @endpush
