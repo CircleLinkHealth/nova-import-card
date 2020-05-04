@@ -165,8 +165,7 @@ class Call extends BaseModel implements AttachableToNotification
 
     public function attestedProblems()
     {
-        return $this->belongsToMany(Problem::class, 'call_problems', 'call_id', 'ccd_problem_id')
-            ->withTimestamps();
+        return $this->belongsToMany(Problem::class, 'call_problems', 'call_id', 'ccd_problem_id');
     }
 
     public function getIsFromCareCenterAttribute()
