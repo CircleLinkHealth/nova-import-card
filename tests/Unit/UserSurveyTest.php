@@ -7,11 +7,11 @@ use App\QuestionGroup;
 use App\QuestionType;
 use App\Survey;
 use App\SurveyInstance;
-
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class UserSurveyTest extends TestCase
@@ -46,16 +46,13 @@ class UserSurveyTest extends TestCase
 
         $this->surveys = Survey::get();
         $this->assertEquals(2, $this->surveys->count());
-
     }
 
     /**
-     * A survey can have multiple instances
-     *
+     * A survey can have multiple instances.
      */
     public function createAndAttachSurveyInstances()
     {
-
         foreach ($this->surveys as $survey) {
             $instances = $survey->instances()->createMany([
                 [
@@ -86,11 +83,10 @@ class UserSurveyTest extends TestCase
         $this->assertEquals(2, $this->user->getSurveys()->count());
         $this->assertEquals(3, $this->user->getSurveys()->first()->instances()->count());
         $this->assertEquals(3, $this->user->getSurveys()->last()->instances()->count());
-
     }
 
     /**
-     *Testing inverse of relationship on survey instance
+     *Testing inverse of relationship on survey instance.
      */
     public function test_questions_can_be_created_for_each_survey()
     {
@@ -103,7 +99,6 @@ class UserSurveyTest extends TestCase
             $questions = [];
 
             for ($i = 0; $i < 10; $i++) {
-
                 $group = QuestionGroup::create([
                     'body' => $this->faker->text,
                 ]);
@@ -132,7 +127,7 @@ class UserSurveyTest extends TestCase
                     $this->assertNull($question->questionGroup);
                 }
 
-                $type         = $questionTypes->random();
+                $type = $questionTypes->random();
                 $questionType = $question->type()->create([
                     'answer_type' => $type,
                 ]);
@@ -151,10 +146,10 @@ class UserSurveyTest extends TestCase
             }
             $this->assertEquals(10, count($questions));
             foreach ($survey->instances as $instance) {
-                $order    = 1;
+                $order = 1;
                 $subOrder = 1;
                 foreach ($questions as $question) {
-                    if ( ! is_null($question->questionGroup)) {
+                    if (! is_null($question->questionGroup)) {
                         $instance->questions()->attach(
                             $question->id,
                             [
@@ -175,15 +170,13 @@ class UserSurveyTest extends TestCase
                         );
                         $order += 1;
                     }
-
                 }
                 $this->assertEquals($instance->questions()->whereNotNull('sub_order')->count(), 4);
             }
         }
-
     }
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -198,13 +191,11 @@ class UserSurveyTest extends TestCase
             'email'             => $this->faker->unique()->safeEmail,
             'email_verified_at' => $this->date,
             'password'          => bcrypt('secret'),
-            'remember_token'    => str_random(10),
+            'remember_token'    => Str::random(10),
         ]);
         $this->assertNotNull($this->user);
 
         $this->createSurveys();
         $this->createAndAttachSurveyInstances();
-
-
     }
 }

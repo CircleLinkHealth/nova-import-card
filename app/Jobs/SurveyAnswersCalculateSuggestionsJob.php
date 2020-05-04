@@ -42,9 +42,9 @@ class SurveyAnswersCalculateSuggestionsJob implements ShouldQueue
                          });
 
         //could optimise these, but I tried to re-use existing code
-        $userWithHraSurvey    = SurveyService::getSurveyData($this->patientId, $surveys[Survey::HRA]);
+        $userWithHraSurvey = SurveyService::getSurveyData($this->patientId, $surveys[Survey::HRA]);
         $userWithVitalsSurvey = SurveyService::getSurveyData($this->patientId, $surveys[Survey::VITALS]);
-        $calculator           = new SurveyAnswerSuggestionsCalculator($userWithHraSurvey,
+        $calculator = new SurveyAnswerSuggestionsCalculator($userWithHraSurvey,
             $userWithHraSurvey->surveyInstances->first(),
             $userWithVitalsSurvey->surveyInstances->first());
         $calculator->calculate();

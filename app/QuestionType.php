@@ -38,7 +38,6 @@ class QuestionType extends BaseModel
         'type',
     ];
 
-
     public function question()
     {
         return $this->belongsTo(Question::class, 'question_id');
@@ -48,5 +47,4 @@ class QuestionType extends BaseModel
     {
         return $this->hasMany(QuestionTypesAnswer::class, 'question_type_id');
     }
-
 }

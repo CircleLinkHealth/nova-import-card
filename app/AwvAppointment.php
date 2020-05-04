@@ -6,8 +6,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 
 /**
- * Class AwvAppointment
- * @package App
+ * Class AwvAppointment.
  *
  * @property int $user
  * @property string $type

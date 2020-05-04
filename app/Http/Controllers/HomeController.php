@@ -30,6 +30,5 @@ class HomeController extends Controller
         }
 
         return \App::call('App\Http\Controllers\PatientController@index');
-
     }
 }

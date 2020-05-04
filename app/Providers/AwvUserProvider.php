@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use App\InvitationLink;
 use Illuminate\Auth\EloquentUserProvider;
-use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
+use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 use Illuminate\Support\Carbon;
 
 class AwvUserProvider extends EloquentUserProvider
@@ -34,18 +34,18 @@ class AwvUserProvider extends EloquentUserProvider
     {
         //$credentials = [ signed_token, name, dob ]
 
-        if ( ! $this->isPatientLogin($credentials)) {
+        if (! $this->isPatientLogin($credentials)) {
             return parent::retrieveByCredentials($credentials);
         }
 
         $credentials = $this->sanitizeCredentialsArr($credentials);
-        if ( ! $credentials) {
-            return null;
+        if (! $credentials) {
+            return;
         }
 
         $invitationLink = $this->getInvitationLink($credentials);
-        if ( ! $invitationLink) {
-            return null;
+        if (! $invitationLink) {
+            return;
         }
 
         return $invitationLink->patientInfo->user;
@@ -63,17 +63,17 @@ class AwvUserProvider extends EloquentUserProvider
     {
         //$credentials = [ signed_token, name, dob ]
 
-        if ( ! $this->isPatientLogin($credentials)) {
+        if (! $this->isPatientLogin($credentials)) {
             return parent::validateCredentials($user, $credentials);
         }
 
         $credentials = $this->sanitizeCredentialsArr($credentials);
-        if ( ! $credentials) {
+        if (! $credentials) {
             return false;
         }
 
         $invitationLink = $this->getInvitationLink($credentials);
-        if ( ! $invitationLink) {
+        if (! $invitationLink) {
             return false;
         }
 
@@ -81,8 +81,7 @@ class AwvUserProvider extends EloquentUserProvider
         $urlUpdatedAt = $invitationLink->updated_at;
         $isExpiredUrl = $invitationLink->is_manually_expired;
         if ($isExpiredUrl || $urlUpdatedAt->diffInDays(Carbon::now()) > self::LINK_EXPIRES_IN_DAYS) {
-
-            if ( ! $isExpiredUrl) {
+            if (! $isExpiredUrl) {
                 $invitationLink->is_manually_expired = true;
                 $invitationLink->save();
             }
@@ -101,13 +100,13 @@ class AwvUserProvider extends EloquentUserProvider
             return null;
         }
 
-        if ( ! isset($credentials['signed_token']) ||
+        if (! isset($credentials['signed_token']) ||
              ! isset($credentials['name']) ||
              ! isset($credentials['dob'])) {
             return null;
         }
 
-        if ( ! ($credentials['dob'] instanceof Carbon)) {
+        if (! ($credentials['dob'] instanceof Carbon)) {
             $credentials['dob'] = Carbon::parse($credentials['dob'])->startOfDay();
         }
 
@@ -117,25 +116,25 @@ class AwvUserProvider extends EloquentUserProvider
     private function getInvitationLink(array $credentials): ?InvitationLink
     {
         $token = $credentials['signed_token'];
-        $name  = $credentials['name'];
-        $dob   = $credentials['dob'];
+        $name = $credentials['name'];
+        $dob = $credentials['dob'];
 
         /** @var InvitationLink $invitationLink */
         $invitationLink = InvitationLink::with('patientInfo.user')
                                         ->where('link_token', $token)
                                         ->first();
 
-        if ( ! $invitationLink) {
+        if (! $invitationLink) {
             return null;
         }
 
         $modelDob = $invitationLink->patientInfo->birth_date;
-        if ( ! ($modelDob instanceof Carbon)) {
+        if (! ($modelDob instanceof Carbon)) {
             $modelDob = Carbon::parse($modelDob)->startOfDay();
         }
 
         //check inputs
-        if ( ! $dob->equalTo($modelDob) ||
+        if (! $dob->equalTo($modelDob) ||
              strcasecmp($invitationLink->patientInfo->user->display_name, $name) != 0) {
             return null;
         }
@@ -143,7 +142,8 @@ class AwvUserProvider extends EloquentUserProvider
         return $invitationLink;
     }
 
-    private function isPatientLogin(array $credentials): bool {
+    private function isPatientLogin(array $credentials): bool
+    {
         return isset($credentials['signed_token']);
     }
 }

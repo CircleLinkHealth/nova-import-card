@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-
 use App\Answer;
 use App\Events\SurveyInstancePivotSaved;
 use App\Survey;
@@ -12,7 +11,6 @@ use Carbon\Carbon;
 
 class SurveyService
 {
-
     public static function getCurrentSurveyData($patientId, $surveyName)
     {
         $surveyId = Survey::where('name', '=', $surveyName)->pluck('id')->first();
@@ -35,7 +33,6 @@ class SurveyService
                                      $question->with(['questionGroup', 'type.questionTypeAnswers']);
                                  },
                              ]);
-
                 },
                 'answers'         => function ($answer) use ($surveyId) {
                     $answer->whereHas('surveyInstance', function ($instance) use ($surveyId) {
@@ -58,11 +55,10 @@ class SurveyService
         self::updateOrCreatePatientAWVSummary($patientWithSurveyData);
 
         return $patientWithSurveyData;
-
     }
 
     /**
-     * Update or create an answer for a survey
+     * Update or create an answer for a survey.
      *
      * @param $input
      *
@@ -81,16 +77,15 @@ class SurveyService
             'value'                   => $input['value'],
         ]);
 
-        if ( ! $answer) {
+        if (! $answer) {
             return false;
         }
 
-        return SurveyService::updateSurveyInstanceStatus($input);
-
+        return self::updateSurveyInstanceStatus($input);
     }
 
     /**
-     * Update the status of a survey based on answered questions
+     * Update the status of a survey based on answered questions.
      *
      * @param $input
      *
@@ -121,7 +116,7 @@ class SurveyService
         /** @var SurveyInstance $instance */
         $instance = $user->surveyInstances->first();
 
-        if ( ! $instance->pivot->start_date) {
+        if (! $instance->pivot->start_date) {
             $instance->pivot->start_date = Carbon::now();
         }
 
@@ -150,7 +145,7 @@ class SurveyService
 
     private static function updateOrCreatePatientAWVSummary(User $patient)
     {
-        if ( ! $patient) {
+        if (! $patient) {
             return;
         }
 
@@ -161,7 +156,7 @@ class SurveyService
 
         $summary = $patient->patientAWVSummaries->where('year', $date->year)->first();
 
-        if ( ! $summary) {
+        if (! $summary) {
             $patient->patientAWVSummaries()->create([
                 'year'             => $date->year,
                 'is_initial_visit' => $isInitial,

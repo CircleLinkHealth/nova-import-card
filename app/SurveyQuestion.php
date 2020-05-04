@@ -6,7 +6,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 
 class SurveyQuestion extends BaseModel
 {
-
     /**
      * The attributes that are mass assignable.
      *
@@ -28,5 +27,4 @@ class SurveyQuestion extends BaseModel
     {
         return $this->hasOne(Question::class, 'question_id');
     }
-
 }

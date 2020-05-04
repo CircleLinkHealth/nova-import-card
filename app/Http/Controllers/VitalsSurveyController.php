@@ -20,9 +20,9 @@ class VitalsSurveyController extends Controller
     {
         $patient = User::with(['regularDoctor', 'billingProvider'])->findOrFail($patientId);
 
-        if ( ! empty($patient->regularDoctorUser())) {
+        if (! empty($patient->regularDoctorUser())) {
             $doctorsName = $patient->regularDoctorUser()->getFullName();
-        } else if ( ! empty($patient->billingProviderUser())) {
+        } elseif (! empty($patient->billingProviderUser())) {
             $doctorsName = $patient->billingProviderUser()->getFullName();
         }
 
@@ -37,9 +37,9 @@ class VitalsSurveyController extends Controller
     {
         $patient = User::with(['regularDoctor', 'billingProvider'])->findOrFail($patientId);
 
-        if ( ! empty($patient->regularDoctorUser())) {
+        if (! empty($patient->regularDoctorUser())) {
             $doctorsName = $patient->regularDoctorUser()->getFullName();
-        } else if ( ! empty($patient->billingProviderUser())) {
+        } elseif (! empty($patient->billingProviderUser())) {
             $doctorsName = $patient->billingProviderUser()->getFullName();
         }
 
@@ -59,7 +59,7 @@ class VitalsSurveyController extends Controller
     public function getCurrentSurvey($patientId)
     {
         //no need to have this check here
-        if ( ! Auth::check()) {
+        if (! Auth::check()) {
             return redirect()->route('survey.vitals.welcome', ['patientId' => $patientId]);
         }
 
@@ -69,8 +69,8 @@ class VitalsSurveyController extends Controller
 
         $userWithSurveyData = $this->service->getSurveyData($patientId);
 
-        if ( ! $userWithSurveyData) {
-            throw new \Error("Survey not found for patient " . $patientId);
+        if (! $userWithSurveyData) {
+            throw new \Error('Survey not found for patient '.$patientId);
         }
 
         return view('survey.vitals.index', [
@@ -90,7 +90,7 @@ class VitalsSurveyController extends Controller
     {
         $result = $this->service->updateOrCreateAnswer($request);
 
-        if ( ! $result) {
+        if (! $result) {
             return response()->json(['errors' => 'Answer was not created'], 400);
         }
 
@@ -99,6 +99,5 @@ class VitalsSurveyController extends Controller
             'survey_status' => $result['status'],
             'next_question_id' => $result['next_question_id'],
         ], 200);
-
     }
 }

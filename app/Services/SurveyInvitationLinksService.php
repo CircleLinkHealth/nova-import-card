@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Services;
 
 use App\InvitationLink;
@@ -30,7 +29,7 @@ class SurveyInvitationLinksService
 
         //http://awv.clh.test/auth/login-survey/326/3
         $path = explode('/', $parsed['path']);
-        $count = sizeof($path);
+        $count = count($path);
 
         return $path[$count - 2];
     }
@@ -48,28 +47,25 @@ class SurveyInvitationLinksService
         User $user,
         string $surveyName,
         bool $addUserToSurveyInstance = false
-    )
-    {
-        if (!$user->patientInfo) {
-            throw new \Exception("missing patient info from user");
+    ) {
+        if (! $user->patientInfo) {
+            throw new \Exception('missing patient info from user');
         }
 
         if ($user->surveyInstances->isEmpty()) {
-
-            if (!$addUserToSurveyInstance) {
-                throw new \Exception("user does not belong to a survey instance");
+            if (! $addUserToSurveyInstance) {
+                throw new \Exception('user does not belong to a survey instance');
             }
 
             $ids = $this->enrolUser($user);
             $surveyId = $ids[$surveyName];
-
         } else {
 
             /** @var SurveyInstance */
             $hraSurveyInstance = $user->surveyInstances->first();
 
             if ($hraSurveyInstance->pivot->status === SurveyInstance::COMPLETED) {
-                throw new \Exception("cannot create invitation link for a completed survey");
+                throw new \Exception('cannot create invitation link for a completed survey');
             }
 
             $surveyId = $hraSurveyInstance->survey_id;
@@ -153,13 +149,13 @@ class SurveyInvitationLinksService
             ->get();
 
         $hraSurvey = $surveys->firstWhere('name', Survey::HRA);
-        if (!$hraSurvey || $hraSurvey->instances->isEmpty()) {
-            throw new \Exception("There is no HRA survey instance.");
+        if (! $hraSurvey || $hraSurvey->instances->isEmpty()) {
+            throw new \Exception('There is no HRA survey instance.');
         }
 
         $vitalsSurvey = $surveys->firstWhere('name', Survey::VITALS);
-        if (!$vitalsSurvey || $vitalsSurvey->instances->isEmpty()) {
-            throw new \Exception("There is no VITALS survey instance.");
+        if (! $vitalsSurvey || $vitalsSurvey->instances->isEmpty()) {
+            throw new \Exception('There is no VITALS survey instance.');
         }
 
         if ($user->surveyInstances->where('survey_id', '=', $vitalsSurvey->id)->isEmpty()) {

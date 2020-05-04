@@ -72,6 +72,5 @@ class CreatePersonalizedPreventionPlanViewTable extends Command
        u.id,
        us.survey_id
        ");
-
     }
 }

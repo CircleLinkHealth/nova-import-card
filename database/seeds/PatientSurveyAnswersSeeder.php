@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Faker\Factory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class PatientSurveyAnswersSeeder extends Seeder
 {
@@ -23,13 +24,13 @@ class PatientSurveyAnswersSeeder extends Seeder
      */
     public function run()
     {
-        $date    = Carbon::now();
+        $date = Carbon::now();
         $service = new SurveyService();
 
         $user = User::ofType('participant')
                     ->first();
 
-        if ( ! $user) {
+        if (! $user) {
             $user = $this->createTestUser();
         }
 
@@ -43,14 +44,14 @@ class PatientSurveyAnswersSeeder extends Seeder
         ])
                            ->where('name', Survey::HRA)->first();
 
-        $vitalsSurvey   = Survey::with([
+        $vitalsSurvey = Survey::with([
             'instances' => function ($instance) use ($date) {
                 $instance->with('questions')
                          ->forYear($date->year);
             },
         ])
                                 ->where('name', Survey::VITALS)->first();
-        $hraInstance    = $hraSurvey->instances->first();
+        $hraInstance = $hraSurvey->instances->first();
         $vitalsInstance = $vitalsSurvey->instances->first();
 
         $user->surveys()->attach(
@@ -73,7 +74,6 @@ class PatientSurveyAnswersSeeder extends Seeder
         $hraAnswers = $this->hraAnswerData();
 
         foreach ($hraAnswers as $answerData) {
-
             $question = $this->getQuestionWithOrder($hraInstance, $answerData['order'], $answerData['subOrder']);
 
             $service->updateOrCreateAnswer([
@@ -87,7 +87,6 @@ class PatientSurveyAnswersSeeder extends Seeder
         $vitalsAnswers = $this->vitalsAnswerData();
 
         foreach ($vitalsAnswers as $answerData) {
-
             $question = $this->getQuestionWithOrder($vitalsInstance, $answerData['order'], $answerData['subOrder']);
 
             $input = [
@@ -101,8 +100,6 @@ class PatientSurveyAnswersSeeder extends Seeder
             //fix to generate reports
 //            $service->updateSurveyInstanceStatus($input, true);
         }
-
-
     }
 
     public function hraAnswerData(): Collection
@@ -133,16 +130,14 @@ class PatientSurveyAnswersSeeder extends Seeder
             [
                 'order'    => 4,
                 'subOrder' => null,
-                'answer'   =>
-                    [
+                'answer'   => [
                         'value' => 'Female',
                     ],
             ],
             [
                 'order'    => 5,
                 'subOrder' => null,
-                'answer'   =>
-                    [
+                'answer'   => [
                         'value' => 'Fair',
                     ],
             ],
@@ -668,15 +663,13 @@ class PatientSurveyAnswersSeeder extends Seeder
         ]);
     }
 
-
     /**
-     * use this to create test patient, currently not being used
+     * use this to create test patient, currently not being used.
      *
      * @return $this|\Illuminate\Database\Eloquent\Model
      */
     public function createTestUser()
     {
-
         $faker = Factory::create();
 
         $user = User::create([
@@ -688,7 +681,7 @@ class PatientSurveyAnswersSeeder extends Seeder
             'username'             => $faker->userName,
             'auto_attach_programs' => 1,
             'password'             => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
-            'remember_token'       => str_random(10),
+            'remember_token'       => Str::random(10),
             'address'              => $faker->address,
             'address2'             => $faker->address,
             'city'                 => $faker->city,

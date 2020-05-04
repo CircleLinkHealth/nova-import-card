@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Services;
-
 
 use App\Answer;
 use App\SurveyInstance;
@@ -11,19 +9,19 @@ use Illuminate\Support\Facades\DB;
 
 class SurveyAnswerSuggestionsCalculator
 {
-    /** @var User $patient */
+    /** @var User */
     protected $patient;
 
-    /** @var SurveyInstance $hraInstance */
+    /** @var SurveyInstance */
     protected $hraInstance;
 
-    /** @var SurveyInstance $vitalsInstance */
+    /** @var SurveyInstance */
     protected $vitalsInstance;
 
     public function __construct(User $patientWithSurvey, SurveyInstance $hraInstance, SurveyInstance $vitalsInstance)
     {
-        $this->patient        = $patientWithSurvey;
-        $this->hraInstance    = $hraInstance;
+        $this->patient = $patientWithSurvey;
+        $this->hraInstance = $hraInstance;
         $this->vitalsInstance = $vitalsInstance;
     }
 
@@ -43,12 +41,10 @@ class SurveyAnswerSuggestionsCalculator
 
     private function suggestAnswerForRace()
     {
-
     }
 
     private function suggestAnswerForHispanicLatino()
     {
-
     }
 
     private function suggestAnswerForAge()
@@ -63,36 +59,31 @@ class SurveyAnswerSuggestionsCalculator
             'survey_instance_id' => $this->hraInstance->id,
             'question_id'        => $target->id,
         ], [
-            'suggested_value' => ["value" => [$this->patient->getAge()]],
+            'suggested_value' => ['value' => [$this->patient->getAge()]],
         ]);
     }
 
     private function suggestAnswerForHeight()
     {
-
     }
 
     private function suggestAnswerForSex()
     {
-
     }
 
     private function suggestAnswerForAlcohol()
     {
-
     }
 
     private function suggestAnswerForConditions()
     {
-
     }
 
     /**
-     * TODO: blocking ticket: CPM-1753
+     * TODO: blocking ticket: CPM-1753.
      */
     private function suggestAnswerForMedications()
     {
-
     }
 
     private function suggestAnswerForAllergies()
@@ -121,7 +112,6 @@ class SurveyAnswerSuggestionsCalculator
 
     private function suggestAnswerForWeight()
     {
-
     }
 
     /**
@@ -129,8 +119,7 @@ class SurveyAnswerSuggestionsCalculator
      *       see ticket CPM-1508
      *  Raw data found in ccdas table
      *  BMI - ccda vitals
-     *  find example ccdas in app-cpm-web/storage/ccdas/Samples
-     *
+     *  find example ccdas in app-cpm-web/storage/ccdas/Samples.
      */
     const HRA_QUESTION_ORDERS = [
         'race'            => ['order' => 1, 'sub_order' => 'a'], //-> race and ethnicity report ccd_demographics_logs
@@ -148,5 +137,4 @@ class SurveyAnswerSuggestionsCalculator
         'weight' => ['order' => 2, 'sub_order' => null], //ccda - vitals
         'height' => ['order' => 3, 'sub_order' => null], //ccda - vitals
     ];
-
 }

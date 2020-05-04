@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers;
-
 
 use App\Http\Requests\AddProviderRequest;
 use App\User;
@@ -17,12 +15,11 @@ class ProviderController
      */
     public function add(AddProviderRequest $request)
     {
-
     }
 
     /**
      * Search for existing provider based on first name and last name.
-     * NOTE: copied from CPM project: CareTeamController@searchProviders
+     * NOTE: copied from CPM project: CareTeamController@searchProviders.
      *
      * @param Request $request
      *

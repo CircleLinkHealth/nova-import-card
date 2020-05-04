@@ -64,7 +64,7 @@ class PatientLoginController extends Controller
     {
         $user = User::with(['primaryPractice', 'billingProvider'])->where('id', '=', $userId)->firstOrFail();
         $doctor = $user->billingProviderUser();
-        $doctorsLastName = "???";
+        $doctorsLastName = '???';
         if ($doctor) {
             $doctorsLastName = $doctor->display_name;
         }
@@ -86,12 +86,13 @@ class PatientLoginController extends Controller
     {
         $survey = Survey::whereName(Survey::ENROLLEES)->select('id')->first();
         $isEnrolleSurvey = false;
-        if (!empty($survey)) {
+        if (! empty($survey)) {
             $isEnrolleSurvey = $survey->users()
                 ->where('user_id', $userId)
                 ->wherePivot('survey_id', $survey->id)
                 ->exists();
         }
+
         return $isEnrolleSurvey;
     }
 
@@ -168,14 +169,14 @@ class PatientLoginController extends Controller
         $user = auth()->user();
 
         $prevUrl = Session::previousUrl();
-        if (empty($prevUrl) || !$user->hasRole(['participant', 'survey-only'])) {
+        if (empty($prevUrl) || ! $user->hasRole(['participant', 'survey-only'])) {
             Log::debug("PatientLoginController: no prevUrl or no participant [$user->id]. Going `home`");
+
             return route('home');
         }
 
         $surveyId = $this->service->getSurveyIdFromSignedUrl($prevUrl);
         $name = Survey::find($surveyId, ['name'])->name;
-
 
         if (Survey::ENROLLEES === $name) {
             $route = route('survey.enrollees',

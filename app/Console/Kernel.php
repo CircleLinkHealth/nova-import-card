@@ -1,8 +1,11 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console;
 
-use App\Console\Commands\RunScheduler;
 use App\Console\Commands\SendHraSurveyReminder;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -15,13 +18,24 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        RunScheduler::class,
     ];
+
+    /**
+     * Register the commands for the application.
+     *
+     * @return void
+     */
+    protected function commands()
+    {
+        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__.'/PersonalizedPreventionPlanController');
+
+        require base_path('routes/console.php');
+    }
 
     /**
      * Define the application's command schedule.
      *
-     * @param \Illuminate\Console\Scheduling\Schedule $schedule
      *
      * @return void
      */
@@ -29,7 +43,7 @@ class Kernel extends ConsoleKernel
     {
         //set the dayPrior field to aid with QAing
 
-        $isProduction = config('app.env') === 'production';
+        $isProduction = 'production' === config('app.env');
 
         $schedule->command(SendHraSurveyReminder::class, [
             'daysPrior' => $isProduction
@@ -42,18 +56,5 @@ class Kernel extends ConsoleKernel
                 ? 8
                 : 1,
         ])->dailyAt('09:05')->onOneServer();
-    }
-
-    /**
-     * Register the commands for the application.
-     *
-     * @return void
-     */
-    protected function commands()
-    {
-        $this->load(__DIR__ . '/Commands');
-        $this->load(__DIR__ . '/PersonalizedPreventionPlanController');
-
-        require base_path('routes/console.php');
     }
 }

@@ -19,7 +19,7 @@ class ProviderReportController extends Controller
 
     public function getProviderReport($userId, $year = null)
     {
-        if (! $year){
+        if (! $year) {
             $year = Carbon::now()->year;
         }
 
@@ -33,7 +33,7 @@ class ProviderReportController extends Controller
 
         $report = optional($patient->providerReports)->first();
 
-        if (! $report){
+        if (! $report) {
             throw new \Exception("This patient does not have a Provider Report for {$year}.");
         }
 

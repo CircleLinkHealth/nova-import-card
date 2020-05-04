@@ -21,6 +21,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
 
 class GeneratePatientReportsJob implements ShouldQueue
 {
@@ -52,7 +53,7 @@ class GeneratePatientReportsJob implements ShouldQueue
     protected $currentDate;
 
     /**
-     * Choose whether to save in Media and therefore cloud, or keep as a local file (for debugging)
+     * Choose whether to save in Media and therefore cloud, or keep as a local file (for debugging).
      * @var bool
      */
     protected $debug;
@@ -67,9 +68,9 @@ class GeneratePatientReportsJob implements ShouldQueue
     public function __construct($patientId, int $instanceYear, $debug = false)
     {
         $this->instanceYear = $instanceYear;
-        $this->patientId    = $patientId;
-        $this->currentDate  = Carbon::now();
-        $this->debug        = $debug;
+        $this->patientId = $patientId;
+        $this->currentDate = Carbon::now();
+        $this->debug = $debug;
     }
 
     /**
@@ -123,30 +124,30 @@ class GeneratePatientReportsJob implements ShouldQueue
 
         //Generate Reports
         $providerReport = (new GenerateProviderReportService($patient))->generateData();
-        if ( ! $providerReport) {
+        if (! $providerReport) {
             throw new \Exception("Something went wrong while generating Provider Report for patient with id:{$patient->id}");
         }
 
         $pppReport = (new GeneratePersonalizedPreventionPlanService($patient))->generateData();
-        if ( ! $pppReport) {
+        if (! $pppReport) {
             throw new \Exception("Something went wrong while generating Provider Report for patient with id:{$patient->id}");
         }
 
         $providerReportMedia = $this->createAndUploadPdfProviderReport($providerReport, $patient, $this->debug);
-        if ( ! $providerReportMedia) {
+        if (! $providerReportMedia) {
             throw new \Exception("Something went wrong while uploading Provider Report for patient with id:{$patient->id}");
         }
 
-        if ( ! $this->debug) {
+        if (! $this->debug) {
             $redisEvent->publishReportCreated($providerReportMedia);
         }
 
         $pppMedia = $this->createAndUploadPdfPPP($pppReport, $patient, $this->debug);
-        if ( ! $pppMedia) {
+        if (! $pppMedia) {
             throw new \Exception("Something went wrong while uploading PPP for patient with id:{$patient->id}");
         }
 
-        if ( ! $this->debug) {
+        if (! $this->debug) {
             $redisEvent->publishReportCreated($pppMedia);
         }
 
@@ -177,8 +178,8 @@ class GeneratePatientReportsJob implements ShouldQueue
     private function createAndUploadPdfProviderReport($providerReport, $patient, $saveLocally = false)
     {
         $pathToCoverPage = $this->getCoverPagePdf($patient, $providerReport->updated_at, 'Provider Report');
-        if ( ! $pathToCoverPage) {
-            throw new \Exception("Could not get cover page for Provider Report");
+        if (! $pathToCoverPage) {
+            throw new \Exception('Could not get cover page for Provider Report');
         }
 
         $providerReportFormattedData = (new ProviderReportService())->formatReportDataForView($providerReport);
@@ -201,14 +202,14 @@ class GeneratePatientReportsJob implements ShouldQueue
         ]);
 
         $pathToData = storage_path("provider_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_data.pdf");
-        $savedData  = file_put_contents($pathToData, $pdf->output());
-        if ( ! $savedData) {
+        $savedData = file_put_contents($pathToData, $pdf->output());
+        if (! $savedData) {
             throw new \Exception("Could not get store file $pathToData");
         }
 
-        $path  = storage_path("provider_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}.pdf");
+        $path = storage_path("provider_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}.pdf");
         $saved = $this->mergePdfs($path, $pathToCoverPage, $pathToData);
-        if ( ! $saved) {
+        if (! $saved) {
             throw new \Exception("Could not merge pdfs [$path]");
         }
 
@@ -232,9 +233,9 @@ class GeneratePatientReportsJob implements ShouldQueue
         $this->setPdfOptions($cover, false);
 
         $doctorsName = null;
-        if ( ! empty($patient->regularDoctorUser())) {
+        if (! empty($patient->regularDoctorUser())) {
             $doctorsName = $patient->regularDoctorUser()->getFullName();
-        } else if ( ! empty($patient->billingProviderUser())) {
+        } elseif (! empty($patient->billingProviderUser())) {
             $doctorsName = $patient->billingProviderUser()->getFullName();
         }
 
@@ -248,8 +249,8 @@ class GeneratePatientReportsJob implements ShouldQueue
             'providerName' => $doctorsName,
         ]);
 
-        $title = snake_case($reportTitle);
-        $coverPath  = storage_path("{$title}_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_temp_cover.pdf");
+        $title = Str::snake($reportTitle);
+        $coverPath = storage_path("{$title}_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_temp_cover.pdf");
         $coverSaved = file_put_contents($coverPath, $cover->output());
 
         return $coverSaved
@@ -287,7 +288,6 @@ class GeneratePatientReportsJob implements ShouldQueue
             //unlink($pdf2);
 
             return $saved;
-
         } catch (\Exception $e) {
             throw $e;
 //            \Log::error($e->getMessage());
@@ -299,12 +299,12 @@ class GeneratePatientReportsJob implements ShouldQueue
     private function createAndUploadPdfPPP(PersonalizedPreventionPlan $ppp, User $patient, $saveLocally = false)
     {
         $pathToCoverPage = $this->getCoverPagePdf($patient, $ppp->updated_at, 'Personalized', 'Prevention Plan');
-        if ( ! $pathToCoverPage) {
+        if (! $pathToCoverPage) {
             return false;
         }
 
         $personalizedHealthAdvices = (new PersonalizedPreventionPlanPrepareData())->prepareRecommendations($ppp);
-        $suggestedCheckListData    = PersonalizedPreventionPlanPrepareData::getOrderedSuggestedChecklist($personalizedHealthAdvices);
+        $suggestedCheckListData = PersonalizedPreventionPlanPrepareData::getOrderedSuggestedChecklist($personalizedHealthAdvices);
 
         /** @var PdfWrapper $pdf */
         $pdf = App::make('snappy.pdf.wrapper');
@@ -325,15 +325,15 @@ class GeneratePatientReportsJob implements ShouldQueue
             'isPdf'                     => true,
         ]);
 
-        $dataPath  = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_data.pdf");
+        $dataPath = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_data.pdf");
         $dataSaved = file_put_contents($dataPath, $pdf->output());
-        if ( ! $dataSaved) {
+        if (! $dataSaved) {
             return false;
         }
 
-        $path  = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}.pdf");
+        $path = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}.pdf");
         $saved = $this->mergePdfs($path, $pathToCoverPage, $dataPath);
-        if ( ! $saved) {
+        if (! $saved) {
             return false;
         }
 
