@@ -115,7 +115,19 @@ class Enrollable extends Resource
             $utcNote = $enrollable->other_note;
         }
 
-        $preferredPhone = $this->getPreferredPhone($enrollable);
+        $preferredPhone = $enrollable->getPreferredPhoneType();
+
+        //get agent details
+        $agentPhone        = '';
+        $agentEmail        = '';
+        $agentRelationship = '';
+        $agentName         = '';
+        if ('agent' === $preferredPhone) {
+            $agentPhone        = $enrollable->getAgentAttribute(Enrollee::AGENT_PHONE_KEY);
+            $agentName         = $enrollable->getAgentAttribute(Enrollee::AGENT_NAME_KEY);
+            $agentRelationship = $enrollable->getAgentAttribute(Enrollee::AGENT_RELATIONSHIP_KEY);
+            $agentEmail        = $enrollable->getAgentAttribute(Enrollee::AGENT_EMAIL_KEY);
+        }
 
         return array_merge([
             'enrollable_id'            => $enrollable->id,
@@ -132,6 +144,11 @@ class Enrollable extends Resource
             'cell_phone'               => $enrollable->cell_phone,
             'home_phone'               => $enrollable->home_phone,
             'preferred_phone'          => $preferredPhone,
+
+            'agent_phone'        => $agentPhone,
+            'agent_name'         => $agentName,
+            'agent_relationship' => $agentRelationship,
+            'agent_email'        => $agentEmail,
 
             'other_phone_sanitized' => $otherPhoneSanitized,
             'cell_phone_sanitized'  => $cellPhoneSanitized,
@@ -170,30 +187,6 @@ class Enrollable extends Resource
 
             'is_confirmed_family' => Enrollee::statusIsToConfirm($enrollable->status),
         ], $familyAttributes);
-    }
-
-    private function getPreferredPhone(Enrollee $enrollable)
-    {
-        if (empty(trim($enrollable->primary_phone))) {
-            return '';
-        }
-
-        $phones = [
-            $enrollable->home_phone  => 'home',
-            $enrollable->cell_phone  => 'cell',
-            $enrollable->other_phone => 'other',
-        ];
-
-        $preferredPhone = isset($phones[$enrollable->primary_phone]) ? $phones[$enrollable->primary_phone] : null;
-
-        //edge case - add primary as other phone
-        if ( ! $preferredPhone) {
-            $enrollable->other_phone = $enrollable->primary_phone_e164;
-            $enrollable->save();
-            $preferredPhone = 'other';
-        }
-
-        return $preferredPhone;
     }
 
     private function timeRangeToPanelWindows(string $timeRange)

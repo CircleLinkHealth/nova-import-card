@@ -7,6 +7,10 @@
 namespace App\Services\Enrollment;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PatientContactWindow;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use Illuminate\Support\Collection;
@@ -159,7 +163,7 @@ class UpdateEnrollable extends EnrollableService
             case 'agent':
                 $this->enrollee->setPrimaryPhoneNumberAttribute($this->data->get('agent_phone'));
                 $this->enrollee->agent_details = [
-                    Enrollee::AGENT_PHONE_KEY        => $this->data->get('agent_phone'),
+                    Enrollee::AGENT_PHONE_KEY        => (new StringManipulation())->formatPhoneNumberE164($this->data->get('agent_phone')),
                     Enrollee::AGENT_NAME_KEY         => $this->data->get('agent_name'),
                     Enrollee::AGENT_EMAIL_KEY        => $this->data->get('agent_email'),
                     Enrollee::AGENT_RELATIONSHIP_KEY => $this->data->get('agent_relationship'),
@@ -175,7 +179,6 @@ class UpdateEnrollable extends EnrollableService
         $this->enrollee->city                    = $this->data->get('city');
         $this->enrollee->zip                     = $this->data->get('zip');
         $this->enrollee->email                   = $this->data->get('email');
-        $this->enrollee->dob                     = $this->data->get('dob');
         $this->enrollee->last_call_outcome       = $this->data->get('consented');
         $this->enrollee->care_ambassador_user_id = $this->careAmbassador->user_id;
 
@@ -199,7 +202,11 @@ class UpdateEnrollable extends EnrollableService
 
         $this->enrollee->save();
 
-        ImportConsentedEnrollees::dispatch([$this->enrollee->id], $this->enrollee->batch);
+        $unreachablePatientUserExists = $this->updateUnreachablePatientUserIfYouShould();
+
+        if ( ! $unreachablePatientUserExists) {
+            ImportConsentedEnrollees::dispatch([$this->enrollee->id], $this->enrollee->batch);
+        }
     }
 
     private function updateOnRejected()
@@ -247,5 +254,147 @@ class UpdateEnrollable extends EnrollableService
         $this->enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
 
         $this->enrollee->save();
+    }
+
+    private function updateUnreachablePatientUserIfYouShould()
+    {
+        $this->enrollee->load('user.patientInfo');
+
+        $patientUser = $this->enrollee->user;
+
+        if ( ! $patientUser) {
+            return;
+        }
+
+        $patientInfo = $patientUser->patientInfo;
+
+        if ( ! $patientInfo) {
+            return;
+        }
+
+        if (Patient::UNREACHABLE !== $patientInfo->ccm_status) {
+            \Log::critical("Something fishy is going on.
+            Enrollee with id:{$this->enrollee->id} has consented through CA enrollment process while having a patient user model with status {$patientInfo->ccm_status}.");
+
+            return;
+        }
+
+        //First update user model.
+        $patientUser->address   = $this->enrollee->address;
+        $patientUser->address_2 = $this->enrollee->address_2;
+        $patientUser->city      = $this->enrollee->city;
+        $patientUser->state     = $this->enrollee->state;
+        $patientUser->zip       = $this->enrollee->zip;
+        $patientUser->email     = $this->enrollee->email;
+
+        $patientUser->save();
+
+        //Then other relationships e.g phones, contact windows.
+
+        //phones
+        $primaryPhonePhone = $this->enrollee->primary_phone_e164;
+        $homePhone         = $this->enrollee->home_phone_e164;
+        $mobilePhone       = $this->enrollee->cell_phone_e164;
+        $workPhone         = null;
+
+        $preferredPhoneType = $this->enrollee->getPreferredPhoneType();
+        //if agent is preferred phone, this will show on patient profile.
+
+        if ('other' == $preferredPhoneType) {
+            $otherPhone = $this->enrollee->other_phone_e164;
+            //if preferred phone is other phone, then check if home or mobile is empty, so we can save it as that. Else Save it as work for the moment.
+            //todo:investigate better solutions
+            if ( ! $homePhone) {
+                $homePhone          = $otherPhone;
+                $preferredPhoneType = 'home';
+            } elseif ( ! $mobilePhone) {
+                $mobilePhone        = $otherPhone;
+                $preferredPhoneType = 'cell';
+            } else {
+                $workPhone          = $otherPhone;
+                $preferredPhoneType = 'work';
+            }
+        }
+
+        if ($homePhone) {
+            PhoneNumber::updateOrCreate(
+                [
+                    'user_id' => $patientUser->id,
+                    'number'  => $homePhone,
+                    'type'    => PhoneNumber::HOME,
+                ],
+                [
+                    'is_primary' => 'home' === $preferredPhoneType,
+                ]
+            );
+        }
+
+        if ($mobilePhone) {
+            PhoneNumber::updateOrCreate(
+                [
+                    'user_id' => $patientUser->id,
+                    'number'  => $mobilePhone,
+                    'type'    => PhoneNumber::MOBILE,
+                ],
+                [
+                    'is_primary' => 'cell' === $preferredPhoneType,
+                ]
+            );
+        }
+
+        if ($workPhone) {
+            PhoneNumber::updateOrCreate(
+                [
+                    'user_id' => $patientUser->id,
+                    'number'  => $workPhone,
+                    'type'    => PhoneNumber::WORK,
+                ],
+                [
+                    'is_primary' => 'work' === $preferredPhoneType,
+                ]
+            );
+        }
+
+        //set preferred contact windows
+        $preferredCallDays  = $this->enrollee->getPreferredCallDays();
+        $preferredCallTimes = $this->enrollee->getPreferredCallTimes();
+
+        if ( ! $preferredCallDays && ! $preferredCallTimes) {
+            PatientContactWindow::sync(
+                $patientInfo,
+                [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                ]
+            );
+        } else {
+            PatientContactWindow::sync(
+                $patientInfo,
+                $preferredCallDays,
+                $preferredCallTimes['start'],
+                $preferredCallTimes['end']
+            );
+        }
+
+        //Finally - patient info. Patient Observer event will do all necessary operations to assign this patient to Nurse Ethan.
+        if ('agent' === $this->enrollee->getPreferredPhoneType()) {
+            $patientInfo->agent_email        = $this->enrollee->getAgentAttribute(Enrollee::AGENT_EMAIL_KEY);
+            $patientInfo->agent_name         = $this->enrollee->getAgentAttribute(Enrollee::AGENT_NAME_KEY);
+            $patientInfo->agent_relationship = $this->enrollee->getAgentAttribute(Enrollee::AGENT_RELATIONSHIP_KEY);
+            $patientInfo->agent_phone        = $this->enrollee->getAgentAttribute(Enrollee::AGENT_PHONE_KEY);
+        }
+
+        if ($this->enrollee->other_note) {
+            $patientInfo->general_comment = $this->enrollee->other_note;
+        }
+
+        $patientInfo->ccm_status = Patient::ENROLLED;
+        $patientInfo->save();
+
+        //patientUserUnreachable exists and updated -> do not call import consented enrollees
+        return true;
     }
 }
