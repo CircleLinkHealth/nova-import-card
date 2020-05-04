@@ -157,6 +157,8 @@ class PatientSummaryEloquentRepository
             return $summary;
         }
 
+        $summary->autoAttestConditionsIfYouShould();
+
         $needsQA = [];
         $hasBhi  = $summary->hasServiceCode(ChargeableService::BHI);
         if ($hasBhi && $summary->bhiAttestedProblems()->isEmpty()) {
