@@ -191,6 +191,7 @@ class EnrollableCallQueue
         $days = isProductionEnv() ? self::DAYS_FOR_NEXT_ATTEMPT : minDaysPastForCareAmbassadorNextAttempt();
 
         return Enrollee::withCaPanelRelationships()
+            ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
             ->lessThanThreeAttempts()
             ->whereStatus(Enrollee::UNREACHABLE)
             ->where('last_attempt_at', '<', Carbon::now()->subDays($days))
