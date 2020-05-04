@@ -112,19 +112,24 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
                 ]
             );
 
+            $newCallArgs = [
+                'note_id'        => $note->id,
+                'type'           => 'task',
+                'sub_type'       => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
+                'service'        => 'phone',
+                'status'         => 'scheduled',
+                'asap'           => true,
+                'attempt_note'   => $directMailMessage->body,
+                'scheduler'      => $cp->patient->billingProviderUser()->id,
+                'inbound_cpm_id' => $cp->user_id,
+            ];
+
+            if ($nurse = $cp->patient->patientInfo->getNurse()) {
+                $newCallArgs['outbound_cpm_id'] = $nurse;
+            }
+
             $task = Call::create(
-                [
-                    'note_id'         => $note->id,
-                    'type'            => 'task',
-                    'sub_type'        => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
-                    'service'         => 'phone',
-                    'status'          => 'scheduled',
-                    'asap'            => true,
-                    'attempt_note'    => $directMailMessage->body,
-                    'scheduler'       => $cp->patient->billingProviderUser()->id,
-                    'inbound_cpm_id'  => $cp->user_id,
-                    'outbound_cpm_id' => $cp->patient->patientInfo->getNurse(),
-                ]
+                $newCallArgs
             );
 
             return true;

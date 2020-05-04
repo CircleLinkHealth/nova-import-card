@@ -40,13 +40,13 @@ class PhiMail implements DirectMail
     }
 
     /**
-     * @throws \Exception
-     *
+     * @param  null                                                   $dmUserAddress
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      * @return bool
      */
-    public function receive()
+    public function receive($dmUserAddress = null)
     {
-        $this->initPhiMailConnection();
+        $this->initPhiMailConnection($dmUserAddress);
 
         if ( ! is_a($this->connector, PhiMailConnector::class)) {
             return false;
