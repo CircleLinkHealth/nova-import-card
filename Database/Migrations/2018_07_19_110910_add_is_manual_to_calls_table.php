@@ -4,7 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Call;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -33,13 +32,15 @@ class AddIsManualToCallsTable extends Migration
                 ->nullable();
         });
 
-        Call::with('schedulerUser')->chunk(200, function ($records) {
-            foreach ($records as $record) {
-                if ($record->isFromCareCenter) {
-                    $record->is_manual = true;
-                    $record->save();
+        if (class_exists('App\Call', false)) {
+            App\Call::with('schedulerUser')->chunk(200, function ($records) {
+                foreach ($records as $record) {
+                    if ($record->isFromCareCenter) {
+                        $record->is_manual = true;
+                        $record->save();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 }
