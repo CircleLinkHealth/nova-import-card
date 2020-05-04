@@ -602,6 +602,50 @@ class Enrollee extends BaseModel
         return $this->practice->display_name ?? null;
     }
 
+    public function getPreferredCallDays()
+    {
+        if (empty($this->enrollee->preferred_days)) {
+            return null;
+        }
+
+        return parseCallDays($this->enrollee->preferred_days);
+    }
+
+    public function getPreferredCallTimes()
+    {
+        if (empty($this->enrollee->preferred_window)) {
+            return null;
+        }
+
+        return parseCallTimes($this->enrollee->preferred_window);
+    }
+
+    public function getPreferredPhoneType()
+    {
+        if (empty(trim($this->primary_phone_e164))) {
+            return '';
+        }
+
+        $phones = [
+            $this->home_phone_e164  => 'home',
+            $this->cell_phone_e164  => 'cell',
+            $this->other_phone_e164 => 'other',
+            //agent phones always saved as e164
+            $this->getAgentAttribute(self::AGENT_PHONE_KEY) => 'agent',
+        ];
+
+        $preferredPhone = isset($phones[$this->primary_phone_e164]) ? $phones[$this->primary_phone_e164] : null;
+
+        //edge case - add primary as other phone
+        if ( ! $preferredPhone) {
+            $this->other_phone = $this->primary_phone_e164;
+            $this->save();
+            $preferredPhone = 'other';
+        }
+
+        return $preferredPhone;
+    }
+
     /**
      * Get Other Phone.
      *
@@ -730,7 +774,8 @@ class Enrollee extends BaseModel
             function ($q) use ($phone) {
                 $q->where('home_phone', 'like', "%${phone}%")
                     ->orWhere('cell_phone', 'like', "%${phone}%")
-                    ->orWhere('other_phone', 'like', "%${phone}%");
+                    ->orWhere('other_phone', 'like', "%${phone}%")
+                    ->orWhere('primary_phone', 'like', "%${phone}%");
             }
         );
     }
