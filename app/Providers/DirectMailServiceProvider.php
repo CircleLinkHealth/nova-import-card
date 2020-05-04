@@ -44,9 +44,10 @@ class DirectMailServiceProvider extends ServiceProvider implements DeferrablePro
                 if ($this->app->environment('testing')) {
                     new class() implements DirectMail {
                         /**
+                         * @param  null  $dmUserAddress
                          * @return mixed
                          */
-                        public function receive()
+                        public function receive($dmUserAddress = null)
                         {
                             // TODO: Implement receive() method.
                         }
