@@ -264,7 +264,7 @@ class Practice extends BaseModel implements HasMedia
         }
 
         if (is_null($primary)) {
-            throw new \Exception('This Practice does not have a location.', 500);
+            throw new \Exception("This Practice [$this->id] does not have a location.", 500);
         }
 
         return [
@@ -456,6 +456,11 @@ class Practice extends BaseModel implements HasMedia
     public function getWeeklyReportRecipientsArray()
     {
         return array_map('trim', explode(',', $this->weekly_report_recipients));
+    }
+
+    public function isARealBillableCustomer(): bool
+    {
+        return ! $this->is_demo && $this->active;
     }
 
     public function isTwilioEnabled()

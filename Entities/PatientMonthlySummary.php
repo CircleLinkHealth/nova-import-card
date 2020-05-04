@@ -258,6 +258,11 @@ class PatientMonthlySummary extends BaseModel
 
     public function autoAttestConditionsIfYouShould()
     {
+        //Auto attest only for past months, to not mess with real attestations
+        if ($this->month_year && $this->month_year->gt(now()->subMonth()->endOfMonth())) {
+            return;
+        }
+
         $this->loadMissing('attestedProblems');
 
         if ($this->unAttestedPcm() || $this->unAttestedCcm()) {
@@ -508,6 +513,10 @@ class PatientMonthlySummary extends BaseModel
             ->delete();
 
         $this->attestedProblems()->attach($attestedProblems);
+
+        if ( ! empty($attestedProblems)) {
+            $this->load('attestedProblems');
+        }
     }
 
     /**
@@ -571,13 +580,16 @@ class PatientMonthlySummary extends BaseModel
             },
         ]);
 
-        return $this->patient->ccdProblems->sortByDesc(function ($problem) {
-            if ( ! $problem->cpmProblem) {
-                return null;
-            }
+        return $this->patient->ccdProblems->unique(function (Problem $p) {
+            return $p->icd10Code();
+        })
+            ->sortByDesc(function ($problem) {
+                if ( ! $problem->cpmProblem) {
+                    return null;
+                }
 
-            return $problem->cpmProblem->weight;
-        });
+                return $problem->cpmProblem->weight;
+            });
     }
 
     private function unAttestedBhi(): bool
