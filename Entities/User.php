@@ -2698,11 +2698,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function routeNotificationForMail($notification)
     {
         if (App::environment(['review'])) {
-            return 'nektariosx01@gmail.com'; // tester
+            return config('services.tester.email'); // tester
         }
 
         if (App::environment(['local'])) {
-            return 'kountouris7@gmail.com';
+            return config('services.tester.email'); // tester
         }
 
         return $this->email;
@@ -2710,8 +2710,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function routeNotificationForTwilio()
     {
-        if (App::environment(['review', 'local'])) {
-            return '+35799018718'; // tester
+        if (App::environment(['review'])) {
+            return config('services.tester.phone'); // tester
         }
 
         return $this->getPhone();
