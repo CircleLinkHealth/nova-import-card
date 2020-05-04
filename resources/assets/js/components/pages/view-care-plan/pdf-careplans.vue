@@ -253,7 +253,7 @@
                         @vdropzone-success-multiple="showSuccess"
                         acceptedFileTypes="application/pdf"
                         dictDefaultMessage="Drop a PDF here, or click to choose a file to upload."
-                        :maxFileSizeInMB="10"
+                        :maxFileSizeInMB="20"
                         :createImageThumbnails="false"
                         :uploadMultiple="true">
                     <input type="hidden" name="csrf-token" :value="csrfToken">

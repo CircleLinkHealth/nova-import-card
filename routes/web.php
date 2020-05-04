@@ -444,11 +444,11 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'API\CareTeamController@index',
         'as'   => 'user.care-team.index',
     ])->middleware(['permission:carePerson.read']);
-    Route::delete('user/{userId}/care-team', [
+    Route::delete('user/{userId}/care-team/{id?}', [
         'uses' => 'API\CareTeamController@destroy',
         'as'   => 'user.care-team.destroy',
     ])->middleware('permission:carePerson.delete');
-    Route::patch('user/{userId}/care-team', [
+    Route::patch('user/{userId}/care-team/{id?}', [
         'uses' => 'API\CareTeamController@update',
         'as'   => 'user.care-team.update',
     ])->middleware('permission:carePerson.update');
@@ -1098,6 +1098,13 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix' => 'admin',
     ], function () {
+        Route::get(
+            'autoQAApprove/{userId}',
+            [
+                'uses' => 'Patient\PatientController@autoQAApprove',
+                'as'   => 'admin.autoqaapprove.careplans',
+            ]
+        );
         Route::group(['prefix' => 'offline-activity-time-requests'], function () {
             Route::get('', [
                 'uses' => 'OfflineActivityTimeRequestController@adminIndex',
@@ -1118,6 +1125,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('inbox/check', [
                 'uses' => 'DirectMailController@checkInbox',
                 'as'   => 'direct-mail.check',
+            ]);
+
+            Route::post('new', [
+                'uses' => 'DirectMailController@send',
+                'as'   => 'direct-mail.send',
             ]);
         });
 

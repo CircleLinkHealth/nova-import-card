@@ -89,6 +89,7 @@ use CircleLinkHealth\SharedModels\Entities\Problem;
  *
  * @property \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection $attestedProblems
  * @property int|null                                                           $attested_problems_count
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Call unassigned()
  */
 class Call extends BaseModel implements AttachableToNotification
 {
@@ -105,7 +106,8 @@ class Call extends BaseModel implements AttachableToNotification
     const OTHER = 'other call';
 
     //patient was reached
-    const REACHED = 'reached';
+    const REACHED   = 'reached';
+    const SCHEDULED = 'scheduled';
 
     const WELCOME = 'welcome call';
 
@@ -329,6 +331,11 @@ class Call extends BaseModel implements AttachableToNotification
             'outboundUser.nurseInfo',
             'note',
         ]);
+    }
+
+    public function scopeUnassigned($builder)
+    {
+        $builder->whereNull('outbound_cpm_id');
     }
 
     public function shouldSendLiveNotification(): bool

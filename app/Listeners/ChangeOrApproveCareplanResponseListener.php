@@ -83,7 +83,7 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
     private function attemptApproval(DirectMailMessage $directMailMessage): bool
     {
         $careplanId = $this->getCareplanIdToApprove($directMailMessage->body);
-        if ($careplanId && $this->actionIsAuthorized($directMailMessage->from, $careplanId)) {
+        if ($careplanId && $this->actionIsAuthorized($directMailMessage->from, $careplanId) && DirectMailMessage::DIRECTION_RECEIVED === $directMailMessage->direction) {
             $cp = $this->getCarePlan($careplanId);
             event(new CarePlanWasApproved($cp->patient, $cp->patient->billingProviderUser()));
             $cp->patient->billingProviderUser()->notify(new CarePlanDMApprovalConfirmation($cp->patient));
@@ -101,7 +101,7 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
     private function attemptChange(DirectMailMessage $directMailMessage): bool
     {
         $careplanId = $this->getCareplanIdToChange($directMailMessage->body);
-        if ($careplanId && $this->actionIsAuthorized($directMailMessage->from, $careplanId)) {
+        if ($careplanId && $this->actionIsAuthorized($directMailMessage->from, $careplanId) && DirectMailMessage::DIRECTION_RECEIVED === $directMailMessage->direction) {
             $cp   = $this->getCarePlan($careplanId);
             $note = Note::create(
                 [
@@ -112,19 +112,24 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
                 ]
             );
 
+            $newCallArgs = [
+                'note_id'        => $note->id,
+                'type'           => 'task',
+                'sub_type'       => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
+                'service'        => 'phone',
+                'status'         => 'scheduled',
+                'asap'           => true,
+                'attempt_note'   => $directMailMessage->body,
+                'scheduler'      => $cp->patient->billingProviderUser()->id,
+                'inbound_cpm_id' => $cp->user_id,
+            ];
+
+            if ($nurse = $cp->patient->patientInfo->getNurse()) {
+                $newCallArgs['outbound_cpm_id'] = $nurse;
+            }
+
             $task = Call::create(
-                [
-                    'note_id'         => $note->id,
-                    'type'            => 'task',
-                    'sub_type'        => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
-                    'service'         => 'phone',
-                    'status'          => 'scheduled',
-                    'asap'            => true,
-                    'attempt_note'    => $directMailMessage->body,
-                    'scheduler'       => $cp->patient->billingProviderUser()->id,
-                    'inbound_cpm_id'  => $cp->user_id,
-                    'outbound_cpm_id' => $cp->patient->patientInfo->getNurse(),
-                ]
+                $newCallArgs
             );
 
             return true;

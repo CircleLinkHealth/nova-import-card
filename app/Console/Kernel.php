@@ -6,6 +6,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\AssignUnassignedPatientsToStandByNurse;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\CheckEnrolledPatientsForScheduledCalls;
@@ -23,6 +24,7 @@ use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateOpsDailyReport;
 use App\Console\Commands\QueueSendApprovedCareplanSlackNotification;
 use App\Console\Commands\QueueSendAuditReports;
+use App\Console\Commands\RemoveDuplicateScheduledCalls;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
@@ -143,7 +145,7 @@ class Kernel extends ConsoleKernel
             ->everyThirtyMinutes()->onOneServer();
 
         $schedule->command(CountPatientMonthlySummaryCalls::class, [now()->startOfMonth()->toDateString()])
-            ->everyThirtyMinutes()->onOneServer();
+            ->twiceDaily(7, 21)->onOneServer();
 
 //        $schedule->command(
 //            SendCareCoachInvoices::class,
@@ -180,7 +182,7 @@ class Kernel extends ConsoleKernel
             ->monthlyOn(1, '02:00')->onOneServer();
 
         $schedule->command(CheckEmrDirectInbox::class)
-            ->everyFiveMinutes()
+            ->everyMinute()
             ->withoutOverlapping()->onOneServer();
 
         //uncomment when ready
@@ -225,5 +227,8 @@ class Kernel extends ConsoleKernel
         $schedule->command(CheckUserTotalTimeTracked::class)
             ->dailyAt('01:10')
             ->onOneServer();
+
+        $schedule->command(AssignUnassignedPatientsToStandByNurse::class)->twiceDaily(8, 14);
+        $schedule->command(RemoveDuplicateScheduledCalls::class)->twiceDaily(8, 14);
     }
 }

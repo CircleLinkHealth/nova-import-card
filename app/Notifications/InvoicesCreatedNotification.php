@@ -165,7 +165,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
             return ['mail'];
         }
 
-        return ['database', 'mail', 'broadcast'];
+        return ['database', 'mail'];
     }
 
     private function getMonthYearText()

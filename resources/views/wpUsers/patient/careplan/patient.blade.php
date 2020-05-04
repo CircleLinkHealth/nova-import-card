@@ -53,14 +53,14 @@ $user_info = [];
                                                 <input type="text" class="form-control" name="first_name"
                                                        id="first_name"
                                                        placeholder="First Name *"
-                                                       value="{{ (old('first_name') ? old('first_name') : $patient->first_name) }}">
+                                                       value="{{ (old('first_name') ? old('first_name') : $patient->first_name) }}" @if(!empty($patient->first_name ?? null)) disabled @endif>
                                                 <span class="help-block">{{ $errors->first('first_name') }}</span>
                                             </div>
                                             <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('last_name') ? 'has-error' : '' }}">
                                                 <label class="sr-only" for="last_name">Last Name</label>
                                                 <input type="text" class="form-control" name="last_name" id="last_name"
                                                        placeholder="Last Name *"
-                                                       value="{{ (old('last_name') ? old('last_name') : $patient->last_name) }}">
+                                                       value="{{ (old('last_name') ? old('last_name') : $patient->last_name) }}" @if(!empty($patient->last_name ?? null)) disabled @endif>
                                                 <span class="help-block">{{ $errors->first('last_name') }}</span>
                                             </div>
                                             <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('gender') ? 'has-error' : '' }}">
@@ -108,7 +108,7 @@ $user_info = [];
                                                         </div>
                                                         <span class="help-block">{{ $errors->first('preferred_contact_language') }}</span>
                                                     </div>
-                                                    <div class="col-sm-12  col-lg-5{{ $errors->first('mrn_number') ? 'has-error' : '' }}">
+                                                    <div class="col-sm-12  col-lg-5 {{ $errors->first('mrn_number') ? 'has-error' : '' }}">
                                                         <label for="mrn_number">MRN<span
                                                                     class="attention">*</span>:</label>
                                                         <input type="text" class="form-control" name="mrn_number"

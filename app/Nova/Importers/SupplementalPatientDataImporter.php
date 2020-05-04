@@ -119,6 +119,7 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
             'N/A',
             '########',
             '#N/A',
+            '-',
         ];
     }
 
@@ -242,9 +243,9 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
 
                     if ( ! $ccda) {
                         $ccda = Ccda::where('practice_id', $spd->practice_id)->where(
-                            'json->demographics->mrn_number',
+                            'patient_mrn',
                             $spd->mrn
-                        )->where('json->demographics->name->family', $spd->last_name)->select(
+                        )->where('patient_last_name', $spd->last_name)->select(
                             ['id', 'location_id', 'practice_id', 'billing_provider_id', 'patient_id']
                         )->first();
                         if ($ccda) {

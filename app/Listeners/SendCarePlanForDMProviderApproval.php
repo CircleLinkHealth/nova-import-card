@@ -52,13 +52,20 @@ class SendCarePlanForDMProviderApproval implements ShouldQueue
         }
     }
 
+    private function isDMApprovalEnabled($patient)
+    {
+        if (DMDomainForAutoApproval::isEnabledForPractice($patient->program_id)) {
+            return true;
+        }
+    }
+
     private function shouldBail($event): bool
     {
         if (CarePlan::QA_APPROVED !== $event->patient->carePlan->status) {
             return true;
         }
 
-        if ( ! DMDomainForAutoApproval::isEnabledForPractice($event->patient->program_id)) {
+        if ( ! $this->isDMApprovalEnabled($event->patient)) {
             return true;
         }
 

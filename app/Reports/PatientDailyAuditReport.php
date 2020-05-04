@@ -8,9 +8,7 @@ namespace App\Reports;
 
 use App\Note;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
 use CircleLinkHealth\Core\PdfService;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Support\Facades\DB;
@@ -25,11 +23,11 @@ class PatientDailyAuditReport
 {
     protected $data = [];
     protected $day;
-    protected $patient;
+    protected $user;
 
-    public function __construct(Patient $patient, Carbon $forMonth)
+    public function __construct(User $user, Carbon $forMonth)
     {
-        $this->patient  = $patient;
+        $this->user     = $user;
         $this->forMonth = $forMonth;
     }
 
@@ -39,12 +37,12 @@ class PatientDailyAuditReport
             $this->forMonth->startOfMonth()->toDateTimeString(),
             $this->forMonth->endOfMonth()->toDateTimeString(),
         ])
-            ->where('patient_id', $this->patient->user_id)
+            ->where('patient_id', $this->user->id)
             ->sum('duration');
 
-        $this->data['name']     = $this->patient->user->getFullName();
+        $this->data['name']     = $this->user->getFullName();
         $this->data['month']    = $this->forMonth->format('F, Y');
-        $this->data['provider'] = $this->patient->user->getBillingProviderName();
+        $this->data['provider'] = $this->user->getBillingProviderName();
         $this->data['totalCCM'] = $this->formatMonthlyTime($time);
 
         $activities = DB::table('lv_activities')
@@ -53,7 +51,7 @@ class PatientDailyAuditReport
                 $this->forMonth->startOfMonth()->toDateTimeString(),
                 $this->forMonth->endOfMonth()->toDateTimeString(),
             ])
-            ->where('patient_id', $this->patient->user_id)
+            ->where('patient_id', $this->user->id)
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -67,19 +65,19 @@ class PatientDailyAuditReport
             $dailyDuration                            = $value->sum('duration');
             $this->data['daily'][$date]['ccm']        = secondsToMMSS($dailyDuration);
 
-            $notes = Note
-                ::wherePatientId($this->patient->user_id)
-                    ->whereBetween('created_at', [
-                        Carbon::parse($date)->startOfDay()->toDateTimeString(),
-                        Carbon::parse($date)->endOfDay()->toDateTimeString(),
-                    ])
-                    ->get();
+            $notes = Note::with(['author'])
+                ->wherePatientId($this->user->id)
+                ->whereBetween('created_at', [
+                    Carbon::parse($date)->startOfDay()->toDateTimeString(),
+                    Carbon::parse($date)->endOfDay()->toDateTimeString(),
+                ])
+                ->get();
 
             $this->data['daily'][$date]['notes'] = [];
 
             foreach ($notes as $note) {
                 $time                                                        = Carbon::parse($note->created_at)->format('g:i:s A');
-                $performer                                                   = User::withTrashed()->find($note->author_id)->getFullName() ?? '';
+                $performer                                                   = $note->author->getFullName() ?? '';
                 $this->data['daily'][$date]['notes'][$note->id]['performer'] = $performer;
                 $this->data['daily'][$date]['notes'][$note->id]['time']      = $time;
                 $this->data['daily'][$date]['notes'][$note->id]['body']      = $note->body;
@@ -90,22 +88,20 @@ class PatientDailyAuditReport
     }
 
     /**
-     * @throws \Exception
-     *
      * @return bool|string
      */
     public function renderPDF()
     {
         $pdfService = app(PdfService::class);
 
-        $name = $this->patient->user->id.'-'.Carbon::now()->timestamp;
+        $name = $this->user->id.'-'.Carbon::now()->timestamp;
         $path = storage_path("download/${name}.pdf");
 
         $this->renderData();
 
         try {
             $pdf = $pdfService->createPdfFromView('wpUsers.patient.audit', ['data' => $this->data], $path);
-        } catch (FileNotFoundException $e) {
+        } catch (\Exception $e) {
             \Log::error($e->getMessage());
 
             return false;
@@ -113,7 +109,7 @@ class PatientDailyAuditReport
 
         $collName = 'audit_report_'.$this->data['month'];
 
-        $this->patient->user->addMedia($path)->preservingOriginal()->toMediaCollection($collName);
+        $this->user->addMedia($path)->preservingOriginal()->toMediaCollection($collName);
 
         return "/${name}.pdf";
     }

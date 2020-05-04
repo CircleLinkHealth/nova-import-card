@@ -78,16 +78,8 @@ class OverwriteNBIImportedData extends Command
             return;
         }
 
-        $datas = SupplementalPatientData::where(
-            'first_name',
-            'like',
-            "{$ccda->patientFirstName()}%"
-        )
-            ->where('practice_id', $this->nbiPractice()->id)
-            ->where(
-                'last_name',
-                $ccda->patientLastName()
-            )->where('dob', $ccda->patientDob())->first();
+        $datas = SupplementalPatientData::forPatient($this->nbiPractice()->id, $ccda->patient_first_name, $ccda->patient_last_name, $ccda->patientDob());
+
         if ($datas) {
             $map = [
                 'HUSSAINI,RAFIA'     => 11493,
