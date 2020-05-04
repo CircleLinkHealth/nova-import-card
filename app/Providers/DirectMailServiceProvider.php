@@ -60,6 +60,7 @@ class DirectMailServiceProvider extends ServiceProvider implements DeferrablePro
                          * @param null $body
                          * @param null $subject
                          *
+                         * @param  null  $dmUserAddress
                          * @return mixed
                          */
                         public function send(
@@ -69,7 +70,8 @@ class DirectMailServiceProvider extends ServiceProvider implements DeferrablePro
                             $ccdaAttachmentPath = null,
                             User $patient = null,
                             $body = null,
-                            $subject = null
+                            $subject = null,
+                            $dmUserAddress = null
                         ) {
                             // TODO: Implement send() method.
                         }
