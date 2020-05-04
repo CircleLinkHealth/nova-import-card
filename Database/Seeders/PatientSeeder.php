@@ -14,7 +14,7 @@ class PatientSeeder extends Seeder
      */
     public function run()
     {
-        if ( ! isProductionEnv()) {
+        if ( ! isProductionEnv() && isCpm()) {
             try {
                 (new \App\Testing\TestPatients())->create();
             } catch (ValidationException $e) {
