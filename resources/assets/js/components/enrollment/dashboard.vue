@@ -115,7 +115,7 @@
         },
         computed: {
             patientExists: function () {
-                return this.patientData.enrollable_id;
+                return this.patientData && this.patientData.enrollable_id;
             },
             shouldShowCookie: function(){
                 return ! this.patientExists && !this.error
