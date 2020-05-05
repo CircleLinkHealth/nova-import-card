@@ -8,6 +8,7 @@ namespace App\Nova;
 
 use App\Nova\Filters\EnrolleeInvitationFilter;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 
@@ -61,7 +62,9 @@ class EnrolleesInvitationPanel extends Resource
      */
     public function cards(Request $request)
     {
-        return [];
+        return [
+            new EnrollmentInvites(),
+        ];
     }
 
     /**
