@@ -27,11 +27,13 @@ class PatientEmailController extends Controller
 
         $file = $request->file()['file'];
 
+        $name = str_replace('.'.$file->getClientOriginalExtension(), '', $file->getClientOriginalName());
+
         $media = Media::where('collection_name', 'patient-email-attachments')
             ->where('model_id', $patientId)
-            ->where('file_name', str_replace(' ', '-', $file->getClientOriginalName()))
+            ->where('name', $name)
             ->whereIn('model_type', [\App\User::class, 'CircleLinkHealth\Customer\Entities\User'])
-            ->firstOrFail();
+            ->first();
 
         $patient->deleteMedia($media->id);
 
@@ -60,6 +62,7 @@ class PatientEmailController extends Controller
                     'media_id' => $media->id,
                     'path'     => $media->getPath(),
                     'url'      => $media->getFullUrl(),
+                    'name'     => $file->getClientOriginalName(),
                 ],
                 200
             );
