@@ -31,16 +31,44 @@ class SelfEnrollmentEnrollees implements ShouldQueue
     use SerializesModels;
 
     const SURVEY_ONLY = 'survey-only';
+    /**
+     * @var int
+     */
+    private $amount;
+    /**
+     * @var null
+     */
+    private $color;
+    /**
+     * @var Enrollee|null
+     */
     private $enrollee;
+    /**
+     * @var mixed
+     */
+    private $practiceId;
 
     /**
      * @var Role
      */
     private $surveyRole;
 
-    public function __construct(Enrollee $enrollee = null)
-    {
-        $this->enrollee = $enrollee;
+    /**
+     * SelfEnrollmentEnrollees constructor.
+     *
+     * @param null  $color
+     * @param mixed $practiceId
+     */
+    public function __construct(
+        Enrollee $enrollee = null,
+        $color = null,
+        int $amount,
+        $practiceId
+    ) {
+        $this->enrollee   = $enrollee;
+        $this->color      = $color;
+        $this->amount     = $amount;
+        $this->practiceId = $practiceId;
     }
 
     /**
@@ -58,13 +86,14 @@ class SelfEnrollmentEnrollees implements ShouldQueue
     public function createUserFromEnrolleeAndInvite(Enrollee $enrollee)
     {
         $surveyRole = $this->surveyRole();
-        CreateUserFromEnrollee::dispatch($enrollee, $surveyRole->id);
+        CreateUserFromEnrollee::dispatch($enrollee, $surveyRole->id, $this->color);
     }
 
     /**
      * Execute the job.
      *
-     * @param  Enrollee|null $enrollee
+     * @param Enrollee|null $enrollee
+     *
      * @return void
      */
     public function handle()
@@ -83,9 +112,12 @@ class SelfEnrollmentEnrollees implements ShouldQueue
                 ->all();
             $this->createSurveyOnlyUserFromEnrollees($enrollees);
         } else {
-            $this->getEnrollees()->chunk(50, function ($enrollees) {
-                $this->createSurveyOnlyUserFromEnrollees($enrollees);
-            });
+            $enrollees = $this->getEnrollees()
+                ->where('practice_id', $this->practiceId)
+                ->orderBy('id', 'asc')
+                ->limit($this->amount)
+                ->get();
+            $this->createSurveyOnlyUserFromEnrollees($enrollees);
         }
     }
 

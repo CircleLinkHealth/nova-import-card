@@ -32,6 +32,10 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     /**
      * @var null
      */
+    private $color;
+    /**
+     * @var null
+     */
     private $enrolleeModelId;
     /**
      * @var bool
@@ -42,10 +46,12 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
      * Create a new notification instance.
      *
      * @param bool $isReminder
+     * @param null $color
      */
-    public function __construct($isReminder = false)
+    public function __construct($isReminder = false, $color = null)
     {
         $this->isReminder = $isReminder;
+        $this->color      = $color;
     }
 
     public function getNotificationContent(User $notifiable)
@@ -114,6 +120,7 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
 
     /**
      * @param $enrolleeId
+     *
      * @return array
      */
     private function enrolleeArraData($enrolleeId)

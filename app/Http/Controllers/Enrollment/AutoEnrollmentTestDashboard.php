@@ -56,9 +56,14 @@ class AutoEnrollmentTestDashboard extends Controller
     /**
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function inviteEnrolleesToEnrollTest()
+    public function inviteEnrolleesToEnrollTest(Request $request)
     {
-        SelfEnrollmentEnrollees::dispatchNow();
+        SelfEnrollmentEnrollees::dispatchNow(
+            null,
+            $request->input('color'),
+            $request->input('amount'),
+            $request->input('practice_id')
+        );
 
         return redirect()->back();
     }
@@ -66,9 +71,13 @@ class AutoEnrollmentTestDashboard extends Controller
     /**
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function inviteUnreachablesToEnrollTest()
+    public function inviteUnreachablesToEnrollTest(Request $request)
     {
-        SelfEnrollmentUnreachablePatients::dispatchNow();
+        SelfEnrollmentUnreachablePatients::dispatchNow(
+            null,
+            $request->input('amount'),
+            $request->input('practice_id')
+        );
 
         return redirect()->back();
     }

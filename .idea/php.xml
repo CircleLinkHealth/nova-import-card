@@ -291,6 +291,10 @@
       <path value="$PROJECT_DIR$/vendor/nexmo/client-core" />
       <path value="$PROJECT_DIR$/vendor/itsgoingd/clockwork" />
       <path value="$PROJECT_DIR$/vendor/laravel-notification-channels/twilio" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/send-invitations-card" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/send-invites" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/aito-enrollment-invites" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/kolos-send" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.3" />

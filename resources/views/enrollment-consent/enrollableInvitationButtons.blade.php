@@ -1,7 +1,7 @@
 <div class="row">
         <div class="enroll-now-href">
             <a href="{{route('patient.self.enroll.now', ['enrollable_id' => $userEnrollee['id'], 'is_survey_only' => $isSurveyOnlyUser])}}">
-                <button type="button" class="btn green btn-large" style="border-radius: 40px">Get my Care Coach</button>
+                <button type="button" class="btn btn-large" style="border-radius: 40px; background-color: {{$buttonColor}}">Get my Care Coach</button>
             </a>
         </div>
 

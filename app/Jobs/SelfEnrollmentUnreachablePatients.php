@@ -25,6 +25,14 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    /**
+     * @var int
+     */
+    private $amount;
+    /**
+     * @var int
+     */
+    private $practiceId;
 
     /**
      * @var User|null
@@ -33,10 +41,18 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
 
     /**
      * Create a new job instance.
+     *
+     * @param null $color
+     * @param $practiceId
      */
-    public function __construct(User $user = null)
-    {
-        $this->user = $user;
+    public function __construct(
+        User $user = null,
+        int $amount,
+        int $practiceId
+    ) {
+        $this->user       = $user;
+        $this->amount     = $amount;
+        $this->practiceId = $practiceId;
     }
 
     /**
@@ -74,14 +90,18 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
                 }
             }
         } else {
-            $this->getUnreachablePatients($monthStart, $monthEnd)->chunk(50, function ($patients) {
-                foreach ($patients as $patient) {
-                    /** @var User $patient */
-                    if ( ! $patient->checkForSurveyOnlyRole()) {
-                        event(new AutoEnrollableCollected($patient));
-                    }
+            $patients = $this->getUnreachablePatients($monthStart, $monthEnd)
+                ->where('program_id', $this->practiceId)
+                ->orderBy('id', 'asc')
+                ->limit($this->amount)
+                ->get();
+
+            foreach ($patients as $patient) {
+                /** @var User $patient */
+                if ( ! $patient->checkForSurveyOnlyRole()) {
+                    event(new AutoEnrollableCollected($patient));
                 }
-            });
+            }
         }
     }
 

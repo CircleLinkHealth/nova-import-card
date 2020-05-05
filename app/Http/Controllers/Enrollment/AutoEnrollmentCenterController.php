@@ -284,8 +284,22 @@ class AutoEnrollmentCenterController extends Controller
         $practiceName           = $enrollablePrimaryPractice->name;
         $signatoryNameForHeader = $provider->display_name;
         $dateLetterSent         = Carbon::parse($enrollee->getLastEnrollmentInvitationLink()->updated_at)->toDateString();
+        $buttonColor            = $this->pastActiveInvitationLinks($enrollee)->button_color;
 
-        return view('enrollment-consent.enrollmentInvitation', compact('userEnrollee', 'isSurveyOnlyUser', 'letterPages', 'practiceName', 'signatoryNameForHeader', 'dateLetterSent', 'hideButtons'));
+        if (is_null($buttonColor)) {
+            $buttonColor = '#4baf50';
+        }
+
+        return view('enrollment-consent.enrollmentInvitation', compact(
+            'userEnrollee',
+            'isSurveyOnlyUser',
+            'letterPages',
+            'practiceName',
+            'signatoryNameForHeader',
+            'dateLetterSent',
+            'hideButtons',
+            'buttonColor'
+        ));
     }
 
     private function getEnrolleeFromNotification($enrollableId)

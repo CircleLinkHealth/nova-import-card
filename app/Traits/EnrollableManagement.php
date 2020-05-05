@@ -118,10 +118,12 @@ trait EnrollableManagement
 
     /**
      * NOTE: "whereDoesntHave" makes sure we dont invite Unreachable/Non responded - Enrollees second time.
+     *
      * @return Enrollee|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public function getEnrollees()
     {
+//        CHECK FOR SURVEY ONLY TOGETHER WITH USER_ID
         return Enrollee::where('user_id', null)
             ->whereDoesntHave('enrollmentInvitationLink')
             ->whereIn('status', [
@@ -230,8 +232,8 @@ trait EnrollableManagement
      *  Requirement: Did patient view Letter or Survey?
      *  If logged in once then user did view the letter. If this exists the no need need to check further.
      *
+     * @param mixed $enrollableId
      *
-     * @param  mixed $enrollableId
      * @return bool
      */
     public function hasViewedLetterOrSurvey($enrollableId)
@@ -263,6 +265,10 @@ trait EnrollableManagement
         return $enrollable->enrollmentInvitationLink()->where('manually_expired', false)->first();
     }
 
+    /**
+     * @param $urlToken
+     * @param $url
+     */
     public function saveTemporaryInvitationLink(User $notifiable, $urlToken, $url)
     {
         if ($notifiable->checkForSurveyOnlyRole()) {
@@ -274,6 +280,7 @@ trait EnrollableManagement
             'link_token'       => $urlToken,
             'url'              => $url,
             'manually_expired' => false,
+            'button_color'     => $this->color,
         ]);
     }
 

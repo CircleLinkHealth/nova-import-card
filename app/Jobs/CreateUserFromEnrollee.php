@@ -23,6 +23,10 @@ class CreateUserFromEnrollee implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    /**
+     * @var null
+     */
+    private $color;
 
     /**
      * @var Enrollee
@@ -34,11 +38,13 @@ class CreateUserFromEnrollee implements ShouldQueue
      * Create a new job instance.
      *
      * @param $surveyRoleId
+     * @param null $color
      */
-    public function __construct(Enrollee $enrollee, $surveyRoleId)
+    public function __construct(Enrollee $enrollee, $surveyRoleId, $color = null)
     {
         $this->enrollee     = $enrollee;
         $this->surveyRoleId = $surveyRoleId;
+        $this->color        = $color;
     }
 
     /**
@@ -89,6 +95,6 @@ class CreateUserFromEnrollee implements ShouldQueue
         $this->enrollee->update(['user_id' => $userCreatedFromEnrollee->id]);
         // The above can be abstracted more
 
-        event(new AutoEnrollableCollected($userCreatedFromEnrollee));
+        event(new AutoEnrollableCollected($userCreatedFromEnrollee, false, $this->color));
     }
 }

@@ -27,6 +27,7 @@ class SendEnrollableEmail implements ShouldQueue
      * Handle the event.
      *
      * @param $event
+     *
      * @return void
      */
     public function handle($event)
@@ -39,6 +40,6 @@ class SendEnrollableEmail implements ShouldQueue
      */
     private function sendEmail($event)
     {
-        $event->user->notify(new SendEnrollmentEmail($event->isReminder));
+        $event->user->notify(new SendEnrollmentEmail($event->isReminder, $event->color));
     }
 }

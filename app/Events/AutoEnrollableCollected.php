@@ -20,6 +20,10 @@ class AutoEnrollableCollected
     /**
      * @var bool
      */
+    public $color;
+    /**
+     * @var bool
+     */
     public $isReminder;
 
     /**
@@ -28,14 +32,16 @@ class AutoEnrollableCollected
     public $user;
 
     /**
-     * Create a new event instance.
+     * AutoEnrollableCollected constructor.
      *
      * @param bool $isReminder
+     * @param null $color
      */
-    public function __construct(User $user, $isReminder = false)
+    public function __construct(User $user, $isReminder = false, $color = null)
     {
         $this->user       = $user;
         $this->isReminder = $isReminder;
+        $this->color      = $color;
     }
 
     /**
