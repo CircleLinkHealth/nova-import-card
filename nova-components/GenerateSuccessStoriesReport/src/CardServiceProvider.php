@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Circlelinkhealth\GenerateSuccessStoriesReport;
 
 use Illuminate\Support\Facades\Route;
@@ -27,6 +31,15 @@ class CardServiceProvider extends ServiceProvider
     }
 
     /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+    }
+
+    /**
      * Register the card's routes.
      *
      * @return void
@@ -38,17 +51,7 @@ class CardServiceProvider extends ServiceProvider
         }
 
         Route::middleware(['nova'])
-                ->prefix('nova-vendor/generate-success-stories-report')
-                ->group(__DIR__.'/../routes/api.php');
-    }
-
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        //
+            ->prefix('nova-vendor/generate-success-stories-report')
+            ->group(__DIR__.'/../routes/api.php');
     }
 }

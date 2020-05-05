@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ab5227a274be426f8035322fdd22f807",
+    "content-hash": "15d050346e2ff589c52fc31a76b6ed73",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -417,16 +417,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.137.1",
+            "version": "3.137.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "935060ae3d64f2bfeab7a6ba46bebe525047446c"
+                "reference": "d70ccd508c9a9fa5a1579f80fd1f6b8fff79a7c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/935060ae3d64f2bfeab7a6ba46bebe525047446c",
-                "reference": "935060ae3d64f2bfeab7a6ba46bebe525047446c",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d70ccd508c9a9fa5a1579f80fd1f6b8fff79a7c8",
+                "reference": "d70ccd508c9a9fa5a1579f80fd1f6b8fff79a7c8",
                 "shasum": ""
             },
             "require": {
@@ -497,7 +497,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-05-01T18:13:22+00:00"
+            "time": "2020-05-05T18:14:48+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -878,8 +878,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
-                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8",
-                "shasum": null
+                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -912,8 +911,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
-                "reference": "6ecab1c47b37727c17819ad31972bbd437c4a44a",
-                "shasum": null
+                "reference": "6ecab1c47b37727c17819ad31972bbd437c4a44a"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1119,13 +1117,45 @@
             "time": "2020-05-04T15:50:58+00:00"
         },
         {
+            "name": "circlelinkhealth/enrollment-invites",
+            "version": "dev-CPM-1919_dashbord_v2",
+            "dist": {
+                "type": "path",
+                "url": "./nova-components/EnrollmentInvites",
+                "reference": "464d4a3178fde4c0bc50d2d0e525d6cf70a14df7"
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Circlelinkhealth\\EnrollmentInvites\\CardServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Circlelinkhealth\\EnrollmentInvites\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova card.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ]
+        },
+        {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
             "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
-                "reference": "8b21629514943da628f3f5acb602c7610c2d9167",
-                "shasum": null
+                "reference": "8b21629514943da628f3f5acb602c7610c2d9167"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1158,8 +1188,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
-                "reference": "647bc07cacc81615878d4210f947957280127fdc",
-                "shasum": null
+                "reference": "647bc07cacc81615878d4210f947957280127fdc"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1192,8 +1221,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "f0df8eb877194dea1489f870e9d57de695feff3b",
-                "shasum": null
+                "reference": "f0df8eb877194dea1489f870e9d57de695feff3b"
             },
             "require": {
                 "php": ">=7.1.0",
@@ -2830,16 +2858,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.132",
+            "version": "v0.133",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "317c8555eaea64a38594d9e617b59547cea45f3e"
+                "reference": "dd53c4a23a5c4d868e409585e30ab31da278b5d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/317c8555eaea64a38594d9e617b59547cea45f3e",
-                "reference": "317c8555eaea64a38594d9e617b59547cea45f3e",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/dd53c4a23a5c4d868e409585e30ab31da278b5d2",
+                "reference": "dd53c4a23a5c4d868e409585e30ab31da278b5d2",
                 "shasum": ""
             },
             "require": {
@@ -2863,7 +2891,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-04-22T00:25:30+00:00"
+            "time": "2020-05-03T00:24:28+00:00"
         },
         {
             "name": "google/auth",
@@ -4043,16 +4071,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v6.18.11",
+            "version": "v6.18.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "73bc10bb23aab7539c8ffae6d5dc3c4b277de557"
+                "reference": "39519d03237a81380e2126d667e898e2922db444"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/73bc10bb23aab7539c8ffae6d5dc3c4b277de557",
-                "reference": "73bc10bb23aab7539c8ffae6d5dc3c4b277de557",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/39519d03237a81380e2126d667e898e2922db444",
+                "reference": "39519d03237a81380e2126d667e898e2922db444",
                 "shasum": ""
             },
             "require": {
@@ -4185,7 +4213,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-04-28T15:18:58+00:00"
+            "time": "2020-05-05T15:53:49+00:00"
         },
         {
             "name": "laravel/horizon",
@@ -4329,16 +4357,16 @@
         },
         {
             "name": "laravel/passport",
-            "version": "v8.4.4",
+            "version": "v8.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/passport.git",
-                "reference": "dd4b1d96eb1fe556a6eb2c55c942360364aa02c1"
+                "reference": "6affa6ed600c5f8909385fbae7cf6f8af3db2d39"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/passport/zipball/dd4b1d96eb1fe556a6eb2c55c942360364aa02c1",
-                "reference": "dd4b1d96eb1fe556a6eb2c55c942360364aa02c1",
+                "url": "https://api.github.com/repos/laravel/passport/zipball/6affa6ed600c5f8909385fbae7cf6f8af3db2d39",
+                "reference": "6affa6ed600c5f8909385fbae7cf6f8af3db2d39",
                 "shasum": ""
             },
             "require": {
@@ -4398,7 +4426,7 @@
                 "oauth",
                 "passport"
             ],
-            "time": "2020-04-21T19:24:59+00:00"
+            "time": "2020-05-05T14:25:53+00:00"
         },
         {
             "name": "laravel/scout",
@@ -4654,16 +4682,16 @@
         },
         {
             "name": "league/commonmark",
-            "version": "1.4.2",
+            "version": "1.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/commonmark.git",
-                "reference": "9e780d972185e4f737a03bade0fd34a9e67bbf31"
+                "reference": "412639f7cfbc0b31ad2455b2fe965095f66ae505"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/9e780d972185e4f737a03bade0fd34a9e67bbf31",
-                "reference": "9e780d972185e4f737a03bade0fd34a9e67bbf31",
+                "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/412639f7cfbc0b31ad2455b2fe965095f66ae505",
+                "reference": "412639f7cfbc0b31ad2455b2fe965095f66ae505",
                 "shasum": ""
             },
             "require": {
@@ -4724,7 +4752,7 @@
                 "md",
                 "parser"
             ],
-            "time": "2020-04-24T13:39:56+00:00"
+            "time": "2020-05-04T22:15:21+00:00"
         },
         {
             "name": "league/event",
@@ -7647,16 +7675,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.10.3",
+            "version": "v0.10.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "2bde2fa03e05dff0aee834598b951d6fc7c6fe02"
+                "reference": "a8aec1b2981ab66882a01cce36a49b6317dc3560"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/2bde2fa03e05dff0aee834598b951d6fc7c6fe02",
-                "reference": "2bde2fa03e05dff0aee834598b951d6fc7c6fe02",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/a8aec1b2981ab66882a01cce36a49b6317dc3560",
+                "reference": "a8aec1b2981ab66882a01cce36a49b6317dc3560",
                 "shasum": ""
             },
             "require": {
@@ -7715,7 +7743,7 @@
                 "interactive",
                 "shell"
             ],
-            "time": "2020-04-07T06:44:48+00:00"
+            "time": "2020-05-03T19:32:03+00:00"
         },
         {
             "name": "pusher/pusher-php-server",
@@ -10745,20 +10773,20 @@
         },
         {
             "name": "vlucas/phpdotenv",
-            "version": "v3.6.3",
+            "version": "v3.6.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlucas/phpdotenv.git",
-                "reference": "1b3103013797f04521c6cae5560f604649484066"
+                "reference": "10d3f853fdf1f3a6b3c7ea0c4620d2f699713db5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/1b3103013797f04521c6cae5560f604649484066",
-                "reference": "1b3103013797f04521c6cae5560f604649484066",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/10d3f853fdf1f3a6b3c7ea0c4620d2f699713db5",
+                "reference": "10d3f853fdf1f3a6b3c7ea0c4620d2f699713db5",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.4 || ^7.0",
+                "php": "^5.4 || ^7.0 || ^8.0",
                 "phpoption/phpoption": "^1.5",
                 "symfony/polyfill-ctype": "^1.9"
             },
@@ -10804,7 +10832,7 @@
                 "env",
                 "environment"
             ],
-            "time": "2020-04-12T15:18:03+00:00"
+            "time": "2020-05-02T13:46:13+00:00"
         },
         {
             "name": "waavi/url-shortener",
@@ -10984,16 +11012,16 @@
     "packages-dev": [
         {
             "name": "barryvdh/laravel-debugbar",
-            "version": "v3.3.2",
+            "version": "v3.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-debugbar.git",
-                "reference": "95c31aab33689cd4572d27038186886f4bfa63ae"
+                "reference": "57f2219f6d9efe41ed1bc880d86701c52f261bf5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-debugbar/zipball/95c31aab33689cd4572d27038186886f4bfa63ae",
-                "reference": "95c31aab33689cd4572d27038186886f4bfa63ae",
+                "url": "https://api.github.com/repos/barryvdh/laravel-debugbar/zipball/57f2219f6d9efe41ed1bc880d86701c52f261bf5",
+                "reference": "57f2219f6d9efe41ed1bc880d86701c52f261bf5",
                 "shasum": ""
             },
             "require": {
@@ -11048,7 +11076,7 @@
                 "profiler",
                 "webprofiler"
             ],
-            "time": "2020-04-16T20:19:40+00:00"
+            "time": "2020-05-05T10:53:32+00:00"
         },
         {
             "name": "barryvdh/laravel-ide-helper",
@@ -12044,16 +12072,16 @@
         },
         {
             "name": "filp/whoops",
-            "version": "2.7.1",
+            "version": "2.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filp/whoops.git",
-                "reference": "fff6f1e4f36be0e0d0b84d66b413d9dcb0c49130"
+                "reference": "17d0d3f266c8f925ebd035cd36f83cf802b47d4a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/fff6f1e4f36be0e0d0b84d66b413d9dcb0c49130",
-                "reference": "fff6f1e4f36be0e0d0b84d66b413d9dcb0c49130",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/17d0d3f266c8f925ebd035cd36f83cf802b47d4a",
+                "reference": "17d0d3f266c8f925ebd035cd36f83cf802b47d4a",
                 "shasum": ""
             },
             "require": {
@@ -12101,7 +12129,7 @@
                 "throwable",
                 "whoops"
             ],
-            "time": "2020-01-15T10:00:00+00:00"
+            "time": "2020-05-05T12:28:07+00:00"
         },
         {
             "name": "friendsofphp/php-cs-fixer",
@@ -13444,16 +13472,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.19",
+            "version": "0.12.23",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "054f6d76b12ba9a6c13a5a8d5fcdf51219615f4d"
+                "reference": "71e529efced79e055fa8318b692e7f7d03ea4e75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/054f6d76b12ba9a6c13a5a8d5fcdf51219615f4d",
-                "reference": "054f6d76b12ba9a6c13a5a8d5fcdf51219615f4d",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/71e529efced79e055fa8318b692e7f7d03ea4e75",
+                "reference": "71e529efced79e055fa8318b692e7f7d03ea4e75",
                 "shasum": ""
             },
             "require": {
@@ -13482,7 +13510,7 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2020-04-19T20:35:10+00:00"
+            "time": "2020-05-05T12:55:44+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -13863,16 +13891,16 @@
         },
         {
             "name": "react/stream",
-            "version": "v1.1.0",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/stream.git",
-                "reference": "50426855f7a77ddf43b9266c22320df5bf6c6ce6"
+                "reference": "7c02b510ee3f582c810aeccd3a197b9c2f52ff1a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/reactphp/stream/zipball/50426855f7a77ddf43b9266c22320df5bf6c6ce6",
-                "reference": "50426855f7a77ddf43b9266c22320df5bf6c6ce6",
+                "url": "https://api.github.com/repos/reactphp/stream/zipball/7c02b510ee3f582c810aeccd3a197b9c2f52ff1a",
+                "reference": "7c02b510ee3f582c810aeccd3a197b9c2f52ff1a",
                 "shasum": ""
             },
             "require": {
@@ -13882,7 +13910,7 @@
             },
             "require-dev": {
                 "clue/stream-filter": "~1.2",
-                "phpunit/phpunit": "^6.4 || ^5.7 || ^4.8.35"
+                "phpunit/phpunit": "^7.0 || ^6.4 || ^5.7 || ^4.8.35"
             },
             "type": "library",
             "autoload": {
@@ -13905,7 +13933,7 @@
                 "stream",
                 "writable"
             ],
-            "time": "2019-01-01T16:15:09+00:00"
+            "time": "2020-05-04T10:17:57+00:00"
         },
         {
             "name": "scrivo/highlight.php",
