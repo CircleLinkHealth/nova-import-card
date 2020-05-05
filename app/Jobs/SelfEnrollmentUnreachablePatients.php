@@ -41,9 +41,6 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param null $color
-     * @param $practiceId
      */
     public function __construct(
         User $user = null,
@@ -65,7 +62,8 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
     public function handle()
     {
         if ( ! is_null($this->user)) {
-            $this->user->notify(new SendEnrollmentEmail());
+//            $this->user->notify(new SendEnrollmentEmail());
+            event(new AutoEnrollableCollected($this->user));
 
             return;
         }

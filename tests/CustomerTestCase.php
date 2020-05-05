@@ -61,6 +61,20 @@ class CustomerTestCase extends TestCase
         return $this->careCoach;
     }
 
+    protected function demoPractice()
+    {
+        return Practice::firstOrCreate(
+            [
+                'name' => 'demo',
+            ],
+            [
+                'display_name'    => 'Demo',
+                'saas_account_id' => 1,
+                'outgoing_number' => '(678) 395-5261',
+            ]
+        );
+    }
+
     protected function enrollee(int $number = 1)
     {
         if ( ! $this->enrollee) {

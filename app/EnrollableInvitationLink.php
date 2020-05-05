@@ -22,22 +22,20 @@ use Illuminate\Database\Eloquent\Model;
  * @property \App\EnrollableRequestInfo      $statusRequestsInfo
  * @property \App\EnrollableInvitationLink   $enrollmentInvitationLink
  * @property \App\EnrollableInvitationLink   $invitationable
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereInvitationableId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereInvitationableType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereLinkToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereManuallyExpired($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereUpdatedAt($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink newModelQuery()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink newQuery()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink query()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereCreatedAt($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereId($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereInvitationableId($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereInvitationableType($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereLinkToken($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereManuallyExpired($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereUpdatedAt($value)
  * @mixin \Eloquent
- *
- * @property string $url
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereUrl($value)
+ * @property string      $url
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereUrl($value)
+ * @property string|null $button_color
  */
 class EnrollableInvitationLink extends Model
 {
