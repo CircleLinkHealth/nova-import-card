@@ -95,4 +95,10 @@ return [
         'key'    => env('PHAXIO_KEY', null),
         'secret' => env('PHAXIO_SECRET', null),
     ],
+
+    'tester' => [
+        //        'nektariosx01@gmail.com'
+        'email' => 'kountouris7@gmail.com',
+        'phone' => '+35799018718',
+    ],
 ];

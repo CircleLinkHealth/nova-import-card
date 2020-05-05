@@ -145,9 +145,9 @@
     "circlelinkhealth/clh-nova-theme": "*",
     "circlelinkhealth/condition-code-lookup-module": "1.1.5",
     "circlelinkhealth/core-module": "1.5.4",
-    "circlelinkhealth/cpm-migrations-module": "1.7.1",
-    "circlelinkhealth/customer-module": "2.3.2",
-    "circlelinkhealth/eligibility-module": "2.3.3",
+    "circlelinkhealth/cpm-migrations-module": "dev-CPM-1919",
+    "circlelinkhealth/customer-module": "dev-CPM-1919_v2_fresh",
+    "circlelinkhealth/eligibility-module": "dev-CPM-1919_fresh_start_eligibility",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/generate-success-stories-report": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
@@ -201,12 +201,13 @@
     "spatie/laravel-view-models": "^1.2",
     "spatie/pdf-to-text": "^1.2",
     "titasgailius/search-relations": "^1.0",
-    "twilio/sdk": "5.7",
     "vink/nova-cache-card": "^1.0",
     "waavi/url-shortener": "dev-master",
     "waynestate/nova-ckeditor4-field": "^0.4.0",
     "yajra/laravel-datatables-oracle": "~9.0",
-    "circlelinkhealth/enrollment-invites": "*"
+    "circlelinkhealth/enrollment-invites": "*",
+    "twilio/sdk": "~5.16",
+    "laravel-notification-channels/twilio": "^2.1"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",

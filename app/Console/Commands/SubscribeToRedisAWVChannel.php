@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\AwvPatientReportNotify;
+use App\Jobs\ListenToAwvChannel;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Redis;
 
@@ -32,12 +32,10 @@ class SubscribeToRedisAWVChannel extends Command
      */
     public function handle()
     {
-        $channel = 'awv-patient-report-created';
-        $this->info("Listening on $channel");
-
-        Redis::connection('pub_sub')->subscribe([$channel], function ($patientReportdata) {
-            $this->info('Received event. Will dispatch for AwvPatientReportNotify. Data:'.$patientReportdata);
-            AwvPatientReportNotify::dispatch($patientReportdata);
+        $this->info('Listening...');
+        Redis::psubscribe(['*'], function ($data, $channel) {
+            $this->info("Listening on $channel");
+            ListenToAwvChannel::dispatch($data, $channel);
         });
     }
 }
