@@ -15,9 +15,11 @@ class UpdateSentToAccountantToNullableInNurseInvoicesTable extends Migration
      */
     public function down()
     {
-        Schema::table('nurse_invoices', function (Blueprint $table) {
-            $table->dateTime('sent_to_accountant_at')->nullable(false)->change();
-        });
+        if (Schema::hasColumn('nurse_invoices', 'sent_to_accountant_at')) {
+            Schema::table('nurse_invoices', function (Blueprint $table) {
+                $table->dateTime('sent_to_accountant_at')->nullable(false)->change();
+            });
+        }
     }
 
     /**
@@ -25,8 +27,10 @@ class UpdateSentToAccountantToNullableInNurseInvoicesTable extends Migration
      */
     public function up()
     {
-        Schema::table('nurse_invoices', function (Blueprint $table) {
-            $table->dateTimeTz('sent_to_accountant_at')->nullable(true)->change();
-        });
+        if (Schema::hasColumn('nurse_invoices', 'sent_to_accountant_at')) {
+            Schema::table('nurse_invoices', function (Blueprint $table) {
+                $table->dateTimeTz('sent_to_accountant_at')->nullable(true)->change();
+            });
+        }
     }
 }

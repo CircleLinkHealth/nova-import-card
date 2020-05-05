@@ -29,6 +29,10 @@ class AddWorkWeekStartInWorkHours extends Migration
             $table->date('work_week_start');
         });
 
-        Artisan::call('command:createCalendarRecurringEventsForPastWindows');
+        try {
+            Artisan::call('command:createCalendarRecurringEventsForPastWindows');
+        } catch (Exception $e) {
+            Log::warning($e->getMessage());
+        }
     }
 }
