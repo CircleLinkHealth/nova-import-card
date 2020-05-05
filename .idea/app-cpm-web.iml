@@ -24,6 +24,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/brick/money" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/cakephp/chronos" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/clh-nova-theme" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/enrollment-invites" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/clue/stdio-react" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/clue/stream-filter" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/clue/term-react" />
