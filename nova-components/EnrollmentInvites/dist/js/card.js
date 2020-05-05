@@ -269,7 +269,7 @@ function normalizeComponent (
 /***/ (function(module, exports, __webpack_require__) {
 
 Nova.booting(function (Vue, router, store) {
-  Vue.component('enrollment-invites', __webpack_require__(/*! ./components/Card */ "./resources/js/components/Card.vue"));
+  Vue.component('enrollment-invites', __webpack_require__(/*! ./components/Card */ "./resources/js/components/Card.vue")["default"]);
 });
 
 /***/ }),
