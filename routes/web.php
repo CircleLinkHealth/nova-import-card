@@ -1131,6 +1131,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'DirectMailController@checkInbox',
                 'as'   => 'direct-mail.check',
             ]);
+
+            Route::post('new', [
+                'uses' => 'DirectMailController@send',
+                'as'   => 'direct-mail.send',
+            ]);
         });
 
         Route::group(['prefix' => 'revisions'], function () {

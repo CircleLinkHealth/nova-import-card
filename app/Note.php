@@ -13,11 +13,11 @@ use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NoteForwarded;
 use App\Traits\Addendumable;
 use App\Traits\NotificationAttachable;
-use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\PdfReportTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**

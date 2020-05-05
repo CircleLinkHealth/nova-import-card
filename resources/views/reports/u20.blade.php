@@ -389,7 +389,15 @@
                         @endif
                         @push('scripts')
                             <script type="text/javascript">
-                                window.onload = filterText('Enrolled');
+                                function onLoad() {
+                                    if (typeof filterText === 'undefined') {
+                                        setTimeout(() => onLoad(), 200);
+                                        return;
+                                    }
+                                    filterText('Enrolled');
+                                }
+
+                                window.onload = onLoad;
                             </script>
                         @endpush
 

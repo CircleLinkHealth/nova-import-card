@@ -8,7 +8,6 @@ namespace App\Services;
 
 use App\Call;
 use App\CareplanAssessment;
-use App\CLH\Repositories\UserRepository;
 use App\Filters\NoteFilters;
 use App\Note;
 use App\Notifications\SendPatientEmail;
@@ -20,6 +19,7 @@ use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\UserRepository;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
