@@ -103,7 +103,8 @@
                         event.attachment.setUploadProgress(100);
                         this.attachments.push({
                             'media_id': response.data['media_id'],
-                            'path': response.data['path']
+                            'path': response.data['path'],
+                            'name': response.data['name']
                         });
                         App.$emit('file-upload', this.attachments);
                     }
@@ -119,6 +120,9 @@
                 let formData = new FormData();
                 let file = event.attachment.file;
 
+                this.attachments = this.attachments.filter(function(a){
+                    return a.name !== file.name;
+                })
                 formData.append("file", file);
 
                 return this.axios.post(this.deleteUrl, formData, {
