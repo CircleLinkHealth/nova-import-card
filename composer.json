@@ -118,6 +118,10 @@
     {
       "type": "path",
       "url": "./nova-components/ClhNovaTheme"
+    },
+    {
+      "type": "path",
+      "url": "./nova-components/EnrollmentInvites"
     }
   ],
   "require": {
@@ -201,7 +205,8 @@
     "vink/nova-cache-card": "^1.0",
     "waavi/url-shortener": "dev-master",
     "waynestate/nova-ckeditor4-field": "^0.4.0",
-    "yajra/laravel-datatables-oracle": "~9.0"
+    "yajra/laravel-datatables-oracle": "~9.0",
+    "circlelinkhealth/enrollment-invites": "*"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",
