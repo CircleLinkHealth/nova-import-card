@@ -8,14 +8,15 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddBooleanInDisputesTable extends Migration
+class AddApproveField extends Migration
 {
     /**
      * Reverse the migrations.
      */
     public function down()
     {
-        Schema::dropIfExists('disputes');
+        Schema::table('nurse_invoices', function (Blueprint $table) {
+        });
     }
 
     /**
@@ -23,10 +24,9 @@ class AddBooleanInDisputesTable extends Migration
      */
     public function up()
     {
-        if (Schema::hasTable('disputes')) {
-            Schema::table('disputes', function (Blueprint $table) {
-                $table->boolean('is_resolved')->default(false);
-            });
-        }
+        Schema::table('nurse_invoices', function (Blueprint $table) {
+            $table->timestamp('nurse_approved_at')->nullable()->after('month_year');
+            $table->boolean('is_nurse_approved')->nullable()->after('month_year');
+        });
     }
 }
