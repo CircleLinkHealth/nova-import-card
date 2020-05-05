@@ -31,7 +31,7 @@ class PatientEmailController extends Controller
             ->where('model_id', $patientId)
             ->where('file_name', str_replace(' ', '-', $file->getClientOriginalName()))
             ->whereIn('model_type', [\App\User::class, 'CircleLinkHealth\Customer\Entities\User'])
-            ->first();
+            ->firstOrFail();
 
         $patient->deleteMedia($media->id);
 
