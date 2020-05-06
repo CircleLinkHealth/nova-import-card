@@ -11,11 +11,12 @@ use App\Traits\EnrollableNotificationContent;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\Twilio\TwilioChannel;
 use NotificationChannels\Twilio\TwilioSmsMessage;
 
-class SendEnrollementSms extends Notification
+class SendEnrollementSms extends Notification implements ShouldQueue
 {
     use EnrollableManagement;
     use EnrollableNotificationContent;
