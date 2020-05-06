@@ -6,8 +6,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Jobs\ListenToAwvChannel;
+use Illuminate\Console\Command;
 
 class SubscribeToRedisAWVChannel extends Command
 {
