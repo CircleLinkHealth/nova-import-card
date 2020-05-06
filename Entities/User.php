@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use App\Call;
-use App\CareAmbassador;
 use App\CareplanAssessment;
 use App\Constants;
 use App\ForeignId;
@@ -1590,6 +1589,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $lc;
     }
 
+    public function getLegacyBhiNursePatientCacheKey($patientId)
+    {
+        if ( ! $this->id) {
+            throw new \Exception('User ID not found.');
+        }
+
+        return "hide_legacy_bhi_banner:$this->id:$patientId";
+    }
+
     public function getMobilePhoneNumber()
     {
         if ( ! $this->phoneNumbers) {
@@ -2133,6 +2141,25 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function isInternalUser()
     {
         return $this->hasRole(Constants::CLH_INTERNAL_USER_ROLE_NAMES);
+    }
+
+    /**
+     * Determine whether the User is Legacy BHI eligible.
+     * "Legacy BHI Eligible" applies to a small number of patients who are BHI eligible, but consented before
+     * 7/23/2018.
+     * On 7/23/2018 we changed our Terms and Conditions to include BHI, so patients who consented before 7/23 need a
+     * separate consent for BHI.
+     *
+     * @return bool
+     */
+    public function isLegacyBhiEligible()
+    {
+        //Do we wanna cache this for a minute maybe?
+//        return \Cache::remember("user:$this->id:is_bhi_eligible", 1, function (){
+        return User::isBhiEligible()
+            ->where('id', $this->id)
+            ->exists();
+//        });
     }
 
     /**
@@ -3929,6 +3956,19 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
 
         return $patientIds->pluck('id')->all();
+    }
+
+    private function ccmNoOfMonitoredProblems()
+    {
+        return $this->ccdProblems()
+            ->where('is_monitored', 1)
+            ->whereHas(
+                'cpmProblem',
+                function ($cpm) {
+                    return $cpm->where('is_behavioral', 0);
+                }
+            )
+            ->count();
     }
 
     private function queryOfPracticesRequiringSpecialBhiConsent($builder, $operator)
