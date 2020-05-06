@@ -6,6 +6,8 @@
 
 namespace App\Nova;
 
+use App\Nova\Filters\UnreachablePatientsFilter;
+use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 
@@ -59,7 +61,14 @@ class PatientsInvitationPanel extends Resource
      */
     public function cards(Request $request)
     {
-        return [];
+        return [
+            (new EnrollmentInvites())->withMeta(
+                [
+                    'practice_id' => $this->getPracticeId(),
+                    'is_patient'  => true,
+                ]
+            ),
+        ];
     }
 
     /**
@@ -81,7 +90,11 @@ class PatientsInvitationPanel extends Resource
      */
     public function filters(Request $request)
     {
-        return [];
+        $practiceId = $this->getPracticeId();
+
+        return [
+            new UnreachablePatientsFilter($practiceId),
+        ];
     }
 
     /**
@@ -100,5 +113,13 @@ class PatientsInvitationPanel extends Resource
     public function lenses(Request $request)
     {
         return [];
+    }
+
+    private function getPracticeId()
+    {
+        $url = parse_url($_SERVER['HTTP_REFERER']);
+        parse_str($url['query'], $params);
+
+        return $params['practice_id'];
     }
 }

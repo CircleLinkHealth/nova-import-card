@@ -104,16 +104,14 @@ class SelfEnrollmentEnrollees implements ShouldQueue
 
         if (App::environment(['local', 'review'])) {
             $practiceId = Practice::whereName('demo')->firstOrFail()->id;
-            $enrollees  = $this->getEnrollees()
-                ->where('practice_id', $practiceId)
+            $enrollees  = $this->getEnrollees($practiceId)
                 ->where('dob', Carbon::parse('1901-01-01'))
                 ->get()
                 ->take(AutoEnrollmentCenterController::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING)
                 ->all();
             $this->createSurveyOnlyUserFromEnrollees($enrollees);
         } else {
-            $enrollees = $this->getEnrollees()
-                ->where('practice_id', $this->practiceId)
+            $enrollees = $this->getEnrollees($this->practiceId)
                 ->orderBy('id', 'asc')
                 ->limit($this->amount)
                 ->get();

@@ -16,11 +16,18 @@
                 <div v-if="errors">
                     <p class="text-danger mb-1" v-for="error in errors">{{error}}</p>
                 </div>
-                <a class="btn btn-default btn-primary ml-auto mt-auto"
-                   style="cursor: pointer; background-color: #4baf50" @click="sendInvites('#4baf50', number)">Invite</a>
+                <div v-if="! this.card.is_patient" class="button">
+                    <a class="btn btn-default btn-primary ml-auto mt-auto"
+                       style="cursor: pointer; background-color: #4baf50" @click="sendInvites('#4baf50', number)">Send Invite</a>
 
-                <a class="btn btn-default btn-primary ml-auto mt-auto"
-                   style="cursor: pointer; background-color: #b1284c" @click="sendInvites('#b1284c', number)">Invite</a>
+                    <a class="btn btn-default btn-primary ml-auto mt-auto"
+                       style="cursor: pointer; background-color: #b1284c" @click="sendInvites('#b1284c', number)">Send Invite</a>
+                </div>
+
+                <div v-if="this.card.is_patient" class="button">
+                    <a class="btn btn-default btn-primary ml-auto mt-auto"
+                       style="cursor: pointer; background-color: #4baf50" @click="sendInvites('#4baf50', number)">Send Invite</a>
+                </div>
             </div>
         </div>
     </card>
@@ -46,11 +53,17 @@ export default {
 
     methods: {
         sendInvites(color, number){
-            console.log(this.card.practice_id)
             Nova.request().post('/nova-vendor/enrollment-invites/enrollment-invites', {
                 color:color,
                 number:number,
-                practice_id:this.card.practice_id
+                practice_id:this.card.practice_id,
+                is_patient:this.card.is_patient
+            }).then(response => {
+                console.log(response);
+                this.$toasted.success(response.data.message);
+            }).catch(error => {
+                    this.$toasted.error(error.response.data);
+
             });
         }
     },

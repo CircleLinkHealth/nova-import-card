@@ -55,8 +55,6 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
     /**
      * NOTE: "whereDoesntHave" makes sure we dont invite Unreachable/Non responded - Users (Patients) second time.
      *
-     * Execute the job.
-     *
      * @return void
      */
     public function handle()
@@ -68,17 +66,16 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
             return;
         }
 
-        $monthStart = Carbon::parse(now())->copy()->startOfMonth()->toDateTimeString();
-        $monthEnd   = Carbon::parse($monthStart)->copy()->endOfMonth()->toDateTimeString();
+//        $monthStart = Carbon::parse(now())->copy()->startOfMonth()->toDateTimeString();
+//        $monthEnd   = Carbon::parse($monthStart)->copy()->endOfMonth()->toDateTimeString();
 
         //    Just for testing
         if (App::environment(['local', 'review'])) {
             $practiceId = Practice::where('name', '=', 'demo')->firstOrFail()->id;
-            $patients   = $this->getUnreachablePatients($monthStart, $monthEnd)
+            $patients   = $this->getUnreachablePatients($practiceId)
                 ->whereHas('patientInfo', function ($patientInfo) {
                     $patientInfo->where('birth_date', Carbon::parse('1901-01-01'));
                 })
-                ->where('program_id', $practiceId)
                 ->get()
                 ->take(AutoEnrollmentCenterController::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING);
             foreach ($patients->all() as $patient) {
@@ -88,8 +85,7 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
                 }
             }
         } else {
-            $patients = $this->getUnreachablePatients($monthStart, $monthEnd)
-                ->where('program_id', $this->practiceId)
+            $patients = $this->getUnreachablePatients($this->practiceId)
                 ->orderBy('id', 'asc')
                 ->limit($this->amount)
                 ->get();
@@ -104,20 +100,16 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
     }
 
     /**
-     * @param $mothStart
-     * @param $monthEnd
-     *
-     * @return \Illuminate\Database\Eloquent\Builder|User
+     * @param $practiceId
+     * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function getUnreachablePatients($mothStart, $monthEnd)
+    private function getUnreachablePatients($practiceId)
     {
         return User::with('patientInfo')
             ->whereDoesntHave('enrollmentInvitationLink')
-            ->whereHas('patientInfo', function ($patient) use ($mothStart, $monthEnd) {
-                $patient->where('ccm_status', 'unreachable')->where([
-                    ['date_unreachable', '>=', $mothStart],
-                    ['date_unreachable', '<=', $monthEnd],
-                ]);
+            ->where('program_id', $practiceId)
+            ->whereHas('patientInfo', function ($patient) {
+                $patient->where('ccm_status', 'unreachable');
             });
     }
 }

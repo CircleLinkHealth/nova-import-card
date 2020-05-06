@@ -123,6 +123,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['card' // The following props are only available on resource detail cards...
   // 'resource',
@@ -137,11 +144,19 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     sendInvites: function sendInvites(color, number) {
-      console.log(this.card.practice_id);
+      var _this = this;
+
       Nova.request().post('/nova-vendor/enrollment-invites/enrollment-invites', {
         color: color,
         number: number,
-        practice_id: this.card.practice_id
+        practice_id: this.card.practice_id,
+        is_patient: this.card.is_patient
+      }).then(function (response) {
+        console.log(response);
+
+        _this.$toasted.success(response.data.message);
+      })["catch"](function (error) {
+        _this.$toasted.error(error.response.data);
       });
     }
   },
@@ -217,33 +232,64 @@ var render = function() {
               )
             : _vm._e(),
           _vm._v(" "),
-          _c(
-            "a",
-            {
-              staticClass: "btn btn-default btn-primary ml-auto mt-auto",
-              staticStyle: { cursor: "pointer", "background-color": "#4baf50" },
-              on: {
-                click: function($event) {
-                  return _vm.sendInvites("#4baf50", _vm.number)
-                }
-              }
-            },
-            [_vm._v("Invite")]
-          ),
+          !this.card.is_patient
+            ? _c("div", { staticClass: "button" }, [
+                _c(
+                  "a",
+                  {
+                    staticClass: "btn btn-default btn-primary ml-auto mt-auto",
+                    staticStyle: {
+                      cursor: "pointer",
+                      "background-color": "#4baf50"
+                    },
+                    on: {
+                      click: function($event) {
+                        return _vm.sendInvites("#4baf50", _vm.number)
+                      }
+                    }
+                  },
+                  [_vm._v("Send Invite")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "a",
+                  {
+                    staticClass: "btn btn-default btn-primary ml-auto mt-auto",
+                    staticStyle: {
+                      cursor: "pointer",
+                      "background-color": "#b1284c"
+                    },
+                    on: {
+                      click: function($event) {
+                        return _vm.sendInvites("#b1284c", _vm.number)
+                      }
+                    }
+                  },
+                  [_vm._v("Send Invite")]
+                )
+              ])
+            : _vm._e(),
           _vm._v(" "),
-          _c(
-            "a",
-            {
-              staticClass: "btn btn-default btn-primary ml-auto mt-auto",
-              staticStyle: { cursor: "pointer", "background-color": "#b1284c" },
-              on: {
-                click: function($event) {
-                  return _vm.sendInvites("#b1284c", _vm.number)
-                }
-              }
-            },
-            [_vm._v("Invite")]
-          )
+          this.card.is_patient
+            ? _c("div", { staticClass: "button" }, [
+                _c(
+                  "a",
+                  {
+                    staticClass: "btn btn-default btn-primary ml-auto mt-auto",
+                    staticStyle: {
+                      cursor: "pointer",
+                      "background-color": "#4baf50"
+                    },
+                    on: {
+                      click: function($event) {
+                        return _vm.sendInvites("#4baf50", _vm.number)
+                      }
+                    }
+                  },
+                  [_vm._v("Send Invite")]
+                )
+              ])
+            : _vm._e()
         ])
       ])
     ]
