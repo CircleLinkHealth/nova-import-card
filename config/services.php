@@ -97,7 +97,8 @@ return [
     ],
 
     'tester' => [
-        'email' => 'nektariosx01@gmail.com',
-        'phone' => '+35799018718',
+        'email'     => 'nektariosx01@gmail.com',
+        'phone'     => '+35799018718',
+        'email_two' => 'kountouris7@gmail.com',
     ],
 ];
