@@ -63,7 +63,7 @@ class EnrolleesInvitationPanel extends Resource
     public function cards(Request $request)
     {
         return [
-            new EnrollmentInvites(),
+            (new EnrollmentInvites())->withMeta(['practice_id' => $this->getPracticeId()]),
         ];
     }
 

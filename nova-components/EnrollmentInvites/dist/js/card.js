@@ -103,14 +103,49 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['card' // The following props are only available on resource detail cards...
   // 'resource',
   // 'resourceId',
   // 'resourceName',
   ],
-  mounted: function mounted() {//
-  }
+  data: function data() {
+    return {
+      number: '',
+      errors: null
+    };
+  },
+  methods: {
+    sendInvites: function sendInvites(color, number) {
+      console.log(this.card.practice_id);
+      Nova.request().post('/nova-vendor/enrollment-invites/enrollment-invites', {
+        color: color,
+        number: number,
+        practice_id: this.card.practice_id
+      });
+    }
+  },
+  mounted: function mounted() {}
 });
 
 /***/ }),
@@ -137,6 +172,78 @@ var render = function() {
       _c("div", { staticClass: "px-3 py-3" }, [
         _c("h1", { staticClass: "text-center text-3xl text-80 font-light" }, [
           _vm._v("Enrollment Invites")
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "py-4" }, [
+          _c("span", { staticClass: "flex " }, [
+            _c("label", { attrs: { for: "number" } }, [
+              _vm._v("Select number of invitations:")
+            ]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.number,
+                  expression: "number"
+                }
+              ],
+              staticStyle: { border: "1px solid #5cc0dd" },
+              attrs: { type: "text", id: "number", name: "number" },
+              domProps: { value: _vm.number },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.number = $event.target.value
+                }
+              }
+            })
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "flex" }, [
+          _vm.errors
+            ? _c(
+                "div",
+                _vm._l(_vm.errors, function(error) {
+                  return _c("p", { staticClass: "text-danger mb-1" }, [
+                    _vm._v(_vm._s(error))
+                  ])
+                }),
+                0
+              )
+            : _vm._e(),
+          _vm._v(" "),
+          _c(
+            "a",
+            {
+              staticClass: "btn btn-default btn-primary ml-auto mt-auto",
+              staticStyle: { cursor: "pointer", "background-color": "#4baf50" },
+              on: {
+                click: function($event) {
+                  return _vm.sendInvites("#4baf50", _vm.number)
+                }
+              }
+            },
+            [_vm._v("Invite")]
+          ),
+          _vm._v(" "),
+          _c(
+            "a",
+            {
+              staticClass: "btn btn-default btn-primary ml-auto mt-auto",
+              staticStyle: { cursor: "pointer", "background-color": "#b1284c" },
+              on: {
+                click: function($event) {
+                  return _vm.sendInvites("#b1284c", _vm.number)
+                }
+              }
+            },
+            [_vm._v("Invite")]
+          )
         ])
       ])
     ]
@@ -361,8 +468,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/michalis/Code/app-cpm-web/nova-components/EnrollmentInvites/resources/js/card.js */"./resources/js/card.js");
-module.exports = __webpack_require__(/*! /Users/michalis/Code/app-cpm-web/nova-components/EnrollmentInvites/resources/sass/card.scss */"./resources/sass/card.scss");
+__webpack_require__(/*! /Users/michalis/Code/Antonis/cpm-web/nova-components/EnrollmentInvites/resources/js/card.js */"./resources/js/card.js");
+module.exports = __webpack_require__(/*! /Users/michalis/Code/Antonis/cpm-web/nova-components/EnrollmentInvites/resources/sass/card.scss */"./resources/sass/card.scss");
 
 
 /***/ })

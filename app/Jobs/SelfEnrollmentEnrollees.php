@@ -44,7 +44,7 @@ class SelfEnrollmentEnrollees implements ShouldQueue
      */
     private $enrollee;
     /**
-     * @var mixed
+     * @var int|mixed
      */
     private $practiceId;
 
@@ -63,7 +63,7 @@ class SelfEnrollmentEnrollees implements ShouldQueue
         Enrollee $enrollee = null,
         $color = null,
         int $amount,
-        $practiceId
+        int $practiceId
     ) {
         $this->enrollee   = $enrollee;
         $this->color      = $color;
