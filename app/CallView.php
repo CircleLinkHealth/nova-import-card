@@ -6,7 +6,6 @@
 
 namespace App;
 
-use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\SqlViewModel;
 use CircleLinkHealth\Core\Filters\Filterable;
 
@@ -92,49 +91,6 @@ class CallView extends SqlViewModel
     ];
 
     protected $table = 'calls_view';
-
-    /**
-     * @return string
-     */
-    public function preferredCallDaysToExpandedString()
-    {
-        $windows = [];
-        if ($this->preferred_call_days) {
-            $days  = explode(',', $this->preferred_call_days);
-            $start = Carbon::parse($this->call_time_start)->format('h:i a');
-            $end   = Carbon::parse($this->call_time_end)->format('h:i a');
-
-            foreach ($days as $day) {
-                switch ($day) {
-                    case 1:
-                        $windows[] = "Monday: {$start} - {$end}<br/>";
-                        break;
-                    case 2:
-                        $windows[] = "Tuesday: {$start} - {$end}<br/>";
-                        break;
-                    case 3:
-                        $windows[] = "Wednesday: {$start} - {$end}<br/>";
-                        break;
-                    case 4:
-                        $windows[] = "Thursday: {$start} - {$end}<br/>";
-                        break;
-                    case 5:
-                        $windows[] = "Friday: {$start} - {$end}<br/>";
-                        break;
-                    case 6:
-                        $windows[] = "Saturday: {$start} - {$end}<br/>";
-                        break;
-                    case 7:
-                        $windows[] = "Sunday: {$start} - {$end}<br/>";
-                        break;
-                }
-            }
-        }
-
-        return empty($windows)
-            ? 'Patient call date/time preferences not found.'
-            : implode($windows);
-    }
 
     public function preferredCallDaysToString()
     {
