@@ -8,6 +8,7 @@ namespace App\Nova;
 
 use App\Constants;
 use App\Models\PracticePull\Demographics;
+use App\Nova\Actions\PracticePull\ImportDemographics;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 
@@ -44,7 +45,7 @@ class PracticePullDemographics extends Resource
      */
     public function actions(Request $request)
     {
-        return [new Actions\PracticePull\ImportDemographics()];
+        return [new ImportDemographics()];
     }
 
     /**

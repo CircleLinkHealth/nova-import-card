@@ -1166,10 +1166,11 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EnrollmentInvites",
-                "reference": "464d4a3178fde4c0bc50d2d0e525d6cf70a14df7",
+                "reference": "3d7e5ac1e98048bb2f469171feb8cb1532131c9c",
                 "shasum": null
             },
             "require": {
+                "anaseqal/nova-import": "^0.0.3",
                 "php": ">=7.1.0"
             },
             "type": "library",

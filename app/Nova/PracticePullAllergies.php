@@ -7,12 +7,12 @@
 namespace App\Nova;
 
 use App\Constants;
-use App\Models\PracticePull\Medication;
-use App\Nova\Actions\PracticePull\ImportMedications;
+use App\Models\PracticePull\Allergy;
+use App\Nova\Actions\PracticePull\ImportAllergies;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 
-class PracticePullMedication extends Resource
+class PracticePullAllergies extends Resource
 {
     public static $group = Constants::NOVA_GROUP_PRACTICE_DATA_PULLS;
     /**
@@ -20,7 +20,7 @@ class PracticePullMedication extends Resource
      *
      * @var string
      */
-    public static $model = Medication::class;
+    public static $model = Allergy::class;
 
     /**
      * The columns that should be searched.
@@ -45,7 +45,7 @@ class PracticePullMedication extends Resource
      */
     public function actions(Request $request)
     {
-        return [new ImportMedications()];
+        return [new ImportAllergies()];
     }
 
     /**
@@ -82,7 +82,7 @@ class PracticePullMedication extends Resource
 
     public static function label()
     {
-        return 'Medications';
+        return 'Allergies';
     }
 
     /**

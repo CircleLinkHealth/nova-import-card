@@ -8,6 +8,7 @@ namespace App\Nova;
 
 use App\Constants;
 use App\Models\PracticePull\Problem;
+use App\Nova\Actions\PracticePull\ImportProblems;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 
@@ -44,7 +45,7 @@ class PracticePullProblem extends Resource
      */
     public function actions(Request $request)
     {
-        return [new Actions\PracticePull\ImportProblems()];
+        return [new ImportProblems()];
     }
 
     /**
