@@ -57,7 +57,14 @@ trait EnrollableManagement
     public function createUrlAndRedirectToSurvey($enrollableId)
     {
         $enrolleesSurveyInstance = $this->getEnrolleesSurveyInstance();
-        $surveyId                = $enrolleesSurveyInstance->survey_id;
+
+        try {
+            $surveyId = $enrolleesSurveyInstance->survey_id;
+        } catch (\Exception $exception) {
+            \Log::critical('Survey instance not found');
+            abort(404);
+        }
+
         $this->updateAwvUsersSurvey($enrollableId, $enrolleesSurveyInstance, $surveyId);
         $enrolleesSurveyUrl = url(config('services.awv.url')."/survey/enrollees/create-url/{$enrollableId}/{$surveyId}");
 

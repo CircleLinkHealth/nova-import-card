@@ -99,6 +99,7 @@ return [
     'tester' => [
         'email'     => 'nektariosx01@gmail.com',
         'phone'     => '+35799018718',
+        'phone_two' => '+35799952761',
         'email_two' => 'kountouris7@gmail.com',
     ],
 ];
