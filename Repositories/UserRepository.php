@@ -684,6 +684,10 @@ class UserRepository
         return array_merge($this->createNewUserRules(), [
             'birth_date' => 'filled|required|date',
             'mrn_number' => ['filled'],
+            'address'    => 'required|filled',
+            'city'       => 'required|filled',
+            'state'      => 'required|filled',
+            'zip'        => 'required|filled',
         ]);
     }
 
