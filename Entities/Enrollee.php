@@ -278,6 +278,13 @@ class Enrollee extends BaseModel
     const UNREACHABLE = 'utc';
 
     /**
+     * For field: source.
+     *
+     * Csv with enrollees uploaded through Superadmin page
+     */
+    const UPLOADED_CSV = 'uploaded-csv';
+
+    /**
      * For mySql full-text search.
      *
      * @var array
@@ -398,6 +405,8 @@ class Enrollee extends BaseModel
 
         'enrollment_non_responsive',
         'auto_enrollment_triggered',
+
+        'source',
     ];
 
     protected $table = 'enrollees';
