@@ -278,6 +278,7 @@
       <path value="$PROJECT_DIR$/vendor/ocramius/package-versions" />
       <path value="$PROJECT_DIR$/vendor/circlelinkhealth/enrollment-invites" />
       <path value="$PROJECT_DIR$/vendor/laravel/nova-app" />
+      <path value="$PROJECT_DIR$/vendor/anaseqal/nova-import" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.3" />

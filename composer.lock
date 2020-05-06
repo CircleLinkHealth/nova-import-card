@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f3e6374be80f071a03439d8ba66892f7",
+    "content-hash": "b389a22cd2c329f2b007cf7b3c596c5b",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -247,6 +247,48 @@
                 "issues": "https://github.com/amnuts/opcache-gui/issues"
             },
             "time": "2018-08-07T23:43:00+00:00"
+        },
+        {
+            "name": "anaseqal/nova-import",
+            "version": "0.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/anaseqal/nova-import.git",
+                "reference": "548fa4d39ea914b1a5ce82b388a9d1df1bdd857a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/anaseqal/nova-import/zipball/548fa4d39ea914b1a5ce82b388a9d1df1bdd857a",
+                "reference": "548fa4d39ea914b1a5ce82b388a9d1df1bdd857a",
+                "shasum": ""
+            },
+            "require": {
+                "maatwebsite/excel": "*",
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Anaseqal\\NovaImport\\ToolServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Anaseqal\\NovaImport\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova tool.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "time": "2020-04-13T12:32:35+00:00"
         },
         {
             "name": "appstract/laravel-opcache",

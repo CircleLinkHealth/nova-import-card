@@ -137,6 +137,7 @@
         "algolia/algoliasearch-client-php": "^2.2",
         "algolia/scout-extended": "^1.8",
         "amnuts/opcache-gui": "dev-master",
+        "anaseqal/nova-import": "^0.0.3",
         "appstract/laravel-opcache": "^3.2.1",
         "barryvdh/laravel-snappy": "0.4.7",
         "circlelinkhealth/ccda-parser-processor-php-module": "1.1.1",
@@ -148,6 +149,7 @@
         "circlelinkhealth/cpm-migrations-module": "1.7.0",
         "circlelinkhealth/customer-module": "dev-attestation-add-timestamps",
         "circlelinkhealth/eligibility-module": "2.3.2",
+        "circlelinkhealth/enrollment-invites": "*",
         "circlelinkhealth/generate-patient-call-data-csv": "*",
         "circlelinkhealth/generate-success-stories-report": "*",
         "circlelinkhealth/import-practice-staff-csv": "*",
@@ -205,8 +207,7 @@
         "vink/nova-cache-card": "^1.0",
         "waavi/url-shortener": "dev-master",
         "waynestate/nova-ckeditor4-field": "^0.4.0",
-        "yajra/laravel-datatables-oracle": "~9.0",
-        "circlelinkhealth/enrollment-invites": "*"
+        "yajra/laravel-datatables-oracle": "~9.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "*",
