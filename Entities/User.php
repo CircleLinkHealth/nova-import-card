@@ -2718,17 +2718,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->get();
     }
 
-    /**
-     * @param $notification
-     * @return string
-     */
     public function routeNotificationForMail($notification)
     {
-        if (App::environment(['review'])) {
-            return config('services.tester.email'); // tester
-        }
-        if (App::environment(['local'])) {
-            return config('services.tester.email_two'); // tester
+        if ( ! App::environment('testing')) {
+            $hasTester = AppConfig::pull('tester_email', null);
+
+            return $hasTester ?? $this->email;
         }
 
         return $this->email;
