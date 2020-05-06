@@ -147,7 +147,7 @@
     "circlelinkhealth/core-module": "1.5.4",
     "circlelinkhealth/cpm-migrations-module": "1.7.3",
     "circlelinkhealth/customer-module": "2.3.5",
-    "circlelinkhealth/eligibility-module": "2.3.5",
+    "circlelinkhealth/eligibility-module": "dev-CPM-2256-2019-2286-2287-CA-L6",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/generate-success-stories-report": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
