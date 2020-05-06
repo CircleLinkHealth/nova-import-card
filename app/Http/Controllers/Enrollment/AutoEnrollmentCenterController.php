@@ -250,8 +250,10 @@ class AutoEnrollmentCenterController extends Controller
         $dateLetterSent         = Carbon::parse($enrollee->getLastEnrollmentInvitationLink()->updated_at)->toDateString();
         $pastActiveLink         = $this->pastActiveInvitationLinks($enrollee);
 
-        if (is_null($pastActiveLink)) {
-            $buttonColor = '#4baf50';
+        $buttonColor = '#4baf50';
+
+        if ( ! empty($pastActiveLink)) {
+            $buttonColor = $pastActiveLink->button_color;
         }
 
         return view('enrollment-consent.enrollmentInvitation', compact(

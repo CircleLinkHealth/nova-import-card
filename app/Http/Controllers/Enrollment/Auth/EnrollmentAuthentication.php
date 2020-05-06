@@ -31,7 +31,7 @@ trait EnrollmentAuthentication
                 ->where('id', $userId)
                 ->firstOrFail();
         } catch (\Exception $exception) {
-            abort(404, 'Unauthorized action.');
+            abort(404, 'User not found.');
         }
     }
 

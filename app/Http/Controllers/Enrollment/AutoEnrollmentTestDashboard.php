@@ -6,7 +6,6 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use App\EnrollableInvitationLink;
 use App\Http\Controllers\Controller;
 use App\Jobs\EnrollableSurveyCompleted;
 use App\Jobs\FinalActionOnNonResponsivePatients;
@@ -18,6 +17,7 @@ use App\Notifications\SendEnrollmentEmail;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;

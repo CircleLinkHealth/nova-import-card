@@ -45,7 +45,7 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
     {
         $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
-        $testingMode   = App::environment(['local', 'review', 'staging', 'production']);
+        $testingMode   = ! App::environment(['testing']);
 
         if ($testingMode) {
             $practice      = $this->getDemoPractice();

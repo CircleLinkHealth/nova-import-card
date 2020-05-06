@@ -70,7 +70,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
         $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
 
-        if (App::environment(['local', 'review', 'staging', 'production'])) {
+        if ( ! App::environment(['testing'])) {
             $twoDaysAgo    = Carbon::parse(now())->startOfMonth()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfMonth()->toDateTimeString();
             $practice      = $this->getDemoPractice();

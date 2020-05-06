@@ -8,8 +8,8 @@ namespace App\Notifications;
 
 use App\Traits\EnrollableManagement;
 use App\Traits\EnrollableNotificationContent;
-use App\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\Twilio\TwilioChannel;
