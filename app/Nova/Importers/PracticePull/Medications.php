@@ -52,8 +52,8 @@ class Medications implements ToModel, WithChunkReading, WithHeadingRow, WithBatc
             'mrn'         => $this->nullOrValue($row['patientid']),
             'name'        => $this->nullOrValue($row['rx']),
             'sig'         => $this->nullOrValue($row['sig']),
-            'start'       => $this->nullOrValue($row['startdate']),
-            'stop'        => $this->nullOrValue($row['stopdate']),
+            'start'       => $row['startdate'],
+            'stop'        => $row['stopdate'],
             'status'      => $this->nullOrValue($row['medstatus']),
         ]);
     }

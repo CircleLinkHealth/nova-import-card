@@ -54,7 +54,7 @@ class Demographics implements ToModel, WithChunkReading, WithHeadingRow, WithBat
             'mrn'                     => $this->nullOrValue($row['mrn']),
             'first_name'              => $this->nullOrValue($row['first_name']),
             'last_name'               => $this->nullOrValue($row['last_name']),
-            'last_encounter'          => $this->nullOrValue(Carbon::parse($row['last_encounter'])),
+            'last_encounter'          => Carbon::parse($row['last_encounter']),
             'dob'                     => ImportPatientInfo::parseDOBDate($this->nullOrValue($row['dob'])),
             'gender'                  => $this->nullOrValue($row['gender']),
             'lang'                    => $this->nullOrValue($row['lang']),

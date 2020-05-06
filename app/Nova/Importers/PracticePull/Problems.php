@@ -6,6 +6,8 @@
 
 namespace App\Nova\Importers\PracticePull;
 
+use App\Models\PracticePull\Problem;
+use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -47,14 +49,14 @@ class Problems implements ToModel, WithChunkReading, WithHeadingRow, WithBatchIn
 
     public function model(array $row)
     {
-        return new \App\Models\PracticePull\Problem([
+        return new Problem([
             'practice_id' => $this->practiceId,
             'mrn'         => $this->nullOrValue($row['patientid']),
             'name'        => $this->nullOrValue($row['name']),
             'code'        => $this->nullOrValue($row['code']),
             'code_type'   => $this->nullOrValue($row['codetype']),
-            'start'       => $this->nullOrValue($row['addeddate']),
-            'stop'        => $this->nullOrValue($row['resolvedate']),
+            'start'       => Carbon::parse($row['addeddate']),
+            'stop'        => Carbon::parse($row['resolvedate']),
             'status'      => $this->nullOrValue($row['status']),
         ]);
     }
