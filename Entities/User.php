@@ -7,10 +7,10 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use App\Call;
-use App\CareAmbassador;
 use App\CareplanAssessment;
 use App\Constants;
 use App\ForeignId;
+use App\Jobs\SelfEnrollmentEnrollees;
 use App\Message;
 use App\Models\EmailSettings;
 use App\Notifications\CarePlanApprovalReminder;
@@ -27,6 +27,7 @@ use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Rules\PasswordCharacters;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
+use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Customer\Traits\TimezoneTrait;
@@ -286,6 +287,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withTrashed()
  * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withoutTrashed()
  * @mixin \Eloquent
+ * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null $enrollmentInvitationLink
+ * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null       $statusRequestsInfo
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -296,6 +299,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use Filterable;
     use HasApiTokens;
     use HasEmrDirectAddress;
+    use HasEnrollableInvitation;
     use HasMediaTrait;
     use Impersonate;
     use MakesOrReceivesCalls;
@@ -306,19 +310,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use SoftDeletes;
     use TimezoneTrait;
 
-    const FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER = 'forward_alerts_in_addition_to_provider';
-    const FORWARD_ALERTS_INSTEAD_OF_PROVIDER     = 'forward_alerts_instead_of_provider';
-
+    const FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER                   = 'forward_alerts_in_addition_to_provider';
+    const FORWARD_ALERTS_INSTEAD_OF_PROVIDER                       = 'forward_alerts_instead_of_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_careplan_approval_emails_in_addition_to_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER     = 'forward_careplan_approval_emails_instead_of_provider';
-
     /**
      * Package Clockwork is hardcoded to look for $user->name. Adding this so that it will work.
      *
      * @var string|null
      */
     public $name;
-
     public $phi = [
         'username',
         'email',
@@ -822,6 +823,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->morphToMany(ChargeableService::class, 'chargeable')
             ->withPivot(['amount'])
             ->withTimestamps();
+    }
+
+    /**
+     * If user has "survey-only" Role, returns true.
+     * note: hasRole() doesnt always produce correct results in this case.
+     *
+     * @return mixed
+     */
+    public function checkForSurveyOnlyRole()
+    {
+        return $this->roles()->where('name', SelfEnrollmentEnrollees::SURVEY_ONLY)->exists();
     }
 
     /**
@@ -1635,7 +1647,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             $output .= (1 == $i
                     ? ''
                     : ', ')
-                       .($i == $last && $i > 1
+                .($i == $last && $i > 1
                     ? 'and '
                     : '').$channel;
 
@@ -1673,6 +1685,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         return $this->providerInfo->npi_number;
     }
+
+    // CCD Models
 
     public function getPatientRules()
     {
@@ -1740,8 +1754,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         return $this->patientInfo->preferred_contact_language;
     }
-
-    // CCD Models
 
     public function getPreferredContactLocation()
     {
@@ -2478,8 +2490,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                                         $q->intersectPracticesWith($this);
                                                     }
                                                 );
-                                            })
-                                             ;
+                                            });
                                     }
                                 );
                             }
@@ -2708,20 +2719,21 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->get();
     }
 
-    /*public function hasScheduledCallThisWeek()
+    /**
+     * @param $notification
+     * @return string
+     */
+    public function routeNotificationForMail($notification)
     {
-        $weekStart = Carbon::now()->startOfWeek()->toDateString();
-        $weekEnd = Carbon::now()->endOfWeek()->toDateString();
+        if (App::environment(['review'])) {
+            return config('services.tester.email'); // tester
+        }
+        if (App::environment(['local'])) {
+            return config('services.tester.email_two'); // tester
+        }
 
-        return Call::where(function ($q) {
-            $q->whereNull('type')
-              ->orWhere('type', '=', 'call');
-        })
-                   ->where('outbound_cpm_id', $this->id)
-                   ->where('status', 'scheduled')
-                   ->whereBetween('scheduled_date', [$weekStart, $weekEnd])
-                   ->exists();
-    }*/
+        return $this->email;
+    }
 
     public function routeNotificationForMail($notification)
     {
@@ -2788,12 +2800,25 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         ];
     }
 
+    /*public function hasScheduledCallThisWeek()
+    {
+        $weekStart = Carbon::now()->startOfWeek()->toDateString();
+        $weekEnd = Carbon::now()->endOfWeek()->toDateString();
+
+        return Call::where(function ($q) {
+            $q->whereNull('type')
+              ->orWhere('type', '=', 'call');
+        })
+                   ->where('outbound_cpm_id', $this->id)
+                   ->where('status', 'scheduled')
+                   ->whereBetween('scheduled_date', [$weekStart, $weekEnd])
+                   ->exists();
+    }*/
+
     public function scopeCareCoaches($query)
     {
         return $query->ofType(['care-center', 'care-center-external']);
     }
-
-    // CPM Models
 
     /**
      * Scope a query to include users NOT of a given type (Role).
@@ -3783,8 +3808,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return true;
         }
         if (EmailSettings::MWF == $settings->frequency && (1 == Carbon::today()->dayOfWeek
-                                                           || 3 == Carbon::today()->dayOfWeek
-                                                           || 5 == Carbon::today()->dayOfWeek)) {
+                || 3 == Carbon::today()->dayOfWeek
+                || 5 == Carbon::today()->dayOfWeek)) {
             return true;
         }
 
@@ -3801,8 +3826,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function shouldShowBhiBannerIfPatientHasScheduledCallToday(User $patient)
     {
         return $patient->hasScheduledCallToday()
-               && $this->shouldShowBhiFlagFor($patient)
-               && ($this->isAdmin() || $this->isCareCoach());
+            && $this->shouldShowBhiFlagFor($patient)
+            && ($this->isAdmin() || $this->isCareCoach());
     }
 
     /**
@@ -3815,13 +3840,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function shouldShowBhiFlagFor(User $patient)
     {
         return $this->hasPermissionForSite('legacy-bhi-consent-decision.create', $patient->program_id)
-               && is_a($patient, self::class)
-               && $patient->isLegacyBhiEligible()
-               && $patient->billingProviderUser()
-               && ! Cache::has(
-                   $this->getLegacyBhiNursePatientCacheKey($patient->id)
-               )
-               && ($this->isAdmin() || $this->isCareCoach());
+            && is_a($patient, self::class)
+            && $patient->isLegacyBhiEligible()
+            && $patient->billingProviderUser()
+            && ! Cache::has(
+                $this->getLegacyBhiNursePatientCacheKey($patient->id)
+            )
+            && ($this->isAdmin() || $this->isCareCoach());
     }
 
     public function shouldShowCcmPlusBadge()
@@ -3895,6 +3920,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->pluck('id')
             ->all();
     }
+
+    // CPM Models
 
     public function viewableProgramIds(bool $withDemo = true): array
     {
