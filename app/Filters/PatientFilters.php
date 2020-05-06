@@ -115,12 +115,12 @@ class PatientFilters extends QueryFilters
 
     public function isCsv()
     {
-        return isset($this->filters()['csv']);
+        return array_key_exists('csv', $this->filters());
     }
 
     public function isExcel()
     {
-        return isset($this->filters()['excel']);
+        return array_key_exists('excel', $this->filters());
     }
 
     public function lastReading($reading)
