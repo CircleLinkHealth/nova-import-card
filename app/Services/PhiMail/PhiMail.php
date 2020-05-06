@@ -11,6 +11,7 @@ use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PhiMail implements DirectMail
 {
@@ -71,20 +72,19 @@ class PhiMail implements DirectMail
      * @param $outboundRecipient
      * @param $binaryAttachmentFilePath
      * @param $binaryAttachmentFileName
-     * @param null       $ccdaAttachmentPath
+     * @param null       $ccdaContents
      * @param mixed|null $body
      * @param mixed|null $subject
      * @param mixed|null $sender
      *
-     * @throws \Exception
-     *
+     *@throws \Exception
      * @return bool|SendResult[]
      */
     public function send(
         $outboundRecipient,
         $binaryAttachmentFilePath = null,
         $binaryAttachmentFileName = null,
-        $ccdaAttachmentPath = null,
+        $ccdaContents = null,
         User $patient = null,
         $body = null,
         $subject = null,
@@ -125,11 +125,11 @@ class PhiMail implements DirectMail
                 $this->connector->setSubject($subject);
             }
 
-            $ccdaAttachmentPath = $this->upgTemporaryHack($patient);
+            $ccdaContent = $this->upgTemporaryHack($patient);
 
-            if ($ccdaAttachmentPath) {
+            if ($ccdaContent) {
                 // Add a CDA attachment and let phiMail server assign a filename.
-                $this->connector->addCDA(self::loadFile($ccdaAttachmentPath));
+                $this->connector->addCDA($ccdaContent);
             }
 
             if ($binaryAttachmentFilePath) {
@@ -299,17 +299,16 @@ class PhiMail implements DirectMail
         try {
             if (self::UPG_NAME === $patient->primaryPractice->name && $patient->hasCcda()) {
                 $content = $patient->ccdas()->orderByDesc('id')->with('media')->first()->getMedia('ccd')->first()->getFile();
-                $path    = storage_path(sha1(now()->timestamp).'.xml');
-                $written = file_put_contents($path, $content);
 
-                if (false === $written) {
-                    Log::error("Could not write `$path`");
+                if ($content && ! Str::startsWith($content, ['<?xml'])) {
+                    $content = '<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="CDA.xsl"?>'.$content;
                 }
 
-                if (file_exists($path)) {
+                if ($content) {
                     Log::critical('UPG: Attach patient '.$patient->id.' CCDA');
 
-                    return $path;
+                    return $content;
                 }
             }
         } catch (\Exception $e) {
