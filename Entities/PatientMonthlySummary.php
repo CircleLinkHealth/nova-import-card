@@ -252,7 +252,8 @@ class PatientMonthlySummary extends BaseModel
 
     public function attestedProblems()
     {
-        return $this->belongsToMany(Problem::class, 'call_problems', 'patient_monthly_summary_id', 'ccd_problem_id');
+        return $this->belongsToMany(Problem::class, 'call_problems', 'patient_monthly_summary_id', 'ccd_problem_id')
+            ->withTimestamps();
     }
 
     public function autoAttestConditionsIfYouShould()
