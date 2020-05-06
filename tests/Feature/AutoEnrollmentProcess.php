@@ -65,7 +65,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
 
         CreateUserFromEnrollee::dispatchNow($enrollle, $this->surveyRole()->id);
         $this->check_notification_mail_has_been_sent($enrollle->fresh()->user);
-        $this->check_notification_sms_has_been_sent($enrollle->fresh()->user);
+//        $this->check_notification_sms_has_been_sent($enrollle->fresh()->user);
 
         self::assertTrue($enrollle->enrollmentInvitationLink()->exists());
         $this->assertDatabaseHas('enrollables_invitation_links', [
@@ -81,7 +81,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
         Notification::fake();
         SelfEnrollmentUnreachablePatients::dispatchNow($patient, 1, $this->demoPractice()->id);
         $this->check_notification_mail_has_been_sent($patient);
-        $this->check_notification_sms_has_been_sent($patient);
+//        $this->check_notification_sms_has_been_sent($patient);
 
         self::assertTrue($this->patient()->enrollmentInvitationLink()->exists());
         $this->assertDatabaseHas('enrollables_invitation_links', [
@@ -102,7 +102,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
         SendEnrollmentReminders::dispatchNow($patient);
 
         $this->check_notification_mail_has_been_sent($patient);
-        $this->check_notification_sms_has_been_sent($patient);
+//        $this->check_notification_sms_has_been_sent($patient);
 
         $this->assertDatabaseHas('enrollables_invitation_links', [
             'invitationable_type' => get_class($enrollee),
@@ -120,7 +120,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
         SendEnrollmentReminders::dispatchNow($patient);
 
         $this->check_notification_mail_has_been_sent($patient);
-        $this->check_notification_sms_has_been_sent($patient);
+//        $this->check_notification_sms_has_been_sent($patient);
 
         $this->assertDatabaseHas('enrollables_invitation_links', [
             'invitationable_type' => get_class($patient),

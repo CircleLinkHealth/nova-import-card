@@ -248,9 +248,9 @@ class AutoEnrollmentCenterController extends Controller
         $practiceName           = $enrollablePrimaryPractice->name;
         $signatoryNameForHeader = $provider->display_name;
         $dateLetterSent         = Carbon::parse($enrollee->getLastEnrollmentInvitationLink()->updated_at)->toDateString();
-        $buttonColor            = $this->pastActiveInvitationLinks($enrollee)->button_color;
+        $pastActiveLink         = $this->pastActiveInvitationLinks($enrollee);
 
-        if (is_null($buttonColor)) {
+        if (is_null($pastActiveLink)) {
             $buttonColor = '#4baf50';
         }
 
