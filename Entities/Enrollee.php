@@ -12,8 +12,10 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Core\Traits\MySQLSearchable;
+use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Str;
 
@@ -176,7 +178,9 @@ use Illuminate\Support\Str;
 class Enrollee extends BaseModel
 {
     use Filterable;
+    use HasEnrollableInvitation;
     use MySQLSearchable;
+    use Notifiable;
 
     // Agent array keys
     const AGENT_EMAIL_KEY        = 'email';
@@ -208,6 +212,11 @@ class Enrollee extends BaseModel
      * status = legacy. These are enrolees who have existed in our system before releasing the care ambassador channel.
      */
     const LEGACY = 'legacy';
+
+    /**
+     * Enrollees who did not respond to any of our notifications to enroll.
+     */
+    const NON_RESPONSIVE = 'non_responsive';
 
     /**
      * status = rejected.
@@ -386,6 +395,9 @@ class Enrollee extends BaseModel
 
         //contains array of agent details, similar to patient_info fields
         'agent_details',
+
+        'enrollment_non_responsive',
+        'auto_enrollment_triggered',
     ];
 
     protected $table = 'enrollees';
