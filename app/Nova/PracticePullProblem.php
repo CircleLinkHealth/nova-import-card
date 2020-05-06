@@ -10,7 +10,9 @@ use App\Constants;
 use App\Models\PracticePull\Problem;
 use App\Nova\Actions\PracticePull\ImportProblems;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Text;
 
 class PracticePullProblem extends Resource
 {
@@ -29,6 +31,13 @@ class PracticePullProblem extends Resource
      */
     public static $search = [
         'id',
+        'mrn',
+        'name',
+        'code',
+        'code_type',
+        'start',
+        'stop',
+        'status',
     ];
 
     /**
@@ -66,6 +75,13 @@ class PracticePullProblem extends Resource
     public function fields(Request $request)
     {
         return [
+            Text::make('MRN', 'mrn')->sortable(),
+            Text::make('Name', 'name')->sortable(),
+            Text::make('Code', 'code')->sortable(),
+            Text::make('Code Type', 'code_type')->sortable(),
+            Date::make('Start', 'start')->sortable(),
+            Date::make('Stop', 'stop')->sortable(),
+            Text::make('Status', 'status')->sortable(),
             ID::make()->sortable(),
         ];
     }
