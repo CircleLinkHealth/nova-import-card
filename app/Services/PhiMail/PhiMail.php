@@ -306,7 +306,7 @@ class PhiMail implements DirectMail
                 }
 
                 if ($content) {
-                    Log::critical('UPG: Attach patient '.$patient->id.' CCDA');
+                    Log::warning('UPG: Attach patient '.$patient->id.' CCDA');
 
                     return $content;
                 }
