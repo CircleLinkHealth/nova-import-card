@@ -29,7 +29,9 @@ use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
+use App\Console\Commands\SendFirstEnrollmentReminder;
 use App\Console\Commands\TuneScheduledCalls;
+use App\Jobs\FinalActionOnNonResponsivePatients;
 use App\Notifications\NurseDailyReport;
 use CircleLinkHealth\Core\Console\Commands\RunScheduler;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
@@ -230,5 +232,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(AssignUnassignedPatientsToStandByNurse::class)->twiceDaily(8, 14);
         $schedule->command(RemoveDuplicateScheduledCalls::class)->twiceDaily(8, 14);
+        $schedule->command(SendFirstEnrollmentReminder::class)->dailyAt('10:27');
+        $schedule->command(FinalActionOnNonResponsivePatients::class)->dailyAt('08:27');
     }
 }

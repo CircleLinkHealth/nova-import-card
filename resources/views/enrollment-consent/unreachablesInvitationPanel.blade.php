@@ -86,7 +86,7 @@
               </ul>
               <a href="{{route('final.action.qa')}}" target="_blank">
                   <button type="button" class="btn btn-warning">
-                      Fast forward 4 days and send reminders
+                      Fast forward 4 days. Final Step
                   </button>
               </a>
           </div>

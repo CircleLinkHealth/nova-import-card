@@ -46,7 +46,7 @@ trait EnrollableNotificationContent
             $isSurveyOnly           = $enrollableEmailContent['isSurveyOnly'];
         }
 
-        $line1   = "Hi, it's $providerName's office at $practiceName!";
+        $line1   = "Hi, it's $providerName's office at $practiceName! ";
         $urlData = [
             'enrollable_id'  => $notifiable->id,
             'is_survey_only' => $isSurveyOnly,
@@ -89,13 +89,13 @@ trait EnrollableNotificationContent
         $provider         = $enrollee->provider;
         $providerLastName = $provider->last_name;
         $line2            = $isReminder
-            ? "Just circling back on Dr. $providerLastName new Personalized Care program. Please enroll or get more info here:"
-            : "Dr. $providerLastName has invested in a new wellness program for you. Please enroll or get more info here:";
+            ? "Just circling back on Dr. $providerLastName new Personalized Care program. Please enroll or get more info here: "
+            : "Dr. $providerLastName has invested in a new wellness program for you. Please enroll or get more info here: ";
 
         return [
             'providerName'     => $provider->display_name,
             'providerLastName' => $providerLastName,
-            'practiceName'     => $enrollee->practice->name,
+            'practiceName'     => $enrollee->practice->display_name,
             'line2'            => $line2,
             'isSurveyOnly'     => true,
         ];
@@ -117,25 +117,25 @@ trait EnrollableNotificationContent
 
         // Should never be empty with production data.
         if (empty($nurseFirstName)) {
-            $nurseFirstName = $testingMode ? 'Adriannou' : '';
+            $nurseFirstName = $testingMode ? 'Jessica' : '';
         }
 
         $line2 = $isReminder
-            ? "Just circling back because $nurseFirstName, our telephone nurse, was unable to reach you this month. Please re-start calls in this link:"
-            : "$nurseFirstName, our nurse, was unable to reach you this month. Please re-start calls in this link:";
+            ? "Just circling back because $nurseFirstName, our telephone nurse, was unable to reach you this month. Please re-start calls in this link: "
+            : "$nurseFirstName, our nurse, was unable to reach you this month. Please re-start calls in this link: ";
 
         // Should never be empty with production data.
         if ( ! empty($provider)) {
             $providerName = $provider->display_name;
         } else {
-            $providerName = $testingMode ? 'Dr. Costaris' : "your doctor's provider";
+            $providerName = $testingMode ? 'Dr. James' : "your doctor's provider";
             Log::error("User $notifiable->id has null billingProviderUser");
         }
 
         return [
             'providerName'   => $providerName,
             'nurseFirstName' => $nurseFirstName,
-            'practiceName'   => $notifiable->primaryPractice->name,
+            'practiceName'   => $notifiable->primaryPractice->display_name,
             'line2'          => $line2,
             'isSurveyOnly'   => false,
         ];
