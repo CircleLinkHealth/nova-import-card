@@ -16,7 +16,7 @@ class EnrollmentFinalAction extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Final action on non responsive patients 4 days after initial invitation';
     /**
      * The name and signature of the console command.
      *
