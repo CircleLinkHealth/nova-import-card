@@ -58,7 +58,7 @@ class SendEnrollementSms extends Notification
         $receiver = $this->getEnrollableModelType($notifiable);
 //        $practiceNumber = $receiver->primaryPractice->outgoing_phone_number;
         $invitationUrl = $receiver->getLastEnrollmentInvitationLink();
-        $shortenUrl    = null;
+        $shortenUrl    = $invitationUrl->url;
 
         try {
             $shortenUrl = shortenUrl($invitationUrl->url);
@@ -67,7 +67,7 @@ class SendEnrollementSms extends Notification
         }
 
         $notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
-        $smsSubject          = $notificationContent['line1'].$notificationContent['line2'].$shortenUrl ?? $invitationUrl->url;
+        $smsSubject          = $notificationContent['line1'].$notificationContent['line2'].$shortenUrl;
 
         return (new TwilioSmsMessage())
 //            ->from($practiceNumber)

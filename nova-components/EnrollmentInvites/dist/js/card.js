@@ -146,16 +146,23 @@ __webpack_require__.r(__webpack_exports__);
     sendInvites: function sendInvites(color, number) {
       var _this = this;
 
+      if (this.number === '') {
+        alert('Invitations number to be send is required');
+        return;
+      }
+
       Nova.request().post('/nova-vendor/enrollment-invites/enrollment-invites', {
         color: color,
         number: number,
         practice_id: this.card.practice_id,
         is_patient: this.card.is_patient
       }).then(function (response) {
-        console.log(response);
+        _this.number = '';
 
         _this.$toasted.success(response.data.message);
       })["catch"](function (error) {
+        _this.number = '';
+
         _this.$toasted.error(error.response.data);
       });
     }

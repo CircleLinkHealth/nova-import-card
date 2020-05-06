@@ -31,7 +31,7 @@ trait EnrollmentAuthentication
                 ->where('id', $userId)
                 ->firstOrFail();
         } catch (\Exception $exception) {
-            abort(403, 'Unauthorized action.');
+            abort(404, 'Unauthorized action.');
         }
     }
 
@@ -44,12 +44,6 @@ trait EnrollmentAuthentication
     {
         $userId = $this->getUserId($request);
 
-        $user = $this->getUser($userId);
-
-        if ($userId !== $user->id) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        return $user;
+        return $this->getUser($userId);
     }
 }

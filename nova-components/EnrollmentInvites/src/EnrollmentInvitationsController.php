@@ -14,6 +14,8 @@ class EnrollmentInvitationsController
 {
     public function handle(NovaRequest $novaRequest)
     {
+        $this->validation($novaRequest);
+
         if (boolval($novaRequest->input('is_patient'))) {
             SelfEnrollmentUnreachablePatients::dispatch(
                 null,
@@ -42,5 +44,17 @@ class EnrollmentInvitationsController
             ],
             200
         );
+    }
+
+    private function validation(NovaRequest $novaRequest)
+    {
+        if (empty($novaRequest->input('amount'))) {
+            return response()->json(
+                [
+                    'message' => 'Invitations number to be send is required',
+                ],
+                403
+            );
+        }
     }
 }

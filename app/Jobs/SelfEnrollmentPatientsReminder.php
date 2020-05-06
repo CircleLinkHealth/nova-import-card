@@ -9,6 +9,7 @@ namespace App\Jobs;
 // This file is part of CarePlan Manager by CircleLink Health.
 
 use App\Notifications\SendEnrollmentEmail;
+use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\App;
 class SelfEnrollmentPatientsReminder implements ShouldQueue
 {
     use Dispatchable;
+    use EnrollableManagement;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
@@ -43,14 +45,30 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
     {
         $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
-        $testingMode   = App::environment(['review', 'staging', 'local']);
+        $testingMode   = App::environment(['local', 'review', 'staging', 'production']);
 
         if ($testingMode) {
+            $practice      = $this->getDemoPractice();
             $twoDaysAgo    = Carbon::parse(now())->startOfMonth()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfMonth()->toDateTimeString();
+            $this->getUsersToSendReminder($untilEndOfDay, $twoDaysAgo)
+                ->where('program_id', $practice->id)
+                ->get()
+                ->each(function (User $enrollable) {
+                    SendEnrollmentReminders::dispatch($enrollable);
+                });
+        } else {
+            $this->getUsersToSendReminder($untilEndOfDay, $twoDaysAgo)
+                ->get()
+                ->each(function (User $enrollable) {
+                    SendEnrollmentReminders::dispatch($enrollable);
+                });
         }
+    }
 
-        User::whereHas('notifications', function ($notification) use ($untilEndOfDay, $twoDaysAgo) {
+    private function getUsersToSendReminder($untilEndOfDay, $twoDaysAgo)
+    {
+        return  User::whereHas('notifications', function ($notification) use ($untilEndOfDay, $twoDaysAgo) {
             $notification->where([
                 ['created_at', '>=', $twoDaysAgo],
                 ['created_at', '<=', $untilEndOfDay],
@@ -62,10 +80,6 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
                     ['date_unreachable', '>=', $twoDaysAgo],
                     ['date_unreachable', '<=', $untilEndOfDay],
                 ]);
-            })
-            ->get()
-            ->each(function (User $enrollable) {
-                SendEnrollmentReminders::dispatch($enrollable);
             });
     }
 }

@@ -6,11 +6,14 @@
 
 namespace App\Nova;
 
+use App\EnrollableInvitationLink;
 use App\Nova\Filters\EnrolleeInvitationFilter;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\MorphOne;
+use Laravel\Nova\Fields\Text;
 
 class EnrolleesInvitationPanel extends Resource
 {
@@ -81,6 +84,14 @@ class EnrolleesInvitationPanel extends Resource
     {
         return [
             ID::make()->sortable(),
+
+            Text::make('First name', 'first_name')
+                ->sortable(),
+
+            Text::make('Last name', 'last_name')
+                ->sortable(),
+
+            //            MorphOne::make(EnrollableInvitationLink::class, ),
         ];
     }
 

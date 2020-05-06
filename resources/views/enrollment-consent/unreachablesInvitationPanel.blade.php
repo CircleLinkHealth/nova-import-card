@@ -4,6 +4,12 @@
 @section('content')
 <div class="container">
     <div class="content">
+        @if(session()->has('message'))
+            <div class="alert alert-info">
+                {{session()->get('message')}}
+            </div>
+        @endif
+
         <h4 style="text-align: center">Test Dashboard</h4>
         <ul class="browser-default">
             <li>
@@ -123,20 +129,21 @@
                     or the link in Sms / Email. <br>
                     Open in incognito window or log out from this browser.
                 </ol>
+
+            @elseif($data['isEnrolleeClass'] === false)
+                    <ol>
+                        <strong>Type: Unreachable Patient.</strong>
+                        <br>
+                        Invited Name: {{$data['name']}}
+                        <br>
+                        DOB: {{$data['dob']}}
+                        <br>
+                        You can <a href="{{$data['invitationUrl']}}" target="_blank">click here</a>
+                        or the link in Sms / Email. <br>
+                        Open in incognito window or log out from this browser.
+                    </ol>
             @endif
-            @if($data['isEnrolleeClass'] === false)
-                <ol>
-                    <strong>Type: Unreachable Patient.</strong>
-                    <br>
-                    Invited Name: {{$data['name']}}
-                    <br>
-                    DOB: {{$data['dob']}}
-                    <br>
-                    You can <a href="{{$data['invitationUrl']}}" target="_blank">click here</a>
-                    or the link in Sms / Email. <br>
-                    Open in incognito window or log out from this browser.
-                </ol>
-            @endif
+
         @endforeach
     </div>
 

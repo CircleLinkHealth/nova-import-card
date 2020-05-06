@@ -53,16 +53,22 @@ export default {
 
     methods: {
         sendInvites(color, number){
+            if (this.number === ''){
+                alert('Invitations number to be send is required');
+                return;
+            }
+
             Nova.request().post('/nova-vendor/enrollment-invites/enrollment-invites', {
                 color:color,
                 number:number,
                 practice_id:this.card.practice_id,
                 is_patient:this.card.is_patient
             }).then(response => {
-                console.log(response);
+                this.number = '';
                 this.$toasted.success(response.data.message);
             }).catch(error => {
-                    this.$toasted.error(error.response.data);
+                this.number = '';
+                this.$toasted.error(error.response.data);
 
             });
         }

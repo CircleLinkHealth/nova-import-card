@@ -70,12 +70,70 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
         $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
 
-        if (App::environment(['local', 'review'])) {
+        if (App::environment(['local', 'review', 'staging', 'production'])) {
             $twoDaysAgo    = Carbon::parse(now())->startOfMonth()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfMonth()->toDateTimeString();
+            $practice      = $this->getDemoPractice();
+            $users         = $this->usersForFinalReminder($twoDaysAgo, $untilEndOfDay)
+                ->where('program_id', $practice->id)
+                ->get();
+            $this->takeAction($users);
+        } else {
+            $users = $this->usersForFinalReminder($twoDaysAgo, $untilEndOfDay)->get();
+            $this->takeAction($users);
         }
+    }
 
-        User::whereHas('notifications', function ($notification) use ($untilEndOfDay, $twoDaysAgo) {
+    /**
+     * @param $noResponsivePatient
+     * @param $pages
+     */
+    public function sendLetterWithRegularMail($noResponsivePatient, $pages)
+    {
+//        Will be the same page where the admin can send the notifs
+//        $noResponsivePatient->notify(new SendEnrollmentLetterToNonResponsivePatients($noResponsivePatient, $pages));
+    }
+
+    /**
+     * @param $users
+     * @return mixed
+     */
+    private function takeAction($users)
+    {
+        return $users->each(function (User $noResponsivePatient) {
+            $isSurveyOnlyUser = $noResponsivePatient->hasRole('survey-only');
+            if ($isSurveyOnlyUser) {
+                /** @var Enrollee $enrollee */
+                $enrollee = $this->getEnrollee($noResponsivePatient->id);
+                if ($this->hasViewedLetterOrSurvey($noResponsivePatient)) {
+                    $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
+                } else {
+//                        Mark as non responsive means they will get a physical MAIL.
+                    $this->enrollmentInvitationService->markAsNonResponsive($enrollee);
+                    $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
+                }
+
+//                    Keeping this maybe we need the letter to be printed from nova
+//                    $practice = $noResponsivePatient->primaryPractice;
+//                    $provider = $this->getEnrollableProvider($isSurveyOnlyUser, $noResponsivePatient);
+//                    $careAmbassadorPhoneNumber = $practice->outgoing_phone_number;
+//                    $practiceName = $practice->name;
+//                    $letter = $this->getPracticeEnrollmentLetter($practice->id);
+//                    $pages = $this->enrollmentInvitationService->createLetter($practiceName, $letter, $careAmbassadorPhoneNumber, $provider, false);
+//                    $this->sendLetterWithRegularMail($noResponsivePatient, $pages);
+            } else {
+//                    We need the enrolle model created when patient became "unreachable"......
+//                    (see.PatientObserver & UnreachablePatientsToCaPanel)
+                $enrollee = $this->getEnrollee($noResponsivePatient->id);
+//                   ...to set call_queue - doing this as temp. solution in order to be displayed on CA PANEL
+                $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
+            }
+        });
+    }
+
+    private function usersForFinalReminder(string $twoDaysAgo, string $untilEndOfDay)
+    {
+        return User::whereHas('notifications', function ($notification) use ($untilEndOfDay, $twoDaysAgo) {
             $notification->where([
                 ['created_at', '<=', $untilEndOfDay],
                 ['created_at', '>=', $twoDaysAgo],
@@ -87,45 +145,6 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
                     ['date_unreachable', '>=', $twoDaysAgo],
                     ['date_unreachable', '<=', $untilEndOfDay], // This ensures will not collect older unreachable
                 ]);
-            })->get()
-            ->each(function (User $noResponsivePatient) {
-                $isSurveyOnlyUser = $noResponsivePatient->hasRole('survey-only');
-                if ($isSurveyOnlyUser) {
-                    /** @var Enrollee $enrollee */
-                    $enrollee = $this->getEnrollee($noResponsivePatient->id);
-                    if ($this->hasViewedLetterOrSurvey($noResponsivePatient)) {
-                        $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
-                    } else {
-//                        Mark as non responsive means they will get a physical MAIL.
-                        $this->enrollmentInvitationService->markAsNonResponsive($enrollee);
-                        $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
-                    }
-
-//                    Keeping this maybe we need the letter to be printed from nova
-//                    $practice = $noResponsivePatient->primaryPractice;
-//                    $provider = $this->getEnrollableProvider($isSurveyOnlyUser, $noResponsivePatient);
-//                    $careAmbassadorPhoneNumber = $practice->outgoing_phone_number;
-//                    $practiceName = $practice->name;
-//                    $letter = $this->getPracticeEnrollmentLetter($practice->id);
-//                    $pages = $this->enrollmentInvitationService->createLetter($practiceName, $letter, $careAmbassadorPhoneNumber, $provider, false);
-//                    $this->sendLetterWithRegularMail($noResponsivePatient, $pages);
-                } else {
-//                    We need the enrolle model created when patient became "unreachable"......
-//                    (see.PatientObserver & UnreachablePatientsToCaPanel)
-                    $enrollee = $this->getEnrollee($noResponsivePatient->id);
-//                   ...to set call_queue - doing this as temp. solution in order to be displayed on CA PANEL
-                    $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
-                }
             });
-    }
-
-    /**
-     * @param $noResponsivePatient
-     * @param $pages
-     */
-    public function sendLetterWithRegularMail($noResponsivePatient, $pages)
-    {
-//        Will be the same page where the admin can send the notifs
-//        $noResponsivePatient->notify(new SendEnrollmentLetterToNonResponsivePatients($noResponsivePatient, $pages));
     }
 }

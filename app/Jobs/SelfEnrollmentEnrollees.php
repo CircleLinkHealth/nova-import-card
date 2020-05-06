@@ -11,7 +11,6 @@ namespace App\Jobs;
 use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -102,9 +101,9 @@ class SelfEnrollmentEnrollees implements ShouldQueue
             return $this->createUserFromEnrolleeAndInvite($this->enrollee);
         }
 
-        if (App::environment(['local', 'review'])) {
-            $practiceId = Practice::whereName('demo')->firstOrFail()->id;
-            $enrollees  = $this->getEnrollees($practiceId)
+        if (App::environment(['local', 'review', 'staging', 'production'])) {
+            $practice  = $this->getDemoPractice();
+            $enrollees = $this->getEnrollees($practice->id)
                 ->where('dob', Carbon::parse('1901-01-01'))
                 ->get()
                 ->take(AutoEnrollmentCenterController::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING)

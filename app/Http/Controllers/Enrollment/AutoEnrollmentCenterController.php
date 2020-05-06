@@ -74,22 +74,6 @@ class AutoEnrollmentCenterController extends Controller
         return $this->manageUnreachablePatientInvitation($enrollableId);
     }
 
-    public function enrolleeContactDetails(Request $request)
-    {
-        $enrollableId = $request->input('enrollee_id');
-        $enrollee     = Enrollee::whereId($enrollableId)->firstOrFail();
-
-        $enrolleeData = [
-            'enrolleeFirstName' => $enrollee->first_name,
-            'enrolleeLastName'  => $enrollee->last_name,
-            'cellPhone'         => $enrollee->cell_phone,
-            'homePhone'         => $cellPhone = $enrollee->home_phone,
-            'otherPhone'        => $cellPhone = $enrollee->other_phone,
-        ];
-
-        return view('enrollment-consent.enrolleeDetails', compact('enrolleeData'));
-    }
-
     /**
      * NOTE: Currently ONLY Enrollee model have the option to request info.
      *
@@ -160,26 +144,6 @@ class AutoEnrollmentCenterController extends Controller
         return DB::table('invitation_links')
             ->where('patient_info_id', $user->patientInfo->id)
             ->first();
-    }
-
-    /**
-     * @param $enrollable
-     * @param $isSurveyOnly
-     *
-     * @return \App\User|array|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
-     */
-    public function getCareAmbassador($enrollable, $isSurveyOnly)
-    {
-        if ($isSurveyOnly) {
-            $enrollee               = Enrollee::whereUserId($enrollable->id)->firstOrFail();
-            $careAmbassadorIdExists = ! empty($enrollee->care_ambassador_user_id);
-
-            return $careAmbassadorIdExists
-                ? User::whereId($enrollee->care_ambassador_user_id)->firstOrFail()
-                : [];
-        }
-
-        return $enrollable->careAmbassador;
     }
 
     /**

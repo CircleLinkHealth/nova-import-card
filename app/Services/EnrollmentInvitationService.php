@@ -107,6 +107,7 @@ class EnrollmentInvitationService
             $surveyLink = $this->getSurveyInvitationLink($enrollable->patientInfo->id);
         } catch (\Exception $exception) {
             \Log::alert($exception);
+            throw new \Exception($exception);
         }
 
         return redirect($surveyLink->url);
@@ -117,7 +118,7 @@ class EnrollmentInvitationService
         $enrollee->update(
             [
                 'status'                    => 'call_queue',
-                'requested_callback'        => Carbon::now()->toDate(),
+                'requested_callback'        => Carbon::now(),
                 'auto_enrollment_triggered' => true,
             ]
         );

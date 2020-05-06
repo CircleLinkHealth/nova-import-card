@@ -83,7 +83,7 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
         if ($notifiable->checkForSurveyOnlyRole()) {
             $enrollee = Enrollee::whereUserId($notifiable->id)->first();
 
-            return $this->enrolleeArraData($enrollee->id);
+            return $this->enrolleeArrayData($enrollee->id);
         }
 
         return $this->patientArrayData();
@@ -123,7 +123,7 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
      *
      * @return array
      */
-    private function enrolleeArraData($enrolleeId)
+    private function enrolleeArrayData($enrolleeId)
     {
         return [
             'enrollee_id'    => $enrolleeId,

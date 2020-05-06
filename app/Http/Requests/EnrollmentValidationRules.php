@@ -64,14 +64,14 @@ class EnrollmentValidationRules extends FormRequest
         if ($input['is_survey_only']) {
             $enrollee = Enrollee::where('user_id', $input['user_id'])->firstOrFail();
             /** @var Enrollee $enrollee */
-            $dbToken = $enrollee->getLastEnrollmentInvitationLink()->link_token;
+            $link = $enrollee->getLastEnrollmentInvitationLink();
         } else {
             /** @var User $user */
-            $dbToken = $user->getLastEnrollmentInvitationLink()->link_token;
+            $link = $user->getLastEnrollmentInvitationLink();
         }
 
         $inputToken = $this->parseUrl($input['url_with_token']);
-        if ($dbToken !== $inputToken
+        if (( ! empty($link) && $link->link_token !== $inputToken)
             || Carbon::parse($input['birth_date'])->startOfDay()->ne($user->patientInfo->birth_date)) {
             return true;
         }

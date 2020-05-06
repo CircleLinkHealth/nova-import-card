@@ -50,7 +50,7 @@ class AutoEnrollmentTestDashboard extends Controller
     {
         FinalActionOnNonResponsivePatients::dispatch(new EnrollmentInvitationService());
 
-        return 'Done!';
+        return redirect()->back()->with('message', 'Reminders Sent Successfully');
     }
 
     /**
@@ -65,7 +65,7 @@ class AutoEnrollmentTestDashboard extends Controller
             $request->input('practice_id')
         );
 
-        return redirect()->back();
+        return redirect()->back()->with('message', 'Invited Successfully');
     }
 
     /**
@@ -79,7 +79,7 @@ class AutoEnrollmentTestDashboard extends Controller
             $request->input('practice_id')
         );
 
-        return redirect()->back();
+        return redirect()->back()->with('message', 'Invited Successfully');
     }
 
     /**
@@ -87,9 +87,11 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function resetEnrollmentTest()
     {
+        $practice = $this->getDemoPractice();
         // TEST ONLY
         $users = User::withTrashed()
             ->with('notifications', 'patientInfo')
+            ->where('program_id', '=', $practice->id)
             ->whereHas('notifications', function ($notification) {
                 $notification->where('type', SendEnrollmentEmail::class);
             })->where('created_at', '>', Carbon::parse(now())->startOfMonth())

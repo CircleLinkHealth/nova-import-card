@@ -9,6 +9,7 @@ namespace App\Traits;
 use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\LoginLogout;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Support\Facades\DB;
@@ -84,6 +85,14 @@ trait EnrollableManagement
         return DB::table('users_surveys')
             ->where('user_id', '=', $notifiable->id)
             ->where('survey_instance_id', '=', $surveyInstance->id);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+     */
+    public function getDemoPractice()
+    {
+        return Practice::where('name', '=', 'demo')->firstOrFail();
     }
 
     /**

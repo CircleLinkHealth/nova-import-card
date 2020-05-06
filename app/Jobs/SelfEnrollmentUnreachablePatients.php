@@ -70,7 +70,7 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
 //        $monthEnd   = Carbon::parse($monthStart)->copy()->endOfMonth()->toDateTimeString();
 
         //    Just for testing
-        if (App::environment(['local', 'review'])) {
+        if (App::environment(['local', 'review', 'staging', 'production'])) {
             $practiceId = Practice::where('name', '=', 'demo')->firstOrFail()->id;
             $patients   = $this->getUnreachablePatients($practiceId)
                 ->whereHas('patientInfo', function ($patientInfo) {
