@@ -8,7 +8,7 @@ namespace App\Models\PracticePull;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
 
-class Medication extends BaseModel
+class Problem extends BaseModel
 {
     protected $dates = [
         'start', 'stop',
@@ -19,10 +19,11 @@ class Medication extends BaseModel
         'practice_id',
         'mrn',
         'name',
-        'sig',
+        'code',
+        'code_type',
         'start',
         'stop',
         'status',
     ];
-    protected $table = 'practice_pull_medications';
+    protected $table = 'practice_pull_problems';
 }

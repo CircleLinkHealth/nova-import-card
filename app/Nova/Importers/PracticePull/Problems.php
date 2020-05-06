@@ -13,7 +13,7 @@ use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class Medications implements ToModel, WithChunkReading, WithHeadingRow, WithBatchInserts, ShouldQueue
+class Problems implements ToModel, WithChunkReading, WithHeadingRow, WithBatchInserts, ShouldQueue
 {
     use Importable;
 
@@ -47,14 +47,15 @@ class Medications implements ToModel, WithChunkReading, WithHeadingRow, WithBatc
 
     public function model(array $row)
     {
-        return new \App\Models\PracticePull\Medication([
+        return new \App\Models\PracticePull\Problem([
             'practice_id' => $this->practiceId,
             'mrn'         => $this->nullOrValue($row['patientid']),
-            'name'        => $this->nullOrValue($row['rx']),
-            'sig'         => $this->nullOrValue($row['sig']),
-            'start'       => $this->nullOrValue($row['startdate']),
-            'stop'        => $this->nullOrValue($row['stopdate']),
-            'status'      => $this->nullOrValue($row['medstatus']),
+            'name'        => $this->nullOrValue($row['name']),
+            'code'        => $this->nullOrValue($row['code']),
+            'code_type'   => $this->nullOrValue($row['codetype']),
+            'start'       => $this->nullOrValue($row['addeddate']),
+            'stop'        => $this->nullOrValue($row['resolvedate']),
+            'status'      => $this->nullOrValue($row['status']),
         ]);
     }
 
