@@ -146,7 +146,7 @@
     "circlelinkhealth/condition-code-lookup-module": "1.1.5",
     "circlelinkhealth/core-module": "1.5.4",
     "circlelinkhealth/cpm-migrations-module": "1.7.3",
-    "circlelinkhealth/customer-module": "2.3.4",
+    "circlelinkhealth/customer-module": "2.3.5",
     "circlelinkhealth/eligibility-module": "2.3.5",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/generate-success-stories-report": "*",
