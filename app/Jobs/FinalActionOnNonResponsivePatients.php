@@ -71,15 +71,15 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
         // no need to check if they went through this again
         if ( ! App::environment(['testing'])) {
-            $twoDaysAgo    = Carbon::parse(now())->startOfMonth()->toDateTimeString();
-            $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfMonth()->toDateTimeString();
+            $twoDaysAgo    = Carbon::parse(now())->startOfDay()->toDateTimeString();
+            $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfDay()->toDateTimeString();
             $practice      = $this->getDemoPractice();
-            $users         = $this->usersForFinalReminder($twoDaysAgo, $untilEndOfDay)
+            $users         = $this->usersForFinalAction($twoDaysAgo, $untilEndOfDay)
                 ->where('program_id', $practice->id)
                 ->get();
             $this->takeAction($users);
         } else {
-            $users = $this->usersForFinalReminder($twoDaysAgo, $untilEndOfDay)->get();
+            $users = $this->usersForFinalAction($twoDaysAgo, $untilEndOfDay)->get();
             $this->takeAction($users);
         }
     }
@@ -132,7 +132,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
         });
     }
 
-    private function usersForFinalReminder(string $twoDaysAgo, string $untilEndOfDay)
+    private function usersForFinalAction(string $twoDaysAgo, string $untilEndOfDay)
     {
         return User::whereHas('notifications', function ($notification) use ($untilEndOfDay, $twoDaysAgo) {
             $notification->where([
@@ -140,7 +140,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
                 ['created_at', '>=', $twoDaysAgo],
             ])->where('type', SendEnrollmentEmail::class)
                 ->where('data->is_reminder', true);
-        })   //            If still unreachable means user did not choose to "Enroll Now" in invitation mail.
+        })
             ->whereHas('patientInfo', function ($patient) use ($twoDaysAgo, $untilEndOfDay) {
                 $patient->where('ccm_status', 'unreachable')->where([
                     ['date_unreachable', '>=', $twoDaysAgo],

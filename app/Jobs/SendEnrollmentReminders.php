@@ -53,9 +53,8 @@ class SendEnrollmentReminders implements ShouldQueue
         $enrollableHasBeenReminded = $this->enrollablePastReminderExists();
 
         if ( ! $enrollableHasBeenReminded
-            || ! $hasRequestedInfoOnInvitation
-            // || ! $this->hasSurveyInProgress($this->enrollable)
-            || ! $this->hasSurveyCompleted($this->enrollable)) {
+            && ( ! $hasRequestedInfoOnInvitation
+            || ! $this->hasSurveyCompleted($this->enrollable))) {
             event(new AutoEnrollableCollected($this->enrollable, true));
         }
     }
