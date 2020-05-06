@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Circlelinkhealth\GenerateSuccessStoriesReport\GenerateSuccessStoriesReportController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,4 +18,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/generate-success-stories-report/{monthYear}', GenerateSuccessStoriesReportController::class . '@handle');
+Route::get('/generate-success-stories-report/{monthYear}', GenerateSuccessStoriesReportController::class.'@handle');

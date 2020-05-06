@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use Illuminate\Http\Request;
+use Circlelinkhealth\EnrollmentInvites\EnrollmentInvitationsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +18,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/endpoint', function (Request $request) {
-//     //
-// });
+Route::post('/enrollment-invites', EnrollmentInvitationsController::class.'@handle');
