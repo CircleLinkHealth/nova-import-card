@@ -4,18 +4,20 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Nova\Actions\ToledoClinic;
+namespace App\Nova\Actions\PracticePull;
 
 use Anaseqal\NovaImport\Actions\Action;
-use App\Nova\Importers\ToledoClinic\Medications;
+use App\Nova\Importers\PracticePull\Medications;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Fields\File;
+use Laravel\Nova\Fields\Select;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ImportToledoMedication extends Action
+class ImportMedications extends Action
 {
     use InteractsWithQueue;
     use Queueable;
@@ -29,15 +31,31 @@ class ImportToledoMedication extends Action
     public $onlyOnIndex = true;
 
     /**
+     * @var array
+     */
+    private $fields;
+
+    public function __construct(array $fields = [])
+    {
+        $this->fields = $fields;
+    }
+
+    /**
      * Get the fields available on the action.
      *
      * @return array
      */
     public function fields()
     {
+        $practices = Practice::whereIn('id', auth()->user()->viewableProgramIds())
+            ->activeBillable()
+            ->pluck('display_name', 'id')
+            ->toArray();
+
         return [
             File::make('File')
                 ->rules('required'),
+            Select::make('Practice', 'practice_id')->options($practices)->withModel(Practice::class),
         ];
     }
 
@@ -48,7 +66,7 @@ class ImportToledoMedication extends Action
      */
     public function handle(ActionFields $fields)
     {
-        Excel::import(new Medications(), $fields->file);
+        Excel::import(new Medications($fields->practice_id), $fields->file);
 
         return Action::message('It worked!');
     }
@@ -60,11 +78,11 @@ class ImportToledoMedication extends Action
      */
     public function name()
     {
-        return __('Import Toledo Medications');
+        return __('Import Practice Pull Medications');
     }
 
     public function uriKey(): string
     {
-        return 'import-toledo-medications';
+        return 'import-practice-pull-medications';
     }
 }

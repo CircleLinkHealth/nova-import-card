@@ -4,13 +4,19 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Models\ToledoClinic;
+namespace App\Models\PracticePull;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
 
-class Medications extends BaseModel
+class Medication extends BaseModel
 {
+    protected $dates = [
+        'start', 'stop',
+    ];
     protected $fillable = [
+        'billing_provider_user_id',
+        'location_id',
+        'practice_id',
         'patient_id',
         'name',
         'sig',
@@ -18,5 +24,5 @@ class Medications extends BaseModel
         'stop',
         'status',
     ];
-    protected $table = 'toledo-clinic_medications';
+    protected $table = 'practice_pull_medications';
 }

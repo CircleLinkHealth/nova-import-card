@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Nova\Importers\ToledoClinic;
+namespace App\Nova\Importers\PracticePull;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
@@ -17,12 +17,22 @@ class Medications implements ToModel, WithChunkReading, WithHeadingRow, WithBatc
 {
     use Importable;
 
-    public function __construct()
+    /**
+     * @var int
+     */
+    private $practiceId;
+
+    /**
+     * Medications constructor.
+     */
+    public function __construct(int $practiceId)
     {
         ini_set('upload_max_filesize', '200M');
         ini_set('post_max_size', '200M');
         ini_set('max_input_time', 900);
         ini_set('max_execution_time', 900);
+
+        $this->practiceId = $practiceId;
     }
 
     public function batchSize(): int
@@ -37,13 +47,14 @@ class Medications implements ToModel, WithChunkReading, WithHeadingRow, WithBatc
 
     public function model(array $row)
     {
-        return new \App\Models\ToledoClinic\Medications([
-            'patient_id' => $this->nullOrValue($row['patientid']),
-            'name'       => $this->nullOrValue($row['rx']),
-            'sig'        => $this->nullOrValue($row['sig']),
-            'start'      => $this->nullOrValue($row['startdate']),
-            'stop'       => $this->nullOrValue($row['stopdate']),
-            'status'     => $this->nullOrValue($row['medstatus']),
+        return new \App\Models\PracticePull\Medication([
+            'practice_id' => $this->practiceId,
+            'patient_id'  => $this->nullOrValue($row['patientid']),
+            'name'        => $this->nullOrValue($row['rx']),
+            'sig'         => $this->nullOrValue($row['sig']),
+            'start'       => $this->nullOrValue($row['startdate']),
+            'stop'        => $this->nullOrValue($row['stopdate']),
+            'status'      => $this->nullOrValue($row['medstatus']),
         ]);
     }
 

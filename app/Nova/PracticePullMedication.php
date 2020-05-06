@@ -6,18 +6,20 @@
 
 namespace App\Nova;
 
-use App\Models\ToledoClinic\Medications;
+use App\Constants;
+use App\Models\PracticePull\Medication;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 
-class ToledoMedication extends Resource
+class PracticePullMedication extends Resource
 {
+    public static $group = Constants::NOVA_GROUP_PRACTICE_DATA_PULLS;
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = Medications::class;
+    public static $model = Medication::class;
 
     /**
      * The columns that should be searched.
@@ -42,7 +44,7 @@ class ToledoMedication extends Resource
      */
     public function actions(Request $request)
     {
-        return [new Actions\ToledoClinic\ImportToledoMedication()];
+        return [new Actions\PracticePull\ImportMedications()];
     }
 
     /**
@@ -75,6 +77,11 @@ class ToledoMedication extends Resource
     public function filters(Request $request)
     {
         return [];
+    }
+
+    public static function label()
+    {
+        return 'Medications';
     }
 
     /**
