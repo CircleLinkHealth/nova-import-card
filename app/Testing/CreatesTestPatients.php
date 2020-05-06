@@ -6,12 +6,12 @@
 
 namespace App\Testing;
 
-use App\CLH\Repositories\UserRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory as Faker;
 use Symfony\Component\HttpFoundation\ParameterBag;

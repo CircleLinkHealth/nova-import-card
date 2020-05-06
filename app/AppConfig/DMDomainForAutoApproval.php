@@ -18,6 +18,32 @@ class DMDomainForAutoApproval
         return (new static())->getAndCacheDomains();
     }
 
+    /**
+     * Check if feature is enabled for a DirectMail address.
+     *
+     * Example: testdr@direct.circlelinkhealth.com
+     *
+     * @param $address
+     */
+    public static function isEnabledForAddress($address): bool
+    {
+        foreach ((new static())->getAndCacheDomains() as $str) {
+            if (strtolower($address) === strtolower($str)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if feature is enabled for DirectMail domain.
+     *
+     * Example: @direct.circlelinkhealth.com
+     *
+     * @param $address
+     * @param mixed $domain
+     */
     public static function isEnabledForDomain($domain): bool
     {
         foreach ((new static())->getAndCacheDomains() as $str) {
@@ -29,6 +55,14 @@ class DMDomainForAutoApproval
         return false;
     }
 
+    /**
+     * Check if feature is enabled for a Practice.
+     *
+     * Example: 8@direct.circlelinkhealth.com
+     *
+     * @param $address
+     * @param mixed $practiceId
+     */
     public static function isEnabledForPractice($practiceId): bool
     {
         foreach ((new static())->getAndCacheDomains() as $str) {

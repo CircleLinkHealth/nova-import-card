@@ -45,8 +45,18 @@ class CheckEmrDirectInbox extends Command
      */
     public function handle()
     {
-        $this->warn('Checking EMR Direct Inbox.');
-        $this->directMail->receive();
-        $this->comment('Checked EMR Direct Inbox.');
+        $address = config('services.emr-direct.user');
+        if ($address) {
+            $this->warn('Checking EMR Direct Inbox.'." Address: $address");
+            $this->directMail->receive($address);
+            $this->comment('Checked EMR Direct Inbox.'." Address: $address");
+        }
+
+        $address = config('services.emr-direct.test_user');
+        if ($address) {
+            $this->warn('Checking Test EMR Direct Inbox.'." Address: $address");
+            $this->directMail->receive($address);
+            $this->comment('Checked Test EMR Direct Inbox.'." Address: $address");
+        }
     }
 }

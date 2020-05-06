@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Storage;
 
 class PhiMail implements DirectMail
 {
+    const UPG_NAME = 'UPG';
+
     /**
      * @var IncomingMessageHandler
      */
@@ -40,13 +42,15 @@ class PhiMail implements DirectMail
     }
 
     /**
-     * @throws \Exception
+     * @param null $dmUserAddress
+     *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      *
      * @return bool
      */
-    public function receive()
+    public function receive($dmUserAddress = null)
     {
-        $this->initPhiMailConnection();
+        $this->initPhiMailConnection($dmUserAddress);
 
         if ( ! is_a($this->connector, PhiMailConnector::class)) {
             return false;
@@ -70,6 +74,7 @@ class PhiMail implements DirectMail
      * @param null       $ccdaAttachmentPath
      * @param mixed|null $body
      * @param mixed|null $subject
+     * @param mixed|null $sender
      *
      * @throws \Exception
      *
@@ -82,10 +87,10 @@ class PhiMail implements DirectMail
         $ccdaAttachmentPath = null,
         User $patient = null,
         $body = null,
-        $subject = null
+        $subject = null,
+        $sender = null
     ) {
-        //add case when everything is null
-        $this->initPhiMailConnection();
+        $this->initPhiMailConnection($sender);
 
         if ( ! is_a($this->connector, PhiMailConnector::class)) {
             return false;
@@ -120,6 +125,8 @@ class PhiMail implements DirectMail
                 $this->connector->setSubject($subject);
             }
 
+            $ccdaAttachmentPath = $this->upgTemporaryHack($patient);
+
             if ($ccdaAttachmentPath) {
                 // Add a CDA attachment and let phiMail server assign a filename.
                 $this->connector->addCDA(self::loadFile($ccdaAttachmentPath));
@@ -136,7 +143,7 @@ class PhiMail implements DirectMail
             // result in a failure notification after the timeout period has elapsed.
             // This command will override the default setting set by the server.
             //
-            //$this->connector->setDeliveryNotification(true);
+            // $this->connector->setDeliveryNotification(true);
 
             // Send the message. srList will contain one entry for each recipient.
             // If more than one recipient was specified, then each would have an entry.
@@ -243,11 +250,13 @@ class PhiMail implements DirectMail
     }
 
     /**
-     * @throws \Exception
+     * @param null $dmUserAddress
+     *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    private function initPhiMailConnection()
+    private function initPhiMailConnection($dmUserAddress = null)
     {
-        $phiMailUser        = config('services.emr-direct.user');
+        $phiMailUser        = $dmUserAddress ? $dmUserAddress : config('services.emr-direct.user');
         $phiMailPass        = config('services.emr-direct.password');
         $clientCertPath     = base_path(config('services.emr-direct.conc-keys-pem-path'));
         $serverCertPath     = base_path(config('services.emr-direct.server-cert-pem-path'));
@@ -278,5 +287,31 @@ class PhiMail implements DirectMail
 
         $this->connector = new PhiMailConnector($phiMailServer, $phiMailPort);
         $this->connector->authenticateUser($phiMailUser, $phiMailPass);
+    }
+
+    private function upgTemporaryHack(?User $patient)
+    {
+        if ( ! $patient) {
+            return null;
+        }
+        $patient->load('primaryPractice');
+
+        try {
+            if (self::UPG_NAME === $patient->primaryPractice->name && $patient->hasCcda()) {
+                $content = $patient->ccdas()->orderByDesc('id')->with('media')->first()->getMedia('ccd')->first()->getFile();
+                $path    = storage_path(sha1(now()->timestamp).'.xml');
+                $written = file_put_contents($path, $content);
+
+                if (false === $written) {
+                    Log::error("Could not write `$path`");
+                }
+
+                if (file_exists($path)) {
+                    return $path;
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('UPG CCDA not attached for patient '.$patient->id);
+        }
     }
 }

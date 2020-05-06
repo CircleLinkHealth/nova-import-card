@@ -44,21 +44,24 @@ class DirectMailServiceProvider extends ServiceProvider implements DeferrablePro
                 if ($this->app->environment('testing')) {
                     new class() implements DirectMail {
                         /**
+                         * @param  mixed|null $dmUserAddress
                          * @return mixed
                          */
-                        public function receive()
+                        public function receive($dmUserAddress = null)
                         {
                             // TODO: Implement receive() method.
                         }
 
                         /**
                          * @param $outboundRecipient
-                         * @param null $binaryAttachmentFilePath
-                         * @param null $binaryAttachmentFileName
-                         * @param null $ccdaAttachmentPath
-                         * @param null $body
-                         * @param null $subject
+                         * @param null       $binaryAttachmentFilePath
+                         * @param null       $binaryAttachmentFileName
+                         * @param null       $ccdaAttachmentPath
+                         * @param null       $body
+                         * @param null       $subject
+                         * @param mixed|null $dmUserAddress
                          *
+                         * @param  null  $dmUserAddress
                          * @return mixed
                          */
                         public function send(
@@ -68,7 +71,8 @@ class DirectMailServiceProvider extends ServiceProvider implements DeferrablePro
                             $ccdaAttachmentPath = null,
                             User $patient = null,
                             $body = null,
-                            $subject = null
+                            $subject = null,
+                            $dmUserAddress = null
                         ) {
                             // TODO: Implement send() method.
                         }

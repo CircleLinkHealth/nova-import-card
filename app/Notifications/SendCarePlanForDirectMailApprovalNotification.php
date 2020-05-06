@@ -40,18 +40,18 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
     {
         $identifier = $this->patientUser->carePlan->id;
 
-        return "Dear {$notifiable->getFullName()},
-            \n
-            Please review attached Care Plan for {$this->patientUser->getFullName()}.
-            \n
-            To approve, please respond to this message with \"#approve$identifier\".
-            \n
-            To make changes, respond to this message with \"#change$identifier\" on the first line of your message, and your changes in plain text below. Or, copy/paste single-use URL/Link \"{$this->passwordlessLoginLink($notifiable)}\" into a web browser and adjust the care plan there, then click the \"Approve and View Next\" button in top-right.
-            \n
-            Thank you,
-            \n
-            CircleLink Team
-";
+        return "Dear {$notifiable->getFullName()},"
+            .PHP_EOL.PHP_EOL.
+            "Please review attached Care Plan for {$this->patientUser->getFullName()}"
+            .PHP_EOL.PHP_EOL.
+            'To approve, please respond to this message with "#approve'.$identifier.'"'
+            .PHP_EOL.PHP_EOL.
+            "To make changes, respond to this message with \"#change$identifier\" on the first line of your message, and your changes in plain text below. Or, copy/paste single-use URL/Link \"{$this->passwordlessLoginLink($notifiable)}\" into a web browser and adjust the care plan there, then click the \"Approve and View Next\" button in top-right."
+            .PHP_EOL.PHP_EOL.PHP_EOL.
+            'Thank you,'
+            .PHP_EOL.
+            'CircleLink Team'
+;
     }
 
     public function directMailSubject($notifiable): string

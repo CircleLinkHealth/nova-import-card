@@ -276,6 +276,10 @@
       <path value="$PROJECT_DIR$/vendor/zendframework/zend-diactoros" />
       <path value="$PROJECT_DIR$/vendor/phpseclib/bcmath_compat" />
       <path value="$PROJECT_DIR$/vendor/ocramius/package-versions" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/enrollment-invites" />
+      <path value="$PROJECT_DIR$/vendor/laravel/nova-app" />
+      <path value="$PROJECT_DIR$/vendor/anaseqal/nova-import" />
+      <path value="$PROJECT_DIR$/vendor/laravel-notification-channels/twilio" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.3" />

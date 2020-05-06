@@ -43,11 +43,12 @@ class Constants
     const MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS = 1200;
 
     //Groups for Nova Resources
-    const NOVA_GROUP_ADMIN        = 'Admin';
-    const NOVA_GROUP_CARE_COACHES = 'Care Coaches';
-    const NOVA_GROUP_ENROLLMENT   = 'Enrollment';
-    const NOVA_GROUP_NBI          = 'NBI';
-    const NOVA_GROUP_PRACTICES    = 'Practices';
+    const NOVA_GROUP_ADMIN               = 'Admin';
+    const NOVA_GROUP_CARE_COACHES        = 'Care Coaches';
+    const NOVA_GROUP_ENROLLMENT          = 'Enrollment';
+    const NOVA_GROUP_NBI                 = 'NBI';
+    const NOVA_GROUP_PRACTICE_DATA_PULLS = 'Practice Data Pulls';
+    const NOVA_GROUP_PRACTICES           = 'Practices';
 
     const PATIENT_PHI_RELATIONSHIPS = ['patientInfo'];
 

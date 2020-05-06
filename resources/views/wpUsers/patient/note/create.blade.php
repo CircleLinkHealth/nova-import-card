@@ -525,6 +525,9 @@
                                 <div class="new-note-item">
                                     <!-- Enter Note -->
                                     <div class="form-group">
+                                        @if($hasSuccessfulCall === false && !empty($patientRequestToKnow))
+                                            @include('wpUsers.patient.note.patientRequestedYouToKnow')
+                                        @endif
                                         <div class="col-sm-12">
                                             <i class="fas fa-book" style="font-size:12px; margin-right: 10px"></i>
                                             <label for="body">

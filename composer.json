@@ -118,6 +118,10 @@
     {
       "type": "path",
       "url": "./nova-components/ClhNovaTheme"
+    },
+    {
+      "type": "path",
+      "url": "./nova-components/EnrollmentInvites"
     }
   ],
   "require": {
@@ -139,19 +143,19 @@
     "circlelinkhealth/cerberus-gatekeeper-module": "3.1.4",
     "circlelinkhealth/clh-import-card-extended": "*",
     "circlelinkhealth/clh-nova-theme": "*",
-    "circlelinkhealth/condition-code-lookup-module": "1.1.4",
+    "circlelinkhealth/condition-code-lookup-module": "1.1.5",
     "circlelinkhealth/core-module": "1.5.4",
-    "circlelinkhealth/cpm-migrations-module": "1.7.0",
-    "circlelinkhealth/customer-module": "2.3.1",
-    "circlelinkhealth/eligibility-module": "dev-CPM-2256-2019-2286-2287-CA-L6",
+    "circlelinkhealth/cpm-migrations-module": "1.7.3",
+    "circlelinkhealth/customer-module": "2.3.5",
+    "circlelinkhealth/eligibility-module": "2.3.5",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/generate-success-stories-report": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
-    "circlelinkhealth/nurseinvoices-module": "1.3.9",
+    "circlelinkhealth/nurseinvoices-module": "1.4.0",
     "circlelinkhealth/patientapi-module": "1.3.2",
     "circlelinkhealth/raygun-module": "1.0",
     "circlelinkhealth/revisionable-module": "6.1.1",
-    "circlelinkhealth/shared-models-module": "1.4.6",
+    "circlelinkhealth/shared-models-module": "1.4.7",
     "circlelinkhealth/sqlviews-module": "1.1.4",
     "circlelinkhealth/timetracking-module": "1.2.2",
     "circlelinkhealth/twofa-module": "1.2.0",
@@ -197,11 +201,14 @@
     "spatie/laravel-view-models": "^1.2",
     "spatie/pdf-to-text": "^1.2",
     "titasgailius/search-relations": "^1.0",
-    "twilio/sdk": "5.7",
     "vink/nova-cache-card": "^1.0",
     "waavi/url-shortener": "dev-master",
     "waynestate/nova-ckeditor4-field": "^0.4.0",
-    "yajra/laravel-datatables-oracle": "~9.0"
+    "yajra/laravel-datatables-oracle": "~9.0",
+    "circlelinkhealth/enrollment-invites": "*",
+    "twilio/sdk": "~5.16",
+    "laravel-notification-channels/twilio": "^2.1",
+    "anaseqal/nova-import": "^0.0.3"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",
