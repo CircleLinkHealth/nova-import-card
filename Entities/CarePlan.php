@@ -486,6 +486,10 @@ class CarePlan extends BaseModel implements PdfReport
             'practice'        => $patient->program_id,
             'location'        => $patient->getPreferredContactLocation(),
             'duplicate'       => $patient->getMRN(),
+            'address'         => $patient->address,
+            'city'            => $patient->city,
+            'state'           => $patient->state,
+            'zip'             => $patient->zip,
         ];
 
         return Validator::make(
@@ -508,6 +512,10 @@ class CarePlan extends BaseModel implements PdfReport
                 'practice'        => 'required|numeric',
                 'location'        => 'required|numeric',
                 'duplicate'       => [new PatientIsNotDuplicate($this->patient->program_id, $this->patient->first_name, $this->patient->last_name, ImportPatientInfo::parseDOBDate($this->patient->patientInfo->birth_date), $this->patient->patientInfo->mrn_number, $this->patient->id)],
+                'address'         => 'required|filled',
+                'city'            => 'required|filled',
+                'state'           => 'required|filled',
+                'zip'             => 'required|filled',
             ],
             [
                 'phoneNumber.phone' => 'The patient has an invalid phone number.',
