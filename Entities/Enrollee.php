@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Eligibility\Entities;
 
 use App\Contracts\Services\TwilioClientable;
-use App\Traits\HasEnrollableInvitation;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
@@ -16,6 +15,7 @@ use CircleLinkHealth\Core\Traits\MySQLSearchable;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 /**
@@ -172,10 +172,10 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
  * @property string|null                                                                                                     $other_note
  * @property int|null                                                                                                        $enrollment_non_responsive
  * @property int                                                                                                             $auto_enrollment_triggered
- * @property \App\EnrollableInvitationLink|null                                                                              $enrollmentInvitationLink
+ * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null                               $enrollmentInvitationLink
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count
- * @property \App\EnrollableRequestInfo|null                                                                                 $statusRequestsInfo
+ * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null                                     $statusRequestsInfo
  */
 class Enrollee extends BaseModel
 {
