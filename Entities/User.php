@@ -19,6 +19,7 @@ use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Core\Filters\Filterable;
@@ -63,6 +64,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -2721,8 +2723,25 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                    ->exists();
     }*/
 
+    public function routeNotificationForMail($notification)
+    {
+        if ( ! App::environment('testing')) {
+            $hasTester = AppConfig::pull('tester_email', null);
+
+            return $hasTester ?? $this->email;
+        }
+
+        return $this->email;
+    }
+
     public function routeNotificationForTwilio()
     {
+        if ( ! App::environment('testing')) {
+            $hasTester = AppConfig::pull('tester_phone', null);
+
+            return $hasTester ?? $this->getPhone();
+        }
+
         return $this->getPhone();
     }
 
