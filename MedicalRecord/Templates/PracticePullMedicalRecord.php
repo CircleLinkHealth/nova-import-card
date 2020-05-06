@@ -124,7 +124,7 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
                     'number' => $demos->other_phone ?? '',
                 ],
             ],
-            'email'      => null,
+            'email'      => $demos->email ?? '',
             'language'   => $demos->lang ?? '',
             'race'       => null,
             'ethnicity'  => null,
