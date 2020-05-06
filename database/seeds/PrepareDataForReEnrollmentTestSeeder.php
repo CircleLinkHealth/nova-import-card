@@ -41,52 +41,51 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         $mothStart = Carbon::parse(now())->copy()->startOfMonth()->toDateTimeString();
         $monthEnd  = Carbon::parse($mothStart)->copy()->endOfMonth()->toDateTimeString();
 
-        $enrollees = Enrollee::where('dob', \Carbon\Carbon::parse('1901-01-01'))
-            ->where('practice_id', $practice->id)
-            ->whereDoesntHave('enrollmentInvitationLink');
-
-        if ($enrollees->count() < 5) {
-            $enrollees->delete(); //Just to be sure
-            $n     = 1;
-            $limit = 5;
-            while ($n <= $limit) {
-                $enrolleesForTesting = factory(Enrollee::class, 1)->create([
-                    'practice_id'             => $practice->id,
-                    'dob'                     => \Carbon\Carbon::parse('1901-01-01'),
-                    'referring_provider_name' => 'Dr. Demo',
-                    'mrn'                     => mt_rand(100000, 999999),
-                    'primary_phone'           => config('services.tester.phone'),
-                    'email'                   => config('services.tester.email'),
-                ]);
-                $this->seedEligibilityJobs(collect($enrolleesForTesting));
-                ++$n;
-            }
+//        $enrollees = Enrollee::where('dob', \Carbon\Carbon::parse('1901-01-01'))
+//            ->where('practice_id', $practice->id)
+//            ->whereDoesntHave('enrollmentInvitationLink');
+//
+//            $enrollees->delete(); //Just to be sure
+        $n     = 1;
+        $limit = 5;
+        while ($n <= $limit) {
+            $enrolleesForTesting = factory(Enrollee::class, 1)->create([
+                'practice_id'             => $practice->id,
+                'dob'                     => \Carbon\Carbon::parse('1901-01-01'),
+                'referring_provider_name' => 'Dr. Demo',
+                'mrn'                     => mt_rand(100000, 999999),
+                'primary_phone'           => config('services.tester.phone_two'),
+                'email'                   => config('services.tester.email'),
+            ]);
+            $this->seedEligibilityJobs(collect($enrolleesForTesting));
+            ++$n;
         }
 
-        $unreachablePatients = User::with('patientInfo')
-            ->where('program_id', $practice->id)
-            ->whereDoesntHave('enrollmentInvitationLink')
-            ->whereHas('patientInfo', function ($patient) use ($mothStart, $monthEnd) {
-                // @var Patient $patient
-                $patient->where('ccm_status', self::CCM_STATUS_UNREACHABLE)->where([
-                    ['date_unreachable', '>=', $mothStart],
-                    ['date_unreachable', '<=', $monthEnd],
-                ])->where('birth_date', '=', '1901-01-01');
-            });
+//        $unreachablePatients = User::with('patientInfo')
+//            ->where('program_id', $practice->id)
+//            ->whereDoesntHave('enrollmentInvitationLink')
+//            ->whereHas('patientInfo', function ($patient) use ($mothStart, $monthEnd) {
+//                // @var Patient $patient
+//                $patient->where('ccm_status', self::CCM_STATUS_UNREACHABLE)->where([
+//                    ['date_unreachable', '>=', $mothStart],
+//                    ['date_unreachable', '<=', $monthEnd],
+//                ])->where('birth_date', '=', '1901-01-01');
+//            });
 
-        if ($unreachablePatients->count() < 5) {
-            $unreachablePatients->forceDelete(); //Just to be sure
-            $n     = 1;
-            $limit = 5;
-            while ($n <= $limit) {
-                $user = $this->createUser($practice->id, 'participant', self::CCM_STATUS_UNREACHABLE);
-                $user->phoneNumbers()->update(['number' => config('services.tester.phone')]);
-                $user->patientInfo()->update([
-                    'birth_date'       => \Carbon\Carbon::parse('1901-01-01'),
-                    'date_unreachable' => now(),
-                ]);
-                ++$n;
-            }
+//        if ($unreachablePatients->count() < 5) {
+//            $unreachablePatients->forceDelete(); //Just to be sure
+        $n     = 1;
+        $limit = 5;
+        while ($n <= $limit) {
+            $user = $this->createUser($practice->id, 'participant', self::CCM_STATUS_UNREACHABLE);
+            $user->phoneNumbers()->update(['number' => config('services.tester.phone')]);
+            $user->patientInfo()->update([
+                'birth_date'       => \Carbon\Carbon::parse('1901-01-01'),
+                'date_unreachable' => now(),
+            ]);
+            ++$n;
         }
     }
+
+//    }
 }

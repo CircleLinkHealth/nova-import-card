@@ -199,6 +199,8 @@ class NotesController extends Controller
                     ->where('identifier', '=', 'Q_REQUESTS_INFO')
                     ->where('survey_instance_id', '=', $surveyInstance->id)
                     ->first();
+            } else {
+                $surveyAnswer = [];
             }
         }
 
