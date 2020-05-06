@@ -19,6 +19,7 @@ class AddPracticePullTables extends Migration
         Schema::dropIfExists('practice_pull_medications');
         Schema::dropIfExists('practice_pull_problems');
         Schema::dropIfExists('practice_pull_demographics');
+        Schema::dropIfExists('practice_pull_allergies');
     }
 
     /**
@@ -103,6 +104,23 @@ class AddPracticePullTables extends Migration
         });
 
         Schema::table('practice_pull_demographics', function (Blueprint $table) {
+            $table->foreign('billing_provider_user_id')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->foreign('location_id')->references('id')->on('locations')->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->foreign('practice_id')->references('id')->on('practices')->onUpdate('CASCADE')->onDelete('CASCADE');
+        });
+
+        //Allergies
+        Schema::create('practice_pull_allergies', function (Blueprint $table) {
+            $table->string('mrn')->index();
+            $table->string('name')->nullable();
+            $table->unsignedBigInteger('id')->autoIncrement();
+            $table->unsignedInteger('location_id')->nullable();
+            $table->unsignedInteger('billing_provider_user_id')->nullable();
+            $table->unsignedInteger('practice_id')->index();
+            $table->timestamps();
+        });
+
+        Schema::table('practice_pull_allergies', function (Blueprint $table) {
             $table->foreign('billing_provider_user_id')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
             $table->foreign('location_id')->references('id')->on('locations')->onUpdate('CASCADE')->onDelete('CASCADE');
             $table->foreign('practice_id')->references('id')->on('practices')->onUpdate('CASCADE')->onDelete('CASCADE');
