@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Storage;
 
 class PhiMail implements DirectMail
 {
+    const UPG_NAME = 'UPG';
+
     /**
      * @var IncomingMessageHandler
      */
@@ -122,6 +124,8 @@ class PhiMail implements DirectMail
             if ($subject) {
                 $this->connector->setSubject($subject);
             }
+
+            $ccdaAttachmentPath = $this->upgTemporaryHack($patient);
 
             if ($ccdaAttachmentPath) {
                 // Add a CDA attachment and let phiMail server assign a filename.
@@ -283,5 +287,31 @@ class PhiMail implements DirectMail
 
         $this->connector = new PhiMailConnector($phiMailServer, $phiMailPort);
         $this->connector->authenticateUser($phiMailUser, $phiMailPass);
+    }
+
+    private function upgTemporaryHack(?User $patient)
+    {
+        if ( ! $patient) {
+            return null;
+        }
+        $patient->load('primaryPractice');
+
+        try {
+            if (self::UPG_NAME === $patient->primaryPractice->name && $patient->hasCcda()) {
+                $content = $patient->ccdas()->orderByDesc('id')->with('media')->first()->getMedia('ccd')->first()->getFile();
+                $path    = storage_path(sha1(now()->timestamp).'.xml');
+                $written = file_put_contents($path, $content);
+
+                if (false === $written) {
+                    Log::error("Could not write `$path`");
+                }
+
+                if (file_exists($path)) {
+                    return $path;
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('UPG CCDA not attached for patient '.$patient->id);
+        }
     }
 }

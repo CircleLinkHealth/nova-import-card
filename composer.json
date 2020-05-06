@@ -207,7 +207,8 @@
     "yajra/laravel-datatables-oracle": "~9.0",
     "circlelinkhealth/enrollment-invites": "*",
     "twilio/sdk": "~5.16",
-    "laravel-notification-channels/twilio": "^2.1"
+    "laravel-notification-channels/twilio": "^2.1",
+    "anaseqal/nova-import": "^0.0.3"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",

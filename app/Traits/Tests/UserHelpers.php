@@ -116,6 +116,9 @@ trait UserHelpers
         }
 
         if ('participant' == $roleName) {
+            $user->ccdMedications()->create([
+                'name' => 'Test Aspirin',
+            ]);
             $user->carePlan()->updateOrCreate(
                 [
                     'care_plan_template_id' => \CircleLinkHealth\Core\Entities\AppConfig::pull('default_care_plan_template_id'),

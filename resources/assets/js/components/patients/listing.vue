@@ -482,8 +482,17 @@
             exportCSV() {
                 let patients = []
                 this.loaders.excel = true
+
+                const $table = this.$refs.tblPatientList
+                const query = $table.$data.query
+                const filters = Object.keys(query).map(key => ({
+                    key,
+                    value: query[key]
+                })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
+                const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
+
                 const download = (page = 1) => {
-                    return this.axios.get(rootUrl(`api/patients?rows=50&page=${page}&csv&showPracticePatients=${this.showPracticePatients}`)).then(response => {
+                    return this.axios.get( rootUrl(`api/patients?rows=50&page=${page}&csv${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}`)).then(response => {
                         const pagination = response.data
                         patients = patients.concat(pagination.data)
                         this.exportCSVText = `Export as CSV (${Math.ceil(pagination.meta.to / pagination.meta.total * 100)}%)`

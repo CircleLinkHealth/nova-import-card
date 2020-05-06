@@ -352,7 +352,7 @@ class PatientAttestedConditionsTest extends DuskTestCase
     public function test_problems_are_automatically_attested_to_pms_if_they_should_bhi()
     {
         $bhiCsId       = ChargeableService::bhi()->first()->id;
-        $pms           = $this->setupPms([$bhiCsId]);
+        $pms           = $this->setupPms([$bhiCsId], now()->subMonth());
         $pms->bhi_time = 1440;
         $pms->save();
 
@@ -361,7 +361,7 @@ class PatientAttestedConditionsTest extends DuskTestCase
         $this->assertTrue($pms->hasServiceCode(ChargeableService::BHI));
         $this->assertEquals($pms->bhiAttestedProblems()->count(), 0);
 
-        $this->runCommandToAutoAssign();
+        $this->runCommandToAutoAssign(now()->subMonth());
 
         $pms->load('attestedProblems');
 
@@ -370,14 +370,14 @@ class PatientAttestedConditionsTest extends DuskTestCase
 
     public function test_problems_are_automatically_attested_to_pms_if_they_should_ccm()
     {
-        $pms           = $this->setupPms([ChargeableService::ccm()->first()->id]);
+        $pms           = $this->setupPms([ChargeableService::ccm()->first()->id], now()->subMonth());
         $pms->ccm_time = 1440;
         $pms->save();
 
         $this->assertTrue($pms->hasServiceCode(ChargeableService::CCM));
         $this->assertEquals($pms->ccmAttestedProblems()->count(), 0);
 
-        $this->runCommandToAutoAssign();
+        $this->runCommandToAutoAssign(now()->subMonth());
 
         $pms->load('attestedProblems');
 
@@ -388,7 +388,7 @@ class PatientAttestedConditionsTest extends DuskTestCase
     {
         $pcmCsId = ChargeableService::pcm()->first()->id;
 
-        $pms           = $this->setupPms([$pcmCsId]);
+        $pms           = $this->setupPms([$pcmCsId], now()->subMonth());
         $pms->ccm_time = 1440;
         $pms->save();
 
@@ -397,7 +397,7 @@ class PatientAttestedConditionsTest extends DuskTestCase
         $this->assertTrue($pms->hasServiceCode(ChargeableService::PCM));
         $this->assertEquals($pms->ccmAttestedProblems()->count(), 0);
 
-        $this->runCommandToAutoAssign();
+        $this->runCommandToAutoAssign(now()->subMonth());
 
         $pms->load('attestedProblems');
 
@@ -434,14 +434,15 @@ class PatientAttestedConditionsTest extends DuskTestCase
         ];
     }
 
-    private function runCommandToAutoAssign()
+    private function runCommandToAutoAssign(Carbon $month = null)
     {
+        $month = $month ? $month : Carbon::now();
         Artisan::call(
             'generate:abp',
             [
                 '--reset-actor' => true,
                 '--auto-attest' => true,
-                'date'          => Carbon::now()->startOfMonth()->toDateString(),
+                'date'          => $month->startOfMonth()->toDateString(),
                 'practiceIds'   => "{$this->patient->program_id}",
             ]
         );

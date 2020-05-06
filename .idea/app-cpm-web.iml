@@ -11,6 +11,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/algolia/algoliasearch-client-php" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/algolia/scout-extended" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/amnuts/opcache-gui" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/anaseqal/nova-import" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/appstract/laravel-opcache" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/appstract/lush-http" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/authy/php" />
