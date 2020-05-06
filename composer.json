@@ -147,7 +147,7 @@
     "circlelinkhealth/condition-code-lookup-module": "1.1.5",
     "circlelinkhealth/core-module": "1.5.4",
     "circlelinkhealth/cpm-migrations-module": "1.7.3",
-    "circlelinkhealth/customer-module": "2.3.6",
+    "circlelinkhealth/customer-module": "2.3.9",
     "circlelinkhealth/eligibility-module": "2.3.6",
     "circlelinkhealth/enrollment-invites": "*",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
@@ -207,10 +207,8 @@
     "waavi/url-shortener": "dev-master",
     "waynestate/nova-ckeditor4-field": "^0.4.0",
     "yajra/laravel-datatables-oracle": "~9.0",
-    "circlelinkhealth/enrollment-invites": "*",
     "twilio/sdk": "~5.16",
-    "laravel-notification-channels/twilio": "^2.1",
-    "anaseqal/nova-import": "^0.0.3"
+    "laravel-notification-channels/twilio": "^2.1"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",
