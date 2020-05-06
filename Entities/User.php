@@ -2700,9 +2700,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if (App::environment(['review'])) {
             return config('services.tester.email'); // tester
         }
-
         if (App::environment(['local'])) {
-            return config('services.tester.email'); // tester
+            return config('services.tester.email_two'); // tester
         }
 
         return $this->email;
@@ -2779,8 +2778,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $query->ofType(['care-center', 'care-center-external']);
     }
-
-    //    THIS IS JUST FOR TESTING. SHOULD BE REMOVED AFTER
 
     /**
      * Scope a query to include users NOT of a given type (Role).
