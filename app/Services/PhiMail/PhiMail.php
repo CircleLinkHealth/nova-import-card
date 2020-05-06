@@ -296,18 +296,22 @@ class PhiMail implements DirectMail
         }
         $patient->load('primaryPractice');
 
-        if (self::UPG_NAME === $patient->primaryPractice->name && $patient->hasCcda()) {
-            $content = $patient->ccdas()->orderByDesc('id')->with('media')->first()->getMedia('ccd')->first()->getFile();
-            $path    = storage_path(sha1(now()->timestamp).'.xml');
-            $written = file_put_contents($path, $content);
+        try {
+            if (self::UPG_NAME === $patient->primaryPractice->name && $patient->hasCcda()) {
+                $content = $patient->ccdas()->orderByDesc('id')->with('media')->first()->getMedia('ccd')->first()->getFile();
+                $path    = storage_path(sha1(now()->timestamp).'.xml');
+                $written = file_put_contents($path, $content);
 
-            if (false === $written) {
-                Log::error("Could not write `$path`");
-            }
+                if (false === $written) {
+                    Log::error("Could not write `$path`");
+                }
 
-            if (file_exists($path)) {
-                return $path;
+                if (file_exists($path)) {
+                    return $path;
+                }
             }
+        } catch (\Exception $e) {
+            Log::error('UPG CCDA not attached for patient '.$patient->id);
         }
     }
 }
