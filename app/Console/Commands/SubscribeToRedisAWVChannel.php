@@ -31,6 +31,8 @@ class SubscribeToRedisAWVChannel extends Command
      */
     public function handle()
     {
+        //https://github.com/phpredis/phpredis/issues/70
+        ini_set('default_socket_timeout', '-1');
         $this->info('Listening...');
         \RedisManager::connection('pub_sub')->subscribe(
             [
