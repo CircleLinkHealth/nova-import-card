@@ -2730,17 +2730,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->email;
     }
 
-    public function routeNotificationForMail($notification)
-    {
-        if ( ! App::environment('testing')) {
-            $hasTester = AppConfig::pull('tester_email', null);
-
-            return $hasTester ?? $this->email;
-        }
-
-        return $this->email;
-    }
-
     public function routeNotificationForTwilio()
     {
         if ( ! App::environment('testing')) {
