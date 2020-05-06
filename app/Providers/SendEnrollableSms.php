@@ -38,8 +38,10 @@ class SendEnrollableSms implements ShouldQueue
 
     private function sendSms($event)
     {
-        if ( ! App::environment(['local'])) {
-            $event->user->notify(new SendEnrollementSms($event->isReminder));
-        }
+
+      if ( ! App::environment(['local'])) {
+        $event->user->notify(new SendEnrollementSms((bool) $event->isReminder));
+       }
+
     }
 }

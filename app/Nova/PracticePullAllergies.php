@@ -11,6 +11,7 @@ use App\Models\PracticePull\Allergy;
 use App\Nova\Actions\PracticePull\ImportAllergies;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Text;
 
 class PracticePullAllergies extends Resource
 {
@@ -29,6 +30,8 @@ class PracticePullAllergies extends Resource
      */
     public static $search = [
         'id',
+        'mrn',
+        'name',
     ];
 
     /**
@@ -66,6 +69,8 @@ class PracticePullAllergies extends Resource
     public function fields(Request $request)
     {
         return [
+            Text::make('MRN', 'mrn')->sortable(),
+            Text::make('Name', 'name')->sortable(),
             ID::make()->sortable(),
         ];
     }

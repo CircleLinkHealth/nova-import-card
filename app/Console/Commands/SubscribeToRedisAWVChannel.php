@@ -8,7 +8,6 @@ namespace App\Console\Commands;
 
 use App\Jobs\ListenToAwvChannel;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Redis;
 
 class SubscribeToRedisAWVChannel extends Command
 {
@@ -32,8 +31,10 @@ class SubscribeToRedisAWVChannel extends Command
      */
     public function handle()
     {
+        //https://github.com/phpredis/phpredis/issues/70
+        ini_set('default_socket_timeout', '-1');
         $this->info('Listening...');
-        Redis::connection('pub_sub')->subscribe(
+        \RedisManager::connection('pub_sub')->subscribe(
             [
                 ListenToAwvChannel::AWV_REPORT_CREATED,
                 ListenToAwvChannel::ENROLLMENT_SURVEY_COMPLETED,
