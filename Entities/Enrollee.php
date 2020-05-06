@@ -12,8 +12,10 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Core\Traits\MySQLSearchable;
+use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 /**
@@ -162,17 +164,25 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
  *     searchPhones($term)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
  *     shouldSuggestAsFamilyForEnrollee($enrolleeId)
- * @property int|null                                          $location_id
- * @property \CircleLinkHealth\SharedModels\Entities\Ccda|null $ccda
- * @method   static                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee duplicates(\CircleLinkHealth\Customer\Entities\User $patient, \CircleLinkHealth\SharedModels\Entities\Ccda $ccda)
- * @method   static                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee whereLocationId($value)
- * @method   static                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee hasPhone($phone)
- * @property string|null                                       $other_note
+ * @property int|null                                                                                                        $location_id
+ * @property \CircleLinkHealth\SharedModels\Entities\Ccda|null                                                               $ccda
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee duplicates(\CircleLinkHealth\Customer\Entities\User $patient, \CircleLinkHealth\SharedModels\Entities\Ccda $ccda)
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee whereLocationId($value)
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee hasPhone($phone)
+ * @property string|null                                                                                                     $other_note
+ * @property int|null                                                                                                        $enrollment_non_responsive
+ * @property int                                                                                                             $auto_enrollment_triggered
+ * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null                               $enrollmentInvitationLink
+ * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
+ * @property int|null                                                                                                        $notifications_count
+ * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null                                     $statusRequestsInfo
  */
 class Enrollee extends BaseModel
 {
     use Filterable;
+    use HasEnrollableInvitation;
     use MySQLSearchable;
+    use Notifiable;
 
     // Agent array keys
     const AGENT_EMAIL_KEY        = 'email';
@@ -209,6 +219,11 @@ class Enrollee extends BaseModel
      * status = legacy. These are enrolees who have existed in our system before releasing the care ambassador channel.
      */
     const LEGACY = 'legacy';
+
+    /**
+     * Enrollees who did not respond to any of our notifications to enroll.
+     */
+    const NON_RESPONSIVE = 'non_responsive';
 
     /**
      * status = rejected.
@@ -355,6 +370,9 @@ class Enrollee extends BaseModel
 
         //contains array of agent details, similar to patient_info fields
         'agent_details',
+
+        'enrollment_non_responsive',
+        'auto_enrollment_triggered',
     ];
 
     protected $table = 'enrollees';
