@@ -99,7 +99,7 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        $shouldUsePasswordless = Route::is('login.token.validate');
+        $shouldUsePasswordless = Route::is('passwordless.login.for.careplan.approval');
 
         if ( ! $shouldUsePasswordless) {
             $this->usernameOrEmail($request);
