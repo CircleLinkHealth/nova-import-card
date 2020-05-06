@@ -55,8 +55,8 @@ class Problems implements ToModel, WithChunkReading, WithHeadingRow, WithBatchIn
             'name'        => $this->nullOrValue($row['name']),
             'code'        => $this->nullOrValue($row['code']),
             'code_type'   => $this->nullOrValue($row['codetype']),
-            'start'       => Carbon::parse($row['addeddate']),
-            'stop'        => Carbon::parse($row['resolvedate']),
+            'start'       => $row['addeddate'] ? Carbon::parse($row['addeddate']) : null,
+            'stop'        => $row['resolvedate'] ? Carbon::parse($row['resolvedate']) : null,
             'status'      => $this->nullOrValue($row['status']),
         ]);
     }

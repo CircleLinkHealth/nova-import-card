@@ -6,6 +6,7 @@
 
 namespace App\Nova\Importers\PracticePull;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -52,8 +53,8 @@ class Medications implements ToModel, WithChunkReading, WithHeadingRow, WithBatc
             'mrn'         => $this->nullOrValue($row['patientid']),
             'name'        => $this->nullOrValue($row['rx']),
             'sig'         => $this->nullOrValue($row['sig']),
-            'start'       => $row['startdate'],
-            'stop'        => $row['stopdate'],
+            'start'       => $row['startdate'] ? Carbon::parse($row['startdate']) : null,
+            'stop'        => $row['stopdate'] ? Carbon::parse($row['stopdate']) : null,
             'status'      => $this->nullOrValue($row['medstatus']),
         ]);
     }
