@@ -100,7 +100,14 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     {
         $this->getNotificationContent($notifiable);
 
+        $fromName = config('mail.from.name');
+        if ( ! empty($notifiable->primaryPractice) && ! empty($notifiable->primaryPractice->display_name)) {
+            $fromName = $notifiable->primaryPractice->display_name;
+        }
+
         return (new AutoEnrollmentMailChannel())
+            ->from(config('mail.from.address'), $fromName)
+            ->subject('Wellness Program')
             ->line($this->notificationContent['line1'])
             ->line($this->notificationContent['line2'])
             ->action('Get my Care Coach', url($this->createInvitationLink($notifiable)));
