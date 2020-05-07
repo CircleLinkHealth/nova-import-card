@@ -330,7 +330,11 @@ class AutoEnrollmentCenterController extends Controller
      */
     private function returnEnrolleeRequestedInfoMessage(Enrollee $enrollee)
     {
-        $practiceNumber  = $enrollee->practice->outgoing_phone_number;
+        $practiceNumber = $enrollee->practice->outgoing_phone_number;
+        if ($practiceNumber) {
+            //remove +1 from phone number
+            $practiceNumber = formatPhoneNumber($practiceNumber);
+        }
         $providerName    = $enrollee->provider->last_name;
         $practiceName    = $enrollee->practice->display_name;
         $practiceLogoSrc = self::ENROLLMENT_LETTER_DEFAULT_LOGO;
