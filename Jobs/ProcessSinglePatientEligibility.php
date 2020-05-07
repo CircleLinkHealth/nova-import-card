@@ -77,7 +77,8 @@ class ProcessSinglePatientEligibility implements ShouldQueue
     {
         //Only process if EligibilityJob status is 0 (not_started), or 1 (processing) and last update is more than 10 minutes ago
         if (0 == $this->eligibilityJob->status
-            || (1 == $this->eligibilityJob->status && $this->eligibilityJob->updated_at->gt(now()->subMinutes(10)))) {
+            || (1 == $this->eligibilityJob->status && $this->eligibilityJob->updated_at->lt(now()->subMinutes(10)))
+        ) {
             new EligibilityChecker(
                 $this->eligibilityJob,
                 $this->practice,
