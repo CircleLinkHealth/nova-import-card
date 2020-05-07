@@ -3999,7 +3999,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         } catch (NumberParseException $e) {
             try {
                 return \Propaganistas\LaravelPhone\PhoneNumber::make($number, 'us')->formatE164();
-            } catch (NumberParseException $e) {
+            } catch (\libphonenumber\NumberParseException|NumberParseException $e) {
                 Log::warning("Could not parse phone number of user[$this->id]");
 
                 return $number;
