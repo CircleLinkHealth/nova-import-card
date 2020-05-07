@@ -9,7 +9,7 @@
                     <div class="container">
                             <div class="z-depth-3 y-depth-3 x-depth-3 grey green-text lighten-4 row"
                                  style="display: inline-block;
-                              padding: 32px 48px 0px 48px;
+                              padding: 32px 30px 0px 30px;
                               border: 1px;
                               margin-top: 10px;
                               solid: #EEE;">
@@ -40,8 +40,8 @@
 {{--                                            </div>--}}
 {{--                                        </div>--}}
                                         <div class='row' style="margin-top: 80px;">
-                                            <div class='input-field col s12'>
-                                                <label for="birth-date" class="birth-date" style="font-size: 20px; color:black">Please Enter Your Date of Birth</label>
+                                            <div class='input-field col s12' style="text-align: left">
+                                                <label for="birth-date" class="birth-date" style="font-size: 16px; position: unset; color:black">Please Enter Your Date of Birth</label>
                                                 <input type="date" name="birth_date"
                                                        class="login-inputs"
                                                        placeholder="1950-01-15"
