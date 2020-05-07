@@ -162,7 +162,7 @@
 
     @media (max-width: 490px) {
         .scrollable label {
-            height: fit-content;
+            height: 33px;
             padding: 8px;
             font-size: 13px;
             font-weight: 400;
