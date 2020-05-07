@@ -8,7 +8,6 @@ namespace App\Jobs;
 
 use App\Events\AutoEnrollableCollected;
 use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
-use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -60,14 +59,10 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
     public function handle()
     {
         if ( ! is_null($this->user)) {
-//            $this->user->notify(new SendEnrollmentEmail());
             event(new AutoEnrollableCollected($this->user));
 
             return;
         }
-
-//        $monthStart = Carbon::parse(now())->copy()->startOfMonth()->toDateTimeString();
-//        $monthEnd   = Carbon::parse($monthStart)->copy()->endOfMonth()->toDateTimeString();
 
         //    Just for testing
         if ( ! App::environment(['testing'])) {
@@ -101,6 +96,7 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
 
     /**
      * @param $practiceId
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function getUnreachablePatients($practiceId)

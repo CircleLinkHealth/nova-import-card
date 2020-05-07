@@ -253,8 +253,7 @@ class AutoEnrollmentCenterController extends Controller
         $signatoryNameForHeader = $provider->display_name;
         $dateLetterSent         = Carbon::parse($enrollee->getLastEnrollmentInvitationLink()->updated_at)->toDateString();
         $pastActiveLink         = $this->pastActiveInvitationLinks($enrollee);
-
-        $buttonColor = '#4baf50';
+        $buttonColor            = '#4baf50';
 
         if ( ! empty($pastActiveLink)) {
             $buttonColor = $pastActiveLink->button_color;
@@ -268,7 +267,7 @@ class AutoEnrollmentCenterController extends Controller
             'signatoryNameForHeader',
             'dateLetterSent',
             'hideButtons',
-            'buttonColor'
+            'buttonColor',
         ));
     }
 

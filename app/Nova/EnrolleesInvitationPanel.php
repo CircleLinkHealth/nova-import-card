@@ -7,14 +7,19 @@
 namespace App\Nova;
 
 use App\Nova\Filters\EnrolleeInvitationFilter;
+use App\Traits\EnrollableManagement;
+use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 
 class EnrolleesInvitationPanel extends Resource
 {
+    use EnrollableManagement;
+    use HasEnrollableInvitation;
     /**
      * The model the resource corresponds to.
      *
@@ -89,7 +94,43 @@ class EnrolleesInvitationPanel extends Resource
             Text::make('Last name', 'last_name')
                 ->sortable(),
 
-            //            MorphOne::make(EnrollableInvitationLink::class, ),
+            Boolean::make('Survey in progress', function () {
+                if ( ! $this->checkIfForUserModelExists($this->resource->id)) {
+                    return false;
+                }
+
+                return $this->hasSurveyInProgress($this->getUserModelEnrollee($this->resource->id));
+            }),
+
+            Boolean::make('Survey Completed', function () {
+                if ( ! $this->checkIfForUserModelExists($this->resource->id)) {
+                    return false;
+                }
+
+                return $this->hasSurveyCompleted($this->getUserModelEnrollee($this->resource->id));
+            }),
+
+            Boolean::make('Requested Call', function () {
+                return $this->resource->statusRequestsInfo()->exists();
+            }),
+
+            Boolean::make('Viewed Letter', function () {
+                if ( ! $this->checkIfForUserModelExists($this->resource->id)) {
+                    return false;
+                }
+
+                return $this->hasViewedLetterOrSurvey($this->getUserModelEnrollee($this->resource->id)->id);
+            }),
+
+            Boolean::make('Viewed Survey but not started', function () {
+                if ( ! $this->checkIfForUserModelExists($this->resource->id)) {
+                    return false;
+                }
+
+                return $this->getSurveyInvitationLink($this->resource)->exists()
+                    && ! $this->hasSurveyInProgress($this->getUserModelEnrollee($this->resource->id))
+                    && ! $this->hasSurveyCompleted($this->getUserModelEnrollee($this->resource->id));
+            }),
         ];
     }
 
@@ -123,6 +164,11 @@ class EnrolleesInvitationPanel extends Resource
     public function lenses(Request $request)
     {
         return [];
+    }
+
+    private function checkIfForUserModelExists($enrolleeId)
+    {
+        return empty($this->getUserModelEnrollee($enrolleeId)) ? false : true;
     }
 
     private function getPracticeId()

@@ -4,5 +4,4 @@
              src="https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png"
              alt="Practice logo image missing">
 
-
     </div>
