@@ -7,6 +7,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\User;
+use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -60,9 +62,27 @@ class LoginController extends Controller
 
     public function logoutEnrollee(Request $request)
     {
+        /** @var User $user */
+        $user         = auth()->user();
+        $practiceId   = null;
+        $practiceName = null;
+        if ( ! empty($user->primaryPractice)) {
+            $practiceId   = $user->primaryPractice->id;
+            $practiceName = $user->primaryPractice->display_name;
+        }
+
+        //default - should not be here
+        $practiceLogoSrc = 'https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png';
+        if ($practiceId) {
+            $practiceLetter = EnrollmentInvitationLetter::wherePracticeId($practiceId)->first();
+            if ($practiceLetter && ! empty($practiceLetter->practice_logo_src)) {
+                $practiceLogoSrc = $practiceLetter->practice_logo_src;
+            }
+        }
+
         $this->logoutUser($request);
 
-        return view('auth.logoutEnrollee');
+        return view('auth.logoutEnrollee', compact('practiceName', 'practiceLogoSrc'));
     }
 
     protected function redirectTo()

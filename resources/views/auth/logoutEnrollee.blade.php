@@ -1,14 +1,13 @@
-@extends('layouts.app')
+@extends('layouts.surveysMaster')
 
 @section('content')
     <div class="container">
         <div class="practice-logo">
             <div class="logo">
                 <div class="practice-logo">
-                    {{--    temporary till we get the logos--}}
                     <img style="height: 120px;"
-                         src="https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png"
-                         alt="Practice logo image missing">
+                         src="{{$practiceLogoSrc}}"
+                         alt="{{$practiceName}}"/>
                 </div>
             </div>
         </div>
