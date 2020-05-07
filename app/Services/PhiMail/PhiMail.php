@@ -125,16 +125,16 @@ class PhiMail implements DirectMail
                 $this->connector->setSubject($subject);
             }
 
+            if ($binaryAttachmentFilePath) {
+                // Add a binary attachment and specify the attachment filename.
+                $this->connector->addRaw(self::loadFile($binaryAttachmentFilePath), $binaryAttachmentFileName);
+            }
+
             $ccdaContent = $this->upgTemporaryHack($patient);
 
             if ($ccdaContent) {
                 // Add a CDA attachment and let phiMail server assign a filename.
                 $this->connector->addCDA($ccdaContent);
-            }
-
-            if ($binaryAttachmentFilePath) {
-                // Add a binary attachment and specify the attachment filename.
-                $this->connector->addRaw(self::loadFile($binaryAttachmentFilePath), $binaryAttachmentFileName);
             }
 
             // Optionally, request a final delivery notification message.
