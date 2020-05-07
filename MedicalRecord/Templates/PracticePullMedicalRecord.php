@@ -84,7 +84,7 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
             'ids' => [
                 'mrn_number' => $demos->mrn,
             ],
-            'name' => [
+            'name' => (object) [
                 'prefix' => null,
                 'given'  => [
                     $demos->first_name,
@@ -96,7 +96,7 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
             'gender'         => $demos->gender,
             'mrn_number'     => $demos->mrn,
             'marital_status' => '',
-            'address'        => [
+            'address'        => (object) [
                 'street' => [
                     $demos->street,
                     $demos->street2,
@@ -107,19 +107,19 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
                 'country' => '',
             ],
             'phones' => [
-                0 => [
+                0 => (object) [
                     'type'   => 'home',
                     'number' => $demos->home_phone ?? '',
                 ],
-                1 => [
+                1 => (object) [
                     'type'   => 'primary_phone',
                     'number' => $demos->primary_phone ?? '',
                 ],
-                2 => [
+                2 => (object) [
                     'type'   => 'mobile',
                     'number' => $demos->cell_phone ?? '',
                 ],
-                3 => [
+                3 => (object) [
                     'type'   => 'other',
                     'number' => $demos->other_phone ?? '',
                 ],
@@ -142,7 +142,7 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
                 ],
                 'relationship'      => null,
                 'relationship_code' => null,
-                'address'           => [
+                'address'           => (object) [
                     'street' => [
                     ],
                     'city'    => null,
@@ -156,13 +156,13 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
             ],
             'patient_contacts' => [
             ],
-            'provider' => [
+            'provider' => (object) [
                 'ids' => [
                 ],
                 'organization' => null,
                 'phones'       => [
                 ],
-                'address' => [
+                'address' => (object) [
                     'street' => [
                     ],
                     'city'    => null,
@@ -184,7 +184,7 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
             ],
             'date'   => '',
             'title'  => '',
-            'author' => [
+            'author' => (object) [
                 'npi'  => '',
                 'name' => [
                     'prefix' => null,
@@ -192,7 +192,7 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
                     'family' => null,
                     'suffix' => null,
                 ],
-                'address' => [
+                'address' => (object) [
                     'street' => [
                         0 => '',
                     ],
@@ -202,14 +202,14 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
                     'country' => '',
                 ],
                 'phones' => [
-                    0 => [
+                    0 => (object) [
                         'type'   => '',
                         'number' => '',
                     ],
                 ],
             ],
             'documentation_of' => [
-                0 => [
+                0 => (object) [
                     'provider_id' => null,
                     'name'        => [
                         'prefix' => null,
@@ -220,12 +220,12 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
                         'suffix' => '',
                     ],
                     'phones' => [
-                        0 => [
+                        0 => (object) [
                             'type'   => '',
                             'number' => '',
                         ],
                     ],
-                    'address' => [
+                    'address' => (object) [
                         'street' => [
                             0 => '',
                         ],
@@ -236,7 +236,7 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
                     ],
                 ],
             ],
-            'legal_authenticator' => [
+            'legal_authenticator' => (object) [
                 'date'            => null,
                 'ids'             => [],
                 'assigned_person' => [
@@ -245,11 +245,11 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
                     'family' => null,
                     'suffix' => null,
                 ],
-                'representedOrganization' => [
+                'representedOrganization' => (object) [
                     'ids'     => [],
                     'name'    => null,
                     'phones'  => [],
-                    'address' => [
+                    'address' => (object) [
                         'street'  => [],
                         'city'    => null,
                         'state'   => null,
@@ -258,9 +258,9 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
                     ],
                 ],
             ],
-            'location' => [
+            'location' => (object) [
                 'name'    => null,
-                'address' => [
+                'address' => (object) [
                     'street'  => [],
                     'city'    => null,
                     'state'   => null,
@@ -268,6 +268,15 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
                     'country' => null,
                 ],
                 'encounter_date' => null,
+            ],
+        ];
+    }
+
+    public function fillEncountersSection(): array
+    {
+        return [
+            (object) [
+                'date' => $this->demos->last_encounter,
             ],
         ];
     }
@@ -370,7 +379,7 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
                         return false;
                     }
 
-                    return [
+                    return (object) [
                         'insurance'   => $insurance,
                         'policy_type' => $type,
                         'policy_id'   => null,

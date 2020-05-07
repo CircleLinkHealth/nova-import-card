@@ -258,6 +258,11 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
         ];
     }
 
+    public function fillEncountersSection(): array
+    {
+        return [];
+    }
+
     public function fillMedicationsSection(): array
     {
         if ( ! array_key_exists('medications_string', $this->data)) {

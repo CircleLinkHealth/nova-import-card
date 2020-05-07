@@ -36,6 +36,11 @@ class CcdaMedicalRecord extends BaseMedicalRecordTemplate
         return $this->ccda->document;
     }
 
+    public function fillEncountersSection(): array
+    {
+        return [];
+    }
+
     public function fillMedicationsSection(): array
     {
         return (array) $this->ccda->medications;
