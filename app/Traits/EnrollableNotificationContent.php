@@ -17,34 +17,16 @@ trait EnrollableNotificationContent
      * @param $notifiable
      * @param $isReminder
      *
+     * @throws \Exception
      * @return array|string
      */
     public function emailAndSmsContent($notifiable, $isReminder)
     {
-        if ($isReminder) {
-            if ( ! $this->hasSurveyCompleted($notifiable)) {
-                $enrollableEmailContent = $this->getEmailContent($notifiable, $isReminder);
-                $providerName           = $enrollableEmailContent['providerName'];
-                $practiceName           = $enrollableEmailContent['practiceName'];
-                $line2                  = $enrollableEmailContent['line2'];
-                $isSurveyOnly           = $enrollableEmailContent['isSurveyOnly'];
-            } else {
-//                 If enrollables didnt take any action on invitation email.
-                $enrollableEmailContent = $this->getEmailContent($notifiable, $isReminder);
-                $providerName           = $enrollableEmailContent['providerName'];
-                $practiceName           = $enrollableEmailContent['practiceName'];
-                $line2                  = $enrollableEmailContent['line2'];
-                $isSurveyOnly           = $enrollableEmailContent['isSurveyOnly'];
-            }
-        }
-
-        if ( ! $isReminder) {
-            $enrollableEmailContent = $this->getEmailContent($notifiable, $isReminder);
-            $providerName           = $enrollableEmailContent['providerName'];
-            $practiceName           = $enrollableEmailContent['practiceName'];
-            $line2                  = $enrollableEmailContent['line2'];
-            $isSurveyOnly           = $enrollableEmailContent['isSurveyOnly'];
-        }
+        $enrollableEmailContent = $this->getEmailContent($notifiable, $isReminder);
+        $providerName           = $enrollableEmailContent['providerName'];
+        $practiceName           = $enrollableEmailContent['practiceName'];
+        $line2                  = $enrollableEmailContent['line2'];
+        $isSurveyOnly           = $enrollableEmailContent['isSurveyOnly'];
 
         $line1   = "Hi, it's $providerName's office at $practiceName! ";
         $urlData = [
@@ -63,6 +45,7 @@ trait EnrollableNotificationContent
      * @param $notifiable
      * @param bool $isReminder
      *
+     * @throws \Exception
      * @return array
      */
     public function getEmailContent(User $notifiable, $isReminder = false)
@@ -80,11 +63,15 @@ trait EnrollableNotificationContent
      * @param $notifiable
      * @param $isReminder
      *
+     * @throws \Exception
      * @return array
      */
     public function getEnrolleeEmailContent(User $notifiable, $isReminder)
     {
-        $enrollee = Enrollee::whereUserId($notifiable->id)->firstOrFail();
+        $enrollee = Enrollee::whereUserId($notifiable->id)->first();
+        if ( ! $enrollee) {
+            throw new \Exception("could not find enrollee for user[$notifiable->id]");
+        }
 
         $provider         = $enrollee->provider;
         $providerLastName = $provider->last_name;
