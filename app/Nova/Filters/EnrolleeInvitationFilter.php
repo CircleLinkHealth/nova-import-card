@@ -38,11 +38,11 @@ class EnrolleeInvitationFilter extends Filter
      */
     public function apply(Request $request, $query, $value)
     {
+//        @todo: Use source filed here to avoid Unreachables
         return $query->whereIn('status', [
             Enrollee::TO_CALL,
             Enrollee::UNREACHABLE,
-        ])->where('practice_id', $value)
-            ->where('user_id', '=', null);
+        ])->where('practice_id', $value)->where('user_id', '=', null);
     }
 
     public function default()
@@ -59,7 +59,7 @@ class EnrolleeInvitationFilter extends Filter
     {
         return [
             'On Call queue' => Enrollee::TO_CALL,
-            'Unreachable'   => Enrollee::UNREACHABLE, // get these to value
+            'Unreachable'   => Enrollee::UNREACHABLE,
         ];
     }
 }

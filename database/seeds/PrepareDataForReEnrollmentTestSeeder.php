@@ -46,8 +46,8 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 'dob'                     => \Carbon\Carbon::parse('1901-01-01'),
                 'referring_provider_name' => 'Dr. Demo',
                 'mrn'                     => mt_rand(100000, 999999),
-                'primary_phone'           => config('services.tester.phone_two'),
-                'home_phone'              => config('services.tester.phone_two'),
+                'primary_phone'           => config('services.tester.phone'),
+                'home_phone'              => config('services.tester.phone'),
                 'email'                   => config('services.tester.email'),
             ]);
             $this->seedEligibilityJobs(collect($enrolleesForTesting));

@@ -201,7 +201,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
             $patientContactTimeEnd       = Carbon::parse($patientContactTimesArray[2])->toTimeString();
             $this->updateUserModel($user, $addressData);
             $this->updatePatientPhoneNumber($user, $surveyAnswers['preferred_number']);
-            $this->upatePatientInfo($user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd);
+            $this->updatePatientInfo($user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd);
             $this->updatePatientContactWindow($user, $preferredContactDaysToArray, $patientContactTimeStart, $patientContactTimeEnd);
             $this->reEnrollUnreachablePatient($user);
             $this->updateEnrolleAvatarModel($user->id);
@@ -276,22 +276,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
         return $default;
     }
 
-    /**
-     * @param $preferredContactDays
-     * @param $patientContactTimeStart
-     * @param $patientContactTimeEnd
-     * @param $dob
-     */
-    private function upatePatientInfo(User $user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd)
-    {
-        $user->patientInfo->update([
-            'preferred_cc_contact_days'  => $preferredContactDays,
-            'daily_contact_window_start' => $patientContactTimeStart,
-            'daily_contact_window_end'   => $patientContactTimeEnd,
-            'auto_enrollment_triggered'  => true,
-        ]);
-    }
-
     private function updateEnrolleAvatarModel($userId)
     {
         $enrolleAvatar = $this->getEnrollee($userId);
@@ -310,6 +294,22 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 'window_time_end'   => $patientContactTimeEnd,
             ]);
         }
+    }
+
+    /**
+     * @param $preferredContactDays
+     * @param $patientContactTimeStart
+     * @param $patientContactTimeEnd
+     * @param $dob
+     */
+    private function updatePatientInfo(User $user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd)
+    {
+        $user->patientInfo->update([
+            'preferred_cc_contact_days'  => $preferredContactDays,
+            'daily_contact_window_start' => $patientContactTimeStart,
+            'daily_contact_window_end'   => $patientContactTimeEnd,
+            'auto_enrollment_triggered'  => true,
+        ]);
     }
 
     /**
