@@ -85,6 +85,15 @@ class EnrolleeFilters extends QueryFilters
         return $this->builder->whereNotIn('status', $statuses);
     }
 
+    public function isolateUploadedViaCsv($isolate)
+    {
+        if ($isolate) {
+            return $this->builder->whereIn('source', [Enrollee::UPLOADED_CSV, Enrollee::AUTO_ENROLLMENT_CSV]);
+        }
+
+        return $this->builder;
+    }
+
     public function lang($lang)
     {
         if (empty($lang)) {
@@ -164,6 +173,15 @@ class EnrolleeFilters extends QueryFilters
         }
 
         return $this->builder->where('secondary_insurance', 'like', '%'.$insurance.'%');
+    }
+
+    public function source($source)
+    {
+        if (empty($source)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('source', 'like', '%'.$source.'%');
     }
 
     public function status($status)
