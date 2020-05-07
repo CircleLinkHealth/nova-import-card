@@ -34,7 +34,7 @@
                             @include('enrollment-consent.enrollmentLetter')
                         </div>
                     </div>
-                    <div class="logo">
+                    <div class="logo" style="margin-bottom: 10px">
                         <div class="logo">
                             @include('enrollment-consent.practiceLogo')
                         </div>
