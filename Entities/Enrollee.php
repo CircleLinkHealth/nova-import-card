@@ -196,6 +196,13 @@ class Enrollee extends BaseModel
     const AGENT_RELATIONSHIP_KEY = 'relationship';
 
     /**
+     * For field: source.
+     *
+     * Csv with enrollees uploaded through Superadmin page
+     */
+    const AUTO_ENROLLMENT_CSV = 'auto-enrollment-csv';
+
+    /**
      * status = consented.
      */
     const CONSENTED = 'consented';
