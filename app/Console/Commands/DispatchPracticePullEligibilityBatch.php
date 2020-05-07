@@ -123,7 +123,7 @@ class DispatchPracticePullEligibilityBatch extends Command
 
     private function query(int $practiceId)
     {
-        return Demographics::where('practice_id', $practiceId)->when($this->getBatch()->updated_at->lt(now()->subDays(2)), function ($q) {
+        return Demographics::where('practice_id', $practiceId)->when($this->getBatch()->updated_at->gt(now()->subDays(2)), function ($q) {
             $q->where('updated_at', '>=', $this->getBatch()->updated_at);
         })->orderByDesc('updated_at');
     }
