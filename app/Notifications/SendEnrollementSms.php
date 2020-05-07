@@ -51,13 +51,19 @@ class SendEnrollementSms extends Notification implements ShouldQueue
      *
      * @param $notifiable
      *
+     * @throws \Exception
      * @return TwilioSmsMessage
      */
     public function toTwilio(User $notifiable)
     {
-//        at this point will always exist only one active link from the mail notif send
+        // at this point will always exist only one active link from the mail notif send
         $receiver = $this->getEnrollableModelType($notifiable);
-//        $practiceNumber = $receiver->primaryPractice->outgoing_phone_number;
+        if ( ! $receiver) {
+            $hasSurveyRole = $notifiable->checkForSurveyOnlyRole();
+            throw new \Exception("Could not deduce user[$notifiable->id] to a receiver. User is survey-role only: $hasSurveyRole");
+        }
+
+        // $practiceNumber = $receiver->primaryPractice->outgoing_phone_number;
         $invitationUrl = $receiver->getLastEnrollmentInvitationLink();
         $shortenUrl    = $invitationUrl->url;
 
