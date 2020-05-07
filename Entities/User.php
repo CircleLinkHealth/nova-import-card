@@ -661,11 +661,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         static::deleting(
             function ($user) {
-                $user->providerInfo()->delete();
-                $user->patientInfo()->delete();
-                $user->carePlan()->delete();
-                $user->careTeamMembers()->delete();
+                if ($user->isProvider()) {
+                    $user->providerInfo()->delete();
+                }
+
                 if ($user->isParticipant()) {
+                    $user->carePlan()->delete();
+                    $user->careTeamMembers()->delete();
+                    $user->patientInfo()->delete();
+                    $user->patientSummaries()->delete();
                     $user->inboundScheduledCalls()->delete();
                 }
             }
@@ -673,12 +677,18 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         static::restoring(
             function ($user) {
-                $user->providerInfo()->restore();
-                $user->patientInfo()->restore();
-                $user->carePlan()->restore();
-                $user->careTeamMembers()->get()->each(function ($ctm) {
-                    $ctm->restore();
-                });
+                if ($user->isProvider()) {
+                    $user->providerInfo()->restore();
+                }
+
+                if ($user->isParticipant()) {
+                    $user->patientInfo()->restore();
+                    $user->patientSummaries()->restore();
+                    $user->carePlan()->restore();
+                    $user->careTeamMembers()->get()->each(function ($ctm) {
+                        $ctm->restore();
+                    });
+                }
             }
         );
 
