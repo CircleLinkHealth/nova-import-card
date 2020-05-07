@@ -6,31 +6,37 @@
 
 namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
 
-use Carbon\Carbon;
-use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem;
+use App\Models\PracticePull\Allergy;
+use App\Models\PracticePull\Demographics;
+use App\Models\PracticePull\Medication;
+use App\Models\PracticePull\Problem as ProblemModel;
+use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem as ProblemValueObject;
 
-class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
+class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
 {
     /**
      * @var array
      */
     protected $data;
+    private $demos;
+    private $mrn;
+    /**
+     * @var int
+     */
+    private $practiceId;
 
-    public function __construct(array $medicalRecord)
+    public function __construct(string $mrn, int $practiceId)
     {
-        $this->data = sanitize_array_keys($medicalRecord);
+        $this->mrn        = $mrn;
+        $this->practiceId = $practiceId;
     }
 
     public function fillAllergiesSection(): array
     {
-        if ( ! array_key_exists('allergies_string', $this->data)) {
-            return [];
-        }
-
-        return collect(collect(json_decode($this->data['allergies_string']))->first())
+        return Allergy::where('practice_id', $this->practiceId)->where('mrn', $this->mrn)->get()
             ->map(
-                function ($allergy) {
-                    if ( ! validAllergyName($this->getAllergyName($allergy))) {
+                function (Allergy $allergy) {
+                    if ( ! validAllergyName($allergy->name)) {
                         return false;
                     }
 
@@ -57,7 +63,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                             'code_system_name' => '',
                         ],
                         'allergen' => [
-                            'name'             => $this->getAllergyName($allergy),
+                            'name'             => $allergy->name,
                             'code'             => '',
                             'code_system'      => '',
                             'code_system_name' => '',
@@ -72,48 +78,54 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 
     public function fillDemographicsSection(): object
     {
+        $demos = $this->getDemographicsModel();
+
         return (object) [
             'ids' => [
-                'mrn_number' => $this->getMrn(),
+                'mrn_number' => $demos->mrn,
             ],
-            'name' => [
+            'name' => (object) [
                 'prefix' => null,
                 'given'  => [
-                    $this->getFirstName(),
+                    $demos->first_name,
                 ],
-                'family' => $this->getLastName(),
+                'family' => $demos->last_name,
                 'suffix' => null,
             ],
-            'dob'            => $this->getDob()->toDateString(),
-            'gender'         => $this->data['gender'],
-            'mrn_number'     => $this->getMrn(),
+            'dob'            => $demos->dob->toDateString(),
+            'gender'         => $demos->gender,
+            'mrn_number'     => $demos->mrn,
             'marital_status' => '',
-            'address'        => [
+            'address'        => (object) [
                 'street' => [
-                    $this->getAddressLine1(),
-                    $this->getAddressLine2(),
+                    $demos->street,
+                    $demos->street2,
                 ],
-                'city'    => $this->data['city'],
-                'state'   => $this->data['state'],
-                'zip'     => $this->getZipCode(),
+                'city'    => $demos->city,
+                'state'   => $demos->state,
+                'zip'     => $demos->zip,
                 'country' => '',
             ],
             'phones' => [
-                0 => [
+                0 => (object) [
                     'type'   => 'home',
-                    'number' => $this->data['home_phone'] ?? '',
+                    'number' => $demos->home_phone ?? '',
                 ],
-                1 => [
+                1 => (object) [
                     'type'   => 'primary_phone',
-                    'number' => $this->data['primary_phone'] ?? '',
+                    'number' => $demos->primary_phone ?? '',
                 ],
-                2 => [
+                2 => (object) [
                     'type'   => 'mobile',
-                    'number' => $this->data['cell_phone'] ?? '',
+                    'number' => $demos->cell_phone ?? '',
+                ],
+                3 => (object) [
+                    'type'   => 'other',
+                    'number' => $demos->other_phone ?? '',
                 ],
             ],
-            'email'      => null,
-            'language'   => null,
+            'email'      => $demos->email ?? '',
+            'language'   => $demos->lang ?? '',
             'race'       => null,
             'ethnicity'  => null,
             'religion'   => null,
@@ -130,7 +142,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                 ],
                 'relationship'      => null,
                 'relationship_code' => null,
-                'address'           => [
+                'address'           => (object) [
                     'street' => [
                     ],
                     'city'    => null,
@@ -144,13 +156,13 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
             ],
             'patient_contacts' => [
             ],
-            'provider' => [
+            'provider' => (object) [
                 'ids' => [
                 ],
                 'organization' => null,
                 'phones'       => [
                 ],
-                'address' => [
+                'address' => (object) [
                     'street' => [
                     ],
                     'city'    => null,
@@ -164,13 +176,15 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 
     public function fillDocumentSection(): object
     {
+        $demos = $this->getDemographicsModel();
+
         return (object) [
             'custodian' => [
-                'name' => $this->getProviderName(),
+                'name' => $demos->referring_provider_name,
             ],
             'date'   => '',
             'title'  => '',
-            'author' => [
+            'author' => (object) [
                 'npi'  => '',
                 'name' => [
                     'prefix' => null,
@@ -178,7 +192,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                     'family' => null,
                     'suffix' => null,
                 ],
-                'address' => [
+                'address' => (object) [
                     'street' => [
                         0 => '',
                     ],
@@ -188,30 +202,30 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                     'country' => '',
                 ],
                 'phones' => [
-                    0 => [
+                    0 => (object) [
                         'type'   => '',
                         'number' => '',
                     ],
                 ],
             ],
             'documentation_of' => [
-                0 => [
+                0 => (object) [
                     'provider_id' => null,
                     'name'        => [
                         'prefix' => null,
                         'given'  => [
-                            0 => $this->getProviderName(),
+                            0 => $demos->referring_provider_name,
                         ],
                         'family' => '',
                         'suffix' => '',
                     ],
                     'phones' => [
-                        0 => [
+                        0 => (object) [
                             'type'   => '',
                             'number' => '',
                         ],
                     ],
-                    'address' => [
+                    'address' => (object) [
                         'street' => [
                             0 => '',
                         ],
@@ -222,7 +236,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                     ],
                 ],
             ],
-            'legal_authenticator' => [
+            'legal_authenticator' => (object) [
                 'date'            => null,
                 'ids'             => [],
                 'assigned_person' => [
@@ -231,11 +245,11 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                     'family' => null,
                     'suffix' => null,
                 ],
-                'representedOrganization' => [
+                'representedOrganization' => (object) [
                     'ids'     => [],
                     'name'    => null,
                     'phones'  => [],
-                    'address' => [
+                    'address' => (object) [
                         'street'  => [],
                         'city'    => null,
                         'state'   => null,
@@ -244,9 +258,9 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                     ],
                 ],
             ],
-            'location' => [
+            'location' => (object) [
                 'name'    => null,
-                'address' => [
+                'address' => (object) [
                     'street'  => [],
                     'city'    => null,
                     'state'   => null,
@@ -260,33 +274,33 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 
     public function fillEncountersSection(): array
     {
-        return [];
+        return [
+            (object) [
+                'date' => $this->demos->last_encounter,
+            ],
+        ];
     }
 
     public function fillMedicationsSection(): array
     {
-        if ( ! array_key_exists('medications_string', $this->data)) {
-            return [];
-        }
-
-        return collect(collect(json_decode($this->data['medications_string']))->first())
+        return Medication::where('practice_id', $this->practiceId)->where('mrn', $this->mrn)->get()
             ->map(
-                function ($medication) {
+                function (Medication $medication) {
                     return [
                         'reference'       => null,
                         'reference_title' => null,
                         'reference_sig'   => null,
                         'date_range'      => [
-                            'start' => $medication->StartDate ?? null,
-                            'end'   => $medication->StopDate ?? null,
+                            'start' => $medication->start ?? null,
+                            'end'   => $medication->stop ?? null,
                         ],
-                        'status'  => $medication->Status,
+                        'status'  => $medication->status,
                         'text'    => null,
                         'product' => [
-                            'name'        => $medication->Name,
+                            'name'        => $medication->name,
                             'code'        => '',
                             'code_system' => '',
-                            'text'        => $medication->Sig,
+                            'text'        => $medication->sig,
                             'translation' => [
                                 'name'             => null,
                                 'code'             => null,
@@ -349,10 +363,12 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 
     public function fillPayersSection(): array
     {
+        $demos = $this->getDemographicsModel();
+
         $insurances = [
-            'primary_insurance'   => $this->data['primary_insurance'] ?? null,
-            'secondary_insurance' => $this->data['secondary_insurance'] ?? null,
-            'tertiary_insurance'  => $this->data['tertiary_insurance'] ?? null,
+            'primary_insurance'   => $demos->primary_insurance ?? null,
+            'secondary_insurance' => $demos->secondary_insurance ?? null,
+            'tertiary_insurance'  => $demos->tertiary_insurance ?? null,
         ];
 
         return collect($insurances)
@@ -363,7 +379,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                         return false;
                     }
 
-                    return [
+                    return (object) [
                         'insurance'   => $insurance,
                         'policy_type' => $type,
                         'policy_id'   => null,
@@ -379,23 +395,19 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 
     public function fillProblemsSection(): array
     {
-        if ( ! array_key_exists('problems_string', $this->data)) {
-            return [];
-        }
-
-        return collect(collect(json_decode($this->data['problems_string']))->first())
+        return ProblemModel::where('practice_id', $this->practiceId)->where('mrn', $this->mrn)->get()
             ->map(
-                function ($problem) {
-                    if ( ! validProblemName($problem->Name)) {
+                function (ProblemModel $problem) {
+                    if ( ! validProblemName($problem->name)) {
                         return false;
                     }
 
-                    return (new Problem())
-                        ->setName($problem->Name)
-                        ->setStartDate($problem->AddedDate)
-                        ->setEndDate($problem->ResolveDate)
-                        ->setCode($problem->Code)
-                        ->setCodeSystemName($problem->CodeType)
+                    return (new ProblemValueObject())
+                        ->setName($problem->name)
+                        ->setStartDate($problem->start)
+                        ->setEndDate($problem->stop)
+                        ->setCode($problem->code)
+                        ->setCodeSystemName($problem->code_type)
                         ->toObject();
                 }
             )
@@ -423,53 +435,17 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
         ];
     }
 
-    public function getDob(): Carbon
-    {
-        return Carbon::parse($this->data['dob']);
-    }
-
-    public function getFirstName(): string
-    {
-        return $this->data['first_name'];
-    }
-
-    public function getLastName(): string
-    {
-        return $this->data['last_name'];
-    }
-
-    public function getMrn(): string
-    {
-        return $this->data['mrn'] ?? $this->data['mrn_number'] ?? $this->data['patient_id'];
-    }
-
-    public function getProviderName(): string
-    {
-        return $this->data['referring_provider_name'];
-    }
-
     public function getType(): string
     {
-        return 'csv-with-json';
+        return 'practice-pull-template';
     }
 
-    private function getAddressLine1(): string
+    private function getDemographicsModel()
     {
-        return $this->data['street'];
-    }
+        if ( ! $this->demos) {
+            $this->demos = Demographics::where('practice_id', $this->practiceId)->where('mrn', $this->mrn)->first();
+        }
 
-    private function getAddressLine2(): string
-    {
-        return $this->data['street2'] ?? '';
-    }
-
-    private function getAllergyName($allergy): string
-    {
-        return $allergy->Name;
-    }
-
-    private function getZipCode(): string
-    {
-        return $this->data['zip'];
+        return $this->demos;
     }
 }

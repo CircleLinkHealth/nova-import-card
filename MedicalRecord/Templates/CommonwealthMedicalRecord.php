@@ -73,6 +73,11 @@ class CommonwealthMedicalRecord extends BaseMedicalRecordTemplate
         return $document;
     }
 
+    public function fillEncountersSection(): array
+    {
+        return [];
+    }
+
     public function fillMedicationsSection(): array
     {
         return $this->ccdaMedicalRecord->fillMedicationsSection();
@@ -153,7 +158,7 @@ class CommonwealthMedicalRecord extends BaseMedicalRecordTemplate
 
                     return (new Problem())->setName(
                         $historyItem
-                    )->toarray();
+                    )->toArray();
                 }
             )->all();
     }

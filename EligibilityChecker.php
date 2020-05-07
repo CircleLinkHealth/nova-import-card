@@ -412,6 +412,10 @@ class EligibilityChecker
 
         if ($problems) {
             foreach ($problems as $p) {
+                if (empty($p)) {
+                    continue;
+                }
+
                 if ( ! is_a($p, Problem::class)) {
                     $e = new \Exception('This is not an object of type '.Problem::class);
                     $this->setEligibilityJobStatusFromException($e);

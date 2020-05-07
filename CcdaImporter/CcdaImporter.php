@@ -103,6 +103,8 @@ class CcdaImporter
             ? $newUserId.'@careplanmanager.com'
             : $email;
 
+        $demographics = $this->ccda->bluebuttonJson()->demographics;
+
         $this->patient = (new UserRepository())->createNewUser(
             new ParameterBag(
                 [
@@ -122,6 +124,15 @@ class CcdaImporter
                     'is_auto_generated' => true,
                     'roles'             => [Role::whereName('participant')->firstOrFail()->id],
                     'is_awv'            => Ccda::IMPORTER_AWV === $this->ccda->source,
+                    'address'           => array_key_exists(0, $demographics->address->street)
+                        ? $demographics->address->street[0]
+                        : null,
+                    'address2' => array_key_exists(1, $demographics->address->street)
+                        ? $demographics->address->street[1]
+                        : null,
+                    'city'  => $demographics->address->city,
+                    'state' => $demographics->address->state,
+                    'zip'   => $demographics->address->zip,
                 ]
             )
         );

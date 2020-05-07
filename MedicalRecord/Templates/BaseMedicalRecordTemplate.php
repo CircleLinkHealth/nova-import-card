@@ -11,6 +11,7 @@ abstract class BaseMedicalRecordTemplate implements MedicalRecordTemplate
     private $allergies;
     private $demographics;
     private $document;
+    private $encounters;
     private $medications;
     private $payers;
     private $problems;
@@ -42,6 +43,15 @@ abstract class BaseMedicalRecordTemplate implements MedicalRecordTemplate
         }
 
         return $this->document;
+    }
+
+    public function getEncounters()
+    {
+        if ( ! $this->encounters) {
+            $this->encounters = $this->fillEncountersSection();
+        }
+
+        return $this->encounters;
     }
 
     public function getMedications()
@@ -89,6 +99,7 @@ abstract class BaseMedicalRecordTemplate implements MedicalRecordTemplate
             'document'     => $this->getDocument(),
             'allergies'    => $this->getAllergies(),
             'demographics' => $this->getDemographics(),
+            'encounters'   => $this->getEncounters(),
             'medications'  => $this->getMedications(),
             'payers'       => $this->getPayers(),
             'problems'     => $this->getProblems(),
@@ -99,5 +110,10 @@ abstract class BaseMedicalRecordTemplate implements MedicalRecordTemplate
     public function toJson(): string
     {
         return json_encode($this->toArray());
+    }
+
+    public function toObject(): object
+    {
+        return (object) $this->toArray();
     }
 }

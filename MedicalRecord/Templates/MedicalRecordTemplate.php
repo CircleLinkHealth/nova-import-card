@@ -14,6 +14,8 @@ interface MedicalRecordTemplate
 
     public function fillDocumentSection(): object;
 
+    public function fillEncountersSection(): array;
+
     public function fillMedicationsSection(): array;
 
     public function fillPayersSection(): array;
@@ -28,6 +30,8 @@ interface MedicalRecordTemplate
 
     public function getDocument();
 
+    public function getEncounters();
+
     public function getMedications();
 
     public function getPayers();
@@ -41,4 +45,6 @@ interface MedicalRecordTemplate
     public function toArray(): array;
 
     public function toJson(): string;
+
+    public function toObject(): object;
 }
