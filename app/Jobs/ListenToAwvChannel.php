@@ -31,7 +31,7 @@ class ListenToAwvChannel implements ShouldQueue
     public function __construct($data, $channel)
     {
         $this->data    = $data;
-        $this->channel = $channel;
+        $this->channel = config('database.redis.options.prefix').$channel;
     }
 
     /**
