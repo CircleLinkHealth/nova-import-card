@@ -11,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
 
 class ListenToAwvChannel implements ShouldQueue
 {
@@ -18,8 +19,8 @@ class ListenToAwvChannel implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    const AWV_REPORT_CREATED          = 'cpm_databaseawv-patient-report-created';
-    const ENROLLMENT_SURVEY_COMPLETED = 'cpm_databaseenrollable-survey-completed';
+    const AWV_REPORT_CREATED          = 'awv-patient-report-created';
+    const ENROLLMENT_SURVEY_COMPLETED = 'enrollable-survey-completed';
     private $channel;
     private $data;
 
@@ -31,7 +32,8 @@ class ListenToAwvChannel implements ShouldQueue
     public function __construct($data, $channel)
     {
         $this->data    = $data;
-        $this->channel = config('database.redis.options.prefix').$channel;
+        //remove prefix
+        $this->channel = Str::replaceFirst(config('database.redis.options.prefix'), '', $channel);
     }
 
     /**
