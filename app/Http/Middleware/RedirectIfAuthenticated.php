@@ -35,6 +35,16 @@ class RedirectIfAuthenticated
 
         Log::debug('RedirectIfAuthenticated -> ready to route somewhere');
 
+        // NOTE:
+        // I am not happy with this implementation.
+        // Redirects should be done in a different way.
+        // Now, any new route has to be inserted in this middleware,
+        // otherwise, user can only go to surveys, and main page
+
+        if (Route::is('logout.enrollee')) {
+            return $next($request);
+        }
+
         /** @var User $user */
         $user          = auth()->user();
         $isParticipant = $user->hasRole('participant');
