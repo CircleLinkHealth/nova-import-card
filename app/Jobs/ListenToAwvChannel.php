@@ -18,8 +18,8 @@ class ListenToAwvChannel implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    const AWV_REPORT_CREATED          = 'awv-patient-report-created';
-    const ENROLLMENT_SURVEY_COMPLETED = 'enrollable-survey-completed';
+    const AWV_REPORT_CREATED          = 'cpm_databaseawv-patient-report-created';
+    const ENROLLMENT_SURVEY_COMPLETED = 'cpm_databaseenrollable-survey-completed';
     private $channel;
     private $data;
 
