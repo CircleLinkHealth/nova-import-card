@@ -11,6 +11,7 @@ use App\CareplanAssessment;
 use App\Constants;
 use App\ForeignId;
 use App\Jobs\SelfEnrollmentEnrollees;
+use App\LoginLogout;
 use App\Message;
 use App\Models\EmailSettings;
 use App\Notifications\CarePlanApprovalReminder;
@@ -672,6 +673,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     $user->patientSummaries()->delete();
                     $user->inboundScheduledCalls()->delete();
                 }
+
+                $user->loginEvents()->delete();
             }
         );
 
@@ -2279,6 +2282,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $this->belongsToMany(Location::class)
             ->withTimestamps();
+    }
+
+    public function loginEvents()
+    {
+        return $this->hasMany(LoginLogout::class, 'user_id', 'id');
     }
 
     public function name()
