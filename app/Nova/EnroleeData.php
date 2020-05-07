@@ -7,10 +7,8 @@
 namespace App\Nova;
 
 use App\Constants;
+use App\Nova\Actions\ImportEnrolees;
 use App\Nova\Actions\ImportEnrollee;
-use App\Nova\Importers\EnroleeData as EnroleeDataImporter;
-use CircleLinkHealth\ClhImportCardExtended\ClhImportCardExtended;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Jubeki\Nova\Cards\Linkable\LinkableAway;
@@ -18,7 +16,6 @@ use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
-use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 
 class EnroleeData extends Resource
@@ -29,8 +26,6 @@ class EnroleeData extends Resource
      * @var string
      */
     public static $group = Constants::NOVA_GROUP_ENROLLMENT;
-
-    public static $importer = EnroleeDataImporter::class;
 
     /**
      * The model the resource corresponds to.
@@ -73,6 +68,7 @@ class EnroleeData extends Resource
     {
         return [
             new ImportEnrollee(),
+            new ImportEnrolees(),
         ];
     }
 
@@ -83,17 +79,7 @@ class EnroleeData extends Resource
      */
     public function cards(Request $request)
     {
-        $practices = Practice::whereIn('id', auth()->user()->viewableProgramIds())
-            ->activeBillable()
-            ->pluck('display_name', 'id')
-            ->toArray();
-
-        $cards = [
-            new ClhImportCardExtended(self::class, [
-                Select::make('practice')->options($practices)->withModel(Practice::class),
-            ], 'Patients from CSV'),
-        ];
-
+        $cards = [];
         if ( ! isProductionEnv()) {
             $cards[] = (new LinkableAway())
                 ->title('Create Patients')
@@ -140,8 +126,7 @@ class EnroleeData extends Resource
 
             Date::make('DOB')
                 ->sortable()
-                ->format('MM/DD/YYYY')->creationRules('required', 'date')
-                ->updateRules('date'),
+                ->creationRules('required'),
 
             Text::make('Primary Insurance')
                 ->sortable()
