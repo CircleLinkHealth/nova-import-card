@@ -53,6 +53,8 @@ class DispatchPracticePullEligibilityBatch extends Command
         $practiceId = $this->argument('practiceId');
         $count      = $this->option('count');
 
+        ini_set('max_execution_time', 900);
+
         if ($count < 0) {
             $this->query($practiceId)->chunkById(200, function ($patients) {
                 $this->processMany($patients);
@@ -128,6 +130,6 @@ class DispatchPracticePullEligibilityBatch extends Command
 
     private function query(int $practiceId)
     {
-        return Demographics::where('practice_id', $practiceId)->whereNull('eligibility_job_id')->orderByDesc('updated_at');
+        return Demographics::where('practice_id', $practiceId)->whereNull('eligibility_job_id');
     }
 }
