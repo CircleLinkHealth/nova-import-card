@@ -16,7 +16,7 @@ class SendFirstEnrollmentReminder extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Send first reminder to unresponsive patients 2 days after initial invitation';
     /**
      * The name and signature of the console command.
      *
