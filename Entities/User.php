@@ -67,12 +67,14 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
 use Laravel\Scout\Searchable;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
+use Propaganistas\LaravelPhone\Exceptions\NumberParseException;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
@@ -1720,21 +1722,24 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
 
         $phoneNumbers = $this->phoneNumbers;
+        $number       = null;
 
         if (1 == count($phoneNumbers)) {
-            return $phoneNumbers->first()->number;
+            $number = $phoneNumbers->first()->number;
+        } else {
+            $primary = $phoneNumbers->where('is_primary', true)->first();
+            if ($primary) {
+                $number = $primary->number;
+            } elseif (count($phoneNumbers) > 0) {
+                $number = $phoneNumbers->first()->number;
+            }
         }
 
-        $primary = $phoneNumbers->where('is_primary', true)->first();
-        if ($primary) {
-            return $primary->number;
+        if ($number) {
+            $number = $this->formatNumberForSms($number);
         }
 
-        if (count($phoneNumbers) > 0) {
-            return $phoneNumbers->first()->number;
-        }
-
-        return '';
+        return $number ?? '';
     }
 
     public function getPreferredCcContactDays()
@@ -3967,6 +3972,21 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 }
             )
             ->count();
+    }
+
+    private function formatNumberForSms($number)
+    {
+        try {
+            return \Propaganistas\LaravelPhone\PhoneNumber::make($number)->formatE164();
+        } catch (NumberParseException $e) {
+            try {
+                return \Propaganistas\LaravelPhone\PhoneNumber::make($number, 'us')->formatE164();
+            } catch (NumberParseException $e) {
+                Log::warning("Could not parse phone number of user[$this->id]");
+
+                return $number;
+            }
+        }
     }
 
     private function queryOfPracticesRequiringSpecialBhiConsent($builder, $operator)
