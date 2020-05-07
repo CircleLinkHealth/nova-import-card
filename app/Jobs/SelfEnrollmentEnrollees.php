@@ -100,6 +100,7 @@ class SelfEnrollmentEnrollees implements ShouldQueue
             return $this->createUserFromEnrolleeAndInvite($this->enrollee);
         }
 
+        //FIXME: We have to get Enrolles that been uploaded using CSV (see enrollees source field)
         if ( ! App::environment(['testing'])) {
             $practice  = $this->getDemoPractice();
             $enrollees = $this->getEnrollees($practice->id)

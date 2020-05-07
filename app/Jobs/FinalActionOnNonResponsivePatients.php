@@ -44,9 +44,9 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(EnrollmentInvitationService $enrollmentInvitationService)
+    public function __construct()
     {
-        $this->enrollmentInvitationService = $enrollmentInvitationService;
+        $this->enrollmentInvitationService = app(EnrollmentInvitationService::class);
     }
 
     /**
