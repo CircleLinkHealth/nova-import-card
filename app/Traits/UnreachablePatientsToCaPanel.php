@@ -37,6 +37,7 @@ trait UnreachablePatientsToCaPanel
                 'requested_callback'      => null,
                 'attempt_count'           => 0,
                 'care_ambassador_user_id' => null,
+                'source'                  => Enrollee::ENROLLED,
             ]
         );
     }
