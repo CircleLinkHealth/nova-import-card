@@ -20,7 +20,7 @@ class MarkEnrolleesForAutoEnrollment extends Action
     use Queueable;
     use SerializesModels;
 
-    public $name = 'Queue Patients for Auto Enrollment';
+    public $name = 'Mark Patients for Auto Enrollment';
 
     /**
      * Get the fields available on the action.
