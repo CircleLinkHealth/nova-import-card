@@ -222,7 +222,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
     {
         $user->delete();
         ImportConsentedEnrollees::dispatch([$enrollee->id]);
-        $user->forceDelete();
     }
 
     public function reEnrollUnreachablePatient(User $user)
