@@ -17,6 +17,7 @@ use App\Console\Commands\CountPatientMonthlySummaryCalls;
 use App\Console\Commands\CreateApprovableBillablePatientsReport;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
+use App\Console\Commands\EnrollmentFinalAction;
 use App\Console\Commands\NursesPerformanceDailyReport;
 use App\Console\Commands\OverwriteNBIImportedData;
 use App\Console\Commands\OverwriteNBIPatientMRN;
@@ -29,6 +30,7 @@ use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
+use App\Console\Commands\SendFirstEnrollmentReminder;
 use App\Console\Commands\TuneScheduledCalls;
 use App\Notifications\NurseDailyReport;
 use CircleLinkHealth\Core\Console\Commands\RunScheduler;
@@ -230,5 +232,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(AssignUnassignedPatientsToStandByNurse::class)->twiceDaily(8, 14);
         $schedule->command(RemoveDuplicateScheduledCalls::class)->twiceDaily(8, 14);
+        $schedule->command(SendFirstEnrollmentReminder::class)->dailyAt('10:27');
+        $schedule->command(EnrollmentFinalAction::class)->dailyAt('08:27');
     }
 }

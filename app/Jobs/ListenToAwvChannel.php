@@ -11,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
 
 class ListenToAwvChannel implements ShouldQueue
 {
@@ -30,8 +31,9 @@ class ListenToAwvChannel implements ShouldQueue
      */
     public function __construct($data, $channel)
     {
-        $this->data    = $data;
-        $this->channel = $channel;
+        $this->data = $data;
+        //remove prefix
+        $this->channel = Str::replaceFirst(config('database.redis.options.prefix'), '', $channel);
     }
 
     /**

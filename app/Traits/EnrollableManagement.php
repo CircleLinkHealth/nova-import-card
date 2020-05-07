@@ -57,7 +57,14 @@ trait EnrollableManagement
     public function createUrlAndRedirectToSurvey($enrollableId)
     {
         $enrolleesSurveyInstance = $this->getEnrolleesSurveyInstance();
-        $surveyId                = $enrolleesSurveyInstance->survey_id;
+
+        try {
+            $surveyId = $enrolleesSurveyInstance->survey_id;
+        } catch (\Exception $exception) {
+            \Log::critical('Survey instance not found');
+            abort(404);
+        }
+
         $this->updateAwvUsersSurvey($enrollableId, $enrolleesSurveyInstance, $surveyId);
         $enrolleesSurveyUrl = url(config('services.awv.url')."/survey/enrollees/create-url/{$enrollableId}/{$surveyId}");
 
@@ -129,6 +136,7 @@ trait EnrollableManagement
      * NOTE: "whereDoesntHave" makes sure we dont invite Unreachable/Non responded - Enrollees second time.
      *
      * @param $practiceId
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getEnrollees($practiceId)
@@ -202,6 +210,10 @@ trait EnrollableManagement
      */
     public function hasSurveyCompleted($notifiable)
     {
+        //        For nova request. At that point enrollees will ot have User model, hence they didnt get invited yet.
+//        if (Enrollee::class === get_class($notifiable)) {
+//            return false;
+//        }
         $surveyLink = $this->getSurveyInvitationLink($notifiable->patientInfo->id);
         if ( ! empty($surveyLink)) {
             $surveyInstance = DB::table('survey_instances')
@@ -223,6 +235,10 @@ trait EnrollableManagement
      */
     public function hasSurveyInProgress($notifiable)
     {
+//        For nova request. At that point enrollees will ot have User model, hence they didnt get invited yet.
+//        if (Enrollee::class === get_class($notifiable)) {
+//            return false;
+//        }
         $surveyLink = $this->getSurveyInvitationLink($notifiable->patientInfo->id);
         if ( ! empty($surveyLink)) {
             $surveyInstance = DB::table('survey_instances')

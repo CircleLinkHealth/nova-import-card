@@ -34,8 +34,8 @@ return [
     ],
     'twilio' => [
         'enabled'          => env('TWILIO_ENABLED', false),
-        'sid'              => env('TWILIO_SID', 'somerandomstring'),
-        'token'            => env('TWILIO_TOKEN', 'somerandomstring'),
+        'account_sid'      => env('TWILIO_SID', 'somerandomstring'),
+        'auth_token'       => env('TWILIO_TOKEN', 'somerandomstring'),
         'from'             => env('TWILIO_FROM', 'somerandomstring'),
         'twiml-app-sid'    => env('TWIML_APP_SID', 'somerandomstring'),
         'allow-conference' => env('TWIML_ALLOW_CONFERENCE', false),
@@ -99,6 +99,7 @@ return [
     'tester' => [
         'email'     => 'nektariosx01@gmail.com',
         'phone'     => '+35799018718',
+        'phone_two' => '+35799952761',
         'email_two' => 'kountouris7@gmail.com',
     ],
 ];

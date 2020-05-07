@@ -49,9 +49,21 @@ class SendEnrollmentReminders implements ShouldQueue
         $hasRequestedInfoOnInvitation = $isSurveyOnly
             ? Enrollee::whereUserId($this->enrollable->id)->first()->statusRequestsInfo()->exists()
             : $this->enrollable->statusRequestsInfo()->exists();
+        //@todo: Move this in SelfEnrollmentPatientsReminder on "getUsersToSendReminder()".
+        $enrollableHasBeenReminded = $this->enrollablePastReminderExists();
 
-        if ( ! $hasRequestedInfoOnInvitation || ! $this->hasSurveyInProgress($this->enrollable) || ! $this->hasSurveyCompleted($this->enrollable)) {
+        if ( ! $enrollableHasBeenReminded
+            && ( ! $hasRequestedInfoOnInvitation
+            || ! $this->hasSurveyCompleted($this->enrollable))) {
             event(new AutoEnrollableCollected($this->enrollable, true));
         }
+    }
+
+    /**
+     * @return mixed
+     */
+    private function enrollablePastReminderExists()
+    {
+        return $this->enrollable->notifications()->where('data->is_reminder', true)->exists();
     }
 }

@@ -44,6 +44,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Demographics newQuery()
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Demographics query()
  * @mixin \Eloquent
+ * @property int|null $eligibility_job_id
  */
 class Demographics extends BaseModel
 {
@@ -75,6 +76,7 @@ class Demographics extends BaseModel
         'location_id',
         'billing_provider_user_id',
         'practice_id',
+        'eligibility_job_id',
     ];
     protected $table = 'practice_pull_demographics';
 }

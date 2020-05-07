@@ -10,7 +10,9 @@ use App\Constants;
 use App\Models\PracticePull\Demographics;
 use App\Nova\Actions\PracticePull\ImportDemographics;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Text;
 
 class PracticePullDemographics extends Resource
 {
@@ -29,6 +31,10 @@ class PracticePullDemographics extends Resource
      */
     public static $search = [
         'id',
+        'mrn',
+        'first_name',
+        'last_name',
+        'dob',
     ];
 
     /**
@@ -66,6 +72,27 @@ class PracticePullDemographics extends Resource
     public function fields(Request $request)
     {
         return [
+            Text::make('MRN', 'mrn')->sortable(),
+            Text::make('First Name', 'first_name')->sortable(),
+            Text::make('Last Name', 'last_name')->sortable(),
+            Date::make('Last Encounter', 'last_encounter')->sortable(),
+            Date::make('DOB', 'dob')->sortable(),
+            Text::make('Gender', 'gender')->sortable(),
+            Text::make('Lang', 'lang')->sortable(),
+            Text::make('Provider Name', 'referring_provider_name')->sortable(),
+            Text::make('Cell Phone', 'cell_phone')->sortable(),
+            Text::make('Home Phone', 'home_phone')->sortable(),
+            Text::make('Other Phone', 'other_phone')->sortable(),
+            Text::make('Primary Phone', 'primary_phone')->sortable(),
+            Text::make('Email', 'email')->sortable(),
+            Text::make('Address', 'street')->sortable(),
+            Text::make('Address 2', 'street2')->sortable(),
+            Text::make('City', 'city')->sortable(),
+            Text::make('State', 'state')->sortable(),
+            Text::make('Zip', 'zip')->sortable(),
+            Text::make('Primary Insurance', 'primary_insurance')->sortable(),
+            Text::make('Secondary Insurance', 'secondary_insurance')->sortable(),
+            Text::make('Tertiary Insurance', 'tertiary_insurance')->sortable(),
             ID::make()->sortable(),
         ];
     }

@@ -24,7 +24,7 @@ class EnrollmentInvitationService
      *
      * @return array
      */
-    public function createLetter($practiceName, $practiceLetter, $practiceNumber, $provider, $hideButtons = false)
+    public function createLetter($practiceName, EnrollmentInvitationLetter $practiceLetter, $practiceNumber, $provider, $hideButtons = false)
     {
         $varsToBeReplaced = [
             EnrollmentInvitationLetter::PROVIDER_LAST_NAME,
@@ -56,13 +56,17 @@ class EnrollmentInvitationService
             : '';
 
         // order has to be the same as the $varsToBeReplaced
+        $practiceSigSrc = '';
+        if ( ! empty($practiceLetter->customer_signature_src)) {
+            $practiceSigSrc = "<img src='$practiceLetter->customer_signature_src'  alt='$practiceName'/>";
+        }
         $replacementVars = [
             $provider->last_name,
             $practiceNumber,
             $provider->display_name,
             $practiceName,
             $buttonsLocation,
-            '[CUSTOMER_SIGNATURE_PIC]',
+            $practiceSigSrc,
             $optionalParagraph,
             $buttonsSecondVersion,
             $optionalTitle,

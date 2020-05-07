@@ -11,11 +11,12 @@ use App\Traits\EnrollableNotificationContent;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\Twilio\TwilioChannel;
 use NotificationChannels\Twilio\TwilioSmsMessage;
 
-class SendEnrollementSms extends Notification
+class SendEnrollementSms extends Notification implements ShouldQueue
 {
     use EnrollableManagement;
     use EnrollableNotificationContent;
@@ -50,13 +51,19 @@ class SendEnrollementSms extends Notification
      *
      * @param $notifiable
      *
+     * @throws \Exception
      * @return TwilioSmsMessage
      */
     public function toTwilio(User $notifiable)
     {
-//        at this point will always exist only one active link from the mail notif send
+        // at this point will always exist only one active link from the mail notif send
         $receiver = $this->getEnrollableModelType($notifiable);
-//        $practiceNumber = $receiver->primaryPractice->outgoing_phone_number;
+        if ( ! $receiver) {
+            $hasSurveyRole = $notifiable->checkForSurveyOnlyRole();
+            throw new \Exception("Could not deduce user[$notifiable->id] to a receiver. User is survey-role only: $hasSurveyRole");
+        }
+
+        // $practiceNumber = $receiver->primaryPractice->outgoing_phone_number;
         $invitationUrl = $receiver->getLastEnrollmentInvitationLink();
         $shortenUrl    = $invitationUrl->url;
 

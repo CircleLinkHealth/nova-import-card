@@ -10,7 +10,9 @@ use App\Constants;
 use App\Models\PracticePull\Medication;
 use App\Nova\Actions\PracticePull\ImportMedications;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Text;
 
 class PracticePullMedication extends Resource
 {
@@ -29,6 +31,12 @@ class PracticePullMedication extends Resource
      */
     public static $search = [
         'id',
+        'mrn',
+        'name',
+        'sig',
+        'start',
+        'stop',
+        'status',
     ];
 
     /**
@@ -66,6 +74,12 @@ class PracticePullMedication extends Resource
     public function fields(Request $request)
     {
         return [
+            Text::make('MRN', 'mrn')->sortable(),
+            Text::make('Name', 'name')->sortable(),
+            Text::make('Sig', 'sig')->sortable(),
+            Date::make('Start', 'start')->sortable(),
+            Date::make('Stop', 'stop')->sortable(),
+            Text::make('Status', 'status')->sortable(),
             ID::make()->sortable(),
         ];
     }

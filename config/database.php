@@ -226,6 +226,7 @@ return [
         // need a specific connection for the pub/sub channel
         // otherwise, we get errors (tried both phpredis and predis)
         'pub_sub' => [
+            'url'                => env('REDIS_URL'),
             'host'               => env('REDIS_HOST', '127.0.0.1'),
             'password'           => env('REDIS_PASSWORD', null),
             'port'               => env('REDIS_PORT', 6379),

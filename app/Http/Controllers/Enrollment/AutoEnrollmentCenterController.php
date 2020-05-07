@@ -23,6 +23,7 @@ class AutoEnrollmentCenterController extends Controller
     use EnrollableManagement;
 
     const ENROLLEES                            = 'Enrollees';
+    const ENROLLMENT_LETTER_DEFAULT_LOGO       = 'https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png';
     const SEND_NOTIFICATIONS_LIMIT_FOR_TESTING = 1;
 
     /**
@@ -36,6 +37,46 @@ class AutoEnrollmentCenterController extends Controller
     public function __construct(EnrollmentInvitationService $enrollmentInvitationService)
     {
         $this->enrollmentInvitationService = $enrollmentInvitationService;
+    }
+
+    /**
+     * Prepares Enrollment letter pages.
+     *
+     * @param $enrollablePrimaryPractice
+     * @param $isSurveyOnlyUser
+     * @param mixed|null $provider
+     * @param mixed      $hideButtons
+     *
+     * @return array
+     */
+    public function composeEnrollmentLetter(
+        EnrollmentInvitationLetter $letter,
+        User $userForEnrollment,
+        $enrollablePrimaryPractice,
+        $isSurveyOnlyUser,
+        $provider = null,
+        $hideButtons = false
+    ) {
+        // CA's phone numbers is the practice number
+        $practiceNumber = $enrollablePrimaryPractice->outgoing_phone_number;
+        if ($practiceNumber) {
+            //remove +1 from phone number
+            $practiceNumber = formatPhoneNumber($practiceNumber);
+        }
+
+        if (null === $provider) {
+            $provider = $this->getEnrollableProvider($isSurveyOnlyUser, $userForEnrollment);
+        }
+
+        $practiceName = $enrollablePrimaryPractice->display_name;
+
+        return $this->enrollmentInvitationService->createLetter(
+            $practiceName,
+            $letter,
+            $practiceNumber,
+            $provider,
+            $hideButtons
+        );
     }
 
     /**
@@ -120,7 +161,10 @@ class AutoEnrollmentCenterController extends Controller
     {
         $enrollableId      = $request->input('enrollable_id');
         $userForEnrollment = $this->getUserModelEnrollee($enrollableId);
-        $enrollable        = $this->getEnrollableModelType($userForEnrollment);
+        if ( ! $userForEnrollment) {
+            return 'Cannot find user. User may have been already enrolled.';
+        }
+        $enrollable = $this->getEnrollableModelType($userForEnrollment);
 
         //      This can happen only on the first redirect and if page is refreshed
         if ($this->enrollableHasRequestedInfo($enrollable)) {
@@ -144,44 +188,6 @@ class AutoEnrollmentCenterController extends Controller
         return DB::table('invitation_links')
             ->where('patient_info_id', $user->patientInfo->id)
             ->first();
-    }
-
-    /**
-     * Prepares Enrollment letter pages.
-     *
-     * @param $enrollablePrimaryPractice
-     * @param $isSurveyOnlyUser
-     * @param mixed|null $provider
-     * @param mixed      $hideButtons
-     *
-     * @return array
-     */
-    public function getEnrollmentLetter(
-        User $userForEnrollment,
-        $enrollablePrimaryPractice,
-        $isSurveyOnlyUser,
-        $provider = null,
-        $hideButtons = false
-    ) {
-        $practiceLetter = EnrollmentInvitationLetter::where('practice_id', $enrollablePrimaryPractice->id)
-            ->firstOrFail();
-
-        // CA's phone numbers is the practice number
-        $practiceNumber = $enrollablePrimaryPractice->outgoing_phone_number;
-
-        if (null === $provider) {
-            $provider = $this->getEnrollableProvider($isSurveyOnlyUser, $userForEnrollment);
-        }
-
-        $practiceName = $enrollablePrimaryPractice->display_name;
-
-        return $this->enrollmentInvitationService->createLetter(
-            $practiceName,
-            $practiceLetter,
-            $practiceNumber,
-            $provider,
-            $hideButtons
-        );
     }
 
     public function manageUnreachablePatientInvitation($enrollableId)
@@ -238,7 +244,11 @@ class AutoEnrollmentCenterController extends Controller
     {
         $enrollablePrimaryPractice = $userEnrollee->primaryPractice;
         $provider                  = $this->getEnrollableProvider($isSurveyOnlyUser, $userEnrollee);
-        $letterPages               = $this->getEnrollmentLetter(
+        /** @var EnrollmentInvitationLetter $practiceLetter */
+        $practiceLetter = EnrollmentInvitationLetter::where('practice_id', $enrollablePrimaryPractice->id)
+            ->firstOrFail();
+        $letterPages = $this->composeEnrollmentLetter(
+            $practiceLetter,
             $userEnrollee,
             $enrollablePrimaryPractice,
             $isSurveyOnlyUser,
@@ -246,11 +256,11 @@ class AutoEnrollmentCenterController extends Controller
             $hideButtons
         );
         $practiceName           = $enrollablePrimaryPractice->name;
+        $practiceLogoSrc        = $practiceLetter->practice_logo_src ?? self::ENROLLMENT_LETTER_DEFAULT_LOGO;
         $signatoryNameForHeader = $provider->display_name;
         $dateLetterSent         = Carbon::parse($enrollee->getLastEnrollmentInvitationLink()->updated_at)->toDateString();
         $pastActiveLink         = $this->pastActiveInvitationLinks($enrollee);
-
-        $buttonColor = '#4baf50';
+        $buttonColor            = '#4baf50';
 
         if ( ! empty($pastActiveLink)) {
             $buttonColor = $pastActiveLink->button_color;
@@ -261,10 +271,11 @@ class AutoEnrollmentCenterController extends Controller
             'isSurveyOnlyUser',
             'letterPages',
             'practiceName',
+            'practiceLogoSrc',
             'signatoryNameForHeader',
             'dateLetterSent',
             'hideButtons',
-            'buttonColor'
+            'buttonColor',
         ));
     }
 
@@ -323,8 +334,27 @@ class AutoEnrollmentCenterController extends Controller
     private function returnEnrolleeRequestedInfoMessage(Enrollee $enrollee)
     {
         $practiceNumber = $enrollee->practice->outgoing_phone_number;
-        $providerName   = $enrollee->provider->last_name;
+        if ($practiceNumber) {
+            //remove +1 from phone number
+            $practiceNumber = formatPhoneNumber($practiceNumber);
+        }
+        $providerName    = $enrollee->provider->last_name;
+        $practiceName    = $enrollee->practice->display_name;
+        $practiceLogoSrc = self::ENROLLMENT_LETTER_DEFAULT_LOGO;
+        $practiceLetter  = EnrollmentInvitationLetter::wherePracticeId($enrollee->practice_id)->first();
+        if ($practiceLetter && ! empty($practiceLetter->practice_logo_src)) {
+            $practiceLogoSrc = $practiceLetter->practice_logo_src;
+        }
 
-        return view('Enrollment.enrollmentInfoRequested', compact('practiceNumber', 'providerName'));
+        $isSurveyOnly = true;
+
+        return view('Enrollment.enrollmentInfoRequested', compact(
+            'practiceNumber',
+            'providerName',
+            'practiceName',
+            'practiceLogoSrc',
+            'isSurveyOnly',
+            'enrollee'
+        ));
     }
 }

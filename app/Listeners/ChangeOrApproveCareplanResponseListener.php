@@ -125,7 +125,7 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
             ];
 
             if ($nurse = $cp->patient->patientInfo->getNurse()) {
-                $newCallArgs['outbound_cpm_id'] = $nurse;
+                $newCallArgs['outbound_cpm_id'] = $nurse->id;
             }
 
             $task = Call::create(

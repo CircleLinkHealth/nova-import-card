@@ -290,7 +290,7 @@ class ApproveCPViaDM extends CustomerTestCase
         );
     }
 
-    public function tests_provider_can_login_with_passwordless_link()
+    public function tests_provider_can_login_with_passwordless_link_and_redirects_to_patient_careplan()
     {
         $this->assertFalse(auth()->check());
 
@@ -301,6 +301,8 @@ class ApproveCPViaDM extends CustomerTestCase
         $response = $this->get($link)->assertStatus(302);
 
         $this->assertEquals($this->provider()->id, auth()->id());
+
+        $response->assertHeader('location', route('patient.careplan.print', [$this->patient()->id]));
 
         $this->assertDatabaseMissing(
             'passwordless_login_tokens',

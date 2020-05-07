@@ -9,7 +9,7 @@
                     <div class="container">
                             <div class="z-depth-3 y-depth-3 x-depth-3 grey green-text lighten-4 row"
                                  style="display: inline-block;
-                              padding: 32px 48px 0px 48px;
+                              padding: 32px 30px 0px 30px;
                               border: 1px;
                               margin-top: 10px;
                               solid: #EEE;">
@@ -17,7 +17,7 @@
                                     <div id="title">
                                         <strong>{{$practiceName}}</strong>
                                         <br/>
-                                        Dr. {{$doctorsLastName}}’s Office
+                                        {{$doctorsLastName}}’s Office
                                     </div>
                                 </div>
                                 <br>
@@ -26,7 +26,7 @@
                                         Before we get started, we just need to verify your identity first.
                                     </div>
                                     <br>
-                                    <form method="POST" action="{{route('invitation.enrollment.login')}}">
+                                    <form method="POST" action="{{route('invitation.enrollment.login')}}" class="form-prevent-multi-submit">
                                         {{csrf_field()}}
 
 {{--                                        <div class='row' style="margin-top: 70px;">--}}
@@ -40,8 +40,8 @@
 {{--                                            </div>--}}
 {{--                                        </div>--}}
                                         <div class='row' style="margin-top: 80px;">
-                                            <div class='input-field col s12'>
-                                                <label for="birth-date" class="birth-date" style="font-size: 20px; color:black">Please Enter Your Date of Birth</label>
+                                            <div class='input-field col s12' style="text-align: left">
+                                                <label for="birth-date" class="birth-date" style="font-size: 16px; position: unset; color:black">Please Enter Your Date of Birth</label>
                                                 <input type="date" name="birth_date"
                                                        class="login-inputs"
                                                        placeholder="1950-01-15"
@@ -64,7 +64,9 @@
                                                 <input type="hidden" name="user_id" value="{{$userId}}">
                                                 <input type="hidden" name="is_survey_only" value="{{$isSurveyOnly}}">
                                                 <input type="hidden" name="url_with_token" value="{{$urlWithToken}}">
-                                                <button type="submit" class="waves-effect waves-light btn-large" style="background-color: #4CB2E1">Continue</button>
+                                                <button type="submit" id="submit" class="waves-effect waves-light btn-large btn-prevent-multi-submit" style="background-color: #4CB2E1">
+                                                    Continue
+                                                </button>
                                             </div>
                                         </center>
                                     </form>

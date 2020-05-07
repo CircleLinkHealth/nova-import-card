@@ -7,8 +7,8 @@
 Route::get('/debug-sentry', 'DemoController@sentry');
 Route::get('/debug-sentry-log', 'DemoController@sentryLog');
 
-Route::get('passwordless-login/{token}', 'Auth\LoginController@login')
-    ->name('login.token.validate');
+Route::get('passwordless-login-for-cp-approval/{token}/{patientId}', 'Auth\LoginController@login')
+    ->name('passwordless.login.for.careplan.approval');
 
 Route::post('webhooks/on-sent-fax', [
     'uses' => 'PhaxioWebhookController@onFaxSent',
@@ -2193,7 +2193,10 @@ Route::prefix('admin')->group(
 
 Route::group([
     'prefix'     => 'admin',
-    'middleware' => ['auth'],
+    'middleware' => [
+        'auth',
+        'permission:admin-access',
+    ],
 ], function () {
     Route::get('/send-enrollment-reminder-test', [
         'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendEnrollmentReminderTestMethod',
