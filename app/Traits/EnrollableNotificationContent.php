@@ -8,7 +8,6 @@ namespace App\Traits;
 
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 
 trait EnrollableNotificationContent
@@ -28,7 +27,12 @@ trait EnrollableNotificationContent
         $line2                  = $enrollableEmailContent['line2'];
         $isSurveyOnly           = $enrollableEmailContent['isSurveyOnly'];
 
-        $line1   = "Hi, it's $providerName's office at $practiceName! ";
+        $line1 = "Hi, it's $providerName's office at $practiceName! ";
+
+        if (empty($providerName)) {
+            $line1 = "Hi, it's your Provider's office at $practiceName! ";
+        }
+
         $urlData = [
             'enrollable_id'  => $notifiable->id,
             'is_survey_only' => $isSurveyOnly,
@@ -96,26 +100,27 @@ trait EnrollableNotificationContent
      */
     public function getUserEmailContent(User $notifiable, $isReminder)
     {
-        $testingMode                    = App::environment(['review', 'local']);
         $provider                       = $notifiable->billingProviderUser();
         $lastNurseThatPerformedActivity = $notifiable->patientInfo->lastNurseThatPerformedActivity();
         $nurseFirstName                 = ! empty($lastNurseThatPerformedActivity) ? $lastNurseThatPerformedActivity->user->display_name
             : '';
 
+        $line2 = $isReminder
+            ? "Just circling back because $nurseFirstName, our telephone nurse was unable to reach you this month. Please re-start calls in this link: "
+            : "$nurseFirstName, our nurse, was unable to reach you this month. Please re-start calls in this link: ";
+
         // Should never be empty with production data.
         if (empty($nurseFirstName)) {
-            $nurseFirstName = $testingMode ? 'Jessica' : '';
+            $line2 = $isReminder
+                ? 'Just circling back because our telephone nurse, was unable to reach you this month. Please re-start calls in this link: '
+                : 'Your Nurse Care Coach was unable to reach you this month. Please re-start calls in this link: ';
         }
-
-        $line2 = $isReminder
-            ? "Just circling back because $nurseFirstName, our telephone nurse, was unable to reach you this month. Please re-start calls in this link: "
-            : "$nurseFirstName, our nurse, was unable to reach you this month. Please re-start calls in this link: ";
 
         // Should never be empty with production data.
         if ( ! empty($provider)) {
             $providerName = $provider->display_name;
         } else {
-            $providerName = $testingMode ? 'Dr. James' : "your doctor's provider";
+            $providerName = '';
             Log::error("User $notifiable->id has null billingProviderUser");
         }
 

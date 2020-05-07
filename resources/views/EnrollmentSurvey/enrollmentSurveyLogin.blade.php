@@ -17,7 +17,7 @@
                                     <div id="title">
                                         <strong>{{$practiceName}}</strong>
                                         <br/>
-                                        Dr. {{$doctorsLastName}}’s Office
+                                        {{$doctorsLastName}}’s Office
                                     </div>
                                 </div>
                                 <br>
