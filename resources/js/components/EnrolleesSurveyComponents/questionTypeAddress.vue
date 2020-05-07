@@ -11,9 +11,9 @@
             <div v-for="(item, index) in physicalAddress"
                  class="col-md-12 active">
                 <br>
-                <label class="label">{{index}}</label>
+                <label class="label">{{capitalizeFirstLetter(index)}}</label>
                 <br>
-                <!--       Dont really understand why i should do this in v-model to work         -->
+                <!-- Dont really understand why i should do this in v-model to work  -->
                 <input type="text"
                        class="address-field"
                        v-model="physicalAddress[index]"
@@ -60,6 +60,14 @@
             }
         },
         methods: {
+
+            capitalizeFirstLetter(text) {
+                if (!text) {
+                    return text;
+                }
+                return text[0].toUpperCase() + text.slice(1);
+            },
+
             handleAnswer() {
                 let answer = [];
                 if (this.isMultiInput) {
@@ -77,15 +85,15 @@
             },
         },
         computed: {
-            placeholderValue(){
-              return this.singleInputHasText !== '' ? '' : 'Enter you email'
+            placeholderValue() {
+                return this.singleInputHasText !== '' ? '' : 'Enter you email'
             },
 
-            buttonText(){
-                if (this.isLastQuestion){
-                    return  'Complete';
+            buttonText() {
+                if (this.isLastQuestion) {
+                    return 'Complete';
                 }
-                if (this.singleInputHasText === '' && ! this.isMultiInput){
+                if (this.singleInputHasText === '' && !this.isMultiInput) {
                     return "I don't have an email";
                 }
                 return 'Next';

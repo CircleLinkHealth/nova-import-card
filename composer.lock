@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c7f6d48913a5106497d284c4adace57a",
+    "content-hash": "0fb9c3dd8c37487867ef207621299cef",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -734,11 +734,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.3.1",
+            "version": "v2.3.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "55b461f178661affcec98f65e33c78fba8900e33"
+                "reference": "8af46aab5b4b96aed8951aa80070456872cb5328"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -763,7 +763,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-01T03:17:40+00:00"
+            "time": "2020-05-07T03:05:25+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
