@@ -14,6 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Fields\ActionFields;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\File;
 use Laravel\Nova\Fields\Select;
 use Maatwebsite\Excel\Facades\Excel;
@@ -57,6 +58,7 @@ class ImportEnrolees extends Action
             File::make('File')
                 ->rules('required'),
             Select::make('Practice', 'practice_id')->options($practices)->withModel(Practice::class),
+            Boolean::make('Include in Auto-enrollment', 'auto_enrollment'),
         ];
     }
 
@@ -67,7 +69,7 @@ class ImportEnrolees extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        Excel::import(new Enrollees($fields->practice_id), $fields->file);
+        Excel::import(new Enrollees($fields->practice_id, $fields->auto_enrollment), $fields->file);
 
         return Action::message('It worked!');
     }
