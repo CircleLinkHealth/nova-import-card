@@ -72,6 +72,11 @@ class DispatchPracticePullEligibilityBatch extends Command
     {
         $ej = $this->createFromBlueButtonObject((new PracticePullMedicalRecord($demos->mrn, $demos->practice_id))->toObject(), $batch, $this->practice);
 
+        if ( ! $demos->eligibility_job_id) {
+            $demos->eligibility_job_id = $ej->id;
+            $demos->save();
+        }
+
         if ( ! $this->option('create-only')) {
             ProcessSinglePatientEligibility::dispatch($ej, $batch, $this->practice);
         }
@@ -123,8 +128,6 @@ class DispatchPracticePullEligibilityBatch extends Command
 
     private function query(int $practiceId)
     {
-        return Demographics::where('practice_id', $practiceId)->when($this->getBatch()->updated_at->gt(now()->subDays(2)), function ($q) {
-            $q->where('updated_at', '>=', $this->getBatch()->updated_at);
-        })->orderByDesc('updated_at');
+        return Demographics::where('practice_id', $practiceId)->whereNull('eligibility_job_id')->orderByDesc('updated_at');
     }
 }
