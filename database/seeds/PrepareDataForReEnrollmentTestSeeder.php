@@ -63,7 +63,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         while ($n <= $limit) {
             $user = $this->createUser($practice->id, 'participant', self::CCM_STATUS_UNREACHABLE);
             $user->phoneNumbers()->update(['number' => $phoneTester]);
-            $user->update(['email' => $phoneTester]);
+            $user->update(['email' => $emailTester]);
             $user->patientInfo()->update([
                 'birth_date'       => \Carbon\Carbon::parse('1901-01-01'),
                 'date_unreachable' => now(),
