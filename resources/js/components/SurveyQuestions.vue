@@ -466,6 +466,7 @@
             const patientName = this.surveyData.display_name;
             const welcomeIcon = this.surveyName === 'hra' ? hraWelcomeIcon : vitalsWelcomeIcon;
             const welcomeTitle = this.surveyName === 'hra' ? 'Annual Wellness Visit (AWV) Questionnaire' : `${patientName} Vitals`;
+            const practiceNumber = this.formatNumber(this.surveyData.primary_practice.outgoing_phone_number);
 
             return {
                 welcomeIcon,
@@ -493,7 +494,7 @@
                 practiceId: this.surveyData.primary_practice.id,
                 practiceName: this.surveyData.primary_practice.display_name,
                 patientName,
-                practiceOutgoingPhoneNumber: this.surveyData.primary_practice.outgoing_phone_number,
+                practiceOutgoingPhoneNumber: practiceNumber,
                 doctorsLastName: this.surveyData.billing_provider && this.surveyData.billing_provider.length ? this.surveyData.billing_provider[0].user.last_name : '???',
                 totalQuestions: 0,
                 totalQuestionWithSubQuestions: 0,
@@ -567,6 +568,17 @@
         },
 
         methods: {
+
+            formatNumber(number) {
+                if (!number || number.length === 0) {
+                    return '';
+                }
+
+                if (number.startsWith("+1")) {
+                    return number.substr(2);
+                }
+                return number;
+            },
 
             getPatientsListUrl() {
                 return '/manage-patients';
