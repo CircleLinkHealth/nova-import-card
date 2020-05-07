@@ -250,7 +250,8 @@ class Enrollee extends BaseModel
     /**
      * status = utc.
      */
-    const UNREACHABLE = 'utc';
+    const UNREACHABLE         = 'utc';
+    const UNREACHABLE_PATIENT = 'unreachable_patient';
 
     /**
      * For mySql full-text search.
@@ -373,6 +374,7 @@ class Enrollee extends BaseModel
 
         'enrollment_non_responsive',
         'auto_enrollment_triggered',
+        'source',
     ];
 
     protected $table = 'enrollees';
