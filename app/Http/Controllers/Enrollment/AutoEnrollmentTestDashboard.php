@@ -14,7 +14,6 @@ use App\Jobs\SelfEnrollmentPatientsReminder;
 use App\Jobs\SelfEnrollmentUnreachablePatients;
 use App\LoginLogout;
 use App\Notifications\SendEnrollmentEmail;
-use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
@@ -48,7 +47,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function finalActionTest()
     {
-        FinalActionOnNonResponsivePatients::dispatch(new EnrollmentInvitationService());
+        FinalActionOnNonResponsivePatients::dispatch();
 
         return redirect()->back()->with('message', 'Reminders Sent Successfully');
     }

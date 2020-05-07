@@ -2190,7 +2190,10 @@ Route::prefix('admin')->group(
 
 Route::group([
     'prefix'     => 'admin',
-    'middleware' => ['auth'],
+    'middleware' => [
+        'auth',
+        'permission:admin-access',
+    ],
 ], function () {
     Route::get('/send-enrollment-reminder-test', [
         'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendEnrollmentReminderTestMethod',

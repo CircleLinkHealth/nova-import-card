@@ -119,6 +119,7 @@ class AutoEnrollmentCenterController extends Controller
      * NOTE: Currently ONLY Enrollee model have the option to request info.
      *
      * @throws \Exception
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      */
     public function enrolleeRequestsInfo(Request $request)
@@ -160,7 +161,10 @@ class AutoEnrollmentCenterController extends Controller
     {
         $enrollableId      = $request->input('enrollable_id');
         $userForEnrollment = $this->getUserModelEnrollee($enrollableId);
-        $enrollable        = $this->getEnrollableModelType($userForEnrollment);
+        if ( ! $userForEnrollment) {
+            return 'Cannot find user. User may have been already enrolled.';
+        }
+        $enrollable = $this->getEnrollableModelType($userForEnrollment);
 
         //      This can happen only on the first redirect and if page is refreshed
         if ($this->enrollableHasRequestedInfo($enrollable)) {
@@ -329,7 +333,11 @@ class AutoEnrollmentCenterController extends Controller
      */
     private function returnEnrolleeRequestedInfoMessage(Enrollee $enrollee)
     {
-        $practiceNumber  = $enrollee->practice->outgoing_phone_number;
+        $practiceNumber = $enrollee->practice->outgoing_phone_number;
+        if ($practiceNumber) {
+            //remove +1 from phone number
+            $practiceNumber = formatPhoneNumber($practiceNumber);
+        }
         $providerName    = $enrollee->provider->last_name;
         $practiceName    = $enrollee->practice->display_name;
         $practiceLogoSrc = self::ENROLLMENT_LETTER_DEFAULT_LOGO;
@@ -338,11 +346,15 @@ class AutoEnrollmentCenterController extends Controller
             $practiceLogoSrc = $practiceLetter->practice_logo_src;
         }
 
+        $isSurveyOnly = true;
+
         return view('Enrollment.enrollmentInfoRequested', compact(
             'practiceNumber',
             'providerName',
             'practiceName',
-            'practiceLogoSrc'
+            'practiceLogoSrc',
+            'isSurveyOnly',
+            'enrollee'
         ));
     }
 }

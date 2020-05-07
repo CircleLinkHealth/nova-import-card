@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "df9ec1d7d517bc82ee7f3385e1b50256",
+    "content-hash": "c4fcc8306a3f03716f111ff6a315e1d7",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1057,11 +1057,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.7.6",
+            "version": "v1.7.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "70f79fd827a6b03e358686c5e038d314310891c6"
+                "reference": "8658d27475d4897b0231b5e6653fe69f32d6cf20"
             },
             "type": "laravel-module",
             "extra": {
@@ -1083,15 +1083,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-07T10:50:19+00:00"
+            "time": "2020-05-07T16:13:55+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.4.1",
+            "version": "v2.4.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "414a19df9aa145183dabcd9d040809954903f637"
+                "reference": "a1b32fa84555dccbea9a3bef91d7c6063b9c034b"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1125,15 +1125,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-07T13:07:14+00:00"
+            "time": "2020-05-07T19:06:28+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.3.8",
+            "version": "v2.3.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "8af46aab5b4b96aed8951aa80070456872cb5328"
+                "reference": "d1cf5afc1e11123cb874bc8b70420156087e5b17"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1158,7 +1158,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-07T03:05:25+00:00"
+            "time": "2020-05-07T14:22:19+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
