@@ -46,9 +46,7 @@ class LoginController extends Controller
      */
     public function logout(Request $request)
     {
-        $this->guard()->logout();
-
-        $request->session()->invalidate();
+        $this->logoutUser($request);
 
         $redirect = $request->input('redirectTo', null);
         $query    = '';
@@ -58,6 +56,13 @@ class LoginController extends Controller
 
         return $this->loggedOut($request)
             ?: redirect('/'.$query);
+    }
+
+    public function logoutEnrollee(Request $request)
+    {
+        $this->logoutUser($request);
+
+        return view('auth.logoutEnrollee');
     }
 
     protected function redirectTo()
@@ -91,5 +96,12 @@ class LoginController extends Controller
         Log::debug("Route => $route");
 
         return $route;
+    }
+
+    private function logoutUser(Request $request)
+    {
+        $this->guard()->logout();
+
+        $request->session()->invalidate();
     }
 }

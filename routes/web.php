@@ -13,6 +13,10 @@ Route::post('/logout', 'Auth\LoginController@logout')
     ->name('logout')
     ->middleware('auth');
 
+Route::post('/logout-enrollee', 'Auth\LoginController@logoutEnrollee')
+    ->name('logout.enrollee')
+    ->middleware('auth');
+
 Route::group([
     'prefix' => 'auth',
 ], function () {

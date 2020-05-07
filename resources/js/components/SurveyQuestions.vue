@@ -283,7 +283,7 @@
                     </div>
 
                     <div class="survey-main-title">
-                        <label>Thank for signing up!</label>
+                        <label>Thank you for signing up!</label>
                     </div>
                     <div class="survey-sub-welcome-text" style="text-align: center;">
                         Your care coach will contact you in the next few days from {{this.practiceOutgoingPhoneNumber}}.<br>
@@ -297,12 +297,9 @@
                     <br/>
 
                     <div class="btn-start-container">
-                        <mdb-btn color="primary" class="btn-start" @click="logout">
+                        <mdb-btn color="primary" class="btn-start" @click="logoutEnrollee">
                             Logout
                         </mdb-btn>
-
-                        <form id="logout-form" action="/logout" method="POST" style="display: none;">
-                        </form>
                     </div>
                 </div>
             </template>
@@ -334,9 +331,6 @@
                         <mdb-btn color="primary" class="btn-start" @click="logout">
                             Logout
                         </mdb-btn>
-
-                        <form id="logout-form" action="/logout" method="POST" style="display: none;">
-                        </form>
                     </div>
 
                     <div v-if="! isEnrollees" class="by-circlelink">
@@ -415,6 +409,10 @@
                 </div>
             </div>
         </div>
+        <form id="logout-form" action="/logout" method="POST" style="display: none;">
+        </form>
+        <form id="logout-enrollee-form" action="/logout-enrollee" method="POST" style="display: none;">
+        </form>
     </div>
 </template>
 
@@ -1316,7 +1314,7 @@
                 }
             },
 
-            logout() {
+            addCsrfTokenToForm(form) {
                 const token = document.head.querySelector('meta[name="csrf-token"]');
                 $('<input>')
                     .attr({
@@ -1324,9 +1322,17 @@
                         name: '_token',
                         value: token.content
                     })
-                    .appendTo('#logout-form');
+                    .appendTo(form);
+            },
 
+            logout() {
+                this.addCsrfTokenToForm('#logout-form');
                 $('#logout-form').submit();
+            },
+
+            logoutEnrollee() {
+                this.addCsrfTokenToForm('#logout-enrollee-form');
+                $('#logout-enrollee-form').submit();
             },
 
             goBack() {
