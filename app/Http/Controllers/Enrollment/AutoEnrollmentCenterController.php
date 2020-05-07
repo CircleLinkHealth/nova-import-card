@@ -168,6 +168,10 @@ class AutoEnrollmentCenterController extends Controller
 
         // CA's phone numbers is the practice number
         $practiceNumber = $enrollablePrimaryPractice->outgoing_phone_number;
+        if ($practiceNumber) {
+            //remove +1 from phone number
+            $practiceNumber = formatPhoneNumber($practiceNumber);
+        }
 
         if (null === $provider) {
             $provider = $this->getEnrollableProvider($isSurveyOnlyUser, $userForEnrollment);
