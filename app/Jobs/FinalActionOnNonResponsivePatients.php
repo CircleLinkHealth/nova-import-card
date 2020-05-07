@@ -21,6 +21,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 
 class FinalActionOnNonResponsivePatients implements ShouldQueue
 {
@@ -103,9 +104,14 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
     {
         return $users->each(function (User $noResponsivePatient) {
             $isSurveyOnlyUser = $noResponsivePatient->hasRole('survey-only');
+            /** @var Enrollee $enrollee */
+            $enrollee = $this->getEnrollee($noResponsivePatient->id);
+            if ( ! $enrollee) {
+                Log::warning("Enrollee model not found for user $noResponsivePatient->id");
+
+                return;
+            }
             if ($isSurveyOnlyUser) {
-                /** @var Enrollee $enrollee */
-                $enrollee = $this->getEnrollee($noResponsivePatient->id);
                 if ($this->hasViewedLetterOrSurvey($noResponsivePatient)) {
                     $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
                 } else {
@@ -113,7 +119,6 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
                     $this->enrollmentInvitationService->markAsNonResponsive($enrollee);
                     $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
                 }
-
 //                    Keeping this maybe we need the letter to be printed from nova
 //                    $practice = $noResponsivePatient->primaryPractice;
 //                    $provider = $this->getEnrollableProvider($isSurveyOnlyUser, $noResponsivePatient);
@@ -125,7 +130,6 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
             } else {
 //                    We need the enrolle model created when patient became "unreachable"......
 //                    (see.PatientObserver & UnreachablePatientsToCaPanel)
-                $enrollee = $this->getEnrollee($noResponsivePatient->id);
 //                   ...to set call_queue - doing this as temp. solution in order to be displayed on CA PANEL
                 $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
             }
