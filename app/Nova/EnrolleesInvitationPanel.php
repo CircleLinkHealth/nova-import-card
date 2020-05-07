@@ -102,13 +102,17 @@ class EnrolleesInvitationPanel extends Resource
                 return $this->hasSurveyInProgress($this->getUserModelEnrollee($this->resource->id));
             }),
 
-            //            Boolean::make('Survey Completed', function () {
-            //                if ( ! $this->checkIfForUserModelExists($this->resource->id)) {
-            //                    return false;
-            //                }
-            //
-            //                return $this->hasSurveyCompleted($this->getUserModelEnrollee($this->resource->id));
-            //            }),
+            Boolean::make('Survey Completed', function () {
+                if ( ! $this->checkIfForUserModelExists($this->resource->id)) {
+                    return false;
+                }
+
+                return $this->hasSurveyCompleted($this->getUserModelEnrollee($this->resource->id));
+            }),
+
+            Boolean::make('Enrolled', function () {
+                return Enrollee::ENROLLED === $this->resource->status;
+            }),
 
             Boolean::make('Requested Call', function () {
                 return $this->resource->statusRequestsInfo()->exists();

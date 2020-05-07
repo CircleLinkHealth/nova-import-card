@@ -42,6 +42,7 @@ class EnrolleeInvitationFilter extends Filter
         return $query->whereIn('status', [
             Enrollee::TO_CALL,
             Enrollee::UNREACHABLE,
+            Enrollee::ENROLLED,
         ])->where('practice_id', $value)
             ->where(function ($q) {
                 $q->where('source', '!=', Enrollee::UNREACHABLE_PATIENT)
