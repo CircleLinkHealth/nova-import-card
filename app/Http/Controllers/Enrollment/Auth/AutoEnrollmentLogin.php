@@ -55,17 +55,20 @@ class AutoEnrollmentLogin extends Controller
 
     protected function logoutEnrollee(Request $request)
     {
-        $practiceLetter = '';
-        $practiceName   = '';
-
+        $practiceLetter  = null;
+        $practiceName    = '';
+        $practiceLogoSrc = AutoEnrollmentCenterController::ENROLLMENT_LETTER_DEFAULT_LOGO;
         // Just checking if Enrollee. Patients(usres) are not allowed here.
         if ($request->input('isSurveyOnly')) {
-            $enrollee       = Enrollee::whereId($request->input('enrolleeId'))->first();
+            $enrollee = Enrollee::with('practice')->where('id', $request->input('enrolleeId'))->first();
+            if (empty($enrollee)) {
+                Auth::logout();
+                throw new \Exception('User not found');
+            }
             $practiceLetter = EnrollmentInvitationLetter::wherePracticeId($enrollee->practice_id)->first();
             $practiceName   = $enrollee->practice->display_name;
         }
 
-        $practiceLogoSrc = AutoEnrollmentCenterController::ENROLLMENT_LETTER_DEFAULT_LOGO;
         if ( ! empty($practiceLetter) && ! empty($practiceLetter->practice_logo_src)) {
             $practiceLogoSrc = $practiceLetter->practice_logo_src;
         }
