@@ -119,7 +119,6 @@ class AutoEnrollmentCenterController extends Controller
      * NOTE: Currently ONLY Enrollee model have the option to request info.
      *
      * @throws \Exception
-     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      */
     public function enrolleeRequestsInfo(Request $request)
@@ -330,9 +329,20 @@ class AutoEnrollmentCenterController extends Controller
      */
     private function returnEnrolleeRequestedInfoMessage(Enrollee $enrollee)
     {
-        $practiceNumber = $enrollee->practice->outgoing_phone_number;
-        $providerName   = $enrollee->provider->last_name;
+        $practiceNumber  = $enrollee->practice->outgoing_phone_number;
+        $providerName    = $enrollee->provider->last_name;
+        $practiceName    = $enrollee->practice->display_name;
+        $practiceLogoSrc = self::ENROLLMENT_LETTER_DEFAULT_LOGO;
+        $practiceLetter  = EnrollmentInvitationLetter::wherePracticeId($enrollee->practice_id)->first();
+        if ($practiceLetter && ! empty($practiceLetter->practice_logo_src)) {
+            $practiceLogoSrc = $practiceLetter->practice_logo_src;
+        }
 
-        return view('Enrollment.enrollmentInfoRequested', compact('practiceNumber', 'providerName'));
+        return view('Enrollment.enrollmentInfoRequested', compact(
+            'practiceNumber',
+            'providerName',
+            'practiceName',
+            'practiceLogoSrc'
+        ));
     }
 }
