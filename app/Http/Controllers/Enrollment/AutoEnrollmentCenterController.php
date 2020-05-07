@@ -119,6 +119,7 @@ class AutoEnrollmentCenterController extends Controller
      * NOTE: Currently ONLY Enrollee model have the option to request info.
      *
      * @throws \Exception
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      */
     public function enrolleeRequestsInfo(Request $request)
@@ -338,11 +339,15 @@ class AutoEnrollmentCenterController extends Controller
             $practiceLogoSrc = $practiceLetter->practice_logo_src;
         }
 
+        $isSurveyOnly = true;
+
         return view('Enrollment.enrollmentInfoRequested', compact(
             'practiceNumber',
             'providerName',
             'practiceName',
-            'practiceLogoSrc'
+            'practiceLogoSrc',
+            'isSurveyOnly',
+            'enrollee'
         ));
     }
 }

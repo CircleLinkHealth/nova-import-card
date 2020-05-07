@@ -11,6 +11,8 @@ use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\Http\Requests\EnrollmentLinkValidation;
 use App\Http\Requests\EnrollmentValidationRules;
 use App\Services\Enrollment\EnrollmentInvitationService;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,11 +53,26 @@ class AutoEnrollmentLogin extends Controller
         );
     }
 
-    protected function logoutEnrollee()
+    protected function logoutEnrollee(Request $request)
     {
+        $practiceLetter = '';
+        $practiceName   = '';
+
+        // Just checking if Enrollee. Patients(usres) are not allowed here.
+        if ($request->input('isSurveyOnly')) {
+            $enrollee       = Enrollee::whereId($request->input('enrolleeId'))->first();
+            $practiceLetter = EnrollmentInvitationLetter::wherePracticeId($enrollee->practice_id)->first();
+            $practiceName   = $enrollee->practice->display_name;
+        }
+
+        $practiceLogoSrc = AutoEnrollmentCenterController::ENROLLMENT_LETTER_DEFAULT_LOGO;
+        if ( ! empty($practiceLetter) && ! empty($practiceLetter->practice_logo_src)) {
+            $practiceLogoSrc = $practiceLetter->practice_logo_src;
+        }
+
         Auth::logout();
 
-        return view('EnrollmentSurvey.enrollableLogout');
+        return view('EnrollmentSurvey.enrollableLogout', compact('practiceLogoSrc', 'practiceName'));
     }
 
     private function getLoginFormData(Request $request)
