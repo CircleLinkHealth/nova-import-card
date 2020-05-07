@@ -31,7 +31,7 @@ class ListenToAwvChannel implements ShouldQueue
      */
     public function __construct($data, $channel)
     {
-        $this->data    = $data;
+        $this->data = $data;
         //remove prefix
         $this->channel = Str::replaceFirst(config('database.redis.options.prefix'), '', $channel);
     }
