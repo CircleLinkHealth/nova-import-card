@@ -161,7 +161,10 @@ class AutoEnrollmentCenterController extends Controller
     {
         $enrollableId      = $request->input('enrollable_id');
         $userForEnrollment = $this->getUserModelEnrollee($enrollableId);
-        $enrollable        = $this->getEnrollableModelType($userForEnrollment);
+        if ( ! $userForEnrollment) {
+            return 'Cannot find user. User may have been already enrolled.';
+        }
+        $enrollable = $this->getEnrollableModelType($userForEnrollment);
 
         //      This can happen only on the first redirect and if page is refreshed
         if ($this->enrollableHasRequestedInfo($enrollable)) {
