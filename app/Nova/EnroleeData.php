@@ -9,6 +9,8 @@ namespace App\Nova;
 use App\Constants;
 use App\Nova\Actions\ImportEnrolees;
 use App\Nova\Actions\ImportEnrollee;
+use App\Nova\Actions\MarkEnrolleesForAutoEnrollment;
+use App\Nova\Filters\PracticeFilter;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Jubeki\Nova\Cards\Linkable\LinkableAway;
@@ -17,6 +19,7 @@ use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 class EnroleeData extends Resource
 {
@@ -69,6 +72,7 @@ class EnroleeData extends Resource
         return [
             new ImportEnrollee(),
             new ImportEnrolees(),
+            new MarkEnrolleesForAutoEnrollment(),
         ];
     }
 
@@ -79,16 +83,14 @@ class EnroleeData extends Resource
      */
     public function cards(Request $request)
     {
-        $cards = [];
-        if ( ! isProductionEnv()) {
-            $cards[] = (new LinkableAway())
-                ->title('Create Patients')
-                ->url(route('ca-director.test-enrollees'))
-                ->subtitle('(Creates 10 test patients)')
-                ->target('_blank');
-        }
-
-        return $cards;
+        return [];
+//        if ( ! isProductionEnv()) {
+//            $cards[] = (new LinkableAway())
+//                ->title('Create Patients')
+//                ->url(route('ca-director.test-enrollees'))
+//                ->subtitle('(Creates 10 test patients)')
+//                ->target('_blank');
+//        }
     }
 
     /**
@@ -99,8 +101,7 @@ class EnroleeData extends Resource
     public function fields(Request $request)
     {
         return [
-            BelongsTo::make('Provider', 'provider', User::class)
-                ->sortable(),
+            ID::make('Eligible Pt ID', 'id')->sortable(),
 
             Text::make('First Name')
                 ->sortable()
@@ -112,7 +113,19 @@ class EnroleeData extends Resource
                 ->creationRules('required', 'string')
                 ->updateRules('string'),
 
-            ID::make('Eligible Pt ID', 'id')->sortable(),
+            BelongsTo::make('Provider', 'provider', User::class)
+                ->sortable(),
+
+            BelongsTo::make('Practice', 'practice', Practice::class)
+                ->sortable(),
+
+            Date::make('DOB')
+                ->sortable()
+                ->creationRules('required'),
+
+            Text::make('Status')
+                ->sortable()
+                ->hideWhenCreating(),
 
             Text::make('Address')
                 ->sortable()
@@ -123,10 +136,6 @@ class EnroleeData extends Resource
                 ->sortable()
                 ->creationRules('required', 'integer')
                 ->updateRules('integer'),
-
-            Date::make('DOB')
-                ->sortable()
-                ->creationRules('required'),
 
             Text::make('Primary Insurance')
                 ->sortable()
@@ -147,7 +156,21 @@ class EnroleeData extends Resource
      */
     public function filters(Request $request)
     {
-        return [];
+        return [
+            new PracticeFilter(),
+        ];
+    }
+
+    /**
+     * Build an "index" query for the given resource.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        return $query->whereNotIn('status', [Enrollee::LEGACY, Enrollee::INELIGIBLE, Enrollee::ENROLLED, Enrollee::SOFT_REJECTED, Enrollee::REJECTED]);
     }
 
     /**
