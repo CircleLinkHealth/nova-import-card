@@ -26,7 +26,7 @@
                                         Before we get started, we just need to verify your identity first.
                                     </div>
                                     <br>
-                                    <form method="POST" action="{{route('invitation.enrollment.login')}}">
+                                    <form method="POST" action="{{route('invitation.enrollment.login')}}" class="form-prevent-multi-submit">
                                         {{csrf_field()}}
 
 {{--                                        <div class='row' style="margin-top: 70px;">--}}
@@ -64,7 +64,9 @@
                                                 <input type="hidden" name="user_id" value="{{$userId}}">
                                                 <input type="hidden" name="is_survey_only" value="{{$isSurveyOnly}}">
                                                 <input type="hidden" name="url_with_token" value="{{$urlWithToken}}">
-                                                <button type="submit" class="waves-effect waves-light btn-large" style="background-color: #4CB2E1">Continue</button>
+                                                <button type="submit" id="submit" class="waves-effect waves-light btn-large btn-prevent-multi-submit" style="background-color: #4CB2E1">
+                                                    Continue
+                                                </button>
                                             </div>
                                         </center>
                                     </form>

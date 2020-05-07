@@ -25,6 +25,7 @@
 
 <body style="background-color: #f2f6f9;">
     @yield('content')
+    <script src="{{mix('js/prevent-multiple-submits.js')}}"></script>
 </body>
 
 
