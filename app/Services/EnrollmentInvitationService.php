@@ -58,7 +58,7 @@ class EnrollmentInvitationService
         // order has to be the same as the $varsToBeReplaced
         $practiceSigSrc = '';
         if ( ! empty($practiceLetter->customer_signature_src)) {
-            $practiceSigSrc = "<img src='$practiceLetter->customer_signature_src'  alt='$practiceName'/>";
+            $practiceSigSrc = "<img src='$practiceLetter->customer_signature_src'  alt='$practiceName' style='max-width: 100%;'/>";
         }
         $replacementVars = [
             $provider->last_name,
