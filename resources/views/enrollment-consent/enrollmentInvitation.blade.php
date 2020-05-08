@@ -107,9 +107,9 @@
     }
 
     @media (max-width: 490px) {
-        .letter-view {
+        /*.letter-view {
             width: 504px;
-        }
+        }*/
 
         .letter {
             width: fit-content;
