@@ -45,7 +45,7 @@ class EnrolleesInvitationPanel extends Resource
      */
     public static $title = 'id';
 
-    public static $with = ['enrolleeSurveyNova'];
+    public static $with = ['selfEnrollmentStatuses'];
 
     /**
      * Get the actions available for the resource.
@@ -133,7 +133,7 @@ class EnrolleesInvitationPanel extends Resource
                     return false;
                 }
                 if ( ! $lastInvitationLink->manually_expired
-                    && is_null(optional($this->enrolleeSurveyNova)->awv_survey_status)) {
+                    && is_null(optional($this->selfEnrollmentStatuses)->awv_survey_status)) {
                     return false;
                 }
 
@@ -146,7 +146,7 @@ class EnrolleesInvitationPanel extends Resource
                     return false;
                 }
 
-                return optional($this->enrolleeSurveyNova)->logged_in;
+                return optional($this->selfEnrollmentStatuses)->logged_in;
             }),
             Boolean::make('Requested Call', function () {
                 return $this->statusRequestsInfo()->exists();
@@ -157,8 +157,8 @@ class EnrolleesInvitationPanel extends Resource
                     return false;
                 }
 
-                return $this->enrolleeSurveyNova && optional($this->enrolleeSurveyNova)->logged_in
-                    && is_null($this->enrolleeSurveyNova->awv_survey_status);
+                return $this->selfEnrollmentStatuses && optional($this->selfEnrollmentStatuses)->logged_in
+                    && is_null($this->selfEnrollmentStatuses->awv_survey_status);
             }),
 
             Boolean::make('Survey in progress', function () {
@@ -167,7 +167,7 @@ class EnrolleesInvitationPanel extends Resource
                     return false;
                 }
 
-                return self::IN_PROGRESS === optional($this->enrolleeSurveyNova)->awv_survey_status;
+                return self::IN_PROGRESS === optional($this->selfEnrollmentStatuses)->awv_survey_status;
             }),
 
             Boolean::make('Survey Completed', function () {
@@ -176,7 +176,7 @@ class EnrolleesInvitationPanel extends Resource
                     return false;
                 }
 
-                return self::COMPLETED === optional($this->enrolleeSurveyNova)->awv_survey_status;
+                return self::COMPLETED === optional($this->selfEnrollmentStatuses)->awv_survey_status;
             }),
 
             Boolean::make('Enrolled', function () {
@@ -237,6 +237,6 @@ class EnrolleesInvitationPanel extends Resource
 
     private function hasUserLoggedIn($userId)
     {
-        return is_null($userId) && ! optional($this->enrolleeSurveyNova)->logged_in;
+        return is_null($userId) && ! optional($this->selfEnrollmentStatuses)->logged_in;
     }
 }
