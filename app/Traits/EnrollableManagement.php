@@ -14,7 +14,7 @@ use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Entities\EnrolleesSurveyNovaDashboard;
+use CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 
@@ -348,13 +348,13 @@ trait EnrollableManagement
 
     public function updateEnrolleesNovaDasboard($enrolleeId, $userId, $statusSurvey)
     {
-        EnrolleesSurveyNovaDashboard::updateOrCreate(
+        SelfEnrollmentStatus::updateOrCreate(
             [
                 'enrollee_id' => $enrolleeId,
             ],
             [
-                'user_id_from_enrollee' => $userId,
-                'awv_survey_status'     => $statusSurvey,
+                'enrollee_user_id'  => $userId,
+                'awv_survey_status' => $statusSurvey,
             ]
         );
     }

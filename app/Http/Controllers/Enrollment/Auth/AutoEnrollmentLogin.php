@@ -13,8 +13,8 @@ use App\Http\Requests\EnrollmentValidationRules;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Entities\EnrolleesSurveyNovaDashboard;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
+use CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -39,7 +39,7 @@ class AutoEnrollmentLogin extends Controller
         if (boolval($request->input('is_survey_only'))) {
             $enrollee = $this->getEnrollee($request->input('user_id'));
 
-            EnrolleesSurveyNovaDashboard::updateOrCreate(
+            SelfEnrollmentStatus::updateOrCreate(
                 [
                     'enrollee_id' => $enrollee->id,
                 ],
