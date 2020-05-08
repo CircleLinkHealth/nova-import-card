@@ -424,7 +424,7 @@ class Enrollee extends BaseModel
 
     public function enrolleeSurveyNova()
     {
-        return $this->hasOne(EnrolleesSurveyNovaDashboard::class, 'enrollee_id');
+        return $this->hasOne(SelfEnrollmentStatus::class, 'enrollee_id');
     }
 
     public function getAddressesAsString(Enrollee $compareAgainstEnrollee = null)
