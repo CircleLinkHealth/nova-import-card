@@ -11,6 +11,7 @@ use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
@@ -151,14 +152,17 @@ class EnrolleesInvitationPanel extends Resource
             Boolean::make('Requested Call', function () {
                 return $this->statusRequestsInfo()->exists();
             }),
+
             Boolean::make("Has clicked 'Get my Care Coach'", function () {
                 $userId = $this->resource->user_id;
                 if ($this->hasUserLoggedIn($userId)) {
                     return false;
                 }
+                $userId = optional($this->selfEnrollmentStatuses)->enrollee_user_id;
 
-                return $this->selfEnrollmentStatuses && optional($this->selfEnrollmentStatuses)->logged_in
-                    && is_null($this->selfEnrollmentStatuses->awv_survey_status);
+                $surveyInstance = $this->getSurveyInstance();
+
+                return  $this->getAwvUserSurvey($userId, $surveyInstance)->exists();
             }),
 
             Boolean::make('Survey in progress', function () {
@@ -233,6 +237,15 @@ class EnrolleesInvitationPanel extends Resource
         parse_str($url['query'], $params);
 
         return $params['practice_id'];
+    }
+
+    private function getSurveyInstance()
+    {
+        $survey = $this->getEnrolleeSurvey();
+
+        return DB::table('survey_instances')
+            ->where('survey_id', '=', $survey->id)
+            ->first();
     }
 
     private function hasUserLoggedIn($userId)
