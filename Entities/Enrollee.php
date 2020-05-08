@@ -420,6 +420,11 @@ class Enrollee extends BaseModel
         return $this->belongsTo(EligibilityJob::class);
     }
 
+    public function enrolleeSurveyNova()
+    {
+        return $this->hasOne(EnrolleesSurveyNovaDashboard::class, 'enrollee_id');
+    }
+
     public function getAddressesAsString(Enrollee $compareAgainstEnrollee = null)
     {
         $addresses = [];
