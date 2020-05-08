@@ -176,6 +176,7 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count
  * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null                                     $statusRequestsInfo
+ * @property string|null                                                                                                     $source
  */
 class Enrollee extends BaseModel
 {
