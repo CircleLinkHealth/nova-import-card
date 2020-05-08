@@ -88,7 +88,7 @@ class EnrolleeFilters extends QueryFilters
     public function isolateUploadedViaCsv($isolate)
     {
         if ($isolate) {
-            return $this->builder->whereIn('source', [Enrollee::UPLOADED_CSV, Enrollee::AUTO_ENROLLMENT_CSV]);
+            return $this->builder->whereIn('source', [Enrollee::UPLOADED_CSV]);
         }
 
         return $this->builder;
