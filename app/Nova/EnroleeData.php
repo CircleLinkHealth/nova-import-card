@@ -10,6 +10,7 @@ use App\Constants;
 use App\Nova\Actions\ImportEnrolees;
 use App\Nova\Actions\ImportEnrollee;
 use App\Nova\Actions\MarkEnrolleesForAutoEnrollment;
+use App\Nova\Filters\EnrolleeStatus;
 use App\Nova\Filters\PracticeFilter;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
@@ -158,6 +159,7 @@ class EnroleeData extends Resource
     {
         return [
             new PracticeFilter(),
+            new EnrolleeStatus(),
         ];
     }
 
