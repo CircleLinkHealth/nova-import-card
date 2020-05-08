@@ -77,7 +77,7 @@ class ImportEnrolees extends Action
     }
 
     /**
-     * todo: this is not working.
+     * Works for inside of card.
      *
      * @return string
      */
