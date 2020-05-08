@@ -93,7 +93,7 @@ class SurveySeeder extends Seeder
             [
                 'identifier'            => EnrolleesSurveyIdentifier::PREFERRED_NUMBER,
                 'order'                 => 2,
-                'question_body'         => 'Preferred phone number for nurse to call',
+                'question_body'         => 'Please confirm or input the best number for nurse to call',
                 'question_type'         => QuestionType::PHONE,
                 'question_type_answers' => [
                     [
@@ -106,9 +106,7 @@ class SurveySeeder extends Seeder
             [
                 'identifier'            => EnrolleesSurveyIdentifier::PREFERRED_DAYS,
                 'order'                 => 3,
-                'sub_order'             => 'a',
-                'question_group'        => 'Please choose preferred days and time to contact:',
-                'question_body'         => 'Choose preferred contact days:',
+                'question_body'         => "Choose the days you're free for a nurse call:",
                 'question_type'         => QuestionType::CHECKBOX,
                 'question_type_answers' => [
                     ['type_answer_body' => 'Monday'],
@@ -120,10 +118,8 @@ class SurveySeeder extends Seeder
             ],
             [
                 'identifier'            => EnrolleesSurveyIdentifier::PREFERRED_TIME,
-                'order'                 => 3,
-                'sub_order'             => 'b',
-                'question_group'        => 'Please choose preferred days and time to contact:',
-                'question_body'         => 'Choose preferred contact time:',
+                'order'                 => 4,
+                'question_body'         => "Choose the times you're free for a nurse call:",
                 'question_type'         => QuestionType::CHECKBOX,
                 'question_type_answers' => [
                     ['type_answer_body' => '9am - 12pm'],
@@ -134,7 +130,7 @@ class SurveySeeder extends Seeder
 
             [
                 'identifier'            => EnrolleesSurveyIdentifier::REQUESTS_INFO,
-                'order'                 => 4,
+                'order'                 => 5,
                 'question_body'         => 'Anything you would like your nurse to know:',
                 'optional'              => true,
                 'question_type'         => QuestionType::TEXT,
@@ -149,7 +145,7 @@ class SurveySeeder extends Seeder
 
             [
                 'identifier'            => EnrolleesSurveyIdentifier::CONFIRM_ADDRESS,
-                'order'                 => 5,
+                'order'                 => 6,
                 'question_body'         => 'Please confirm or update your address:',
                 'question_type'         => QuestionType::ADDRESS,
                 'question_type_answers' => [
@@ -176,7 +172,7 @@ class SurveySeeder extends Seeder
             //            ],
             [
                 'identifier'    => EnrolleesSurveyIdentifier::CONFIRM_LETTER,
-                'order'         => 6,
+                'order'         => 7,
                 'optional'      => true,
                 'question_body' => 'Please confirm you have read the letter',
                 'question_type' => QuestionType::CONFIRMATION,
