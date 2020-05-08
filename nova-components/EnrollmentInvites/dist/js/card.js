@@ -199,7 +199,9 @@ var render = function() {
         _c("div", { staticClass: "py-4" }, [
           _c("span", { staticClass: "flex " }, [
             _c("label", { attrs: { for: "number" } }, [
-              _vm._v("Select number of invitations:")
+              _vm._v(
+                "Input number of patient to send enrollment sms/emails to:"
+              )
             ]),
             _vm._v(" "),
             _c("input", {
@@ -255,7 +257,7 @@ var render = function() {
                       }
                     }
                   },
-                  [_vm._v("Send Invite")]
+                  [_vm._v("Send SMS/Emails (Green But.)")]
                 ),
                 _vm._v(" "),
                 _c(
@@ -272,7 +274,7 @@ var render = function() {
                       }
                     }
                   },
-                  [_vm._v("Send Invite")]
+                  [_vm._v("Send SMS/Emails (Red But.)")]
                 )
               ])
             : _vm._e(),

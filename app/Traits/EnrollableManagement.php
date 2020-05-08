@@ -8,10 +8,13 @@ namespace App\Traits;
 
 use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\LoginLogout;
+use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\EnrolleesSurveyNovaDashboard;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 
@@ -76,7 +79,7 @@ trait EnrollableManagement
      */
     public function expirePastInvitationLink($enrollable)
     {
-        $pastInvitationLinks = $this->pastActiveInvitationLinks($enrollable);
+        $pastInvitationLinks = $this->pastActiveInvitationLink($enrollable);
         if ( ! empty($pastInvitationLinks)) {
             $pastInvitationLinks->update(['manually_expired' => true]);
         }
@@ -130,6 +133,15 @@ trait EnrollableManagement
     public function getEnrollee(string $enrollableId)
     {
         return Enrollee::whereUserId($enrollableId)->first();
+    }
+
+    public function getEnrolleeFromNotification($enrollableId)
+    {
+        $notification = DatabaseNotification::where('type', SendEnrollmentEmail::class)
+            ->where('notifiable_id', $enrollableId)
+            ->first();
+
+        return Enrollee::whereId($notification->data['enrollee_id'])->first();
     }
 
     /**
@@ -287,7 +299,7 @@ trait EnrollableManagement
      *
      * @return mixed
      */
-    public function pastActiveInvitationLinks($enrollable)
+    public function pastActiveInvitationLink($enrollable)
     {
         return $enrollable->enrollmentInvitationLink()->where('manually_expired', false)->first();
     }
@@ -330,6 +342,19 @@ trait EnrollableManagement
             [
                 'status'     => 'pending',
                 'start_date' => Carbon::parse(now())->toDateTimeString(),
+            ]
+        );
+    }
+
+    public function updateEnrolleesNovaDasboard($enrolleeId, $userId, $statusSurvey)
+    {
+        EnrolleesSurveyNovaDashboard::updateOrCreate(
+            [
+                'enrollee_id' => $enrolleeId,
+            ],
+            [
+                'user_id_from_enrollee' => $userId,
+                'awv_survey_status'     => $statusSurvey,
             ]
         );
     }
