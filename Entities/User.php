@@ -122,7 +122,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\Appointment[]|\Illuminate\Database\Eloquent\Collection                      $appointments
  * @property int|null                                                                                                        $appointments_count
  * @property \CircleLinkHealth\TwoFA\Entities\AuthyUser                                                                      $authyUser
- * @property \App\CareAmbassador                                                                                             $careAmbassador
+ * @property \CircleLinkHealth\Customer\Entities\CareAmbassador                                                              $careAmbassador
  * @property \CircleLinkHealth\SharedModels\Entities\CarePlan                                                                $carePlan
  * @property \App\CareplanAssessment                                                                                         $carePlanAssessment
  * @property \CircleLinkHealth\Customer\Entities\CarePerson[]|\Illuminate\Database\Eloquent\Collection                       $careTeamMembers
