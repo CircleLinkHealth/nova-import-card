@@ -422,11 +422,6 @@ class Enrollee extends BaseModel
         return $this->belongsTo(EligibilityJob::class);
     }
 
-    public function enrolleeSurveyNova()
-    {
-        return $this->hasOne(SelfEnrollmentStatus::class, 'enrollee_id');
-    }
-
     public function getAddressesAsString(Enrollee $compareAgainstEnrollee = null)
     {
         $addresses = [];
@@ -753,6 +748,11 @@ class Enrollee extends BaseModel
         return $query
             ->where('status', self::TO_SMS)
             ->whereNotNull('cell_phone');
+    }
+
+    public function selfEnrollmentStatuses()
+    {
+        return $this->hasOne(SelfEnrollmentStatus::class, 'enrollee_id');
     }
 
     public function sendEnrollmentConsentReminderSMS()
