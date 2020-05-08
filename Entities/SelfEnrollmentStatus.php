@@ -8,6 +8,24 @@ namespace CircleLinkHealth\Eligibility\Entities;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
 
+/**
+ * CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus.
+ *
+ * @property int                                                                                         $id
+ * @property int                                                                                         $enrollee_id
+ * @property int|null                                                                                    $enrollee_user_id
+ * @property int|null                                                                                    $enrollee_patient_info
+ * @property string|null                                                                                 $awv_survey_status
+ * @property int                                                                                         $logged_in
+ * @property \Illuminate\Support\Carbon|null                                                             $created_at
+ * @property \Illuminate\Support\Carbon|null                                                             $updated_at
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ * @property int|null                                                                                    $revision_history_count
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus query()
+ * @mixin \Eloquent
+ */
 class SelfEnrollmentStatus extends BaseModel
 {
 //    We could save all needed values for the enrolee invitation dashboard on this model.
