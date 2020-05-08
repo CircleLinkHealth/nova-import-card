@@ -12,6 +12,7 @@ use App\Survey;
 use App\SurveyInstance;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class SurveyService
 {
@@ -127,10 +128,17 @@ class SurveyService
         $surveyStatusResult = $instance->calculateCurrentStatusForUser($user);
         $surveyStatus       = $surveyStatusResult['status'];
 
+        DB::table('enrollees_nova_display')->where('user_id_from_enrollee', $user->id)->update([
+            'awv_survey_status' => SurveyInstance::IN_PROGRESS,
+        ]);
+
         //change status only if not completed
         if ($instance->pivot->status !== $surveyStatus) {
             $instance->pivot->status = $surveyStatus;
             if (SurveyInstance::COMPLETED === $surveyStatus) {
+                DB::table('enrollees_nova_display')->where('user_id_from_enrollee', $user->id)->update([
+                    'awv_survey_status' => SurveyInstance::COMPLETED,
+                ]);
                 $instance->pivot->completed_at = Carbon::now();
             }
         }
