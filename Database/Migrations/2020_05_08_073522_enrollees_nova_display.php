@@ -29,7 +29,7 @@ class EnrolleesNovaDisplay extends Migration
             $table->increments('id');
             $table->unsignedInteger('enrollee_id');
             $table->unsignedInteger('user_id_from_enrollee')->nullable();
-            $table->integer('awv_survey_status')->nullable();
+            $table->string('awv_survey_status')->nullable();
             $table->boolean('logged_in')->default(false);
             $table->timestamps();
         });
