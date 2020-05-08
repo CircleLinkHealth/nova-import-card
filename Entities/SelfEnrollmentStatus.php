@@ -8,7 +8,7 @@ namespace CircleLinkHealth\Eligibility\Entities;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
 
-class EnrolleesSurveyNovaDashboard extends BaseModel
+class SelfEnrollmentStatus extends BaseModel
 {
     protected $fillable = [
         'enrollee_id',
@@ -16,5 +16,5 @@ class EnrolleesSurveyNovaDashboard extends BaseModel
         'awv_survey_status',
         'logged_in',
     ];
-    protected $table = 'enrollees_nova_display';
+    protected $table = 'self_enrollment_statuses';
 }

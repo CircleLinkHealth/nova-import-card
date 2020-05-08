@@ -465,11 +465,6 @@ class Enrollee extends BaseModel
         return $this->belongsTo(EligibilityJob::class);
     }
 
-    public function enrolleeSurveyNova()
-    {
-        return $this->hasOne(EnrolleesSurveyNovaDashboard::class, 'enrollee_id');
-    }
-
     public function getAddressesAsString(Enrollee $compareAgainstEnrollee = null)
     {
         $addresses = [];
@@ -896,6 +891,11 @@ class Enrollee extends BaseModel
     public function scopeWithCaPanelRelationships($query)
     {
         return $query->with(['practice.enrollmentTips', 'provider.providerInfo', 'confirmedFamilyMembers']);
+    }
+    
+    public function selfEnrollmentStatuses()
+    {
+        return $this->hasOne(SelfEnrollmentStatus::class, 'enrollee_id');
     }
 
     public function sendEnrollmentConsentReminderSMS()
