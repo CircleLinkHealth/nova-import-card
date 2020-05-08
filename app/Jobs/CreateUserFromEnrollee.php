@@ -95,8 +95,15 @@ class CreateUserFromEnrollee implements ShouldQueue
 
         $userCreatedFromEnrollee->setBillingProviderId($this->enrollee->provider->id);
         $this->enrollee->update(['user_id' => $userCreatedFromEnrollee->id]);
+
+        $this->updateEnrolleeSurveyStatuses(
+            $this->enrollee->id,
+            $userCreatedFromEnrollee->id,
+            null,
+            false,
+            optional($userCreatedFromEnrollee->patientInfo)->id
+        );
         // The above can be abstracted more
         event(new AutoEnrollableCollected($userCreatedFromEnrollee, false, $this->color));
-        $this->updateEnrolleesNovaDasboard($this->enrollee->id, $userCreatedFromEnrollee->id, null);
     }
 }

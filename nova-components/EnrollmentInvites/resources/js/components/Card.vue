@@ -18,10 +18,10 @@
                 </div>
                 <div v-if="! this.card.is_patient" class="button">
                     <a class="btn btn-default btn-primary ml-auto mt-auto"
-                       style="cursor: pointer; background-color: #4baf50" @click="sendInvites('#4baf50', number)">Send SMS/Emails (Green But.)</a>
+                       style="cursor: pointer; background-color: #4baf50" @click="sendInvites('#4baf50', number)">Send SMS/Emails (Green Btn.)</a>
 
                     <a class="btn btn-default btn-primary ml-auto mt-auto"
-                       style="cursor: pointer; background-color: #b1284c" @click="sendInvites('#b1284c', number)">Send SMS/Emails (Red But.)</a>
+                       style="cursor: pointer; background-color: #b1284c" @click="sendInvites('#b1284c', number)">Send SMS/Emails (Red Btn.)</a>
                 </div>
 
                 <div v-if="this.card.is_patient" class="button">

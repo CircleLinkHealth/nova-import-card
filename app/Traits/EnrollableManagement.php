@@ -14,7 +14,7 @@ use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Entities\EnrolleesSurveyNovaDashboard;
+use CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 
@@ -87,13 +87,14 @@ trait EnrollableManagement
 
     /**
      * @param $surveyInstance
+     * @param mixed $userId
      *
      * @return \Illuminate\Database\Query\Builder
      */
-    public function getAwvUserSurvey(User $notifiable, $surveyInstance)
+    public function getAwvUserSurvey($userId, $surveyInstance)
     {
         return DB::table('users_surveys')
-            ->where('user_id', '=', $notifiable->id)
+            ->where('user_id', '=', $userId)
             ->where('survey_instance_id', '=', $surveyInstance->id);
     }
 
@@ -232,7 +233,7 @@ trait EnrollableManagement
                 ->where('survey_id', '=', $surveyLink->survey_id)
                 ->first();
 
-            return $this->getAwvUserSurvey($notifiable, $surveyInstance)
+            return $this->getAwvUserSurvey($notifiable->id, $surveyInstance)
                 ->where('status', '=', 'completed')
                 ->exists();
         }
@@ -346,15 +347,21 @@ trait EnrollableManagement
         );
     }
 
-    public function updateEnrolleesNovaDasboard($enrolleeId, $userId, $statusSurvey)
-    {
-        EnrolleesSurveyNovaDashboard::updateOrCreate(
+    public function updateEnrolleeSurveyStatuses(
+        $enrolleeId,
+        $userId = null,
+        $statusSurvey = null,
+        $loggedIn = false,
+        $patientInfo = null
+    ) {
+        SelfEnrollmentStatus::updateOrCreate(
             [
                 'enrollee_id' => $enrolleeId,
             ],
             [
-                'user_id_from_enrollee' => $userId,
+                'enrollee_user_id'      => $userId,
                 'awv_survey_status'     => $statusSurvey,
+                'enrollee_patient_info' => $patientInfo,
             ]
         );
     }

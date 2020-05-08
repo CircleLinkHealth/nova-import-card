@@ -77,6 +77,7 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
      * @param $notifiable
      *
      * @throws \Exception
+     *
      * @return array
      */
     public function toArrayData($notifiable)
@@ -109,7 +110,7 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
             $fromName = $notifiable->primaryPractice->display_name;
         }
 
-        return (new AutoEnrollmentMailChannel())
+        return (new AutoEnrollmentMailChannel($fromName))
             ->from(config('mail.from.address'), $fromName)
             ->subject('Wellness Program')
             ->line($this->notificationContent['line1'])

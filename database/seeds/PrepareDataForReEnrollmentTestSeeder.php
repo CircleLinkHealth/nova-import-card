@@ -61,7 +61,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             $enrolleeForTesting->first()->update([
                 'status' => Enrollee::QUEUE_AUTO_ENROLLMENT,
             ]);
-            $this->updateEnrolleesNovaDasboard($enrolleeForTesting->first()->id, null, false);
+            $this->updateEnrolleeSurveyStatuses($enrolleeForTesting->first()->id);
             ++$n;
         }
 

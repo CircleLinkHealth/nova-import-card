@@ -142,7 +142,7 @@ class AutoEnrollmentCenterController extends Controller
             //            Delete User Created from Enrollee
 //            Unreachables cant request info yet.
             if ($isSurveyOnly) {
-                $this->updateEnrolleesNovaDasboard($enrollee->id, $userModelEnrollee->id, null);
+                $this->updateEnrolleeSurveyStatuses($enrollee->id, $userModelEnrollee->id, null);
                 $enrollee->update(['user_id' => null, 'auto_enrollment_triggered' => true]);
                 $userModelEnrollee->delete();
             }
