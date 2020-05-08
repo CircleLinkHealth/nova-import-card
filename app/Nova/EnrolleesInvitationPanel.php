@@ -143,7 +143,7 @@ class EnrolleesInvitationPanel extends Resource
                     return false;
                 }
 
-                return $this->resource->enrolleeSurveyNova->logged_in;
+                return optional($this->resource->enrolleeSurveyNova)->logged_in;
             }),
             Boolean::make('Requested Call', function () {
                 return $this->statusRequestsInfo()->exists();
@@ -154,7 +154,7 @@ class EnrolleesInvitationPanel extends Resource
                     return false;
                 }
 
-                return $this->resource->enrolleeSurveyNova->logged_in
+                return $this->resource->enrolleeSurveyNova && $this->resource->enrolleeSurveyNova->logged_in
                     && ! is_null($this->resource->enrolleeSurveyNova->awv_survey_status);
             }),
 
@@ -164,7 +164,7 @@ class EnrolleesInvitationPanel extends Resource
                     return false;
                 }
 
-                return self::IN_PROGRESS === $this->resource->enrolleeSurveyNova->awv_survey_status;
+                return self::IN_PROGRESS === optional($this->resource->enrolleeSurveyNova)->awv_survey_status;
             }),
 
             Boolean::make('Survey Completed', function () {
@@ -173,7 +173,7 @@ class EnrolleesInvitationPanel extends Resource
                     return false;
                 }
 
-                return self::COMPLETED === $this->resource->enrolleeSurveyNova->awv_survey_status;
+                return self::COMPLETED === optional($this->resource->enrolleeSurveyNova)->awv_survey_status;
             }),
 
             Boolean::make('Enrolled', function () {
@@ -221,7 +221,7 @@ class EnrolleesInvitationPanel extends Resource
 
     private function checkUserId($userId)
     {
-        return is_null($userId) && ! $this->resource->enrolleeSurveyNova->logged_in;
+        return is_null($userId) && ! optional($this->resource->enrolleeSurveyNova)->logged_in;
     }
 
     private function getPracticeId()
