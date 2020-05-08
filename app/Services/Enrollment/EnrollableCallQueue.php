@@ -6,8 +6,8 @@
 
 namespace App\Services\Enrollment;
 
-use App\CareAmbassador;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\CareAmbassador;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
 /**

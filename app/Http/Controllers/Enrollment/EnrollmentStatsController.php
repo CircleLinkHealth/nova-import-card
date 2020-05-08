@@ -6,11 +6,11 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use App\CareAmbassador;
 use App\CareAmbassadorLog;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
+use CircleLinkHealth\Customer\Entities\CareAmbassador;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
