@@ -4,7 +4,7 @@
             <h1 class="text-center text-3xl text-80 font-light">Enrollment Invites</h1>
             <div class="py-4">
                     <span class="flex ">
-                       <label for="number">Input number of patient to send enrollment sms/emails to:</label>
+                       <label for="number">Input number of patients to send enrollment sms/emails to:</label>
                         <input type="text"
                                id="number"
                                name="number"
