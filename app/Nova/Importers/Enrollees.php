@@ -19,6 +19,7 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Validator;
 
 class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueue, WithEvents
 {
@@ -33,12 +34,14 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
 
     protected $rules;
 
+    private $actionType;
+
     /**
      * @var int
      */
     private $practiceId;
 
-    public function __construct(int $practiceId)
+    public function __construct(int $practiceId, $actionType)
     {
         ini_set('upload_max_filesize', '200M');
         ini_set('post_max_size', '200M');
@@ -46,6 +49,7 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
         ini_set('max_execution_time', 900);
 
         $this->practiceId = $practiceId;
+        $this->actionType = $actionType;
     }
 
     public function chunkSize(): int
@@ -60,7 +64,85 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
 
     public function model(array $row)
     {
+        if ('mark_for_auto_enrollment' == $this->actionType) {
+            $this->markForAutoEnrollment($row);
+        }
+
+        if ('create_enrollees' == $this->actionType) {
+            $this->updateOrCreateEnrolleeFromCsv();
+        }
+    }
+
+    public function rules(): array
+    {
+        return $this->rules;
+    }
+
+    /**
+     * Subtracts 100 years off date if it's after 1/1/2000.
+     *
+     * @return Carbon
+     */
+    private function correctCenturyIfNeeded(Carbon &$date)
+    {
+        //If a DOB is after 2000 it's because at some point the date incorrectly assumed to be in the 2000's, when it was actually in the 1900's. For example, this date 10/05/04.
+        $cutoffDate = Carbon::createFromDate(2000, 1, 1);
+
+        if ($date->gte($cutoffDate)) {
+            $date->subYears(100);
+        }
+
+        return $date;
+    }
+
+    private function markForAutoEnrollment(array $row)
+    {
+        $v = Validator::make($row, [
+            'eligible_patient_id' => 'required',
+            'mrn'                 => 'required',
+            'first_name'          => 'required',
+            'last_name'           => 'required',
+        ]);
+
+        if ($v->fails()) {
+            //report something
+            return;
+        }
+
+        $enrollee = Enrollee::whereId($row['eligible_patient_id'])
+            ->where('practice_id', $this->practiceId)
+            ->where('mrn', $row['mrn'])
+            ->where('first_name', $row['first_name'])
+            ->where('last_name', $row['last_name'])
+            ->first();
+
+        if ( ! $enrollee) {
+            //report something.
+            return;
+        }
+
+        if (Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->status && $enrollee->auto_enrollment_triggered) {
+            //report something
+            return;
+        }
+
+        //set for Auto Enrollment
+        $enrollee->status = Enrollee::QUEUE_AUTO_ENROLLMENT;
+
+        //unassign from any care_ambassador to prevent calling patients who have received invitations
+        $enrollee->care_ambassador_user_id = null;
+
+        //reset attempt count and requested callback to prevent the CA call queue from accidentally picking these up - edge case
+        //this also means we reset their call statuses in general
+        $enrollee->attempt_count      = 0;
+        $enrollee->requested_callback = null;
+        $enrollee->save();
+    }
+
+    private function updateOrCreateEnrolleeFromCsv(array $row)
+    {
         //not sure if we should accept null dobs
+        //also, still proceed with Enrollee creation if dob fails validation, e.g false ?
         if ($row['dob']) {
             if (is_int($row['dob'])) {
                 $row['dob'] = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['dob']);
@@ -102,28 +184,6 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
                 'source' => Enrollee::UPLOADED_CSV,
             ]
         );
-    }
-
-    public function rules(): array
-    {
-        return $this->rules;
-    }
-
-    /**
-     * Subtracts 100 years off date if it's after 1/1/2000.
-     *
-     * @return Carbon
-     */
-    private function correctCenturyIfNeeded(Carbon &$date)
-    {
-        //If a DOB is after 2000 it's because at some point the date incorrectly assumed to be in the 2000's, when it was actually in the 1900's. For example, this date 10/05/04.
-        $cutoffDate = Carbon::createFromDate(2000, 1, 1);
-
-        if ($date->gte($cutoffDate)) {
-            $date->subYears(100);
-        }
-
-        return $date;
     }
 
     private function validateDob($dob)

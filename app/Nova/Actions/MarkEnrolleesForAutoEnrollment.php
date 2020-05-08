@@ -13,6 +13,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
+use Laravel\Nova\Fields\Number;
 
 class MarkEnrolleesForAutoEnrollment extends Action
 {
@@ -29,7 +30,9 @@ class MarkEnrolleesForAutoEnrollment extends Action
      */
     public function fields()
     {
-        return [];
+        return [
+            Number::make('Mark subset of selected Patients (Input number)'),
+        ];
     }
 
     /**

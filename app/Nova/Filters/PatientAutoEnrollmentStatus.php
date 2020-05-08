@@ -10,7 +10,7 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Laravel\Nova\Filters\Filter;
 
-class EnrolleeStatus extends Filter
+class PatientAutoEnrollmentStatus extends Filter
 {
     /**
      * The filter's component.
@@ -18,13 +18,6 @@ class EnrolleeStatus extends Filter
      * @var string
      */
     public $component = 'boolean-filter';
-
-    /**
-     * The displayable name of the filter.
-     *
-     * @var string
-     */
-    public $name = 'Filter Patients by Status';
 
     /**
      * Apply the filter to the given query.
@@ -35,15 +28,9 @@ class EnrolleeStatus extends Filter
      */
     public function apply(Request $request, $query, $value)
     {
-        $statuses = [];
-        foreach ($value as $status => $bool) {
-            if (true === $bool) {
-                $statuses[] = $status;
-            }
-        }
-
-        if ( ! empty($statuses)) {
-            return $query->whereIn('status', $statuses);
+        if (isset($value['uninvited']) && true === $value['uninvited']) {
+            return $query->whereNotIn('status', [Enrollee::QUEUE_AUTO_ENROLLMENT, Enrollee::CONSENTED])
+                ->where('auto_enrollment_triggered', false);
         }
 
         return $query;
@@ -57,11 +44,7 @@ class EnrolleeStatus extends Filter
     public function options(Request $request)
     {
         return [
-            'Unreachable'                => Enrollee::UNREACHABLE,
-            'Consented'                  => Enrollee::CONSENTED,
-            'To Call'                    => Enrollee::TO_CALL,
-            'Marked for Auto-Enrollment' => Enrollee::QUEUE_AUTO_ENROLLMENT,
-            'Non responsive'             => Enrollee::NON_RESPONSIVE,
+            'Uninvited' => 'uninvited',
         ];
     }
 }

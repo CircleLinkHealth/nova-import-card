@@ -54,6 +54,10 @@ class ImportEnrolees extends Action
             ->toArray();
 
         return [
+            Select::make('Action Type', 'action_type')->options([
+                'create_enrollees'         => 'Create Patients from CSV',
+                'mark_for_auto_enrollment' => 'Mark Patients for Auto Enrollment',
+            ]),
             File::make('File')
                 ->rules('required'),
             Select::make('Practice', 'practice_id')->options($practices)->withModel(Practice::class),
@@ -67,7 +71,7 @@ class ImportEnrolees extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        Excel::import(new Enrollees($fields->practice_id), $fields->file);
+        Excel::import(new Enrollees($fields->practice_id, $fields->action_type), $fields->file);
 
         return Action::message('It worked!');
     }
@@ -79,7 +83,7 @@ class ImportEnrolees extends Action
      */
     public function name()
     {
-        return __('Import Enrolee Datas');
+        return __('Import CSV');
     }
 
     public function uriKey(): string
