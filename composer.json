@@ -146,7 +146,7 @@
     "circlelinkhealth/clh-nova-theme": "*",
     "circlelinkhealth/condition-code-lookup-module": "1.1.5",
     "circlelinkhealth/core-module": "1.5.4",
-    "circlelinkhealth/cpm-migrations-module": "1.7.8",
+    "circlelinkhealth/cpm-migrations-module": "dev-CPM-1919_nova_dash_enrolle_migration",
     "circlelinkhealth/customer-module": "2.4.4",
     "circlelinkhealth/eligibility-module": "dev-CPM-2256-2019-2286-2287-CA-L6",
     "circlelinkhealth/enrollment-invites": "*",
