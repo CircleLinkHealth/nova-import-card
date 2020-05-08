@@ -33,10 +33,12 @@ trait UnreachablePatientsToCaPanel
                 'primary_phone'           => $user->getPrimaryPhone(),
                 'home_phone'              => $user->getHomePhoneNumber(),
                 'cell_phone'              => $user->getMobilePhoneNumber(),
-                'status'                  => Enrollee::UNREACHABLE_PATIENT, // Setting STATUS here
+                'status'                  => Enrollee::TO_CALL, // Setting STATUS here
                 'requested_callback'      => null,
                 'attempt_count'           => 0,
                 'care_ambassador_user_id' => null,
+
+                'source' => Enrollee::UNREACHABLE_PATIENT,
             ]
         );
     }
