@@ -225,6 +225,8 @@ class Enrollee extends BaseModel
      */
     const NON_RESPONSIVE = 'non_responsive';
 
+    const QUEUE_AUTO_ENROLLMENT = 'queue_auto_enrollment';
+
     /**
      * status = rejected.
      *
