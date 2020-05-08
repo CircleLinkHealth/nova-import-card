@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b8590a902b09bd7ee74968251ffa4662",
+    "content-hash": "83106695fd4c5f2c8e3c9038389332a3",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1767,6 +1767,68 @@
                 "pdf"
             ],
             "time": "2019-06-07T16:37:27+00:00"
+        },
+        {
+            "name": "danielme85/laravel-log-to-db",
+            "version": "v2.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danielme85/laravel-log-to-db.git",
+                "reference": "77ba74a6e7722a9b3f89dc1cc196380251eb85e9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danielme85/laravel-log-to-db/zipball/77ba74a6e7722a9b3f89dc1cc196380251eb85e9",
+                "reference": "77ba74a6e7722a9b3f89dc1cc196380251eb85e9",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": ">=5.6",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "jenssegers/mongodb": ">=3.4",
+                "mockery/mockery": "^1.0",
+                "orchestra/testbench": ">=3.7"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "danielme85\\LaravelLogToDB\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "LogToDB": "danielme85\\LaravelLogToDB\\LogToDB"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "danielme85\\LaravelLogToDB\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Daniel Mellum",
+                    "email": "mellum@gmail.com"
+                }
+            ],
+            "description": "Custom Larvel 5.6+ Log channel handler that can store log events to SQL or MongoDB databases. Uses Laravel native logging functionality.",
+            "keywords": [
+                "database",
+                "db",
+                "laravel",
+                "log",
+                "logging",
+                "mongodb",
+                "mysql",
+                "sql"
+            ],
+            "time": "2020-05-06T20:33:05+00:00"
         },
         {
             "name": "defuse/php-encryption",

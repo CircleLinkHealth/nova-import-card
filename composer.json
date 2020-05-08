@@ -163,6 +163,7 @@
     "circlelinkhealth/twofa-module": "1.2.0",
     "consoletvs/charts": "^6.5",
     "daltcore/lara-pdf-merger": "dev-master",
+    "danielme85/laravel-log-to-db": "^2.3",
     "dillingham/nova-button": "^1.0",
     "doctrine/dbal": "2.9.2",
     "epartment/nova-dependency-container": "^1.2",
@@ -179,6 +180,7 @@
     "kreitje/nova-horizon-stats": "^0.3.0",
     "lab404/laravel-impersonate": "^1.2",
     "laracasts/utilities": "~3.0",
+    "laravel-notification-channels/twilio": "^2.1",
     "laravel/framework": "^6.18",
     "laravel/horizon": "^3.2.7",
     "laravel/nova": "^2.3",
@@ -203,12 +205,11 @@
     "spatie/laravel-view-models": "^1.2",
     "spatie/pdf-to-text": "^1.2",
     "titasgailius/search-relations": "^1.0",
+    "twilio/sdk": "~5.16",
     "vink/nova-cache-card": "^1.0",
     "waavi/url-shortener": "dev-master",
     "waynestate/nova-ckeditor4-field": "^0.4.0",
-    "yajra/laravel-datatables-oracle": "~9.0",
-    "twilio/sdk": "~5.16",
-    "laravel-notification-channels/twilio": "^2.1"
+    "yajra/laravel-datatables-oracle": "~9.0"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",

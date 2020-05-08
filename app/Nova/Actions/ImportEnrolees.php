@@ -71,7 +71,8 @@ class ImportEnrolees extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        Excel::import(new Enrollees($fields->practice_id, $fields->action_type), $fields->file);
+        $file = $fields->file;
+        Excel::import(new Enrollees($fields->practice_id, $fields->action_type, $file->getClientOriginalName()), $file);
 
         return Action::message('It worked!');
     }

@@ -11,7 +11,9 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\EnrolleesSurveyNovaDashboard;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
@@ -32,16 +34,20 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
 
     protected $resource;
 
+    protected $rowNumber = 2;
+
     protected $rules;
 
     private $actionType;
+
+    private $fileName;
 
     /**
      * @var int
      */
     private $practiceId;
 
-    public function __construct(int $practiceId, $actionType)
+    public function __construct(int $practiceId, $actionType, $fileName)
     {
         ini_set('upload_max_filesize', '200M');
         ini_set('post_max_size', '200M');
@@ -50,6 +56,7 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
 
         $this->practiceId = $practiceId;
         $this->actionType = $actionType;
+        $this->fileName   = $fileName;
     }
 
     public function chunkSize(): int
@@ -71,6 +78,7 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
         if ('create_enrollees' == $this->actionType) {
             $this->updateOrCreateEnrolleeFromCsv();
         }
+        ++$this->rowNumber;
     }
 
     public function rules(): array
@@ -107,12 +115,14 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
         ]);
 
         if ($v->fails()) {
-            //report something
+            Log::channel('database')->critical("Input Validation for CSV:{$this->fileName}, at row: {$this->rowNumber}, failed.");
+
             return;
         }
 
         //Currently not accomodating for cases where enrollee does not exist.
-        $enrollee = Enrollee::whereId($row['eligible_patient_id'])
+        $enrollee = Enrollee::with('enrollmentInvitationLink')
+            ->whereId($row['eligible_patient_id'])
             ->where('practice_id', $this->practiceId)
             ->where('mrn', $row['mrn'])
             ->where('first_name', $row['first_name'])
@@ -120,14 +130,26 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
             ->first();
 
         if ( ! $enrollee) {
-            //report something.
+            Log::channel('database')->critical("Patient not found for CSV:{$this->fileName}, for row: {$this->rowNumber}.");
+
             return;
         }
 
-        if (Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->status && $enrollee->auto_enrollment_triggered) {
-            //report something
+        //if enrollee has already been marked or invited return.
+        if (Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->status || $enrollee->enrollmentInvitationLink->exists()) {
+            Log::channel('database')->warning("Patient for CSV:{$this->fileName}, for row: {$this->rowNumber} has already been marked for auto-enrollment.");
+
             return;
         }
+
+        EnrolleesSurveyNovaDashboard::updateOrCreate(
+            [
+                'enrollee_id' => $enrollee->id,
+            ],
+            [
+                'user_id_from_enrollee' => $enrollee->user_id,
+            ]
+        );
 
         //set for Auto Enrollment
         $enrollee->status = Enrollee::QUEUE_AUTO_ENROLLMENT;
@@ -157,7 +179,12 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
         }
         $provider = ProviderByName::first($row['provider']);
 
-        $row['provider_id'] = optional($provider)->id;
+        if ( ! $provider) {
+            //Log Error
+            return;
+        }
+
+        $row['provider_id'] = $provider->id;
         $row['practice_id'] = $this->practiceId;
 
         Enrollee::updateOrCreate(
