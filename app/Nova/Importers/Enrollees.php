@@ -76,7 +76,7 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
         }
 
         if ('create_enrollees' == $this->actionType) {
-            $this->updateOrCreateEnrolleeFromCsv();
+            $this->updateOrCreateEnrolleeFromCsv($row);
         }
         ++$this->rowNumber;
     }
@@ -136,7 +136,7 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
         }
 
         //if enrollee has already been marked or invited return.
-        if (Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->status || $enrollee->enrollmentInvitationLink->exists()) {
+        if (Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->status || $enrollee->enrollmentInvitationLink) {
             Log::channel('database')->warning("Patient for CSV:{$this->fileName}, for row: {$this->rowNumber} has already been marked for auto-enrollment.");
 
             return;
