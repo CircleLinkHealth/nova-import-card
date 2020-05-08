@@ -157,7 +157,7 @@ class EnrolleesInvitationPanel extends Resource
                     return false;
                 }
 
-                return $this->enrolleeSurveyNova && $this->enrolleeSurveyNova->logged_in
+                return $this->enrolleeSurveyNova && optional($this->enrolleeSurveyNova)->logged_in
                     && is_null($this->enrolleeSurveyNova->awv_survey_status);
             }),
 
@@ -237,6 +237,6 @@ class EnrolleesInvitationPanel extends Resource
 
     private function hasUserLoggedIn($userId)
     {
-        return is_null($userId) && ! $this->resource->enrolleeSurveyNova->logged_in;
+        return is_null($userId) && ! optional($this->enrolleeSurveyNova)->logged_in;
     }
 }
