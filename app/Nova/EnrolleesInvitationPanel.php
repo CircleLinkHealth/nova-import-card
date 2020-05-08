@@ -12,7 +12,6 @@ use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
@@ -140,7 +139,7 @@ class EnrolleesInvitationPanel extends Resource
 
             Boolean::make('Has viewed Letter', function () {
                 $userId = $this->resource->user_id;
-                if (is_null($userId)) {
+                if ($this->checkUserId($userId)) {
                     return false;
                 }
 
@@ -151,23 +150,17 @@ class EnrolleesInvitationPanel extends Resource
             }),
             Boolean::make("Has clicked 'Get my Care Coach'", function () {
                 $userId = $this->resource->user_id;
-                if (is_null($userId)) {
+                if ($this->checkUserId($userId)) {
                     return false;
                 }
-                $user = $this->getUserModelEnrollee($userId);
-                $survey = $this->getEnrolleeSurvey();
-
-                $surveyInstance = DB::table('survey_instances')
-                    ->where('survey_id', '=', $survey->id)
-                    ->first();
 
                 return $this->resource->enrolleeSurveyNova->logged_in
-                    && ! empty($this->getAwvUserSurvey($user, $surveyInstance)->first());
+                    && ! is_null($this->resource->enrolleeSurveyNova->awv_survey_status);
             }),
 
             Boolean::make('Survey in progress', function () {
                 $userId = $this->resource->user_id;
-                if (is_null($userId)) {
+                if ($this->checkUserId($userId)) {
                     return false;
                 }
 
@@ -176,7 +169,7 @@ class EnrolleesInvitationPanel extends Resource
 
             Boolean::make('Survey Completed', function () {
                 $userId = $this->resource->user_id;
-                if (is_null($userId)) {
+                if ($this->checkUserId($userId)) {
                     return false;
                 }
 
@@ -224,6 +217,11 @@ class EnrolleesInvitationPanel extends Resource
     private function checkIfForUserModelExists($enrolleeUserId)
     {
         return empty($this->getUserModelEnrollee($enrolleeUserId)) ? false : true;
+    }
+
+    private function checkUserId($userId)
+    {
+        return is_null($userId) && ! $this->resource->enrolleeSurveyNova->logged_in;
     }
 
     private function getPracticeId()
