@@ -105,12 +105,12 @@
                 </form>
             </div>
 
-            <div class="request-info-href">
-                <a href="{{route('reset.test.qa')}}">
-                    <button type="button" class="btn btn-warning">Reset Test
-                    </button>
-                </a>
-            </div>
+{{--            <div class="request-info-href">--}}
+{{--                <a href="{{route('reset.test.qa')}}">--}}
+{{--                    <button type="button" class="btn btn-warning">Reset Test--}}
+{{--                    </button>--}}
+{{--                </a>--}}
+{{--            </div>--}}
         </div>
     </div>
 

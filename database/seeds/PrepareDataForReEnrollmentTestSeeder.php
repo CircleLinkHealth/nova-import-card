@@ -47,7 +47,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         $n     = 1;
         $limit = 5;
         while ($n <= $limit) {
-            $enrolleesForTesting = factory(Enrollee::class, 1)->create([
+            $enrolleeForTesting = factory(Enrollee::class, 1)->create([
                 'practice_id'             => $practice->id,
                 'dob'                     => \Carbon\Carbon::parse('1901-01-01'),
                 'referring_provider_name' => 'Dr. Demo',
@@ -56,8 +56,12 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 'home_phone'              => $phoneTester,
                 'email'                   => $emailTester,
             ]);
-            $this->seedEligibilityJobs(collect($enrolleesForTesting));
-            $this->updateEnrolleesNovaDasboard($enrolleesForTesting->first()->id, null, false);
+            $this->seedEligibilityJobs(collect($enrolleeForTesting));
+            //            Emulating Constantinos dashboard Importing - Mark Enrollees to invite.
+            $enrolleeForTesting->first()->update([
+                'status' => Enrollee::QUEUE_AUTO_ENROLLMENT,
+            ]);
+            $this->updateEnrolleesNovaDasboard($enrolleeForTesting->first()->id, null, false);
             ++$n;
         }
 
@@ -71,6 +75,14 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 'birth_date'       => \Carbon\Carbon::parse('1901-01-01'),
                 'date_unreachable' => now(),
             ]);
+
+            $enrollee = $this->getEnrollee($user->id);
+            $enrollee->update(
+                [
+                    'status' => Enrollee::QUEUE_AUTO_ENROLLMENT,
+                ]
+            );
+
             ++$n;
         }
     }
