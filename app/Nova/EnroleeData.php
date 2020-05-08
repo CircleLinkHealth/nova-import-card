@@ -84,14 +84,16 @@ class EnroleeData extends Resource
      */
     public function cards(Request $request)
     {
-        return [];
-//        if ( ! isProductionEnv()) {
-//            $cards[] = (new LinkableAway())
-//                ->title('Create Patients')
-//                ->url(route('ca-director.test-enrollees'))
-//                ->subtitle('(Creates 10 test patients)')
-//                ->target('_blank');
-//        }
+        $cards = [];
+        if ( ! isProductionEnv()) {
+            $cards[] = (new LinkableAway())
+                ->title('Create Patients')
+                ->url(route('ca-director.test-enrollees'))
+                ->subtitle('(Creates 10 test patients)')
+                ->target('_blank');
+        }
+
+        return $cards;
     }
 
     /**
