@@ -892,7 +892,7 @@ class Enrollee extends BaseModel
     {
         return $query->with(['practice.enrollmentTips', 'provider.providerInfo', 'confirmedFamilyMembers']);
     }
-    
+
     public function selfEnrollmentStatuses()
     {
         return $this->hasOne(SelfEnrollmentStatus::class, 'enrollee_id');
