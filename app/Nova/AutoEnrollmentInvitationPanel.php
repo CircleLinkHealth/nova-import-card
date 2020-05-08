@@ -48,7 +48,7 @@ class AutoEnrollmentInvitationPanel extends Resource
     {
         return [
             new EnrolleesInvitationAction(),
-            new PatientsInvitationAction(),
+            //            new PatientsInvitationAction(),
         ];
     }
 

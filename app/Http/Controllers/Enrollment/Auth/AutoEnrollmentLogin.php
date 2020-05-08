@@ -11,15 +11,19 @@ use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\Http\Requests\EnrollmentLinkValidation;
 use App\Http\Requests\EnrollmentValidationRules;
 use App\Services\Enrollment\EnrollmentInvitationService;
+use App\Traits\EnrollableManagement;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\EnrolleesSurveyNovaDashboard;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AutoEnrollmentLogin extends Controller
 {
     use AuthenticatesUsers;
+    use EnrollableManagement;
     use EnrollmentAuthentication;
 
     public function __construct()
@@ -32,6 +36,20 @@ class AutoEnrollmentLogin extends Controller
         $manager = new AutoEnrollmentCenterController(new EnrollmentInvitationService());
         Auth::loginUsingId($request->input('user_id'), true);
 
+        if (boolval($request->input('is_survey_only'))) {
+            $enrollee = $this->getEnrollee($request->input('user_id'));
+
+            EnrolleesSurveyNovaDashboard::updateOrCreate(
+                [
+                    'enrollee_id' => $enrollee->id,
+                ],
+                [
+                    'user_id_from_enrollee' => $request->input('user_id'),
+                    'logged_in'             => true,
+                ]
+            );
+        }
+
         return $manager->enrollableInvitationManager(
             $request->input('user_id'),
             boolval($request->input('is_survey_only'))
@@ -41,11 +59,23 @@ class AutoEnrollmentLogin extends Controller
     protected function enrollmentAuthForm(EnrollmentLinkValidation $request)
     {
         $loginFormData   = $this->getLoginFormData($request);
+        $user            = $loginFormData['user'];
         $urlWithToken    = $loginFormData['url_with_token'];
         $practiceName    = $loginFormData['practiceName'];
         $doctorsLastName = $loginFormData['doctorsLastName'];
         $userId          = intval($request->input('enrollable_id'));
         $isSurveyOnly    = $request->input('is_survey_only');
+
+        if ($isSurveyOnly) {
+            $enrollable = $this->getEnrollee($userId);
+            if ( ! $enrollable) {
+                Log::warning("Enrollee for user with id $userId not found");
+                throw new \Exception('User does not exist', 404);
+            }
+            $this->expirePastInvitationLink($enrollable);
+        } else {
+            $this->expirePastInvitationLink($user);
+        }
 
         return view(
             'EnrollmentSurvey.enrollmentSurveyLogin',
@@ -93,6 +123,7 @@ class AutoEnrollmentLogin extends Controller
             'practiceName'    => $user->getPrimaryPracticeName(),
             'doctor'          => $doctor,
             'doctorsLastName' => $doctorsLastName,
+            'user'            => $user,
         ];
     }
 }

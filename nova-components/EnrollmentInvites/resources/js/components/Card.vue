@@ -4,7 +4,7 @@
             <h1 class="text-center text-3xl text-80 font-light">Enrollment Invites</h1>
             <div class="py-4">
                     <span class="flex ">
-                       <label for="number">Select number of invitations:</label>
+                       <label for="number">Input number of patient to send enrollment sms/emails to:</label>
                         <input type="text"
                                id="number"
                                name="number"
@@ -18,10 +18,10 @@
                 </div>
                 <div v-if="! this.card.is_patient" class="button">
                     <a class="btn btn-default btn-primary ml-auto mt-auto"
-                       style="cursor: pointer; background-color: #4baf50" @click="sendInvites('#4baf50', number)">Send Invite</a>
+                       style="cursor: pointer; background-color: #4baf50" @click="sendInvites('#4baf50', number)">Send SMS/Emails (Green But.)</a>
 
                     <a class="btn btn-default btn-primary ml-auto mt-auto"
-                       style="cursor: pointer; background-color: #b1284c" @click="sendInvites('#b1284c', number)">Send Invite</a>
+                       style="cursor: pointer; background-color: #b1284c" @click="sendInvites('#b1284c', number)">Send SMS/Emails (Red But.)</a>
                 </div>
 
                 <div v-if="this.card.is_patient" class="button">

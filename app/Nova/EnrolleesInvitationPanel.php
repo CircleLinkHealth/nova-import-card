@@ -12,6 +12,7 @@ use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
@@ -20,6 +21,9 @@ class EnrolleesInvitationPanel extends Resource
 {
     use EnrollableManagement;
     use HasEnrollableInvitation;
+    const COMPLETED = 'completed';
+
+    const IN_PROGRESS = 'in_progress';
     /**
      * The model the resource corresponds to.
      *
@@ -33,7 +37,7 @@ class EnrolleesInvitationPanel extends Resource
      * @var array
      */
     public static $search = [
-        'id',
+        'id', 'name', 'last_name',
     ];
 
     /**
@@ -51,6 +55,30 @@ class EnrolleesInvitationPanel extends Resource
     public function actions(Request $request)
     {
         return [];
+    }
+
+    /**
+     * @return bool
+     */
+    public static function authorizedToCreate(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function authorizedToDelete(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function authorizedToUpdate(Request $request)
+    {
+        return true;
     }
 
     /**
@@ -94,46 +122,69 @@ class EnrolleesInvitationPanel extends Resource
             Text::make('Last name', 'last_name')
                 ->sortable(),
 
-            Boolean::make('Survey in progress', function () {
-                if ( ! $this->checkIfForUserModelExists($this->resource->id)) {
+            Boolean::make('Invited', function () {
+                return ! is_null($this->getLastEnrollmentInvitationLink());
+            }),
+
+            Boolean::make('Has viewed login form', function () {
+                if (is_null($this->getLastEnrollmentInvitationLink())) {
+                    return false;
+                }
+                if ( ! $this->getLastEnrollmentInvitationLink()->manually_expired
+                    && is_null($this->resource->enrolleeSurveyNova->awv_survey_status)) {
                     return false;
                 }
 
-                return $this->hasSurveyInProgress($this->getUserModelEnrollee($this->resource->id));
+                return true;
+            }),
+
+            Boolean::make('Has viewed Letter', function () {
+                $userId = $this->resource->user_id;
+                if (is_null($userId)) {
+                    return false;
+                }
+
+                return $this->resource->enrolleeSurveyNova->logged_in;
+            }),
+            Boolean::make('Requested Call', function () {
+                return $this->statusRequestsInfo()->exists();
+            }),
+            Boolean::make("Has clicked 'Get my Care Coach'", function () {
+                $userId = $this->resource->user_id;
+                if (is_null($userId)) {
+                    return false;
+                }
+                $user = $this->getUserModelEnrollee($userId);
+                $survey = $this->getEnrolleeSurvey();
+
+                $surveyInstance = DB::table('survey_instances')
+                    ->where('survey_id', '=', $survey->id)
+                    ->first();
+
+                return $this->resource->enrolleeSurveyNova->logged_in
+                    && ! empty($this->getAwvUserSurvey($user, $surveyInstance)->first());
+            }),
+
+            Boolean::make('Survey in progress', function () {
+                $userId = $this->resource->user_id;
+                if (is_null($userId)) {
+                    return false;
+                }
+
+                return self::IN_PROGRESS === $this->resource->enrolleeSurveyNova->awv_survey_status;
             }),
 
             Boolean::make('Survey Completed', function () {
-                if ( ! $this->checkIfForUserModelExists($this->resource->id)) {
+                $userId = $this->resource->user_id;
+                if (is_null($userId)) {
                     return false;
                 }
 
-                return $this->hasSurveyCompleted($this->getUserModelEnrollee($this->resource->id));
+                return self::COMPLETED === $this->resource->enrolleeSurveyNova->awv_survey_status;
             }),
 
             Boolean::make('Enrolled', function () {
                 return Enrollee::ENROLLED === $this->resource->status;
-            }),
-
-            Boolean::make('Requested Call', function () {
-                return /*$this->resource->statusRequestsInfo()->exists()*/ false;
-            }),
-
-            Boolean::make('Viewed Letter', function () {
-                if ( ! $this->checkIfForUserModelExists($this->resource->id)) {
-                    return false;
-                }
-
-                return $this->hasViewedLetterOrSurvey($this->getUserModelEnrollee($this->resource->id)->id);
-            }),
-
-            Boolean::make('Viewed Survey but not started', function () {
-                if ( ! $this->checkIfForUserModelExists($this->resource->id)) {
-                    return false;
-                }
-
-                return // $this->getSurveyInvitationLink($this->resource)->exists()
-                    ! $this->hasSurveyInProgress($this->getUserModelEnrollee($this->resource->id))
-                    && ! $this->hasSurveyCompleted($this->getUserModelEnrollee($this->resource->id));
             }),
         ];
     }
@@ -170,9 +221,9 @@ class EnrolleesInvitationPanel extends Resource
         return [];
     }
 
-    private function checkIfForUserModelExists($enrolleeId)
+    private function checkIfForUserModelExists($enrolleeUserId)
     {
-        return empty($this->getUserModelEnrollee($enrolleeId)) ? false : true;
+        return empty($this->getUserModelEnrollee($enrolleeUserId)) ? false : true;
     }
 
     private function getPracticeId()
@@ -181,5 +232,10 @@ class EnrolleesInvitationPanel extends Resource
         parse_str($url['query'], $params);
 
         return $params['practice_id'];
+    }
+
+    private function getUserIdFromEnrollee($userId)
+    {
+        return $this->resource->enrolleeSurveyNova()->first()->user_id_from_enrollee;
     }
 }
