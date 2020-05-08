@@ -115,7 +115,7 @@ class EnrolleesInvitationPanel extends Resource
             }),
 
             Boolean::make('Requested Call', function () {
-                return $this->resource->statusRequestsInfo()->exists();
+                return /*$this->resource->statusRequestsInfo()->exists()*/ false;
             }),
 
             Boolean::make('Viewed Letter', function () {
@@ -131,8 +131,8 @@ class EnrolleesInvitationPanel extends Resource
                     return false;
                 }
 
-                return $this->getSurveyInvitationLink($this->resource)->exists()
-                    && ! $this->hasSurveyInProgress($this->getUserModelEnrollee($this->resource->id))
+                return // $this->getSurveyInvitationLink($this->resource)->exists()
+                    ! $this->hasSurveyInProgress($this->getUserModelEnrollee($this->resource->id))
                     && ! $this->hasSurveyCompleted($this->getUserModelEnrollee($this->resource->id));
             }),
         ];
