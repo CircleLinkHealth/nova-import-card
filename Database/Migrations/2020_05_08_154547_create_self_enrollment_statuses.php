@@ -30,6 +30,7 @@ class CreateSelfEnrollmentStatuses extends Migration
             $table->increments('id');
             $table->unsignedInteger('enrollee_id');
             $table->unsignedInteger('enrollee_user_id')->nullable();
+            $table->unsignedInteger('enrollee_patient_info')->nullable();
             $table->string('awv_survey_status')->nullable();
             $table->boolean('logged_in')->default(false);
             $table->timestamps();
