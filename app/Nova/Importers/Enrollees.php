@@ -97,6 +97,8 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
 
     private function markForAutoEnrollment(array $row)
     {
+        //Currently not accomodating for cases where enrollee does not exist.
+
         $v = Validator::make($row, [
             'eligible_patient_id' => 'required',
             'mrn'                 => 'required',
@@ -109,6 +111,7 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
             return;
         }
 
+        //Currently not accomodating for cases where enrollee does not exist.
         $enrollee = Enrollee::whereId($row['eligible_patient_id'])
             ->where('practice_id', $this->practiceId)
             ->where('mrn', $row['mrn'])
