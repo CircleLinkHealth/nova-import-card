@@ -27,7 +27,7 @@ trait EnrollableNotificationContent
         $line2                  = $enrollableEmailContent['line2'];
         $isSurveyOnly           = $enrollableEmailContent['isSurveyOnly'];
 
-        $line1 = "Hi, it's $providerName's office at $practiceName! ";
+        $line1 = "Hi, it's Dr. $providerName's office at $practiceName! ";
 
         if (empty($providerName)) {
             $line1 = "Hi, it's your Provider's office at $practiceName! ";
