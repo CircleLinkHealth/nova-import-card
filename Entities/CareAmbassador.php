@@ -6,6 +6,8 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
+use App\CareAmbassadorLog;
+
 /**
  * App\CareAmbassador.
  *
