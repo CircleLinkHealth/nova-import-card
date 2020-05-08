@@ -6,7 +6,6 @@
 
 namespace App\Nova;
 
-use App\Nova\Filters\EnrolleeInvitationFilter;
 use App\Traits\EnrollableManagement;
 use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -15,6 +14,7 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 class EnrolleesInvitationPanel extends Resource
 {
@@ -36,15 +36,16 @@ class EnrolleesInvitationPanel extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name', 'last_name',
+        'id', 'first_name', 'last_name',
     ];
-
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
     public static $title = 'id';
+
+    public static $with = ['enrolleeSurveyNova'];
 
     /**
      * Get the actions available for the resource.
@@ -77,7 +78,7 @@ class EnrolleesInvitationPanel extends Resource
      */
     public function authorizedToUpdate(Request $request)
     {
-        return true;
+        return false;
     }
 
     /**
@@ -112,6 +113,8 @@ class EnrolleesInvitationPanel extends Resource
      */
     public function fields(Request $request)
     {
+        $lastInvitationLink = $this->getLastEnrollmentInvitationLink();
+
         return [
             ID::make()->sortable(),
 
@@ -121,16 +124,16 @@ class EnrolleesInvitationPanel extends Resource
             Text::make('Last name', 'last_name')
                 ->sortable(),
 
-            Boolean::make('Invited', function () {
-                return ! is_null($this->getLastEnrollmentInvitationLink());
+            Boolean::make('Invited', function () use ($lastInvitationLink) {
+                return ! is_null($lastInvitationLink);
             }),
 
-            Boolean::make('Has viewed login form', function () {
-                if (is_null($this->getLastEnrollmentInvitationLink())) {
+            Boolean::make('Has viewed login form', function () use ($lastInvitationLink) {
+                if (is_null($lastInvitationLink)) {
                     return false;
                 }
-                if ( ! $this->getLastEnrollmentInvitationLink()->manually_expired
-                    && is_null($this->resource->enrolleeSurveyNova->awv_survey_status)) {
+                if ( ! $lastInvitationLink->manually_expired
+                    && is_null(optional($this->enrolleeSurveyNova)->awv_survey_status)) {
                     return false;
                 }
 
@@ -139,18 +142,18 @@ class EnrolleesInvitationPanel extends Resource
 
             Boolean::make('Has viewed Letter', function () {
                 $userId = $this->resource->user_id;
-                if ($this->checkUserId($userId)) {
+                if ($this->hasUserLoggedIn($userId)) {
                     return false;
                 }
 
-                return optional($this->resource->enrolleeSurveyNova)->logged_in;
+                return optional($this->enrolleeSurveyNova)->logged_in;
             }),
             Boolean::make('Requested Call', function () {
                 return $this->statusRequestsInfo()->exists();
             }),
             Boolean::make("Has clicked 'Get my Care Coach'", function () {
                 $userId = $this->resource->user_id;
-                if ($this->checkUserId($userId)) {
+                if ($this->hasUserLoggedIn($userId)) {
                     return false;
                 }
 
@@ -160,7 +163,7 @@ class EnrolleesInvitationPanel extends Resource
 
             Boolean::make('Survey in progress', function () {
                 $userId = $this->resource->user_id;
-                if ($this->checkUserId($userId)) {
+                if ($this->hasUserLoggedIn($userId)) {
                     return false;
                 }
 
@@ -169,7 +172,7 @@ class EnrolleesInvitationPanel extends Resource
 
             Boolean::make('Survey Completed', function () {
                 $userId = $this->resource->user_id;
-                if ($this->checkUserId($userId)) {
+                if ($this->hasUserLoggedIn($userId)) {
                     return false;
                 }
 
@@ -189,11 +192,21 @@ class EnrolleesInvitationPanel extends Resource
      */
     public function filters(Request $request)
     {
-        $practiceId = $this->getPracticeId();
-
         return [
-            new EnrolleeInvitationFilter($practiceId),
         ];
+    }
+
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        return $query->whereIn('status', [
+            Enrollee::TO_CALL,
+            Enrollee::UNREACHABLE,
+            Enrollee::ENROLLED,
+        ])->where('practice_id', self::getPracticeId())
+            ->where(function ($q) {
+                $q->where('source', '!=', Enrollee::UNREACHABLE_PATIENT)
+                    ->orWhereNull('source');
+            });
     }
 
     /**
@@ -224,7 +237,7 @@ class EnrolleesInvitationPanel extends Resource
         return is_null($userId) && ! optional($this->resource->enrolleeSurveyNova)->logged_in;
     }
 
-    private function getPracticeId()
+    private static function getPracticeId()
     {
         $url = parse_url($_SERVER['HTTP_REFERER']);
         parse_str($url['query'], $params);
@@ -232,8 +245,8 @@ class EnrolleesInvitationPanel extends Resource
         return $params['practice_id'];
     }
 
-    private function getUserIdFromEnrollee($userId)
+    private function hasUserLoggedIn($userId)
     {
-        return $this->resource->enrolleeSurveyNova()->first()->user_id_from_enrollee;
+        return is_null($userId) && ! $this->resource->enrolleeSurveyNova->logged_in;
     }
 }
