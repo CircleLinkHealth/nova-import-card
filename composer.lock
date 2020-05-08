@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c758f0b5bc68fb32ae004889adab4de8",
+    "content-hash": "a5a92cdd63ffd0d005b091e7d7a9dff6",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1059,7 +1059,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "ccad4af0ac0fef2a23c85c9d1103b9e2acefe8e2"
+                "reference": "b1448ecb01c8405bdddfe3dde0d036288548afbc"
             },
             "type": "laravel-module",
             "extra": {
@@ -1081,7 +1081,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-08T20:07:10+00:00"
+            "time": "2020-05-08T22:41:51+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1131,7 +1131,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "78373652c734b03287e23c5d6dd72e9db032a4d5"
+                "reference": "4e8340c0be10b6d131e7e66f5002e5ade91a7c28"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1156,7 +1156,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-08T22:00:16+00:00"
+            "time": "2020-05-08T23:04:14+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1435,11 +1435,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.4.8",
+            "version": "dev-fix-failing-tests",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "a35e5236a61efc98327c1129b78db192570e12a0"
+                "reference": "ba5c04d3c0513ce85f0ba4dcb5c2d025119b0e64"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1453,7 +1453,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-06T17:40:17+00:00"
+            "time": "2020-05-08T23:04:14+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -15589,6 +15589,7 @@
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/eligibility-module": 20,
+        "circlelinkhealth/shared-models-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20
