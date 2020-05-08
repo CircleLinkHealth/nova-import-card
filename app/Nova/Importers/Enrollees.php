@@ -33,22 +33,19 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
 
     protected $rules;
 
-    private $autoEnrollment;
-
     /**
      * @var int
      */
     private $practiceId;
 
-    public function __construct(int $practiceId, $autoEnrollment)
+    public function __construct(int $practiceId)
     {
         ini_set('upload_max_filesize', '200M');
         ini_set('post_max_size', '200M');
         ini_set('max_input_time', 900);
         ini_set('max_execution_time', 900);
 
-        $this->practiceId     = $practiceId;
-        $this->autoEnrollment = $autoEnrollment;
+        $this->practiceId = $practiceId;
     }
 
     public function chunkSize(): int
@@ -74,8 +71,6 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
             $row['dob'] = $date;
         }
         $provider = ProviderByName::first($row['provider']);
-
-        $source = $this->autoEnrollment ? Enrollee::AUTO_ENROLLMENT_CSV : Enrollee::UPLOADED_CSV;
 
         $row['provider_id'] = optional($provider)->id;
         $row['practice_id'] = $this->practiceId;

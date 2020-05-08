@@ -180,7 +180,7 @@ class EnroleeData extends Resource
      */
     public static function label()
     {
-        return 'Patients - Create';
+        return 'Patients to Enroll';
     }
 
     /**
