@@ -128,7 +128,7 @@ class SurveyService
         $surveyStatusResult = $instance->calculateCurrentStatusForUser($user);
         $surveyStatus       = $surveyStatusResult['status'];
 
-        DB::table('enrollees_nova_display')->where('user_id_from_enrollee', $user->id)->update([
+        DB::table('self_enrollment_statuses')->where('enrollee_user_id', $user->id)->update([
             'awv_survey_status' => SurveyInstance::IN_PROGRESS,
         ]);
 
@@ -136,7 +136,7 @@ class SurveyService
         if ($instance->pivot->status !== $surveyStatus) {
             $instance->pivot->status = $surveyStatus;
             if (SurveyInstance::COMPLETED === $surveyStatus) {
-                DB::table('enrollees_nova_display')->where('user_id_from_enrollee', $user->id)->update([
+                DB::table('self_enrollment_statuses')->where('enrollee_user_id', $user->id)->update([
                     'awv_survey_status' => SurveyInstance::COMPLETED,
                 ]);
                 $instance->pivot->completed_at = Carbon::now();
