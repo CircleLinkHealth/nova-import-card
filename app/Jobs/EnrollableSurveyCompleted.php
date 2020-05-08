@@ -176,7 +176,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
         if ($isSurveyOnly) {
             $enrollee = Enrollee::whereUserId($user->id)->firstOrFail();
 
-            $this->updateEnrolleesNovaDasboard($enrollee->id, $user->id, self::SURVEY_COMPLETED);
+            $this->updateEnrolleeSurveyStatuses($enrollee->id, $user->id, self::SURVEY_COMPLETED);
 
             $enrollee->update([
                 'primary_phone'             => $surveyAnswers['preferred_number'],

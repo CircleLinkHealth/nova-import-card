@@ -346,7 +346,7 @@ trait EnrollableManagement
         );
     }
 
-    public function updateEnrolleesNovaDasboard($enrolleeId, $userId, $statusSurvey)
+    public function updateEnrolleeSurveyStatuses($enrolleeId, $userId, $statusSurvey)
     {
         SelfEnrollmentStatus::updateOrCreate(
             [

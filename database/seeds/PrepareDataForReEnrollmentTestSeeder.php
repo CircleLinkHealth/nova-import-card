@@ -57,7 +57,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 'email'                   => $emailTester,
             ]);
             $this->seedEligibilityJobs(collect($enrolleesForTesting));
-            $this->updateEnrolleesNovaDasboard($enrolleesForTesting->first()->id, null, null);
+            $this->updateEnrolleeSurveyStatuses($enrolleesForTesting->first()->id, null, null);
             ++$n;
         }
 
