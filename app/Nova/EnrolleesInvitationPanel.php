@@ -157,8 +157,8 @@ class EnrolleesInvitationPanel extends Resource
                     return false;
                 }
 
-                return $this->resource->enrolleeSurveyNova && $this->resource->enrolleeSurveyNova->logged_in
-                    && ! is_null($this->resource->enrolleeSurveyNova->awv_survey_status);
+                return $this->enrolleeSurveyNova && $this->enrolleeSurveyNova->logged_in
+                    && is_null($this->enrolleeSurveyNova->awv_survey_status);
             }),
 
             Boolean::make('Survey in progress', function () {
@@ -167,7 +167,7 @@ class EnrolleesInvitationPanel extends Resource
                     return false;
                 }
 
-                return self::IN_PROGRESS === optional($this->resource->enrolleeSurveyNova)->awv_survey_status;
+                return self::IN_PROGRESS === optional($this->enrolleeSurveyNova)->awv_survey_status;
             }),
 
             Boolean::make('Survey Completed', function () {
@@ -176,7 +176,7 @@ class EnrolleesInvitationPanel extends Resource
                     return false;
                 }
 
-                return self::COMPLETED === optional($this->resource->enrolleeSurveyNova)->awv_survey_status;
+                return self::COMPLETED === optional($this->enrolleeSurveyNova)->awv_survey_status;
             }),
 
             Boolean::make('Enrolled', function () {
@@ -225,16 +225,6 @@ class EnrolleesInvitationPanel extends Resource
     public function lenses(Request $request)
     {
         return [];
-    }
-
-    private function checkIfForUserModelExists($enrolleeUserId)
-    {
-        return empty($this->getUserModelEnrollee($enrolleeUserId)) ? false : true;
-    }
-
-    private function checkUserId($userId)
-    {
-        return is_null($userId) && ! optional($this->resource->enrolleeSurveyNova)->logged_in;
     }
 
     private static function getPracticeId()
