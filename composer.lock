@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c758f0b5bc68fb32ae004889adab4de8",
+    "content-hash": "04d6d11d1cc95acbb80803e5ac56bfc2",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1059,7 +1059,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "dda3e2d2f5a69b8826229c2d85b468df2edf3297"
+                "reference": "62c3c12da7a7a17c4ba6091c155316287b454f92"
             },
             "type": "laravel-module",
             "extra": {
@@ -1081,15 +1081,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-08T19:01:53+00:00"
+            "time": "2020-05-08T19:29:55+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.4.4",
+            "version": "v2.4.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "a1b32fa84555dccbea9a3bef91d7c6063b9c034b"
+                "reference": "68d4e92d379ec6bed45eee6dc7d919d374d45d97"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1123,7 +1123,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-07T19:06:28+00:00"
+            "time": "2020-05-08T19:39:04+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
