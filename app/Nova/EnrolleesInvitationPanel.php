@@ -6,6 +6,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Actions\SelfEnrollmentManualInvite;
 use App\Traits\EnrollableManagement;
 use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -55,7 +56,13 @@ class EnrolleesInvitationPanel extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            (new SelfEnrollmentManualInvite())->canSee(function () {
+                return true;
+            })->canRun(function () {
+                return true;
+            }),
+        ];
     }
 
     /**

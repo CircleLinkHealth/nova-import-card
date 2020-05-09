@@ -59,8 +59,8 @@ class SelfEnrollmentEnrollees implements ShouldQueue
     public function __construct(
         Enrollee $enrollee = null,
         $color = null,
-        int $amount,
-        int $practiceId
+        int $amount = 0,
+        int $practiceId = 0
     ) {
         $this->enrollee   = $enrollee;
         $this->color      = $color;

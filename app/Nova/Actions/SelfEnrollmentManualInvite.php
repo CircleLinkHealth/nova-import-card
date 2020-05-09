@@ -6,13 +6,15 @@
 
 namespace App\Nova\Actions;
 
+use App\Jobs\SelfEnrollmentEnrollees;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
 
-class EnrolleesInvitationAction extends Action
+class SelfEnrollmentManualInvite extends Action
 {
     use InteractsWithQueue;
     use Queueable;
@@ -24,7 +26,8 @@ class EnrolleesInvitationAction extends Action
      */
     public function fields()
     {
-        return [];
+        return [
+        ];
     }
 
     /**
@@ -34,13 +37,9 @@ class EnrolleesInvitationAction extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        if ($models->count() > 1) {
-            // Allowing just one $model from AutoEnrollmentInvitationsPanel
-            return Action::danger('Please select just one Practice to send Sms/Email for Auto Enrollment!');
-        }
-
-        return Action::push('/resources/enrollees-invitation-panels', [
-            'practice_id' => $models->first()->id,
-        ]);
+        $models->each(function (Enrollee $model) {
+            SelfEnrollmentEnrollees::dispatch($model, null, );
+        });
+        Action::message('Invites should have been sent. Please check invitation panel.');
     }
 }

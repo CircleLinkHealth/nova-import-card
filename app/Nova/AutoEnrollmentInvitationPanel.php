@@ -7,10 +7,10 @@
 namespace App\Nova;
 
 use App\Constants;
-use App\Nova\Actions\EnrolleesInvitationAction;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Nova;
 
 class AutoEnrollmentInvitationPanel extends Resource
 {
@@ -46,12 +46,6 @@ class AutoEnrollmentInvitationPanel extends Resource
     public function actions(Request $request)
     {
         return [
-            (new EnrolleesInvitationAction())->canSee(function () {
-                return true;
-            })->canRun(function () {
-                return true;
-            }),
-            //            new PatientsInvitationAction(),
         ];
     }
 
@@ -108,6 +102,13 @@ class AutoEnrollmentInvitationPanel extends Resource
                 ->hideWhenCreating()
                 ->sortable()
                 ->readonly(true),
+
+            Text::make('Invite', function ($row) {
+                return $this->getInviteButton($row->id);
+            })
+                ->textAlign('right')
+                ->hideFromDetail()
+                ->asHtml(),
         ];
     }
 
@@ -142,5 +143,15 @@ class AutoEnrollmentInvitationPanel extends Resource
     public static function usesScout()
     {
         return false;
+    }
+
+    private function getInviteButton($practiceId)
+    {
+        $novaPath = Nova::path();
+
+        return "<a class='text-black text-justify no-underline dim'
+href='$novaPath/resources/enrollees-invitation-panels?practice_id=$practiceId'>
+Invite Patients
+</a>";
     }
 }
