@@ -75,11 +75,7 @@ class AttachDefaultPatientContactWindows extends BaseCcdaImportTask
             return null;
         }
 
-        if (empty($this->enrollee->preferred_days)) {
-            return null;
-        }
-
-        return parseCallDays($this->enrollee->preferred_days);
+        return $this->enrollee->getPreferredCallDays();
     }
 
     private function getEnrolleePreferredCallTimes()
@@ -88,10 +84,6 @@ class AttachDefaultPatientContactWindows extends BaseCcdaImportTask
             return null;
         }
 
-        if (empty($this->enrollee->preferred_window)) {
-            return null;
-        }
-
-        return parseCallTimes($this->enrollee->preferred_window);
+        return $this->enrollee->getPreferredCallTimes();
     }
 }
