@@ -142,7 +142,7 @@ class EnrolleesInvitationPanel extends Resource
 
             Boolean::make('Has viewed Letter', function () {
                 $userId = $this->resource->user_id;
-                if ($this->hasUserLoggedIn($userId)) {
+                if ($this->enrolleeHasNotLoggedIn($userId)) {
                     return false;
                 }
 
@@ -153,7 +153,7 @@ class EnrolleesInvitationPanel extends Resource
             }),
             Boolean::make("Has clicked 'Get my Care Coach'", function () {
                 $userId = $this->resource->user_id;
-                if ($this->hasUserLoggedIn($userId)) {
+                if ($this->enrolleeHasNotLoggedIn($userId)) {
                     return false;
                 }
 
@@ -163,7 +163,7 @@ class EnrolleesInvitationPanel extends Resource
 
             Boolean::make('Survey in progress', function () {
                 $userId = $this->resource->user_id;
-                if ($this->hasUserLoggedIn($userId)) {
+                if ($this->enrolleeHasNotLoggedIn($userId)) {
                     return false;
                 }
 
@@ -172,7 +172,7 @@ class EnrolleesInvitationPanel extends Resource
 
             Boolean::make('Survey Completed', function () {
                 $userId = $this->resource->user_id;
-                if ($this->hasUserLoggedIn($userId)) {
+                if ($this->enrolleeHasNotLoggedIn($userId)) {
                     return false;
                 }
 
@@ -227,16 +227,16 @@ class EnrolleesInvitationPanel extends Resource
         return [];
     }
 
+    private function enrolleeHasNotLoggedIn($userId)
+    {
+        return is_null($userId) && ! optional($this->selfEnrollmentStatuses)->logged_in;
+    }
+
     private static function getPracticeId()
     {
         $url = parse_url($_SERVER['HTTP_REFERER']);
         parse_str($url['query'], $params);
 
         return $params['practice_id'];
-    }
-
-    private function hasUserLoggedIn($userId)
-    {
-        return is_null($userId) && ! optional($this->selfEnrollmentStatuses)->logged_in;
     }
 }
