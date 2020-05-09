@@ -64,12 +64,12 @@ class AutoEnrollmentLogin extends Controller
         $isSurveyOnly    = $request->input('is_survey_only');
 
         if ($isSurveyOnly) {
-            $enrollable = $this->getEnrollee($userId);
-            if ( ! $enrollable) {
+            $enrollee = $this->getEnrollee($userId);
+            if ( ! $enrollee) {
                 Log::warning("Enrollee for user with id $userId not found");
                 throw new \Exception('User does not exist', 404);
             }
-            $this->expirePastInvitationLink($enrollable);
+            $this->expirePastInvitationLink($enrollee);
         } else {
             $this->expirePastInvitationLink($user);
         }
