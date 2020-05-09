@@ -220,6 +220,8 @@ class Enrollee extends BaseModel
      */
     const LEGACY = 'legacy';
 
+    const MAX_CALL_ATTEMPTS = 3;
+
     /**
      * Enrollees who did not respond to any of our notifications to enroll.
      */
@@ -817,7 +819,7 @@ class Enrollee extends BaseModel
     {
         $query->where(function ($q) {
             $q->whereNull('attempt_count')
-                ->orWhere('attempt_count', '<', 3);
+                ->orWhere('attempt_count', '<', self::MAX_CALL_ATTEMPTS);
         });
     }
 
@@ -850,7 +852,7 @@ class Enrollee extends BaseModel
         )
             ->where(function ($q) {
                 $q->whereNull('attempt_count')
-                    ->orWhere('attempt_count', '<', 3);
+                    ->orWhere('attempt_count', '<', self::MAX_CALL_ATTEMPTS);
             });
     }
 
