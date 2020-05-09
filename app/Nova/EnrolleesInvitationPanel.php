@@ -11,7 +11,6 @@ use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
@@ -114,7 +113,8 @@ class EnrolleesInvitationPanel extends Resource
      */
     public function fields(Request $request)
     {
-        $lastInvitationLink = $this->getLastEnrollmentInvitationLink();
+        $lastInvitationLink    = $this->getLastEnrollmentInvitationLink();
+        $enroleeHasNotLoggedIn = $this->enrolleeHasNotLoggedIn($this->resource->user_id);
 
         return [
             ID::make()->sortable(),
@@ -141,9 +141,8 @@ class EnrolleesInvitationPanel extends Resource
                 return true;
             }),
 
-            Boolean::make('Has viewed Letter', function () {
-                $userId = $this->resource->user_id;
-                if ($this->enrolleeHasNotLoggedIn($userId)) {
+            Boolean::make('Has viewed Letter', function () use ($enroleeHasNotLoggedIn) {
+                if ($enroleeHasNotLoggedIn) {
                     return false;
                 }
 
@@ -152,9 +151,8 @@ class EnrolleesInvitationPanel extends Resource
             Boolean::make('Requested Call', function () {
                 return $this->statusRequestsInfo()->exists();
             }),
-            Boolean::make("Has clicked 'Get my Care Coach'", function () {
-                $userId = $this->resource->user_id;
-                if ($this->enrolleeHasNotLoggedIn($userId)) {
+            Boolean::make("Has clicked 'Get my Care Coach'", function () use ($enroleeHasNotLoggedIn) {
+                if ($enroleeHasNotLoggedIn) {
                     return false;
                 }
 
@@ -162,18 +160,16 @@ class EnrolleesInvitationPanel extends Resource
                     && is_null($this->selfEnrollmentStatuses->awv_survey_status);
             }),
 
-            Boolean::make('Survey in progress', function () {
-                $userId = $this->resource->user_id;
-                if ($this->enrolleeHasNotLoggedIn($userId)) {
+            Boolean::make('Survey in progress', function () use ($enroleeHasNotLoggedIn) {
+                if ($enroleeHasNotLoggedIn) {
                     return false;
                 }
 
                 return self::IN_PROGRESS === optional($this->selfEnrollmentStatuses)->awv_survey_status;
             }),
 
-            Boolean::make('Survey Completed', function () {
-                $userId = $this->resource->user_id;
-                if ($this->enrolleeHasNotLoggedIn($userId)) {
+            Boolean::make('Survey Completed', function () use ($enroleeHasNotLoggedIn) {
+                if ($enroleeHasNotLoggedIn) {
                     return false;
                 }
 
@@ -241,20 +237,5 @@ class EnrolleesInvitationPanel extends Resource
         parse_str($url['query'], $params);
 
         return $params['practice_id'];
-    }
-
-    private function getSurveyInstance()
-    {
-        $survey = $this->getEnrolleeSurvey();
-
-        if (empty($survey)) {
-            return response()->json(
-                'Enrollee Survey is missing'
-            );
-        }
-
-        return DB::table('survey_instances')
-            ->where('survey_id', '=', $survey->id)
-            ->first();
     }
 }
