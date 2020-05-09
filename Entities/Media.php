@@ -60,6 +60,8 @@ use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
  */
 class Media extends SpatieMedia
 {
+    protected $table = 'media';
+
     /**
      * Get the file.
      *
