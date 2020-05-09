@@ -8,7 +8,6 @@ namespace App\Jobs;
 
 // This file is part of CarePlan Manager by CircleLink Health.
 
-use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Role;
@@ -100,23 +99,23 @@ class SelfEnrollmentEnrollees implements ShouldQueue
             return $this->createUserFromEnrolleeAndInvite($this->enrollee);
         }
 
-        //FIXME: We have to get Enrolles that been uploaded using CSV (see enrollees source field)
-        if ( ! App::environment(['testing'])) {
-            $practice  = $this->getDemoPractice();
-            $enrollees = $this->getEnrollees($practice->id)
-                ->where('dob', Carbon::parse('1901-01-01'))
-                ->get()
-                ->take(AutoEnrollmentCenterController::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING)
-                ->all();
-            $this->createSurveyOnlyUserFromEnrollees($enrollees);
-        } else {
-            $enrollees = $this->getEnrollees($this->practiceId)
-                ->orderBy('id', 'asc')
-                ->limit($this->amount)
-                ->get();
-            $this->createSurveyOnlyUserFromEnrollees($enrollees);
-        }
+//        if (App::environment(['testing'])) {
+//            $practice  = $this->getDemoPractice();
+//            $enrollees = $this->getEnrollees($practice->id)
+//                ->where('dob', Carbon::parse('1901-01-01'))
+//                ->get()
+//                ->take($this->amount)
+//                ->all();
+//            $this->createSurveyOnlyUserFromEnrollees($enrollees);
+//        } else {
+        $enrollees = $this->getEnrollees($this->practiceId)
+            ->orderBy('id', 'asc')
+            ->limit($this->amount)
+            ->get();
+        $this->createSurveyOnlyUserFromEnrollees($enrollees);
     }
+
+//    }
 
     private function surveyRole(): Role
     {

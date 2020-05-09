@@ -14,7 +14,6 @@ use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
-use CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -39,15 +38,13 @@ class AutoEnrollmentLogin extends Controller
         if (boolval($request->input('is_survey_only'))) {
             $enrollee = $this->getEnrollee($request->input('user_id'));
 
-            SelfEnrollmentStatus::updateOrCreate(
-                [
-                    'enrollee_id' => $enrollee->id,
-                ],
-                [
-                    'user_id_from_enrollee' => $request->input('user_id'),
-                    'logged_in'             => true,
-                ]
-            );
+            if ( ! $enrollee) {
+                abort(404);
+            }
+
+            $enrollee->selfEnrollmentStatuses()->update([
+                'logged_in' => true,
+            ]);
         }
 
         return $manager->enrollableInvitationManager(

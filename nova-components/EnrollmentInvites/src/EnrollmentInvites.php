@@ -15,7 +15,7 @@ class EnrollmentInvites extends Card
      *
      * @var string
      */
-    public $width = '1/2';
+    public $width = 'full';
 
     /**
      * Get the component name for the element.

@@ -107,7 +107,7 @@ class AutoEnrollmentTestDashboard extends Controller
             if ($user->checkForSurveyOnlyRole()) {
                 /** @var Enrollee $enrollee */
                 $enrollee = $this->getEnrollee($user->id);
-                $this->getAwvUserSurvey($user, $surveyInstance)->delete();
+                $this->deleteTestAwvUser($user->id, $surveyInstance);
                 $user->notifications()->delete();
                 $enrollee->enrollmentInvitationLink()->delete();
                 $enrollee->statusRequestsInfo()->delete();
@@ -128,7 +128,7 @@ class AutoEnrollmentTestDashboard extends Controller
                 }
                 $user->forceDelete();
             } else {
-                $this->getAwvUserSurvey($user, $surveyInstance)->delete();
+                $this->deleteTestAwvUser($user->id, $surveyInstance);
                 $user->notifications()->delete();
                 $user->enrollmentInvitationLink()->delete();
                 $user->statusRequestsInfo()->delete();
@@ -221,5 +221,12 @@ class AutoEnrollmentTestDashboard extends Controller
         }
 
         return 'You can go back and proceed to Step 2.';
+    }
+
+    private function deleteTestAwvUser($userId, $surveyInstance)
+    {
+        if ( ! is_null($this->getAwvUserSurvey($userId, $surveyInstance)->first())) {
+            $this->getAwvUserSurvey($userId, $surveyInstance)->delete();
+        }
     }
 }

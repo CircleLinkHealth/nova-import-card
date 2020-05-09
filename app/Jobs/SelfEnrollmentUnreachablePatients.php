@@ -7,7 +7,6 @@
 namespace App\Jobs;
 
 use App\Events\AutoEnrollableCollected;
-use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -64,35 +63,36 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
             return;
         }
 
-        //    Just for testing
-        if ( ! App::environment(['testing'])) {
-            $practiceId = Practice::where('name', '=', 'demo')->firstOrFail()->id;
-            $patients   = $this->getUnreachablePatients($practiceId)
-                ->whereHas('patientInfo', function ($patientInfo) {
-                    $patientInfo->where('birth_date', Carbon::parse('1901-01-01'));
-                })
-                ->get()
-                ->take(AutoEnrollmentCenterController::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING);
-            foreach ($patients->all() as $patient) {
-                /** @var User $patient */
-                if ( ! $patient->checkForSurveyOnlyRole()) {
-                    event(new AutoEnrollableCollected($patient));
-                }
-            }
-        } else {
-            $patients = $this->getUnreachablePatients($this->practiceId)
-                ->orderBy('id', 'asc')
-                ->limit($this->amount)
-                ->get();
+//        //    Just for testing
+//        if (App::environment(['testing'])) {
+//            $practiceId = Practice::where('name', '=', 'demo')->firstOrFail()->id;
+//            $patients   = $this->getUnreachablePatients($practiceId)
+//                ->whereHas('patientInfo', function ($patientInfo) {
+//                    $patientInfo->where('birth_date', Carbon::parse('1901-01-01'));
+//                })
+//                ->get()
+//                ->take($this->amount);
+//            foreach ($patients->all() as $patient) {
+//                /** @var User $patient */
+//                if ( ! $patient->checkForSurveyOnlyRole()) {
+//                    event(new AutoEnrollableCollected($patient));
+//                }
+//            }
+//        } else {
+        $patients = $this->getUnreachablePatients($this->practiceId)
+            ->orderBy('id', 'asc')
+            ->limit($this->amount)
+            ->get();
 
-            foreach ($patients as $patient) {
-                /** @var User $patient */
-                if ( ! $patient->checkForSurveyOnlyRole()) {
-                    event(new AutoEnrollableCollected($patient));
-                }
+        foreach ($patients as $patient) {
+            /** @var User $patient */
+            if ( ! $patient->checkForSurveyOnlyRole()) {
+                event(new AutoEnrollableCollected($patient));
             }
         }
     }
+
+//    }
 
     /**
      * @param $practiceId
@@ -101,6 +101,7 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
      */
     private function getUnreachablePatients($practiceId)
     {
+//        @todo; Add anothe check for enrollee of user when constantinos is ready
         return User::with('patientInfo')
             ->whereDoesntHave('enrollmentInvitationLink')
             ->where('program_id', $practiceId)
