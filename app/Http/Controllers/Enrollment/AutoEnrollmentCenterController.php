@@ -122,16 +122,17 @@ class AutoEnrollmentCenterController extends Controller
      */
     public function enrolleeRequestsInfo(Request $request)
     {
-        /** @var Enrollee $enrollee */
-        $enrollableId      = $request->input('enrollable_id');
-        $isSurveyOnly      = $request->input('is_survey_only');
-        $enrollee          = $this->getEnrollee($enrollableId);
-        $userModelEnrollee = $this->getUserModelEnrollee($enrollableId);
+        $enrollableId = $request->input('enrollable_id');
+        $isSurveyOnly = $request->input('is_survey_only');
 
-        if (
-            $enrollee->statusRequestsInfo()->exists()
-            && $enrollee->getLastEnrollmentInvitationLink()->manually_expired
-        ) {
+        /** @var Enrollee $enrollee */
+        $enrollee = $this->getEnrollee($enrollableId);
+        if ( ! $enrollee) {
+            return "Enrollee[$enrollableId] not found";
+        }
+
+        if ($enrollee->statusRequestsInfo()->exists()
+            && $enrollee->getLastEnrollmentInvitationLink()->manually_expired) {
             return $this->returnEnrolleeRequestedInfoMessage($enrollee);
         }
 
@@ -142,9 +143,12 @@ class AutoEnrollmentCenterController extends Controller
             //            Delete User Created from Enrollee
 //            Unreachables cant request info yet.
             if ($isSurveyOnly) {
-                $this->updateEnrolleeSurveyStatuses($enrollee->id, $userModelEnrollee->id, null);
+                $userModelEnrollee = $this->getUserModelEnrollee($enrollableId);
+                $this->updateEnrolleeSurveyStatuses($enrollee->id, optional($userModelEnrollee)->id, null);
                 $enrollee->update(['user_id' => null, 'auto_enrollment_triggered' => true]);
-                $userModelEnrollee->delete();
+                if ($userModelEnrollee) {
+                    $userModelEnrollee->delete();
+                }
             }
 
             return $this->returnEnrolleeRequestedInfoMessage($enrollee);
