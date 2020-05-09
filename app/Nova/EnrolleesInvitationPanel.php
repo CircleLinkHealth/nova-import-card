@@ -203,14 +203,16 @@ class EnrolleesInvitationPanel extends Resource
     public static function indexQuery(NovaRequest $request, $query)
     {
         return $query->whereIn('status', [
-            Enrollee::TO_CALL,
+            Enrollee::QUEUE_AUTO_ENROLLMENT,
             Enrollee::UNREACHABLE,
             Enrollee::ENROLLED,
+            Enrollee::TO_CALL,
         ])->where('practice_id', self::getPracticeId())
             ->where(function ($q) {
                 $q->where('source', '!=', Enrollee::UNREACHABLE_PATIENT)
                     ->orWhereNull('source');
-            });
+            })
+            ->whereHas('selfEnrollmentStatuses');
     }
 
     /**

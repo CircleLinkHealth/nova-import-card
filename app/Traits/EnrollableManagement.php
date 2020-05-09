@@ -159,8 +159,7 @@ trait EnrollableManagement
             ->where('practice_id', $practiceId)
             ->whereDoesntHave('enrollmentInvitationLink')
             ->whereIn('status', [
-                'call_queue',
-                'utc',
+                Enrollee::QUEUE_AUTO_ENROLLMENT,
             ]);
     }
 
