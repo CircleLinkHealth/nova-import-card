@@ -296,7 +296,7 @@ class CcdaImporter
      */
     private function importPatientInfo()
     {
-        ImportPatientInfo::for($this->patient, $this->ccda);
+        ImportPatientInfo::for($this->patient, $this->ccda, $this->enrollee);
 
         return $this;
     }

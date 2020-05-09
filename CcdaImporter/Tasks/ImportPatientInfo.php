@@ -8,9 +8,11 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use  Illuminate\Support\Str;
 
 class ImportPatientInfo extends BaseCcdaImportTask
@@ -24,6 +26,16 @@ class ImportPatientInfo extends BaseCcdaImportTask
      * @var Enrollee
      */
     private $enrollee;
+
+    public static function for(User $patient, Ccda $ccda, Enrollee $enrollee = null)
+    {
+        $static = new static($patient, $ccda);
+        if ($enrollee instanceof Enrollee) {
+            $static->setEnrollee($enrollee);
+        }
+
+        return $static->import();
+    }
 
     /**
      * @param $dob
@@ -69,6 +81,14 @@ class ImportPatientInfo extends BaseCcdaImportTask
 
             return Carbon::createFromDate($year, $date[0], $date[1]);
         }
+    }
+
+    /**
+     * @param mixed $enrollee
+     */
+    public function setEnrollee(Enrollee $enrollee): void
+    {
+        $this->enrollee = $enrollee;
     }
 
     protected function import()
