@@ -7,11 +7,9 @@
 namespace App\Http\Controllers\Enrollment;
 
 use App\Http\Controllers\Controller;
-use App\Notifications\SendEnrollmentEmail;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
@@ -144,6 +142,7 @@ class AutoEnrollmentCenterController extends Controller
             //            Delete User Created from Enrollee
 //            Unreachables cant request info yet.
             if ($isSurveyOnly) {
+                $this->updateEnrolleeSurveyStatuses($enrollee->id, $userModelEnrollee->id, null);
                 $enrollee->update(['user_id' => null, 'auto_enrollment_triggered' => true]);
                 $userModelEnrollee->delete();
             }
@@ -259,7 +258,7 @@ class AutoEnrollmentCenterController extends Controller
         $practiceLogoSrc        = $practiceLetter->practice_logo_src ?? self::ENROLLMENT_LETTER_DEFAULT_LOGO;
         $signatoryNameForHeader = $provider->display_name;
         $dateLetterSent         = Carbon::parse($enrollee->getLastEnrollmentInvitationLink()->updated_at)->toDateString();
-        $pastActiveLink         = $this->pastActiveInvitationLinks($enrollee);
+        $pastActiveLink         = $this->pastActiveInvitationLink($enrollee);
         $buttonColor            = '#4baf50';
 
         if ( ! empty($pastActiveLink)) {
@@ -277,15 +276,6 @@ class AutoEnrollmentCenterController extends Controller
             'hideButtons',
             'buttonColor',
         ));
-    }
-
-    private function getEnrolleeFromNotification($enrollableId)
-    {
-        $notification = DatabaseNotification::where('type', SendEnrollmentEmail::class)
-            ->where('notifiable_id', $enrollableId)
-            ->first();
-
-        return Enrollee::whereId($notification->data['enrollee_id'])->first();
     }
 
     /**

@@ -7,6 +7,7 @@
 namespace App\Jobs;
 
 use App\Events\AutoEnrollableCollected;
+use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -20,6 +21,7 @@ use Illuminate\Queue\SerializesModels;
 class CreateUserFromEnrollee implements ShouldQueue
 {
     use Dispatchable;
+    use EnrollableManagement;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
@@ -94,7 +96,7 @@ class CreateUserFromEnrollee implements ShouldQueue
         $userCreatedFromEnrollee->setBillingProviderId($this->enrollee->provider->id);
         $this->enrollee->update(['user_id' => $userCreatedFromEnrollee->id]);
         // The above can be abstracted more
-
         event(new AutoEnrollableCollected($userCreatedFromEnrollee, false, $this->color));
+        $this->updateEnrolleeSurveyStatuses($this->enrollee->id, $userCreatedFromEnrollee->id, null);
     }
 }

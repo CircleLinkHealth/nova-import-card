@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\Traits\EnrollableManagement;
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -13,6 +14,7 @@ use Illuminate\Database\Seeder;
 
 class PrepareDataForReEnrollmentTestSeeder extends Seeder
 {
+    use EnrollableManagement;
     use SeedEligibilityJobsForEnrollees;
     use UserHelpers;
 
@@ -55,6 +57,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 'email'                   => $emailTester,
             ]);
             $this->seedEligibilityJobs(collect($enrolleesForTesting));
+            $this->updateEnrolleeSurveyStatuses($enrolleesForTesting->first()->id, null, null);
             ++$n;
         }
 

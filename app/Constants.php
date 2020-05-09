@@ -49,6 +49,7 @@ class Constants
     const NOVA_GROUP_NBI                 = 'NBI';
     const NOVA_GROUP_PRACTICE_DATA_PULLS = 'Practice Data Pulls';
     const NOVA_GROUP_PRACTICES           = 'Practices';
+    const NOVA_GROUP_SETTINGS            = 'Settings';
 
     const PATIENT_PHI_RELATIONSHIPS = ['patientInfo'];
 

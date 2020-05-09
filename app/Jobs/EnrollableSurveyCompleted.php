@@ -28,6 +28,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    const SURVEY_COMPLETED = 'completed';
     private $data;
 
     /**
@@ -174,6 +175,9 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
         if ($isSurveyOnly) {
             $enrollee = Enrollee::whereUserId($user->id)->firstOrFail();
+
+            $this->updateEnrolleeSurveyStatuses($enrollee->id, $user->id, self::SURVEY_COMPLETED);
+
             $enrollee->update([
                 'primary_phone'             => $surveyAnswers['preferred_number'],
                 'preferred_days'            => $this->getPreferredDaysToString($surveyAnswers['preferred_days']),

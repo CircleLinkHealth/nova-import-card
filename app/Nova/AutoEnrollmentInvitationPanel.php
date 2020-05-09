@@ -47,9 +47,37 @@ class AutoEnrollmentInvitationPanel extends Resource
     public function actions(Request $request)
     {
         return [
-            new EnrolleesInvitationAction(),
-            new PatientsInvitationAction(),
+            (new EnrolleesInvitationAction())->canSee(function () {
+                return true;
+            })->canRun(function () {
+                return true;
+            }),
+            //            new PatientsInvitationAction(),
         ];
+    }
+
+    /**
+     * @return bool
+     */
+    public static function authorizedToCreate(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function authorizedToDelete(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function authorizedToUpdate(Request $request)
+    {
+        return false;
     }
 
     /**
@@ -99,7 +127,7 @@ class AutoEnrollmentInvitationPanel extends Resource
      */
     public static function label()
     {
-        return 'Enrollment Invitations Panel';
+        return 'Invitations Panel';
     }
 
     /**

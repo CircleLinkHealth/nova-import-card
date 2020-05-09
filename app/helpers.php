@@ -998,18 +998,24 @@ if ( ! function_exists('getProblemCodeSystemName')) {
     function getProblemCodeSystemName(array $clues)
     {
         foreach ($clues as $clue) {
-            if ('2.16.840.1.113883.6.96' == $clue
-                || Str::contains(strtolower($clue), ['snomed'])) {
+            if (
+                '2.16.840.1.113883.6.96' == $clue
+                || Str::contains(strtolower($clue), ['snomed'])
+            ) {
                 return Constants::SNOMED_NAME;
             }
 
-            if ('2.16.840.1.113883.6.103' == $clue
-                || Str::contains(strtolower($clue), ['9'])) {
+            if (
+                '2.16.840.1.113883.6.103' == $clue
+                || Str::contains(strtolower($clue), ['9'])
+            ) {
                 return Constants::ICD9_NAME;
             }
 
-            if ('2.16.840.1.113883.6.3' == $clue
-                || Str::contains(strtolower($clue), ['10'])) {
+            if (
+                '2.16.840.1.113883.6.3' == $clue
+                || Str::contains(strtolower($clue), ['10'])
+            ) {
                 return Constants::ICD10_NAME;
             }
         }
@@ -1931,9 +1937,11 @@ if ( ! function_exists('getPatientListDropdown')) {
                         $result[] = 'awv';
                     }
 
-                    if ((1 === $count && $hasAwvInitial) ||
+                    if (
+                        (1 === $count && $hasAwvInitial) ||
                         (1 === $count && $hasAwvSubsequent) ||
-                        (2 === $count && $hasAwvInitial && $hasAwvSubsequent)) {
+                        (2 === $count && $hasAwvInitial && $hasAwvSubsequent)
+                    ) {
                         return;
                     }
 
@@ -2002,6 +2010,62 @@ if ( ! function_exists('suggestedFamilyMemberAcceptableRelevanceScore')) {
     }
 }
 
+if ( ! function_exists('levenshteinPercent')) {
+    /**
+     * @param int   $insert
+     * @param mixed $replace
+     * @param int   $delete
+     */
+    function levenshteinPercent(string $string1, string $string2, $insert = 1, $replace = 1, $delete = 1): int
+    {
+        return round(
+            100 - levenshtein($string1, $string2, $insert, $replace, $delete)
+            / \Illuminate\Support\Str::length($string1) * 100
+        );
+    }
+}
+
+if ( ! function_exists('stringMeansEnglish')) {
+    function stringMeansEnglish(string $string): bool
+    {
+        return in_array(strtolower($string), [
+            'e',
+            'en',
+            'eng',
+            'english',
+        ]) ||
+            Str::startsWith(strtolower($string), 'en');
+    }
+}
+
+if ( ! function_exists('stringMeansSpanish')) {
+    function stringMeansSpanish(string $string): bool
+    {
+        return in_array(strtolower($string), [
+            'sp',
+            'es',
+            'spanish',
+            'spa',
+        ]) ||
+            Str::startsWith(strtolower($string), ['es', 'sp']);
+    }
+}
+
+if ( ! function_exists('minDaysPastForCareAmbassadorNextAttempt')) {
+    /**
+     * @param array $times
+     *
+     * @return string|null
+     */
+    function minDaysPastForCareAmbassadorNextAttempt(): int
+    {
+        $key = 'min_days_past_for_care_ambassador_next_attempt';
+
+        return \Cache::remember($key, 2, function () use ($key) {
+            return (int) AppConfig::pull($key, 3);
+        });
+    }
+}
 if ( ! function_exists('complexAttestationRequirementsEnabledForPractice')) {
     /**
      * @param mixed $practiceId
