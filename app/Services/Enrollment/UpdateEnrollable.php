@@ -101,6 +101,10 @@ class UpdateEnrollable extends EnrollableService
             $attributesToUpdate['address_2'] = $this->data->get('address_2');
         }
 
+        if ( ! empty($this->enrollee->agent_details)) {
+            $attributesToUpdate['agent_details'] = $this->enrollee->agent_details;
+        }
+
         Enrollee::whereIn('id', $ids)->update($attributesToUpdate);
     }
 

@@ -1920,17 +1920,17 @@ Route::group([
         ])->middleware('permission:enrollee.read,enrollee.update');
 
         Route::post('/consented', [
-            'uses' => 'Enrollment\EnrollmentCenterController@consented',
+            'uses' => 'API\EnrollmentCenterController@consented',
             'as'   => 'enrollment-center.consented',
         ])->middleware('permission:enrollee.update');
 
         Route::post('/utc', [
-            'uses' => 'Enrollment\EnrollmentCenterController@unableToContact',
+            'uses' => 'API\EnrollmentCenterController@unableToContact',
             'as'   => 'enrollment-center.utc',
         ])->middleware('permission:enrollee.update');
 
         Route::post('/rejected', [
-            'uses' => 'Enrollment\EnrollmentCenterController@rejected',
+            'uses' => 'API\EnrollmentCenterController@rejected',
             'as'   => 'enrollment-center.rejected',
         ])->middleware('permission:enrollee.update');
     });
