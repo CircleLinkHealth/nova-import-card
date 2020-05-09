@@ -99,22 +99,23 @@ class SelfEnrollmentEnrollees implements ShouldQueue
             return $this->createUserFromEnrolleeAndInvite($this->enrollee);
         }
 
-        if (App::environment(['testing'])) {
-            $practice  = $this->getDemoPractice();
-            $enrollees = $this->getEnrollees($practice->id)
-                ->where('dob', Carbon::parse('1901-01-01'))
-                ->get()
-                ->take($this->amount)
-                ->all();
-            $this->createSurveyOnlyUserFromEnrollees($enrollees);
-        } else {
-            $enrollees = $this->getEnrollees($this->practiceId)
-                ->orderBy('id', 'asc')
-                ->limit($this->amount)
-                ->get();
-            $this->createSurveyOnlyUserFromEnrollees($enrollees);
-        }
+//        if (App::environment(['testing'])) {
+//            $practice  = $this->getDemoPractice();
+//            $enrollees = $this->getEnrollees($practice->id)
+//                ->where('dob', Carbon::parse('1901-01-01'))
+//                ->get()
+//                ->take($this->amount)
+//                ->all();
+//            $this->createSurveyOnlyUserFromEnrollees($enrollees);
+//        } else {
+        $enrollees = $this->getEnrollees($this->practiceId)
+            ->orderBy('id', 'asc')
+            ->limit($this->amount)
+            ->get();
+        $this->createSurveyOnlyUserFromEnrollees($enrollees);
     }
+
+//    }
 
     private function surveyRole(): Role
     {

@@ -143,7 +143,7 @@ class EnrolleesInvitationPanel extends Resource
 
             Boolean::make('Has viewed Letter', function () {
                 $userId = $this->resource->user_id;
-                if ($this->hasUserLoggedIn($userId)) {
+                if ($this->enrolleeHasNotLoggedIn($userId)) {
                     return false;
                 }
 
@@ -152,22 +152,19 @@ class EnrolleesInvitationPanel extends Resource
             Boolean::make('Requested Call', function () {
                 return $this->statusRequestsInfo()->exists();
             }),
-
             Boolean::make("Has clicked 'Get my Care Coach'", function () {
                 $userId = $this->resource->user_id;
-                if ($this->hasUserLoggedIn($userId)) {
+                if ($this->enrolleeHasNotLoggedIn($userId)) {
                     return false;
                 }
-                $userId = optional($this->selfEnrollmentStatuses)->enrollee_user_id;
 
-                $surveyInstance = $this->getSurveyInstance();
-
-                return  $this->getAwvUserSurvey($userId, $surveyInstance)->exists();
+                return $this->selfEnrollmentStatuses && optional($this->selfEnrollmentStatuses)->logged_in
+                    && is_null($this->selfEnrollmentStatuses->awv_survey_status);
             }),
 
             Boolean::make('Survey in progress', function () {
                 $userId = $this->resource->user_id;
-                if ($this->hasUserLoggedIn($userId)) {
+                if ($this->enrolleeHasNotLoggedIn($userId)) {
                     return false;
                 }
 
@@ -176,7 +173,7 @@ class EnrolleesInvitationPanel extends Resource
 
             Boolean::make('Survey Completed', function () {
                 $userId = $this->resource->user_id;
-                if ($this->hasUserLoggedIn($userId)) {
+                if ($this->enrolleeHasNotLoggedIn($userId)) {
                     return false;
                 }
 
@@ -233,6 +230,11 @@ class EnrolleesInvitationPanel extends Resource
         return [];
     }
 
+    private function enrolleeHasNotLoggedIn($userId)
+    {
+        return is_null($userId) && ! optional($this->selfEnrollmentStatuses)->logged_in;
+    }
+
     private static function getPracticeId()
     {
         $url = parse_url($_SERVER['HTTP_REFERER']);
@@ -254,10 +256,5 @@ class EnrolleesInvitationPanel extends Resource
         return DB::table('survey_instances')
             ->where('survey_id', '=', $survey->id)
             ->first();
-    }
-
-    private function hasUserLoggedIn($userId)
-    {
-        return is_null($userId) && ! optional($this->selfEnrollmentStatuses)->logged_in;
     }
 }
