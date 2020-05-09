@@ -11,6 +11,7 @@ use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
@@ -156,8 +157,20 @@ class EnrolleesInvitationPanel extends Resource
                     return false;
                 }
 
-                return $this->selfEnrollmentStatuses && optional($this->selfEnrollmentStatuses)->logged_in
-                    && is_null($this->selfEnrollmentStatuses->awv_survey_status);
+                $userId = optional($this->selfEnrollmentStatuses)->enrollee_user_id;
+                $survey = $this->getEnrolleeSurvey();
+
+                if (empty($survey)) {
+                    return response()->json(
+                        [
+                            'Enrollee Survey not found',
+                        ],
+                        404
+                    );
+                }
+                $surveyInstance = $this->getSurveyInstance($survey);
+
+                return  $this->getAwvUserSurvey($userId, $surveyInstance)->exists();
             }),
 
             Boolean::make('Survey in progress', function () use ($enroleeHasNotLoggedIn) {
@@ -237,5 +250,12 @@ class EnrolleesInvitationPanel extends Resource
         parse_str($url['query'], $params);
 
         return $params['practice_id'];
+    }
+
+    private function getSurveyInstance($survey)
+    {
+        return DB::table('survey_instances')
+            ->where('survey_id', '=', $survey->id)
+            ->first();
     }
 }
