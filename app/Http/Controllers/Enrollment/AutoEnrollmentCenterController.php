@@ -262,8 +262,7 @@ class AutoEnrollmentCenterController extends Controller
         $practiceLogoSrc        = $practiceLetter->practice_logo_src ?? self::ENROLLMENT_LETTER_DEFAULT_LOGO;
         $signatoryNameForHeader = $provider->display_name;
         $dateLetterSent         = Carbon::parse($enrollee->getLastEnrollmentInvitationLink()->updated_at)->toDateString();
-//        $pastActiveLink         = $this->pastActiveInvitationLink($enrollee);
-        $buttonColor = '#4baf50';
+        $buttonColor            = '#4baf50';
 
         if ($isSurveyOnlyUser) {
             $enrollable = $userEnrollee;
