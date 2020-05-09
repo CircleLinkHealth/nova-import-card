@@ -99,8 +99,7 @@ class SelfEnrollmentEnrollees implements ShouldQueue
             return $this->createUserFromEnrolleeAndInvite($this->enrollee);
         }
 
-        //@todo:Change This Before Deploy
-        if ( ! App::environment(['testing'])) {
+        if (App::environment(['testing'])) {
             $practice  = $this->getDemoPractice();
             $enrollees = $this->getEnrollees($practice->id)
                 ->where('dob', Carbon::parse('1901-01-01'))

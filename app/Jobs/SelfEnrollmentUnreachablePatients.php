@@ -7,7 +7,6 @@
 namespace App\Jobs;
 
 use App\Events\AutoEnrollableCollected;
-use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -65,14 +64,14 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
         }
 
         //    Just for testing
-        if ( ! App::environment(['testing'])) {
+        if (App::environment(['testing'])) {
             $practiceId = Practice::where('name', '=', 'demo')->firstOrFail()->id;
             $patients   = $this->getUnreachablePatients($practiceId)
                 ->whereHas('patientInfo', function ($patientInfo) {
                     $patientInfo->where('birth_date', Carbon::parse('1901-01-01'));
                 })
                 ->get()
-                ->take(AutoEnrollmentCenterController::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING);
+                ->take($this->amount);
             foreach ($patients->all() as $patient) {
                 /** @var User $patient */
                 if ( ! $patient->checkForSurveyOnlyRole()) {

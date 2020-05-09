@@ -1131,7 +1131,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "f6394e7ee7937d70cac2d5484d5d41916b7edc77"
+                "reference": "a04e4a67b9a69d12f6b0912fff69c84dfa050fe4"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1156,7 +1156,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-08T22:41:51+00:00"
+            "time": "2020-05-08T23:00:37+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",

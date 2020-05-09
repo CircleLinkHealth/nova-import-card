@@ -245,6 +245,12 @@ class EnrolleesInvitationPanel extends Resource
     {
         $survey = $this->getEnrolleeSurvey();
 
+        if (empty($survey)) {
+            return response()->json(
+                'Enrollee Survey is missing'
+            );
+        }
+
         return DB::table('survey_instances')
             ->where('survey_id', '=', $survey->id)
             ->first();
