@@ -20,13 +20,18 @@ trait EnrollableNotificationContent
      *
      * @return array|string
      */
-    public function emailAndSmsContent($notifiable, $isReminder)
+    public function emailAndSmsContent(User $notifiable, $isReminder)
     {
         $enrollableEmailContent = $this->getEmailContent($notifiable, $isReminder);
         $providerName           = $enrollableEmailContent['providerLastName'];
         $practiceName           = $enrollableEmailContent['practiceName'];
         $line2                  = $enrollableEmailContent['line2'];
         $isSurveyOnly           = $enrollableEmailContent['isSurveyOnly'];
+
+        if (empty($practiceName)) {
+            Log::warning("Practice name not found for user $notifiable->id");
+            $practiceName = '???';
+        }
 
         $line1 = "Hi, it's Dr. $providerName's office at $practiceName! ";
 
@@ -154,9 +159,10 @@ trait EnrollableNotificationContent
         return [
             'providerLastName' => $providerLastName,
             'nurseFirstName'   => $nurseFirstName,
-            'practiceName'     => $notifiable->primaryPractice->display_name,
-            'line2'            => $line2,
-            'isSurveyOnly'     => false,
+            //@todo: This is always "". $notifiable has "program_id" and it should work
+            'practiceName' => $notifiable->getPrimaryPracticeName(),
+            'line2'        => $line2,
+            'isSurveyOnly' => false,
         ];
     }
 }

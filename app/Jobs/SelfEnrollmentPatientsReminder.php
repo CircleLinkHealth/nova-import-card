@@ -11,6 +11,7 @@ namespace App\Jobs;
 use App\Notifications\SendEnrollmentEmail;
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -45,7 +46,7 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
     {
         $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
-        $testingEnv    = App::environment(['testing']);
+        $testingEnv    = App::environment(['staging', 'local']);
 
         if ($testingEnv) {
             $practice      = $this->getDemoPractice();
@@ -76,7 +77,7 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
         })
 //            If still unreachable means user did not choose to "Enroll Now" in invitation mail.
             ->whereHas('patientInfo', function ($patient) use ($twoDaysAgo, $untilEndOfDay) {
-                $patient->where('ccm_status', 'unreachable')->where([
+                $patient->where('ccm_status', Patient::UNREACHABLE)->where([
                     ['date_unreachable', '>=', $twoDaysAgo],
                     ['date_unreachable', '<=', $untilEndOfDay],
                 ]);

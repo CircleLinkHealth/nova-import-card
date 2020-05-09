@@ -105,7 +105,7 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     {
         $this->getNotificationContent($notifiable);
 
-        $fromName = config('mail.from.name');
+        $fromName = config('mail.from.name'); //@todo: We dont need to show CircleLinkHealth as default
         if ( ! empty($notifiable->primaryPractice) && ! empty($notifiable->primaryPractice->display_name)) {
             $fromName = $notifiable->primaryPractice->display_name;
         }

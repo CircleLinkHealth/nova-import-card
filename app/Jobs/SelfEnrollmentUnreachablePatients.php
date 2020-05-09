@@ -10,6 +10,7 @@ use App\Events\AutoEnrollableCollected;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -79,16 +80,10 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
 //                }
 //            }
 //        } else {
-        $patients = $this->getUnreachablePatients($this->practiceId)
-            ->orderBy('id', 'asc')
-            ->limit($this->amount)
-            ->get();
+        $enrollableUnreachablePatient = array_slice($this->getUnreachablePatients($this->practiceId), 0, $this->amount);
 
-        foreach ($patients as $patient) {
-            /** @var User $patient */
-            if ( ! $patient->checkForSurveyOnlyRole()) {
-                event(new AutoEnrollableCollected($patient));
-            }
+        if ( ! empty($enrollableUnreachablePatient)) {
+            event(new AutoEnrollableCollected($enrollableUnreachablePatient));
         }
     }
 
@@ -96,17 +91,25 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
 
     /**
      * @param $practiceId
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param $amount
+     * @return array
      */
     private function getUnreachablePatients($practiceId)
     {
-//        @todo; Add anothe check for enrollee of user when constantinos is ready
-        return User::with('patientInfo')
+        $userIds = [];
+        Enrollee::whereNotNull('user_id')
+            ->where('source', '=', Enrollee::UNREACHABLE_PATIENT)
+            ->where('practice_id', $practiceId)
             ->whereDoesntHave('enrollmentInvitationLink')
-            ->where('program_id', $practiceId)
-            ->whereHas('patientInfo', function ($patient) {
-                $patient->where('ccm_status', 'unreachable');
+            ->whereIn('status', [
+                Enrollee::QUEUE_AUTO_ENROLLMENT,
+            ])
+            ->orderBy('id', 'asc')
+            ->select('user_id')
+            ->each(function ($unreachable) use (&$userIds) {
+                $userIds[] = $unreachable->user_id;
             });
+
+        return $userIds;
     }
 }
