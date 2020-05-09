@@ -217,7 +217,7 @@ class EnrolleesInvitationPanel extends Resource
      */
     public static function label()
     {
-        return 'Enrollee Invitations Panel';
+        return 'Invitations Panel';
     }
 
     /**
