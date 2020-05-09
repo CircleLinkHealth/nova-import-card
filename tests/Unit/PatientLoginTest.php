@@ -49,6 +49,8 @@ class PatientLoginTest extends CustomerTestCase
 
     public function test_notification_is_sent_after_cp_provider_approval()
     {
+        Notification::fake();
+
         $this->patient->carePlan->status = CarePlan::QA_APPROVED;
         $this->patient->carePlan->save();
 
