@@ -640,20 +640,20 @@ class Enrollee extends BaseModel
 
     public function getPreferredCallDays()
     {
-        if (empty($this->enrollee->preferred_days)) {
+        if (empty($this->preferred_days)) {
             return null;
         }
 
-        return parseCallDays($this->enrollee->preferred_days);
+        return explode(',', $this->preferred_days);
     }
 
     public function getPreferredCallTimes()
     {
-        if (empty($this->enrollee->preferred_window)) {
+        if (empty($this->preferred_window)) {
             return null;
         }
 
-        return parseCallTimes($this->enrollee->preferred_window);
+        return parseCallTimes($this->preferred_window);
     }
 
     public function getPreferredPhoneType()
