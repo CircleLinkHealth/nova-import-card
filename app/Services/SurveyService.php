@@ -8,10 +8,12 @@ namespace App\Services;
 
 use App\Answer;
 use App\Events\SurveyInstancePivotSaved;
+use App\Jobs\UpdateEnrolleeSurveyStatuses;
 use App\Survey;
 use App\SurveyInstance;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class SurveyService
 {
@@ -127,10 +129,15 @@ class SurveyService
         $surveyStatusResult = $instance->calculateCurrentStatusForUser($user);
         $surveyStatus       = $surveyStatusResult['status'];
 
+        UpdateEnrolleeSurveyStatuses::dispatch($user->id, SurveyInstance::IN_PROGRESS);
+
         //change status only if not completed
         if ($instance->pivot->status !== $surveyStatus) {
             $instance->pivot->status = $surveyStatus;
             if (SurveyInstance::COMPLETED === $surveyStatus) {
+                DB::table('self_enrollment_statuses')->where('enrollee_user_id', $user->id)->update([
+                    'awv_survey_status' => SurveyInstance::COMPLETED,
+                ]);
                 $instance->pivot->completed_at = Carbon::now();
             }
         }
@@ -141,6 +148,7 @@ class SurveyService
         $instance->pivot->save();
 
         if (SurveyInstance::COMPLETED === $surveyStatus) {
+            UpdateEnrolleeSurveyStatuses::dispatch($user->id, SurveyInstance::COMPLETED);
             event(new SurveyInstancePivotSaved($instance));
         }
 
