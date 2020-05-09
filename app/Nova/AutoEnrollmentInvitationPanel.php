@@ -8,7 +8,6 @@ namespace App\Nova;
 
 use App\Constants;
 use App\Nova\Actions\EnrolleesInvitationAction;
-use App\Nova\Actions\PatientsInvitationAction;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
@@ -105,7 +104,7 @@ class AutoEnrollmentInvitationPanel extends Resource
                 ->hideWhenUpdating()
                 ->sortable(),
 
-            Text::make('Name', 'display_name')
+            Text::make('Practice Name', 'display_name')
                 ->hideWhenCreating()
                 ->sortable()
                 ->readonly(true),
@@ -138,5 +137,10 @@ class AutoEnrollmentInvitationPanel extends Resource
     public function lenses(Request $request)
     {
         return [];
+    }
+
+    public static function usesScout()
+    {
+        return false;
     }
 }
