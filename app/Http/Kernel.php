@@ -8,6 +8,7 @@ namespace App\Http;
 
 use App\Http\Middleware\ACL\ProviderDashboardACL;
 use App\Http\Middleware\AdminOrPracticeStaff;
+use App\Http\Middleware\CareAmbassadorAPI;
 use App\Http\Middleware\CheckCarePlanMode;
 use App\Http\Middleware\CheckForMaintenanceMode;
 use App\Http\Middleware\CheckOnboardingInvite;
@@ -122,6 +123,7 @@ class Kernel extends HttpKernel
         'check.careplan.mode'    => CheckCarePlanMode::class,
         'checkPatientUserData'   => CheckPatientUserData::class,
         'enrollmentCenter'       => EnrollmentCenter::class,
+        'careAmbassadorAPI'      => CareAmbassadorAPI::class,
         'adminOrPracticeStaff'   => AdminOrPracticeStaff::class,
     ];
 }

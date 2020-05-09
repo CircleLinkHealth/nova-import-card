@@ -19,7 +19,7 @@ class EnrollmentCenter
      */
     public function handle($request, Closure $next)
     {
-        if ( ! auth()->user()->careAmbassador) {
+        if ( ! auth()->user()->careAmbassador || ! auth()->user()->isCareAmbassador(true)) {
             return view('errors.403', [
                 'message'   => 'You need to be a Care Ambassador to acccess this page.',
                 'hideLinks' => true,

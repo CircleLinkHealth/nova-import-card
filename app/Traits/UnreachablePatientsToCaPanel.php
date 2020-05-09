@@ -12,7 +12,7 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 trait UnreachablePatientsToCaPanel
 {
     /**
-     * We are doing this so we can assign enrollmet call and show the enrolle model on CA PANEL.
+     * We are doing this so we can assign enrollmet call and show the enrollee model on CA PANEL.
      */
     public function createEnrolleModelForPatient(User $user)
     {
@@ -33,11 +33,12 @@ trait UnreachablePatientsToCaPanel
                 'primary_phone'           => $user->getPrimaryPhone(),
                 'home_phone'              => $user->getHomePhoneNumber(),
                 'cell_phone'              => $user->getMobilePhoneNumber(),
-                'status'                  => Enrollee::TO_CALL, // Setting STATUS here
+                'status'                  => Enrollee::QUEUE_AUTO_ENROLLMENT, // Setting STATUS here
                 'requested_callback'      => null,
                 'attempt_count'           => 0,
                 'care_ambassador_user_id' => null,
-                'source'                  => Enrollee::UNREACHABLE_PATIENT,
+
+                'source' => Enrollee::UNREACHABLE_PATIENT,
             ]
         );
     }

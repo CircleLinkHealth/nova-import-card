@@ -18,6 +18,7 @@ use Sparclex\NovaImportCard\NovaImportCard;
 
 class EnroleeStatus extends Resource
 {
+    //todo: DEPRECATE/REMOVE AS SOON AS WE SWITCH OVER TO CA PANEL
     /**
      * The logical group associated with the resource.
      *

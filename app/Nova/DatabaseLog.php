@@ -7,19 +7,27 @@
 namespace App\Nova;
 
 use App\Constants;
-use CircleLinkHealth\Core\Entities\AppConfig as AppConfigModel;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 
-class AppConfig extends Resource
+class DatabaseLog extends Resource
 {
+    /**
+     * The logical group associated with the resource.
+     *
+     * @var string
+     */
     public static $group = Constants::NOVA_GROUP_SETTINGS;
+
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = AppConfigModel::class;
+    public static $model = \App\DatabaseLog::class;
 
     /**
      * The columns that should be searched.
@@ -27,7 +35,7 @@ class AppConfig extends Resource
      * @var array
      */
     public static $search = [
-        'config_key',
+        'id',
     ];
 
     /**
@@ -65,8 +73,20 @@ class AppConfig extends Resource
     public function fields(Request $request)
     {
         return [
-            Text::make('Setting', 'config_key'),
-            Text::make('Value', 'config_value'),
+            ID::make()->sortable(),
+
+            Text::make('message'),
+
+            Text::make('channel'),
+
+            Number::make('level'),
+
+            Text::make('level_name'),
+
+            //Todo: fixme - does not work as DateTime field, even when declared as a date on Eloquent model
+            Text::make('datetime'),
+
+            DateTime::make('created_at'),
         ];
     }
 
@@ -78,11 +98,6 @@ class AppConfig extends Resource
     public function filters(Request $request)
     {
         return [];
-    }
-
-    public static function label()
-    {
-        return 'CPM Configuration';
     }
 
     /**
