@@ -17,6 +17,7 @@ class AutoEnrollmentMailChannel extends MailMessage
 
     /**
      * AutoEnrollmentMailChannel constructor.
+     *
      * @param mixed|null $practiceName
      */
     public function __construct($practiceName = null)

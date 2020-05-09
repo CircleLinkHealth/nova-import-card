@@ -17,6 +17,7 @@ trait EnrollableNotificationContent
      * @param $isReminder
      *
      * @throws \Exception
+     *
      * @return array|string
      */
     public function emailAndSmsContent($notifiable, $isReminder)
@@ -50,6 +51,7 @@ trait EnrollableNotificationContent
      * @param bool $isReminder
      *
      * @throws \Exception
+     *
      * @return array
      */
     public function getEmailContent(User $notifiable, $isReminder = false)
@@ -68,6 +70,7 @@ trait EnrollableNotificationContent
      * @param $isReminder
      *
      * @throws \Exception
+     *
      * @return array
      */
     public function getEnrolleeEmailContent(User $notifiable, $isReminder)

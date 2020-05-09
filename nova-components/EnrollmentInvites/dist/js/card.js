@@ -138,30 +138,30 @@ __webpack_require__.r(__webpack_exports__);
   ],
   data: function data() {
     return {
-      number: '',
+      amount: '',
       errors: null
     };
   },
   methods: {
-    sendInvites: function sendInvites(color, number) {
+    sendInvites: function sendInvites(color, amount) {
       var _this = this;
 
-      if (this.number === '') {
+      if (this.amount === '') {
         alert('Invitations number to be send is required');
         return;
       }
 
       Nova.request().post('/nova-vendor/enrollment-invites/enrollment-invites', {
         color: color,
-        number: number,
+        amount: amount,
         practice_id: this.card.practice_id,
         is_patient: this.card.is_patient
       }).then(function (response) {
-        _this.number = '';
+        _this.amount = '';
 
         _this.$toasted.success(response.data.message);
       })["catch"](function (error) {
-        _this.number = '';
+        _this.amount = '';
 
         _this.$toasted.error(error.response.data);
       });
@@ -198,9 +198,9 @@ var render = function() {
         _vm._v(" "),
         _c("div", { staticClass: "py-4" }, [
           _c("span", { staticClass: "flex " }, [
-            _c("label", { attrs: { for: "number" } }, [
+            _c("label", { attrs: { for: "amount" } }, [
               _vm._v(
-                "Input number of patient to send enrollment sms/emails to:"
+                "Input amount of patients to send enrollment sms/emails to:"
               )
             ]),
             _vm._v(" "),
@@ -209,19 +209,19 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.number,
-                  expression: "number"
+                  value: _vm.amount,
+                  expression: "amount"
                 }
               ],
               staticStyle: { border: "1px solid #5cc0dd" },
-              attrs: { type: "text", id: "number", name: "number" },
-              domProps: { value: _vm.number },
+              attrs: { type: "text", id: "amount", name: "amount" },
+              domProps: { value: _vm.amount },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.number = $event.target.value
+                  _vm.amount = $event.target.value
                 }
               }
             })
@@ -253,11 +253,11 @@ var render = function() {
                     },
                     on: {
                       click: function($event) {
-                        return _vm.sendInvites("#4baf50", _vm.number)
+                        return _vm.sendInvites("#4baf50", _vm.amount)
                       }
                     }
                   },
-                  [_vm._v("Send SMS/Emails (Green But.)")]
+                  [_vm._v("Send SMS/Emails (Green Btn.)")]
                 ),
                 _vm._v(" "),
                 _c(
@@ -270,11 +270,11 @@ var render = function() {
                     },
                     on: {
                       click: function($event) {
-                        return _vm.sendInvites("#b1284c", _vm.number)
+                        return _vm.sendInvites("#b1284c", _vm.amount)
                       }
                     }
                   },
-                  [_vm._v("Send SMS/Emails (Red But.)")]
+                  [_vm._v("Send SMS/Emails (Red Btn.)")]
                 )
               ])
             : _vm._e(),
@@ -291,7 +291,7 @@ var render = function() {
                     },
                     on: {
                       click: function($event) {
-                        return _vm.sendInvites("#4baf50", _vm.number)
+                        return _vm.sendInvites("#4baf50", _vm.amount)
                       }
                     }
                   },

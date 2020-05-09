@@ -4,11 +4,11 @@
             <h1 class="text-center text-3xl text-80 font-light">Enrollment Invites</h1>
             <div class="py-4">
                     <span class="flex ">
-                       <label for="number">Input number of patients to send enrollment sms/emails to:</label>
+                       <label for="amount">Input amount of patients to send enrollment sms/emails to:</label>
                         <input type="text"
-                               id="number"
-                               name="number"
-                               v-model="number"
+                               id="amount"
+                               name="amount"
+                               v-model="amount"
                                style="border: 1px solid #5cc0dd">
                     </span>
             </div>
@@ -18,15 +18,15 @@
                 </div>
                 <div v-if="! this.card.is_patient" class="button">
                     <a class="btn btn-default btn-primary ml-auto mt-auto"
-                       style="cursor: pointer; background-color: #4baf50" @click="sendInvites('#4baf50', number)">Send SMS/Emails (Green Btn.)</a>
+                       style="cursor: pointer; background-color: #4baf50" @click="sendInvites('#4baf50', amount)">Send SMS/Emails (Green Btn.)</a>
 
                     <a class="btn btn-default btn-primary ml-auto mt-auto"
-                       style="cursor: pointer; background-color: #b1284c" @click="sendInvites('#b1284c', number)">Send SMS/Emails (Red Btn.)</a>
+                       style="cursor: pointer; background-color: #b1284c" @click="sendInvites('#b1284c', amount)">Send SMS/Emails (Red Btn.)</a>
                 </div>
 
                 <div v-if="this.card.is_patient" class="button">
                     <a class="btn btn-default btn-primary ml-auto mt-auto"
-                       style="cursor: pointer; background-color: #4baf50" @click="sendInvites('#4baf50', number)">Send Invite</a>
+                       style="cursor: pointer; background-color: #4baf50" @click="sendInvites('#4baf50', amount)">Send Invite</a>
                 </div>
             </div>
         </div>
@@ -46,28 +46,28 @@ export default {
 
     data() {
         return {
-            number:'',
+            amount:'',
             errors:null,
         };
     },
 
     methods: {
-        sendInvites(color, number){
-            if (this.number === ''){
+        sendInvites(color, amount){
+            if (this.amount === ''){
                 alert('Invitations number to be send is required');
                 return;
             }
 
             Nova.request().post('/nova-vendor/enrollment-invites/enrollment-invites', {
                 color:color,
-                number:number,
+                amount:amount,
                 practice_id:this.card.practice_id,
                 is_patient:this.card.is_patient
             }).then(response => {
-                this.number = '';
+                this.amount = '';
                 this.$toasted.success(response.data.message);
             }).catch(error => {
-                this.number = '';
+                this.amount = '';
                 this.$toasted.error(error.response.data);
 
             });
