@@ -115,7 +115,7 @@ class EnrolleesInvitationPanel extends Resource
     }
 
     /**
-     * Get the fields displayed by the resource.
+     * Get the fields displayed by the resource.y.
      *
      * @return array
      */
@@ -138,15 +138,7 @@ class EnrolleesInvitationPanel extends Resource
             }),
 
             Boolean::make('Has viewed login form', function () use ($lastInvitationLink) {
-                if (is_null($lastInvitationLink)) {
-                    return false;
-                }
-                if ( ! $lastInvitationLink->manually_expired
-                    && is_null(optional($this->selfEnrollmentStatuses)->awv_survey_status)) {
-                    return false;
-                }
-
-                return true;
+                return ! is_null($lastInvitationLink) && $lastInvitationLink->manually_expired;
             }),
 
             Boolean::make('Has viewed Letter', function () use ($enroleeHasNotLoggedIn) {
