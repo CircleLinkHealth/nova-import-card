@@ -20,12 +20,12 @@ class EnrolleeFilters extends QueryFilters
     {
         if (empty($count)) {
             return $this->builder->where(function ($subQuery) {
-                $subQuery->where('attempt_count', '<', 3)
+                $subQuery->where('attempt_count', '<', Enrollee::MAX_CALL_ATTEMPTS)
                     ->orWhere('attempt_count', null);
             });
         }
 
-        return $this->builder->where('attempt_count', 'like', '%'.$count.'%');
+        return $this->builder->where('attempt_count', '=', $count);
     }
 
     public function care_ambassador_name($name)
