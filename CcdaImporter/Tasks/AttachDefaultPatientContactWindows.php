@@ -14,15 +14,15 @@ class AttachDefaultPatientContactWindows extends TakesEnrolleeCcdaImportTask
     protected function import()
     {
         $this->patient->load('patientInfo');
-        
-        if (!$this->patient->timezone) {
+
+        if ( ! $this->patient->timezone) {
             $this->patient->timezone = optional($this->ccda->location)->timezone ?? 'America/New_York';
         }
-        
-        $preferredCallDays = $this->getEnrolleePreferredCallDays();
+
+        $preferredCallDays  = $this->getEnrolleePreferredCallDays();
         $preferredCallTimes = $this->getEnrolleePreferredCallTimes();
-        
-        if (!$preferredCallDays && !$preferredCallTimes) {
+
+        if ( ! $preferredCallDays && ! $preferredCallTimes) {
             PatientContactWindow::sync(
                 $this->patient->patientInfo,
                 [
@@ -33,10 +33,10 @@ class AttachDefaultPatientContactWindows extends TakesEnrolleeCcdaImportTask
                     5,
                 ]
             );
-            
+
             return;
         }
-        
+
         PatientContactWindow::sync(
             $this->patient->patientInfo,
             $preferredCallDays,
@@ -44,22 +44,22 @@ class AttachDefaultPatientContactWindows extends TakesEnrolleeCcdaImportTask
             $preferredCallTimes['end']
         );
     }
-    
+
     private function getEnrolleePreferredCallDays()
     {
-        if (!$this->enrollee) {
+        if ( ! $this->enrollee) {
             return null;
         }
-        
+
         return $this->enrollee->getPreferredCallDays();
     }
-    
+
     private function getEnrolleePreferredCallTimes()
     {
-        if (!$this->enrollee) {
+        if ( ! $this->enrollee) {
             return null;
         }
-        
+
         return $this->enrollee->getPreferredCallTimes();
     }
 }
