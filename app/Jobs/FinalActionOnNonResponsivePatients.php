@@ -71,7 +71,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
         //        Two days after the last reminder - (the "SendEnrollmentNotificationsReminder")
         $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
-        $testingMode   = AppConfig::pull('testing_enroll_sms', false);
+        $testingMode   = AppConfig::pull('testing_enroll_sms', true);
         if ($testingMode) {
             $twoDaysAgo    = Carbon::parse(now())->startOfDay()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfDay()->toDateTimeString();
