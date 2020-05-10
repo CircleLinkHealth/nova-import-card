@@ -55,9 +55,9 @@ class AutoEnrollmentLogin extends Controller
 
     protected function enrollmentAuthForm(EnrollmentLinkValidation $request)
     {
-        $alreadyLoggedIn = auth()->check();
-        $authId          = auth()->id();
-        Log::debug("User is already logged in:$alreadyLoggedIn. User Id: $authId");
+        $alreadyLoggedIn = auth()->check() ? 'yes' : 'no';
+        $authId          = auth()->id() ?? 'null';
+        Log::debug("enrollmentAuthForm - user is already logged in: $alreadyLoggedIn. User Id: $authId");
 
         $loginFormData   = $this->getLoginFormData($request);
         $user            = $loginFormData['user'];
