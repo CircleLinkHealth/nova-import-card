@@ -43,7 +43,7 @@ class SendEnrollableEmail implements ShouldQueue
     private function sendEmail($event)
     {
         foreach ($event->userIds as $userId) {
-            $user = User::where('user_id', $userId)->first();
+            $user = User::find($userId);
             if ( ! $user) {
                 Log::critical("Cannot find user[$userId]. Will not send enrollment email.");
                 continue;
