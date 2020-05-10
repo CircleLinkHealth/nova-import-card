@@ -6,19 +6,20 @@
 
 namespace App\Jobs;
 
+// This file is part of CarePlan Manager by CircleLink Health.
+
 use App\Traits\EnrollableManagement;
 use App\Traits\EnrollmentReminderShared;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class SelfEnrollmentPatientsReminder implements ShouldQueue
+class SelfEnrollmentEnrolleesReminder implements ShouldQueue
 {
     use Dispatchable;
     use EnrollableManagement;
@@ -51,14 +52,14 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
             $practice      = $this->getDemoPractice();
             $twoDaysAgo    = Carbon::parse(now())->startOfDay()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfDay()->toDateTimeString();
-            $this->getUnreachablePatientsToSendReminder($untilEndOfDay, $twoDaysAgo)
+            $this->getEnrolleUsersToSendReminder($untilEndOfDay, $twoDaysAgo)
                 ->where('program_id', $practice->id)
                 ->get()
                 ->each(function (User $enrollable) {
                     SendEnrollmentReminders::dispatch($enrollable);
                 });
         } else {
-            $this->getUnreachablePatientsToSendReminder($untilEndOfDay, $twoDaysAgo)
+            $this->getEnrolleUsersToSendReminder($untilEndOfDay, $twoDaysAgo)
                 ->get()
                 ->each(function (User $enrollable) {
                     SendEnrollmentReminders::dispatch($enrollable);
@@ -66,11 +67,16 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
         }
     }
 
-    private function getUnreachablePatientsToSendReminder($untilEndOfDay, $twoDaysAgo)
+    /**
+     * @param $untilEndOfDay
+     * @param $twoDaysAgo
+     * @return \Illuminate\Database\Eloquent\Builder|User
+     */
+    private function getEnrolleUsersToSendReminder($untilEndOfDay, $twoDaysAgo)
     {
         return $this->sharedReminderQuery($untilEndOfDay, $twoDaysAgo)
             ->whereHas('enrollee', function ($enrollee) {
-                $enrollee->where('source', '=', Enrollee::UNREACHABLE_PATIENT); //  It's NOT Original enrollee.
+                $enrollee->whereNull('source'); // Is not unreachable patient. It is Original enrollee.
             });
     }
 }

@@ -48,11 +48,13 @@ class SendEnrollmentReminders implements ShouldQueue
         $enrollabe = $this->enrollable;
 
         if ($enrollabe->checkForSurveyOnlyRole()) {
-            $enrollabe = Enrollee::findOrFail($this->enrollable->id);
+            $enrollabe = Enrollee::where('user_id', $this->enrollable->id)->first();
         }
 
         if ( ! $enrollabe) {
-            Log::critical("Cannot find user or enrollee[$enrollabe->id]. Will not send enrollment email.");
+            Log::critical("Cannot find user or enrollee[$enrollabe->user_id]. Will not send enrollment email.");
+
+            return; // Confirm Here Please
         }
 
         $hasRequestedInfoOnInvitation = $enrollabe->statusRequestsInfo()->exists();
