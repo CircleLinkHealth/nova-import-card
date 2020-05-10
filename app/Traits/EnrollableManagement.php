@@ -41,11 +41,12 @@ trait EnrollableManagement
     {
         $url = URL::temporarySignedRoute('invitation.enrollment.loginForm', now()->addHours(48), $this->notificationContent['urlData']);
 
-        try {
+        $shortUrl = null;
+        /*try {
             $shortUrl = shortenUrl($url);
         } catch (\Exception $e) {
             \Log::warning($e->getMessage());
-        }
+        }*/
 
         $urlToken = $this->parseUrl($url);
         $this->saveTemporaryInvitationLink($notifiable, $urlToken, $url);
