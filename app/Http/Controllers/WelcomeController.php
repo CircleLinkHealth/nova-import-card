@@ -59,6 +59,12 @@ class WelcomeController extends Controller
             throw new \Exception("Log in for User with id {$user->id} failed. User has no assigned Roles.");
         }
 
+        if ($user->hasRole('survey-only')) {
+            auth()->logout();
+
+            return redirect()->route('login');
+        }
+
         if ($user->isCareCoach()) {
             return redirect()->route('patientCallList.index');
         }
