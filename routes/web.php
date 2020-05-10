@@ -13,9 +13,10 @@ Route::post('/logout', 'Auth\LoginController@logout')
     ->name('logout')
     ->middleware('auth');
 
-Route::post('/logout-enrollee', 'Auth\LoginController@logoutEnrollee')
-    ->name('logout.enrollee')
-    ->middleware('auth');
+Route::get('logout-successful/{practiceId}', [
+    'uses' => 'EnrolleeSurveyController@showLogoutSuccessful',
+    'as'   => 'enrollee.show.logout.success',
+]);
 
 Route::group([
     'prefix' => 'auth',
@@ -205,5 +206,6 @@ Route::group([
         ]);
     });
 });
+
 Route::post('twilio/sms/status', 'TwilioController@smsStatusCallback')
     ->name('twilio.sms.status');

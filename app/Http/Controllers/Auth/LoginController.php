@@ -8,7 +8,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\User;
-use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -37,7 +36,7 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except(['logout', 'logoutEnrollee']);
+        $this->middleware('guest')->except('logout');
     }
 
     /**
@@ -48,8 +47,18 @@ class LoginController extends Controller
      */
     public function logout(Request $request)
     {
-        $this->logoutUser($request);
+        $this->guard()->logout();
 
+        $request->session()->invalidate();
+
+        //this will redirect to url
+        $redirectImmediate = $request->input('redirectImmediate', null);
+        if ($redirectImmediate) {
+            return $this->loggedOut($request)
+                ?: redirect('/'.$redirectImmediate);
+        }
+
+        //this will pass redirect as query param
         $redirect = $request->input('redirectTo', null);
         $query    = '';
         if ($redirect) {
@@ -58,33 +67,6 @@ class LoginController extends Controller
 
         return $this->loggedOut($request)
             ?: redirect('/'.$query);
-    }
-
-    public function logoutEnrollee(Request $request)
-    {
-        Log::debug('logoutEnrollee');
-
-        /** @var User $user */
-        $user         = auth()->user();
-        $practiceId   = null;
-        $practiceName = null;
-        if ( ! empty($user->primaryPractice)) {
-            $practiceId   = $user->primaryPractice->id;
-            $practiceName = $user->primaryPractice->display_name;
-        }
-
-        //default - should not be here
-        $practiceLogoSrc = 'https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png';
-        if ($practiceId) {
-            $practiceLetter = EnrollmentInvitationLetter::wherePracticeId($practiceId)->first();
-            if ($practiceLetter && ! empty($practiceLetter->practice_logo_src)) {
-                $practiceLogoSrc = $practiceLetter->practice_logo_src;
-            }
-        }
-
-        $this->logoutUser($request);
-
-        return view('auth.logoutEnrollee', compact('practiceName', 'practiceLogoSrc'));
     }
 
     protected function redirectTo()
@@ -118,12 +100,5 @@ class LoginController extends Controller
         Log::debug("Route => $route");
 
         return $route;
-    }
-
-    private function logoutUser(Request $request)
-    {
-        $this->guard()->logout();
-
-        $request->session()->invalidate();
     }
 }

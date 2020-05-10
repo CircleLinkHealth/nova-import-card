@@ -12,6 +12,8 @@ use App\Services\SurveyInvitationLinksService;
 use App\Services\SurveyService;
 use App\Survey;
 use App\User;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -87,6 +89,21 @@ class EnrolleeSurveyController extends Controller
         return view('survey.Enrollees.index', [
             'data' => $surveyData->toArray(),
         ]);
+    }
+
+    public function showLogoutSuccessful($practiceId)
+    {
+        $practice     = Practice::findOrFail($practiceId);
+        $practiceName = $practice->display_name;
+
+        //default - should not be here
+        $practiceLogoSrc = 'https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png';
+        $practiceLetter  = EnrollmentInvitationLetter::wherePracticeId($practiceId)->first();
+        if ($practiceLetter && ! empty($practiceLetter->practice_logo_src)) {
+            $practiceLogoSrc = $practiceLetter->practice_logo_src;
+        }
+
+        return view('auth.logoutEnrollee', compact('practiceName', 'practiceLogoSrc'));
     }
 
     public function storeAnswer(StoreAnswer $request)

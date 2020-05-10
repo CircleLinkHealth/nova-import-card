@@ -411,7 +411,7 @@
         </div>
         <form id="logout-form" action="/logout" method="POST" style="display: none;">
         </form>
-        <form id="logout-enrollee-form" action="/logout-enrollee" method="POST" style="display: none;">
+        <form id="logout-enrollee-form" :action="getEnrolleeLogoutUrl()" method="POST" style="display: none;">
         </form>
     </div>
 </template>
@@ -568,6 +568,10 @@
         },
 
         methods: {
+
+            getEnrolleeLogoutUrl() {
+                return '/logout?redirectImmediate=logout-successful/' + this.practiceId;
+            },
 
             formatNumber(number) {
                 if (!number || number.length === 0) {
