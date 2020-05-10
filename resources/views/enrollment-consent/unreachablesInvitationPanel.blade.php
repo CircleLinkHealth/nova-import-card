@@ -64,11 +64,21 @@
                       For this to work,<br> you should just invite test patients and take no action after.
                   </li>
               </ul>
-              <a href="{{route('send.reminder.qa')}}" target="_blank">
-                  <button type="button" class="btn btn-warning">
-                      Fast Forward 2 days and send reminders
-                  </button>
-              </a>
+            <div>
+                <a href="{{route('send.reminder.enrollee.qa')}}" target="_blank">
+                    <button type="button" class="btn btn-warning">
+                        Fast Forward 2 days and send reminders to Enrollees
+                    </button>
+                </a>
+            </div>
+<br>
+             <div>
+                 <a href="{{route('send.reminder.patient.qa')}}" target="_blank">
+                     <button type="button" class="btn btn-warning">
+                         Fast Forward 2 days and send reminders to Patients
+                     </button>
+                 </a>
+             </div>
           </div>
 
           <br>
@@ -105,12 +115,12 @@
                 </form>
             </div>
 
-{{--            <div class="request-info-href">--}}
-{{--                <a href="{{route('reset.test.qa')}}">--}}
-{{--                    <button type="button" class="btn btn-warning">Reset Test--}}
-{{--                    </button>--}}
-{{--                </a>--}}
-{{--            </div>--}}
+            <div class="request-info-href">
+                <a href="{{route('reset.test.qa')}}">
+                    <button type="button" class="btn btn-warning">Reset Test
+                    </button>
+                </a>
+            </div>
         </div>
     </div>
 

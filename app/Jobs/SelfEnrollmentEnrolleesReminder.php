@@ -14,13 +14,14 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class SelfEnrollmentPatientsReminder implements ShouldQueue
+class SelfEnrollmentEnrolleesReminder implements ShouldQueue
 {
     use Dispatchable;
     use EnrollableManagement;
@@ -52,14 +53,14 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
             $practice      = $this->getDemoPractice();
             $twoDaysAgo    = Carbon::parse(now())->startOfDay()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfDay()->toDateTimeString();
-            $this->getUsersToSendReminder($untilEndOfDay, $twoDaysAgo)
+            $this->getEnrolleUsersToSendReminder($untilEndOfDay, $twoDaysAgo)
                 ->where('program_id', $practice->id)
                 ->get()
                 ->each(function (User $enrollable) {
                     SendEnrollmentReminders::dispatch($enrollable);
                 });
         } else {
-            $this->getUsersToSendReminder($untilEndOfDay, $twoDaysAgo)
+            $this->getEnrolleUsersToSendReminder($untilEndOfDay, $twoDaysAgo)
                 ->get()
                 ->each(function (User $enrollable) {
                     SendEnrollmentReminders::dispatch($enrollable);
@@ -72,7 +73,7 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
      * @param $twoDaysAgo
      * @return \Illuminate\Database\Eloquent\Builder|User
      */
-    private function getUsersToSendReminder($untilEndOfDay, $twoDaysAgo)
+    private function getEnrolleUsersToSendReminder($untilEndOfDay, $twoDaysAgo)
     {
         return User::whereHas('notifications', function ($notification) use ($untilEndOfDay, $twoDaysAgo) {
             $notification
@@ -88,6 +89,8 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
                     ['date_unreachable', '>=', $twoDaysAgo],
                     ['date_unreachable', '<=', $untilEndOfDay],
                 ]);
+            })->whereHas('enrollee', function ($enrollee) {
+                $enrollee->whereNull('source'); // NOt unreachable patient. Original enrollee
             });
     }
 }

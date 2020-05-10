@@ -61,29 +61,22 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             $enrolleeForTesting->first()->update([
                 'status' => Enrollee::QUEUE_AUTO_ENROLLMENT,
             ]);
-            $this->updateEnrolleeSurveyStatuses($enrolleeForTesting->first()->id);
+//            $this->updateEnrolleeSurveyStatuses($enrolleeForTesting->first()->id);
             ++$n;
         }
 
-//        $n     = 1;
-//        $limit = 5;
-//        while ($n <= $limit) {
-//            $user = $this->createUser($practice->id, 'participant', self::CCM_STATUS_UNREACHABLE);
-//            $user->phoneNumbers()->update(['number' => $phoneTester]);
-//            $user->update(['email' => $emailTester]);
-//            $user->patientInfo()->update([
-//                'birth_date'       => \Carbon\Carbon::parse('1901-01-01'),
-//                'date_unreachable' => now(),
-//            ]);
-//
-//            $enrollee = $this->getEnrollee($user->id);
-//            $enrollee->update(
-//                [
-//                    'status' => Enrollee::QUEUE_AUTO_ENROLLMENT,
-//                ]
-//            );
-//
-//            ++$n;
-//        }
+        $n     = 1;
+        $limit = 5;
+        while ($n <= $limit) {
+            $user = $this->createUser($practice->id, 'participant', self::CCM_STATUS_UNREACHABLE);
+            $user->phoneNumbers()->update(['number' => $phoneTester]);
+            $user->update(['email' => $emailTester]);
+            $user->patientInfo()->update([
+                'birth_date'       => \Carbon\Carbon::parse('1901-01-01'),
+                'date_unreachable' => now(),
+            ]);
+            ++$n;
+//            There is PatientObesrver
+        }
     }
 }

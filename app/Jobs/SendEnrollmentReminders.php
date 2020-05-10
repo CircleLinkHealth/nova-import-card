@@ -48,7 +48,7 @@ class SendEnrollmentReminders implements ShouldQueue
         $enrollabe = $this->enrollable;
 
         if ($enrollabe->checkForSurveyOnlyRole()) {
-            $enrollabe = Enrollee::where('user_id', $this->enrollable->user_id)->first();
+            $enrollabe = Enrollee::where('user_id', $this->enrollable->id)->first();
         }
 
         if ( ! $enrollabe) {

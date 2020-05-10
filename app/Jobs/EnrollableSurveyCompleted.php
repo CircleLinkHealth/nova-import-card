@@ -19,6 +19,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class EnrollableSurveyCompleted implements ShouldQueue
 {
@@ -174,10 +175,13 @@ class EnrollableSurveyCompleted implements ShouldQueue
         $addressData      = $this->getAddressData($surveyAnswers['address']);
 
         if ($isSurveyOnly) {
-            $enrollee = Enrollee::whereUserId($user->id)->firstOrFail();
+            $enrollee = Enrollee::whereUserId($user->id)->first();
+            if ( ! $enrollee) {
+                Log::critical("Enrolle with user_id[$user->id] not found");
+                return;
+            }
 
             $this->updateEnrolleeSurveyStatuses($enrollee->id, $user->id, self::SURVEY_COMPLETED);
-
             $enrollee->update([
                 'primary_phone'             => $surveyAnswers['preferred_number'],
                 'preferred_days'            => $this->getPreferredDaysToString($surveyAnswers['preferred_days']),

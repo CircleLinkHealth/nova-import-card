@@ -10,7 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\EnrollableSurveyCompleted;
 use App\Jobs\FinalActionOnNonResponsivePatients;
 use App\Jobs\SelfEnrollmentEnrollees;
-use App\Jobs\SelfEnrollmentPatientsReminder;
+use App\Jobs\SelfEnrollmentEnrolleesReminder;
 use App\Jobs\SelfEnrollmentUnreachablePatients;
 use App\LoginLogout;
 use App\Notifications\SendEnrollmentEmail;
@@ -156,10 +156,10 @@ class AutoEnrollmentTestDashboard extends Controller
     /**
      * @return string
      */
-    public function sendEnrollmentReminderTestMethod()
+    public function sendEnrolleesReminderTestMethod()
     {
         try {
-            SelfEnrollmentPatientsReminder::dispatch();
+            SelfEnrollmentEnrolleesReminder::dispatch();
         } catch (\Exception $e) {
             return 'Something went wrong';
         }
@@ -206,6 +206,17 @@ class AutoEnrollmentTestDashboard extends Controller
         });
 
         return view('enrollment-consent.unreachablesInvitationPanel', compact('invitedPatientsUrls', 'invitationData'));
+    }
+
+    public function sendPatientsReminderTestMethod()
+    {
+//        try {
+//            SelfEnrollmentEnrolleesReminder::dispatch();
+//        } catch (\Exception $e) {
+//            return 'Something went wrong';
+//        }
+//
+//        return 'Please check your email';
     }
 
     /**
