@@ -37,7 +37,7 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except('logout');
+        $this->middleware('guest')->except(['logout', 'logoutEnrollee']);
     }
 
     /**
@@ -62,6 +62,8 @@ class LoginController extends Controller
 
     public function logoutEnrollee(Request $request)
     {
+        Log::debug('logoutEnrollee');
+
         /** @var User $user */
         $user         = auth()->user();
         $practiceId   = null;
