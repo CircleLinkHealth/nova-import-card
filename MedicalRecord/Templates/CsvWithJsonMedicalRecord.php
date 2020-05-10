@@ -445,7 +445,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 
     public function getProviderName(): string
     {
-        return $this->data['referring_provider_name'];
+        return $this->data['referring_provider_name'] ?? $this->data['preferred_provider'] ?? $this->data['provider'] ?? $this->data['provider_name'];
     }
 
     public function getType(): string
