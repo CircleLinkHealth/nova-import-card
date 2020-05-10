@@ -32,6 +32,7 @@ use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Customer\Traits\TimezoneTrait;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\NurseInvoices\Entities\Dispute;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
@@ -294,6 +295,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null       $statusRequestsInfo
  * @property \App\LoginLogout[]|\Illuminate\Database\Eloquent\Collection                       $loginEvents
  * @property int|null                                                                          $login_events_count
+ * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null                              $enrollee
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -1029,6 +1031,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function emailSettings()
     {
         return $this->hasOne(EmailSettings::class);
+    }
+
+    public function enrollee()
+    {
+        return $this->hasOne(Enrollee::class, 'user_id');
     }
 
     public function firstOrNewProviderInfo()
