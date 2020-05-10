@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class SendEnrollmentReminders implements ShouldQueue
 {
@@ -44,10 +45,17 @@ class SendEnrollmentReminders implements ShouldQueue
      */
     public function handle()
     {
-        $isSurveyOnly                 = $this->enrollable->checkForSurveyOnlyRole();
-        $hasRequestedInfoOnInvitation = $isSurveyOnly
-            ? Enrollee::where('user_id', $this->enrollable->id)->firstOrFail()->statusRequestsInfo()->exists()
-            : $this->enrollable->statusRequestsInfo()->exists();
+        $enrollabe = $this->enrollable;
+
+        if ($enrollabe->checkForSurveyOnlyRole()) {
+            $enrollabe = Enrollee::findOrFail($this->enrollable->id);
+        }
+
+        if ( ! $enrollabe) {
+            Log::critical("Cannot find user or enrollee[$enrollabe->id]. Will not send enrollment email.");
+        }
+
+        $hasRequestedInfoOnInvitation = $enrollabe->statusRequestsInfo()->exists();
 
         if ( ! $hasRequestedInfoOnInvitation
             || ! $this->hasSurveyCompleted($this->enrollable)) {

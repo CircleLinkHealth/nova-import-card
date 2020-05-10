@@ -127,9 +127,7 @@ trait EnrollableNotificationContent
         $notifiable->loadMissing([
             'billingProvider',
             'patientInfo',
-            'primaryPractice' => function ($q) {
-                return $q->select('display_name');
-            },
+            'primaryPractice',
         ]);
 
         $provider                       = $notifiable->billingProviderUser();
@@ -159,10 +157,9 @@ trait EnrollableNotificationContent
         return [
             'providerLastName' => $providerLastName,
             'nurseFirstName'   => $nurseFirstName,
-            //@todo: This is always "". $notifiable has "program_id" and it should work
-            'practiceName' => $notifiable->getPrimaryPracticeName(),
-            'line2'        => $line2,
-            'isSurveyOnly' => false,
+            'practiceName'     => $notifiable->getPrimaryPracticeName(),
+            'line2'            => $line2,
+            'isSurveyOnly'     => false,
         ];
     }
 }

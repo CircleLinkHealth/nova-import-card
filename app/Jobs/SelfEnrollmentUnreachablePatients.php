@@ -47,7 +47,7 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
      */
     public function handle()
     {
-        $enrollableUnreachablePatient = array_slice($this->getUnreachablePatients($this->practiceId), 0, $this->amount);
+        $enrollableUnreachablePatient = $this->getUnreachablePatients($this->practiceId, $this->amount);
         if ( ! empty($enrollableUnreachablePatient)) {
             event(new AutoEnrollableCollected($enrollableUnreachablePatient));
         }
@@ -60,10 +60,9 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
      * @param $amount
      * @return array
      */
-    private function getUnreachablePatients($practiceId)
+    private function getUnreachablePatients($practiceId, $amount)
     {
-        $userIds = [];
-        Enrollee::whereNotNull('user_id')
+        return Enrollee::whereNotNull('user_id')
             ->where('source', '=', Enrollee::UNREACHABLE_PATIENT)
             ->where('practice_id', $practiceId)
             ->whereDoesntHave('enrollmentInvitationLink')
@@ -72,10 +71,10 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
             ])
             ->orderBy('id', 'asc')
             ->select('user_id')
-            ->each(function ($unreachable) use (&$userIds) {
-                $userIds[] = $unreachable->user_id;
-            });
-
-        return $userIds;
+            ->take($amount)
+            ->get()
+            ->map(function ($unreachable) {
+                return $unreachable->user_id;
+            })->toArray();
     }
 }

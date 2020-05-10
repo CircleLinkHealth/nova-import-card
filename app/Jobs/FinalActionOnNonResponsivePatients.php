@@ -11,6 +11,7 @@ use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
 use App\Traits\UnreachablePatientsToCaPanel;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -70,9 +71,8 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
         //        Two days after the last reminder - (the "SendEnrollmentNotificationsReminder")
         $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
-        // no need to check if they went through this again
-//        @todo:Change me after qa
-        if ( ! App::environment(['testing'])) {
+        $testingMode   = AppConfig::pull('testing_enroll_sms', false);
+        if ($testingMode) {
             $twoDaysAgo    = Carbon::parse(now())->startOfDay()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfDay()->toDateTimeString();
             $practice      = $this->getDemoPractice();
