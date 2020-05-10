@@ -13,11 +13,6 @@ Route::post('/logout', 'Auth\LoginController@logout')
     ->name('logout')
     ->middleware('auth');
 
-Route::get('logout-successful/{practiceId}', [
-    'uses' => 'EnrolleeSurveyController@showLogoutSuccessful',
-    'as'   => 'enrollee.show.logout.success',
-]);
-
 Route::group([
     'prefix' => 'auth',
 ], function () {
@@ -121,6 +116,11 @@ Route::group([
         Route::post('{patientId}/save-answer', [
             'uses' => 'EnrolleeSurveyController@storeAnswer',
             'as'   => 'survey.enrollees.store.answer',
+        ]);
+
+        Route::get('logout-successful', [
+            'uses' => 'EnrolleeSurveyController@showLogoutSuccessful',
+            'as'   => 'enrollee.show.logout.success',
         ]);
     });
 

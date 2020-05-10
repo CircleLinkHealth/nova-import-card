@@ -12,7 +12,6 @@ use App\Services\SurveyInvitationLinksService;
 use App\Services\SurveyService;
 use App\Survey;
 use App\User;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -91,17 +90,25 @@ class EnrolleeSurveyController extends Controller
         ]);
     }
 
-    public function showLogoutSuccessful($practiceId)
+    public function showLogoutSuccessful()
     {
-        $practice     = Practice::findOrFail($practiceId);
-        $practiceName = $practice->display_name;
+        /** @var User $user */
+        $user = auth()->user();
 
         //default - should not be here
         $practiceLogoSrc = 'https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png';
-        $practiceLetter  = EnrollmentInvitationLetter::wherePracticeId($practiceId)->first();
-        if ($practiceLetter && ! empty($practiceLetter->practice_logo_src)) {
-            $practiceLogoSrc = $practiceLetter->practice_logo_src;
+        $practiceName    = '';
+
+        $practiceId = $user->program_id;
+        if ($practiceId) {
+            $practiceName   = $user->primaryPractice->display_name;
+            $practiceLetter = EnrollmentInvitationLetter::wherePracticeId($practiceId)->first();
+            if ($practiceLetter && ! empty($practiceLetter->practice_logo_src)) {
+                $practiceLogoSrc = $practiceLetter->practice_logo_src;
+            }
         }
+
+        Auth::logout();
 
         return view('auth.logoutEnrollee', compact('practiceName', 'practiceLogoSrc'));
     }

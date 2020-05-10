@@ -51,13 +51,6 @@ class LoginController extends Controller
 
         $request->session()->invalidate();
 
-        //this will redirect to url
-        $redirectImmediate = $request->input('redirectImmediate', null);
-        if ($redirectImmediate) {
-            return $this->loggedOut($request)
-                ?: redirect('/'.$redirectImmediate);
-        }
-
         //this will pass redirect as query param
         $redirect = $request->input('redirectTo', null);
         $query    = '';
