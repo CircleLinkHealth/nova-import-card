@@ -3,13 +3,15 @@
         <div class="px-3 py-3">
             <h1 class="text-center text-3xl text-80 font-light">Enrollment Invites</h1>
             <div class="py-4">
-                    <span class="flex ">
-                       <label for="amount">Input number of patients to send enrollment sms/emails to:</label>
-                        <input type="text"
+                    <span class="flex" style="max-width: 70%;">
+                       <label for="amount">
+                           Input number of patients to send enrollment sms/emails to:
+                       </label>
+                        <input type="number"
                                id="amount"
                                name="amount"
                                v-model="amount"
-                               style="border: 1px solid #5cc0dd">
+                               style="border: 1px solid #5cc0dd; max-width: 100px;" required>
                     </span>
             </div>
             <div class="flex">
@@ -34,6 +36,7 @@
 </template>
 
 <script>
+    import loader from "../../../../../resources/assets/js/components/loader";
 export default {
     props: [
         'card',
