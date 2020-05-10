@@ -64,7 +64,7 @@
                     <div v-else-if="isEnrollees"
                          class="survey-sub-welcome-text"
                          style="text-align: center;">
-                        Dear {{this.surveyData.last_name}},<br>
+                        Dear {{this.surveyData.first_name}},<br>
                         Almost done! Just confirm/edit some information to make sure <br>
                         we call the right number at the right time.
                     </div>
