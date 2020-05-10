@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Providers;
+namespace App\Listeners;
 
 use App\Notifications\SendEnrollementSms;
 use CircleLinkHealth\Customer\Entities\User;

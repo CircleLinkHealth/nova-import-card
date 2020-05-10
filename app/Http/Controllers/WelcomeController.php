@@ -67,6 +67,12 @@ class WelcomeController extends Controller
             return redirect()->route('patient-user.careplan');
         }
 
+        if ($user->hasRole('survey-only')) {
+            auth()->logout();
+
+            return redirect()->route('login');
+        }
+
         if ($user->isAdmin()) {
             return \App::call('App\Http\Controllers\Admin\DashboardController@index');
         }

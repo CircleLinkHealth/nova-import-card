@@ -18,6 +18,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class AutoEnrollmentLogin extends Controller
 {
@@ -55,11 +56,11 @@ class AutoEnrollmentLogin extends Controller
 
     protected function enrollmentAuthForm(EnrollmentLinkValidation $request)
     {
+        $isFromBitly     = Str::contains($request->headers->get('user-agent', ''), 'bitly');
         $alreadyLoggedIn = auth()->check() ? 'yes' : 'no';
         $authId          = auth()->id() ?? 'null';
-        $referrer        = $_SERVER['REQUEST_URI'];
         $headers         = json_encode($request->headers->all());
-        Log::debug("enrollmentAuthForm - User is already logged in: $alreadyLoggedIn.\nUser Id: $authId.\nReferrer: $referrer.\nHeaders: $headers");
+        Log::debug("enrollmentAuthForm - User is already logged in: $alreadyLoggedIn.\nUser Id: $authId.\nHeaders: $headers");
 
         $loginFormData   = $this->getLoginFormData($request);
         $user            = $loginFormData['user'];
@@ -69,15 +70,17 @@ class AutoEnrollmentLogin extends Controller
         $userId          = intval($request->input('enrollable_id'));
         $isSurveyOnly    = $request->input('is_survey_only');
 
-        if ($isSurveyOnly) {
-            $enrollee = $this->getEnrollee($userId);
-            if ( ! $enrollee) {
-                Log::warning("Enrollee for user with id $userId not found");
-                throw new \Exception('User does not exist', 404);
+        if ( ! $isFromBitly) {
+            if ($isSurveyOnly) {
+                $enrollee = $this->getEnrollee($userId);
+                if ( ! $enrollee) {
+                    Log::warning("Enrollee for user with id $userId not found");
+                    throw new \Exception('User does not exist', 404);
+                }
+                $this->expirePastInvitationLink($enrollee);
+            } else {
+                $this->expirePastInvitationLink($user);
             }
-            $this->expirePastInvitationLink($enrollee);
-        } else {
-            $this->expirePastInvitationLink($user);
         }
 
         return view(
