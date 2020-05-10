@@ -57,7 +57,9 @@ class AutoEnrollmentLogin extends Controller
     {
         $alreadyLoggedIn = auth()->check() ? 'yes' : 'no';
         $authId          = auth()->id() ?? 'null';
-        Log::debug("enrollmentAuthForm - user is already logged in: $alreadyLoggedIn. User Id: $authId");
+        $referrer        = $_SERVER['HTTP_REFERER'];
+        $headers         = json_encode($request->headers->all());
+        Log::debug("enrollmentAuthForm - User is already logged in: $alreadyLoggedIn.\nUser Id: $authId.\nReferrer: $referrer.\nHeaders: $headers");
 
         $loginFormData   = $this->getLoginFormData($request);
         $user            = $loginFormData['user'];
