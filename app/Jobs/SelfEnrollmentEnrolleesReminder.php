@@ -76,7 +76,7 @@ class SelfEnrollmentEnrolleesReminder implements ShouldQueue
     {
         return $this->sharedReminderQuery($untilEndOfDay, $twoDaysAgo)
             ->whereHas('enrollee', function ($enrollee) {
-                $enrollee->whereNull('source'); // NOt unreachable patient. Original enrollee
+                $enrollee->whereNull('source'); // Is not unreachable patient. It is Original enrollee.
             });
     }
 }

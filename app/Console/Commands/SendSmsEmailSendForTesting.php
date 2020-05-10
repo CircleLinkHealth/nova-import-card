@@ -49,9 +49,9 @@ class SendSmsEmailSendForTesting extends Command
             intval(8)
         );
 
-        SelfEnrollmentUnreachablePatients::dispatch(
-            intval(2),
-            intval(8)
-        );
+//        SelfEnrollmentUnreachablePatients::dispatch(
+//            intval(2),
+//            intval(8)
+//        );
     }
 }

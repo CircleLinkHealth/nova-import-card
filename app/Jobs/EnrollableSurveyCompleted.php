@@ -222,15 +222,16 @@ class EnrollableSurveyCompleted implements ShouldQueue
         return info("$patientType patient $id has been enrolled");
     }
 
-    /**
-     * @param $enrollee
-     *
-     * @throws \Exception
-     */
-    public function importEnrolleeSurveyOnly($enrollee, User $user)
+    public function importEnrolleeSurveyOnly(Enrollee $enrollee, User $user)
     {
+        $userId     = $user->id;
+        $enrolleeId = $enrollee->id;
+
         User::whereId($user->id)->forceDelete();
-        ImportConsentedEnrollees::dispatch([$enrollee->id]);
+        ImportConsentedEnrollees::dispatch([$enrollee->id])
+            ->chain([
+                new KeepOriginalUserId($userId, $enrolleeId),
+            ]);
     }
 
     public function reEnrollUnreachablePatient(User $user)

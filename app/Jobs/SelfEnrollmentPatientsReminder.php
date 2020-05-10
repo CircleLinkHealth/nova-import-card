@@ -6,7 +6,12 @@
 
 namespace App\Jobs;
 
+use App\Traits\EnrollableManagement;
 use App\Traits\EnrollmentReminderShared;
+use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,6 +21,7 @@ use Illuminate\Queue\SerializesModels;
 class SelfEnrollmentPatientsReminder implements ShouldQueue
 {
     use Dispatchable;
+    use EnrollableManagement;
     use EnrollmentReminderShared;
     use InteractsWithQueue;
     use Queueable;
@@ -37,5 +43,34 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
      */
     public function handle()
     {
+        $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
+        $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
+        $testingMode   = AppConfig::pull('testing_enroll_sms', true);
+
+        if ($testingMode) {
+            $practice      = $this->getDemoPractice();
+            $twoDaysAgo    = Carbon::parse(now())->startOfDay()->toDateTimeString();
+            $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfDay()->toDateTimeString();
+            $this->getUnreachablePatientsToSendReminder($untilEndOfDay, $twoDaysAgo)
+                ->where('program_id', $practice->id)
+                ->get()
+                ->each(function (User $enrollable) {
+                    SendEnrollmentReminders::dispatch($enrollable);
+                });
+        } else {
+            $this->getUnreachablePatientsToSendReminder($untilEndOfDay, $twoDaysAgo)
+                ->get()
+                ->each(function (User $enrollable) {
+                    SendEnrollmentReminders::dispatch($enrollable);
+                });
+        }
+    }
+
+    private function getUnreachablePatientsToSendReminder($untilEndOfDay, $twoDaysAgo)
+    {
+        return $this->sharedReminderQuery($untilEndOfDay, $twoDaysAgo)
+            ->whereHas('enrollee', function ($enrollee) {
+                $enrollee->where('source', '=', Enrollee::UNREACHABLE_PATIENT); //  It's NOT Original enrollee.
+            });
     }
 }
