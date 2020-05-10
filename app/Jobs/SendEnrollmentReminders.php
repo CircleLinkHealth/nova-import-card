@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class SendEnrollmentReminders implements ShouldQueue
 {
@@ -44,18 +45,21 @@ class SendEnrollmentReminders implements ShouldQueue
      */
     public function handle()
     {
-        $isSurveyOnly = $this->enrollable->checkForSurveyOnlyRole();
-//                Currently only Enrollees can request Info but ... covers both.
-        $hasRequestedInfoOnInvitation = $isSurveyOnly
-            ? Enrollee::whereUserId($this->enrollable->id)->first()->statusRequestsInfo()->exists()
-            : $this->enrollable->statusRequestsInfo()->exists();
-        //@todo: Move this in SelfEnrollmentPatientsReminder on "getUsersToSendReminder()".
-        $enrollableHasBeenReminded = $this->enrollablePastReminderExists();
+        $enrollabe = $this->enrollable;
 
-        if ( ! $enrollableHasBeenReminded
-            && ( ! $hasRequestedInfoOnInvitation
-            || ! $this->hasSurveyCompleted($this->enrollable))) {
-            event(new AutoEnrollableCollected($this->enrollable, true));
+        if ($enrollabe->checkForSurveyOnlyRole()) {
+            $enrollabe = Enrollee::findOrFail($this->enrollable->id);
+        }
+
+        if ( ! $enrollabe) {
+            Log::critical("Cannot find user or enrollee[$enrollabe->id]. Will not send enrollment email.");
+        }
+
+        $hasRequestedInfoOnInvitation = $enrollabe->statusRequestsInfo()->exists();
+
+        if ( ! $hasRequestedInfoOnInvitation
+            || ! $this->hasSurveyCompleted($this->enrollable)) {
+            event(new AutoEnrollableCollected([$this->enrollable->id], true));
         }
     }
 

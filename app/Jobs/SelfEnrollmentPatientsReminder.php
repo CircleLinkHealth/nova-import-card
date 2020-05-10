@@ -11,13 +11,14 @@ namespace App\Jobs;
 use App\Notifications\SendEnrollmentEmail;
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\App;
 
 class SelfEnrollmentPatientsReminder implements ShouldQueue
 {
@@ -45,9 +46,9 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
     {
         $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
-        $testingEnv    = App::environment(['testing']);
+        $testingMode   = AppConfig::pull('testing_enroll_sms', true);
 
-        if ($testingEnv) {
+        if ($testingMode) {
             $practice      = $this->getDemoPractice();
             $twoDaysAgo    = Carbon::parse(now())->startOfDay()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfDay()->toDateTimeString();
@@ -66,17 +67,24 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
         }
     }
 
+    /**
+     * @param $untilEndOfDay
+     * @param $twoDaysAgo
+     * @return \Illuminate\Database\Eloquent\Builder|User
+     */
     private function getUsersToSendReminder($untilEndOfDay, $twoDaysAgo)
     {
-        return  User::whereHas('notifications', function ($notification) use ($untilEndOfDay, $twoDaysAgo) {
-            $notification->where([
-                ['created_at', '>=', $twoDaysAgo],
-                ['created_at', '<=', $untilEndOfDay],
-            ])->where('type', SendEnrollmentEmail::class);
+        return User::whereHas('notifications', function ($notification) use ($untilEndOfDay, $twoDaysAgo) {
+            $notification
+                ->where('data->is_reminder', false)
+                ->where([
+                    ['created_at', '>=', $twoDaysAgo],
+                    ['created_at', '<=', $untilEndOfDay],
+                ])->where('type', SendEnrollmentEmail::class);
         })
 //            If still unreachable means user did not choose to "Enroll Now" in invitation mail.
             ->whereHas('patientInfo', function ($patient) use ($twoDaysAgo, $untilEndOfDay) {
-                $patient->where('ccm_status', 'unreachable')->where([
+                $patient->where('ccm_status', Patient::UNREACHABLE)->where([
                     ['date_unreachable', '>=', $twoDaysAgo],
                     ['date_unreachable', '<=', $untilEndOfDay],
                 ]);

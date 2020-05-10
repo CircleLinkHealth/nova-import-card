@@ -299,10 +299,8 @@ class AutoEnrollmentCenterController extends Controller
         /** @var User $userModelEnrollee */
 //        Note: this can be either Unreachable patient Or User created from enrollee
         $userCreatedFromEnrollee = $this->getUserModelEnrollee($enrollableId);
-        //        If user is deleted and enrollee is null
-        //         Then Enrollable has been enrolled and his temporary user is deleted.
-        //        Enrollee user_id is detached when user model is deleted.
-        //        @todo: Not great/clear solution. Come back to this
+        // If enrollee get enrolled, then its user model is also deleted
+        // We can assume is enrollee for now,  since is the only model that can request info.
         if (is_null($enrollee) && is_null($userCreatedFromEnrollee)) {
             $enrollee = $this->getEnrolleeFromNotification($enrollableId);
         }
@@ -314,9 +312,7 @@ class AutoEnrollmentCenterController extends Controller
             return view('enrollment-consent.enrolledMessagePage', compact('practiceNumber', 'doctorName'));
         }
 
-        $linkIsManuallyExpired = $enrollee->getLastEnrollmentInvitationLink()->manually_expired;
-
-        if ($linkIsManuallyExpired && $enrollee->statusRequestsInfo()->exists()) {
+        if ($enrollee->statusRequestsInfo()->exists()) {
             return $this->returnEnrolleeRequestedInfoMessage($enrollee);
         }
 

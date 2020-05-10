@@ -160,12 +160,7 @@ class EnrolleesInvitationPanel extends Resource
                 $survey = $this->getEnrolleeSurvey();
 
                 if (empty($survey)) {
-                    return response()->json(
-                        [
-                            'Enrollee Survey not found',
-                        ],
-                        404
-                    );
+                    return false;
                 }
                 $surveyInstance = $this->getSurveyInstance($survey);
 

@@ -7,9 +7,11 @@
 namespace App\Providers;
 
 use App\Notifications\SendEnrollementSms;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 
 class SendEnrollableSms implements ShouldQueue
 {
@@ -42,6 +44,14 @@ class SendEnrollableSms implements ShouldQueue
             return;
         }
 
-        $event->user->notify(new SendEnrollementSms((bool) $event->isReminder));
+        foreach ($event->userIds as $userId) {
+            $user = User::find($userId);
+            if ( ! $user) {
+                Log::critical("Cannot find user[$userId]. Will not send enrollment sms.");
+                continue;
+            }
+
+            $user->notify(new SendEnrollementSms((bool) $event->isReminder));
+        }
     }
 }

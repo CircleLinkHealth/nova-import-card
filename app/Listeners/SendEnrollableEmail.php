@@ -7,8 +7,10 @@
 namespace App\Listeners;
 
 use App\Notifications\SendEnrollmentEmail;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Log;
 
 class SendEnrollableEmail implements ShouldQueue
 {
@@ -40,6 +42,13 @@ class SendEnrollableEmail implements ShouldQueue
      */
     private function sendEmail($event)
     {
-        $event->user->notify(new SendEnrollmentEmail($event->isReminder, $event->color));
+        foreach ($event->userIds as $userId) {
+            $user = User::find($userId);
+            if ( ! $user) {
+                Log::critical("Cannot find user[$userId]. Will not send enrollment email.");
+                continue;
+            }
+            $user->notify(new SendEnrollmentEmail($event->isReminder, $event->color));
+        }
     }
 }

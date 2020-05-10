@@ -28,17 +28,16 @@ class AutoEnrollableCollected
     /**
      * @var User
      */
-    public $user;
+    public $userIds;
 
     /**
      * AutoEnrollableCollected constructor.
-     *
      * @param bool $isReminder
      * @param null $color
      */
-    public function __construct(User $user, $isReminder = false, $color = null)
+    public function __construct(array $userIds, $isReminder = false, $color = null)
     {
-        $this->user       = $user;
+        $this->userIds    = $userIds;
         $this->isReminder = $isReminder;
         $this->color      = $color;
     }

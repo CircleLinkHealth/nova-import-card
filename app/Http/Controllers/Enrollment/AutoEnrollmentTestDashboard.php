@@ -73,7 +73,6 @@ class AutoEnrollmentTestDashboard extends Controller
     public function inviteUnreachablesToEnrollTest(Request $request)
     {
         SelfEnrollmentUnreachablePatients::dispatchNow(
-            null,
             $request->input('amount'),
             $request->input('practice_id')
         );
