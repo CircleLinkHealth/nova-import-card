@@ -331,9 +331,10 @@ trait EnrollableManagement
             'button_color'     => $this->color,
         ]);
 
-        $notifiable->enrollmentInvitationLink->refresh();
+        $notifiable->load('enrollmentInvitationLink');
         $currentLinkId = $notifiable->enrollmentInvitationLink->id;
-        Log::debug("saveTemporaryInvitationLink, new link id: $currentLinkId");
+        $expired = $notifiable->enrollmentInvitationLink->manually_expired;
+        Log::debug("saveTemporaryInvitationLink, new link id: $currentLinkId, expired: $expired");
     }
 
     /**
