@@ -108,8 +108,6 @@ class EnrolleeSurveyController extends Controller
             }
         }
 
-        Auth::logout();
-
         return view('auth.logoutEnrollee', compact('practiceName', 'practiceLogoSrc'));
     }
 

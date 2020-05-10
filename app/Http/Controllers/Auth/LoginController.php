@@ -43,13 +43,17 @@ class LoginController extends Controller
      * Log the user out of the application.
      *
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function logout(Request $request)
     {
         $this->guard()->logout();
 
         $request->session()->invalidate();
+
+        if ($request->expectsJson()) {
+            return response()->json([], 200);
+        }
 
         //this will pass redirect as query param
         $redirect = $request->input('redirectTo', null);

@@ -9,9 +9,10 @@ Route::get('/', 'HomeController@index')
 
 Auth::routes();
 
-Route::post('/logout', 'Auth\LoginController@logout')
-    ->name('logout')
-    ->middleware('auth');
+Route::post('/logout', [
+    'uses' => 'Auth\LoginController@logout',
+    'as'   => 'logout',
+])->middleware('auth');
 
 Route::group([
     'prefix' => 'auth',
