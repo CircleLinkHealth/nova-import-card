@@ -117,7 +117,7 @@ class CpmEventServiceProvider extends ServiceProvider
 
         AutoEnrollableCollected::class => [
             SendEnrollableEmail::class,
-            SendEnrollableSms::class,
+            //SendEnrollableSms::class,
         ],
     ];
 
