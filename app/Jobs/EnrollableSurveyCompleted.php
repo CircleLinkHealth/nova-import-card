@@ -224,14 +224,8 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
     public function importEnrolleeSurveyOnly(Enrollee $enrollee, User $user)
     {
-        $userId     = $user->id;
-        $enrolleeId = $enrollee->id;
-
         User::whereId($user->id)->forceDelete();
-        ImportConsentedEnrollees::dispatch([$enrollee->id])
-            ->chain([
-                new KeepOriginalUserId($userId, $enrolleeId),
-            ]);
+        ImportConsentedEnrollees::dispatch([$enrollee->id]);
     }
 
     public function reEnrollUnreachablePatient(User $user)

@@ -23,7 +23,7 @@ class SendSmsEmailSendForTesting extends Command
      *
      * @var string
      */
-    protected $signature = 'command:sex';
+    protected $signature = 'command:sendSmsEmailTest';
 
     /**
      * Create a new command instance.
