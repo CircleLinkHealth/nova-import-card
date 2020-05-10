@@ -16,6 +16,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 
 trait EnrollableManagement
@@ -79,6 +80,7 @@ trait EnrollableManagement
      */
     public function expirePastInvitationLink($enrollable)
     {
+        Log::debug("expirePastInvitationLink called for $enrollable->id");
         $pastInvitationLinks = $this->pastActiveInvitationLink($enrollable);
         if ( ! empty($pastInvitationLinks)) {
             $pastInvitationLinks->update(['manually_expired' => true]);
@@ -313,14 +315,25 @@ trait EnrollableManagement
         if ($notifiable->checkForSurveyOnlyRole()) {
             $notifiable = Enrollee::whereUserId($notifiable->id)->firstOrFail();
         }
-//        Expire previous INVITATION link if exists
+        //  Expire previous INVITATION link if exists
+        $currentLinkId = null;
+        if ($notifiable->enrollmentInvitationLink) {
+            $currentLinkId = $notifiable->enrollmentInvitationLink->id;
+        }
+        Log::debug("saveTemporaryInvitationLink: $currentLinkId");
+
         $this->expirePastInvitationLink($notifiable);
+
         $notifiable->enrollmentInvitationLink()->create([
             'link_token'       => $urlToken,
             'url'              => $url,
             'manually_expired' => false,
             'button_color'     => $this->color,
         ]);
+
+        $notifiable->enrollmentInvitationLink->refresh();
+        $currentLinkId = $notifiable->enrollmentInvitationLink->id;
+        Log::debug("saveTemporaryInvitationLink, new link id: $currentLinkId");
     }
 
     /**
