@@ -67,7 +67,7 @@ class WelcomeController extends Controller
             return redirect()->route('patient-user.careplan');
         }
 
-        if ($user->hasRole('survey-only')) {
+        if ($user->isSurveyOnly()) {
             auth()->logout();
 
             return redirect()->route('login');
