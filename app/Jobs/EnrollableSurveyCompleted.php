@@ -178,6 +178,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
             $enrollee = Enrollee::whereUserId($user->id)->first();
             if ( ! $enrollee) {
                 Log::critical("Enrolle with user_id[$user->id] not found");
+
                 return;
             }
 

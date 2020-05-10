@@ -216,6 +216,7 @@ namespace App;
  * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null       $statusRequestsInfo
  * @property \App\LoginLogout[]|\Illuminate\Database\Eloquent\Collection                       $loginEvents
  * @property int|null                                                                          $login_events_count
+ * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null                              $enrollee
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {

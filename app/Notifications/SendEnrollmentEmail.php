@@ -109,7 +109,7 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
         if ( ! empty($notifiable->primaryPractice) && ! empty($notifiable->primaryPractice->display_name)) {
             $fromName = $notifiable->primaryPractice->display_name;
         }
-      
+
         return (new AutoEnrollmentMailChannel($fromName))
             ->from(config('mail.from.address'), $fromName)
             ->subject('Wellness Program')

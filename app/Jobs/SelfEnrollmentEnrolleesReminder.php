@@ -8,13 +8,11 @@ namespace App\Jobs;
 
 // This file is part of CarePlan Manager by CircleLink Health.
 
-use App\Notifications\SendEnrollmentEmail;
 use App\Traits\EnrollableManagement;
+use App\Traits\EnrollmentReminderShared;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -25,6 +23,7 @@ class SelfEnrollmentEnrolleesReminder implements ShouldQueue
 {
     use Dispatchable;
     use EnrollableManagement;
+    use EnrollmentReminderShared;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
@@ -75,21 +74,8 @@ class SelfEnrollmentEnrolleesReminder implements ShouldQueue
      */
     private function getEnrolleUsersToSendReminder($untilEndOfDay, $twoDaysAgo)
     {
-        return User::whereHas('notifications', function ($notification) use ($untilEndOfDay, $twoDaysAgo) {
-            $notification
-                ->where('data->is_reminder', false)
-                ->where([
-                    ['created_at', '>=', $twoDaysAgo],
-                    ['created_at', '<=', $untilEndOfDay],
-                ])->where('type', SendEnrollmentEmail::class);
-        })
-//            If still unreachable means user did not choose to "Enroll Now" in invitation mail.
-            ->whereHas('patientInfo', function ($patient) use ($twoDaysAgo, $untilEndOfDay) {
-                $patient->where('ccm_status', Patient::UNREACHABLE)->where([
-                    ['date_unreachable', '>=', $twoDaysAgo],
-                    ['date_unreachable', '<=', $untilEndOfDay],
-                ]);
-            })->whereHas('enrollee', function ($enrollee) {
+        return $this->sharedReminderQuery($untilEndOfDay, $twoDaysAgo)
+            ->whereHas('enrollee', function ($enrollee) {
                 $enrollee->whereNull('source'); // NOt unreachable patient. Original enrollee
             });
     }

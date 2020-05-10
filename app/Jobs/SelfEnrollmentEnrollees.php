@@ -9,7 +9,6 @@ namespace App\Jobs;
 // This file is part of CarePlan Manager by CircleLink Health.
 
 use App\Traits\EnrollableManagement;
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
@@ -17,7 +16,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\App;
 
 class SelfEnrollmentEnrollees implements ShouldQueue
 {
@@ -99,15 +97,6 @@ class SelfEnrollmentEnrollees implements ShouldQueue
             return $this->createUserFromEnrolleeAndInvite($this->enrollee);
         }
 
-//        if (App::environment(['testing'])) {
-//            $practice  = $this->getDemoPractice();
-//            $enrollees = $this->getEnrollees($practice->id)
-//                ->where('dob', Carbon::parse('1901-01-01'))
-//                ->get()
-//                ->take($this->amount)
-//                ->all();
-//            $this->createSurveyOnlyUserFromEnrollees($enrollees);
-//        } else {
         $enrollees = $this->getEnrollees($this->practiceId)
             ->orderBy('id', 'asc')
             ->limit($this->amount)

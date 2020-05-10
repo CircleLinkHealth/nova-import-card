@@ -2203,13 +2203,12 @@ Route::group([
         'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendEnrolleesReminderTestMethod',
         'as'   => 'send.reminder.enrollee.qa',
     ])->middleware('auth');
-    
+
     Route::get('/send-patient-reminder-test', [
         'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendPatientsReminderTestMethod',
         'as'   => 'send.reminder.patient.qa',
     ])->middleware('auth');
-    
-    
+
     Route::get('/final-action-unreachables-test', [
         'uses' => 'Enrollment\AutoEnrollmentTestDashboard@finalActionTest',
         'as'   => 'final.action.qa',

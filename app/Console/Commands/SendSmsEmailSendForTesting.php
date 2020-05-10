@@ -6,23 +6,24 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\SelfEnrollmentEnrolleesReminder;
+use App\Jobs\SelfEnrollmentEnrollees;
+use App\Jobs\SelfEnrollmentUnreachablePatients;
 use Illuminate\Console\Command;
 
-class SendFirstEnrollmentReminderEnrollees extends Command
+class SendSmsEmailSendForTesting extends Command
 {
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Send first reminder to unresponsive enrollees 2 days after initial invitation';
+    protected $description = 'Command description';
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:sendFirstEnrolleesReminder';
+    protected $signature = 'command:sex';
 
     /**
      * Create a new command instance.
@@ -41,6 +42,16 @@ class SendFirstEnrollmentReminderEnrollees extends Command
      */
     public function handle()
     {
-        SelfEnrollmentEnrolleesReminder::dispatch();
+        SelfEnrollmentEnrollees::dispatch(
+            null,
+            'blue',
+            intval(2),
+            intval(8)
+        );
+
+        SelfEnrollmentUnreachablePatients::dispatch(
+            intval(2),
+            intval(8)
+        );
     }
 }
