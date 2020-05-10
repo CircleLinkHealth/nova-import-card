@@ -45,7 +45,7 @@ class SendEnrollableSms implements ShouldQueue
         }
 
         foreach ($event->userIds as $userId) {
-            $user = User::findOrFail($userId);
+            $user = User::where('user_id', $userId)->first();
             if ( ! $user) {
                 Log::critical("Cannot find user[$userId]. Will not send enrollment sms.");
                 continue;

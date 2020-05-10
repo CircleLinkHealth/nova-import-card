@@ -47,9 +47,9 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
      */
     public function handle()
     {
-        $enrollableUnreachablePatient = $this->getUnreachablePatients($this->practiceId, $this->amount);
-        if ( ! empty($enrollableUnreachablePatient)) {
-            event(new AutoEnrollableCollected($enrollableUnreachablePatient));
+        $enrollablesUnreachablePatient = $this->getUnreachablePatients($this->practiceId, $this->amount);
+        if ( ! empty($enrollablesUnreachablePatient)) {
+            event(new AutoEnrollableCollected($enrollablesUnreachablePatient));
         }
     }
 
