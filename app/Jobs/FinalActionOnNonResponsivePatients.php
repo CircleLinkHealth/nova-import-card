@@ -71,6 +71,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
         $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
         // no need to check if they went through this again
+//        @todo:Change me after qa
         if ( ! App::environment(['testing'])) {
             $twoDaysAgo    = Carbon::parse(now())->startOfDay()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfDay()->toDateTimeString();
