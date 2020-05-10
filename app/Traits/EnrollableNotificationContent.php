@@ -127,7 +127,9 @@ trait EnrollableNotificationContent
         $notifiable->loadMissing([
             'billingProvider',
             'patientInfo',
-            'primaryPractice',
+            'primaryPractice' => function ($q) {
+                return $q->select(['id', 'display_name']);
+            },
         ]);
 
         $provider                       = $notifiable->billingProviderUser();
