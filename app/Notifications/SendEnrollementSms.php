@@ -63,7 +63,6 @@ class SendEnrollementSms extends Notification implements ShouldQueue
             throw new \Exception("Could not deduce user[$notifiable->id] to a receiver. User is survey-role only: $hasSurveyRole");
         }
 
-        // $practiceNumber = $receiver->primaryPractice->outgoing_phone_number;
         $invitationUrl = $receiver->getLastEnrollmentInvitationLink();
         $shortenUrl    = $invitationUrl->url;
 

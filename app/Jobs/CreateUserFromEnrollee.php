@@ -104,6 +104,6 @@ class CreateUserFromEnrollee implements ShouldQueue
             optional($userCreatedFromEnrollee->patientInfo)->id
         );
 
-        event(new AutoEnrollableCollected($userCreatedFromEnrollee, false, $this->color));
+        event(new AutoEnrollableCollected([$userCreatedFromEnrollee->id], false, $this->color));
     }
 }

@@ -41,9 +41,10 @@ class SendEnrollableEmail implements ShouldQueue
      */
     private function sendEmail($event)
     {
+        $user = null;
         foreach ($event->userIds as $userId) {
             $user = User::findOrFail($userId); // Just in case.
+            $user->notify(new SendEnrollmentEmail($event->isReminder, $event->color));
         }
-        $user->notify(new SendEnrollmentEmail($event->isReminder, $event->color));
     }
 }

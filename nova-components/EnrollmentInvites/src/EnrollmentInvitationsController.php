@@ -18,7 +18,6 @@ class EnrollmentInvitationsController
 
         if (boolval($novaRequest->input('is_patient'))) {
             SelfEnrollmentUnreachablePatients::dispatch(
-                null,
                 intval($novaRequest->input('amount')),
                 intval($novaRequest->input('practice_id'))
             );

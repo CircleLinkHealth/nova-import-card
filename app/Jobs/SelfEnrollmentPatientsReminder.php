@@ -46,9 +46,9 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
     {
         $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
-        $testingEnv    = App::environment(['staging', 'local']);
-
-        if ($testingEnv) {
+        $testingEnv    = App::environment(['testing']);
+        //@todo:Change later to staging.
+        if ( ! $testingEnv) {
             $practice      = $this->getDemoPractice();
             $twoDaysAgo    = Carbon::parse(now())->startOfDay()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfDay()->toDateTimeString();
@@ -70,11 +70,14 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
     private function getUsersToSendReminder($untilEndOfDay, $twoDaysAgo)
     {
         return  User::whereHas('notifications', function ($notification) use ($untilEndOfDay, $twoDaysAgo) {
-            $notification->where([
-                ['created_at', '>=', $twoDaysAgo],
-                ['created_at', '<=', $untilEndOfDay],
-            ])->where('type', SendEnrollmentEmail::class);
+            $notification
+                ->where('data->is_reminder', false)
+                ->where([
+                    ['created_at', '>=', $twoDaysAgo],
+                    ['created_at', '<=', $untilEndOfDay],
+                ])->where('type', SendEnrollmentEmail::class);
         })
+
 //            If still unreachable means user did not choose to "Enroll Now" in invitation mail.
             ->whereHas('patientInfo', function ($patient) use ($twoDaysAgo, $untilEndOfDay) {
                 $patient->where('ccm_status', Patient::UNREACHABLE)->where([
