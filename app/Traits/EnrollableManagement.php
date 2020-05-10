@@ -317,12 +317,6 @@ trait EnrollableManagement
             $notifiable = Enrollee::whereUserId($notifiable->id)->firstOrFail();
         }
         //  Expire previous INVITATION link if exists
-        $currentLinkId = null;
-        if ($notifiable->enrollmentInvitationLink) {
-            $currentLinkId = $notifiable->enrollmentInvitationLink->id;
-        }
-        Log::debug("saveTemporaryInvitationLink: $currentLinkId");
-
         $this->expirePastInvitationLink($notifiable);
 
         $notifiable->enrollmentInvitationLink()->create([
@@ -331,11 +325,6 @@ trait EnrollableManagement
             'manually_expired' => false,
             'button_color'     => $this->color,
         ]);
-
-        $notifiable->load('enrollmentInvitationLink');
-        $currentLinkId = $notifiable->enrollmentInvitationLink->id;
-        $expired       = $notifiable->enrollmentInvitationLink->manually_expired;
-        Log::debug("saveTemporaryInvitationLink, new link id: $currentLinkId, expired: $expired");
     }
 
     /**
