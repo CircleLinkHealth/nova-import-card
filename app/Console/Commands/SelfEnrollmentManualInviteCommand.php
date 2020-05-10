@@ -1,27 +1,29 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Jobs\SelfEnrollmentEnrollees;
-use App\Nova\Actions\SelfEnrollmentManualInvite;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;
 
 class SelfEnrollmentManualInviteCommand extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'self-enrollment:invite {enrolleeId}';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Command description';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'self-enrollment:invite {enrolleeId}';
 
     /**
      * Create a new command instance.

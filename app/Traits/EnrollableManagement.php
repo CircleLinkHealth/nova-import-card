@@ -333,7 +333,7 @@ trait EnrollableManagement
 
         $notifiable->load('enrollmentInvitationLink');
         $currentLinkId = $notifiable->enrollmentInvitationLink->id;
-        $expired = $notifiable->enrollmentInvitationLink->manually_expired;
+        $expired       = $notifiable->enrollmentInvitationLink->manually_expired;
         Log::debug("saveTemporaryInvitationLink, new link id: $currentLinkId, expired: $expired");
     }
 
