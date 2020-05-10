@@ -25,10 +25,10 @@ class ImportEnrollee
         //verify it wasn't already imported
         if ($enrollee->user_id) {
             /** @var User|null $patientUser */
-            $patientUser = $static->handleExistingUser($enrollee);
+            $patientUserImported = $static->handleExistingUser($enrollee);
 
-            if ( ! is_null($patientUser)) {
-                return $patientUser;
+            if ( ! is_null($patientUserImported)) {
+                return $patientUserImported;
             }
         }
 
@@ -95,6 +95,11 @@ class ImportEnrollee
             $enrollee->user_id = null;
             $enrollee->save();
 
+            return null;
+        }
+
+        //If user is survey only return null so we can proceed with the importing
+        if ($user->isSurveyOnly()) {
             return null;
         }
 
