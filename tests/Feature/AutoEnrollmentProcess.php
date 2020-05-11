@@ -6,7 +6,7 @@
 
 namespace Tests\Feature;
 
-use App\Jobs\CreateUserFromEnrollee;
+use App\Jobs\CreateUsersFromEnrollees;
 use App\Jobs\SelfEnrollmentUnreachablePatients;
 use App\Jobs\SendEnrollmentReminders;
 use App\Notifications\SendEnrollementSms;
@@ -64,7 +64,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
 //        Notification::fake();
 //        $enrollle = $this->enrollee();
 //
-//        CreateUserFromEnrollee::dispatchNow($enrollle, $this->surveyRole()->id);
+//        CreateUsersFromEnrollees::dispatchNow($enrollle, $this->surveyRole()->id);
 //        $this->check_notification_mail_has_been_sent($enrollle->fresh()->user);
 ////        $this->check_notification_sms_has_been_sent($enrollle->fresh()->user);
 //

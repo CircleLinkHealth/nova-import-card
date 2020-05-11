@@ -67,24 +67,6 @@ class SelfEnrollmentEnrollees implements ShouldQueue
     }
 
     /**
-     * First we create temporary user from Enrollee.
-     *
-     * @param $enrollees
-     */
-    public function createSurveyOnlyUserFromEnrollees(iterable $enrollees)
-    {
-        foreach ($enrollees as $enrollee) {
-            $this->createUserFromEnrolleeAndInvite($enrollee);
-        }
-    }
-
-    public function createUserFromEnrolleeAndInvite(Enrollee $enrollee)
-    {
-        $surveyRole = $this->surveyRole();
-        CreateUserFromEnrollee::dispatch($enrollee, $surveyRole->id, $this->color);
-    }
-
-    /**
      * Execute the job.
      *
      * @param Enrollee|null $enrollee
@@ -94,17 +76,31 @@ class SelfEnrollmentEnrollees implements ShouldQueue
     public function handle()
     {
         if ( ! is_null($this->enrollee)) {
-            return $this->createUserFromEnrolleeAndInvite($this->enrollee);
+            return $this->createSurveyOnlyUsers([$this->enrollee->id]);
         }
 
-        $enrollees = $this->getEnrollees($this->practiceId)
+        $this->getEnrollees($this->practiceId)
             ->orderBy('id', 'asc')
             ->limit($this->amount)
-            ->get();
-        $this->createSurveyOnlyUserFromEnrollees($enrollees);
+            ->select(['id'])
+            ->get()
+            //needs to go after the get(), because we are using `limit`. otherwise `chunk` would override `limit`
+            ->chunk(100)
+            ->each(function ($coll) {
+                $arr = $coll
+                    ->map(function ($item) {
+                        return $item->id;
+                    })
+                    ->toArray();
+                $this->createSurveyOnlyUsers($arr);
+            });
     }
 
-//    }
+    private function createSurveyOnlyUsers(array $enrolleeIds)
+    {
+        $surveyRole = $this->surveyRole();
+        CreateUsersFromEnrollees::dispatch($enrolleeIds, $surveyRole->id, $this->color);
+    }
 
     private function surveyRole(): Role
     {
