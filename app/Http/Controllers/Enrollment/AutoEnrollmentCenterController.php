@@ -131,30 +131,19 @@ class AutoEnrollmentCenterController extends Controller
             return "Enrollee[$enrollableId] not found";
         }
 
-        if ($enrollee->statusRequestsInfo()->exists()
-            && $enrollee->getLastEnrollmentInvitationLink()->manually_expired) {
-            return $this->returnEnrolleeRequestedInfoMessage($enrollee);
-        }
-
-        if ($this->activeEnrollmentInvitationsExists($enrollee)) {
-            $this->expirePastInvitationLink($enrollee);
+        if ( ! $enrollee->statusRequestsInfo()->exists()) {
             $this->createEnrollStatusRequestsInfo($enrollee);
             $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
-            //            Delete User Created from Enrollee
-//            Unreachables cant request info yet.
+            // Delete User Created from Enrollee
+            // Unreachables cant request info yet.
             if ($isSurveyOnly) {
                 $userModelEnrollee = $this->getUserModelEnrollee($enrollableId);
                 $this->updateEnrolleeSurveyStatuses($enrollee->id, optional($userModelEnrollee)->id, null);
                 $enrollee->update(['user_id' => null, 'auto_enrollment_triggered' => true]);
-                if ($userModelEnrollee) {
-                    $userModelEnrollee->delete();
-                }
             }
-
-            return $this->returnEnrolleeRequestedInfoMessage($enrollee);
         }
 
-        return 'Your link has expired, someone will contact you soon. Thank you';
+        return $this->returnEnrolleeRequestedInfoMessage($enrollee);
     }
 
     /**
@@ -239,6 +228,10 @@ class AutoEnrollmentCenterController extends Controller
             return $this->enrollmentLetterView($user, true, $enrollee, true);
         }
         abort(403, 'Unauthorized action.');
+    }
+
+    public function viewFormVisited()
+    {
     }
 
     /**
