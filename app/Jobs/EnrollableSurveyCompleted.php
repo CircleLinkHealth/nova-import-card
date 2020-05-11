@@ -176,7 +176,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
         $preferredContactDays        = $this->getPreferredDaysToString($surveyAnswers['preferred_days']);
         $patientContactTimesToString = $this->getPreferredContactHoursToString($surveyAnswers['preferred_time']);
-
+        // They are mandatory fields
         if (empty($preferredContactDays) || empty($patientContactTimesToString)) {
             throw new \Exception("Missing survey values for user [$user->id]");
         }
