@@ -212,10 +212,6 @@ class CcdaImporter
             }
         }
 
-        if ($this->patient->isSurveyOnly()) {
-            $this->ccda->user_id = $this->patient->id;
-            $this->ccda->save();
-        }
         $this->patient->loadMissing(['primaryPractice', 'patientInfo']);
         $this->ccda->loadMissing(['location', 'patient']);
 
@@ -401,7 +397,10 @@ class CcdaImporter
         //Make sure Patient does not have survey-only role moving forward
         $participantRoleId = Role::whereName('participant')->firstOrFail()->id;
 
-        $this->patient->roles()->sync([$participantRoleId]);
+        $this->patient->roles()->sync([
+            $participantRoleId => ['program_id' => $this->patient->program_id,
+            ],
+        ]);
 
         if ($this->patient->isDirty()) {
             $this->patient->save();
