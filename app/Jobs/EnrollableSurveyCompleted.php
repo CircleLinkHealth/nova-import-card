@@ -194,7 +194,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 'email'                     => $surveyAnswers['email'],
                 'status'                    => Enrollee::ENROLLED,
                 'auto_enrollment_triggered' => true,
-                'user_id'                   => null,
+                //                'user_id'                   => null,
             ]);
 
             $this->importEnrolleeSurveyOnly($enrollee, $user);
@@ -224,7 +224,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
     public function importEnrolleeSurveyOnly(Enrollee $enrollee, User $user)
     {
-//        User::whereId($user->id)->forceDelete();
         ImportConsentedEnrollees::dispatch([$enrollee->id]);
     }
 
