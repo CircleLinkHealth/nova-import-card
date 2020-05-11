@@ -314,7 +314,7 @@ class Enrollee extends BaseModel
         'batch_id',
         'eligibility_job_id',
 
-        'medical_record_type',
+        'medical_record_type', //deprecated => do not use
         'medical_record_id',
 
         'user_id',
