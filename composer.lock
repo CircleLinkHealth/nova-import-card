@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a49146576edc8d50f14dff15ff596eff",
+    "content-hash": "3510404d89b48a695448bbaa7fad6317",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1085,11 +1085,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-create-survey-only-user-fixes",
+            "version": "v2.4.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "dd8c39c66f0aba25c56012545e0d9fb51df2b0c4"
+                "reference": "6db93cc17549f47bcb769fb4538c4c8fd6b48aef"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1123,15 +1123,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-10T23:03:36+00:00"
+            "time": "2020-05-11T14:22:46+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-create-survey-only-user-fixes",
+            "version": "v2.4.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "60a4247a9e025e01779724e34e3f45e97c0e1994"
+                "reference": "97da195c5257cf59d30bcbb86319094d465fecc0"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1156,7 +1156,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-10T23:03:36+00:00"
+            "time": "2020-05-11T14:21:46+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -15601,8 +15601,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/customer-module": 20,
-        "circlelinkhealth/eligibility-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20
