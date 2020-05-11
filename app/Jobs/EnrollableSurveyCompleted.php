@@ -175,11 +175,17 @@ class EnrollableSurveyCompleted implements ShouldQueue
         $addressData      = $this->getAddressData($surveyAnswers['address']);
 
         $preferredContactDays        = $this->getPreferredDaysToString($surveyAnswers['preferred_days']);
-        $preferredContactDaysToArray = explode(',', $preferredContactDays);
         $patientContactTimesToString = $this->getPreferredContactHoursToString($surveyAnswers['preferred_time']);
+
+        if (empty($preferredContactDays) || empty($patientContactTimesToString)) {
+            throw new \Exception("Missing survey values for user [$user->id]");
+        }
+
+        $preferredContactDaysToArray = explode(',', $preferredContactDays);
         $patientContactTimesArray    = explode(' ', $patientContactTimesToString);
-        $patientContactTimeStart     = Carbon::parse($patientContactTimesArray[0])->toTimeString();
-        $patientContactTimeEnd       = Carbon::parse($patientContactTimesArray[2])->toTimeString();
+
+        $patientContactTimeStart = Carbon::parse($patientContactTimesArray[0])->toTimeString();
+        $patientContactTimeEnd   = Carbon::parse($patientContactTimesArray[2])->toTimeString();
 
         if ($isSurveyOnly) {
             $enrollee = Enrollee::whereUserId($user->id)->first();
