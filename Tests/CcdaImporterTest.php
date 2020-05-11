@@ -190,7 +190,7 @@ class CcdaImporterTest extends CustomerTestCase
         $this->assertTrue($patient->email === $enrollee->email);
     }
 
-    public function test_it_when_survey_only_user_is_imported_user_role_changes_to_participant()
+    public function test_when_survey_only_user_is_imported_user_role_changes_to_participant()
     {
         $enrollee          = $this->enrollee();
         $enrollee->user_id = $this->surveyOnly()->id;
