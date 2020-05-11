@@ -154,10 +154,17 @@ class ImportEnrollee
     {
         $mr = new CsvWithJsonMedicalRecord($job->data);
 
+        $enrolleeUser = $enrollee->user;
+        $isSurveyOnly = $enrolleeUser->isSurveyOnly();
+
         $ccda = Ccda::create([
             'json'        => $mr->toJson(),
             'mrn'         => $mr->getMrn(),
             'practice_id' => $enrollee->practice_id,
+            'patient_id'  => $isSurveyOnly ? $enrolleeUser->id : null,
+
+            //todo: please confirm this is actually what we want.
+            'billing_provider_id' => $isSurveyOnly ? $enrollee->provider_id : null,
         ]);
 
         $enrollee->medical_record_type = get_class($ccda);
