@@ -109,6 +109,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
                         )
                     );
 
+                    //todo: IMPORTANT - NEEDS TO BE ADDRESSED
                     //Are we sure we have ccda? can we implement it from importer instead?
 //        $this->ccda->patient_id = $this->patient->id;
 
