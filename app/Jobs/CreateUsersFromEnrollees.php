@@ -135,8 +135,8 @@ class CreateUsersFromEnrollees implements ShouldQueue
 
                     if ($ccda) {
                         $ccda->patient_id = $userCreatedFromEnrollee->id;
+                        $ccda->save();
                     }
-                    $ccda->save();
 
                     //handle phones here, we wanna make sure enrollee cell_phone gets priority, since we are sending SMS.
                     //This is worth investigating. When Zack goes through enrollees to see if they are eligible for auto enrollment, does he check phones?
