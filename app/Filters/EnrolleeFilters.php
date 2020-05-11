@@ -65,6 +65,7 @@ class EnrolleeFilters extends QueryFilters
             Enrollee::SOFT_REJECTED,
             Enrollee::REJECTED,
             Enrollee::ENROLLED,
+            Enrollee::QUEUE_AUTO_ENROLLMENT,
         ]);
         $decoded['attempt_count'] = '';
 
