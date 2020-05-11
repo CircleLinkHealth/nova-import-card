@@ -59,7 +59,7 @@ class SendEnrollementSms extends Notification implements ShouldQueue
         // at this point will always exist only one active link from the mail notif send
         $receiver = $this->getEnrollableModelType($notifiable);
         if ( ! $receiver) {
-            $hasSurveyRole = $notifiable->checkForSurveyOnlyRole();
+            $hasSurveyRole = $notifiable->isSurveyOnly();
             throw new \Exception("Could not deduce user[$notifiable->id] to a receiver. User is survey-role only: $hasSurveyRole");
         }
 
