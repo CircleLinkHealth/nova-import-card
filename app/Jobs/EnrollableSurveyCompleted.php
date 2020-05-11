@@ -224,7 +224,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
     public function importEnrolleeSurveyOnly(Enrollee $enrollee, User $user)
     {
-        User::whereId($user->id)->forceDelete();
+//        User::whereId($user->id)->forceDelete();
         ImportConsentedEnrollees::dispatch([$enrollee->id]);
     }
 

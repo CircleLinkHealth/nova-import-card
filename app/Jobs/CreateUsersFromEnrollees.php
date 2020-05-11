@@ -67,7 +67,12 @@ class CreateUsersFromEnrollees implements ShouldQueue
             ->chunk(100, function ($entries) use (&$count) {
                 $newUserIds = collect();
                 $entries->each(function ($enrollee) use ($newUserIds, &$count) {
-                    if ( ! empty($enrollee->user_id)) {
+//                    If already has user_id then just invite
+//                    Only QUEUE_AUTO_ENROLLMENT
+//                    Only original Enrollee (Not UNREACHABLE_PATIENT)
+                    if ( ! empty($enrollee->user_id)
+                        && Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->source
+                        && Enrollee::UNREACHABLE_PATIENT !== $enrollee->source) {
                         $newUserIds->push($enrollee->user_id);
 
                         return;
