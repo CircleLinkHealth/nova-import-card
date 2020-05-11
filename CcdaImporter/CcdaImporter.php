@@ -97,7 +97,7 @@ class CcdaImporter
 
     private function createNewPatient()
     {
-        $newUserId = Str::random(25);
+        $newUserId = (string) Str::uuid();
 
         $email = empty($email = $this->patientEmail())
             ? $newUserId.'@careplanmanager.com'
@@ -211,7 +211,11 @@ class CcdaImporter
                 return $this->ccda;
             }
         }
-
+    
+        if ($this->patient->isSurveyOnly()){
+            $this->ccda->user_id = $this->patient->id;
+            $this->ccda->save();
+        }
         $this->patient->loadMissing(['primaryPractice', 'patientInfo']);
         $this->ccda->loadMissing(['location', 'patient']);
 

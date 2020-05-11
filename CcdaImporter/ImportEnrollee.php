@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
+use App\Jobs\SelfEnrollmentEnrollees;
 use App\Nova\Actions\ClearAndReimportCcda;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
@@ -57,7 +58,7 @@ class ImportEnrollee
 
             $static->importFromEligibilityJob($enrollee, $job);
         }
-        
+
         //If enrollee is from uploaded CSV from Nova Page,
         //Where we create Enrollees without any other data,
         //so we can consent them and then ask the practice to send us the CCDs
@@ -107,7 +108,7 @@ class ImportEnrollee
         }
 
         //If user is survey only return null so we can proceed with the importing
-        if ($user->isSurveyOnly()) {
+        if ($user->hasRole(SelfEnrollmentEnrollees::SURVEY_ONLY)) {
             return null;
         }
 
