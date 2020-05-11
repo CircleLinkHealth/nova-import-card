@@ -94,7 +94,6 @@ class CreateUsersFromEnrollees implements ShouldQueue
                         ? $newUserId.'@careplanmanager.com'
                         : $email;
 
-                    //need this to determine if is_awv. What about if there is no CCDA? e.g. only has eligibility job?
                     $ccda = $enrollee->ccda;
                     $isAwv = false;
                     if ($ccda) {
@@ -134,7 +133,6 @@ class CreateUsersFromEnrollees implements ShouldQueue
                         )
                     );
 
-                    //Are we sure we have ccda? can we implement it from importer instead?
                     $ccda->patient_id = $userCreatedFromEnrollee->id;
 
                     //handle phones here, we wanna make sure enrollee cell_phone gets priority, since we are sending SMS.
