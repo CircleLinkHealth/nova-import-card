@@ -48,6 +48,10 @@ class CustomerTestCase extends TestCase
      * @var array|User
      */
     private $superadmin;
+    /**
+     * @var array|User
+     */
+    private $surveyOnly;
 
     /**
      * @return array|User
@@ -161,6 +165,18 @@ class CustomerTestCase extends TestCase
         }
 
         return $this->superadmin;
+    }
+
+    /**
+     * @return array|User
+     */
+    protected function surveyOnly(int $number = 1)
+    {
+        if ( ! $this->surveyOnly) {
+            $this->surveyOnly = $this->createUsersOfType('survey-only', $number);
+        }
+
+        return $this->surveyOnly;
     }
 
     /**
