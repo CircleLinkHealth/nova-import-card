@@ -61,7 +61,7 @@ trait EnrollableNotificationContent
      */
     public function getEmailContent(User $notifiable, $isReminder = false)
     {
-        $notifiableIsSurveyOnly = $notifiable->checkForSurveyOnlyRole();
+        $notifiableIsSurveyOnly = $notifiable->isSurveyOnly();
 
         return $notifiableIsSurveyOnly
             ? $this->getEnrolleeEmailContent($notifiable, $isReminder)
