@@ -99,9 +99,15 @@ class CcdaImporter
     {
         $newUserId = (string) Str::uuid();
 
-        $email = empty($email = $this->patientEmail())
-            ? $newUserId.'@careplanmanager.com'
-            : $email;
+        $email = $this->patientEmail();
+
+        if (optional($this->enrollee)->email) {
+            $email = $this->enrollee->email;
+        }
+
+        if (empty($email)) {
+            $email = $newUserId.'@careplanmanager.com';
+        }
 
         $demographics = $this->ccda->bluebuttonJson()->demographics;
 
