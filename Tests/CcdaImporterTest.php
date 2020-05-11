@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Eligibility\Tests;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachDefaultPatientContactWindows;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachLocation;
@@ -176,5 +177,16 @@ class CcdaImporterTest extends CustomerTestCase
             'type'    => PhoneNumber::HOME,
             'number'  => '+12012819204',
         ]);
+    }
+
+    public function test_it_replaces_email_with_email_from_enrollee()
+    {
+        $enrollee = $this->enrollee();
+
+        $ccda = FakeCalvaryCcda::create(['practice_id' => $enrollee->practice_id]);
+
+        $imported = $ccda->fresh()->import($enrollee);
+        $patient  = User::ofType('participant')->findOrFail($imported->patient_id);
+        $this->assertTrue($patient->email === $enrollee->email);
     }
 }
