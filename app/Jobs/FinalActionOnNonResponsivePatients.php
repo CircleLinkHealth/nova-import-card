@@ -71,7 +71,8 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
         //        Two days after the last reminder - (the "SendEnrollmentNotificationsReminder")
         $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
-        $testingMode   = AppConfig::pull('testing_enroll_sms', true);
+//        @todo:REMOVE THIS BEFORE REAL USE or just set to  false and set value
+        $testingMode = AppConfig::pull('testing_enroll_sms', true);
         if ($testingMode) {
             $twoDaysAgo    = Carbon::parse(now())->startOfDay()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfDay()->toDateTimeString();
@@ -113,7 +114,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
                 return;
             }
             if ($isSurveyOnlyUser) {
-                if ($this->hasViewedLetterOrSurvey($noResponsivePatient)) {
+                if ($this->hasViewedLetterOrSurvey($enrollee)) {
                     $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
                 } else {
 //                        Mark as non responsive means they will get a physical MAIL.

@@ -7,7 +7,6 @@
 namespace App\Traits;
 
 use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
-use App\LoginLogout;
 use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
@@ -275,13 +274,13 @@ trait EnrollableManagement
      *  If logged in once then user did view the letter. If this exists the no need need to check further.
      *
      * @param mixed $enrollableId
+     * @param mixed $enrollee
      *
      * @return bool
      */
-    public function hasViewedLetterOrSurvey($enrollableId)
+    public function hasViewedLetterOrSurvey($enrollee)
     {
-//       Move this to User as a relationship??
-        return LoginLogout::whereUserId($enrollableId)->exists();
+        return is_null($enrollee->user_id) && ! optional($enrollee->selfEnrollmentStatuses)->logged_in;
     }
 
     /**
