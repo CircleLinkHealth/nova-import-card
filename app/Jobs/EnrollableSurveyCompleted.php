@@ -317,7 +317,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
             'city'    => $addressData['city'],
             'state'   => $addressData['state'],
             'zip'     => $addressData['zip'],
-            'email'   => $email,
+            'email'   => collect($email)->first(),
         ]);
     }
 
