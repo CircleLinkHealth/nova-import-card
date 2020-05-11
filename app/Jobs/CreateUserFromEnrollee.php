@@ -60,7 +60,7 @@ class CreateUserFromEnrollee implements ShouldQueue
      */
     public function handle()
     {
-        $newUserId = Str::random(25);
+        $newUserId = (string) Str::uuid();
 
         $email = empty($email = $this->enrollee->email)
             ? $newUserId.'@careplanmanager.com'
