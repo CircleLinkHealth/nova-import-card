@@ -71,12 +71,15 @@ class CreateUsersFromEnrollees implements ShouldQueue
 //                    Only QUEUE_AUTO_ENROLLMENT
 //                    Only original Enrollee (Not UNREACHABLE_PATIENT)
                     if ( ! empty($enrollee->user_id)
-                        && Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->source
+                        && Enrollee::QUEUE_AUTO_ENROLLMENT == $enrollee->source
                         && Enrollee::UNREACHABLE_PATIENT !== $enrollee->source) {
                         $newUserIds->push($enrollee->user_id);
 
                         return;
                     }
+                    Log::warning("Enrollee with id [$enrollee->id] is unreachable patient. Should not be here");
+
+                    return;
                     $newUserId = (string) Str::uuid();
 
                     $email = empty($email = $enrollee->email)
