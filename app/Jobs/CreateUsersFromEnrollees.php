@@ -67,6 +67,11 @@ class CreateUsersFromEnrollees implements ShouldQueue
             ->chunk(100, function ($entries) use (&$count) {
                 $newUserIds = collect();
                 $entries->each(function ($enrollee) use ($newUserIds, &$count) {
+                    if ( ! empty($enrollee->user_id)) {
+                        $newUserIds->push($enrollee->user_id);
+
+                        return;
+                    }
                     $newUserId = (string) Str::uuid();
 
                     $email = empty($email = $enrollee->email)
