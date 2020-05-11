@@ -12,6 +12,7 @@ use App\Http\Requests\EnrollmentLinkValidation;
 use App\Http\Requests\EnrollmentValidationRules;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -56,18 +57,23 @@ class AutoEnrollmentLogin extends Controller
 
     protected function enrollmentAuthForm(EnrollmentLinkValidation $request)
     {
+        // Debugging logs
         $isFromBitly     = Str::contains($request->headers->get('user-agent', ''), 'bitly');
         $alreadyLoggedIn = auth()->check() ? 'yes' : 'no';
         $authId          = auth()->id() ?? 'null';
         $headers         = json_encode($request->headers->all());
         Log::debug("enrollmentAuthForm - User is already logged in: $alreadyLoggedIn.\nUser Id: $authId.\nHeaders: $headers");
 
-        $loginFormData   = $this->getLoginFormData($request);
+        try {
+            $loginFormData = $this->getLoginFormData($request);
+        } catch (\Exception $e) {
+            return view('EnrollmentSurvey.enrollableError');
+        }
         $user            = $loginFormData['user'];
         $urlWithToken    = $loginFormData['url_with_token'];
         $practiceName    = $loginFormData['practiceName'];
         $doctorsLastName = $loginFormData['doctorsLastName'];
-        $userId          = intval($request->input('enrollable_id'));
+        $userId          = $this->getUserId($request);
         $isSurveyOnly    = $request->input('is_survey_only');
 
         if ( ! $isFromBitly) {
@@ -114,9 +120,21 @@ class AutoEnrollmentLogin extends Controller
         return view('EnrollmentSurvey.enrollableLogout', compact('practiceLogoSrc', 'practiceName'));
     }
 
+    /**
+     * @throws \Exception
+     * @return array
+     */
     private function getLoginFormData(Request $request)
     {
-        $user            = $this->getUserValidated($request);
+        $userId = $this->getUserId($request);
+
+        /** @var User $user */
+        $user = $this->getUser($userId);
+        if ( ! $user) {
+            Log::warning("User[$userId] not found.");
+            throw new \Exception('User not found');
+        }
+
         $doctor          = $user->billingProviderUser();
         $doctorsLastName = '???';
         if ($doctor) {

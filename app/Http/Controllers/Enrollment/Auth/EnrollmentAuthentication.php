@@ -25,25 +25,13 @@ trait EnrollmentAuthentication
      */
     private function getUser(int $userId)
     {
-        try {
-            // @var User $user
-            return User::with(['primaryPractice', 'billingProvider', 'patientInfo'])
-                ->where('id', $userId)
-                ->firstOrFail();
-        } catch (\Exception $exception) {
-            abort(404, 'User not found.');
-        }
+        return User::with(['primaryPractice', 'billingProvider', 'patientInfo'])
+            ->where('id', $userId)
+            ->first();
     }
 
     private function getUserId($request)
     {
         return intval($request->input('enrollable_id'));
-    }
-
-    private function getUserValidated(Request $request)
-    {
-        $userId = $this->getUserId($request);
-
-        return $this->getUser($userId);
     }
 }

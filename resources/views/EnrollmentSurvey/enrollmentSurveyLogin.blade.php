@@ -1,6 +1,6 @@
 @extends('layouts.EnrollmentSurvey.enrollmentLetterMaster')
-@section('title', 'Auto enrollment Login')
-@section('activity', 'Auto enrollment Login')
+@section('title', 'Self-Enrollment Login')
+@section('activity', 'Self-Enrollment Login')
 @section('content')
     <div class="container">
             <br>

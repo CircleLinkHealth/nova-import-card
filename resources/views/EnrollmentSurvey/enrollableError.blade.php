@@ -1,16 +1,10 @@
 @extends('layouts.EnrollmentSurvey.enrollmentLetterMaster')
-@section('title', 'Self-Enrollment logout')
-@section('activity', 'Self-Enrollment logout')
+@section('title', 'Self-Enrollment error')
+@section('activity', 'Self-Enrollment error')
 @section('content')
     <div class="container">
-        <div class="practice-logo">
-            <div class="logo">
-                @include('enrollment-consent.practiceLogo', compact('practiceLogoSrc'))
-            </div>
-        </div>
        <div class="message">
-           <hr>
-           <h4>Done! You can close this window.</h4>
+           <h4>There was an error. A care coach will contact you soon.</h4>
        </div>
     </div>
     @endsection
@@ -27,10 +21,5 @@
         margin-bottom: 10px;
         /*margin-left: 111px;*/
         color: #50b2e2;
-    }
-
-    .practice-logo{
-        text-align: center;
-        padding-top: 40px;
     }
 </style>
