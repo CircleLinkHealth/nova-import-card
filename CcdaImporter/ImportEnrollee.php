@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
-use App\Jobs\SelfEnrollmentEnrollees;
 use App\Nova\Actions\ClearAndReimportCcda;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
