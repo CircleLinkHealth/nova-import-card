@@ -77,9 +77,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
 
                         return;
                     }
-                    Log::warning("Enrollee with id [$enrollee->id] is unreachable patient. Should not be here");
 
-                    return;
                     $newUserId = (string) Str::uuid();
 
                     $email = empty($email = $enrollee->email)
