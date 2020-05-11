@@ -103,7 +103,7 @@ class AutoEnrollmentTestDashboard extends Controller
                 ->where('survey_id', '=', $survey->id)
                 ->first();
 
-            if ($user->checkForSurveyOnlyRole()) {
+            if ($user->isSurveyOnly()) {
                 /** @var Enrollee $enrollee */
                 $enrollee = $this->getEnrollee($user->id);
                 $this->deleteTestAwvUser($user->id, $surveyInstance);
