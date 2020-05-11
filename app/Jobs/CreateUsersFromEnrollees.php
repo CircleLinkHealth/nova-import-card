@@ -101,7 +101,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
                                 'program_id'        => $enrollee->practice_id,
                                 'is_auto_generated' => true,
                                 'roles'             => [$this->surveyRoleId],
-                                'is_awv'            => $ccda,
+                                'is_awv'            => $isAwv,
                                 'address'           => $enrollee->address,
                                 'address2'          => $enrollee->address_2,
                                 'city'              => $enrollee->city,
