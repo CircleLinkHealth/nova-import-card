@@ -136,12 +136,12 @@ class UserRepository
         }
         // phone numbers
         $this->saveOrUpdatePhoneNumbers($user, $params);
-    
+
 //        /for survey only
         if ($user->isSurveyOnly()) {
             $this->saveOrUpdatePatientInfo($user, $params);
         }
-    
+
         // participant info
         if ($user->isParticipant()) {
             $this->saveOrUpdatePatientInfo($user, $params);
@@ -584,7 +584,8 @@ class UserRepository
         $this->clearRolesCache($user);
 
         // add patient info
-        if ($user->isParticipant() && ! $user->patientInfo) {
+        $shouldCreateModelForParticipant = $user->isParticipant() && ! $user->patientInfo;
+        if ($shouldCreateModelForParticipant || $user->isSurveyOnly()) {
             $patientInfo          = new Patient();
             $patientInfo->user_id = $user->id;
             $patientInfo->save();
