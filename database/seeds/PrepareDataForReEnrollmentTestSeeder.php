@@ -53,13 +53,12 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 'practice_id'             => $practice->id,
                 'dob'                     => \Carbon\Carbon::parse('1901-01-01'),
                 'referring_provider_name' => 'Dr. Demo',
-                'mrn'                     => mt_rand(100000, 999999),
                 'primary_phone'           => $phoneTester,
                 'home_phone'              => $phoneTester,
                 'email'                   => $faker->unique()->safeEmail,
             ]);
             $this->seedEligibilityJobs(collect($enrolleeForTesting));
-            //            Emulating Constantinos dashboard Importing - Mark Enrollees to invite.
+//                        Emulating Constantinos dashboard Importing - Mark Enrollees to invite.
             $enrolleeForTesting->first()->update([
                 'status' => Enrollee::QUEUE_AUTO_ENROLLMENT,
             ]);

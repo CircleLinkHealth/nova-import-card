@@ -75,9 +75,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
                     }
 
                     // If Enrollee and invited again (has user_id) the dont create user. Just invite
-                    if ( ! empty($enrollee->user_id)
-                        && Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->source
-                        && Enrollee::ENROLLED !== $enrollee->status) {
+                    if ( ! empty($enrollee->user_id) && Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->status) {
                         $newUserIds->push($enrollee->user_id);
 
                         return;
