@@ -204,7 +204,7 @@ class NotesController extends Controller
                 $surveyAnswer = [];
             }
         }
-
+        
         $answerFromMoreInfo = ! empty($surveyAnswer)
             ? json_decode($surveyAnswer->value)[0]->name
             : '';
