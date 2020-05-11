@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "73b3985d52fb53bd362085a0e52e58da",
+    "content-hash": "84b9a210ff5010518c7b028362482f4a",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -128,37 +128,37 @@
         },
         {
             "name": "algolia/scout-extended",
-            "version": "v1.8.0",
+            "version": "v1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/algolia/scout-extended.git",
-                "reference": "ea5cec58af8f726fe1f5848082c0a5f84ffbd3b8"
+                "reference": "1ca3d75c21f7dd8d209c044c1447cf54a7fba5c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/algolia/scout-extended/zipball/ea5cec58af8f726fe1f5848082c0a5f84ffbd3b8",
-                "reference": "ea5cec58af8f726fe1f5848082c0a5f84ffbd3b8",
+                "url": "https://api.github.com/repos/algolia/scout-extended/zipball/1ca3d75c21f7dd8d209c044c1447cf54a7fba5c0",
+                "reference": "1ca3d75c21f7dd8d209c044c1447cf54a7fba5c0",
                 "shasum": ""
             },
             "require": {
-                "algolia/algoliasearch-client-php": "^2.0",
+                "algolia/algoliasearch-client-php": "^2.5.1",
                 "ext-json": "*",
-                "illuminate/console": "5.6.*|5.7.*|5.8.*|^6.0",
-                "illuminate/contracts": "5.6.*|5.7.*|5.8.*|^6.0",
-                "illuminate/database": "5.6.*|5.7.*|5.8.*|^6.0",
-                "illuminate/filesystem": "5.6.*|5.7.*|5.8.*|^6.0",
-                "illuminate/support": "5.6.*|5.7.*|5.8.*|^6.0",
-                "laravel/scout": "^6.1.1|^7.0",
-                "php": "^7.1.3",
-                "riimu/kit-phpencoder": "^2.3"
+                "illuminate/console": "^6.0|^7.0",
+                "illuminate/contracts": "^6.0|^7.0",
+                "illuminate/database": "^6.0|^7.0",
+                "illuminate/filesystem": "^6.0|^7.0",
+                "illuminate/support": "^6.0|^7.0",
+                "laravel/scout": "^8.0",
+                "php": "^7.2",
+                "riimu/kit-phpencoder": "^2.4"
             },
             "require-dev": {
                 "fzaninotto/faker": "^1.8",
                 "mockery/mockery": "^1.1",
-                "nunomaduro/larastan": "^0.4",
-                "orchestra/testbench": "^3.0",
-                "phpstan/phpstan": "^0.11",
-                "phpunit/phpunit": "^7.0|^8.0"
+                "nunomaduro/larastan": "^0.5",
+                "orchestra/testbench": "^4.0|^5.0",
+                "phpstan/phpstan": "^0.12.14",
+                "phpunit/phpunit": "^8.0|^9.0"
             },
             "suggest": {
                 "ext-dom": "Required to use the HTML Splitter."
@@ -200,7 +200,7 @@
                 "scout",
                 "search"
             ],
-            "time": "2019-10-14T11:00:44+00:00"
+            "time": "2020-03-03T14:27:21+00:00"
         },
         {
             "name": "amnuts/opcache-gui",
@@ -920,8 +920,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
-                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8",
-                "shasum": null
+                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -954,8 +953,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
-                "reference": "6ecab1c47b37727c17819ad31972bbd437c4a44a",
-                "shasum": null
+                "reference": "6ecab1c47b37727c17819ad31972bbd437c4a44a"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1087,11 +1085,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.4.7",
+            "version": "v2.4.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "54a785f2ff144ca9a408e0e22c7a601cb65cc8c7"
+                "reference": "6db93cc17549f47bcb769fb4538c4c8fd6b48aef"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1125,15 +1123,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-10T21:06:26+00:00"
+            "time": "2020-05-11T14:22:46+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.4.4",
+            "version": "v2.4.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "72d3d9c777e149efee82346bab6e9974a7068d9c"
+                "reference": "94125b76df66799eb5348a2329aa73d91de1d682"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1158,7 +1156,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-09T18:26:20+00:00"
+            "time": "2020-05-11T17:55:49+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1166,8 +1164,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EnrollmentInvites",
-                "reference": "3d7e5ac1e98048bb2f469171feb8cb1532131c9c",
-                "shasum": null
+                "reference": "3d7e5ac1e98048bb2f469171feb8cb1532131c9c"
             },
             "require": {
                 "anaseqal/nova-import": "^0.0.3",
@@ -1201,8 +1198,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
-                "reference": "8b21629514943da628f3f5acb602c7610c2d9167",
-                "shasum": null
+                "reference": "8b21629514943da628f3f5acb602c7610c2d9167"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1235,8 +1231,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
-                "reference": "647bc07cacc81615878d4210f947957280127fdc",
-                "shasum": null
+                "reference": "647bc07cacc81615878d4210f947957280127fdc"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1269,8 +1264,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "f0df8eb877194dea1489f870e9d57de695feff3b",
-                "shasum": null
+                "reference": "f0df8eb877194dea1489f870e9d57de695feff3b"
             },
             "require": {
                 "php": ">=7.1.0",
@@ -1667,6 +1661,16 @@
                 }
             ],
             "description": "Composer plugin that provides efficient querying for installed package versions (no runtime IO)",
+            "funding": [
+                {
+                    "url": "https://packagist.com",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-04-23T11:49:37+00:00"
         },
         {
@@ -2204,16 +2208,16 @@
         },
         {
             "name": "doctrine/inflector",
-            "version": "1.4.0",
+            "version": "1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/inflector.git",
-                "reference": "ab5de36233a1995f9c776c741b803eb8207aebef"
+                "reference": "4111f6853aea6f28b2b1dcfdde83d12dd3d5e6e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/inflector/zipball/ab5de36233a1995f9c776c741b803eb8207aebef",
-                "reference": "ab5de36233a1995f9c776c741b803eb8207aebef",
+                "url": "https://api.github.com/repos/doctrine/inflector/zipball/4111f6853aea6f28b2b1dcfdde83d12dd3d5e6e3",
+                "reference": "4111f6853aea6f28b2b1dcfdde83d12dd3d5e6e3",
                 "shasum": ""
             },
             "require": {
@@ -2278,7 +2282,21 @@
                 "uppercase",
                 "words"
             ],
-            "time": "2020-05-06T11:01:57+00:00"
+            "funding": [
+                {
+                    "url": "https://www.doctrine-project.org/sponsorship.html",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.patreon.com/phpdoctrine",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Finflector",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-05-09T15:09:09+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -2980,16 +2998,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.133",
+            "version": "v0.134",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "dd53c4a23a5c4d868e409585e30ab31da278b5d2"
+                "reference": "4237f6725a48761701101e26e4575ddb053b5d80"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/dd53c4a23a5c4d868e409585e30ab31da278b5d2",
-                "reference": "dd53c4a23a5c4d868e409585e30ab31da278b5d2",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/4237f6725a48761701101e26e4575ddb053b5d80",
+                "reference": "4237f6725a48761701101e26e4575ddb053b5d80",
                 "shasum": ""
             },
             "require": {
@@ -3013,7 +3031,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-05-03T00:24:28+00:00"
+            "time": "2020-05-10T00:25:08+00:00"
         },
         {
             "name": "google/auth",
@@ -4080,6 +4098,12 @@
                 "psr",
                 "psr-7"
             ],
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
+            ],
             "time": "2020-04-27T17:07:01+00:00"
         },
         {
@@ -4614,31 +4638,25 @@
         },
         {
             "name": "laravel/scout",
-            "version": "v7.2.1",
+            "version": "8.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://github.com/laravel/scout.git",
-                "reference": "733f334cc2487c6ac85a557ae5eefd29f6bb1ba3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/scout/zipball/733f334cc2487c6ac85a557ae5eefd29f6bb1ba3",
-                "reference": "733f334cc2487c6ac85a557ae5eefd29f6bb1ba3",
-                "shasum": ""
+                "url": "git@github.com:CircleLinkHealth/scout.git",
+                "reference": "b12f51fd57dddf07ddb4c937cdec230f6049f31a"
             },
             "require": {
-                "illuminate/bus": "~5.4.0|~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0|^7.0",
-                "illuminate/contracts": "~5.4.0|~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0|^7.0",
-                "illuminate/database": "~5.4.0|~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0|^7.0",
-                "illuminate/pagination": "~5.4.0|~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0|^7.0",
-                "illuminate/queue": "~5.4.0|~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0|^7.0",
-                "illuminate/support": "~5.4.0|~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0|^7.0",
-                "php": "^7.1.3"
+                "illuminate/bus": "^6.0|^7.0",
+                "illuminate/contracts": "^6.0|^7.0",
+                "illuminate/database": "^6.0|^7.0",
+                "illuminate/pagination": "^6.0|^7.0",
+                "illuminate/queue": "^6.0|^7.0",
+                "illuminate/support": "^6.0|^7.0",
+                "php": "^7.2"
             },
             "require-dev": {
                 "algolia/algoliasearch-client-php": "^2.2",
                 "mockery/mockery": "^1.0",
-                "phpunit/phpunit": "^6.0|^7.0|^8.0"
+                "phpunit/phpunit": "^8.0"
             },
             "suggest": {
                 "algolia/algoliasearch-client-php": "Required to use the Algolia engine (^2.2)."
@@ -4646,7 +4664,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "7.0-dev"
+                    "dev-master": "8.x-dev"
                 },
                 "laravel": {
                     "providers": [
@@ -4659,7 +4677,11 @@
                     "Laravel\\Scout\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Laravel\\Scout\\Tests\\": "tests/"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -4675,7 +4697,11 @@
                 "laravel",
                 "search"
             ],
-            "time": "2019-09-24T21:06:28+00:00"
+            "support": {
+                "issues": "https://github.com/laravel/scout/issues",
+                "source": "https://github.com/laravel/scout"
+            },
+            "time": "2020-05-09T20:27:14+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -5419,6 +5445,12 @@
                 "resource",
                 "secure",
                 "server"
+            ],
+            "funding": [
+                {
+                    "url": "https://github.com/sephster",
+                    "type": "github"
+                }
             ],
             "time": "2020-04-29T22:14:38+00:00"
         },
@@ -6316,6 +6348,16 @@
                 "date",
                 "datetime",
                 "time"
+            ],
+            "funding": [
+                {
+                    "url": "https://opencollective.com/Carbon",
+                    "type": "open_collective"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/nesbot/carbon",
+                    "type": "tidelift"
+                }
             ],
             "time": "2020-04-20T15:05:43+00:00"
         },
@@ -7403,6 +7445,20 @@
                 "x.509",
                 "x509"
             ],
+            "funding": [
+                {
+                    "url": "https://github.com/terrafrost",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/phpseclib",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/phpseclib/phpseclib",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-04-04T23:17:33+00:00"
         },
         {
@@ -8207,6 +8263,16 @@
                 "linter",
                 "parser",
                 "validator"
+            ],
+            "funding": [
+                {
+                    "url": "https://github.com/Seldaek",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/seld/jsonlint",
+                    "type": "tidelift"
+                }
             ],
             "time": "2020-04-30T19:05:18+00:00"
         },
@@ -11020,6 +11086,16 @@
                 "env",
                 "environment"
             ],
+            "funding": [
+                {
+                    "url": "https://github.com/GrahamCampbell",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/vlucas/phpdotenv",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-05-02T13:46:13+00:00"
         },
         {
@@ -13661,16 +13737,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.24",
+            "version": "0.12.25",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "823a120fea50b68742b2be2285818202ecce511e"
+                "reference": "9619551d68b2d4c0d681a8df73f3c847c798ee64"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/823a120fea50b68742b2be2285818202ecce511e",
-                "reference": "823a120fea50b68742b2be2285818202ecce511e",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/9619551d68b2d4c0d681a8df73f3c847c798ee64",
+                "reference": "9619551d68b2d4c0d681a8df73f3c847c798ee64",
                 "shasum": ""
             },
             "require": {
@@ -13699,7 +13775,21 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2020-05-10T14:25:55+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/ondrejmirtes",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/phpstan",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/phpstan/phpstan",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-05-10T20:36:16+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -15514,6 +15604,7 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "daltcore/lara-pdf-merger": 20,
+        "laravel/scout": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20
     },
@@ -15529,5 +15620,6 @@
         "ext-redis": "*",
         "ext-simplexml": "*"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }

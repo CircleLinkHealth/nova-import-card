@@ -114,7 +114,7 @@ trait EnrollableManagement
      */
     public function getEnrollableModelType(User $user)
     {
-        return $user->checkForSurveyOnlyRole()
+        return $user->isSurveyOnly()
             ? $this->getEnrollee($user->id)
             : $this->getUserModelEnrollee($user->id);
     }
@@ -313,7 +313,7 @@ trait EnrollableManagement
      */
     public function saveTemporaryInvitationLink(User $notifiable, $urlToken, $url)
     {
-        if ($notifiable->checkForSurveyOnlyRole()) {
+        if ($notifiable->isSurveyOnly()) {
             $notifiable = Enrollee::whereUserId($notifiable->id)->firstOrFail();
         }
         //  Expire previous INVITATION link if exists

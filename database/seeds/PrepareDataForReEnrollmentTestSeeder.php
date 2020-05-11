@@ -10,6 +10,7 @@ use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\SeedEligibilityJobsForEnrollees;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use Faker\Factory;
 use Illuminate\Database\Seeder;
 
 class PrepareDataForReEnrollmentTestSeeder extends Seeder
@@ -27,6 +28,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
      */
     public function run()
     {
+        $faker       = Factory::create();
         $phoneTester = AppConfig::pull('tester_phone', null) ?? config('services.tester.phone');
         $emailTester = AppConfig::pull('tester_email', null) ?? config('services.tester.email');
 
@@ -51,13 +53,12 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 'practice_id'             => $practice->id,
                 'dob'                     => \Carbon\Carbon::parse('1901-01-01'),
                 'referring_provider_name' => 'Dr. Demo',
-                'mrn'                     => mt_rand(100000, 999999),
                 'primary_phone'           => $phoneTester,
                 'home_phone'              => $phoneTester,
-                'email'                   => $emailTester,
+                'email'                   => $faker->unique()->safeEmail,
             ]);
             $this->seedEligibilityJobs(collect($enrolleeForTesting));
-            //            Emulating Constantinos dashboard Importing - Mark Enrollees to invite.
+//                        Emulating Constantinos dashboard Importing - Mark Enrollees to invite.
             $enrolleeForTesting->first()->update([
                 'status' => Enrollee::QUEUE_AUTO_ENROLLMENT,
             ]);
@@ -65,18 +66,18 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             ++$n;
         }
 
-        $n     = 1;
-        $limit = 5;
-        while ($n <= $limit) {
-            $user = $this->createUser($practice->id, 'participant', self::CCM_STATUS_UNREACHABLE);
-            $user->phoneNumbers()->update(['number' => $phoneTester]);
-            $user->update(['email' => $emailTester]);
-            $user->patientInfo()->update([
-                'birth_date'       => \Carbon\Carbon::parse('1901-01-01'),
-                'date_unreachable' => now(),
-            ]);
-            ++$n;
-//            There is PatientObesrver
-        }
+//        $n     = 1;
+//        $limit = 5;
+//        while ($n <= $limit) {
+//            $user = $this->createUser($practice->id, 'participant', self::CCM_STATUS_UNREACHABLE);
+//            $user->phoneNumbers()->update(['number' => $phoneTester]);
+//            $user->update(['email' => $faker->unique()->safeEmail]);
+//            $user->patientInfo()->update([
+//                'birth_date'       => \Carbon\Carbon::parse('1901-01-01'),
+//                'date_unreachable' => now(),
+//            ]);
+//            ++$n;
+////            There is PatientObesrver
+//        }
     }
 }

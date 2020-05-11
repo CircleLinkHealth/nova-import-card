@@ -122,6 +122,7 @@ class AutoEnrollmentLogin extends Controller
 
     /**
      * @throws \Exception
+     *
      * @return array
      */
     private function getLoginFormData(Request $request)

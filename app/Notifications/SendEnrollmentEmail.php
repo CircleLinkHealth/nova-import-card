@@ -82,7 +82,7 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
      */
     public function toArrayData($notifiable)
     {
-        if ($notifiable->checkForSurveyOnlyRole()) {
+        if ($notifiable->isSurveyOnly()) {
             $enrollee = Enrollee::whereUserId($notifiable->id)->first();
             if ( ! $enrollee) {
                 throw new \Exception("Could not find enrollee for user[$notifiable->id]");
