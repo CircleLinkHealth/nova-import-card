@@ -158,6 +158,7 @@ class AutoEnrollmentCenterController extends Controller
     }
 
     /**
+     * @throws \Exception
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      */
     public function enrollNow(Request $request)
@@ -165,22 +166,25 @@ class AutoEnrollmentCenterController extends Controller
         $enrollableId      = $request->input('enrollable_id');
         $userForEnrollment = $this->getUserModelEnrollee($enrollableId);
         if ( ! $userForEnrollment) {
-            return 'Cannot find user. User may have been already enrolled.';
+            throw new \Exception('There was an error. Please try again. [1]', 400);
         }
         $enrollable = $this->getEnrollableModelType($userForEnrollment);
 
         //      This can happen only on the first redirect and if page is refreshed
         if ($this->enrollableHasRequestedInfo($enrollable)) {
-            return 'Action Not Allowed';
+            throw new \Exception('There was an error. A care coach will contact you soon. [2]', 400);
         }
 
         $this->expirePastInvitationLink($enrollable);
-//        $pastActiveSurveyLink = $this->getSurveyInvitationLink($userForEnrollment->patientInfo->id);
+
+        return $this->createUrlAndRedirectToSurvey($enrollableId);
+        /*
+        $pastActiveSurveyLink = $this->getSurveyInvitationLink($userForEnrollment->patientInfo->id);
         if (empty($pastActiveSurveyLink)) {
             return $this->createUrlAndRedirectToSurvey($enrollableId);
         }
-
         return redirect($pastActiveSurveyLink->url);
+        */
     }
 
     /**

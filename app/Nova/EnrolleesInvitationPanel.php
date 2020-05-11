@@ -107,7 +107,7 @@ class EnrolleesInvitationPanel extends Resource
         return [
             (new EnrollmentInvites())->withMeta(
                 [
-                    'practice_id' => $this->getPracticeId(),
+                    'practice_id' => self::getPracticeId($this),
                     'is_patient'  => false,
                 ]
             ),
@@ -238,12 +238,19 @@ class EnrolleesInvitationPanel extends Resource
         return is_null($userId) && ! optional($this->selfEnrollmentStatuses)->logged_in;
     }
 
-    private static function getPracticeId()
+    private static function getPracticeId(Resource $thisResource = null)
     {
         $url = parse_url($_SERVER['HTTP_REFERER']);
-        parse_str($url['query'], $params);
+        if (isset($url['query'])) {
+            parse_str($url['query'], $params);
 
-        return $params['practice_id'];
+            return $params['practice_id'];
+        }
+        if ($thisResource) {
+            return $thisResource->resource->practice_id;
+        }
+
+        return null;
     }
 
     private function getSurveyInstance($survey)
