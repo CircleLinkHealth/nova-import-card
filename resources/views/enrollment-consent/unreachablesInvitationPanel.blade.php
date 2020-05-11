@@ -72,18 +72,18 @@
                 </a>
             </div>
 <br>
-             <div>
-                 <a href="{{route('send.reminder.patient.qa')}}" target="_blank">
-                     <button type="button" class="btn btn-warning">
-                         Fast Forward 2 days and send reminders to Patients
-                     </button>
-                 </a>
-             </div>
-          </div>
+{{--             <div>--}}
+{{--                 <a href="{{route('send.reminder.patient.qa')}}" target="_blank">--}}
+{{--                     <button type="button" class="btn btn-warning">--}}
+{{--                         Fast Forward 2 days and send reminders to Patients--}}
+{{--                     </button>--}}
+{{--                 </a>--}}
+{{--             </div>--}}
+{{--          </div>--}}
 
           <br>
 
-          <div class="request-info-href" style="padding-left: 135px;">
+          <div class="request-info-href">
               <h5>Test Case 2</h5>
               <p>Take Final Action on Non Responding Patients</p>
               <ul class="browser-default">
