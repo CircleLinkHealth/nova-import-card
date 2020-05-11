@@ -57,6 +57,14 @@ class ImportEnrollee
 
             $static->importFromEligibilityJob($enrollee, $job);
         }
+        
+        //If enrollee is from uploaded CSV from Nova Page,
+        //Where we create Enrollees without any other data,
+        //so we can consent them and then ask the practice to send us the CCDs
+        //It is expected to reach this point, do not throw error
+        if ($enrollee->source === Enrollee::UPLOADED_CSV){
+            return;
+        }
 
         Log::error("This should never be reached. enrollee: $enrollee->id");
     }

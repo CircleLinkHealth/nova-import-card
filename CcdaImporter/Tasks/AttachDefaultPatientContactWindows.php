@@ -7,34 +7,10 @@
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
-use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\Eligibility\CcdaImporter\TakesEnrolleeCcdaImportTask;
 
-class AttachDefaultPatientContactWindows extends BaseCcdaImportTask
+class AttachDefaultPatientContactWindows extends TakesEnrolleeCcdaImportTask
 {
-    /** @var Enrollee */
-    private $enrollee;
-
-    public static function for(User $patient, Ccda $ccda, Enrollee $enrollee = null)
-    {
-        $static = new static($patient, $ccda);
-        if ($enrollee instanceof Enrollee) {
-            $static->setEnrollee($enrollee);
-        }
-
-        return $static->import();
-    }
-
-    /**
-     * @param mixed $enrollee
-     */
-    public function setEnrollee(Enrollee $enrollee): void
-    {
-        $this->enrollee = $enrollee;
-    }
-
     protected function import()
     {
         $this->patient->load('patientInfo');
