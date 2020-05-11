@@ -62,7 +62,8 @@ class AutoEnrollmentLogin extends Controller
         $alreadyLoggedIn = auth()->check() ? 'yes' : 'no';
         $authId          = auth()->id() ?? 'null';
         $headers         = json_encode($request->headers->all());
-        Log::debug("enrollmentAuthForm - User is already logged in: $alreadyLoggedIn.\nUser Id: $authId.\nHeaders: $headers");
+        $userId          = $this->getUserId($request);
+        Log::debug("enrollmentAuthForm - User is already logged in: $alreadyLoggedIn. EnrollableId[$userId]. isFromBitly[$isFromBitly].\nUser Id: $authId.\nHeaders: $headers");
 
         try {
             $loginFormData = $this->getLoginFormData($request);
@@ -73,7 +74,6 @@ class AutoEnrollmentLogin extends Controller
         $urlWithToken    = $loginFormData['url_with_token'];
         $practiceName    = $loginFormData['practiceName'];
         $doctorsLastName = $loginFormData['doctorsLastName'];
-        $userId          = $this->getUserId($request);
         $isSurveyOnly    = $request->input('is_survey_only');
 
         if ( ! $isFromBitly) {
