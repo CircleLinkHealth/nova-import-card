@@ -63,7 +63,7 @@ class ImportEnrollee
         //Where we create Enrollees without any other data,
         //so we can consent them and then ask the practice to send us the CCDs
         //It is expected to reach this point, do not throw error
-        if ($enrollee->source === Enrollee::UPLOADED_CSV){
+        if (Enrollee::UPLOADED_CSV === $enrollee->source) {
             return;
         }
 
@@ -108,7 +108,7 @@ class ImportEnrollee
         }
 
         //If user is survey only return null so we can proceed with the importing
-        if ($user->hasRole(SelfEnrollmentEnrollees::SURVEY_ONLY)) {
+        if ($user->isSurveyOnly()) {
             return null;
         }
 
