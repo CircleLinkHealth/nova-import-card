@@ -120,12 +120,12 @@ class AutoEnrollmentTestDashboard extends Controller
                     ->where('survey_instance_id', $surveyInstance->id)
                     ->delete();
 
-                $hasLoggedIn = $this->hasViewedLetterOrSurvey($user->id);
+//                $hasLoggedIn = $this->hasViewedLetterOrSurvey($user->id);
                 //                Just for live testing so i can reset the test
-                if ($hasLoggedIn) {
-                    LoginLogout::where('user_id', $user->id)->delete();
-                }
-                $user->forceDelete();
+//                if ($hasLoggedIn) {
+//                    LoginLogout::where('user_id', $user->id)->delete();
+//                }
+//                $user->forceDelete();
             } else {
                 $this->deleteTestAwvUser($user->id, $surveyInstance);
                 $user->notifications()->delete();
