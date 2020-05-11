@@ -67,7 +67,6 @@ class CreateUserFromEnrollee implements ShouldQueue
             : $email;
 
         //need this to determine if is_awv. What about if there is no CCDA? e.g. only has eligibility job?
-        //todo: please confirm
         $ccda  = $this->enrollee->ccda;
         $isAwv = $ccda ? Ccda::IMPORTER_AWV === $ccda->source : false;
 
