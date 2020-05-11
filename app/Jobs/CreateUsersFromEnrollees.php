@@ -94,9 +94,12 @@ class CreateUsersFromEnrollees implements ShouldQueue
                         ? $newUserId.'@careplanmanager.com'
                         : $email;
 
-                    //need this to determine if is_awv. What about if there is no CCDA? e.g. only has eligibility job?
                     $ccda = $enrollee->ccda;
-                    $isAwv = $ccda ? Ccda::IMPORTER_AWV === $ccda->source : false;
+                    $isAwv = false;
+                    if ($ccda) {
+                        $ccda->billing_provider_id = $enrollee->provider->id;
+                        $isAwv = Ccda::IMPORTER_AWV === $ccda->source;
+                    }
 
                     //what about if enrollee already has user?
                     $userCreatedFromEnrollee = (new UserRepository())->createNewUser(
@@ -130,9 +133,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
                         )
                     );
 
-                    //todo: IMPORTANT - NEEDS TO BE ADDRESSED
-                    //Are we sure we have ccda? can we implement it from importer instead?
-//        $this->ccda->patient_id = $this->patient->id;
+                    $ccda->patient_id = $userCreatedFromEnrollee->id;
 
                     //handle phones here, we wanna make sure enrollee cell_phone gets priority, since we are sending SMS.
                     //This is worth investigating. When Zack goes through enrollees to see if they are eligible for auto enrollment, does he check phones?
