@@ -24,6 +24,15 @@ class GenerateOpsDailyReport implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    const MEMORY_LIMIT = '800M';
+
+    /**
+     * The number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 600;
+
     /**
      * The number of times the job may be attempted.
      *
@@ -87,7 +96,9 @@ class GenerateOpsDailyReport implements ShouldQueue
      */
     public function handle(OpsDashboardService $opsDashboardService)
     {
-        ini_set('memory_limit', '512M');
+        ini_set('memory_limit', self::MEMORY_LIMIT);
+        ini_set('max_input_time', $this->timeout);
+        ini_set('max_execution_time', $this->timeout);
 
         $demoPracticeIds = Practice::whereIsDemo(1)->pluck('id')->toArray();
 
