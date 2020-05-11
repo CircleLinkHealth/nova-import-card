@@ -210,8 +210,11 @@ class ImporterController extends Controller
                         continue;
                     }
 
-                    $ccda->location_id         = $record['location_id'];
-                    $ccda->practice_id         = $record['practice_id'];
+                    $ccda->location_id = $record['location_id'];
+                    //A CCDA should never have a reason to change practice id, so only do it if it was not set.
+                    if ( ! $ccda->practice_id) {
+                        $ccda->practice_id = $record['practice_id'];
+                    }
                     $ccda->billing_provider_id = $record['billing_provider_id'];
                     $ccda                      = $ccda->updateOrCreateCarePlan();
                     array_push(
