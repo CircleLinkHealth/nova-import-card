@@ -57,6 +57,19 @@ class CcdaImporterTest extends CustomerTestCase
         $this->assertTrue($this->patient()->program_id === $differentPracticeId);
     }
 
+    public function test_it_does_not_change_billing_provider_during_reimport()
+    {
+        $ccda = FakeCalvaryCcda::create(['billing_provider_id' => $this->provider()->id]);
+
+        AttachBillingProvider::for($this->patient(), $ccda);
+        $this->assertTrue($this->provider()->id === $this->patient()->billingProviderUser()->id);
+
+        $ccda->billing_provider_id = $this->superadmin()->id;
+        $ccda->save();
+        AttachBillingProvider::for($this->patient(), $ccda);
+        $this->assertTrue($this->provider()->id === $this->patient()->billingProviderUser()->id);
+    }
+
     public function test_it_does_not_import_ccd_without_practice_id()
     {
         $ccda = FakeDiabetesAndEndocrineCcda::create()->import();
