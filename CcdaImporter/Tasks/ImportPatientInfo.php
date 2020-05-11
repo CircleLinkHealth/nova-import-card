@@ -8,22 +8,17 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
+use CircleLinkHealth\Eligibility\CcdaImporter\TakesEnrolleeCcdaImportTask;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use  Illuminate\Support\Str;
+use Illuminate\Support\Str;
 
-class ImportPatientInfo extends BaseCcdaImportTask
+class ImportPatientInfo extends TakesEnrolleeCcdaImportTask
 {
     use FiresImportingHooks;
     const HOOK_IMPORTED_PATIENT_INFO = 'IMPORTED_PATIENTINFO';
 
     const HOOK_IMPORTING_PATIENT_INFO = 'IMPORTING_PATIENTINFO';
-
-    /**
-     * @var Enrollee
-     */
-    private $enrollee;
 
     /**
      * @param $dob
@@ -146,8 +141,8 @@ class ImportPatientInfo extends BaseCcdaImportTask
                 ),
                 'preferred_contact_method' => 'CCT',
                 'registration_date'        => $this->patient->user_registered->toDateString(),
-                'general_comment'          => $this->enrollee()
-                    ? $this->enrollee()->other_note
+                'general_comment'          => $this->enrollee
+                    ? $this->enrollee->other_note
                     : null,
             ],
             $agentDetails
@@ -250,22 +245,6 @@ class ImportPatientInfo extends BaseCcdaImportTask
         return $date;
     }
 
-    private function enrollee(): ?Enrollee
-    {
-        if ( ! $this->enrollee) {
-            $this->enrollee = Enrollee::where(
-                [
-                    ['user_id', '=', $this->patient->id],
-                    ['practice_id', '=', $this->patient->program_id],
-                    ['first_name', '=', $this->patient->first_name],
-                    ['last_name', '=', $this->patient->last_name],
-                ]
-            )->first();
-        }
-
-        return $this->enrollee;
-    }
-
     /**
      * If Enrollee exists and if agent details are set,
      * Get array to save in patient info.
@@ -274,18 +253,18 @@ class ImportPatientInfo extends BaseCcdaImportTask
      */
     private function getEnrolleeAgentDetailsIfExist()
     {
-        if ( ! $this->enrollee()) {
+        if ( ! $this->enrollee) {
             return [];
         }
-        if (empty($this->enrollee()->agent_details)) {
+        if (empty($this->enrollee->agent_details)) {
             return [];
         }
 
         return [
-            'agent_name'         => $this->enrollee()->getAgentAttribute(Enrollee::AGENT_NAME_KEY),
-            'agent_telephone'    => $this->enrollee()->getAgentAttribute(Enrollee::AGENT_PHONE_KEY),
-            'agent_email'        => $this->enrollee()->getAgentAttribute(Enrollee::AGENT_EMAIL_KEY),
-            'agent_relationship' => $this->enrollee()->getAgentAttribute(Enrollee::AGENT_RELATIONSHIP_KEY),
+            'agent_name'         => $this->enrollee->getAgentAttribute(Enrollee::AGENT_NAME_KEY),
+            'agent_telephone'    => $this->enrollee->getAgentAttribute(Enrollee::AGENT_PHONE_KEY),
+            'agent_email'        => $this->enrollee->getAgentAttribute(Enrollee::AGENT_EMAIL_KEY),
+            'agent_relationship' => $this->enrollee->getAgentAttribute(Enrollee::AGENT_RELATIONSHIP_KEY),
         ];
     }
 

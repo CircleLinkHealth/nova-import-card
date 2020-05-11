@@ -25,10 +25,10 @@ class ImportEnrollee
         //verify it wasn't already imported
         if ($enrollee->user_id) {
             /** @var User|null $patientUser */
-            $patientUser = $static->handleExistingUser($enrollee);
+            $patientUserImported = $static->handleExistingUser($enrollee);
 
-            if ( ! is_null($patientUser)) {
-                return $patientUser;
+            if ( ! is_null($patientUserImported)) {
+                return $patientUserImported;
             }
         }
 
@@ -56,6 +56,14 @@ class ImportEnrollee
             }
 
             $static->importFromEligibilityJob($enrollee, $job);
+        }
+        
+        //If enrollee is from uploaded CSV from Nova Page,
+        //Where we create Enrollees without any other data,
+        //so we can consent them and then ask the practice to send us the CCDs
+        //It is expected to reach this point, do not throw error
+        if ($enrollee->source === Enrollee::UPLOADED_CSV){
+            return;
         }
 
         Log::error("This should never be reached. enrollee: $enrollee->id");
@@ -95,6 +103,11 @@ class ImportEnrollee
             $enrollee->user_id = null;
             $enrollee->save();
 
+            return null;
+        }
+
+        //If user is survey only return null so we can proceed with the importing
+        if ($user->isSurveyOnly()) {
             return null;
         }
 
@@ -151,7 +164,9 @@ class ImportEnrollee
         $enrollee->medical_record_id   = $ccda->id;
         $enrollee->save();
 
-        $ccda = $ccda->import($enrollee);
+        //We need to refresh the model before we perform the import, to make sure virtual columns contain the proper data
+        //since the model that gets returned from Ccda::create method contains null values fro virtual columns
+        $ccda = $ccda->fresh()->import($enrollee);
 
         $this->enrolleeMedicalRecordImported($enrollee);
     }

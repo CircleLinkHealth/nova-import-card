@@ -296,7 +296,7 @@ class CcdaImporter
      */
     private function importPatientInfo()
     {
-        ImportPatientInfo::for($this->patient, $this->ccda);
+        ImportPatientInfo::for($this->patient, $this->ccda, $this->enrollee);
 
         return $this;
     }
@@ -395,6 +395,11 @@ class CcdaImporter
 
     private function updatePatientUserPostImport()
     {
+        //Make sure Patient does not have survey-only role moving forward
+        $participantRoleId = Role::whereName('participant')->firstOrFail()->id;
+
+        $this->patient->roles()->sync([$participantRoleId]);
+
         if ($this->patient->isDirty()) {
             $this->patient->save();
         }
