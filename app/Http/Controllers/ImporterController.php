@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Jobs\ImportCcda;
 use App\Nova\Actions\ClearAndReimportCcda;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -231,6 +232,19 @@ class ImporterController extends Controller
                                 'temporary_nurse_user_id' => null,
                                 'temporary_from'          => null,
                                 'temporary_to'            => null,
+                            ]
+                        );
+                    }
+
+                    if ($record['billing_provider_id']) {
+                        $updateBillingProvider = CarePerson::updateOrCreate(
+                            [
+                                'type'    => CarePerson::BILLING_PROVIDER,
+                                'user_id' => $ccda->patient->id,
+                            ],
+                            [
+                                'member_user_id' => $record['billing_provider_id'],
+                                'alert'          => true,
                             ]
                         );
                     }
