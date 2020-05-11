@@ -24,7 +24,7 @@ class AttachBillingProvider extends BaseCcdaImportTask
             'alert'          => true,
         ];
 
-        $billing = CarePerson::firstOrCreate(
+        $billing = CarePerson::updateOrCreate(
             [
                 'type'    => CarePerson::BILLING_PROVIDER,
                 'user_id' => $this->patient->id,
