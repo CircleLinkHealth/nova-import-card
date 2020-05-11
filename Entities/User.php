@@ -845,17 +845,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
-     * If user has "survey-only" Role, returns true.
-     * note: hasRole() doesnt always produce correct results in this case.
-     *
-     * @return mixed
-     */
-    public function checkForSurveyOnlyRole()
-    {
-        return $this->roles()->where('name', SelfEnrollmentEnrollees::SURVEY_ONLY)->exists();
-    }
-
-    /**
      * Delete all existing Phone Numbers and replace them with a new primary number.
      *
      * @param $number
@@ -2246,6 +2235,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function isSoftwareOnly(): bool
     {
         return $this->hasRole('software-only');
+    }
+
+    /**
+     * If user has "survey-only" Role, returns true.
+     * note: hasRole() doesnt always produce correct results in this case.
+     *
+     * @return mixed
+     */
+    public function isSurveyOnly()
+    {
+        return $this->roles()->where('name', SelfEnrollmentEnrollees::SURVEY_ONLY)->exists();
     }
 
     public function lastObservation()

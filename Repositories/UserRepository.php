@@ -136,7 +136,12 @@ class UserRepository
         }
         // phone numbers
         $this->saveOrUpdatePhoneNumbers($user, $params);
-
+    
+//        /for survey only
+        if ($user->isSurveyOnly()) {
+            $this->saveOrUpdatePatientInfo($user, $params);
+        }
+    
         // participant info
         if ($user->isParticipant()) {
             $this->saveOrUpdatePatientInfo($user, $params);
