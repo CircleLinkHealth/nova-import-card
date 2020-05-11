@@ -2259,7 +2259,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->orderBy('updated_at', 'desc')
             ->first();
     }
- 
+
     /**
      * Get billing provider.
      */
