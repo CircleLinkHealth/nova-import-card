@@ -6,16 +6,14 @@
 
 namespace App\Nova\Actions;
 
-use App\Jobs\ImportCcda;
-use CircleLinkHealth\SharedModels\Entities\Ccda;
+use App\Jobs\ImportCcdas;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
 
-class ImportCcdaAction extends Action implements ShouldQueue
+class ImportCcdaAction extends Action
 {
     use InteractsWithQueue;
     use Queueable;
@@ -44,12 +42,7 @@ class ImportCcdaAction extends Action implements ShouldQueue
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        Ccda::whereIn('id', $models->pluck('ccda_id')->all())->chunkById(50, function ($ccdas) {
-            $ccdas->each(function (Ccda $ccda) {
-                $ccda->user_id = auth()->id();
-                ImportCcda::dispatch($ccda, true);
-            });
-        });
+        ImportCcdas::dispatch($models->pluck('ccda_id')->all(), auth()->id());
 
         return Action::message('CCDAs queued to import. We will send you a notification in CPM when done.');
     }
