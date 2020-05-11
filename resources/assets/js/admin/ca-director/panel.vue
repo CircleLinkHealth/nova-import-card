@@ -131,6 +131,9 @@
                         }
                         return data;
                     },
+                    headings: {
+                        enrollment_non_responsive : 'Send Regular Mail'
+                    },
                     columnsClasses: {
                         'selected': 'blank',
                         'Type': 'padding-2'
