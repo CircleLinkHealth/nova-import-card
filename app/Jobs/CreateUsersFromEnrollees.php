@@ -67,13 +67,25 @@ class CreateUsersFromEnrollees implements ShouldQueue
             ->chunk(100, function ($entries) use (&$count) {
                 $newUserIds = collect();
                 $entries->each(function ($enrollee) use ($newUserIds, &$count) {
-//                    If already has user_id then just invite
-//                    Only QUEUE_AUTO_ENROLLMENT
-//                    Only original Enrollee (Not UNREACHABLE_PATIENT)
+                    // UNREACHABLE_PATIENT marks unreachable patients in enrollee model. Doesnt get updated.
+                    if ( ! empty($enrollee->user_id) && Enrollee::UNREACHABLE_PATIENT === $enrollee->source) {
+                        Log::warning("Enrollee with id [$enrollee->id] is unreachable patient. Should not be here");
+
+                        return;
+                    }
+
+                    // If Enrollee and invited again (has user_id) the dont create user. Just invite
                     if ( ! empty($enrollee->user_id)
-                        && Enrollee::QUEUE_AUTO_ENROLLMENT == $enrollee->source
-                        && Enrollee::UNREACHABLE_PATIENT !== $enrollee->source) {
+                        && Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->source
+                        && Enrollee::ENROLLED !== $enrollee->status) {
                         $newUserIds->push($enrollee->user_id);
+
+                        return;
+                    }
+
+                    // If any other reason then something is wrong
+                    if ( ! empty($enrollee->user_id)) {
+                        Log::critical("Enrollee with id [$enrollee->id] should not have reached this point");
 
                         return;
                     }
