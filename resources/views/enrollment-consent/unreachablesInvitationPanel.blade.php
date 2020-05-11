@@ -36,21 +36,21 @@
 
           <br>
 
-          <div class="row" style="display: inline-flex">
-              <div class="enroll-now-href">
-                  <h5>Step 2</h5>
+{{--          <div class="row" style="display: inline-flex">--}}
+{{--              <div class="enroll-now-href">--}}
+{{--                  <h5>Step 2</h5>--}}
 {{--                  <a href="{{route('send.enrollee.invitations', ['color' => '#4baf50', 'amount'=> 1, 'practice_id' => 8])}}">--}}
 {{--                      <button type="button" class="btn btn-success" style="background-color: #4baf50">Invite 1 Test Enrollee</button>--}}
 {{--                  </a>--}}
 {{--                  <a href="{{route('send.enrollee.invitations', ['color' => '#b1284c', 'amount'=> 1, 'practice_id' => 8])}}">--}}
 {{--                      <button type="button" class="btn btn-success" style="background-color: #b1284c">Invite 1 Test Enrollee</button>--}}
 {{--                  </a>--}}
-              </div>
-              <div class="enroll-now-href" style="padding-top: 53px; padding-left: 10px;">
-                  <a href="{{route('send.unreachable.invitations',  ['amount'=> 1, 'practice_id' => 8])}}">
-                      <button type="button" class="btn btn-success" style="background-color: #4baf50">Invite 1 Test Unreachable Patient</button>
-                  </a>
-              </div>
+{{--              </div>--}}
+{{--              <div class="enroll-now-href" style="padding-top: 53px; padding-left: 10px;">--}}
+{{--                  <a href="{{route('send.unreachable.invitations',  ['amount'=> 1, 'practice_id' => 8])}}">--}}
+{{--                      <button type="button" class="btn btn-success" style="background-color: #4baf50">Invite 1 Test Unreachable Patient</button>--}}
+{{--                  </a>--}}
+{{--              </div>--}}
           </div>
 
   </div>
@@ -104,58 +104,58 @@
 
             <br>
 
-            <div class="request-info-href" style="padding-top: 20px;">
-                <h5>Enter patient's / enrolee's 'ID' that got enrolled</h5>
-                <p>This will update patient or enrollee fields and display them where they should be (see. flow)</p>
-                <strong>This will be automated on production</strong>
-                <form action="{{route('evaluate.survey.completed')}}" target="_blank">
-                    <label for="enrolleeId">Enter Id:</label><br>
-                    <input type="text" id="enrolleeId" name="enrolleeId" placeholder="ex.1616"><br>
-                    <input type="submit" value="Submit">
-                </form>
-            </div>
+{{--            <div class="request-info-href" style="padding-top: 20px;">--}}
+{{--                <h5>Enter patient's / enrolee's 'ID' that got enrolled</h5>--}}
+{{--                <p>This will update patient or enrollee fields and display them where they should be (see. flow)</p>--}}
+{{--                <strong>This will be automated on production</strong>--}}
+{{--                <form action="{{route('evaluate.survey.completed')}}" target="_blank">--}}
+{{--                    <label for="enrolleeId">Enter Id:</label><br>--}}
+{{--                    <input type="text" id="enrolleeId" name="enrolleeId" placeholder="ex.1616"><br>--}}
+{{--                    <input type="submit" value="Submit">--}}
+{{--                </form>--}}
+{{--            </div>--}}
 
-            <div class="request-info-href">
-                <a href="{{route('reset.test.qa')}}">
-                    <button type="button" class="btn btn-warning">Reset Test
-                    </button>
-                </a>
-            </div>
+{{--            <div class="request-info-href">--}}
+{{--                <a href="{{route('reset.test.qa')}}">--}}
+{{--                    <button type="button" class="btn btn-warning">Reset Test--}}
+{{--                    </button>--}}
+{{--                </a>--}}
+{{--            </div>--}}
         </div>
     </div>
 
-    <div>
-        <h5>Invited Patients credentials</h5>
-        @foreach($invitationData as $data)
-            @if($data['isEnrolleeClass'])
-                <ol>
-                    <strong> Type: Enrollee.</strong>
-                    <br>
-                    Invited Name: {{$data['name']}}
-                    <br>
-                    DOB: {{$data['dob']}}
-                    <br>
-                    <a href="{{$data['invitationUrl']}}" target="_blank">click here</a>
-                    or the link in Sms / Email. <br>
-                    Open in incognito window or log out from this browser.
-                </ol>
+{{--    <div>--}}
+{{--        <h5>Invited Patients credentials</h5>--}}
+{{--        @foreach($invitationData as $data)--}}
+{{--            @if($data['isEnrolleeClass'])--}}
+{{--                <ol>--}}
+{{--                    <strong> Type: Enrollee.</strong>--}}
+{{--                    <br>--}}
+{{--                    Invited Name: {{$data['name']}}--}}
+{{--                    <br>--}}
+{{--                    DOB: {{$data['dob']}}--}}
+{{--                    <br>--}}
+{{--                    <a href="{{$data['invitationUrl']}}" target="_blank">click here</a>--}}
+{{--                    or the link in Sms / Email. <br>--}}
+{{--                    Open in incognito window or log out from this browser.--}}
+{{--                </ol>--}}
 
-            @elseif($data['isEnrolleeClass'] === false)
-                    <ol>
-                        <strong>Type: Unreachable Patient.</strong>
-                        <br>
-                        Invited Name: {{$data['name']}}
-                        <br>
-                        DOB: {{$data['dob']}}
-                        <br>
-                        You can <a href="{{$data['invitationUrl']}}" target="_blank">click here</a>
-                        or the link in Sms / Email. <br>
-                        Open in incognito window or log out from this browser.
-                    </ol>
-            @endif
+{{--            @elseif($data['isEnrolleeClass'] === false)--}}
+{{--                    <ol>--}}
+{{--                        <strong>Type: Unreachable Patient.</strong>--}}
+{{--                        <br>--}}
+{{--                        Invited Name: {{$data['name']}}--}}
+{{--                        <br>--}}
+{{--                        DOB: {{$data['dob']}}--}}
+{{--                        <br>--}}
+{{--                        You can <a href="{{$data['invitationUrl']}}" target="_blank">click here</a>--}}
+{{--                        or the link in Sms / Email. <br>--}}
+{{--                        Open in incognito window or log out from this browser.--}}
+{{--                    </ol>--}}
+{{--            @endif--}}
 
-        @endforeach
-    </div>
+{{--        @endforeach--}}
+{{--    </div>--}}
 
 </div>
 @endsection
