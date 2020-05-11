@@ -24,7 +24,10 @@ class AttachBillingProvider extends BaseCcdaImportTask
             'alert'          => true,
         ];
 
-        $billing = CarePerson::updateOrCreate(
+        // firstOrCreate intentional here. Never change to updateOrCreate.
+        // We get billing provider lists from the practice, and sometimes it's wrong. Providers may then be uploaded by users, changed by nurses etc.
+        // So we don't want to touch any change an admin/nurse/practice staff may have performed.
+        $billing = CarePerson::firstOrCreate(
             [
                 'type'    => CarePerson::BILLING_PROVIDER,
                 'user_id' => $this->patient->id,
