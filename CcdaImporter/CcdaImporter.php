@@ -97,7 +97,7 @@ class CcdaImporter
 
     private function createNewPatient()
     {
-        $newUserId = Str::random(25);
+        $newUserId = (string) Str::uuid();
 
         $email = empty($email = $this->patientEmail())
             ? $newUserId.'@careplanmanager.com'
