@@ -189,4 +189,19 @@ class CcdaImporterTest extends CustomerTestCase
         $patient  = User::ofType('participant')->findOrFail($imported->patient_id);
         $this->assertTrue($patient->email === $enrollee->email);
     }
+
+    public function test_it_when_survey_only_user_is_imported_user_role_changes_to_participant()
+    {
+        $enrollee          = $this->enrollee();
+        $enrollee->user_id = $this->surveyOnly()->id;
+        $enrollee->save();
+
+        $ccda = FakeCalvaryCcda::create(['practice_id' => $enrollee->practice_id]);
+
+        $imported = $ccda->fresh()->import($enrollee);
+        $patient  = User::ofType('participant')->findOrFail($imported->patient_id);
+        $this->assertTrue($patient->email === $enrollee->email);
+        $this->assertFalse($patient->hasRole('survey-only'));
+        $this->assertTrue($patient->hasRole('participant'));
+    }
 }
