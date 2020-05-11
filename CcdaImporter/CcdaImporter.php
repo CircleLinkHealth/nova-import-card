@@ -211,8 +211,8 @@ class CcdaImporter
                 return $this->ccda;
             }
         }
-    
-        if ($this->patient->isSurveyOnly()){
+
+        if ($this->patient->isSurveyOnly()) {
             $this->ccda->user_id = $this->patient->id;
             $this->ccda->save();
         }
@@ -239,8 +239,7 @@ class CcdaImporter
 //            ->importVitals()
             ->updateCcdaPostImport()
             ->updateEnrolleePostImport()
-            ->updatePatientUserPostImport()
-        ;
+            ->updatePatientUserPostImport();
 
         event(new PatientUserCreated($this->patient));
     }
