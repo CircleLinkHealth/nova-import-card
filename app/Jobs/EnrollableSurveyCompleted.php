@@ -19,6 +19,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class EnrollableSurveyCompleted implements ShouldQueue
 {
@@ -28,6 +29,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    const SURVEY_COMPLETED = 'completed';
     private $data;
 
     /**
@@ -165,15 +167,35 @@ class EnrollableSurveyCompleted implements ShouldQueue
      */
     public function handle()
     {
-        $enrollableId     = is_json($this->data) ? json_decode($this->data)->enrollable_id : $this->data['enrollable_id'];
-        $surveyInstanceId = is_json($this->data) ? json_decode($this->data)->survey_instance_id : $this->data['survey_instance_id'];
-        $surveyAnswers    = $this->getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId);
-        $user             = User::withTrashed()->whereId($enrollableId)->firstOrFail();
-        $isSurveyOnly     = $user->hasRole('survey-only');
-        $addressData      = $this->getAddressData($surveyAnswers['address']);
+        $enrollableId                = is_json($this->data) ? json_decode($this->data)->enrollable_id : $this->data['enrollable_id'];
+        $surveyInstanceId            = is_json($this->data) ? json_decode($this->data)->survey_instance_id : $this->data['survey_instance_id'];
+        $surveyAnswers               = $this->getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId);
+        $user                        = User::withTrashed()->whereId($enrollableId)->firstOrFail();
+        $isSurveyOnly                = $user->hasRole('survey-only');
+        $addressData                 = $this->getAddressData($surveyAnswers['address']);
+        $emailToString               = getStringValueFromAnswerAwvUser($surveyAnswers['email']);
+        $preferredContactDays        = $this->getPreferredDaysToString($surveyAnswers['preferred_days']);
+        $patientContactTimesToString = $this->getPreferredContactHoursToString($surveyAnswers['preferred_time']);
+        if (empty($preferredContactDays) || empty($patientContactTimesToString)) {
+            throw new \Exception("Missing survey values for user [$user->id]");
+        }
+
+        $preferredContactDaysToArray = explode(',', $preferredContactDays);
+        $patientContactTimesArray    = explode(' ', $patientContactTimesToString);
+
+        $patientContactTimeStart = Carbon::parse($patientContactTimesArray[0])->toTimeString();
+        $patientContactTimeEnd   = Carbon::parse($patientContactTimesArray[2])->toTimeString();
 
         if ($isSurveyOnly) {
-            $enrollee = Enrollee::whereUserId($user->id)->firstOrFail();
+            $enrollee = Enrollee::whereUserId($user->id)->first();
+            if ( ! $enrollee) {
+                Log::critical("Enrolle with user_id[$user->id] not found");
+
+                return;
+            }
+
+            $this->updateEnrolleeSurveyStatuses($enrollee->id, $user->id, self::SURVEY_COMPLETED);
+
             $enrollee->update([
                 'primary_phone'             => $surveyAnswers['preferred_number'],
                 'preferred_days'            => $this->getPreferredDaysToString($surveyAnswers['preferred_days']),
@@ -182,23 +204,20 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 'city'                      => $addressData['city'],
                 'state'                     => $addressData['state'],
                 'zip'                       => $addressData['zip'],
-                'email'                     => $surveyAnswers['email'],
+                'email'                     => $emailToString,
                 'status'                    => Enrollee::ENROLLED,
                 'auto_enrollment_triggered' => true,
-                'user_id'                   => null,
             ]);
+//    It's Duplication but better to make sense. Will refactor later
+
+            $this->updateEnrolleeUser($user, $addressData, $emailToString);
+            $this->updateEnrolleePatient($user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd);
 
             $this->importEnrolleeSurveyOnly($enrollee, $user);
 
             $patientType = 'Initial';
             $id          = $enrollee->id;
         } else {
-            $preferredContactDays        = $this->getPreferredDaysToString($surveyAnswers['preferred_days']);
-            $preferredContactDaysToArray = explode(',', $preferredContactDays);
-            $patientContactTimesToString = $this->getPreferredContactHoursToString($surveyAnswers['preferred_time']);
-            $patientContactTimesArray    = explode(' ', $patientContactTimesToString);
-            $patientContactTimeStart     = Carbon::parse($patientContactTimesArray[0])->toTimeString();
-            $patientContactTimeEnd       = Carbon::parse($patientContactTimesArray[2])->toTimeString();
             $this->updateUserModel($user, $addressData);
             $this->updatePatientPhoneNumber($user, $surveyAnswers['preferred_number']);
             $this->updatePatientInfo($user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd);
@@ -213,14 +232,8 @@ class EnrollableSurveyCompleted implements ShouldQueue
         return info("$patientType patient $id has been enrolled");
     }
 
-    /**
-     * @param $enrollee
-     *
-     * @throws \Exception
-     */
-    public function importEnrolleeSurveyOnly($enrollee, User $user)
+    public function importEnrolleeSurveyOnly(Enrollee $enrollee, User $user)
     {
-        User::whereId($user->id)->forceDelete();
         ImportConsentedEnrollees::dispatch([$enrollee->id]);
     }
 
@@ -282,6 +295,29 @@ class EnrollableSurveyCompleted implements ShouldQueue
         $enrolleAvatar->update([
             'status'                    => Enrollee::ENROLLED,
             'auto_enrollment_triggered' => true,
+        ]);
+    }
+
+    private function updateEnrolleePatient(User $user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd)
+    {
+        $user->patientInfo->update([
+            'preferred_cc_contact_days'  => $preferredContactDays,
+            'daily_contact_window_start' => $patientContactTimeStart,
+            'daily_contact_window_end'   => $patientContactTimeEnd,
+            'auto_enrollment_triggered'  => true,
+            'ccm_status'                 => Patient::ENROLLED,
+        ]);
+    }
+
+    private function updateEnrolleeUser(User $user, array $addressData, string $email)
+    {
+//        Its duplication but i prefer it to make sense
+        $user->update([
+            'address' => $addressData['address'],
+            'city'    => $addressData['city'],
+            'state'   => $addressData['state'],
+            'zip'     => $addressData['zip'],
+            'email'   => $email,
         ]);
     }
 

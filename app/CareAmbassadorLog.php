@@ -7,6 +7,7 @@
 namespace App;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\CareAmbassador;
 use CircleLinkHealth\Customer\Entities\Practice;
 
 /**

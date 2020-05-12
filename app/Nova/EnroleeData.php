@@ -7,10 +7,11 @@
 namespace App\Nova;
 
 use App\Constants;
+use App\Nova\Actions\ImportEnrolees;
 use App\Nova\Actions\ImportEnrollee;
-use App\Nova\Importers\EnroleeData as EnroleeDataImporter;
-use CircleLinkHealth\ClhImportCardExtended\ClhImportCardExtended;
-use CircleLinkHealth\Customer\Entities\Practice;
+use App\Nova\Filters\EnrolleeStatus;
+use App\Nova\Filters\PatientAutoEnrollmentStatus;
+use App\Nova\Filters\PracticeFilter;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Jubeki\Nova\Cards\Linkable\LinkableAway;
@@ -18,8 +19,8 @@ use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
-use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 class EnroleeData extends Resource
 {
@@ -29,8 +30,6 @@ class EnroleeData extends Resource
      * @var string
      */
     public static $group = Constants::NOVA_GROUP_ENROLLMENT;
-
-    public static $importer = EnroleeDataImporter::class;
 
     /**
      * The model the resource corresponds to.
@@ -73,6 +72,9 @@ class EnroleeData extends Resource
     {
         return [
             new ImportEnrollee(),
+            new ImportEnrolees(),
+            //try to implement in a future date - coordinate with Zak
+            //            new MarkEnrolleesForAutoEnrollment(),
         ];
     }
 
@@ -83,15 +85,18 @@ class EnroleeData extends Resource
      */
     public function cards(Request $request)
     {
-        $practices = Practice::whereIn('id', auth()->user()->viewableProgramIds())
-            ->activeBillable()
-            ->pluck('display_name', 'id')
-            ->toArray();
-
+        //adds templates to new Actions
         $cards = [
-            new ClhImportCardExtended(self::class, [
-                Select::make('practice')->options($practices)->withModel(Practice::class),
-            ], 'Patients from CSV'),
+            (new LinkableAway())
+                ->title('Create Patients CSV Template')
+                ->url('https://drive.google.com/file/d/1RgCl5AgyodKlIytemOVMXlAHgr9iGgm9/view?usp=sharing')
+                ->subtitle('Click to download.')
+                ->target('_self'),
+            (new LinkableAway())
+                ->title('Auto Enrolment CSV Template')
+                ->url('https://drive.google.com/file/d/1qEF-p6PB4q_gI6q0i3JQAwZeIHwfSRop/view?usp=sharing')
+                ->subtitle('Click to download.')
+                ->target('_self'),
         ];
 
         if ( ! isProductionEnv()) {
@@ -113,8 +118,7 @@ class EnroleeData extends Resource
     public function fields(Request $request)
     {
         return [
-            BelongsTo::make('Provider', 'provider', User::class)
-                ->sortable(),
+            ID::make('Eligible Pt ID', 'id')->sortable(),
 
             Text::make('First Name')
                 ->sortable()
@@ -126,11 +130,22 @@ class EnroleeData extends Resource
                 ->creationRules('required', 'string')
                 ->updateRules('string'),
 
-            ID::make('Eligible Pt ID', 'id')->sortable(),
+            BelongsTo::make('Provider', 'provider', User::class)
+                ->sortable(),
+
+            BelongsTo::make('Practice', 'practice', Practice::class)
+                ->sortable(),
+
+            Date::make('DOB')
+                ->sortable(),
+
+            Text::make('Status')
+                ->sortable()
+                ->hideWhenCreating(),
 
             Text::make('Address')
                 ->sortable()
-                ->creationRules('required', 'string')
+                ->creationRules('string')
                 ->updateRules('string'),
 
             Number::make('MRN')
@@ -138,14 +153,9 @@ class EnroleeData extends Resource
                 ->creationRules('required', 'integer')
                 ->updateRules('integer'),
 
-            Date::make('DOB')
-                ->sortable()
-                ->format('MM/DD/YYYY')->creationRules('required', 'date')
-                ->updateRules('date'),
-
             Text::make('Primary Insurance')
                 ->sortable()
-                ->creationRules('required', 'string')
+                ->creationRules('string')
                 ->updateRules('string'),
 
             Text::make('Secondary Insurance')
@@ -162,7 +172,23 @@ class EnroleeData extends Resource
      */
     public function filters(Request $request)
     {
-        return [];
+        return [
+            new PracticeFilter(),
+            new EnrolleeStatus(),
+            new PatientAutoEnrollmentStatus(),
+        ];
+    }
+
+    /**
+     * Build an "index" query for the given resource.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        return $query->whereNotIn('status', [Enrollee::LEGACY, Enrollee::INELIGIBLE, Enrollee::ENROLLED, Enrollee::SOFT_REJECTED, Enrollee::REJECTED]);
     }
 
     /**
@@ -170,7 +196,7 @@ class EnroleeData extends Resource
      */
     public static function label()
     {
-        return 'Patients - Create';
+        return 'Patients to Enroll';
     }
 
     /**

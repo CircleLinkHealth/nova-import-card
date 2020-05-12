@@ -6,23 +6,24 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\SelfEnrollmentPatientsReminder;
+use App\Jobs\SelfEnrollmentEnrollees;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;
 
-class SendFirstEnrollmentReminder extends Command
+class SelfEnrollmentManualInviteCommand extends Command
 {
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Send first reminder to unresponsive patients 2 days after initial invitation';
+    protected $description = 'Command description';
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:sendFirstEnrollmentReminder';
+    protected $signature = 'self-enrollment:invite {enrolleeId}';
 
     /**
      * Create a new command instance.
@@ -41,6 +42,7 @@ class SendFirstEnrollmentReminder extends Command
      */
     public function handle()
     {
-        SelfEnrollmentPatientsReminder::dispatch();
+        $model = Enrollee::find($this->argument('enrolleeId'));
+        SelfEnrollmentEnrollees::dispatch($model);
     }
 }

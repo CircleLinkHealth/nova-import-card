@@ -8,9 +8,7 @@ namespace App\Jobs;
 
 // This file is part of CarePlan Manager by CircleLink Health.
 
-use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\Traits\EnrollableManagement;
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
@@ -18,7 +16,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\App;
 
 class SelfEnrollmentEnrollees implements ShouldQueue
 {
@@ -60,31 +57,13 @@ class SelfEnrollmentEnrollees implements ShouldQueue
     public function __construct(
         Enrollee $enrollee = null,
         $color = null,
-        int $amount,
-        int $practiceId
+        int $amount = 0,
+        int $practiceId = 0
     ) {
         $this->enrollee   = $enrollee;
         $this->color      = $color;
         $this->amount     = $amount;
         $this->practiceId = $practiceId;
-    }
-
-    /**
-     * First we create temporary user from Enrollee.
-     *
-     * @param $enrollees
-     */
-    public function createSurveyOnlyUserFromEnrollees(iterable $enrollees)
-    {
-        foreach ($enrollees as $enrollee) {
-            $this->createUserFromEnrolleeAndInvite($enrollee);
-        }
-    }
-
-    public function createUserFromEnrolleeAndInvite(Enrollee $enrollee)
-    {
-        $surveyRole = $this->surveyRole();
-        CreateUserFromEnrollee::dispatch($enrollee, $surveyRole->id, $this->color);
     }
 
     /**
@@ -97,25 +76,30 @@ class SelfEnrollmentEnrollees implements ShouldQueue
     public function handle()
     {
         if ( ! is_null($this->enrollee)) {
-            return $this->createUserFromEnrolleeAndInvite($this->enrollee);
+            return $this->createSurveyOnlyUsers([$this->enrollee->id]);
         }
 
-        //FIXME: We have to get Enrolles that been uploaded using CSV (see enrollees source field)
-        if ( ! App::environment(['testing'])) {
-            $practice  = $this->getDemoPractice();
-            $enrollees = $this->getEnrollees($practice->id)
-                ->where('dob', Carbon::parse('1901-01-01'))
-                ->get()
-                ->take(AutoEnrollmentCenterController::SEND_NOTIFICATIONS_LIMIT_FOR_TESTING)
-                ->all();
-            $this->createSurveyOnlyUserFromEnrollees($enrollees);
-        } else {
-            $enrollees = $this->getEnrollees($this->practiceId)
-                ->orderBy('id', 'asc')
-                ->limit($this->amount)
-                ->get();
-            $this->createSurveyOnlyUserFromEnrollees($enrollees);
-        }
+        $this->getEnrollees($this->practiceId)
+            ->orderBy('id', 'asc')
+            ->limit($this->amount)
+            ->select(['id'])
+            ->get()
+            //needs to go after the get(), because we are using `limit`. otherwise `chunk` would override `limit`
+            ->chunk(100)
+            ->each(function ($coll) {
+                $arr = $coll
+                    ->map(function ($item) {
+                        return $item->id;
+                    })
+                    ->toArray();
+                $this->createSurveyOnlyUsers($arr);
+            });
+    }
+
+    private function createSurveyOnlyUsers(array $enrolleeIds)
+    {
+        $surveyRole = $this->surveyRole();
+        CreateUsersFromEnrollees::dispatch($enrolleeIds, $surveyRole->id, $this->color);
     }
 
     private function surveyRole(): Role

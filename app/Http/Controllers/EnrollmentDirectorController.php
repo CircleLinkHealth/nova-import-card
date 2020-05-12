@@ -12,6 +12,7 @@ use App\Filters\EnrolleeFilters;
 use App\Http\Requests\AddEnrolleeCustomFilter;
 use App\Http\Requests\EditEnrolleeData;
 use App\Http\Requests\UpdateMultipleEnrollees;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -106,6 +107,8 @@ class EnrollmentDirectorController extends Controller
         $data->limit($limit)
             ->skip($limit * ($page - 1));
 
+        $now = Carbon::now()->toDateString();
+
         if (isset($orderBy)) {
             $direction = 1 == $ascending
                 ? 'ASC'
@@ -113,11 +116,10 @@ class EnrollmentDirectorController extends Controller
             $data->orderBy($orderBy, $direction);
         } else {
             $data->orderByRaw("CASE
-   WHEN status = 'engaged' THEN 1
-   WHEN status = 'call_queue' THEN 2
-   WHEN status = 'utc' THEN 3
-   WHEN status = 'soft_rejected' THEN 4
-   ELSE 5
+            WHEN requested_callback IS NOT NULL AND DATE(requested_callback) <= DATE('{$now}') THEN 1
+   WHEN status = 'call_queue' THEN 3
+   WHEN status = 'utc' THEN 4
+   ELSE 4
 END ASC, attempt_count ASC");
         }
 

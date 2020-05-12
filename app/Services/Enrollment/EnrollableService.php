@@ -7,9 +7,14 @@
 namespace App\Services\Enrollment;
 
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use Illuminate\Support\Collection;
 
-abstract class EnrolleeFamilyMembersService
+abstract class EnrollableService
 {
+    /**
+     * @var Collection|null
+     */
+    protected $data;
     /**
      * @var Enrollee
      */
@@ -19,9 +24,10 @@ abstract class EnrolleeFamilyMembersService
      */
     protected $enrolleeId;
 
-    public function __construct($enrolleeId)
+    public function __construct($enrolleeId, Collection $data = null)
     {
         $this->enrolleeId = $enrolleeId;
+        $this->data       = $data ?? collect([]);
     }
 
     protected function getModel()

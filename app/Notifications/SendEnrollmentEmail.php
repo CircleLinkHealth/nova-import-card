@@ -77,14 +77,15 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
      * @param $notifiable
      *
      * @throws \Exception
+     *
      * @return array
      */
     public function toArrayData($notifiable)
     {
-        if ($notifiable->checkForSurveyOnlyRole()) {
+        if ($notifiable->isSurveyOnly()) {
             $enrollee = Enrollee::whereUserId($notifiable->id)->first();
             if ( ! $enrollee) {
-                throw new \Exception("could not find enrollee for user[$notifiable->id]");
+                throw new \Exception("Could not find enrollee for user[$notifiable->id]");
             }
 
             return $this->enrolleeArrayData($enrollee->id);
@@ -104,12 +105,12 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     {
         $this->getNotificationContent($notifiable);
 
-        $fromName = config('mail.from.name');
+        $fromName = config('mail.from.name'); //@todo: We dont need to show CircleLinkHealth as default
         if ( ! empty($notifiable->primaryPractice) && ! empty($notifiable->primaryPractice->display_name)) {
             $fromName = $notifiable->primaryPractice->display_name;
         }
 
-        return (new AutoEnrollmentMailChannel())
+        return (new AutoEnrollmentMailChannel($fromName))
             ->from(config('mail.from.address'), $fromName)
             ->subject('Wellness Program')
             ->line($this->notificationContent['line1'])

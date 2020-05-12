@@ -192,6 +192,7 @@ class NotesController extends Controller
                 ->where('year', '=', $thisYear)
                 ->first();
 
+//            NOTE: $patientId is $user->id.
             if ($surveyInstance) {
                 $surveyAnswer = DB::table('questions')
                     ->join('answers', 'questions.id', '=', 'answers.question_id')

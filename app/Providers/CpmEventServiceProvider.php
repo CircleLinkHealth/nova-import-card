@@ -34,6 +34,7 @@ use App\Listeners\NotifySlackChannel;
 use App\Listeners\PatientContactWindowUpdated;
 use App\Listeners\SendCarePlanForDMProviderApproval;
 use App\Listeners\SendEnrollableEmail;
+use App\Listeners\SendEnrollableSms;
 use App\Listeners\UpdateCarePlanStatus;
 use App\Listeners\UpdateCcdaStatus;
 use App\Listeners\UPG0506CcdaImporterListener;

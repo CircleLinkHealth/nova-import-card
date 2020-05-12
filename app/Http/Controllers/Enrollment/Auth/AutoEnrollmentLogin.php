@@ -11,15 +11,20 @@ use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\Http\Requests\EnrollmentLinkValidation;
 use App\Http\Requests\EnrollmentValidationRules;
 use App\Services\Enrollment\EnrollmentInvitationService;
+use App\Traits\EnrollableManagement;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class AutoEnrollmentLogin extends Controller
 {
     use AuthenticatesUsers;
+    use EnrollableManagement;
     use EnrollmentAuthentication;
 
     public function __construct()
@@ -32,6 +37,18 @@ class AutoEnrollmentLogin extends Controller
         $manager = new AutoEnrollmentCenterController(new EnrollmentInvitationService());
         Auth::loginUsingId($request->input('user_id'), true);
 
+        if (boolval($request->input('is_survey_only'))) {
+            $enrollee = $this->getEnrollee($request->input('user_id'));
+
+            if ( ! $enrollee) {
+                abort(404);
+            }
+
+            $enrollee->selfEnrollmentStatuses()->update([
+                'logged_in' => true,
+            ]);
+        }
+
         return $manager->enrollableInvitationManager(
             $request->input('user_id'),
             boolval($request->input('is_survey_only'))
@@ -40,11 +57,23 @@ class AutoEnrollmentLogin extends Controller
 
     protected function enrollmentAuthForm(EnrollmentLinkValidation $request)
     {
-        $loginFormData   = $this->getLoginFormData($request);
+        // Debugging logs
+        $isFromBitly     = Str::contains($request->headers->get('user-agent', ''), 'bitly');
+        $alreadyLoggedIn = auth()->check() ? 'yes' : 'no';
+        $authId          = auth()->id() ?? 'null';
+        $headers         = json_encode($request->headers->all());
+        $userId          = $this->getUserId($request);
+        Log::debug("enrollmentAuthForm - User is already logged in: $alreadyLoggedIn. EnrollableId[$userId]. isFromBitly[$isFromBitly].\nUser Id: $authId.\nHeaders: $headers");
+
+        try {
+            $loginFormData = $this->getLoginFormData($request);
+        } catch (\Exception $e) {
+            return view('EnrollmentSurvey.enrollableError');
+        }
+        $user            = $loginFormData['user'];
         $urlWithToken    = $loginFormData['url_with_token'];
         $practiceName    = $loginFormData['practiceName'];
         $doctorsLastName = $loginFormData['doctorsLastName'];
-        $userId          = intval($request->input('enrollable_id'));
         $isSurveyOnly    = $request->input('is_survey_only');
 
         return view(
@@ -78,9 +107,22 @@ class AutoEnrollmentLogin extends Controller
         return view('EnrollmentSurvey.enrollableLogout', compact('practiceLogoSrc', 'practiceName'));
     }
 
+    /**
+     * @throws \Exception
+     *
+     * @return array
+     */
     private function getLoginFormData(Request $request)
     {
-        $user            = $this->getUserValidated($request);
+        $userId = $this->getUserId($request);
+
+        /** @var User $user */
+        $user = $this->getUser($userId);
+        if ( ! $user) {
+            Log::warning("User[$userId] not found.");
+            throw new \Exception('User not found');
+        }
+
         $doctor          = $user->billingProviderUser();
         $doctorsLastName = '???';
         if ($doctor) {
@@ -93,6 +135,7 @@ class AutoEnrollmentLogin extends Controller
             'practiceName'    => $user->getPrimaryPracticeName(),
             'doctor'          => $doctor,
             'doctorsLastName' => $doctorsLastName,
+            'user'            => $user,
         ];
     }
 }

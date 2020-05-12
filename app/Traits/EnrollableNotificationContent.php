@@ -17,17 +17,23 @@ trait EnrollableNotificationContent
      * @param $isReminder
      *
      * @throws \Exception
+     *
      * @return array|string
      */
-    public function emailAndSmsContent($notifiable, $isReminder)
+    public function emailAndSmsContent(User $notifiable, $isReminder)
     {
         $enrollableEmailContent = $this->getEmailContent($notifiable, $isReminder);
-        $providerName           = $enrollableEmailContent['providerName'];
+        $providerName           = $enrollableEmailContent['providerLastName'];
         $practiceName           = $enrollableEmailContent['practiceName'];
         $line2                  = $enrollableEmailContent['line2'];
         $isSurveyOnly           = $enrollableEmailContent['isSurveyOnly'];
 
-        $line1 = "Hi, it's $providerName's office at $practiceName! ";
+        if (empty($practiceName)) {
+            Log::warning("Practice name not found for user $notifiable->id");
+            $practiceName = '???';
+        }
+
+        $line1 = "Hi, it's Dr. $providerName's office at $practiceName! ";
 
         if (empty($providerName)) {
             $line1 = "Hi, it's your Provider's office at $practiceName! ";
@@ -50,11 +56,12 @@ trait EnrollableNotificationContent
      * @param bool $isReminder
      *
      * @throws \Exception
+     *
      * @return array
      */
     public function getEmailContent(User $notifiable, $isReminder = false)
     {
-        $notifiableIsSurveyOnly = $notifiable->checkForSurveyOnlyRole();
+        $notifiableIsSurveyOnly = $notifiable->isSurveyOnly();
 
         return $notifiableIsSurveyOnly
             ? $this->getEnrolleeEmailContent($notifiable, $isReminder)
@@ -68,23 +75,40 @@ trait EnrollableNotificationContent
      * @param $isReminder
      *
      * @throws \Exception
+     *
      * @return array
      */
     public function getEnrolleeEmailContent(User $notifiable, $isReminder)
     {
-        $enrollee = Enrollee::whereUserId($notifiable->id)->first();
+        /** @var Enrollee $enrollee */
+        $enrollee = Enrollee::with([
+            'provider' => function ($q) {
+                return $q->select(['id', 'last_name']);
+            },
+            'practice' => function ($q) {
+                return $q->select(['id', 'display_name']);
+            },
+        ])
+            ->whereUserId($notifiable->id)->first();
+
         if ( ! $enrollee) {
             throw new \Exception("could not find enrollee for user[$notifiable->id]");
         }
 
-        $provider         = $enrollee->provider;
-        $providerLastName = $provider->last_name;
+        if ( ! $enrollee->provider) {
+            throw new \Exception("could not find provider for enrollee[$enrollee->id]");
+        }
+
+        if ( ! $enrollee->practice) {
+            throw new \Exception("could not find practice for enrollee[$enrollee->id]");
+        }
+
+        $providerLastName = $enrollee->provider->last_name;
         $line2            = $isReminder
-            ? "Just circling back on Dr. $providerLastName new Personalized Care program. Please enroll or get more info here: "
+            ? "Just circling back on Dr. $providerLastName's new Personalized Care program. Please enroll or get more info here: "
             : "Dr. $providerLastName has invested in a new wellness program for you. Please enroll or get more info here: ";
 
         return [
-            'providerName'     => $provider->display_name,
             'providerLastName' => $providerLastName,
             'practiceName'     => $enrollee->practice->display_name,
             'line2'            => $line2,
@@ -100,17 +124,25 @@ trait EnrollableNotificationContent
      */
     public function getUserEmailContent(User $notifiable, $isReminder)
     {
+        $notifiable->loadMissing([
+            'billingProvider',
+            'patientInfo',
+            'primaryPractice' => function ($q) {
+                return $q->select(['id', 'display_name']);
+            },
+        ]);
+
         $provider                       = $notifiable->billingProviderUser();
         $lastNurseThatPerformedActivity = $notifiable->patientInfo->lastNurseThatPerformedActivity();
         $nurseFirstName                 = ! empty($lastNurseThatPerformedActivity) ? $lastNurseThatPerformedActivity->user->display_name
             : '';
 
-        $line2 = $isReminder
-            ? "Just circling back because $nurseFirstName, our telephone nurse was unable to reach you this month. Please re-start calls in this link: "
-            : "$nurseFirstName, our nurse, was unable to reach you this month. Please re-start calls in this link: ";
-
-        // Should never be empty with production data.
-        if (empty($nurseFirstName)) {
+        if ( ! empty($nurseFirstName)) {
+            $line2 = $isReminder
+                ? "Just circling back because $nurseFirstName, our telephone nurse was unable to reach you this month. Please re-start calls in this link: "
+                : "$nurseFirstName, our nurse, was unable to reach you this month. Please re-start calls in this link: ";
+        } else {
+            // Should never be empty with production data.
             $line2 = $isReminder
                 ? 'Just circling back because our telephone nurse, was unable to reach you this month. Please re-start calls in this link: '
                 : 'Your Nurse Care Coach was unable to reach you this month. Please re-start calls in this link: ';
@@ -118,18 +150,18 @@ trait EnrollableNotificationContent
 
         // Should never be empty with production data.
         if ( ! empty($provider)) {
-            $providerName = $provider->display_name;
+            $providerLastName = $provider->last_name;
         } else {
-            $providerName = '';
+            $providerLastName = '';
             Log::error("User $notifiable->id has null billingProviderUser");
         }
 
         return [
-            'providerName'   => $providerName,
-            'nurseFirstName' => $nurseFirstName,
-            'practiceName'   => $notifiable->primaryPractice->display_name,
-            'line2'          => $line2,
-            'isSurveyOnly'   => false,
+            'providerLastName' => $providerLastName,
+            'nurseFirstName'   => $nurseFirstName,
+            'practiceName'     => $notifiable->getPrimaryPracticeName(),
+            'line2'            => $line2,
+            'isSurveyOnly'     => false,
         ];
     }
 }

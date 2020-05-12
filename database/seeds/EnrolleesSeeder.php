@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\SeedEligibilityJobsForEnrollees;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Seeder;
@@ -21,12 +22,16 @@ class EnrolleesSeeder extends Seeder
 
         $this->command->info('Seeding Enrollees.');
 
+        $practice = Practice::where('name', 'demo')
+            ->where('is_demo', true)
+            ->first();
+
         $enrollees = factory(Enrollee::class, 10)->create();
 
         $this->command->info('Enrollees created.');
 
         $this->command->info('Seeding Eligibility Jobs for Enrollees.');
 
-        $this->seedEligibilityJobs($enrollees);
+        $this->seedEligibilityJobs($enrollees, $practice);
     }
 }

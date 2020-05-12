@@ -1,6 +1,6 @@
 @extends('layouts.EnrollmentSurvey.enrollmentLetterMaster')
-@section('title', 'Enrollment requested info')
-@section('activity', 'Enrollment requested info')
+@section('title', 'Self-Enrollment logout')
+@section('activity', 'Self-Enrollment logout')
 @section('content')
     <div class="container">
         <div class="practice-logo">

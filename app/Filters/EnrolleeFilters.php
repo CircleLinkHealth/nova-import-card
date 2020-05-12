@@ -19,10 +19,13 @@ class EnrolleeFilters extends QueryFilters
     public function attempt_count($count)
     {
         if (empty($count)) {
-            return $this->builder;
+            return $this->builder->where(function ($subQuery) {
+                $subQuery->where('attempt_count', '<', Enrollee::MAX_CALL_ATTEMPTS)
+                    ->orWhere('attempt_count', null);
+            });
         }
 
-        return $this->builder->where('attempt_count', 'like', '%'.$count.'%');
+        return $this->builder->where('attempt_count', '=', $count);
     }
 
     public function care_ambassador_name($name)
@@ -62,7 +65,9 @@ class EnrolleeFilters extends QueryFilters
             Enrollee::SOFT_REJECTED,
             Enrollee::REJECTED,
             Enrollee::ENROLLED,
+            Enrollee::QUEUE_AUTO_ENROLLMENT,
         ]);
+        $decoded['attempt_count'] = '';
 
         return $decoded;
     }
@@ -79,6 +84,15 @@ class EnrolleeFilters extends QueryFilters
     public function hideStatus($statuses)
     {
         return $this->builder->whereNotIn('status', $statuses);
+    }
+
+    public function isolateUploadedViaCsv($isolate)
+    {
+        if ($isolate) {
+            return $this->builder->whereIn('source', [Enrollee::UPLOADED_CSV]);
+        }
+
+        return $this->builder;
     }
 
     public function lang($lang)
@@ -160,6 +174,15 @@ class EnrolleeFilters extends QueryFilters
         }
 
         return $this->builder->where('secondary_insurance', 'like', '%'.$insurance.'%');
+    }
+
+    public function source($source)
+    {
+        if (empty($source)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('source', 'like', '%'.$source.'%');
     }
 
     public function status($status)

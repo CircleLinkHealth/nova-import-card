@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\SelfEnrollmentPatientsReminder;
+use App\Jobs\SelfEnrollmentEnrolleesReminder;
 use Illuminate\Console\Command;
 
 class SendEnrollmentNotificationReminder extends Command
@@ -41,6 +41,6 @@ class SendEnrollmentNotificationReminder extends Command
      */
     public function handle()
     {
-        SelfEnrollmentPatientsReminder::dispatch();
+        SelfEnrollmentEnrolleesReminder::dispatch();
     }
 }

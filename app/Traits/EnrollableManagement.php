@@ -7,12 +7,15 @@
 namespace App\Traits;
 
 use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
-use App\LoginLogout;
+use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 
 trait EnrollableManagement
@@ -37,6 +40,7 @@ trait EnrollableManagement
     {
         $url = URL::temporarySignedRoute('invitation.enrollment.loginForm', now()->addHours(48), $this->notificationContent['urlData']);
 
+        $shortUrl = null;
         try {
             $shortUrl = shortenUrl($url);
         } catch (\Exception $e) {
@@ -76,7 +80,8 @@ trait EnrollableManagement
      */
     public function expirePastInvitationLink($enrollable)
     {
-        $pastInvitationLinks = $this->pastActiveInvitationLinks($enrollable);
+        Log::debug("expirePastInvitationLink called for $enrollable->id");
+        $pastInvitationLinks = $this->pastActiveInvitationLink($enrollable);
         if ( ! empty($pastInvitationLinks)) {
             $pastInvitationLinks->update(['manually_expired' => true]);
         }
@@ -84,13 +89,14 @@ trait EnrollableManagement
 
     /**
      * @param $surveyInstance
+     * @param mixed $userId
      *
      * @return \Illuminate\Database\Query\Builder
      */
-    public function getAwvUserSurvey(User $notifiable, $surveyInstance)
+    public function getAwvUserSurvey($userId, $surveyInstance)
     {
         return DB::table('users_surveys')
-            ->where('user_id', '=', $notifiable->id)
+            ->where('user_id', '=', $userId)
             ->where('survey_instance_id', '=', $surveyInstance->id);
     }
 
@@ -107,7 +113,7 @@ trait EnrollableManagement
      */
     public function getEnrollableModelType(User $user)
     {
-        return $user->checkForSurveyOnlyRole()
+        return $user->isSurveyOnly()
             ? $this->getEnrollee($user->id)
             : $this->getUserModelEnrollee($user->id);
     }
@@ -132,6 +138,15 @@ trait EnrollableManagement
         return Enrollee::whereUserId($enrollableId)->first();
     }
 
+    public function getEnrolleeFromNotification($enrollableId)
+    {
+        $notification = DatabaseNotification::where('type', SendEnrollmentEmail::class)
+            ->where('notifiable_id', $enrollableId)
+            ->first();
+
+        return Enrollee::whereId($notification->data['enrollee_id'])->first();
+    }
+
     /**
      * NOTE: "whereDoesntHave" makes sure we dont invite Unreachable/Non responded - Enrollees second time.
      *
@@ -146,8 +161,7 @@ trait EnrollableManagement
             ->where('practice_id', $practiceId)
             ->whereDoesntHave('enrollmentInvitationLink')
             ->whereIn('status', [
-                'call_queue',
-                'utc',
+                Enrollee::QUEUE_AUTO_ENROLLMENT,
             ]);
     }
 
@@ -220,7 +234,7 @@ trait EnrollableManagement
                 ->where('survey_id', '=', $surveyLink->survey_id)
                 ->first();
 
-            return $this->getAwvUserSurvey($notifiable, $surveyInstance)
+            return $this->getAwvUserSurvey($notifiable->id, $surveyInstance)
                 ->where('status', '=', 'completed')
                 ->exists();
         }
@@ -260,13 +274,13 @@ trait EnrollableManagement
      *  If logged in once then user did view the letter. If this exists the no need need to check further.
      *
      * @param mixed $enrollableId
+     * @param mixed $enrollee
      *
      * @return bool
      */
-    public function hasViewedLetterOrSurvey($enrollableId)
+    public function hasViewedLetterOrSurvey($enrollee)
     {
-//       Move this to User as a relationship??
-        return LoginLogout::whereUserId($enrollableId)->exists();
+        return optional($enrollee->selfEnrollmentStatuses)->logged_in;
     }
 
     /**
@@ -287,7 +301,7 @@ trait EnrollableManagement
      *
      * @return mixed
      */
-    public function pastActiveInvitationLinks($enrollable)
+    public function pastActiveInvitationLink($enrollable)
     {
         return $enrollable->enrollmentInvitationLink()->where('manually_expired', false)->first();
     }
@@ -298,11 +312,12 @@ trait EnrollableManagement
      */
     public function saveTemporaryInvitationLink(User $notifiable, $urlToken, $url)
     {
-        if ($notifiable->checkForSurveyOnlyRole()) {
+        if ($notifiable->isSurveyOnly()) {
             $notifiable = Enrollee::whereUserId($notifiable->id)->firstOrFail();
         }
-//        Expire previous INVITATION link if exists
+        //  Expire previous INVITATION link if exists
         $this->expirePastInvitationLink($notifiable);
+
         $notifiable->enrollmentInvitationLink()->create([
             'link_token'       => $urlToken,
             'url'              => $url,
@@ -330,6 +345,25 @@ trait EnrollableManagement
             [
                 'status'     => 'pending',
                 'start_date' => Carbon::parse(now())->toDateTimeString(),
+            ]
+        );
+    }
+
+    public function updateEnrolleeSurveyStatuses(
+        $enrolleeId,
+        $userId = null,
+        $statusSurvey = null,
+        $loggedIn = false,
+        $patientInfo = null
+    ) {
+        SelfEnrollmentStatus::updateOrCreate(
+            [
+                'enrollee_id' => $enrolleeId,
+            ],
+            [
+                'enrollee_user_id'      => $userId,
+                'awv_survey_status'     => $statusSurvey,
+                'enrollee_patient_info' => $patientInfo,
             ]
         );
     }

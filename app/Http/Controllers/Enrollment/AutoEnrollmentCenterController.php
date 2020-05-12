@@ -7,20 +7,21 @@
 namespace App\Http\Controllers\Enrollment;
 
 use App\Http\Controllers\Controller;
-use App\Notifications\SendEnrollmentEmail;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Entities\DatabaseNotification;
+use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AutoEnrollmentCenterController extends Controller
 {
     use EnrollableManagement;
+    const DEFAULT_BUTTON_COLOR = '#4baf50';
 
     const ENROLLEES                            = 'Enrollees';
     const ENROLLMENT_LETTER_DEFAULT_LOGO       = 'https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png';
@@ -124,37 +125,32 @@ class AutoEnrollmentCenterController extends Controller
      */
     public function enrolleeRequestsInfo(Request $request)
     {
-        /** @var Enrollee $enrollee */
-        $enrollableId      = $request->input('enrollable_id');
-        $isSurveyOnly      = $request->input('is_survey_only');
-        $enrollee          = $this->getEnrollee($enrollableId);
-        $userModelEnrollee = $this->getUserModelEnrollee($enrollableId);
+        $enrollableId = $request->input('enrollable_id');
+        $isSurveyOnly = $request->input('is_survey_only');
 
-        if (
-            $enrollee->statusRequestsInfo()->exists()
-            && $enrollee->getLastEnrollmentInvitationLink()->manually_expired
-        ) {
-            return $this->returnEnrolleeRequestedInfoMessage($enrollee);
+        /** @var Enrollee $enrollee */
+        $enrollee = $this->getEnrollee($enrollableId);
+        if ( ! $enrollee) {
+            return "Enrollee[$enrollableId] not found";
         }
 
-        if ($this->activeEnrollmentInvitationsExists($enrollee)) {
-            $this->expirePastInvitationLink($enrollee);
+        if ( ! $enrollee->statusRequestsInfo()->exists()) {
             $this->createEnrollStatusRequestsInfo($enrollee);
             $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
-            //            Delete User Created from Enrollee
-//            Unreachables cant request info yet.
+            // Delete User Created from Enrollee
+            // Unreachables cant request info yet.
             if ($isSurveyOnly) {
+                $userModelEnrollee = $this->getUserModelEnrollee($enrollableId);
+                $this->updateEnrolleeSurveyStatuses($enrollee->id, optional($userModelEnrollee)->id, null);
                 $enrollee->update(['user_id' => null, 'auto_enrollment_triggered' => true]);
-                $userModelEnrollee->delete();
             }
-
-            return $this->returnEnrolleeRequestedInfoMessage($enrollee);
         }
 
-        return 'Your link has expired, someone will contact you soon. Thank you';
+        return $this->returnEnrolleeRequestedInfoMessage($enrollee);
     }
 
     /**
+     * @throws \Exception
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      */
     public function enrollNow(Request $request)
@@ -162,22 +158,25 @@ class AutoEnrollmentCenterController extends Controller
         $enrollableId      = $request->input('enrollable_id');
         $userForEnrollment = $this->getUserModelEnrollee($enrollableId);
         if ( ! $userForEnrollment) {
-            return 'Cannot find user. User may have been already enrolled.';
+            throw new \Exception('There was an error. Please try again. [1]', 400);
         }
         $enrollable = $this->getEnrollableModelType($userForEnrollment);
 
         //      This can happen only on the first redirect and if page is refreshed
         if ($this->enrollableHasRequestedInfo($enrollable)) {
-            return 'Action Not Allowed';
+            throw new \Exception('There was an error. A care coach will contact you soon. [2]', 400);
         }
 
         $this->expirePastInvitationLink($enrollable);
-//        $pastActiveSurveyLink = $this->getSurveyInvitationLink($userForEnrollment->patientInfo->id);
+
+        return $this->createUrlAndRedirectToSurvey($enrollableId);
+        /*
+        $pastActiveSurveyLink = $this->getSurveyInvitationLink($userForEnrollment->patientInfo->id);
         if (empty($pastActiveSurveyLink)) {
             return $this->createUrlAndRedirectToSurvey($enrollableId);
         }
-
         return redirect($pastActiveSurveyLink->url);
+        */
     }
 
     /**
@@ -234,6 +233,25 @@ class AutoEnrollmentCenterController extends Controller
         abort(403, 'Unauthorized action.');
     }
 
+    public function viewFormVisited(Request $request)
+    {
+        $isSurveyOnly = boolval($request->input('is_survey_only'));
+        $userId       = intval($request->input('enrollable_id'));
+        if ($isSurveyOnly) {
+            $enrollee = $this->getEnrollee($userId);
+            if ( ! $enrollee) {
+                Log::warning("Enrollee for user with id $userId not found");
+                throw new \Exception('User does not exist', 404);
+            }
+            $this->expirePastInvitationLink($enrollee);
+        } else {
+            $user = User::find($userId);
+            $this->expirePastInvitationLink($user);
+        }
+
+        return response()->json([], 200);
+    }
+
     /**
      * @param $isSurveyOnlyUser
      * @param $hideButtons
@@ -258,13 +276,21 @@ class AutoEnrollmentCenterController extends Controller
         $practiceName           = $enrollablePrimaryPractice->name;
         $practiceLogoSrc        = $practiceLetter->practice_logo_src ?? self::ENROLLMENT_LETTER_DEFAULT_LOGO;
         $signatoryNameForHeader = $provider->display_name;
-        $dateLetterSent         = Carbon::parse($enrollee->getLastEnrollmentInvitationLink()->updated_at)->toDateString();
-        $pastActiveLink         = $this->pastActiveInvitationLinks($enrollee);
-        $buttonColor            = '#4baf50';
+        $dateLetterSent         = '???';
+        $buttonColor            = self::DEFAULT_BUTTON_COLOR;
 
-        if ( ! empty($pastActiveLink)) {
-            $buttonColor = $pastActiveLink->button_color;
+        /** @var EnrollableInvitationLink $invitationLink */
+        $invitationLink = $enrollee->getLastEnrollmentInvitationLink();
+        if ($invitationLink) {
+            $dateLetterSent = Carbon::parse($invitationLink->updated_at)->toDateString();
+            $buttonColor    = $invitationLink->button_color;
         }
+
+        /*if ($isSurveyOnlyUser) {
+            $enrollable = $userEnrollee;
+        }
+
+        $enrollable = $enrollee;*/
 
         return view('enrollment-consent.enrollmentInvitation', compact(
             'userEnrollee',
@@ -279,15 +305,6 @@ class AutoEnrollmentCenterController extends Controller
         ));
     }
 
-    private function getEnrolleeFromNotification($enrollableId)
-    {
-        $notification = DatabaseNotification::where('type', SendEnrollmentEmail::class)
-            ->where('notifiable_id', $enrollableId)
-            ->first();
-
-        return Enrollee::whereId($notification->data['enrollee_id'])->first();
-    }
-
     /**
      * @param $enrollableId
      *
@@ -300,10 +317,8 @@ class AutoEnrollmentCenterController extends Controller
         /** @var User $userModelEnrollee */
 //        Note: this can be either Unreachable patient Or User created from enrollee
         $userCreatedFromEnrollee = $this->getUserModelEnrollee($enrollableId);
-        //        If user is deleted and enrollee is null
-        //         Then Enrollable has been enrolled and his temporary user is deleted.
-        //        Enrollee user_id is detached when user model is deleted.
-        //        @todo: Not great/clear solution. Come back to this
+        // If enrollee get enrolled, then its user model is also deleted
+        // We can assume is enrollee for now,  since is the only model that can request info.
         if (is_null($enrollee) && is_null($userCreatedFromEnrollee)) {
             $enrollee = $this->getEnrolleeFromNotification($enrollableId);
         }
@@ -315,9 +330,7 @@ class AutoEnrollmentCenterController extends Controller
             return view('enrollment-consent.enrolledMessagePage', compact('practiceNumber', 'doctorName'));
         }
 
-        $linkIsManuallyExpired = $enrollee->getLastEnrollmentInvitationLink()->manually_expired;
-
-        if ($linkIsManuallyExpired && $enrollee->statusRequestsInfo()->exists()) {
+        if ($enrollee->statusRequestsInfo()->exists()) {
             return $this->returnEnrolleeRequestedInfoMessage($enrollee);
         }
 

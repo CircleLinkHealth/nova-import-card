@@ -11,6 +11,7 @@ use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
 use App\Traits\UnreachablePatientsToCaPanel;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -67,11 +68,13 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
      */
     public function handle()
     {
+//        @TODO:refactor this class when in call with michalis.
         //        Two days after the last reminder - (the "SendEnrollmentNotificationsReminder")
         $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
-        // no need to check if they went through this again
-        if ( ! App::environment(['testing'])) {
+//        @todo:REMOVE THIS BEFORE REAL USE or just set to  false and set value
+        $testingMode = AppConfig::pull('testing_enroll_sms', true);
+        if ($testingMode) {
             $twoDaysAgo    = Carbon::parse(now())->startOfDay()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfDay()->toDateTimeString();
             $practice      = $this->getDemoPractice();
@@ -112,7 +115,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
                 return;
             }
             if ($isSurveyOnlyUser) {
-                if ($this->hasViewedLetterOrSurvey($noResponsivePatient)) {
+                if ($this->hasViewedLetterOrSurvey($enrollee)) {
                     $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
                 } else {
 //                        Mark as non responsive means they will get a physical MAIL.

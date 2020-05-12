@@ -477,7 +477,11 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::group(
         [
-            'prefix' => 'enrollment',
+            'prefix'     => 'enrollment',
+            'middleware' => [
+                'auth',
+                'careAmbassadorAPI',
+            ],
         ],
         function () {
             Route::get('/get-suggested-family-members/{enrolleeId}', [
@@ -485,7 +489,12 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'enrollment-center.family-members',
             ])->middleware('permission:enrollee.read');
 
-            Route::get('/show', [
+            Route::get('queryEnrollable', [
+                'uses' => 'API\EnrollmentCenterController@queryEnrollables',
+                'as'   => 'enrollables.query',
+            ]);
+
+            Route::get('/show/{enrollableId?}', [
                 'uses' => 'API\EnrollmentCenterController@show',
                 'as'   => 'enrollment-center.show',
             ])->middleware('permission:enrollee.read');
@@ -504,11 +513,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'API\EnrollmentCenterController@rejected',
                 'as'   => 'enrollment-center.rejected',
             ])->middleware('permission:enrollee.update');
-
-            Route::post('/update-ca-daily-time', [
-                'uses' => 'API\EnrollmentCenterController@updateCareAmbassadorDailyTime',
-                'as'   => 'enrollment-center.update-ca-daily-time',
-            ]);
         }
     );
 
@@ -1916,17 +1920,17 @@ Route::group([
         ])->middleware('permission:enrollee.read,enrollee.update');
 
         Route::post('/consented', [
-            'uses' => 'Enrollment\EnrollmentCenterController@consented',
+            'uses' => 'API\EnrollmentCenterController@consented',
             'as'   => 'enrollment-center.consented',
         ])->middleware('permission:enrollee.update');
 
         Route::post('/utc', [
-            'uses' => 'Enrollment\EnrollmentCenterController@unableToContact',
+            'uses' => 'API\EnrollmentCenterController@unableToContact',
             'as'   => 'enrollment-center.utc',
         ])->middleware('permission:enrollee.update');
 
         Route::post('/rejected', [
-            'uses' => 'Enrollment\EnrollmentCenterController@rejected',
+            'uses' => 'API\EnrollmentCenterController@rejected',
             'as'   => 'enrollment-center.rejected',
         ])->middleware('permission:enrollee.update');
     });
@@ -2195,9 +2199,14 @@ Route::group([
         'permission:admin-access',
     ],
 ], function () {
-    Route::get('/send-enrollment-reminder-test', [
-        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendEnrollmentReminderTestMethod',
-        'as'   => 'send.reminder.qa',
+    Route::get('/send-enrollee-reminder-test', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendEnrolleesReminderTestMethod',
+        'as'   => 'send.reminder.enrollee.qa',
+    ])->middleware('auth');
+
+    Route::get('/send-patient-reminder-test', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendPatientsReminderTestMethod',
+        'as'   => 'send.reminder.patient.qa',
     ])->middleware('auth');
 
     Route::get('/final-action-unreachables-test', [
@@ -2308,6 +2317,11 @@ Route::post('nurses/nurse-calendar-data', [
 Route::get('login-enrollees-survey/{user}/{survey}', 'AutoEnrollmentCenterController@sendToSurvey')
     ->name('enrollee.login.signed')
     ->middleware('signed');
+
+Route::post('enrollee-login-viewed', [
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@viewFormVisited',
+    'as'   => 'enrollee.login.viewed',
+])->middleware('guest');
 
 //Route::get('get-calendar-data', [
 //    'uses' => 'CareCenter\WorkScheduleController@calendarEvents',

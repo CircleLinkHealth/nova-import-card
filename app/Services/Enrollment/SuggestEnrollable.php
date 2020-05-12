@@ -8,8 +8,10 @@ namespace App\Services\Enrollment;
 
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
-class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
+class SuggestEnrollable extends EnrollableService
 {
+    const NINETY_PERCENT = 90;
+
     public static function get($enrolleeId)
     {
         return (new static($enrolleeId))->generate();
@@ -75,15 +77,21 @@ class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
 
     private function levenshteinValidAddressExists(Enrollee $e)
     {
-        //todo: account for empty strings
-        return 0 !== collect([
-            levenshtein($e->address, $this->enrollee->address),
-            levenshtein($e->address, $this->enrollee->address_2),
-            levenshtein($e->address_2, $this->enrollee->address),
-            levenshtein($e->address_2, $this->enrollee->address_2),
-        ])->filter(function ($l) {
-            //if less than 7 characters need to change to match strings. See Levenshtein Distance
-            return $l <= 7;
-        })->count();
+        $levenshteinDistances          = collect([]);
+        $enrolleeAddresses             = collect([$this->enrollee->address, $this->enrollee->address_2])->filter();
+        $possibleFamilyMemberAddresses = collect([$e->address, $e->address_2])->filter();
+
+        foreach ($enrolleeAddresses as $address) {
+            foreach ($possibleFamilyMemberAddresses as $possibleMatchingAddress) {
+                $levenshteinDistances->push(levenshteinPercent($address, $possibleMatchingAddress));
+            }
+        }
+
+        $levenshteinValidAddresses = $levenshteinDistances->filter(function ($l) {
+            //Levenshtein Distance transformed to relevance percent
+            return $l >= self::NINETY_PERCENT;
+        });
+
+        return 0 !== $levenshteinValidAddresses->count();
     }
 }
