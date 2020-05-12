@@ -167,16 +167,15 @@ class EnrollableSurveyCompleted implements ShouldQueue
      */
     public function handle()
     {
-        $enrollableId     = is_json($this->data) ? json_decode($this->data)->enrollable_id : $this->data['enrollable_id'];
-        $surveyInstanceId = is_json($this->data) ? json_decode($this->data)->survey_instance_id : $this->data['survey_instance_id'];
-        $surveyAnswers    = $this->getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId);
-        $user             = User::withTrashed()->whereId($enrollableId)->firstOrFail();
-        $isSurveyOnly     = $user->hasRole('survey-only');
-        $addressData      = $this->getAddressData($surveyAnswers['address']);
-
+        $enrollableId                = is_json($this->data) ? json_decode($this->data)->enrollable_id : $this->data['enrollable_id'];
+        $surveyInstanceId            = is_json($this->data) ? json_decode($this->data)->survey_instance_id : $this->data['survey_instance_id'];
+        $surveyAnswers               = $this->getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId);
+        $user                        = User::withTrashed()->whereId($enrollableId)->firstOrFail();
+        $isSurveyOnly                = $user->hasRole('survey-only');
+        $addressData                 = $this->getAddressData($surveyAnswers['address']);
+        $emailToString               = getStringValueFromAnswerAwvUser($surveyAnswers['email']);
         $preferredContactDays        = $this->getPreferredDaysToString($surveyAnswers['preferred_days']);
         $patientContactTimesToString = $this->getPreferredContactHoursToString($surveyAnswers['preferred_time']);
-
         if (empty($preferredContactDays) || empty($patientContactTimesToString)) {
             throw new \Exception("Missing survey values for user [$user->id]");
         }
@@ -205,12 +204,13 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 'city'                      => $addressData['city'],
                 'state'                     => $addressData['state'],
                 'zip'                       => $addressData['zip'],
-                'email'                     => $surveyAnswers['email'],
+                'email'                     => $emailToString,
                 'status'                    => Enrollee::ENROLLED,
                 'auto_enrollment_triggered' => true,
             ]);
 //    It's Duplication but better to make sense. Will refactor later
-            $this->updateEnrolleeUser($user, $addressData, $surveyAnswers['email']);
+
+            $this->updateEnrolleeUser($user, $addressData, $emailToString);
             $this->updateEnrolleePatient($user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd);
 
             $this->importEnrolleeSurveyOnly($enrollee, $user);
@@ -317,7 +317,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
             'city'    => $addressData['city'],
             'state'   => $addressData['state'],
             'zip'     => $addressData['zip'],
-            'email'   => collect($email)->first(),
+            'email'   => $email,
         ]);
     }
 

@@ -76,6 +76,38 @@
             </main>
 @endsection
 
+@push('scripts')
+        <script>
+            $(document).ready(function () {
+
+                setTimeout(() => {
+                    const csrfToken = $('meta[name="csrf-token"]').attr('content');
+                    const req = $.ajax({
+                        type: "POST",
+                        url: "/enrollee-login-viewed",
+                        method: "POST",
+                        data: {
+                            'is_survey_only': {{$isSurveyOnly}},
+                            'enrollable_id': {{$userId}}
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        datatype: "json"
+                    });
+
+                    req.done(function (msg) {
+                        console.log(msg);
+                    });
+
+                    req.fail(function(jqXHR, textStatus) {
+                        console.error(textStatus);
+                    });
+                }, 500);
+            });
+        </script>
+@endpush('scripts')
+
 @push('styles')
     <style>
         .survey-sub-welcome-text {

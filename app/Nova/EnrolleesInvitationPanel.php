@@ -137,9 +137,9 @@ class EnrolleesInvitationPanel extends Resource
                 return ! is_null($lastInvitationLink);
             }),
 
-            //            Boolean::make('Has viewed login form', function () use ($lastInvitationLink) {
-            //                return ! is_null($lastInvitationLink) && $lastInvitationLink->manually_expired;
-            //            }),
+            Boolean::make('Has viewed login form', function () use ($lastInvitationLink) {
+                return ! is_null($lastInvitationLink) && $lastInvitationLink->manually_expired;
+            }),
 
             Boolean::make('Has viewed Letter', function () use ($enroleeHasNotLoggedIn) {
                 if ($enroleeHasNotLoggedIn) {
