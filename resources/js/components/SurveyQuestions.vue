@@ -64,7 +64,7 @@
                     <div v-else-if="isEnrollees"
                          class="survey-sub-welcome-text"
                          style="text-align: center;">
-                        Dear {{this.surveyData.last_name}},<br>
+                        Dear {{this.surveyData.first_name}},<br>
                         Almost done! Just confirm/edit some information to make sure <br>
                         we call the right number at the right time.
                     </div>
@@ -411,8 +411,6 @@
         </div>
         <form id="logout-form" action="/logout" method="POST" style="display: none;">
         </form>
-        <form id="logout-enrollee-form" action="/logout-enrollee" method="POST" style="display: none;">
-        </form>
     </div>
 </template>
 
@@ -568,6 +566,10 @@
         },
 
         methods: {
+
+            getEnrolleeLogoutUrl() {
+                return '/survey/enrollees/logout-successful';
+            },
 
             formatNumber(number) {
                 if (!number || number.length === 0) {
@@ -1343,8 +1345,7 @@
             },
 
             logoutEnrollee() {
-                this.addCsrfTokenToForm('#logout-enrollee-form');
-                $('#logout-enrollee-form').submit();
+                window.location.pathname = this.getEnrolleeLogoutUrl();
             },
 
             goBack() {

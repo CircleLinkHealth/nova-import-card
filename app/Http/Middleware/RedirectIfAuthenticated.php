@@ -41,7 +41,7 @@ class RedirectIfAuthenticated
         // Now, any new route has to be inserted in this middleware,
         // otherwise, user can only go to surveys, and main page
 
-        if (Route::is('logout.enrollee')) {
+        if (Route::is('enrollee.show.logout.success')) {
             return $next($request);
         }
 
