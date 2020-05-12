@@ -43,7 +43,7 @@ trait SeedEligibilityJobsForEnrollees
                 'secondary_insurance'     => $enrollee->secondary_insturance,
                 'referring_provider_name' => $enrollee->referring_provider_name,
                 'mrn'                     => $enrollee->mrn,
-                'problems'                => [
+                'problems_string'                => [
                     [
                         'name'       => 'Hypertension',
                         'start_date' => \Carbon\Carbon::now()->toDateString(),
@@ -57,8 +57,10 @@ trait SeedEligibilityJobsForEnrollees
                         'code_type'  => 'ICD-10',
                     ],
                 ],
-                'allergies'   => [['name' => 'peanut']],
-                'medications' => [],
+                'allergies_string'   => [['name' => 'peanut']],
+                'medications_string' => [[
+                    'name' => 'Test Aspirin',
+                ]],
                 'is_demo'     => 'true',
             ];
             $job->save();
