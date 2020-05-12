@@ -26,7 +26,8 @@
               <h5>Step 1</h5>
               <ul class="browser-default">
                   <li>
-                      Will create 5 Unreachable Patients and 5 Enrollees to invite.
+                      Emulates Enrollees Imported from CSV
+                      <br> and ready to be invited for Auto Enrollment.
                   </li>
               </ul>
               <a href="{{route('trigger.enrolldata.test')}}">

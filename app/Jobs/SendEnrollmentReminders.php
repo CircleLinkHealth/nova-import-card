@@ -54,7 +54,7 @@ class SendEnrollmentReminders implements ShouldQueue
         if ( ! $enrollabe) {
             Log::critical("Cannot find user or enrollee[$enrollabe->user_id]. Will not send enrollment email.");
 
-            return; // Confirm Here Please
+            return;
         }
 
         $hasRequestedInfoOnInvitation = $enrollabe->statusRequestsInfo()->exists();
@@ -63,13 +63,5 @@ class SendEnrollmentReminders implements ShouldQueue
             || ! $this->hasSurveyCompleted($this->enrollable)) {
             event(new AutoEnrollableCollected([$this->enrollable->id], true));
         }
-    }
-
-    /**
-     * @return mixed
-     */
-    private function enrollablePastReminderExists()
-    {
-        return $this->enrollable->notifications()->where('data->is_reminder', true)->exists();
     }
 }
