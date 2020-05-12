@@ -22,8 +22,7 @@ trait EnrollmentReminderShared
                     ['created_at', '<=', $untilEndOfDay],
                 ])->where('type', SendEnrollmentEmail::class);
         })
-//            If still unreachable means user did not choose to "Enroll Now" in invitation mail.
-//                This Check may be unnecessary in the case of enrollees. But is double check. @todo:confirm!
+            // Enrollees also have User and Patient_info this point
             ->whereHas('patientInfo', function ($patient) use ($twoDaysAgo, $untilEndOfDay) {
                 $patient->where('ccm_status', Patient::UNREACHABLE);
             });
