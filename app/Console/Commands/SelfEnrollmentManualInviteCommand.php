@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\Jobs\SelfEnrollmentEnrollees;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;
@@ -43,6 +44,6 @@ class SelfEnrollmentManualInviteCommand extends Command
     public function handle()
     {
         $model = Enrollee::find($this->argument('enrolleeId'));
-        SelfEnrollmentEnrollees::dispatch($model);
+        SelfEnrollmentEnrollees::dispatch($model, AutoEnrollmentCenterController::DEFAULT_BUTTON_COLOR);
     }
 }

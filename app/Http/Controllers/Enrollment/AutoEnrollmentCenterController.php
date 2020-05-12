@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 class AutoEnrollmentCenterController extends Controller
 {
     use EnrollableManagement;
+    const DEFAULT_BUTTON_COLOR = '#4baf50';
 
     const ENROLLEES                            = 'Enrollees';
     const ENROLLMENT_LETTER_DEFAULT_LOGO       = 'https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png';
@@ -259,7 +260,7 @@ class AutoEnrollmentCenterController extends Controller
         $practiceLogoSrc        = $practiceLetter->practice_logo_src ?? self::ENROLLMENT_LETTER_DEFAULT_LOGO;
         $signatoryNameForHeader = $provider->display_name;
         $dateLetterSent         = Carbon::parse($enrollee->getLastEnrollmentInvitationLink()->updated_at)->toDateString();
-        $buttonColor            = '#4baf50';
+        $buttonColor            = self::DEFAULT_BUTTON_COLOR;
 
         if ($isSurveyOnlyUser) {
             $enrollable = $userEnrollee;
