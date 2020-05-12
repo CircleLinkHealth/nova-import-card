@@ -44,7 +44,25 @@ if ( ! function_exists('sanitize_array_keys')) {
         );
     }
 }
+    if ( ! function_exists('getStringValueFromAnswerAwvUser')) {
+        function getStringValueFromAnswerAwvUser($val, $default = '')
+        {
+            if (empty($val)) {
+                return $default;
+            }
+            if (is_string($val)) {
+                return $val;
+            }
+            if (is_array($val)) {
+                return getStringValueFromAnswerAwvUser(reset($val));
+            }
+            if ($val instanceof Collection) {
+                return getStringValueFromAnswerAwvUser($val->first());
+            }
 
+            return $val;
+        }
+    }
 if ( ! function_exists('getIpAddress')) {
     /**
      * Get the IP address. This also works with Heroku, where we are behind a load balancer.
@@ -998,18 +1016,24 @@ if ( ! function_exists('getProblemCodeSystemName')) {
     function getProblemCodeSystemName(array $clues)
     {
         foreach ($clues as $clue) {
-            if ('2.16.840.1.113883.6.96' == $clue
-                || Str::contains(strtolower($clue), ['snomed'])) {
+            if (
+                '2.16.840.1.113883.6.96' == $clue
+                || Str::contains(strtolower($clue), ['snomed'])
+            ) {
                 return Constants::SNOMED_NAME;
             }
 
-            if ('2.16.840.1.113883.6.103' == $clue
-                || Str::contains(strtolower($clue), ['9'])) {
+            if (
+                '2.16.840.1.113883.6.103' == $clue
+                || Str::contains(strtolower($clue), ['9'])
+            ) {
                 return Constants::ICD9_NAME;
             }
 
-            if ('2.16.840.1.113883.6.3' == $clue
-                || Str::contains(strtolower($clue), ['10'])) {
+            if (
+                '2.16.840.1.113883.6.3' == $clue
+                || Str::contains(strtolower($clue), ['10'])
+            ) {
                 return Constants::ICD10_NAME;
             }
         }
@@ -1931,9 +1955,11 @@ if ( ! function_exists('getPatientListDropdown')) {
                         $result[] = 'awv';
                     }
 
-                    if ((1 === $count && $hasAwvInitial) ||
+                    if (
+                        (1 === $count && $hasAwvInitial) ||
                         (1 === $count && $hasAwvSubsequent) ||
-                        (2 === $count && $hasAwvInitial && $hasAwvSubsequent)) {
+                        (2 === $count && $hasAwvInitial && $hasAwvSubsequent)
+                    ) {
                         return;
                     }
 
@@ -1999,5 +2025,91 @@ if ( ! function_exists('suggestedFamilyMemberAcceptableRelevanceScore')) {
         return \Cache::remember($key, 2, function () use ($key) {
             return AppConfig::pull($key, 30);
         });
+    }
+}
+
+if ( ! function_exists('levenshteinPercent')) {
+    /**
+     * @param int   $insert
+     * @param mixed $replace
+     * @param int   $delete
+     */
+    function levenshteinPercent(string $string1, string $string2, $insert = 1, $replace = 1, $delete = 1): int
+    {
+        return round(
+            100 - levenshtein($string1, $string2, $insert, $replace, $delete)
+            / \Illuminate\Support\Str::length($string1) * 100
+        );
+    }
+}
+
+if ( ! function_exists('stringMeansEnglish')) {
+    function stringMeansEnglish(string $string): bool
+    {
+        return in_array(strtolower($string), [
+            'e',
+            'en',
+            'eng',
+            'english',
+        ]) ||
+            Str::startsWith(strtolower($string), 'en');
+    }
+}
+
+if ( ! function_exists('stringMeansSpanish')) {
+    function stringMeansSpanish(string $string): bool
+    {
+        return in_array(strtolower($string), [
+            'sp',
+            'es',
+            'spanish',
+            'spa',
+        ]) ||
+            Str::startsWith(strtolower($string), ['es', 'sp']);
+    }
+}
+
+if ( ! function_exists('minDaysPastForCareAmbassadorNextAttempt')) {
+    /**
+     * @param array $times
+     *
+     * @return string|null
+     */
+    function minDaysPastForCareAmbassadorNextAttempt(): int
+    {
+        $key = 'min_days_past_for_care_ambassador_next_attempt';
+
+        return \Cache::remember($key, 2, function () use ($key) {
+            return (int) AppConfig::pull($key, 3);
+        });
+    }
+}
+if ( ! function_exists('complexAttestationRequirementsEnabledForPractice')) {
+    /**
+     * @param mixed $practiceId
+     */
+    function complexAttestationRequirementsEnabledForPractice($practiceId): bool
+    {
+        $key = 'complex_attestation_requirements_for_practice';
+
+        $practiceIds = \Cache::remember($key, 2, function () use ($key) {
+            $val = AppConfig::pull($key, null);
+            if (null === $val) {
+                setAppConfig($key, '');
+
+                return [];
+            }
+
+            return explode(',', $val);
+        });
+
+        return in_array($practiceId, $practiceIds) || in_array('all', $practiceIds);
+    }
+}
+
+if ( ! function_exists('isCpm')) {
+    function isCpm()
+    {
+        return 'CarePlan Manager' === config('app.name');
     }
 }

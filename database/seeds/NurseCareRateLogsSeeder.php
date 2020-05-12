@@ -91,7 +91,7 @@ class NurseCareRateLogsSeeder extends Seeder
         int $seconds,
         bool $billable,
         bool $withSuccessfulCall = false,
-        \Carbon\Carbon $when = null
+        Carbon\Carbon $when = null
     ) {
         if ($withSuccessfulCall) {
             /** @var Note $fakeNote */

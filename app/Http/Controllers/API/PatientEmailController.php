@@ -11,6 +11,7 @@ use App\Rules\PatientEmailDoesNotContainPhi;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PatientEmailController extends Controller
 {
@@ -27,9 +28,16 @@ class PatientEmailController extends Controller
 
         $file = $request->file()['file'];
 
+        $name = $file->getClientOriginalName();
+        $ext  = '.'.$file->getClientOriginalExtension();
+
+        if (Str::endsWith($name, $ext)) {
+            $name = rtrim($name, $ext);
+        }
+
         $media = Media::where('collection_name', 'patient-email-attachments')
             ->where('model_id', $patientId)
-            ->where('file_name', str_replace(' ', '-', $file->getClientOriginalName()))
+            ->where('name', $name)
             ->whereIn('model_type', [\App\User::class, 'CircleLinkHealth\Customer\Entities\User'])
             ->first();
 
@@ -60,6 +68,7 @@ class PatientEmailController extends Controller
                     'media_id' => $media->id,
                     'path'     => $media->getPath(),
                     'url'      => $media->getFullUrl(),
+                    'name'     => $file->getClientOriginalName(),
                 ],
                 200
             );

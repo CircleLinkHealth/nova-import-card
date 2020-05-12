@@ -80,6 +80,12 @@ class CareAmbassadorScript extends Resource
                     'es' => 'Spanish',
                 ])->displayUsingLabels(),
 
+            Select::make('Type')
+                ->options([
+                    TrixField::CARE_AMBASSADOR_SCRIPT                  => 'For Patients to Enroll',
+                    TrixField::CARE_AMBASSADOR_UNREACHABLE_USER_SCRIPT => 'For Unreachable Users',
+                ])->displayUsingLabels(),
+
             CKEditor::make('Body', 'body')
                 ->options([
                     'height'  => 500,
@@ -121,7 +127,6 @@ class CareAmbassadorScript extends Resource
     public static function newModel()
     {
         $model = new static::$model();
-        $model->setAttribute('type', TrixField::CARE_AMBASSADOR_SCRIPT);
 
         return $model;
     }

@@ -11,6 +11,7 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 trait HasChargeableServices
 {
+    //todo: do we need to deprecate this in favor of the Customer Version?
     public function chargeableServices()
     {
         return $this->morphToMany(ChargeableService::class, 'chargeable')

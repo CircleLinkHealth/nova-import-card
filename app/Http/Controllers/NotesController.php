@@ -22,8 +22,10 @@ use App\Services\CPM\CpmProblemService;
 use App\Services\NoteService;
 use App\Services\PatientCustomEmail;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
@@ -178,29 +180,61 @@ class NotesController extends Controller
 
         $performedAt = optional($existingNote)->performed_at ?? Carbon::now();
 
+        $hasSuccessfulCall = ! empty($patient->patientInfo->last_successful_contact_time);
+
+        $surveyAnswer = [];
+
+        if ( ! $hasSuccessfulCall) {
+            $thisYear       = Carbon::now()->year;
+            $surveyInstance = DB::table('survey_instances')
+                ->join('surveys', 'survey_instances.survey_id', '=', 'surveys.id')
+                ->where('name', '=', 'Enrollees')
+                ->where('year', '=', $thisYear)
+                ->first();
+
+//            NOTE: $patientId is $user->id.
+            if ($surveyInstance) {
+                $surveyAnswer = DB::table('questions')
+                    ->join('answers', 'questions.id', '=', 'answers.question_id')
+                    ->where('user_id', '=', $patientId)
+                    ->where('identifier', '=', 'Q_REQUESTS_INFO')
+                    ->where('survey_instance_id', '=', $surveyInstance->id)
+                    ->first();
+            } else {
+                $surveyAnswer = [];
+            }
+        }
+
+        $answerFromMoreInfo = ! empty($surveyAnswer)
+            ? json_decode($surveyAnswer->value)[0]->name
+            : '';
+
         $view_data = [
-            'userTime'               => $performedAt->setTimezone($patient->timezone)->format('Y-m-d\TH:i'),
-            'program_id'             => $patient->program_id,
-            'patient'                => $patient,
-            'patient_name'           => $patient_name,
-            'note_types'             => Activity::input_activity_types(),
-            'task_types_to_topics'   => Activity::task_types_to_topics(),
-            'tasks'                  => $nurse_patient_tasks,
-            'author_id'              => $author_id,
-            'author_name'            => $author_name,
-            'careteam_info'          => $careteam_info,
-            'userTimeZone'           => $userTimeZone,
-            'window'                 => $window,
-            'window_flag'            => $patient_contact_window_exists,
-            'contact_days_array'     => $contact_days_array,
-            'notifies_text'          => $patient->getNotifiesText(),
-            'note_channels_text'     => $patient->getNoteChannelsText(),
-            'medications'            => $meds,
-            'withdrawnReasons'       => $withdrawnReasons,
-            'patientWithdrawnReason' => $patientWithdrawnReason,
-            'note'                   => $existingNote,
-            'call'                   => $existingCall,
-            'cpmProblems'            => (new CpmProblemService())->all(),
+            'userTime'                => $performedAt->setTimezone($patient->timezone)->format('Y-m-d\TH:i'),
+            'program_id'              => $patient->program_id,
+            'patient'                 => $patient,
+            'patient_name'            => $patient_name,
+            'note_types'              => Activity::input_activity_types(),
+            'task_types_to_topics'    => Activity::task_types_to_topics(),
+            'tasks'                   => $nurse_patient_tasks,
+            'author_id'               => $author_id,
+            'author_name'             => $author_name,
+            'careteam_info'           => $careteam_info,
+            'userTimeZone'            => $userTimeZone,
+            'window'                  => $window,
+            'window_flag'             => $patient_contact_window_exists,
+            'contact_days_array'      => $contact_days_array,
+            'notifies_text'           => $patient->getNotifiesText(),
+            'note_channels_text'      => $patient->getNoteChannelsText(),
+            'medications'             => $meds,
+            'withdrawnReasons'        => $withdrawnReasons,
+            'patientWithdrawnReason'  => $patientWithdrawnReason,
+            'note'                    => $existingNote,
+            'call'                    => $existingCall,
+            'cpmProblems'             => (new CpmProblemService())->all(),
+            'patientRequestToKnow'    => $answerFromMoreInfo,
+            'hasSuccessfulCall'       => $hasSuccessfulCall,
+            'attestationRequirements' => $this->getAttestationRequirementsIfYouShould($patient),
         ];
 
         return view('wpUsers.patient.note.create', $view_data);
@@ -834,6 +868,74 @@ class NotesController extends Controller
         }
 
         return response()->json(['message' => 'success', 'note_id' => $note->id]);
+    }
+
+    /**
+     * Per CPM-2259
+     * Default behaviour for attesting patient conditions is: Require at least 1 condition to be attested on call.
+     *
+     * However:
+     *
+     * If feature is enabled for practice,
+     *
+     * If current summary has CCM code && less than 2 conditions have been attested alredy -> require nurse to
+     * attest to 2 CCM conditions in the modal.
+     * (Make distinction between CCM && BHI only if summary has both BHI && CCM code enabled - is_complex)
+     *
+     * If current summary has also BHI code && no BHI conditions have been attested already -> require nurse to
+     * attest 1 BHI condition along with 2 CCM
+     */
+    private function getAttestationRequirementsIfYouShould(User $patient)
+    {
+        $requirements = [
+            'disabled'   => true,
+            'ccm_2'      => false,
+            'bhi_1'      => false,
+            'is_complex' => false,
+        ];
+
+        if ( ! complexAttestationRequirementsEnabledForPractice($patient->primaryPractice->id)) {
+            return $requirements;
+        }
+
+        $requirements['disabled'] = false;
+
+        if ( ! PatientMonthlySummary::existsForCurrentMonthForPatient($patient->id)) {
+            PatientMonthlySummary::createFromPatient($patient->id, Carbon::now()->startOfMonth());
+        }
+
+        /**
+         * @var PatientMonthlySummary
+         */
+        $pms = $patient->patientSummaries()
+            ->with([
+                //all chargeable services includes un-fulfilled service codes as well as fulfilled.
+                'allChargeableServices',
+                'attestedProblems',
+            ])
+            ->getCurrent()
+            ->first();
+
+        //if this hasn't had last month's chargeable services attach for some reason, try here
+        if ($pms->allchargeableServices->isEmpty()) {
+            $pms->attachChargeableServicesToFulfill();
+            $pms->load('allChargeableServices');
+        }
+
+        $services = $pms->allChargeableServices;
+
+        if ($services->where('code', ChargeableService::CCM)->isNotEmpty()) {
+            if ($pms->ccmAttestedProblems()->count() < 2) {
+                $requirements['ccm_2'] = true;
+            }
+
+            if ($services->where('code', ChargeableService::BHI)->isNotEmpty() && $pms->bhiAttestedProblems()->count() < 1) {
+                $requirements['is_complex'] = true;
+                $requirements['bhi_1']      = true;
+            }
+        }
+
+        return $requirements;
     }
 
     private function getProviders($getNotesFor)

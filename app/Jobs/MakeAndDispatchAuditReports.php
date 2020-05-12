@@ -46,18 +46,23 @@ class MakeAndDispatchAuditReports implements ShouldQueue
      * @var User
      */
     protected $patient;
+    /**
+     * @var bool
+     */
+    private $send;
 
     /**
      * Create a new job instance.
      *
      * @param Carbon $date
      */
-    public function __construct(User $patient, Carbon $date = null)
+    public function __construct(User $patient, Carbon $date = null, bool $send = true)
     {
         $this->patient    = $patient;
         $this->date       = $date ?? Carbon::now();
         $this->directMail = app(DirectMail::class);
         $this->eFax       = app(Efax::class);
+        $this->send       = $send;
     }
 
     /**
@@ -79,24 +84,26 @@ class MakeAndDispatchAuditReports implements ShouldQueue
             return;
         }
 
-        $settings = $this->patient->primaryPractice->settings()->firstOrNew([]);
+        if ($this->send) {
+            $settings = $this->patient->primaryPractice->settings()->firstOrNew([]);
 
-        $sent = $this->patient->locations->map(function ($location) use ($path, $settings, $fileName) {
-            //Send DM mail
-            if ($settings->dm_audit_reports) {
-                $this->directMail->send($location->emr_direct_address, $path, $fileName);
-            }
+            $sent = $this->patient->locations->map(function ($location) use ($path, $settings, $fileName) {
+                //Send DM mail
+                if ($settings->dm_audit_reports) {
+                    $this->directMail->send($location->emr_direct_address, $path, $fileName);
+                }
 
-            //Send eFax
-            $fax = $location->fax;
+                //Send eFax
+                $fax = $location->fax;
 
-            if ($settings->efax_audit_reports && $fax) {
-                $number = (new StringManipulation())->formatPhoneNumberE164($fax);
-                $this->eFax->createFaxFor($number)->send(['file' => $path, 'batch_delay' => 60, 'batch_collision_avoidance' => true]);
-            }
+                if ($settings->efax_audit_reports && $fax) {
+                    $number = (new StringManipulation())->formatPhoneNumberE164($fax);
+                    $this->eFax->createFaxFor($number)->send(['file' => $path, 'batch_delay' => 60, 'batch_collision_avoidance' => true]);
+                }
 
-            return $location;
-        });
+                return $location;
+            });
+        }
 
         \File::delete($path);
     }

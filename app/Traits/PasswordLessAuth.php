@@ -30,7 +30,7 @@ trait PasswordLessAuth
             return $this->sendLockoutResponse($request);
         }
         if ($this->attemptPasswordlessLogin($token, $request)) {
-            return $this->sendLoginResponse($request);
+            return $this->redirectToPatientCarePlan($request);
         }
         $this->incrementLoginAttempts($request);
 
@@ -62,5 +62,15 @@ trait PasswordLessAuth
         }
 
         return false;
+    }
+
+    protected function redirectToPatientCarePlan(Request $request)
+    {
+        $request->session()->regenerate();
+
+        $this->clearLoginAttempts($request);
+
+        return $this->authenticated($request, $this->guard()->user())
+            ?: redirect()->intended(route('patient.careplan.print', [$request->route('patientId')]));
     }
 }

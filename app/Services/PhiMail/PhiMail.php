@@ -11,9 +11,12 @@ use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PhiMail implements DirectMail
 {
+    const UPG_NAME = 'UPG';
+
     /**
      * @var IncomingMessageHandler
      */
@@ -40,13 +43,15 @@ class PhiMail implements DirectMail
     }
 
     /**
-     * @throws \Exception
+     * @param null $dmUserAddress
+     *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      *
      * @return bool
      */
-    public function receive()
+    public function receive($dmUserAddress = null)
     {
-        $this->initPhiMailConnection();
+        $this->initPhiMailConnection($dmUserAddress);
 
         if ( ! is_a($this->connector, PhiMailConnector::class)) {
             return false;
@@ -67,25 +72,25 @@ class PhiMail implements DirectMail
      * @param $outboundRecipient
      * @param $binaryAttachmentFilePath
      * @param $binaryAttachmentFileName
-     * @param null       $ccdaAttachmentPath
+     * @param null       $ccdaContents
      * @param mixed|null $body
      * @param mixed|null $subject
+     * @param mixed|null $sender
      *
-     * @throws \Exception
-     *
+     *@throws \Exception
      * @return bool|SendResult[]
      */
     public function send(
         $outboundRecipient,
         $binaryAttachmentFilePath = null,
         $binaryAttachmentFileName = null,
-        $ccdaAttachmentPath = null,
+        $ccdaContents = null,
         User $patient = null,
         $body = null,
-        $subject = null
+        $subject = null,
+        $sender = null
     ) {
-        //add case when everything is null
-        $this->initPhiMailConnection();
+        $this->initPhiMailConnection($sender);
 
         if ( ! is_a($this->connector, PhiMailConnector::class)) {
             return false;
@@ -120,14 +125,16 @@ class PhiMail implements DirectMail
                 $this->connector->setSubject($subject);
             }
 
-            if ($ccdaAttachmentPath) {
-                // Add a CDA attachment and let phiMail server assign a filename.
-                $this->connector->addCDA(self::loadFile($ccdaAttachmentPath));
-            }
-
             if ($binaryAttachmentFilePath) {
                 // Add a binary attachment and specify the attachment filename.
                 $this->connector->addRaw(self::loadFile($binaryAttachmentFilePath), $binaryAttachmentFileName);
+            }
+
+            $ccdaContent = $this->upgTemporaryHack($patient);
+
+            if ($ccdaContent) {
+                // Add a CDA attachment and let phiMail server assign a filename.
+                $this->connector->addCDA($ccdaContent);
             }
 
             // Optionally, request a final delivery notification message.
@@ -136,7 +143,7 @@ class PhiMail implements DirectMail
             // result in a failure notification after the timeout period has elapsed.
             // This command will override the default setting set by the server.
             //
-            //$this->connector->setDeliveryNotification(true);
+            // $this->connector->setDeliveryNotification(true);
 
             // Send the message. srList will contain one entry for each recipient.
             // If more than one recipient was specified, then each would have an entry.
@@ -243,11 +250,13 @@ class PhiMail implements DirectMail
     }
 
     /**
-     * @throws \Exception
+     * @param null $dmUserAddress
+     *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    private function initPhiMailConnection()
+    private function initPhiMailConnection($dmUserAddress = null)
     {
-        $phiMailUser        = config('services.emr-direct.user');
+        $phiMailUser        = $dmUserAddress ? $dmUserAddress : config('services.emr-direct.user');
         $phiMailPass        = config('services.emr-direct.password');
         $clientCertPath     = base_path(config('services.emr-direct.conc-keys-pem-path'));
         $serverCertPath     = base_path(config('services.emr-direct.server-cert-pem-path'));
@@ -278,5 +287,32 @@ class PhiMail implements DirectMail
 
         $this->connector = new PhiMailConnector($phiMailServer, $phiMailPort);
         $this->connector->authenticateUser($phiMailUser, $phiMailPass);
+    }
+
+    private function upgTemporaryHack(?User $patient)
+    {
+        if ( ! $patient) {
+            return null;
+        }
+        $patient->load('primaryPractice');
+
+        try {
+            if (self::UPG_NAME === $patient->primaryPractice->name && $patient->hasCcda()) {
+                $content = $patient->ccdas()->orderByDesc('id')->with('media')->first()->getMedia('ccd')->first()->getFile();
+
+                if ($content && ! Str::startsWith($content, ['<?xml'])) {
+                    $content = '<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="CDA.xsl"?>'.$content;
+                }
+
+                if ($content) {
+                    Log::warning('UPG: Attach patient '.$patient->id.' CCDA');
+
+                    return $content;
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('UPG CCDA not attached for patient '.$patient->id);
+        }
     }
 }

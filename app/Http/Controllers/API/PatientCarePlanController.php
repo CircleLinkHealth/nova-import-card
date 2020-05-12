@@ -57,7 +57,7 @@ class PatientCarePlanController extends Controller
         }
 
         foreach ($cp->pdfs as $pdf) {
-            $pdf->url   = route('download.pdf.careplan', ['fileName' => $pdf->filename]);
+            $pdf->url   = route('download.pdf.careplan', [$pdf->filename]);
             $pdf->label = "CarePlan uploaded on {$pdf->created_at->format('m/d/Y')} at {$pdf->created_at->format('g:i:s A T')}";
         }
 
@@ -90,7 +90,7 @@ class PatientCarePlanController extends Controller
                 'file'         => base64_encode(file_get_contents($file)),
             ]);
 
-            $pdf->url   = route('download.pdf.careplan', ['fileName' => $pdf->filename]);
+            $pdf->url   = route('download.pdf.careplan', [$pdf->filename]);
             $pdf->label = "CarePlan uploaded on {$pdf->created_at->format('m/d/Y')} at {$pdf->created_at->format('g:i:s A T')}";
 
             $created[] = $pdf;

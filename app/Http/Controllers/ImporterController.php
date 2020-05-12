@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Jobs\ImportCcda;
 use App\Nova\Actions\ClearAndReimportCcda;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -137,9 +138,9 @@ class ImporterController extends Controller
                     $ccda->checkDuplicity();
 
                     return [
-                        'display_name'        => $ccda->patientFirstName().' '.$ccda->patientLastName(),
+                        'display_name'        => $ccda->patient_first_name.' '.$ccda->patient_last_name,
                         'dob'                 => $ccda->patientDob(),
-                        'mrn'                 => $ccda->patientMrn(),
+                        'mrn'                 => $ccda->patient_mrn,
                         'id'                  => $ccda->id,
                         'patient'             => $ccda->patient,
                         'practice'            => $ccda->practice,
@@ -209,8 +210,11 @@ class ImporterController extends Controller
                         continue;
                     }
 
-                    $ccda->location_id         = $record['location_id'];
-                    $ccda->practice_id         = $record['practice_id'];
+                    $ccda->location_id = $record['location_id'];
+                    //A CCDA should never have a reason to change practice id, so only do it if it was not set.
+                    if ( ! $ccda->practice_id) {
+                        $ccda->practice_id = $record['practice_id'];
+                    }
                     $ccda->billing_provider_id = $record['billing_provider_id'];
                     $ccda                      = $ccda->updateOrCreateCarePlan();
                     array_push(
@@ -231,6 +235,19 @@ class ImporterController extends Controller
                                 'temporary_nurse_user_id' => null,
                                 'temporary_from'          => null,
                                 'temporary_to'            => null,
+                            ]
+                        );
+                    }
+
+                    if ($record['billing_provider_id']) {
+                        $updateBillingProvider = CarePerson::updateOrCreate(
+                            [
+                                'type'    => CarePerson::BILLING_PROVIDER,
+                                'user_id' => $ccda->patient->id,
+                            ],
+                            [
+                                'member_user_id' => $record['billing_provider_id'],
+                                'alert'          => true,
                             ]
                         );
                     }

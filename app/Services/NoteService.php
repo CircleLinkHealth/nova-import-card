@@ -8,7 +8,6 @@ namespace App\Services;
 
 use App\Call;
 use App\CareplanAssessment;
-use App\CLH\Repositories\UserRepository;
 use App\Filters\NoteFilters;
 use App\Note;
 use App\Notifications\SendPatientEmail;
@@ -20,6 +19,7 @@ use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\UserRepository;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
@@ -111,6 +111,10 @@ class NoteService
     {
         if ( ! empty($requestInput['status'])) {
             $note->status = $requestInput['status'];
+        }
+
+        if (empty($requestInput['type'])) {
+            $requestInput['type'] = $note->type;
         }
 
         $note->logger_id = $requestInput['logger_id'];

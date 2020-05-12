@@ -47,6 +47,7 @@ class ApprovableBillablePatient extends Resource
         if (null == $status) {
             $status = $this->patient->patientInfo->getCcmStatusForMonth(Carbon::parse($this->month_year));
         }
+        $problems = $this->allCcdProblems($this->patient)->unique('code')->filter()->values();
 
         return [
             'id'       => $this->patient->id,
@@ -63,17 +64,17 @@ class ApprovableBillablePatient extends Resource
             'total_time'             => $this->total_time,
             'bhi_time'               => $this->bhi_time,
             'ccm_time'               => $this->ccm_time,
-            'problems'               => $this->allCcdProblems($this->patient),
+            'problems'               => $problems,
             'no_of_successful_calls' => $this->no_of_successful_calls,
             'status'                 => $status,
-            'approve'                => $this->approved,
-            'reject'                 => $this->rejected,
+            'approve'                => (bool) $this->approved,
+            'reject'                 => (bool) $this->rejected,
             'report_id'              => $this->id,
             'actor_id'               => $this->actor_id,
             'qa'                     => $this->needs_qa || ( ! $this->approved && ! $this->rejected),
-            'attested_ccm_problems'  => $this->ccmAttestedProblems()->pluck('id'),
+            'attested_ccm_problems'  => $this->ccmAttestedProblems()->unique()->pluck('id'),
             'chargeable_services'    => ChargeableService::collection($this->whenLoaded('chargeableServices')),
-            'attested_bhi_problems'  => $this->bhiAttestedProblems()->pluck('id'),
+            'attested_bhi_problems'  => $this->bhiAttestedProblems()->unique()->pluck('id'),
         ];
     }
 }

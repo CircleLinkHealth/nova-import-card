@@ -56,7 +56,9 @@ class PatientCallListController extends Controller
         }
 
         $dropdownStatusClass = 'all' !== $filterPriority
-            ? ['disabled' => 'disable', 'class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;']
+            ? ['disabled' => 'disable',
+                'class'   => 'form-control select-picker',
+                'style'   => 'width:32%; margin-left:-55%;', ]
             : ['class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;'];
 
         $calls = $this->service->filterCalls($dropdownStatus, $filterPriority, $today, $nurseId);
