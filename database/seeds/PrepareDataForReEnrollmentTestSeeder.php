@@ -21,6 +21,26 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
 
     const CCM_STATUS_UNREACHABLE = 'unreachable';
 
+    public function createEnrollee(Practice $practice, ?string $phoneTester = null, ?string $emailTester = null)
+    {
+        $faker = Factory::create();
+
+        $enrolleeForTesting = factory(Enrollee::class, 1)->create([
+            'practice_id'             => $practice->id,
+            'dob'                     => \Carbon\Carbon::parse('1901-01-01'),
+            'referring_provider_name' => 'Dr. Demo',
+            'primary_phone'           => $phoneTester,
+            'home_phone'              => $phoneTester,
+            'email'                   => $faker->unique()->safeEmail,
+        ]);
+        $this->seedEligibilityJobs(collect($enrolleeForTesting));
+//                        Emulating Constantinos dashboard Importing - Mark Enrollees to invite.
+        $enrolleeForTesting->first()->update([
+            'status' => Enrollee::QUEUE_AUTO_ENROLLMENT,
+        ]);
+        $this->updateEnrolleeSurveyStatuses($enrolleeForTesting->first()->id);
+    }
+
     /**
      * Run the database seeds.
      *
@@ -28,7 +48,6 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
      */
     public function run()
     {
-        $faker       = Factory::create();
         $phoneTester = AppConfig::pull('tester_phone', null) ?? config('services.tester.phone');
         $emailTester = AppConfig::pull('tester_email', null) ?? config('services.tester.email');
 
@@ -49,20 +68,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         $n     = 1;
         $limit = 5;
         while ($n <= $limit) {
-            $enrolleeForTesting = factory(Enrollee::class, 1)->create([
-                'practice_id'             => $practice->id,
-                'dob'                     => \Carbon\Carbon::parse('1901-01-01'),
-                'referring_provider_name' => 'Dr. Demo',
-                'primary_phone'           => $phoneTester,
-                'home_phone'              => $phoneTester,
-                'email'                   => $faker->unique()->safeEmail,
-            ]);
-            $this->seedEligibilityJobs(collect($enrolleeForTesting));
-//                        Emulating Constantinos dashboard Importing - Mark Enrollees to invite.
-            $enrolleeForTesting->first()->update([
-                'status' => Enrollee::QUEUE_AUTO_ENROLLMENT,
-            ]);
-            $this->updateEnrolleeSurveyStatuses($enrolleeForTesting->first()->id);
+            $this->createEnrollee($practice, $phoneTester, $emailTester);
             ++$n;
         }
 
