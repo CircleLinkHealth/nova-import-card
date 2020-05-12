@@ -75,20 +75,7 @@ class AutoEnrollmentLogin extends Controller
         $practiceName    = $loginFormData['practiceName'];
         $doctorsLastName = $loginFormData['doctorsLastName'];
         $isSurveyOnly    = $request->input('is_survey_only');
-
-        if ( ! $isFromBitly) {
-            if ($isSurveyOnly) {
-                $enrollee = $this->getEnrollee($userId);
-                if ( ! $enrollee) {
-                    Log::warning("Enrollee for user with id $userId not found");
-                    throw new \Exception('User does not exist', 404);
-                }
-                $this->expirePastInvitationLink($enrollee);
-            } else {
-                $this->expirePastInvitationLink($user);
-            }
-        }
-
+        
         return view(
             'EnrollmentSurvey.enrollmentSurveyLogin',
             compact('userId', 'isSurveyOnly', 'doctorsLastName', 'practiceName', 'urlWithToken')

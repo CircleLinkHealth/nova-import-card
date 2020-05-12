@@ -2318,6 +2318,11 @@ Route::get('login-enrollees-survey/{user}/{survey}', 'AutoEnrollmentCenterContro
     ->name('enrollee.login.signed')
     ->middleware('signed');
 
+Route::post('enrollee-login-viewed', [
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@viewFormVisited',
+    'as'   => 'enrollee.login.viewed',
+])->middleware('guest');
+
 //Route::get('get-calendar-data', [
 //    'uses' => 'CareCenter\WorkScheduleController@calendarEvents',
 //    'as'   => 'care.center.work.schedule.getCalendarData',
