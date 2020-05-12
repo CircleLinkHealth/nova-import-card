@@ -68,6 +68,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
      */
     public function handle()
     {
+//        @TODO:refactor this class when in call with michalis.
         //        Two days after the last reminder - (the "SendEnrollmentNotificationsReminder")
         $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
