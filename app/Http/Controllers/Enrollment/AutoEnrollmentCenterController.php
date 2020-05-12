@@ -246,7 +246,7 @@ class AutoEnrollmentCenterController extends Controller
             $user = User::find($userId);
             $this->expirePastInvitationLink($user);
         }
-        
+
         return response()->json([], 200);
     }
 

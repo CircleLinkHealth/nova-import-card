@@ -75,7 +75,7 @@ class AutoEnrollmentLogin extends Controller
         $practiceName    = $loginFormData['practiceName'];
         $doctorsLastName = $loginFormData['doctorsLastName'];
         $isSurveyOnly    = $request->input('is_survey_only');
-        
+
         return view(
             'EnrollmentSurvey.enrollmentSurveyLogin',
             compact('userId', 'isSurveyOnly', 'doctorsLastName', 'practiceName', 'urlWithToken')
