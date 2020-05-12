@@ -176,7 +176,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
         $preferredContactDays        = $this->getPreferredDaysToString($surveyAnswers['preferred_days']);
         $patientContactTimesToString = $this->getPreferredContactHoursToString($surveyAnswers['preferred_time']);
-
         if (empty($preferredContactDays) || empty($patientContactTimesToString)) {
             throw new \Exception("Missing survey values for user [$user->id]");
         }
@@ -205,7 +204,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 'city'                      => $addressData['city'],
                 'state'                     => $addressData['state'],
                 'zip'                       => $addressData['zip'],
-                'email'                     => $surveyAnswers['email'],
+                'email'                     => getStringValueFromAnswerAwvUser($surveyAnswers['email']),
                 'status'                    => Enrollee::ENROLLED,
                 'auto_enrollment_triggered' => true,
             ]);
@@ -317,7 +316,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
             'city'    => $addressData['city'],
             'state'   => $addressData['state'],
             'zip'     => $addressData['zip'],
-            'email'   => collect($email)->first(),
+            'email'   => getStringValueFromAnswerAwvUser($email),
         ]);
     }
 

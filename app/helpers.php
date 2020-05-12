@@ -44,7 +44,25 @@ if ( ! function_exists('sanitize_array_keys')) {
         );
     }
 }
+    if ( ! function_exists('getStringValueFromAnswerAwvUser')) {
+        function getStringValueFromAnswerAwvUser($val, $default = '')
+        {
+            if (empty($val)) {
+                return $default;
+            }
+            if (is_string($val)) {
+                return $val;
+            }
+            if (is_array($val)) {
+                return getStringValueFromAnswerAwvUser(reset($val));
+            }
+            if ($val instanceof Collection) {
+                return getStringValueFromAnswerAwvUser($val->first());
+            }
 
+            return $val;
+        }
+    }
 if ( ! function_exists('getIpAddress')) {
     /**
      * Get the IP address. This also works with Heroku, where we are behind a load balancer.
