@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
@@ -275,18 +276,21 @@ class AutoEnrollmentCenterController extends Controller
         $practiceName           = $enrollablePrimaryPractice->name;
         $practiceLogoSrc        = $practiceLetter->practice_logo_src ?? self::ENROLLMENT_LETTER_DEFAULT_LOGO;
         $signatoryNameForHeader = $provider->display_name;
-        $dateLetterSent         = Carbon::parse($enrollee->getLastEnrollmentInvitationLink()->updated_at)->toDateString();
+        $dateLetterSent         = '???';
         $buttonColor            = self::DEFAULT_BUTTON_COLOR;
 
-        if ($isSurveyOnlyUser) {
+        /** @var EnrollableInvitationLink $invitationLink */
+        $invitationLink = $enrollee->getLastEnrollmentInvitationLink();
+        if ($invitationLink) {
+            $dateLetterSent = Carbon::parse($invitationLink->updated_at)->toDateString();
+            $buttonColor    = $invitationLink->button_color;
+        }
+
+        /*if ($isSurveyOnlyUser) {
             $enrollable = $userEnrollee;
         }
 
-        $enrollable = $enrollee;
-
-        if ( ! is_null($enrollee->getLastEnrollmentInvitationLink())) {
-            $buttonColor = $enrollee->getLastEnrollmentInvitationLink()->button_color;
-        }
+        $enrollable = $enrollee;*/
 
         return view('enrollment-consent.enrollmentInvitation', compact(
             'userEnrollee',
