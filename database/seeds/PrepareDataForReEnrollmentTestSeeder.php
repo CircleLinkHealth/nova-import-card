@@ -25,7 +25,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
     {
         $faker = Factory::create();
 
-        $enrolleeForTesting = factory(Enrollee::class, 1)->create([
+        $enrolleeForTesting = factory(Enrollee::class)->create([
             'practice_id'             => $practice->id,
             'dob'                     => \Carbon\Carbon::parse('1901-01-01'),
             'referring_provider_name' => 'Dr. Demo',
@@ -33,12 +33,14 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             'home_phone'              => $phoneTester,
             'email'                   => $faker->unique()->safeEmail,
         ]);
-        $this->seedEligibilityJobs(collect($enrolleeForTesting));
+        $this->seedEligibilityJobs(collect([$enrolleeForTesting]), $practice);
 //                        Emulating Constantinos dashboard Importing - Mark Enrollees to invite.
-        $enrolleeForTesting->first()->update([
+        $enrolleeForTesting->update([
             'status' => Enrollee::QUEUE_AUTO_ENROLLMENT,
         ]);
-        $this->updateEnrolleeSurveyStatuses($enrolleeForTesting->first()->id);
+        $this->updateEnrolleeSurveyStatuses($enrolleeForTesting->id);
+
+        return $enrolleeForTesting;
     }
 
     /**
