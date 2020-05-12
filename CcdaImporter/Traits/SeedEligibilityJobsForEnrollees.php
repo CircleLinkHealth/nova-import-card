@@ -48,24 +48,28 @@ trait SeedEligibilityJobsForEnrollees
                 'secondary_insurance'     => $enrollee->secondary_insturance,
                 'referring_provider_name' => $enrollee->referring_provider_name,
                 'mrn'                     => $enrollee->mrn,
-                'problems_string'         => json_encode([
+                'problems_string'         => json_encode([[
                     [
-                        'name'       => 'Hypertension',
-                        'start_date' => \Carbon\Carbon::now()->toDateString(),
-                        'code'       => 'I10',
-                        'code_type'  => 'ICD-10',
+                        'Name'        => 'Hypertension',
+                        'AddedDate'   => \Carbon\Carbon::now()->toDateString(),
+                        'ResolveDate' => \Carbon\Carbon::now()->toDateString(),
+                        'Code'        => 'I10',
+                        'CodeType'    => 'ICD-10',
                     ],
                     [
-                        'name'       => 'Asthma',
-                        'start_date' => \Carbon\Carbon::now()->toDateString(),
-                        'code'       => 'J45.901',
-                        'code_type'  => 'ICD-10',
+                        'Name'        => 'Asthma',
+                        'AddedDate'   => \Carbon\Carbon::now()->toDateString(),
+                        'ResolveDate' => \Carbon\Carbon::now()->toDateString(),
+                        'Code'        => 'J45.901',
+                        'CodeType'    => 'ICD-10',
                     ],
-                ]),
-                'allergies_string'   => json_encode([['Name' => 'peanut']]),
-                'medications_string' => json_encode([[
-                    'name' => 'Test Aspirin',
                 ]]),
+                'allergies_string'   => json_encode([[['Name' => 'peanut']]]),
+                'medications_string' => json_encode([[[
+                    'Name'   => 'Test Aspirin',
+                    'Status' => 'TestStatus',
+                    'Sig'    => 'TestSig',
+                ]]]),
                 'is_demo' => 'true',
             ];
             $job->save();
