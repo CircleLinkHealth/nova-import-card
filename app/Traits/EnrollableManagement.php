@@ -280,7 +280,7 @@ trait EnrollableManagement
      */
     public function hasViewedLetterOrSurvey($enrollee)
     {
-        return ! optional($enrollee->selfEnrollmentStatuses)->logged_in;
+        return optional($enrollee->selfEnrollmentStatuses)->logged_in;
     }
 
     /**
