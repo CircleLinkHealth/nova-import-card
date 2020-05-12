@@ -465,7 +465,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
 
     private function getAllergyName($allergy): string
     {
-        return $allergy->Name;
+        return $allergy->Name ?? $allergy->name;
     }
 
     private function getZipCode(): string
