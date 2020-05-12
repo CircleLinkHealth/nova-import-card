@@ -87,8 +87,15 @@ class ImportEnrollee
 
     private function enrolleeMedicalRecordImported(Enrollee $enrollee)
     {
-        $link = route('import.ccd.remix');
-        $this->log("Just imported the CCD of Eligible Patient ID {$enrollee->id}. Please visit $link");
+        $msg = "Just imported the CCD of Eligible Patient ID {$enrollee->id}. \nPlease visit ";
+        
+        if ($enrollee->user()->exists()) {
+            $msg .= route('patient.careplan.print', [$enrollee->user_id]);
+        } else {
+            $msg .= route('import.ccd.remix');
+        }
+        
+        $this->log($msg);
     }
 
     private function handleExistingUser(Enrollee $enrollee): ?User
