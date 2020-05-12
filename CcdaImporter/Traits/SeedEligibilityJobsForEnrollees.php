@@ -6,17 +6,22 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Traits;
 
+use CircleLinkHealth\Customer\Entities\Practice;
+use Illuminate\Support\Collection;
+
 trait SeedEligibilityJobsForEnrollees
 {
     /**
      * @param $enrollees
      */
-    public function seedEligibilityJobs($enrollees)
+    public function seedEligibilityJobs(Collection $enrollees, Practice $practice)
     {
+        $isCommandLine = method_exists($this, 'command');
+
         foreach ($enrollees as $enrollee) {
             //create eligibility job
             $job       = factory(\CircleLinkHealth\Eligibility\Entities\EligibilityJob::class)->create();
-            $job->hash = $enrollee->practice->name.$enrollee->first_name.$enrollee->last_name.$enrollee->mrn.$enrollee->city.$enrollee->state.$enrollee->zip;
+            $job->hash = $practice->name.$enrollee->first_name.$enrollee->last_name.$enrollee->mrn.$enrollee->city.$enrollee->state.$enrollee->zip;
 
             $job->data = [
                 'patient_id'              => $enrollee->mrn,
@@ -43,7 +48,7 @@ trait SeedEligibilityJobsForEnrollees
                 'secondary_insurance'     => $enrollee->secondary_insturance,
                 'referring_provider_name' => $enrollee->referring_provider_name,
                 'mrn'                     => $enrollee->mrn,
-                'problems_string'                => [
+                'problems_string'         => json_encode([
                     [
                         'name'       => 'Hypertension',
                         'start_date' => \Carbon\Carbon::now()->toDateString(),
@@ -56,12 +61,12 @@ trait SeedEligibilityJobsForEnrollees
                         'code'       => 'J45.901',
                         'code_type'  => 'ICD-10',
                     ],
-                ],
-                'allergies_string'   => [['name' => 'peanut']],
-                'medications_string' => [[
+                ]),
+                'allergies_string'   => json_encode([['Name' => 'peanut']]),
+                'medications_string' => json_encode([[
                     'name' => 'Test Aspirin',
-                ]],
-                'is_demo'     => 'true',
+                ]]),
+                'is_demo' => 'true',
             ];
             $job->save();
 
@@ -69,7 +74,9 @@ trait SeedEligibilityJobsForEnrollees
             $enrollee->save();
         }
 
-        $this->command->info('Seeding possible family members');
+        if ($isCommandLine) {
+            $this->command->info('Seeding possible family members');
+        }
         //take some enrollees to fake "suggested" family members for testing purposes. Randomly make their data look like the would be family members
         [$enrollees, $fakeSuggestedFamilyMembers] = $enrollees->partition(function ($e) use ($enrollees) {
             return $enrollees->search($e) < 3;
@@ -100,6 +107,9 @@ trait SeedEligibilityJobsForEnrollees
                 $e->save();
             });
         }
-        $this->command->info('Enrollee Family Members seeded.');
+
+        if ($isCommandLine) {
+            $this->command->info('Enrollee Family Members seeded.');
+        }
     }
 }

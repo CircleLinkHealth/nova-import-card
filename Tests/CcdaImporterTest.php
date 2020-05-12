@@ -6,6 +6,9 @@
 
 namespace CircleLinkHealth\Eligibility\Tests;
 
+use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
+use App\Jobs\EnrollableSurveyCompleted;
+use App\Jobs\SelfEnrollmentEnrollees;
 use App\Listeners\AssignPatientToStandByNurse;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -30,6 +33,23 @@ use Tests\CustomerTestCase;
 
 class CcdaImporterTest extends CustomerTestCase
 {
+    public function test_auto_enrollment_flow()
+    {
+        $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)->createEnrollee($this->practice());
+        SelfEnrollmentEnrollees::dispatch($enrollee, AutoEnrollmentCenterController::DEFAULT_BUTTON_COLOR, 1, $this->practice()->id);
+        $this->assertTrue(empty($enrollee->user_id));
+        $patient = User::findOrFail($enrollee->fresh()->user_id);
+        $this->assertTrue($patient->isSurveyOnly());
+
+        $survey = new EnrollableSurveyCompleted([
+            'enrollable_id' => $enrollee->id,
+        ]);
+
+        $survey->importEnrolleeSurveyOnly($enrollee, $patient);
+        $this->assertTrue($patient->isParticipant());
+        $this->assertFalse($patient->isSurveyOnly());
+    }
+
     public function test_it_attaches_default_contact_windows()
     {
         $ccda = FakeCalvaryCcda::create();
