@@ -8,14 +8,17 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Eligibility\CcdaImporter\TakesEnrolleeCcdaImportTask;
+use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
+use CircleLinkHealth\Eligibility\CcdaImporter\Traits\TaskAcceptsEnrollee;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Support\Str;
 
-class ImportPatientInfo extends TakesEnrolleeCcdaImportTask
+class ImportPatientInfo extends BaseCcdaImportTask
 {
     use FiresImportingHooks;
+    use TaskAcceptsEnrollee;
+    
     const HOOK_IMPORTED_PATIENT_INFO = 'IMPORTED_PATIENTINFO';
 
     const HOOK_IMPORTING_PATIENT_INFO = 'IMPORTING_PATIENTINFO';

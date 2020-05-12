@@ -7,10 +7,13 @@
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
-use CircleLinkHealth\Eligibility\CcdaImporter\TakesEnrolleeCcdaImportTask;
+use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
+use CircleLinkHealth\Eligibility\CcdaImporter\Traits\TaskAcceptsEnrollee;
 
-class AttachDefaultPatientContactWindows extends TakesEnrolleeCcdaImportTask
+class AttachDefaultPatientContactWindows extends BaseCcdaImportTask
 {
+    use TaskAcceptsEnrollee;
+    
     protected function import()
     {
         $this->patient->load('patientInfo');
