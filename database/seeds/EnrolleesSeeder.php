@@ -26,6 +26,10 @@ class EnrolleesSeeder extends Seeder
             ->where('is_demo', true)
             ->first();
 
+        if (isUnitTestingEnv() && ! $practice) {
+            $practice = factory(Practice::class)->create();
+        }
+
         $enrollees = factory(Enrollee::class, 10)->create();
 
         $this->command->info('Enrollees created.');
