@@ -29,16 +29,6 @@ class AutoEnrollmentTestDashboard extends Controller
     /**
      * @return string
      */
-    public function evaluateEnrolledForSurveyTest(Request $request)
-    {
-        Artisan::call('db:seed', ['--class' => 'ManuallyImportSurveyDonePatientsCommand']);
-
-        return 'enrolled successfully';
-    }
-
-    /**
-     * @return string
-     */
     public function finalActionTest()
     {
         FinalActionOnNonResponsivePatients::dispatch();
