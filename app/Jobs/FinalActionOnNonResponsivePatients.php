@@ -149,7 +149,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
             ])->where('type', SendEnrollmentEmail::class)
                 ->where('data->is_reminder', true);
         })
-            ->whereHas('patientInfo', function ($patient) use ($twoDaysAgo, $untilEndOfDay) {
+            ->whereHas('patientInfo', function ($patient) {
                 $patient->where('ccm_status', Patient::UNREACHABLE);
             });
     }
