@@ -53,7 +53,7 @@ class ManuallyImportSurveyDonePatientsCommand extends Command
         $surveyInstance = $this->getEnrolleesSurveyInstance()->id;
 
         if (empty($surveyInstance)) {
-            return info("Survey Instance of user [$userId] is not found");
+            return info('Could not find survey instance for enrollees survey');
         }
 
         $data = [

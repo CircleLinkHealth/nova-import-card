@@ -201,8 +201,8 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
             $enrollee->update([
                 'primary_phone'             => $preferredPhoneNumber,
-                'preferred_days'            => $this->getPreferredDaysToString($surveyAnswers['preferred_days']),
-                'preferred_window'          => $this->getPreferredContactHoursToString($surveyAnswers['preferred_time']),
+                'preferred_days'            => $preferredContactDays,
+                'preferred_window'          => $patientContactTimesToString,
                 'address'                   => $addressData['address'],
                 'city'                      => $addressData['city'],
                 'state'                     => $addressData['state'],
