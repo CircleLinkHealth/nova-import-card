@@ -7,8 +7,11 @@
 namespace App\Console\Commands;
 
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
+use App\Call;
+use App\Note;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Console\Command;
 
 class FixSuccessfulCallsOfCareRateLogs extends Command
@@ -61,7 +64,7 @@ class FixSuccessfulCallsOfCareRateLogs extends Command
                     if ( ! $item->activity) {
                         return;
                     }
-                    if ( ! AlternativeCareTimePayableCalculator::isActivityForSuccessfulCall($item->activity)) {
+                    if ( ! $this->isActivityForSuccessfulCall($item->activity)) {
                         return;
                     }
 
@@ -72,5 +75,41 @@ class FixSuccessfulCallsOfCareRateLogs extends Command
             });
 
         $this->info("Out of $totalCount nurse_care_rate_logs entries, $totalModified were modified.");
+    }
+
+    /**
+     * Not the same as in
+     * {@link AlternativeCareTimePayableCalculator::isActivityForSuccessfulCall}.
+     */
+    private function isActivityForSuccessfulCall(Activity $activity): bool
+    {
+        if ( ! in_array($activity->type, ['Patient Note Creation', 'Patient Note Edit'])) {
+            return false;
+        }
+
+        $performedAt = Carbon::parse($activity->performed_at);
+        $noteIds     = Note
+            ::where(function ($q) use ($performedAt) {
+                $q->whereBetween('performed_at', [
+                    $performedAt->copy()->startOfDay(),
+                    $performedAt->copy()->endOfDay(),
+                ])->orWhereBetween('updated_at', [
+                    $performedAt->copy()->startOfDay(),
+                    $performedAt->copy()->endOfDay(),
+                ]);
+            })
+                ->where('status', '=', Note::STATUS_COMPLETE)
+                ->where('author_id', '=', $activity->logger_id)
+                ->where('patient_id', '=', $activity->patient_id)
+                ->pluck('id');
+
+        $hasSuccessfulCall = false;
+        if ( ! empty($noteIds)) {
+            $hasSuccessfulCall = Call::whereIn('note_id', $noteIds)
+                ->where('status', '=', Call::REACHED)
+                ->count() > 0;
+        }
+
+        return $hasSuccessfulCall;
     }
 }

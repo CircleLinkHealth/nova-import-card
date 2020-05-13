@@ -127,7 +127,7 @@ class AlternativeCareTimePayableCalculator
      * @param Activity $activity
      * @return bool
      */
-    public static function isActivityForSuccessfulCall(Activity $activity): bool
+    private function isActivityForSuccessfulCall(Activity $activity): bool
     {
         if ( ! in_array($activity->type, ['Patient Note Creation', 'Patient Note Edit'])) {
             return false;
