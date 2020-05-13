@@ -837,6 +837,13 @@ class NotesController extends Controller
 
         $input = $request->allSafe();
 
+        // we should not reach here because we make this check on client
+        // however, an sql error shows that the js client check failed (CPM-2370)
+        // so, we put this here for extra safety
+        if ( ! isset($input['body']) || null === $input['body']) {
+            return response()->json(['error' => 'cannot store draft. body is null']);
+        }
+
         $patient = User::findOrFail($patientId);
 
         $noteId = ! empty($input['note_id'])
