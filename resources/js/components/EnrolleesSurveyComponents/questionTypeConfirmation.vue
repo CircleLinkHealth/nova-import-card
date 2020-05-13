@@ -1,15 +1,6 @@
 <template>
     <div class="scroll-container">
         <div class="row no-gutters scrollable">
-            <div>
-                <a style="color: #50b2e2; text-underline: #50b2e2"
-                   @click="openInNewWindow()">
-                    Click here to review letter
-                </a>
-            </div>
-
-                <br>
-
             <label>
                 <input class="checkbox checkbox-info checkbox-circle"
                        type="checkbox"
@@ -29,6 +20,13 @@
             {{buttonText}}
             <mdb-icon v-show="waiting" icon="spinner" :spin="true"/>
         </mdbBtn>
+
+        <div>
+            <a style="color: #50b2e2; text-underline: #50b2e2"
+               @click="openInNewWindow()">
+                Click here to review letter
+            </a>
+        </div>
     </div>
 </template>
 

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
 use Carbon\Carbon;
@@ -15,6 +19,9 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  */
 class InvitationLink extends BaseModel
 {
+    protected $casts = [
+        'is_manually_expired' => 'boolean',
+    ];
     protected $fillable = [
         'patient_info_id',
         'survey_id',
@@ -22,10 +29,6 @@ class InvitationLink extends BaseModel
         'is_manually_expired',
         'url',
         'short_url',
-    ];
-
-    protected $casts = [
-        'is_manually_expired' => 'boolean',
     ];
 
     public function patientInfo()

@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Horizon Domain
@@ -94,10 +97,10 @@ return [
     */
 
     'trim' => [
-        'recent' => 60,
+        'recent'        => 60,
         'recent_failed' => 10080,
-        'failed' => 10080,
-        'monitored' => 10080,
+        'failed'        => 10080,
+        'monitored'     => 10080,
     ],
 
     /*
@@ -142,34 +145,34 @@ return [
     'environments' => [
         'production' => [
             'awv-supervisor-1' => [
-                'connection' => 'redis',
-                'queue' => ['awv-default', 'awv-high'],
-                'balance' => 'simple',
+                'connection'   => 'redis',
+                'queue'        => ['awv-default', 'awv-high'],
+                'balance'      => 'simple',
                 'minProcesses' => 1,
                 'maxProcesses' => 5,
-                'tries' => 1,
+                'tries'        => 1,
             ],
         ],
 
         'staging' => [
             'awv-supervisor-1' => [
-                'connection' => 'redis',
-                'queue' => ['awv-default', 'awv-high'],
-                'balance' => 'simple',
+                'connection'   => 'redis',
+                'queue'        => ['awv-default', 'awv-high'],
+                'balance'      => 'simple',
                 'minProcesses' => 1,
                 'maxProcesses' => 2,
-                'tries' => 1,
+                'tries'        => 1,
             ],
         ],
 
         'local' => [
             'awv-supervisor-1' => [
-                'connection' => 'redis',
-                'queue' => ['awv-default', 'awv-high'],
-                'balance' => 'simple',
+                'connection'   => 'redis',
+                'queue'        => ['awv-default', 'awv-high'],
+                'balance'      => 'simple',
                 'minProcesses' => 1,
                 'maxProcesses' => 2,
-                'tries' => 1,
+                'tries'        => 1,
             ],
         ],
     ],

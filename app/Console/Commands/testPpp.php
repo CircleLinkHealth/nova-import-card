@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Services\GeneratePersonalizedPreventionPlanService;
@@ -12,14 +16,21 @@ class testPpp extends Command
     protected const TEST_USER_ID = 9784;
 
     /**
-     * @var User
-     */
-    protected $patient;
-
-    /**
      * @var Carbon
      */
     protected $date;
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Command description';
+
+    /**
+     * @var User
+     */
+    protected $patient;
 
     /**
      * @var GeneratePersonalizedPreventionPlanService
@@ -32,13 +43,6 @@ class testPpp extends Command
      * @var string
      */
     protected $signature = 'command:testPpp';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Command description';
 
     /**
      * Create a new command instance.
@@ -63,15 +67,15 @@ class testPpp extends Command
             ::with([
                 'surveyInstances' => function ($instance) {
                     $instance->with(['survey', 'questions.type.questionTypeAnswers'])
-                             ->forYear($this->date->year);
+                        ->forYear($this->date->year);
                 },
-                'answers'         => function ($answers) {
+                'answers' => function ($answers) {
                     $answers->whereHas('surveyInstance', function ($instance) {
                         $instance->forYear($this->date->year);
                     });
                 },
             ])
-            ->findOrFail(self::TEST_USER_ID);
+                ->findOrFail(self::TEST_USER_ID);
 
         $this->service = new GeneratePersonalizedPreventionPlanService($this->patient, $this->date);
     }
