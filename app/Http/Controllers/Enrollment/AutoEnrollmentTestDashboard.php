@@ -33,7 +33,7 @@ class AutoEnrollmentTestDashboard extends Controller
     {
         FinalActionOnNonResponsivePatients::dispatch();
 
-        return redirect()->back()->with('message', 'Reminders Sent Successfully');
+        return redirect(route('ca-director.index'))->with('message', 'Reminders Sent Successfully');
     }
 
     /**
