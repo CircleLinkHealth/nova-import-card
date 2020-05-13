@@ -135,16 +135,10 @@ class AlternativeCareTimePayableCalculator
 
         $performedAt = Carbon::parse($activity->performed_at);
         $noteIds     = Note
-            ::where(function ($q) use ($performedAt) {
-                $q->whereBetween('performed_at', [
-                    $performedAt->copy()->startOfDay(),
-                    $performedAt->copy()->endOfDay(),
-                ])
-                    ->orWhereBetween('updated_at', [
-                        $performedAt->copy()->startOfDay(),
-                        $performedAt->copy()->endOfDay(),
-                    ]);
-            })
+            ::whereBetween('performed_at', [
+                $performedAt->copy()->startOfDay(),
+                $performedAt->copy()->endOfDay(),
+            ])
                 ->where('status', '=', Note::STATUS_COMPLETE)
                 ->where('author_id', '=', $activity->logger_id)
                 ->where('patient_id', '=', $activity->patient_id)
