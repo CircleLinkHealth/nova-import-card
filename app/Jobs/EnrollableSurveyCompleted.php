@@ -163,6 +163,8 @@ class EnrollableSurveyCompleted implements ShouldQueue
     /**
      * @throws \Exception
      *
+     * //@todo:Should split the functionality of this class into two more classes
+     * //@todo:One for Enrollees and one for unreachable patients
      * @return string
      */
     public function handle()
