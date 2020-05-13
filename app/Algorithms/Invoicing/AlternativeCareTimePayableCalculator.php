@@ -47,7 +47,7 @@ class AlternativeCareTimePayableCalculator
             $user->loadMissing('chargeableServices');
         }
 
-        $isActivityForSuccessfulCall = static::isActivityForSuccessfulCall($activity);
+        $isActivityForSuccessfulCall = $this->isActivityForSuccessfulCall($activity);
 
         $monthYear = Carbon::parse($activity->performed_at)->startOfMonth();
 
@@ -117,15 +117,11 @@ class AlternativeCareTimePayableCalculator
 
         return $ranges;
     }
-    
+
     /**
-     *
      * Would like to move this method into Activity model,
      * but I would have to require Note and Call models which are in cpm-web app from time-tracking module.
      * This introduces a cyclic dependency from cpm-web to time-tracking and time-tracking to cpm-web.
-     *
-     * @param Activity $activity
-     * @return bool
      */
     private function isActivityForSuccessfulCall(Activity $activity): bool
     {
