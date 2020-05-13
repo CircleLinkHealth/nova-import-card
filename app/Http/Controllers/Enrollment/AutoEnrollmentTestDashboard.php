@@ -7,7 +7,6 @@
 namespace App\Http\Controllers\Enrollment;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\EnrollableSurveyCompleted;
 use App\Jobs\FinalActionOnNonResponsivePatients;
 use App\Jobs\SelfEnrollmentEnrollees;
 use App\Jobs\SelfEnrollmentEnrolleesReminder;
@@ -32,12 +31,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function evaluateEnrolledForSurveyTest(Request $request)
     {
-        $data = [
-            'enrollable_id'      => $request->input('enrolleeId'),
-            'survey_instance_id' => $this->getEnrolleesSurveyInstance()->id,
-        ];
-
-        EnrollableSurveyCompleted::dispatch($data);
+        Artisan::call('db:seed', ['--class' => 'ManuallyImportSurveyDonePatientsCommand']);
 
         return 'enrolled successfully';
     }
