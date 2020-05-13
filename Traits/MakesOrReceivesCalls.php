@@ -87,7 +87,7 @@ trait MakesOrReceivesCalls
      */
     public function countUnSuccessfulCallsFor(Carbon $date)
     {
-        return $this->unSuccessfulCallsFor($date)->count();
+        return $this->unsuccessfulCallsFor($date)->count();
     }
 
     /**
