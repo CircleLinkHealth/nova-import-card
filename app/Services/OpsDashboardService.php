@@ -88,31 +88,16 @@ class OpsDashboardService
      *
      * @param $date
      * @param mixed $practices
+     * @param mixed $totalNumberOfEnrolledPatients
+     * @param mixed $totalPatientCcmTime
      *
      * @return float|int
      */
-    public function calculateHoursBehind(Carbon $date, $practices)
+    public function calculateHoursBehind(Carbon $date, int $totalNumberOfEnrolledPatients, int $totalPatientCcmTime)
     {
         $this->setTimeGoal();
 
-        $enrolledPatients = $practices->map(
-            function ($practice) {
-                return $practice->patients->filter(
-                    function ($user) {
-                        if ( ! $user) {
-                            return false;
-                        }
-                        if ( ! $user->patientInfo) {
-                            return false;
-                        }
-
-                        return Patient::ENROLLED == $user->patientInfo->ccm_status;
-                    }
-                );
-            }
-        )->flatten()->unique('id');
-
-        $totActPt                = $enrolledPatients->count();
+        $totActPt                = $totalNumberOfEnrolledPatients;
         $targetMinutesPerPatient = floatval($this->timeGoal);
 
         $startOfMonth       = $date->copy()->startOfMonth();
@@ -122,19 +107,12 @@ class OpsDashboardService
             $startOfMonth->toDateTimeString(),
             $endOfMonth->toDateTimeString()
         );
+
         $avgMinT = ($workingDaysElapsed / $workingDaysMonth) * $targetMinutesPerPatient;
 
-        $allPatients = $enrolledPatients->pluck('id')->unique()->all();
+        $sum = $totalPatientCcmTime;
 
-        $ccmTimeTotal = [];
-        foreach ($enrolledPatients as $patient) {
-            if ($patient->patientSummaries->first()) {
-                $ccmTimeTotal[] = $patient->patientSummaries->first()->ccm_time;
-            }
-        }
-        $sum = array_sum($ccmTimeTotal);
-
-        $avg = $sum / count($allPatients);
+        $avg = $sum / $totActPt;
 
         $avgMinA = $avg / 60;
 
@@ -191,15 +169,16 @@ class OpsDashboardService
         $count['20+']     = 0;
         $count['20+ BHI'] = 0;
 
+        $totalCcmTime = [];
         foreach ($patients as $patient) {
             if ( ! $patient->patientInfo) {
                 continue;
             }
             if (Patient::ENROLLED == $patient->patientInfo->ccm_status) {
                 if ($patient->patientSummaries->first()) {
-                    $summary = $patient->patientSummaries->first();
-                    $bhiTime = $summary->bhi_time;
-                    $ccmTime = $summary->ccm_time;
+                    $summary        = $patient->patientSummaries->first();
+                    $bhiTime        = $summary->bhi_time;
+                    $totalCcmTime[] = $ccmTime = $summary->ccm_time;
 
                     if (0 === $ccmTime || null == $ccmTime) {
                         ++$count['0 mins'];
@@ -288,6 +267,8 @@ class OpsDashboardService
                 'Withdrawn'        => $withdrawnCount,
                 'Delta'            => $delta,
                 'G0506 To Enroll'  => $toEnrollCount,
+                //adding to help us generate hours behind metric,
+                'total_ccm_time' => array_sum($totalCcmTime),
             ]
         );
     }
