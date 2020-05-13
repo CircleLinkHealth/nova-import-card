@@ -38,7 +38,7 @@ class SelfEnrollmentManualInvite extends Action
     public function handle(ActionFields $fields, Collection $models)
     {
         $models->each(function (Enrollee $model) {
-            SelfEnrollmentEnrollees::dispatch($model, null, );
+            SelfEnrollmentEnrollees::dispatch($model, null);
         });
         Action::message('Invites should have been sent. Please check invitation panel.');
     }

@@ -137,8 +137,6 @@ class AutoEnrollmentCenterController extends Controller
         if ( ! $enrollee->statusRequestsInfo()->exists()) {
             $this->createEnrollStatusRequestsInfo($enrollee);
             $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
-            // Delete User Created from Enrollee
-            // Unreachables cant request info yet.
             if ($isSurveyOnly) {
                 $userModelEnrollee = $this->getUserModelEnrollee($enrollableId);
                 $this->updateEnrolleeSurveyStatuses($enrollee->id, optional($userModelEnrollee)->id, null);
@@ -151,6 +149,7 @@ class AutoEnrollmentCenterController extends Controller
 
     /**
      * @throws \Exception
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      */
     public function enrollNow(Request $request)
