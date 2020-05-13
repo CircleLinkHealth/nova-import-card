@@ -118,6 +118,11 @@ class AlternativeCareTimePayableCalculator
         return $ranges;
     }
 
+    /**
+     * Would like to move this method into Activity model,
+     * but I would have to require Note and Call models which are in cpm-web app from time-tracking module.
+     * This introduces a cyclic dependency from cpm-web to time-tracking and time-tracking to cpm-web.
+     */
     private function isActivityForSuccessfulCall(Activity $activity): bool
     {
         if ( ! in_array($activity->type, ['Patient Note Creation', 'Patient Note Edit'])) {
