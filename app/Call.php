@@ -216,6 +216,24 @@ class Call extends BaseModel implements AttachableToNotification
         return $record->no_of_calls;
     }
 
+    public static function numberOfSuccessfulCallsForPatientForDay(User $user, $date)
+    {
+        $calls = Call::where(function ($q) {
+            $q->whereNull('type')
+                ->orWhere('type', '=', 'call')
+                ->orWhere('sub_type', '=', 'Call Back');
+        })
+            ->where(function ($q) use ($user, $date) {
+                $q->where('outbound_cpm_id', $user->id)
+                    ->orWhere('inbound_cpm_id', $user->id);
+            })
+            ->where('called_date', '>=', $date->startOfDay()->toDateTimeString())
+            ->where('called_date', '<=', $date->endOfDay()->toDateTimeString())
+            ->where('status', 'reached');
+
+        return $calls->count();
+    }
+
     public static function numberOfSuccessfulCallsForPatientForMonth(User $user, $date)
     {
         if ($date) {
