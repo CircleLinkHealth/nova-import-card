@@ -1,6 +1,9 @@
 <template>
     <div class="container main-container" :class="stage">
 
+        <!-- dummy component to use for formatting us numbers -->
+        <VuePhoneNumberInput ref="vuePhoneNumberComp" style="display: none"/>
+
         <div class="top-buttons" v-if="adminMode">
             <mdb-row class="no-gutters">
                 <mdb-col>
@@ -292,8 +295,8 @@
                         <label>Thank you for signing up!</label>
                     </div>
                     <div class="survey-sub-welcome-text-enrollee" style="text-align: center;">
-                        Your care coach will contact you in the next few days from <br>
-                        {{this.practiceOutgoingPhoneNumber}}.<br>
+                        Your care coach will contact you in the next few days from
+                        <br>{{this.practiceOutgoingPhoneNumberFormatted}}.<br>
                         Please save this number to your phone ASAP.
                         <br>
                         <br>
@@ -439,6 +442,7 @@
     import questionTypeTime from "./EnrolleesSurveyComponents/questionTypeTime";
     import questionTypeAddress from "./EnrolleesSurveyComponents/questionTypeAddress";
     import questionTypeConfirmation from "./EnrolleesSurveyComponents/questionTypeConfirmation";
+    import VuePhoneNumberInput from 'vue-phone-number-input';
 
     import $ from "jquery";
 
@@ -464,6 +468,7 @@
             'question-type-time': questionTypeTime,
             'question-type-address': questionTypeAddress,
             'question-type-confirmation': questionTypeConfirmation,
+            VuePhoneNumberInput
         },
 
         data() {
@@ -471,7 +476,6 @@
             const patientName = this.surveyData.display_name;
             const welcomeIcon = this.surveyName === 'hra' ? hraWelcomeIcon : vitalsWelcomeIcon;
             const welcomeTitle = this.surveyName === 'hra' ? 'Annual Wellness Visit (AWV) Questionnaire' : `${patientName} Vitals`;
-            const practiceNumber = this.formatNumber(this.surveyData.primary_practice.outgoing_phone_number);
 
             return {
                 welcomeIcon,
@@ -499,7 +503,11 @@
                 practiceId: this.surveyData.primary_practice.id,
                 practiceName: this.surveyData.primary_practice.display_name,
                 patientName,
-                practiceOutgoingPhoneNumber: practiceNumber,
+                practiceOutgoingPhoneNumber: this.surveyData.primary_practice.outgoing_phone_number,
+
+                //will format on mounted(), since I need ref to component
+                practiceOutgoingPhoneNumberFormatted: this.surveyData.primary_practice.outgoing_phone_number,
+
                 doctorsLastName: this.surveyData.billing_provider && this.surveyData.billing_provider.length ? this.surveyData.billing_provider[0].user.last_name : '???',
                 totalQuestions: 0,
                 totalQuestionWithSubQuestions: 0,
@@ -582,9 +590,19 @@
                     return '';
                 }
 
-                if (number.startsWith("+1")) {
-                    return number.substr(2);
+                if (!number.startsWith("+1")) {
+                    number = `+1${number}`;
                 }
+
+                const parsed = this.$refs.vuePhoneNumberComp.getParsePhoneNumberFromString({
+                    phoneNumber: number,
+                    countryCode: 'US'
+                });
+
+                if (parsed.isValid) {
+                    return parsed.formatNational;
+                }
+
                 return number;
             },
 
@@ -1359,9 +1377,9 @@
             }
         },
         mounted() {
+            this.practiceOutgoingPhoneNumberFormatted = this.formatNumber(this.practiceOutgoingPhoneNumber);
         },
         created() {
-
             const questionsData = this.surveyData.survey_instances[0].questions.map(function (q) {
                 const result = Object.assign(q, {answer_types: [q.answer_type]});
                 result.disabled = false; // we will be disabling based on answers

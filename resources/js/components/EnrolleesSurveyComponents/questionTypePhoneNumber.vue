@@ -4,9 +4,8 @@
         <div class="scrollable">
             <div class="col-md-12 active">
                 <VuePhoneNumberInput
-                    no-country-selector
-                    :only-coubtires="onlyCountries"
-                    no-example
+                    :no-country-selector="true"
+                    :no-example="true"
                     v-model="inputPhoneNumber"/>
             </div>
 
@@ -42,7 +41,6 @@
 
         data() {
             return {
-                onlyCountries: ['US'],
                 phoneValue: '',
                 inputPhoneNumber: '',
                 phoneNumberIsUsValid: false,
