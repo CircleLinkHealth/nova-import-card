@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Feature;
 
 use App\PatientAwvSurveyInstanceStatusView;
@@ -9,8 +13,8 @@ use Tests\TestCase;
 
 class AddAppointmentToPatientTest extends TestCase
 {
-    use UserHelpers;
     use PatientHelpers;
+    use UserHelpers;
 
     /**
      * A basic feature test example.

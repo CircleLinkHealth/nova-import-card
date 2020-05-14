@@ -27887,6 +27887,48 @@ body,
   border-radius: 5px;
 }
 
+.survey-sub-welcome-text-enrollee {
+  font-size: 36px;
+  padding-bottom: 50px;
+  line-height: 64px;
+  letter-spacing: 2px;
+  text-align: center;
+  font-weight: 400;
+}
+
+.enrollee-btn {
+  font-size: 30px;
+  border-radius: 10px;
+  height: 80px;
+  width: 200px;
+}
+
+.enrollee-title {
+  font-size: 50px;
+}
+
+@media (max-width: 490px) {
+  .survey-sub-welcome-text-enrollee {
+    font-size: 21px !important;
+    padding-bottom: 27px;
+    line-height: 37px;
+    letter-spacing: 2px;
+    font-weight: 400;
+  }
+}
+
+@media (max-width: 519px) {
+  .enrollee-btn {
+    height: 55px;
+    width: 140px;
+    font-size: 20px;
+  }
+
+  .enrollee-title {
+    font-size: 24px;
+  }
+}
+
 @media (min-width: 519px) {
   .btn-start {
     padding-left: 65px;

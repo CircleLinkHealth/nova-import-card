@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Laravel\Nova\Actions\ActionResource;
 use Laravel\Nova\Http\Middleware\Authenticate;
 use Laravel\Nova\Http\Middleware\Authorize;
@@ -7,7 +11,6 @@ use Laravel\Nova\Http\Middleware\BootTools;
 use Laravel\Nova\Http\Middleware\DispatchServingNovaEvent;
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Nova App Name
@@ -132,5 +135,4 @@ return [
     'actions' => [
         'resource' => ActionResource::class,
     ],
-
 ];

@@ -1,6 +1,9 @@
 <template>
     <div class="container main-container" :class="stage">
 
+        <!-- dummy component to use for formatting us numbers -->
+        <VuePhoneNumberInput ref="vuePhoneNumberComp" style="display: none"/>
+
         <div class="top-buttons" v-if="adminMode">
             <mdb-row class="no-gutters">
                 <mdb-col>
@@ -47,7 +50,7 @@
                          class="welcome-icon" alt="welcome icon">
                     <div class="survey-main-title">
                         <label v-if="!isEnrollees" id="sub-title">{{welcomeTitle}}</label>
-                        <label v-else>Enrollment Survey</label>
+                        <label class="enrollee-title" v-else>Enrollment Survey</label>
                     </div>
                     <div v-if="isHra" class="survey-sub-welcome-text">Welcome to your
                         Annual Wellness Visit (AWV) Questionnaire! Understanding your health is of upmost importance to
@@ -62,11 +65,15 @@
                         will also reach out shortly. Thanks!
                     </div>
                     <div v-else-if="isEnrollees"
-                         class="survey-sub-welcome-text"
-                         style="text-align: center;">
-                        Dear {{this.surveyData.first_name}},<br>
-                        Almost done! Just confirm/edit some information to make sure <br>
-                        we call the right number at the right time.
+                         class="survey-sub-welcome-text survey-sub-welcome-text-enrollee">
+                        <div>Dear {{this.surveyData.first_name}},</div>
+                        <br>
+                        <div>
+                            Almost done!
+                            <br>
+                            Please confirm some information <br>
+                            so we call the right number at the right time.
+                        </div>
                     </div>
                     <div v-else class="survey-sub-welcome-text">
                         Here is the form to fill out {{patientName}}'s Vitals. Once completed, a PPP will be
@@ -77,7 +84,9 @@
                     <div class="btn-start-container">
                         <!-- @todo: this is not working exactly as expected so im keepin one element true and i ll get back-->
                         <mdb-btn
-                            color="primary" class="btn-start" @click="showQuestions">
+                            :class="{'enrollee-btn': isEnrollees, 'btn-start': !isEnrollees}"
+                            color="primary"
+                            @click="showQuestions">
                             <span v-if="progress === 0">Start</span>
                             <span v-else>Continue</span>
                         </mdb-btn>
@@ -285,8 +294,9 @@
                     <div class="survey-main-title">
                         <label>Thank you for signing up!</label>
                     </div>
-                    <div class="survey-sub-welcome-text" style="text-align: center;">
-                        Your care coach will contact you in the next few days from {{this.practiceOutgoingPhoneNumber}}.<br>
+                    <div class="survey-sub-welcome-text-enrollee" style="text-align: center;">
+                        Your care coach will contact you in the next few days from
+                        <br><a :href="'tel:' + this.practiceOutgoingPhoneNumberFormatted">{{this.practiceOutgoingPhoneNumberFormatted}}</a>.<br>
                         Please save this number to your phone ASAP.
                         <br>
                         <br>
@@ -297,7 +307,7 @@
                     <br/>
 
                     <div class="btn-start-container">
-                        <mdb-btn color="primary" class="btn-start" @click="logoutEnrollee">
+                        <mdb-btn color="primary" :class="{'enrollee-btn': isEnrollees, 'btn-start': !isEnrollees}" @click="logoutEnrollee">
                             Logout
                         </mdb-btn>
                     </div>
@@ -432,6 +442,7 @@
     import questionTypeTime from "./EnrolleesSurveyComponents/questionTypeTime";
     import questionTypeAddress from "./EnrolleesSurveyComponents/questionTypeAddress";
     import questionTypeConfirmation from "./EnrolleesSurveyComponents/questionTypeConfirmation";
+    import VuePhoneNumberInput from 'vue-phone-number-input';
 
     import $ from "jquery";
 
@@ -457,6 +468,7 @@
             'question-type-time': questionTypeTime,
             'question-type-address': questionTypeAddress,
             'question-type-confirmation': questionTypeConfirmation,
+            VuePhoneNumberInput
         },
 
         data() {
@@ -464,7 +476,6 @@
             const patientName = this.surveyData.display_name;
             const welcomeIcon = this.surveyName === 'hra' ? hraWelcomeIcon : vitalsWelcomeIcon;
             const welcomeTitle = this.surveyName === 'hra' ? 'Annual Wellness Visit (AWV) Questionnaire' : `${patientName} Vitals`;
-            const practiceNumber = this.formatNumber(this.surveyData.primary_practice.outgoing_phone_number);
 
             return {
                 welcomeIcon,
@@ -492,7 +503,11 @@
                 practiceId: this.surveyData.primary_practice.id,
                 practiceName: this.surveyData.primary_practice.display_name,
                 patientName,
-                practiceOutgoingPhoneNumber: practiceNumber,
+                practiceOutgoingPhoneNumber: this.surveyData.primary_practice.outgoing_phone_number,
+
+                //will format on mounted(), since I need ref to component
+                practiceOutgoingPhoneNumberFormatted: this.surveyData.primary_practice.outgoing_phone_number,
+
                 doctorsLastName: this.surveyData.billing_provider && this.surveyData.billing_provider.length ? this.surveyData.billing_provider[0].user.last_name : '???',
                 totalQuestions: 0,
                 totalQuestionWithSubQuestions: 0,
@@ -566,7 +581,6 @@
         },
 
         methods: {
-
             getEnrolleeLogoutUrl() {
                 return '/survey/enrollees/logout-successful';
             },
@@ -576,9 +590,19 @@
                     return '';
                 }
 
-                if (number.startsWith("+1")) {
-                    return number.substr(2);
+                if (!number.startsWith("+1")) {
+                    number = `+1${number}`;
                 }
+
+                const parsed = this.$refs.vuePhoneNumberComp.getParsePhoneNumberFromString({
+                    phoneNumber: number,
+                    countryCode: 'US'
+                });
+
+                if (parsed.isValid) {
+                    return parsed.formatNational;
+                }
+
                 return number;
             },
 
@@ -1353,9 +1377,9 @@
             }
         },
         mounted() {
+            this.practiceOutgoingPhoneNumberFormatted = this.formatNumber(this.practiceOutgoingPhoneNumber);
         },
         created() {
-
             const questionsData = this.surveyData.survey_instances[0].questions.map(function (q) {
                 const result = Object.assign(q, {answer_types: [q.answer_type]});
                 result.disabled = false; // we will be disabling based on answers
