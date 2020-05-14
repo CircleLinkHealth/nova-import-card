@@ -2336,6 +2336,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     /**
      * Calls made from the User to CLH.
+     * Does not include task type calls i.e callbacks.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
