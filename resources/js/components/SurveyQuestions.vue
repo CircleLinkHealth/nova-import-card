@@ -296,7 +296,7 @@
                     </div>
                     <div class="survey-sub-welcome-text-enrollee" style="text-align: center;">
                         Your care coach will contact you in the next few days from
-                        <br>{{this.practiceOutgoingPhoneNumberFormatted}}.<br>
+                        <br><a :href="'tel:' + this.practiceOutgoingPhoneNumberFormatted">{{this.practiceOutgoingPhoneNumberFormatted}}</a>.<br>
                         Please save this number to your phone ASAP.
                         <br>
                         <br>
