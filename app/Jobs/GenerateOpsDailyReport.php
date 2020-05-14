@@ -112,9 +112,10 @@ class GenerateOpsDailyReport implements ShouldQueue
         $reports = OpsDashboardPracticeReport::with('practice')
             ->whereIn('practice_id', $this->practiceIds)
             ->where('date', $this->date->toDateString())
-            ->get();
-
-        //sort
+            ->get()
+            ->sortBy(function ($r) {
+                return $r->practice->display_name;
+            });
 
         $pendingReports = $reports->where('is_processed', false)->count();
 
