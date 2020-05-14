@@ -15,25 +15,24 @@ use Illuminate\Database\Eloquent\Collection;
  */
 trait MakesOrReceivesCalls
 {
-    public function completedCallsFor(Carbon $date)
+    public function callsWithCallbacks(Carbon $date)
     {
-        return $this->calls()
-            ->where([
-                ['called_date', '>=', $date->copy()->startOfDay()->toDateTimeString()],
-                ['called_date', '<=', $date->copy()->endOfDay()->toDateTimeString()],
-            ])->whereIn('calls.status', ['reached', 'not reached']);
+        return Call::where(function ($q) {
+            $q->whereNull('type')
+                ->orWhere('type', '=', 'call')
+                ->orWhere('sub_type', '=', 'Call Back');
+        })
+            ->where(function ($q) use ($date) {
+                $q->where('outbound_cpm_id', $this->id)
+                    ->orWhere('inbound_cpm_id', $this->id);
+            })
+            ->where('called_date', '>=', $date->startOfDay()->toDateTimeString())
+            ->where('called_date', '<=', $date->endOfDay()->toDateTimeString());
     }
 
-    /**
-     * Returns today's completed calls.
-     * Completed Call: A call that was placed today and was either successful, or unsuccessful. It doesn’t matter when
-     * it was scheduled for.
-     *
-     * @return Collection
-     */
-    public function completedCallsForToday()
+    public function completedCallsFor(Carbon $date)
     {
-        return $this->completedCallsFor(Carbon::now())->get();
+        return $this->callsWithCallbacks($date)->whereIn('calls.status', ['reached', 'not reached']);
     }
 
     public function countCompletedCallsFor(Carbon $date)
@@ -108,19 +107,7 @@ trait MakesOrReceivesCalls
                     ]);
             });
     }
-
-    /**
-     * Returns today's scheduled calls.
-     * Scheduled Call: A call that was scheduled for today and either was placed today, or not placed yet.
-     *
-     * @return Collection
-     */
-    public function scheduledCallsForToday()
-    {
-        return $this->scheduledCallsFor(Carbon::now())
-            ->get();
-    }
-
+    
     /**
      * This method does not collect calls marked as tyoe => task - i.e a callback.
      *
@@ -128,18 +115,7 @@ trait MakesOrReceivesCalls
      */
     public function successfulCallsFor(Carbon $date)
     {
-       return Call::where(function ($q) {
-            $q->whereNull('type')
-                ->orWhere('type', '=', 'call')
-                ->orWhere('sub_type', '=', 'Call Back');
-        })
-            ->where(function ($q) use ($date) {
-                $q->where('outbound_cpm_id', $this->id)
-                    ->orWhere('inbound_cpm_id', $this->id);
-            })
-            ->where('called_date', '>=', $date->startOfDay()->toDateTimeString())
-            ->where('called_date', '<=', $date->endOfDay()->toDateTimeString())
-            ->where('status', 'reached');
+        return $this->callsWithCallbacks($date)->where('status', 'reached');
     }
 
 //    /**
