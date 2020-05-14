@@ -159,6 +159,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
                     $newUserIds->push($userCreatedFromEnrollee->id);
                 });
                 $count += $newUserIds->count();
+//                SHOULD NOT BE IN THIS CLASS. BETTER TO MOVE
                 event(new AutoEnrollableCollected($newUserIds->toArray(), false, $this->color));
             });
 
