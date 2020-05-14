@@ -8,7 +8,6 @@ namespace CircleLinkHealth\Customer\Traits;
 
 use App\Call;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Trait MakesOrReceivesCalls.
@@ -107,7 +106,7 @@ trait MakesOrReceivesCalls
                     ]);
             });
     }
-    
+
     /**
      * This method does not collect calls marked as tyoe => task - i.e a callback.
      *
@@ -118,25 +117,9 @@ trait MakesOrReceivesCalls
         return $this->callsWithCallbacks($date)->where('status', 'reached');
     }
 
-//    /**
-//     * Returns today's successful calls.
-//     * Successful Call: A call that was placed today and was successful. It does not matter if the call was scheduled
-//     * for tomorrow.
-//     *
-//     * @return Collection
-//     */
-//    public function successfulCallsMadeToday()
-//    {
-//        return $this->successfulCallsFor(Carbon::now())->get();
-//    }
-
     public function unsuccessfulCallsFor(Carbon $date)
     {
-        return $this->calls()
-            ->where([
-                ['called_date', '>=', $date->copy()->startOfDay()->toDateTimeString()],
-                ['called_date', '<=', $date->copy()->endOfDay()->toDateTimeString()],
-                ['calls.status', '=', 'not reached'],
-            ]);
+        return $this->callsWithCallbacks($date)
+            ->where('calls.status', '=', 'not reached');
     }
 }
