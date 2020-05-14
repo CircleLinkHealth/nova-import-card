@@ -17,6 +17,16 @@ class CareAmbassadorPanelAPI extends TestCase
      */
     public function test_example()
     {
+        //assert action routes work
+
+        //assert search works
+
+        //assert correct messages if things go wrong
+
+        //assert all keys exist in the resouce
+
+        //assert show route
+
         $response = $this->get('/');
 
         $response->assertStatus(200);

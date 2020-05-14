@@ -9,7 +9,6 @@ namespace App\Http\Resources;
 use App\CareAmbassadorLog;
 use App\TrixField;
 use CircleLinkHealth\Core\StringManipulation;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Resources\Json\Resource;
 
@@ -36,9 +35,7 @@ class Enrollable extends Resource
         $careAmbassador = $this->careAmbassador->careAmbassador;
 
         //get script
-        $enrollableIsUnreachableUser = $enrollable->user()->whereHas('patientInfo', function ($p) {
-            $p->where('ccm_status', Patient::UNREACHABLE);
-        })->exists();
+        $enrollableIsUnreachableUser = Enrollee::UNREACHABLE_PATIENT === $enrollable->source;
 
         $script = TrixField::careAmbassador($enrollable->lang, $enrollableIsUnreachableUser)->first();
 
