@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Providers;
 
 use App\Events\SurveyInstancePivotSaved;
@@ -16,7 +20,7 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        Registered::class               => [
+        Registered::class => [
             SendEmailVerificationNotification::class,
         ],
         SurveyInstancePivotSaved::class => [
@@ -32,7 +36,5 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
-
-        //
     }
 }

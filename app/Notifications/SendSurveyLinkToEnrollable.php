@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
@@ -23,26 +27,27 @@ class SendSurveyLinkToEnrollable extends Notification
     }
 
     /**
-     * Get the notification's delivery channels.
+     * Get the array representation of the notification.
      *
-     * @param mixed $notifiable
+     * @param  mixed $notifiable
      * @return array
      */
-    public function via($notifiable)
+    public function toArray($notifiable)
     {
-        return ['mail'];
+        return [
+        ];
     }
 
     /**
      * Get the mail representation of the notification.
      *
-     * @param mixed $notifiable
+     * @param  mixed                                          $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
     {
 //        @todo:  should not say "Regards AWV" & also send sms MAYBE emmit an event
-        return (new MailMessage)
+        return (new MailMessage())
             ->line('You have successfully logged in to your Enrollment Survey.')
             ->line('Please use the link bellow if you wish to fill the survey some other time.')
             ->action('Enrollment Survey', url($this->url))
@@ -51,15 +56,13 @@ class SendSurveyLinkToEnrollable extends Notification
     }
 
     /**
-     * Get the array representation of the notification.
+     * Get the notification's delivery channels.
      *
-     * @param mixed $notifiable
+     * @param  mixed $notifiable
      * @return array
      */
-    public function toArray($notifiable)
+    public function via($notifiable)
     {
-        return [
-            //
-        ];
+        return ['mail'];
     }
 }
