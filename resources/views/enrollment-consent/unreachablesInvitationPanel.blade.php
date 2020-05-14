@@ -97,9 +97,11 @@
               </ul>
               <a href="{{route('final.action.qa')}}" target="_blank">
                   <button type="button" class="btn btn-warning">
-                      Fast forward 4 days. Final Step
+                      Fast forward 4 days. Final Step<br>
                   </button>
               </a>
+              <p> After Final Step is done, you will be redirected to "Care Ambassador Director Panel"<br>
+                  You can check if patient is listed there marked as "Send Regular Mail" and "Auto enrollment triggered".</p>
           </div>
       </div>
 
