@@ -6,7 +6,6 @@
 
 namespace App\Services;
 
-use App\Call;
 use App\Traits\NursePerformanceCalculations;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
@@ -118,7 +117,7 @@ class NursesPerformanceReportService
 //        It's "Case Load" in UI.
         $patientsForMonth                     = $this->getUniquePatientsAssignedForNurseForMonth($nurse, $date);
         $totalMonthlyCompletedPatientsOfNurse = $this->getTotalCompletedPatientsOfNurse($patientsForMonth);
-        $successfulCallsDaily                 = Call::numberOfSuccessfulCallsForPatientForDay($nurse, $date);
+        $successfulCallsDaily                 = $nurse->countSuccessfulCallsFor($date);
         //        "Case Completion" in view
         $caseLoadComplete = $this->percentageCaseLoadComplete($patientsForMonth, $totalMonthlyCompletedPatientsOfNurse);
 
