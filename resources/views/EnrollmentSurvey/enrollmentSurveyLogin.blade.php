@@ -41,6 +41,7 @@
                                                        max="12"
                                                        class="login-inputs"
                                                        required
+                                                       placeholder="mm"
                                                        value="{{old('birth_date_month')}}">
                                             </div>
                                             <div class="col s4">
@@ -50,6 +51,7 @@
                                                        max="31"
                                                        class="login-inputs"
                                                        required
+                                                       placeholder="dd"
                                                        value="{{old('birth_date_day')}}">
                                             </div>
                                             <div class="col s4">
@@ -58,6 +60,7 @@
                                                        min="1900"
                                                        max="2000"
                                                        class="login-inputs"
+                                                       placeholder="yyyy"
                                                        required
                                                        value="{{old('birth_date_year')}}">
                                             </div>
