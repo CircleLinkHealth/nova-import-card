@@ -75,6 +75,7 @@ class SelfEnrollmentEnrollees implements ShouldQueue
      */
     public function handle()
     {
+//        @todo: Move to its own class
         if ( ! is_null($this->enrollee)) {
             return $this->createSurveyOnlyUsers([$this->enrollee->id]);
         }

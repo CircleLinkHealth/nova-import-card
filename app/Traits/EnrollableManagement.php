@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\URL;
 
 trait EnrollableManagement
 {
+    //@todo: Move methods used in one place to that place.
+
     /**
      * @param $enrollable
      *
