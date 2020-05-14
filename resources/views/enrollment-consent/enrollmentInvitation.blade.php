@@ -69,9 +69,9 @@
         overflow-y: scroll;
     }
 
-    .headers {
+    /*.headers {
         padding-top: 10px;
-    }
+    }*/
 
     .letter-sent {
         float: right;
