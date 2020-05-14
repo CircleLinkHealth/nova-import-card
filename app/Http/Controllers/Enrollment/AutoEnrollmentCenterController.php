@@ -62,7 +62,8 @@ class AutoEnrollmentCenterController extends Controller
         $practiceNumber = $enrollablePrimaryPractice->outgoing_phone_number;
         if ($practiceNumber) {
             //remove +1 from phone number
-            $practiceNumber = formatPhoneNumber($practiceNumber);
+            $formatted      = formatPhoneNumber($practiceNumber);
+            $practiceNumber = "<a href='tel:$formatted'>$formatted</a>";
         }
 
         if (null === $provider) {
