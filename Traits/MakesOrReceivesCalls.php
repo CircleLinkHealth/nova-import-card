@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Traits;
 
+use App\Call;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -71,16 +72,6 @@ trait MakesOrReceivesCalls
     }
 
     /**
-     * Returns a count of the successful calls made today.
-     *
-     * @return int
-     */
-    public function countSuccessfulCallsMadeToday()
-    {
-        return $this->successfulCallsFor(Carbon::now())->count();
-    }
-
-    /**
      * Returns a count of the unsuccessful calls on a given day.
      *
      * @return int
@@ -131,29 +122,37 @@ trait MakesOrReceivesCalls
     }
 
     /**
+     * This method does not collect calls marked as tyoe => task - i.e a callback.
+     *
      * @return mixed
      */
     public function successfulCallsFor(Carbon $date)
     {
-        return $this->calls()
-            ->where([
-                ['called_date', '>=', $date->copy()->startOfDay()->toDateTimeString()],
-                ['called_date', '<=', $date->copy()->endOfDay()->toDateTimeString()],
-                ['calls.status', '=', 'reached'],
-            ]);
+       return Call::where(function ($q) {
+            $q->whereNull('type')
+                ->orWhere('type', '=', 'call')
+                ->orWhere('sub_type', '=', 'Call Back');
+        })
+            ->where(function ($q) use ($date) {
+                $q->where('outbound_cpm_id', $this->id)
+                    ->orWhere('inbound_cpm_id', $this->id);
+            })
+            ->where('called_date', '>=', $date->startOfDay()->toDateTimeString())
+            ->where('called_date', '<=', $date->endOfDay()->toDateTimeString())
+            ->where('status', 'reached');
     }
 
-    /**
-     * Returns today's successful calls.
-     * Successful Call: A call that was placed today and was successful. It does not matter if the call was scheduled
-     * for tomorrow.
-     *
-     * @return Collection
-     */
-    public function successfulCallsMadeToday()
-    {
-        return $this->successfulCallsFor(Carbon::now())->get();
-    }
+//    /**
+//     * Returns today's successful calls.
+//     * Successful Call: A call that was placed today and was successful. It does not matter if the call was scheduled
+//     * for tomorrow.
+//     *
+//     * @return Collection
+//     */
+//    public function successfulCallsMadeToday()
+//    {
+//        return $this->successfulCallsFor(Carbon::now())->get();
+//    }
 
     public function unsuccessfulCallsFor(Carbon $date)
     {
