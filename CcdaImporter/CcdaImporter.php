@@ -368,6 +368,24 @@ class CcdaImporter
         return $email;
     }
 
+    private function throwExceptionIfSuspicious(Enrollee $enrollee)
+    {
+        if (strtolower($this->patient->last_name) != strtolower($enrollee->last_name)) {
+            throw new \Exception("Something fishy is going on. enrollee:{$enrollee->id} has user:{$enrollee->user_id}, which does not matched with user:{$this->patient->id}");
+        }
+
+        if (strtolower($this->patient->first_name) == strtolower($enrollee->first_name)) {
+            return;
+        }
+
+        //middle name
+        if (3 === levenshtein(strtolower($this->patient->first_name), strtolower($enrollee->first_name))) {
+            return;
+        }
+
+        throw new \Exception("Something fishy is going on. enrollee:{$enrollee->id} has user:{$enrollee->user_id}, which does not matched with user:{$this->patient->id}");
+    }
+
     private function updateCcdaPostImport()
     {
         //This CarePlan is now ready to be QA'ed by a CLH Admin
@@ -419,23 +437,5 @@ class CcdaImporter
         }
 
         return $this;
-    }
-    
-    private function throwExceptionIfSuspicious(Enrollee $enrollee)
-    {
-        if (strtolower($this->patient->last_name) != strtolower($enrollee->last_name)) {
-            throw new \Exception("Something fishy is going on. enrollee:{$enrollee->id} has user:{$enrollee->user_id}, which does not matched with user:{$this->patient->id}");
-        }
-    
-        if (strtolower($this->patient->first_name) == strtolower($enrollee->first_name)) {
-            return;
-        }
-    
-        //middle name
-        if (3 === levenshtein(strtolower($this->patient->first_name), strtolower($enrollee->first_name))) {
-            return;
-        }
-    
-        throw new \Exception("Something fishy is going on. enrollee:{$enrollee->id} has user:{$enrollee->user_id}, which does not matched with user:{$this->patient->id}");
     }
 }
