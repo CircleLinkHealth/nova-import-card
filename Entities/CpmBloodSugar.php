@@ -68,6 +68,8 @@ class CpmBloodSugar extends \CircleLinkHealth\Core\Entities\BaseModel implements
         'low_alert',
     ];
 
+    protected $table = 'cpm_blood_sugars';
+
     public function biometric()
     {
         return CpmBiometric::where('name', 'LIKE', '%sugar%');
