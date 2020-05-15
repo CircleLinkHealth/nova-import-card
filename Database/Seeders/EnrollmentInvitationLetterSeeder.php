@@ -32,43 +32,32 @@ class EnrollmentInvitationLetterSeeder extends Seeder
         $practices = Practice::get();
 
         $bodyPageOne = "<p><span>$practiceName</span>
-<span> has invested in a new Personalized Care Program to help patients get care at home,
-which is especially important given current events, and I'm inviting you to join.</span></p>
+<span> has invested in a new Personalized Care Program to help patients get care at home, which is especially important given current events, and I'm inviting you to join.</span></p>
 
-<p><span>You are getting this invitation because you're eligible according to Medicare guidelines,
-and we believe you will benefit from it greatly, particularly during this pandemic.</span></p>
+<p><span>You are getting this invitation because you're eligible according to Medicare guidelines, and we believe you will benefit from it greatly, particularly during this pandemic.</span></p>
 
 <p><span>Here's how it works:</span></p>
 <ul class='browser-default'>
-<li><span>You'll get monthly calls from a Registered Nurse Care Coach to help you manage your health conditions,
-so you can stay as active and healthy as you can be.</span></li>
+<li><span>You'll get monthly calls from a Registered Nurse Care Coach to help you manage your health conditions, so you can stay as active and healthy as you can be.</span></li>
 </ul>
 <ul class='browser-default'>
-<li><span>By staying healthy in between office visits, you'll be less likely to need extra/expensive medical care,
-including visits to the ER or the hospital, which helps reduce your medical bills.</span></li>
+<li><span>By staying healthy in between office visits, you'll be less likely to need extra/expensive medical care, including visits to the ER or the hospital, which helps reduce your medical bills.</span></li>
 </ul>
 <ul class='browser-default'>
-<li><span>You can avoid being on hold when you need something: your nurse can help with prescription refills,
-appointment scheduling, transportation assistance, and any general questions.</span></li>
+<li><span>You can avoid being on hold when you need something: your nurse can help with prescription refills, appointment scheduling, transportation assistance, and any general questions.</span></li>
 </ul>
 <ul class='browser-default'>
-<li><span>You can disenroll at any time. This is a voluntary program meant to provide assistance and benefits
-outside of our physical office.</span></li>
+<li><span>You can disenroll at any time. This is a voluntary program meant to provide assistance and benefits outside of our physical office.</span></li>
 </ul>
 <p style=\"text-decoration: underline;\"><span>What's the Cost?</span></p>
-<p><span>The program is covered by Medicare. If you have Medicaid or a supplemental insurance,
-it will likely cover the copay, which means you'll have $0 out-of-pocket costs.
-In addition, during this crisis, your Dr. may waive co-pays for this kind of remote care.
-Medicare has invested in this program because it saves them money by keeping people like you healthy.</span></p>
+<p><span>The program is covered by Medicare. If you have Medicaid or a supplemental insurance, it will likely cover the copay, which means you'll have $0 out-of-pocket costs. In addition, during this crisis, your Dr. may waive co-pays for this kind of remote care. Medicare has invested in this program because it saves them money by keeping people like you healthy.</span></p>
 
 <p style=\"text-decoration: underline;\"><span>What's Next?</span></p>
-<p><span>$locationEnrollButton For more information, please see below Frequently Asked Questions
-or call $practiceNumber</span><span> to be connected with one of our care coordinators</span><strong style='font-weight: 600;'>.</strong></p>
+<p><span>$locationEnrollButton For more information, please see below Frequently Asked Questions or call $practiceNumber</span><span> to be connected with one of our care coordinators</span><strong style='font-weight: 600;'>.</strong></p>
 
-<p><span>I look forward to having you join this program to continue
-keeping you healthy between office visits.</span></p>
+<p><span>I look forward to having you join this program to continue keeping you healthy between office visits.</span></p>
 
-<p><span>Sincerely,&nbsp;</span></p>
+<p><span>On Behalf of Our Medical Staff,&nbsp;</span></p>
 <p><span>$customerSignaturePic</span></p>
 <p><span>$signatoryName</span></p>
 <p><span>$practiceName</span></p>
