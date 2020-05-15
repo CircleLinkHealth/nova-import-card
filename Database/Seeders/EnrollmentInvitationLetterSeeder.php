@@ -82,7 +82,7 @@ keeping you healthy between office visits.</span></p>
                         and care you need to live a healthier life.</p>
                         <p><strong style='font-weight: 600;'>Why does my doctor want this for me?</strong></p>
                         <p>While everyone can benefit from having their care coordinated,
-                        it can be especially important if you have managing multiple conditions.
+                        it can be especially important if you are managing multiple conditions.
                         You may be seeing different types of doctors or taking several medications.
                         When your care is coordinated properly, your doctors get the information they need when
                         they need it and have peace of mind knowing that your healthcare needs are being met.</p>
