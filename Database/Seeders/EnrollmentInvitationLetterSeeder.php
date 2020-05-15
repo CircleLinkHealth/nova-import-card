@@ -36,7 +36,7 @@ class EnrollmentInvitationLetterSeeder extends Seeder
 which is especially important given current events, and I'm inviting you to join.</span></p>
 
 <p><span>You are getting this invitation because you're eligible according to Medicare guidelines,
-and we believe you will benefit from it greatly.</span></p>
+and we believe you will benefit from it greatly, particularly during this pandemic.</span></p>
 
 <p><span>Here's how it works:</span></p>
 <ul class='browser-default'>
