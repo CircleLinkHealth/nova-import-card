@@ -216,7 +216,7 @@ class ImporterController extends Controller
                         $ccda->practice_id = $record['practice_id'];
                     }
                     $ccda->billing_provider_id = $record['billing_provider_id'];
-                    $ccda                      = $ccda->updateOrCreateCarePlan();
+                    $ccda                      = $ccda->import();
                     array_push(
                         $importedRecords,
                         [
