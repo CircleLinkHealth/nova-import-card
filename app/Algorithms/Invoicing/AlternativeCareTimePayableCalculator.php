@@ -73,7 +73,8 @@ class AlternativeCareTimePayableCalculator
             $isActivityForSuccessfulCall,
             $user,
             $monthYear,
-            $activity->is_behavioral
+            $activity->is_behavioral,
+            Carbon::parse($activity->performed_at)
         );
     }
 
@@ -141,7 +142,7 @@ class AlternativeCareTimePayableCalculator
                 ->pluck('id');
 
         $hasSuccessfulCall = false;
-        if ( ! empty($noteIds)) {
+        if ($noteIds->isNotEmpty()) {
             $hasSuccessfulCall = Call::whereIn('note_id', $noteIds)
                 ->where('status', '=', Call::REACHED)
                 ->count() > 0;
@@ -158,7 +159,8 @@ class AlternativeCareTimePayableCalculator
         bool $isActivityForSuccessfulCall,
         \CircleLinkHealth\Customer\Entities\User $patient,
         Carbon $monthYear,
-        bool $isBehavioral
+        bool $isBehavioral,
+        Carbon $time
     ) {
         $ranges = $this->calculateTimeRanges(
             $total_time_before,
@@ -184,6 +186,7 @@ class AlternativeCareTimePayableCalculator
                     'time_before'        => $timeBefore,
                     'is_successful_call' => $isActivityForSuccessfulCall,
                     'is_behavioral'      => $isBehavioral,
+                    'performed_at'       => $time,
                 ]
             );
 
