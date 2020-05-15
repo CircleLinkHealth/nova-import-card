@@ -1,12 +1,23 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use CircleLinkHealth\Eligibility\Database\Seeders\EnrollmentInvitationLetterSeeder;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class EnrollmentSeeder extends Migration
 {
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+    }
+
     /**
      * Run the migrations.
      *
@@ -19,15 +30,5 @@ class EnrollmentSeeder extends Migration
                 '--class' => EnrollmentInvitationLetterSeeder::class,
             ]);
         }
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        //
     }
 }
