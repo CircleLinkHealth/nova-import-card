@@ -81,7 +81,6 @@ class ImportPatientInfo extends BaseCcdaImportTask
             [
                 'ccda_id'      => $this->ccda->id,
                 'birth_date'   => self::parseDOBDate($demographics['dob']),
-                'consent_date' => now()->toDateString(),
                 'gender'       => call_user_func(function () use (
                     $demographics
                 ) {
@@ -179,7 +178,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
         }
 
         if ( ! $patientInfo->consent_date) {
-            $patientInfo->consent_date = $args['consent_date'];
+            $patientInfo->consent_date = now()->toDateString();
         }
 
         if ( ! $patientInfo->gender) {
