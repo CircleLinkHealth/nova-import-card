@@ -79,9 +79,9 @@ class ImportPatientInfo extends BaseCcdaImportTask
 
         $args = array_merge(
             [
-                'ccda_id'      => $this->ccda->id,
-                'birth_date'   => self::parseDOBDate($demographics['dob']),
-                'gender'       => call_user_func(function () use (
+                'ccda_id'    => $this->ccda->id,
+                'birth_date' => self::parseDOBDate($demographics['dob']),
+                'gender'     => call_user_func(function () use (
                     $demographics
                 ) {
                     $maleVariations = [
