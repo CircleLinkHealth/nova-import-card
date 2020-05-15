@@ -47,6 +47,10 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
  */
 class NurseCareRateLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
+    protected $dates = [
+        'performed_at',
+    ];
+
     protected $fillable = [
         'nurse_id',
         'activity_id',
@@ -57,6 +61,7 @@ class NurseCareRateLog extends \CircleLinkHealth\Core\Entities\BaseModel
         'time_before',
         'is_successful_call',
         'is_behavioral',
+        'performed_at',
     ];
 
     public function activity()
