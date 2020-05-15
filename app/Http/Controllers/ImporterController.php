@@ -272,7 +272,7 @@ class ImporterController extends Controller
 
     public function reImportPatient(Request $request, $userId)
     {
-        ClearAndReimportCcda::for($userId, auth()->id());
+        ImportCcda::for($userId, auth()->id());
 
         return redirect()->back();
     }
