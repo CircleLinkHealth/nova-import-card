@@ -90,7 +90,7 @@ class UserRepository
                     $params->get('birth_date'),
                     $params->get('mrn_number')
                 );
-                
+
                 throw new ValidationException($validator);
             }
 

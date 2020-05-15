@@ -59,6 +59,11 @@ class PatientIsNotDuplicate implements Rule
         $this->patientUserId = $patientUserId;
     }
 
+    public function getPatientUserId(): ?int
+    {
+        return $this->duplicatePatientUserId;
+    }
+
     /**
      * Get the validation error message.
      *
@@ -114,13 +119,5 @@ class PatientIsNotDuplicate implements Rule
         }
 
         return true;
-    }
-    
-    /**
-     * @return int|null
-     */
-    public function getPatientUserId(): ?int
-    {
-        return $this->duplicatePatientUserId;
     }
 }
