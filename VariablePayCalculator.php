@@ -152,8 +152,7 @@ class VariablePayCalculator
         $nurseInfoId,
         $newDuration,
         $successfulCall,
-        $logDate,
-        $replaceLogDate = true
+        $logDate
     ) {
         $range = $ranges[$index];
         $prev  = null;
@@ -169,9 +168,20 @@ class VariablePayCalculator
             }
 
             $duration += $prev['duration'];
-            if ( ! $replaceLogDate) {
+
+            /*
+            // for $index === 1 (30+) we record the first time we reach that range
+            // for $index === 0 (0-30) we record the time when we fulfill the range
+            $isPcmAndHasJustFulfilledPayableRange = $isPCm && $index < 1 && self::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM === $duration;
+
+            // for $index === 3 (60+) we record the first time we reach that range
+            // for all the rest (0-20, 20-40, 40-60) we record the time when we fulfill the range
+            $hasJustFulfilledPayableRange = ! $isPCm && $index < 3 && self::MONTHLY_TIME_TARGET_IN_SECONDS === $duration;
+
+            if ($isPcmAndHasJustFulfilledPayableRange || $hasJustFulfilledPayableRange) {
                 $logDate = $prev['last_log_date'];
             }
+            */
         }
 
         return [
@@ -843,7 +853,8 @@ class VariablePayCalculator
             $totalTimeBefore = $e['time_before'];
             $totalTimeAfter = $totalTimeBefore + $duration;
 
-            $logDate = $e['created_at']->toDateString();
+            // performed_at is a new field, we revert to created_at if it is null
+            $logDate = ($e['performed_at'] ?? $e['created_at'])->toDateString();
 
             //ccm + bhi
             $add_to_accrued_towards_20 = 0;
@@ -880,6 +891,10 @@ class VariablePayCalculator
             } elseif ($was_above_20) {
                 if ($is_above_40) {
                     $add_to_accrued_after_40 = $totalTimeAfter - self::MONTHLY_TIME_TARGET_2X_IN_SECONDS;
+                    if ($add_to_accrued_after_40 > self::MONTHLY_TIME_TARGET_IN_SECONDS) {
+                        $add_to_accrued_after_60 = $add_to_accrued_after_40 - self::MONTHLY_TIME_TARGET_IN_SECONDS;
+                        $add_to_accrued_after_40 = self::MONTHLY_TIME_TARGET_IN_SECONDS;
+                    }
                     $add_to_accrued_after_20 = self::MONTHLY_TIME_TARGET_2X_IN_SECONDS - $totalTimeBefore;
                 } else {
                     $add_to_accrued_after_20 = $duration;
@@ -887,6 +902,14 @@ class VariablePayCalculator
             } else {
                 if ($is_above_20) {
                     $add_to_accrued_after_20 = $totalTimeAfter - self::MONTHLY_TIME_TARGET_IN_SECONDS;
+                    if ($add_to_accrued_after_20 > self::MONTHLY_TIME_TARGET_IN_SECONDS) {
+                        $add_to_accrued_after_40 = $add_to_accrued_after_20 - self::MONTHLY_TIME_TARGET_IN_SECONDS;
+                        if ($add_to_accrued_after_40 > self::MONTHLY_TIME_TARGET_IN_SECONDS) {
+                            $add_to_accrued_after_60 = $add_to_accrued_after_40 - self::MONTHLY_TIME_TARGET_IN_SECONDS;
+                            $add_to_accrued_after_40 = self::MONTHLY_TIME_TARGET_IN_SECONDS;
+                        }
+                        $add_to_accrued_after_20 = self::MONTHLY_TIME_TARGET_IN_SECONDS;
+                    }
                     $add_to_accrued_towards_20 = self::MONTHLY_TIME_TARGET_IN_SECONDS - $totalTimeBefore;
                 } else {
                     $add_to_accrued_towards_20 = $duration;
@@ -933,8 +956,7 @@ class VariablePayCalculator
                     $nurseInfoId,
                     $add_to_accrued_after_20,
                     $isSuccessfulCall,
-                    $logDate,
-                    false
+                    $logDate
                 );
             }
 
@@ -948,8 +970,7 @@ class VariablePayCalculator
                     $nurseInfoId,
                     $add_to_accrued_after_40,
                     $isSuccessfulCall,
-                    $logDate,
-                    false
+                    $logDate
                 );
             }
 
@@ -963,8 +984,7 @@ class VariablePayCalculator
                     $nurseInfoId,
                     $add_to_accrued_after_60,
                     $isSuccessfulCall,
-                    $logDate,
-                    false
+                    $logDate
                 );
             }
 
@@ -986,17 +1006,52 @@ class VariablePayCalculator
                     $nurseInfoId,
                     $add_to_accrued_after_30,
                     $isSuccessfulCall,
-                    $logDate,
-                    false
+                    $logDate
                 );
             }
         });
+
+        $this->setSuccessfulCallBasedOnPreviousRange($ccmRanges);
+        $this->setSuccessfulCallBasedOnPreviousRange($bhiRanges);
+        $this->setSuccessfulCallBasedOnPreviousRange($pcmRanges);
 
         return [
             'ccm' => $ccmRanges,
             'bhi' => $bhiRanges,
             'pcm' => $pcmRanges,
         ];
+    }
+
+    /**
+     * If a range is in the same day as an other range with a successful call,
+     * make sure that both have successful call as true
+     * This covers the case where a care coach makes a call that spans over two ranges.
+     */
+    private function setSuccessfulCallBasedOnPreviousRange(array &$rangeColl)
+    {
+        $callsInDays = collect();
+        $coll        = collect($rangeColl);
+        $coll->each(function (array $nurseRange, $rangeIndex) use ($callsInDays) {
+            collect($nurseRange)->each(function ($range, string $nurseInfoId) use ($callsInDays) {
+                if ( ! $range['has_successful_call']) {
+                    return;
+                }
+                $entry = $callsInDays->get($nurseInfoId, []);
+                if ( ! in_array($range['last_log_date'], $entry)) {
+                    $entry[] = $range['last_log_date'];
+                }
+                $callsInDays->put($nurseInfoId, $entry);
+            });
+        });
+        $coll->each(function (array $nurseRange, $rangeIndex) use (&$rangeColl, $callsInDays) {
+            collect($nurseRange)->each(function ($range, string $nurseInfoId) use (&$rangeColl, $rangeIndex, $callsInDays) {
+                $entry = $callsInDays->get($nurseInfoId, []);
+                if (in_array($range['last_log_date'], $entry)) {
+                    //need to modify the original array/collection
+                    $rangeColl[$rangeIndex][$nurseInfoId]['has_successful_call'] = true;
+                }
+            });
+        });
     }
 }
 
