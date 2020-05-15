@@ -65,59 +65,54 @@ class EnrollmentInvitationLetterSeeder extends Seeder
 
         $bodyPageTwo = "<p style=\"text-decoration: underline;\"><strong style='font-weight: 600;'>Frequently Asked Questions</strong></p>
                         <p><strong style='font-weight: 600;'>What is the Personalized Care Program?</strong></p>
-                        <p>The Personalized Care Program provides support and care between doctor visits to eligible
-                        patients. Services include access to a care team who can answer your healthcare questions and
-                        help you get the information, appointments, treatments,
-                        and care you need to live a healthier life.</p>
+                        <p>The Personalized Care Program provides support and care between doctor visits to eligible patients. Services include access to a care team who can answer your healthcare questions and help you get the information, appointments, treatments, and care you need to live a healthier life.</p>
+                        
                         <p><strong style='font-weight: 600;'>Why does my doctor want this for me?</strong></p>
-                        <p>While everyone can benefit from having their care coordinated,
-                        it can be especially important if you are managing multiple conditions.
-                        You may be seeing different types of doctors or taking several medications.
-                        When your care is coordinated properly, your doctors get the information they need when
-                        they need it and have peace of mind knowing that your healthcare needs are being met.</p>
+                        <p>While everyone can benefit from having their care coordinated, it can be especially important if you are managing multiple conditions. You may be seeing different types of doctors or taking several medications. When your care is coordinated properly, your doctors get the information they need when they need it and have peace of mind knowing that your healthcare needs are being met.</strong></p>
+                        
                         <p><strong style='font-weight: 600;'>Is my information private and secure?</strong></p>
-                        <p>Yes - just like there are rules in banking that protect your financial information,
-                        there are rules in healthcare that protect your medical information.</p>
+                        <p>Yes - just like there are rules in banking that protect your financial information, there are rules in healthcare that protect your medical information.</p>
+                        
                         <p><strong style='font-weight: 600;'>But what if I feel fine?</strong></p>
-                        <p>Great. Let's keep it that way. One of the reasons your doctor is inviting you
-                        to participate in this program is to help you get and stay as healthy as possible.
-                        The program also focuses on things like helping you keep on top of preventive care and
-                        helping you find valuable healthcare resources and community services.</p>
+                        <p>Great. Let's keep it that way. One of the reasons your doctor is inviting you to participate in this program is to help you get and stay as healthy as possible. The program also focuses on things like helping you keep on top of preventive care and helping you find valuable healthcare resources and community services.</p>
                      
                         <p><strong style='font-weight: 600;'>What does the program cost?</strong></p>
-                        <p>The Personalized Care Program is a benefit under Medicare Part B. However,
-                        there may be a co-payment for this benefit. If you have a secondary health plan,
-                        it will likely cover the remainder. For example, if you have both Medicare and Medicaid,
-                        there is $0 out of pocket cost. You can contact your health plan if you’re not sure of
-                        your coverage or you can ask our care coordinators for assistance when they
-                        reach out to you.&nbsp;</p> <br>";
+                        <p>The Personalized Care Program is a benefit under Medicare Part B. However, there may be a co-payment for this benefit. If you have a secondary health plan, it will likely cover the remainder. For example, if you have both Medicare and Medicaid, there is <u>$0</u> out of pocket cost.  In addition, during this crisis, your Dr. may waive co-pays for this kind of remote care. You can contact your health plan if you’re not sure of your coverage or you can ask our care coordinators for assistance when they reach out to you.</p> <br>";
 
         $bodyPageThree = "<p><strong style='font-weight: 600;'>What are the benefits of signing up for the Personalized Care Program?</strong></p>
-                        <p>When you sign up, you will be taking an important step toward living a healthier life.
-                        Benefits of the program include:</p>
+                        <p>When you sign up, you will be taking an important step toward living a healthier life. Benefits of the program include:</p>
                         <ul class='browser-default'>
-                            <li>Access to a 24 hours a day / 7 days a week care hotline</li>
-                            <li>A dedicated care team that will coordinate all of your health care, including
-                            at another doctor's office, at the pharmacy, in your home, or from a community
-                            service organization
+                            <li>
+                                Access to a 24 hours a day / 7 days a week care hotline
                             </li>
-                            <li>A personalized care plan that includes steps you can take to help you reach
-                            the goals you and your doctor have set</li>
-                            <li>Updates and communication with your doctors so they have the most
-                            accurate and complete information about your health</li>
-                            <li>Help managing your medications, securing appointments
-                            and addressing preventive care needs</li>
-                            <li>Help following through on doctor's instructions, including locating and
-                            following up with specialists and lab facilities</li>
-                            <li>Greater access to services and support that may help you avoid medical problems,
-                            expensive emergency department visits, and hospital stays</li>
+                            <li>
+                                A dedicated care team that will coordinate all of your health care, including at another doctor's office, at the pharmacy, in your home, or from a community service organization
+                            </li>
+                            <li>
+                                A personalized care plan that includes steps you can take to help you reach the goals you and your doctor have set
+                            </li>
+                            <li>
+                                Updates and communication with your doctors so they have the most accurate and complete information about your health
+                            </li>
+                            <li>
+                                Help managing your medications, securing appointments and addressing preventive care needs
+                            </li>
+                            <li>
+                                Help following through on doctor's instructions, including locating and following up with specialists and lab facilities
+                            </li>
+                            <li>
+                                Greater access to services and support that may help you avoid medical problems, expensive emergency department visits, and hospital stays
+                            </li>
                         </ul>
-                        <p>Your doctor can count on them to look out for you between visits and make sure that
-                        you get the information, appointments, treatments and care you need when you need it.</p>
-                        <p><strong style='font-weight: 600;'>Can I cancel these services if I change my mind?</strong></p>
-                        <p>Yes. You can discontinue the services at any time for any reason.
-                        To do so, just call <strong style='font-weight: 600;'>$practiceNumber</strong> and the services will stop at the end of
-                        the month that you cancel them.</p>
+                        <p>
+                            Your doctor can count on them to look out for you between visits and make sure that you get the information, appointments, treatments and care you need when you need it.
+                        </p>
+                        
+                        <p>
+                            <strong style='font-weight: 600;'>Can I cancel these services if I change my mind?</strong>
+                        </p>
+                        <p>Yes. You can discontinue the services at any time for any reason. To do so, just call <strong style='font-weight: 600;'>$practiceNumber</strong> and the services will stop at the end of the month that you cancel them.</p>
+                        
                         <p><strong style='font-weight: 600;'>$optionalTitle</strong></p>
                         <p>$optionalParagraph</p>
                         <p>$locationEnrollButtonSecondVersion</p> <br>";
