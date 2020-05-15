@@ -10,6 +10,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\Validator;
 
 class EnrollmentValidationRules extends FormRequest
 {
@@ -44,16 +45,20 @@ class EnrollmentValidationRules extends FormRequest
     public function rules()
     {
         return [
-            'url_with_token' => 'required|string',
-            'birth_date'     => 'required|date',
+            'url_with_token'   => 'required|string',
+            'birth_date_day'   => 'required|numeric|min:1|max:31',
+            'birth_date_month' => 'required|numeric|min:1|max:12',
+            'birth_date_year'  => 'required|numeric|min:1900|max:2000',
         ];
     }
 
     public function withValidator($validator)
     {
-        $validator->after(function ($validator) {
-            if ($this->inputIsInvalid($validator->getData())) {
-                $validator->errors()->add('field', 'Your credentials do not match our records');
+        $validator->after(function (Validator $validator) {
+            if ( ! $validator->failed()) {
+                if ($this->inputIsInvalid($validator->getData())) {
+                    $validator->errors()->add('field', 'Your credentials do not match our records');
+                }
             }
         });
     }
@@ -71,8 +76,17 @@ class EnrollmentValidationRules extends FormRequest
         }
 
         $inputToken = $this->parseUrl($input['url_with_token']);
-        if (( ! empty($link) && $link->link_token !== $inputToken)
-            || Carbon::parse($input['birth_date'])->startOfDay()->ne($user->patientInfo->birth_date)) {
+        if (empty($link) || $link->link_token !== $inputToken) {
+            return true;
+        }
+
+        $day         = $input['birth_date_day'];
+        $month       = $input['birth_date_month'];
+        $year        = $input['birth_date_year'];
+        $inputDobStr = "$year-$month-$day";
+        $inputDob    = Carbon::parse($inputDobStr);
+        $actualDob   = optional($user->patientInfo->birth_date)->startOfDay();
+        if ($inputDob->startOfDay()->ne($actualDob)) {
             return true;
         }
 

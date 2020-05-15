@@ -855,6 +855,55 @@ class NursePaymentAlgoTest extends TestCase
     /**
      * - Hourly Rate = 10$
      * - CCM Plus Algo - Variable Rate
+     * - CCM = 72 minutes
+     * - Total CPM time = 72 minutes
+     * - CCM Plus (G2058).
+     *
+     * Result: $37.50. Nurse Visit Fee $12.50 + $12.00 + $11.75. Hourly rate yields $20.
+     *
+     * @throws \Exception
+     */
+    public function test_ccm_plus_alt_algo_over_60_with_long_call()
+    {
+        $nurseVisitFee   = 12.50;
+        $nurseHourlyRate = 10.0;
+        $practice        = $this->setupPractice(true, true);
+        $this->provider  = $this->createUser($practice->id);
+        $nurse           = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $patient         = $this->setupPatient($practice);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        $this->addTime($nurse, $patient, 22, true, true);
+        $this->addTime($nurse, $patient, 50, true, true);
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        /** @var NurseInvoice $invoice */
+        $invoice = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first();
+
+        $invoiceData = $invoice->invoice_data;
+
+        $fixedRatePay = $invoiceData['fixedRatePay'];
+        self::assertEquals(20.00, $fixedRatePay);
+
+        $pay = $invoiceData['baseSalary'];
+        self::assertEquals(12.50 + 12.00 + 11.75, $pay);
+    }
+
+    /**
+     * - Hourly Rate = 10$
+     * - CCM Plus Algo - Variable Rate
      * - CCM = 15 minutes
      * - Total CPM time = 35 minutes
      * - CCM Plus (G2058).
@@ -1958,7 +2007,7 @@ class NursePaymentAlgoTest extends TestCase
         $nurse2          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
         $patient         = $this->setupPatient($practice);
 
-        $this->addTime($nurse1, $patient, 15, true, true);
+        $this->addTime($nurse1, $patient, 15, true, true, false, now()->subDay()->midDay());
         $this->addTime($nurse2, $patient, 15, true, true);
         $this->addTime($nurse1, $patient, 10, true, false);
 

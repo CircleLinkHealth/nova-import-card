@@ -28,25 +28,41 @@
                                     <br>
                                     <form method="POST" action="{{route('invitation.enrollment.login')}}" class="form-prevent-multi-submit">
                                         {{csrf_field()}}
-
-{{--                                        <div class='row' style="margin-top: 70px;">--}}
-{{--                                            <div class='input-field col s12'>--}}
-{{--                                                <label for="display_name" class="full-name" style="font-size: 20px; color:black">Full Name</label>--}}
-{{--                                                <input type="text" name="display_name"--}}
-{{--                                                       class="login-inputs"--}}
-{{--                                                       value="{{old('display_name')}}"--}}
-{{--                                                       placeholder="Enter your full Name"--}}
-{{--                                                       required>--}}
-{{--                                            </div>--}}
-{{--                                        </div>--}}
                                         <div class='row' style="margin-top: 80px;">
                                             <div class='input-field col s12' style="text-align: left">
-                                                <label for="birth-date" class="birth-date" style="font-size: 16px; position: unset; color:black">Please Enter Your Date of Birth</label>
-                                                <input type="date" name="birth_date"
+                                                <label class="birth-date" style="line-height: 1.4;font-size: 16px; position: unset; color:black">Please Enter Your Date of Birth Here</label>
+                                            </div>
+                                        </div>
+                                        <div class="row col" style="text-align: left">
+                                            <div class="col s4">
+                                                <label class="birth-date" for="birth_date_month">Month</label>
+                                                <input type="number" name="birth_date_month"
+                                                       min="1"
+                                                       max="12"
                                                        class="login-inputs"
-                                                       placeholder="1950-01-15"
-                                                       value="{{old('birth_date')}}"
-                                                       required>
+                                                       required
+                                                       placeholder="mm"
+                                                       value="{{old('birth_date_month')}}">
+                                            </div>
+                                            <div class="col s4">
+                                                <label class="birth-date" for="birth_date_day">Day</label>
+                                                <input type="number" name="birth_date_day"
+                                                       min="1"
+                                                       max="31"
+                                                       class="login-inputs"
+                                                       required
+                                                       placeholder="dd"
+                                                       value="{{old('birth_date_day')}}">
+                                            </div>
+                                            <div class="col s4">
+                                                <label class="birth-date" for="birth_date_year">Year</label>
+                                                <input type="number" name="birth_date_year"
+                                                       min="1900"
+                                                       max="2000"
+                                                       class="login-inputs"
+                                                       placeholder="yyyy"
+                                                       required
+                                                       value="{{old('birth_date_year')}}">
                                             </div>
                                         </div>
                                         <br/>
