@@ -377,6 +377,10 @@ class CcdaImporter
         if (strtolower($this->patient->first_name) == strtolower($enrollee->first_name)) {
             return;
         }
+        
+        if ($enrollee->user_id && ($enrollee->user_id !== $this->patient->id)) {
+            throw new \Exception("Something fishy is going on. enrollee:{$enrollee->id} has user:{$enrollee->user_id}, which does not matched with user:{$this->patient->id}");
+        }
 
         //middle name
         if (3 === levenshtein(strtolower($this->patient->first_name), strtolower($enrollee->first_name))) {
