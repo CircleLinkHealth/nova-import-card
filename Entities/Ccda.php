@@ -443,7 +443,6 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             $this->bluebuttonJson();
         }
 
-        
         if ( ! $this->patient_mrn) {
             //fetch a fresh instance from the DB to have virtual fields
             $ccda = $ccda->fresh();
