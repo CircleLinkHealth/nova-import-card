@@ -84,8 +84,7 @@ class PatientIsNotDuplicate implements Rule
      */
     public function passes($attribute, $value)
     {
-        $this->duplicatePatientUserId = User::whereFirstName($this->firstName)
-            ->whereLastName($this->lastName)
+        $this->duplicatePatientUserId = User::whereLastName($this->lastName)
             ->whereHas(
                 'patientInfo',
                 function ($q) {
