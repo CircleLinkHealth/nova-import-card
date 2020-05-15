@@ -21,6 +21,7 @@ use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
+use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
 use CircleLinkHealth\Customer\Rules\PatientIsNotDuplicate;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
@@ -81,14 +82,25 @@ class UserRepository
             ]);
 
             if ($validator->fails()) {
+                //also check for duplicates, in case the validation failed due to the same email
+                self::validatePatientDoesNotAlreadyExist(
+                    $params->get('program_id'),
+                    $params->get('first_name'),
+                    $params->get('last_name'),
+                    $params->get('birth_date'),
+                    $params->get('mrn_number')
+                );
+                
                 throw new ValidationException($validator);
             }
 
-            //Using 2 different validators because the custom rule expects non-null items in its constructor
-            $validator = \Validator::make($params->all(), $this->checkPatientForDupes($params), [
-                'required'                   => 'The :attribute field is required.',
-                'home_phone_number.required' => 'The patient phone number field is required.',
-            ]);
+            self::validatePatientDoesNotAlreadyExist(
+                $params->get('program_id'),
+                $params->get('first_name'),
+                $params->get('last_name'),
+                $params->get('birth_date'),
+                $params->get('mrn_number')
+            );
         } else {
             $validator = \Validator::make($params->all(), $this->createNewUserRules(), [
                 'required'                   => 'The :attribute field is required.',
@@ -662,19 +674,25 @@ class UserRepository
         $user->save();
     }
 
-    private function checkPatientForDupes(ParameterBag $params)
+    /**
+     * Validate tht the patient does not already exist.
+     *
+     * @param  mixed|null                    $mrn
+     * @throws PatientAlreadyExistsException
+     */
+    public static function validatePatientDoesNotAlreadyExist(int $practiceId, string $firstName, string $lastName, string $dob, $mrn = null)
     {
-        return [
-            'mrn_number' => [
-                new PatientIsNotDuplicate(
-                    $params->get('program_id'),
-                    $params->get('first_name'),
-                    $params->get('last_name'),
-                    $params->get('birth_date'),
-                    $params->get('mrn_number')
-                ),
-            ],
-        ];
+        $validator = new PatientIsNotDuplicate(
+            $practiceId,
+            $firstName,
+            $lastName,
+            $dob,
+            $mrn
+        );
+
+        if ( ! $validator->passes(null, null)) {
+            throw new PatientAlreadyExistsException($validator->getPatientUserId());
+        }
     }
 
     /**

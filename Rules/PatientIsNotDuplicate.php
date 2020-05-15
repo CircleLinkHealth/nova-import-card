@@ -115,4 +115,12 @@ class PatientIsNotDuplicate implements Rule
 
         return true;
     }
+    
+    /**
+     * @return int|null
+     */
+    public function getPatientUserId(): ?int
+    {
+        return $this->duplicatePatientUserId;
+    }
 }
