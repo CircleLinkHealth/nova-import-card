@@ -249,7 +249,7 @@ class CcdaImporterTest extends CustomerTestCase
 
         $ccda = FakeCalvaryCcda::create(['practice_id' => $enrollee->practice_id]);
 
-        $imported = $ccda->fresh()->import($enrollee);
+        $imported = $ccda->import($enrollee);
         $patient  = User::ofType('participant')->findOrFail($imported->patient_id);
         $this->assertTrue($patient->email === $enrollee->email);
     }
@@ -262,10 +262,34 @@ class CcdaImporterTest extends CustomerTestCase
 
         $ccda = FakeCalvaryCcda::create(['practice_id' => $enrollee->practice_id]);
 
-        $imported = $ccda->fresh()->import($enrollee);
+        $imported = $ccda->import($enrollee);
         $patient  = User::ofType('participant')->findOrFail($imported->patient_id);
         $this->assertTrue($patient->email === $enrollee->email);
         $this->assertFalse($patient->hasRole('survey-only'));
         $this->assertTrue($patient->hasRole('participant'));
+    }
+    
+    public function test_it_attaches_ccda_to_duplicate_patients_and_imports() {
+        $enrollee          = $this->enrollee();
+        
+        $ccda1 = FakeCalvaryCcda::create(['practice_id' => $enrollee->practice_id]);
+        $imported1 = $ccda1->import($enrollee);
+        
+        $this->assertDatabaseHas('enrollees', [
+            'id' => $enrollee->id,
+            'medical_record_id' => $imported1->id,
+            'user_id' => $imported1->patient_id,
+        ]);
+    
+        $ccda2 = FakeCalvaryCcda::create(['practice_id' => $enrollee->practice_id]);
+        $imported2 = $ccda2->import($enrollee);
+    
+        $this->assertDatabaseHas('enrollees', [
+            'id' => $enrollee->id,
+            'medical_record_id' => $imported2->id,
+            'user_id' => $imported2->patient_id,
+        ]);
+        
+        $this->assertTrue($ccda1->patient_id === $ccda2->patient_id);
     }
 }

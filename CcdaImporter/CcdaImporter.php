@@ -10,6 +10,7 @@ use App\Events\PatientUserCreated;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachDefaultPatientContactWindows;
@@ -163,13 +164,19 @@ class CcdaImporter
             )) {
                 throw new \Exception("Something fishy is going on. enrollee:{$enrollee->id} has user:{$enrollee->user_id}, which does not matched with user:{$this->patient->id}");
             }
-            $this->enrollee    = $enrollee;
-            $enrollee->user_id = $this->patient->id;
+            $this->enrollee              = $enrollee;
+            $enrollee->user_id           = $this->patient->id;
+            $enrollee->medical_record_id = $this->ccda->id;
             $enrollee->save();
         }
 
         if ($this->enrollee) {
             $this->ccda = ImportService::replaceCpmValues($this->ccda, $this->enrollee);
+    
+            if ($this->enrollee->medical_record_id != $this->ccda->id) {
+                $this->enrollee->medical_record_id = $this->ccda->id;
+                $this->enrollee->save();
+            }
         }
 
         return $this;
@@ -215,6 +222,11 @@ class CcdaImporter
                 $this->ccda->save();
 
                 return $this->ccda;
+            } catch (PatientAlreadyExistsException $e) {
+                $this->ccda->patient_id = $e->getPatientUserId();
+                $this->ccda->save();
+                $this->ccda->load('patient');
+                $this->patient = $this->ccda->patient;
             }
         }
 
