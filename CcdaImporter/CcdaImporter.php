@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
 use App\Events\PatientUserCreated;
+use App\Jobs\CreateUsersFromEnrollees;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
@@ -99,13 +100,17 @@ class CcdaImporter
     private function createNewPatient()
     {
         $newUserId = (string) Str::uuid();
-
-        $email = $this->patientEmail();
-
+        
+        $email = null;
+        
         if (optional($this->enrollee)->email) {
-            $email = $this->enrollee->email;
+            $email = CreateUsersFromEnrollees::sanitizeEmail($this->enrollee);
         }
 
+        if (empty($email)) {
+            $email = $this->patientEmail();
+        }
+        
         if (empty($email)) {
             $email = $newUserId.'@careplanmanager.com';
         }
@@ -361,7 +366,7 @@ class CcdaImporter
     {
         $email = $this->ccda->patient_email;
 
-        if (in_array(strtolower($email), ['noemail@noemail.com', 'null'])) {
+        if (empty($email) || in_array(strtolower($email), ['noemail@noemail.com', 'null'])) {
             return null;
         }
 
