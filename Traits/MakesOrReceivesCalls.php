@@ -6,33 +6,32 @@
 
 namespace CircleLinkHealth\Customer\Traits;
 
+use App\Call;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Trait MakesOrReceivesCalls.
  */
 trait MakesOrReceivesCalls
 {
-    public function completedCallsFor(Carbon $date)
+    public function callsWithCallbacks(Carbon $date)
     {
-        return $this->calls()
-            ->where([
-                ['called_date', '>=', $date->copy()->startOfDay()->toDateTimeString()],
-                ['called_date', '<=', $date->copy()->endOfDay()->toDateTimeString()],
-            ])->whereIn('calls.status', ['reached', 'not reached']);
+        return Call::where(function ($q) {
+            $q->whereNull('type')
+                ->orWhere('type', '=', 'call')
+                ->orWhere('sub_type', '=', 'Call Back');
+        })
+            ->where(function ($q) use ($date) {
+                $q->where('outbound_cpm_id', $this->id)
+                    ->orWhere('inbound_cpm_id', $this->id);
+            })
+            ->where('called_date', '>=', $date->startOfDay()->toDateTimeString())
+            ->where('called_date', '<=', $date->endOfDay()->toDateTimeString());
     }
 
-    /**
-     * Returns today's completed calls.
-     * Completed Call: A call that was placed today and was either successful, or unsuccessful. It doesn’t matter when
-     * it was scheduled for.
-     *
-     * @return Collection
-     */
-    public function completedCallsForToday()
+    public function completedCallsFor(Carbon $date)
     {
-        return $this->completedCallsFor(Carbon::now())->get();
+        return $this->callsWithCallbacks($date)->whereIn('calls.status', ['reached', 'not reached']);
     }
 
     public function countCompletedCallsFor(Carbon $date)
@@ -71,23 +70,13 @@ trait MakesOrReceivesCalls
     }
 
     /**
-     * Returns a count of the successful calls made today.
-     *
-     * @return int
-     */
-    public function countSuccessfulCallsMadeToday()
-    {
-        return $this->successfulCallsFor(Carbon::now())->count();
-    }
-
-    /**
      * Returns a count of the unsuccessful calls on a given day.
      *
      * @return int
      */
     public function countUnSuccessfulCallsFor(Carbon $date)
     {
-        return $this->unSuccessfulCallsFor($date)->count();
+        return $this->unsuccessfulCallsFor($date)->count();
     }
 
     /**
@@ -119,49 +108,18 @@ trait MakesOrReceivesCalls
     }
 
     /**
-     * Returns today's scheduled calls.
-     * Scheduled Call: A call that was scheduled for today and either was placed today, or not placed yet.
+     * This method does not collect calls marked as tyoe => task - i.e a callback.
      *
-     * @return Collection
-     */
-    public function scheduledCallsForToday()
-    {
-        return $this->scheduledCallsFor(Carbon::now())
-            ->get();
-    }
-
-    /**
      * @return mixed
      */
     public function successfulCallsFor(Carbon $date)
     {
-        return $this->calls()
-            ->where([
-                ['called_date', '>=', $date->copy()->startOfDay()->toDateTimeString()],
-                ['called_date', '<=', $date->copy()->endOfDay()->toDateTimeString()],
-                ['calls.status', '=', 'reached'],
-            ]);
-    }
-
-    /**
-     * Returns today's successful calls.
-     * Successful Call: A call that was placed today and was successful. It does not matter if the call was scheduled
-     * for tomorrow.
-     *
-     * @return Collection
-     */
-    public function successfulCallsMadeToday()
-    {
-        return $this->successfulCallsFor(Carbon::now())->get();
+        return $this->callsWithCallbacks($date)->where('status', 'reached');
     }
 
     public function unsuccessfulCallsFor(Carbon $date)
     {
-        return $this->calls()
-            ->where([
-                ['called_date', '>=', $date->copy()->startOfDay()->toDateTimeString()],
-                ['called_date', '<=', $date->copy()->endOfDay()->toDateTimeString()],
-                ['calls.status', '=', 'not reached'],
-            ]);
+        return $this->callsWithCallbacks($date)
+            ->where('calls.status', '=', 'not reached');
     }
 }
