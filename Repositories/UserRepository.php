@@ -82,14 +82,19 @@ class UserRepository
             ]);
 
             if ($validator->fails()) {
-                //also check for duplicates, in case the validation failed due to the same email
-                self::validatePatientDoesNotAlreadyExist(
-                    $params->get('program_id'),
-                    $params->get('first_name'),
-                    $params->get('last_name'),
-                    $params->get('birth_date'),
-                    $params->get('mrn_number')
-                );
+                if ($params->get('program_id') &&
+                    $params->get('first_name') &&
+                    $params->get('last_name') &&
+                    $params->get('birth_date')) {
+                    //also check for duplicates, in case the validation failed due to the same email
+                    self::validatePatientDoesNotAlreadyExist(
+                        $params->get('program_id'),
+                        $params->get('first_name'),
+                        $params->get('last_name'),
+                        $params->get('birth_date'),
+                        $params->get('mrn_number')
+                    );
+                }
 
                 throw new ValidationException($validator);
             }
