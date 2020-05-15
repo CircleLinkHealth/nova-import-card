@@ -11,7 +11,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Entities\EnrolleesSurveyNovaDashboard;
+use CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -121,7 +121,7 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
         }
 
         //Currently not accomodating for cases where enrollee does not exist.
-        $enrollee = Enrollee::with('enrollmentInvitationLink')
+        $enrollee = Enrollee::with(['user', 'enrollmentInvitationLink'])
             ->whereId($row['eligible_patient_id'])
             ->where('practice_id', $this->practiceId)
             ->where('mrn', $row['mrn'])
@@ -142,12 +142,12 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
             return;
         }
 
-        EnrolleesSurveyNovaDashboard::updateOrCreate(
+        SelfEnrollmentStatus::updateOrCreate(
             [
                 'enrollee_id' => $enrollee->id,
             ],
             [
-                'user_id_from_enrollee' => $enrollee->user_id,
+                'enrollee_user_id' => optional($enrollee->user)->id,
             ]
         );
 
