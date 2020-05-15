@@ -8,12 +8,9 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
-use CircleLinkHealth\Eligibility\CcdaImporter\Traits\TaskAcceptsEnrollee;
 
 class AttachDefaultPatientContactWindows extends BaseCcdaImportTask
 {
-    use TaskAcceptsEnrollee;
-    
     protected function import()
     {
         $this->patient->load('patientInfo');
@@ -22,6 +19,10 @@ class AttachDefaultPatientContactWindows extends BaseCcdaImportTask
             $this->patient->timezone = optional($this->ccda->location)->timezone ?? 'America/New_York';
         }
 
+        if ($this->patient->patientInfo->contactWindows()->exists()) {
+            return;
+        }
+        
         $preferredCallDays  = $this->getEnrolleePreferredCallDays();
         $preferredCallTimes = $this->getEnrolleePreferredCallTimes();
 
