@@ -272,7 +272,7 @@
                             </li>
 
                             <li class="dropdown">
-                                <a href="{{ url('/superadmin') }}" target="_blank"
+                                <a href="{{ url('/superadmin') }}"
                                    style=""><i class="glyphicon glyphicon-fire"></i> SuperAdmin</a>
                             </li>
                             <li class="dropdown">

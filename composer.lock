@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1e6b6c16b751aa31742f791c3e257155",
+    "content-hash": "5006a64be12f9518c6c5450f28d044d6",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1057,11 +1057,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.8.2",
+            "version": "v1.8.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "097ac1894d497ba0c83bb75522d5035ac557ebfb"
+                "reference": "8a770d1e9f6f7524e4907d5c67815c14f6aeebfd"
             },
             "type": "laravel-module",
             "extra": {
@@ -1083,7 +1083,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-15T15:22:56+00:00"
+            "time": "2020-05-15T16:51:25+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1129,11 +1129,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.5.7",
+            "version": "v2.5.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "ddc1cb8beac7f347619c15f74658f2a30a01ff58"
+                "reference": "ee0d87236c7a52e5b83aa232223a20d751290855"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1158,7 +1158,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-15T13:13:44+00:00"
+            "time": "2020-05-15T16:13:24+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
