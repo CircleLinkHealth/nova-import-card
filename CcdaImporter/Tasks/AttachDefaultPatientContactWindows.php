@@ -22,7 +22,7 @@ class AttachDefaultPatientContactWindows extends BaseCcdaImportTask
         if ($this->patient->patientInfo->contactWindows()->exists()) {
             return;
         }
-        
+
         $preferredCallDays  = $this->getEnrolleePreferredCallDays();
         $preferredCallTimes = $this->getEnrolleePreferredCallTimes();
 

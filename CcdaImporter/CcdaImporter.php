@@ -172,7 +172,7 @@ class CcdaImporter
 
         if ($this->enrollee) {
             $this->ccda = ImportService::replaceCpmValues($this->ccda, $this->enrollee);
-    
+
             if ($this->enrollee->medical_record_id != $this->ccda->id) {
                 $this->enrollee->medical_record_id = $this->ccda->id;
                 $this->enrollee->save();

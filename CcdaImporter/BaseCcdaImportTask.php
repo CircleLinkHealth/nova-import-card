@@ -19,15 +19,15 @@ abstract class BaseCcdaImportTask implements CcdaImportTask
      * @var Ccda
      */
     protected $ccda;
+    /**
+     * @var Enrollee
+     */
+    protected $enrollee;
 
     /**
      * @var User
      */
     protected $patient;
-    /**
-     * @var Enrollee
-     */
-    protected $enrollee;
     /**
      * @var CcdToLogTranformer
      */
