@@ -157,13 +157,7 @@ class CcdaImporter
         )->first();
 
         if ($enrollee) {
-            if (strtolower($this->patient->first_name) != strtolower($enrollee->first_name) || strtolower(
-                $this->patient->last_name
-            ) != strtolower(
-                $enrollee->last_name
-            )) {
-                throw new \Exception("Something fishy is going on. enrollee:{$enrollee->id} has user:{$enrollee->user_id}, which does not matched with user:{$this->patient->id}");
-            }
+            $this->throwExceptionIfSuspicious($enrollee);
             $this->enrollee              = $enrollee;
             $enrollee->user_id           = $this->patient->id;
             $enrollee->medical_record_id = $this->ccda->id;
@@ -425,5 +419,23 @@ class CcdaImporter
         }
 
         return $this;
+    }
+    
+    private function throwExceptionIfSuspicious(Enrollee $enrollee)
+    {
+        if (strtolower($this->patient->last_name) != strtolower($enrollee->last_name)) {
+            throw new \Exception("Something fishy is going on. enrollee:{$enrollee->id} has user:{$enrollee->user_id}, which does not matched with user:{$this->patient->id}");
+        }
+    
+        if (strtolower($this->patient->first_name) == strtolower($enrollee->first_name)) {
+            return;
+        }
+    
+        //middle name
+        if (3 === levenshtein(strtolower($this->patient->first_name), strtolower($enrollee->first_name))) {
+            return;
+        }
+    
+        throw new \Exception("Something fishy is going on. enrollee:{$enrollee->id} has user:{$enrollee->user_id}, which does not matched with user:{$this->patient->id}");
     }
 }
