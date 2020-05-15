@@ -11,6 +11,7 @@ use App\Jobs\EnrollableSurveyCompleted;
 use App\Jobs\SelfEnrollmentEnrollees;
 use App\Listeners\AssignPatientToStandByNurse;
 use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
@@ -35,6 +36,8 @@ class CcdaImporterTest extends CustomerTestCase
 {
     public function test_auto_enrollment_flow()
     {
+        Notification::fake();
+
         $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)->createEnrollee($this->practice());
         SelfEnrollmentEnrollees::dispatch($enrollee, AutoEnrollmentCenterController::DEFAULT_BUTTON_COLOR, 1, $this->practice()->id);
         $this->assertTrue(empty($enrollee->user_id));
