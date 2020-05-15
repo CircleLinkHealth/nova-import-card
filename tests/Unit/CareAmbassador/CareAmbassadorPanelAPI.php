@@ -27,6 +27,8 @@ class CareAmbassadorPanelAPI extends TestCase
 
         //assert show route
 
+        //CA Directors
+
         $response = $this->get('/');
 
         $response->assertStatus(200);
