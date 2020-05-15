@@ -33,7 +33,7 @@ abstract class BaseCcdaImportTask implements CcdaImportTask
      */
     private $transformer;
 
-    private function __construct(User $patient, Ccda $ccda, Enrollee $enrollee = null)
+    public function __construct(User $patient, Ccda $ccda, Enrollee $enrollee = null)
     {
         $this->patient  = $patient;
         $this->ccda     = $ccda;
