@@ -17,7 +17,6 @@ use Illuminate\Support\Str;
 class ImportPatientInfo extends BaseCcdaImportTask
 {
     use FiresImportingHooks;
-    use TaskAcceptsEnrollee;
     
     const HOOK_IMPORTED_PATIENT_INFO = 'IMPORTED_PATIENTINFO';
 

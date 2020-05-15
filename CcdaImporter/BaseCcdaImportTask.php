@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Contracts\CcdaImportTask;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\CcdToLogTranformer;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
@@ -24,14 +25,19 @@ abstract class BaseCcdaImportTask implements CcdaImportTask
      */
     protected $patient;
     /**
+     * @var Enrollee
+     */
+    protected $enrollee;
+    /**
      * @var CcdToLogTranformer
      */
     private $transformer;
 
-    public function __construct(User $patient, Ccda $ccda)
+    private function __construct(User $patient, Ccda $ccda, Enrollee $enrollee = null)
     {
-        $this->patient = $patient;
-        $this->ccda    = $ccda;
+        $this->patient  = $patient;
+        $this->ccda     = $ccda;
+        $this->enrollee = $enrollee;
     }
 
     public function chooseValidator($item)
@@ -47,9 +53,9 @@ abstract class BaseCcdaImportTask implements CcdaImportTask
         return false;
     }
 
-    public static function for(User $patient, Ccda $ccda)
+    public static function for(User $patient, Ccda $ccda, Enrollee $enrollee = null)
     {
-        return (app(get_called_class(), ['patient' => $patient, 'ccda' => $ccda]))->import();
+        return (new static($patient, $ccda, $enrollee))->import();
     }
 
     public function getTransformer()
