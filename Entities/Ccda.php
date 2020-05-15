@@ -433,13 +433,23 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
      */
     public function import(Enrollee $enrollee = null)
     {
-        $this
+        $ccda = $this;
+
+        $ccda
             ->fillInSupplementaryData()
             ->guessPracticeLocationProvider();
 
-        $ccda = $this->updateOrCreateCarePlan($enrollee);
+        if ( ! $ccda->json) {
+            $this->bluebuttonJson();
+        }
 
-        $ccda->raiseConcernsOrAutoQAApprove();
+        
+        if ( ! $this->patient_mrn) {
+            //fetch a fresh instance from the DB to have virtual fields
+            $ccda = $ccda->fresh();
+        }
+
+        $ccda = (new CcdaImporter($ccda, $ccda->load('patient')->patient ?? null, $enrollee))->attemptImport()->raiseConcernsOrAutoQAApprove();
 
         if ($ccda->isDirty()) {
             $ccda->save();
@@ -612,15 +622,6 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     public function targetPatient()
     {
         return $this->hasOne(TargetPatient::class);
-    }
-
-    public function updateOrCreateCarePlan(Enrollee $enrollee = null): Ccda
-    {
-        if ( ! $this->json) {
-            $this->bluebuttonJson();
-        }
-
-        return (new CcdaImporter($this, $this->load('patient')->patient ?? null, $enrollee))->attemptImport();
     }
 
     protected function parseToJson()
