@@ -35,7 +35,7 @@ trait TimeHelpers
             $fakeNote->author_id    = $nurse->id;
             $fakeNote->patient_id   = $patient->id;
             $fakeNote->status       = Note::STATUS_COMPLETE;
-            $fakeNote->performed_at = $startTime;
+            $fakeNote->performed_at = $startTime ?? now();
             $fakeNote->save();
 
             /** @var Call $fakeCall */
@@ -44,7 +44,7 @@ trait TimeHelpers
             $fakeCall->status          = Call::REACHED;
             $fakeCall->inbound_cpm_id  = $patient->id;
             $fakeCall->outbound_cpm_id = $nurse->id;
-            $fakeCall->called_date     = $startTime;
+            $fakeCall->called_date     = $startTime ?? now();
             $fakeCall->save();
         }
 
