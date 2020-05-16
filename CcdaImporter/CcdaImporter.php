@@ -100,9 +100,9 @@ class CcdaImporter
     private function createNewPatient()
     {
         $newUserId = (string) Str::uuid();
-        
+
         $email = null;
-        
+
         if (optional($this->enrollee)->email) {
             $email = CreateUsersFromEnrollees::sanitizeEmail($this->enrollee);
         }
@@ -110,7 +110,7 @@ class CcdaImporter
         if (empty($email)) {
             $email = $this->patientEmail();
         }
-        
+
         if (empty($email)) {
             $email = $newUserId.'@careplanmanager.com';
         }
