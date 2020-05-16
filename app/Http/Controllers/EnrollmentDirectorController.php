@@ -77,7 +77,7 @@ class EnrollmentDirectorController extends Controller
         $unassignedEnrolleesExist = ! empty($notAssigned);
         if ($unassignedEnrolleesExist) {
             $ids     = implode(',', $notAssigned);
-            $message = "The following patients have not been assigned to Care Ambassador ({$careAmbassadorUser->display_name}) because they do not speak spanish: (IDs) {$ids}";
+            $message = "The following patients have not been assigned to Care Ambassador ({$careAmbassadorUser->display_name}) because CA does not speak spanish: (IDs) {$ids}";
         }
 
         return response()->json([
