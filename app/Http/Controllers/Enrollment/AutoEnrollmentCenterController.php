@@ -273,7 +273,7 @@ class AutoEnrollmentCenterController extends Controller
             $provider,
             $hideButtons
         );
-        $practiceName           = $enrollablePrimaryPractice->name;
+        $practiceName           = $enrollablePrimaryPractice->display_name;
         $practiceLogoSrc        = $practiceLetter->practice_logo_src ?? self::ENROLLMENT_LETTER_DEFAULT_LOGO;
         $signatoryNameForHeader = $provider->display_name;
         $dateLetterSent         = '???';

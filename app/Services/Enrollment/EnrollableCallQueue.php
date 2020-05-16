@@ -219,7 +219,7 @@ class EnrollableCallQueue
             }
 
             if (
-                $enrollee->speaksSpanish() && $this->careAmbassadorInfo->speaks_spanish && ! in_array($function, ['getFromCache',
+                $enrollee->speaksSpanish() && ! $this->careAmbassadorInfo->speaks_spanish && ! in_array($function, ['getFromCache',
                     'getPendingConfirmedFamilyMembers', ])
             ) {
                 //return to CA Director page to be assigned again
