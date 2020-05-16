@@ -184,7 +184,7 @@ class EnrollmentCenterController extends ApiController
             $enrollable->status = Enrollee::INELIGIBLE;
             $enrollable->save();
 
-            return $this->show($enrollableId);
+            return $this->show($request);
         }
 
         return Enrollable::make($enrollable);
