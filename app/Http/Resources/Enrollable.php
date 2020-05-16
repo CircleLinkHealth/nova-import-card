@@ -42,6 +42,11 @@ class Enrollable extends Resource
 
         $script = TrixField::careAmbassador($enrollable->lang, $enrollableIsUnreachableUser)->first();
 
+        if ( ! $script) {
+            //default to english, just so we can avoid cases where something went wrong with enrollee->language
+            $script = TrixField::careAmbassador(TrixField::ENGLISH_LANGUAGE, $enrollableIsUnreachableUser)->first();
+        }
+
         $familyAttributes = $this->getFamilyAttributes($enrollable);
 
         $phoneAttributes = $this->getPhoneAttributes($enrollable);
