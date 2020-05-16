@@ -10,7 +10,6 @@ use App\Helpers\PlaceholderEmailsVerifier;
 use App\Survey;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Support\Str;
 
 class EnrolleesSurveyService
 {
@@ -50,8 +49,21 @@ class EnrolleesSurveyService
         return SurveyService::getCurrentSurveyData($patientId, Survey::ENROLLEES);
     }
 
+    /**
+     * @return string[]
+     */
     private function placeholderVerifier(string $email)
     {
-        return PlaceholderEmailsVerifier::isClhGeneratedEmail($email) ? '' : $email;
+        if (PlaceholderEmailsVerifier::isClhGeneratedEmail($email)) {
+            return [
+                'viewEmail'    => '',
+                'email' => $email,
+            ];
+        }
+
+        return [
+            'viewEmail'    => $email,
+            'email' => '',
+        ];
     }
 }

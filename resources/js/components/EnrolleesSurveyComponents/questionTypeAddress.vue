@@ -77,8 +77,13 @@
                         answer.push(values);
                     });
                 } else {
+                    let value = '';
+                    if(this.singleInputHasText === ''
+                        && this.enrollmentSurveyPatients.patientEmail.email !== ''){
+                          value = this.enrollmentSurveyPatients.patientEmail.email;
+                    }
                     answer = {
-                        value: this.singleInputHasText
+                        value: value
                     }
                 }
                 this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer, this.isLastQuestion);
@@ -112,7 +117,7 @@
 
         created() {
             if (this.question.identifier === 'Q_CONFIRM_EMAIL') {
-                this.singleInputHasText = this.enrollmentSurveyPatients.patientEmail;
+                this.singleInputHasText = this.enrollmentSurveyPatients.patientEmail.viewEmail;
             }
 
             if (this.question.identifier === 'Q_CONFIRM_ADDRESS') {

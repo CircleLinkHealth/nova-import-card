@@ -520,7 +520,7 @@
                     city: this.surveyData.city,
                     zip: this.surveyData.zip,
                     state: this.surveyData.state,
-                    patientEmail: '',
+                    patientEmail: [],
                     preferredContactNumber: [],
                     isSurveyOnlyRole: false,
                     letterLink: '',
@@ -1427,13 +1427,14 @@
                     .then((response) => {
                         const data = response.data.data;
                         const dob = data.dob;
+                        const email = data.patientEmail;
                         const preferredContactNumber = data.preferredContactNumber;
                         const isSurveyOnlyRole = data.isSurveyOnlyRole;
                         this.enrollmentSurveyPatients.dob.push(dob);
                         this.enrollmentSurveyPatients.preferredContactNumber.push(preferredContactNumber);
                         this.enrollmentSurveyPatients.isSurveyOnlyRole = isSurveyOnlyRole;
                         this.enrollmentSurveyPatients.letterLink = data.letterLink;
-                        this.enrollmentSurveyPatients.patientEmail = data.patientEmail;
+                        this.enrollmentSurveyPatients.patientEmail = email;
 
 
                     })
