@@ -58,13 +58,13 @@ class CcdaImporterTest extends CustomerTestCase
     public function test_careplan_status_does_not_change_with_reimport()
     {
         $this->enableQaAutoApprover();
-        $enrollee = $this->enrollee();
-        $ccdaArgs = ['practice_id' => $enrollee->practice_id, 'billing_provider_id' => $this->provider()->id];
+        $enrollee  = $this->enrollee();
+        $ccdaArgs  = ['practice_id' => $enrollee->practice_id, 'billing_provider_id' => $this->provider()->id];
         $ccda1     = FakeCalvaryCcda::create($ccdaArgs);
         $imported1 = $ccda1->import($enrollee);
 
         $cp = CarePlan::where('user_id', $imported1->patient_id)->firstOrFail();
-        
+
         $this->assertTrue(CarePlan::QA_APPROVED === $cp->status);
 
         $cp->status               = CarePlan::PROVIDER_APPROVED;
@@ -74,9 +74,9 @@ class CcdaImporterTest extends CustomerTestCase
 
         $ccda2     = FakeCalvaryCcda::create($ccdaArgs);
         $imported2 = $ccda2->import($enrollee);
-    
+
         $cp = CarePlan::where('user_id', $imported1->patient_id)->firstOrFail();
-    
+
         $this->assertTrue(CarePlan::PROVIDER_APPROVED === $cp->status);
     }
 
@@ -324,19 +324,19 @@ class CcdaImporterTest extends CustomerTestCase
         $this->assertFalse($patient->hasRole('survey-only'));
         $this->assertTrue($patient->hasRole('participant'));
     }
-    
+
+    private function enableQaAutoApprover()
+    {
+        AppConfig::create([
+            'config_key'   => CarePlanAutoApprover::CARE_PLAN_AUTO_APPROVER_USER_ID_NOVA_KEY,
+            'config_value' => $this->superadmin()->id,
+        ]);
+    }
+
     private function enableStandByNurse()
     {
         AppConfig::create([
             'config_key'   => StandByNurseUser::STAND_BY_NURSE_USER_ID_NOVA_KEY,
-            'config_value' => $this->superadmin()->id,
-        ]);
-    }
-    
-    private function enableQaAutoApprover()
-    {
-        AppConfig::create([
-            'config_key'   =>CarePlanAutoApprover::CARE_PLAN_AUTO_APPROVER_USER_ID_NOVA_KEY,
             'config_value' => $this->superadmin()->id,
         ]);
     }
