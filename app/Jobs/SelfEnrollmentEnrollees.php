@@ -77,7 +77,7 @@ class SelfEnrollmentEnrollees implements ShouldQueue
     {
 //        @todo: Move to its own class
         if ( ! is_null($this->enrollee)) {
-            return $this->createSurveyOnlyUsers([$this->enrollee->id]);
+//            return $this->createSurveyOnlyUsers([$this->enrollee->id]);
         }
 
         $this->getEnrollees($this->practiceId)
@@ -93,30 +93,30 @@ class SelfEnrollmentEnrollees implements ShouldQueue
                         return $item->id;
                     })
                     ->toArray();
-                $this->createSurveyOnlyUsers($arr);
+//                $this->createSurveyOnlyUsers($arr);
             });
     }
 
-    private function createSurveyOnlyUsers(array $enrolleeIds)
-    {
-        $surveyRole = $this->surveyRole();
-        CreateUsersFromEnrollees::dispatch($enrolleeIds, $surveyRole->id, $this->color);
-    }
-
-    private function surveyRole(): Role
-    {
-        if ( ! $this->surveyRole) {
-            $this->surveyRole = Role::firstOrCreate(
-                [
-                    'name' => 'survey-only',
-                ],
-                [
-                    'display_name' => 'Survey User',
-                    'description'  => 'Became Users just to be enrolled in AWV survey',
-                ]
-            );
-        }
-
-        return $this->surveyRole;
-    }
+//    private function createSurveyOnlyUsers(array $enrolleeIds)
+//    {
+//        $surveyRole = $this->surveyRole();
+//        CreateUsersFromEnrollees::dispatch($enrolleeIds, $surveyRole->id, $this->color);
+//    }
+//
+//    private function surveyRole(): Role
+//    {
+//        if ( ! $this->surveyRole) {
+//            $this->surveyRole = Role::firstOrCreate(
+//                [
+//                    'name' => 'survey-only',
+//                ],
+//                [
+//                    'display_name' => 'Survey User',
+//                    'description'  => 'Became Users just to be enrolled in AWV survey',
+//                ]
+//            );
+//        }
+//
+//        return $this->surveyRole;
+//    }
 }

@@ -10,6 +10,7 @@ use App\Events\AutoEnrollableCollected;
 use App\Traits\EnrollableManagement;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
+use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -32,27 +33,20 @@ class CreateUsersFromEnrollees implements ShouldQueue
     use SerializesModels;
 
     /**
-     * @var null
-     */
-    private $color;
-
-    /**
      * @var Enrollee
      */
     private $enrolleeIds;
-    private $surveyRoleId;
+    /**
+     * @var \Illuminate\Database\Eloquent\Model|Role
+     */
+    private $surveyRole;
 
     /**
-     * Create a new job instance.
-     *
-     * @param $surveyRoleId
-     * @param null $color
+     * CreateUsersFromEnrollees constructor.
      */
-    public function __construct(array $enrolleeIds, $surveyRoleId, $color = null)
+    public function __construct(array $enrolleeIds)
     {
-        $this->enrolleeIds  = $enrolleeIds;
-        $this->surveyRoleId = $surveyRoleId;
-        $this->color        = $color;
+        $this->enrolleeIds = $enrolleeIds;
     }
 
     /**
@@ -62,7 +56,8 @@ class CreateUsersFromEnrollees implements ShouldQueue
      */
     public function handle()
     {
-        $count = 0;
+        $count            = 0;
+        $this->surveyRole = $this->surveyRole();
         Enrollee::whereIn('id', $this->enrolleeIds)
             ->chunk(100, function ($entries) use (&$count) {
                 $newUserIds = collect();
@@ -113,7 +108,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
                                 'username'          => $email,
                                 'program_id'        => $enrollee->practice_id,
                                 'is_auto_generated' => true,
-                                'roles'             => [$this->surveyRoleId],
+                                'roles'             => [$this->surveyRole->id],
                                 'is_awv'            => $isAwv,
                                 'address'           => $enrollee->address,
                                 'address2'          => $enrollee->address_2,
@@ -154,7 +149,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
                 });
                 $count += $newUserIds->count();
 //                SHOULD NOT BE IN THIS CLASS. BETTER TO MOVE
-                event(new AutoEnrollableCollected($newUserIds->toArray(), false, $this->color));
+//                event(new AutoEnrollableCollected($newUserIds->toArray(), false, $this->color));
             });
 
         $target = sizeof($this->enrolleeIds);
@@ -213,5 +208,20 @@ class CreateUsersFromEnrollees implements ShouldQueue
                 'is_primary' => false,
             ]);
         }
+    }
+
+    private function surveyRole(): Role
+    {
+        $this->surveyRole = Role::firstOrCreate(
+            [
+                'name' => 'survey-only',
+            ],
+            [
+                'display_name' => 'Survey User',
+                'description'  => 'Became Users just to be enrolled in AWV survey',
+            ]
+        );
+
+        return $this->surveyRole;
     }
 }
