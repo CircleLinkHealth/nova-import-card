@@ -41,11 +41,18 @@
                 <div class="error-message">
                     <span>{{this.error}}</span>
                 </div>
+                <div v-if="error_retrieve_next" class="container center-align">
+                    <a v-on:click="closeAndRetrievePatient()"
+                       class="waves-effect waves-light btn"
+                       style="background: green"><i
+                            class="material-icons left">call</i>Get Next Patient</a>
+                </div>
             </div>
         </div>
         <div v-if="!loading">
             <div v-if="patientExists">
-                <patient-to-enroll :patient-data="patientData" :time-tracker="$refs.timeTracker" :debug="debug"></patient-to-enroll>
+                <patient-to-enroll :patient-data="patientData" :time-tracker="$refs.timeTracker"
+                                   :debug="debug"></patient-to-enroll>
             </div>
             <div v-else>
                 <div v-show="onCall">
@@ -69,7 +76,8 @@
                                     <p>In the meantime, enjoy this cookie.</p>
                                     <br>
                                     <p v-if="pendingPatientsExist">
-                                        You have {{patients_pending}} pending patient(s). Next call attempt will be at {{next_attempt_at}}.
+                                        You have {{patients_pending}} pending patient(s). Next call attempt will be at
+                                        {{next_attempt_at}}.
                                     </p>
                                 </div>
                             </div>
@@ -117,10 +125,10 @@
             patientExists: function () {
                 return this.patientData && this.patientData.enrollable_id;
             },
-            shouldShowCookie: function(){
-                return ! this.patientExists && !this.error
+            shouldShowCookie: function () {
+                return !this.patientExists && !this.error
             },
-            pendingPatientsExist: function(){
+            pendingPatientsExist: function () {
                 return this.patients_pending > 0;
             }
         },
@@ -143,7 +151,9 @@
                 loading_modal: null,
                 error_modal: null,
                 patients_pending: 0,
-                next_attempt_at: null
+                next_attempt_at: null,
+                error_retrieve_next: false,
+                error_enrollee_id: null,
             };
         },
         mounted: function () {
@@ -194,9 +204,18 @@
                 this.updateCallStatus()
             })
 
-            App.$on('enrollable:load-from-search-bar', () =>{
+            App.$on('enrollable:load-from-search-bar', () => {
                 this.retrievePatient();
                 this.loading_modal.open();
+            })
+
+            App.$on('enrollable:error', (enrollableId) => {
+                this.patientData = null;
+                this.error_retrieve_next = true;
+                this.error_enrollee_id = enrollableId;
+
+                this.error = 'Something went wrong while saving patient details. We are investigating the issue. Please click on button to get next Patient.';
+                this.error_modal.open()
             })
         },
         methods: {
@@ -214,25 +233,41 @@
                 this.setTimeTrackerInfo(info);
                 TimeTrackerEventBus.$emit('tracker:activity', info);
             },
+            closeAndRetrievePatient() {
+                this.error_modal.close()
+                this.retrievePatient()
+                this.loading_modal.open();
+                this.updateCallStatus()
+                this.error_retrieve_next = false;
+                this.error_enrollee_id = null;
+            },
             retrievePatient() {
                 this.loading = true;
                 let url = rootUrl('/enrollment/show');
 
                 let href = window.location.href
                 let tags = href.split('#')
-                if (tags[1] && tags[1] !== '!'){
+                if (tags[1] && tags[1] !== '!') {
                     url = url + '/' + tags[1]
+                }
+                let errorData = null;
+                if (this.error_retrieve_next) {
+                    errorData = {
+                        params: {
+                            error_enrollable_id: this.error_enrollee_id
+                        }
+                    }
                 }
 
                 return this.axios
-                    .get(url)
+                    .get(url, errorData)
                     .then(response => new Promise(resolve => setTimeout(() => {
                         this.loading = false
                         this.loading_modal.close()
 
                         let patientData = response.data.data;
 
-                        if (response.data.patients_pending !== undefined){
+                        if (response.data.patients_pending !== undefined) {
                             this.patients_pending = response.data.patients_pending
                             this.next_attempt_at = response.data.next_attempt_at
                             return;
@@ -248,16 +283,16 @@
                         this.notifyTimeTracker();
 
                         App.$emit('enrollable:loaded', {
-                            has_tips : this.patientData.has_tips
+                            has_tips: this.patientData.has_tips
                         })
                     }, 2000)))
                     .catch(err => {
                         //to implement
                         this.loading = false;
                         this.loading_modal.close()
-                        if (err.response.status == 404){
+                        if (err.response.status == 404) {
                             this.error = err.response.data.message;
-                        }else{
+                        } else {
                             this.error = 'Something went wrong while retrieving patient. Please contact CLH support.';
                         }
 
@@ -306,7 +341,7 @@
                 this.callStatus = "Ended Call";
                 M.toast({html: this.callStatus, displayLength: 3000});
                 //if anything goes wrong with twilio, prevent page from falsely showing  message: 'Calling...'
-                if (this.device){
+                if (this.device) {
                     this.device.disconnectAll();
                 }
             },
@@ -429,14 +464,16 @@
     .on-call-info ul li {
         text-align: center;
     }
+
     .error-image {
-        color:red;
-        margin-left:44%;
-        margin-top:15%;
+        color: red;
+        margin-left: 44%;
+        margin-top: 15%;
         font-size: 190px;
     }
+
     .modal-error-icon {
-        margin-top:10%;
+        margin-top: 10%;
         margin-left: 45%;
         color: red;
         font-size: 50px;

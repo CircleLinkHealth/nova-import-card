@@ -44,13 +44,46 @@ class EnrollmentDirectorController extends Controller
 
     public function assignCareAmbassadorToEnrollees(UpdateMultipleEnrollees $request)
     {
-        Enrollee::whereIn('id', $request->input('enrolleeIds'))
+        $careAmbassadorUser = User::with('careAmbassador')
+            ->has('careAmbassador')
+            ->findOrFail($request->input('ambassadorId'));
+
+        $enrolleeIds = $request->input('enrolleeIds');
+
+        $notAssigned = [];
+
+        if ( ! $careAmbassadorUser->careAmbassador->speaks_spanish) {
+            $spanishSpeakingEnrollees = Enrollee::whereIn('id', $enrolleeIds)
+                ->where('lang', 'like', '%es%')
+                ->orWhere('lang', 'like', '%sp')
+                ->pluck('id');
+
+            foreach ($spanishSpeakingEnrollees as $id) {
+                $key = array_search($id, $enrolleeIds);
+                if (false !== $key) {
+                    $notAssigned[] = $id;
+                    unset($enrolleeIds[$key]);
+                }
+            }
+        }
+
+        Enrollee::whereIn('id', $enrolleeIds)
             ->update([
                 'status'                  => Enrollee::TO_CALL,
                 'care_ambassador_user_id' => $request->input('ambassadorId'),
             ]);
 
-        return response()->json([], 200);
+        $message                  = null;
+        $unassignedEnrolleesExist = ! empty($notAssigned);
+        if ($unassignedEnrolleesExist) {
+            $ids     = implode(',', $notAssigned);
+            $message = "The following patients have not been assigned to Care Ambassador ({$careAmbassadorUser->display_name}) because CA does not speak spanish: (IDs) {$ids}";
+        }
+
+        return response()->json([
+            'enrollees_unassigned' => ! empty($notAssigned),
+            'message'              => $message,
+        ], 200);
     }
 
     public function editEnrolleeData(EditEnrolleeData $request)
