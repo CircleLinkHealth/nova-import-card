@@ -6,12 +6,19 @@
 
 namespace App\Services;
 
+use App\Helpers\PlaceholderEmailsVerifier;
 use App\Survey;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Support\Str;
 
 class EnrolleesSurveyService
 {
+    /**
+     * Fake email generated for enrollees without email.
+     */
+    const CLH_GENERATED_EMAIL_DOMAIN = '@careplanmanager.com';
+
     /**
      * @return array
      */
@@ -36,7 +43,7 @@ class EnrolleesSurveyService
         return [
             'dob'                    => $birthDate,
             'address'                => $user->address,
-            'patientEmail'           => $user->email,
+            'patientEmail'           => $this->validateEmail($user->email),
             'preferredContactNumber' => ! empty($primaryPhoneNumber) ? $primaryPhoneNumber : [],
             'isSurveyOnlyRole'       => $isSurveyOnly,
             'letterLink'             => $letterLink,
@@ -46,5 +53,10 @@ class EnrolleesSurveyService
     public function getSurveyData($patientId)
     {
         return SurveyService::getCurrentSurveyData($patientId, Survey::ENROLLEES);
+    }
+
+    private function validateEmail(string $email)
+    {
+        return PlaceholderEmailsVerifier::isClhGeneratedEmail($email) ? '' : $email;
     }
 }
