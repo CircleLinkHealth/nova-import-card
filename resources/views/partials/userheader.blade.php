@@ -55,6 +55,10 @@
                     <span class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span>
                 </a>
 
+                <span style="font-size: 15px;">
+                    (Patient ID: {{$patient->id}})
+                </span>
+
                 @if ($patient->shouldShowCcmPlusBadge())
                     <h4 style="display: inline">
                         <span class="label label-success with-tooltip"

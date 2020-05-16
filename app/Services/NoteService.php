@@ -8,7 +8,6 @@ namespace App\Services;
 
 use App\Call;
 use App\CareplanAssessment;
-use App\CLH\Repositories\UserRepository;
 use App\Filters\NoteFilters;
 use App\Note;
 use App\Notifications\SendPatientEmail;
@@ -20,6 +19,7 @@ use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\UserRepository;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
@@ -121,10 +121,13 @@ class NoteService
         $note->isTCM     = isset($requestInput['tcm'])
             ? 'true' === $requestInput['tcm']
             : 0;
-        $note->type                 = $requestInput['type'];
-        $note->summary              = $requestInput['summary'] ?? null;
-        $note->body                 = $requestInput['body'];
-        $note->performed_at         = $requestInput['performed_at'];
+        $note->type    = $requestInput['type'];
+        $note->summary = $requestInput['summary'] ?? null;
+        $note->body    = $requestInput['body'];
+
+        // this is no longer available in create note page
+        $note->performed_at = Carbon::now(); //$requestInput['performed_at'];
+
         $note->did_medication_recon = isset($requestInput['medication_recon'])
             ? 'true' === $requestInput['medication_recon']
             : 0;

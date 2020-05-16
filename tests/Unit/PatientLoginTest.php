@@ -49,12 +49,18 @@ class PatientLoginTest extends CustomerTestCase
 
     public function test_notification_is_sent_after_cp_provider_approval()
     {
+        Notification::fake();
+
+        //CarePlan Observer will attempt to send the same notification for QA approval.
         $this->patient->carePlan->status = CarePlan::QA_APPROVED;
         $this->patient->carePlan->save();
 
+        //However, we need to make assertions for the same notification sent for Provider Approval (different content)
+        //if we do not reset the fake Notification bound instance here, the assertion will be made for the QA approval and it will fail
+        //So: re-set Notification Fake
         Notification::fake();
 
-        //Provider approves patient Care pLAN
+        //Provider approves patient Care Plan
         $this->providerApprovesCarePlan();
 
         Notification::assertSentTo(

@@ -14,6 +14,7 @@ use CircleLinkHealth\Customer\Entities\User;
 trait CustomerTestCaseHelper
 {
     use UserHelpers;
+
     /**
      * @var array|User
      */

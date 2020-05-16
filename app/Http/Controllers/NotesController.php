@@ -180,6 +180,35 @@ class NotesController extends Controller
 
         $performedAt = optional($existingNote)->performed_at ?? Carbon::now();
 
+        $hasSuccessfulCall = ! empty($patient->patientInfo->last_successful_contact_time);
+
+        $surveyAnswer = [];
+
+        if ( ! $hasSuccessfulCall) {
+            $thisYear       = Carbon::now()->year;
+            $surveyInstance = DB::table('survey_instances')
+                ->join('surveys', 'survey_instances.survey_id', '=', 'surveys.id')
+                ->where('name', '=', 'Enrollees')
+                ->where('year', '=', $thisYear)
+                ->first();
+
+//            NOTE: $patientId is $user->id.
+            if ($surveyInstance) {
+                $surveyAnswer = DB::table('questions')
+                    ->join('answers', 'questions.id', '=', 'answers.question_id')
+                    ->where('user_id', '=', $patientId)
+                    ->where('identifier', '=', 'Q_REQUESTS_INFO')
+                    ->where('survey_instance_id', '=', $surveyInstance->id)
+                    ->first();
+            } else {
+                $surveyAnswer = [];
+            }
+        }
+
+        $answerFromMoreInfo = ! empty($surveyAnswer)
+            ? json_decode($surveyAnswer->value)[0]->name
+            : '';
+
         $view_data = [
             'userTime'                => $performedAt->setTimezone($patient->timezone)->format('Y-m-d\TH:i'),
             'program_id'              => $patient->program_id,
@@ -203,6 +232,8 @@ class NotesController extends Controller
             'note'                    => $existingNote,
             'call'                    => $existingCall,
             'cpmProblems'             => (new CpmProblemService())->all(),
+            'patientRequestToKnow'    => $answerFromMoreInfo,
+            'hasSuccessfulCall'       => $hasSuccessfulCall,
             'attestationRequirements' => $this->getAttestationRequirementsIfYouShould($patient),
         ];
 

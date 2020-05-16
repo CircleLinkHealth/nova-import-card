@@ -25,6 +25,8 @@ class ProtectPHITest extends TestCase
     protected $nurse;
     protected $patient;
 
+    protected $patientPhi;
+
     protected $practice;
     protected $provider;
 

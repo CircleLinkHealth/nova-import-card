@@ -7,7 +7,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 /**
  * App\TrixField.
@@ -36,7 +35,8 @@ class TrixField extends Model
     /**
      * The Type to get scripts for the Care Ambassadors Page.
      */
-    const CARE_AMBASSADOR_SCRIPT = 'care_ambassador_script';
+    const CARE_AMBASSADOR_SCRIPT                  = 'care_ambassador_script';
+    const CARE_AMBASSADOR_UNREACHABLE_USER_SCRIPT = 'care_ambassador_unreachable_user_script';
 
     const ENGLISH_LANGUAGE = 'en';
     const SPANISH_LANGUAGE = 'es';
@@ -52,33 +52,22 @@ class TrixField extends Model
      *
      * @param $builder
      * @param $language
+     * @param mixed $enrollableIsUnreachableUser
      */
-    public function scopeCareAmbassador($builder, $language)
+    public function scopeCareAmbassador($builder, $language, $enrollableIsUnreachableUser = false)
     {
         $scriptLanguage = '';
 
-        if (in_array(strtolower($language), [
-            'en',
-            'eng',
-            'english',
-        ]) ||
-            Str::startsWith(strtolower($language), 'en')
-        ) {
+        if (stringMeansEnglish($language)) {
             $scriptLanguage = self::ENGLISH_LANGUAGE;
         }
 
-        if (in_array(strtolower($language), [
-            'sp',
-            'es',
-            'spanish',
-            'spa',
-        ]) ||
-            Str::startsWith(strtolower($language), ['es', 'sp'])
-        ) {
+        if (stringMeansSpanish($language)) {
             $scriptLanguage = self::SPANISH_LANGUAGE;
         }
+        $type = $enrollableIsUnreachableUser ? self::CARE_AMBASSADOR_UNREACHABLE_USER_SCRIPT : self::CARE_AMBASSADOR_SCRIPT;
 
-        $builder->where('type', TrixField::CARE_AMBASSADOR_SCRIPT)
+        $builder->where('type', $type)
             ->where(function ($q) use ($scriptLanguage) {
                 $q->where('language', $scriptLanguage)
                         //Default to english language. We don't want cases where enrollee has something unexpected in language field,

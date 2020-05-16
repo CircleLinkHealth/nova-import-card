@@ -210,9 +210,6 @@
                             <div v-if="clickedToViewEvent && eventToViewData[0].eventType === 'holiday'"
                                  class="view-event">
                                 <div v-if="authIsAdmin" class="nurse-name">{{this.eventToViewData[0].name}}</div>
-                                <div class="work-day-read">Choose Day-off: {{this.eventToViewData[0].day}}
-                                    {{this.eventToViewData[0].date}}
-                                </div>
                             </div>
                             <div v-if="clickedToViewEvent && eventToViewData[0].eventType === 'workDay'"
                                  class="view-event">

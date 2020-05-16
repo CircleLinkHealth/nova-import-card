@@ -54,7 +54,8 @@
                                     <ul>
                                         <li class="sidebar-demo-list"><span :title="name"><b>Name:</b> {{name}}</span>
                                         </li>
-                                        <li class="sidebar-demo-list"><span :title="dob"><b>Date of Birth:</b> {{dob}}</span>
+                                        <li class="sidebar-demo-list"><span
+                                                :title="dob"><b>Date of Birth:</b> {{dob}}</span>
                                         </li>
                                         <li class="sidebar-demo-list"><span
                                                 :title="lang"><b>Language:</b> {{lang}}</span>
@@ -133,9 +134,11 @@
                                                             >
                                                             <span>{{member.first_name}} {{member.last_name}}</span>
                                                             <div style="padding-left: 10px">
-                                                                <div><strong>Addresses:</strong><span v-html="member.addresses.value"></span>
+                                                                <div><strong>Addresses:</strong><span
+                                                                        v-html="member.addresses.value"></span>
                                                                 </div>
-                                                                <div><strong>Phones:</strong><span v-html="member.phones.value"></span>
+                                                                <div><strong>Phones:</strong><span
+                                                                        v-html="member.phones.value"></span>
                                                                 </div>
                                                             </div>
                                                         </label>
@@ -258,12 +261,26 @@
 
                 <div class="padding-top-5" style="font-size: 16px;">
 
-                    <blockquote v-if="last_call_outcome !== ''">
+                    <blockquote v-if="is_confirmed_family">
+                        <span v-if="family_member_names != ''">
+                        Family member of: {{ family_member_names }}
+                        </span>
+                        <span v-if="family_confirmed_at != ''">
+                            <br/>
+                            Confirmed at: {{ family_confirmed_at }}
+                        </span>
+                        <br/>
+                    </blockquote>
+                    <blockquote v-if="last_call_outcome !== '' && ! is_confirmed_family">
                         Last Call Outcome: {{ last_call_outcome }}
                         <span v-if="last_call_outcome_reason !== ''">
                         <br/>
                         Last Call Comment: {{ last_call_outcome_reason }}
-                    </span>
+                        </span>
+                        <span v-if="utc_note !== ''">
+                        <br/>
+                        Note: {{ utc_note }}
+                        </span>
                     </blockquote>
 
                     <div class="enrollment-script font-size-20">
@@ -474,7 +491,7 @@
                     </div>
                     <div class="modal-footer">
                         <button name="btnSubmit" type="submit"
-                                :disabled="home_is_invalid || cell_is_invalid || other_is_invalid || preferred_phone_empty || contact_day_or_time_empty"
+                                :disabled="disable_consented_submit"
                                 class="modal-action waves-effect waves-light btn">Confirm and call next patient
                         </button>
                         <div v-if="onCall === true" style="text-align: center">
@@ -530,6 +547,11 @@
                                 <input name="utc_callback" id="utc_callback">
                             </div>
 
+                            <div class="col s12 m12">
+                                <label for="utc-note" class="label">Note:</label>
+                                <input class="input-field" v-model="utc_note" name="utc_note" id="utc-note">
+                            </div>
+
                         </div>
 
                         <input type="hidden" name="status" value="utc">
@@ -539,7 +561,7 @@
                     </div>
                     <div class="modal-footer">
                         <button name="btnSubmit" type="submit"
-                                :disabled="utc_reason_empty"
+                                :disabled="utc_reason_empty || should_not_perform_action"
                                 class="modal-action waves-effect waves-light btn">Call Next Patient
                         </button>
                         <div v-if="onCall === true" style="text-align: center">
@@ -593,7 +615,7 @@
                     </div>
                     <div class="modal-footer" style="padding-right: 60px">
                         <button name="btnSubmit" type="submit"
-                                :disabled="reason_empty"
+                                :disabled="reason_empty || should_not_perform_action"
                                 class="modal-action waves-effect waves-light btn">Call Next Patient
                         </button>
                         <div v-if="onCall === true" style="text-align: center">
@@ -625,8 +647,9 @@
                                                v-model="confirmed_family_members">
                                         <span>{{member.first_name}} {{member.last_name}}</span>
                                         <ul style="padding-left: 10px">
-                                            <li><strong>Addresses:</strong>{{member.addresses.value}}</li>
-                                            <li><strong>Phones:</strong>{{member.phones.value}}</li>
+                                            <li><strong>Addresses:</strong><span v-html="member.addresses.value"></span>
+                                            </li>
+                                            <li><strong>Phones:</strong><span v-html="member.phones.value"></span></li>
                                         </ul>
                                     </label>
                                 </li>
@@ -713,7 +736,7 @@
                 return this.report.total_calls || 0;
             },
             enrollmentTips: function () {
-                return this.enrollable_practice && this.enrollable_practice.enrollment_tips ? this.enrollable_practice.enrollment_tips.content : '';
+                return this.practice && this.practice.enrollment_tips ? this.practice.enrollment_tips.content : '';
             },
             //other phone computer vars
             other_phone_label: function () {
@@ -815,6 +838,9 @@
 
                 return name.trim();
             },
+            disable_consented_submit(){
+                return this.home_is_invalid || this.cell_is_invalid || this.other_is_invalid || this.preferred_phone_empty || this.contact_day_or_time_empty || this.should_not_perform_action;
+            },
             provider_name_for_side_bar() {
                 let suffix = this.provider.suffix;
 
@@ -859,7 +885,7 @@
                 }
                 let ca_script = this.script.body;
 
-                if (! ca_script){
+                if (!ca_script) {
                     return 'Script not found.'
                 }
                 return ca_script.replace(/{doctor}/gi, this.provider_name_for_enrollment_script)
@@ -887,7 +913,7 @@
                 return !this.preferred_phone;
             },
             contact_day_or_time_empty() {
-                return this.days.length <= 1 || this.times.length <= 1
+                return this.days.length < 1 || this.times.length < 1
             },
             utc_reason_empty() {
                 return this.utc_reason.length <= 1;
@@ -895,6 +921,14 @@
             reason_empty() {
                 return this.reason.length <= 1;
             },
+            should_not_perform_action() {
+                //Inverse of (because it's used on :disable): allow performing of actions without a call only when enrollable is confirmed family member of other enrollable.
+                //It means that CA may only have called the first enrollable, and may perform actions on confirmed family members without calling them.
+                if (!this.is_confirmed_family) {
+                    return !this.callHasBeenPerformed;
+                }
+                return false;
+            }
         },
         data: function () {
             return {
@@ -919,6 +953,7 @@
                 last_call_outcome: '',
                 last_call_outcome_reason: '',
                 extra: '',
+                utc_note: '',
                 name: '',
                 lang: '',
                 home_phone: '',
@@ -943,6 +978,7 @@
                 callStatus: 'Summoning Calling Gods...',
                 toCall: '',
                 callError: null,
+                callHasBeenPerformed: false,
 
                 //urls
                 consentedUrl: rootUrl('enrollment/consented'),
@@ -970,6 +1006,9 @@
 
                 suggested_family_members: [],
                 confirmed_family_members: [],
+                is_confirmed_family: false,
+                family_member_names: '',
+                family_confirmed_at: '',
 
                 pending_form: null,
                 pending_form_url: null,
@@ -1078,12 +1117,13 @@
                     this.pending_form_url = url
                     let modal = M.Modal.getInstance(document.getElementById('suggested-family-members-modal'));
                     modal.open();
-                }else{
+                } else {
                     this.submitForm(event.target, url)
                 }
             },
             submitForm(form, url) {
 
+                window.location.href = rootUrl('/home#')
                 let formData = new FormData(form)
 
                 this.axios
@@ -1094,6 +1134,7 @@
                     })
                     .catch(err => {
                         console.log(err)
+                        App.$emit('enrollable:error', this.enrollable_id);
                     });
             },
             submitPendingForm() {
@@ -1190,7 +1231,8 @@
                 //phone number now come sanitized from Enrollable Resource, in E164 format
                 this.callError = null;
                 this.onCall = true;
-                this.callStatus = "Calling " + type + "..." + phoneSanitized;
+                this.callHasBeenPerformed = true;
+                this.callStatus = "Calling " + type + "..." + phone;
                 M.toast({html: this.callStatus, displayLength: 3000});
 
                 App.$emit('enrollable:call', {

@@ -6,11 +6,11 @@
 
 namespace Tests\Unit;
 
-use App\CLH\Repositories\UserRepository;
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Repositories\UserRepository;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Request;

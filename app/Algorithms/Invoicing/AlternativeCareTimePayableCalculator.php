@@ -73,7 +73,8 @@ class AlternativeCareTimePayableCalculator
             $isActivityForSuccessfulCall,
             $user,
             $monthYear,
-            $activity->is_behavioral
+            $activity->is_behavioral,
+            Carbon::parse($activity->performed_at)
         );
     }
 
@@ -118,6 +119,11 @@ class AlternativeCareTimePayableCalculator
         return $ranges;
     }
 
+    /**
+     * Would like to move this method into Activity model,
+     * but I would have to require Note and Call models which are in cpm-web app from time-tracking module.
+     * This introduces a cyclic dependency from cpm-web to time-tracking and time-tracking to cpm-web.
+     */
     private function isActivityForSuccessfulCall(Activity $activity): bool
     {
         if ( ! in_array($activity->type, ['Patient Note Creation', 'Patient Note Edit'])) {
@@ -136,7 +142,7 @@ class AlternativeCareTimePayableCalculator
                 ->pluck('id');
 
         $hasSuccessfulCall = false;
-        if ( ! empty($noteIds)) {
+        if ($noteIds->isNotEmpty()) {
             $hasSuccessfulCall = Call::whereIn('note_id', $noteIds)
                 ->where('status', '=', Call::REACHED)
                 ->count() > 0;
@@ -153,7 +159,8 @@ class AlternativeCareTimePayableCalculator
         bool $isActivityForSuccessfulCall,
         \CircleLinkHealth\Customer\Entities\User $patient,
         Carbon $monthYear,
-        bool $isBehavioral
+        bool $isBehavioral,
+        Carbon $time
     ) {
         $ranges = $this->calculateTimeRanges(
             $total_time_before,
@@ -179,6 +186,7 @@ class AlternativeCareTimePayableCalculator
                     'time_before'        => $timeBefore,
                     'is_successful_call' => $isActivityForSuccessfulCall,
                     'is_behavioral'      => $isBehavioral,
+                    'performed_at'       => $time,
                 ]
             );
 

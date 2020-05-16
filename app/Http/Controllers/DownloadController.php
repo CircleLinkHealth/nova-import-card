@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\DownloadMediaWithSignedRequest;
 use App\Http\Requests\DownloadPracticeAuditReports;
 use App\Http\Requests\DownloadZippedMediaWithSignedRequest;
+use App\Jobs\MakeAndDispatchAuditReports;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\Media;
@@ -32,23 +33,13 @@ class DownloadController extends Controller
         $practiceId = $request->input('practice_id');
         $monthInput = $request->input('month');
 
-        $date = Carbon::createFromFormat('Y-m', $monthInput);
+        $date = Carbon::createFromFormat('Y-m', $monthInput)->startOfMonth();
 
-        $mediaExport = Media::whereIn(
-            'model_type',
-            [
-                \App\User::class,
-                \CircleLinkHealth\Customer\Entities\User::class,
-            ]
-        )->whereIn(
-            'model_id',
-            function ($query) use ($practiceId) {
-                $query->select('id')
-                    ->from((new User())->getTable())
-                    ->whereProgramId($practiceId);
-            }
-        )->where('collection_name', 'audit_report_'.$date->format('F, Y'))
-            ->groupBy('model_id')->get();
+        if ( ! $this->auditReportsQuery($date, $practiceId)->exists()) {
+            return response()->redirectToRoute('make.monthly.audit.reports', ['practice_id' => $practiceId, 'month' => $date->format('Y-m')]);
+        }
+
+        $mediaExport = $this->auditReportsQuery($date, $practiceId)->get();
 
         if ($mediaExport->isNotEmpty()) {
             return MediaStream::create("Audit Reports for {$date->format('F, Y')}.zip")->addMedia($mediaExport);
@@ -168,6 +159,34 @@ class DownloadController extends Controller
         );
     }
 
+    public function makeAuditReportsForMonth(DownloadPracticeAuditReports $request)
+    {
+        $practiceId = $request->input('practice_id');
+        $monthInput = $request->input('month');
+
+        $date = Carbon::createFromFormat('Y-m', $monthInput)->startOfMonth();
+
+        User::ofType('participant')->ofPractice($practiceId)
+            ->with('patientInfo')
+            ->with('patientSummaries')
+            ->with('primaryPractice')
+            ->whereHas('patientSummaries', function ($query) use ($date) {
+                $query->where('total_time', '>', 0)
+                    ->where('month_year', $date->toDateString());
+            })
+            ->chunkById(200, function ($patients) use ($date) {
+                $delay = 5;
+
+                foreach ($patients as $patient) {
+                    MakeAndDispatchAuditReports::dispatch($patient, $date, false)
+                        ->onQueue('low')->delay(now()->addSeconds($delay));
+                    ++$delay;
+                }
+            });
+
+        return 'CPM will create reports for patients for '.$date->format('F, Y').' Visit '.link_to_route('make.monthly.audit.reports', 'this page', ['practice_id' => $practiceId, 'month' => $date->format('Y-m')]).' in 10-20 minutes to download the reports.';
+    }
+
     public function mediaFileExists($filePath)
     {
         $filePath = base64_decode($filePath);
@@ -192,6 +211,25 @@ class DownloadController extends Controller
     public function postDownloadfile(Request $request)
     {
         return $this->file($request->input('filePath'));
+    }
+
+    private function auditReportsQuery(Carbon $date, $practiceId)
+    {
+        return Media::whereIn(
+            'model_type',
+            [
+                \App\User::class,
+                \CircleLinkHealth\Customer\Entities\User::class,
+            ]
+        )->whereIn(
+            'model_id',
+            function ($query) use ($practiceId) {
+                $query->select('id')
+                    ->from((new User())->getTable())
+                    ->whereProgramId($practiceId);
+            }
+        )->where('collection_name', 'audit_report_'.$date->format('F, Y'))
+            ->groupBy('model_id');
     }
 
     private function canDownload(Media $media)

@@ -15,6 +15,7 @@ class EnrolleeFamilyTest extends TestCase
     use \App\Traits\Tests\UserHelpers;
     protected $careAmbassador;
     protected $enrollee;
+    protected $nonSuggestedFamilyMembers;
 
     protected $practice;
     protected $provider;
@@ -42,6 +43,10 @@ class EnrolleeFamilyTest extends TestCase
             );
 
         $response->assertOk();
+
+        //assert count of patients
+
+        //assert fields are highlighted?
     }
 
     /**
@@ -50,11 +55,6 @@ class EnrolleeFamilyTest extends TestCase
      * @return void
      */
     public function test_enrollee_can_have_family_members()
-    {
-        $this->assertTrue(true);
-    }
-
-    public function test_family_members_are_next_in_queue()
     {
         $this->assertTrue(true);
     }
@@ -73,12 +73,12 @@ class EnrolleeFamilyTest extends TestCase
             ],
             [
                 'last_name'   => $this->enrollee->last_name,
-                'other_phone' => $this->enrollee->primary_phone,
+                'other_phone' => $this->enrollee->cell_phone,
             ],
             [
-                'last_name'     => $this->enrollee->last_name,
-                'address'       => $this->enrollee->address,
-                'primary_phone' => $this->enrollee->primary_phone,
+                'last_name'  => $this->enrollee->last_name,
+                'address'    => $this->enrollee->address,
+                'home_phone' => $this->enrollee->home_phone,
             ],
             [
                 'address'    => $this->enrollee->address,
@@ -99,6 +99,12 @@ class EnrolleeFamilyTest extends TestCase
             $family[] = $enrollee;
         }
 
-        $this->suggestedFamilyMembers = collect($family);
+        $nonSuggested = [];
+        for ($i = 4; $i > 0; --$i) {
+            $nonSuggested[] = factory(Enrollee::class)->create();
+        }
+
+        $this->suggestedFamilyMembers    = collect($family);
+        $this->nonSuggestedFamilyMembers = collect($nonSuggested);
     }
 }

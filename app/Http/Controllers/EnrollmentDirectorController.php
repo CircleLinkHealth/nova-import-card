@@ -12,6 +12,7 @@ use App\Filters\EnrolleeFilters;
 use App\Http\Requests\AddEnrolleeCustomFilter;
 use App\Http\Requests\EditEnrolleeData;
 use App\Http\Requests\UpdateMultipleEnrollees;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -43,13 +44,46 @@ class EnrollmentDirectorController extends Controller
 
     public function assignCareAmbassadorToEnrollees(UpdateMultipleEnrollees $request)
     {
-        Enrollee::whereIn('id', $request->input('enrolleeIds'))
+        $careAmbassadorUser = User::with('careAmbassador')
+            ->has('careAmbassador')
+            ->findOrFail($request->input('ambassadorId'));
+
+        $enrolleeIds = $request->input('enrolleeIds');
+
+        $notAssigned = [];
+
+        if ( ! $careAmbassadorUser->careAmbassador->speaks_spanish) {
+            $spanishSpeakingEnrollees = Enrollee::whereIn('id', $enrolleeIds)
+                ->where('lang', 'like', '%es%')
+                ->orWhere('lang', 'like', '%sp')
+                ->pluck('id');
+
+            foreach ($spanishSpeakingEnrollees as $id) {
+                $key = array_search($id, $enrolleeIds);
+                if (false !== $key) {
+                    $notAssigned[] = $id;
+                    unset($enrolleeIds[$key]);
+                }
+            }
+        }
+
+        Enrollee::whereIn('id', $enrolleeIds)
             ->update([
                 'status'                  => Enrollee::TO_CALL,
                 'care_ambassador_user_id' => $request->input('ambassadorId'),
             ]);
 
-        return response()->json([], 200);
+        $message                  = null;
+        $unassignedEnrolleesExist = ! empty($notAssigned);
+        if ($unassignedEnrolleesExist) {
+            $ids     = implode(',', $notAssigned);
+            $message = "The following patients have not been assigned to Care Ambassador ({$careAmbassadorUser->display_name}) because CA does not speak spanish: (IDs) {$ids}";
+        }
+
+        return response()->json([
+            'enrollees_unassigned' => ! empty($notAssigned),
+            'message'              => $message,
+        ], 200);
     }
 
     public function editEnrolleeData(EditEnrolleeData $request)
@@ -106,6 +140,8 @@ class EnrollmentDirectorController extends Controller
         $data->limit($limit)
             ->skip($limit * ($page - 1));
 
+        $now = Carbon::now()->toDateString();
+
         if (isset($orderBy)) {
             $direction = 1 == $ascending
                 ? 'ASC'
@@ -113,11 +149,10 @@ class EnrollmentDirectorController extends Controller
             $data->orderBy($orderBy, $direction);
         } else {
             $data->orderByRaw("CASE
-   WHEN status = 'engaged' THEN 1
-   WHEN status = 'call_queue' THEN 2
-   WHEN status = 'utc' THEN 3
-   WHEN status = 'soft_rejected' THEN 4
-   ELSE 5
+            WHEN requested_callback IS NOT NULL AND DATE(requested_callback) <= DATE('{$now}') THEN 1
+   WHEN status = 'call_queue' THEN 3
+   WHEN status = 'utc' THEN 4
+   ELSE 4
 END ASC, attempt_count ASC");
         }
 

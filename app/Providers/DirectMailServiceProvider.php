@@ -56,18 +56,19 @@ class DirectMailServiceProvider extends ServiceProvider implements DeferrablePro
                          * @param $outboundRecipient
                          * @param null       $binaryAttachmentFilePath
                          * @param null       $binaryAttachmentFileName
-                         * @param null       $ccdaAttachmentPath
+                         * @param null       $ccdaContents
                          * @param null       $body
                          * @param null       $subject
                          * @param mixed|null $dmUserAddress
                          *
+                         * @param  null  $dmUserAddress
                          * @return mixed
                          */
                         public function send(
                             $outboundRecipient,
                             $binaryAttachmentFilePath = null,
                             $binaryAttachmentFileName = null,
-                            $ccdaAttachmentPath = null,
+                            $ccdaContents = null,
                             User $patient = null,
                             $body = null,
                             $subject = null,

@@ -47,6 +47,7 @@ class ApprovableBillablePatient extends JsonResource
         if (null == $status) {
             $status = $this->patient->patientInfo->getCcmStatusForMonth(Carbon::parse($this->month_year));
         }
+        $problems = $this->allCcdProblems($this->patient)->unique('code')->filter()->values();
 
         return [
             'id'       => $this->patient->id,
@@ -63,7 +64,7 @@ class ApprovableBillablePatient extends JsonResource
             'total_time'             => $this->total_time,
             'bhi_time'               => $this->bhi_time,
             'ccm_time'               => $this->ccm_time,
-            'problems'               => $this->allCcdProblems($this->patient),
+            'problems'               => $problems,
             'no_of_successful_calls' => $this->no_of_successful_calls,
             'status'                 => $status,
             'approve'                => (bool) $this->approved,

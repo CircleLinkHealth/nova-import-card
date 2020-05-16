@@ -23,7 +23,9 @@
         "build-clhImportCardExtended": "cd nova-components/ClhImportCardExtended && npm run dev",
         "build-clhImportCardExtended-prod": "cd nova-components/ClhImportCardExtended && npm run prod",
         "build-generate-success-stories-report": "cd nova-components/GenerateSuccessStoriesReport && npm run dev",
-        "build-generate-success-stories-report-prod": "cd nova-components/GenerateSuccessStoriesReport && npm run prod"
+        "build-generate-success-stories-report-prod": "cd nova-components/GenerateSuccessStoriesReport && npm run prod",
+        "build-enrollment-invites": "cd nova-components/EnrollmentInvites && npm run dev",
+        "build-enrollment-invites-prod": "cd nova-components/EnrollmentInvites && npm run prod"
     },
     "jest": {
         "verbose": true,

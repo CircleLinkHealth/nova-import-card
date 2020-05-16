@@ -76,10 +76,10 @@ return [
             'model'  => User::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        //        'enrollables' => [
+        //            'driver' => 'enrollmentLogin',
+        //            'table'  => User::class,
+        //        ],
     ],
 
     /*

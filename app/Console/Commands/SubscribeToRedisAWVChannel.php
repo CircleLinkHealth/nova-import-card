@@ -6,9 +6,8 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\AwvPatientReportNotify;
+use App\Jobs\ListenToAwvChannel;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Redis;
 
 class SubscribeToRedisAWVChannel extends Command
 {
@@ -32,12 +31,18 @@ class SubscribeToRedisAWVChannel extends Command
      */
     public function handle()
     {
-        $channel = 'awv-patient-report-created';
-        $this->info("Listening on $channel");
-
-        Redis::connection('pub_sub')->subscribe([$channel], function ($patientReportdata) {
-            $this->info('Received event. Will dispatch for AwvPatientReportNotify. Data:'.$patientReportdata);
-            AwvPatientReportNotify::dispatch($patientReportdata);
-        });
+        //https://github.com/phpredis/phpredis/issues/70
+        ini_set('default_socket_timeout', '-1');
+        $this->info('Listening...');
+        \RedisManager::connection('pub_sub')->subscribe(
+            [
+                ListenToAwvChannel::AWV_REPORT_CREATED,
+                ListenToAwvChannel::ENROLLMENT_SURVEY_COMPLETED,
+            ],
+            function ($data, $channel) {
+                $this->info("Received on $channel");
+                ListenToAwvChannel::dispatch($data, $channel);
+            }
+        );
     }
 }

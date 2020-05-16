@@ -31,18 +31,37 @@
                 </div>
             </div>
         </div>
+        <div id="error" class="modal confirm" style="width: 40% !important">
+            <div class="modal-content">
+                <div><i
+                        class="material-icons left modal-error-icon">error</i></div>
+                <div class="error-header">
+                    <span>Oops! Something went wrong... </span>
+                </div>
+                <div class="error-message">
+                    <span>{{this.error}}</span>
+                </div>
+                <div v-if="error_retrieve_next" class="container center-align">
+                    <a v-on:click="closeAndRetrievePatient()"
+                       class="waves-effect waves-light btn"
+                       style="background: green"><i
+                            class="material-icons left">call</i>Get Next Patient</a>
+                </div>
+            </div>
+        </div>
         <div v-if="!loading">
             <div v-if="patientExists">
-                <patient-to-enroll :patient-data="patientData" :time-tracker="$refs.timeTracker" :debug="debug"></patient-to-enroll>
+                <patient-to-enroll :patient-data="patientData" :time-tracker="$refs.timeTracker"
+                                   :debug="debug"></patient-to-enroll>
             </div>
             <div v-else>
                 <div v-show="onCall">
                     <a v-on:click="hangUp"
                        class="waves-effect waves-light btn"
-                       style="background: red;  margin-top: 1%; margin-left: 50%; position: fixed"><i
+                       style="background: red;  margin-top: 1%; margin-left: 40%; position: fixed"><i
                             class="material-icons left">call_end</i>Hang Up</a>
                 </div>
-                <div class="row">
+                <div v-if="shouldShowCookie" class="row">
                     <div class="col cookie">
                         <div class="card horizontal">
                             <div class="card-image">
@@ -55,10 +74,19 @@
                                         calls.</p>
                                     <br>
                                     <p>In the meantime, enjoy this cookie.</p>
+                                    <br>
+                                    <p v-if="pendingPatientsExist">
+                                        You have {{patients_pending}} pending patient(s). Next call attempt will be at
+                                        {{next_attempt_at}}.
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div v-if="this.error" class="row">
+                    <i
+                            class="material-icons left error-image">error_outline</i>
                 </div>
             </div>
         </div>
@@ -95,13 +123,20 @@
         },
         computed: {
             patientExists: function () {
-                return this.patientData.enrollable_id;
+                return this.patientData && this.patientData.enrollable_id;
+            },
+            shouldShowCookie: function () {
+                return !this.patientExists && !this.error
+            },
+            pendingPatientsExist: function () {
+                return this.patients_pending > 0;
             }
         },
         data: function () {
             return {
                 patientData: [],
                 loading: false,
+                error: null,
                 phone: null,
                 callError: null,
                 onCall: false,
@@ -113,7 +148,12 @@
                 device: null,
                 log: null,
                 phone_type: null,
-                loading_modal: null
+                loading_modal: null,
+                error_modal: null,
+                patients_pending: 0,
+                next_attempt_at: null,
+                error_retrieve_next: false,
+                error_enrollee_id: null,
             };
         },
         mounted: function () {
@@ -123,7 +163,14 @@
                 preventScrolling: true,
                 dismissible: false
             });
+
+            M.Modal.init($('#error'), {
+                preventScrolling: true,
+                dismissible: true
+            });
             this.loading_modal = M.Modal.getInstance(document.getElementById('loading'));
+            this.error_modal = M.Modal.getInstance(document.getElementById('error'));
+
             this.loading_modal.open();
 
             this.retrievePatient();
@@ -156,6 +203,20 @@
                 this.hangUp()
                 this.updateCallStatus()
             })
+
+            App.$on('enrollable:load-from-search-bar', () => {
+                this.retrievePatient();
+                this.loading_modal.open();
+            })
+
+            App.$on('enrollable:error', (enrollableId) => {
+                this.patientData = null;
+                this.error_retrieve_next = true;
+                this.error_enrollee_id = enrollableId;
+
+                this.error = 'Something went wrong while saving patient details. We are investigating the issue. Please click on button to get next Patient.';
+                this.error_modal.open()
+            })
         },
         methods: {
             getTimeTrackerInfo() {
@@ -172,16 +233,45 @@
                 this.setTimeTrackerInfo(info);
                 TimeTrackerEventBus.$emit('tracker:activity', info);
             },
+            closeAndRetrievePatient() {
+                this.error_modal.close()
+                this.retrievePatient()
+                this.loading_modal.open();
+                this.updateCallStatus()
+                this.error_retrieve_next = false;
+                this.error_enrollee_id = null;
+            },
             retrievePatient() {
                 this.loading = true;
+                let url = rootUrl('/enrollment/show');
+
+                let href = window.location.href
+                let tags = href.split('#')
+                if (tags[1] && tags[1] !== '!') {
+                    url = url + '/' + tags[1]
+                }
+                let errorData = null;
+                if (this.error_retrieve_next) {
+                    errorData = {
+                        params: {
+                            error_enrollable_id: this.error_enrollee_id
+                        }
+                    }
+                }
+
                 return this.axios
-                    .get(rootUrl('/enrollment/show'))
+                    .get(url, errorData)
                     .then(response => new Promise(resolve => setTimeout(() => {
                         this.loading = false
                         this.loading_modal.close()
 
                         let patientData = response.data.data;
 
+                        if (response.data.patients_pending !== undefined) {
+                            this.patients_pending = response.data.patients_pending
+                            this.next_attempt_at = response.data.next_attempt_at
+                            return;
+                        }
                         patientData.onCall = this.onCall
                         patientData.callStatus = this.callStatus
                         patientData.log = this.log
@@ -191,10 +281,22 @@
                         this.enrollable_id = patientData.enrollable_id;
 
                         this.notifyTimeTracker();
+
+                        App.$emit('enrollable:loaded', {
+                            has_tips: this.patientData.has_tips
+                        })
                     }, 2000)))
                     .catch(err => {
                         //to implement
                         this.loading = false;
+                        this.loading_modal.close()
+                        if (err.response.status == 404) {
+                            this.error = err.response.data.message;
+                        } else {
+                            this.error = 'Something went wrong while retrieving patient. Please contact CLH support.';
+                        }
+
+                        this.error_modal.open()
                         console.error(err);
                     });
             },
@@ -238,7 +340,10 @@
                 this.onCall = false;
                 this.callStatus = "Ended Call";
                 M.toast({html: this.callStatus, displayLength: 3000});
-                this.device.disconnectAll();
+                //if anything goes wrong with twilio, prevent page from falsely showing  message: 'Calling...'
+                if (this.device) {
+                    this.device.disconnectAll();
+                }
             },
             initTwilio: function () {
                 const self = this;
@@ -304,6 +409,23 @@
         font-size: large;
     }
 
+    .error-header {
+        margin-top: 25%;
+        margin-bottom: 10%;
+        text-align: center;
+    }
+
+    .error-header span {
+        color: darkgray;
+        font-size: large;
+    }
+
+    .error-message {
+        text-align: center;
+        font-size: medium;
+        padding-bottom: 10%;
+    }
+
     .cookie {
         margin-top: 10%;
         margin-left: 15%;
@@ -341,6 +463,20 @@
 
     .on-call-info ul li {
         text-align: center;
+    }
+
+    .error-image {
+        color: red;
+        margin-left: 44%;
+        margin-top: 15%;
+        font-size: 190px;
+    }
+
+    .modal-error-icon {
+        margin-top: 10%;
+        margin-left: 45%;
+        color: red;
+        font-size: 50px;
     }
 </style>
 

@@ -9,7 +9,7 @@ namespace App\Jobs;
 use App\Charts\OpsChart;
 use App\Services\OpsDashboardService;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -24,12 +24,21 @@ class GenerateOpsDailyReport implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    const MEMORY_LIMIT = '800M';
+
+    /**
+     * The number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 600;
+
     /**
      * The number of times the job may be attempted.
      *
      * @var int
      */
-    public $tries = 3;
+    public $tries = 5;
 
     /**
      * @var Carbon
@@ -42,13 +51,20 @@ class GenerateOpsDailyReport implements ShouldQueue
     private $fromDate;
 
     /**
+     * @var array
+     */
+    private $practiceIds;
+
+    /**
      * Create a new job instance.
      */
-    public function __construct(Carbon $date = null)
+    public function __construct(array $practiceIds, Carbon $date = null)
     {
         if ( ! $date) {
             $date = Carbon::now();
         }
+
+        $this->practiceIds = $practiceIds;
 
         $this->date = $date;
 
@@ -84,25 +100,64 @@ class GenerateOpsDailyReport implements ShouldQueue
 
     /**
      * Execute the job.
+     *
+     * @throws \Exception
      */
     public function handle(OpsDashboardService $opsDashboardService)
     {
-        ini_set('memory_limit', '512M');
+        ini_set('memory_limit', self::MEMORY_LIMIT);
+        ini_set('max_input_time', $this->timeout);
+        ini_set('max_execution_time', $this->timeout);
 
-        $demoPracticeIds = Practice::whereIsDemo(1)->pluck('id')->toArray();
-
-        $practices = Practice::select(['id', 'display_name'])
-            ->activeBillable()
-            ->opsDashboardQuery($this->date->copy()->startOfMonth(), $this->fromDate)
+        $reports = OpsDashboardPracticeReport::with('practice')
+            ->whereIn('practice_id', $this->practiceIds)
+            ->where('date', $this->date->toDateString())
             ->get()
-            ->sortBy('display_name');
+            ->sortBy(function ($r) {
+                return $r->practice->display_name;
+            });
 
-        $hoursBehind = $opsDashboardService->calculateHoursBehind($this->date, $practices);
+        $pendingReports = $reports->where('is_processed', false)->count();
 
-        foreach ($practices as $practice) {
-            $row = $opsDashboardService->dailyReportRow($practice->patients->unique('id'), $this->date);
+        if ($pendingReports > 0) {
+            //push back to queue
+            if (5 == $this->attempts()) {
+                throw new \Exception('Some Jobs for Practices are not being processed. Unable to create Ops Daily Report.');
+            }
+
+            $this->release(300);
+
+            return;
+        }
+
+        $reports = $reports->where('data', '!=', null);
+
+        if (0 == $reports->count()) {
+            return;
+        }
+        //get vars for hours behind
+        $totalEnrolledPatientsCount = $reports->sum(function ($report) {
+            if (empty($report->data)) {
+                return 0;
+            }
+
+            return $report->data['Total'];
+        });
+
+        $totalPatientCcmTime = $reports->sum(function ($report) {
+            if (empty($report->data)) {
+                return 0;
+            }
+
+            return $report->data['total_ccm_time'];
+        });
+
+        $hoursBehind = $opsDashboardService->calculateHoursBehind($this->date, $totalEnrolledPatientsCount, $totalPatientCcmTime);
+
+        foreach ($reports as $report) {
+            $row = $report->data;
             if (null != $row) {
-                $rows[$practice->display_name] = $row;
+                $rows[$report->practice->display_name] = $row;
             }
         }
         $rows['CircleLink Total'] = $this->calculateDailyTotalRow($rows);

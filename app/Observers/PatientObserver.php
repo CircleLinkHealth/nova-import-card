@@ -8,6 +8,7 @@ namespace App\Observers;
 
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Listeners\AssignPatientToStandByNurse;
+use App\Traits\UnreachablePatientsToCaPanel;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\Artisan;
 
 class PatientObserver
 {
+    use UnreachablePatientsToCaPanel;
+
     public function attachTargetPatient(Patient $patient)
     {
         $user = $patient->user;
@@ -54,6 +57,11 @@ class PatientObserver
     public function saved(Patient $patient)
     {
         if ($patient->isDirty('ccm_status')) {
+            if (Patient::UNREACHABLE === $patient->ccm_status
+            && ! $patient->user->hasRole('survey-only')) {
+                $this->createEnrolleModelForPatient($patient->user);
+            }
+
             if (in_array(
                 $patient->ccm_status,
                 [
