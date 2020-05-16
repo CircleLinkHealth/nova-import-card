@@ -490,7 +490,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             return $this;
         }
 
-        if (CarePlanAutoApprover::id()) {
+        if (CarePlan::DRAFT === $this->patient->carePlan->status && CarePlanAutoApprover::id()) {
             $this->patient->carePlan->status         = CarePlan::QA_APPROVED;
             $this->patient->carePlan->qa_approver_id = CarePlanAutoApprover::id();
             $this->patient->carePlan->qa_date        = now()->toDateTimeString();
