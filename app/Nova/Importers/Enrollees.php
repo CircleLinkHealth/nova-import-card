@@ -121,7 +121,7 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
         }
 
         //Currently not accomodating for cases where enrollee does not exist.
-        $enrollee = Enrollee::with('enrollmentInvitationLink')
+        $enrollee = Enrollee::with(['user', 'enrollmentInvitationLink'])
             ->whereId($row['eligible_patient_id'])
             ->where('practice_id', $this->practiceId)
             ->where('mrn', $row['mrn'])

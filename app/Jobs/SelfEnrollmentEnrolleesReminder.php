@@ -41,7 +41,7 @@ class SelfEnrollmentEnrolleesReminder implements ShouldQueue
     {
         $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
-        $testingMode   = AppConfig::pull('testing_enroll_sms', true);
+        $testingMode   = filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN);
 
         if ($testingMode) {
             $practice      = $this->getDemoPractice();

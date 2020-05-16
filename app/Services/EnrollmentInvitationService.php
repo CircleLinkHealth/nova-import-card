@@ -39,16 +39,15 @@ class EnrollmentInvitationService
         ];
 
         $buttonsLocation = ! $hideButtons
-            ? 'To enroll, click the "Get My Care Coach" button at the top/bottom of this letter.'
+            ? 'To enroll, click the "Get My Care Coach" button located both at the top and bottom of this letter.'
             : '';
 
         $optionalParagraph = ! $hideButtons
-            ? "If you would like additional information, or are interested in enrolling today,
-             please call <strong>$practiceNumber</strong>."
+            ? "If you would like additional information, or are interested in enrolling today, please call <strong>$practiceNumber</strong>."
             : '';
 
         $buttonsSecondVersion = ! $hideButtons
-        ? 'or click the "Get My Care Coach" button top/bottom of this letter.'
+        ? 'or click the "Get My Care Coach" button located both at the top and bottom of this letter.'
         : '';
 
         $optionalTitle = ! $hideButtons

@@ -42,7 +42,7 @@
 
     @if(auth()->check() && reimportingPatientsIsEnabledForUser(auth()->id()))
         <div class="medical-record-admin-display">
-            <a href="{{ route('medical-record.patient.reimport', ['userId' => $patient->id, 'flushCcd' => 'on']) }}"
+            <a href="{{ route('medical-record.patient.reimport', ['userId' => $patient->id]) }}"
                class="btn btn-default btn-xs tooltip-bottom"
                onclick="return confirm('This will delete and re-import Problems, Medications, Insurances, and Allergies. Would you like to proceed?')"
                data-tooltip="Reimport (beta)"
