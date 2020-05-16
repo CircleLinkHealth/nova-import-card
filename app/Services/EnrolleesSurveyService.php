@@ -56,14 +56,14 @@ class EnrolleesSurveyService
     {
         if (PlaceholderEmailsVerifier::isClhGeneratedEmail($email)) {
             return [
-                'viewEmail'    => '',
-                'email' => $email,
+                'viewEmail' => '',
+                'email'     => $email,
             ];
         }
 
         return [
-            'viewEmail'    => $email,
-            'email' => '',
+            'viewEmail' => $email,
+            'email'     => '',
         ];
     }
 }

@@ -77,11 +77,12 @@
                         answer.push(values);
                     });
                 } else {
-                    let value = '';
+                    let value = this.singleInputHasText;
                     if(this.singleInputHasText === ''
                         && this.enrollmentSurveyPatients.patientEmail.email !== ''){
-                          value = this.enrollmentSurveyPatients.patientEmail.email;
+                            value = this.enrollmentSurveyPatients.patientEmail.email;
                     }
+
                     answer = {
                         value: value
                     }
