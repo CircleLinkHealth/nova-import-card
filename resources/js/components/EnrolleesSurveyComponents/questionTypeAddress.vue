@@ -78,7 +78,7 @@
                     });
                 } else {
                     let value = this.singleInputHasText;
-                    if(this.singleInputHasText === ''){
+                    if(value === ''){
                             value = this.enrollmentSurveyPatients.patientEmail.email;
                     }
 
