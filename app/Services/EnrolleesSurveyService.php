@@ -38,7 +38,7 @@ class EnrolleesSurveyService
         return [
             'dob'                    => $birthDate,
             'address'                => $user->address,
-            'patientEmail'           => $this->validateEmail($user->email),
+            'patientEmail'           => $this->placeholderVerifier($user->email),
             'preferredContactNumber' => ! empty($primaryPhoneNumber) ? $primaryPhoneNumber : [],
             'isSurveyOnlyRole'       => $isSurveyOnly,
             'letterLink'             => $letterLink,
@@ -50,7 +50,7 @@ class EnrolleesSurveyService
         return SurveyService::getCurrentSurveyData($patientId, Survey::ENROLLEES);
     }
 
-    private function validateEmail(string $email)
+    private function placeholderVerifier(string $email)
     {
         return PlaceholderEmailsVerifier::isClhGeneratedEmail($email) ? '' : $email;
     }
