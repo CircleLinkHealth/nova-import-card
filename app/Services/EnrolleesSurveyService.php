@@ -6,9 +6,11 @@
 
 namespace App\Services;
 
+use App\Helpers\PlaceholderEmailsVerifier;
 use App\Survey;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Support\Str;
 
 class EnrolleesSurveyService
 {
@@ -36,7 +38,7 @@ class EnrolleesSurveyService
         return [
             'dob'                    => $birthDate,
             'address'                => $user->address,
-            'patientEmail'           => $user->email,
+            'patientEmail'           => $this->placeholderVerifier($user->email),
             'preferredContactNumber' => ! empty($primaryPhoneNumber) ? $primaryPhoneNumber : [],
             'isSurveyOnlyRole'       => $isSurveyOnly,
             'letterLink'             => $letterLink,
@@ -46,5 +48,10 @@ class EnrolleesSurveyService
     public function getSurveyData($patientId)
     {
         return SurveyService::getCurrentSurveyData($patientId, Survey::ENROLLEES);
+    }
+
+    private function placeholderVerifier(string $email)
+    {
+        return PlaceholderEmailsVerifier::isClhGeneratedEmail($email) ? '' : $email;
     }
 }
