@@ -15,11 +15,6 @@ use Illuminate\Support\Str;
 class EnrolleesSurveyService
 {
     /**
-     * Fake email generated for enrollees without email.
-     */
-    const CLH_GENERATED_EMAIL_DOMAIN = '@careplanmanager.com';
-
-    /**
      * @return array
      */
     public function enrolleesQuestionsData(User $user)
