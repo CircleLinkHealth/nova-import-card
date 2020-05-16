@@ -45,7 +45,7 @@
                     <a v-on:click="closeAndRetrievePatient()"
                        class="waves-effect waves-light btn"
                        style="background: green"><i
-                            class="material-icons left">call</i>Call Next Patient</a>
+                            class="material-icons left">call</i>Get Next Patient</a>
                 </div>
             </div>
         </div>
