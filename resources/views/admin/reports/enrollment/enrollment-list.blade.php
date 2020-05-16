@@ -150,7 +150,7 @@
                                 "render": function ( data, type, row ) {
                                     return Math.round(data/60);
                                 },
-                                "targets": 8
+                                "targets": 9
                             },
                             // {
                             //     // The `data` parameter refers to the data for the cell (defined by the
