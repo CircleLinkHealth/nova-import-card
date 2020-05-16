@@ -78,8 +78,7 @@
                     });
                 } else {
                     let value = this.singleInputHasText;
-                    if(this.singleInputHasText === ''
-                        && this.enrollmentSurveyPatients.patientEmail.email !== ''){
+                    if(this.singleInputHasText === ''){
                             value = this.enrollmentSurveyPatients.patientEmail.email;
                     }
 
