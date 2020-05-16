@@ -13,6 +13,7 @@ use App\Services\Enrollment\EnrollableCallQueue;
 use App\Services\Enrollment\SuggestEnrollable;
 use App\Services\Enrollment\UpdateEnrollable;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class EnrollmentCenterController extends ApiController
@@ -102,7 +103,6 @@ class EnrollmentCenterController extends ApiController
             $enrollables[$i]['mrn']      = $e->mrn;
             $enrollables[$i]['program']  = optional($e->practice)->display_name ?? '';
             $enrollables[$i]['provider'] = optional($e->provider)->getFullName() ?? '';
-            $enrollables[$i]['hint']     = $enrollables[$i]['name'].'PROVIDER:  ['.$enrollables[$i]['program']."] HOME PHONE: {$e->home_phone}";
             $enrollables[$i]['hint']     = "{$enrollables[$i]['name']} {$phonesString} PROVIDER: [{$enrollables[$i]['provider']}] [{$enrollables[$i]['program']}]";
             ++$i;
         }
@@ -136,8 +136,22 @@ class EnrollmentCenterController extends ApiController
         ]);
     }
 
-    public function show($enrollableId = null)
+    public function show(Request $request, $enrollableId = null)
     {
+        //make sure that enrollee that caused error is removed from queue
+        //so that CA can continue calling while we investigate
+        if ($request->has('error_enrollable_id')) {
+            $errorEnrollee = Enrollee::find($request->input('error_enrollable_id'));
+            if ($errorEnrollee) {
+                Log::critical("Something failed when performing CA action on enrollee {$errorEnrollee->id}.");
+                //Chose Ineligible because:
+                //It will remove from CA queue
+                //Can still be viewed by pressing button on CA Director page
+                $errorEnrollee->status = Enrollee::INELIGIBLE;
+                $errorEnrollee->save();
+            }
+        }
+
         if ($enrollableId) {
             $enrollable = Enrollee::withCaPanelRelationships()
                 ->whereCareAmbassadorUserId(auth()->user()->id)
@@ -162,6 +176,15 @@ class EnrollmentCenterController extends ApiController
                 'patients_pending' => $stats['patients_pending'],
                 'next_attempt_at'  => $stats['next_attempt_at'],
             ]);
+        }
+
+        //Edge case but we don't want the dashboard to break and CAs having nowhere to go after that
+        if ( ! $enrollable->provider) {
+            Log::critical("Enrollee with id: {$enrollable->id}, does not have provider attached. Marking as ineligible and recommending investigation.");
+            $enrollable->status = Enrollee::INELIGIBLE;
+            $enrollable->save();
+
+            return $this->show($enrollableId);
         }
 
         return Enrollable::make($enrollable);

@@ -284,12 +284,12 @@ class UpdateEnrollable extends EnrollableService
         }
 
         //First update user model.
-        $patientUser->address   = $this->enrollee->address;
-        $patientUser->address_2 = $this->enrollee->address_2;
-        $patientUser->city      = $this->enrollee->city;
-        $patientUser->state     = $this->enrollee->state;
-        $patientUser->zip       = $this->enrollee->zip;
-        $patientUser->email     = $this->enrollee->email;
+        $patientUser->address  = $this->enrollee->address;
+        $patientUser->address2 = $this->enrollee->address_2;
+        $patientUser->city     = $this->enrollee->city;
+        $patientUser->state    = $this->enrollee->state;
+        $patientUser->zip      = $this->enrollee->zip;
+        $patientUser->email    = $this->enrollee->email;
 
         $patientUser->save();
 
@@ -388,7 +388,7 @@ class UpdateEnrollable extends EnrollableService
             $patientInfo->agent_email        = $this->enrollee->getAgentAttribute(Enrollee::AGENT_EMAIL_KEY);
             $patientInfo->agent_name         = $this->enrollee->getAgentAttribute(Enrollee::AGENT_NAME_KEY);
             $patientInfo->agent_relationship = $this->enrollee->getAgentAttribute(Enrollee::AGENT_RELATIONSHIP_KEY);
-            $patientInfo->agent_phone        = $this->enrollee->getAgentAttribute(Enrollee::AGENT_PHONE_KEY);
+            $patientInfo->agent_telephone    = $this->enrollee->getAgentAttribute(Enrollee::AGENT_PHONE_KEY);
         }
 
         if ($this->enrollee->other_note) {

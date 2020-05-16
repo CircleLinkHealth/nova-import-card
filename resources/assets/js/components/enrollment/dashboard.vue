@@ -41,6 +41,12 @@
                 <div class="error-message">
                     <span>{{this.error}}</span>
                 </div>
+                <div v-if="error_retrieve_next" class="container center-align">
+                    <a v-on:click="closeAndRetrievePatient()"
+                       class="waves-effect waves-light btn"
+                       style="background: green"><i
+                            class="material-icons left">call</i>Call Next Patient</a>
+                </div>
             </div>
         </div>
         <div v-if="!loading">
@@ -143,7 +149,9 @@
                 loading_modal: null,
                 error_modal: null,
                 patients_pending: 0,
-                next_attempt_at: null
+                next_attempt_at: null,
+                error_retrieve_next: false,
+                error_enrollee_id: null,
             };
         },
         mounted: function () {
@@ -198,6 +206,15 @@
                 this.retrievePatient();
                 this.loading_modal.open();
             })
+
+            App.$on('enrollable:error', (enrollableId) => {
+                this.patientData = null;
+               this.error_retrieve_next = true;
+               this.error_enrollee_id =  enrollableId;
+
+                this.error = 'Something went wrong while saving patient details. We are investigating the issue. Please click on button to get next Patient.';
+                this.error_modal.open()
+            })
         },
         methods: {
             getTimeTrackerInfo() {
@@ -214,6 +231,14 @@
                 this.setTimeTrackerInfo(info);
                 TimeTrackerEventBus.$emit('tracker:activity', info);
             },
+            closeAndRetrievePatient(){
+                this.error_modal.close()
+                this.retrievePatient()
+                this.loading_modal.open();
+                this.updateCallStatus()
+                this.error_retrieve_next = false;
+                this.error_enrollee_id = null;
+            },
             retrievePatient() {
                 this.loading = true;
                 let url = rootUrl('/enrollment/show');
@@ -223,9 +248,17 @@
                 if (tags[1] && tags[1] !== '!'){
                     url = url + '/' + tags[1]
                 }
+                let errorData = null;
+                if (this.error_retrieve_next){
+                    errorData = {
+                        params: {
+                            error_enrollable_id : this.error_enrollee_id
+                        }
+                    }
+                }
 
                 return this.axios
-                    .get(url)
+                    .get(url, errorData)
                     .then(response => new Promise(resolve => setTimeout(() => {
                         this.loading = false
                         this.loading_modal.close()

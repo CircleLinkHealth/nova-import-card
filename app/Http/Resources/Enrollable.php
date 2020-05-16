@@ -19,6 +19,7 @@ class Enrollable extends Resource
      *
      * @param \Illuminate\Http\Request $request
      *
+     * @throws \Exception
      * @return array
      */
     public function toArray($request)
@@ -29,7 +30,9 @@ class Enrollable extends Resource
         $enrollable = $this->resource;
 
         if ( ! $enrollable) {
-            return [];
+            $ca = auth()->user();
+
+            throw new \Exception("Something went wrong with call queue for Care Ambassador with id: {$ca->id} Enrollable resource does not contain enrollee.");
         }
 
         $careAmbassador = $this->careAmbassador->careAmbassador;

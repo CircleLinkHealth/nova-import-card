@@ -97,6 +97,14 @@
                 })
                     .then(resp => {
                         this.loading = false;
+
+                        if (resp.data.enrollees_unassigned){
+                            Event.$emit('notifications-ca-panel:create', {
+                                noTimeout: true,
+                                text: resp.data.message,
+                                type: 'error'
+                            });
+                        }
                         Event.$emit('clear-selected-enrollees');
                         Event.$emit('refresh-table');
                         Event.$emit("modal-select-ca:hide");
