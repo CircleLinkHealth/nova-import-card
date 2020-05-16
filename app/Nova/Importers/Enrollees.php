@@ -16,14 +16,15 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\Importable;
+use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
-use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Row;
 use Validator;
 
-class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueue, WithEvents
+class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQueue, WithEvents
 {
     use Importable;
     use RegistersEventListeners;
@@ -69,8 +70,10 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
         return 'File queued for importing.';
     }
 
-    public function model(array $row)
+    public function onRow(Row $row)
     {
+        $row = $row->toArray();
+
         if ('mark_for_auto_enrollment' == $this->actionType) {
             $this->markForAutoEnrollment($row);
         }
@@ -106,7 +109,6 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
     private function markForAutoEnrollment(array $row)
     {
         //Currently not accomodating for cases where enrollee does not exist.
-
         $v = Validator::make($row, [
             'eligible_patient_id' => 'required',
             'mrn'                 => 'required',
@@ -180,7 +182,8 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
         $provider = ProviderByName::first($row['provider']);
 
         if ( ! $provider) {
-            //Log Error
+            Log::channel('database')->critical("Import for:{$this->fileName}, Provider not found for Enrollee at row: {$this->rowNumber}.");
+
             return;
         }
 
