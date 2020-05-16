@@ -55,7 +55,7 @@ class EnrollmentDirectorController extends Controller
         if ( ! $careAmbassadorUser->careAmbassador->speaks_spanish) {
             $spanishSpeakingEnrollees = Enrollee::whereIn('id', $enrolleeIds)
                 ->where('lang', 'like', '%es%')
-                ->orWhere('lang', 'like', '%sp')
+                ->orWhere('lang', 'like', '%sp%')
                 ->pluck('id');
 
             foreach ($spanishSpeakingEnrollees as $id) {
