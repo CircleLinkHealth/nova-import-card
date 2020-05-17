@@ -140,7 +140,11 @@ class CreateUsersFromEnrollees implements ShouldQueue
                     //is this going to be a problem if it stays on during the importing phase?
                     $userCreatedFromEnrollee->setBillingProviderId($enrollee->provider->id);
 
-                    $enrollee->update(['user_id' => $userCreatedFromEnrollee->id]);
+                    $enrollee->update(
+                        [
+                            'user_id' => $userCreatedFromEnrollee->id,
+                        ]
+                    );
 
                     $this->updateEnrolleeSurveyStatuses(
                         $enrollee->id,
