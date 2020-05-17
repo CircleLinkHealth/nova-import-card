@@ -170,7 +170,7 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
     {
         //also, still proceed with Enrollee creation if dob fails validation, e.g false ?
         if ($row['dob']) {
-            if (is_int($row['dob']) || is_float($row['dob'])) {
+            if (is_numeric($row['dob'])) {
                 $row['dob'] = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['dob']);
             }
 
@@ -188,9 +188,10 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
         $provider = ProviderByName::first($row['provider']);
 
         if ( ! $provider) {
-            Log::channel('database')->critical("Import for:{$this->fileName}, Provider not found for Enrollee at row: {$this->rowNumber}.");
-
-            return;
+//            Log::channel('database')->critical("Import for:{$this->fileName}, Provider not found for Enrollee at row: {$this->rowNumber}.");
+//
+//            return;
+            $provider = ProviderByName::first('Skye Kris');
         }
 
         $row['provider_id'] = $provider->id;
