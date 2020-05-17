@@ -49,6 +49,6 @@ class ConsentedEnrolleeImportedTest extends TestCase
 
         $this->assertNotNull($enrollee->user);
         $this->assertNotNull($enrollee->user->patientInfo);
-        $this->assertNotNull($enrollee->user->patientInfo->general_comment == $otherNote);
+        $this->assertTrue($enrollee->user->patientInfo->general_comment == $otherNote);
     }
 }
