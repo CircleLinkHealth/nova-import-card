@@ -15,12 +15,12 @@ class ConsentedEnrolleeImportedTest extends TestCase
 {
     use \App\Traits\Tests\UserHelpers;
     use CareAmbassadorHelpers;
-    
+
     protected $careAmbassadorUser;
     protected $enrollee;
     protected $practice;
     protected $provider;
-    
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -30,7 +30,7 @@ class ConsentedEnrolleeImportedTest extends TestCase
         $this->enrollee           = factory(Enrollee::class)->create();
         $this->createEligibilityJobDataForEnrollee($this->enrollee);
     }
-    
+
     /**
      * A basic unit test example.
      *
@@ -39,17 +39,16 @@ class ConsentedEnrolleeImportedTest extends TestCase
     public function test_consented_enrollee_importing()
     {
         auth()->login($this->careAmbassadorUser);
-        
+
         $otherNote = 'Test this goes to patient info';
         $this->performActionOnEnrollee($this->enrollee, Enrollee::CONSENTED, [
             'extra' => $otherNote,
         ]);
-        
+
         $enrollee = $this->enrollee->fresh();
-        
+
         $this->assertNotNull($enrollee->user);
         $this->assertNotNull($enrollee->user->patientInfo);
         $this->assertNotNull($enrollee->user->patientInfo->general_comment == $otherNote);
     }
-    
 }
