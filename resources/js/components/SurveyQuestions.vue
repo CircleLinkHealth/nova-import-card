@@ -520,7 +520,7 @@
                     city: this.surveyData.city,
                     zip: this.surveyData.zip,
                     state: this.surveyData.state,
-                    patientEmail: this.surveyData.email,
+                    patientEmail: '',
                     preferredContactNumber: [],
                     isSurveyOnlyRole: false,
                     letterLink: '',
@@ -1433,6 +1433,7 @@
                         this.enrollmentSurveyPatients.preferredContactNumber.push(preferredContactNumber);
                         this.enrollmentSurveyPatients.isSurveyOnlyRole = isSurveyOnlyRole;
                         this.enrollmentSurveyPatients.letterLink = data.letterLink;
+                        this.enrollmentSurveyPatients.patientEmail = data.patientEmail;
 
 
                     })
