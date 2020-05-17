@@ -168,10 +168,9 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
 
     private function updateOrCreateEnrolleeFromCsv(array $row)
     {
-        //not sure if we should accept null dobs
         //also, still proceed with Enrollee creation if dob fails validation, e.g false ?
         if ($row['dob']) {
-            if (is_int($row['dob'])) {
+            if (is_int($row['dob']) || is_float($row['dob'])) {
                 $row['dob'] = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['dob']);
             }
 
@@ -179,6 +178,13 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
 
             $row['dob'] = $date;
         }
+
+        if (empty($row['dob']) || false === $row['dob']) {
+            Log::channel('database')->critical("Import for:{$this->fileName}, Invalid DOB for Enrollee at row: {$this->rowNumber}.");
+
+            return;
+        }
+
         $provider = ProviderByName::first($row['provider']);
 
         if ( ! $provider) {
