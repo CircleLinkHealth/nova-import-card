@@ -225,7 +225,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 $preferredContactDaysToArray
             );
 
-            $this->importEnrolleeSurveyOnly($enrollee, $user);
+            $this->importEnrolleeSurveyOnly($enrollee);
 
             $patientType = 'Initial';
             $id          = $enrollee->id;
