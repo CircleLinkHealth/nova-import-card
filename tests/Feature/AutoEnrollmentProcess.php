@@ -141,7 +141,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
 //        SendEnrollmentReminders::dispatchNow($patient);
 //
 //        $this->check_notification_mail_has_been_sent($patient);
-////        $this->check_notification_sms_has_been_sent($patient);
+    ////        $this->check_notification_sms_has_been_sent($patient);
 //
 //        $this->assertDatabaseHas('enrollables_invitation_links', [
 //            'invitationable_type' => get_class($patient),
@@ -152,9 +152,16 @@ class AutoEnrollmentProcess extends CustomerTestCase
 //        self::assertTrue($patient->enrollmentInvitationLink()->exists());
 //    }
 
-//    public function test_patient_logins_before_redirect()
-//    {
-//    }
+    public function test_patient_has_viewed_login_form()
+    {
+        $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)
+            ->createEnrollee($this->practice());
+        EnrollmentSeletiveInviteEnrollees::dispatch([$enrollee->fresh()->user_id]);
+        $enrollee->enrollmentInvitationLink->manually_expired = true;
+        $enrollee->enrollmentInvitationLink->save();
+//    If patient has link expired = has opened the link and seen the login form.
+        self::assertTrue(optional($enrollee->enrollmentInvitationLink())->where('manually_expired', true)->exists());
+    }
 
 //    Meaning they will get physical mail.
 //    public function test_only_patients_taken_no_action_will_be_marked_as_unresponsive()
