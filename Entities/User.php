@@ -10,7 +10,7 @@ use App\Call;
 use App\CareplanAssessment;
 use App\Constants;
 use App\ForeignId;
-use App\Jobs\SelfEnrollmentEnrollees;
+use App\Jobs\EnrollmentMassInviteEnrollees;
 use App\LoginLogout;
 use App\Message;
 use App\Models\EmailSettings;
@@ -2245,7 +2245,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function isSurveyOnly()
     {
-        return $this->roles()->where('name', SelfEnrollmentEnrollees::SURVEY_ONLY)->exists();
+        return $this->roles()->where('name', EnrollmentMassInviteEnrollees::SURVEY_ONLY)->exists();
     }
 
     public function lastObservation()
