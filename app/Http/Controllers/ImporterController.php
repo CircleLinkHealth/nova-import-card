@@ -8,7 +8,6 @@ namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Jobs\ImportCcda;
-use App\Nova\Actions\ClearAndReimportCcda;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
@@ -216,7 +215,7 @@ class ImporterController extends Controller
                         $ccda->practice_id = $record['practice_id'];
                     }
                     $ccda->billing_provider_id = $record['billing_provider_id'];
-                    $ccda                      = $ccda->updateOrCreateCarePlan();
+                    $ccda                      = $ccda->import();
                     array_push(
                         $importedRecords,
                         [
@@ -272,7 +271,7 @@ class ImporterController extends Controller
 
     public function reImportPatient(Request $request, $userId)
     {
-        ClearAndReimportCcda::for($userId, auth()->id());
+        ImportCcda::for($userId, auth()->id());
 
         return redirect()->back();
     }

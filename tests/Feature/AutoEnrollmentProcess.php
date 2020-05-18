@@ -142,4 +142,6 @@ class AutoEnrollmentProcess extends CustomerTestCase
 //    }
 
 // test authentication
+
+// test reminder _ only setnd just one remidner.
 }

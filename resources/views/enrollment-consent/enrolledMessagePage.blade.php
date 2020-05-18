@@ -6,7 +6,7 @@
         <label>Thanks for signing up!</label>
     </div>
     <div class="survey-sub-welcome-text" style="text-align: center;">
-        Your care coach will contact you in the next few days from {{$practiceNumber}}.<br>
+        Your care coach will contact you in the next few days from <a href="tel:{{$practiceNumber}}">{{$practiceNumber}}</a>.<br>
         Please save this number to your phone ASAP.
         <br>
         <br>

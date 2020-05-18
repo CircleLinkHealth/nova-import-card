@@ -9,7 +9,6 @@ namespace App\Http\Resources;
 use App\CareAmbassadorLog;
 use App\TrixField;
 use CircleLinkHealth\Core\StringManipulation;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Resources\Json\Resource;
 
@@ -20,6 +19,7 @@ class Enrollable extends Resource
      *
      * @param \Illuminate\Http\Request $request
      *
+     * @throws \Exception
      * @return array
      */
     public function toArray($request)
@@ -30,17 +30,22 @@ class Enrollable extends Resource
         $enrollable = $this->resource;
 
         if ( ! $enrollable) {
-            return [];
+            $ca = auth()->user();
+
+            throw new \Exception("Something went wrong with call queue for Care Ambassador with id: {$ca->id} Enrollable resource does not contain enrollee.");
         }
 
         $careAmbassador = $this->careAmbassador->careAmbassador;
 
         //get script
-        $enrollableIsUnreachableUser = $enrollable->user()->whereHas('patientInfo', function ($p) {
-            $p->where('ccm_status', Patient::UNREACHABLE);
-        })->exists();
+        $enrollableIsUnreachableUser = Enrollee::UNREACHABLE_PATIENT === $enrollable->source;
 
         $script = TrixField::careAmbassador($enrollable->lang, $enrollableIsUnreachableUser)->first();
+
+        if ( ! $script) {
+            //default to english, just so we can avoid cases where something went wrong with enrollee->language
+            $script = TrixField::careAmbassador(TrixField::ENGLISH_LANGUAGE, $enrollableIsUnreachableUser)->first();
+        }
 
         $familyAttributes = $this->getFamilyAttributes($enrollable);
 

@@ -28,6 +28,15 @@ class EnrolleeFilters extends QueryFilters
         return $this->builder->where('attempt_count', '=', $count);
     }
 
+    public function auto_enrollment_triggered($aet)
+    {
+        if (empty($aet) && '0' !== $aet) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('auto_enrollment_triggered', boolval($aet));
+    }
+
     public function care_ambassador_name($name)
     {
         if (empty($name)) {
@@ -44,6 +53,15 @@ class EnrolleeFilters extends QueryFilters
         }
 
         return $this->builder->where('eligibility_job_id', 'like', '%'.$id.'%');
+    }
+
+    public function enrollment_non_responsive($enr)
+    {
+        if (empty($enr) && '0' !== $enr) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('enrollment_non_responsive', boolval($enr));
     }
 
     public function first_name($name)
@@ -65,7 +83,6 @@ class EnrolleeFilters extends QueryFilters
             Enrollee::SOFT_REJECTED,
             Enrollee::REJECTED,
             Enrollee::ENROLLED,
-            Enrollee::QUEUE_AUTO_ENROLLMENT,
         ]);
         $decoded['attempt_count'] = '';
 
@@ -86,6 +103,15 @@ class EnrolleeFilters extends QueryFilters
         return $this->builder->whereNotIn('status', $statuses);
     }
 
+    public function id($id)
+    {
+        if (empty($id)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('id', 'like', '%'.$id.'%');
+    }
+
     public function isolateUploadedViaCsv($isolate)
     {
         if ($isolate) {
@@ -102,6 +128,15 @@ class EnrolleeFilters extends QueryFilters
         }
 
         return $this->builder->where('lang', 'like', '%'.$lang.'%');
+    }
+
+    public function last_attempt_at($dateString)
+    {
+        if (empty($date)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('last_attempt_at', 'like', '%'.$dateString.'%');
     }
 
     public function last_name($name)
@@ -201,5 +236,14 @@ class EnrolleeFilters extends QueryFilters
         }
 
         return $this->builder->where('tertiary_insurance', 'like', '%'.$insurance.'%');
+    }
+
+    public function user_id($id)
+    {
+        if (empty($id)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('user_id', 'like', '%'.$id.'%');
     }
 }

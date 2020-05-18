@@ -31,7 +31,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             'referring_provider_name' => 'Dr. Demo',
             'primary_phone'           => $phoneTester,
             'home_phone'              => $phoneTester,
-            'email'                   => $faker->unique()->safeEmail,
+            'email'                   => '',
         ]);
         $this->seedEligibilityJobs(collect([$enrolleeForTesting]), $practice);
 //                        Emulating Constantinos dashboard Importing - Mark Enrollees to invite.

@@ -7,7 +7,6 @@
 namespace App\Http\Controllers\Enrollment;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\EnrollableSurveyCompleted;
 use App\Jobs\FinalActionOnNonResponsivePatients;
 use App\Jobs\SelfEnrollmentEnrollees;
 use App\Jobs\SelfEnrollmentEnrolleesReminder;
@@ -30,26 +29,11 @@ class AutoEnrollmentTestDashboard extends Controller
     /**
      * @return string
      */
-    public function evaluateEnrolledForSurveyTest(Request $request)
-    {
-        $data = [
-            'enrollable_id'      => $request->input('enrolleeId'),
-            'survey_instance_id' => $this->getEnrolleesSurveyInstance()->id,
-        ];
-
-        EnrollableSurveyCompleted::dispatch($data);
-
-        return 'enrolled successfully';
-    }
-
-    /**
-     * @return string
-     */
     public function finalActionTest()
     {
         FinalActionOnNonResponsivePatients::dispatch();
 
-        return redirect()->back()->with('message', 'Reminders Sent Successfully');
+        return redirect(route('ca-director.index'))->with('message', 'Reminders Sent Successfully');
     }
 
     /**

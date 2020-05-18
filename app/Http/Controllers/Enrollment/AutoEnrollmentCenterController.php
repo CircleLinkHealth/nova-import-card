@@ -62,7 +62,8 @@ class AutoEnrollmentCenterController extends Controller
         $practiceNumber = $enrollablePrimaryPractice->outgoing_phone_number;
         if ($practiceNumber) {
             //remove +1 from phone number
-            $practiceNumber = formatPhoneNumber($practiceNumber);
+            $formatted      = formatPhoneNumber($practiceNumber);
+            $practiceNumber = "<a href='tel:$formatted'>$formatted</a>";
         }
 
         if (null === $provider) {
@@ -98,7 +99,8 @@ class AutoEnrollmentCenterController extends Controller
      */
     public function enrollableHasRequestedInfo($enrollable)
     {
-        return $enrollable->statusRequestsInfo()->exists();
+//        Not sure optional() is needed with exists(). Checked it and returns false if statusRequestsInfo() is null;
+        return optional($enrollable->statusRequestsInfo())->exists();
     }
 
     /**
@@ -137,12 +139,9 @@ class AutoEnrollmentCenterController extends Controller
         if ( ! $enrollee->statusRequestsInfo()->exists()) {
             $this->createEnrollStatusRequestsInfo($enrollee);
             $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
-            // Delete User Created from Enrollee
-            // Unreachables cant request info yet.
             if ($isSurveyOnly) {
                 $userModelEnrollee = $this->getUserModelEnrollee($enrollableId);
                 $this->updateEnrolleeSurveyStatuses($enrollee->id, optional($userModelEnrollee)->id, null);
-                $enrollee->update(['user_id' => null, 'auto_enrollment_triggered' => true]);
             }
         }
 
@@ -151,6 +150,7 @@ class AutoEnrollmentCenterController extends Controller
 
     /**
      * @throws \Exception
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      */
     public function enrollNow(Request $request)
@@ -256,6 +256,7 @@ class AutoEnrollmentCenterController extends Controller
      * @param $isSurveyOnlyUser
      * @param $hideButtons
      *
+     * @throws \Exception
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     private function enrollmentLetterView(User $userEnrollee, $isSurveyOnlyUser, Enrollee $enrollee, $hideButtons)
@@ -273,7 +274,7 @@ class AutoEnrollmentCenterController extends Controller
             $provider,
             $hideButtons
         );
-        $practiceName           = $enrollablePrimaryPractice->name;
+        $practiceName           = $enrollablePrimaryPractice->display_name;
         $practiceLogoSrc        = $practiceLetter->practice_logo_src ?? self::ENROLLMENT_LETTER_DEFAULT_LOGO;
         $signatoryNameForHeader = $provider->display_name;
         $dateLetterSent         = '???';

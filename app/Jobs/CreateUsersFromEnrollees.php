@@ -88,11 +88,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
                         return;
                     }
 
-                    $newUserId = (string) Str::uuid();
-
-                    $email = empty($email = $enrollee->email)
-                        ? $newUserId.'@careplanmanager.com'
-                        : $email;
+                    $email = self::sanitizeEmail($enrollee);
 
                     $ccda = $enrollee->ccda;
                     $isAwv = false;
@@ -110,13 +106,11 @@ class CreateUsersFromEnrollees implements ShouldQueue
                                 'display_name' => ucwords(
                                     strtolower($enrollee->first_name.' '.$enrollee->last_name)
                                 ),
-                                'first_name' => $enrollee->first_name,
-                                'last_name'  => $enrollee->last_name,
-                                'mrn_number' => $enrollee->mrn,
-                                'birth_date' => $enrollee->dob,
-                                'username'   => empty($email)
-                                    ? $newUserId
-                                    : $email,
+                                'first_name'        => $enrollee->first_name,
+                                'last_name'         => $enrollee->last_name,
+                                'mrn_number'        => $enrollee->mrn,
+                                'birth_date'        => $enrollee->dob,
+                                'username'          => $email,
                                 'program_id'        => $enrollee->practice_id,
                                 'is_auto_generated' => true,
                                 'roles'             => [$this->surveyRoleId],
@@ -146,7 +140,11 @@ class CreateUsersFromEnrollees implements ShouldQueue
                     //is this going to be a problem if it stays on during the importing phase?
                     $userCreatedFromEnrollee->setBillingProviderId($enrollee->provider->id);
 
-                    $enrollee->update(['user_id' => $userCreatedFromEnrollee->id]);
+                    $enrollee->update(
+                        [
+                            'user_id' => $userCreatedFromEnrollee->id,
+                        ]
+                    );
 
                     $this->updateEnrolleeSurveyStatuses(
                         $enrollee->id,
@@ -159,6 +157,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
                     $newUserIds->push($userCreatedFromEnrollee->id);
                 });
                 $count += $newUserIds->count();
+//                SHOULD NOT BE IN THIS CLASS. BETTER TO MOVE
                 event(new AutoEnrollableCollected($newUserIds->toArray(), false, $this->color));
             });
 
@@ -166,6 +165,15 @@ class CreateUsersFromEnrollees implements ShouldQueue
         if ($target !== $count) {
             Log::critical("CreateUsersFromEnrollees: Was supposed to create $target, but only created $count.");
         }
+    }
+
+    public static function sanitizeEmail(Enrollee $enrollee): ?string
+    {
+        if (empty($enrollee->email) || in_array(strtolower($enrollee->email), ['noemail@noemail.com', 'null'])) {
+            return "e{$enrollee->id}@careplanmanager.com";
+        }
+
+        return $enrollee->email;
     }
 
     private function attachPhones(User $userCreatedFromEnrollee, Enrollee $enrollee)

@@ -133,7 +133,7 @@ class NursesPerformanceReportService
             //            "completed calls" in UI
             'actualCalls'                    => $nurse->countCompletedCallsFor($date),
             'successful'                     => $successfulCallsDaily,
-            'unsuccessful'                   => $nurse->countUnsuccessfulCallsFor($date),
+            'unsuccessful'                   => $nurse->countUnSuccessfulCallsFor($date),
             'totalMonthSystemTimeSeconds'    => $this->getTotalMonthSystemTimeSeconds($nurse, $date),
             'uniquePatientsAssignedForMonth' => $patientsForMonth->count(),
         ];

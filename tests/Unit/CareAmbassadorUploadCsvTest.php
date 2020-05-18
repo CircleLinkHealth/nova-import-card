@@ -6,9 +6,9 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
+use PHPUnit\Framework\TestCase;
 
-class EnrolleeDetailsAreImportedToPatientUser extends TestCase
+class CareAmbassadorUploadCsvTest extends TestCase
 {
     /**
      * A basic unit test example.
@@ -17,6 +17,9 @@ class EnrolleeDetailsAreImportedToPatientUser extends TestCase
      */
     public function test_example()
     {
+        //ASSERT CSV IS UPLOADED
+        //ASSERT FAILS ARE LOGGED IN THE DB
+        //ADD NOTIFICATION
         $this->assertTrue(true);
     }
 }

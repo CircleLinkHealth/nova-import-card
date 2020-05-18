@@ -72,8 +72,8 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
         //        Two days after the last reminder - (the "SendEnrollmentNotificationsReminder")
         $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
         $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
-//        @todo:REMOVE THIS BEFORE REAL USE or just set to  false and set value
-        $testingMode = AppConfig::pull('testing_enroll_sms', true);
+//        @todo:Set to false in config
+        $testingMode = filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN);
         if ($testingMode) {
             $twoDaysAgo    = Carbon::parse(now())->startOfDay()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfDay()->toDateTimeString();
@@ -141,6 +141,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
 
     private function usersForFinalAction(string $twoDaysAgo, string $untilEndOfDay)
     {
+//       Note to consider - Here Im depending only on notifications as source of truth.
         return User::whereHas('notifications', function ($notification) use ($untilEndOfDay, $twoDaysAgo) {
             $notification->where([
                 ['created_at', '<=', $untilEndOfDay],
@@ -148,11 +149,8 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
             ])->where('type', SendEnrollmentEmail::class)
                 ->where('data->is_reminder', true);
         })
-            ->whereHas('patientInfo', function ($patient) use ($twoDaysAgo, $untilEndOfDay) {
-                $patient->where('ccm_status', 'unreachable')->where([
-                    ['date_unreachable', '>=', $twoDaysAgo],
-                    ['date_unreachable', '<=', $untilEndOfDay], // This ensures will not collect older unreachable
-                ]);
+            ->whereHas('patientInfo', function ($patient) {
+                $patient->where('ccm_status', Patient::UNREACHABLE);
             });
     }
 }

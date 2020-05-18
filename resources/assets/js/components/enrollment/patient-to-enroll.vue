@@ -1134,6 +1134,7 @@
                     })
                     .catch(err => {
                         console.log(err)
+                        App.$emit('enrollable:error', this.enrollable_id);
                     });
             },
             submitPendingForm() {

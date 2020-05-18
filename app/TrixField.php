@@ -68,10 +68,7 @@ class TrixField extends Model
 
         $builder->where('type', $type)
             ->where(function ($q) use ($scriptLanguage) {
-                $q->where('language', $scriptLanguage)
-                        //Default to english language. We don't want cases where enrollee has something unexpected in language field,
-                        // and we do not bring any script because of that
-                    ->orWhere('language', self::ENGLISH_LANGUAGE);
+                $q->where('language', $scriptLanguage);
             });
     }
 }

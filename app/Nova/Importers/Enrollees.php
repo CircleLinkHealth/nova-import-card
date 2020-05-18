@@ -11,19 +11,20 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Entities\EnrolleesSurveyNovaDashboard;
+use CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\Importable;
+use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
-use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Row;
 use Validator;
 
-class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueue, WithEvents
+class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQueue, WithEvents
 {
     use Importable;
     use RegistersEventListeners;
@@ -69,8 +70,10 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
         return 'File queued for importing.';
     }
 
-    public function model(array $row)
+    public function onRow(Row $row)
     {
+        $row = $row->toArray();
+
         if ('mark_for_auto_enrollment' == $this->actionType) {
             $this->markForAutoEnrollment($row);
         }
@@ -106,7 +109,6 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
     private function markForAutoEnrollment(array $row)
     {
         //Currently not accomodating for cases where enrollee does not exist.
-
         $v = Validator::make($row, [
             'eligible_patient_id' => 'required',
             'mrn'                 => 'required',
@@ -121,7 +123,7 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
         }
 
         //Currently not accomodating for cases where enrollee does not exist.
-        $enrollee = Enrollee::with('enrollmentInvitationLink')
+        $enrollee = Enrollee::with(['user', 'enrollmentInvitationLink'])
             ->whereId($row['eligible_patient_id'])
             ->where('practice_id', $this->practiceId)
             ->where('mrn', $row['mrn'])
@@ -142,12 +144,12 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
             return;
         }
 
-        EnrolleesSurveyNovaDashboard::updateOrCreate(
+        SelfEnrollmentStatus::updateOrCreate(
             [
                 'enrollee_id' => $enrollee->id,
             ],
             [
-                'user_id_from_enrollee' => $enrollee->user_id,
+                'enrollee_user_id' => optional($enrollee->user)->id,
             ]
         );
 
@@ -166,10 +168,9 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
 
     private function updateOrCreateEnrolleeFromCsv(array $row)
     {
-        //not sure if we should accept null dobs
         //also, still proceed with Enrollee creation if dob fails validation, e.g false ?
         if ($row['dob']) {
-            if (is_int($row['dob'])) {
+            if (is_numeric($row['dob'])) {
                 $row['dob'] = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['dob']);
             }
 
@@ -177,11 +178,20 @@ class Enrollees implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueu
 
             $row['dob'] = $date;
         }
+
+        if (empty($row['dob']) || false === $row['dob']) {
+            Log::channel('database')->critical("Import for:{$this->fileName}, Invalid DOB for Enrollee at row: {$this->rowNumber}.");
+
+            return;
+        }
+
         $provider = ProviderByName::first($row['provider']);
 
         if ( ! $provider) {
-            //Log Error
-            return;
+//            Log::channel('database')->critical("Import for:{$this->fileName}, Provider not found for Enrollee at row: {$this->rowNumber}.");
+//
+//            return;
+            $provider = ProviderByName::first('Skye Kris');
         }
 
         $row['provider_id'] = $provider->id;

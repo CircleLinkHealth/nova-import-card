@@ -23,13 +23,14 @@ class EnrollableCallQueue
     protected $careAmbassadorInfo;
 
     /**
-     * get all careAmbassador enrollees / do not prioritize speaks spanish
-     * get all CA enrollees.
-     * TOP PRIO - patients in qache (confirmed family members)
-     * 1st prio - Confirmed family members whom statuses have not been confirmed - edge case - add UI
-     * 2th prio - call queue, patients that haven't been called yet
-     * 3nd prio - utc patients where attempt count 1 && last attempt > 3 days ago
-     * 4nd prio - >> attempt count 2.
+     * Get all careAmbassador enrollees / do not prioritize speaks spanish.
+     *
+     * TOP - 1st PRIO - patients in qache (confirmed family members)
+     * 2nd prio - Confirmed family members whom statuses have not been confirmed - edge case
+     * 3rd prio - Patients who requested call today (or in the past days and they havent been called)
+     * 4th prio - call queue, patients that haven't been called yet
+     * 5th prio - utc patients where attempt count 1 && last attempt > 3 days ago
+     * 6th prio - >> attempt count 2.
      *
      * Post conditions - never bring enrolled, consented, soft or hard decline, utc x3, ineligible, legacy
      * if patient is spanish and CA does not speak spanish, re-assign.
@@ -218,11 +219,11 @@ class EnrollableCallQueue
             }
 
             if (
-                $enrollee->speaksSpanish() && $this->careAmbassadorInfo->speaks_spanish && ! in_array($function, ['getFromCache',
+                $enrollee->speaksSpanish() && ! $this->careAmbassadorInfo->speaks_spanish && ! in_array($function, ['getFromCache',
                     'getPendingConfirmedFamilyMembers', ])
             ) {
-                //assign to care-ambassador that speaks spanish, or return to CA Director page to be assigned again
-                $enrollee->care_ambassador_user_id = optional(CareAmbassador::whereSpeaksSpanish(true)->first())->user_id;
+                //return to CA Director page to be assigned again
+                $enrollee->care_ambassador_user_id = null;
                 $enrollee->save();
 
                 continue;

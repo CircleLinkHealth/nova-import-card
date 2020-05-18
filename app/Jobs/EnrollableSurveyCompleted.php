@@ -163,19 +163,24 @@ class EnrollableSurveyCompleted implements ShouldQueue
     /**
      * @throws \Exception
      *
+     * //@todo:Should split the functionality of this class into two more classes
+     * //@todo:One for Enrollees and one for unreachable patients
+     *
      * @return string
      */
     public function handle()
     {
-        $enrollableId                = is_json($this->data) ? json_decode($this->data)->enrollable_id : $this->data['enrollable_id'];
-        $surveyInstanceId            = is_json($this->data) ? json_decode($this->data)->survey_instance_id : $this->data['survey_instance_id'];
-        $surveyAnswers               = $this->getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId);
-        $user                        = User::withTrashed()->whereId($enrollableId)->firstOrFail();
-        $isSurveyOnly                = $user->hasRole('survey-only');
-        $addressData                 = $this->getAddressData($surveyAnswers['address']);
-        $emailToString               = getStringValueFromAnswerAwvUser($surveyAnswers['email']);
+        $enrollableId     = is_json($this->data) ? json_decode($this->data)->enrollable_id : $this->data['enrollable_id'];
+        $surveyInstanceId = is_json($this->data) ? json_decode($this->data)->survey_instance_id : $this->data['survey_instance_id'];
+        $surveyAnswers    = $this->getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId);
+        $user             = User::withTrashed()->whereId($enrollableId)->firstOrFail();
+        $isSurveyOnly     = $user->hasRole('survey-only');
+        $addressData      = $this->getAddressData($surveyAnswers['address']);
+        $emailToString    = $this->getEmail($surveyAnswers['email'], $user->email);
+//        $emailToString               = getStringValueFromAnswerAwvUser($surveyAnswers['email']);
         $preferredContactDays        = $this->getPreferredDaysToString($surveyAnswers['preferred_days']);
         $patientContactTimesToString = $this->getPreferredContactHoursToString($surveyAnswers['preferred_time']);
+        $preferredPhoneNumber        = getStringValueFromAnswerAwvUser($surveyAnswers['preferred_number']);
         if (empty($preferredContactDays) || empty($patientContactTimesToString)) {
             throw new \Exception("Missing survey values for user [$user->id]");
         }
@@ -197,9 +202,9 @@ class EnrollableSurveyCompleted implements ShouldQueue
             $this->updateEnrolleeSurveyStatuses($enrollee->id, $user->id, self::SURVEY_COMPLETED);
 
             $enrollee->update([
-                'primary_phone'             => $surveyAnswers['preferred_number'],
-                'preferred_days'            => $this->getPreferredDaysToString($surveyAnswers['preferred_days']),
-                'preferred_window'          => $this->getPreferredContactHoursToString($surveyAnswers['preferred_time']),
+                'primary_phone'             => $preferredPhoneNumber,
+                'preferred_days'            => $preferredContactDays,
+                'preferred_window'          => $patientContactTimesToString,
                 'address'                   => $addressData['address'],
                 'city'                      => $addressData['city'],
                 'state'                     => $addressData['state'],
@@ -211,15 +216,22 @@ class EnrollableSurveyCompleted implements ShouldQueue
 //    It's Duplication but better to make sense. Will refactor later
 
             $this->updateEnrolleeUser($user, $addressData, $emailToString);
-            $this->updateEnrolleePatient($user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd);
+            $this->updateEnrolleePatient(
+                $user,
+                $preferredContactDays,
+                $patientContactTimeStart,
+                $patientContactTimeEnd,
+                $preferredPhoneNumber,
+                $preferredContactDaysToArray
+            );
 
-            $this->importEnrolleeSurveyOnly($enrollee, $user);
+            $this->importEnrolleeSurveyOnly($enrollee);
 
             $patientType = 'Initial';
             $id          = $enrollee->id;
         } else {
             $this->updateUserModel($user, $addressData);
-            $this->updatePatientPhoneNumber($user, $surveyAnswers['preferred_number']);
+            $this->updatePatientPhoneNumber($user, $preferredPhoneNumber);
             $this->updatePatientInfo($user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd);
             $this->updatePatientContactWindow($user, $preferredContactDaysToArray, $patientContactTimeStart, $patientContactTimeEnd);
             $this->reEnrollUnreachablePatient($user);
@@ -232,7 +244,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
         return info("$patientType patient $id has been enrolled");
     }
 
-    public function importEnrolleeSurveyOnly(Enrollee $enrollee, User $user)
+    public function importEnrolleeSurveyOnly(Enrollee $enrollee)
     {
         ImportConsentedEnrollees::dispatch([$enrollee->id]);
     }
@@ -289,6 +301,17 @@ class EnrollableSurveyCompleted implements ShouldQueue
         return $default;
     }
 
+    private function getEmail(object $answerEmail, $userEmail)
+    {
+        $answerEmail = getStringValueFromAnswerAwvUser($answerEmail);
+
+        if (empty($answerEmail)) {
+            return $userEmail;
+        }
+
+        return  $answerEmail;
+    }
+
     private function updateEnrolleAvatarModel($userId)
     {
         $enrolleAvatar = $this->getEnrollee($userId);
@@ -298,8 +321,16 @@ class EnrollableSurveyCompleted implements ShouldQueue
         ]);
     }
 
-    private function updateEnrolleePatient(User $user, $preferredContactDays, $patientContactTimeStart, $patientContactTimeEnd)
-    {
+    private function updateEnrolleePatient(
+        User $user,
+        $preferredContactDays,
+        $patientContactTimeStart,
+        $patientContactTimeEnd,
+        $preferredPhoneNumber,
+        $preferredContactDaysToArray
+    ) {
+        $this->updatePatientPhoneNumber($user, $preferredPhoneNumber);
+        $this->updatePatientContactWindow($user, $preferredContactDaysToArray, $patientContactTimeStart, $patientContactTimeEnd);
         $user->patientInfo->update([
             'preferred_cc_contact_days'  => $preferredContactDays,
             'daily_contact_window_start' => $patientContactTimeStart,
@@ -349,15 +380,17 @@ class EnrollableSurveyCompleted implements ShouldQueue
     }
 
     /**
-     * @param $preferredNumber
+     * @param $preferredPhoneNumber
      */
-    private function updatePatientPhoneNumber(User $user, $preferredNumber)
+    private function updatePatientPhoneNumber(User $user, $preferredPhoneNumber)
     {
         $user->phoneNumbers()->updateOrCreate(
-            ['user_id' => $user->id],
+            [
+                'user_id' => $user->id,
+            ],
             [
                 'is_primary' => true,
-                'number'     => $preferredNumber,
+                'number'     => $preferredPhoneNumber,
             ]
         );
     }
