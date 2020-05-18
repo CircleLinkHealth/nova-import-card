@@ -82,29 +82,95 @@ class ImportConsentedEnrollees implements ShouldQueue
 
         return ['importconsentedenrollees', 'enrollees:'.$ids];
     }
-    
+
     private function eligibilityJob(Enrollee $enrollee)
     {
         if ($enrollee->eligibilityJob) {
             return $enrollee->eligibilityJob;
         }
         $hash = $enrollee->practice->name.$enrollee->first_name.$enrollee->last_name.$enrollee->mrn.$enrollee->city.$enrollee->state.$enrollee->zip;
-        
+
         return EligibilityJob::whereHash($hash)->first();
     }
-    
+
     private function enrolleeAlreadyImported(Enrollee $enrollee)
     {
         $link = route('patient.careplan.print', [$enrollee->user_id]);
         $this->log("Eligible patient with ID {$enrollee->id} has already been imported. See $link");
     }
-    
+
     private function enrolleeMedicalRecordImported(Enrollee $enrollee)
     {
         $link = route('import.ccd.remix');
         $this->log("Just imported the CCD of Eligible Patient ID {$enrollee->id}. Please visit $link");
     }
-    
+
+    private function getDefaultPatientReimportNotifiableId(): ?int
+    {
+        return AppConfig::whereConfigKey('default_patient_reimport_notifiable_id')->pluck('config_value')->first();
+    }
+
+    private function handleExistingUser(Enrollee $enrollee): ?User
+    {
+        if ( ! $enrollee->user_id) {
+            return null;
+        }
+
+        $user = User::withTrashed()->find($enrollee->user_id);
+
+        if ( ! $user) {
+            $enrollee->user_id = null;
+            $enrollee->save();
+
+            return null;
+        }
+
+        if (is_null($user->deleted_at)) {
+            $this->enrolleeAlreadyImported($enrollee);
+
+            return $user;
+        }
+
+        if ($user->restore()) {
+            Artisan::call(
+                ReimportPatientMedicalRecord::class,
+                [
+                    'patientUserId'   => $user->id,
+                    'initiatorUserId' => auth()->id(),
+                    '--flush-ccd'     => true,
+                ]
+            );
+
+            $this->enrolleeMedicalRecordImported($enrollee);
+
+            return $user;
+        }
+    }
+
+    /**
+     * @return bool|\stdClass
+     */
+    private function importCcdUsingMrnFromEligibilityJob(EligibilityJob $job, Enrollee $enrollee)
+    {
+        $mrn = $job->data['mrn_number'] ?? $job->data['mrn'] ?? $job->data['patient_id'] ?? $job->data['internal_id'] ?? null;
+
+        if ( ! $mrn) {
+            return false;
+        }
+
+        $ccda = Ccda::whereBatchId($job->batch_id)->whereMrn($mrn)->first();
+
+        if ( ! $ccda) {
+            return false;
+        }
+
+        $enrollee->medical_record_id   = $ccda->id;
+        $enrollee->medical_record_type = Ccda::class;
+        $enrollee->save();
+
+        return app(ImportService::class)->importExistingCcda($ccda->id);
+    }
+
     private function importFromEligibilityJob(Enrollee $enrollee, EligibilityJob $job)
     {
         if ( ! $enrollee->user_id) {
@@ -122,17 +188,17 @@ class ImportConsentedEnrollees implements ShouldQueue
                     ]
                 ),
                 ImportedMedicalRecord::firstOrNew([
-                    'patient_id' => $enrollee->user_id,
-                    'practice_id' => $enrollee->practice_id,
-                    'medical_record_id' => $enrollee->medical_record_id,
+                    'patient_id'          => $enrollee->user_id,
+                    'practice_id'         => $enrollee->practice_id,
+                    'medical_record_id'   => $enrollee->medical_record_id,
                     'medical_record_type' => $enrollee->medical_record_type,
-                                                  ])
+                ])
             );
-            
+
             $enrollee->user_id = $user->id;
             $enrollee->save();
         }
-    
+
         Artisan::call(
             ReimportPatientMedicalRecord::class,
             [
@@ -141,31 +207,31 @@ class ImportConsentedEnrollees implements ShouldQueue
                 '--flush-ccd'     => true,
             ]
         );
-    
+
         $this->enrolleeMedicalRecordImported($enrollee);
     }
-    
+
     private function importTargetPatient(Enrollee $enrollee)
     {
         $url = route(
             'import.ccd.remix',
             'Click here to Create and a CarePlan and review.'
         );
-        
+
         $athenaApi = app(\CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation::class);
-        
+
         $ccdaExternal = $athenaApi->getCcd(
             $enrollee->targetPatient->ehr_patient_id,
             $enrollee->targetPatient->ehr_practice_id,
             $enrollee->targetPatient->ehr_department_id
         );
-        
+
         if ( ! isset($ccdaExternal[0])) {
             $this->log("Could not retrieve CCD from Athena for eligible patient id $enrollee->id");
-            
+
             return;
         }
-        
+
         $ccda = Ccda::create(
             [
                 'practice_id' => $enrollee->practice_id,
@@ -173,89 +239,19 @@ class ImportConsentedEnrollees implements ShouldQueue
                 'xml'         => $ccdaExternal[0]['ccda'],
             ]
         );
-        
+
         $enrollee->medical_record_id   = $ccda->id;
         $enrollee->medical_record_type = Ccda::class;
         $imported                      = $ccda->import();
         $enrollee->save();
-        
+
         $this->enrolleeMedicalRecordImported($enrollee);
     }
-    
+
     private function log($message)
     {
         \Log::warning($message);
-        
+
         sendSlackMessage('#parse_enroll_import', $message);
     }
-    
-    /**
-     * @param EligibilityJob $job
-     * @param Enrollee $enrollee
-     *
-     * @return bool|\stdClass
-     */
-    private function importCcdUsingMrnFromEligibilityJob(EligibilityJob $job, Enrollee $enrollee)
-    {
-        $mrn = $job->data['mrn_number'] ?? $job->data['mrn'] ?? $job->data['patient_id'] ?? $job->data['internal_id'] ?? null;
-        
-        if ( ! $mrn) {
-            return false;
-        }
-        
-        $ccda = Ccda::whereBatchId($job->batch_id)->whereMrn($mrn)->first();
-        
-        if ( ! $ccda) {
-            return false;
-        }
-        
-        $enrollee->medical_record_id   = $ccda->id;
-        $enrollee->medical_record_type = Ccda::class;
-        $enrollee->save();
-        
-        return app(ImportService::class)->importExistingCcda($ccda->id);
-    }
-    
-    private function handleExistingUser(Enrollee $enrollee): ?User
-    {
-        if ( ! $enrollee->user_id) {
-            return null;
-        }
-        
-        $user = User::withTrashed()->find($enrollee->user_id);
-        
-        if ( ! $user) {
-            $enrollee->user_id = null;
-            $enrollee->save();
-            
-            return null;
-        };
-        
-        if (is_null($user->deleted_at)) {
-            $this->enrolleeAlreadyImported($enrollee);
-            
-            return $user;
-        }
-        
-        if ($user->restore()) {
-            Artisan::call(
-                ReimportPatientMedicalRecord::class,
-                [
-                    'patientUserId'   => $user->id,
-                    'initiatorUserId' => auth()->id(),
-                    '--flush-ccd'     => true,
-                ]
-            );
-            
-            $this->enrolleeMedicalRecordImported($enrollee);
-            
-            return $user;
-        }
-    }
-    
-    private function getDefaultPatientReimportNotifiableId() : ? int
-    {
-        return AppConfig::whereConfigKey('default_patient_reimport_notifiable_id')->pluck('config_value')->first();
-    }
 }
-
