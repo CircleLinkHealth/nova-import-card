@@ -48,7 +48,10 @@ class MakeSurveyOnlyUsersForAllExistingEnrollees extends Command
             ->select('id')
             ->get()
             ->chunk(100)->each(function ($col) {
-                CreateUsersFromEnrollees::dispatch($col->pluck('id')->all());
+                $col->each(function ($e) {
+                    $this->warn("Create user from enrollee {$e->id}");
+                    CreateUsersFromEnrollees::dispatch([$e->id]);
+                });
             });
     }
 }
