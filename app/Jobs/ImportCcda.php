@@ -8,12 +8,14 @@ namespace App\Jobs;
 
 use App\Notifications\CcdaImportedNotification;
 use App\User;
+use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Artisan;
 
 class ImportCcda implements ShouldQueue
 {
@@ -45,6 +47,17 @@ class ImportCcda implements ShouldQueue
     {
         $this->ccda               = $ccda;
         $this->notifyUploaderUser = $notifyUploaderUser;
+    }
+
+    public static function for(int $patientUserId, ?int $notifiableUserId, string $method = 'queue'): void
+    {
+        Artisan::$method(
+            ReimportPatientMedicalRecord::class,
+            [
+                'patientUserId'   => $patientUserId,
+                'initiatorUserId' => $notifiableUserId,
+            ]
+        );
     }
 
     /**
