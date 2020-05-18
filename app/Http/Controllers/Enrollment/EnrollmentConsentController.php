@@ -33,7 +33,7 @@ class EnrollmentConsentController extends Controller
     public function index()
     {
         $enrollees = EnrolleeView::
-            whereNotIn('status', [Enrollee::ENROLLED, Enrollee::LEGACY])
+            whereNotIn('status', [Enrollee::ENROLLED, Enrollee::LEGACY, Enrollee::INELIGIBLE])
                 ->where(function ($subQuery) {
                     $subQuery->whereNull('attempt_count')
                         ->orWhere('attempt_count', '<=', 3);
