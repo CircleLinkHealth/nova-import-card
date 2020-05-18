@@ -8,7 +8,7 @@ namespace App\Http\Controllers\Enrollment;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\FinalActionOnNonResponsivePatients;
-use App\Jobs\SelfEnrollmentEnrollees;
+use App\Jobs\EnrollmentMassInviteEnrollees;
 use App\Jobs\SelfEnrollmentEnrolleesReminder;
 use App\Jobs\SelfEnrollmentUnreachablePatients;
 use App\LoginLogout;
@@ -41,7 +41,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function inviteEnrolleesToEnrollTest(Request $request)
     {
-        SelfEnrollmentEnrollees::dispatchNow(
+        EnrollmentMassInviteEnrollees::dispatchNow(
             null,
             $request->input('color'),
             $request->input('amount'),

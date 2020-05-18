@@ -132,8 +132,10 @@ class CreateUsersFromEnrollees implements ShouldQueue
                     //Do we need to know anything about his validation process, to make sure we get the correct number here?
                     $this->attachPhones($userCreatedFromEnrollee, $enrollee);
 
-                    //is this going to be a problem if it stays on during the importing phase?
-                    $userCreatedFromEnrollee->setBillingProviderId($enrollee->provider->id);
+                    if ( ! empty($enrollee->provider)) {
+                        //is this going to be a problem if it stays on during the importing phase?
+                        $userCreatedFromEnrollee->setBillingProviderId($enrollee->provider->id);
+                    }
 
                     $enrollee->update(
                         [

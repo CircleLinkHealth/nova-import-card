@@ -8,6 +8,7 @@ namespace App\Jobs;
 
 // This file is part of CarePlan Manager by CircleLink Health.
 
+use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\Traits\EnrollableManagement;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -17,7 +18,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class SelfEnrollmentEnrollees implements ShouldQueue
+class EnrollmentMassInviteEnrollees implements ShouldQueue
 {
     use Dispatchable;
     use EnrollableManagement;
@@ -35,10 +36,6 @@ class SelfEnrollmentEnrollees implements ShouldQueue
      */
     private $color;
     /**
-     * @var Enrollee|null
-     */
-    private $enrollee;
-    /**
      * @var int|mixed
      */
     private $practiceId;
@@ -47,23 +44,21 @@ class SelfEnrollmentEnrollees implements ShouldQueue
      * @var Role
      */
     private $surveyRole;
-
+    
     /**
-     * SelfEnrollmentEnrollees constructor.
-     *
-     * @param null  $color
-     * @param mixed $practiceId
+     * EnrollmentMassInviteEnrollees constructor.
+     * @param int $amount
+     * @param int $practiceId
+     * @param string $color
      */
     public function __construct(
-        Enrollee $enrollee = null,
-        $color = null,
-        int $amount = 0,
-        int $practiceId = 0
+        int $amount,
+        int $practiceId,
+        string $color = AutoEnrollmentCenterController::DEFAULT_BUTTON_COLOR
     ) {
-        $this->enrollee   = $enrollee;
-        $this->color      = $color;
         $this->amount     = $amount;
         $this->practiceId = $practiceId;
+        $this->color      = $color;
     }
 
     /**
@@ -75,11 +70,6 @@ class SelfEnrollmentEnrollees implements ShouldQueue
      */
     public function handle()
     {
-//        @todo: Move to its own class
-        if ( ! is_null($this->enrollee)) {
-//            return $this->createSurveyOnlyUsers([$this->enrollee->id]);
-        }
-
         $this->getEnrollees($this->practiceId)
             ->orderBy('id', 'asc')
             ->limit($this->amount)
@@ -93,6 +83,8 @@ class SelfEnrollmentEnrollees implements ShouldQueue
                         return $item->id;
                     })
                     ->toArray();
+
+                $x = 1;
 //                $this->createSurveyOnlyUsers($arr);
             });
     }
