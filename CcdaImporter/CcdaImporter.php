@@ -233,6 +233,7 @@ class CcdaImporter
         $this->ccda->loadMissing(['location', 'patient']);
 
         $this->handleDuplicateEnrollees()
+            ->updateAddressesFromCareAmbassadorInput()
             ->createNewCarePlan()
             ->importAllergies()
             ->importProblems()
@@ -393,6 +394,44 @@ class CcdaImporter
         }
 
         throw new \Exception("Something fishy is going on. enrollee:{$enrollee->id} has user:{$enrollee->user_id}, which does not matched with user:{$this->patient->id}");
+    }
+
+    private function updateAddressesFromCareAmbassadorInput()
+    {
+        //Care Ambassador can confirm/change mailing and email addresses from consented modal
+
+        //do not update if enrollee does not have care ambassador
+        if (empty($this->enrollee->care_ambassador_user_id)) {
+            return $this;
+        }
+
+        if ($this->patient->email !== $this->enrollee->email) {
+            $this->patient->email = $this->enrollee->email;
+        }
+
+        if ($this->patient->address !== $this->enrollee->address) {
+            $this->patient->address = $this->enrollee->address;
+        }
+
+        if ($this->patient->address2 !== $this->enrollee->address_2) {
+            $this->patient->address2 = $this->enrollee->address_2;
+        }
+
+        if ($this->patient->state !== $this->enrollee->state) {
+            $this->patient->state = $this->enrollee->state;
+        }
+
+        if ($this->patient->city !== $this->enrollee->city) {
+            $this->patient->city = $this->enrollee->city;
+        }
+
+        if ($this->patient->zip !== $this->enrollee->zip) {
+            $this->patient->zip = $this->enrollee->zip;
+        }
+
+        //no need to save - these will be saved at updatePatientUserPostImport if changes did exist
+
+        return $this;
     }
 
     private function updateCcdaPostImport()
