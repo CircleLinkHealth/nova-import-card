@@ -99,7 +99,8 @@ class AutoEnrollmentCenterController extends Controller
      */
     public function enrollableHasRequestedInfo($enrollable)
     {
-        return $enrollable->statusRequestsInfo()->exists();
+//        Not sure optional() is needed with exists(). Checked it and returns false if statusRequestsInfo() is null;
+        return optional($enrollable->statusRequestsInfo())->exists();
     }
 
     /**
@@ -141,7 +142,6 @@ class AutoEnrollmentCenterController extends Controller
             if ($isSurveyOnly) {
                 $userModelEnrollee = $this->getUserModelEnrollee($enrollableId);
                 $this->updateEnrolleeSurveyStatuses($enrollee->id, optional($userModelEnrollee)->id, null);
-                $enrollee->update(['user_id' => null, 'auto_enrollment_triggered' => true]);
             }
         }
 
