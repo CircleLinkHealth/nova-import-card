@@ -8,6 +8,7 @@ namespace App\Jobs;
 
 // This file is part of CarePlan Manager by CircleLink Health.
 
+use App\Events\AutoEnrollableCollected;
 use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\Traits\EnrollableManagement;
 use CircleLinkHealth\Customer\Entities\Role;
@@ -44,12 +45,9 @@ class EnrollmentMassInviteEnrollees implements ShouldQueue
      * @var Role
      */
     private $surveyRole;
-    
+
     /**
      * EnrollmentMassInviteEnrollees constructor.
-     * @param int $amount
-     * @param int $practiceId
-     * @param string $color
      */
     public function __construct(
         int $amount,
@@ -73,42 +71,17 @@ class EnrollmentMassInviteEnrollees implements ShouldQueue
         $this->getEnrollees($this->practiceId)
             ->orderBy('id', 'asc')
             ->limit($this->amount)
-            ->select(['id'])
+            ->select(['user_id'])
             ->get()
             //needs to go after the get(), because we are using `limit`. otherwise `chunk` would override `limit`
             ->chunk(100)
             ->each(function ($coll) {
                 $arr = $coll
                     ->map(function ($item) {
-                        return $item->id;
+                        return $item->user_id;
                     })
                     ->toArray();
-
-                $x = 1;
-//                $this->createSurveyOnlyUsers($arr);
+                AutoEnrollableCollected::dispatch($arr, false, $this->color);
             });
     }
-
-//    private function createSurveyOnlyUsers(array $enrolleeIds)
-//    {
-//        $surveyRole = $this->surveyRole();
-//        CreateUsersFromEnrollees::dispatch($enrolleeIds, $surveyRole->id, $this->color);
-//    }
-//
-//    private function surveyRole(): Role
-//    {
-//        if ( ! $this->surveyRole) {
-//            $this->surveyRole = Role::firstOrCreate(
-//                [
-//                    'name' => 'survey-only',
-//                ],
-//                [
-//                    'display_name' => 'Survey User',
-//                    'description'  => 'Became Users just to be enrolled in AWV survey',
-//                ]
-//            );
-//        }
-//
-//        return $this->surveyRole;
-//    }
 }

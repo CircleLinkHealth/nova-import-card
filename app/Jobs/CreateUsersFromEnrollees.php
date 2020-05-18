@@ -6,7 +6,6 @@
 
 namespace App\Jobs;
 
-use App\Events\AutoEnrollableCollected;
 use App\Traits\EnrollableManagement;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
@@ -154,8 +153,6 @@ class CreateUsersFromEnrollees implements ShouldQueue
                     $newUserIds->push($userCreatedFromEnrollee->id);
                 });
                 $count += $newUserIds->count();
-//                SHOULD NOT BE IN THIS CLASS. BETTER TO MOVE
-//                event(new AutoEnrollableCollected($newUserIds->toArray(), false, $this->color));
             });
 
         $target = sizeof($this->enrolleeIds);

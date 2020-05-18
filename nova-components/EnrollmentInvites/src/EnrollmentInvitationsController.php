@@ -26,10 +26,9 @@ class EnrollmentInvitationsController
         }
 
         EnrollmentMassInviteEnrollees::dispatch(
-            null,
-            $novaRequest->input('color'),
             intval($novaRequest->input('amount')),
-            intval($novaRequest->input('practice_id'))
+            intval($novaRequest->input('practice_id')),
+            $novaRequest->input('color')
         );
 
         return $this->response();

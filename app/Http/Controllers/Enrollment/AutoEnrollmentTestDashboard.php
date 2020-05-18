@@ -7,8 +7,8 @@
 namespace App\Http\Controllers\Enrollment;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\FinalActionOnNonResponsivePatients;
 use App\Jobs\EnrollmentMassInviteEnrollees;
+use App\Jobs\FinalActionOnNonResponsivePatients;
 use App\Jobs\SelfEnrollmentEnrolleesReminder;
 use App\Jobs\SelfEnrollmentUnreachablePatients;
 use App\LoginLogout;
@@ -42,10 +42,9 @@ class AutoEnrollmentTestDashboard extends Controller
     public function inviteEnrolleesToEnrollTest(Request $request)
     {
         EnrollmentMassInviteEnrollees::dispatchNow(
-            null,
-            $request->input('color'),
             $request->input('amount'),
-            $request->input('practice_id')
+            $request->input('practice_id'),
+            $request->input('color')
         );
 
         return redirect()->back()->with('message', 'Invited Successfully');

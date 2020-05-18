@@ -159,8 +159,8 @@ trait EnrollableManagement
     public function getEnrollees($practiceId)
     {
 //        CHECK FOR SURVEY ONLY TOGETHER WITH USER_ID
-        return Enrollee::where('user_id', null)
-            ->where('practice_id', $practiceId)
+        return Enrollee::where('practice_id', $practiceId)
+            ->whereNull('source')
             ->whereDoesntHave('enrollmentInvitationLink')
             ->whereIn('status', [
                 Enrollee::QUEUE_AUTO_ENROLLMENT,
