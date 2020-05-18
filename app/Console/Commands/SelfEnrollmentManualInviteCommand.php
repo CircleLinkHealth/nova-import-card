@@ -47,6 +47,7 @@ class SelfEnrollmentManualInviteCommand extends Command
 
         if (is_null($model->user_id)) {
             Log::warning("Enrollee [$model->id] has null user_id. this is unexpected at this point");
+
             return info("Enrollee [$model->id] has null user_id. this is unexpected at this point");
         }
 

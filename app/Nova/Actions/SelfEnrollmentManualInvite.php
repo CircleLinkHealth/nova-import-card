@@ -47,7 +47,7 @@ class SelfEnrollmentManualInvite extends Action
 
             EnrollmentSeletiveInviteEnrollees::dispatch([$model->user_id]);
         });
-        
+
         Action::message('Invites should have been sent. Please check invitation panel.');
     }
 }
