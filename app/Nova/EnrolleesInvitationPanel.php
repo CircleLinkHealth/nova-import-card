@@ -134,7 +134,7 @@ class EnrolleesInvitationPanel extends Resource
                 ->sortable(),
 
             Boolean::make('Invited', function () use ($enrollmentInvitationLink) {
-                return ! empty($enrollmentInvitationLink);
+                return ! empty($enrollmentInvitationLink->first());
             }),
 
             Boolean::make('Has viewed login form', function () use ($enrollmentInvitationLink) {
