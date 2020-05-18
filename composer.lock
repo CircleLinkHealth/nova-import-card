@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "67c120b95716f1c8de97595c2540afdb",
+    "content-hash": "32a729625b6ab727ea188a17bb866cbb",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -838,7 +838,7 @@
             "version": "3.1.4",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git",
+                "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper-module.git",
                 "reference": "8612c5c646ee5ce8f823a713aa940ff444c27247"
             },
             "require": {
@@ -1127,11 +1127,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.6.0",
+            "version": "v2.6.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "0c25d6b7c03de73f184ef40e05e291c0df59e9de"
+                "reference": "afce3eb6e928ed597e6156a840f724e9ca69f3fc"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1156,7 +1156,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-16T05:40:25+00:00"
+            "time": "2020-05-18T01:27:13+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -2973,16 +2973,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.135",
+            "version": "v0.136",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "d976baf8672d44123727593aae7762af597017be"
+                "reference": "e6fcc181136d28f6efa4b41f3434c97819b520e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/d976baf8672d44123727593aae7762af597017be",
-                "reference": "d976baf8672d44123727593aae7762af597017be",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/e6fcc181136d28f6efa4b41f3434c97819b520e6",
+                "reference": "e6fcc181136d28f6efa4b41f3434c97819b520e6",
                 "shasum": ""
             },
             "require": {
@@ -3006,7 +3006,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-05-14T00:25:00+00:00"
+            "time": "2020-05-16T00:25:19+00:00"
         },
         {
             "name": "google/auth",
@@ -4738,16 +4738,16 @@
         },
         {
             "name": "laravelcollective/html",
-            "version": "v6.1.0",
+            "version": "v6.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LaravelCollective/html.git",
-                "reference": "64f2268bf41bf02b3a9dd3c30f102e934d721664"
+                "reference": "895115187e6fca81350a0b1152b5804f52a8ac28"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LaravelCollective/html/zipball/64f2268bf41bf02b3a9dd3c30f102e934d721664",
-                "reference": "64f2268bf41bf02b3a9dd3c30f102e934d721664",
+                "url": "https://api.github.com/repos/LaravelCollective/html/zipball/895115187e6fca81350a0b1152b5804f52a8ac28",
+                "reference": "895115187e6fca81350a0b1152b5804f52a8ac28",
                 "shasum": ""
             },
             "require": {
@@ -4802,7 +4802,7 @@
             ],
             "description": "HTML and Form Builders for the Laravel Framework",
             "homepage": "https://laravelcollective.com",
-            "time": "2020-03-02T16:41:28+00:00"
+            "time": "2020-05-17T20:19:55+00:00"
         },
         {
             "name": "lcobucci/jwt",

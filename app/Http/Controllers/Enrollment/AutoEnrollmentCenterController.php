@@ -99,7 +99,7 @@ class AutoEnrollmentCenterController extends Controller
      */
     public function enrollableHasRequestedInfo($enrollable)
     {
-        return $enrollable->statusRequestsInfo()->exists();
+        return $enrollable ? $enrollable->statusRequestsInfo()->exists() : false;
     }
 
     /**
@@ -141,7 +141,6 @@ class AutoEnrollmentCenterController extends Controller
             if ($isSurveyOnly) {
                 $userModelEnrollee = $this->getUserModelEnrollee($enrollableId);
                 $this->updateEnrolleeSurveyStatuses($enrollee->id, optional($userModelEnrollee)->id, null);
-                $enrollee->update(['user_id' => null, 'auto_enrollment_triggered' => true]);
             }
         }
 
@@ -256,6 +255,7 @@ class AutoEnrollmentCenterController extends Controller
      * @param $isSurveyOnlyUser
      * @param $hideButtons
      *
+     * @throws \Exception
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     private function enrollmentLetterView(User $userEnrollee, $isSurveyOnlyUser, Enrollee $enrollee, $hideButtons)

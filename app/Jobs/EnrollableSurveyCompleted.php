@@ -170,13 +170,14 @@ class EnrollableSurveyCompleted implements ShouldQueue
      */
     public function handle()
     {
-        $enrollableId                = is_json($this->data) ? json_decode($this->data)->enrollable_id : $this->data['enrollable_id'];
-        $surveyInstanceId            = is_json($this->data) ? json_decode($this->data)->survey_instance_id : $this->data['survey_instance_id'];
-        $surveyAnswers               = $this->getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId);
-        $user                        = User::withTrashed()->whereId($enrollableId)->firstOrFail();
-        $isSurveyOnly                = $user->hasRole('survey-only');
-        $addressData                 = $this->getAddressData($surveyAnswers['address']);
-        $emailToString               = getStringValueFromAnswerAwvUser($surveyAnswers['email']);
+        $enrollableId     = is_json($this->data) ? json_decode($this->data)->enrollable_id : $this->data['enrollable_id'];
+        $surveyInstanceId = is_json($this->data) ? json_decode($this->data)->survey_instance_id : $this->data['survey_instance_id'];
+        $surveyAnswers    = $this->getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId);
+        $user             = User::withTrashed()->whereId($enrollableId)->firstOrFail();
+        $isSurveyOnly     = $user->hasRole('survey-only');
+        $addressData      = $this->getAddressData($surveyAnswers['address']);
+        $emailToString    = $this->getEmail($surveyAnswers['email'], $user->email);
+//        $emailToString               = getStringValueFromAnswerAwvUser($surveyAnswers['email']);
         $preferredContactDays        = $this->getPreferredDaysToString($surveyAnswers['preferred_days']);
         $patientContactTimesToString = $this->getPreferredContactHoursToString($surveyAnswers['preferred_time']);
         $preferredPhoneNumber        = getStringValueFromAnswerAwvUser($surveyAnswers['preferred_number']);
@@ -224,7 +225,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 $preferredContactDaysToArray
             );
 
-            $this->importEnrolleeSurveyOnly($enrollee, $user);
+            $this->importEnrolleeSurveyOnly($enrollee);
 
             $patientType = 'Initial';
             $id          = $enrollee->id;
@@ -298,6 +299,17 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
 //        else return []
         return $default;
+    }
+
+    private function getEmail(object $answerEmail, $userEmail)
+    {
+        $answerEmail = getStringValueFromAnswerAwvUser($answerEmail);
+
+        if (empty($answerEmail)) {
+            return $userEmail;
+        }
+
+        return  $answerEmail;
     }
 
     private function updateEnrolleAvatarModel($userId)
