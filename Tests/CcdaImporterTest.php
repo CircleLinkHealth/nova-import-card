@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Tests;
 
+use App\Jobs\CreateUsersFromEnrollees;
 use App\Jobs\EnrollableSurveyCompleted;
 use App\Jobs\EnrollmentSeletiveInviteEnrollees;
 use App\Listeners\AssignPatientToStandByNurse;
@@ -40,8 +41,7 @@ class CcdaImporterTest extends CustomerTestCase
         Notification::fake();
 
         $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)->createEnrollee($this->practice());
-        EnrollmentSeletiveInviteEnrollees::dispatch([$enrollee->user_id]);
-        $this->assertTrue( ! empty($enrollee->user_id));
+        EnrollmentSeletiveInviteEnrollees::dispatch([$enrollee->fresh()->user_id]);
         $patient = User::findOrFail($enrollee->fresh()->user_id);
         $this->assertTrue($patient->isSurveyOnly());
 
@@ -294,9 +294,9 @@ class CcdaImporterTest extends CustomerTestCase
         ]);
     }
 
-    public function test_it_matches_patient_name_with_dupe_name_with_middle_initial()
-    {
-    }
+//    public function test_it_matches_patient_name_with_dupe_name_with_middle_initial()
+//    {
+//    }
 
     public function test_it_replaces_email_with_email_from_enrollee()
     {
