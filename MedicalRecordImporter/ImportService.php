@@ -46,7 +46,7 @@ class ImportService
             )->whereProgramId($ccda->practice_id)->with('carePlan')
                 ->first();
 
-            if ($exists) {
+            if ($exists && $exists->carePlan) {
                 $ccda->patient_id = $enrollee->user_id = $exists->id;
                 $ccda->save();
                 $enrollee->save();
