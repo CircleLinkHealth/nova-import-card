@@ -6,9 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Tests;
 
-use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\Jobs\EnrollableSurveyCompleted;
-use App\Jobs\EnrollmentMassInviteEnrollees;
+use App\Jobs\EnrollmentSeletiveInviteEnrollees;
 use App\Listeners\AssignPatientToStandByNurse;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
@@ -41,8 +40,8 @@ class CcdaImporterTest extends CustomerTestCase
         Notification::fake();
 
         $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)->createEnrollee($this->practice());
-        EnrollmentMassInviteEnrollees::dispatch($enrollee, AutoEnrollmentCenterController::DEFAULT_BUTTON_COLOR, 1, $this->practice()->id);
-        $this->assertTrue(empty($enrollee->user_id));
+        EnrollmentSeletiveInviteEnrollees::dispatch([$enrollee->user_id]);
+        $this->assertTrue( ! empty($enrollee->user_id));
         $patient = User::findOrFail($enrollee->fresh()->user_id);
         $this->assertTrue($patient->isSurveyOnly());
 
