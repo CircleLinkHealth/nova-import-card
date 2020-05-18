@@ -857,9 +857,10 @@ class Enrollee extends BaseModel
             });
     }
 
-    public function scopeShouldSuggestAsFamilyForEnrollee($query, $enrolleeId)
+    public function scopeShouldSuggestAsFamilyForEnrollee($query, Enrollee $enrollee)
     {
-        return $query->where('id', '!=', $enrolleeId)
+        return $query->where('id', '!=', $enrollee->id)
+            ->where('practice_id', $enrollee->practice_id)
             ->whereNotIn(
                 'status',
                 [
