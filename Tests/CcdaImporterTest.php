@@ -6,9 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Tests;
 
-use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\Jobs\EnrollableSurveyCompleted;
-use App\Jobs\SelfEnrollmentEnrollees;
+use App\Jobs\EnrollmentSeletiveInviteEnrollees;
 use App\Listeners\AssignPatientToStandByNurse;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
@@ -38,11 +37,10 @@ class CcdaImporterTest extends CustomerTestCase
 {
     public function test_auto_enrollment_flow()
     {
+//        See. EnrolleeObserver
         Notification::fake();
-
         $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)->createEnrollee($this->practice());
-        SelfEnrollmentEnrollees::dispatch($enrollee, AutoEnrollmentCenterController::DEFAULT_BUTTON_COLOR, 1, $this->practice()->id);
-        $this->assertTrue(empty($enrollee->user_id));
+        EnrollmentSeletiveInviteEnrollees::dispatch([$enrollee->fresh()->user_id]);
         $patient = User::findOrFail($enrollee->fresh()->user_id);
         $this->assertTrue($patient->isSurveyOnly());
 
@@ -295,9 +293,9 @@ class CcdaImporterTest extends CustomerTestCase
         ]);
     }
 
-    public function test_it_matches_patient_name_with_dupe_name_with_middle_initial()
-    {
-    }
+//    public function test_it_matches_patient_name_with_dupe_name_with_middle_initial()
+//    {
+//    }
 
     public function test_it_replaces_email_with_email_from_enrollee()
     {
