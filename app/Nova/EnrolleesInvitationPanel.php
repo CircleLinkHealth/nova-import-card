@@ -38,8 +38,9 @@ class EnrolleesInvitationPanel extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'first_name', 'last_name',
+        'id', 'first_name', 'last_name', 'status',
     ];
+
     /**
      * The single value that should be used to represent the resource when being displayed.
      *

@@ -16,7 +16,6 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class AutoEnrollmentCenterController extends Controller
 {
@@ -230,25 +229,6 @@ class AutoEnrollmentCenterController extends Controller
             return $this->enrollmentLetterView($user, true, $enrollee, true);
         }
         abort(403, 'Unauthorized action.');
-    }
-
-    public function viewFormVisited(Request $request)
-    {
-        $isSurveyOnly = boolval($request->input('is_survey_only'));
-        $userId       = intval($request->input('enrollable_id'));
-        if ($isSurveyOnly) {
-            $enrollee = $this->getEnrollee($userId);
-            if ( ! $enrollee) {
-                Log::warning("Enrollee for user with id $userId not found");
-                throw new \Exception('User does not exist', 404);
-            }
-            $this->expirePastInvitationLink($enrollee);
-        } else {
-            $user = User::find($userId);
-            $this->expirePastInvitationLink($user);
-        }
-
-        return response()->json([], 200);
     }
 
     /**
