@@ -4,8 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
-
 Route::get('/debug-sentry', 'DemoController@sentry');
 Route::get('/debug-sentry-log', 'DemoController@sentryLog');
 
@@ -2329,5 +2327,3 @@ Route::post('enrollee-login-viewed', [
 //    'uses' => 'CareCenter\WorkScheduleController@calendarEvents',
 //    'as'   => 'care.center.work.schedule.getCalendarData',
 //]);
-
-ImportConsentedEnrollees::dispatch([238370]);
