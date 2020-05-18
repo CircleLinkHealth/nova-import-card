@@ -144,7 +144,7 @@ class EnrollmentStatsController extends Controller
 
             $data[$ambassador->id]['total_calls'] = $base->sum('total_calls');
 
-            if (0 != $base->sum('total_calls') && 0 != $base->sum('no_enrolled') && 'Not Set' != $hourCost) {
+            if (0 != $base->sum('total_calls') && 0 != $base->sum('no_enrolled') && 'Not Set' != $hourCost && 0 !== $totalTimeInSystemSeconds) {
                 $data[$ambassador->id]['earnings'] = '$'.number_format(
                     $hourCost * ($totalTimeInSystemSeconds / 3600),
                     2
