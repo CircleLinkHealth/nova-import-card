@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\Tests;
 
-use App\Jobs\CreateUsersFromEnrollees;
 use App\Jobs\EnrollableSurveyCompleted;
 use App\Jobs\EnrollmentSeletiveInviteEnrollees;
 use App\Listeners\AssignPatientToStandByNurse;
@@ -38,8 +37,8 @@ class CcdaImporterTest extends CustomerTestCase
 {
     public function test_auto_enrollment_flow()
     {
+//        See. EnrolleeObserver
         Notification::fake();
-
         $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)->createEnrollee($this->practice());
         EnrollmentSeletiveInviteEnrollees::dispatch([$enrollee->fresh()->user_id]);
         $patient = User::findOrFail($enrollee->fresh()->user_id);
