@@ -99,8 +99,7 @@ class AutoEnrollmentCenterController extends Controller
      */
     public function enrollableHasRequestedInfo($enrollable)
     {
-//        Not sure optional() is needed with exists(). Checked it and returns false if statusRequestsInfo() is null;
-        return optional($enrollable->statusRequestsInfo())->exists();
+        return $enrollable ? $enrollable->statusRequestsInfo()->exists() : false;
     }
 
     /**
