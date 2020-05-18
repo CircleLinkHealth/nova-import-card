@@ -15,7 +15,6 @@ use Illuminate\Support\Str;
  * If Enrollees do not have emails, CPM will generate a fake email using formula: "e{$enrollee->id}@careplanmanager.com"
  *
  * Class PlaceholderEmailsVerifier
- * @package CircleLinkHealth\Customer\Helpers
  */
 class PlaceholderEmailsVerifier
 {
