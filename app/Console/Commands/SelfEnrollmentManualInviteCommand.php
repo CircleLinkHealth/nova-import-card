@@ -6,9 +6,10 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\SelfEnrollmentEnrollees;
+use App\Jobs\EnrollmentSeletiveInviteEnrollees;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class SelfEnrollmentManualInviteCommand extends Command
 {
@@ -43,6 +44,13 @@ class SelfEnrollmentManualInviteCommand extends Command
     public function handle()
     {
         $model = Enrollee::find($this->argument('enrolleeId'));
-        SelfEnrollmentEnrollees::dispatch($model);
+
+        if (is_null($model->user_id)) {
+            Log::warning("Enrollee [$model->id] has null user_id. this is unexpected at this point");
+
+            return info("Enrollee [$model->id] has null user_id. this is unexpected at this point");
+        }
+
+        EnrollmentSeletiveInviteEnrollees::dispatch([$model->user_id]);
     }
 }
