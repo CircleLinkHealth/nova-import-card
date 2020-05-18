@@ -168,7 +168,7 @@ class EnrollmentCenterController extends ApiController
                 auth()->user()->careAmbassador
             );
         }
-
+        //return stats and cookie if enrollable does not exist
         if ( ! $enrollable) {
             $stats = EnrollableCallQueue::getCareAmbassadorPendingCallStatus(auth()->user()->id);
 
