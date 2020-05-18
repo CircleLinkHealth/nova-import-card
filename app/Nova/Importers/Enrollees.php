@@ -188,10 +188,9 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
         $provider = ProviderByName::first($row['provider']);
 
         if ( ! $provider) {
-//            Log::channel('database')->critical("Import for:{$this->fileName}, Provider not found for Enrollee at row: {$this->rowNumber}.");
-//
-//            return;
-            $provider = ProviderByName::first('Skye Kris');
+            Log::channel('database')->critical("Import for:{$this->fileName}, Provider not found for Enrollee at row: {$this->rowNumber}.");
+
+            return;
         }
 
         $row['provider_id'] = $provider->id;

@@ -47,10 +47,10 @@ class SuggestEnrollable extends EnrollableService
     private function getSuggestions()
     {
         //Exact phone number match is the best indicator for a family member
-        $matchingPhones = Enrollee::shouldSuggestAsFamilyForEnrollee($this->enrolleeId)
+        $matchingPhones = Enrollee::shouldSuggestAsFamilyForEnrollee($this->enrollee)
             ->searchPhones($this->enrollee->getPhonesE164AsString())->get();
 
-        $matchingAddressAndSurname = Enrollee::shouldSuggestAsFamilyForEnrollee($this->enrolleeId)
+        $matchingAddressAndSurname = Enrollee::shouldSuggestAsFamilyForEnrollee($this->enrollee)
             ->searchAddresses($this->enrollee->getAddressesAsString())
             ->get()
             ->map(function (Enrollee $e) {

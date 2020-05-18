@@ -84,10 +84,15 @@ class CreateUsersFromEnrollees implements ShouldQueue
 
                     $email = self::sanitizeEmail($enrollee);
 
+                    //Naive way to validate it will not break in UserRepository when creating the User and halt sendng the auto-enrollment invites
+                    if ( ! $email || ! $enrollee->provider_id || ! $enrollee->first_name || ! $enrollee->last_name || ! $enrollee->dob || ! $enrollee->mrn) {
+                        return;
+                    }
+
                     $ccda = $enrollee->ccda;
                     $isAwv = false;
                     if ($ccda) {
-                        $ccda->billing_provider_id = $enrollee->provider->id;
+                        $ccda->billing_provider_id = $enrollee->provider_id;
                         $isAwv = Ccda::IMPORTER_AWV === $ccda->source;
                     }
 
