@@ -100,7 +100,7 @@ class EnrollmentDirectorController extends Controller
                 'address_2'           => $request->input('address_2'),
                 'primary_phone'       => $phones['primary_phone'],
                 'home_phone'          => $phones['home_phone'],
-                'other_phone'         => $phones['other_phone'],
+                'other_phone'         => $phones['other_phone'] ?? $phones['work_phone'] ?? null,
                 'cell_phone'          => $phones['cell_phone'],
                 'primary_insurance'   => $request->input('primary_insurance'),
                 'secondary_insurance' => $request->input('secondary_insurance'),
