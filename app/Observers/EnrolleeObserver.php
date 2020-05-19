@@ -49,10 +49,8 @@ class EnrolleeObserver
 
     public function saved(Enrollee $enrollee)
     {
-        if ($enrollee->isDirty('status') && is_null($enrollee->user_id)) {
-            if (Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->status) {
-                CreateUsersFromEnrollees::dispatch([$enrollee->id]);
-            }
+        if ($this->shouldCreateSurveyOnlyUser($enrollee)) {
+            CreateUsersFromEnrollees::dispatch([$enrollee->id]);
         }
     }
 
@@ -63,5 +61,26 @@ class EnrolleeObserver
      */
     public function updated(Enrollee $enrollee)
     {
+    }
+
+    private function shouldCreateSurveyOnlyUser(Enrollee $enrollee)
+    {
+        if ( ! $enrollee->isDirty('status')) {
+            return false;
+        }
+
+        if ( ! is_null($enrollee->user_id)) {
+            return false;
+        }
+
+        if (Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->getOriginal('status')) {
+            return false;
+        }
+
+        if (Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->status) {
+            return true;
+        }
+
+        return false;
     }
 }
