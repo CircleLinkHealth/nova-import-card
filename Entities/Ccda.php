@@ -25,6 +25,7 @@ use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\Eligibility\MedicalRecord\MedicalRecordFactory;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use CircleLinkHealth\SharedModels\Traits\BelongsToPatientUser;
@@ -117,12 +118,13 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
     const CCD_MEDIA_COLLECTION_NAME = 'ccd';
 
-    const EMR_DIRECT   = 'emr_direct';
-    const GOOGLE_DRIVE = 'google_drive';
-    const IMPORTER     = 'importer';
-    const IMPORTER_AWV = 'importer_awv';
-    const SFTP_DROPBOX = 'sftp_dropbox';
-    const UPLOADED     = 'uploaded';
+    const EMR_DIRECT                          = 'emr_direct';
+    const GOOGLE_DRIVE                        = 'google_drive';
+    const IMPORTER                            = 'importer';
+    const IMPORTER_AWV                        = 'importer_awv';
+    const SFTP_DROPBOX                        = 'sftp_dropbox';
+    const TEMP_VAR_COMMONWEALTH_PRACTICE_NAME = 'commonwealth-pain-associates-pllc';
+    const UPLOADED                            = 'uploaded';
 
     protected $attributes = [
         'imported' => false,
@@ -173,13 +175,43 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
      */
     private $duplicate_id;
 
+    /**
+     * This is a solution for commonwealth importing!
+     * Likely to change.
+     *
+     * If there is a specific template for this practice, decorate the ccda.json.
+     *
+     *
+     * @return \CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord|null
+     */
+    public static function attemptToDecorateCcda(User $user, Ccda $ccda)
+    {
+        if (self::TEMP_VAR_COMMONWEALTH_PRACTICE_NAME !== optional($user->primaryPractice)->name) {
+            return $ccda;
+        }
+
+        if ($mr = MedicalRecordFactory::create($user, $ccda)) {
+            if ( ! empty($mr)) {
+                $ccda->json = $mr->toJson();
+                $ccda->save();
+                $ccda->bluebuttonJson(true);
+            }
+        }
+
+        return $ccda;
+    }
+
     public function batch()
     {
         return $this->belongsTo(EligibilityBatch::class);
     }
 
-    public function bluebuttonJson()
+    public function bluebuttonJson($purgeDecodedCcda = false)
     {
+        if (true === $purgeDecodedCcda) {
+            $this->decodedJson = null;
+        }
+
         if ( ! empty($this->decodedJson)) {
             return $this->decodedJson;
         }
@@ -448,7 +480,13 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             $ccda = $ccda->fresh();
         }
 
-        $ccda = (new CcdaImporter($ccda, $ccda->load('patient')->patient ?? null, $enrollee))->attemptImport()->raiseConcernsOrAutoQAApprove();
+        $patient = $ccda->load('patient')->patient ?? null;
+
+        if ($patient) {
+            $ccda = self::attemptToDecorateCcda($patient, $ccda);
+        }
+
+        $ccda = (new CcdaImporter($ccda, $patient, $enrollee))->attemptImport()->raiseConcernsOrAutoQAApprove();
 
         if ($ccda->isDirty()) {
             $ccda->save();
