@@ -22,7 +22,7 @@ class ReplaceFieldsFromSupplementaryData extends BaseCcdaImportHook
 
     const RECEIVES_NBI_EXCEPTIONS_NOTIFICATIONS = 'receives_nbi_exceptions_notifications';
 
-    public function run(): Patient
+    public function run()
     {
         if (self::NBI_PRACTICE_NAME != $this->patient->primaryPractice->name) {
             return $this->payload;
