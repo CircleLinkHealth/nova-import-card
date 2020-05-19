@@ -24,6 +24,10 @@ use Tests\CustomerTestCase;
 class AutoEnrollmentProcess extends CustomerTestCase
 {
     use EnrollableManagement;
+    const COMPLETED = 'completed';
+
+    const IN_PROGRESS = 'in_progress';
+    const PENDING     = 'pending';
     /**
      * @var
      */
@@ -138,39 +142,49 @@ class AutoEnrollmentProcess extends CustomerTestCase
         self::assertTrue($enrollee->enrollmentInvitationLink()->exists());
     }
 
+    public function test_patient_has_clicked_get_my_care_coach()
+    {
+        $userId         = 666;
+        $surveyInstance = $this->surveyInstance($userId, self::PENDING);
+        self::assertTrue($this->getAwvUserSurvey($userId, $surveyInstance)->exists());
+    }
+
     public function test_patient_has_logged_in()
     {
-//         $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)
-//            ->createEnrollee($this->practice());
-//        Auth::loginUsingId($enrollee->fresh()->user_id, true);
-//        self::assertDatabaseHas('login_logout_events', [
-//            'user_id' => $enrollee->fresh()->user_id,
-//        ]);
+        $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)
+            ->createEnrollee($this->practice());
+        Auth::loginUsingId($enrollee->fresh()->user_id, true);
+        self::assertDatabaseHas('login_logout_events', [
+            'user_id' => $enrollee->fresh()->user_id,
+        ]);
+    }
+
+    public function test_patient_has_requested_info()
+    {
+        $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)
+            ->createEnrollee($this->practice());
+
+        // Create Request Info
+        $enrollee->statusRequestsInfo()->create();
+
+        $this->assertDatabaseHas('enrollees_request_info', [
+            'enrollable_id'   => $enrollee->id,
+            'enrollable_type' => get_class($enrollee),
+        ]);
+    }
+
+    public function test_patient_has_survey_completed()
+    {
+        $userId         = 666;
+        $surveyInstance = $this->surveyInstance($userId, self::COMPLETED);
+        self::assertTrue('in_progress' === $this->getAwvUserSurvey($userId, $surveyInstance)->first()->status);
     }
 
     public function test_patient_has_survey_in_progress()
     {
-//        $userId = 666;
-//
-//        $surveyId = DB::table('surveys')->insertGetId([
-//            'name' => 'Enrollees',
-//        ]);
-//
-//        $surveyInstanceId = DB::table('survey_instances')->insertGetId([
-//            'survey_id' => $surveyId,
-//            'year'      => Carbon::now(),
-//        ]);
-//
-//        DB::table('users_survey')->insert(
-//            [
-//                'user_id'            => $userId,
-//                'survey_instance_id' => $surveyInstanceId,
-//                'survey_id'          => $surveyId,
-//                'status'             => 'in_progress',
-//            ]
-//        );
-//        $surveyInstance = DB::table('survey_instances')->where('id', '=', $surveyInstanceId)->first();
-//        self::assertTrue('in_progress' === $this->getAwvUserSurvey($userId, $surveyInstance)->first()->status);
+        $userId         = 666;
+        $surveyInstance = $this->surveyInstance($userId, self::IN_PROGRESS);
+        self::assertTrue('in_progress' === $this->getAwvUserSurvey($userId, $surveyInstance)->first()->status);
     }
 
 //
@@ -203,12 +217,40 @@ class AutoEnrollmentProcess extends CustomerTestCase
         self::assertTrue(optional($enrollee->enrollmentInvitationLink())->where('manually_expired', true)->exists());
     }
 
+    private function createSurveyConditions(int $userId, int $surveyInstanceId, int $surveyId, string $status)
+    {
+        DB::table('users_surveys')->insert(
+            [
+                'user_id'            => $userId,
+                'survey_instance_id' => $surveyInstanceId,
+                'survey_id'          => $surveyId,
+                'status'             => $status,
+                'start_date'         => Carbon::parse(now())->toDateTimeString(),
+            ]
+        );
+    }
+
 //    Meaning they will get physical mail.
 //    public function test_only_patients_taken_no_action_will_be_marked_as_unresponsive()
 //    {
 //    }
 
-// test authentication
+    // test authentication
 
-// test reminder _ only setnd just one remidner.
+    // test reminder _ only setnd just one remidner.
+    private function surveyInstance(string $userId, string $status)
+    {
+        $surveyId = DB::table('surveys')->insertGetId([
+            'name' => 'Enrollees',
+        ]);
+
+        $surveyInstanceId = DB::table('survey_instances')->insertGetId([
+            'survey_id' => $surveyId,
+            'year'      => Carbon::now(),
+        ]);
+
+        $this->createSurveyConditions($userId, $surveyInstanceId, $surveyId, $status);
+
+        return DB::table('survey_instances')->where('id', '=', $surveyInstanceId)->first();
+    }
 }
