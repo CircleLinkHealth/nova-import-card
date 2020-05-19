@@ -11,6 +11,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -85,7 +86,22 @@ class CreateUsersFromEnrollees implements ShouldQueue
                     $email = self::sanitizeEmail($enrollee);
 
                     //Naive way to validate it will not break in UserRepository when creating the User and halt sendng the auto-enrollment invites
-                    if ( ! $email || ! $enrollee->provider_id || ! $enrollee->first_name || ! $enrollee->last_name || ! $enrollee->dob || ! $enrollee->mrn) {
+                    if ( ! $email || ! $enrollee->practice_id || ! $enrollee->provider_id || ! $enrollee->first_name || ! $enrollee->last_name || ! $enrollee->dob || ! $enrollee->mrn) {
+                        return;
+                    }
+
+                    try {
+                        $dupeCheck = UserRepository::validatePatientDoesNotAlreadyExist(
+                            $enrollee->practice_id,
+                            $enrollee->first_name,
+                            $enrollee->last_name,
+                            $enrollee->dob,
+                            $enrollee->mrn
+                        );
+                    } catch (PatientAlreadyExistsException $e) {
+                        $enrollee->user_id = $e->getPatientUserId();
+                        $enrollee->save();
+
                         return;
                     }
 
