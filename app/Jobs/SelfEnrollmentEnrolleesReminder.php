@@ -48,11 +48,11 @@ class SelfEnrollmentEnrolleesReminder implements ShouldQueue
         $testingMode   = filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN)
         || App::environment('testing');
 
-//        Temporary. Need a solution here. This class is triggered by a scheduled command.
+//        @todo:Temporary. Need a solution here. (This class is triggered by a scheduled command.)
         $practice = Practice::where('name', '=', 'Commonwealth Pain & Spine')->first();
 
         if (empty($practice) && ! $testingMode) {
-            Log::critical('Practice with name [Commonwealth Pain & Spine] does not exist.');
+            Log::critical('Practice to send reminders to, does not exist.');
 
             return;
         }
@@ -62,7 +62,7 @@ class SelfEnrollmentEnrolleesReminder implements ShouldQueue
             $twoDaysAgo              = Carbon::parse(now())->startOfDay()->toDateTimeString();
             $untilEndOfDay           = Carbon::parse($twoDaysAgo)->copy()->endOfDay()->toDateTimeString();
             $enrolleesToSendReminder = $this->getEnrolleUsersToSendReminder($untilEndOfDay, $twoDaysAgo, $practice->id);
-            if (empty($enrolleesToSendReminder)) {
+            if (empty($enrolleesToSendReminder->toArray())) {
                 Log::info('There are no Enrollees to send reminders to.');
 
                 return;
@@ -75,7 +75,7 @@ class SelfEnrollmentEnrolleesReminder implements ShouldQueue
         }
 
         $enrolleesToSendReminder = $this->getEnrolleUsersToSendReminder($untilEndOfDay, $twoDaysAgo, $practice->id);
-        if (empty($enrolleesToSendReminder)) {
+        if (empty($enrolleesToSendReminder->toArray())) {
             Log::info('There are no Enrollees to send reminders to.');
 
             return;
