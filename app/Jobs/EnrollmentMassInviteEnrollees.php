@@ -18,6 +18,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class EnrollmentMassInviteEnrollees implements ShouldQueue
 {
@@ -81,6 +82,10 @@ class EnrollmentMassInviteEnrollees implements ShouldQueue
                         return $item->user_id;
                     })
                     ->toArray();
+
+                if (empty($arr)) {
+                    Log::warning('No Enrollees to invite have been found');
+                }
                 AutoEnrollableCollected::dispatch($arr, false, $this->color);
             });
     }

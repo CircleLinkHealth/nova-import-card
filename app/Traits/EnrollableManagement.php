@@ -7,13 +7,13 @@
 namespace App\Traits;
 
 use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
+use App\LoginLogout;
 use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
@@ -75,6 +75,18 @@ trait EnrollableManagement
         $enrolleesSurveyUrl = url(config('services.awv.url')."/survey/enrollees/create-url/{$enrollableId}/{$surveyId}");
 
         return redirect($enrolleesSurveyUrl);
+    }
+
+    /**
+     *  Requirement: Did patient view Letter or Survey?
+     *  If logged in once then user did view the letter.
+     *
+     * @param $userId
+     * @return bool
+     */
+    public function enrolleeHasLoggedIn($userId)
+    {
+        return LoginLogout::whereUserId($userId)->exists();
     }
 
     /**
@@ -272,20 +284,6 @@ trait EnrollableManagement
     }
 
     /**
-     *  Requirement: Did patient view Letter or Survey?
-     *  If logged in once then user did view the letter. If this exists the no need need to check further.
-     *
-     * @param mixed $enrollableId
-     * @param mixed $enrollee
-     *
-     * @return bool
-     */
-    public function hasViewedLetterOrSurvey($enrollee)
-    {
-        return optional($enrollee->selfEnrollmentStatuses)->logged_in;
-    }
-
-    /**
      * @param $url
      *
      * @return mixed
@@ -345,25 +343,6 @@ trait EnrollableManagement
             [
                 'status'     => 'pending',
                 'start_date' => Carbon::parse(now())->toDateTimeString(),
-            ]
-        );
-    }
-
-    public function updateEnrolleeSurveyStatuses(
-        $enrolleeId,
-        $userId = null,
-        $statusSurvey = null,
-        $loggedIn = false,
-        $patientInfo = null
-    ) {
-        SelfEnrollmentStatus::updateOrCreate(
-            [
-                'enrollee_id' => $enrolleeId,
-            ],
-            [
-                'enrollee_user_id'      => $userId,
-                'awv_survey_status'     => $statusSurvey,
-                'enrollee_patient_info' => $patientInfo,
             ]
         );
     }

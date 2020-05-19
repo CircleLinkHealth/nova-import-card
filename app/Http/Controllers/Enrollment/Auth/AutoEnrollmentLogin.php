@@ -43,10 +43,6 @@ class AutoEnrollmentLogin extends Controller
             if ( ! $enrollee) {
                 abort(404);
             }
-
-            $enrollee->selfEnrollmentStatuses()->update([
-                'logged_in' => true,
-            ]);
         }
 
         return $manager->enrollableInvitationManager(

@@ -138,10 +138,6 @@ class AutoEnrollmentCenterController extends Controller
         if ( ! $enrollee->statusRequestsInfo()->exists()) {
             $this->createEnrollStatusRequestsInfo($enrollee);
             $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
-            if ($isSurveyOnly) {
-                $userModelEnrollee = $this->getUserModelEnrollee($enrollableId);
-                $this->updateEnrolleeSurveyStatuses($enrollee->id, optional($userModelEnrollee)->id, null);
-            }
         }
 
         return $this->returnEnrolleeRequestedInfoMessage($enrollee);

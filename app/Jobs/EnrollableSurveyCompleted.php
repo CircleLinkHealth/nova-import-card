@@ -199,8 +199,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 return;
             }
 
-            $this->updateEnrolleeSurveyStatuses($enrollee->id, $user->id, self::SURVEY_COMPLETED);
-
             $enrollee->update([
                 'primary_phone'             => $preferredPhoneNumber,
                 'preferred_days'            => $preferredContactDays,

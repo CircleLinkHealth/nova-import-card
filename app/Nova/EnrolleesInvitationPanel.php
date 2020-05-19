@@ -6,7 +6,6 @@
 
 namespace App\Nova;
 
-use App\LoginLogout;
 use App\Nova\Actions\SelfEnrollmentManualInvite;
 use App\Traits\EnrollableManagement;
 use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
@@ -48,8 +47,6 @@ class EnrolleesInvitationPanel extends Resource
      * @var string
      */
     public static $title = 'id';
-
-    public static $with = ['selfEnrollmentStatuses'];
 
     /**
      * Get the actions available for the resource.
@@ -222,12 +219,6 @@ class EnrolleesInvitationPanel extends Resource
     public function lenses(Request $request)
     {
         return [];
-    }
-
-    private function enrolleeHasLoggedIn($userId)
-    {
-//        return is_null($userId) && ! optional($this->selfEnrollmentStatuses)->logged_in;
-        return LoginLogout::whereUserId($userId)->exists();
     }
 
     private static function getPracticeId(Resource $thisResource = null)

@@ -163,14 +163,6 @@ class CreateUsersFromEnrollees implements ShouldQueue
                         ]
                     );
 
-                    $this->updateEnrolleeSurveyStatuses(
-                        $enrollee->id,
-                        $userCreatedFromEnrollee->id,
-                        null,
-                        false,
-                        optional($userCreatedFromEnrollee->patientInfo)->id
-                    );
-
                     $newUserIds->push($userCreatedFromEnrollee->id);
                 });
                 $count += $newUserIds->count();
