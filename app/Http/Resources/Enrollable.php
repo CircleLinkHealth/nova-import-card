@@ -40,7 +40,12 @@ class Enrollable extends Resource
         //get script
         $enrollableIsUnreachableUser = Enrollee::UNREACHABLE_PATIENT === $enrollable->source;
 
-        $script = TrixField::careAmbassador($enrollable->lang, $enrollableIsUnreachableUser)->first();
+        if (empty($enrollable->lang)) {
+            //default to english, just so we can avoid cases where something went wrong with enrollee->language
+            $script = TrixField::careAmbassador(TrixField::ENGLISH_LANGUAGE, $enrollableIsUnreachableUser)->first();
+        } else {
+            $script = TrixField::careAmbassador($enrollable->lang, $enrollableIsUnreachableUser)->first();
+        }
 
         if ( ! $script) {
             //default to english, just so we can avoid cases where something went wrong with enrollee->language
