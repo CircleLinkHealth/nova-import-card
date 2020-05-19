@@ -52,12 +52,14 @@ class ProcessCareAmbassadorTime implements ShouldQueue
         $user = User::with(['careAmbassador'])
             ->findOrFail($this->userId);
 
-        $enrolleeId = $this->activity['enrolleeId'];
+        if (isset($this->activity['enrolleeId'])) {
+            $enrolleeId = $this->activity['enrolleeId'];
 
-        $enrollee = Enrollee::find($enrolleeId);
-        if ($enrollee) {
-            $enrollee->total_time_spent += $this->activity['duration'];
-            $enrollee->save();
+            $enrollee = Enrollee::find($enrolleeId);
+            if ($enrollee) {
+                $enrollee->total_time_spent += $this->activity['duration'];
+                $enrollee->save();
+            }
         }
 
         $report                       = CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id);
