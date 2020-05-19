@@ -36,7 +36,7 @@ class SendEnrollmentEmail implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(User $user, bool $isReminder, string $color)
+    public function __construct(User $user, bool $isReminder, ?string $color)
     {
         $this->user       = $user;
         $this->isReminder = $isReminder;
