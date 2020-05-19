@@ -168,7 +168,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
     public function test_patient_has_clicked_get_my_care_coach()
     {
         $userId         = 666;
-        $surveyInstance = $this->surveyInstance($userId, self::PENDING);
+        $surveyInstance = $this->createSurveyConditionsAndGetSurveyInstance($userId, self::PENDING);
         self::assertTrue($this->getAwvUserSurvey($userId, $surveyInstance)->exists());
     }
 
@@ -199,15 +199,15 @@ class AutoEnrollmentProcess extends CustomerTestCase
     public function test_patient_has_survey_completed()
     {
         $userId         = 666;
-        $surveyInstance = $this->surveyInstance($userId, self::COMPLETED);
+        $surveyInstance = $this->createSurveyConditionsAndGetSurveyInstance($userId, self::COMPLETED);
         self::assertTrue(self::COMPLETED === $this->getAwvUserSurvey($userId, $surveyInstance)->first()->status);
     }
 
     public function test_patient_has_survey_in_progress()
     {
         $userId         = 666;
-        $surveyInstance = $this->surveyInstance($userId, self::IN_PROGRESS);
-        self::assertTrue('in_progress' === $this->getAwvUserSurvey($userId, $surveyInstance)->first()->status);
+        $surveyInstance = $this->createSurveyConditionsAndGetSurveyInstance($userId, self::IN_PROGRESS);
+        self::assertTrue(self::IN_PROGRESS === $this->getAwvUserSurvey($userId, $surveyInstance)->first()->status);
     }
 
     public function test_patient_has_viewed_login_form()
@@ -239,7 +239,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
 //    {
 //    }
 
-    private function surveyInstance(string $userId, string $status)
+    private function createSurveyConditionsAndGetSurveyInstance(string $userId, string $status)
     {
         $surveyId = DB::table('surveys')->insertGetId([
             'name' => 'Enrollees',
