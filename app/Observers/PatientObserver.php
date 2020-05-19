@@ -145,6 +145,9 @@ class PatientObserver
 
     private function assignToStandByNurseIfChangedToEnrolled(Patient $patient)
     {
+        if ( ! $patient->user->isParticipant()) {
+            return;
+        }
         if ($patient->isDirty('ccm_status')) {
             if ($this->statusChangedToEnrolled($patient)) {
                 $patient->loadMissing('user');

@@ -38,8 +38,9 @@ class EnrolleesInvitationPanel extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'first_name', 'last_name',
+        'id', 'first_name', 'last_name', 'status',
     ];
+
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
@@ -121,8 +122,8 @@ class EnrolleesInvitationPanel extends Resource
      */
     public function fields(Request $request)
     {
-        $lastInvitationLink    = $this->getLastEnrollmentInvitationLink();
-        $enroleeHasNotLoggedIn = $this->enrolleeHasNotLoggedIn($this->resource->user_id);
+        $enrollmentInvitationLink = $this->enrollmentInvitationLink();
+        $enroleeHasNotLoggedIn    = $this->enrolleeHasNotLoggedIn($this->resource->user_id);
 
         return [
             ID::make()->sortable(),
@@ -133,12 +134,12 @@ class EnrolleesInvitationPanel extends Resource
             Text::make('Last name', 'last_name')
                 ->sortable(),
 
-            Boolean::make('Invited', function () use ($lastInvitationLink) {
-                return ! is_null($lastInvitationLink);
+            Boolean::make('Invited', function () use ($enrollmentInvitationLink) {
+                return ! empty($enrollmentInvitationLink->first());
             }),
 
-            Boolean::make('Has viewed login form', function () use ($lastInvitationLink) {
-                return ! is_null($lastInvitationLink) && $lastInvitationLink->manually_expired;
+            Boolean::make('Has viewed login form', function () use ($enrollmentInvitationLink) {
+                return optional($enrollmentInvitationLink)->where('manually_expired', true)->exists();
             }),
 
             Boolean::make('Has viewed Letter', function () use ($enroleeHasNotLoggedIn) {

@@ -6,11 +6,12 @@
 
 namespace App\Nova\Actions;
 
-use App\Jobs\SelfEnrollmentEnrollees;
+use App\Jobs\EnrollmentSeletiveInviteEnrollees;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
 
@@ -38,8 +39,21 @@ class SelfEnrollmentManualInvite extends Action
     public function handle(ActionFields $fields, Collection $models)
     {
         $models->each(function (Enrollee $model) {
-            SelfEnrollmentEnrollees::dispatch($model, null);
+            if (is_null($model->user_id)) {
+                Log::warning("Enrollee [$model->id] has null user_id. this is unexpected at this point");
+
+                return;
+            }
+
+            if ( ! empty(optional($model->enrollmentInvitationLink())->first())) {
+                Log::info("Enrollee [$model->id] has already been invited");
+
+                return;
+            }
+
+            EnrollmentSeletiveInviteEnrollees::dispatch([$model->user_id]);
         });
+
         Action::message('Invites should have been sent. Please check invitation panel.');
     }
 }
