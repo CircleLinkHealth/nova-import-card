@@ -1,5 +1,3 @@
-const getTime = require("../cache/user-time").getTime;
-
 const {EventEmitter} = require('events')
 const {validateInfo, createActivity} = require('./utils.fn');
 
@@ -9,6 +7,7 @@ axiosRetry(axios, {retries: 3, retryDelay: axiosRetry.exponentialDelay});
 
 const errorLogger = require('../logger').getErrorLogger();
 const storeTime = require("../cache/user-time").storeTime;
+const getTime = require("../cache/user-time").getTime;
 
 const {ignorePatientTimeSync} = require('../sockets/sync.with.cpm');
 
@@ -473,10 +472,16 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         };
 
         if (user.totalCcmSeconds === 0 && user.totalBhiSeconds === 0) {
-            console.log('will not cache ccc because time is 0');
+            console.log('will not cache ccm because time is 0');
         } else {
-            console.log('caching ccm', user.totalCcmSeconds);
-            storeTime(user.key, requestData.activities, user.totalCcmSeconds, user.totalBhiSeconds);
+            const currentCache = getTime(user.key);
+            if (currentCache && (currentCache.ccm > user.totalCcmSeconds || currentCache.bhi > user.totalBhiSeconds)) {
+                console.log('will not cache ccm because cache is higher');
+            }
+            else {
+                console.log('caching ccm', user.totalCcmSeconds);
+                storeTime(user.key, requestData.activities, user.totalCcmSeconds, user.totalBhiSeconds);
+            }
         }
 
         axios
