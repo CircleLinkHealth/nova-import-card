@@ -140,7 +140,7 @@ class Ccda extends Resource
                 }
 
                 return link_to_route('patient.careplan.print', 'View', [$row->patient_user_id])->toHtml();
-            })->asHtml(),
+            })->asHtml()->sortable(),
             Text::make('First Name', 'first_name')->sortable(),
             Text::make('Last Name', 'last_name')->sortable(),
             Date::make('DOB', 'dob')->sortable(),
