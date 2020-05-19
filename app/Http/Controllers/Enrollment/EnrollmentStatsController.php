@@ -9,7 +9,6 @@ namespace App\Http\Controllers\Enrollment;
 use App\CareAmbassadorLog;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\CareAmbassador;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -26,23 +25,11 @@ class EnrollmentStatsController extends Controller
      */
     public function ambassadorStats(Request $request)
     {
-        return datatables()->collection(collect($this->getAmbassadorStats($request)))->make(true);
-    }
+        $stats = collect($this->getAmbassadorStats($request))->map(function ($ps) {
+            return $ps;
+        })->values()->toArray();
 
-    /**
-     * Get an excel representation of ambassador stats.
-     *TO DEPRECATE: Using Jquery exports is better.
-     *
-     * @return mixed
-     */
-    public function ambassadorStatsExcel(Request $request)
-    {
-        $date = Carbon::now()->toAtomString();
-        $data = $this->getAmbassadorStats($request);
-
-        $fileName = "Care Ambassador Enrollment Stats - ${date}.xls";
-
-        return (new FromArray($fileName, $data))->download($fileName);
+        return response()->json($stats);
     }
 
     /**
@@ -77,22 +64,6 @@ class EnrollmentStatsController extends Controller
         })->values()->toArray();
 
         return response()->json($stats);
-    }
-
-    /**
-     * Get an excel representation of practice stats.
-     * TO DEPRECATE: Using Jquery exports is better.
-     *
-     * @return mixed
-     */
-    public function practiceStatsExcel(Request $request)
-    {
-        $date = Carbon::now()->toAtomString();
-        $data = $this->getPracticeStats($request);
-
-        $filename = "Practice Enrollment Stats - ${date}.xlsx";
-
-        return (new FromArray($filename, $data))->download($filename);
     }
 
     /**

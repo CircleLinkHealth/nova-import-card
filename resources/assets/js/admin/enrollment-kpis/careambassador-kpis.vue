@@ -37,7 +37,7 @@
     import moment from "moment";
 
     export default {
-        name: "practice-kpis",
+        name: "careambassador-kpis",
         components: {
             'modal': Modal,
             'loader': Loader,
@@ -55,7 +55,7 @@
                 endDate: null,
                 loading: false,
                 tableData: [],
-                columns: ['name', 'unique_patients_called', 'consented', 'utc', 'soft_declined', 'hard_declined', 'incomplete_3_attempts', 'labor_hours', 'conversion', 'labor_rate', 'total_cost', 'acq_cost'],
+                columns: [ 'name','total_hours','no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'earnings'],
                 options: {
                     requestAdapter(data) {
                         if (typeof (self) !== 'undefined') {
@@ -65,25 +65,21 @@
                         return data;
                     },
                     headings: {
-                        name : 'Practice Name',
-                        unique_patients_called: '#Unique Patients Called',
-                        consented: '#Consented',
-                        utc: '#Unable to Contact',
-                        soft_declined: '#Soft Declined',
-                        hard_declined: '#Hard Declined',
-                        incomplete_3_attempts: '#Incomplete +3 Attempts',
-                        labor_hours: 'Labor Hours',
-                        conversion: 'Conversion %',
-                        labor_rate: 'Labor Rate',
-                        total_cost: 'Total Cost',
-                        acq_cost: 'Patient Acq. Cost'
+                        name : 'Ambassador Name',
+                        total_hours: 'Total Hours',
+                        no_enrolled: '#Enrolled',
+                        total_calls: '#Called',
+                        calls_per_hour: 'Calls/Hour',
+                        mins_per_enrollment: 'Mins/Enrollment',
+                        hourly_rate: 'Hourly Rate',
+                        per_cost: 'Cost per Enrollment',
                     },
                     perPage: 50,
                     perPageValues: [10, 25, 50, 100, 200],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
-                    filterable: ['name', 'unique_patients_called', 'consented', 'utc', 'soft_declined', 'hard_declined', '+3_attempts', 'labor_hours', 'conversion', 'labor_rate', 'total_cost', 'acq_cost'],
-                    sortable: ['name', 'unique_patients_called', 'consented', 'utc', 'soft_declined', 'hard_declined', '+3_attempts', 'labor_hours', 'conversion', 'labor_rate', 'total_cost', 'acq_cost'],
+                    filterable: ['name','total_hours','no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'earnings'],
+                    sortable: ['name','total_hours','no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'earnings'],
                 },
             }
 
@@ -104,14 +100,14 @@
                 })
             },
             getUrl() {
-                return rootUrl(`/admin/enrollment/practice/kpis/data?start_date=${this.startDate}&end_date=${this.endDate}`);
+                return rootUrl(`/admin/enrollment/ambassador/kpis/data?start_date=${this.startDate}&end_date=${this.endDate}`);
             },
             listenTo(a) {
                 this.info = JSON.stringify(a);
             },
             exportCSV() {
 
-                const str = 'Practice Name,#Unique Patients Called,#Consented,#Unable to Contact,#Soft Declined,#Hard Declined,#Incomplete +3 Attempts,Labor Hours,Conversion %, Labor Rate,Total Cost,Patient Acq. Cost\n'
+                const str = 'Ambassador Name,Total Hours,#Enrolled,#Called,Calls/Hour,Mins/Enrollment,Conversion,Hourly Rate,Cost per Enrollment,Earnings\n'
                     + this.tableData.map(item => Object.values(item).join(","))
                         .join("\n")
                         .replace(/(^\[)|(\]$)/gm, "");
@@ -119,7 +115,7 @@
                 const csvData = new Blob([str], {type: 'text/csv'});
                 const csvUrl = URL.createObjectURL(csvData);
                 const link = document.createElement('a');
-                link.download = `Practice KPIs from ${this.startDate} to ${this.endDate}.csv`;
+                link.download = `Ambassador KPIs from ${this.startDate} to ${this.endDate}.csv`;
                 link.href = csvUrl;
                 link.click();
                 this.loaders.excel = false
