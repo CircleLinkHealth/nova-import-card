@@ -90,7 +90,16 @@ class CommonwealthMedicalRecord extends BaseMedicalRecordTemplate
 
     public function fillProblemsSection(): array
     {
-        return collect(array_merge((array) $this->ccdaMedicalRecord->fillProblemsSection(), $this->getMedicalHistory()))->unique('name')->all();
+        return collect(array_merge((array) $this->ccdaMedicalRecord->fillProblemsSection(), $this->getMedicalHistory(), (array)$this->data['problems'] ?? []))->unique('name')->transform(function ($problem){
+            $problem = (object) $problem;
+            return (new Problem())
+                ->setName($problem->name)
+                ->setStartDate($problem->start ?? null)
+                ->setEndDate($problem->end ?? null)
+                ->setCode($problem->code ?? null)
+                ->setCodeSystemName($problem->code_system_name ?? null)
+                ->toObject();
+        })->all();
     }
 
     public function fillVitals(): array

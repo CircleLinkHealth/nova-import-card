@@ -9,8 +9,6 @@ namespace CircleLinkHealth\Eligibility\Decorators;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Contracts\MedicalRecordDecorator;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
-use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class DemographicsFromAthena implements MedicalRecordDecorator
 {
@@ -24,12 +22,6 @@ class DemographicsFromAthena implements MedicalRecordDecorator
         $this->athenaApiImplementation = $athenaApiImplementation;
     }
 
-    /**
-     * @param TargetPatient $targetPatient
-     * @param Ccda          $ccda
-     *
-     * @throws \Exception
-     */
     public function decorate(
         EligibilityJob $eligibilityJob
     ): EligibilityJob {
