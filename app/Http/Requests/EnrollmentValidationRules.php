@@ -6,10 +6,12 @@
 
 namespace App\Http\Requests;
 
+use Carbon\Exceptions\InvalidFormatException;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Validator;
 
 class EnrollmentValidationRules extends FormRequest
@@ -80,12 +82,23 @@ class EnrollmentValidationRules extends FormRequest
             return true;
         }
 
-        $day         = $input['birth_date_day'];
-        $month       = $input['birth_date_month'];
-        $year        = $input['birth_date_year'];
-        $inputDobStr = "$year-$month-$day";
-        $inputDob    = Carbon::parse($inputDobStr);
-        $actualDob   = optional($user->patientInfo->birth_date)->startOfDay();
+        $day   = intval($input['birth_date_day']);
+        $month = intval($input['birth_date_month']);
+        $year  = intval($input['birth_date_year']);
+        if (0 === $day || 0 === $month || 0 === $year) {
+            return true;
+        }
+
+        try {
+            $inputDobStr = "$year-$month-$day";
+            $inputDob    = Carbon::parse($inputDobStr);
+        } catch (InvalidFormatException $e) {
+            Log::warning("EnrollmentValidationRules: {$e->getMessage()}");
+
+            return true;
+        }
+
+        $actualDob = optional($user->patientInfo->birth_date)->startOfDay();
         if ($inputDob->startOfDay()->ne($actualDob)) {
             return true;
         }
