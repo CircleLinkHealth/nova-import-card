@@ -7,7 +7,6 @@
 namespace App\Traits;
 
 use App\Notifications\SendEnrollmentEmail;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 
 trait EnrollmentReminderShared
@@ -25,19 +24,14 @@ trait EnrollmentReminderShared
                     ['created_at', '<=', $to],
                 ])
                 ->where('type', SendEnrollmentEmail::class);
-        })
-            // Enrollees also have User and Patient_info this point
-            ->whereHas('patientInfo', function ($patient) use ($from, $to) {
-                $patient->where('ccm_status', Patient::UNREACHABLE);
-            })
-            ->whereDoesntHave('notifications', function ($notification) use ($to, $from) {
-                $notification
-                    ->where('data->is_reminder', true)
-                    ->where([
-                        ['created_at', '>=', $from],
-                        ['created_at', '<=', $to],
-                    ])
-                    ->where('type', SendEnrollmentEmail::class);
-            });
+        })->whereDoesntHave('notifications', function ($notification) use ($to, $from) {
+            $notification
+                ->where('data->is_reminder', true)
+                ->where([
+                    ['created_at', '>=', $from],
+                    ['created_at', '<=', $to],
+                ])
+                ->where('type', SendEnrollmentEmail::class);
+        });
     }
 }

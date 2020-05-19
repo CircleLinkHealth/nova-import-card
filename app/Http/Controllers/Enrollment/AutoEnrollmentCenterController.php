@@ -11,6 +11,7 @@ use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;

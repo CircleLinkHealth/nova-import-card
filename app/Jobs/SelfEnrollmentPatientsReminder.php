@@ -70,7 +70,8 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
     {
         return $this->sharedReminderQuery($untilEndOfDay, $twoDaysAgo)
             ->whereHas('enrollee', function ($enrollee) {
-                $enrollee->where('source', '=', Enrollee::UNREACHABLE_PATIENT); //  It's NOT Original enrollee.
+                $enrollee->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT)
+                    ->where('source', '=', Enrollee::UNREACHABLE_PATIENT); //  It's NOT Original enrollee.
             });
     }
 }

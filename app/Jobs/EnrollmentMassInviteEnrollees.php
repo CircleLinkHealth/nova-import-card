@@ -84,7 +84,7 @@ class EnrollmentMassInviteEnrollees implements ShouldQueue
                     ->toArray();
 
                 if (empty($arr)) {
-                    Log::warning('No Enrollees to invite have been found');
+                    Log::warning('No Enrollees to invite has not been found');
                 }
                 AutoEnrollableCollected::dispatch($arr, false, $this->color);
             });

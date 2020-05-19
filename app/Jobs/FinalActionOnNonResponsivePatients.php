@@ -116,6 +116,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
             }
             if ($isSurveyOnlyUser) {
                 if ($this->enrolleeHasLoggedIn($enrollee)) {
+//                    Don't send regular mail
                     $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
                 } else {
 //                        Mark as non responsive means they will get a physical MAIL.

@@ -40,6 +40,7 @@ class EnrollmentSeletiveInviteEnrollees implements ShouldQueue
      */
     public function handle()
     {
+//        Selective invite will allow sending second invitation to user.
         AutoEnrollableCollected::dispatch($this->userIds);
     }
 }

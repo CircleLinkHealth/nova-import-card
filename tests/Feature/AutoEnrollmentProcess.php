@@ -8,6 +8,7 @@ namespace Tests\Feature;
 
 use App\Jobs\CreateUsersFromEnrollees;
 use App\Jobs\EnrollmentSeletiveInviteEnrollees;
+use App\Jobs\SelfEnrollmentEnrolleesReminder;
 use App\Jobs\SelfEnrollmentUnreachablePatients;
 use App\Jobs\SendEnrollmentReminders;
 use App\Notifications\SendEnrollementSms;
@@ -28,10 +29,6 @@ class AutoEnrollmentProcess extends CustomerTestCase
 
     const IN_PROGRESS = 'in_progress';
     const PENDING     = 'pending';
-    /**
-     * @var
-     */
-    protected $enrollee;
 
     public function check_notification_mail_has_been_sent($user)
     {
@@ -90,7 +87,6 @@ class AutoEnrollmentProcess extends CustomerTestCase
         EnrollmentSeletiveInviteEnrollees::dispatch([$enrollee->fresh()->user_id]);
         $this->check_notification_mail_has_been_sent($enrollee->fresh()->user);
 //        $this->check_notification_sms_has_been_sent($enrollle->fresh()->user);
-
         self::assertTrue($enrollee->enrollmentInvitationLink()->exists());
         $this->assertDatabaseHas('enrollables_invitation_links', [
             'invitationable_type' => get_class($enrollee),
@@ -99,10 +95,25 @@ class AutoEnrollmentProcess extends CustomerTestCase
         ]);
     }
 
-//    public function test_it_sends_just_one_reminder_to_enrollee()
-//    {
-//
-//    }
+    public function test_it_sends_reminder_to_non_responding_enrollee()
+    {
+        Notification::fake();
+        $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)
+            ->createEnrollee($this->practice());
+        $patient = $enrollee->fresh()->user;
+
+//        Send Invitation (the original)
+        EnrollmentSeletiveInviteEnrollees::dispatch([$enrollee->fresh()->user_id]);
+        $this->check_notification_mail_has_been_sent($patient);
+        //        $this->check_notification_sms_has_been_sent($patient);
+
+        $invitationsCount = count($enrollee->enrollmentInvitationLink()->get());
+        self::assertTrue(1 === $invitationsCount);
+
+        SelfEnrollmentEnrolleesReminder::dispatch();
+        $this->check_notification_mail_has_been_sent($patient);
+        self::assertTrue(2 === $invitationsCount);
+    }
 
 //
 //    public function test_it_sends_invitations_to_unreachable_patient()
@@ -121,26 +132,26 @@ class AutoEnrollmentProcess extends CustomerTestCase
 //        ]);
 //    }
 //
-    public function test_it_sends_reminder_to_enrollee()
-    {
-        $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)
-            ->createEnrollee($this->practice());
-        $patient = $enrollee->fresh()->user;
-
-        Notification::fake();
-        SendEnrollmentReminders::dispatchNow($patient);
-
-        $this->check_notification_mail_has_been_sent($patient);
-//        $this->check_notification_sms_has_been_sent($patient);
-
-        $this->assertDatabaseHas('enrollables_invitation_links', [
-            'invitationable_type' => get_class($enrollee),
-            'invitationable_id'   => $enrollee->id,
-            'manually_expired'    => false,
-        ]);
-
-        self::assertTrue($enrollee->enrollmentInvitationLink()->exists());
-    }
+//    public function test_it_sends_reminder_to_enrollee()
+//    {
+//        $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)
+//            ->createEnrollee($this->practice());
+//        $patient = $enrollee->fresh()->user;
+//
+//        Notification::fake();
+//        SendEnrollmentReminders::dispatchNow($patient);
+//
+//        $this->check_notification_mail_has_been_sent($patient);
+    ////        $this->check_notification_sms_has_been_sent($patient);
+//
+//        $this->assertDatabaseHas('enrollables_invitation_links', [
+//            'invitationable_type' => get_class($enrollee),
+//            'invitationable_id'   => $enrollee->id,
+//            'manually_expired'    => false,
+//        ]);
+//
+//        self::assertTrue($enrollee->enrollmentInvitationLink()->exists());
+//    }
 
     public function test_patient_has_clicked_get_my_care_coach()
     {
@@ -186,25 +197,6 @@ class AutoEnrollmentProcess extends CustomerTestCase
         $surveyInstance = $this->surveyInstance($userId, self::IN_PROGRESS);
         self::assertTrue('in_progress' === $this->getAwvUserSurvey($userId, $surveyInstance)->first()->status);
     }
-
-//
-//    public function test_it_sends_reminder_to_non_responding_patient()
-//    {
-//        $patient = $this->patient();
-//        Notification::fake();
-//        SendEnrollmentReminders::dispatchNow($patient);
-//
-//        $this->check_notification_mail_has_been_sent($patient);
-    ////        $this->check_notification_sms_has_been_sent($patient);
-//
-//        $this->assertDatabaseHas('enrollables_invitation_links', [
-//            'invitationable_type' => get_class($patient),
-//            'invitationable_id'   => $patient->id,
-//            'manually_expired'    => false,
-//        ]);
-//
-//        self::assertTrue($patient->enrollmentInvitationLink()->exists());
-//    }
 
     public function test_patient_has_viewed_login_form()
     {

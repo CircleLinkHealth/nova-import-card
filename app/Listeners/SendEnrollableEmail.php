@@ -10,7 +10,6 @@ use App\Events\AutoEnrollableCollected;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\App;
 
 class SendEnrollableEmail implements ShouldQueue
 {
@@ -39,10 +38,6 @@ class SendEnrollableEmail implements ShouldQueue
 
     private function sendEmail(array $userIds, bool $isReminder, ?string $color = null)
     {
-        if (App::environment(['testing'])) {
-            return;
-        }
-
         User::whereIn('id', $userIds)->get()->each(function (User $user) use ($isReminder, $color) {
             \App\Jobs\SendEnrollmentEmail::dispatch($user, $isReminder, $color);
         });
