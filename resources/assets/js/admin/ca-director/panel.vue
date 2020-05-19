@@ -119,7 +119,7 @@
             return {
                 loading: false,
                 selectedEnrolleeIds: [],
-                hideStatus: ['ineligible', 'consented', 'queue_auto_enrollment'],
+                hideStatus: ['ineligible', 'consented', 'queue_auto_enrollment', 'enrolled', 'rejected', 'soft_rejected'],
                 hideAssigned: true,
                 isolateUploadedViaCsv: false,
                 columns: ['select', 'edit', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'source', 'enrollment_non_responsive', 'auto_enrollment_triggered', 'practice_name', 'provider_name', 'requested_callback', 'total_time_spent', 'attempt_count', 'last_attempt_at',
