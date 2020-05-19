@@ -37,7 +37,7 @@ class SendEnrollableEmail implements ShouldQueue
         $this->sendEmail($event->userIds, $event->isReminder, $event->color);
     }
 
-    private function sendEmail(array $userIds, bool $isReminder, ?string $color)
+    private function sendEmail(array $userIds, bool $isReminder, ?string $color = null)
     {
         if (App::environment(['testing'])) {
             return;
