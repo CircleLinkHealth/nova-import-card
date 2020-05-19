@@ -300,6 +300,22 @@ if ( ! function_exists('extractNumbers')) {
     }
 }
 
+if ( ! function_exists('extractLetters')) {
+    /**
+     * Returns only letters in a string.
+     *
+     * @param $string
+     *
+     * @return string
+     */
+    function extractLetters($string)
+    {
+        preg_match_all('/[^a-zA-Z]/', $string, $match);
+
+        return implode($match[0]);
+    }
+}
+
 if ( ! function_exists('detectDelimiter')) {
     /**
      * @param bool|resource $csvFileHandle The handle of a file opened with fopen
@@ -2044,8 +2060,12 @@ if ( ! function_exists('levenshteinPercent')) {
 }
 
 if ( ! function_exists('stringMeansEnglish')) {
-    function stringMeansEnglish(string $string): bool
+    function stringMeansEnglish(string $string = null): bool
     {
+        if ( ! $string) {
+            return false;
+        }
+
         return in_array(strtolower($string), [
             'e',
             'en',
@@ -2057,8 +2077,12 @@ if ( ! function_exists('stringMeansEnglish')) {
 }
 
 if ( ! function_exists('stringMeansSpanish')) {
-    function stringMeansSpanish(string $string): bool
+    function stringMeansSpanish(string $string = null): bool
     {
+        if ( ! $string) {
+            return false;
+        }
+
         return in_array(strtolower($string), [
             'sp',
             'es',
