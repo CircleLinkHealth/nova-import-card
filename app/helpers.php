@@ -300,6 +300,22 @@ if ( ! function_exists('extractNumbers')) {
     }
 }
 
+if ( ! function_exists('extractLetters')) {
+    /**
+     * Returns only letters in a string.
+     *
+     * @param $string
+     *
+     * @return string
+     */
+    function extractLetters($string)
+    {
+        preg_match_all('/[^a-zA-Z]/', $string, $match);
+
+        return implode($match[0]);
+    }
+}
+
 if ( ! function_exists('detectDelimiter')) {
     /**
      * @param bool|resource $csvFileHandle The handle of a file opened with fopen
