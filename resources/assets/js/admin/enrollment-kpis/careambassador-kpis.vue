@@ -108,7 +108,17 @@
             exportCSV() {
 
                 const str = 'Ambassador Name,Total Hours,#Enrolled,#Called,Calls/Hour,Mins/Enrollment,Conversion,Hourly Rate,Cost per Enrollment,Earnings\n'
-                    + this.tableData.map(item => Object.values(item).join(","))
+                    + this.tableData.map(item => [
+                        item.name,
+                        item.total_hours,
+                        item.no_enrolled,
+                        item.total_calls,
+                        item.calls_per_hour,
+                        item.mins_per_enrollment,
+                        item.conversion,
+                        item.hourly_rate,
+                        item.per_cost,
+                        item.earnings].join(","))
                         .join("\n")
                         .replace(/(^\[)|(\]$)/gm, "");
 
