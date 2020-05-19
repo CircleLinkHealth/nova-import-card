@@ -252,7 +252,7 @@ class EnrollmentStatsController extends Controller
 
             $data[$practice->id]['labor_hours'] = secondsToHMS($total_time);
 
-            $data[$practice->id]['+3_attempts'] = Enrollee
+            $data[$practice->id]['incomplete_3_attempts'] = Enrollee
                 ::where('practice_id', $practice->id)
                     ->where('last_attempt_at', '>=', $start)
                     ->where('last_attempt_at', '<=', $end)
