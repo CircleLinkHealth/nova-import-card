@@ -119,8 +119,8 @@ class UserRepository
 
         $user = User::create([
             'saas_account_id' => $params->get('saas_account_id') ?? Practice::whereId($params->get('program_id'))->value('saas_account_id'),
-            'first_name'      => $params->get('first_name'),
-            'last_name'       => $params->get('last_name'),
+            'first_name'      => ucwords($params->get('first_name')),
+            'last_name'       => ucwords($params->get('last_name')),
             'program_id'      => $params->get('program_id'),
             'email'           => $params->get('email'),
             'username'        => $params->get('username'),
@@ -650,10 +650,10 @@ class UserRepository
         $user->auto_attach_programs = $params->has('auto_attach_programs');
 
         if ($params->get('first_name')) {
-            $user->setFirstName($params->get('first_name'));
+            $user->setFirstName(ucwords($params->get('first_name')));
         }
         if ($params->get('last_name')) {
-            $user->setLastName($params->get('last_name'));
+            $user->setLastName(ucwords($params->get('last_name')));
         }
         if ($params->get('suffix')) {
             $user->suffix = $params->get('suffix');
