@@ -377,23 +377,35 @@ class CcdaImporter
     private function throwExceptionIfSuspicious(Enrollee $enrollee)
     {
         if (strtolower($this->patient->last_name) != strtolower($enrollee->last_name)) {
-            throw new \Exception("Something fishy is going on. enrollee:{$enrollee->id} has user:{$enrollee->user_id}, which does not matched with user:{$this->patient->id}");
+            throw new \Exception("
+            Something mucho fishy is going on.
+            Enrollee {$enrollee->id} has user {$enrollee->user_id},
+            which does not have the same `Last Name` as user:{$this->patient->id}.");
         }
 
-        if (strtolower($this->patient->first_name) == strtolower($enrollee->first_name)) {
+        if (strtolower($this->patient->first_name) === strtolower($enrollee->first_name)) {
             return;
         }
 
         if ($enrollee->user_id && ($enrollee->user_id !== $this->patient->id)) {
-            throw new \Exception("Something fishy is going on. enrollee:{$enrollee->id} has user:{$enrollee->user_id}, which does not matched with user:{$this->patient->id}");
+            throw new \Exception("
+            Something no bueno is going on.
+            Enrollee {$enrollee->id} has user {$enrollee->user_id},
+            and now we are trying to attach user {$this->patient->id}.
+            ");
         }
 
-        //middle name
+        //Both names are the same, but one includes a middle name
         if (3 === levenshtein(strtolower($this->patient->first_name), strtolower($enrollee->first_name))) {
             return;
         }
 
-        throw new \Exception("Something fishy is going on. enrollee:{$enrollee->id} has user:{$enrollee->user_id}, which does not matched with user:{$this->patient->id}");
+        throw new \Exception("
+        Something fishy of undefined proportions is going on friend.
+        You have unleashed the anger of the Gods by reaching the unreachable code block.
+        Enrollee {$enrollee->id} has User {$enrollee->user_id},
+        and now we are trying to attach user {$this->patient->id}.
+        ");
     }
 
     private function updateAddressesFromCareAmbassadorInput()
