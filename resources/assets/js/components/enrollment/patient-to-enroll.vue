@@ -832,7 +832,7 @@
                 }
                 let name = this.capitalizeFirstLetter(first_name.toLowerCase()) + ' ' + this.capitalizeFirstLetter(last_name.toLowerCase());
 
-                if (suffix.length > 0) {
+                if (suffix !== null && suffix.length > 0) {
                     name = name + ' ' + suffix;
                 }
 
@@ -844,6 +844,9 @@
             provider_name_for_side_bar() {
                 let suffix = this.provider.suffix;
 
+                if (suffix === null){
+                    return this.provider.first_name + ' ' + this.provider.last_name;
+                }
                 if (this.dr_suffixes.includes(suffix)) {
                     suffix = 'Dr.';
                 }
@@ -852,7 +855,9 @@
             provider_name_for_enrollment_script() {
                 let providerName;
 
-                if (this.dr_suffixes.includes(this.provider.suffix)) {
+                let suffix = this.provider.suffix;
+
+                if (suffix !== null && this.dr_suffixes.includes(this.provider.suffix)) {
                     providerName = 'Dr.' + ' ' + this.provider.last_name;
                 } else {
                     providerName = this.provider.first_name + ' ' + this.provider.last_name;
