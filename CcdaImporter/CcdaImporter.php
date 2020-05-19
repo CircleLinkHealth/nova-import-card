@@ -363,6 +363,26 @@ class CcdaImporter
         return $this;
     }
 
+    /**
+     * Returns true if both names are the same, but one includes a middle initial.
+     *
+     * Example 1: "Foo", "Foo J"
+     * Example 2: "Jane", "Jane, J."
+     */
+    private function isSameNameButOneHasMiddleInitial(?string $name1, ?string $name2): bool
+    {
+        if (empty($name1) || empty($name2)) {
+            return false;
+        }
+
+        //If none of the strings contain spaces, we assume none contain a middle initial
+        if ( ! Str::contains($name1, ' ') && ! Str::contains($name2, ' ')) {
+            return false;
+        }
+
+        return 1 === levenshtein(extractLetters(strtolower($name1)), extractLetters(strtolower($name2)));
+    }
+
     private function patientEmail()
     {
         $email = $this->ccda->patient_email;
@@ -497,29 +517,5 @@ class CcdaImporter
         }
 
         return $this;
-    }
-    
-    /**
-     * Returns true if both names are the same, but one includes a middle initial.
-     *
-     * Example 1: "Foo", "Foo J"
-     * Example 2: "Jane", "Jane, J."
-     *
-     * @param string|null $name1
-     * @param string|null $name2
-     * @return bool
-     */
-    private function isSameNameButOneHasMiddleInitial(?string $name1, ?string $name2):bool
-    {
-        if (empty($name1) || empty($name2)) {
-            return false;
-        }
-        
-        //If none of the strings contain spaces, we assume none contain a middle initial
-        if (! Str::contains($name1, ' ') && ! Str::contains($name2, ' ')) {
-            return false;
-        }
-        
-        return 1 === levenshtein(extractLetters(strtolower($name1)), extractLetters(strtolower($name2)));
     }
 }
