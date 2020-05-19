@@ -55,7 +55,7 @@ class TrixField extends Model
      */
     public function scopeCareAmbassador($builder, $language, $enrollableIsUnreachableUser = false)
     {
-        $scriptLanguage = '';
+        $scriptLanguage = null;
 
         if (stringMeansEnglish($language)) {
             $scriptLanguage = self::ENGLISH_LANGUAGE;
@@ -64,6 +64,11 @@ class TrixField extends Model
         if (stringMeansSpanish($language)) {
             $scriptLanguage = self::SPANISH_LANGUAGE;
         }
+
+        if ( ! $scriptLanguage) {
+            return $builder;
+        }
+
         $type = $enrollableIsUnreachableUser ? self::CARE_AMBASSADOR_UNREACHABLE_USER_SCRIPT : self::CARE_AMBASSADOR_SCRIPT;
 
         $builder->where('type', $type)
