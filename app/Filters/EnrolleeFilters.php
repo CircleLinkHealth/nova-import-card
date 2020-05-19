@@ -112,6 +112,11 @@ class EnrolleeFilters extends QueryFilters
         return $this->builder->where('id', 'like', '%'.$id.'%');
     }
 
+    public function isCsv()
+    {
+        return array_key_exists('csv', $this->filters());
+    }
+
     public function isolateUploadedViaCsv($isolate)
     {
         if ($isolate) {

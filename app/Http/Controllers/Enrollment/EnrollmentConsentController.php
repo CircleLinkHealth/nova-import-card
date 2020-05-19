@@ -9,6 +9,7 @@ namespace App\Http\Controllers\Enrollment;
 use App\EnrolleeView;
 use App\Filters\EnrolleeFilters;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\EnrolleeCsvResource;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
@@ -56,6 +57,12 @@ class EnrollmentConsentController extends Controller
                 ? 'ASC'
                 : 'DESC';
             $data->orderBy($orderBy, $direction);
+        }
+
+        $filtersInput = $filters->filters();
+
+        if ($filters->isCsv()) {
+            return EnrolleeCsvResource::collection($data->paginate($filtersInput['rows']));
         }
 
         $results = $data->get()->toArray();
