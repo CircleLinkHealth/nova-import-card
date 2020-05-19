@@ -30,7 +30,7 @@ class ReplaceFieldsFromSupplementaryData extends BaseCcdaImportHook
 
         $dataFromPractice = SupplementalPatientData::where('first_name', 'like', "{$this->patient->first_name}%")
             ->where('last_name', $this->patient->last_name)
-            ->where('dob', $this->patient->patientInfo->dob)
+            ->where('dob', $this->patient->patientInfo->birth_date)
             ->where(
                 'practice_id',
                 Practice::whereName(self::NBI_PRACTICE_NAME)->value('id')
