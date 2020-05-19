@@ -789,6 +789,11 @@ class Enrollee extends BaseModel
                     '=',
                     $patient->getMRN(),
                 ],
+                [
+                    'mrn',
+                    'is not',
+                    NULL,
+                ],
             ]
         );
     }
