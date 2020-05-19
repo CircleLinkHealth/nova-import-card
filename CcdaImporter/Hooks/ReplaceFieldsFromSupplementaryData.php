@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Hooks;
 
 use CircleLinkHealth\Core\Entities\AppConfig;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportHook;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
