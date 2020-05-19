@@ -12,13 +12,18 @@ use App\Jobs\SelfEnrollmentUnreachablePatients;
 use App\Jobs\SendEnrollmentReminders;
 use App\Notifications\SendEnrollementSms;
 use App\Notifications\SendEnrollmentEmail;
+use App\Traits\EnrollableManagement;
+use Carbon\Carbon;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\Entities\Role;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use NotificationChannels\Twilio\TwilioChannel;
 use Tests\CustomerTestCase;
 
 class AutoEnrollmentProcess extends CustomerTestCase
 {
+    use EnrollableManagement;
     /**
      * @var
      */
@@ -131,6 +136,41 @@ class AutoEnrollmentProcess extends CustomerTestCase
         ]);
 
         self::assertTrue($enrollee->enrollmentInvitationLink()->exists());
+    }
+
+    public function test_patient_has_logged_in()
+    {
+//         $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)
+//            ->createEnrollee($this->practice());
+//        Auth::loginUsingId($enrollee->fresh()->user_id, true);
+//        self::assertDatabaseHas('login_logout_events', [
+//            'user_id' => $enrollee->fresh()->user_id,
+//        ]);
+    }
+
+    public function test_patient_has_survey_in_progress()
+    {
+//        $userId = 666;
+//
+//        $surveyId = DB::table('surveys')->insertGetId([
+//            'name' => 'Enrollees',
+//        ]);
+//
+//        $surveyInstanceId = DB::table('survey_instances')->insertGetId([
+//            'survey_id' => $surveyId,
+//            'year'      => Carbon::now(),
+//        ]);
+//
+//        DB::table('users_survey')->insert(
+//            [
+//                'user_id'            => $userId,
+//                'survey_instance_id' => $surveyInstanceId,
+//                'survey_id'          => $surveyId,
+//                'status'             => 'in_progress',
+//            ]
+//        );
+//        $surveyInstance = DB::table('survey_instances')->where('id', '=', $surveyInstanceId)->first();
+//        self::assertTrue('in_progress' === $this->getAwvUserSurvey($userId, $surveyInstance)->first()->status);
     }
 
 //
