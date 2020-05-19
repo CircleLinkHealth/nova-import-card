@@ -792,7 +792,7 @@ class Enrollee extends BaseModel
                 [
                     'mrn',
                     'is not',
-                    NULL,
+                    null,
                 ],
             ]
         );
