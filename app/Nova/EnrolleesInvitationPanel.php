@@ -203,8 +203,7 @@ class EnrolleesInvitationPanel extends Resource
             ->where(function ($q) {
                 $q->where('source', '!=', Enrollee::UNREACHABLE_PATIENT)
                     ->orWhereNull('source');
-            })
-            ->whereHas('selfEnrollmentStatuses');
+            });
     }
 
     /**
