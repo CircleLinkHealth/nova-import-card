@@ -100,7 +100,7 @@
                     const csrfToken = $('meta[name="csrf-token"]').attr('content');
                     const req = $.ajax({
                         type: "POST",
-                        url: "/enrollee-login-viewed",
+                        url: '{{route('enrollee.login.viewed')}}',
                         method: "POST",
                         data: {
                             'is_survey_only': {{$isSurveyOnly}},
