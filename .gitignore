@@ -19,5 +19,5 @@ npm-debug.log
 public/.DS_Store
 /.nyc_output/
 /.idea/workspace.xml
+/.idea/compiler.xml
 .env
-.idea/
