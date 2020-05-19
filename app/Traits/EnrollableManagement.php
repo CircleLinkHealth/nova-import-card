@@ -317,8 +317,6 @@ trait EnrollableManagement
         if ($notifiable->isSurveyOnly()) {
             $notifiable = Enrollee::whereUserId($notifiable->id)->firstOrFail();
         }
-        //  Expire previous INVITATION link if exists
-        $this->expirePastInvitationLink($notifiable);
 
         $notifiable->enrollmentInvitationLink()->create([
             'link_token'       => $urlToken,
