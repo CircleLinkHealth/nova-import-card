@@ -39,7 +39,6 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             'status' => Enrollee::QUEUE_AUTO_ENROLLMENT,
         ]);
         $enrolleeForTesting->status = Enrollee::QUEUE_AUTO_ENROLLMENT;
-        $this->updateEnrolleeSurveyStatuses($enrolleeForTesting->id);
 
         return $enrolleeForTesting;
     }
