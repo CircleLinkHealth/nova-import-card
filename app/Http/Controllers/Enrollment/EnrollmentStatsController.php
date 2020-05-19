@@ -72,8 +72,11 @@ class EnrollmentStatsController extends Controller
      */
     public function practiceStats(Request $request)
     {
-        return datatables()->collection(collect($this->getPracticeStats($request)))
-            ->make(true);
+        $stats = collect($this->getPracticeStats($request))->map(function ($ps) {
+            return $ps;
+        })->values()->toArray();
+
+        return response()->json($stats);
     }
 
     /**
