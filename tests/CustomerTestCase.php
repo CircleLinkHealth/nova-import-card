@@ -10,14 +10,22 @@ use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use Illuminate\Foundation\Testing\WithFaker;
 
 class CustomerTestCase extends TestCase
 {
     use UserHelpers;
+    use WithFaker;
     /**
      * @var array|User
      */
     private $careCoach;
+
+    /**
+     * @var Enrollee
+     */
+    private $enrollee;
 
     /**
      * @var Location
@@ -40,6 +48,10 @@ class CustomerTestCase extends TestCase
      * @var array|User
      */
     private $superadmin;
+    /**
+     * @var array|User
+     */
+    private $surveyOnly;
 
     /**
      * @return array|User
@@ -51,6 +63,35 @@ class CustomerTestCase extends TestCase
         }
 
         return $this->careCoach;
+    }
+
+    protected function demoPractice()
+    {
+        return Practice::firstOrCreate(
+            [
+                'name' => 'demo',
+            ],
+            [
+                'display_name'    => 'Demo',
+                'saas_account_id' => 1,
+                'outgoing_number' => '(678) 395-5261',
+            ]
+        );
+    }
+
+    protected function enrollee(int $number = 1)
+    {
+        if ( ! $this->enrollee) {
+            $this->enrollee = factory(Enrollee::class)->create([
+                'practice_id'             => $this->practice()->id,
+                'dob'                     => \Carbon\Carbon::parse('1901-01-01'),
+                'referring_provider_name' => 'Dr. Demo',
+                'mrn'                     => mt_rand(100000, 999999),
+                'email'                   => $this->faker->safeEmail,
+            ]);
+        }
+
+        return $this->enrollee;
     }
 
     /**
@@ -124,6 +165,18 @@ class CustomerTestCase extends TestCase
         }
 
         return $this->superadmin;
+    }
+
+    /**
+     * @return array|User
+     */
+    protected function surveyOnly(int $number = 1)
+    {
+        if ( ! $this->surveyOnly) {
+            $this->surveyOnly = $this->createUsersOfType('survey-only', $number);
+        }
+
+        return $this->surveyOnly;
     }
 
     /**

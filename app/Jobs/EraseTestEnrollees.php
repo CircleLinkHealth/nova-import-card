@@ -54,10 +54,10 @@ class EraseTestEnrollees implements ShouldQueue
             $user = $enrollee->user()->first();
 
             if ($user) {
+                Ccda::where('patient_id', $user->id)->forceDelete();
+
                 $user->patientSummaries()->delete();
                 $user->forceDelete();
-
-                Ccda::where('patient_id', $user->id)->forceDelete();
             }
 
             $careAmbassador = $enrollee->careAmbassador()->first();

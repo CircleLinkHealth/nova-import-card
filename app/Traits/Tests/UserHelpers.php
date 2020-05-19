@@ -21,6 +21,7 @@ use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;
 use Illuminate\Support\Str;
@@ -116,12 +117,16 @@ trait UserHelpers
         }
 
         if ('participant' == $roleName) {
-            $user->carePlan()->updateOrCreate(
+            $user->ccdMedications()->create([
+                'name' => 'Test Aspirin',
+            ]);
+            CarePlan::updateOrCreate(
                 [
-                    'care_plan_template_id' => \CircleLinkHealth\Core\Entities\AppConfig::pull('default_care_plan_template_id'),
+                    'user_id' => $user->id,
                 ],
                 [
-                    'status' => 'draft',
+                    'care_plan_template_id' => \CircleLinkHealth\Core\Entities\AppConfig::pull('default_care_plan_template_id'),
+                    'status'                => 'draft',
                 ]
             );
         }

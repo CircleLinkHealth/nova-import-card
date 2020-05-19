@@ -31,10 +31,11 @@ trait TimeHelpers
     ) {
         if ($withSuccessfulCall) {
             /** @var Note $fakeNote */
-            $fakeNote             = \factory(Note::class)->make();
-            $fakeNote->author_id  = $nurse->id;
-            $fakeNote->patient_id = $patient->id;
-            $fakeNote->status     = Note::STATUS_COMPLETE;
+            $fakeNote               = \factory(Note::class)->make();
+            $fakeNote->author_id    = $nurse->id;
+            $fakeNote->patient_id   = $patient->id;
+            $fakeNote->status       = Note::STATUS_COMPLETE;
+            $fakeNote->performed_at = $startTime ?? now();
             $fakeNote->save();
 
             /** @var Call $fakeCall */
@@ -43,6 +44,7 @@ trait TimeHelpers
             $fakeCall->status          = Call::REACHED;
             $fakeCall->inbound_cpm_id  = $patient->id;
             $fakeCall->outbound_cpm_id = $nurse->id;
+            $fakeCall->called_date     = $startTime ?? now();
             $fakeCall->save();
         }
 

@@ -66,7 +66,7 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
      */
     public function passwordlessLoginLink($notifiable)
     {
-        return URL::route('login.token.validate', [$this->token($notifiable)->token]);
+        return URL::route('passwordless.login.for.careplan.approval', [$this->token($notifiable)->token, $this->patientUser->id]);
     }
 
     /**

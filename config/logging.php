@@ -40,7 +40,7 @@ return [
     'channels' => [
         'stack' => [
             'driver'            => 'stack',
-            'channels'          => ['stderr'],
+            'channels'          => ['stderr', 'database', 'file'],
             'ignore_exceptions' => false,
         ],
 
@@ -55,6 +55,26 @@ return [
             'path'   => storage_path('logs/laravel-'.php_sapi_name().'.log'),
             'level'  => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
             'days'   => 14,
+        ],
+
+        'database' => [
+            'driver'           => 'custom',
+            'via'              => danielme85\LaravelLogToDB\LogToDbHandler::class,
+            'model'            => \App\DatabaseLog::class, //Your own optional custom model
+            'level'            => env('APP_LOG_LEVEL', 'debug'),
+            'name'             => 'database',
+            'connection'       => 'default',
+            'collection'       => 'log',
+            'detailed'         => true,
+            'queue'            => true,
+            'queue_name'       => '',
+            'queue_connection' => '',
+            'max_records'      => false,
+            'max_hours'        => false,
+            'processors'       => [
+                //Monolog\Processor\HostnameProcessor::class
+                // ..
+            ],
         ],
 
         'null' => [

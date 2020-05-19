@@ -19,10 +19,22 @@ class EnrolleeFilters extends QueryFilters
     public function attempt_count($count)
     {
         if (empty($count)) {
+            return $this->builder->where(function ($subQuery) {
+                $subQuery->where('attempt_count', '<', Enrollee::MAX_CALL_ATTEMPTS)
+                    ->orWhere('attempt_count', null);
+            });
+        }
+
+        return $this->builder->where('attempt_count', '=', $count);
+    }
+
+    public function auto_enrollment_triggered($aet)
+    {
+        if (empty($aet) && '0' !== $aet) {
             return $this->builder;
         }
 
-        return $this->builder->where('attempt_count', 'like', '%'.$count.'%');
+        return $this->builder->where('auto_enrollment_triggered', boolval($aet));
     }
 
     public function care_ambassador_name($name)
@@ -41,6 +53,15 @@ class EnrolleeFilters extends QueryFilters
         }
 
         return $this->builder->where('eligibility_job_id', 'like', '%'.$id.'%');
+    }
+
+    public function enrollment_non_responsive($enr)
+    {
+        if (empty($enr) && '0' !== $enr) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('enrollment_non_responsive', boolval($enr));
     }
 
     public function first_name($name)
@@ -63,6 +84,7 @@ class EnrolleeFilters extends QueryFilters
             Enrollee::REJECTED,
             Enrollee::ENROLLED,
         ]);
+        $decoded['attempt_count'] = '';
 
         return $decoded;
     }
@@ -81,6 +103,24 @@ class EnrolleeFilters extends QueryFilters
         return $this->builder->whereNotIn('status', $statuses);
     }
 
+    public function id($id)
+    {
+        if (empty($id)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('id', 'like', '%'.$id.'%');
+    }
+
+    public function isolateUploadedViaCsv($isolate)
+    {
+        if ($isolate) {
+            return $this->builder->whereIn('source', [Enrollee::UPLOADED_CSV]);
+        }
+
+        return $this->builder;
+    }
+
     public function lang($lang)
     {
         if (empty($lang)) {
@@ -88,6 +128,15 @@ class EnrolleeFilters extends QueryFilters
         }
 
         return $this->builder->where('lang', 'like', '%'.$lang.'%');
+    }
+
+    public function last_attempt_at($dateString)
+    {
+        if (empty($date)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('last_attempt_at', 'like', '%'.$dateString.'%');
     }
 
     public function last_name($name)
@@ -162,6 +211,15 @@ class EnrolleeFilters extends QueryFilters
         return $this->builder->where('secondary_insurance', 'like', '%'.$insurance.'%');
     }
 
+    public function source($source)
+    {
+        if (empty($source)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('source', 'like', '%'.$source.'%');
+    }
+
     public function status($status)
     {
         if (empty($status)) {
@@ -178,5 +236,14 @@ class EnrolleeFilters extends QueryFilters
         }
 
         return $this->builder->where('tertiary_insurance', 'like', '%'.$insurance.'%');
+    }
+
+    public function user_id($id)
+    {
+        if (empty($id)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('user_id', 'like', '%'.$id.'%');
     }
 }

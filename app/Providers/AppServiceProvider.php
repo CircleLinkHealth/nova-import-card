@@ -20,6 +20,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\SQLiteBuilder;
 use Illuminate\Database\SQLiteConnection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Fluent;
@@ -184,5 +185,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(\Waavi\UrlShortener\UrlShortenerServiceProvider::class);
         $this->app->register(GoogleDriveServiceProvider::class);
         $this->app->register(\LynX39\LaraPdfMerger\PdfMergerServiceProvider::class);
+
+//        Auth::provider('enrollmentLogin', function ($app, array $config) {
+//            return new AutoEnrollmentLoginProvider($app['hash'], $config['model']);
+//        });
     }
 }

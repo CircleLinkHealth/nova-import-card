@@ -70,9 +70,9 @@ $style = [
 
     'button-alignment' => 'float: left;',
 
-    'button--green'   => 'background-color: #22BC66;',
-    'button--red'     => 'background-color: #dc4d2f;',
-    'button--fucshia' => 'background-color: #f54949;',
+    'button--green'     => 'background-color: #22BC66;',
+    'button--red'       => 'background-color: #dc4d2f;',
+    'button--blueLight' => 'background-color: #2bbce3;',
 ];
 ?>
 {{--Montserrat Regular--}}{{-- is what Christian sent me. But doesnt look like the mockup --}}
@@ -90,12 +90,14 @@ $style = [
 
                             <!-- Logo -->
                             <tr>
-                                <td>
-                                    <img src="{{asset('img/logos/LogoHorizontal_Color.svg')}}"
-                                         alt="{{config('app.name')}}"
-                                         style="{{ $style['logo'] }}">
-                                    <hr style="border-color: #edeff247">
-                                </td>
+                              @if(! isset($excludeLogo))
+                                    <td>
+                                        <img src="{{asset('img/logos/LogoHorizontal_Color.svg')}}"
+                                             alt="{{config('app.name')}}"
+                                             style="{{ $style['logo'] }}">
+                                        <hr style="border-color: #edeff247">
+                                    </td>
+                                @endif
                             </tr>
 
                             <!-- Email Body -->
@@ -155,7 +157,7 @@ $style = [
                                                             $actionColor = 'button--red';
                                                             break;
                                                         default:
-                                                            $actionColor = 'button--fucshia';
+                                                            $actionColor = 'button--blueLight';
                                                     }
                                                     ?>
 

@@ -56,6 +56,11 @@ class TestPatients extends CreatesTestPatients
             ],
             //number of dummy medications
             'medications' => 25,
+
+            'address' => $this->faker->address,
+            'city'    => $this->faker->city,
+            'state'   => $this->faker->state,
+            'zip'     => $this->faker->postcode,
         ];
     }
 }

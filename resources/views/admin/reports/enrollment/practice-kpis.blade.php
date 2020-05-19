@@ -22,9 +22,7 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading">Practice Enrollment KPIs
-                                <span class="pull-right">
-                                    <a class="excel-export" data-href="{{ route('enrollment.practice.stats.excel') }}">Export Excel</a>
-                                </span></div>
+                            </div>
                             <div class="panel-body">
 
                                 <div class="col-md-12">
@@ -95,6 +93,16 @@
 
         @push('scripts')
             <script>
+                var buttonCommon = {
+                    exportOptions: {
+                        format: {
+                            body: function ( data, row, column, node ) {
+                                //just in case we want to format data
+                                return data;
+                            }
+                        }
+                    }
+                };
 
                 $(function () {
 
@@ -128,6 +136,22 @@
                                 d.end_date = $('#end_date').val();
                             }
                         },
+                        dom: 'Bfrtip',
+                        buttons: [
+                            $.extend( true, {}, buttonCommon, {
+                                extend: 'copyHtml5',
+                            } ),
+                            $.extend( true, {}, buttonCommon, {
+                                extend: 'excelHtml5',
+                                title: 'Practice Enrollment KPIs CSV Export'
+                            } ),
+                            $.extend( true, {}, buttonCommon, {
+                                extend: 'pdfHtml5',
+                                orientation: 'landscape',
+                                pageSize: 'A4',
+                                title: 'Practice Enrollment KPIs PDF Export'
+                            } )
+                        ],
                         columns: [
                             {data: 'name', name: 'name', className: "text-center"},
                             {data: 'unique_patients_called', name: 'unique_patients_called'},
@@ -164,7 +188,12 @@
                     $('#practice_kpis').DataTable().ajax.reload();
                 });
             </script>
-            <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+            <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+            <script src="//cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.js"></script>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.2.0/jszip.js"></script>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.65/pdfmake.js"></script>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.65/vfs_fonts.js"></script>
+            <script src="//cdn.datatables.net/buttons/1.6.2/js/buttons.html5.js"></script>
         @endpush
     </div>
 

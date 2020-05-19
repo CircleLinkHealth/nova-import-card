@@ -6,6 +6,7 @@
 
 namespace App\Providers;
 
+use Anaseqal\NovaImport\NovaImport;
 use App\Nova\Dashboards\ServerInsights;
 use App\Nova\Metrics\PatientsOverTargetBhiTime;
 use App\Nova\Metrics\PatientsOverTargetCcmTime;
@@ -53,7 +54,9 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     public function tools()
     {
-        return [];
+        return [
+            new NovaImport(),
+        ];
     }
 
     /**

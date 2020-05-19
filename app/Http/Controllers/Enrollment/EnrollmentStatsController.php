@@ -6,11 +6,11 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use App\CareAmbassador;
 use App\CareAmbassadorLog;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
+use CircleLinkHealth\Customer\Entities\CareAmbassador;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -31,6 +31,7 @@ class EnrollmentStatsController extends Controller
 
     /**
      * Get an excel representation of ambassador stats.
+     *TO DEPRECATE: Using Jquery exports is better.
      *
      * @return mixed
      */
@@ -77,6 +78,7 @@ class EnrollmentStatsController extends Controller
 
     /**
      * Get an excel representation of practice stats.
+     * TO DEPRECATE: Using Jquery exports is better.
      *
      * @return mixed
      */
@@ -142,7 +144,7 @@ class EnrollmentStatsController extends Controller
 
             $data[$ambassador->id]['total_calls'] = $base->sum('total_calls');
 
-            if (0 != $base->sum('total_calls') && 0 != $base->sum('no_enrolled') && 'Not Set' != $hourCost) {
+            if (0 != $base->sum('total_calls') && 0 != $base->sum('no_enrolled') && 'Not Set' != $hourCost && 0 !== $totalTimeInSystemSeconds) {
                 $data[$ambassador->id]['earnings'] = '$'.number_format(
                     $hourCost * ($totalTimeInSystemSeconds / 3600),
                     2

@@ -8,7 +8,7 @@ namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Jobs\ImportCcda;
-use App\Nova\Actions\ClearAndReimportCcda;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -209,10 +209,13 @@ class ImporterController extends Controller
                         continue;
                     }
 
-                    $ccda->location_id         = $record['location_id'];
-                    $ccda->practice_id         = $record['practice_id'];
+                    $ccda->location_id = $record['location_id'];
+                    //A CCDA should never have a reason to change practice id, so only do it if it was not set.
+                    if ( ! $ccda->practice_id) {
+                        $ccda->practice_id = $record['practice_id'];
+                    }
                     $ccda->billing_provider_id = $record['billing_provider_id'];
-                    $ccda                      = $ccda->updateOrCreateCarePlan();
+                    $ccda                      = $ccda->import();
                     array_push(
                         $importedRecords,
                         [
@@ -231,6 +234,19 @@ class ImporterController extends Controller
                                 'temporary_nurse_user_id' => null,
                                 'temporary_from'          => null,
                                 'temporary_to'            => null,
+                            ]
+                        );
+                    }
+
+                    if ($record['billing_provider_id']) {
+                        $updateBillingProvider = CarePerson::updateOrCreate(
+                            [
+                                'type'    => CarePerson::BILLING_PROVIDER,
+                                'user_id' => $ccda->patient->id,
+                            ],
+                            [
+                                'member_user_id' => $record['billing_provider_id'],
+                                'alert'          => true,
                             ]
                         );
                     }
@@ -255,7 +271,7 @@ class ImporterController extends Controller
 
     public function reImportPatient(Request $request, $userId)
     {
-        ClearAndReimportCcda::for($userId, auth()->id());
+        ImportCcda::for($userId, auth()->id());
 
         return redirect()->back();
     }

@@ -137,6 +137,7 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, 
         return (new SimpleNotification())
             ->setBody($this->directMailBody($notifiable))
             ->setSubject($this->directMailSubject($notifiable))
+            ->setPatient($this->note->patient)
             ->setFilePath($this->toPdf());
     }
 

@@ -116,6 +116,8 @@ class EmailRNDailyReport extends Command
                 }
             );
 
+        $this->info($date->toDateString());
+
         $this->table(
             [
                 'nurse',

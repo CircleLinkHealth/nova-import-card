@@ -98,8 +98,7 @@
                 </div>
                 <div class="col-md-12">
                     <div class="ops-csv">
-                        <a href="{{route('OpsDashboard.dailyCsv')}}" class="btn btn-info">Generate CSV: From 11pm to
-                            Now</a>
+                        <a class="excel-export btn btn-info" data-href="{{route('OpsDashboard.dailyCsv')}}">Generate CSV</a>
                     </div>
                 </div>
             </div>
@@ -231,6 +230,27 @@
             </div>
         @endif
     </div>
+    @push('scripts')
+        <script>
+            $(function () {
+                function setExcelExportHref(date) {
+                    var href = $('.excel-export').attr('data-href') + '?date=' + date
+                    $('.excel-export').attr('href', href)
+                    return href
+                }
+
+                $("#date").change(function (date) {
+                    // whatever you need to be done on change of the input field
+                    setExcelExportHref($("#start_date").val())
+                });
+
+
+                setExcelExportHref($("#date").val())
+            })
+
+        </script>
+
+    @endpush
 
 
 @endsection

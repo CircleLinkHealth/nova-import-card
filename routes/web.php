@@ -7,8 +7,8 @@
 Route::get('/debug-sentry', 'DemoController@sentry');
 Route::get('/debug-sentry-log', 'DemoController@sentryLog');
 
-Route::get('passwordless-login/{token}', 'Auth\LoginController@login')
-    ->name('login.token.validate');
+Route::get('passwordless-login-for-cp-approval/{token}/{patientId}', 'Auth\LoginController@login')
+    ->name('passwordless.login.for.careplan.approval');
 
 Route::post('webhooks/on-sent-fax', [
     'uses' => 'PhaxioWebhookController@onFaxSent',
@@ -71,6 +71,11 @@ Route::group([
     Route::get('inactivity-logout', [
         'uses' => 'Auth\LoginController@inactivityLogout',
         'as'   => 'user.inactivity-logout',
+    ]);
+
+    Route::get('enrollment-logout', [
+        'uses' => 'Enrollment\Auth\AutoEnrollmentLogin@logoutEnrollee',
+        'as'   => 'user.enrollee.logout',
     ]);
 });
 
@@ -472,7 +477,11 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::group(
         [
-            'prefix' => 'enrollment',
+            'prefix'     => 'enrollment',
+            'middleware' => [
+                'auth',
+                'careAmbassadorAPI',
+            ],
         ],
         function () {
             Route::get('/get-suggested-family-members/{enrolleeId}', [
@@ -480,7 +489,12 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'enrollment-center.family-members',
             ])->middleware('permission:enrollee.read');
 
-            Route::get('/show', [
+            Route::get('queryEnrollable', [
+                'uses' => 'API\EnrollmentCenterController@queryEnrollables',
+                'as'   => 'enrollables.query',
+            ]);
+
+            Route::get('/show/{enrollableId?}', [
                 'uses' => 'API\EnrollmentCenterController@show',
                 'as'   => 'enrollment-center.show',
             ])->middleware('permission:enrollee.read');
@@ -499,11 +513,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'API\EnrollmentCenterController@rejected',
                 'as'   => 'enrollment-center.rejected',
             ])->middleware('permission:enrollee.update');
-
-            Route::post('/update-ca-daily-time', [
-                'uses' => 'API\EnrollmentCenterController@updateCareAmbassadorDailyTime',
-                'as'   => 'enrollment-center.update-ca-daily-time',
-            ]);
         }
     );
 
@@ -728,7 +737,8 @@ Route::group(['middleware' => 'auth'], function () {
     //
     // PROVIDER UI (/manage-patients, /reports, ect)
     //
-    Route::get('reports/audit/monthly', 'DownloadController@downloadAuditReportsForMonth')->middleware('adminOrPracticeStaff');
+    Route::get('reports/audit/monthly', ['uses' => 'DownloadController@downloadAuditReportsForMonth', 'as' => 'download.monthly.audit.reports'])->middleware('adminOrPracticeStaff');
+    Route::get('reports/audit/make', ['uses' => 'DownloadController@makeAuditReportsForMonth', 'as' => 'make.monthly.audit.reports'])->middleware('adminOrPracticeStaff');
 
     // **** PATIENTS (/manage-patients/
     Route::group([
@@ -1414,6 +1424,11 @@ Route::group(['middleware' => 'auth'], function () {
                 ])->middleware('permission:salesReport.create');
             });
 
+            Route::get('ethnicity', [
+                'uses' => 'Admin\Reports\EthnicityReportController@getReport',
+                'as'   => 'EthnicityReportController.getReport',
+            ])->middleware('permission:ethnicityReport.create');
+
             Route::get('call-v2', [
                 'uses' => 'Admin\Reports\CallReportController@exportxlsV2',
                 'as'   => 'CallReportController.exportxlsv2',
@@ -1903,6 +1918,21 @@ Route::group([
             'uses' => 'Enrollment\EnrollmentCenterController@dashboard',
             'as'   => 'enrollment-center.dashboard',
         ])->middleware('permission:enrollee.read,enrollee.update');
+
+        Route::post('/consented', [
+            'uses' => 'API\EnrollmentCenterController@consented',
+            'as'   => 'enrollment-center.consented',
+        ])->middleware('permission:enrollee.update');
+
+        Route::post('/utc', [
+            'uses' => 'API\EnrollmentCenterController@unableToContact',
+            'as'   => 'enrollment-center.utc',
+        ])->middleware('permission:enrollee.update');
+
+        Route::post('/rejected', [
+            'uses' => 'API\EnrollmentCenterController@rejected',
+            'as'   => 'enrollment-center.rejected',
+        ])->middleware('permission:enrollee.update');
     });
 });
 
@@ -2160,6 +2190,110 @@ Route::prefix('admin')->group(
     }
 );
 
+// TESTING ROUTES - DELETE AFTER TEST
+
+Route::group([
+    'prefix'     => 'admin',
+    'middleware' => [
+        'auth',
+        'permission:admin-access',
+    ],
+], function () {
+    Route::get('/send-enrollee-reminder-test', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendEnrolleesReminderTestMethod',
+        'as'   => 'send.reminder.enrollee.qa',
+    ])->middleware('auth');
+
+    Route::get('/send-patient-reminder-test', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendPatientsReminderTestMethod',
+        'as'   => 'send.reminder.patient.qa',
+    ])->middleware('auth');
+
+    Route::get('/final-action-unreachables-test', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@finalActionTest',
+        'as'   => 'final.action.qa',
+    ])->middleware('auth');
+
+    Route::get('/evaluate-enrolled-from-survey', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@evaluateEnrolledForSurveyTest',
+        'as'   => 'evaluate.survey.completed',
+    ])->middleware('auth');
+
+    Route::get('/reset-enrollment-test', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@resetEnrollmentTest',
+        'as'   => 'reset.test.qa',
+    ])->middleware('auth');
+
+    Route::get('/send-enrollee-invites', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@inviteEnrolleesToEnrollTest',
+        'as'   => 'send.enrollee.invitations',
+    ])->middleware('auth');
+
+    Route::get('/send-unreachable-invites', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@inviteUnreachablesToEnrollTest',
+        'as'   => 'send.unreachable.invitations',
+    ])->middleware('auth');
+
+    Route::get('/trigger-enrolldata-test', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@triggerEnrollmentSeederTest',
+        'as'   => 'trigger.enrolldata.test',
+    ])->middleware('auth');
+
+    Route::get('/invite-unreachable', [
+        'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendInvitesPanelTest',
+        'as'   => 'send.invitates.panel',
+    ])->middleware('auth');
+    //---------------------------------------
+});
+
+// TEMPORARY SIGNED ROUTE
+//Route::get('/patient-self-enrollment', [
+//    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrollableInvitationManager',
+//    'as'   => 'invitation.enrollment',
+//]);
+
+Route::group([
+    'prefix'     => 'auth',
+    'middleware' => ['web'],
+], function () {
+    Auth::routes();
+    Route::get(
+        '/patient-self-enrollment',
+        [
+            'uses' => 'Enrollment\Auth\AutoEnrollmentLogin@enrollmentAuthForm',
+            'as'   => 'invitation.enrollment.loginForm',
+        ]
+    )->middleware('signed');
+
+    Route::post('login-enrollment-survey', [
+        'uses' => 'Enrollment\Auth\AutoEnrollmentLogin@authenticate',
+        'as'   => 'invitation.enrollment.login',
+    ]);
+});
+// TEMPORARY SIGNED ROUTE
+
+Route::get('/enrollment-survey', [
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrollNow',
+    'as'   => 'patient.self.enroll.now',
+]);
+
+Route::get('/enrollment-info', [
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrolleeRequestsInfo',
+    'as'   => 'patient.requests.enroll.info',
+]);
+
+// Redirects to view with enrollees details to contact.
+Route::get('/enrollee-contact-details', [
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrolleeContactDetails',
+    'as'   => 'enrollee.to.call.details',
+])->middleware('auth');
+
+// Incoming from AWV
+Route::get('/review-letter/{userId}', [
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@reviewLetter',
+    'as'   => 'enrollee.to.review.letter',
+]);
+
 Route::get('/notification-unsubscribe', [
     'uses' => 'NotificationsMailSubscriptionController@unsubscribe',
     'as'   => 'unsubscribe.notifications.mail',
@@ -2179,6 +2313,15 @@ Route::post('nurses/nurse-calendar-data', [
     'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
     'as'   => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');
+
+Route::get('login-enrollees-survey/{user}/{survey}', 'AutoEnrollmentCenterController@sendToSurvey')
+    ->name('enrollee.login.signed')
+    ->middleware('signed');
+
+Route::post('enrollee-login-viewed', [
+    'uses' => 'Enrollment\AutoEnrollmentCenterController@viewFormVisited',
+    'as'   => 'enrollee.login.viewed',
+])->middleware('guest');
 
 //Route::get('get-calendar-data', [
 //    'uses' => 'CareCenter\WorkScheduleController@calendarEvents',
