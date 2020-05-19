@@ -4,6 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+
     "content-hash": "397dbfcfeb3461e33d0c8d14b2df5b19",
     "packages": [
         {
@@ -1156,7 +1157,9 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
+
             "time": "2020-05-19T14:24:06+00:00"
+
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
