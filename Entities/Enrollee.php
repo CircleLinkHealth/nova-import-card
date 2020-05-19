@@ -989,6 +989,10 @@ class Enrollee extends BaseModel
 
     public function speaksSpanish()
     {
+        if (empty($this->lang)) {
+            return false;
+        }
+
         return stringMeansSpanish($this->lang);
     }
 
