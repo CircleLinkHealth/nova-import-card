@@ -97,6 +97,7 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
      */
     protected $fillable = [
         'practice_id',
+        'external_department_id',
         'is_primary',
         'name',
         'phone',
