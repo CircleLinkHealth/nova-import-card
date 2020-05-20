@@ -206,6 +206,11 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         return $this->belongsTo(EligibilityBatch::class);
     }
 
+    public function billingProvider()
+    {
+        return $this->belongsTo(User::class, 'billing_provider_id');
+    }
+
     public function bluebuttonJson($purgeDecodedCcda = false)
     {
         if (true === $purgeDecodedCcda) {
@@ -437,8 +442,17 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         if ($this->billing_provider_id && $this->location_id) {
             return $this;
         }
-        if ($term = $this->getReferringProviderName()) {
-            $this->setAllPracticeInfoFromProvider($term);
+
+        $this->loadMissing('billingProvider');
+
+        $provider = $this->billingProvider;
+
+        if ( ! $provider && $term = $this->getReferringProviderName()) {
+            $provider = self::searchBillingProvider($term, $this->practice_id);
+        }
+
+        if ($provider instanceof User) {
+            $this->setAllPracticeInfoFromProvider($provider);
         }
 
         if ($this->isDirty()) {
@@ -730,19 +744,13 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         return optional(DB::table(config('ccda-parser.db_table'))->where('ccda_id', '=', $this->id)->first())->result;
     }
 
-    private function setAllPracticeInfoFromProvider(string $term)
+    private function setAllPracticeInfoFromProvider(User $provider)
     {
-        $searchProvider = self::searchBillingProvider($term, $this->practice_id);
-
-        if ( ! $searchProvider) {
-            return;
-        }
-
         if ( ! $this->getPracticeId()) {
-            $this->setPracticeId($searchProvider->program_id);
+            $this->setPracticeId($provider->program_id);
         }
 
-        $this->setBillingProviderId($searchProvider->id);
-        $this->setLocationId(optional($searchProvider->loadMissing('locations')->locations->first())->id);
+        $this->setBillingProviderId($provider->id);
+        $this->setLocationId(optional($provider->loadMissing('locations')->locations->first())->id);
     }
 }
