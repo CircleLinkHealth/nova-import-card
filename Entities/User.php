@@ -391,7 +391,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     //we need this for ProtectsPHI.php
     //it is used with CerberusSiteUserTrait::setRelation
-    protected $with = ['roles'];
+    protected $with = ['roles', 'perms'];
 
     private static $canSeePhi = [];
 
