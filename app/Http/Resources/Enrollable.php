@@ -167,16 +167,16 @@ class Enrollable extends Resource
     private function getPhoneAttributes($enrollable)
     {
         //These phone numbers will be used to call by Twilio.
-        //This will allow us to use custom numbers on non-prod environments
-        $otherPhoneSanitized = isProductionEnv()
+        //This will allow us to use custom numbers on non-prod environments or on production with demo practices
+        $otherPhoneSanitized = isProductionEnv() && ! $enrollable->practice->is_demo
             ? $enrollable->other_phone_e164
             : $enrollable->getOriginal('other_phone');
 
-        $cellPhoneSanitized = isProductionEnv()
+        $cellPhoneSanitized = isProductionEnv() && ! $enrollable->practice->is_demo
             ? $enrollable->cell_phone_e164
             : $enrollable->getOriginal('cell_phone');
 
-        $homePhoneSanitized = isProductionEnv()
+        $homePhoneSanitized = isProductionEnv() && ! $enrollable->practice->is_demo
             ? $enrollable->home_phone_e164
             : $enrollable->getOriginal('home_phone');
 
