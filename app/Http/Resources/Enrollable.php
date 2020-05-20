@@ -8,10 +8,12 @@ namespace App\Http\Resources;
 
 use App\CareAmbassadorLog;
 use App\TrixField;
+use Carbon\CarbonTimeZone;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Support\Facades\Log;
 
 class Enrollable extends Resource
 {
@@ -288,7 +290,21 @@ class Enrollable extends Resource
             }
         }
 
-        return $timezone ?? 'N/A';
+        if ($timezone) {
+            try {
+                $tz     = CarbonTimeZone::create($timezone);
+                $region = $tz->toRegionName();
+                $offset = $tz->toOffsetName();
+
+                return  "$region ($offset)";
+            } catch (\Exception $exception) {
+                Log::critical("Invalid timezone for enrollee: {$enrollable->id}");
+
+                return 'N/A';
+            }
+        }
+
+        return 'N/A';
     }
 
     private function timeRangeToPanelWindows(string $timeRange)
