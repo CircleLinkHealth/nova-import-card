@@ -9,6 +9,7 @@ namespace App\Http\Resources;
 use App\CareAmbassadorLog;
 use App\TrixField;
 use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Resources\Json\Resource;
 
@@ -82,6 +83,8 @@ class Enrollable extends Resource
                 'home_phone'               => $enrollable->home_phone,
 
                 'extra' => $extra,
+
+                'timezone' => $timezone,
 
                 'utc_note'        => $utcNote,
                 'last_encounter'  => $enrollable->last_encounter ?? 'N/A',
@@ -243,14 +246,46 @@ class Enrollable extends Resource
 
     private function getTimezone($enrollable)
     {
-        $timezone = $enrollable->user->timezone ?? null;
+        $timezone = optional($enrollable->user)->timezone;
 
-        //todo: check location on enrollee?
+        //check enrollee location id
+        if ( ! $timezone && ! empty($enrollable->location_id)) {
+            $timezone = optional($enrollable->location)->timezone;
+        }
 
+        //check ccda
+        if ( ! $timezone && $enrollable->ccda) {
+            $timezone = optional($enrollable->ccda->location)->timezone;
+        }
+
+        //check provider location
+        $provider = $enrollable->provider;
+        if ( ! $timezone && $provider) {
+            $timezone = $provider->timezone;
+            if ( ! $timezone) {
+                //pre-loaded only locations with timezone
+                $location = $provider->locations->first();
+                $timezone = $location->timezone;
+            }
+
+            if ( ! $timezone) {
+                //pre-loaded only locations with timezone
+                $providerPractice = $provider->primaryPractice;
+                $location         = $providerPractice->locations->first();
+                if ($location) {
+                    $timezone = $location->timezone;
+                }
+            }
+        }
+
+        //check practice first location that has timezone
         if ( ! $timezone) {
-            //only locations with timezone loaded
-            //todo: avoid breaks
-            $location = $enrollable->practice->locations->first() ?? null;
+            $practice = $enrollable->practice;
+            //pre-filter from relationship to only load locations with timezone
+            $location = $practice->locations->first();
+            if ($location) {
+                $timezone = $location->timezone;
+            }
         }
 
         return $timezone ?? 'N/A';

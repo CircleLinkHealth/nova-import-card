@@ -74,13 +74,16 @@
                                                 :title="provider_phone"><b>Provider Phone:</b> {{provider_phone}}</span>
                                         </li>
                                         <li class="sidebar-demo-list"><span
-                                                :title="last_office_visit_at"><b>Last Office Visit:</b> {{last_office_visit_at}}</span>
+                                                :title="timezone"><b>Practice Time Zone:</b> {{timezone}}</span>
                                         </li>
                                         <li class="sidebar-demo-list"><span
                                                 :title="last_attempt_at"><b>Last Attempt:</b> {{last_attempt_at}}</span>
                                         </li>
                                         <li class="sidebar-demo-list"><span
                                                 :title="attempt_count"><b>Attempt Count:</b> {{attempt_count}}</span>
+                                        </li>
+                                        <li class="sidebar-demo-list"><span
+                                                :title="attempt_count"><b>Our Callback Number:</b> {{practice_phone}}</span>
                                         </li>
                                         <li class="sidebar-demo-list"><span> </span>
                                         </li>
@@ -990,6 +993,7 @@
                 utcUrl: rootUrl('enrollment/utc'),
                 rejectedUrl: rootUrl('enrollment/rejected'),
 
+                timezone: '',
 
                 isSoftDecline: false,
                 utc_reason: '',
