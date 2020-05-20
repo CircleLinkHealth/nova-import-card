@@ -79,13 +79,13 @@ class EnrollmentStatsController extends Controller
         $fields = ['*'];
 
         $byColumn  = $request->get('byColumn');
-        $query     = $request->get('query');
+        $query     = json_decode($request->get('query'));
         $limit     = $request->get('limit');
         $orderBy   = $request->get('orderBy');
         $ascending = $request->get('ascending');
         $page      = $request->get('page');
 
-        $practiceName = $query['name'] ?? null;
+        $practiceName = property_exists($query, 'name') ? $query->name : null;
 
         $practiceQuery = Practice::active()
             ->whereIn('id', $practiceIds)

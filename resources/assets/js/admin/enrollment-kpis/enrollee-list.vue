@@ -155,6 +155,8 @@
     }
 </script>
 
-<style scoped>
-
+<style>
+    th {
+        min-width: 80px;
+    }
 </style>

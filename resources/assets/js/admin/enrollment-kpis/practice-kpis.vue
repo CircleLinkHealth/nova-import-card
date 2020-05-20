@@ -81,8 +81,8 @@
                     perPageValues: [10, 25],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
-                    filterable: ['name', 'unique_patients_called', 'consented', 'utc', 'soft_declined', 'hard_declined', '+3_attempts', 'labor_hours', 'conversion', 'labor_rate', 'total_cost', 'acq_cost'],
-                    sortable: ['name', 'unique_patients_called', 'consented', 'utc', 'soft_declined', 'hard_declined', '+3_attempts', 'labor_hours', 'conversion', 'labor_rate', 'total_cost', 'acq_cost'],
+                    filterable: ['name'],
+                    sortable: ['name'],
                 },
             }
 
