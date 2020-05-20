@@ -26,7 +26,7 @@ class FetchMedicationsFromAthenaApi extends BaseCcdaImportHook
             $this->ccda->targetPatient->ehr_practice_id,
             $this->ccda->targetPatient->ehr_department_id
         );
-        
+
         // Incomplete
     }
 }
