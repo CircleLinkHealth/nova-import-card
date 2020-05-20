@@ -196,6 +196,14 @@ interface AthenaApiImplementation
     public function getMedicalHistory(int $patientId, int $practiceId, int $departmentId);
 
     /**
+     * Get patient medications.
+     *
+     *@throws \Exception
+     * @return array|mixed
+     */
+    public function getMedications(int $patientId, int $practiceId, int $departmentId);
+
+    /**
      * Get the next paginated result set.
      *
      * @param $url
