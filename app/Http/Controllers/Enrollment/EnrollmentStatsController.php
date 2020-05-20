@@ -85,7 +85,7 @@ class EnrollmentStatsController extends Controller
         $ascending = $request->get('ascending');
         $page      = $request->get('page');
 
-        $practiceName = property_exists($query, 'name') ? $query->name : null;
+        $practiceName = $query && property_exists($query, 'name') ? $query->name : null;
 
         $practiceQuery = Practice::active()
             ->whereIn('id', $practiceIds)
