@@ -437,13 +437,24 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             ->first();
     }
 
+    /**
+     * Attempt to fill in Practice, Location, and Billing Provider on this CCDA.
+     *
+     * @return $this|MedicalRecord
+     */
     public function guessPracticeLocationProvider(): MedicalRecord
     {
-        if ($this->billing_provider_id && $this->location_id) {
+        if ($this->practice_id && $this->location_id && $this->billing_provider_id) {
             return $this;
         }
 
-        $this->loadMissing('billingProvider');
+        $this->loadMissing(['billingProvider', 'targetPatient']);
+
+        if ( ! $this->location_id && $this->practice_id && $deptId = optional($this->targetPatient)->ehr_department_id) {
+            $this->location_id = \Cache::remember("cpm_location_for_athena_department_id_$deptId", 2, function () use ($deptId) {
+                return Location::where('practice_id', $this->practice_id)->where('external_department_id', $deptId)->value('id');
+            });
+        }
 
         $provider = $this->billingProvider;
 
@@ -638,7 +649,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     /**
      * @param mixed $locationId
      */
-    public function setLocationId($locationId): MedicalRecord
+    public function setLocationId(int $locationId): MedicalRecord
     {
         $this->location_id = $locationId;
 
@@ -746,11 +757,14 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
     private function setAllPracticeInfoFromProvider(User $provider)
     {
-        if ( ! $this->getPracticeId()) {
+        if ( ! $this->practice_id) {
             $this->setPracticeId($provider->program_id);
         }
 
         $this->setBillingProviderId($provider->id);
-        $this->setLocationId(optional($provider->loadMissing('locations')->locations->first())->id);
+
+        if ( ! $this->location_id && 1 === count($provider->locations)) {
+            $this->setLocationId($provider->locations->first()->id);
+        }
     }
 }
