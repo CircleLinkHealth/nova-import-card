@@ -10,6 +10,19 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\Validator as Se
 
 class ValidStatus implements SectionValidator
 {
+    /**
+     * Only these values will be considered as "valid candidates" for the validation process.
+     */
+    const VALID_STATUS_VALUES = [
+        'active',
+        'inactive',
+        'chronic',
+        'taking',
+        'continue',
+        'refill',
+        'not taking',
+    ];
+
     public function isValid($item): bool
     {
         if (is_array($item)) {
@@ -41,15 +54,6 @@ class ValidStatus implements SectionValidator
 
         return empty($item->status)
             ? false
-            : in_array(strtolower($item->status), [
-                'active',
-                'inactive',
-                'chronic',
-
-                'taking',
-                'continue',
-                'refill',
-                'not taking',
-            ]);
+            : in_array(strtolower($item->status), self::VALID_STATUS_VALUES);
     }
 }
