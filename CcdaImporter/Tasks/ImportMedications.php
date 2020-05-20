@@ -6,26 +6,25 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
-use App\Constants;
 use App\MedicationGroupsMap;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\ConsolidatesMedicationInfo;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 use CircleLinkHealth\SharedModels\Entities\Medication;
 
 class ImportMedications extends BaseCcdaImportTask
 {
-    const HOOK_IMPORTING_MEDICATIONS = 'IMPORTING_MEDICATIONS';
-    
     use ConsolidatesMedicationInfo;
     use FiresImportingHooks;
+    const HOOK_IMPORTING_MEDICATIONS = 'IMPORTING_MEDICATIONS';
 
     protected function import()
     {
         $this->fireImportingHook(self::HOOK_IMPORTING_MEDICATIONS, $this->patient, $this->ccda, []);
-    
+
         $medicationGroups = [];
 
         collect($this->getRawMedications())->each(
@@ -97,7 +96,13 @@ class ImportMedications extends BaseCcdaImportTask
 
     private function getRawMedications(): array
     {
-        return $this->ccda->bluebuttonJson()->medications ?? [];
+        $meds = $this->ccda->bluebuttonJson()->medications ?? [];
+
+        if (empty($meds)) {
+            return $this->getMedsFromOtherCcda();
+        }
+        
+        return $meds;
     }
 
     private function importAll()
@@ -148,5 +153,30 @@ class ImportMedications extends BaseCcdaImportTask
     private function transform(object $medication): array
     {
         return $this->getTransformer()->medication($medication);
+    }
+    
+    private function getMedsFromOtherCcda()
+    {
+        $otherCcdas = Ccda::where('id', '!=', $this->ccda->id)
+            ->where('practice_id', $this->ccda->practice_id)
+            ->where('patient_mrn', $this->ccda->patient_mrn)
+            ->where('patient_first_name', $this->ccda->patient_first_name)
+            ->where('patient_last_name', $this->ccda->patient_last_name)
+            ->where('patient_dob', $this->ccda->patient_dob)->get();
+    
+        foreach ($otherCcdas as $otherCcda) {
+            $newMeds = $otherCcda->bluebuttonJson()->medications ?? [];
+        
+            if ( ! empty($newMeds)) {
+                $data              = $this->ccda->bluebuttonJson();
+                $data->medications = $newMeds;
+                $this->ccda->json  = json_encode($data);
+                $this->ccda->save();
+            
+                return $this->ccda->bluebuttonJson()->medications ?? [];
+            }
+        }
+        
+        return [];
     }
 }
