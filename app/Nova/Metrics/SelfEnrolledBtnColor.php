@@ -9,9 +9,9 @@ namespace App\Nova\Metrics;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Laravel\Nova\Metrics\Value;
+use Laravel\Nova\Metrics\Partition;
 
-class SelfEnrolledPatientTotal extends Value
+class SelfEnrolledBtnColor extends Partition
 {
     /**
      * @var int
@@ -40,29 +40,21 @@ class SelfEnrolledPatientTotal extends Value
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->count($request, $this->queryEnrolleesEnrolled());
-    }
-
-    /**
-     * Get the ranges available for the metric.
-     *
-     * @return array
-     */
-    public function ranges()
-    {
-        return [
-            1       => '1 Day',
-            2       => '2 Days',
-            7       => '7 Days',
-            14      => '14 Days',
-            30      => '30 Days',
-            60      => '60 Days',
-            365     => '365 Days',
-            'TODAY' => 'Today',
-            'MTD'   => 'Month To Date',
-            'QTD'   => 'Quarter To Date',
-            'YTD'   => 'Year To Date',
-        ];
+        return $this->count($request, $this->queryEnrolleesEnrolled(), 'button_color')->colors([
+            //green
+            'Green' => '#4baf50',
+            //red
+            'Red' => '#b1284c',
+        ])->label(function ($value) {
+            switch ($value) {
+                case '#4baf50':
+                    return 'Green';
+                case '#b1284c':
+                    return 'Red';
+                default:
+                    return ucfirst($value);
+            }
+        });
     }
 
     /**
@@ -72,13 +64,13 @@ class SelfEnrolledPatientTotal extends Value
      */
     public function uriKey()
     {
-        return 'self-enrolled-patient-count';
+        return 'self-enrolled-btn-color';
     }
 
     private function queryEnrolleesEnrolled()
     {
         return EnrollableInvitationLink::whereIn('invitationable_id', function ($q) {
             $q->select('id')->from('enrollees')->where('practice_id', '=', $this->practiceId)->where('auto_enrollment_triggered', '=', true)->where('status', '=', Enrollee::ENROLLED);
-        })->where('invitationable_type', Enrollee::class)->distinct('invitationable_id');
+        })->where('invitationable_type', Enrollee::class)->distinct('invitationable_id')->whereNotNull('button_color');
     }
 }

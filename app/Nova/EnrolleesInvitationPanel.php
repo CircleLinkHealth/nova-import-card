@@ -7,6 +7,7 @@
 namespace App\Nova;
 
 use App\Nova\Actions\SelfEnrollmentManualInvite;
+use App\Nova\Metrics\SelfEnrolledBtnColor;
 use App\Nova\Metrics\SelfEnrolledPatientTotal;
 use App\Traits\EnrollableManagement;
 use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
@@ -113,11 +114,8 @@ class EnrolleesInvitationPanel extends Resource
                     'is_patient'  => false,
                 ]
             ),
-            (new SelfEnrolledPatientTotal())->withMeta(
-                [
-                    'practice_id' => self::getPracticeId($this),
-                ]
-            ),
+            (new SelfEnrolledPatientTotal(self::getPracticeId($this))),
+            (new SelfEnrolledBtnColor(self::getPracticeId($this))),
         ];
     }
 
