@@ -157,26 +157,29 @@ class ImportMedications extends BaseCcdaImportTask
     
     private function getMedsFromOtherCcda()
     {
-        $otherCcdas = Ccda::where('id', '!=', $this->ccda->id)
-            ->where('practice_id', $this->ccda->practice_id)
-            ->where('patient_mrn', $this->ccda->patient_mrn)
-            ->where('patient_first_name', $this->ccda->patient_first_name)
-            ->where('patient_last_name', $this->ccda->patient_last_name)
-            ->where('patient_dob', $this->ccda->patient_dob)->get();
+        $otherMeds = [];
+        
+        $this->ccda->queryForOtherCcdasForTheSamePatient()
+            ->chunkById(10, function ($otherCcdas) use (&$otherMeds){
+                foreach ($otherCcdas as $otherCcda) {
+                    $newMeds = $otherCcda->bluebuttonJson()->medications ?? [];
+        
+                    if ( ! empty($newMeds)) {
+                        $data              = $this->ccda->bluebuttonJson();
+                        $data->medications = $newMeds;
+                        $this->ccda->json  = json_encode($data);
+                        $this->ccda->save();
     
-        foreach ($otherCcdas as $otherCcda) {
-            $newMeds = $otherCcda->bluebuttonJson()->medications ?? [];
+                        $otherMeds = $this->ccda->bluebuttonJson()->medications;
+                        
+                        //break chunking
+                        return false;
+                    }
+                }
+            });
+    
         
-            if ( ! empty($newMeds)) {
-                $data              = $this->ccda->bluebuttonJson();
-                $data->medications = $newMeds;
-                $this->ccda->json  = json_encode($data);
-                $this->ccda->save();
-            
-                return $this->ccda->bluebuttonJson()->medications ?? [];
-            }
-        }
         
-        return [];
+        return $otherMeds;
     }
 }
