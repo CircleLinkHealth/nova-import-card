@@ -230,7 +230,12 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         }
         ws.active = true
 
-        $emitter.emit(`server:enter:${user.providerId}`, user.patientId, user.patientFamilyId)
+        let enrolleeId = null;
+        const activeActivity = user.activities.filter(activity => activity.isActive);
+        if (activeActivity.length) {
+            enrolleeId = activeActivity[0].enrolleeId;
+        }
+        $emitter.emit(`server:enter:${user.providerId}`, user.patientId, user.patientFamilyId, enrolleeId)
     }
 
     /**
@@ -366,9 +371,12 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         }
     }
 
-    const serverEnterHandler = (patientId, patientFamilyId) => {
-        if (!Number(patientId) || (Number(patientId) && (Number(patientFamilyId) || Number(user.patientFamilyId)) && (patientFamilyId != user.patientFamilyId))) {
-            user.exitCallMode(info)
+    const serverEnterHandler = (patientId, patientFamilyId, enrolleeId) => {
+        if (!Number(enrolleeId)) {
+            //i don't understand this logic
+            if (!Number(patientId) || (Number(patientId) && (Number(patientFamilyId) || Number(user.patientFamilyId)) && (patientFamilyId != user.patientFamilyId))) {
+                user.exitCallMode(info)
+            }
         }
     }
 
