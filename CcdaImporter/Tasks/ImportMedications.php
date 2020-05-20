@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
+use App\Constants;
 use App\MedicationGroupsMap;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
@@ -21,7 +22,7 @@ class ImportMedications extends BaseCcdaImportTask
     {
         $medicationGroups = [];
 
-        collect($this->ccda->bluebuttonJson()->medications ?? [])->each(
+        collect($this->getRawMedications())->each(
             function ($medication) use (&$medicationGroups) {
                 $new = (array) $this->consolidateMedicationInfo((object) $this->transform($medication));
 
@@ -86,6 +87,11 @@ class ImportMedications extends BaseCcdaImportTask
         if ( ! $this->hasMisc($this->patient, $misc)) {
             $this->patient->cpmMiscs()->attach(optional($misc)->id);
         }
+    }
+
+    private function getRawMedications(): array
+    {
+        return $this->ccda->bluebuttonJson()->medications ?? [];
     }
 
     private function importAll()
