@@ -893,7 +893,18 @@ class Enrollee extends BaseModel
 
     public function scopeWithCaPanelRelationships($query)
     {
-        return $query->with(['practice.enrollmentTips', 'provider.providerInfo', 'confirmedFamilyMembers']);
+        return $query->with(['practice' => function ($p) {
+            $p->with([
+                'enrollmentTips',
+                'locations' => function ($l) {
+                    $l->whereNotNull('timezone');
+                },
+            ]);
+        },
+            'user',
+            'provider.providerInfo',
+            'confirmedFamilyMembers',
+        ]);
     }
 
     public function selfEnrollmentStatuses()
