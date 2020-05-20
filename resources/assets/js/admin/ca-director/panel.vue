@@ -25,7 +25,7 @@
                         @click="isolatePatientsUploadedViaCsv">{{this.showIsolatedViaCsvLabel}}
                 </button>
             </div>
-            <div class="col-sm-5 text-left">
+            <div class="col-sm-12 text-left">
                 <button class="btn btn-info btn-xs"
                         v-bind:class="{'btn-selected': !this.hideStatus.includes('queue_auto_enrollment')}"
                         @click="showSelfEnrollment">Include Queued for Self-Enrollment
@@ -35,9 +35,16 @@
                         @click="showConsented">Include Consented
                 </button>
                 <button class="btn btn-info btn-xs"
+                        v-bind:class="{'btn-selected': !this.hideStatus.includes('soft_rejected')}"
+                        @click="showSoftRejected">Include Soft Declined
+                </button>
+                <button class="btn btn-info btn-xs"
                         v-bind:class="{'btn-selected': !this.hideStatus.includes('ineligible')}"
                         @click="showIneligible">Include Ineligible
                 </button>
+            </div>
+            <div class="col-sm-5">
+
             </div>
             <div class="col-sm-2">
                 <loader style="margin-left: 80px" v-if="loading"/>
@@ -232,6 +239,34 @@
                     this.hideStatus = this.hideStatus.filter(item => item !== 'ineligible');
                 else
                     this.hideStatus.push('ineligible');
+
+                const query = {
+                    hideStatus: this.hideStatus,
+                    hideAssigned: this.hideAssigned,
+                    isolateUploadedViaCsv : this.isolateUploadedViaCsv
+                };
+                this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
+                    .then(resp => {
+                        this.$refs.table.setData(resp.data);
+                        this.loading = false;
+                    })
+                    .catch(err => {
+                        let errors = err.response.data.errors ? err.response.data.errors : [];
+                        this.loading = false;
+                        Event.$emit('notifications-ca-panel:create', {
+                            noTimeout: true,
+                            text: errors,
+                            type: 'error'
+                        });
+                    });
+            },
+            showSoftRejected() {
+                Event.$emit('notifications-ca-panel:dismissAll');
+                this.loading = true;
+                if (this.hideStatus.includes('soft_rejected'))
+                    this.hideStatus = this.hideStatus.filter(item => item !== 'soft_rejected');
+                else
+                    this.hideStatus.push('soft_rejected');
 
                 const query = {
                     hideStatus: this.hideStatus,
