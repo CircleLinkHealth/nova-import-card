@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use App\CareAmbassadorLog;
+use App\Constants;
 use App\EnrolleeCustomFilter;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
@@ -461,6 +462,11 @@ class Practice extends BaseModel implements HasMedia
     public function isARealBillableCustomer(): bool
     {
         return ! $this->is_demo && $this->active;
+    }
+
+    public function isAthenaEhr(): bool
+    {
+        return $this->ehr_id === Constants::athenaEhrId();
     }
 
     public function isTwilioEnabled()
