@@ -7,6 +7,7 @@
 namespace App\Nova;
 
 use App\Nova\Actions\SelfEnrollmentManualInvite;
+use App\Nova\Metrics\SelfEnrolledPatientTotal;
 use App\Traits\EnrollableManagement;
 use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -110,6 +111,11 @@ class EnrolleesInvitationPanel extends Resource
                 [
                     'practice_id' => self::getPracticeId($this),
                     'is_patient'  => false,
+                ]
+            ),
+            (new SelfEnrolledPatientTotal())->withMeta(
+                [
+                    'practice_id' => self::getPracticeId($this),
                 ]
             ),
         ];
