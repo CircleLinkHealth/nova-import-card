@@ -136,7 +136,7 @@
                     const csvData = new Blob([str], {type: 'text/csv'});
                     const csvUrl = URL.createObjectURL(csvData);
                     const link = document.createElement('a');
-                    link.download = `patient-list-${Date.now()}.csv`;
+                    link.download = `enrollee-list-${Date.now()}.csv`;
                     link.href = csvUrl;
                     link.click();
                     this.exportCSVText = 'Export as CSV';

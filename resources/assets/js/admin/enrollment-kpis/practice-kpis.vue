@@ -10,10 +10,10 @@
         <div class="row" style="margin-top: 20px">
             <div class="col-sm-12" style="padding-left: 0 !important; padding-bottom: 20px !important">
                 <div class="col-sm-6 text-left">
-                    <input v-model="startDate"  type="date"
+                    <input v-model="startDate" type="date"
                            value="Start Date" @change="setStartDate">
 
-                    <input v-model="endDate"  type="date"
+                    <input v-model="endDate" type="date"
                            value="End Date" @change="setEndDate">
                 </div>
             </div>
@@ -21,20 +21,19 @@
         <div class="top-10">
             <loader v-if="loaders.next || loaders.excel"></loader>
         </div>
-        <v-client-table ref="table" :data="tableData" :columns="columns" :options="options"
+        <v-server-table ref="table" :url="getUrlCom" v-on:filter="listenTo" :data="tableData" :columns="columns" :options="options"
                         id="table">
-        </v-client-table>
+        </v-server-table>
     </div>
 </template>
 
 <script>
     import {rootUrl} from '../../app.config.js'
     import Modal from '../common/modal';
-    import {Event} from 'vue-tables-2'
     import Loader from '../../components/loader';
     import Notifications from '../../components/notifications';
-    import {CancelToken} from "axios";
     import moment from "moment";
+    import {Event} from 'vue-tables-2'
 
     export default {
         name: "practice-kpis",
@@ -58,14 +57,14 @@
                 columns: ['name', 'unique_patients_called', 'consented', 'utc', 'soft_declined', 'hard_declined', 'incomplete_3_attempts', 'labor_hours', 'conversion', 'labor_rate', 'total_cost', 'acq_cost'],
                 options: {
                     requestAdapter(data) {
-                        if (typeof (self) !== 'undefined') {
-                            data.query.startDate = self.startDate;
-                            data.query.endDate = self.endDate;
-                        }
+                        // if (typeof (self) !== 'undefined') {
+                        //     data.query.start_date = self.startDate;
+                        //     data.query.end_date = self.endDate;
+                        // }
                         return data;
                     },
                     headings: {
-                        name : 'Practice Name',
+                        name: 'Practice Name',
                         unique_patients_called: '#Unique Patients Called',
                         consented: '#Consented',
                         utc: '#Unable to Contact',
@@ -78,8 +77,8 @@
                         total_cost: 'Total Cost',
                         acq_cost: 'Patient Acq. Cost'
                     },
-                    perPage: 50,
-                    perPageValues: [10, 25, 50, 100, 200],
+                    perPage: 10,
+                    perPageValues: [10, 25],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
                     filterable: ['name', 'unique_patients_called', 'consented', 'utc', 'soft_declined', 'hard_declined', '+3_attempts', 'labor_hours', 'conversion', 'labor_rate', 'total_cost', 'acq_cost'],
@@ -88,8 +87,13 @@
             }
 
         },
+        computed: {
+            getUrlCom(){
+                return rootUrl(`/admin/enrollment/practice/kpis/data?start_date=${this.startDate}&end_date=${this.endDate}`);
+            },
+        },
         methods: {
-            retrieveTableData(){
+            retrieveTableData() {
                 const self = this
                 this.loaders.next = true
                 return this.axios.get(this.getUrl()).then(response => {
@@ -109,42 +113,83 @@
             listenTo(a) {
                 this.info = JSON.stringify(a);
             },
-            exportCSV() {
-
-                const str = 'Practice Name,#Unique Patients Called,#Consented,#Unable to Contact,#Soft Declined,#Hard Declined,#Incomplete +3 Attempts,Labor Hours,Conversion %, Labor Rate,Total Cost,Patient Acq. Cost\n'
-                    + this.tableData.map(item => Object.values(item).join(","))
-                        .join("\n")
-                        .replace(/(^\[)|(\]$)/gm, "");
-
-                const csvData = new Blob([str], {type: 'text/csv'});
-                const csvUrl = URL.createObjectURL(csvData);
-                const link = document.createElement('a');
-                link.download = `Practice KPIs from ${this.startDate} to ${this.endDate}.csv`;
-                link.href = csvUrl;
-                link.click();
-                this.loaders.excel = false
+            columnMapping(name) {
+                const columns = {}
+                return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
             },
-            setStartDate(event){
+            exportCSV() {
+                let data = []
+                this.loaders.excel = true
+
+                const $table = this.$refs.table
+                const query = $table.$data.query
+
+                const filters = Object.keys(query).map(key => ({
+                    key,
+                    value: query[key]
+                })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
+                const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
+
+                const download = (page = 1) => {
+                    return this.axios.get( rootUrl(`/admin/enrollment/practice/kpis/data?start_date=${this.startDate}&end_date=${this.endDate}&rows=50&page=${page}&csv${filters}`)).then(response => {
+                        const pagination = response.data
+                        data = data.concat(pagination.data)
+                        this.exportCSVText = `Export as CSV (${Math.ceil(pagination.meta.to / pagination.meta.total * 100)}%)`
+                        if (pagination.meta.to < pagination.meta.total) return download(page + 1)
+                        return pagination
+                    }).catch(err => {
+                        console.log('practice:csv:export', err)
+                    })
+                }
+                return download().then(res => {
+
+                    const str = 'Practice Name,#Unique Patients Called,#Consented,#Unable to Contact,#Soft Declined,#Hard Declined,#Incomplete +3 Attempts,Labor Hours,Conversion %, Labor Rate,Total Cost,Patient Acq. Cost\n'
+                        + data.join('\n');
+                    const csvData = new Blob([str], {type: 'text/csv'});
+                    const csvUrl = URL.createObjectURL(csvData);
+                    const link = document.createElement('a');
+                    link.download = `Practice KPIs from ${this.startDate} to ${this.endDate}.csv`;
+                    link.href = csvUrl;
+                    link.click();
+                    this.exportCSVText = 'Export as CSV';
+                    this.loaders.excel = false
+                })
+            },
+            setStartDate(event) {
                 this.loaders.next = true
                 this.startDate = event.currentTarget._value
-                this.retrieveTableData();
+                this.refreshTable();
             },
-            setEndDate(event){
+            setEndDate(event) {
                 this.loaders.next = true
                 this.endDate = event.currentTarget._value
-                this.retrieveTableData();
-            }
+                this.refreshTable();
+            },
+            refreshTable() {
+                this.$refs.table.refresh();
+            },
         },
         created() {
             self = this;
             console.info('created');
-        },
-        mounted() {
-            this.loaders.next = true;
             this.startDate = moment().startOf('month').format('YYYY-MM-DD');
             this.endDate = moment().format('YYYY-MM-DD');
-            this.retrieveTableData();
+        },
+        mounted() {
+            const self = this;
+            this.startDate = moment().startOf('month').format('YYYY-MM-DD');
+            this.endDate = moment().format('YYYY-MM-DD');
+
+
             console.info('mounted');
+
+            Event.$on('vue-tables.loading', function (data) {
+                self.loaders.next = true
+            });
+
+            Event.$on('vue-tables.loaded', function (data) {
+                self.loaders.next = false
+            });
         }
     }
 </script>

@@ -37,20 +37,9 @@ class Enrollable extends Resource
 
         $careAmbassador = $this->careAmbassador->careAmbassador;
 
-        //get script
-        $enrollableIsUnreachableUser = Enrollee::UNREACHABLE_PATIENT === $enrollable->source;
+        $timezone = $this->getTimezone($enrollable);
 
-        if (empty($enrollable->lang)) {
-            //default to english, just so we can avoid cases where something went wrong with enrollee->language
-            $script = TrixField::careAmbassador(TrixField::ENGLISH_LANGUAGE, $enrollableIsUnreachableUser)->first();
-        } else {
-            $script = TrixField::careAmbassador($enrollable->lang, $enrollableIsUnreachableUser)->first();
-        }
-
-        if ( ! $script) {
-            //default to english, just so we can avoid cases where something went wrong with enrollee->language
-            $script = TrixField::careAmbassador(TrixField::ENGLISH_LANGUAGE, $enrollableIsUnreachableUser)->first();
-        }
+        $script = $this->getScript($enrollable);
 
         $familyAttributes = $this->getFamilyAttributes($enrollable);
 
@@ -231,6 +220,40 @@ class Enrollable extends Resource
             'reason'           => $reason,
             'reason_other'     => $reasonOther,
         ];
+    }
+
+    private function getScript($enrollable): TrixField
+    {
+        $enrollableIsUnreachableUser = Enrollee::UNREACHABLE_PATIENT === $enrollable->source;
+
+        if (empty($enrollable->lang)) {
+            //default to english, just so we can avoid cases where something went wrong with enrollee->language
+            $script = TrixField::careAmbassador(TrixField::ENGLISH_LANGUAGE, $enrollableIsUnreachableUser)->first();
+        } else {
+            $script = TrixField::careAmbassador($enrollable->lang, $enrollableIsUnreachableUser)->first();
+        }
+
+        if ( ! $script) {
+            //default to english, just so we can avoid cases where something went wrong with enrollee->language
+            $script = TrixField::careAmbassador(TrixField::ENGLISH_LANGUAGE, $enrollableIsUnreachableUser)->first();
+        }
+
+        return $script;
+    }
+
+    private function getTimezone($enrollable)
+    {
+        $timezone = $enrollable->user->timezone ?? null;
+
+        //todo: check location on enrollee?
+
+        if ( ! $timezone) {
+            //only locations with timezone loaded
+            //todo: avoid breaks
+            $location = $enrollable->practice->locations->first() ?? null;
+        }
+
+        return $timezone ?? 'N/A';
     }
 
     private function timeRangeToPanelWindows(string $timeRange)
