@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Settings;
 
+use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\FetchMedicationsFromAthenaApi;
 use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\GetProblemInstruction;
 use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\GetUPG0506ProblemInstruction;
 use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\ReplaceFieldsFromSupplementaryData;
@@ -13,8 +14,9 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\ReplaceFieldsFromSupplementa
 class Hooks
 {
     const LISTENERS = [
-        ReplaceFieldsFromSupplementaryData::IMPORTING_LISTENER_NAME => ReplaceFieldsFromSupplementaryData::class,
+        FetchMedicationsFromAthenaApi::IMPORTING_LISTENER_NAME      => FetchMedicationsFromAthenaApi::class,
         GetProblemInstruction::IMPORTING_LISTENER_NAME              => GetProblemInstruction::class,
         GetUPG0506ProblemInstruction::IMPORTING_LISTENER_NAME       => GetUPG0506ProblemInstruction::class,
+        ReplaceFieldsFromSupplementaryData::IMPORTING_LISTENER_NAME => ReplaceFieldsFromSupplementaryData::class,
     ];
 }

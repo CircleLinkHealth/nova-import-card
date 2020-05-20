@@ -10,16 +10,22 @@ use App\Constants;
 use App\MedicationGroupsMap;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
+use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\ConsolidatesMedicationInfo;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 use CircleLinkHealth\SharedModels\Entities\Medication;
 
 class ImportMedications extends BaseCcdaImportTask
 {
+    const HOOK_IMPORTING_MEDICATIONS = 'IMPORTING_MEDICATIONS';
+    
     use ConsolidatesMedicationInfo;
+    use FiresImportingHooks;
 
     protected function import()
     {
+        $this->fireImportingHook(self::HOOK_IMPORTING_MEDICATIONS, $this->patient, $this->ccda, []);
+    
         $medicationGroups = [];
 
         collect($this->getRawMedications())->each(
