@@ -62,6 +62,8 @@ class Role extends CerberusRole
      */
     protected $table = 'lv_roles';
 
+    protected $with = ['perms'];
+
     /**
      * Get the IDs of Roles from names.
      *
