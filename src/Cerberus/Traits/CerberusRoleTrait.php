@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Config;
 
 trait CerberusRoleTrait
 {
+    protected static $permissionsCache = [];
+
     /**
      * Attach permission to current role.
      *
@@ -78,15 +80,22 @@ trait CerberusRoleTrait
     //Big block of caching functionality.
     public function cachedPermissions()
     {
-        $rolePrimaryKey = $this->primaryKey;
-        $cacheKey       = 'cerberus_permissions_for_role_'.$this->$rolePrimaryKey;
-        if (Cache::getStore() instanceof TaggableStore) {
-            return Cache::tags(Config::get('cerberus.permissibles_table'))->remember($cacheKey, Config::get('cache.ttl', 60), function () {
-                return $this->perms()->get();
-            });
-        } else {
-            return $this->perms()->get();
+        $cacheKey = $this->getPermissionsCacheKey();
+        if ( ! isset(static::$permissionsCache[$cacheKey])) {
+            if (Cache::getStore() instanceof TaggableStore) {
+                static::$permissionsCache[$cacheKey] = Cache::tags(Config::get('cerberus.permissibles_table'))->remember(
+                    $cacheKey,
+                    Config::get('cache.ttl', 60),
+                    function () {
+                        return $this->perms()->get();
+                    }
+                );
+            } else {
+                static::$permissionsCache[$cacheKey] = $this->perms()->get();
+            }
         }
+
+        return static::$permissionsCache[$cacheKey];
     }
 
     public function delete(array $options = [])
@@ -226,6 +235,21 @@ trait CerberusRoleTrait
         }
     }
 
+    public function setRelation($relation, $value)
+    {
+        parent::setRelation($relation, $value);
+        if ('perms' === $relation) {
+            static::$permissionsCache[$this->getPermissionsCacheKey()] = $value;
+        }
+    }
+
+    public function setRelations(array $relations)
+    {
+        foreach ($relations as $relation => $value) {
+            $this->setRelation($relation, $value);
+        }
+    }
+
     /**
      * Many-to-Many relations with the user model.
      *
@@ -234,5 +258,12 @@ trait CerberusRoleTrait
     public function users()
     {
         return $this->belongsToMany(Config::get('cerberus.user'), Config::get('cerberus.role_user_site_table'), Config::get('cerberus.role_foreign_key'), Config::get('cerberus.user_foreign_key'));
+    }
+
+    private function getPermissionsCacheKey()
+    {
+        $rolePrimaryKey = $this->primaryKey;
+
+        return 'cerberus_permissions_for_role_'.$this->$rolePrimaryKey;
     }
 }
