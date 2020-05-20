@@ -54,7 +54,7 @@ class EnrollmentStatsController extends Controller
     }
 
     /**
-     * Render practice stats datatable.
+     * Render practice stats vue table.
      *
      * @return mixed
      */
