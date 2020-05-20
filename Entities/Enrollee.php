@@ -908,7 +908,7 @@ class Enrollee extends BaseModel
             ]);
         },
             'user',
-            'provider'=> function ($p) {
+            'provider' => function ($p) {
                 $p->with([
                     'providerInfo',
                     'primaryPractice' => function ($p) {
