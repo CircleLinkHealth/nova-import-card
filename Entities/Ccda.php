@@ -450,11 +450,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
         $this->loadMissing(['billingProvider', 'targetPatient']);
 
-        if ( ! $this->location_id && $this->practice_id && $deptId = optional($this->targetPatient)->ehr_department_id) {
-            $this->location_id = \Cache::remember("cpm_location_for_athena_department_id_$deptId", 2, function () use ($deptId) {
-                return Location::where('practice_id', $this->practice_id)->where('external_department_id', $deptId)->value('id');
-            });
-        }
+        $this->fillLocationFromAthenaDepartmentId();
 
         $provider = $this->billingProvider;
 
@@ -517,6 +513,17 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             $ccda->save();
         }
 
+        $this->queryForOtherCcdasForTheSamePatient()->update([
+            'mrn'                     => $ccda->mrn,
+            'referring_provider_name' => $ccda->referring_provider_name,
+            'location_id'             => $ccda->location_id,
+            'practice_id'             => $ccda->practice_id,
+            'billing_provider_id'     => $ccda->billing_provider_id,
+            'patient_id'              => $ccda->patient_id,
+            'status'                  => $ccda->status,
+            'validation_checks'       => null,
+        ]);
+
         event(new CcdaImported($ccda->getId()));
 
         return $ccda;
@@ -535,6 +542,27 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     public function practice()
     {
         return $this->belongsTo(Practice::class);
+    }
+
+    public function queryForOtherCcdasForTheSamePatient()
+    {
+        return Ccda::where('id', '!=', $this->id)
+            ->where('practice_id', $this->practice_id)
+            ->where('patient_mrn', $this->patient_mrn)
+//            @Constantinos: Any suggestions on how to handle matching when a the patient's first name has a last name?
+//
+//            Example:
+//                $this->patient_first_name === 'John, K'
+//                ccdas.patient_first_name === 'John'
+//                Can we make this match?
+//
+//                $this->patient_first_name === 'John K.'
+//                ccdas.patient_first_name === 'John'
+//                This too?
+//
+//            ->where('patient_first_name', $this->patient_first_name)
+            ->where('patient_last_name', $this->patient_last_name)
+            ->where('patient_dob', $this->patient_dob);
     }
 
     public function raiseConcernsOrAutoQAApprove()
@@ -743,6 +771,39 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         }
 
         return $name;
+    }
+
+    private function fillLocationFromAthenaDepartmentId()
+    {
+        if ($this->location_id) {
+            return;
+        }
+
+        if ( ! $this->practice_id) {
+            return;
+        }
+
+        $deptId = optional($this->targetPatient)->ehr_department_id;
+
+        if ( ! $deptId) {
+            $this->queryForOtherCcdasForTheSamePatient()->with('targetPatient')->chunkById(10, function ($otherCcdas) use (&$deptId) {
+                foreach ($otherCcdas as $otherCcda) {
+                    $targetPatient = $otherCcda->targetPatient;
+
+                    if ($targetPatient instanceof TargetPatient && is_numeric($targetPatient->ehr_department_id)) {
+                        $deptId = $targetPatient->ehr_department_id;
+                        //break chunking
+                        return false;
+                    }
+                }
+            });
+        }
+
+        if ($deptId) {
+            $this->location_id = \Cache::remember("cpm_practice_{$this->practice_id}___location_for_athena_department_id_$deptId", 2, function () use ($deptId) {
+                return Location::where('practice_id', $this->practice_id)->where('external_department_id', $deptId)->value('id');
+            });
+        }
     }
 
     /**
