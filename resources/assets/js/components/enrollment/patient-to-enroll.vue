@@ -707,7 +707,7 @@
 <script>
 
     import {rootUrl} from '../../app.config';
-
+    import {Logger} from '../../logger-logdna';
     import Loader from '../loader.vue';
 
     const userId = window.userId;
@@ -1160,12 +1160,15 @@
                         this.confirmed_family_members = response.data.suggested_family_members.map(function (member) {
                             return member.is_confirmed ? member.id : null;
                         }).filter(x => !!x);
+
+                        Logger.warn(`Suggested family members for: ${this.enrollable_id}, ids: ${this.suggested_family_members.join(',')}`, {meta: {'connection': 'warning'}});
                     })
                     .catch(err => {
                         this.family_loading = false;
                         this.bannerText = err.response.data.message;
                         this.bannerType = 'danger';
                         this.showBanner = true;
+                        Logger.warn(`WARNING: Suggested family members error ${this.bannerText}`, {meta: {'connection': 'warning'}});
                     });
             },
 
