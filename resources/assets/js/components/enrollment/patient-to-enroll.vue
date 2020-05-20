@@ -493,14 +493,13 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button name="btnSubmit" type="submit"
-                                :disabled="disable_consented_submit"
-                                class="modal-action waves-effect waves-light btn">Confirm and call next patient
-                        </button>
-                        <div v-if="onCall === true" style="text-align: center">
-                            <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
+                            <a v-if="onCall" v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
                                     class="material-icons left">call_end</i>Hang Up</a>
-                        </div>
+
+                            <button name="btnSubmit" type="submit"
+                                    :disabled="disable_consented_submit"
+                                    class="modal-action waves-effect waves-light btn">Confirm and call next patient
+                            </button>
                     </div>
                 </form>
             </div>
@@ -563,14 +562,12 @@
 
                     </div>
                     <div class="modal-footer">
+                        <a v-if="onCall" v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
+                                class="material-icons left">call_end</i>Hang Up</a>
                         <button name="btnSubmit" type="submit"
                                 :disabled="utc_reason_empty || should_not_perform_action"
                                 class="modal-action waves-effect waves-light btn">Call Next Patient
                         </button>
-                        <div v-if="onCall === true" style="text-align: center">
-                            <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
-                                    class="material-icons left">call_end</i>Hang Up</a>
-                        </div>
                     </div>
                 </form>
             </div>
@@ -617,14 +614,12 @@
                         <input type="hidden" name="confirmed_family_members" v-model="confirmed_family_members">
                     </div>
                     <div class="modal-footer" style="padding-right: 60px">
+                        <a v-if="onCall" v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
+                                class="material-icons left">call_end</i>Hang Up</a>
                         <button name="btnSubmit" type="submit"
                                 :disabled="reason_empty || should_not_perform_action"
                                 class="modal-action waves-effect waves-light btn">Call Next Patient
                         </button>
-                        <div v-if="onCall === true" style="text-align: center">
-                            <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
-                                    class="material-icons left">call_end</i>Hang Up</a>
-                        </div>
                     </div>
                 </form>
             </div>
@@ -661,6 +656,8 @@
                     </div>
                 </div>
                 <div class="modal-footer" style="padding-right: 60px">
+                    <a v-if="onCall" v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
+                            class="material-icons left">call_end</i>Hang Up</a>
                     <button class="modal-action waves-effect waves-light btn" type="submit"
                             v-on:click="submitPendingForm()">Proceed
                     </button>
