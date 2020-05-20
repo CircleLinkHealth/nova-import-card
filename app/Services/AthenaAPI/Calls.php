@@ -455,6 +455,26 @@ class Calls implements AthenaApiImplementation
     }
 
     /**
+     * Get patient medications.
+     *
+     * @throws \Exception
+     * @return array|mixed
+     */
+    public function getMedications(int $patientId, int $practiceId, int $departmentId)
+    {
+        $response = $this->api()->GET(
+            "${practiceId}/chart/${patientId}/medications",
+            [
+                'departmentid' => $departmentId,
+                'patientid'    => $patientId,
+                'practiceid'   => $practiceId,
+            ]
+        );
+
+        return $this->response($response);
+    }
+
+    /**
      * Get the next paginated result set.
      *
      * @param $url

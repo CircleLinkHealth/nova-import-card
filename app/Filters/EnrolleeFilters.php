@@ -77,12 +77,12 @@ class EnrolleeFilters extends QueryFilters
     {
         $query = $this->request->get('query');
 
-        $decoded               = json_decode($query, true);
+        $decoded = json_decode($query, true);
+        //We're using this filter class for both CA-Director panel and Enrollment/Enrollee-List,
+        //so let's just say globally hide Enrolled and Legacy only, then anything extra comes from each vue-component
         $decoded['hideStatus'] = array_merge($decoded['hideStatus'], [
-            Enrollee::LEGACY,
-            Enrollee::SOFT_REJECTED,
-            Enrollee::REJECTED,
             Enrollee::ENROLLED,
+            Enrollee::LEGACY,
         ]);
         $decoded['attempt_count'] = '';
 
@@ -110,6 +110,11 @@ class EnrolleeFilters extends QueryFilters
         }
 
         return $this->builder->where('id', 'like', '%'.$id.'%');
+    }
+
+    public function isCsv()
+    {
+        return array_key_exists('csv', $this->filters());
     }
 
     public function isolateUploadedViaCsv($isolate)
