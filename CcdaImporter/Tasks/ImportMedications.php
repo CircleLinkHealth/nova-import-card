@@ -11,7 +11,6 @@ use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\ConsolidatesMedicationInfo;
-use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 use CircleLinkHealth\SharedModels\Entities\Medication;
 
@@ -94,6 +93,32 @@ class ImportMedications extends BaseCcdaImportTask
         }
     }
 
+    private function getMedsFromOtherCcda()
+    {
+        $otherMeds = [];
+
+        $this->ccda->queryForOtherCcdasForTheSamePatient()
+            ->chunkById(10, function ($otherCcdas) use (&$otherMeds) {
+                foreach ($otherCcdas as $otherCcda) {
+                    $newMeds = $otherCcda->bluebuttonJson()->medications ?? [];
+
+                    if ( ! empty($newMeds)) {
+                        $data = $this->ccda->bluebuttonJson();
+                        $data->medications = $newMeds;
+                        $this->ccda->json = json_encode($data);
+                        $this->ccda->save();
+
+                        $otherMeds = $this->ccda->bluebuttonJson()->medications;
+
+                        //break chunking
+                        return false;
+                    }
+                }
+            });
+
+        return $otherMeds;
+    }
+
     private function getRawMedications(): array
     {
         $meds = $this->ccda->bluebuttonJson()->medications ?? [];
@@ -101,7 +126,7 @@ class ImportMedications extends BaseCcdaImportTask
         if (empty($meds)) {
             return $this->getMedsFromOtherCcda();
         }
-        
+
         return $meds;
     }
 
@@ -153,33 +178,5 @@ class ImportMedications extends BaseCcdaImportTask
     private function transform(object $medication): array
     {
         return $this->getTransformer()->medication($medication);
-    }
-    
-    private function getMedsFromOtherCcda()
-    {
-        $otherMeds = [];
-        
-        $this->ccda->queryForOtherCcdasForTheSamePatient()
-            ->chunkById(10, function ($otherCcdas) use (&$otherMeds){
-                foreach ($otherCcdas as $otherCcda) {
-                    $newMeds = $otherCcda->bluebuttonJson()->medications ?? [];
-        
-                    if ( ! empty($newMeds)) {
-                        $data              = $this->ccda->bluebuttonJson();
-                        $data->medications = $newMeds;
-                        $this->ccda->json  = json_encode($data);
-                        $this->ccda->save();
-    
-                        $otherMeds = $this->ccda->bluebuttonJson()->medications;
-                        
-                        //break chunking
-                        return false;
-                    }
-                }
-            });
-    
-        
-        
-        return $otherMeds;
     }
 }
