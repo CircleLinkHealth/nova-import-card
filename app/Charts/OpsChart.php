@@ -29,6 +29,11 @@ class OpsChart extends Chart
         parent::__construct();
     }
 
+    /**
+     * Incomplete!
+     *
+     * @return mixed
+     */
     public static function autoEnrollmentChart(int $practiceId)
     {
         return Cache::remember(
