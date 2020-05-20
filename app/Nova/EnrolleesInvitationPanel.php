@@ -7,6 +7,7 @@
 namespace App\Nova;
 
 use App\Nova\Actions\SelfEnrollmentManualInvite;
+use App\Nova\Metrics\InvitationsSent;
 use App\Nova\Metrics\SelfEnrolledBtnColor;
 use App\Nova\Metrics\SelfEnrolledPatientTotal;
 use App\Traits\EnrollableManagement;
@@ -116,6 +117,7 @@ class EnrolleesInvitationPanel extends Resource
             ),
             (new SelfEnrolledPatientTotal(self::getPracticeId($this))),
             (new SelfEnrolledBtnColor(self::getPracticeId($this))),
+            (new InvitationsSent(self::getPracticeId($this))),
         ];
     }
 
