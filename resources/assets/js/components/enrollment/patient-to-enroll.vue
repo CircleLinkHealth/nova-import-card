@@ -589,6 +589,7 @@
                                     <option value="Worried about co-pay">Worried about co-pay</option>
                                     <option value="Doesn’t trust medicare">Doesn’t trust medicare</option>
                                     <option value="Doesn’t need help with Health">Doesn’t need help with health</option>
+                                    <option v-if="isSoftDecline" value="not at this time - try again later">Not At This Time, But Please Try Again At A Later Date</option>
                                     <option value="other">Other...</option>
                                 </select>
                             </div>
