@@ -40,7 +40,7 @@ class SelfEnrolledPatientTotal extends Value
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->count($request, $this->queryEnrolleesEnrolled());
+        return $this->count($request, $this->queryEnrolleesEnrolled(), \DB::raw('DISTINCT(invitationable_id)'));
     }
 
     /**
@@ -79,6 +79,6 @@ class SelfEnrolledPatientTotal extends Value
     {
         return EnrollableInvitationLink::whereIn('invitationable_id', function ($q) {
             $q->select('id')->from('enrollees')->where('practice_id', '=', $this->practiceId)->where('auto_enrollment_triggered', '=', true)->where('status', '=', Enrollee::ENROLLED);
-        })->where('invitationable_type', Enrollee::class)->distinct('invitationable_id');
+        })->where('invitationable_type', Enrollee::class);
     }
 }

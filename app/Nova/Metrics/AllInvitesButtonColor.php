@@ -9,9 +9,9 @@ namespace App\Nova\Metrics;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Laravel\Nova\Metrics\Trend;
+use Laravel\Nova\Metrics\Partition;
 
-class TotalInvitationsSentHourly extends Trend
+class AllInvitesButtonColor extends Partition
 {
     /**
      * @var int
@@ -30,7 +30,7 @@ class TotalInvitationsSentHourly extends Trend
      */
     public function cacheFor()
     {
-        return now()->addMinutes(1);
+//        return now()->addMinutes(1);
     }
 
     /**
@@ -40,24 +40,17 @@ class TotalInvitationsSentHourly extends Trend
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->countByHours($request, $this->queryEnrolleesEnrolled(), \DB::raw('DISTINCT(invitationable_id)'));
-    }
-
-    /**
-     * Get the ranges available for the metric.
-     *
-     * @return array
-     */
-    public function ranges()
-    {
-        return [
-            48  => '2 Days',
-            72  => '3 Days',
-            96  => '4 Days',
-            168 => '7 Days',
-            336 => '14 Days',
-            720 => '30 Days',
-        ];
+        return $this->count($request, $this->queryEnrolleesEnrolled(), 'button_color', \DB::raw('DISTINCT(invitationable_id)'))->colors([
+            'Green' => '#4baf50',
+            'Red'   => '#b1284c',
+        ])->label(function ($value) {
+            switch ($value) {
+                case '#b1284c':
+                    return 'Red';
+                default:
+                    return 'Green';
+            }
+        });
     }
 
     /**
@@ -67,13 +60,13 @@ class TotalInvitationsSentHourly extends Trend
      */
     public function uriKey()
     {
-        return 'invitations-sent';
+        return 'all-invites-button-color';
     }
 
     private function queryEnrolleesEnrolled()
     {
         return EnrollableInvitationLink::whereIn('invitationable_id', function ($q) {
             $q->select('id')->from('enrollees')->where('practice_id', '=', $this->practiceId);
-        })->where('invitationable_type', Enrollee::class)->distinct('invitationable_id');
+        })->where('invitationable_type', Enrollee::class);
     }
 }
