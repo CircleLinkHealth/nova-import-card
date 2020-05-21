@@ -179,6 +179,7 @@
                 this.$refs['attest-call-conditions-modal'].visible = false;
             },
             submitForm() {
+
                 if (this.isNotesPage){
                     //validate and set error messages if you should
                     if (! this.validateAttestedConditions()){
