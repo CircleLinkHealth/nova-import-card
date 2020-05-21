@@ -40,7 +40,7 @@ class TotalInvitationsSentHourly extends Trend
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->countByHours($request, $this->queryEnrolleesEnrolled(), \DB::raw('DISTINCT(invitationable_id)'));
+        return $this->countByHours($request, $this->queryEnrolleesEnrolled(), 'created_at');
     }
 
     /**
@@ -74,6 +74,6 @@ class TotalInvitationsSentHourly extends Trend
     {
         return EnrollableInvitationLink::whereIn('invitationable_id', function ($q) {
             $q->select('id')->from('enrollees')->where('practice_id', '=', $this->practiceId);
-        })->where('invitationable_type', Enrollee::class)->distinct('invitationable_id');
+        })->where('invitationable_type', Enrollee::class)->selectRaw('DISTINCT(invitationable_id), created_at');
     }
 }
