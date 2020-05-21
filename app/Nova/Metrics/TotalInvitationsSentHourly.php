@@ -6,7 +6,8 @@
 
 namespace App\Nova\Metrics;
 
-use CircleLinkHealth\Core\Entities\DatabaseNotification;
+use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Trend;
 
@@ -51,6 +52,8 @@ class TotalInvitationsSentHourly extends Trend
     {
         return [
             48  => '2 Days',
+            72  => '3 Days',
+            96  => '4 Days',
             168 => '7 Days',
             336 => '14 Days',
             720 => '30 Days',
@@ -69,8 +72,8 @@ class TotalInvitationsSentHourly extends Trend
 
     private function queryEnrolleesEnrolled()
     {
-        return DatabaseNotification::whereIn('notifiable_id', function ($q) {
-            $q->select('user_id')->from('enrollees')->where('practice_id', '=', $this->practiceId);
-        })->whereIn('notifiable_type', [\App\User::class, \CircleLinkHealth\Customer\Entities\User::class])->distinct('notifiable_id')->where('type', 'like', '%SendEnrollmentEmail%');
+        return EnrollableInvitationLink::whereIn('invitationable_id', function ($q) {
+            $q->select('id')->from('enrollees')->where('practice_id', '=', $this->practiceId);
+        })->where('invitationable_type', Enrollee::class)->distinct('invitationable_id');
     }
 }
