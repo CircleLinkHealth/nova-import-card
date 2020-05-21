@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5937a04e5c12aad1c68fe7f08370a155",
+    "content-hash": "2b159779d9bf909008034653db03d9cb",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1091,11 +1091,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-CPM-2417-attestation-bug",
+            "version": "v2.6.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "de1dc6705a35307ed714b8e2fbbe5340acd33e8a"
+                "reference": "e030ce656c2f92489fbd0ff425c8ba678c3deec3"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1129,7 +1129,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-21T09:55:08+00:00"
+            "time": "2020-05-21T11:24:37+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -8324,16 +8324,16 @@
         },
         {
             "name": "sentry/sentry",
-            "version": "2.3.2",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-php.git",
-                "reference": "b3e71feb32f1787b66a3b4fdb8686972e9c7ba94"
+                "reference": "e44561875e0d724bac3d9cdb705bf58847acd425"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/b3e71feb32f1787b66a3b4fdb8686972e9c7ba94",
-                "reference": "b3e71feb32f1787b66a3b4fdb8686972e9c7ba94",
+                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/e44561875e0d724bac3d9cdb705bf58847acd425",
+                "reference": "e44561875e0d724bac3d9cdb705bf58847acd425",
                 "shasum": ""
             },
             "require": {
@@ -8348,7 +8348,9 @@
                 "php-http/discovery": "^1.6.1",
                 "php-http/httplug": "^1.1|^2.0",
                 "php-http/message": "^1.5",
+                "psr/http-factory": "^1.0",
                 "psr/http-message-implementation": "^1.0",
+                "psr/log": "^1.0",
                 "symfony/options-resolver": "^2.7|^3.0|^4.0|^5.0",
                 "symfony/polyfill-uuid": "^1.13.1"
             },
@@ -8357,12 +8359,12 @@
                 "raven/raven": "*"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.13",
+                "friendsofphp/php-cs-fixer": "^2.16",
                 "monolog/monolog": "^1.3|^2.0",
                 "php-http/mock-client": "^1.3",
                 "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan": "^0.11",
-                "phpstan/phpstan-phpunit": "^0.11",
+                "phpstan/phpstan": "^0.12",
+                "phpstan/phpstan-phpunit": "^0.12",
                 "phpunit/phpunit": "^7.5.18",
                 "symfony/phpunit-bridge": "^4.3|^5.0",
                 "vimeo/psalm": "^3.4"
@@ -8373,7 +8375,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.3-dev"
+                    "dev-master": "2.4-dev"
                 }
             },
             "autoload": {
@@ -8405,7 +8407,17 @@
                 "logging",
                 "sentry"
             ],
-            "time": "2020-03-06T09:24:53+00:00"
+            "funding": [
+                {
+                    "url": "https://sentry.io/",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://sentry.io/pricing/",
+                    "type": "custom"
+                }
+            ],
+            "time": "2020-05-20T20:49:38+00:00"
         },
         {
             "name": "sentry/sentry-laravel",
@@ -15745,7 +15757,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/customer-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "laravel/scout": 20,
         "waavi/url-shortener": 20,
