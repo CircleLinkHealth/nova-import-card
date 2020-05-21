@@ -534,6 +534,13 @@ class NotesController extends Controller
         $input = $request->allSafe();
 
         $patient = User::findOrFail($patientId);
+    
+        if ( ! isset($input['body']) || null === $input['body']) {
+            return redirect()
+                ->back()
+                ->withErrors(['Cannot create note with empty body.'])
+                ->withInput();
+        }
 
         // validating attested problems by nurse. Checking existence since we are about to attach them below
         $request->validate([
