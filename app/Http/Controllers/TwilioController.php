@@ -18,6 +18,7 @@ use Illuminate\Validation\Rule;
 use SimpleXMLElement;
 use Twilio\Exceptions\TwimlException;
 use Twilio\Twiml;
+use Illuminate\Support\Facades\Response;
 
 class TwilioController extends Controller
 {
@@ -904,7 +905,7 @@ class TwilioController extends Controller
             $header['Content-Type'] = 'application/xml';
         }
 
-        return \Response::make($xml->asXML(), $status, $header);
+        return Response::make($xml->asXML(), $status, $header);
     }
 
     private function responseWithXmlType($response)
