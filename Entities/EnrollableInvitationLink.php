@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Customer\EnrollableInvitationLink;
 
+use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink.
@@ -37,7 +37,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method   static      \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereUrl($value)
  * @property string|null $button_color
  */
-class EnrollableInvitationLink extends Model
+class EnrollableInvitationLink extends BaseModel
 {
     use HasEnrollableInvitation;
 
