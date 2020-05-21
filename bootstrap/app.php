@@ -25,9 +25,11 @@ $app = new Laravel\Lumen\Application(
 
 $app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
 $app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
+
 $app->configure('app');
 $app->configure('services');
 $app->configure('cors');
+$app->configure('view');
 
 $app->withFacades();
 
