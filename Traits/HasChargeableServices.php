@@ -13,6 +13,8 @@ trait HasChargeableServices
 {
     private $byCode;
 
+    private $byCodeIncludeUnfulfilled;
+
     /**
      * Include unfulfilled ChargeableServices - services added at the start of month,
      * based on last month's services if last month pms exists, or based on logic seen in:
@@ -71,9 +73,9 @@ trait HasChargeableServices
         return $chargeableServices->has(ChargeableService::CCM_PLUS_40) || $chargeableServices->has(ChargeableService::CCM_PLUS_60);
     }
 
-    public function hasServiceCode($code)
+    public function hasServiceCode($code, $includeUnfulfilled = false)
     {
-        return $this->byCode()->has($code);
+        return $this->byCode($includeUnfulfilled)->has($code);
     }
 
     public function scopeHasServiceCode($builder, $code)
@@ -83,8 +85,16 @@ trait HasChargeableServices
         });
     }
 
-    private function byCode()
+    private function byCode($includeUnfulfilled = false)
     {
+        if ($includeUnfulfilled) {
+            if ( ! $this->byCodeIncludeUnfulfilled) {
+                $this->byCodeIncludeUnfulfilled = $this->allChargeableServices->keyBy('code');
+            }
+
+            return $this->byCodeIncludeUnfulfilled;
+        }
+
         if ( ! $this->byCode) {
             $this->byCode = $this->chargeableServices->keyBy('code');
         }
