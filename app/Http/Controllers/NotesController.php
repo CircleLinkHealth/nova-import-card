@@ -932,11 +932,11 @@ class NotesController extends Controller
         $services = $pms->allChargeableServices;
 
         if ($services->where('code', ChargeableService::CCM)->isNotEmpty()) {
-            if ($pms->ccmAttestedProblems()->count() < 2) {
+            if ($pms->ccmAttestedProblems(true)->count() < 2) {
                 $requirements['ccm_2'] = true;
             }
 
-            if ($services->where('code', ChargeableService::BHI)->isNotEmpty() && $pms->bhiAttestedProblems()->count() < 1) {
+            if ($services->where('code', ChargeableService::BHI)->isNotEmpty() && $pms->bhiAttestedProblems(true)->count() < 1) {
                 $requirements['is_complex'] = true;
                 $requirements['bhi_1']      = true;
             }
