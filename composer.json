@@ -41,7 +41,7 @@
         "predis/predis": "^1.1",
         "propaganistas/laravel-phone": "^4.1",
         "sentry/sentry-laravel": "1.7.0",
-        "twilio/sdk": "^5.31",
+        "twilio/sdk": "5.31.3",
         "vlucas/phpdotenv": "^3"
     },
     "require-dev": {
