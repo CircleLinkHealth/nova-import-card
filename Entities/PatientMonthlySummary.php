@@ -275,11 +275,12 @@ class PatientMonthlySummary extends BaseModel
     }
 
     /**
+     * @param  bool              $includeUnfulfilledChargeableServices
      * @return Collection|static
      */
-    public function bhiAttestedProblems()
+    public function bhiAttestedProblems($includeUnfulfilledChargeableServices = false)
     {
-        if ( ! $this->hasServiceCode(ChargeableService::BHI)) {
+        if ( ! $this->hasServiceCode(ChargeableService::BHI, $includeUnfulfilledChargeableServices)) {
             return collect([]);
         }
 
@@ -317,11 +318,12 @@ class PatientMonthlySummary extends BaseModel
     }
 
     /**
+     * @param  bool                                                                      $includeUnfulfilledChargeableServices
      * @return \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection|static
      */
-    public function ccmAttestedProblems()
+    public function ccmAttestedProblems($includeUnfulfilledChargeableServices = false)
     {
-        return ! $this->hasServiceCode(ChargeableService::BHI)
+        return ! $this->hasServiceCode(ChargeableService::BHI, $includeUnfulfilledChargeableServices)
             ? $this->attestedProblems
             : $this->attestedProblems->where('cpmProblem.is_behavioral', '=', false);
     }
