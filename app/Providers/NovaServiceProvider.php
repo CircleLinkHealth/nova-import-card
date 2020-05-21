@@ -22,6 +22,15 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function boot()
     {
         parent::boot();
+    
+        /**
+         * Nova Assumes UTC in Eloquent. Below makes it show the time as we store it in the DB (EST).
+         *
+         * @see https://github.com/laravel/framework/issues/19737
+         */
+        Nova::userTimezone(function () {
+            return '+00:00';
+        });
 
         \Laravel\Nova\Fields\Field::macro('withModel', function ($model, $modelKey = null) {
             $this->withMeta([

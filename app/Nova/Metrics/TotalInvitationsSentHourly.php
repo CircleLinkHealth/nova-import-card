@@ -10,7 +10,7 @@ use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Trend;
 
-class InvitationsSent extends Trend
+class TotalInvitationsSentHourly extends Trend
 {
     /**
      * @var int
@@ -39,7 +39,7 @@ class InvitationsSent extends Trend
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->countByDays($request, $this->queryEnrolleesEnrolled());
+        return $this->countByHours($request, $this->queryEnrolleesEnrolled());
     }
 
     /**
@@ -50,13 +50,10 @@ class InvitationsSent extends Trend
     public function ranges()
     {
         return [
-            1  => '1 Day',
-            2  => '2 Days',
-            7  => '7 Days',
-            14 => '14 Days',
-            30 => '30 Days',
-            60 => '60 Days',
-            90 => '90 Days',
+            48  => '2 Days',
+            168 => '7 Days',
+            336 => '14 Days',
+            720 => '30 Days',
         ];
     }
 

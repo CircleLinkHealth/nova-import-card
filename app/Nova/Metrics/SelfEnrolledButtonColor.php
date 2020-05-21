@@ -11,7 +11,7 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Partition;
 
-class SelfEnrolledBtnColor extends Partition
+class SelfEnrolledButtonColor extends Partition
 {
     /**
      * @var int
