@@ -40,19 +40,15 @@ class SelfEnrolledButtonColor extends Partition
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->count($request, $this->queryEnrolleesEnrolled(), 'button_color')->colors([
-            //green
+        return $this->count($request, $this->queryEnrolleesEnrolled(), 'button_color', \DB::raw('DISTINCT(invitationable_id)'))->colors([
             'Green' => '#4baf50',
-            //red
-            'Red' => '#b1284c',
+            'Red'   => '#b1284c',
         ])->label(function ($value) {
             switch ($value) {
-                case '#4baf50':
-                    return 'Green';
                 case '#b1284c':
                     return 'Red';
                 default:
-                    return ucfirst($value);
+                    return 'Green';
             }
         });
     }
@@ -69,8 +65,8 @@ class SelfEnrolledButtonColor extends Partition
 
     private function queryEnrolleesEnrolled()
     {
-        return EnrollableInvitationLink::whereIn('invitationable_id', function ($q) {
+        return EnrollableInvitationLink::select(['button_color', 'invitationable_id'])->whereIn('invitationable_id', function ($q) {
             $q->select('id')->from('enrollees')->where('practice_id', '=', $this->practiceId)->where('auto_enrollment_triggered', '=', true)->where('status', '=', Enrollee::ENROLLED);
-        })->where('invitationable_type', Enrollee::class)->distinct('invitationable_id')->whereNotNull('button_color');
+        })->where('invitationable_type', Enrollee::class);
     }
 }

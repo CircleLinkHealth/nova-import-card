@@ -7,6 +7,7 @@
 namespace App\Nova;
 
 use App\Nova\Actions\SelfEnrollmentManualInvite;
+use App\Nova\Metrics\AllInvitesButtonColor;
 use App\Nova\Metrics\SelfEnrolledButtonColor;
 use App\Nova\Metrics\SelfEnrolledPatientTotal;
 use App\Nova\Metrics\TotalInvitationsSentHourly;
@@ -118,6 +119,7 @@ class EnrolleesInvitationPanel extends Resource
             (new SelfEnrolledPatientTotal(self::getPracticeId($this))),
             (new SelfEnrolledButtonColor(self::getPracticeId($this))),
             (new TotalInvitationsSentHourly(self::getPracticeId($this))),
+            (new AllInvitesButtonColor(self::getPracticeId($this))),
         ];
     }
 
