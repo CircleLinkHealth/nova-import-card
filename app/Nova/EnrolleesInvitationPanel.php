@@ -7,9 +7,9 @@
 namespace App\Nova;
 
 use App\Nova\Actions\SelfEnrollmentManualInvite;
-use App\Nova\Metrics\TotalInvitationsSentHourly;
 use App\Nova\Metrics\SelfEnrolledButtonColor;
 use App\Nova\Metrics\SelfEnrolledPatientTotal;
+use App\Nova\Metrics\TotalInvitationsSentHourly;
 use App\Traits\EnrollableManagement;
 use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
