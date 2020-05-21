@@ -56,13 +56,6 @@
                 tableData: [],
                 columns: ['name', 'unique_patients_called', 'consented', 'utc', 'soft_declined', 'hard_declined', 'incomplete_3_attempts', 'labor_hours', 'conversion', 'labor_rate', 'total_cost', 'acq_cost'],
                 options: {
-                    requestAdapter(data) {
-                        // if (typeof (self) !== 'undefined') {
-                        //     data.query.start_date = self.startDate;
-                        //     data.query.end_date = self.endDate;
-                        // }
-                        return data;
-                    },
                     headings: {
                         name: 'Practice Name',
                         unique_patients_called: '#Unique Patients Called',

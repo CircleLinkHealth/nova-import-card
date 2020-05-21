@@ -39,6 +39,10 @@
                         @click="showSoftRejected">Include Soft Declined
                 </button>
                 <button class="btn btn-info btn-xs"
+                        v-bind:class="{'btn-selected': !this.hideStatus.includes('rejected')}"
+                        @click="showRejected">Include Hard Declined
+                </button>
+                <button class="btn btn-info btn-xs"
                         v-bind:class="{'btn-selected': !this.hideStatus.includes('ineligible')}"
                         @click="showIneligible">Include Ineligible
                 </button>
@@ -224,6 +228,27 @@
                     this.selectedEnrolleeIds.splice(pos, 1);
                 }
             },
+            updateTable(){
+                const query = {
+                    hideStatus: this.hideStatus,
+                    hideAssigned: this.hideAssigned,
+                    isolateUploadedViaCsv : this.isolateUploadedViaCsv
+                };
+                this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
+                    .then(resp => {
+                        this.$refs.table.setData(resp.data);
+                        this.loading = false;
+                    })
+                    .catch(err => {
+                        let errors = err.response.data.errors ? err.response.data.errors : [];
+                        this.loading = false;
+                        Event.$emit('notifications-ca-panel:create', {
+                            noTimeout: true,
+                            text: errors,
+                            type: 'error'
+                        });
+                    });
+            },
             selected(id) {
                 const pos = this.selectedEnrolleeIds.indexOf(id);
                 if (pos === -1) {
@@ -240,25 +265,7 @@
                 else
                     this.hideStatus.push('ineligible');
 
-                const query = {
-                    hideStatus: this.hideStatus,
-                    hideAssigned: this.hideAssigned,
-                    isolateUploadedViaCsv : this.isolateUploadedViaCsv
-                };
-                this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
-                    .then(resp => {
-                        this.$refs.table.setData(resp.data);
-                        this.loading = false;
-                    })
-                    .catch(err => {
-                        let errors = err.response.data.errors ? err.response.data.errors : [];
-                        this.loading = false;
-                        Event.$emit('notifications-ca-panel:create', {
-                            noTimeout: true,
-                            text: errors,
-                            type: 'error'
-                        });
-                    });
+                this.updateTable();
             },
             showSoftRejected() {
                 Event.$emit('notifications-ca-panel:dismissAll');
@@ -268,25 +275,17 @@
                 else
                     this.hideStatus.push('soft_rejected');
 
-                const query = {
-                    hideStatus: this.hideStatus,
-                    hideAssigned: this.hideAssigned,
-                    isolateUploadedViaCsv : this.isolateUploadedViaCsv
-                };
-                this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
-                    .then(resp => {
-                        this.$refs.table.setData(resp.data);
-                        this.loading = false;
-                    })
-                    .catch(err => {
-                        let errors = err.response.data.errors ? err.response.data.errors : [];
-                        this.loading = false;
-                        Event.$emit('notifications-ca-panel:create', {
-                            noTimeout: true,
-                            text: errors,
-                            type: 'error'
-                        });
-                    });
+                this.updateTable();
+            },
+            showRejected() {
+                Event.$emit('notifications-ca-panel:dismissAll');
+                this.loading = true;
+                if (this.hideStatus.includes('rejected'))
+                    this.hideStatus = this.hideStatus.filter(item => item !== 'rejected');
+                else
+                    this.hideStatus.push('soft_rejected');
+
+                this.updateTable();
             },
             showSelfEnrollment() {
                 Event.$emit('notifications-ca-panel:dismissAll');
@@ -296,25 +295,7 @@
                 else
                     this.hideStatus.push('queue_auto_enrollment');
 
-                const query = {
-                    hideStatus: this.hideStatus,
-                    hideAssigned: this.hideAssigned,
-                    isolateUploadedViaCsv : this.isolateUploadedViaCsv
-                };
-                this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
-                    .then(resp => {
-                        this.$refs.table.setData(resp.data);
-                        this.loading = false;
-                    })
-                    .catch(err => {
-                        let errors = err.response.data.errors ? err.response.data.errors : [];
-                        this.loading = false;
-                        Event.$emit('notifications-ca-panel:create', {
-                            noTimeout: true,
-                            text: errors,
-                            type: 'error'
-                        });
-                    });
+                this.updateTable();
             },
             showConsented() {
                 Event.$emit('notifications-ca-panel:dismissAll');
@@ -327,76 +308,25 @@
                     this.hideStatus.push('consented');
                 }
 
-
-                const query = {
-                    hideStatus: this.hideStatus,
-                    hideAssigned: this.hideAssigned,
-                    isolateUploadedViaCsv : this.isolateUploadedViaCsv
-                };
-                this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
-                    .then(resp => {
-                        this.$refs.table.setData(resp.data);
-                        this.loading = false;
-                    }).catch(err => {
-                    let errors = err.response.data.errors ? err.response.data.errors : [];
-                    this.loading = false;
-                    Event.$emit('notifications-ca-panel:create', {
-                        noTimeout: true,
-                        text: errors,
-                        type: 'error'
-                    });
-                })
+                this.updateTable();
             },
             showAssigned() {
                 Event.$emit('notifications-ca-panel:dismissAll');
                 this.loading = true;
                 this.hideAssigned = !this.hideAssigned;
-                const query = {
-                    hideStatus: this.hideStatus,
-                    hideAssigned: this.hideAssigned,
-                    isolateUploadedViaCsv : this.isolateUploadedViaCsv
-                };
-                this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
-                    .then(resp => {
-                        this.$refs.table.setData(resp.data);
-                        this.loading = false;
-                    }).catch(err => {
-                    let errors = err.response.data.errors ? err.response.data.errors : [];
-                    this.loading = false;
-                    Event.$emit('notifications-ca-panel:create', {
-                        noTimeout: true,
-                        text: errors,
-                        type: 'error'
-                    });
-                })
+
+                this.updateTable();
             },
             isolatePatientsUploadedViaCsv(){
                 Event.$emit('notifications-ca-panel:dismissAll');
                 this.loading = true;
-                this.isolateUploadedViaCsv = ! this.isolateUploadedViaCsv
-                const query = {
-                    hideStatus: this.hideStatus,
-                    hideAssigned: this.hideAssigned,
-                    isolateUploadedViaCsv : this.isolateUploadedViaCsv
-                };
-                this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
-                    .then(resp => {
-                        this.$refs.table.setData(resp.data);
-                        this.loading = false;
-                    }).catch(err => {
-                    let errors = err.response.data.errors ? err.response.data.errors : [];
-                    this.loading = false;
-                    Event.$emit('notifications-ca-panel:create', {
-                        noTimeout: true,
-                        text: errors,
-                        type: 'error'
-                    });
-                })
+                this.isolateUploadedViaCsv = ! this.isolateUploadedViaCsv;
+
+                this.updateTable();
             },
             listenTo(a) {
                 this.info = JSON.stringify(a);
             }
-
         },
 
 
