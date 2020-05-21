@@ -29,7 +29,7 @@ class TotalInvitationsSentHourly extends Trend
      */
     public function cacheFor()
     {
-        // return now()->addMinutes(1);;
+        return now()->addMinutes(1);
     }
 
     /**
