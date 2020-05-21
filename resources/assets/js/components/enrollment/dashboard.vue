@@ -175,8 +175,7 @@
 
             this.retrievePatient();
 
-            let self = this;
-            self.initTwilio();
+            this.initTwilio();
 
             App.$on('enrollable:action-complete', () => {
                 this.patientData = null;
@@ -196,7 +195,7 @@
                 this.onCall = data.onCall;
                 this.callStatus = data.callStatus;
 
-                this.call()
+                this.call();
             })
 
             App.$on('enrollable:hang-up', () => {
@@ -307,10 +306,10 @@
 
             updateCallStatus() {
                 App.$emit('enrollable:update-call-status', {
-                    'onCall': self.onCall,
-                    'callStatus': self.callStatus,
-                    'log': self.log,
-                    'callError': self.callError
+                    'onCall': this.onCall,
+                    'callStatus': this.callStatus,
+                    'log': this.log,
+                    'callError': this.callError
                 })
             },
 
@@ -328,6 +327,7 @@
             },
 
             call() {
+                TimeTrackerEventBus.$emit('tracker:call-mode:enter');
                 this.device.connect({
                     To: this.phone,
                     From: this.practice_phone ? this.practice_phone : undefined,
@@ -337,6 +337,7 @@
                 });
             },
             hangUp() {
+                TimeTrackerEventBus.$emit('tracker:call-mode:exit');
                 this.onCall = false;
                 this.callStatus = "Ended Call";
                 M.toast({html: this.callStatus, displayLength: 3000});
@@ -346,45 +347,45 @@
                 }
             },
             initTwilio: function () {
-                const self = this;
                 const url = rootUrl(`/twilio/token`);
 
-                self.$http.get(url)
+                this.$http.get(url)
                     .then(response => {
-                        self.log = 'Initializing';
-                        self.device = new Twilio.Device(response.data.token, {
+                        this.log = 'Initializing';
+                        this.device = new Twilio.Device(response.data.token, {
                             closeProtection: true
                         });
 
-                        self.device.on('disconnect', () => {
+                        this.device.on('disconnect', () => {
                             console.log('twilio device: disconnect');
-                            self.log = 'Call ended.';
-                            self.onCall = false;
+                            this.log = 'Call ended.';
+                            this.onCall = false;
+                            TimeTrackerEventBus.$emit('tracker:call-mode:exit');
                             this.updateCallStatus()
                         });
 
-                        self.device.on('offline', () => {
+                        this.device.on('offline', () => {
                             console.log('twilio device: offline');
-                            self.log = 'Offline.';
+                            this.log = 'Offline.';
                             this.updateCallStatus()
                         });
 
-                        self.device.on('error', (err) => {
+                        this.device.on('error', (err) => {
                             console.error('twilio device: error', err);
-                            self.callError = err.message;
+                            this.callError = err.message;
                             this.updateCallStatus()
                         });
 
-                        self.device.on('ready', () => {
+                        this.device.on('ready', () => {
                             console.log('twilio device: ready');
-                            self.log = 'Ready to make call';
-                            M.toast({html: self.log, displayLength: 5000});
+                            this.log = 'Ready to make call';
+                            M.toast({html: this.log, displayLength: 5000});
                             this.updateCallStatus()
                         });
                     })
                     .catch(error => {
                         console.log(error);
-                        self.log = 'Could not fetch token, see console.log';
+                        this.log = 'Could not fetch token, see console.log';
                         this.updateCallStatus()
                     });
             }
