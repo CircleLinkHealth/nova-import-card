@@ -73,8 +73,8 @@ $app->bind(\Illuminate\Session\SessionManager::class, function () use ($app) {
 
 $app->middleware([
     //App\Http\Middleware\ExampleMiddleware::class
-    //\Barryvdh\Cors\HandleCors::class,
-    //\Illuminate\Session\Middleware\StartSession::class,
+    \Barryvdh\Cors\HandleCors::class,
+    \Illuminate\Session\Middleware\StartSession::class,
 ]);
 
 $app->routeMiddleware([
