@@ -568,7 +568,7 @@ class PatientCareplanController extends Controller
         } catch (ValidationException|PatientAlreadyExistsException $e) {
             return redirect()
                 ->back()
-                ->with('errors', [$e->getMessage()])
+                ->withErrors(['first_name' => $e->getMessage()])
                 ->withInput($request->input());
         }
 
