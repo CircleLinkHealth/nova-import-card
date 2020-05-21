@@ -118,8 +118,8 @@ class EnrolleesInvitationPanel extends Resource
             ),
             (new SelfEnrolledPatientTotal(self::getPracticeId($this))),
             (new SelfEnrolledButtonColor(self::getPracticeId($this))),
-            (new TotalInvitationsSentHourly(self::getPracticeId($this))),
             (new AllInvitesButtonColor(self::getPracticeId($this))),
+            (new TotalInvitationsSentHourly(self::getPracticeId($this))),
         ];
     }
 
