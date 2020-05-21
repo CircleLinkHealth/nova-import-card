@@ -1,5 +1,7 @@
 <?php
 
+$isProd = (env('APP_ENV', 'production') === 'production' || env('APP_ENV', 'production') === 'worker');
+
 return [
 
     /*
@@ -12,11 +14,11 @@ return [
     |
     */
 
-    'supportsCredentials'    => true,
-    'allowedOrigins'         => ['*'],
-    'allowedHeaders'         => ['*'],
-    'allowedMethods'         => ['*'],
-    'exposedHeaders'         => [],
-    'maxAge'                 => 0,
+    'supportsCredentials' => true,
+    'allowedOrigins'      => $isProd ? ['*careplanmanager.com'] : ['*'],
+    'allowedHeaders'      => ['*'],
+    'allowedMethods'      => ['*'],
+    'exposedHeaders'      => [],
+    'maxAge'              => 0,
 
 ];
