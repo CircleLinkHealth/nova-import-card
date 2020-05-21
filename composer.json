@@ -20,6 +20,10 @@
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/module-raygun.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:circlelinkhealth/revisionable-module.git"
         }
     ],
     "require": {
@@ -29,15 +33,16 @@
         "barryvdh/laravel-ide-helper": "^2.6",
         "circlelinkhealth/core-module": "1.5.0",
         "circlelinkhealth/customer-module": "1.9.3",
-        "illuminate/redis": "^5.7",
-        "illuminate/session": "^5.7",
-        "laravel/lumen-framework": "5.7.*",
+        "circlelinkhealth/revisionable-module": "^6.1",
+        "illuminate/redis": "^6",
+        "illuminate/session": "^6",
+        "laravel/lumen-framework": "^6",
         "laravel/tinker": "^1.0",
         "predis/predis": "^1.1",
         "propaganistas/laravel-phone": "^4.1",
         "sentry/sentry-laravel": "1.7.0",
         "twilio/sdk": "^5.31",
-        "vlucas/phpdotenv": "~2.2"
+        "vlucas/phpdotenv": "^3"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.4",
