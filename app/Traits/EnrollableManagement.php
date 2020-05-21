@@ -56,11 +56,23 @@ trait EnrollableManagement
     }
 
     /**
+     * @param $enrollable
+     */
+    public function expirePastInvitationLink($enrollable)
+    {
+        Log::debug("expirePastInvitationLink called for $enrollable->id");
+        $pastInvitationLinks = $this->pastActiveInvitationLink($enrollable);
+        if ( ! empty($pastInvitationLinks)) {
+            $pastInvitationLinks->update(['manually_expired' => true]);
+        }
+    }
+
+    /**
      * @param $enrollableId
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function createUrlAndRedirectToSurvey($enrollableId)
+    public function generateUrlAndRedirectToSurvey($enrollableId)
     {
         $enrolleesSurveyInstance = $this->getEnrolleesSurveyInstance();
 
@@ -75,18 +87,6 @@ trait EnrollableManagement
         $enrolleesSurveyUrl = url(config('services.awv.url')."/survey/enrollees/create-url/{$enrollableId}/{$surveyId}");
 
         return redirect($enrolleesSurveyUrl);
-    }
-
-    /**
-     * @param $enrollable
-     */
-    public function expirePastInvitationLink($enrollable)
-    {
-        Log::debug("expirePastInvitationLink called for $enrollable->id");
-        $pastInvitationLinks = $this->pastActiveInvitationLink($enrollable);
-        if ( ! empty($pastInvitationLinks)) {
-            $pastInvitationLinks->update(['manually_expired' => true]);
-        }
     }
 
     /**
