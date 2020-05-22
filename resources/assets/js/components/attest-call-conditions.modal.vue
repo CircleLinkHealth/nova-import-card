@@ -27,7 +27,7 @@
                                            :problems="problems" :code-is-required="true"
                                            :is-approve-billable-page="!isNotesPage"
                                            :patient-has-bhi="patientHasBhi"
-                            :is-bhi="isBhi"></add-condition>
+                                           :is-bhi="isBhi"></add-condition>
                         </div>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
             'cpmProblems': Array,
             'attestationRequirements': Object
         },
-        created(){
+        created() {
             self = this;
         },
         mounted() {
@@ -72,13 +72,7 @@
                 this.$refs['attest-call-conditions-modal'].visible = true;
             });
 
-            if(! this.cpmProblems){
-                this.cpm_problems = this.careplan().allCpmProblems || []
-            }else{
-                this.cpm_problems = this.cpmProblems
-            }
-
-            if (this.patientId){
+            if (this.patientId) {
                 this.patient_id = this.patientId;
             }
 
@@ -89,7 +83,7 @@
 
             Event.$on('full-conditions:add', (ccdProblem) => {
 
-                let cpmProblem = this.cpm_problems.filter(function(p){
+                let cpmProblem = this.getCpmProblems().filter(function (p) {
                     return p.id == ccdProblem.cpm_id;
                 })[0];
 
@@ -163,6 +157,13 @@
             }
         },
         methods: {
+            getCpmProblems() {
+                if (!this.cpmProblems) {
+                    return this.careplan().allCpmProblems || [];
+                } else {
+                    return this.cpmProblems;
+                }
+            },
             getPatientBillableProblems() {
                 this.axios.get(rootUrl(`/api/patients/` + this.patientId + `/problems/ccd`))
                     .then(resp => {
@@ -180,9 +181,9 @@
             },
             submitForm() {
 
-                if (this.isNotesPage){
+                if (this.isNotesPage) {
                     //validate and set error messages if you should
-                    if (! this.validateAttestedConditions()){
+                    if (!this.validateAttestedConditions()) {
                         return;
                     }
                 }
@@ -209,23 +210,25 @@
             toggleAddCondition() {
                 this.addCondition = !this.addCondition;
             },
-            problemIsBehavioral(pId){
+            problemIsBehavioral(pId) {
                 let p = this.problems.find(function (p) {
                     return p.id === pId;
                 })
-                if (! p.cpm_id){
+                if (!p.cpm_id) {
                     return false;
                 }
-                let cpmProblem = this.cpm_problems.find(function (cpm) {
+
+                let cpmProblem = this.getCpmProblems().find(function (cpm) {
                     return cpm.id === p.cpm_id
                 })
-                if (cpmProblem){
+
+                if (cpmProblem) {
                     return cpmProblem.is_behavioral
                 }
                 return false;
             },
-            validateAttestedConditions(){
-                if (! this.attestationRequirements || this.attestationRequirements.disabled){
+            validateAttestedConditions() {
+                if (!this.attestationRequirements || this.attestationRequirements.disabled) {
                     return true;
                 }
                 let self = this;
@@ -234,50 +237,50 @@
                 //if ccm 2
                 //if complex require 2 CCM attested
                 //else require any 2
-                if (this.attestationRequirements.ccm_2){
-                    if(this.attestationRequirements.is_complex){
+                if (this.attestationRequirements.ccm_2) {
+                    if (this.attestationRequirements.is_complex) {
                         let attestedCcm = 0;
                         this.attestedProblems.forEach(function (p) {
-                            if (! self.problemIsBehavioral(p)){
+                            if (!self.problemIsBehavioral(p)) {
                                 attestedCcm++;
                             }
                         })
-                        if (attestedCcm < 2){
+                        if (attestedCcm < 2) {
                             ccmError = true;
                         }
-                    }else {
+                    } else {
                         if (this.attestedProblems.length < 2) {
                             this.error = "Please select at least two conditions."
                             return false;
                         }
                     }
                 }
-                if (this.attestationRequirements.is_complex && this.attestationRequirements.bhi_1){
+                if (this.attestationRequirements.is_complex && this.attestationRequirements.bhi_1) {
                     let attestedBhi = 0;
                     this.attestedProblems.forEach(function (p) {
-                        if (self.problemIsBehavioral(p)){
+                        if (self.problemIsBehavioral(p)) {
                             attestedBhi++;
                         }
                     })
-                    if (attestedBhi === 0){
+                    if (attestedBhi === 0) {
                         bhiError = true;
                     }
                 }
-                if (! ccmError && ! bhiError){
+                if (!ccmError && !bhiError) {
                     return true
                 }
                 let error;
-                if (ccmError){
+                if (ccmError) {
                     error = 'Please select at least two CCM conditions'
                 }
-                if (bhiError){
-                    if (!error){
+                if (bhiError) {
+                    if (!error) {
                         error = 'Please select at least one BHI condition';
-                    }else{
+                    } else {
                         error = error + ' and at least one BHI condition';
                     }
                 }
-                this.error = error +'.';
+                this.error = error + '.';
                 return false;
             }
         },
