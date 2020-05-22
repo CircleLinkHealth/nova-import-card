@@ -12,6 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Spatie\RateLimitedMiddleware\RateLimited;
 
 class SendEnrollmentEmail implements ShouldQueue
 {
@@ -51,5 +52,20 @@ class SendEnrollmentEmail implements ShouldQueue
     public function handle()
     {
         $this->user->notify(new \App\Notifications\SendEnrollmentEmail($this->isReminder, $this->color));
+    }
+
+    public function middleware()
+    {
+        $rateLimitedMiddleware = (new RateLimited())
+            ->allow(10)
+            ->everySeconds(60)
+            ->releaseAfterSeconds(90);
+
+        return [$rateLimitedMiddleware];
+    }
+
+    public function retryUntil(): \DateTime
+    {
+        return now()->addMinutes(10);
     }
 }
