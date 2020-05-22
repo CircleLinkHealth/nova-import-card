@@ -54,7 +54,7 @@ class EnrolleesInvitationPanel extends Resource
      */
     public static $title = 'id';
 
-    public static $with = ['selfEnrollmentStatuses'];
+    public static $with = ['selfEnrollmentStatuses', 'enrollmentInvitationLink'];
 
     /**
      * Get the actions available for the resource.
@@ -201,7 +201,7 @@ class EnrolleesInvitationPanel extends Resource
                 if (empty($survey)) {
                     return false;
                 }
-                $surveyInstance = $this->getSurveyInstance($survey);
+                $surveyInstance = $this->getSurveyInstance();
 
                 return  $this->getAwvUserSurvey($userId, $surveyInstance)->exists();
             }),
