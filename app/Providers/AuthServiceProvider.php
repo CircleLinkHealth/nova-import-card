@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\ServiceProvider;
 
@@ -47,5 +48,9 @@ class AuthServiceProvider extends ServiceProvider
 
             return $user;
         });
+    }
+
+    private function getTokenString() {
+        return config('app.key') . Carbon::today()->toDateString();
     }
 }

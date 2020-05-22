@@ -28,6 +28,7 @@ $app->configure('app');
 $app->configure('services');
 $app->configure('cors');
 $app->configure('view');
+$app->configure('ide-helper');
 
 $app->withFacades();
 
@@ -95,7 +96,6 @@ $app->register(Barryvdh\Cors\ServiceProvider::class);
 $app->register(App\Providers\TwilioClientServiceProvider::class);
 $app->register(Propaganistas\LaravelPhone\PhoneServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
-$app->register(Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 $app->register(\Laravel\Tinker\TinkerServiceProvider::class);
 $app->register(\Sentry\Laravel\ServiceProvider::class);
 
