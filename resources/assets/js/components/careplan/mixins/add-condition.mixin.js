@@ -30,7 +30,7 @@ export default {
          */
         checkPatientBehavioralStatus() {
             const problems = this.problems || [];
-            const cpmProblems = this.cpm_problems || [];
+            const cpmProblems = this.getAddConditionCpmProblems() || [];
 
             const ccmCount = problems.filter(problem => {
                 if (problem.is_monitored) {
@@ -63,6 +63,13 @@ export default {
                 console.error('full-conditions:get-system-codes', err)
             })
         },
+        getAddConditionCpmProblems(){
+            if(! this.cpmProblems){
+                return this.careplan().allCpmProblems || [];
+            }else{
+                return this.cpmProblems;
+            }
+        }
     },
     mounted() {
         if(! this.cpmProblems){
