@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-Route::get('/e/{shortURLKey}', 'AshAllenDesign\ShortURL\Controllers\ShortURLController')->name('short-url.invoke');
+Route::get('/e/{shortURLKey}', '\AshAllenDesign\ShortURL\Controllers\ShortURLController')->name('short-url.visit');
 
 Route::get('passwordless-login-for-cp-approval/{token}/{patientId}', 'Auth\LoginController@login')
     ->name('passwordless.login.for.careplan.approval');

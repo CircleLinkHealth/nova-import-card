@@ -33,7 +33,7 @@ return [
     | method.
     |
     */
-    'enforce_https' => true,
+    'enforce_https' => 'local' !== env('APP_ENV', 'production'),
 
     /*
     |--------------------------------------------------------------------------
