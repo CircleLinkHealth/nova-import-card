@@ -72,7 +72,7 @@ class Enrollable extends Resource
             [
                 'enrollable_id'            => $enrollable->id,
                 'enrollable_user_id'       => optional($enrollable->user)->id,
-                'practice'                 => $enrollable->practice->toArray(),
+                'practice'                 => $enrollable->practice->attributesToArray(),
                 'last_call_outcome'        => $enrollable->last_call_outcome ?? '',
                 'last_call_outcome_reason' => $enrollable->last_call_outcome_reason ?? '',
                 'name'                     => $enrollable->first_name.' '.$enrollable->last_name,
@@ -108,7 +108,7 @@ class Enrollable extends Resource
                     ? $this->timeRangeToPanelWindows($enrollable->preferred_window)
                     : [],
 
-                'provider'       => $this->provider->toArray(),
+                'provider'       => $this->provider->attributesToArray(),
                 'provider_phone' => (new StringManipulation())->formatPhoneNumber($this->provider->getPhone()),
                 'has_tips'       => (bool) $this->practice->enrollmentTips,
 
