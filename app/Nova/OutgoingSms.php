@@ -16,7 +16,7 @@ use Laravel\Nova\Fields\Textarea;
 class OutgoingSms extends Resource
 {
     public static $group = Constants::NOVA_GROUP_ENROLLMENT;
-    
+
     /**
      * The model the resource corresponds to.
      *
@@ -85,6 +85,11 @@ class OutgoingSms extends Resource
         return [];
     }
 
+    public static function label()
+    {
+        return 'Send SMS';
+    }
+
     /**
      * Get the lenses available for the resource.
      *
@@ -93,10 +98,5 @@ class OutgoingSms extends Resource
     public function lenses(Request $request)
     {
         return [];
-    }
-    
-    public static function label()
-    {
-        return 'Send SMS';
     }
 }
