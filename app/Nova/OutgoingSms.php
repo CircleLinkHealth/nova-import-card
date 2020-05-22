@@ -73,7 +73,7 @@ class OutgoingSms extends Resource
             Text::make('Receiver', 'receiver_phone_number')->sortable(),
             Textarea::make('Message', 'message')->sortable()->withMeta([
                 'extraAttributes' => [
-                    'placeholder' => 'Type your message to the patient here
+                    'placeholder' => 'Only text patients who texted back the Self Enrollment SMS we sent out. The Received SMS\'s can be found on Twilio Dashboard. Ask Zach/PAngrations for access.
 
 Please do not include ant PHI or PII in your messages.
 Specifically, never include the patient\'s name, address, phone, birth date, or anything else that can identify them.
