@@ -1759,7 +1759,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return '';
         }
 
-        $validCellNumbers = $this->phoneNumbers->map(function ($phone) {
+        $validCellNumbers = $this->phoneNumbers->whereNotNull('number')->where('number', '!=', '')->map(function ($phone) {
             $number = formatPhoneNumberE164($phone->number);
 
             if (\Propaganistas\LaravelPhone\PhoneNumber::make($number, 'US')->isOfType('mobile')) {
