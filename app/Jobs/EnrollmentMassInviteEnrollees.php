@@ -76,12 +76,7 @@ class EnrollmentMassInviteEnrollees implements ShouldQueue
             //needs to go after the get(), because we are using `limit`. otherwise `chunk` would override `limit`
             ->chunk(100)
             ->each(function ($coll) {
-                $arr = $coll
-                    ->map(function ($item) {
-                        return $item->user_id;
-                    })
-                    ->toArray();
-                AutoEnrollableCollected::dispatch($arr, false, $this->color);
+                AutoEnrollableCollected::dispatch($coll->pluck('user_id')->all(), false, $this->color);
             });
     }
 }
