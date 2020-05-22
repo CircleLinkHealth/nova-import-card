@@ -141,6 +141,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['card' // The following props are only available on resource detail cards...
   // 'resource',
@@ -204,168 +217,168 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "card",
-    { staticClass: "flex flex-col items-center justify-center" },
-    [
-      _c(
-        "div",
-        { staticClass: "px-3 py-3" },
-        [
-          _c("h1", { staticClass: "text-center text-3xl text-80 font-light" }, [
-            _vm._v("Enrollment Invites")
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "py-4" }, [
-            _c(
-              "span",
-              {
-                staticClass: "flex",
-                staticStyle: { "max-width": "70%", "margin-bottom": "10px" }
+  return _c("card", { staticClass: "flex flex-col items-left" }, [
+    _c(
+      "div",
+      { staticClass: "px-3 py-3" },
+      [
+        _c("h1", { staticClass: "text-left text-3xl text-80 font-light" }, [
+          _vm._v("Enrollment Invites")
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "py-2" }, [
+          _c("span", { staticClass: "flex" }, [
+            _c("label", { attrs: { for: "amount" } }, [
+              _vm._v("\n                       Input number of patients to "),
+              _c("br"),
+              _vm._v(" send enrollment sms/emails to:\n                   ")
+            ]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.amount,
+                  expression: "amount"
+                }
+              ],
+              staticStyle: {
+                border: "1px solid #5cc0dd",
+                "max-width": "100px",
+                "margin-left": "10px"
               },
-              [
-                _c("label", { attrs: { for: "amount" } }, [
-                  _vm._v(
-                    "\n                       Input number of patients to send enrollment sms/emails to:\n                   "
-                  )
-                ]),
-                _vm._v(" "),
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.amount,
-                      expression: "amount"
-                    }
-                  ],
-                  staticStyle: {
-                    border: "1px solid #5cc0dd",
-                    "max-width": "100px"
-                  },
-                  attrs: {
-                    type: "number",
-                    id: "amount",
-                    name: "amount",
-                    disabled: _vm.sendingInvites,
-                    required: ""
-                  },
-                  domProps: { value: _vm.amount },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.amount = $event.target.value
-                    }
+              attrs: {
+                type: "number",
+                id: "amount",
+                name: "amount",
+                disabled: _vm.sendingInvites,
+                required: ""
+              },
+              domProps: { value: _vm.amount },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
                   }
-                })
-              ]
-            )
-          ]),
-          _vm._v(" "),
-          _vm.sendingInvites
-            ? _c("loader", { attrs: { width: "30" } })
+                  _vm.amount = $event.target.value
+                }
+              }
+            })
+          ])
+        ]),
+        _vm._v(" "),
+        _vm.sendingInvites
+          ? _c("loader", { attrs: { width: "30" } })
+          : _vm._e(),
+        _vm._v(" "),
+        _c("div", { staticClass: "flex" }, [
+          _vm.errors
+            ? _c(
+                "div",
+                _vm._l(_vm.errors, function(error) {
+                  return _c("p", { staticClass: "text-danger mb-1" }, [
+                    _vm._v(_vm._s(error))
+                  ])
+                }),
+                0
+              )
             : _vm._e(),
           _vm._v(" "),
-          _c("div", { staticClass: "flex" }, [
-            _vm.errors
+          _c("div", { staticClass: "invite-buttons" }, [
+            !this.card.is_patient
               ? _c(
                   "div",
-                  _vm._l(_vm.errors, function(error) {
-                    return _c("p", { staticClass: "text-danger mb-1" }, [
-                      _vm._v(_vm._s(error))
-                    ])
-                  }),
-                  0
-                )
-              : _vm._e(),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                staticClass: "invite-buttons",
-                staticStyle: { "margin-bottom": "10px" }
-              },
-              [
-                !this.card.is_patient
-                  ? _c("div", { staticClass: "button" }, [
-                      _c(
-                        "a",
-                        {
-                          staticClass:
-                            "btn btn-default btn-primary ml-auto mt-auto",
-                          staticStyle: {
-                            cursor: "pointer",
-                            "background-color": "#4baf50"
-                          },
-                          attrs: { disabled: _vm.sendingInvites },
-                          on: {
-                            click: function($event) {
-                              return _vm.sendInvites("#4baf50", _vm.amount)
-                            }
-                          }
-                        },
-                        [_vm._v("Send SMS/Emails (Green Btn.)")]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "a",
-                        {
-                          staticClass:
-                            "btn btn-default btn-primary ml-auto mt-auto",
-                          staticStyle: {
-                            cursor: "pointer",
-                            "background-color": "#b1284c"
-                          },
-                          attrs: { disabled: _vm.sendingInvites },
-                          on: {
-                            click: function($event) {
-                              return _vm.sendInvites("#b1284c", _vm.amount)
-                            }
-                          }
-                        },
-                        [_vm._v("Send SMS/Emails (Red Btn.)")]
-                      )
-                    ])
-                  : _vm._e(),
-                _vm._v(" "),
-                this.card.is_patient
-                  ? _c(
-                      "div",
+                  { staticClass: "button", staticStyle: { display: "flex" } },
+                  [
+                    _c(
+                      "a",
                       {
-                        staticClass: "button",
-                        attrs: { disabled: _vm.sendingInvites }
+                        staticClass:
+                          "btn btn-default btn-primary ml-auto mt-auto",
+                        staticStyle: {
+                          cursor: "pointer",
+                          "background-color": "#4baf50",
+                          "white-space": "nowrap",
+                          width: "275px",
+                          "margin-right": "10px"
+                        },
+                        attrs: { disabled: _vm.sendingInvites },
+                        on: {
+                          click: function($event) {
+                            return _vm.sendInvites("#4baf50", _vm.amount)
+                          }
+                        }
                       },
                       [
-                        _c(
-                          "a",
-                          {
-                            staticClass:
-                              "btn btn-default btn-primary ml-auto mt-auto",
-                            staticStyle: {
-                              cursor: "pointer",
-                              "background-color": "#4baf50"
-                            },
-                            on: {
-                              click: function($event) {
-                                return _vm.sendInvites("#4baf50", _vm.amount)
-                              }
-                            }
-                          },
-                          [_vm._v("Send Invite")]
+                        _vm._v(
+                          "\n                   Send SMS/Emails (Green Btn.)\n               "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "a",
+                      {
+                        staticClass:
+                          "btn btn-default btn-primary ml-auto mt-auto",
+                        staticStyle: {
+                          cursor: "pointer",
+                          "background-color": "#b1284c",
+                          "white-space": "nowrap",
+                          width: "275px"
+                        },
+                        attrs: { disabled: _vm.sendingInvites },
+                        on: {
+                          click: function($event) {
+                            return _vm.sendInvites("#b1284c", _vm.amount)
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                   Send SMS/Emails (Red Btn.)\n               "
                         )
                       ]
                     )
-                  : _vm._e()
-              ]
-            )
+                  ]
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            this.card.is_patient
+              ? _c(
+                  "div",
+                  {
+                    staticClass: "button",
+                    attrs: { disabled: _vm.sendingInvites }
+                  },
+                  [
+                    _c(
+                      "a",
+                      {
+                        staticClass:
+                          "btn btn-default btn-primary ml-auto mt-auto",
+                        staticStyle: {
+                          cursor: "pointer",
+                          "background-color": "#4baf50"
+                        },
+                        on: {
+                          click: function($event) {
+                            return _vm.sendInvites("#4baf50", _vm.amount)
+                          }
+                        }
+                      },
+                      [_vm._v("Send Invite")]
+                    )
+                  ]
+                )
+              : _vm._e()
           ])
-        ],
-        1
-      )
-    ]
-  )
+        ])
+      ],
+      1
+    )
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true

@@ -1,18 +1,18 @@
 <template>
-    <card class="flex flex-col items-center justify-center">
+    <card class="flex flex-col items-left">
         <div class="px-3 py-3">
-            <h1 class="text-center text-3xl text-80 font-light">Enrollment Invites</h1>
-            <div class="py-4">
-                    <span class="flex" style="max-width: 70%; margin-bottom: 10px;">
+            <h1 class="text-left text-3xl text-80 font-light">Enrollment Invites</h1>
+            <div class="py-2">
+                    <span class="flex">
                        <label for="amount">
-                           Input number of patients to send enrollment sms/emails to:
+                           Input number of patients to <br> send enrollment sms/emails to:
                        </label>
                         <input type="number"
                                id="amount"
                                name="amount"
                                v-model="amount"
                                :disabled="sendingInvites"
-                               style="border: 1px solid #5cc0dd; max-width: 100px;" required>
+                               style="border: 1px solid #5cc0dd; max-width: 100px; margin-left: 10px;" required>
                     </span>
             </div>
 
@@ -22,15 +22,28 @@
                 <div v-if="errors">
                     <p class="text-danger mb-1" v-for="error in errors">{{error}}</p>
                 </div>
-           <div class="invite-buttons" style="margin-bottom: 10px;">
-               <div v-if="! this.card.is_patient" class="button">
+           <div class="invite-buttons">
+               <div v-if="! this.card.is_patient" class="button" style="display: flex">
                    <a class="btn btn-default btn-primary ml-auto mt-auto"
                       :disabled="sendingInvites"
-                      style="cursor: pointer; background-color: #4baf50" @click="sendInvites('#4baf50', amount)">Send SMS/Emails (Green Btn.)</a>
+                      style="cursor: pointer;
+                      background-color: #4baf50;
+                      white-space: nowrap;
+                      width: 275px;
+                      margin-right: 10px;"
+                      @click="sendInvites('#4baf50', amount)">
+                       Send SMS/Emails (Green Btn.)
+                   </a>
 
                    <a class="btn btn-default btn-primary ml-auto mt-auto"
                       :disabled="sendingInvites"
-                      style="cursor: pointer; background-color: #b1284c" @click="sendInvites('#b1284c', amount)">Send SMS/Emails (Red Btn.)</a>
+                      style="cursor: pointer;
+                      background-color: #b1284c;
+                      white-space: nowrap;
+                      width: 275px;"
+                      @click="sendInvites('#b1284c', amount)">
+                       Send SMS/Emails (Red Btn.)
+                   </a>
                </div>
 
                <div v-if="this.card.is_patient" class="button"
