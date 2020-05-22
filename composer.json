@@ -143,7 +143,7 @@
     "amnuts/opcache-gui": "dev-master",
     "anaseqal/nova-import": "^0.0.3",
     "appstract/laravel-opcache": "^3.2.1",
-    "ashallendesign/short-url": "^3.0",
+    "ashallendesign/short-url": "^3.0-dev",
     "barryvdh/laravel-snappy": "0.4.7",
     "circlelinkhealth/ccda-parser-processor-php-module": "1.1.1",
     "circlelinkhealth/cerberus-gatekeeper-module": "3.1.4",

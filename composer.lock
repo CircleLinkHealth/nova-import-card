@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b9f43c77c4e2b1d11373291a5596178e",
+    "content-hash": "6e85e6ee7c7975ec8abc6a64582a10d7",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -15544,6 +15544,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "ashallendesign/short-url": 20,
         "daltcore/lara-pdf-merger": 20,
         "laravel/scout": 20,
         "orangehill/iseed": 20
