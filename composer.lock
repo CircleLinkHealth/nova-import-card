@@ -417,7 +417,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/short-url.git",
-                "reference": "b0c7ea52eeb40ec20bc13d30956267fb1af47214"
+                "reference": "fc98324f71d5b58a55b89acec1a42f37a74d0c09"
             },
             "require": {
                 "hashids/hashids": "^4.0",
@@ -472,7 +472,7 @@
                 "short-urls",
                 "url-shortener"
             ],
-            "time": "2020-05-22T00:59:25+00:00"
+            "time": "2020-05-22T02:47:10+00:00"
         },
         {
             "name": "authy/php",

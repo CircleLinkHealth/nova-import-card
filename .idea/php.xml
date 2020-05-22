@@ -197,7 +197,6 @@
       <path value="$PROJECT_DIR$/vendor/laracasts/utilities" />
       <path value="$PROJECT_DIR$/vendor/jenssegers/model" />
       <path value="$PROJECT_DIR$/vendor/jenssegers/agent" />
-      <path value="$PROJECT_DIR$/vendor/ashallendesign/short-url" />
       <path value="$PROJECT_DIR$/vendor/genealabs/laravel-caffeine" />
       <path value="$PROJECT_DIR$/vendor/hubertnnn/laravel-nova-field-dynamic-select" />
       <path value="$PROJECT_DIR$/vendor/mtdowling/jmespath.php" />
