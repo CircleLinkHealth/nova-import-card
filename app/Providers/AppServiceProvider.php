@@ -182,7 +182,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(\jeremykenedy\Slack\Laravel\ServiceProvider::class);
         $this->app->register(EmailArrayValidatorServiceProvider::class);
         $this->app->register(\Propaganistas\LaravelPhone\PhoneServiceProvider::class);
-        $this->app->register(\Waavi\UrlShortener\UrlShortenerServiceProvider::class);
         $this->app->register(GoogleDriveServiceProvider::class);
         $this->app->register(\LynX39\LaraPdfMerger\PdfMergerServiceProvider::class);
 
