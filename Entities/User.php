@@ -1753,7 +1753,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $number ?? '';
     }
 
-    public function getPhoneNumberForSms():string
+    public function getPhoneNumberForSms(): string
     {
         if ( ! $this->phoneNumbers) {
             return '';
@@ -1768,7 +1768,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
             return false;
         })->filter()->unique()->values();
-        
+
         return $validCellNumbers->first();
     }
 
