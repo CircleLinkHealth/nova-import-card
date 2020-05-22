@@ -4,8 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-Route::get('/debug-sentry', 'DemoController@sentry');
-Route::get('/debug-sentry-log', 'DemoController@sentryLog');
+Route::get('/e/{shortURLKey}', 'AshAllenDesign\ShortURL\Controllers\ShortURLController')->name('short-url.invoke');
 
 Route::get('passwordless-login-for-cp-approval/{token}/{patientId}', 'Auth\LoginController@login')
     ->name('passwordless.login.for.careplan.approval');
