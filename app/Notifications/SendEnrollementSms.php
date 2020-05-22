@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\Notifications\Channels\CustomTwilioChannel;
 use App\Traits\EnrollableManagement;
 use App\Traits\EnrollableNotificationContent;
 use CircleLinkHealth\Customer\Entities\User;
@@ -13,7 +14,6 @@ use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
-use NotificationChannels\Twilio\TwilioChannel;
 use NotificationChannels\Twilio\TwilioSmsMessage;
 use Spatie\RateLimitedMiddleware\RateLimited;
 
@@ -105,6 +105,6 @@ class SendEnrollementSms extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['database', TwilioChannel::class];
+        return ['database', CustomTwilioChannel::class];
     }
 }
