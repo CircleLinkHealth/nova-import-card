@@ -12,12 +12,14 @@ use App\Nova\Metrics\SelfEnrolledButtonColor;
 use App\Nova\Metrics\SelfEnrolledPatientTotal;
 use App\Nova\Metrics\TotalInvitationsSentHourly;
 use App\Traits\EnrollableManagement;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -52,7 +54,7 @@ class EnrolleesInvitationPanel extends Resource
      */
     public static $title = 'id';
 
-    public static $with = ['selfEnrollmentStatuses'];
+    public static $with = ['selfEnrollmentStatuses', 'enrollmentInvitationLink'];
 
     /**
      * Get the actions available for the resource.
@@ -130,8 +132,24 @@ class EnrolleesInvitationPanel extends Resource
      */
     public function fields(Request $request)
     {
+        $surveyInstance           = $this->getSurveyInstance();
+        $awvUserSurvey            = $this->getAwvUserSurvey($this->resource->user_id, $surveyInstance);
         $enrollmentInvitationLink = $this->enrollmentInvitationLink();
+        $enrolleeRequestedInfo    = $this->statusRequestsInfo();
         $enroleeHasNotLoggedIn    = $this->enrolleeHasNotLoggedIn($this->resource->user_id);
+        $inviteSentDate           = ! is_null(optional($enrollmentInvitationLink->orderBy('created_at', 'desc')->first())->created_at)
+        ? Carbon::parse(optional($enrollmentInvitationLink->orderBy('created_at', 'desc')->first())->created_at)->toDateString()
+            : 'N/A';
+        $requestedInfoDate = ! is_null(optional($enrolleeRequestedInfo->first())->created_at)
+            ? Carbon::parse(optional($enrolleeRequestedInfo->first())->created_at)->toDateString()
+            : 'N/A';
+
+        //Any direct way to get enrolled date?
+        // This is an assumption that patient enrolled on the same date as date survey was done.
+        $enrolledDate = ! is_null(optional($awvUserSurvey->first())->completed_at)
+            && Enrollee::ENROLLED === $this->resource->status
+            ? Carbon::parse($awvUserSurvey->first()->completed_at)->toDateString()
+            : 'N/A';
 
         return [
             ID::make()->sortable(),
@@ -141,6 +159,18 @@ class EnrolleesInvitationPanel extends Resource
 
             Text::make('Last name', 'last_name')
                 ->sortable(),
+
+            Date::make('Date Sent', function () use ($inviteSentDate) {
+                return  $inviteSentDate;
+            }),
+
+            Date::make('Date Asked For Call', function () use ($requestedInfoDate) {
+                return  $requestedInfoDate;
+            }),
+
+            Date::make('Date Enrolled', function () use ($enrolledDate) {
+                return  $enrolledDate;
+            }),
 
             Boolean::make('Invited', function () use ($enrollmentInvitationLink) {
                 return ! empty($enrollmentInvitationLink->first());
@@ -171,7 +201,7 @@ class EnrolleesInvitationPanel extends Resource
                 if (empty($survey)) {
                     return false;
                 }
-                $surveyInstance = $this->getSurveyInstance($survey);
+                $surveyInstance = $this->getSurveyInstance();
 
                 return  $this->getAwvUserSurvey($userId, $surveyInstance)->exists();
             }),
@@ -262,8 +292,10 @@ class EnrolleesInvitationPanel extends Resource
         return null;
     }
 
-    private function getSurveyInstance($survey)
+    private function getSurveyInstance()
     {
+        $survey = $this->getEnrolleeSurvey();
+
         return DB::table('survey_instances')
             ->where('survey_id', '=', $survey->id)
             ->first();
