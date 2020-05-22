@@ -116,7 +116,7 @@
                 return self.cpmProblemsForAutoComplete
             },
             cpmProblemsForAutoComplete() {
-                let probs = self.cpm_problems;
+                let probs = self.getAddConditionCpmProblems();
 
                 if (self.isApproveBillablePage && self.patient_has_bhi) {
                     probs = probs.filter(function (p) {
