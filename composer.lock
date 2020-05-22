@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b7d26e7a25e174a72581dd9a3fc97885",
+    "content-hash": "45369188266bdab9aa56bf511c9e3fd5",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1152,11 +1152,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.6.5",
+            "version": "v2.6.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "263414094e0c197e6ebbbda424779fbfa1765589"
+                "reference": "3cbe98acb2568baa66a8faeb2ee7a51c7b6b0789"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1190,15 +1190,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-22T17:33:52+00:00"
+            "time": "2020-05-22T21:32:13+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.7.0",
+            "version": "v2.7.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "ac813b0c1f0d64063148dcb560e9c3a06eb4f0f5"
+                "reference": "4d778abfbed13b22b8c9eaaa14649351c6210187"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1223,7 +1223,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-20T19:22:16+00:00"
+            "time": "2020-05-20T21:54:31+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
