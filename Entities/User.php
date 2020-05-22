@@ -1753,6 +1753,25 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $number ?? '';
     }
 
+    public function getPhoneNumberForSms():string
+    {
+        if ( ! $this->phoneNumbers) {
+            return '';
+        }
+
+        $validCellNumbers = $this->phoneNumbers->map(function ($phone) {
+            $number = formatPhoneNumberE164($phone->number);
+
+            if (\Propaganistas\LaravelPhone\PhoneNumber::make($number, 'US')->isOfType('mobile')) {
+                return $number;
+            }
+
+            return false;
+        })->filter()->unique()->values();
+        
+        return $validCellNumbers->first();
+    }
+
     public function getPreferredCcContactDays()
     {
         if ( ! $this->patientInfo) {
@@ -2768,10 +2787,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ($this->primaryPractice && $this->primaryPractice->is_demo) {
             $hasTester = AppConfig::pull('tester_phone', null);
 
-            return $hasTester ?? $this->getPhone();
+            return $hasTester ?? $this->getPhoneNumberForSms();
         }
 
-        return $this->getPhone();
+        return $this->getPhoneNumberForSms();
     }
 
     public function saasAccountName()
