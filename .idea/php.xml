@@ -300,7 +300,6 @@
       <path value="$PROJECT_DIR$/vendor/fruitcake/laravel-cors" />
       <path value="$PROJECT_DIR$/vendor/asm89/stack-cors" />
       <path value="$PROJECT_DIR$/vendor/laravel/ui" />
-      <path value="$PROJECT_DIR$/vendor/ashallendesign/short-url" />
       <path value="$PROJECT_DIR$/vendor/hashids/hashids" />
     </include_path>
   </component>

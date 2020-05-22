@@ -534,7 +534,7 @@ class NotesController extends Controller
         $input = $request->allSafe();
 
         $patient = User::findOrFail($patientId);
-    
+
         if ( ! isset($input['body']) || null === $input['body']) {
             return redirect()
                 ->back()
