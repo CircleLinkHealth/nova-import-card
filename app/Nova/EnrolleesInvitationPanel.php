@@ -160,6 +160,8 @@ class EnrolleesInvitationPanel extends Resource
             Boolean::make('Requested Call', function () {
                 return $this->statusRequestsInfo()->exists();
             }),
+            //        NOTE:If patient clicks Get my Care Coach but instead of starting survey, goes back and requests info
+            //        this will stay green together ith get my care coach.
             Boolean::make("Has clicked 'Get my Care Coach'", function () use ($enroleeHasNotLoggedIn) {
                 if ($enroleeHasNotLoggedIn) {
                     return false;
