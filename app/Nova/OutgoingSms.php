@@ -71,7 +71,15 @@ class OutgoingSms extends Resource
             ID::make()->sortable(),
             Number::make('Sent By (User ID)', 'sender_user_id')->sortable()->hideWhenCreating(),
             Text::make('Receiver', 'receiver_phone_number')->sortable(),
-            Textarea::make('Message', 'message')->sortable(),
+            Textarea::make('Message', 'message')->sortable()->withMeta([
+                'extraAttributes' => [
+                    'placeholder' => 'Type your message to the patient here
+
+Please do not include ant PHI or PII in your messages.
+Specifically, never include the patient\'s name, address, phone, birth date, or anything else that can identify them.
+Do not discuss any health information.',
+                ],
+            ]),
         ];
     }
 
