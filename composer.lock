@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6e85e6ee7c7975ec8abc6a64582a10d7",
+    "content-hash": "3522fafa606c71140e0c524802af017e",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -413,16 +413,16 @@
         },
         {
             "name": "ashallendesign/short-url",
-            "version": "v3.0.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ash-jc-allen/short-url.git",
-                "reference": "8b59cdc8687ed18476c954e23cd399ca0c2ccf5f"
+                "reference": "fccab37ac7efc94fb99510891f8cf800992d0a90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ash-jc-allen/short-url/zipball/8b59cdc8687ed18476c954e23cd399ca0c2ccf5f",
-                "reference": "8b59cdc8687ed18476c954e23cd399ca0c2ccf5f",
+                "url": "https://api.github.com/repos/ash-jc-allen/short-url/zipball/fccab37ac7efc94fb99510891f8cf800992d0a90",
+                "reference": "fccab37ac7efc94fb99510891f8cf800992d0a90",
                 "shasum": ""
             },
             "require": {
@@ -474,7 +474,7 @@
                 "laravel-package",
                 "short-urls"
             ],
-            "time": "2020-04-11T00:54:27+00:00"
+            "time": "2020-05-09T21:40:35+00:00"
         },
         {
             "name": "authy/php",
