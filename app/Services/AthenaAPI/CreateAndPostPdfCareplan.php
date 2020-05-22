@@ -109,7 +109,7 @@ class CreateAndPostPdfCareplan
             $patientId    = $bookedAppointment['patientid'];
             $departmentId = $bookedAppointment['departmentid'];
 
-            $patientCustomFields = $this->api->getPatientCustomFields($patientId, $practiceId, $departmentId);
+            $patientCustomFields = $this->api->getPatientCustomFields($patientId, $practiceId, $departmentId) ?? [];
 
             //If 'CCM Enabled' contains a y (meaning yes), then save the patient id
             foreach ($patientCustomFields as $customField) {
