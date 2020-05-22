@@ -87,7 +87,7 @@ class OutgoingSms extends Resource
 
     public static function label()
     {
-        return 'Send SMS';
+        return 'SMS';
     }
 
     /**
