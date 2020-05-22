@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7bbd5d5151c1d3d6965519979d9c5b39",
+    "content-hash": "933b777547fd38868974c7fd47b2fd3e",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -325,11 +325,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.5.0",
+            "version": "v1.5.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "0868a7f278e4e1dc9f39c4f9dc91785fa640f454"
+                "reference": "1e3bb33500be80f33ab625073bd859143b13f2fe"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -358,7 +358,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-06T15:55:55+00:00"
+            "time": "2020-05-22T12:22:01+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -9114,7 +9114,8 @@
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.2.0",
-        "ext-simplexml": "*"
+        "ext-simplexml": "*",
+        "ext-json": "*"
     },
     "platform-dev": []
 }

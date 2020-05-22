@@ -27,7 +27,7 @@
         "ext-simplexml": "*",
         "barryvdh/laravel-cors": "^0.11.3",
         "barryvdh/laravel-ide-helper": "^2.6",
-        "circlelinkhealth/core-module": "1.5.0",
+        "circlelinkhealth/core-module": "1.5.5",
         "circlelinkhealth/customer-module": "1.9.3",
         "circlelinkhealth/revisionable-module": "^6.1",
         "illuminate/redis": "^6",
