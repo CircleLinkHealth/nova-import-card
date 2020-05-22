@@ -14,10 +14,6 @@
     },
     {
       "type": "git",
-      "url": "git@github.com:subzero10/url-shortener.git"
-    },
-    {
-      "type": "git",
       "url": "git@github.com:CircleLinkHealth/opcache-gui.git"
     },
     {
@@ -112,8 +108,12 @@
       "url": "git@github.com:CircleLinkHealth/nova-import-card.git"
     },
     {
-      "type": "vcs",
+      "type": "git",
       "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/short-url.git"
     },
     {
       "type": "path",
@@ -143,6 +143,7 @@
     "amnuts/opcache-gui": "dev-master",
     "anaseqal/nova-import": "^0.0.3",
     "appstract/laravel-opcache": "^3.2.1",
+    "ashallendesign/short-url": "3.0.1",
     "barryvdh/laravel-snappy": "0.4.7",
     "circlelinkhealth/ccda-parser-processor-php-module": "1.1.1",
     "circlelinkhealth/cerberus-gatekeeper-module": "3.1.5",
@@ -150,8 +151,8 @@
     "circlelinkhealth/clh-nova-theme": "*",
     "circlelinkhealth/condition-code-lookup-module": "1.1.5",
     "circlelinkhealth/core-module": "1.5.4",
-    "circlelinkhealth/cpm-migrations-module": "1.8.5",
-    "circlelinkhealth/customer-module": "2.6.3",
+    "circlelinkhealth/cpm-migrations-module": "1.8.6",
+    "circlelinkhealth/customer-module": "2.6.4",
     "circlelinkhealth/eligibility-module": "2.7.0",
     "circlelinkhealth/enrollment-invites": "*",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
@@ -211,7 +212,6 @@
     "titasgailius/search-relations": "^1.0",
     "twilio/sdk": "~5.16",
     "vink/nova-cache-card": "^1.0",
-    "waavi/url-shortener": "dev-master",
     "waynestate/nova-ckeditor4-field": "^0.4.0",
     "yajra/laravel-datatables-oracle": "~9.0"
   },

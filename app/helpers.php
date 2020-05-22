@@ -6,6 +6,7 @@
 
 use App\Constants;
 use App\Jobs\SendSlackMessage;
+use AshAllenDesign\ShortURL\Classes\Builder as ShortUrlBuilder;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Exceptions\CsvFieldNotFoundException;
@@ -1175,7 +1176,7 @@ if ( ! function_exists('shortenUrl')) {
      */
     function shortenUrl($url)
     {
-        return \UrlShortener::driver('bitly-gat')->shorten($url);
+        return (new ShortUrlBuilder())->destinationUrl($url)->make()->default_short_url;
     }
 }
 
