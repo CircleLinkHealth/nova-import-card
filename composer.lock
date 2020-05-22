@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3522fafa606c71140e0c524802af017e",
+    "content-hash": "e81bfa44e78efa03f685d5e9f1d5120f",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -413,17 +413,11 @@
         },
         {
             "name": "ashallendesign/short-url",
-            "version": "dev-master",
+            "version": "v3.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/ash-jc-allen/short-url.git",
-                "reference": "fccab37ac7efc94fb99510891f8cf800992d0a90"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ash-jc-allen/short-url/zipball/fccab37ac7efc94fb99510891f8cf800992d0a90",
-                "reference": "fccab37ac7efc94fb99510891f8cf800992d0a90",
-                "shasum": ""
+                "url": "git@github.com:CircleLinkHealth/short-url.git",
+                "reference": "b0c7ea52eeb40ec20bc13d30956267fb1af47214"
             },
             "require": {
                 "hashids/hashids": "^4.0",
@@ -455,7 +449,11 @@
                     "AshAllenDesign\\ShortURL\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "AshAllenDesign\\ShortURL\\Tests\\": "tests/"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -468,13 +466,13 @@
             "description": "A Laravel package for creating shortened URLs for your web apps.",
             "homepage": "https://github.com/ash-jc-allen/short-url",
             "keywords": [
-                "URL-Shortener",
                 "ashallendesign",
                 "laravel",
                 "laravel-package",
-                "short-urls"
+                "short-urls",
+                "url-shortener"
             ],
-            "time": "2020-05-09T21:40:35+00:00"
+            "time": "2020-05-22T00:59:25+00:00"
         },
         {
             "name": "authy/php",
@@ -15546,7 +15544,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "ashallendesign/short-url": 20,
         "daltcore/lara-pdf-merger": 20,
         "laravel/scout": 20,
         "orangehill/iseed": 20

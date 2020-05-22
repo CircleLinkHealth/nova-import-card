@@ -108,12 +108,12 @@
       "url": "git@github.com:CircleLinkHealth/nova-import-card.git"
     },
     {
-      "type": "vcs",
+      "type": "git",
       "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git"
     },
     {
-      "type": "vcs",
-      "url": "https://github.com/CircleLinkHealth/short-url.git"
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/short-url.git"
     },
     {
       "type": "path",
@@ -143,7 +143,7 @@
     "amnuts/opcache-gui": "dev-master",
     "anaseqal/nova-import": "^0.0.3",
     "appstract/laravel-opcache": "^3.2.1",
-    "ashallendesign/short-url": "dev-master",
+    "ashallendesign/short-url": "3.0.1",
     "barryvdh/laravel-snappy": "0.4.7",
     "circlelinkhealth/ccda-parser-processor-php-module": "1.1.1",
     "circlelinkhealth/cerberus-gatekeeper-module": "3.1.4",
