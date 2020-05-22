@@ -116,7 +116,10 @@ $app->router->group([
     require __DIR__ . '/../routes/web.php';
 });
 
-//register some aliases, helps with compatibility of Laravel packages
+// register some aliases, helps with compatibility of Laravel packages
 class_alias('Illuminate\Support\Facades\Config', 'Config');
+
+// needed in RevisionableTrait
+class_alias('Illuminate\Support\Facades\Request', 'Request');
 
 return $app;
