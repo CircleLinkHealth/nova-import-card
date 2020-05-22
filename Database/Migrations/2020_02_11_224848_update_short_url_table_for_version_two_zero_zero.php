@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -7,6 +11,27 @@ use Illuminate\Support\Facades\Schema;
 
 class UpdateShortURLTableForVersionTwoZeroZero extends Migration
 {
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('short_urls', function (Blueprint $table) {
+            $table->dropColumn([
+                'redirect_status_code',
+                'track_ip_address',
+                'track_operating_system',
+                'track_operating_system_version',
+                'track_browser',
+                'track_browser_version',
+                'track_referer_url',
+                'track_device_type',
+            ]);
+        });
+    }
+
     /**
      * Run the migrations.
      *
@@ -34,26 +59,5 @@ class UpdateShortURLTableForVersionTwoZeroZero extends Migration
             'track_referer_url'              => config('short-url.tracking.fields.referer_url'),
             'track_device_type'              => config('short-url.tracking.fields.device_type'),
         ]);
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::table('short_urls', function (Blueprint $table) {
-            $table->dropColumn([
-                'redirect_status_code',
-                'track_ip_address',
-                'track_operating_system',
-                'track_operating_system_version',
-                'track_browser',
-                'track_browser_version',
-                'track_referer_url',
-                'track_device_type',
-            ]);
-        });
     }
 }
