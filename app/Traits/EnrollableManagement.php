@@ -6,6 +6,7 @@
 
 namespace App\Traits;
 
+use App\Helpers\SelfEnrollmentHelpers;
 use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
@@ -119,7 +120,7 @@ trait EnrollableManagement
 //        if (Enrollee::class === get_class($notifiable)) {
 //            return false;
 //        }
-        $surveyLink = $this->getSurveyInvitationLink($notifiable->patientInfo->id);
+        $surveyLink = SelfEnrollmentHelpers::getSurveyInvitationLink($notifiable->patientInfo->id);
         if ( ! empty($surveyLink)) {
             $surveyInstance = DB::table('survey_instances')
                 ->where('survey_id', '=', $surveyLink->survey_id)

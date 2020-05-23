@@ -163,7 +163,6 @@ class AutoEnrollmentCenterController extends Controller
         }
         $enrollable = $this->getEnrollableModelType($userForEnrollment);
 
-        //      This can happen only on the first redirect and if page is refreshed
         if ($this->enrollableHasRequestedInfo($enrollable)) {
             throw new \Exception('There was an error. A care coach will contact you soon. [2]', 400);
         }
@@ -171,13 +170,6 @@ class AutoEnrollmentCenterController extends Controller
         $this->expirePastInvitationLink($enrollable);
 
         return $this->createUrlAndRedirectToSurvey($enrollableId);
-        /*
-        $pastActiveSurveyLink = $this->getSurveyInvitationLink($userForEnrollment->patientInfo->id);
-        if (empty($pastActiveSurveyLink)) {
-            return $this->createUrlAndRedirectToSurvey($enrollableId);
-        }
-        return redirect($pastActiveSurveyLink->url);
-        */
     }
 
     /**
