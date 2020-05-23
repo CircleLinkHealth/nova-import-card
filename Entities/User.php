@@ -67,7 +67,6 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -2257,14 +2256,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
-     * If user has "survey-only" Role, returns true.
-     * note: hasRole() doesnt always produce correct results in this case.
+     * Returns if this is a Survey-Only user. A Survey-Only user is meant to do Self Enrollment as an Enrollee, or Unreachable Patient.
      *
-     * @return mixed
+     * @return bool
      */
     public function isSurveyOnly()
     {
-        return $this->roles()->where('name', SendSelfEnrollmentInvitationToPracticeEnrollees::SURVEY_ONLY)->exists();
+        return $this->hasRole(SendSelfEnrollmentInvitationToPracticeEnrollees::SURVEY_ONLY);
     }
 
     public function lastObservation()
@@ -2836,21 +2834,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         ];
     }
 
-    /*public function hasScheduledCallThisWeek()
-    {
-        $weekStart = Carbon::now()->startOfWeek()->toDateString();
-        $weekEnd = Carbon::now()->endOfWeek()->toDateString();
-
-        return Call::where(function ($q) {
-            $q->whereNull('type')
-              ->orWhere('type', '=', 'call');
-        })
-                   ->where('outbound_cpm_id', $this->id)
-                   ->where('status', 'scheduled')
-                   ->whereBetween('scheduled_date', [$weekStart, $weekEnd])
-                   ->exists();
-    }*/
-
     public function scopeCareCoaches($query)
     {
         return $query->ofType(['care-center', 'care-center-external']);
@@ -3199,6 +3182,28 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     ->whereIn('practice_role_user.role_id', $roleIds);
             }
         );
+    }
+
+    /*public function hasScheduledCallThisWeek()
+    {
+        $weekStart = Carbon::now()->startOfWeek()->toDateString();
+        $weekEnd = Carbon::now()->endOfWeek()->toDateString();
+
+        return Call::where(function ($q) {
+            $q->whereNull('type')
+              ->orWhere('type', '=', 'call');
+        })
+                   ->where('outbound_cpm_id', $this->id)
+                   ->where('status', 'scheduled')
+                   ->whereBetween('scheduled_date', [$weekStart, $weekEnd])
+                   ->exists();
+    }*/
+
+    public function scopeWasSentSelfEnrollmentInvite($query)
+    {
+        return $query->whereHas('notifications', function ($q) {
+            $q->selfEnrollmentInvites();
+        });
     }
 
     public function scopeWithCareTeamOfType(
