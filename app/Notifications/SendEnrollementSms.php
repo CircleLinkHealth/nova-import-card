@@ -75,13 +75,6 @@ class SendEnrollementSms extends Notification implements ShouldQueue
      */
     public function toTwilio(User $notifiable)
     {
-        // at this point will always exist only one active link from the mail notif send
-        $receiver = SelfEnrollmentHelpers::getEnrollableModel($notifiable);
-        if ( ! $receiver) {
-            $hasSurveyRole = $notifiable->isSurveyOnly();
-            throw new \Exception("Could not deduce user[$notifiable->id] to a receiver. User is survey-role only: $hasSurveyRole");
-        }
-
         if (empty($this->url)) {
             throw new InvalidArgumentException("`url` cannot be empty. User ID {$notifiable->id}");
         }

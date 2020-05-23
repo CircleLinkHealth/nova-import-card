@@ -58,11 +58,13 @@ class SelfEnrollmentHelpers
     /**
      * @return \App\User|Enrollee|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
      */
-    public static function getEnrollableModel(User $user)
+    public static function getEnrollableModel(User &$user)
     {
+        $user->loadMissing('enrollee');
+
         return $user->isSurveyOnly()
-            ? Enrollee::fromUserId($user->id)
-            : User::find($user->id);
+            ? $user->enrollee
+            : $user;
     }
 
     public static function getEnrolleeSurvey(): object

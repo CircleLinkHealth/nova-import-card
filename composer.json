@@ -150,7 +150,7 @@
     "circlelinkhealth/clh-import-card-extended": "*",
     "circlelinkhealth/clh-nova-theme": "*",
     "circlelinkhealth/condition-code-lookup-module": "1.1.5",
-    "circlelinkhealth/core-module": "1.5.4",
+    "circlelinkhealth/core-module": "dev-michalis_self_enrollment_refactor",
     "circlelinkhealth/cpm-migrations-module": "1.8.8",
     "circlelinkhealth/customer-module": "dev-michalis_self_enrollment_refactor",
     "circlelinkhealth/eligibility-module": "dev-michalis_self_enrollment_refactor",

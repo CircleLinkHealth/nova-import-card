@@ -321,8 +321,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
     private function updateEnrolleAvatarModel($userId)
     {
-        $enrolleAvatar = \CircleLinkHealth\Eligibility\Entities\Enrollee::fromUserId($userId);
-        $enrolleAvatar->update([
+        Enrollee::whereUserId($userId)->update([
             'status'                    => Enrollee::ENROLLED,
             'auto_enrollment_triggered' => true,
         ]);

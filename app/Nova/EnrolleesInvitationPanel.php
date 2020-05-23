@@ -182,8 +182,8 @@ class EnrolleesInvitationPanel extends Resource
                 return ! is_null($firstEnrollmentInvitationLink);
             }),
 
-            Boolean::make('Has viewed login form', function () use ($firstEnrollmentInvitationLink) {
-                return ! is_null($firstEnrollmentInvitationLink) && true === (bool) $firstEnrollmentInvitationLink->manually_expired;
+            Boolean::make('Has viewed login form', function () {
+                return $this->resource->enrollmentInvitationLinks->where('manually_expired', true)->isNotEmpty();
             }),
 
             Boolean::make('Has viewed Letter', function () use ($enroleeHasLoggedIn) {
