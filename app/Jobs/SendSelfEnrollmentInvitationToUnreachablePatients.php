@@ -6,7 +6,6 @@
 
 namespace App\Jobs;
 
-use App\Events\AutoEnrollableCollected;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,7 +13,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class SelfEnrollmentUnreachablePatients implements ShouldQueue
+class SendSelfEnrollmentInvitationToUnreachablePatients implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -24,6 +23,12 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
      * @var int
      */
     private $amount;
+    /**
+     * The number of patients we dispatched jobs to send invitations to.
+     *
+     * @var int
+     */
+    private $dispatched = 0;
     /**
      * @var int
      */
@@ -40,41 +45,32 @@ class SelfEnrollmentUnreachablePatients implements ShouldQueue
         $this->practiceId = $practiceId;
     }
 
-    /**
-     * NOTE: "whereDoesntHave" makes sure we dont invite Unreachable/Non responded - Users (Patients) second time.
-     *
-     * @return void
-     */
     public function handle()
     {
-        $enrollablesUnreachablePatient = $this->getUnreachablePatients($this->practiceId, $this->amount);
-        if ( ! empty($enrollablesUnreachablePatient)) {
-            event(new AutoEnrollableCollected($enrollablesUnreachablePatient));
-        }
+        $this->getUnreachablePatients($this->practiceId)->chunk(100, function ($enrollees) {
+            foreach ($enrollees as $enrollee) {
+                SendSelfEnrollmentInvitation::dispatch($enrollee->user);
+
+                if (++$this->dispatched === $this->amount) {
+                    //break chunking
+                    return false;
+                }
+            }
+        });
     }
 
-//    }
-
-    /**
-     * @param $practiceId
-     * @param $amount
-     * @return array
-     */
-    private function getUnreachablePatients($practiceId, $amount)
+    private function getUnreachablePatients(int $practiceId)
     {
         return Enrollee::whereNotNull('user_id')
+            ->has('user')
+            ->with('user')
             ->where('source', '=', Enrollee::UNREACHABLE_PATIENT)
             ->where('practice_id', $practiceId)
-            ->whereDoesntHave('enrollmentInvitationLink')
+            // NOTE: "whereDoesntHave" makes sure we dont invite Unreachable/Non responded - Users (Patients) second time
+            ->whereDoesntHave('enrollmentInvitationLinks')
             ->whereIn('status', [
                 Enrollee::QUEUE_AUTO_ENROLLMENT,
             ])
-            ->orderBy('id', 'asc')
-            ->select('user_id')
-            ->take($amount)
-            ->get()
-            ->map(function ($unreachable) {
-                return $unreachable->user_id;
-            })->toArray();
+            ->orderBy('id', 'asc');
     }
 }

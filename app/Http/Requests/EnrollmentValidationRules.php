@@ -6,6 +6,7 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\SelfEnrollmentHelpers;
 use Carbon\Exceptions\InvalidFormatException;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -24,19 +25,6 @@ class EnrollmentValidationRules extends FormRequest
     public function authorize()
     {
         return true;
-    }
-
-    /**
-     * @param $url
-     *
-     * @return mixed
-     */
-    public function parseUrl($url)
-    {
-        $parsedUrl = parse_url($url);
-        parse_str($parsedUrl['query'], $output);
-
-        return $output['signature'];
     }
 
     /**
@@ -77,7 +65,7 @@ class EnrollmentValidationRules extends FormRequest
             $link = $user->getLastEnrollmentInvitationLink();
         }
 
-        $inputToken = $this->parseUrl($input['url_with_token']);
+        $inputToken = SelfEnrollmentHelpers::getTokenFromUrl($input['url_with_token']);
         if (empty($link) || $link->link_token !== $inputToken) {
             return true;
         }

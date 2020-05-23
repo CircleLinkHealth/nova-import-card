@@ -6,7 +6,6 @@
 
 namespace App\Providers;
 
-use App\Events\AutoEnrollableCollected;
 use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Events\CarePlanWasApproved;
 use App\Events\CarePlanWasProviderApproved;
@@ -33,8 +32,6 @@ use App\Listeners\NotifyPatientOfCarePlanApproval;
 use App\Listeners\NotifySlackChannel;
 use App\Listeners\PatientContactWindowUpdated;
 use App\Listeners\SendCarePlanForDMProviderApproval;
-use App\Listeners\SendEnrollableEmail;
-use App\Listeners\SendEnrollableSms;
 use App\Listeners\UpdateCarePlanStatus;
 use App\Listeners\UpdateCcdaStatus;
 use App\Listeners\UPG0506CcdaImporterListener;
@@ -114,11 +111,6 @@ class CpmEventServiceProvider extends ServiceProvider
         CarePlanWasProviderApproved::class => [
             ForwardApprovedCarePlanToPractice::class,
             NotifyPatientOfCarePlanApproval::class,
-        ],
-
-        AutoEnrollableCollected::class => [
-            SendEnrollableEmail::class,
-            SendEnrollableSms::class,
         ],
     ];
 

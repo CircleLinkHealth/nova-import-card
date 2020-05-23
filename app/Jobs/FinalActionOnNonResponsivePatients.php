@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use App\Helpers\SelfEnrollmentHelpers;
 use App\Notifications\SendEnrollmentEmail;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
@@ -77,7 +78,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
         if ($testingMode) {
             $twoDaysAgo    = Carbon::parse(now())->startOfDay()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfDay()->toDateTimeString();
-            $practice      = $this->getDemoPractice();
+            $practice      = SelfEnrollmentHelpers::getDemoPractice();
             $users         = $this->usersForFinalAction($twoDaysAgo, $untilEndOfDay)
                 ->where('program_id', $practice->id)
                 ->get();
@@ -108,14 +109,14 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
         return $users->each(function (User $noResponsivePatient) {
             $isSurveyOnlyUser = $noResponsivePatient->hasRole('survey-only');
             /** @var Enrollee $enrollee */
-            $enrollee = $this->getEnrollee($noResponsivePatient->id);
+            $enrollee = \CircleLinkHealth\Eligibility\Entities\Enrollee::fromUserId($noResponsivePatient->id);
             if ( ! $enrollee) {
                 Log::warning("Enrollee model not found for user $noResponsivePatient->id");
 
                 return;
             }
             if ($isSurveyOnlyUser) {
-                if ($this->hasViewedLetterOrSurvey($enrollee)) {
+                if ((bool) optional($enrollee->selfEnrollmentStatus)->logged_in) {
                     $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
                 } else {
 //                        Mark as non responsive means they will get a physical MAIL.
@@ -124,7 +125,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
                 }
 //                    Keeping this maybe we need the letter to be printed from nova
 //                    $practice = $noResponsivePatient->primaryPractice;
-//                    $provider = $this->getEnrollableProvider($isSurveyOnlyUser, $noResponsivePatient);
+//                    $provider = $noResponsivePatient->billingProviderUser();
 //                    $careAmbassadorPhoneNumber = $practice->outgoing_phone_number;
 //                    $practiceName = $practice->name;
 //                    $letter = $this->getPracticeEnrollmentLetter($practice->id);
