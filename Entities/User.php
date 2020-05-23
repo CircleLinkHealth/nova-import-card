@@ -292,7 +292,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withTrashed()
  * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withoutTrashed()
  * @mixin \Eloquent
- * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null $enrollmentInvitationLink
+ * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null $enrollmentInvitationLinks
  * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null       $statusRequestsInfo
  * @property \App\LoginLogout[]|\Illuminate\Database\Eloquent\Collection                       $loginEvents
  * @property int|null                                                                          $login_events_count
