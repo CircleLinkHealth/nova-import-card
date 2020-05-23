@@ -9,19 +9,19 @@ namespace CircleLinkHealth\Customer\Traits;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo;
 
-trait HasEnrollableInvitation
+trait HasSelfEnrollmentInvitation
 {
     /**
      * @return mixed
      */
-    public function enrollmentInvitationLink()
+    public function enrollmentInvitationLinks()
     {
-        return $this->morphOne(EnrollableInvitationLink::class, 'invitationable');
+        return $this->morphMany(EnrollableInvitationLink::class, 'invitationable');
     }
 
-    public function getLastEnrollmentInvitationLink()
+    public function getLastEnrollmentInvitationLink(): ?EnrollableInvitationLink
     {
-        return $this->enrollmentInvitationLink()->orderBy('created_at', 'desc')->first();
+        return $this->enrollmentInvitationLinks()->orderBy('created_at', 'desc')->first();
     }
 
     /**

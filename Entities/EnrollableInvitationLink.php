@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Customer\EnrollableInvitationLink;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
-use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 
 /**
  * CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink.
@@ -20,7 +19,7 @@ use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
  * @property \Illuminate\Support\Carbon|null                                        $created_at
  * @property \Illuminate\Support\Carbon|null                                        $updated_at
  * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo $statusRequestsInfo
- * @property \App\EnrollableInvitationLink                                          $enrollmentInvitationLink
+ * @property \App\EnrollableInvitationLink                                          $enrollmentInvitationLinks
  * @property \App\EnrollableInvitationLink                                          $invitationable
  * @method   static                                                                 \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink newModelQuery()
  * @method   static                                                                 \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink newQuery()
@@ -39,8 +38,6 @@ use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
  */
 class EnrollableInvitationLink extends BaseModel
 {
-    use HasEnrollableInvitation;
-
     protected $fillable = [
         'invitationable_id',
         'enrollable_type',
