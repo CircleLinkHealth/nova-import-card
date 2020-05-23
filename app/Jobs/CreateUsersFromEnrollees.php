@@ -210,7 +210,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
             $userCreatedFromEnrollee->phoneNumbers()->create([
                 'type'       => PhoneNumber::HOME,
                 'number'     => $primaryPhone,
-                'is_primary' => true,
+                'is_primary' => false,
             ]);
         }
 
@@ -220,7 +220,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
             $userCreatedFromEnrollee->phoneNumbers()->create([
                 'type'       => PhoneNumber::HOME,
                 'number'     => $homePhone,
-                'is_primary' => true,
+                'is_primary' => false,
             ]);
         }
 
