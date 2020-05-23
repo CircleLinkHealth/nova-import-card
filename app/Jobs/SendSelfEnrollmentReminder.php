@@ -7,7 +7,6 @@
 namespace App\Jobs;
 
 use App\Helpers\SelfEnrollmentHelpers;
-use App\Traits\EnrollableManagement;
 use CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;

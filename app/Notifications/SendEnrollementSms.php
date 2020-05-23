@@ -10,7 +10,6 @@ use App\Notifications\Channels\CustomTwilioChannel;
 use App\Traits\EnrollableManagement;
 use App\Traits\EnrollableNotificationContent;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Customer\Traits\HasSelfEnrollmentInvitation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
@@ -34,8 +33,6 @@ class SendEnrollementSms extends Notification implements ShouldQueue
 
     /**
      * Create a new notification instance.
-     *
-     * @param bool $isReminder
      */
     public function __construct(string $url, bool $isReminder = false)
     {

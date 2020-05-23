@@ -76,7 +76,7 @@ class SendSelfEnrollmentReminders implements ShouldQueue
         if (is_null($query)) {
             return;
         }
-        
+
         $query->chunk(100, function ($users) {
             $users->each(function (User $enrollable) {
                 SendSelfEnrollmentReminder::dispatch($enrollable);

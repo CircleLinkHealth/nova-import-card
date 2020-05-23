@@ -33,7 +33,7 @@ class SelfEnrollmentManualInviteCommand extends Command
     public function handle()
     {
         $enrollee = Enrollee::with('user')->has('user')->findOrFail($this->argument('enrolleeId'));
-        
+
         SendSelfEnrollmentInvitationToEligiblePatient::dispatch($enrollee->user);
     }
 }

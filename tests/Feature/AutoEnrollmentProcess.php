@@ -8,8 +8,8 @@ namespace Tests\Feature;
 
 use App\Jobs\CreateUsersFromEnrollees;
 use App\Jobs\EnrollmentSeletiveInviteEnrollees;
-use App\Jobs\SendSelfEnrollmentReminder;
 use App\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
+use App\Jobs\SendSelfEnrollmentReminder;
 use App\Notifications\SendEnrollementSms;
 use App\Notifications\SendEnrollmentEmail;
 use CircleLinkHealth\Core\Facades\Notification;

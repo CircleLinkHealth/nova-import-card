@@ -44,7 +44,7 @@ class SendSelfEnrollmentInvitationToUnreachablePatients implements ShouldQueue
         $this->amount     = $amount;
         $this->practiceId = $practiceId;
     }
-    
+
     public function handle()
     {
         $this->getUnreachablePatients($this->practiceId)->chunk(100, function ($enrollees) {

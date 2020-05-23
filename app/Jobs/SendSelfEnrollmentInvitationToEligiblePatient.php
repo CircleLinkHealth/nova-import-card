@@ -42,12 +42,9 @@ class SendSelfEnrollmentInvitationToEligiblePatient implements ShouldQueue
      * @var User
      */
     private $user;
-    
+
     /**
      * Create a new job instance.
-     * @param User $user
-     * @param string|null $color
-     * @param bool $isReminder
      */
     public function __construct(User $user, ?string $color = AutoEnrollmentCenterController::DEFAULT_BUTTON_COLOR, bool $isReminder = false)
     {

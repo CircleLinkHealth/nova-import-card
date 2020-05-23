@@ -35,7 +35,7 @@ class AutoEnrollmentLogin extends Controller
     protected function authenticate(EnrollmentValidationRules $request)
     {
         $manager = new AutoEnrollmentCenterController(new EnrollmentInvitationService());
-        $userId = (int) $request->input('user_id');
+        $userId  = (int) $request->input('user_id');
         Auth::loginUsingId($userId, true);
 
         if (boolval($request->input('is_survey_only'))) {
