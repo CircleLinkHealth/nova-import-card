@@ -20,18 +20,6 @@ use Illuminate\Support\Facades\URL;
 
 trait EnrollableManagement
 {
-    //@todo: Move methods used in one place to that place.
-
-    /**
-     * @param $enrollable
-     *
-     * @return bool
-     */
-    public function activeEnrollmentInvitationsExists($enrollable)
-    {
-        return $enrollable->enrollmentInvitationLink->where('manually_expired', false)->exists();
-    }
-
     /**
      * @param $enrollableId
      *
@@ -64,19 +52,6 @@ trait EnrollableManagement
         if ( ! empty($pastInvitationLinks)) {
             $pastInvitationLinks->update(['manually_expired' => true]);
         }
-    }
-
-    /**
-     * @param $surveyInstance
-     * @param mixed $userId
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
-    public function getAwvUserSurvey($userId, $surveyInstance)
-    {
-        return DB::table('users_surveys')
-            ->where('user_id', '=', $userId)
-            ->where('survey_instance_id', '=', $surveyInstance->id);
     }
 
     /**
@@ -125,27 +100,7 @@ trait EnrollableManagement
     {
         return DB::table('surveys')
             ->join('survey_instances', 'surveys.id', '=', 'survey_instances.survey_id')
-            ->where('name', '=', AutoEnrollmentCenterController::ENROLLEES)->first();
-    }
-
-    public function getEnrolleeSurvey()
-    {
-        return DB::table('surveys')
-            ->where('name', '=', AutoEnrollmentCenterController::ENROLLEES)
-            ->first();
-    }
-
-    /**
-     * @param $patientInfoId
-     *
-     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Query\Builder|object|null
-     */
-    public function getSurveyInvitationLink($patientInfoId)
-    {
-        return DB::table('invitation_links')
-            ->where('patient_info_id', $patientInfoId)
-            ->orderBy('created_at', 'desc')
-            ->first();
+            ->where('name', '=', AutoEnrollmentCenterController::ENROLLEES_SURVEY_NAME)->first();
     }
 
     /**
@@ -200,7 +155,7 @@ trait EnrollableManagement
      */
     public function hasViewedLetterOrSurvey($enrollee)
     {
-        return optional($enrollee->selfEnrollmentStatuses)->logged_in;
+        return optional($enrollee->selfEnrollmentStatus)->logged_in;
     }
 
     /**
@@ -223,7 +178,7 @@ trait EnrollableManagement
      */
     public function pastActiveInvitationLink($enrollable)
     {
-        return $enrollable->enrollmentInvitationLink()->where('manually_expired', false)->first();
+        return $enrollable->enrollmentInvitationLinks()->where('manually_expired', false)->first();
     }
 
     /**

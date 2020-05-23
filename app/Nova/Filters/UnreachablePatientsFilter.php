@@ -39,7 +39,7 @@ class UnreachablePatientsFilter extends Filter
     public function apply(Request $request, $query, $value)
     {
         return $query->with('patientInfo')
-            ->whereDoesntHave('enrollmentInvitationLink')
+            ->whereDoesntHave('enrollmentInvitationLinks')
             ->where('program_id', '=', $value)
             ->whereHas('patientInfo', function ($patient) {
                 $patient->where('ccm_status', '=', Patient::UNREACHABLE);

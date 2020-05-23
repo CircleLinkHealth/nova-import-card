@@ -55,13 +55,13 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
                 ->where('program_id', $practice->id)
                 ->get()
                 ->each(function (User $enrollable) {
-                    SendEnrollmentReminders::dispatch($enrollable);
+                    SendSelfEnrollmentReminder::dispatch($enrollable);
                 });
         } else {
             $this->getUnreachablePatientsToSendReminder($untilEndOfDay, $twoDaysAgo)
                 ->get()
                 ->each(function (User $enrollable) {
-                    SendEnrollmentReminders::dispatch($enrollable);
+                    SendSelfEnrollmentReminder::dispatch($enrollable);
                 });
         }
     }

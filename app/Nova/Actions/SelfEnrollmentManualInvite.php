@@ -45,7 +45,7 @@ class SelfEnrollmentManualInvite extends Action
                 return;
             }
 
-            if ( ! empty(optional($model->enrollmentInvitationLink())->first())) {
+            if ( ! empty(optional($model->enrollmentInvitationLinks())->first())) {
                 Log::info("Enrollee [$model->id] has already been invited");
 
                 return;

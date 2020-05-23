@@ -22,10 +22,10 @@ class AutoEnrollmentCenterController extends Controller
 {
     use EnrollableManagement;
     const DEFAULT_BUTTON_COLOR = '#4baf50';
-    const RED_BUTTON_COLOR = '#b1284c';
 
-    const ENROLLEES                            = 'Enrollees';
+    const ENROLLEES_SURVEY_NAME                = 'Enrollees';
     const ENROLLMENT_LETTER_DEFAULT_LOGO       = 'https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png';
+    const RED_BUTTON_COLOR                     = '#b1284c';
     const SEND_NOTIFICATIONS_LIMIT_FOR_TESTING = 1;
 
     /**
@@ -189,11 +189,11 @@ class AutoEnrollmentCenterController extends Controller
             ->first();
     }
 
-    public function manageUnreachablePatientInvitation($enrollableId)
+    public function manageUnreachablePatientInvitation($patientUserId)
     {
         /** @var User $userModelEnrollee */
 //        Note: this can be either Unreachable patient Or User created from enrollee
-        $unrechablePatient = User::find($enrollableId);
+        $unrechablePatient = User::find($patientUserId);
 
         if ($this->hasSurveyInProgress($unrechablePatient)) {
             return redirect($this->getAwvInvitationLinkForUser($unrechablePatient)->url);
@@ -311,7 +311,7 @@ class AutoEnrollmentCenterController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
-    private function manageEnrolleeInvitation($enrollableId)
+    private function manageEnrolleeInvitation(int $enrollableId)
     {
         /** @var Enrollee $enrollee */
         $enrollee = Enrollee::fromUserId($enrollableId);

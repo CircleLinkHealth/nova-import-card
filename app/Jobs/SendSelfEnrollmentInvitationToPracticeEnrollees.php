@@ -102,9 +102,9 @@ class SendSelfEnrollmentInvitationToPracticeEnrollees implements ShouldQueue
     {
         return Enrollee::where('practice_id', $practiceId)
             ->whereNull('source')
-            // If an enrollmentInvitationLink exists, it means we have already invited the patient,
+            // If an enrollmentInvitationLinks exists, it means we have already invited the patient,
             // and we do not want to send them another invitation.
-            ->whereDoesntHave('enrollmentInvitationLink')
+            ->whereDoesntHave('enrollmentInvitationLinks')
             ->whereIn('status', [
                 Enrollee::QUEUE_AUTO_ENROLLMENT,
             ]);

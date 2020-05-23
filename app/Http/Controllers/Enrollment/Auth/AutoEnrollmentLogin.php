@@ -35,22 +35,23 @@ class AutoEnrollmentLogin extends Controller
     protected function authenticate(EnrollmentValidationRules $request)
     {
         $manager = new AutoEnrollmentCenterController(new EnrollmentInvitationService());
-        Auth::loginUsingId($request->input('user_id'), true);
+        $userId = (int) $request->input('user_id');
+        Auth::loginUsingId($userId, true);
 
         if (boolval($request->input('is_survey_only'))) {
-            $enrollee = Enrollee::fromUserId($request->input('user_id'));
+            $enrollee = Enrollee::fromUserId($userId);
 
             if ( ! $enrollee) {
                 abort(404);
             }
 
-            $enrollee->selfEnrollmentStatuses()->update([
+            $enrollee->selfEnrollmentStatus()->update([
                 'logged_in' => true,
             ]);
         }
 
         return $manager->enrollableInvitationManager(
-            $request->input('user_id'),
+            $userId,
             boolval($request->input('is_survey_only'))
         );
     }

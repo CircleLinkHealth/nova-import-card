@@ -20,7 +20,7 @@ trait EnrollableNotificationContent
      *
      * @return array|string
      */
-    public function emailAndSmsContent(User $notifiable, $isReminder)
+    public function emailAndSmsContent(User $notifiable, bool $isReminder)
     {
         $enrollableEmailContent = $this->getEmailContent($notifiable, $isReminder);
         $providerName           = $enrollableEmailContent['providerLastName'];

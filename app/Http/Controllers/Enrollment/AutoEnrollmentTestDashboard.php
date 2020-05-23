@@ -6,10 +6,11 @@
 
 namespace App\Http\Controllers\Enrollment;
 
+use App\Helpers\SelfEnrollmentHelpers;
 use App\Http\Controllers\Controller;
-use App\Jobs\SendSelfEnrollmentInvitationToPracticeEnrollees;
 use App\Jobs\FinalActionOnNonResponsivePatients;
 use App\Jobs\SelfEnrollmentEnrolleesReminder;
+use App\Jobs\SendSelfEnrollmentInvitationToPracticeEnrollees;
 use App\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
 use App\LoginLogout;
 use App\Notifications\SendEnrollmentEmail;
@@ -79,7 +80,7 @@ class AutoEnrollmentTestDashboard extends Controller
             ->whereHas('patientInfo')
             ->get();
 
-        $survey = $this->getEnrolleeSurvey();
+        $survey = SelfEnrollmentHelpers::getEnrolleeSurvey();
 
         foreach ($users as $user) {
             $surveyInstance = DB::table('survey_instances')
@@ -88,10 +89,10 @@ class AutoEnrollmentTestDashboard extends Controller
 
             if ($user->isSurveyOnly()) {
                 /** @var Enrollee $enrollee */
-                $enrollee = \CircleLinkHealth\Eligibility\Entities\Enrollee::fromUserId($user->id);
-                $this->deleteTestAwvUser($user->id, $surveyInstance);
+                $enrollee = Enrollee::fromUserId($user->id);
+                $this->deleteTestAwvUser($user, $surveyInstance);
                 $user->notifications()->delete();
-                $enrollee->enrollmentInvitationLink()->delete();
+                $enrollee->enrollmentInvitationLinks()->delete();
                 $enrollee->statusRequestsInfo()->delete();
 
                 DB::table('invitation_links')
@@ -110,9 +111,9 @@ class AutoEnrollmentTestDashboard extends Controller
 //                }
 //                $user->forceDelete();
             } else {
-                $this->deleteTestAwvUser($user->id, $surveyInstance);
+                $this->deleteTestAwvUser($user, $surveyInstance);
                 $user->notifications()->delete();
-                $user->enrollmentInvitationLink()->delete();
+                $user->enrollmentInvitationLinks()->delete();
                 $user->statusRequestsInfo()->delete();
                 $user->patientInfo()->update(
                     [
@@ -216,10 +217,12 @@ class AutoEnrollmentTestDashboard extends Controller
         return 'You can go back and proceed to Step 2.';
     }
 
-    private function deleteTestAwvUser($userId, $surveyInstance)
+    private function deleteTestAwvUser(User $user, $surveyInstance)
     {
-        if ( ! is_null($this->getAwvUserSurvey($userId, $surveyInstance)->first())) {
-            $this->getAwvUserSurvey($userId, $surveyInstance)->delete();
+        if ( ! SelfEnrollmentHelpers::awvUserSurveyQuery($user, $surveyInstance)->exists()) {
+            return;
         }
+
+        SelfEnrollmentHelpers::awvUserSurveyQuery($user, $surveyInstance)->delete();
     }
 }

@@ -49,17 +49,17 @@ class SelfEnrollmentEnrolleesReminder implements ShouldQueue
             $practice      = $this->getDemoPractice();
             $twoDaysAgo    = Carbon::parse(now())->startOfDay()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfDay()->toDateTimeString();
-            $this->getEnrolleUsersToSendReminder($untilEndOfDay, $twoDaysAgo, $practice->id)
+            $this->getEnrolleeUsersToSendReminder($untilEndOfDay, $twoDaysAgo, $practice->id)
                 ->each(function (User $enrollable) {
-                    SendEnrollmentReminders::dispatch($enrollable);
+                    SendSelfEnrollmentReminder::dispatch($enrollable);
                 });
 
             return;
         }
 
-        $this->getEnrolleUsersToSendReminder($untilEndOfDay, $twoDaysAgo)
+        $this->getEnrolleeUsersToSendReminder($untilEndOfDay, $twoDaysAgo)
             ->each(function (User $enrollable) {
-                SendEnrollmentReminders::dispatch($enrollable);
+                SendSelfEnrollmentReminder::dispatch($enrollable);
             });
     }
 
@@ -69,7 +69,7 @@ class SelfEnrollmentEnrolleesReminder implements ShouldQueue
      * @param  int                                                                                                                                                         $practiceId
      * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Query\Builder[]|\Illuminate\Support\Collection|User[]
      */
-    private function getEnrolleUsersToSendReminder($untilEndOfDay, $twoDaysAgo, int $practiceId = null)
+    private function getEnrolleeUsersToSendReminder($untilEndOfDay, $twoDaysAgo, int $practiceId = null)
     {
         return $this->sharedReminderQuery($untilEndOfDay, $twoDaysAgo)
             ->whereHas('enrollee', function ($enrollee) {

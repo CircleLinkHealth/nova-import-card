@@ -25,10 +25,6 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
 
     const USER = User::class;
     /**
-     * @var array
-     */
-    public $notificationContent;
-    /**
      * @var null
      */
     private $enrolleeModelId;
@@ -40,23 +36,14 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
      * @var string
      */
     private $url;
-    
+
     /**
      * Create a new notification instance.
-     * @param string $url
-     * @param bool $isReminder
      */
     public function __construct(string $url, bool $isReminder = false)
     {
         $this->isReminder = $isReminder;
         $this->url        = $url;
-    }
-
-    public function getNotificationContent(User $notifiable)
-    {
-        $this->notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
-
-        return $this->notificationContent;
     }
 
     public function middleware()
@@ -81,30 +68,26 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
      *
      * @return array
      */
-    public function toArray($notifiable)
-    {
-        return $this->toArrayData($notifiable);
-    }
-
-    /**
-     * @param $notifiable
-     *
-     * @throws \Exception
-     *
-     * @return array
-     */
-    public function toArrayData($notifiable)
+    public function toArray(User $notifiable)
     {
         if ($notifiable->isSurveyOnly()) {
             $enrollee = Enrollee::whereUserId($notifiable->id)->first();
+        
             if ( ! $enrollee) {
                 throw new \Exception("Could not find enrollee for user[$notifiable->id]");
             }
-
-            return $this->enrolleeArrayData($enrollee->id);
+        
+            return [
+                'enrollee_id'    => $enrollee->id,
+                'is_reminder'    => $this->isReminder,
+                'is_survey_only' => true,
+            ];
         }
-
-        return $this->patientArrayData();
+    
+        return [
+            'is_reminder'    => $this->isReminder,
+            'is_survey_only' => false,
+        ];
     }
 
     /**
@@ -116,7 +99,7 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        $this->getNotificationContent($notifiable);
+        $notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
 
         $fromName = config('mail.from.name'); //@todo: We dont need to show CircleLinkHealth as default
         if ( ! empty($notifiable->primaryPractice) && ! empty($notifiable->primaryPractice->display_name)) {
@@ -126,8 +109,8 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
         return (new AutoEnrollmentMailChannel($fromName))
             ->from(config('mail.from.address'), $fromName)
             ->subject('Wellness Program')
-            ->line($this->notificationContent['line1'])
-            ->line($this->notificationContent['line2'])
+            ->line($notificationContent['line1'])
+            ->line($notificationContent['line2'])
             ->action('Get my Care Coach', $this->url);
     }
 
@@ -141,30 +124,5 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     public function via($notifiable)
     {
         return ['database', 'mail'];
-    }
-
-    /**
-     * @param $enrolleeId
-     *
-     * @return array
-     */
-    private function enrolleeArrayData($enrolleeId)
-    {
-        return [
-            'enrollee_id'    => $enrolleeId,
-            'is_reminder'    => $this->isReminder,
-            'is_survey_only' => true,
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    private function patientArrayData()
-    {
-        return [
-            'is_reminder'    => $this->isReminder,
-            'is_survey_only' => false,
-        ];
     }
 }
