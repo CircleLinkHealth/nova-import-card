@@ -84,10 +84,6 @@ class SendSelfEnrollmentReminders implements ShouldQueue
             $query = $this->getEnrolleeUsersToSendReminder($untilEndOfDay, $twoDaysAgo, $practiceId);
         }
 
-        if (is_null($query)) {
-            return;
-        }
-
         $query->chunk(100, function ($users) {
             $users->each(function (User $enrollable) {
                 SendSelfEnrollmentReminder::dispatch($enrollable);
@@ -111,7 +107,7 @@ class SendSelfEnrollmentReminders implements ShouldQueue
         return $this->sharedReminderQuery($untilEndOfDay, $twoDaysAgo)
             ->whereHas('enrollee', function ($enrollee) {
                 $enrollee->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT)
-                    ->where('source', '=', Enrollee::UNREACHABLE_PATIENT); //  It's NOT Original enrollee.
+                    ->where('source', '=', Enrollee::UNREACHABLE_PATIENT);
             })
             ->when($practiceId, function ($q) use ($practiceId) {
                 return $q->where('program_id', $practiceId);
