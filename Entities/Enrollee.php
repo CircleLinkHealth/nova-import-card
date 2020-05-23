@@ -467,7 +467,7 @@ class Enrollee extends BaseModel
         return $this->belongsTo(EligibilityJob::class);
     }
 
-    public static function fromUserId(int $userId)
+    public static function fromUserId(int $userId): ?Enrollee
     {
         return static::whereUserId($userId)->first();
     }
