@@ -4050,21 +4050,4 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             );
         });
     }
-    
-    public function hasCompletedSelfEnrollmentSurvey()
-    {
-        $surveyLink = $this->getSurveyInvitationLink($this->patientInfo->id);
-        
-        if ( ! empty($surveyLink)) {
-            $surveyInstance = DB::table('survey_instances')
-                ->where('survey_id', '=', $surveyLink->survey_id)
-                ->first();
-            
-            return $this->getAwvUserSurvey($this->id, $surveyInstance)
-                ->where('status', '=', 'completed')
-                ->exists();
-        }
-        
-        return false;
-    }
 }
