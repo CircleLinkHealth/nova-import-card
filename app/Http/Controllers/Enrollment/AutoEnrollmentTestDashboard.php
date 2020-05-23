@@ -9,10 +9,9 @@ namespace App\Http\Controllers\Enrollment;
 use App\Helpers\SelfEnrollmentHelpers;
 use App\Http\Controllers\Controller;
 use App\Jobs\FinalActionOnNonResponsivePatients;
-use App\Jobs\SelfEnrollmentEnrolleesReminder;
 use App\Jobs\SendSelfEnrollmentInvitationToPracticeEnrollees;
 use App\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
-use App\LoginLogout;
+use App\Jobs\SendSelfEnrollmentReminders;
 use App\Notifications\SendEnrollmentEmail;
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
@@ -143,7 +142,7 @@ class AutoEnrollmentTestDashboard extends Controller
     public function sendEnrolleesReminderTestMethod()
     {
         try {
-            SelfEnrollmentEnrolleesReminder::dispatch();
+            SendSelfEnrollmentReminders::dispatch(SendSelfEnrollmentReminders::REMIND_ENROLLEES);
         } catch (\Exception $e) {
             return 'Something went wrong';
         }

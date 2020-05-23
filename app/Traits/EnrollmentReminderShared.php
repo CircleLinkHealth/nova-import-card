@@ -14,8 +14,10 @@ use CircleLinkHealth\Customer\Entities\User;
 
 trait EnrollmentReminderShared
 {
-    public function sharedReminderQuery(Carbon $to, Carbon $from)
+    public function sharedReminderQuery(Carbon $end, Carbon $start)
     {
+        $from = $start->toDateTimeString();
+        $to   = $end->toDateTimeString();
 //         We send the first notification marked as is_reminder => false
 //         We send the second notification(reminder => true).
 //         We dont want to send a second reminder if user has 1 true and 1 false is_reminder.
