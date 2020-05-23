@@ -98,7 +98,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
 //        Will be the same page where the admin can send the notifs
 //        $noResponsivePatient->notify(new SendEnrollmentLetterToNonResponsivePatients($noResponsivePatient, $pages));
     }
-    
+
     /**
      * @param $users
      *

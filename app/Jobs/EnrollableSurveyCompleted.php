@@ -214,7 +214,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 'auto_enrollment_triggered' => true,
             ]);
 //    It's Duplication but better to make sense. Will refactor later
-    
+
             $user->update([
                 'address' => $addressData['address'],
                 'city'    => $addressData['city'],
@@ -222,7 +222,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 'zip'     => $addressData['zip'],
                 'email'   => $emailToString,
             ]);
-            
+
             $this->updateEnrolleePatient(
                 $user,
                 $preferredContactDays,

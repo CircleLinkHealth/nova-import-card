@@ -27,6 +27,16 @@ class SelfEnrollmentHelpers
             ->where('survey_instance_id', '=', $surveyInstance->id);
     }
 
+    public static function getCurrentYearEnrolleeSurveyInstance(): object
+    {
+        return \Cache::remember('current_year_self_enrollment_survey_instance_'.now()->year.'_'.SelfEnrollmentController::ENROLLEES_SURVEY_NAME, 2, function () {
+            return DB::table('survey_instances')
+                ->where('survey_id', '=', self::getEnrolleeSurvey()->id)
+                ->where('year', '=', now()->year)
+                ->firstOrFail();
+        });
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
      */
@@ -37,21 +47,21 @@ class SelfEnrollmentHelpers
         });
     }
 
+    /**
+     * @return \App\User|Enrollee|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
+     */
+    public static function getEnrollableModel(User $user)
+    {
+        return $user->isSurveyOnly()
+            ? Enrollee::fromUserId($user->id)
+            : User::find($user->id);
+    }
+
     public static function getEnrolleeSurvey(): object
     {
         return \Cache::remember('self_enrollment_survey_'.SelfEnrollmentController::ENROLLEES_SURVEY_NAME, 2, function () {
             return DB::table('surveys')
                 ->where('name', '=', SelfEnrollmentController::ENROLLEES_SURVEY_NAME)
-                ->firstOrFail();
-        });
-    }
-    
-    public static function getCurrentYearEnrolleeSurveyInstance(): object
-    {
-        return \Cache::remember('current_year_self_enrollment_survey_instance_'.now()->year.'_'.SelfEnrollmentController::ENROLLEES_SURVEY_NAME, 2, function () {
-            return DB::table('survey_instances')
-                ->where('survey_id', '=', self::getEnrolleeSurvey()->id)
-                ->where('year', '=', now()->year)
                 ->firstOrFail();
         });
     }
@@ -110,15 +120,5 @@ class SelfEnrollmentHelpers
         return self::awvUserSurveyQuery($user, $surveyInstance)
             ->where('status', '=', 'completed')
             ->exists();
-    }
-    
-    /**
-     * @return \App\User|Enrollee|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
-     */
-    public static function getEnrollableModel(User $user)
-    {
-        return $user->isSurveyOnly()
-            ? Enrollee::fromUserId($user->id)
-            : User::find($user->id);
     }
 }

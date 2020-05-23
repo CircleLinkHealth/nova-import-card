@@ -146,7 +146,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
                         $ccda->patient_id = $userCreatedFromEnrollee->id;
                         $ccda->save();
                     }
-                    
+
                     $this->attachPhones($userCreatedFromEnrollee, $enrollee);
 
                     if ( ! empty($enrollee->provider)) {
@@ -197,7 +197,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
                 'is_primary' => true,
             ]);
         }
-        
+
         $primaryPhone = $enrollee->primary_phone_e164;
         if ($primaryPhone) {
             $userCreatedFromEnrollee->phoneNumbers()->create([
@@ -206,7 +206,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
                 'is_primary' => false,
             ]);
         }
-        
+
         $homePhone = $enrollee->home_phone_e164;
         if ($homePhone) {
             $userCreatedFromEnrollee->phoneNumbers()->create([
@@ -215,7 +215,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
                 'is_primary' => false,
             ]);
         }
-        
+
         $otherPhone = $enrollee->other_phone_e164;
         if ($otherPhone) {
             $userCreatedFromEnrollee->phoneNumbers()->create([
