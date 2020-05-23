@@ -59,6 +59,6 @@ class SendSelfEnrollmentReminder implements ShouldQueue
 
         $invitation = $enrollee->enrollmentInvitationLinks->first();
 
-        SendSelfEnrollmentInvitationToEligiblePatient::dispatch($this->patient, optional($invitation)->button_color, true);
+        SendSelfEnrollmentInvitation::dispatch($this->patient, optional($invitation)->button_color, true);
     }
 }

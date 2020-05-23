@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\SendSelfEnrollmentInvitationToEligiblePatient;
+use App\Jobs\SendSelfEnrollmentInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;
 
@@ -34,6 +34,6 @@ class SelfEnrollmentManualInviteCommand extends Command
     {
         $enrollee = Enrollee::with('user')->has('user')->findOrFail($this->argument('enrolleeId'));
 
-        SendSelfEnrollmentInvitationToEligiblePatient::dispatch($enrollee->user);
+        SendSelfEnrollmentInvitation::dispatch($enrollee->user);
     }
 }

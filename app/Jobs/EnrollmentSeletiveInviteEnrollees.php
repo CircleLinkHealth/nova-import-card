@@ -42,7 +42,7 @@ class EnrollmentSeletiveInviteEnrollees implements ShouldQueue
     {
         User::whereIn('id', array_filter($this->userIds))->chunk(100, function ($users) {
             foreach ($users as $user) {
-                SendSelfEnrollmentInvitationToEligiblePatient::dispatch($user);
+                SendSelfEnrollmentInvitation::dispatch($user);
             }
         });
     }

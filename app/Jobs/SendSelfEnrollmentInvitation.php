@@ -19,7 +19,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
 
-class SendSelfEnrollmentInvitationToEligiblePatient implements ShouldQueue
+class SendSelfEnrollmentInvitation implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;

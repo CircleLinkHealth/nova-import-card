@@ -81,7 +81,7 @@ class SendSelfEnrollmentInvitationToPracticeEnrollees implements ShouldQueue
             ->select(['user_id'])
             ->chunk(100, function ($enrollees) {
                 foreach ($enrollees as $enrollee) {
-                    SendSelfEnrollmentInvitationToEligiblePatient::dispatch($enrollee->user, $this->color);
+                    SendSelfEnrollmentInvitation::dispatch($enrollee->user, $this->color);
 
                     if (++$this->dispatched === $this->amount) {
                         //break chunking

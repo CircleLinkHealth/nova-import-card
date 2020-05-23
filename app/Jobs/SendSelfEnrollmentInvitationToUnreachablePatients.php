@@ -49,7 +49,7 @@ class SendSelfEnrollmentInvitationToUnreachablePatients implements ShouldQueue
     {
         $this->getUnreachablePatients($this->practiceId)->chunk(100, function ($enrollees) {
             foreach ($enrollees as $enrollee) {
-                SendSelfEnrollmentInvitationToEligiblePatient::dispatch($enrollee->user);
+                SendSelfEnrollmentInvitation::dispatch($enrollee->user);
 
                 if (++$this->dispatched === $this->amount) {
                     //break chunking
