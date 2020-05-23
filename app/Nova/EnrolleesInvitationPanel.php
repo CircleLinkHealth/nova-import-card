@@ -139,14 +139,14 @@ class EnrolleesInvitationPanel extends Resource
             $awvUserSurvey = SelfEnrollmentHelpers::awvUserSurveyQuery($this->resource->user, $surveyInstance)->first();
         }
 
-        $lastEnrollmentInvitationLink = $this->resource->enrollmentInvitationLinks->isNotEmpty()
-            ? $this->resource->enrollmentInvitationLinks->sortByDesc('created_at')->first()
+        $firstEnrollmentInvitationLink = $this->resource->enrollmentInvitationLinks->isNotEmpty()
+            ? $this->resource->enrollmentInvitationLinks->sortBy('created_at')->first()
             : null;
 
         $enroleeHasLoggedIn = $this->enrolleeHasLoggedIn();
 
-        $inviteSentDate = ! is_null($lastEnrollmentInvitationLink) && ! is_null($lastEnrollmentInvitationLink->created_at)
-            ? $lastEnrollmentInvitationLink->created_at->toDateString()
+        $inviteSentDate = ! is_null($firstEnrollmentInvitationLink) && ! is_null($firstEnrollmentInvitationLink->created_at)
+            ? $firstEnrollmentInvitationLink->created_at->toDateString()
             : 'N/A';
 
         $requestedInfoDate = ! is_null($this->resource->statusRequestsInfo) && ! is_null($this->resource->statusRequestsInfo->created_at)
@@ -178,12 +178,12 @@ class EnrolleesInvitationPanel extends Resource
                 return  $enrolledDate;
             }),
 
-            Boolean::make('Invited', function () use ($lastEnrollmentInvitationLink) {
-                return ! is_null($lastEnrollmentInvitationLink);
+            Boolean::make('Invited', function () use ($firstEnrollmentInvitationLink) {
+                return ! is_null($firstEnrollmentInvitationLink);
             }),
 
-            Boolean::make('Has viewed login form', function () use ($lastEnrollmentInvitationLink) {
-                return ! is_null($lastEnrollmentInvitationLink) && true === (bool) $lastEnrollmentInvitationLink->manually_expired;
+            Boolean::make('Has viewed login form', function () use ($firstEnrollmentInvitationLink) {
+                return ! is_null($firstEnrollmentInvitationLink) && true === (bool) $firstEnrollmentInvitationLink->manually_expired;
             }),
 
             Boolean::make('Has viewed Letter', function () use ($enroleeHasLoggedIn) {
