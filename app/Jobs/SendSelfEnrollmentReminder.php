@@ -51,7 +51,7 @@ class SendSelfEnrollmentReminder implements ShouldQueue
         if (empty($this->patient->enrollee)) {
             throw new \Exception("user[{$this->patient->id}] does not have an enrollee.");
         }
-        
+
         if ($this->patient->enrollee->statusRequestsInfo instanceof EnrollableRequestInfo) {
             return;
         }
