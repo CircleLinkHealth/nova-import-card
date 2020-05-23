@@ -171,7 +171,7 @@ class EnrolleesInvitationPanel extends Resource
             }),
 
             Date::make('Date Asked For Call', function () use ($requestedInfoDate) {
-                return  $requestedInfoDate;
+                return $requestedInfoDate;
             }),
 
             Date::make('Date Enrolled', function () use ($enrolledDate) {
@@ -189,8 +189,8 @@ class EnrolleesInvitationPanel extends Resource
             Boolean::make('Has viewed Letter', function () use ($enroleeHasLoggedIn) {
                 return $enroleeHasLoggedIn;
             }),
-            Boolean::make('Requested Call', function () {
-                return $this->resource->statusRequestsInfo()->exists();
+            Boolean::make('Requested Call', function () use ($requestedInfoDate) {
+                return ! ('N/A' === $requestedInfoDate);
             }),
             Boolean::make("Has clicked 'Get my Care Coach'", function () use ($enroleeHasLoggedIn) {
                 if (is_null($this->resource->user)) {
