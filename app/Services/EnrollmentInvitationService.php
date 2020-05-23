@@ -108,7 +108,7 @@ class EnrollmentInvitationService
     public function sendToAwv($enrollable)
     {
         try {
-            $surveyLink = SelfEnrollmentHelpers::getSurveyInvitationLink($enrollable->patientInfo->id);
+            $surveyLink = SelfEnrollmentHelpers::getSurveyInvitationLink($enrollable->patientInfo);
         } catch (\Exception $exception) {
             \Log::alert($exception);
             throw new \Exception($exception);

@@ -120,7 +120,7 @@ trait EnrollableManagement
 //        if (Enrollee::class === get_class($notifiable)) {
 //            return false;
 //        }
-        $surveyLink = SelfEnrollmentHelpers::getSurveyInvitationLink($notifiable->patientInfo->id);
+        $surveyLink = SelfEnrollmentHelpers::getSurveyInvitationLink($notifiable->patientInfo);
         if ( ! empty($surveyLink)) {
             $surveyInstance = DB::table('survey_instances')
                 ->where('survey_id', '=', $surveyLink->survey_id)
