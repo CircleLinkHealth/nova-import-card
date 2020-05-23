@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e6e685ceb0117f177757116bec378861",
+    "content-hash": "5ce9c7d2b3635d7a06be3826b7da0d67",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -547,7 +547,7 @@
             "version": "3.1.4",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git",
+                "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper-module.git",
                 "reference": "8612c5c646ee5ce8f823a713aa940ff444c27247"
             },
             "require": {
@@ -836,11 +836,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v1.1.4",
+            "version": "v1.1.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "6d3948e3ccd642dbdf1821becf29c902e097f97f"
+                "reference": "5dcb9ca07096c6d1c108052183aea1c17498b74f"
             },
             "type": "laravel-module",
             "extra": {
@@ -865,7 +865,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-29T23:47:12+00:00"
+            "time": "2020-05-20T19:56:34+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
