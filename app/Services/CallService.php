@@ -6,7 +6,7 @@
 
 namespace App\Services;
 
-use App\CallView;
+use App\CallViewNurses;
 
 class CallService
 {
@@ -19,7 +19,7 @@ class CallService
      */
     public function filterCalls($dropdownStatus, $filterPriority, string $today, $nurseId)
     {
-        $calls = CallView::where('nurse_id', '=', $nurseId);
+        $calls = CallViewNurses::where('nurse_id', '=', $nurseId);
 
         if ('completed' === $dropdownStatus && 'all' === $filterPriority) {
             $calls->whereIn('status', ['reached', 'done']);

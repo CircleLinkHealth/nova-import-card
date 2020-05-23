@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Events\AutoEnrollableCollected;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -40,7 +40,10 @@ class EnrollmentSeletiveInviteEnrollees implements ShouldQueue
      */
     public function handle()
     {
-//        Selective invite will allow sending second invitation to user.
-        AutoEnrollableCollected::dispatch($this->userIds);
+        User::whereIn('id', array_filter($this->userIds))->chunk(100, function ($users) {
+            foreach ($users as $user) {
+                SendSelfEnrollmentInvitation::dispatch($user);
+            }
+        });
     }
 }

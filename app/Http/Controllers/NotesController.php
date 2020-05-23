@@ -535,6 +535,13 @@ class NotesController extends Controller
 
         $patient = User::findOrFail($patientId);
 
+        if ( ! isset($input['body']) || null === $input['body']) {
+            return redirect()
+                ->back()
+                ->withErrors(['Cannot create note with empty body.'])
+                ->withInput();
+        }
+
         // validating attested problems by nurse. Checking existence since we are about to attach them below
         $request->validate([
             'attested_problems.ccd_problem_id' => 'exists:ccd_problems',
@@ -932,11 +939,11 @@ class NotesController extends Controller
         $services = $pms->allChargeableServices;
 
         if ($services->where('code', ChargeableService::CCM)->isNotEmpty()) {
-            if ($pms->ccmAttestedProblems()->count() < 2) {
+            if ($pms->ccmAttestedProblems(true)->count() < 2) {
                 $requirements['ccm_2'] = true;
             }
 
-            if ($services->where('code', ChargeableService::BHI)->isNotEmpty() && $pms->bhiAttestedProblems()->count() < 1) {
+            if ($services->where('code', ChargeableService::BHI)->isNotEmpty() && $pms->bhiAttestedProblems(true)->count() < 1) {
                 $requirements['is_complex'] = true;
                 $requirements['bhi_1']      = true;
             }

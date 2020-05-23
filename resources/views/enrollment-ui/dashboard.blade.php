@@ -22,7 +22,6 @@
     $urlShort   = $pieces[0];
 
     $bhiTime     = 0;
-    $ccmTime     = optional(App\CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id))->total_time_in_system ?? 0;
     $monthlyTime = $user->formattedTime($ccmTime);
     ?>
 

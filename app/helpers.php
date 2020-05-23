@@ -6,6 +6,7 @@
 
 use App\Constants;
 use App\Jobs\SendSlackMessage;
+use AshAllenDesign\ShortURL\Classes\Builder as ShortUrlBuilder;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Exceptions\CsvFieldNotFoundException;
@@ -1165,17 +1166,13 @@ if ( ! function_exists('showDiabetesBanner')) {
 
 if ( ! function_exists('shortenUrl')) {
     /**
-     * Create a short URL.
-     *
      * @param $url
-     *
-     * @throws \Waavi\UrlShortener\InvalidResponseException
-     *
+     * @throws \AshAllenDesign\ShortURL\Exceptions\ShortURLException
      * @return string
      */
     function shortenUrl($url)
     {
-        return \UrlShortener::driver('bitly-gat')->shorten($url);
+        return (new ShortUrlBuilder())->destinationUrl($url)->make()->default_short_url;
     }
 }
 

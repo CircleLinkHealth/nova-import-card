@@ -9,13 +9,15 @@ namespace App\Charts;
 use Carbon\CarbonPeriod;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use ConsoleTVs\Charts\Classes\Chartjs\Chart;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class OpsChart extends Chart
 {
-    const ADMIN_CHART_CACHE_KEY = 'chart:clh:total_billable_patients';
+    const ADMIN_CHART_CACHE_KEY                  = 'chart:clh:total_billable_patients';
+    const AUTO_ENROLMENT_INVITES_CHART_CACHE_KEY = 'chart:clh:auto_enrollment_invites';
 
     /**
      * Initializes the chart.
@@ -25,6 +27,27 @@ class OpsChart extends Chart
     public function __construct()
     {
         parent::__construct();
+    }
+
+    /**
+     * Incomplete!
+     *
+     * @return mixed
+     */
+    public static function autoEnrollmentChart(int $practiceId)
+    {
+        return Cache::remember(
+            self::AUTO_ENROLMENT_INVITES_CHART_CACHE_KEY,
+            10,
+            function () use ($practiceId) {
+                $period = CarbonPeriod::create(now()->subWeeks(2), now());
+
+                Enrollee::where('practice_id', $practiceId)->where('status', Enrollee::ENROLLED)->where('auto_enrollment_triggered', true);
+
+                foreach ($period as $date) {
+                }
+            }
+        );
     }
 
     public static function clearClhCachedChart()

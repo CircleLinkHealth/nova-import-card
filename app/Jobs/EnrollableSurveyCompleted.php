@@ -213,7 +213,14 @@ class EnrollableSurveyCompleted implements ShouldQueue
             ]);
 //    It's Duplication but better to make sense. Will refactor later
 
-            $this->updateEnrolleeUser($user, $addressData, $emailToString);
+            $user->update([
+                'address' => $addressData['address'],
+                'city'    => $addressData['city'],
+                'state'   => $addressData['state'],
+                'zip'     => $addressData['zip'],
+                'email'   => $emailToString,
+            ]);
+
             $this->updateEnrolleePatient(
                 $user,
                 $preferredContactDays,
@@ -312,8 +319,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
     private function updateEnrolleAvatarModel($userId)
     {
-        $enrolleAvatar = $this->getEnrollee($userId);
-        $enrolleAvatar->update([
+        Enrollee::whereUserId($userId)->update([
             'status'                    => Enrollee::ENROLLED,
             'auto_enrollment_triggered' => true,
         ]);
@@ -335,18 +341,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
             'daily_contact_window_end'   => $patientContactTimeEnd,
             'auto_enrollment_triggered'  => true,
             'ccm_status'                 => Patient::ENROLLED,
-        ]);
-    }
-
-    private function updateEnrolleeUser(User $user, array $addressData, string $email)
-    {
-//        Its duplication but i prefer it to make sense
-        $user->update([
-            'address' => $addressData['address'],
-            'city'    => $addressData['city'],
-            'state'   => $addressData['state'],
-            'zip'     => $addressData['zip'],
-            'email'   => $email,
         ]);
     }
 

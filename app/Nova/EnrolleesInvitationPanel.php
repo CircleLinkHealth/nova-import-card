@@ -6,14 +6,19 @@
 
 namespace App\Nova;
 
+use App\Helpers\SelfEnrollmentHelpers;
 use App\Nova\Actions\SelfEnrollmentManualInvite;
+use App\Nova\Metrics\AllInvitesButtonColor;
+use App\Nova\Metrics\SelfEnrolledButtonColor;
+use App\Nova\Metrics\SelfEnrolledPatientTotal;
+use App\Nova\Metrics\TotalInvitationsSentHourly;
 use App\Traits\EnrollableManagement;
-use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -21,7 +26,7 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 class EnrolleesInvitationPanel extends Resource
 {
     use EnrollableManagement;
-    use HasEnrollableInvitation;
+
     const COMPLETED = 'completed';
 
     const IN_PROGRESS = 'in_progress';
@@ -47,6 +52,8 @@ class EnrolleesInvitationPanel extends Resource
      * @var string
      */
     public static $title = 'id';
+
+    public static $with = ['selfEnrollmentStatus', 'enrollmentInvitationLinks', 'user.patientInfo', 'statusRequestsInfo'];
 
     /**
      * Get the actions available for the resource.
@@ -110,6 +117,10 @@ class EnrolleesInvitationPanel extends Resource
                     'is_patient'  => false,
                 ]
             ),
+            (new SelfEnrolledPatientTotal(self::getPracticeId($this))),
+            (new SelfEnrolledButtonColor(self::getPracticeId($this))),
+            (new AllInvitesButtonColor(self::getPracticeId($this))),
+            (new TotalInvitationsSentHourly(self::getPracticeId($this))),
         ];
     }
 
@@ -120,10 +131,31 @@ class EnrolleesInvitationPanel extends Resource
      */
     public function fields(Request $request)
     {
-        $enrollmentInvitationLink = $this->enrollmentInvitationLink();
-        $enroleeHasLoggedIn       = $this->enrolleeHasLoggedIn($this->resource->user_id);
-        $surveyInstance           = $this->getSurveyInstance();
-        $awvUserSurvey            = $this->getAwvUserSurvey($this->resource->user_id, $surveyInstance);
+        $surveyInstance = $this->getSurveyInstance();
+
+        $awvUserSurvey = null;
+
+        if ( ! is_null($this->resource->user)) {
+            $awvUserSurvey = SelfEnrollmentHelpers::awvUserSurveyQuery($this->resource->user, $surveyInstance)->first();
+        }
+
+        $firstEnrollmentInvitationLink = $this->resource->enrollmentInvitationLinks->isNotEmpty()
+            ? $this->resource->enrollmentInvitationLinks->sortBy('created_at')->first()
+            : null;
+
+        $enroleeHasLoggedIn = $this->enrolleeHasLoggedIn();
+
+        $inviteSentDate = ! is_null($firstEnrollmentInvitationLink) && ! is_null($firstEnrollmentInvitationLink->created_at)
+            ? $firstEnrollmentInvitationLink->created_at->toDateString()
+            : 'N/A';
+
+        $requestedInfoDate = ! is_null($this->resource->statusRequestsInfo) && ! is_null($this->resource->statusRequestsInfo->created_at)
+            ? $this->resource->statusRequestsInfo->created_at->toDateString()
+            : 'N/A';
+
+        $enrolledDate = Enrollee::ENROLLED === $this->resource->status && $this->resource->user && $this->resource->user->patientInfo && ! is_null($this->resource->user->patientInfo->registration_date)
+        ? $this->resource->user->patientInfo->registration_date->toDateString()
+            : 'N/A';
 
         return [
             ID::make()->sortable(),
@@ -134,42 +166,66 @@ class EnrolleesInvitationPanel extends Resource
             Text::make('Last name', 'last_name')
                 ->sortable(),
 
-            Boolean::make('Invited', function () use ($enrollmentInvitationLink) {
-                return ! empty($enrollmentInvitationLink->first());
+            Date::make('Date Sent', function () use ($inviteSentDate) {
+                return $inviteSentDate;
             }),
 
-            Boolean::make('Has viewed login form', function () use ($enrollmentInvitationLink) {
-                return optional($enrollmentInvitationLink)->where('manually_expired', true)->exists();
+            Date::make('Date Asked For Call', function () use ($requestedInfoDate) {
+                return $requestedInfoDate;
+            }),
+
+            Date::make('Date Enrolled', function () use ($enrolledDate) {
+                return  $enrolledDate;
+            }),
+
+            Boolean::make('Invited', function () use ($firstEnrollmentInvitationLink) {
+                return ! is_null($firstEnrollmentInvitationLink);
+            }),
+
+            Boolean::make('Has viewed login form', function () {
+                return $this->resource->enrollmentInvitationLinks->where('manually_expired', true)->isNotEmpty();
             }),
 
             Boolean::make('Has viewed Letter', function () use ($enroleeHasLoggedIn) {
                 return $enroleeHasLoggedIn;
             }),
-            Boolean::make('Requested Call', function () {
-                return $this->statusRequestsInfo()->exists();
+            Boolean::make('Requested Call', function () use ($requestedInfoDate) {
+                return ! ('N/A' === $requestedInfoDate);
             }),
-            Boolean::make("Has clicked 'Get my Care Coach'", function () use ($enroleeHasLoggedIn, $awvUserSurvey) {
+            Boolean::make("Has clicked 'Get my Care Coach'", function () use ($enroleeHasLoggedIn) {
+                if (is_null($this->resource->user)) {
+                    return false;
+                }
+
                 if ( ! $enroleeHasLoggedIn) {
                     return false;
                 }
 
-                return  $awvUserSurvey->exists();
+                $survey = SelfEnrollmentHelpers::getEnrolleeSurvey();
+
+                if (empty($survey)) {
+                    return false;
+                }
+
+                $surveyInstance = $this->getSurveyInstance();
+
+                return SelfEnrollmentHelpers::awvUserSurveyQuery($this->resource->user, $surveyInstance)->exists();
             }),
 
-            Boolean::make('Survey in progress', function () use ($enroleeHasLoggedIn, $awvUserSurvey) {
+            Boolean::make('Survey in progress', function () use ($enroleeHasLoggedIn) {
                 if ( ! $enroleeHasLoggedIn) {
                     return false;
                 }
 
-                return self::IN_PROGRESS === optional($awvUserSurvey->first())->status;
+                return self::IN_PROGRESS === optional($this->resource->selfEnrollmentStatus)->awv_survey_status;
             }),
 
-            Boolean::make('Survey Completed', function () use ($enroleeHasLoggedIn, $awvUserSurvey) {
+            Boolean::make('Survey Completed', function () use ($enroleeHasLoggedIn) {
                 if ( ! $enroleeHasLoggedIn) {
                     return false;
                 }
 
-                return self::COMPLETED === optional($awvUserSurvey->first())->status;
+                return self::COMPLETED === optional($this->resource->selfEnrollmentStatus)->awv_survey_status;
             }),
 
             Boolean::make('Enrolled', function () {
@@ -200,7 +256,8 @@ class EnrolleesInvitationPanel extends Resource
             ->where(function ($q) {
                 $q->where('source', '!=', Enrollee::UNREACHABLE_PATIENT)
                     ->orWhereNull('source');
-            });
+            })
+            ->has('selfEnrollmentStatus');
     }
 
     /**
@@ -221,16 +278,23 @@ class EnrolleesInvitationPanel extends Resource
         return [];
     }
 
-    private static function getPracticeId(Resource $thisResource = null)
+    private function enrolleeHasLoggedIn(): bool
+    {
+        return $this->resource->selfEnrollmentStatus && $this->resource->selfEnrollmentStatus->logged_in;
+    }
+
+    private static function getPracticeId(?EnrolleesInvitationPanel $resource = null)
     {
         $url = parse_url($_SERVER['HTTP_REFERER']);
-        if (isset($url['query'])) {
+
+        if (is_array($url) && array_key_exists('query', $url)) {
             parse_str($url['query'], $params);
 
             return $params['practice_id'];
         }
-        if ($thisResource) {
-            return $thisResource->resource->practice_id;
+
+        if ($resource) {
+            return $resource->resource->practice_id;
         }
 
         return null;
@@ -238,7 +302,7 @@ class EnrolleesInvitationPanel extends Resource
 
     private function getSurveyInstance()
     {
-        $survey = $this->getEnrolleeSurvey();
+        $survey = SelfEnrollmentHelpers::getEnrolleeSurvey();
 
         return DB::table('survey_instances')
             ->where('survey_id', '=', $survey->id)

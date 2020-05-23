@@ -9,30 +9,22 @@ namespace App\Notifications;
 // This file is part of CarePlan Manager by CircleLink Health.
 
 use App\Notifications\Channels\AutoEnrollmentMailChannel;
-use App\Traits\EnrollableManagement;
 use App\Traits\EnrollableNotificationContent;
+use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Spatie\RateLimitedMiddleware\RateLimited;
 
 class SendEnrollmentEmail extends Notification implements ShouldQueue
 {
-    use EnrollableManagement;
     use EnrollableNotificationContent;
     use Queueable;
 
     const USER = User::class;
-    /**
-     * @var array
-     */
-    public $notificationContent;
-    /**
-     * @var null
-     */
-    private $color;
     /**
      * @var null
      */
@@ -41,24 +33,33 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
      * @var bool
      */
     private $isReminder;
+    /**
+     * @var string
+     */
+    private $url;
 
     /**
      * Create a new notification instance.
-     *
-     * @param bool $isReminder
-     * @param null $color
      */
-    public function __construct($isReminder = false, $color = null)
+    public function __construct(string $url, bool $isReminder = false)
     {
         $this->isReminder = $isReminder;
-        $this->color      = $color;
+        $this->url        = $url;
     }
 
-    public function getNotificationContent(User $notifiable)
+    public function middleware()
     {
-        $this->notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
+        $rateLimitedMiddleware = (new RateLimited())
+            ->allow(10)
+            ->everySeconds(60)
+            ->releaseAfterSeconds(90);
 
-        return $this->notificationContent;
+        return [$rateLimitedMiddleware];
+    }
+
+    public function retryUntil(): \DateTime
+    {
+        return now()->addMinutes(10);
     }
 
     /**
@@ -68,30 +69,26 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
      *
      * @return array
      */
-    public function toArray($notifiable)
-    {
-        return $this->toArrayData($notifiable);
-    }
-
-    /**
-     * @param $notifiable
-     *
-     * @throws \Exception
-     *
-     * @return array
-     */
-    public function toArrayData($notifiable)
+    public function toArray(User $notifiable)
     {
         if ($notifiable->isSurveyOnly()) {
             $enrollee = Enrollee::whereUserId($notifiable->id)->first();
+
             if ( ! $enrollee) {
                 throw new \Exception("Could not find enrollee for user[$notifiable->id]");
             }
 
-            return $this->enrolleeArrayData($enrollee->id);
+            return [
+                'enrollee_id'    => $enrollee->id,
+                'is_reminder'    => $this->isReminder,
+                'is_survey_only' => true,
+            ];
         }
 
-        return $this->patientArrayData();
+        return [
+            'is_reminder'    => $this->isReminder,
+            'is_survey_only' => false,
+        ];
     }
 
     /**
@@ -103,19 +100,23 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        $this->getNotificationContent($notifiable);
+        $notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
 
         $fromName = config('mail.from.name'); //@todo: We dont need to show CircleLinkHealth as default
         if ( ! empty($notifiable->primaryPractice) && ! empty($notifiable->primaryPractice->display_name)) {
             $fromName = $notifiable->primaryPractice->display_name;
         }
 
+        if (empty($this->url)) {
+            throw new InvalidArgumentException("`url` cannot be empty. User ID {$notifiable->id}");
+        }
+
         return (new AutoEnrollmentMailChannel($fromName))
             ->from(config('mail.from.address'), $fromName)
             ->subject('Wellness Program')
-            ->line($this->notificationContent['line1'])
-            ->line($this->notificationContent['line2'])
-            ->action('Get my Care Coach', url($this->createInvitationLink($notifiable)));
+            ->line($notificationContent['line1'])
+            ->line($notificationContent['line2'])
+            ->action('Get my Care Coach', $this->url);
     }
 
     /**
@@ -128,30 +129,5 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     public function via($notifiable)
     {
         return ['database', 'mail'];
-    }
-
-    /**
-     * @param $enrolleeId
-     *
-     * @return array
-     */
-    private function enrolleeArrayData($enrolleeId)
-    {
-        return [
-            'enrollee_id'    => $enrolleeId,
-            'is_reminder'    => $this->isReminder,
-            'is_survey_only' => true,
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    private function patientArrayData()
-    {
-        return [
-            'is_reminder'    => $this->isReminder,
-            'is_survey_only' => false,
-        ];
     }
 }
