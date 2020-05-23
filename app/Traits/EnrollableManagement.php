@@ -6,11 +6,11 @@
 
 namespace App\Traits;
 
+use App\Helpers\SelfEnrollmentHelpers;
 use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus;
@@ -20,59 +20,12 @@ use Illuminate\Support\Facades\URL;
 
 trait EnrollableManagement
 {
-    //@todo: Move methods used in one place to that place.
-
-    /**
-     * @param $enrollable
-     *
-     * @return bool
-     */
-    public function activeEnrollmentInvitationsExists($enrollable)
-    {
-        return $enrollable->enrollmentInvitationLink->where('manually_expired', false)->exists();
-    }
-
-    /**
-     * @param $notifiable
-     * @param $data
-     *
-     * @return string
-     */
-    public function createInvitationLink($notifiable)
-    {
-        $url = URL::temporarySignedRoute('invitation.enrollment.loginForm', now()->addHours(48), $this->notificationContent['urlData']);
-
-        $shortUrl = null;
-        try {
-            $shortUrl = shortenUrl($url);
-        } catch (\Exception $e) {
-            \Log::warning($e->getMessage());
-        }
-
-        $urlToken = $this->parseUrl($url);
-        $this->saveTemporaryInvitationLink($notifiable, $urlToken, $url);
-
-        return $shortUrl ?? $url;
-    }
-
-    /**
-     * @param $enrollable
-     */
-    public function expirePastInvitationLink($enrollable)
-    {
-        Log::debug("expirePastInvitationLink called for $enrollable->id");
-        $pastInvitationLinks = $this->pastActiveInvitationLink($enrollable);
-        if ( ! empty($pastInvitationLinks)) {
-            $pastInvitationLinks->update(['manually_expired' => true]);
-        }
-    }
-
     /**
      * @param $enrollableId
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function generateUrlAndRedirectToSurvey($enrollableId)
+    public function createUrlAndRedirectToSurvey($enrollableId)
     {
         $enrolleesSurveyInstance = $this->getEnrolleesSurveyInstance();
 
@@ -90,24 +43,15 @@ trait EnrollableManagement
     }
 
     /**
-     * @param $surveyInstance
-     * @param mixed $userId
-     *
-     * @return \Illuminate\Database\Query\Builder
+     * @param $enrollable
      */
-    public function getAwvUserSurvey($userId, $surveyInstance)
+    public function expirePastInvitationLink($enrollable)
     {
-        return DB::table('users_surveys')
-            ->where('user_id', '=', $userId)
-            ->where('survey_instance_id', '=', $surveyInstance->id);
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
-     */
-    public function getDemoPractice()
-    {
-        return Practice::where('name', '=', 'demo')->firstOrFail();
+        Log::debug("expirePastInvitationLink called for $enrollable->id");
+        $pastInvitationLinks = $this->pastActiveInvitationLink($enrollable);
+        if ( ! empty($pastInvitationLinks)) {
+            $pastInvitationLinks->update(['manually_expired' => true]);
+        }
     }
 
     /**
@@ -116,8 +60,8 @@ trait EnrollableManagement
     public function getEnrollableModelType(User $user)
     {
         return $user->isSurveyOnly()
-            ? $this->getEnrollee($user->id)
-            : $this->getUserModelEnrollee($user->id);
+            ? Enrollee::fromUserId($user->id)
+            : User::find($user->id);
     }
 
     /**
@@ -132,14 +76,6 @@ trait EnrollableManagement
             : $enrollable->providerInfo;
     }
 
-    /**
-     * @return Enrollee|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
-     */
-    public function getEnrollee(string $enrollableId)
-    {
-        return Enrollee::whereUserId($enrollableId)->first();
-    }
-
     public function getEnrolleeFromNotification($enrollableId)
     {
         $notification = DatabaseNotification::where('type', SendEnrollmentEmail::class)
@@ -150,51 +86,13 @@ trait EnrollableManagement
     }
 
     /**
-     * NOTE: "whereDoesntHave" makes sure we dont invite Unreachable/Non responded - Enrollees second time.
-     *
-     * @param $practiceId
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function getEnrollees($practiceId)
-    {
-//        CHECK FOR SURVEY ONLY TOGETHER WITH USER_ID
-        return Enrollee::where('practice_id', $practiceId)
-            ->whereNull('source')
-            ->whereDoesntHave('enrollmentInvitationLink')
-            ->whereIn('status', [
-                Enrollee::QUEUE_AUTO_ENROLLMENT,
-            ]);
-    }
-
-    /**
      * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Query\Builder|object|null
      */
     public function getEnrolleesSurveyInstance()
     {
         return DB::table('surveys')
             ->join('survey_instances', 'surveys.id', '=', 'survey_instances.survey_id')
-            ->where('name', '=', AutoEnrollmentCenterController::ENROLLEES)->first();
-    }
-
-    public function getEnrolleeSurvey()
-    {
-        return DB::table('surveys')
-            ->where('name', '=', AutoEnrollmentCenterController::ENROLLEES)
-            ->first();
-    }
-
-    /**
-     * @param $patientInfoId
-     *
-     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Query\Builder|object|null
-     */
-    public function getSurveyInvitationLink($patientInfoId)
-    {
-        return DB::table('invitation_links')
-            ->where('patient_info_id', $patientInfoId)
-            ->orderBy('created_at', 'desc')
-            ->first();
+            ->where('name', '=', AutoEnrollmentCenterController::ENROLLEES_SURVEY_NAME)->first();
     }
 
     /**
@@ -212,39 +110,6 @@ trait EnrollableManagement
     }
 
     /**
-     * @return \App\User|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
-     */
-    public function getUserModelEnrollee(string $enrollableId)
-    {
-        return User::whereId($enrollableId)->first();
-    }
-
-    /**
-     * @param $notifiable
-     *
-     * @return bool
-     */
-    public function hasSurveyCompleted($notifiable)
-    {
-        //        For nova request. At that point enrollees will ot have User model, hence they didnt get invited yet.
-//        if (Enrollee::class === get_class($notifiable)) {
-//            return false;
-//        }
-        $surveyLink = $this->getSurveyInvitationLink($notifiable->patientInfo->id);
-        if ( ! empty($surveyLink)) {
-            $surveyInstance = DB::table('survey_instances')
-                ->where('survey_id', '=', $surveyLink->survey_id)
-                ->first();
-
-            return $this->getAwvUserSurvey($notifiable->id, $surveyInstance)
-                ->where('status', '=', 'completed')
-                ->exists();
-        }
-
-        return false;
-    }
-
-    /**
      * @param $notifiable
      *
      * @return bool
@@ -255,7 +120,7 @@ trait EnrollableManagement
 //        if (Enrollee::class === get_class($notifiable)) {
 //            return false;
 //        }
-        $surveyLink = $this->getSurveyInvitationLink($notifiable->patientInfo->id);
+        $surveyLink = SelfEnrollmentHelpers::getSurveyInvitationLink($notifiable->patientInfo);
         if ( ! empty($surveyLink)) {
             $surveyInstance = DB::table('survey_instances')
                 ->where('survey_id', '=', $surveyLink->survey_id)
@@ -282,20 +147,7 @@ trait EnrollableManagement
      */
     public function hasViewedLetterOrSurvey($enrollee)
     {
-        return optional($enrollee->selfEnrollmentStatuses)->logged_in;
-    }
-
-    /**
-     * @param $url
-     *
-     * @return mixed
-     */
-    public function parseUrl($url)
-    {
-        $parsedUrl = parse_url($url);
-        parse_str($parsedUrl['query'], $output);
-
-        return $output['signature'];
+        return optional($enrollee->selfEnrollmentStatus)->logged_in;
     }
 
     /**
@@ -305,25 +157,7 @@ trait EnrollableManagement
      */
     public function pastActiveInvitationLink($enrollable)
     {
-        return $enrollable->enrollmentInvitationLink()->where('manually_expired', false)->first();
-    }
-
-    /**
-     * @param $urlToken
-     * @param $url
-     */
-    public function saveTemporaryInvitationLink(User $notifiable, $urlToken, $url)
-    {
-        if ($notifiable->isSurveyOnly()) {
-            $notifiable = Enrollee::whereUserId($notifiable->id)->firstOrFail();
-        }
-
-        $notifiable->enrollmentInvitationLink()->create([
-            'link_token'       => $urlToken,
-            'url'              => $url,
-            'manually_expired' => false,
-            'button_color'     => $this->color,
-        ]);
+        return $enrollable->enrollmentInvitationLinks()->where('manually_expired', false)->first();
     }
 
     /**

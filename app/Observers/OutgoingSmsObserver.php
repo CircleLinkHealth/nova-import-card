@@ -25,6 +25,7 @@ class OutgoingSmsObserver
 
     public function creating(OutgoingSms $outgoingSms)
     {
-        $outgoingSms->sender_user_id = auth()->id();
+        $outgoingSms->sender_user_id        = auth()->id();
+        $outgoingSms->receiver_phone_number = formatPhoneNumberE164($outgoingSms->receiver_phone_number);
     }
 }
