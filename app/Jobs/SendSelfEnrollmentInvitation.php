@@ -7,7 +7,7 @@
 namespace App\Jobs;
 
 use App\Helpers\SelfEnrollmentHelpers;
-use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
+use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Notifications\SendEnrollementSms as Sms;
 use App\Notifications\SendEnrollmentEmail as Email;
 use CircleLinkHealth\Customer\Entities\User;
@@ -47,7 +47,7 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(User $user, ?string $color = AutoEnrollmentCenterController::DEFAULT_BUTTON_COLOR, bool $isReminder = false)
+    public function __construct(User $user, ?string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR, bool $isReminder = false)
     {
         $this->user       = $user;
         $this->isReminder = $isReminder;
@@ -129,10 +129,10 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
         }
 
         if ( ! in_array($this->color, [
-            AutoEnrollmentCenterController::DEFAULT_BUTTON_COLOR,
-            AutoEnrollmentCenterController::RED_BUTTON_COLOR,
+            SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
+            SelfEnrollmentController::RED_BUTTON_COLOR,
         ])) {
-            throw new \InvalidArgumentException("Invalid color `{$this->color}`. Valid values are `".AutoEnrollmentCenterController::RED_BUTTON_COLOR.'` and `'.AutoEnrollmentCenterController::DEFAULT_BUTTON_COLOR.'`.');
+            throw new \InvalidArgumentException("Invalid color `{$this->color}`. Valid values are `".SelfEnrollmentController::RED_BUTTON_COLOR.'` and `'.SelfEnrollmentController::DEFAULT_BUTTON_COLOR.'`.');
         }
 
         return true;

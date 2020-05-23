@@ -7,7 +7,7 @@
 namespace App\Traits;
 
 use App\Helpers\SelfEnrollmentHelpers;
-use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
+use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
@@ -16,7 +16,6 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\URL;
 
 trait EnrollableManagement
 {
@@ -92,7 +91,7 @@ trait EnrollableManagement
     {
         return DB::table('surveys')
             ->join('survey_instances', 'surveys.id', '=', 'survey_instances.survey_id')
-            ->where('name', '=', AutoEnrollmentCenterController::ENROLLEES_SURVEY_NAME)->first();
+            ->where('name', '=', SelfEnrollmentController::ENROLLEES_SURVEY_NAME)->first();
     }
 
     /**

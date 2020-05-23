@@ -8,7 +8,7 @@ namespace App\Jobs;
 
 // This file is part of CarePlan Manager by CircleLink Health.
 
-use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
+use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
@@ -57,7 +57,7 @@ class SendSelfEnrollmentInvitationToPracticeEnrollees implements ShouldQueue
     public function __construct(
         int $amount,
         int $practiceId,
-        string $color = AutoEnrollmentCenterController::DEFAULT_BUTTON_COLOR
+        string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR
     ) {
         $this->amount     = $amount;
         $this->practiceId = $practiceId;

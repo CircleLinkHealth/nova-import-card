@@ -6,7 +6,7 @@
 
 namespace App\Helpers;
 
-use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
+use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -38,9 +38,9 @@ class SelfEnrollmentHelpers
 
     public static function getEnrolleeSurvey(): object
     {
-        return \Cache::remember('self_enrollment_survey_'.AutoEnrollmentCenterController::ENROLLEES_SURVEY_NAME, 2, function () {
+        return \Cache::remember('self_enrollment_survey_'.SelfEnrollmentController::ENROLLEES_SURVEY_NAME, 2, function () {
             return DB::table('surveys')
-                ->where('name', '=', AutoEnrollmentCenterController::ENROLLEES_SURVEY_NAME)
+                ->where('name', '=', SelfEnrollmentController::ENROLLEES_SURVEY_NAME)
                 ->first();
         });
     }
