@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use App\Helpers\SelfEnrollmentHelpers;
 use App\Notifications\SendEnrollmentEmail;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
@@ -77,7 +78,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
         if ($testingMode) {
             $twoDaysAgo    = Carbon::parse(now())->startOfDay()->toDateTimeString();
             $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfDay()->toDateTimeString();
-            $practice      = $this->getDemoPractice();
+            $practice      = SelfEnrollmentHelpers::getDemoPractice();
             $users         = $this->usersForFinalAction($twoDaysAgo, $untilEndOfDay)
                 ->where('program_id', $practice->id)
                 ->get();

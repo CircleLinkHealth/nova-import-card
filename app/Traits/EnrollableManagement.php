@@ -10,7 +10,6 @@ use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\Notifications\SendEnrollmentEmail;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus;
@@ -52,14 +51,6 @@ trait EnrollableManagement
         if ( ! empty($pastInvitationLinks)) {
             $pastInvitationLinks->update(['manually_expired' => true]);
         }
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
-     */
-    public function getDemoPractice()
-    {
-        return Practice::where('name', '=', 'demo')->firstOrFail();
     }
 
     /**

@@ -69,7 +69,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function resetEnrollmentTest()
     {
-        $practice = $this->getDemoPractice();
+        $practice = SelfEnrollmentHelpers::getDemoPractice();
         // TEST ONLY
         $users = User::withTrashed()
             ->with('notifications', 'patientInfo')

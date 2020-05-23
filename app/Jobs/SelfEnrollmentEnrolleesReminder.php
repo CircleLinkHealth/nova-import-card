@@ -8,6 +8,7 @@ namespace App\Jobs;
 
 // This file is part of CarePlan Manager by CircleLink Health.
 
+use App\Helpers\SelfEnrollmentHelpers;
 use App\Traits\EnrollableManagement;
 use App\Traits\EnrollmentReminderShared;
 use Carbon\Carbon;
@@ -40,43 +41,34 @@ class SelfEnrollmentEnrolleesReminder implements ShouldQueue
 
     public function handle()
     {
-        $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
-        $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
-        $testingMode   = filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN)
-        || App::environment('testing');
+        $testingMode = filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN) || App::environment('testing');
 
         if ($testingMode) {
-            $practice      = $this->getDemoPractice();
-            $twoDaysAgo    = Carbon::parse(now())->startOfDay()->toDateTimeString();
-            $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfDay()->toDateTimeString();
-            $this->getEnrolleeUsersToSendReminder($untilEndOfDay, $twoDaysAgo, $practice->id)
-                ->each(function (User $enrollable) {
-                    SendSelfEnrollmentReminder::dispatch($enrollable);
-                });
-
-            return;
+            $practiceId    = SelfEnrollmentHelpers::getDemoPractice()->id;
+            $twoDaysAgo    = now()->startOfDay();
+            $untilEndOfDay = $twoDaysAgo->copy()->endOfDay();
+        } else {
+            $practiceId    = null;
+            $twoDaysAgo    = now()->copy()->subHours(48)->startOfDay();
+            $untilEndOfDay = $twoDaysAgo->copy()->endOfDay();
         }
 
-        $this->getEnrolleeUsersToSendReminder($untilEndOfDay, $twoDaysAgo)
-            ->each(function (User $enrollable) {
-                SendSelfEnrollmentReminder::dispatch($enrollable);
+        $this->getEnrolleeUsersToSendReminder($untilEndOfDay, $twoDaysAgo, $practiceId)
+            ->chunk(100, function ($users) {
+                $users->each(function (User $enrollable) {
+                    SendSelfEnrollmentReminder::dispatch($enrollable);
+                });
             });
     }
 
-    /**
-     * @param $untilEndOfDay
-     * @param $twoDaysAgo
-     * @param  int                                                                                                                                                         $practiceId
-     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Query\Builder[]|\Illuminate\Support\Collection|User[]
-     */
-    private function getEnrolleeUsersToSendReminder($untilEndOfDay, $twoDaysAgo, int $practiceId = null)
+    private function getEnrolleeUsersToSendReminder(Carbon $untilEndOfDay, Carbon $twoDaysAgo, ?int $practiceId = null)
     {
         return $this->sharedReminderQuery($untilEndOfDay, $twoDaysAgo)
             ->whereHas('enrollee', function ($enrollee) {
-                $enrollee->whereNull('source'); // Is not unreachable patient. It is Original enrollee.
+                $enrollee->whereNull('source'); //Eliminates unreachable patients, and only fetches enrollees who have not yet enrolled.
             })->orderBy('created_at', 'asc')
             ->when($practiceId, function ($q) use ($practiceId) {
                 return $q->where('program_id', $practiceId);
-            })->get();
+            });
     }
 }

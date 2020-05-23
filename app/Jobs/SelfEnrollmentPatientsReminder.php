@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use App\Helpers\SelfEnrollmentHelpers;
 use App\Traits\EnrollableManagement;
 use App\Traits\EnrollmentReminderShared;
 use Carbon\Carbon;
@@ -43,30 +44,33 @@ class SelfEnrollmentPatientsReminder implements ShouldQueue
      */
     public function handle()
     {
-        $twoDaysAgo    = Carbon::parse(now())->copy()->subHours(48)->startOfDay()->toDateTimeString();
-        $untilEndOfDay = Carbon::parse($twoDaysAgo)->endOfDay()->toDateTimeString();
-        $testingMode   = filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN);
+        $testModeEnabled = filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN);
 
-        if ($testingMode) {
-            $practice      = $this->getDemoPractice();
-            $twoDaysAgo    = Carbon::parse(now())->startOfDay()->toDateTimeString();
-            $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfDay()->toDateTimeString();
+        if ($testModeEnabled) {
+            $practice      = SelfEnrollmentHelpers::getDemoPractice();
+            $twoDaysAgo    = now()->startOfDay();
+            $untilEndOfDay = Carbon::parse($twoDaysAgo)->copy()->endOfDay();
             $this->getUnreachablePatientsToSendReminder($untilEndOfDay, $twoDaysAgo)
                 ->where('program_id', $practice->id)
                 ->get()
                 ->each(function (User $enrollable) {
                     SendSelfEnrollmentReminder::dispatch($enrollable);
                 });
-        } else {
-            $this->getUnreachablePatientsToSendReminder($untilEndOfDay, $twoDaysAgo)
-                ->get()
-                ->each(function (User $enrollable) {
-                    SendSelfEnrollmentReminder::dispatch($enrollable);
-                });
+
+            return;
         }
+
+        $twoDaysAgo    = now()->subHours(48)->startOfDay();
+        $untilEndOfDay = $twoDaysAgo->copy()->endOfDay();
+
+        $this->getUnreachablePatientsToSendReminder($untilEndOfDay, $twoDaysAgo)
+            ->get()
+            ->each(function (User $enrollable) {
+                SendSelfEnrollmentReminder::dispatch($enrollable);
+            });
     }
 
-    private function getUnreachablePatientsToSendReminder($untilEndOfDay, $twoDaysAgo)
+    private function getUnreachablePatientsToSendReminder(Carbon $untilEndOfDay, Carbon $twoDaysAgo)
     {
         return $this->sharedReminderQuery($untilEndOfDay, $twoDaysAgo)
             ->whereHas('enrollee', function ($enrollee) {

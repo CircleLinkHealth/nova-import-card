@@ -6,13 +6,15 @@
 
 namespace App\Traits;
 
+use App\Notifications\SendEnrollementSms;
 use App\Notifications\SendEnrollmentEmail;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 
 trait EnrollmentReminderShared
 {
-    public function sharedReminderQuery(string $to, string $from)
+    public function sharedReminderQuery(Carbon $to, Carbon $from)
     {
 //         We send the first notification marked as is_reminder => false
 //         We send the second notification(reminder => true).
@@ -24,7 +26,9 @@ trait EnrollmentReminderShared
                     ['created_at', '>=', $from],
                     ['created_at', '<=', $to],
                 ])
-                ->where('type', SendEnrollmentEmail::class);
+                ->where(function ($q) {
+                    $q->where('type', SendEnrollmentEmail::class)->orWhere('type', SendEnrollementSms::class);
+                });
         })
             // Enrollees also have User and Patient_info this point
             ->whereHas('patientInfo', function ($patient) use ($from, $to) {
@@ -37,7 +41,9 @@ trait EnrollmentReminderShared
                         ['created_at', '>=', $from],
                         ['created_at', '<=', $to],
                     ])
-                    ->where('type', SendEnrollmentEmail::class);
+                    ->where(function ($q) {
+                        $q->where('type', SendEnrollmentEmail::class)->orWhere('type', SendEnrollementSms::class);
+                    });
             });
     }
 }
