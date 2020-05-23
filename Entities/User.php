@@ -10,7 +10,7 @@ use App\Call;
 use App\CareplanAssessment;
 use App\Constants;
 use App\ForeignId;
-use App\Jobs\EnrollmentMassInviteEnrollees;
+use App\Jobs\SendSelfEnrollmentInvitationToPracticeEnrollees;
 use App\LoginLogout;
 use App\Message;
 use App\Models\EmailSettings;
@@ -28,7 +28,7 @@ use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Rules\PasswordCharacters;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
-use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
+use CircleLinkHealth\Customer\Traits\HasSelfEnrollmentInvitation;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Customer\Traits\TimezoneTrait;
@@ -69,6 +69,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -306,7 +307,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use Filterable;
     use HasApiTokens;
     use HasEmrDirectAddress;
-    use HasEnrollableInvitation;
+    use HasSelfEnrollmentInvitation;
     use HasMediaTrait;
     use Impersonate;
     use MakesOrReceivesCalls;
@@ -2264,7 +2265,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function isSurveyOnly()
     {
-        return $this->roles()->where('name', EnrollmentMassInviteEnrollees::SURVEY_ONLY)->exists();
+        return $this->roles()->where('name', SendSelfEnrollmentInvitationToPracticeEnrollees::SURVEY_ONLY)->exists();
     }
 
     public function lastObservation()
@@ -4048,5 +4049,22 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 }
             );
         });
+    }
+    
+    public function hasCompletedSelfEnrollmentSurvey()
+    {
+        $surveyLink = $this->getSurveyInvitationLink($this->patientInfo->id);
+        
+        if ( ! empty($surveyLink)) {
+            $surveyInstance = DB::table('survey_instances')
+                ->where('survey_id', '=', $surveyLink->survey_id)
+                ->first();
+            
+            return $this->getAwvUserSurvey($this->id, $surveyInstance)
+                ->where('status', '=', 'completed')
+                ->exists();
+        }
+        
+        return false;
     }
 }
