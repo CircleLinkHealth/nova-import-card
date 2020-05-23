@@ -8,11 +8,9 @@ namespace App\Http\Controllers\Enrollment;
 
 use App\Helpers\SelfEnrollmentHelpers;
 use App\Http\Controllers\Controller;
-use App\Jobs\FinalActionOnNonResponsivePatients;
 use App\Jobs\SendSelfEnrollmentInvitationToPracticeEnrollees;
 use App\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
 use App\Jobs\SendSelfEnrollmentReminders;
-use App\Notifications\SendEnrollmentEmail;
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
@@ -31,7 +29,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function finalActionTest()
     {
-        FinalActionOnNonResponsivePatients::dispatch();
+        SendSelfEnrollmentReminders::dispatch(SendSelfEnrollmentReminders::TAKE_FINAL_ACTION_ON_UNRESPONSIVE_PATIENTS);
 
         return redirect(route('ca-director.index'))->with('message', 'Reminders Sent Successfully');
     }
@@ -71,11 +69,10 @@ class AutoEnrollmentTestDashboard extends Controller
         $practice = SelfEnrollmentHelpers::getDemoPractice();
         // TEST ONLY
         $users = User::withTrashed()
-            ->with('notifications', 'patientInfo')
+            ->with('notifications', 'patientInfo', 'enrollee')
             ->where('program_id', '=', $practice->id)
-            ->whereHas('notifications', function ($notification) {
-                $notification->where('type', SendEnrollmentEmail::class);
-            })->where('created_at', '>', Carbon::parse(now())->startOfMonth())
+            ->wasSentSelfEnrollmentInvite()
+            ->where('created_at', '>', Carbon::parse(now())->startOfMonth())
             ->whereHas('patientInfo')
             ->get();
 
@@ -87,12 +84,10 @@ class AutoEnrollmentTestDashboard extends Controller
                 ->first();
 
             if ($user->isSurveyOnly()) {
-                /** @var Enrollee $enrollee */
-                $enrollee = Enrollee::fromUserId($user->id);
                 $this->deleteTestAwvUser($user, $surveyInstance);
                 $user->notifications()->delete();
-                $enrollee->enrollmentInvitationLinks()->delete();
-                $enrollee->statusRequestsInfo()->delete();
+                $user->enrollee->enrollmentInvitationLinks()->delete();
+                $user->enrollee->statusRequestsInfo()->delete();
 
                 DB::table('invitation_links')
                     ->where('patient_info_id', $user->patientInfo()->withTrashed()->first()->id)

@@ -72,16 +72,15 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
     {
         $url = URL::temporarySignedRoute('invitation.enrollment.loginForm', now()->addHours(48), $this->getSignedRouteParams());
 
-        $urlToken = SelfEnrollmentHelpers::getTokenFromUrl($url);
-
-        if (empty($urlToken)) {
+        if (empty($urlToken = SelfEnrollmentHelpers::getTokenFromUrl($url))) {
             throw new \Exception("`urlToken` cannot be empty. User ID {$this->user->id}");
         }
 
         $notifiable = $this->user;
 
-        if ($this->isSurveyOnlyUser()) {
-            $notifiable = Enrollee::whereUserId($this->user->id)->firstOrFail();
+        if ($this->user->isSurveyOnly()) {
+            $this->user->loadMissing('enrollee');
+            $notifiable = $this->user->enrollee;
         }
 
         $notifiable->enrollmentInvitationLinks()->create([
@@ -98,17 +97,8 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
     {
         return [
             'enrollable_id'  => $this->user->id,
-            'is_survey_only' => $this->isSurveyOnlyUser(),
+            'is_survey_only' => $this->user->isSurveyOnly(),
         ];
-    }
-
-    private function isSurveyOnlyUser()
-    {
-        if ( ! $this->isSurveyOnlyUser) {
-            $this->isSurveyOnlyUser = $this->user->isSurveyOnly();
-        }
-
-        return $this->isSurveyOnlyUser;
     }
 
     private function sendInvite(string $link)
