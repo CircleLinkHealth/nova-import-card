@@ -15,7 +15,7 @@ use CircleLinkHealth\Core\Traits\MySQLSearchable;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
+use CircleLinkHealth\Customer\Traits\HasSelfEnrollmentInvitation;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Str;
 
@@ -177,7 +177,7 @@ use Illuminate\Support\Str;
  * @property string|null                                                                                                     $source
  * @property int|null                                                                                                        $enrollment_non_responsive
  * @property int                                                                                                             $auto_enrollment_triggered
- * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null                               $enrollmentInvitationLink
+ * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null                               $enrollmentInvitationLinks
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count
  * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null                                     $statusRequestsInfo
@@ -186,7 +186,7 @@ use Illuminate\Support\Str;
 class Enrollee extends BaseModel
 {
     use Filterable;
-    use HasEnrollableInvitation;
+    use HasSelfEnrollmentInvitation;
     use MySQLSearchable;
     use Notifiable;
 
@@ -901,7 +901,7 @@ class Enrollee extends BaseModel
         return $query->with(['practice.enrollmentTips', 'provider.providerInfo', 'confirmedFamilyMembers']);
     }
 
-    public function selfEnrollmentStatuses()
+    public function selfEnrollmentStatus()
     {
         return $this->hasOne(SelfEnrollmentStatus::class, 'enrollee_id');
     }
@@ -1009,5 +1009,9 @@ class Enrollee extends BaseModel
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+    
+    public static function fromUserId(int $userId) {
+        return static::whereUserId($userId)->first();
     }
 }
