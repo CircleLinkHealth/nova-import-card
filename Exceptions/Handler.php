@@ -38,7 +38,6 @@ class Handler extends ExceptionHandler
         AuthenticationException::class,
         AuthorizationException::class,
         HttpException::class,
-        ModelNotFoundException::class,
         TokenMismatchException::class,
         ValidationException::class,
     ];
