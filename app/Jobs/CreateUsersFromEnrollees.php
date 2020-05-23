@@ -146,14 +146,10 @@ class CreateUsersFromEnrollees implements ShouldQueue
                         $ccda->patient_id = $userCreatedFromEnrollee->id;
                         $ccda->save();
                     }
-
-                    //handle phones here, we wanna make sure enrollee cell_phone gets priority, since we are sending SMS.
-                    //This is worth investigating. When Zack goes through enrollees to see if they are eligible for auto enrollment, does he check phones?
-                    //Do we need to know anything about his validation process, to make sure we get the correct number here?
+                    
                     $this->attachPhones($userCreatedFromEnrollee, $enrollee);
 
                     if ( ! empty($enrollee->provider)) {
-                        //is this going to be a problem if it stays on during the importing phase?
                         $userCreatedFromEnrollee->setBillingProviderId($enrollee->provider->id);
                     }
 
@@ -193,8 +189,6 @@ class CreateUsersFromEnrollees implements ShouldQueue
 
     private function attachPhones(User $userCreatedFromEnrollee, Enrollee $enrollee)
     {
-        //Self Enrollment uses $user->getPhone() - If there are many Primary Phone Numbers, it will get the one created first
-        //1st prio - cell phone
         $cellPhone = $enrollee->cell_phone_e164;
         if ( ! empty($cellPhone)) {
             $userCreatedFromEnrollee->phoneNumbers()->create([
@@ -203,8 +197,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
                 'is_primary' => true,
             ]);
         }
-
-        //2nd prio - primary phone - will likely be empty
+        
         $primaryPhone = $enrollee->primary_phone_e164;
         if ($primaryPhone) {
             $userCreatedFromEnrollee->phoneNumbers()->create([
@@ -213,8 +206,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
                 'is_primary' => false,
             ]);
         }
-
-        //3rd prio - home phone
+        
         $homePhone = $enrollee->home_phone_e164;
         if ($homePhone) {
             $userCreatedFromEnrollee->phoneNumbers()->create([
@@ -223,8 +215,7 @@ class CreateUsersFromEnrollees implements ShouldQueue
                 'is_primary' => false,
             ]);
         }
-
-        //last
+        
         $otherPhone = $enrollee->other_phone_e164;
         if ($otherPhone) {
             $userCreatedFromEnrollee->phoneNumbers()->create([

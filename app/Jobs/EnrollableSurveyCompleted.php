@@ -214,8 +214,15 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 'auto_enrollment_triggered' => true,
             ]);
 //    It's Duplication but better to make sense. Will refactor later
-
-            $this->updateEnrolleeUser($user, $addressData, $emailToString);
+    
+            $user->update([
+                'address' => $addressData['address'],
+                'city'    => $addressData['city'],
+                'state'   => $addressData['state'],
+                'zip'     => $addressData['zip'],
+                'email'   => $emailToString,
+            ]);
+            
             $this->updateEnrolleePatient(
                 $user,
                 $preferredContactDays,
@@ -337,18 +344,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
             'daily_contact_window_end'   => $patientContactTimeEnd,
             'auto_enrollment_triggered'  => true,
             'ccm_status'                 => Patient::ENROLLED,
-        ]);
-    }
-
-    private function updateEnrolleeUser(User $user, array $addressData, string $email)
-    {
-//        Its duplication but i prefer it to make sense
-        $user->update([
-            'address' => $addressData['address'],
-            'city'    => $addressData['city'],
-            'state'   => $addressData['state'],
-            'zip'     => $addressData['zip'],
-            'email'   => $email,
         ]);
     }
 

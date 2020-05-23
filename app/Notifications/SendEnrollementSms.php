@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\Helpers\SelfEnrollmentHelpers;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\Traits\EnrollableManagement;
 use App\Traits\EnrollableNotificationContent;
@@ -75,7 +76,7 @@ class SendEnrollementSms extends Notification implements ShouldQueue
     public function toTwilio(User $notifiable)
     {
         // at this point will always exist only one active link from the mail notif send
-        $receiver = $this->getEnrollableModelType($notifiable);
+        $receiver = SelfEnrollmentHelpers::getEnrollableModel($notifiable);
         if ( ! $receiver) {
             $hasSurveyRole = $notifiable->isSurveyOnly();
             throw new \Exception("Could not deduce user[$notifiable->id] to a receiver. User is survey-role only: $hasSurveyRole");

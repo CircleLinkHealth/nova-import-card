@@ -98,7 +98,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
 //        Will be the same page where the admin can send the notifs
 //        $noResponsivePatient->notify(new SendEnrollmentLetterToNonResponsivePatients($noResponsivePatient, $pages));
     }
-
+    
     /**
      * @param $users
      *
@@ -116,7 +116,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
                 return;
             }
             if ($isSurveyOnlyUser) {
-                if ($this->hasViewedLetterOrSurvey($enrollee)) {
+                if ((bool) optional($enrollee->selfEnrollmentStatus)->logged_in) {
                     $this->enrollmentInvitationService->putIntoCallQueue($enrollee);
                 } else {
 //                        Mark as non responsive means they will get a physical MAIL.
@@ -125,7 +125,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
                 }
 //                    Keeping this maybe we need the letter to be printed from nova
 //                    $practice = $noResponsivePatient->primaryPractice;
-//                    $provider = $this->getEnrollableProvider($isSurveyOnlyUser, $noResponsivePatient);
+//                    $provider = $noResponsivePatient->billingProviderUser();
 //                    $careAmbassadorPhoneNumber = $practice->outgoing_phone_number;
 //                    $practiceName = $practice->name;
 //                    $letter = $this->getPracticeEnrollmentLetter($practice->id);
