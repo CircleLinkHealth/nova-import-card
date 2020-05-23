@@ -6,15 +6,32 @@
 
 namespace App\Notifications\Channels;
 
+use App\Contracts\TwilioInterface;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\Twilio\Exceptions\CouldNotSendNotification;
+use NotificationChannels\Twilio\Twilio;
 use NotificationChannels\Twilio\TwilioChannel;
 use NotificationChannels\Twilio\TwilioMessage;
 use NotificationChannels\Twilio\TwilioSmsMessage;
 
 class CustomTwilioChannel extends TwilioChannel
 {
+    /**
+     * @var Twilio
+     */
+    protected $twilio;
+
+    /**
+     * TwilioChannel constructor.
+     */
+    public function __construct(TwilioInterface $twilio, Dispatcher $events)
+    {
+        $this->twilio = $twilio;
+        $this->events = $events;
+    }
+
     /**
      * Send the given notification.
      *
@@ -38,7 +55,7 @@ class CustomTwilioChannel extends TwilioChannel
             }
 
             return $this->twilio->sendMessage($message, $to, $useSender);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $event = new NotificationFailed($notifiable, $notification, 'twilio', ['message' => $exception->getMessage()]);
             if (function_exists('event')) { // Use event helper when possible to add Lumen support
                 event($event);
