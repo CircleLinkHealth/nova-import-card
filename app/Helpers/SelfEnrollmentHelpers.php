@@ -30,10 +30,18 @@ class SelfEnrollmentHelpers
     public static function getCurrentYearEnrolleeSurveyInstance(): object
     {
         return \Cache::remember('current_year_self_enrollment_survey_instance_'.now()->year.'_'.SelfEnrollmentController::ENROLLEES_SURVEY_NAME, 2, function () {
-            return DB::table('survey_instances')
-                ->where('survey_id', '=', self::getEnrolleeSurvey()->id)
+            $surveyId = self::getEnrolleeSurvey()->id;
+
+            $instance = DB::table('survey_instances')
+                ->where('survey_id', '=', $surveyId)
                 ->where('year', '=', now()->year)
-                ->firstOrFail();
+                ->first();
+
+            if ( ! $instance) {
+                throw new \Exception("Could not find survey instance for survey with ID $surveyId");
+            }
+
+            return $instance;
         });
     }
 
@@ -60,9 +68,15 @@ class SelfEnrollmentHelpers
     public static function getEnrolleeSurvey(): object
     {
         return \Cache::remember('self_enrollment_survey_'.SelfEnrollmentController::ENROLLEES_SURVEY_NAME, 2, function () {
-            return DB::table('surveys')
+            $survey = DB::table('surveys')
                 ->where('name', '=', SelfEnrollmentController::ENROLLEES_SURVEY_NAME)
-                ->firstOrFail();
+                ->first();
+
+            if ( ! $survey) {
+                throw new \Exception('Could not find survey with name '.SelfEnrollmentController::ENROLLEES_SURVEY_NAME);
+            }
+
+            return $survey;
         });
     }
 
