@@ -8,7 +8,6 @@ namespace App\Services;
 
 use App\Answer;
 use App\Events\SurveyInstancePivotSaved;
-use App\Jobs\UpdateEnrolleeSurveyStatuses;
 use App\Survey;
 use App\SurveyInstance;
 use App\User;
@@ -129,8 +128,6 @@ class SurveyService
         $surveyStatusResult = $instance->calculateCurrentStatusForUser($user);
         $surveyStatus       = $surveyStatusResult['status'];
 
-        UpdateEnrolleeSurveyStatuses::dispatch($user->id, SurveyInstance::IN_PROGRESS);
-
         //change status only if not completed
         if ($instance->pivot->status !== $surveyStatus) {
             $instance->pivot->status = $surveyStatus;
@@ -148,7 +145,6 @@ class SurveyService
         $instance->pivot->save();
 
         if (SurveyInstance::COMPLETED === $surveyStatus) {
-            UpdateEnrolleeSurveyStatuses::dispatch($user->id, SurveyInstance::COMPLETED);
             event(new SurveyInstancePivotSaved($instance));
         }
 

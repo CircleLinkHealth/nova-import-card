@@ -36,7 +36,6 @@ class EnrolleesSurveyService
 
         return [
             'dob'                    => $birthDate,
-            'dob'                    => $birthDate,
             'address'                => $user->address,
             'patientEmail'           => $this->patientEmail($user->email),
             'preferredContactNumber' => ! empty($primaryPhoneNumber) ? $primaryPhoneNumber : [],
