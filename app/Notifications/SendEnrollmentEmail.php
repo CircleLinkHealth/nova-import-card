@@ -9,7 +9,6 @@ namespace App\Notifications;
 // This file is part of CarePlan Manager by CircleLink Health.
 
 use App\Notifications\Channels\AutoEnrollmentMailChannel;
-use App\Traits\EnrollableManagement;
 use App\Traits\EnrollableNotificationContent;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -17,10 +16,10 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Spatie\RateLimitedMiddleware\RateLimited;
 
 class SendEnrollmentEmail extends Notification implements ShouldQueue
 {
-    use EnrollableManagement;
     use EnrollableNotificationContent;
     use Queueable;
 
@@ -32,26 +31,25 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     /**
      * @var null
      */
-    private $color;
-    /**
-     * @var null
-     */
     private $enrolleeModelId;
     /**
      * @var bool
      */
     private $isReminder;
-
+    /**
+     * @var string
+     */
+    private $url;
+    
     /**
      * Create a new notification instance.
-     *
+     * @param string $url
      * @param bool $isReminder
-     * @param null $color
      */
-    public function __construct($isReminder = false, $color = null)
+    public function __construct(string $url, bool $isReminder = false)
     {
         $this->isReminder = $isReminder;
-        $this->color      = $color;
+        $this->url        = $url;
     }
 
     public function getNotificationContent(User $notifiable)
@@ -59,6 +57,21 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
         $this->notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
 
         return $this->notificationContent;
+    }
+
+    public function middleware()
+    {
+        $rateLimitedMiddleware = (new RateLimited())
+            ->allow(10)
+            ->everySeconds(60)
+            ->releaseAfterSeconds(90);
+
+        return [$rateLimitedMiddleware];
+    }
+
+    public function retryUntil(): \DateTime
+    {
+        return now()->addMinutes(10);
     }
 
     /**
@@ -115,7 +128,7 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
             ->subject('Wellness Program')
             ->line($this->notificationContent['line1'])
             ->line($this->notificationContent['line2'])
-            ->action('Get my Care Coach', url($this->createInvitationLink($notifiable)));
+            ->action('Get my Care Coach', $this->url);
     }
 
     /**

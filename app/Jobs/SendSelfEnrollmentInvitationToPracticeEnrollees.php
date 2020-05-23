@@ -8,21 +8,19 @@ namespace App\Jobs;
 
 // This file is part of CarePlan Manager by CircleLink Health.
 
-use App\Events\AutoEnrollableCollected;
 use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
-use App\Traits\EnrollableManagement;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class EnrollmentMassInviteEnrollees implements ShouldQueue
+class SendSelfEnrollmentInvitationToPracticeEnrollees implements ShouldQueue
 {
     use Dispatchable;
-    use EnrollableManagement;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
@@ -36,6 +34,13 @@ class EnrollmentMassInviteEnrollees implements ShouldQueue
      * @var null
      */
     private $color;
+
+    /**
+     * The number of patients we dispatched jobs to send invitations to.
+     *
+     * @var int
+     */
+    private $dispatched = 0;
     /**
      * @var int|mixed
      */
@@ -47,7 +52,7 @@ class EnrollmentMassInviteEnrollees implements ShouldQueue
     private $surveyRole;
 
     /**
-     * EnrollmentMassInviteEnrollees constructor.
+     * SendSelfEnrollmentInvitationToPracticeEnrollees constructor.
      */
     public function __construct(
         int $amount,
@@ -70,18 +75,38 @@ class EnrollmentMassInviteEnrollees implements ShouldQueue
     {
         $this->getEnrollees($this->practiceId)
             ->orderBy('id', 'asc')
-            ->limit($this->amount)
+            ->whereNotNull('user_id')
+            ->has('user')
+            ->with('user')
             ->select(['user_id'])
-            ->get()
-            //needs to go after the get(), because we are using `limit`. otherwise `chunk` would override `limit`
-            ->chunk(100)
-            ->each(function ($coll) {
-                $arr = $coll
-                    ->map(function ($item) {
-                        return $item->user_id;
-                    })
-                    ->toArray();
-                AutoEnrollableCollected::dispatch($arr, false, $this->color);
+            ->chunk(100, function ($enrollees) {
+                foreach ($enrollees as $enrollee) {
+                    SendSelfEnrollmentInvitationToEligiblePatient::dispatch($enrollee->user, $this->color);
+
+                    if (++$this->dispatched === $this->amount) {
+                        //break chunking
+                        return false;
+                    }
+                }
             });
+    }
+
+    /**
+     * Get the Enrollees to invite.
+     *
+     * @param $practiceId
+     *
+     * @return Builder
+     */
+    private function getEnrollees($practiceId)
+    {
+        return Enrollee::where('practice_id', $practiceId)
+            ->whereNull('source')
+            // If an enrollmentInvitationLink exists, it means we have already invited the patient,
+            // and we do not want to send them another invitation.
+            ->whereDoesntHave('enrollmentInvitationLink')
+            ->whereIn('status', [
+                Enrollee::QUEUE_AUTO_ENROLLMENT,
+            ]);
     }
 }

@@ -6,7 +6,6 @@
 
 namespace App\Jobs;
 
-use App\Events\AutoEnrollableCollected;
 use App\Traits\EnrollableManagement;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -45,23 +44,25 @@ class SendEnrollmentReminders implements ShouldQueue
      */
     public function handle()
     {
-        $enrollabe = $this->enrollable;
+        $enrollable = $this->enrollable;
 
-        if ($enrollabe->isSurveyOnly()) {
-            $enrollabe = Enrollee::where('user_id', $this->enrollable->id)->first();
+        if ($enrollable->isSurveyOnly()) {
+            $enrollable = Enrollee::where('user_id', $this->enrollable->id)->firstOrFail();
         }
 
-        if ( ! $enrollabe) {
-            Log::critical("Cannot find user or enrollee[$enrollabe->user_id]. Will not send enrollment email.");
+        if ( ! $enrollable) {
+            Log::critical("Cannot find user or enrollee[$enrollable->user_id]. Will not send enrollment email.");
 
             return;
         }
 
-        $hasRequestedInfoOnInvitation = $enrollabe->statusRequestsInfo()->exists();
-
-        if ( ! $hasRequestedInfoOnInvitation
-            || ! $this->hasSurveyCompleted($this->enrollable)) {
-            event(new AutoEnrollableCollected([$this->enrollable->id], true));
+        if ($enrollable->statusRequestsInfo()->exists()) {
+            return;
         }
+        if ($this->hasCompletedSelfEnrollmentSurvey($this->enrollable)) {
+            return;
+        }
+        
+        SendSelfEnrollmentInvitationToEligiblePatient::dispatch($this->enrollable);
     }
 }

@@ -22,6 +22,7 @@ class AutoEnrollmentCenterController extends Controller
 {
     use EnrollableManagement;
     const DEFAULT_BUTTON_COLOR = '#4baf50';
+    const RED_BUTTON_COLOR = '#b1284c';
 
     const ENROLLEES                            = 'Enrollees';
     const ENROLLMENT_LETTER_DEFAULT_LOGO       = 'https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png';
@@ -198,7 +199,7 @@ class AutoEnrollmentCenterController extends Controller
             return redirect($this->getAwvInvitationLinkForUser($unrechablePatient)->url);
         }
 
-        if ($this->hasSurveyCompleted($unrechablePatient)) {
+        if ($this->hasCompletedSelfEnrollmentSurvey($unrechablePatient)) {
             $practiceNumber = $unrechablePatient->primaryPractice->outgoing_phone_number;
             $doctorName     = $unrechablePatient->getBillingProviderName();
 
