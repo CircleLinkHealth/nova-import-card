@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\FinalActionOnNonResponsivePatients;
+use App\Jobs\SendSelfEnrollmentReminders;
 use Illuminate\Console\Command;
 
 class EnrollmentFinalAction extends Command
@@ -41,6 +41,6 @@ class EnrollmentFinalAction extends Command
      */
     public function handle()
     {
-        FinalActionOnNonResponsivePatients::dispatch();
+        SendSelfEnrollmentReminders::dispatch(SendSelfEnrollmentReminders::TAKE_FINAL_ACTION_ON_UNRESPONSIVE_PATIENTS);
     }
 }

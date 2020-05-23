@@ -9,7 +9,6 @@ namespace App\Jobs;
 use App\Helpers\SelfEnrollmentHelpers;
 use CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -47,17 +46,21 @@ class SendSelfEnrollmentReminder implements ShouldQueue
             return;
         }
 
-        $enrollee = Enrollee::where('user_id', $this->patient->id)->with('statusRequestsInfo', 'enrollmentInvitationLinks')->has('enrollmentInvitationLinks')->firstOrFail();
+        $this->patient->loadMissing(['enrollee.statusRequestsInfo', 'enrollee.enrollmentInvitationLinks']);
 
-        if ($enrollee->statusRequestsInfo instanceof EnrollableRequestInfo) {
+        if (empty($this->patient->enrollee)) {
+            throw new \Exception("user[{$this->patient->id}] does not have an enrollee.");
+        }
+
+        if ($this->patient->enrollee->statusRequestsInfo instanceof EnrollableRequestInfo) {
             return;
         }
 
-        if ($enrollee->enrollmentInvitationLinks->count() > 1) {
+        if ($this->patient->enrollee->enrollmentInvitationLinks->count() > 1) {
             return;
         }
 
-        $invitation = $enrollee->enrollmentInvitationLinks->first();
+        $invitation = $this->patient->enrollee->enrollmentInvitationLinks->first();
 
         SendSelfEnrollmentInvitation::dispatch($this->patient, optional($invitation)->button_color, true);
     }

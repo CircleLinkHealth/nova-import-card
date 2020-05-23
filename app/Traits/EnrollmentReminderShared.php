@@ -28,9 +28,7 @@ trait EnrollmentReminderShared
                     ['created_at', '>=', $from],
                     ['created_at', '<=', $to],
                 ])
-                ->where(function ($q) {
-                    $q->where('type', SendEnrollmentEmail::class)->orWhere('type', SendEnrollementSms::class);
-                });
+                ->wasSentSelfEnrollmentInvite();
         })
             // Enrollees also have User and Patient_info this point
             ->whereHas('patientInfo', function ($patient) use ($from, $to) {

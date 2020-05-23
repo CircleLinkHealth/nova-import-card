@@ -122,20 +122,11 @@ class SelfEnrollmentController extends Controller
         $isSurveyOnly = $request->input('is_survey_only');
 
         /** @var Enrollee $enrollee */
-        $enrollee = Enrollee::fromUserId($enrollableId);
-        if ( ! $enrollee) {
-            return "Enrollee[$enrollableId] not found";
-        }
+        $enrollee = Enrollee::whereUserId($enrollableId)->has('user')->with('user')->firstOrFail();
 
-        if (is_null($enrollee->user_id)) {
-            return "Enrollee [$enrollableId] user_id is null";
-        }
-
-        $patientUser = User::findOrFail($enrollee->user_id);
-
-        if (SelfEnrollmentHelpers::hasCompletedSelfEnrollmentSurvey($patientUser)) {
+        if (SelfEnrollmentHelpers::hasCompletedSelfEnrollmentSurvey($enrollee->user)) {
 //            Redirect to Survey Done Page (awv logout)
-            return $this->generateUrlAndRedirectToSurvey($patientUser->id);
+            return $this->createUrlAndRedirectToSurvey($enrollee->user);
         }
 
         if ( ! $enrollee->statusRequestsInfo()->exists()) {
@@ -157,20 +148,23 @@ class SelfEnrollmentController extends Controller
      */
     public function enrollNow(Request $request)
     {
-        $enrollableId      = $request->input('enrollable_id');
-        $userForEnrollment = User::find($enrollableId);
-        if ( ! $userForEnrollment) {
-            throw new \Exception('There was an error. Please try again. [1]', 400);
+        $userId = $request->input('enrollable_id');
+
+        if ( ! is_numeric($userId)) {
+            throw new \Exception("EnrollableId `$userId` needs to be numeric", 400);
         }
-        $enrollable = SelfEnrollmentHelpers::getEnrollableModel($userForEnrollment);
+
+        $user = User::has('enrollee')->with('enrollee')->findOrFail($userId);
+
+        $enrollable = SelfEnrollmentHelpers::getEnrollableModel($user);
 
         if ($enrollable->statusRequestsInfo()->exists()) {
-            return $this->returnEnrolleeRequestedInfoMessage($enrollable);
+            return $this->returnEnrolleeRequestedInfoMessage($user->enrollee);
         }
 
         $this->expirePastInvitationLink($enrollable);
 
-        return $this->createUrlAndRedirectToSurvey($enrollableId);
+        return $this->createUrlAndRedirectToSurvey($user);
     }
 
     /**
@@ -245,12 +239,12 @@ class SelfEnrollmentController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $user = User::whereId($userId)->firstOrFail();
-        if ($user->hasRole('survey-only')) {
-            $enrollee = Enrollee::fromUserId($userId);
+        $user = User::whereId($userId)->has('enrollee')->with('enrollee')->firstOrFail();
 
-            return $this->enrollmentLetterView($user, true, $enrollee, true);
+        if ($user->isSurveyOnly()) {
+            return $this->enrollmentLetterView($user, true, $user->enrollee, true);
         }
+
         abort(403, 'Unauthorized action.');
     }
 
@@ -259,12 +253,7 @@ class SelfEnrollmentController extends Controller
         $isSurveyOnly = boolval($request->input('is_survey_only'));
         $userId       = intval($request->input('enrollable_id'));
         if ($isSurveyOnly) {
-            $enrollee = Enrollee::fromUserId($userId);
-            if ( ! $enrollee) {
-                Log::warning("Enrollee for user with id $userId not found");
-                throw new \Exception('User does not exist', 404);
-            }
-            $this->expirePastInvitationLink($enrollee);
+            $this->expirePastInvitationLink(Enrollee::whereUserId($userId)->firstOrFail());
         } else {
             $user = User::find($userId);
             $this->expirePastInvitationLink($user);
@@ -276,23 +265,16 @@ class SelfEnrollmentController extends Controller
     protected function authenticate(EnrollmentValidationRules $request)
     {
         $userId = (int) $request->input('user_id');
-        Auth::loginUsingId($userId, true);
+        $user   = Auth::loginUsingId($userId, true);
 
-        if (boolval($request->input('is_survey_only'))) {
-            $enrollee = Enrollee::fromUserId($userId);
-
-            if ( ! $enrollee) {
-                abort(404);
-            }
-
-            $enrollee->selfEnrollmentStatus()->update([
+        if ($user->isSurveyOnly()) {
+            Enrollee::whereUserId($userId)->firstOrFail()->selfEnrollmentStatus()->update([
                 'logged_in' => true,
             ]);
         }
 
         return $this->enrollableInvitationManager(
-            $userId,
-            boolval($request->input('is_survey_only'))
+            $user
         );
     }
 
@@ -360,12 +342,12 @@ class SelfEnrollmentController extends Controller
         DB::table('users_surveys')->updateOrInsert(
             [
                 'user_id'            => $enrollableId,
-                'survey_instance_id' => $enrolleesSurvey->id,
-                'survey_id'          => SelfEnrollmentHelpers::getCurrentYearEnrolleeSurveyInstance()->id,
+                'survey_instance_id' => SelfEnrollmentHelpers::getCurrentYearEnrolleeSurveyInstance()->id,
+                'survey_id'          => $enrolleesSurvey->id,
             ],
             [
                 'status'     => 'pending',
-                'start_date' => Carbon::parse(now())->toDateTimeString(),
+                'start_date' => now()->toDateTimeString(),
             ]
         );
 
@@ -374,9 +356,9 @@ class SelfEnrollmentController extends Controller
         return redirect($enrolleesSurveyUrl);
     }
 
-    private function enrollableInvitationManager($enrollableId, $isSurveyOnlyUser)
+    private function enrollableInvitationManager(User $user)
     {
-        if ($isSurveyOnlyUser) {
+        if ($user->isSurveyOnly()) {
             return $this->handleEnrolleeInvitation($enrollableId);
         }
 
@@ -437,9 +419,11 @@ class SelfEnrollmentController extends Controller
     private function expirePastInvitationLink($enrollable)
     {
         Log::debug("expirePastInvitationLink called for $enrollable->id");
-        $pastInvitationLinks = $enrollable->enrollmentInvitationLinks()->where('manually_expired', false)->first();
-        if ( ! empty($pastInvitationLinks)) {
-            $pastInvitationLinks->update(['manually_expired' => true]);
+
+        $pastInvitationLinksQuery = $enrollable->enrollmentInvitationLinks()->where('manually_expired', false);
+
+        if ($pastInvitationLinksQuery->exists()) {
+            $pastInvitationLinksQuery->update(['manually_expired' => true]);
         }
     }
 
@@ -484,22 +468,17 @@ class SelfEnrollmentController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
-    private function handleEnrolleeInvitation(int $userId)
+    private function handleEnrolleeInvitation(User $user)
     {
-        $user     = User::findOrFail($userId);
-        $enrollee = Enrollee::fromUserId($userId);
+        $user->loadMissing(['enrollee.statusRequestsInfo', 'enrollee.practice', 'enrollee.provider']);
 
-        if ( ! $enrollee) {
-            throw new \Exception("Enrollee not found for user[$userId]");
+        if ( ! is_null($user->enrollee->statusRequestsInfo)) {
+            return $this->returnEnrolleeRequestedInfoMessage($user->enrollee);
         }
 
-        if ($enrollee->statusRequestsInfo()->exists()) {
-            return $this->returnEnrolleeRequestedInfoMessage($enrollee);
-        }
-
-        if (Enrollee::ENROLLED === $enrollee->status) {
-            $practiceNumber = $enrollee->practice->outgoing_phone_number;
-            $doctorName     = optional($enrollee->provider)->last_name;
+        if (Enrollee::ENROLLED === $user->enrollee->status) {
+            $practiceNumber = $user->enrollee->practice->outgoing_phone_number;
+            $doctorName     = optional($user->enrollee->provider)->last_name;
 
             return view('enrollment-consent.enrolledMessagePage', compact('practiceNumber', 'doctorName'));
         }
@@ -508,7 +487,7 @@ class SelfEnrollmentController extends Controller
             return redirect($this->getAwvInvitationLinkForUser($user)->url);
         }
 
-        return $this->enrollmentLetterView($user, true, $enrollee, false);
+        return $this->enrollmentLetterView($user, true, $user->enrollee, false);
     }
 
     /**
