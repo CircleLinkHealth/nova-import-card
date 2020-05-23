@@ -71,7 +71,15 @@ class OutgoingSms extends Resource
             ID::make()->sortable(),
             Number::make('Sent By (User ID)', 'sender_user_id')->sortable()->hideWhenCreating(),
             Text::make('Receiver', 'receiver_phone_number')->sortable(),
-            Textarea::make('Message', 'message')->sortable(),
+            Textarea::make('Message', 'message')->sortable()->withMeta([
+                'extraAttributes' => [
+                    'placeholder' => 'Only text patients who texted back the Self Enrollment SMS we sent out. The Received SMS\'s can be found on Twilio Dashboard. Ask Zach/PAngrations for access.
+
+Please do not include ant PHI or PII in your messages.
+Specifically, never include the patient\'s name, address, phone, birth date, or anything else that can identify them.
+Do not discuss any health information.',
+                ],
+            ]),
         ];
     }
 
@@ -87,7 +95,7 @@ class OutgoingSms extends Resource
 
     public static function label()
     {
-        return 'Send SMS';
+        return 'SMS';
     }
 
     /**

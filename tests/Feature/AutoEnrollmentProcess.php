@@ -8,8 +8,8 @@ namespace Tests\Feature;
 
 use App\Jobs\CreateUsersFromEnrollees;
 use App\Jobs\EnrollmentSeletiveInviteEnrollees;
-use App\Jobs\SelfEnrollmentUnreachablePatients;
-use App\Jobs\SendEnrollmentReminders;
+use App\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
+use App\Jobs\SendSelfEnrollmentReminder;
 use App\Notifications\SendEnrollementSms;
 use App\Notifications\SendEnrollmentEmail;
 use CircleLinkHealth\Core\Facades\Notification;
@@ -82,7 +82,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
         $this->check_notification_mail_has_been_sent($enrollee->fresh()->user);
 //        $this->check_notification_sms_has_been_sent($enrollle->fresh()->user);
 
-        self::assertTrue($enrollee->enrollmentInvitationLink()->exists());
+        self::assertTrue($enrollee->enrollmentInvitationLinks()->exists());
         $this->assertDatabaseHas('enrollables_invitation_links', [
             'invitationable_type' => get_class($enrollee),
             'invitationable_id'   => $enrollee->id,
@@ -100,11 +100,11 @@ class AutoEnrollmentProcess extends CustomerTestCase
 //    {
 //        $patient = $this->patient();
 //        Notification::fake();
-//        SelfEnrollmentUnreachablePatients::dispatchNow($patient, 1, $this->demoPractice()->id);
+//        SendSelfEnrollmentInvitationToUnreachablePatients::dispatchNow($patient, 1, $this->demoPractice()->id);
 //        $this->check_notification_mail_has_been_sent($patient);
     ////        $this->check_notification_sms_has_been_sent($patient);
 //
-//        self::assertTrue($this->patient()->enrollmentInvitationLink()->exists());
+//        self::assertTrue($this->patient()->enrollmentInvitationLinks()->exists());
 //        $this->assertDatabaseHas('enrollables_invitation_links', [
 //            'invitationable_type' => get_class($patient),
 //            'invitationable_id'   => $patient->id,
@@ -119,7 +119,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
         $patient = $enrollee->fresh()->user;
 
         Notification::fake();
-        SendEnrollmentReminders::dispatchNow($patient);
+        SendSelfEnrollmentReminder::dispatchNow($patient);
 
         $this->check_notification_mail_has_been_sent($patient);
 //        $this->check_notification_sms_has_been_sent($patient);
@@ -130,7 +130,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
             'manually_expired'    => false,
         ]);
 
-        self::assertTrue($enrollee->enrollmentInvitationLink()->exists());
+        self::assertTrue($enrollee->enrollmentInvitationLinks()->exists());
     }
 
 //
@@ -138,7 +138,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
 //    {
 //        $patient = $this->patient();
 //        Notification::fake();
-//        SendEnrollmentReminders::dispatchNow($patient);
+//        SendSelfEnrollmentReminder::dispatchNow($patient);
 //
 //        $this->check_notification_mail_has_been_sent($patient);
     ////        $this->check_notification_sms_has_been_sent($patient);
@@ -149,7 +149,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
 //            'manually_expired'    => false,
 //        ]);
 //
-//        self::assertTrue($patient->enrollmentInvitationLink()->exists());
+//        self::assertTrue($patient->enrollmentInvitationLinks()->exists());
 //    }
 
     public function test_patient_has_viewed_login_form()
@@ -157,10 +157,11 @@ class AutoEnrollmentProcess extends CustomerTestCase
         $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)
             ->createEnrollee($this->practice());
         EnrollmentSeletiveInviteEnrollees::dispatch([$enrollee->fresh()->user_id]);
-        $enrollee->enrollmentInvitationLink->manually_expired = true;
-        $enrollee->enrollmentInvitationLink->save();
+        $lastEnrollmentLink                   = $enrollee->getLastEnrollmentInvitationLink();
+        $lastEnrollmentLink->manually_expired = true;
+        $lastEnrollmentLink->save();
 //    If patient has link expired = has opened the link and seen the login form.
-        self::assertTrue(optional($enrollee->enrollmentInvitationLink())->where('manually_expired', true)->exists());
+        self::assertTrue(optional($enrollee->enrollmentInvitationLinks())->where('manually_expired', true)->exists());
     }
 
 //    Meaning they will get physical mail.

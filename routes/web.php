@@ -73,7 +73,7 @@ Route::group([
     ]);
 
     Route::get('enrollment-logout', [
-        'uses' => 'Enrollment\Auth\AutoEnrollmentLogin@logoutEnrollee',
+        'uses' => 'Enrollment\SelfEnrollmentController@logoutEnrollee',
         'as'   => 'user.enrollee.logout',
     ]);
 });
@@ -2247,7 +2247,7 @@ Route::group([
 
 // TEMPORARY SIGNED ROUTE
 //Route::get('/patient-self-enrollment', [
-//    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrollableInvitationManager',
+//    'uses' => 'Enrollment\Auth\SelfEnrollmentController@enrollableInvitationManager',
 //    'as'   => 'invitation.enrollment',
 //]);
 
@@ -2259,37 +2259,37 @@ Route::group([
     Route::get(
         '/patient-self-enrollment',
         [
-            'uses' => 'Enrollment\Auth\AutoEnrollmentLogin@enrollmentAuthForm',
+            'uses' => 'Enrollment\SelfEnrollmentController@enrollmentAuthForm',
             'as'   => 'invitation.enrollment.loginForm',
         ]
     )->middleware('signed');
 
     Route::post('login-enrollment-survey', [
-        'uses' => 'Enrollment\Auth\AutoEnrollmentLogin@authenticate',
+        'uses' => 'Enrollment\SelfEnrollmentController@authenticate',
         'as'   => 'invitation.enrollment.login',
     ]);
 });
 // TEMPORARY SIGNED ROUTE
 
 Route::get('/enrollment-survey', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrollNow',
+    'uses' => 'Enrollment\SelfEnrollmentController@enrollNow',
     'as'   => 'patient.self.enroll.now',
 ]);
 
 Route::get('/enrollment-info', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrolleeRequestsInfo',
+    'uses' => 'Enrollment\SelfEnrollmentController@enrolleeRequestsInfo',
     'as'   => 'patient.requests.enroll.info',
 ]);
 
 // Redirects to view with enrollees details to contact.
 Route::get('/enrollee-contact-details', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrolleeContactDetails',
+    'uses' => 'Enrollment\SelfEnrollmentController@enrolleeContactDetails',
     'as'   => 'enrollee.to.call.details',
 ])->middleware('auth');
 
 // Incoming from AWV
 Route::get('/review-letter/{userId}', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@reviewLetter',
+    'uses' => 'Enrollment\SelfEnrollmentController@reviewLetter',
     'as'   => 'enrollee.to.review.letter',
 ]);
 
@@ -2313,12 +2313,12 @@ Route::post('nurses/nurse-calendar-data', [
     'as'   => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');
 
-Route::get('login-enrollees-survey/{user}/{survey}', 'AutoEnrollmentCenterController@sendToSurvey')
+Route::get('login-enrollees-survey/{user}/{survey}', 'SelfEnrollmentController@sendToSurvey')
     ->name('enrollee.login.signed')
     ->middleware('signed');
 
 Route::post('enrollee-login-viewed', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@viewFormVisited',
+    'uses' => 'Enrollment\SelfEnrollmentController@viewFormVisited',
     'as'   => 'enrollee.login.viewed',
 ])->middleware('guest');
 
