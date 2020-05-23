@@ -467,6 +467,11 @@ class Enrollee extends BaseModel
         return $this->belongsTo(EligibilityJob::class);
     }
 
+    public static function fromUserId(int $userId)
+    {
+        return static::whereUserId($userId)->first();
+    }
+
     public function getAddressesAsString(Enrollee $compareAgainstEnrollee = null)
     {
         $addresses = [];
@@ -1009,9 +1014,5 @@ class Enrollee extends BaseModel
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
-    }
-    
-    public static function fromUserId(int $userId) {
-        return static::whereUserId($userId)->first();
     }
 }
