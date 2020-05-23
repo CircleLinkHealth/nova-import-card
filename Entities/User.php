@@ -69,7 +69,6 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -307,8 +306,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use Filterable;
     use HasApiTokens;
     use HasEmrDirectAddress;
-    use HasSelfEnrollmentInvitation;
     use HasMediaTrait;
+    use HasSelfEnrollmentInvitation;
     use Impersonate;
     use MakesOrReceivesCalls;
     use Notifiable;
