@@ -111,16 +111,16 @@ class EnrolleesInvitationPanel extends Resource
     public function cards(Request $request)
     {
         return [
-            //            (new EnrollmentInvites())->withMeta(
-            //                [
-            //                    'practice_id' => self::getPracticeId($this),
-            //                    'is_patient'  => false,
-            //                ]
-            //            ),
-            //            (new SelfEnrolledPatientTotal(self::getPracticeId($this))),
-            //            (new SelfEnrolledButtonColor(self::getPracticeId($this))),
-            //            (new AllInvitesButtonColor(self::getPracticeId($this))),
-            //            (new TotalInvitationsSentHourly(self::getPracticeId($this))),
+            (new EnrollmentInvites())->withMeta(
+                [
+                    'practice_id' => self::getPracticeId($this),
+                    'is_patient'  => false,
+                ]
+            ),
+            (new SelfEnrolledPatientTotal(self::getPracticeId($this))),
+            (new SelfEnrolledButtonColor(self::getPracticeId($this))),
+            (new AllInvitesButtonColor(self::getPracticeId($this))),
+            (new TotalInvitationsSentHourly(self::getPracticeId($this))),
         ];
     }
 
@@ -183,15 +183,11 @@ class EnrolleesInvitationPanel extends Resource
             }),
 
             Boolean::make('Has viewed login form', function () use ($lastEnrollmentInvitationLink) {
-                return ! is_null($lastEnrollmentInvitationLink) && true === $lastEnrollmentInvitationLink->manually_expired;
+                return ! is_null($lastEnrollmentInvitationLink) && true === (bool) $lastEnrollmentInvitationLink->manually_expired;
             }),
 
             Boolean::make('Has viewed Letter', function () use ($enroleeHasLoggedIn) {
-                if ( ! $enroleeHasLoggedIn) {
-                    return false;
-                }
-
-                return optional($this->selfEnrollmentStatus)->logged_in;
+                return $enroleeHasLoggedIn;
             }),
             Boolean::make('Requested Call', function () {
                 return $this->resource->statusRequestsInfo()->exists();
