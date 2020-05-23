@@ -167,7 +167,7 @@ class EnrolleesInvitationPanel extends Resource
                 ->sortable(),
 
             Date::make('Date Sent', function () use ($inviteSentDate) {
-                return  $inviteSentDate;
+                return $inviteSentDate;
             }),
 
             Date::make('Date Asked For Call', function () use ($requestedInfoDate) {
