@@ -388,7 +388,7 @@ class SelfEnrollmentController extends Controller
     private function getLoginFormData(Request $request)
     {
         $userId = $this->getUserId($request);
-        
+
         $user = User::find($userId);
         if ( ! $user) {
             Log::warning("User[$userId] not found.");
