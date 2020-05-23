@@ -47,7 +47,11 @@ class SendEnrollmentReminders implements ShouldQueue
         $enrollable = $this->enrollable;
 
         if ($enrollable->isSurveyOnly()) {
-            $enrollable = Enrollee::where('user_id', $this->enrollable->id)->firstOrFail();
+            $enrollee = Enrollee::where('user_id', $this->enrollable->id)->firstOrFail();
+    
+            if ($enrollee->statusRequestsInfo()->exists()) {
+                return;
+            }
         }
 
         if ( ! $enrollable) {
@@ -55,11 +59,8 @@ class SendEnrollmentReminders implements ShouldQueue
 
             return;
         }
-
-        if ($enrollable->statusRequestsInfo()->exists()) {
-            return;
-        }
-        if ($this->hasCompletedSelfEnrollmentSurvey($this->enrollable)) {
+        
+        if ($enrollable->hasCompletedSelfEnrollmentSurvey($this->enrollable)) {
             return;
         }
         

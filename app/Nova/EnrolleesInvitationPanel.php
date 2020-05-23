@@ -13,7 +13,6 @@ use App\Nova\Metrics\SelfEnrolledPatientTotal;
 use App\Nova\Metrics\TotalInvitationsSentHourly;
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use Illuminate\Http\Request;
@@ -27,7 +26,7 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 class EnrolleesInvitationPanel extends Resource
 {
     use EnrollableManagement;
-    use HasEnrollableInvitation;
+
     const COMPLETED = 'completed';
 
     const IN_PROGRESS = 'in_progress';
@@ -134,8 +133,8 @@ class EnrolleesInvitationPanel extends Resource
     {
         $surveyInstance           = $this->getSurveyInstance();
         $awvUserSurvey            = $this->getAwvUserSurvey($this->resource->user_id, $surveyInstance);
-        $enrollmentInvitationLink = $this->enrollmentInvitationLink();
-        $enrolleeRequestedInfo    = $this->statusRequestsInfo();
+        $enrollmentInvitationLink = $this->resource->enrollmentInvitationLink();
+        $enrolleeRequestedInfo    = $this->resource->statusRequestsInfo();
         $enroleeHasNotLoggedIn    = $this->enrolleeHasNotLoggedIn($this->resource->user_id);
         $inviteSentDate           = ! is_null(optional($enrollmentInvitationLink->orderBy('created_at', 'desc')->first())->created_at)
         ? Carbon::parse(optional($enrollmentInvitationLink->orderBy('created_at', 'desc')->first())->created_at)->toDateString()

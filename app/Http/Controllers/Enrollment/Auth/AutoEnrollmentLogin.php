@@ -38,7 +38,7 @@ class AutoEnrollmentLogin extends Controller
         Auth::loginUsingId($request->input('user_id'), true);
 
         if (boolval($request->input('is_survey_only'))) {
-            $enrollee = $this->getEnrollee($request->input('user_id'));
+            $enrollee = \CircleLinkHealth\Eligibility\Entities\Enrollee::fromUserId($request->input('user_id'));
 
             if ( ! $enrollee) {
                 abort(404);
@@ -117,7 +117,7 @@ class AutoEnrollmentLogin extends Controller
         $userId = $this->getUserId($request);
 
         /** @var User $user */
-        $user = $this->getUser($userId);
+        $user = User::find($userId);
         if ( ! $user) {
             Log::warning("User[$userId] not found.");
             throw new \Exception('User not found');

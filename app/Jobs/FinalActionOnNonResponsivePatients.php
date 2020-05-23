@@ -108,7 +108,7 @@ class FinalActionOnNonResponsivePatients implements ShouldQueue
         return $users->each(function (User $noResponsivePatient) {
             $isSurveyOnlyUser = $noResponsivePatient->hasRole('survey-only');
             /** @var Enrollee $enrollee */
-            $enrollee = $this->getEnrollee($noResponsivePatient->id);
+            $enrollee = \CircleLinkHealth\Eligibility\Entities\Enrollee::fromUserId($noResponsivePatient->id);
             if ( ! $enrollee) {
                 Log::warning("Enrollee model not found for user $noResponsivePatient->id");
 

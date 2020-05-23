@@ -33,29 +33,6 @@ trait EnrollableManagement
     }
 
     /**
-     * @param $notifiable
-     * @param $data
-     *
-     * @return string
-     */
-    public function createInvitationLink($notifiable)
-    {
-        $url = URL::temporarySignedRoute('invitation.enrollment.loginForm', now()->addHours(48), $this->notificationContent['urlData']);
-
-        $shortUrl = null;
-        try {
-            $shortUrl = shortenUrl($url);
-        } catch (\Exception $e) {
-            \Log::warning($e->getMessage());
-        }
-
-        $urlToken = $this->parseUrl($url);
-        $this->saveTemporaryInvitationLink($notifiable, $urlToken, $url);
-
-        return $shortUrl ?? $url;
-    }
-
-    /**
      * @param $enrollableId
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
@@ -116,8 +93,8 @@ trait EnrollableManagement
     public function getEnrollableModelType(User $user)
     {
         return $user->isSurveyOnly()
-            ? $this->getEnrollee($user->id)
-            : $this->getUserModelEnrollee($user->id);
+            ? Enrollee::fromUserId($user->id)
+            : User::find($user->id);
     }
 
     /**
@@ -132,14 +109,6 @@ trait EnrollableManagement
             : $enrollable->providerInfo;
     }
 
-    /**
-     * @return Enrollee|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
-     */
-    public function getEnrollee(string $enrollableId)
-    {
-        return Enrollee::whereUserId($enrollableId)->first();
-    }
-
     public function getEnrolleeFromNotification($enrollableId)
     {
         $notification = DatabaseNotification::where('type', SendEnrollmentEmail::class)
@@ -147,24 +116,6 @@ trait EnrollableManagement
             ->first();
 
         return Enrollee::whereId($notification->data['enrollee_id'])->first();
-    }
-
-    /**
-     * NOTE: "whereDoesntHave" makes sure we dont invite Unreachable/Non responded - Enrollees second time.
-     *
-     * @param $practiceId
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function getEnrollees($practiceId)
-    {
-//        CHECK FOR SURVEY ONLY TOGETHER WITH USER_ID
-        return Enrollee::where('practice_id', $practiceId)
-            ->whereNull('source')
-            ->whereDoesntHave('enrollmentInvitationLink')
-            ->whereIn('status', [
-                Enrollee::QUEUE_AUTO_ENROLLMENT,
-            ]);
     }
 
     /**
@@ -209,39 +160,6 @@ trait EnrollableManagement
             ->firstOrFail();
 
         return $enrollee->provider;
-    }
-
-    /**
-     * @return \App\User|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
-     */
-    public function getUserModelEnrollee(string $enrollableId)
-    {
-        return User::whereId($enrollableId)->first();
-    }
-
-    /**
-     * @param $notifiable
-     *
-     * @return bool
-     */
-    public function hasSurveyCompleted($notifiable)
-    {
-        //        For nova request. At that point enrollees will ot have User model, hence they didnt get invited yet.
-//        if (Enrollee::class === get_class($notifiable)) {
-//            return false;
-//        }
-        $surveyLink = $this->getSurveyInvitationLink($notifiable->patientInfo->id);
-        if ( ! empty($surveyLink)) {
-            $surveyInstance = DB::table('survey_instances')
-                ->where('survey_id', '=', $surveyLink->survey_id)
-                ->first();
-
-            return $this->getAwvUserSurvey($notifiable->id, $surveyInstance)
-                ->where('status', '=', 'completed')
-                ->exists();
-        }
-
-        return false;
     }
 
     /**
@@ -306,24 +224,6 @@ trait EnrollableManagement
     public function pastActiveInvitationLink($enrollable)
     {
         return $enrollable->enrollmentInvitationLink()->where('manually_expired', false)->first();
-    }
-
-    /**
-     * @param $urlToken
-     * @param $url
-     */
-    public function saveTemporaryInvitationLink(User $notifiable, $urlToken, $url)
-    {
-        if ($notifiable->isSurveyOnly()) {
-            $notifiable = Enrollee::whereUserId($notifiable->id)->firstOrFail();
-        }
-
-        $notifiable->enrollmentInvitationLink()->create([
-            'link_token'       => $urlToken,
-            'url'              => $url,
-            'manually_expired' => false,
-            'button_color'     => $this->color,
-        ]);
     }
 
     /**

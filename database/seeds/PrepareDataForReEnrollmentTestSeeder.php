@@ -15,16 +15,13 @@ use Illuminate\Database\Seeder;
 
 class PrepareDataForReEnrollmentTestSeeder extends Seeder
 {
-    use EnrollableManagement;
     use SeedEligibilityJobsForEnrollees;
     use UserHelpers;
 
     const CCM_STATUS_UNREACHABLE = 'unreachable';
 
-    public function createEnrollee(Practice $practice, ?string $phoneTester = null, ?string $emailTester = null)
+    public function createEnrollee(Practice $practice, ?string $phoneTester = null)
     {
-        $faker = Factory::create();
-
         $enrolleeForTesting = factory(Enrollee::class)->create([
             'practice_id'             => $practice->id,
             'dob'                     => \Carbon\Carbon::parse('1901-01-01'),
@@ -70,7 +67,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         $n     = 1;
         $limit = 5;
         while ($n <= $limit) {
-            $this->createEnrollee($practice, $phoneTester, $emailTester);
+            $this->createEnrollee($practice, $phoneTester);
             ++$n;
         }
 

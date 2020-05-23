@@ -8,7 +8,7 @@ namespace Tests\Feature;
 
 use App\Jobs\CreateUsersFromEnrollees;
 use App\Jobs\EnrollmentSeletiveInviteEnrollees;
-use App\Jobs\SelfEnrollmentUnreachablePatients;
+use App\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
 use App\Jobs\SendEnrollmentReminders;
 use App\Notifications\SendEnrollementSms;
 use App\Notifications\SendEnrollmentEmail;
@@ -100,7 +100,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
 //    {
 //        $patient = $this->patient();
 //        Notification::fake();
-//        SelfEnrollmentUnreachablePatients::dispatchNow($patient, 1, $this->demoPractice()->id);
+//        SendSelfEnrollmentInvitationToUnreachablePatients::dispatchNow($patient, 1, $this->demoPractice()->id);
 //        $this->check_notification_mail_has_been_sent($patient);
     ////        $this->check_notification_sms_has_been_sent($patient);
 //

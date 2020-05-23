@@ -7,10 +7,10 @@
 namespace App\Http\Controllers\Enrollment;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\EnrollmentMassInviteEnrollees;
+use App\Jobs\SendSelfEnrollmentInvitationToPracticeEnrollees;
 use App\Jobs\FinalActionOnNonResponsivePatients;
 use App\Jobs\SelfEnrollmentEnrolleesReminder;
-use App\Jobs\SelfEnrollmentUnreachablePatients;
+use App\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
 use App\LoginLogout;
 use App\Notifications\SendEnrollmentEmail;
 use App\Traits\EnrollableManagement;
@@ -41,7 +41,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function inviteEnrolleesToEnrollTest(Request $request)
     {
-        EnrollmentMassInviteEnrollees::dispatchNow(
+        SendSelfEnrollmentInvitationToPracticeEnrollees::dispatchNow(
             $request->input('amount'),
             $request->input('practice_id'),
             $request->input('color')
@@ -55,7 +55,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function inviteUnreachablesToEnrollTest(Request $request)
     {
-        SelfEnrollmentUnreachablePatients::dispatchNow(
+        SendSelfEnrollmentInvitationToUnreachablePatients::dispatchNow(
             $request->input('amount'),
             $request->input('practice_id')
         );
@@ -88,7 +88,7 @@ class AutoEnrollmentTestDashboard extends Controller
 
             if ($user->isSurveyOnly()) {
                 /** @var Enrollee $enrollee */
-                $enrollee = $this->getEnrollee($user->id);
+                $enrollee = \CircleLinkHealth\Eligibility\Entities\Enrollee::fromUserId($user->id);
                 $this->deleteTestAwvUser($user->id, $surveyInstance);
                 $user->notifications()->delete();
                 $enrollee->enrollmentInvitationLink()->delete();

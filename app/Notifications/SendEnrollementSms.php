@@ -10,7 +10,7 @@ use App\Notifications\Channels\CustomTwilioChannel;
 use App\Traits\EnrollableManagement;
 use App\Traits\EnrollableNotificationContent;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
+use CircleLinkHealth\Customer\Traits\HasSelfEnrollmentInvitation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
@@ -21,22 +21,26 @@ class SendEnrollementSms extends Notification implements ShouldQueue
 {
     use EnrollableManagement;
     use EnrollableNotificationContent;
-    use HasEnrollableInvitation;
     use Queueable;
 
     /**
      * @var bool
      */
     private $isReminder;
+    /**
+     * @var string
+     */
+    private $url;
 
     /**
      * Create a new notification instance.
      *
      * @param bool $isReminder
      */
-    public function __construct($isReminder = false)
+    public function __construct(string $url, bool $isReminder = false)
     {
         $this->isReminder = $isReminder;
+        $this->url        = $url;
     }
 
     public function middleware()
@@ -79,11 +83,10 @@ class SendEnrollementSms extends Notification implements ShouldQueue
             throw new \Exception("Could not deduce user[$notifiable->id] to a receiver. User is survey-role only: $hasSurveyRole");
         }
 
-        $invitationUrl = $receiver->getLastEnrollmentInvitationLink();
-        $shortenUrl    = $invitationUrl->url;
+        $shortenUrl = $this->url;
 
         try {
-            $shortenUrl = shortenUrl($invitationUrl->url);
+            $shortenUrl = shortenUrl($shortenUrl);
         } catch (\Exception $e) {
             \Log::warning($e->getMessage());
         }
@@ -92,7 +95,6 @@ class SendEnrollementSms extends Notification implements ShouldQueue
         $smsSubject          = $notificationContent['line1'].$notificationContent['line2'].$shortenUrl;
 
         return (new TwilioSmsMessage())
-//            ->from($practiceNumber)
             ->content($smsSubject);
     }
 
