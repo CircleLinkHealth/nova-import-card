@@ -10,6 +10,7 @@ namespace App\Notifications;
 
 use App\Notifications\Channels\AutoEnrollmentMailChannel;
 use App\Traits\EnrollableNotificationContent;
+use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
@@ -104,6 +105,10 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
         $fromName = config('mail.from.name'); //@todo: We dont need to show CircleLinkHealth as default
         if ( ! empty($notifiable->primaryPractice) && ! empty($notifiable->primaryPractice->display_name)) {
             $fromName = $notifiable->primaryPractice->display_name;
+        }
+
+        if (empty($this->url)) {
+            throw new InvalidArgumentException("`url` cannot be empty. User ID {$notifiable->id}");
         }
 
         return (new AutoEnrollmentMailChannel($fromName))

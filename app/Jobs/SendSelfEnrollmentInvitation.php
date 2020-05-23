@@ -91,7 +91,7 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
             'button_color'     => $this->color,
         ]);
 
-        return url(shortenUrl($url));
+        return shortenUrl(url($url));
     }
 
     private function getSignedRouteParams(): array
@@ -114,7 +114,7 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
     private function sendInvite(string $link)
     {
         $this->user->notify(new Email($link, $this->isReminder));
-        $this->user->notify(new Sms($this->isReminder));
+        $this->user->notify(new Sms($link, $this->isReminder));
     }
 
     private function shouldRun(): bool

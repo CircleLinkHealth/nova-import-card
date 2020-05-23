@@ -9,6 +9,7 @@ namespace App\Notifications;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\Traits\EnrollableManagement;
 use App\Traits\EnrollableNotificationContent;
+use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -80,16 +81,12 @@ class SendEnrollementSms extends Notification implements ShouldQueue
             throw new \Exception("Could not deduce user[$notifiable->id] to a receiver. User is survey-role only: $hasSurveyRole");
         }
 
-        $shortenUrl = $this->url;
-
-        try {
-            $shortenUrl = shortenUrl($shortenUrl);
-        } catch (\Exception $e) {
-            \Log::warning($e->getMessage());
+        if (empty($this->url)) {
+            throw new InvalidArgumentException("`url` cannot be empty. User ID {$notifiable->id}");
         }
 
         $notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
-        $smsSubject          = $notificationContent['line1'].$notificationContent['line2'].$shortenUrl;
+        $smsSubject          = $notificationContent['line1'].$notificationContent['line2'].$this->url;
 
         return (new TwilioSmsMessage())
             ->content($smsSubject);
