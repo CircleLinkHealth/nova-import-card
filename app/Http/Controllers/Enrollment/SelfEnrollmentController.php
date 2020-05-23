@@ -131,11 +131,11 @@ class SelfEnrollmentController extends Controller
             return "Enrollee [$enrollableId] user_id is null";
         }
 
-        $userFromEnrollee = $this->getUserModelEnrollee($enrollee->user_id);
+        $patientUser = User::findOrFail($enrollee->user_id);
 
-        if (SelfEnrollmentHelpers::hasCompletedSelfEnrollmentSurvey($userFromEnrollee)) {
+        if (SelfEnrollmentHelpers::hasCompletedSelfEnrollmentSurvey($patientUser)) {
 //            Redirect to Survey Done Page (awv logout)
-            return $this->generateUrlAndRedirectToSurvey($userFromEnrollee->id);
+            return $this->generateUrlAndRedirectToSurvey($patientUser->id);
         }
 
         if ( ! $enrollee->statusRequestsInfo()->exists()) {
