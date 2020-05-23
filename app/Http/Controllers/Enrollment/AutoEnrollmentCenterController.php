@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Enrollment;
 
+use App\Helpers\SelfEnrollmentHelpers;
 use App\Http\Controllers\Controller;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use App\Traits\EnrollableManagement;
@@ -199,7 +200,7 @@ class AutoEnrollmentCenterController extends Controller
             return redirect($this->getAwvInvitationLinkForUser($unrechablePatient)->url);
         }
 
-        if ($this->hasCompletedSelfEnrollmentSurvey($unrechablePatient)) {
+        if (SelfEnrollmentHelpers::hasCompletedSelfEnrollmentSurvey($unrechablePatient)) {
             $practiceNumber = $unrechablePatient->primaryPractice->outgoing_phone_number;
             $doctorName     = $unrechablePatient->getBillingProviderName();
 
