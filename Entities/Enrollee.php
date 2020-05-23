@@ -17,7 +17,6 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\HasSelfEnrollmentInvitation;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 /**
