@@ -17,6 +17,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\HasSelfEnrollmentInvitation;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 /**
@@ -465,11 +466,6 @@ class Enrollee extends BaseModel
     public function eligibilityJob()
     {
         return $this->belongsTo(EligibilityJob::class);
-    }
-
-    public static function fromUserId(int $userId): ?Enrollee
-    {
-        return static::whereUserId($userId)->first();
     }
 
     public function getAddressesAsString(Enrollee $compareAgainstEnrollee = null)
