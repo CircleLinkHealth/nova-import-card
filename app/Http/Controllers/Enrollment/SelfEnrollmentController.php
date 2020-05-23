@@ -323,6 +323,28 @@ class SelfEnrollmentController extends Controller
         return view('EnrollmentSurvey.enrollableLogout', compact('practiceLogoSrc', 'practiceName'));
     }
 
+    /**
+     * @param $enrollableId
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    private function createUrlAndRedirectToSurvey($enrollableId)
+    {
+        $enrolleesSurveyInstance = $this->getEnrolleesSurveyInstance();
+
+        try {
+            $surveyId = $enrolleesSurveyInstance->survey_id;
+        } catch (\Exception $exception) {
+            \Log::critical('Survey instance not found');
+            abort(404);
+        }
+
+        $this->updateAwvUsersSurvey($enrollableId, $enrolleesSurveyInstance, $surveyId);
+        $enrolleesSurveyUrl = url(config('services.awv.url')."/survey/enrollees/create-url/{$enrollableId}/{$surveyId}");
+
+        return redirect($enrolleesSurveyUrl);
+    }
+
     private function enrollableInvitationManager($enrollableId, $isSurveyOnlyUser)
     {
         if ($isSurveyOnlyUser) {
