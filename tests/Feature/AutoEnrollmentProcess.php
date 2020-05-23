@@ -209,6 +209,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
         $surveyInstance = $this->createSurveyConditionsAndGetSurveyInstance($userId, self::IN_PROGRESS);
         self::assertTrue(self::IN_PROGRESS === $this->getAwvUserSurvey($userId, $surveyInstance)->first()->status);
     }
+
 //
 //    public function test_it_sends_reminder_to_non_responding_patient()
 //    {
