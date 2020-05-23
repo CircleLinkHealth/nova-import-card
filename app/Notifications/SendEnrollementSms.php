@@ -6,7 +6,6 @@
 
 namespace App\Notifications;
 
-use App\Helpers\SelfEnrollmentHelpers;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\Traits\EnrollableManagement;
 use App\Traits\EnrollableNotificationContent;

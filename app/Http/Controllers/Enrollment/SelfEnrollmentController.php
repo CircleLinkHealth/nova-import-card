@@ -240,11 +240,11 @@ class SelfEnrollmentController extends Controller
         }
 
         $user = User::whereId($userId)->has('enrollee')->with('enrollee')->firstOrFail();
-        
+
         if ($user->isSurveyOnly()) {
             return $this->enrollmentLetterView($user, true, $user->enrollee, true);
         }
-        
+
         abort(403, 'Unauthorized action.');
     }
 
@@ -265,7 +265,7 @@ class SelfEnrollmentController extends Controller
     protected function authenticate(EnrollmentValidationRules $request)
     {
         $userId = (int) $request->input('user_id');
-        $user = Auth::loginUsingId($userId, true);
+        $user   = Auth::loginUsingId($userId, true);
 
         if ($user->isSurveyOnly()) {
             Enrollee::whereUserId($userId)->firstOrFail()->selfEnrollmentStatus()->update([
@@ -419,9 +419,9 @@ class SelfEnrollmentController extends Controller
     private function expirePastInvitationLink($enrollable)
     {
         Log::debug("expirePastInvitationLink called for $enrollable->id");
-        
+
         $pastInvitationLinksQuery = $enrollable->enrollmentInvitationLinks()->where('manually_expired', false);
-        
+
         if ($pastInvitationLinksQuery->exists()) {
             $pastInvitationLinksQuery->update(['manually_expired' => true]);
         }
@@ -472,7 +472,7 @@ class SelfEnrollmentController extends Controller
     {
         $user->loadMissing(['enrollee.statusRequestsInfo', 'enrollee.practice', 'enrollee.provider']);
 
-        if (!is_null($user->enrollee->statusRequestsInfo)) {
+        if ( ! is_null($user->enrollee->statusRequestsInfo)) {
             return $this->returnEnrolleeRequestedInfoMessage($user->enrollee);
         }
 

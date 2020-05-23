@@ -11,7 +11,6 @@ use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Notifications\SendEnrollementSms as Sms;
 use App\Notifications\SendEnrollmentEmail as Email;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
