@@ -38,7 +38,7 @@ class AutoEnrollmentLogin extends Controller
         Auth::loginUsingId($request->input('user_id'), true);
 
         if (boolval($request->input('is_survey_only'))) {
-            $enrollee = \CircleLinkHealth\Eligibility\Entities\Enrollee::fromUserId($request->input('user_id'));
+            $enrollee = Enrollee::fromUserId($request->input('user_id'));
 
             if ( ! $enrollee) {
                 abort(404);
