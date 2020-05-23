@@ -151,19 +151,6 @@ trait EnrollableManagement
     }
 
     /**
-     * @param $url
-     *
-     * @return mixed
-     */
-    public function parseUrl($url)
-    {
-        $parsedUrl = parse_url($url);
-        parse_str($parsedUrl['query'], $output);
-
-        return $output['signature'];
-    }
-
-    /**
      * @param $enrollable
      *
      * @return mixed

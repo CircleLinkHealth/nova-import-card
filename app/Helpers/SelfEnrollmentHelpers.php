@@ -58,6 +58,26 @@ class SelfEnrollmentHelpers
             ->first();
     }
 
+    /**
+     * @param $url
+     *
+     * @return mixed
+     */
+    public static function getTokenFromUrl(string $url): ?string
+    {
+        $parsedUrl = parse_url($url);
+
+        if ( ! is_array($parsedUrl)) {
+            return null;
+        }
+        if ( ! array_key_exists('query', $parsedUrl)) {
+            return null;
+        }
+        parse_str($parsedUrl['query'], $output);
+
+        return $output['signature'];
+    }
+
     public static function hasCompletedSelfEnrollmentSurvey(User $user): bool
     {
         $user->loadMissing('patientInfo');

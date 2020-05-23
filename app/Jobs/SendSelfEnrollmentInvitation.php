@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use App\Helpers\SelfEnrollmentHelpers;
 use App\Http\Controllers\Enrollment\AutoEnrollmentCenterController;
 use App\Notifications\SendEnrollementSms as Sms;
 use App\Notifications\SendEnrollmentEmail as Email;
@@ -71,14 +72,11 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
     {
         $url = URL::temporarySignedRoute('invitation.enrollment.loginForm', now()->addHours(48), $this->getSignedRouteParams());
 
-        $shortUrl = null;
-        try {
-            $shortUrl = shortenUrl($url);
-        } catch (\Exception $e) {
-            \Log::warning($e->getMessage());
-        }
+        $urlToken = SelfEnrollmentHelpers::getTokenFromUrl($url);
 
-        $urlToken = $this->parseUrl($url);
+        if (empty($urlToken)) {
+            throw new \Exception("`urlToken` cannot be empty. User ID {$this->user->id}");
+        }
 
         $notifiable = $this->user;
 
@@ -93,7 +91,7 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
             'button_color'     => $this->color,
         ]);
 
-        return url($shortUrl ?? $url);
+        return url(shortenUrl($url));
     }
 
     private function getSignedRouteParams(): array
