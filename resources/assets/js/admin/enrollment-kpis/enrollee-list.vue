@@ -94,7 +94,7 @@
                             {id:'queue_auto_enrollment', text:'Queued for Self-enrollment'},
                         ],
                     },
-                    perPage: 100,
+                    perPage: 50,
                     perPageValues: [10, 25, 50, 100, 200],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
