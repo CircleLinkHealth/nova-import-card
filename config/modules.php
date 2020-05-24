@@ -137,8 +137,26 @@ return [
     'composer' => [
         'vendor' => 'circlelinkhealth',
         'author' => [
-            'name'  => 'Michalis Antoniou',
-            'email' => 'mantoniou@cirlelinkhealth.com',
+            [
+                'name'  => 'Antonis Antoniou',
+                'email' => 'antonis@cirlelinkhealth.com',
+                'role'  => 'Developer',
+            ],
+            [
+                'name'  => 'Constantinos Kakoushias',
+                'email' => 'constantinos@cirlelinkhealth.com',
+                'role'  => 'Developer',
+            ],
+            [
+                'name'  => 'Michalis Antoniou',
+                'email' => 'mantoniou@cirlelinkhealth.com',
+                'role'  => 'Lead Developer',
+            ],
+            [
+                'name'  => 'Pangratios Cosma',
+                'email' => 'pangratios@cirlelinkhealth.com',
+                'role'  => 'Lead Developer',
+            ],
         ],
     ],
     /*
