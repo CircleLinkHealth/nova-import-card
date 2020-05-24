@@ -5,6 +5,28 @@
     "framework",
     "laravel"
   ],
+  "authors": [
+    {
+      "name": "Antonis Antoniou",
+      "email": "antonis@cirlelinkhealth.com",
+      "role": "Developerr"
+    },
+    {
+      "name": "Constantinos Kakoushias",
+      "email": "constantinos@cirlelinkhealth.com",
+      "role": "Developerr"
+    },
+    {
+      "name": "Michalis Antoniou",
+      "email": "mantoniou@cirlelinkhealth.com",
+      "role": "Lead Developerr"
+    },
+    {
+      "name": "Pangratios Cosma",
+      "email": "pangratios@cirlelinkhealth.com",
+      "role": "Lead Developerr"
+    }
+  ],
   "license": "MIT",
   "type": "project",
   "repositories": [
@@ -243,7 +265,8 @@
       "database/factories"
     ],
     "psr-4": {
-      "App\\": "app/"
+      "App\\": "app/",
+      "Modules\\": "Modules/"
     },
     "files": [
       "app/helpers.php"
