@@ -1,6 +1,6 @@
 {
-    "name": "$STUDLY_NAME$",
-    "alias": "$LOWER_NAME$",
+    "name": "CerberusGatekeeper",
+    "alias": "cerberusgatekeeper",
     "description": "",
     "keywords": [],
     "order": 0,
