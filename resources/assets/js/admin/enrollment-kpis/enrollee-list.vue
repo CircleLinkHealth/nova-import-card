@@ -10,6 +10,11 @@
             </div>
             <v-server-table class="table" v-on:filter="listenTo" :url="getUrl()" :columns="columns" :options="options"
                             ref="table">
+                <template slot="status" slot-scope="props">
+                    <div>
+                        {{enrolleeStatusMap[props.row.status] || props.row.status}}
+                    </div>
+                </template>
                 <template slot="total_time_spent" slot-scope="props">
                     {{formatSecondsToHHMMSS(props.row.total_time_spent)}}
                 </template>
@@ -41,6 +46,16 @@
                     next: false,
                     excel: false,
                 },
+                enrolleeStatusMap: {
+                    call_queue: 'Call Queue',
+                    enrolled: 'Enrolled',
+                    consented: 'consented',
+                    soft_rejected: 'Soft Declined',
+                    hard_declined: 'Hard Declined',
+                    utc: 'Unreachable',
+                    ineligible: 'Ineligible',
+                    queue_auto_enrollment: 'Queued for Self-enrollment',
+                },
                 loading: false,
                 hideStatus: ['ineligible'],
                 columns: ['id', 'user_id', 'mrn', 'first_name', 'last_name', 'care_ambassador_name','status', 'source', 'enrollment_non_responsive', 'auto_enrollment_triggered', 'practice_name', 'provider_name', 'lang', 'requested_callback', 'total_time_spent', 'attempt_count', 'last_attempt_at',
@@ -58,13 +73,32 @@
                     },
                     columnsClasses: {
                         'selected': 'blank',
-                        'Type': 'padding-2'
+                        'Type': 'padding-2',
+                        'id': 'min-width-80',
+                        'edit': 'min-width-50',
+                        'select': 'min-width-50',
+                        'has-copay': 'min-width-50',
+                        'user_id': 'min-width-80',
+                        'mrn': 'min-width-80',
+                        'lang': 'min-width-80'
+                    },
+                    listColumns: {
+                        status: [
+                            {id: 'call_queue', text: 'Call Queue'},
+                            {id:'enrolled', text: 'Enrolled'},
+                            {id:'consented', text: 'consented'},
+                            {id:'soft_rejected', text: 'Soft Declined'},
+                            {id: 'hard_declined', text: 'Hard Declined'},
+                            {id:'utc', text: 'Unreachable'},
+                            {id:'ineligible',text: 'Ineligible'},
+                            {id:'queue_auto_enrollment', text:'Queued for Self-enrollment'},
+                        ],
                     },
                     perPage: 100,
                     perPageValues: [10, 25, 50, 100, 200],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
-                    filterable: ['hideStatus', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status','source', 'requested_callback', 'eligibility_job_id', 'enrollment_non_responsive', 'last_attempt_at', 'auto_enrollment_triggered','medical_record_id', 'practice_name', 'provider_name', 'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'attempt_count'],
+                    filterable: ['hideStatus', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status','source', 'requested_callback', 'eligibility_job_id', 'enrollment_non_responsive', 'last_attempt_at', 'auto_enrollment_triggered','medical_record_id', 'practice_name', 'provider_name', 'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'attempt_count', 'primary_phone', 'home_phone', 'cell_phone', 'other_phone'],
                     sortable: ['id', 'user_id', 'first_name', 'last_name', 'practice_name', 'provider_name', 'primary_insurance', 'status', 'source', 'created_at', 'state', 'city','enrollment_non_responsive', 'auto_enrollment_triggered', 'last_attempt_at', 'care_ambassador_name', 'attempt_count', 'requested_callback'],
                 },
             }
@@ -157,6 +191,14 @@
 
 <style>
     th {
-        min-width: 80px;
+        min-width: 130px;
     }
+    .min-width-50 {
+        min-width: 50px !important;
+    }
+
+    .min-width-80 {
+        min-width: 80px !important;
+    }
+
 </style>

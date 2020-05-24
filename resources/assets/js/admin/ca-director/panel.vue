@@ -51,7 +51,7 @@
 
             </div>
             <div class="col-sm-2">
-                <loader style="margin-left: 80px" v-if="loading"/>
+                <loader style="margin-top:20px; margin-left: 80px" v-if="loading"/>
             </div>
             <div class="col-sm-5 text-right" v-if="enrolleesAreSelected">
                 <button class="btn btn-primary btn-s" @click="assignSelectedToCa">Assign To CA</button>
@@ -83,6 +83,11 @@
                            :v-model="props.row.select"
                            :checked="selected(props.row.id)"
                            @change="toggleId(props.row.id)">
+                </template>
+                <template slot="status" slot-scope="props">
+                    <div>
+                        {{enrolleeStatusMap[props.row.status] || props.row.status}}
+                    </div>
                 </template>
                 <template slot="total_time_spent" slot-scope="props">
                     {{formatSecondsToHHMMSS(props.row.total_time_spent)}}
@@ -123,7 +128,6 @@
             'add-custom-filter-modal': AddCustomFilterModal,
             'loader': Loader,
             'notifications': Notifications
-
         },
         props: [],
         data() {
@@ -150,7 +154,26 @@
                     },
                     columnsClasses: {
                         'selected': 'blank',
-                        'Type': 'padding-2'
+                        'Type': 'padding-2',
+                        'id': 'min-width-80',
+                        'edit': 'min-width-50',
+                        'select': 'min-width-50',
+                        'has-copay': 'min-width-50',
+                        'user_id': 'min-width-80',
+                        'mrn': 'min-width-80',
+                        'lang': 'min-width-80'
+                    },
+                    listColumns: {
+                        status: [
+                            {id: 'call_queue', text: 'Call Queue'},
+                            {id:'enrolled', text: 'Enrolled'},
+                            {id:'consented', text: 'consented'},
+                            {id:'soft_rejected', text: 'Soft Declined'},
+                            {id: 'hard_declined', text: 'Hard Declined'},
+                            {id:'utc', text: 'Unreachable'},
+                            {id:'ineligible',text: 'Ineligible'},
+                            {id:'queue_auto_enrollment', text:'Queued for Self-enrollment'},
+                        ],
                     },
                     perPage: 100,
                     perPageValues: [10, 25, 50, 100, 200],
@@ -158,6 +181,16 @@
                     filterByColumn: true,
                     filterable: ['hideStatus', 'hideAssigned', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status','source', 'requested_callback', 'eligibility_job_id', 'enrollment_non_responsive', 'primary_phone', 'home_phone', 'cell_phone', 'other_phone','last_attempt_at', 'auto_enrollment_triggered','medical_record_id', 'practice_name', 'provider_name', 'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'attempt_count'],
                     sortable: ['id', 'user_id', 'first_name', 'last_name', 'practice_name', 'provider_name', 'primary_insurance', 'status', 'source', 'created_at', 'state', 'city','enrollment_non_responsive', 'auto_enrollment_triggered', 'last_attempt_at', 'care_ambassador_name', 'attempt_count', 'requested_callback'],
+                },
+                enrolleeStatusMap: {
+                    call_queue: 'Call Queue',
+                    enrolled: 'Enrolled',
+                    consented: 'consented',
+                    soft_rejected: 'Soft Declined',
+                    hard_declined: 'Hard Declined',
+                    utc: 'Unreachable',
+                    ineligible: 'Ineligible',
+                    queue_auto_enrollment: 'Queued for Self-enrollment',
                 },
             }
 
@@ -259,47 +292,40 @@
             },
             showIneligible() {
                 Event.$emit('notifications-ca-panel:dismissAll');
-                this.loading = true;
                 if (this.hideStatus.includes('ineligible'))
                     this.hideStatus = this.hideStatus.filter(item => item !== 'ineligible');
                 else
                     this.hideStatus.push('ineligible');
 
-                this.updateTable();
+                this.refreshTable();
             },
             showSoftRejected() {
                 Event.$emit('notifications-ca-panel:dismissAll');
-                this.loading = true;
                 if (this.hideStatus.includes('soft_rejected'))
                     this.hideStatus = this.hideStatus.filter(item => item !== 'soft_rejected');
                 else
                     this.hideStatus.push('soft_rejected');
-
-                this.updateTable();
+                this.refreshTable();
             },
             showRejected() {
                 Event.$emit('notifications-ca-panel:dismissAll');
-                this.loading = true;
                 if (this.hideStatus.includes('rejected'))
                     this.hideStatus = this.hideStatus.filter(item => item !== 'rejected');
                 else
                     this.hideStatus.push('soft_rejected');
-
-                this.updateTable();
+                this.refreshTable();
             },
             showSelfEnrollment() {
                 Event.$emit('notifications-ca-panel:dismissAll');
-                this.loading = true;
                 if (this.hideStatus.includes('queue_auto_enrollment'))
                     this.hideStatus = this.hideStatus.filter(item => item !== 'queue_auto_enrollment');
                 else
                     this.hideStatus.push('queue_auto_enrollment');
 
-                this.updateTable();
+                this.refreshTable();
             },
             showConsented() {
                 Event.$emit('notifications-ca-panel:dismissAll');
-                this.loading = true;
                 if (this.hideStatus.includes('consented')) {
                     this.hideStatus = this.hideStatus.filter(item => item !== 'consented');
                     this.hideAssigned = false;
@@ -308,21 +334,19 @@
                     this.hideStatus.push('consented');
                 }
 
-                this.updateTable();
+                this.refreshTable();
             },
             showAssigned() {
                 Event.$emit('notifications-ca-panel:dismissAll');
-                this.loading = true;
+                Event.$emit('notifications-ca-panel:dismissAll');
                 this.hideAssigned = !this.hideAssigned;
-
-                this.updateTable();
+                this.refreshTable();
             },
             isolatePatientsUploadedViaCsv(){
                 Event.$emit('notifications-ca-panel:dismissAll');
-                this.loading = true;
+                Event.$emit('notifications-ca-panel:dismissAll');
                 this.isolateUploadedViaCsv = ! this.isolateUploadedViaCsv;
-
-                this.updateTable();
+                this.refreshTable();
             },
             listenTo(a) {
                 this.info = JSON.stringify(a);
@@ -335,9 +359,18 @@
             console.info('created');
         },
         mounted() {
+            self = this;
             Event.$on('clear-selected-enrollees', this.clearSelected)
             Event.$on('refresh-table', this.refreshTable)
             console.info('mounted');
+
+            Event.$on('vue-tables.loading', function (data) {
+                self.loading = true;
+            });
+
+            Event.$on('vue-tables.loaded', function (data) {
+                self.loading = false;
+            });
         }
 
     }
@@ -356,7 +389,7 @@
     }
 
     th {
-        min-width: 80px;
+        min-width: 130px;
     }
 
     .table {
@@ -382,7 +415,12 @@
         background: #7d92f5 !important;
     }
 
-    .panel-body {
-
+    .min-width-50 {
+      min-width: 50px !important;
     }
+
+    .min-width-80 {
+        min-width: 80px !important;
+    }
+
 </style>
