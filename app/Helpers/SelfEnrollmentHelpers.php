@@ -7,6 +7,8 @@
 namespace App\Helpers;
 
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use App\Notifications\SelfEnrollmentInviteNotification;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -136,5 +138,36 @@ class SelfEnrollmentHelpers
         return self::awvUserSurveyQuery($user, $surveyInstance)
             ->where('status', '=', 'completed')
             ->exists();
+    }
+    
+    public static function enrollableUsersToRemindQuery(Carbon $end, Carbon $start)
+    {
+        $from = $start->toDateTimeString();
+        $to   = $end->toDateTimeString();
+
+//         We send the first notification marked as is_reminder => false
+//         We send the second notification(reminder => true).
+//         We dont want to send a second reminder if user has 1 true and 1 false is_reminder.
+        return User::whereHas('notifications', function ($notification) use ($to, $from) {
+            $notification
+                ->where('data->is_reminder', false)
+                ->where([
+                    ['created_at', '>=', $from],
+                    ['created_at', '<=', $to],
+                ])
+                ->selfEnrollmentInvites();
+        })
+            ->whereHas('patientInfo', function ($patient) use ($from, $to) {
+                $patient->where('ccm_status', Patient::UNREACHABLE);
+            })
+            ->whereDoesntHave('notifications', function ($notification) use ($to, $from) {
+                $notification
+                    ->where('data->is_reminder', true)
+                    ->where([
+                        ['created_at', '>=', $from],
+                        ['created_at', '<=', $to],
+                    ])
+                    ->where('type', SelfEnrollmentInviteNotification::class);
+            });
     }
 }

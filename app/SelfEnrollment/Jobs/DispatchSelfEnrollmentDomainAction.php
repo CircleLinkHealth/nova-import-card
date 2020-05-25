@@ -10,7 +10,6 @@ use App\Helpers\SelfEnrollmentHelpers;
 use App\SelfEnrollment\Domain\RemindEnrollees;
 use App\SelfEnrollment\Domain\RemindUnreachablePatients;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
-use App\Traits\EnrollmentReminderShared;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -22,7 +21,6 @@ use Illuminate\Support\Facades\App;
 class DispatchSelfEnrollmentDomainAction implements ShouldQueue
 {
     use Dispatchable;
-    use EnrollmentReminderShared;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;

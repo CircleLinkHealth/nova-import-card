@@ -6,23 +6,21 @@
 
 namespace App\SelfEnrollment\Domain;
 
+use App\Helpers\SelfEnrollmentHelpers;
+use App\SelfEnrollment\Contracts\SelfEnrollable;
 use App\SelfEnrollment\Jobs\SendSelfEnrollmentReminder;
-use App\Traits\EnrollmentReminderShared;
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 
-class RemindEnrollees extends AbstractUserIterator
+class RemindEnrollees extends AbstractSelfEnrollableModelIterator
 {
-    use EnrollmentReminderShared;
-
-    public function action(User $user): void
+    public function action(SelfEnrollable $enrollable): void
     {
-        SendSelfEnrollmentReminder::dispatch($user);
+        SendSelfEnrollmentReminder::dispatch($enrollable);
     }
 
     public function query(): Builder
     {
-        return $this->sharedReminderQuery($this->untilEndOfDay, $this->twoDaysAgo)
+        return SelfEnrollmentHelpers::enrollableUsersToRemindQuery($this->end, $this->start)
             ->whereHas('enrollee', function ($enrollee) {
                 $enrollee->whereNull('source'); //Eliminates unreachable patients, and only fetches enrollees who have not yet enrolled.
             })->orderBy('created_at', 'asc')
