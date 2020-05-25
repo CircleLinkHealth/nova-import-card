@@ -42,6 +42,18 @@ class SendInvitation implements ShouldQueue
     private $isSurveyOnlyUser;
 
     /**
+     * A signed URL for enrollables to login to take self enrollment survey.
+     *
+     * @var string|null
+     */
+    private $link;
+
+    /**
+     * @var string
+     */
+    private $shortUrl;
+
+    /**
      * @var User
      */
     private $user;
@@ -61,6 +73,11 @@ class SendInvitation implements ShouldQueue
         $this->channels   = $channels;
     }
 
+    public function getLink(): ?string
+    {
+        return $this->link;
+    }
+
     /**
      * Execute the job.
      *
@@ -77,6 +94,10 @@ class SendInvitation implements ShouldQueue
 
     private function createLink(): string
     {
+        if ( ! is_null($this->shortUrl)) {
+            return $this->shortUrl;
+        }
+
         $url = URL::temporarySignedRoute('invitation.enrollment.loginForm', now()->addHours(48), $this->getSignedRouteParams());
 
         if (empty($urlToken = Helpers::getTokenFromUrl($url))) {
@@ -97,7 +118,10 @@ class SendInvitation implements ShouldQueue
             'button_color'     => $this->color,
         ]);
 
-        return shortenUrl(url($url));
+        $this->link     = $url;
+        $this->shortUrl = shortenUrl(url($url));
+
+        return $this->shortUrl;
     }
 
     private function getSignedRouteParams(): array

@@ -9,8 +9,11 @@ namespace Tests\Feature\SelfEnrollment;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
+use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
+use App\SelfEnrollment\Jobs\SendInvitation;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Queue;
 use Notification;
 use PrepareDataForReEnrollmentTestSeeder;
 use Tests\Concerns\TwilioFake\Twilio;
@@ -24,7 +27,14 @@ class SelfEnrollmentTest extends TestCase
      */
     private $factory;
 
-    public function tests_it_does_not_send_sms_if_only_email_selected()
+    public function test_it_creates_user_from_enrollee()
+    {
+        $enrollee = $this->createEnrollees();
+        CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee);
+        self::assertTrue( ! is_null($enrollee->fresh()->user_id));
+    }
+
+    public function test_it_does_not_send_sms_if_only_email_selected()
     {
         $this->createEnrollees($number = 2);
         Twilio::fake();
@@ -40,7 +50,33 @@ class SelfEnrollmentTest extends TestCase
         Twilio::assertNothingSent();
     }
 
-    public function tests_it_sends_enrollment_notifications()
+    public function test_it_saves_enrollment_link_in_db_when_sending_invite()
+    {
+        $this->createEnrollees($number = 1);
+
+        Queue::fake();
+
+        InvitePracticeEnrollees::dispatchNow(
+            $number,
+            $this->practice()->id,
+            $color = SelfEnrollmentController::RED_BUTTON_COLOR,
+            ['mail', CustomTwilioChannel::class]
+        );
+
+        Queue::assertPushed(SendInvitation::class, function (SendInvitation $job) use ($color) {
+            Notification::fake();
+            $job->handle();
+            $this->assertDatabaseHas('enrollables_invitation_links', [
+                'url'              => $job->getLink(),
+                'manually_expired' => false,
+                'button_color'     => $color,
+            ]);
+
+            return true;
+        });
+    }
+
+    public function test_it_sends_enrollment_notifications()
     {
         $this->createEnrollees($number = 2);
         Notification::fake();
@@ -53,7 +89,7 @@ class SelfEnrollmentTest extends TestCase
         Notification::assertTimesSent($number, SelfEnrollmentInviteNotification::class);
     }
 
-    public function tests_it_sends_enrollment_sms()
+    public function test_it_sends_enrollment_sms()
     {
         $this->createEnrollees($number = 2);
         Twilio::fake();

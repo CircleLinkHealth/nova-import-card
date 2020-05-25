@@ -6,9 +6,9 @@
 
 namespace Tests\Feature;
 
-use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use App\SelfEnrollment\Jobs\SendInvitation;
 use App\SelfEnrollment\Jobs\SendReminder;
+use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\Entities\Role;
@@ -27,9 +27,8 @@ class AutoEnrollmentProcessTest extends CustomerTestCase
     {
         Notification::assertSentTo(
             $user,
-            'App\Notifications\SendEnrollmentEmail',
-            function (SendEnrollmentEmail $notification, $channels, $notifiable) use ($user) {
-                $notification->createInvitationLink($notifiable);
+            SelfEnrollmentInviteNotification::class,
+            function (SelfEnrollmentInviteNotification $notification, $channels, $notifiable) use ($user) {
                 self::assertEquals(['database', 'mail'], $channels);
 
                 return (int) $notifiable->id === (int) $user->id;
@@ -62,13 +61,6 @@ class AutoEnrollmentProcessTest extends CustomerTestCase
                 'description'  => 'Became Users just to be enrolled in AWV surveyRole',
             ]
         );
-    }
-
-    public function test_it_creates_user_from_enrollee()
-    {
-        $enrollee = $this->enrollee();
-        CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee);
-        self::assertTrue( ! is_null($enrollee->fresh()->user_id));
     }
 
     public function test_it_sends_invitations_to_enrollee()
