@@ -8,12 +8,10 @@ namespace App\Console\Commands;
 
 use App\Helpers\SelfEnrollmentHelpers;
 use App\Jobs\EnrollableSurveyCompleted;
-use App\Traits\EnrollableManagement;
 use Illuminate\Console\Command;
 
 class ManuallyImportSurveyDonePatientsCommand extends Command
 {
-    use EnrollableManagement;
     /**
      * The console command description.
      *

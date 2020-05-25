@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Traits\EnrollableManagement;
+
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Role;
@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 class CreateUsersFromEnrollees implements ShouldQueue
 {
     use Dispatchable;
-    use EnrollableManagement;
+    
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;

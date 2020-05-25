@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Traits\EnrollableManagement;
+
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Log;
 class EnrollableSurveyCompleted implements ShouldQueue
 {
     use Dispatchable;
-    use EnrollableManagement;
+    
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;

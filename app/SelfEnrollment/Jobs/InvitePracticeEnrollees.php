@@ -4,11 +4,12 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Jobs;
+namespace App\SelfEnrollment\Jobs;
 
 // This file is part of CarePlan Manager by CircleLink Health.
 
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use App\Jobs\SendSelfEnrollmentInvitation;
 use App\Notifications\Channels\CustomTwilioChannel;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -19,7 +20,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class SendSelfEnrollmentInvitationToPracticeEnrollees implements ShouldQueue
+class InvitePracticeEnrollees implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -57,7 +58,7 @@ class SendSelfEnrollmentInvitationToPracticeEnrollees implements ShouldQueue
     private $surveyRole;
 
     /**
-     * SendSelfEnrollmentInvitationToPracticeEnrollees constructor.
+     * InvitePracticeEnrollees constructor.
      */
     public function __construct(
         int $amount,

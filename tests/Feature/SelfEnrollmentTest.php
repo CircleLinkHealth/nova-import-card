@@ -7,9 +7,9 @@
 namespace Tests\Feature;
 
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
-use App\Jobs\SendSelfEnrollmentInvitationToPracticeEnrollees;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\Notifications\SelfEnrollmentInviteNotification;
+use App\SelfEnrollment\Jobs\InvitePracticeEnrollees;
 use Illuminate\Support\Facades\Mail;
 use Notification;
 use Tests\Concerns\TwilioFake\Twilio;
@@ -24,7 +24,7 @@ class SelfEnrollmentTest extends CustomerTestCase
         $this->createEnrollees($number = 2);
         Twilio::fake();
         Mail::fake();
-        SendSelfEnrollmentInvitationToPracticeEnrollees::dispatchNow($number, $this->practice()->id, SelfEnrollmentController::DEFAULT_BUTTON_COLOR, ['mail']);
+        InvitePracticeEnrollees::dispatchNow($number, $this->practice()->id, SelfEnrollmentController::DEFAULT_BUTTON_COLOR, ['mail']);
         Twilio::assertNothingSent();
     }
 
@@ -32,7 +32,7 @@ class SelfEnrollmentTest extends CustomerTestCase
     {
         $this->createEnrollees($number = 2);
         Notification::fake();
-        SendSelfEnrollmentInvitationToPracticeEnrollees::dispatchNow($number, $this->practice()->id, SelfEnrollmentController::DEFAULT_BUTTON_COLOR, ['mail', CustomTwilioChannel::class]);
+        InvitePracticeEnrollees::dispatchNow($number, $this->practice()->id, SelfEnrollmentController::DEFAULT_BUTTON_COLOR, ['mail', CustomTwilioChannel::class]);
         Notification::assertTimesSent($number, SelfEnrollmentInviteNotification::class);
     }
 
@@ -40,7 +40,7 @@ class SelfEnrollmentTest extends CustomerTestCase
     {
         $this->createEnrollees($number = 2);
         Twilio::fake();
-        SendSelfEnrollmentInvitationToPracticeEnrollees::dispatchNow($number, $this->practice()->id, SelfEnrollmentController::DEFAULT_BUTTON_COLOR, [CustomTwilioChannel::class]);
+        InvitePracticeEnrollees::dispatchNow($number, $this->practice()->id, SelfEnrollmentController::DEFAULT_BUTTON_COLOR, [CustomTwilioChannel::class]);
         Twilio::assertNumberOfMessagesSent($number);
     }
 

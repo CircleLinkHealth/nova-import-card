@@ -8,10 +8,12 @@ namespace App\Http\Controllers\Enrollment;
 
 use App\Helpers\SelfEnrollmentHelpers;
 use App\Http\Controllers\Controller;
-use App\Jobs\SendSelfEnrollmentInvitationToPracticeEnrollees;
+use App\SelfEnrollment\Actions\RemindEnrollees;
+use App\SelfEnrollment\Actions\UnreachablesFinalAction;
+use App\SelfEnrollment\Jobs\InvitePracticeEnrollees;
 use App\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
-use App\Jobs\SendSelfEnrollmentReminders;
-use App\Traits\EnrollableManagement;
+use App\SelfEnrollment\Jobs\DispatchSelfEnrollmentAction;
+
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;
@@ -22,14 +24,14 @@ use Illuminate\Support\Facades\DB;
 
 class AutoEnrollmentTestDashboard extends Controller
 {
-    use EnrollableManagement;
+    
 
     /**
      * @return string
      */
     public function finalActionTest()
     {
-        SendSelfEnrollmentReminders::dispatch(SendSelfEnrollmentReminders::TAKE_FINAL_ACTION_ON_UNRESPONSIVE_PATIENTS);
+        DispatchSelfEnrollmentAction::dispatch(UnreachablesFinalAction::class);
 
         return redirect(route('ca-director.index'))->with('message', 'Reminders Sent Successfully');
     }
@@ -39,7 +41,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function inviteEnrolleesToEnrollTest(Request $request)
     {
-        SendSelfEnrollmentInvitationToPracticeEnrollees::dispatchNow(
+        InvitePracticeEnrollees::dispatchNow(
             $request->input('amount'),
             $request->input('practice_id'),
             $request->input('color')
@@ -130,7 +132,7 @@ class AutoEnrollmentTestDashboard extends Controller
     public function sendEnrolleesReminderTestMethod()
     {
         try {
-            SendSelfEnrollmentReminders::dispatch(SendSelfEnrollmentReminders::REMIND_ENROLLEES);
+            DispatchSelfEnrollmentAction::dispatch(RemindEnrollees::class);
         } catch (\Exception $e) {
             return 'Something went wrong';
         }

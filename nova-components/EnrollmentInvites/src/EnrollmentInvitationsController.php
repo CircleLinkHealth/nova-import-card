@@ -6,7 +6,7 @@
 
 namespace Circlelinkhealth\EnrollmentInvites;
 
-use App\Jobs\SendSelfEnrollmentInvitationToPracticeEnrollees;
+use App\SelfEnrollment\Jobs\InvitePracticeEnrollees;
 use App\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -25,7 +25,7 @@ class EnrollmentInvitationsController
             return $this->response();
         }
 
-        SendSelfEnrollmentInvitationToPracticeEnrollees::dispatch(
+        InvitePracticeEnrollees::dispatch(
             intval($novaRequest->input('amount')),
             intval($novaRequest->input('practice_id')),
             $novaRequest->input('color')
