@@ -30,7 +30,7 @@ class SelfEnrolledButtonColor extends Partition
      */
     public function cacheFor()
     {
-        return now()->addMinutes(1);
+//        return now()->addMinutes(1);
     }
 
     /**

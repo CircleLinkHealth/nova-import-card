@@ -37,7 +37,7 @@ class AutoEnrollableCollected
      */
     public function __construct(array $userIds, $isReminder = false, $color = null)
     {
-        $this->userIds    = $userIds;
+        $this->userIds    = array_values(array_filter($userIds));
         $this->isReminder = $isReminder;
         $this->color      = $color;
     }

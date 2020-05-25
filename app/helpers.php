@@ -1166,12 +1166,8 @@ if ( ! function_exists('showDiabetesBanner')) {
 
 if ( ! function_exists('shortenUrl')) {
     /**
-     * Create a short URL.
-     *
      * @param $url
-     *
-     * @throws \Waavi\UrlShortener\InvalidResponseException
-     *
+     * @throws \AshAllenDesign\ShortURL\Exceptions\ShortURLException
      * @return string
      */
     function shortenUrl($url)
