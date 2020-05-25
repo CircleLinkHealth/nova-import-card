@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use App\EnrollmentInvitationsBatch;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -47,9 +48,10 @@ class SendSelfEnrollmentInvitationToUnreachablePatients implements ShouldQueue
 
     public function handle()
     {
-        $this->getUnreachablePatients($this->practiceId)->chunk(100, function ($enrollees) {
+        $invitationsBatch = EnrollmentInvitationsBatch::create();
+        $this->getUnreachablePatients($this->practiceId)->chunk(100, function ($enrollees) use ($invitationsBatch) {
             foreach ($enrollees as $enrollee) {
-                SendSelfEnrollmentInvitation::dispatch($enrollee->user);
+                SendSelfEnrollmentInvitation::dispatch($enrollee->user, $invitationsBatch->id);
 
                 if (++$this->dispatched === $this->amount) {
                     //break chunking

@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use App\EnrollmentInvitationsBatch;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -40,9 +41,10 @@ class EnrollmentSeletiveInviteEnrollees implements ShouldQueue
      */
     public function handle()
     {
-        User::whereIn('id', array_filter($this->userIds))->chunk(100, function ($users) {
+        $invitationsBatch = EnrollmentInvitationsBatch::create();
+        User::whereIn('id', array_filter($this->userIds))->chunk(100, function ($users) use ($invitationsBatch) {
             foreach ($users as $user) {
-                SendSelfEnrollmentInvitation::dispatch($user);
+                SendSelfEnrollmentInvitation::dispatch($user, $invitationsBatch->id);
             }
         });
     }

@@ -8,6 +8,7 @@ namespace App\Jobs;
 
 // This file is part of CarePlan Manager by CircleLink Health.
 
+use App\EnrollmentInvitationsBatch;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -73,15 +74,16 @@ class SendSelfEnrollmentInvitationToPracticeEnrollees implements ShouldQueue
      */
     public function handle()
     {
+        $invitationsBatch = EnrollmentInvitationsBatch::create();
         $this->getEnrollees($this->practiceId)
             ->orderBy('id', 'asc')
             ->whereNotNull('user_id')
             ->has('user')
             ->with('user')
             ->select(['user_id'])
-            ->chunk(100, function ($enrollees) {
+            ->chunk(100, function ($enrollees) use ($invitationsBatch) {
                 foreach ($enrollees as $enrollee) {
-                    SendSelfEnrollmentInvitation::dispatch($enrollee->user, $this->color);
+                    SendSelfEnrollmentInvitation::dispatch($enrollee->user, $invitationsBatch->id, $this->color);
 
                     if (++$this->dispatched === $this->amount) {
                         //break chunking

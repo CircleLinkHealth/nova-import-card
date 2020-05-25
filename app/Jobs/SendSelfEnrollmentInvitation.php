@@ -30,6 +30,10 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
      */
     private $color;
     /**
+     * @var int
+     */
+    private $invitationsBatchId;
+    /**
      * @var bool
      */
     private $isReminder;
@@ -46,11 +50,16 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(User $user, ?string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR, bool $isReminder = false)
-    {
-        $this->user       = $user;
-        $this->isReminder = $isReminder;
-        $this->color      = $color;
+    public function __construct(
+        User $user,
+        int $invitationsBatchId,
+        ?string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
+        bool $isReminder = false
+    ) {
+        $this->user               = $user;
+        $this->invitationsBatchId = $invitationsBatchId;
+        $this->color              = $color;
+        $this->isReminder         = $isReminder;
     }
 
     /**
@@ -84,6 +93,7 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
 
         $notifiable->enrollmentInvitationLinks()->create([
             'link_token'       => $urlToken,
+            'batch_id'         => $this->invitationsBatchId,
             'url'              => $url,
             'manually_expired' => false,
             'button_color'     => $this->color,
