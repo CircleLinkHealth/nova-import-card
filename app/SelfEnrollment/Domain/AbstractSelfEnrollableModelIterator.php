@@ -14,6 +14,10 @@ use Illuminate\Database\Eloquent\Builder;
 abstract class AbstractSelfEnrollableModelIterator
 {
     /**
+     * @var Carbon
+     */
+    protected $end;
+    /**
      * @var int|null
      */
     protected $practiceId;
@@ -21,16 +25,12 @@ abstract class AbstractSelfEnrollableModelIterator
      * @var Carbon
      */
     protected $start;
-    /**
-     * @var Carbon
-     */
-    protected $end;
 
     public function __construct(Carbon $endDate, Carbon $startDate, ?int $practiceId = null)
     {
-        $this->end = $endDate;
-        $this->start    = $startDate;
-        $this->practiceId    = $practiceId;
+        $this->end        = $endDate;
+        $this->start      = $startDate;
+        $this->practiceId = $practiceId;
     }
 
     /**

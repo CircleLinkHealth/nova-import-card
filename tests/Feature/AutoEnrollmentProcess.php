@@ -7,7 +7,7 @@
 namespace Tests\Feature;
 
 use App\Notifications\SelfEnrollmentInviteNotification;
-use App\SelfEnrollment\Jobs\CreateUsersFromEnrollees;
+use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use App\SelfEnrollment\Jobs\EnrollmentSeletiveInviteEnrollees;
 use App\SelfEnrollment\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
 use App\SelfEnrollment\Jobs\SendSelfEnrollmentReminder;
@@ -70,7 +70,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
     public function test_it_creates_user_from_enrollee()
     {
         $enrollee = $this->enrollee();
-        CreateUsersFromEnrollees::dispatch([$enrollee->id]);
+        CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee);
         self::assertTrue( ! is_null($enrollee->fresh()->user_id));
     }
 
