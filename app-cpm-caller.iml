@@ -10,8 +10,10 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/barryvdh/reflection-docblock" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/cerberus-gatekeeper-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/core-module" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/cpm-migrations-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/customer-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/revisionable-module" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/shared-models-module" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/clue/stream-filter" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/defuse/php-encryption" />

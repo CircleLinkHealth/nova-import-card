@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "933b777547fd38868974c7fd47b2fd3e",
+    "content-hash": "3f0090af3f05f589171e31f4deefa036",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -361,6 +361,36 @@
             "time": "2020-05-22T12:22:01+00:00"
         },
         {
+            "name": "circlelinkhealth/cpm-migrations-module",
+            "version": "dev-ROAD-93_twilio_debugger_logs",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
+                "reference": "655c4ccd440f62ff695cc153f7557c059008c790"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\CpmMigrations\\Providers\\CpmMigrationsServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\CpmMigrations\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2020-05-25T12:48:20+00:00"
+        },
+        {
             "name": "circlelinkhealth/customer-module",
             "version": "v1.9.3",
             "source": {
@@ -448,6 +478,28 @@
                 "revision"
             ],
             "time": "2020-04-24T08:46:54+00:00"
+        },
+        {
+            "name": "circlelinkhealth/shared-models-module",
+            "version": "dev-ROAD-93_twilio_debugger_logs",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
+                "reference": "52e4490c8eba74d92a25af152d2454e846fc3e8d"
+            },
+            "type": "laravel-module",
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\SharedModels\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2020-05-25T12:48:20+00:00"
         },
         {
             "name": "clue/stream-filter",
@@ -9109,13 +9161,17 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "circlelinkhealth/shared-models-module": 20,
+        "circlelinkhealth/cpm-migrations-module": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.2.0",
+        "ext-json": "*",
         "ext-simplexml": "*",
-        "ext-json": "*"
+        "ext-redis": "*"
     },
     "platform-dev": []
 }
