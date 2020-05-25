@@ -10,6 +10,7 @@ use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Jobs\SendSelfEnrollmentInvitationToPracticeEnrollees;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\Notifications\SelfEnrollmentInviteNotification;
+use Illuminate\Support\Facades\Mail;
 use Notification;
 use Tests\Concerns\TwilioFake\Twilio;
 use Tests\CustomerTestCase;
@@ -17,6 +18,15 @@ use Tests\CustomerTestCase;
 class SelfEnrollmentTest extends CustomerTestCase
 {
     private $factory;
+
+    public function tests_it_does_not_send_sms_if_only_email_selected()
+    {
+        $this->createEnrollees($number = 2);
+        Twilio::fake();
+        Mail::fake();
+        SendSelfEnrollmentInvitationToPracticeEnrollees::dispatchNow($number, $this->practice()->id, SelfEnrollmentController::DEFAULT_BUTTON_COLOR, ['mail']);
+        Twilio::assertNothingSent();
+    }
 
     public function tests_it_sends_enrollment_notifications()
     {
