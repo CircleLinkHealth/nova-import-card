@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Entities;
 
 use App\Contracts\Services\TwilioClientable;
+use App\SelfEnrollment\Contracts\SelfEnrollable;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
@@ -15,7 +16,7 @@ use CircleLinkHealth\Core\Traits\MySQLSearchable;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Customer\Traits\HasSelfEnrollmentInvitation;
+use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Str;
 
@@ -185,10 +186,10 @@ use Illuminate\Support\Str;
  * @property int|null                                                                                                        $enrollment_invitation_links_count
  * @property \CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus|null                                                $selfEnrollmentStatus
  */
-class Enrollee extends BaseModel
+class Enrollee extends BaseModel implements SelfEnrollable
 {
     use Filterable;
-    use HasSelfEnrollmentInvitation;
+    use SelfEnrollableTrait;
     use MySQLSearchable;
     use Notifiable;
 
