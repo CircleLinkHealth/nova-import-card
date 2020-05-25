@@ -27,7 +27,7 @@ class UnreachablesFinalAction extends AbstractSelfEnrollmentReminder
             return;
         }
 
-        if ((bool) optional($user->enrollee->selfEnrollmentStatus)->logged_in) {
+        if ($user->loginEvents()->exists()) {
             $enrollmentInvitationService->putIntoCallQueue($user->enrollee);
 
             return;

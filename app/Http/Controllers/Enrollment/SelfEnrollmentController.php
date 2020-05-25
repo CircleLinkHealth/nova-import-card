@@ -13,7 +13,6 @@ use App\SelfEnrollment\Helpers;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
@@ -172,26 +171,22 @@ class SelfEnrollmentController extends Controller
             ->first();
     }
 
-    public function handleUnreachablePatientInvitation($patientUserId)
+    public function handleUnreachablePatientInvitation(User $patient)
     {
-        /** @var User $userModelEnrollee */
-//        Note: this can be either Unreachable patient Or User created from enrollee
-        $unrechablePatient = User::findOrFail($patientUserId);
-
-        if ($this->hasSurveyInProgress($unrechablePatient)) {
-            return redirect($this->getAwvInvitationLinkForUser($unrechablePatient)->url);
+        if ($this->hasSurveyInProgress($patient)) {
+            return redirect($this->getAwvInvitationLinkForUser($patient)->url);
         }
 
-        if (Helpers::hasCompletedSelfEnrollmentSurvey($unrechablePatient)) {
-            $practiceNumber = $unrechablePatient->primaryPractice->outgoing_phone_number;
-            $doctorName     = $unrechablePatient->getBillingProviderName();
+        if (Helpers::hasCompletedSelfEnrollmentSurvey($patient)) {
+            $practiceNumber = $patient->primaryPractice->outgoing_phone_number;
+            $doctorName     = $patient->getBillingProviderName();
 
             return view('enrollment-consent.enrolledMessagePage', compact('practiceNumber', 'doctorName'));
         }
 
-        $this->expirePastInvitationLink($unrechablePatient);
+        $this->expirePastInvitationLink($patient);
 
-        return $this->generateUrlAndRedirectToSurvey($unrechablePatient->id);
+        return $this->createUrlAndRedirectToSurvey($patient->id);
     }
 
     /**
@@ -259,17 +254,8 @@ class SelfEnrollmentController extends Controller
 
     protected function authenticate(EnrollmentValidationRules $request)
     {
-        $userId = (int) $request->input('user_id');
-        $user   = Auth::loginUsingId($userId, true);
-
-        if ($user->isSurveyOnly()) {
-            Enrollee::whereUserId($userId)->firstOrFail()->selfEnrollmentStatus()->update([
-                'logged_in' => true,
-            ]);
-        }
-
         return $this->enrollableInvitationManager(
-            $user
+            Auth::loginUsingId((int) $request->input('user_id'), true)
         );
     }
 
@@ -354,10 +340,10 @@ class SelfEnrollmentController extends Controller
     private function enrollableInvitationManager(User $user)
     {
         if ($user->isSurveyOnly()) {
-            return $this->handleEnrolleeInvitation($enrollableId);
+            return $this->handleEnrolleeInvitation($user);
         }
 
-        return $this->handleUnreachablePatientInvitation($enrollableId);
+        return $this->handleUnreachablePatientInvitation($user);
     }
 
     /**

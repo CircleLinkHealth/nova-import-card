@@ -50,7 +50,7 @@ class EnrolleesInvitationPanel extends Resource
      */
     public static $title = 'id';
 
-    public static $with = ['selfEnrollmentStatus', 'enrollmentInvitationLinks', 'user.patientInfo', 'statusRequestsInfo'];
+    public static $with = ['enrollmentInvitationLinks', 'user.patientInfo', 'statusRequestsInfo', 'user.loginEvents'];
 
     /**
      * Get the actions available for the resource.
@@ -132,15 +132,15 @@ class EnrolleesInvitationPanel extends Resource
 
         $awvUserSurvey = null;
 
+        $enroleeHasLoggedIn = false;
         if ( ! is_null($this->resource->user)) {
-            $awvUserSurvey = Helpers::awvUserSurveyQuery($this->resource->user, $surveyInstance)->first();
+            $awvUserSurvey      = Helpers::awvUserSurveyQuery($this->resource->user, $surveyInstance)->first();
+            $enroleeHasLoggedIn = $this->resource->user->loginEvents->isNotEmpty();
         }
 
         $firstEnrollmentInvitationLink = $this->resource->enrollmentInvitationLinks->isNotEmpty()
             ? $this->resource->enrollmentInvitationLinks->sortBy('created_at')->first()
             : null;
-
-        $enroleeHasLoggedIn = $this->enrolleeHasLoggedIn();
 
         $inviteSentDate = ! is_null($firstEnrollmentInvitationLink) && ! is_null($firstEnrollmentInvitationLink->created_at)
             ? $firstEnrollmentInvitationLink->created_at->toDateString()
@@ -209,20 +209,20 @@ class EnrolleesInvitationPanel extends Resource
                 return Helpers::awvUserSurveyQuery($this->resource->user, $surveyInstance)->exists();
             }),
 
-            Boolean::make('Survey in progress', function () use ($enroleeHasLoggedIn) {
+            Boolean::make('Survey in progress', function () use ($enroleeHasLoggedIn, $awvUserSurvey) {
                 if ( ! $enroleeHasLoggedIn) {
                     return false;
                 }
 
-                return self::IN_PROGRESS === optional($this->resource->selfEnrollmentStatus)->awv_survey_status;
+                return self::IN_PROGRESS === optional($awvUserSurvey)->status;
             }),
 
-            Boolean::make('Survey Completed', function () use ($enroleeHasLoggedIn) {
+            Boolean::make('Survey Completed', function () use ($enroleeHasLoggedIn, $awvUserSurvey) {
                 if ( ! $enroleeHasLoggedIn) {
                     return false;
                 }
 
-                return self::COMPLETED === optional($this->resource->selfEnrollmentStatus)->awv_survey_status;
+                return self::COMPLETED === optional($awvUserSurvey)->status;
             }),
 
             Boolean::make('Enrolled', function () {
@@ -253,8 +253,7 @@ class EnrolleesInvitationPanel extends Resource
             ->where(function ($q) {
                 $q->where('source', '!=', Enrollee::UNREACHABLE_PATIENT)
                     ->orWhereNull('source');
-            })
-            ->has('selfEnrollmentStatus');
+            });
     }
 
     /**
@@ -273,11 +272,6 @@ class EnrolleesInvitationPanel extends Resource
     public function lenses(Request $request)
     {
         return [];
-    }
-
-    private function enrolleeHasLoggedIn(): bool
-    {
-        return $this->resource->selfEnrollmentStatus && $this->resource->selfEnrollmentStatus->logged_in;
     }
 
     private static function getPracticeId(?EnrolleesInvitationPanel $resource = null)
