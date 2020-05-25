@@ -11,7 +11,6 @@ use App\Notifications\Channels\CustomTwilioChannel;
 use App\Notifications\SelfEnrollmentInviteNotification;
 use App\SelfEnrollment\Domain\RemindEnrollees;
 use App\SelfEnrollment\Jobs\DispatchSelfEnrollmentDomainAction;
-use App\SelfEnrollment\Jobs\InvitePracticeEnrollees;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Notification;
@@ -26,7 +25,7 @@ class SelfEnrollmentTest extends TestCase
      * @var PrepareDataForReEnrollmentTestSeeder
      */
     private $factory;
-    
+
     public function test_it_dispatches_domain_actions()
     {
         Queue::fake();
@@ -41,7 +40,16 @@ class SelfEnrollmentTest extends TestCase
         $this->createEnrollees($number = 2);
         Twilio::fake();
         Mail::fake();
-        InvitePracticeEnrollees::dispatchNow($number, $this->practice()->id, SelfEnrollmentController::DEFAULT_BUTTON_COLOR, ['mail']);
+
+        DispatchSelfEnrollmentDomainAction::dispatch(
+            new \App\SelfEnrollment\Domain\InvitePracticeEnrollees(
+                $number,
+                $this->practice()->id,
+                SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
+                ['mail']
+            )
+        );
+
         Twilio::assertNothingSent();
     }
 

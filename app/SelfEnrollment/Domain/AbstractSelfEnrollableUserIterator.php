@@ -6,28 +6,17 @@
 
 namespace App\SelfEnrollment\Domain;
 
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 
 abstract class AbstractSelfEnrollableUserIterator
 {
     /**
-     * If set, stop chunking once the number of processed records reaches the limit.
-     *
-     * @var int|null
-     */
-    protected $limit;
-
-
-    /**
      * The chunked DB rows we ran an action on so far.
      *
      * @var int
      */
     private $dispatched = 0;
-
-
 
     /**
      * Run an action on a User.
@@ -48,22 +37,25 @@ abstract class AbstractSelfEnrollableUserIterator
             $users->each(function (User $user) {
                 $this->action($user);
 
-                if ( ! is_null($this->limit) && ++$this->dispatched === $this->limit) {
+                if ( ! is_null($this->limit()) && ++$this->dispatched === $this->limit()) {
                     return false;
                 }
             });
         });
     }
 
-    public function setLimit(int $limit): AbstractSelfEnrollableUserIterator
-    {
-        $this->limit = $limit;
-
-        return $this;
-    }
-
-    protected function chunkSize()
+    protected function chunkSize(): int
     {
         return 100;
+    }
+    
+    /**
+     * If not null, stop chunking once the number of processed records reaches the limit.
+     *
+     * @var int|null
+     */
+    protected function limit(): ?int
+    {
+        return null;
     }
 }

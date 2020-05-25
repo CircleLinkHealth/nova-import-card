@@ -7,7 +7,6 @@
 namespace App\SelfEnrollment\Domain;
 
 use App\Services\Enrollment\EnrollmentInvitationService;
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;

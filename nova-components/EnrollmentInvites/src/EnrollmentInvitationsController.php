@@ -8,7 +8,6 @@ namespace Circlelinkhealth\EnrollmentInvites;
 
 use App\SelfEnrollment\Domain\InviteUnreachablePatients;
 use App\SelfEnrollment\Jobs\DispatchSelfEnrollmentDomainAction;
-use App\SelfEnrollment\Jobs\InvitePracticeEnrollees;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class EnrollmentInvitationsController
@@ -28,10 +27,12 @@ class EnrollmentInvitationsController
             return $this->response();
         }
 
-        InvitePracticeEnrollees::dispatch(
-            intval($novaRequest->input('amount')),
-            intval($novaRequest->input('practice_id')),
-            $novaRequest->input('color')
+        DispatchSelfEnrollmentDomainAction::dispatch(
+            new \App\SelfEnrollment\Domain\InvitePracticeEnrollees(
+                (int) $novaRequest->input('amount'),
+                (int) $novaRequest->input('practice_id'),
+                $novaRequest->input('color')
+            )
         );
 
         return $this->response();

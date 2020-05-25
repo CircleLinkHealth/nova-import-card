@@ -12,7 +12,6 @@ use App\SelfEnrollment\Domain\InviteUnreachablePatients;
 use App\SelfEnrollment\Domain\RemindEnrollees;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
 use App\SelfEnrollment\Jobs\DispatchSelfEnrollmentDomainAction;
-use App\SelfEnrollment\Jobs\InvitePracticeEnrollees;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;
@@ -38,10 +37,12 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function inviteEnrolleesToEnrollTest(Request $request)
     {
-        InvitePracticeEnrollees::dispatchNow(
-            $request->input('amount'),
-            $request->input('practice_id'),
-            $request->input('color')
+        DispatchSelfEnrollmentDomainAction::dispatch(
+            new \App\SelfEnrollment\Domain\InvitePracticeEnrollees(
+                $request->input('amount'),
+                $request->input('practice_id'),
+                $request->input('color')
+            )
         );
 
         return redirect()->back()->with('message', 'Invited Successfully');
