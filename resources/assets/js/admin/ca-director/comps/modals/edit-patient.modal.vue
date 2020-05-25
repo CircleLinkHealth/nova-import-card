@@ -160,7 +160,7 @@
                     {id:'enrolled', text: 'Enrolled'},
                     {id:'consented', text: 'Consented'},
                     {id:'soft_rejected', text: 'Soft Declined'},
-                    {id: 'hard_declined', text: 'Hard Declined'},
+                    {id:'rejected', text: 'Hard Declined'},
                     {id:'utc', text: 'Unreachable'},
                     {id:'ineligible',text: 'Ineligible'},
                     {id:'queue_auto_enrollment', text:'Queued for Self-enrollment'},

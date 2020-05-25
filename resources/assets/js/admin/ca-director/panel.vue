@@ -169,7 +169,7 @@
                             {id:'enrolled', text: 'Enrolled'},
                             {id:'consented', text: 'Consented'},
                             {id:'soft_rejected', text: 'Soft Declined'},
-                            {id: 'hard_declined', text: 'Hard Declined'},
+                            {id:'rejected', text: 'Hard Declined'},
                             {id:'utc', text: 'Unreachable'},
                             {id:'ineligible',text: 'Ineligible'},
                             {id:'queue_auto_enrollment', text:'Queued for Self-enrollment'},
@@ -187,7 +187,7 @@
                     enrolled: 'Enrolled',
                     consented: 'Consented',
                     soft_rejected: 'Soft Declined',
-                    hard_declined: 'Hard Declined',
+                    rejected: 'Hard Declined',
                     utc: 'Unreachable',
                     ineligible: 'Ineligible',
                     queue_auto_enrollment: 'Queued for Self-enrollment',
@@ -338,12 +338,10 @@
             },
             showAssigned() {
                 Event.$emit('notifications-ca-panel:dismissAll');
-                Event.$emit('notifications-ca-panel:dismissAll');
                 this.hideAssigned = !this.hideAssigned;
                 this.refreshTable();
             },
             isolatePatientsUploadedViaCsv(){
-                Event.$emit('notifications-ca-panel:dismissAll');
                 Event.$emit('notifications-ca-panel:dismissAll');
                 this.isolateUploadedViaCsv = ! this.isolateUploadedViaCsv;
                 this.refreshTable();
