@@ -6,9 +6,7 @@
 
 namespace App\SelfEnrollment;
 
-use App\SelfEnrollment\AbstractSelfEnrollableUserIterator;
 use App\SelfEnrollment\Domain\App;
-use App\SelfEnrollment\Helpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 
