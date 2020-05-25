@@ -186,9 +186,11 @@ class EnrolleesInvitationPanel extends Resource
             Boolean::make('Has viewed Letter', function () use ($enroleeHasLoggedIn) {
                 return $enroleeHasLoggedIn;
             }),
-            Boolean::make('Requested Call', function () use ($requestedInfoDate) {
-                return ! ('N/A' === $requestedInfoDate);
+
+            Boolean::make('Requested Call', function () {
+                return ! is_null($this->resource->statusRequestsInfo);
             }),
+
             Boolean::make("Has clicked 'Get my Care Coach'", function () use ($enroleeHasLoggedIn) {
                 if (is_null($this->resource->user)) {
                     return false;
