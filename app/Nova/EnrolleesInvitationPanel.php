@@ -128,7 +128,7 @@ class EnrolleesInvitationPanel extends Resource
      */
     public function fields(Request $request)
     {
-        $surveyInstance = $this->getSurveyInstance();
+        $surveyInstance = $this->getSurveyInstance()->first();
 
         $awvUserSurvey = null;
 
@@ -292,7 +292,6 @@ class EnrolleesInvitationPanel extends Resource
     private function getSurveyInstance()
     {
         return DB::table('survey_instances')
-            ->where('survey_id', '=', Helpers::getEnrolleeSurvey()->id)
-            ->first();
+            ->where('survey_id', '=', Helpers::getEnrolleeSurvey()->id);
     }
 }

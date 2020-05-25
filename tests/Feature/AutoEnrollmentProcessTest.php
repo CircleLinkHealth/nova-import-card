@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Tests\CustomerTestCase;
 
-class AutoEnrollmentProcess extends CustomerTestCase
+class AutoEnrollmentProcessTest extends CustomerTestCase
 {
     const COMPLETED = 'completed';
 
