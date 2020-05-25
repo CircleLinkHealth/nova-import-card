@@ -14,10 +14,12 @@ use App\TwilioRawLog;
 use App\TwilioRecording;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use SimpleXMLElement;
 use Twilio\Exceptions\TwimlException;
 use Twilio\Twiml;
+use Illuminate\Support\Facades\Response;
 
 class TwilioController extends Controller
 {
@@ -210,7 +212,7 @@ class TwilioController extends Controller
     public function endCall(Request $request)
     {
         $input      = $request->all();
-        $validation = \Validator::make($input, [
+        $validation = Validator::make($input, [
             'CallSid'        => 'required',
             'InboundUserId'  => 'required',
             'OutboundUserId' => 'required',
@@ -239,7 +241,7 @@ class TwilioController extends Controller
     {
         $input = $request->all();
 
-        $validation = \Validator::make($input, [
+        $validation = Validator::make($input, [
             'inbound_user_id'  => 'required',
             'outbound_user_id' => 'required',
         ]);
@@ -312,7 +314,7 @@ class TwilioController extends Controller
                 : false;
         }
 
-        $validation = \Validator::make($input, [
+        $validation = Validator::make($input, [
             //could be the practice outgoing phone number (in case of enrollment)
             'From' => 'required|phone:AUTO,US',
             'To'   => [
@@ -369,7 +371,7 @@ class TwilioController extends Controller
     public function jsCreateConference(Request $request)
     {
         $input      = $request->all();
-        $validation = \Validator::make($input, [
+        $validation = Validator::make($input, [
             'inbound_user_id'  => 'required',
             'outbound_user_id' => 'required',
         ]);
@@ -465,7 +467,7 @@ class TwilioController extends Controller
             $input['IsCallToPatient'] = false;
         }
 
-        $validation = \Validator::make($input, [
+        $validation = Validator::make($input, [
             //could be the practice outgoing phone number (in case of enrollment)
             'From' => 'required|phone:AUTO,US',
             'To'   => [
@@ -904,7 +906,7 @@ class TwilioController extends Controller
             $header['Content-Type'] = 'application/xml';
         }
 
-        return \Response::make($xml->asXML(), $status, $header);
+        return Response::make($xml->asXML(), $status, $header);
     }
 
     private function responseWithXmlType($response)

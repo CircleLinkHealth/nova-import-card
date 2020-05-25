@@ -19,7 +19,7 @@
         },
         {
             "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-raygun.git"
+            "url": "git@github.com:circlelinkhealth/revisionable-module.git"
         }
     ],
     "require": {
@@ -27,17 +27,19 @@
         "ext-simplexml": "*",
         "barryvdh/laravel-cors": "^0.11.3",
         "barryvdh/laravel-ide-helper": "^2.6",
-        "circlelinkhealth/core": "dev-master",
-        "circlelinkhealth/customer": "dev-master",
-        "circlelinkhealth/raygun": "dev-master",
-        "illuminate/redis": "^5.7",
-        "illuminate/session": "^5.7",
-        "laravel/lumen-framework": "5.7.*",
+        "circlelinkhealth/core-module": "1.5.5",
+        "circlelinkhealth/customer-module": "1.9.3",
+        "circlelinkhealth/revisionable-module": "^6.1",
+        "illuminate/redis": "^6",
+        "illuminate/session": "^6",
+        "laravel/lumen-framework": "^6",
         "laravel/tinker": "^1.0",
         "predis/predis": "^1.1",
         "propaganistas/laravel-phone": "^4.1",
-        "twilio/sdk": "^5.31",
-        "vlucas/phpdotenv": "~2.2"
+        "sentry/sentry-laravel": "1.7.0",
+        "twilio/sdk": "5.31.3",
+        "vlucas/phpdotenv": "^3",
+        "ext-json": "*"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.4",
@@ -64,6 +66,17 @@
     "scripts": {
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-update-cmd": [
+            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
+            "@php artisan ide-helper:generate",
+            "@php artisan ide-helper:meta",
+            "@php artisan ide-helper:models -W --dir=\"app\""
+        ],
+        "ide": [
+            "@php artisan ide-helper:generate",
+            "@php artisan ide-helper:meta",
+            "@php artisan ide-helper:models -W --dir=\"app\""
         ]
     },
     "config": {

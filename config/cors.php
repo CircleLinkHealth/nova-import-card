@@ -1,5 +1,7 @@
 <?php
 
+$isProd = (env('APP_ENV', 'production') === 'production' || env('APP_ENV', 'production') === 'worker');
+
 return [
 
     /*
@@ -12,15 +14,11 @@ return [
     |
     */
 
-    'supportsCredentials'    => true,
-    'allowedOrigins'         => (env('APP_ENV', 'production') === 'production' || env('APP_ENV',
-            'production') === 'worker' || env('APP_ENV', 'production') === 'staging')
-        ? ['*careplanmanager.com', '*clh-staging.com']
-        : ['*.ngrok.io', '*.test'],
-    'allowedOriginsPatterns' => [],
-    'allowedHeaders'         => ['*'],
-    'allowedMethods'         => ['*'],
-    'exposedHeaders'         => [],
-    'maxAge'                 => 0,
+    'supportsCredentials' => true,
+    'allowedOrigins'      => $isProd ? ['*careplanmanager.com'] : ['*'],
+    'allowedHeaders'      => ['*'],
+    'allowedMethods'      => ['*'],
+    'exposedHeaders'      => [],
+    'maxAge'              => 0,
 
 ];

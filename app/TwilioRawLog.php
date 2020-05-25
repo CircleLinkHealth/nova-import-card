@@ -21,7 +21,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property \Illuminate\Support\Carbon|null                                                $created_at
  * @property \Illuminate\Support\Carbon|null                                                $updated_at
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog query()
@@ -35,6 +34,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read int|null $revision_history_count
  */
 class TwilioRawLog extends BaseModel
 {

@@ -2,11 +2,9 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-try {
-    (new Dotenv\Dotenv(dirname(__DIR__)))->load();
-} catch (Dotenv\Exception\InvalidPathException $e) {
-    //
-}
+(new Laravel\Lumen\Bootstrap\LoadEnvironmentVariables(
+    dirname(__DIR__)
+))->bootstrap();
 
 /*
 |--------------------------------------------------------------------------
@@ -25,9 +23,12 @@ $app = new Laravel\Lumen\Application(
 
 $app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
 $app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
+
 $app->configure('app');
 $app->configure('services');
 $app->configure('cors');
+$app->configure('view');
+$app->configure('ide-helper');
 
 $app->withFacades();
 
@@ -95,8 +96,8 @@ $app->register(Barryvdh\Cors\ServiceProvider::class);
 $app->register(App\Providers\TwilioClientServiceProvider::class);
 $app->register(Propaganistas\LaravelPhone\PhoneServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
-$app->register(CircleLinkHealth\Raygun\Providers\RaygunServiceProvider::class);
-$app->register(Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
+$app->register(\Laravel\Tinker\TinkerServiceProvider::class);
+$app->register(\Sentry\Laravel\ServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
@@ -115,7 +116,10 @@ $app->router->group([
     require __DIR__ . '/../routes/web.php';
 });
 
-//register some aliases, helps with compatibility of Laravel packages
+// register some aliases, helps with compatibility of Laravel packages
 class_alias('Illuminate\Support\Facades\Config', 'Config');
+
+// needed in RevisionableTrait
+class_alias('Illuminate\Support\Facades\Request', 'Request');
 
 return $app;
