@@ -64,38 +64,7 @@ class AutoEnrollmentProcessTest extends CustomerTestCase
     }
 
 //
-//    public function test_it_sends_one_reminder_to_non_responding_enrollee()
-//    {
-//        Notification::fake();
-//        $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)
-//            ->createEnrollee($this->practice());
-//        $patient = $enrollee->fresh()->user;
 //
-//        Send Invitation (the original)
-//        EnrollmentSeletiveInviteEnrollees::dispatch([$enrollee->fresh()->user_id]);
-//        $this->check_notification_mail_has_been_sent($patient);
-//        //        $this->check_notification_sms_has_been_sent($patient);
-//        $invitationsCount = count($enrollee->notifications()->get());
-//        self::assertTrue(1 === $invitationsCount);
-//
-//       Send Reminder (First and should be the last successful attempt)
-//        Notification::fake();
-//        SelfEnrollmentEnrolleesReminder::dispatchNow();
-//        $this->check_notification_mail_has_been_sent($patient);
-//        $this->check_notification_sms_has_been_sent($patient);
-//        $invitationsCount = count($enrollee->enrollmentInvitationLink()->get());
-//        self::assertTrue(2 === $invitationsCount);
-//
-//        //        Send Reminder (Second and should be an unsuccessful attempt)
-//
-//        Notification::fake();
-//        SelfEnrollmentEnrolleesReminder::dispatchNow();
-//        $this->check_notification_mail_has_been_sent($patient);
-//        $this->check_notification_sms_has_been_sent($patient);
-//        $invitationsCount = count($enrollee->enrollmentInvitationLink()->get());
-//        self::assertTrue(2 === $invitationsCount);
-//    }
-
 //
 //    public function test_it_sends_invitations_to_unreachable_patient()
 //    {

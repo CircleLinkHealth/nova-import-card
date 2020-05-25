@@ -52,6 +52,32 @@ class SelfEnrollmentTest extends TestCase
         Twilio::assertNothingSent();
     }
 
+    public function test_it_saves_different_enrollment_link_in_db_when_sending_reminder()
+    {
+        $enrollee = $this->createEnrollees($number = 1);
+        $patient  = $enrollee->fresh()->user;
+
+        Notification::fake();
+        SendInvitation::dispatchNow($patient);
+
+        Queue::fake();
+
+        SendInvitation::dispatch($patient);
+
+        Queue::assertPushed(SendInvitation::class, function (SendInvitation $job) {
+            Notification::fake();
+            $job->handle();
+            $this->assertDatabaseHas('enrollables_invitation_links', [
+                'url'              => $job->getLink(),
+                'manually_expired' => false,
+            ]);
+
+            return true;
+        });
+
+        self::assertTrue(2 === $count = $enrollee->enrollmentInvitationLinks()->count(), "Failed to assert that count[$count] matches the expected 2.");
+    }
+
     public function test_it_saves_enrollment_link_in_db_when_sending_invite()
     {
         $this->createEnrollees($number = 1);

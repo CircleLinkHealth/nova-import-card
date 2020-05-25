@@ -41,6 +41,6 @@ class EnrollmentFinalAction extends Command
      */
     public function handle()
     {
-        UnreachablesFinalAction::createForInvitesSentTwoDaysAgo()::dispatch();
+        UnreachablesFinalAction::createForInvitesSentTwoDaysAgo()->dispatchToQueue();
     }
 }

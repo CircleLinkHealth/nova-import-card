@@ -6,9 +6,9 @@
 
 namespace App\SelfEnrollment;
 
-use App\SelfEnrollment\Domain\App;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
+use Illuminate\Foundation\Bus\PendingDispatch;
 
 abstract class AbstractSelfEnrollmentReminder extends AbstractSelfEnrollableUserIterator
 {
@@ -34,7 +34,7 @@ abstract class AbstractSelfEnrollmentReminder extends AbstractSelfEnrollableUser
 
     public static function createForInvitesSentTwoDaysAgo()
     {
-        $testingMode = filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN) || App::environment('testing');
+        $testingMode = filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN);
 
         if ($testingMode) {
             $practiceId = Helpers::getDemoPractice()->id;
@@ -47,5 +47,10 @@ abstract class AbstractSelfEnrollmentReminder extends AbstractSelfEnrollableUser
         }
 
         return new static($endDate, $startDate, $practiceId);
+    }
+
+    public function dispatchToQueue()
+    {
+        return new PendingDispatch($this);
     }
 }

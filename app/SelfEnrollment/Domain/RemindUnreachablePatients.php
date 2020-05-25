@@ -21,7 +21,7 @@ class RemindUnreachablePatients extends AbstractSelfEnrollmentReminder
 
     public function query(): Builder
     {
-        return User::enrollableUsersToRemindQuery($this->end, $this->start)
+        return User::enrollableUsersToRemind($this->end, $this->start)
             ->whereHas('enrollee', function ($enrollee) {
                 $enrollee->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT)
                     ->where('source', '=', Enrollee::UNREACHABLE_PATIENT);
