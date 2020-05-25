@@ -189,9 +189,9 @@ use Illuminate\Support\Str;
 class Enrollee extends BaseModel implements SelfEnrollable
 {
     use Filterable;
-    use SelfEnrollableTrait;
     use MySQLSearchable;
     use Notifiable;
+    use SelfEnrollableTrait;
 
     // Agent array keys
     const AGENT_EMAIL_KEY        = 'email';

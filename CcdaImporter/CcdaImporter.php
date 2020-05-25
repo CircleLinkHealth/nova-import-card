@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
 use App\Events\PatientUserCreated;
-use App\SelfEnrollment\Jobs\CreateUsersFromEnrollees;
+use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
@@ -104,7 +104,7 @@ class CcdaImporter
         $email = null;
 
         if (optional($this->enrollee)->email) {
-            $email = CreateUsersFromEnrollees::sanitizeEmail($this->enrollee);
+            $email = CreateSurveyOnlyUserFromEnrollee::sanitizeEmail($this->enrollee);
         }
 
         if (empty($email)) {
