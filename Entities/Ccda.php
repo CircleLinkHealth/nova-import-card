@@ -100,11 +100,12 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method   static                                                                                      \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda withTrashed()
  * @method   static                                                                                      \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda withoutTrashed()
  * @mixin \Eloquent
- * @property string|null $patient_first_name
- * @property string|null $patient_last_name
- * @property string|null $patient_mrn
- * @property string|null $patient_dob
- * @property string|null $patient_email
+ * @property string|null                                   $patient_first_name
+ * @property string|null                                   $patient_last_name
+ * @property string|null                                   $patient_mrn
+ * @property string|null                                   $patient_dob
+ * @property string|null                                   $patient_email
+ * @property \CircleLinkHealth\Customer\Entities\User|null $billingProvider
  */
 class Ccda extends BaseModel implements HasMedia, MedicalRecord
 {
