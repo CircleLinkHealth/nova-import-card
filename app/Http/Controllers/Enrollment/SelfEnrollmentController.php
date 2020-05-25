@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use App\Helpers\SelfEnrollmentHelpers;
+use App\SelfEnrollment\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EnrollmentLinkValidation;
 use App\Http\Requests\EnrollmentValidationRules;
@@ -123,7 +123,7 @@ class SelfEnrollmentController extends Controller
         /** @var Enrollee $enrollee */
         $enrollee = Enrollee::whereUserId($enrollableId)->has('user')->with('user')->firstOrFail();
 
-        if (SelfEnrollmentHelpers::hasCompletedSelfEnrollmentSurvey($enrollee->user)) {
+        if (Helpers::hasCompletedSelfEnrollmentSurvey($enrollee->user)) {
 //            Redirect to Survey Done Page (awv logout)
             return $this->createUrlAndRedirectToSurvey($enrollee->user);
         }
@@ -151,7 +151,7 @@ class SelfEnrollmentController extends Controller
 
         $user = User::has('enrollee')->with('enrollee')->findOrFail($userId);
 
-        $enrollable = SelfEnrollmentHelpers::getEnrollableModel($user);
+        $enrollable = Helpers::getEnrollableModel($user);
 
         if ($enrollable->statusRequestsInfo()->exists()) {
             return $this->returnEnrolleeRequestedInfoMessage($user->enrollee);
@@ -182,7 +182,7 @@ class SelfEnrollmentController extends Controller
             return redirect($this->getAwvInvitationLinkForUser($unrechablePatient)->url);
         }
 
-        if (SelfEnrollmentHelpers::hasCompletedSelfEnrollmentSurvey($unrechablePatient)) {
+        if (Helpers::hasCompletedSelfEnrollmentSurvey($unrechablePatient)) {
             $practiceNumber = $unrechablePatient->primaryPractice->outgoing_phone_number;
             $doctorName     = $unrechablePatient->getBillingProviderName();
 
@@ -205,7 +205,7 @@ class SelfEnrollmentController extends Controller
 //        if (Enrollee::class === get_class($notifiable)) {
 //            return false;
 //        }
-        $surveyLink = SelfEnrollmentHelpers::getSurveyInvitationLink($notifiable->patientInfo);
+        $surveyLink = Helpers::getSurveyInvitationLink($notifiable->patientInfo);
         if ( ! empty($surveyLink)) {
             $surveyInstance = DB::table('survey_instances')
                 ->where('survey_id', '=', $surveyLink->survey_id)
@@ -332,12 +332,12 @@ class SelfEnrollmentController extends Controller
      */
     private function createUrlAndRedirectToSurvey($enrollableId)
     {
-        $enrolleesSurvey = SelfEnrollmentHelpers::getEnrolleeSurvey();
+        $enrolleesSurvey = Helpers::getEnrolleeSurvey();
 
         DB::table('users_surveys')->updateOrInsert(
             [
                 'user_id'            => $enrollableId,
-                'survey_instance_id' => SelfEnrollmentHelpers::getCurrentYearEnrolleeSurveyInstance()->id,
+                'survey_instance_id' => Helpers::getCurrentYearEnrolleeSurveyInstance()->id,
                 'survey_id'          => $enrolleesSurvey->id,
             ],
             [

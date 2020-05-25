@@ -6,7 +6,7 @@
 
 namespace App\Nova;
 
-use App\Helpers\SelfEnrollmentHelpers;
+use App\SelfEnrollment\Helpers;
 use App\Nova\Actions\SelfEnrollmentManualInvite;
 use App\Nova\Metrics\AllInvitesButtonColor;
 use App\Nova\Metrics\SelfEnrolledButtonColor;
@@ -133,7 +133,7 @@ class EnrolleesInvitationPanel extends Resource
         $awvUserSurvey = null;
 
         if ( ! is_null($this->resource->user)) {
-            $awvUserSurvey = SelfEnrollmentHelpers::awvUserSurveyQuery($this->resource->user, $surveyInstance)->first();
+            $awvUserSurvey = Helpers::awvUserSurveyQuery($this->resource->user, $surveyInstance)->first();
         }
 
         $firstEnrollmentInvitationLink = $this->resource->enrollmentInvitationLinks->isNotEmpty()
@@ -198,7 +198,7 @@ class EnrolleesInvitationPanel extends Resource
                     return false;
                 }
 
-                $survey = SelfEnrollmentHelpers::getEnrolleeSurvey();
+                $survey = Helpers::getEnrolleeSurvey();
 
                 if (empty($survey)) {
                     return false;
@@ -206,7 +206,7 @@ class EnrolleesInvitationPanel extends Resource
 
                 $surveyInstance = $this->getSurveyInstance();
 
-                return SelfEnrollmentHelpers::awvUserSurveyQuery($this->resource->user, $surveyInstance)->exists();
+                return Helpers::awvUserSurveyQuery($this->resource->user, $surveyInstance)->exists();
             }),
 
             Boolean::make('Survey in progress', function () use ($enroleeHasLoggedIn) {
@@ -299,7 +299,7 @@ class EnrolleesInvitationPanel extends Resource
 
     private function getSurveyInstance()
     {
-        $survey = SelfEnrollmentHelpers::getEnrolleeSurvey();
+        $survey = Helpers::getEnrolleeSurvey();
 
         return DB::table('survey_instances')
             ->where('survey_id', '=', $survey->id)

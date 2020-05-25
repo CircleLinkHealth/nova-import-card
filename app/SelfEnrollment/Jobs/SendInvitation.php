@@ -6,7 +6,7 @@
 
 namespace App\SelfEnrollment\Jobs;
 
-use App\Helpers\SelfEnrollmentHelpers;
+use App\SelfEnrollment\Helpers;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
@@ -79,7 +79,7 @@ class SendInvitation implements ShouldQueue
     {
         $url = URL::temporarySignedRoute('invitation.enrollment.loginForm', now()->addHours(48), $this->getSignedRouteParams());
 
-        if (empty($urlToken = SelfEnrollmentHelpers::getTokenFromUrl($url))) {
+        if (empty($urlToken = Helpers::getTokenFromUrl($url))) {
             throw new \Exception("`urlToken` cannot be empty. User ID {$this->user->id}");
         }
 

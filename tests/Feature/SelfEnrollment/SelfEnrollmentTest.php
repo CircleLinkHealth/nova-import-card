@@ -8,8 +8,8 @@ namespace Tests\Feature\SelfEnrollment;
 
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Notifications\Channels\CustomTwilioChannel;
-use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
+use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use Illuminate\Support\Facades\Mail;
 use Notification;
 use PrepareDataForReEnrollmentTestSeeder;

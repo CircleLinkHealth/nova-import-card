@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Helpers;
+namespace App\SelfEnrollment;
 
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
@@ -16,7 +16,7 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
-class SelfEnrollmentHelpers
+class Helpers
 {
     /**
      * @param $surveyInstance

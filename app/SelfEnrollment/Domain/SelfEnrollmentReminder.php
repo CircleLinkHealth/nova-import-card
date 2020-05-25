@@ -6,7 +6,7 @@
 
 namespace App\SelfEnrollment\Domain;
 
-use App\Helpers\SelfEnrollmentHelpers;
+use App\SelfEnrollment\Helpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 
@@ -37,7 +37,7 @@ abstract class SelfEnrollmentReminder extends AbstractSelfEnrollableUserIterator
         $testingMode = filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN) || App::environment('testing');
 
         if ($testingMode) {
-            $practiceId = SelfEnrollmentHelpers::getDemoPractice()->id;
+            $practiceId = Helpers::getDemoPractice()->id;
             $startDate  = now()->startOfDay();
             $endDate    = $startDate->copy()->endOfDay();
         } else {

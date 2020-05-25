@@ -6,7 +6,7 @@
 
 namespace App\SelfEnrollment\Domain;
 
-use App\Helpers\SelfEnrollmentHelpers;
+use App\SelfEnrollment\Helpers;
 use App\SelfEnrollment\Jobs\SendReminder;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -21,7 +21,7 @@ class RemindUnreachablePatients extends SelfEnrollmentReminder
 
     public function query(): Builder
     {
-        return SelfEnrollmentHelpers::enrollableUsersToRemindQuery($this->end, $this->start)
+        return Helpers::enrollableUsersToRemindQuery($this->end, $this->start)
             ->whereHas('enrollee', function ($enrollee) {
                 $enrollee->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT)
                     ->where('source', '=', Enrollee::UNREACHABLE_PATIENT);

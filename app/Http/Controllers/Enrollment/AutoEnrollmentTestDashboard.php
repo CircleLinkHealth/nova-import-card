@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use App\Helpers\SelfEnrollmentHelpers;
+use App\SelfEnrollment\Helpers;
 use App\Http\Controllers\Controller;
 use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use App\SelfEnrollment\Domain\InviteUnreachablePatients;
@@ -64,7 +64,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function resetEnrollmentTest()
     {
-        $practice = SelfEnrollmentHelpers::getDemoPractice();
+        $practice = Helpers::getDemoPractice();
         // TEST ONLY
         $users = User::withTrashed()
             ->with('notifications', 'patientInfo', 'enrollee')
@@ -74,7 +74,7 @@ class AutoEnrollmentTestDashboard extends Controller
             ->whereHas('patientInfo')
             ->get();
 
-        $survey = SelfEnrollmentHelpers::getEnrolleeSurvey();
+        $survey = Helpers::getEnrolleeSurvey();
 
         foreach ($users as $user) {
             $surveyInstance = DB::table('survey_instances')
@@ -204,10 +204,10 @@ class AutoEnrollmentTestDashboard extends Controller
 
     private function deleteTestAwvUser(User $user, $surveyInstance)
     {
-        if ( ! SelfEnrollmentHelpers::awvUserSurveyQuery($user, $surveyInstance)->exists()) {
+        if ( ! Helpers::awvUserSurveyQuery($user, $surveyInstance)->exists()) {
             return;
         }
 
-        SelfEnrollmentHelpers::awvUserSurveyQuery($user, $surveyInstance)->delete();
+        Helpers::awvUserSurveyQuery($user, $surveyInstance)->delete();
     }
 }

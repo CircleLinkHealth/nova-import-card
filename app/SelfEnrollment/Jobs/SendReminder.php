@@ -6,7 +6,7 @@
 
 namespace App\SelfEnrollment\Jobs;
 
-use App\Helpers\SelfEnrollmentHelpers;
+use App\SelfEnrollment\Helpers;
 use CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
@@ -42,7 +42,7 @@ class SendReminder implements ShouldQueue
      */
     public function handle()
     {
-        if (SelfEnrollmentHelpers::hasCompletedSelfEnrollmentSurvey($this->patient)) {
+        if (Helpers::hasCompletedSelfEnrollmentSurvey($this->patient)) {
             return;
         }
 
