@@ -17,7 +17,7 @@ use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\ResetPassword;
 use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
-use App\SelfEnrollment\Contracts\SelfEnrollable;
+use CircleLinkHealth\Customer\Contracts\SelfEnrollable;
 use App\SelfEnrollment\Jobs\InvitePracticeEnrollees;
 use App\Services\UserService;
 use Carbon\Carbon;
