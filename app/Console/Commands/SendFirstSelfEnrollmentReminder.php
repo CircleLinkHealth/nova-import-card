@@ -8,7 +8,6 @@ namespace App\Console\Commands;
 
 use App\SelfEnrollment\Domain\RemindEnrollees;
 use App\SelfEnrollment\Domain\RemindUnreachablePatients;
-use App\SelfEnrollment\Jobs\DispatchSelfEnrollmentDomainAction;
 use Illuminate\Console\Command;
 
 class SendFirstSelfEnrollmentReminder extends Command
@@ -44,11 +43,11 @@ class SendFirstSelfEnrollmentReminder extends Command
     public function handle()
     {
         if ($this->option('enrollees')) {
-            DispatchSelfEnrollmentDomainAction::dispatch(RemindEnrollees::fromTwoDaysAgo());
+            RemindEnrollees::dispatchForInvitesSentTwoDaysAgo();
         }
 
         if ($this->option('patients')) {
-            DispatchSelfEnrollmentDomainAction::dispatch(RemindUnreachablePatients::fromTwoDaysAgo());
+            RemindUnreachablePatients::dispatchForInvitesSentTwoDaysAgo();
         }
     }
 }

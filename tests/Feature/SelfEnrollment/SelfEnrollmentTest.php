@@ -9,10 +9,8 @@ namespace Tests\Feature\SelfEnrollment;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\Notifications\SelfEnrollmentInviteNotification;
-use App\SelfEnrollment\Domain\RemindEnrollees;
-use App\SelfEnrollment\Jobs\DispatchSelfEnrollmentDomainAction;
+use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Queue;
 use Notification;
 use PrepareDataForReEnrollmentTestSeeder;
 use Tests\Concerns\TwilioFake\Twilio;
@@ -26,28 +24,17 @@ class SelfEnrollmentTest extends TestCase
      */
     private $factory;
 
-    public function test_it_dispatches_domain_actions()
-    {
-        Queue::fake();
-
-        DispatchSelfEnrollmentDomainAction::dispatch(RemindEnrollees::fromTwoDaysAgo());
-
-        Queue::assertPushed(DispatchSelfEnrollmentDomainAction::class, 1);
-    }
-
     public function tests_it_does_not_send_sms_if_only_email_selected()
     {
         $this->createEnrollees($number = 2);
         Twilio::fake();
         Mail::fake();
-
-        DispatchSelfEnrollmentDomainAction::dispatch(
-            new \App\SelfEnrollment\Domain\InvitePracticeEnrollees(
-                $number,
-                $this->practice()->id,
-                SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
-                ['mail']
-            )
+    
+        InvitePracticeEnrollees::dispatch(
+            $number,
+            $this->practice()->id,
+            SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
+            ['mail']
         );
 
         Twilio::assertNothingSent();
@@ -57,7 +44,12 @@ class SelfEnrollmentTest extends TestCase
     {
         $this->createEnrollees($number = 2);
         Notification::fake();
-        InvitePracticeEnrollees::dispatchNow($number, $this->practice()->id, SelfEnrollmentController::DEFAULT_BUTTON_COLOR, ['mail', CustomTwilioChannel::class]);
+        InvitePracticeEnrollees::dispatch(
+            $number,
+            $this->practice()->id,
+            SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
+            ['mail', CustomTwilioChannel::class]
+        );
         Notification::assertTimesSent($number, SelfEnrollmentInviteNotification::class);
     }
 
@@ -65,7 +57,12 @@ class SelfEnrollmentTest extends TestCase
     {
         $this->createEnrollees($number = 2);
         Twilio::fake();
-        InvitePracticeEnrollees::dispatchNow($number, $this->practice()->id, SelfEnrollmentController::DEFAULT_BUTTON_COLOR, [CustomTwilioChannel::class]);
+        InvitePracticeEnrollees::dispatch(
+            $number,
+            $this->practice()->id,
+            SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
+            [CustomTwilioChannel::class]
+        );
         Twilio::assertNumberOfMessagesSent($number);
     }
 

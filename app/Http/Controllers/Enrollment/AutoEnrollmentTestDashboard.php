@@ -8,10 +8,10 @@ namespace App\Http\Controllers\Enrollment;
 
 use App\Helpers\SelfEnrollmentHelpers;
 use App\Http\Controllers\Controller;
+use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use App\SelfEnrollment\Domain\InviteUnreachablePatients;
 use App\SelfEnrollment\Domain\RemindEnrollees;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
-use App\SelfEnrollment\Jobs\DispatchSelfEnrollmentDomainAction;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;
@@ -27,7 +27,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function finalActionTest()
     {
-        DispatchSelfEnrollmentDomainAction::dispatch(UnreachablesFinalAction::fromTwoDaysAgo());
+        UnreachablesFinalAction::dispatchForInvitesSentTwoDaysAgo();
 
         return redirect(route('ca-director.index'))->with('message', 'Reminders Sent Successfully');
     }
@@ -37,12 +37,10 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function inviteEnrolleesToEnrollTest(Request $request)
     {
-        DispatchSelfEnrollmentDomainAction::dispatch(
-            new \App\SelfEnrollment\Domain\InvitePracticeEnrollees(
-                $request->input('amount'),
-                $request->input('practice_id'),
-                $request->input('color')
-            )
+        InvitePracticeEnrollees::dispatch(
+            $request->input('amount'),
+            $request->input('practice_id'),
+            $request->input('color')
         );
 
         return redirect()->back()->with('message', 'Invited Successfully');
@@ -53,11 +51,9 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function inviteUnreachablesToEnrollTest(Request $request)
     {
-        DispatchSelfEnrollmentDomainAction::dispatch(
-            new InviteUnreachablePatients(
-                $request->input('practice_id'),
-                $request->input('amount')
-            )
+        InviteUnreachablePatients::dispatch(
+            $request->input('practice_id'),
+            $request->input('amount')
         );
 
         return redirect()->back()->with('message', 'Invited Successfully');
@@ -132,7 +128,7 @@ class AutoEnrollmentTestDashboard extends Controller
     public function sendEnrolleesReminderTestMethod()
     {
         try {
-            DispatchSelfEnrollmentDomainAction::dispatch(RemindEnrollees::fromTwoDaysAgo());
+            RemindEnrollees::dispatchForInvitesSentTwoDaysAgo();
         } catch (\Exception $e) {
             return 'Something went wrong';
         }

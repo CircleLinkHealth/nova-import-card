@@ -7,10 +7,20 @@
 namespace App\SelfEnrollment\Domain;
 
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-abstract class AbstractSelfEnrollableUserIterator
+abstract class AbstractSelfEnrollableUserIterator implements ShouldQueue
 {
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
     /**
      * The chunked DB rows we ran an action on so far.
      *
@@ -24,14 +34,9 @@ abstract class AbstractSelfEnrollableUserIterator
     abstract public function action(User $user): void;
 
     /**
-     * The query to get Users.
-     */
-    abstract public function query(): Builder;
-
-    /**
      * Run an action on Users chunked from the DB.
      */
-    public function run(): void
+    public function handle()
     {
         $this->query()->chunk($this->chunkSize(), function ($users) {
             $users->each(function (User $user) {
@@ -44,11 +49,16 @@ abstract class AbstractSelfEnrollableUserIterator
         });
     }
 
+    /**
+     * The query to get Users.
+     */
+    abstract public function query(): Builder;
+
     protected function chunkSize(): int
     {
         return 100;
     }
-    
+
     /**
      * If not null, stop chunking once the number of processed records reaches the limit.
      *
@@ -57,5 +67,18 @@ abstract class AbstractSelfEnrollableUserIterator
     protected function limit(): ?int
     {
         return null;
+    }
+    
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array
+     */
+    public function tags()
+    {
+        return [
+            'SelfEnrollmentAction',
+            get_class($this),
+        ];
     }
 }

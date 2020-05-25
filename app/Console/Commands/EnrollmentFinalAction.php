@@ -7,7 +7,6 @@
 namespace App\Console\Commands;
 
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
-use App\SelfEnrollment\Jobs\DispatchSelfEnrollmentDomainAction;
 use Illuminate\Console\Command;
 
 class EnrollmentFinalAction extends Command
@@ -42,6 +41,6 @@ class EnrollmentFinalAction extends Command
      */
     public function handle()
     {
-        DispatchSelfEnrollmentDomainAction::dispatch(UnreachablesFinalAction::fromTwoDaysAgo());
+        UnreachablesFinalAction::dispatchForInvitesSentTwoDaysAgo();
     }
 }

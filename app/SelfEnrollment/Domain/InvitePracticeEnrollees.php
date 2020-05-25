@@ -9,7 +9,6 @@ namespace App\SelfEnrollment\Domain;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\SelfEnrollment\Jobs\SendInvitation;
-use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Builder;
@@ -73,7 +72,7 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
                     ]);
             });
     }
-    
+
     protected function limit(): ?int
     {
         return $this->amount;

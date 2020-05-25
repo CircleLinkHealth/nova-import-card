@@ -44,7 +44,7 @@ class InviteUnreachablePatients extends AbstractSelfEnrollableUserIterator
             ])
             ->orderBy('id', 'asc');
     }
-    
+
     protected function limit(): ?int
     {
         return $this->count;
