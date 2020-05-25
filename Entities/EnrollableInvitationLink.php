@@ -32,9 +32,11 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method   static                                                                 \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereManuallyExpired($value)
  * @method   static                                                                 \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property string      $url
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereUrl($value)
- * @property string|null $button_color
+ * @property string                                                                                      $url
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereUrl($value)
+ * @property string|null                                                                                 $button_color
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ * @property int|null                                                                                    $revision_history_count
  */
 class EnrollableInvitationLink extends BaseModel
 {
