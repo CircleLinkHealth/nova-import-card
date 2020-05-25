@@ -41,7 +41,7 @@ class SelfEnrollmentTest extends CustomerTestCase
         $this->createEnrollees($number = 2);
         Twilio::fake();
         SendSelfEnrollmentInvitationToPracticeEnrollees::dispatchNow($number, $this->practice()->id, SelfEnrollmentController::DEFAULT_BUTTON_COLOR, [CustomTwilioChannel::class]);
-        Twilio::assertNumberOfMessageSent($number);
+        Twilio::assertNumberOfMessagesSent($number);
     }
 
     private function createEnrollees(int $number = 1)

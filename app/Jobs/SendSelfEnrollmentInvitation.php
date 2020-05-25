@@ -54,8 +54,7 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
         ?string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
         bool $isReminder = false,
         array $channels = ['mail', CustomTwilioChannel::class]
-    )
-    {
+    ) {
         $this->user       = $user;
         $this->isReminder = $isReminder;
         $this->color      = $color;

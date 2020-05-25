@@ -39,7 +39,7 @@ class TwilioFakeTest extends CustomerTestCase
 
         try {
             $wrongNumberSent = $numberSent + 1;
-            $this->twilio()->assertNumberOfMessageSent($wrongNumberSent);
+            $this->twilio()->assertNumberOfMessagesSent($wrongNumberSent);
         } catch (ExpectationFailedException $e) {
             $expected = "Failed to send [$wrongNumberSent] SMS messages. [$numberSent] were sent.\nFailed asserting that false is true.";
 
@@ -65,14 +65,14 @@ class TwilioFakeTest extends CustomerTestCase
 
         try {
             $wrongNumberSent = $numberSent - 1;
-            $this->twilio()->assertNumberOfMessageSent($wrongNumberSent);
+            $this->twilio()->assertNumberOfMessagesSent($wrongNumberSent);
         } catch (ExpectationFailedException $e) {
             $expected = "Failed to send [$wrongNumberSent] SMS messages. [$numberSent] were sent.\nFailed asserting that false is true.";
 
             $this->assertTrue($expected === $e->getMessage(), "Failed asserting that expected `$expected` equals `{$e->getMessage()}`");
         }
 
-        $this->twilio()->assertNumberOfMessageSent($numberSent);
+        $this->twilio()->assertNumberOfMessagesSent($numberSent);
     }
 
     public function test_fake_message_is_not_sent_if_notification_does_not_have_twilio_channel()

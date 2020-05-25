@@ -69,7 +69,7 @@ class TwilioFake implements TwilioInterface
     /**
      * @return $this
      */
-    public function assertNumberOfMessageSent(int $number)
+    public function assertNumberOfMessagesSent(int $number)
     {
         PHPUnit::assertTrue(
             $number === $count = count($this->logger->getMessages()),
