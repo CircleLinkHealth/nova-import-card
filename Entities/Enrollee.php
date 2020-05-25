@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Entities;
 
 use App\Contracts\Services\TwilioClientable;
-use App\SelfEnrollment\Contracts\SelfEnrollable;
+use CircleLinkHealth\Customer\Contracts\SelfEnrollable;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
