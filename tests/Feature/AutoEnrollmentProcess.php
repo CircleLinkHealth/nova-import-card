@@ -6,17 +6,14 @@
 
 namespace Tests\Feature;
 
-use App\Notifications\SelfEnrollmentInviteNotification;
 use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use App\SelfEnrollment\Jobs\EnrollmentSeletiveInviteEnrollees;
-use App\SelfEnrollment\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
 use App\SelfEnrollment\Jobs\SendSelfEnrollmentReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use NotificationChannels\Twilio\TwilioChannel;
 use Tests\CustomerTestCase;
 
 class AutoEnrollmentProcess extends CustomerTestCase
@@ -80,8 +77,9 @@ class AutoEnrollmentProcess extends CustomerTestCase
         //        See. EnrolleeObserver
         $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)
             ->createEnrollee($this->practice());
-        EnrollmentSeletiveInviteEnrollees::dispatch([$enrollee->fresh()->user_id]);
-        $this->check_notification_mail_has_been_sent($enrollee->fresh()->user);
+        $newUser = $enrollee->fresh()->user;
+        EnrollmentSeletiveInviteEnrollees::dispatch($newUser);
+        $this->check_notification_mail_has_been_sent($newUser);
 //        $this->check_notification_sms_has_been_sent($enrollle->fresh()->user);
 
         self::assertTrue($enrollee->enrollmentInvitationLinks()->exists());
@@ -230,7 +228,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
     {
         $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)
             ->createEnrollee($this->practice());
-        EnrollmentSeletiveInviteEnrollees::dispatch([$enrollee->fresh()->user_id]);
+        EnrollmentSeletiveInviteEnrollees::dispatch($enrollee->user);
         $lastEnrollmentLink                   = $enrollee->getLastEnrollmentInvitationLink();
         $lastEnrollmentLink->manually_expired = true;
         $lastEnrollmentLink->save();

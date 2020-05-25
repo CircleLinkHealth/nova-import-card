@@ -6,7 +6,7 @@
 
 namespace App;
 
-use App\SelfEnrollment\Contracts\SelfEnrollable;
+use CircleLinkHealth\Customer\Contracts\SelfEnrollable;
 
 /**
  * App\User.

@@ -6,7 +6,7 @@
 
 namespace App\SelfEnrollment\Domain;
 
-use App\SelfEnrollment\Contracts\SelfEnrollable;
+use CircleLinkHealth\Customer\Contracts\SelfEnrollable;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;

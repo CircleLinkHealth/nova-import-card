@@ -7,7 +7,7 @@
 namespace App\SelfEnrollment\Domain;
 
 use App\Helpers\SelfEnrollmentHelpers;
-use App\SelfEnrollment\Contracts\SelfEnrollable;
+use CircleLinkHealth\Customer\Contracts\SelfEnrollable;
 use App\SelfEnrollment\Jobs\SendSelfEnrollmentReminder;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Builder;

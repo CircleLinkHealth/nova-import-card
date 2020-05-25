@@ -6,7 +6,7 @@
 
 namespace App\SelfEnrollment\Domain;
 
-use App\SelfEnrollment\Contracts\SelfEnrollable;
+use CircleLinkHealth\Customer\Contracts\SelfEnrollable;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
