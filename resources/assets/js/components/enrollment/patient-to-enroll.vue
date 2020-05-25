@@ -586,11 +586,7 @@
                             <div class="col s12 m12">
                                 <label for="reason" class="label">What reason did the Patient convey?</label>
                                 <select class="auto-close" v-model="reason" name="reason" id="reason" required>
-                                    <option value="Worried about co-pay">Worried about co-pay</option>
-                                    <option value="Doesn’t trust medicare">Doesn’t trust medicare</option>
-                                    <option value="Doesn’t need help with Health">Doesn’t need help with health</option>
-                                    <option v-show="isSoftDecline" value="not at this time - try again later">Not At This Time, But Please Try Again At A Later Date</option>
-                                    <option value="other">Other...</option>
+                                    <option v-for="option in rejectedOptions" v-bind:value="option.id">{{option.text}}</option>
                                 </select>
                             </div>
 
@@ -853,6 +849,9 @@
                 }
                 return suffix + ' ' + this.provider.first_name + ' ' + this.provider.last_name;
             },
+            rejectedOptions(){
+                return this.isSoftDecline ? this.soft_rejected_reasons : this.rejected_reasons;
+            },
             provider_name_for_enrollment_script() {
                 let providerName;
 
@@ -1024,7 +1023,21 @@
                 times: [],
 
                 provider: [],
-                provider_phone: ''
+                provider_phone: '',
+
+                rejected_reasons: [
+                    {id: 'Worried about co-pay', text: 'Worried about co-pay'},
+                    {id: 'Doesn’t trust medicare', text: 'Doesn’t trust medicare'},
+                    {id:'Doesn’t need help with Health', text: 'Doesn’t need help with Health'},
+                    {id:'other', text: 'Other...'},
+                ],
+                soft_rejected_reasons: [
+                    {id: 'Worried about co-pay', text: 'Worried about co-pay'},
+                    {id: 'Doesn’t trust medicare', text: 'Doesn’t trust medicare'},
+                    {id:'Doesn’t need help with Health', text: 'Doesn’t need help with Health'},
+                    {id:'not at this time - try again later', text: 'Not at this time, but please try again at a later date'},
+                    {id:'other', text: 'Other...'},
+                ],
             };
         },
         mounted: function () {
@@ -1058,9 +1071,13 @@
                             format: 'yyyy-mm-dd'
                         })
                     },
+                    onOpenStart: function(){
+                        self.reasonSelectInitWithOptions();
+                    },
                     onCloseEnd: function () {
                         //always reset when modal is closed
                         self.isSoftDecline = false;
+                        self.reasonSelectInitWithOptions();
                     }
                 });
 
@@ -1107,6 +1124,13 @@
             })
         },
         methods: {
+            reasonSelectInitWithOptions(){
+                let options = this.isSoftDecline ? this.soft_rejected_reasons : this.rejected_reasons;
+
+                M.FormSelect.getInstance(document.getElementById('reason')).destroy()
+
+                M.FormSelect.init(document.getElementById('reason'), options);
+            },
             setDays(event) {
                 if (this.days.includes('all')) {
                     M.FormSelect.getInstance(document.getElementById('days[]')).dropdown.close()
