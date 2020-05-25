@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\SelfEnrollment\Jobs;
+namespace App\Jobs;
 
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
@@ -18,7 +18,7 @@ use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class AwvPatientReportNotify implements ShouldQueue
+class AwvNotifyBillingProviderOfCareDocument implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -129,7 +129,7 @@ class AwvPatientReportNotify implements ShouldQueue
     public function tags()
     {
         return [
-            AwvPatientReportNotify::class,
+            AwvNotifyBillingProviderOfCareDocument::class,
             'patient_id:'.$this->patientReportData['patient_id'],
             'report_media_id:'.$this->patientReportData['report_media_id'],
         ];
