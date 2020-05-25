@@ -17,7 +17,6 @@ use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\ResetPassword;
 use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
-use CircleLinkHealth\Customer\Contracts\SelfEnrollable;
 use App\SelfEnrollment\Jobs\InvitePracticeEnrollees;
 use App\Services\UserService;
 use Carbon\Carbon;
@@ -299,7 +298,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                          $enrollment_invitation_links_count
  * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User wasSentSelfEnrollmentInvite()
  */
-class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia, SelfEnrollable
+class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
     use \Laravel\Nova\Actions\Actionable;
     use Authenticatable;
