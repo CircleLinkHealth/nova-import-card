@@ -6,12 +6,13 @@
 
 namespace App\SelfEnrollment\Domain;
 
+use App\SelfEnrollment\AbstractSelfEnrollmentReminder;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 
-class UnreachablesFinalAction extends SelfEnrollmentReminder
+class UnreachablesFinalAction extends AbstractSelfEnrollmentReminder
 {
     public function action(User $user): void
     {

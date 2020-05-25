@@ -4,13 +4,15 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\SelfEnrollment\Domain;
+namespace App\SelfEnrollment;
 
+use App\SelfEnrollment\AbstractSelfEnrollableUserIterator;
+use App\SelfEnrollment\Domain\App;
 use App\SelfEnrollment\Helpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 
-abstract class SelfEnrollmentReminder extends AbstractSelfEnrollableUserIterator
+abstract class AbstractSelfEnrollmentReminder extends AbstractSelfEnrollableUserIterator
 {
     /**
      * @var Carbon

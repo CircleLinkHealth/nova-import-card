@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\SelfEnrollment\Domain;
+namespace App\SelfEnrollment;
 
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
