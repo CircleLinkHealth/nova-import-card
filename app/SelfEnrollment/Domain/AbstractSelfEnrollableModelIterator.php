@@ -6,7 +6,6 @@
 
 namespace App\SelfEnrollment\Domain;
 
-use CircleLinkHealth\Customer\Contracts\SelfEnrollable;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -36,7 +35,7 @@ abstract class AbstractSelfEnrollableModelIterator
     /**
      * Run an action on a User.
      */
-    abstract public function action(SelfEnrollable $enrollableModel): void;
+    abstract public function action(User $userModel): void;
 
     /**
      * The query to get Users.

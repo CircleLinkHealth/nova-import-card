@@ -6,12 +6,12 @@
 
 namespace App\SelfEnrollment\Domain;
 
-use CircleLinkHealth\Customer\Contracts\SelfEnrollable;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 
 class CreateUsersFromEnrollees extends AbstractSelfEnrollableModelIterator
 {
-    public function action(SelfEnrollable $enrollableModel): void
+    public function action(User $userModel): void
     {
         // TODO: Implement action() method.
     }

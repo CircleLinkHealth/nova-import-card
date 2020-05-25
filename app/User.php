@@ -6,8 +6,6 @@
 
 namespace App;
 
-use CircleLinkHealth\Customer\Contracts\SelfEnrollable;
-
 /**
  * App\User.
  *
@@ -222,6 +220,6 @@ use CircleLinkHealth\Customer\Contracts\SelfEnrollable;
  * @property int|null                                                                          $enrollment_invitation_links_count
  * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User wasSentSelfEnrollmentInvite()
  */
-class User extends \CircleLinkHealth\Customer\Entities\User implements SelfEnrollable
+class User extends \CircleLinkHealth\Customer\Entities\User
 {
 }

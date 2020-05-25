@@ -6,7 +6,6 @@
 
 namespace App\SelfEnrollment\Domain;
 
-use CircleLinkHealth\Customer\Contracts\SelfEnrollable;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -14,28 +13,28 @@ use Illuminate\Database\Eloquent\Builder;
 
 class UnreachablesFinalAction extends AbstractSelfEnrollableModelIterator
 {
-    public function action(SelfEnrollable $enrollable): void
+    public function action(User $user): void
     {
         $enrollmentInvitationService = app(EnrollmentInvitationService::class);
 
-        if ( ! $enrollable->isSurveyOnly()) {
+        if ( ! $user->isSurveyOnly()) {
 //                    We need the enrolle model created when patient became "unreachable"......
 //                    (see.PatientObserver & UnreachablePatientsToCaPanel)
 //                   ...to set call_queue - doing this as temp. solution in order to be displayed on CA PANEL
-            $enrollmentInvitationService->putIntoCallQueue($enrollable->enrollee);
+            $enrollmentInvitationService->putIntoCallQueue($user->enrollee);
 
             return;
         }
 
-        if ((bool) optional($enrollable->enrollee->selfEnrollmentStatus)->logged_in) {
-            $enrollmentInvitationService->putIntoCallQueue($enrollable->enrollee);
+        if ((bool) optional($user->enrollee->selfEnrollmentStatus)->logged_in) {
+            $enrollmentInvitationService->putIntoCallQueue($user->enrollee);
 
             return;
         }
 
 //                        Mark as non responsive means they will get a physical MAIL.
-        $enrollmentInvitationService->markAsNonResponsive($enrollable->enrollee);
-        $enrollmentInvitationService->putIntoCallQueue($enrollable->enrollee);
+        $enrollmentInvitationService->markAsNonResponsive($user->enrollee);
+        $enrollmentInvitationService->putIntoCallQueue($user->enrollee);
     }
 
     public function query(): Builder
