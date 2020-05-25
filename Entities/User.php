@@ -17,7 +17,6 @@ use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\ResetPassword;
 use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
-use App\SelfEnrollment\Jobs\InvitePracticeEnrollees;
 use App\Services\UserService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
@@ -322,6 +321,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     const FORWARD_ALERTS_INSTEAD_OF_PROVIDER                       = 'forward_alerts_instead_of_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_careplan_approval_emails_in_addition_to_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER     = 'forward_careplan_approval_emails_instead_of_provider';
+
+    const SURVEY_ONLY = 'survey-only';
     /**
      * Package Clockwork is hardcoded to look for $user->name. Adding this so that it will work.
      *
@@ -2264,7 +2265,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function isSurveyOnly()
     {
-        return $this->hasRole(InvitePracticeEnrollees::SURVEY_ONLY);
+        return $this->hasRole(self::SURVEY_ONLY);
     }
 
     public function lastObservation()
