@@ -6,17 +6,12 @@
 
 namespace App\SelfEnrollment\Jobs;
 
-use App\Helpers\SelfEnrollmentHelpers;
-use App\SelfEnrollment\Domain\RemindEnrollees;
-use App\SelfEnrollment\Domain\RemindUnreachablePatients;
-use App\SelfEnrollment\Domain\UnreachablesFinalAction;
-use CircleLinkHealth\Core\Entities\AppConfig;
+use App\SelfEnrollment\Domain\AbstractSelfEnrollableUserIterator;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\App;
 
 class DispatchSelfEnrollmentDomainAction implements ShouldQueue
 {
@@ -33,26 +28,9 @@ class DispatchSelfEnrollmentDomainAction implements ShouldQueue
     /**
      * DispatchSelfEnrollmentDomainAction constructor.
      */
-    public function __construct(string $action)
+    public function __construct(AbstractSelfEnrollableUserIterator $action)
     {
         $this->action = $action;
-    }
-
-    /**
-     * All actions that can be dispatched by this Dispatcher Class.
-     *
-     * Att these actions are related to patient-CPM interaction via SMS, and Email.
-     * Future iterations may include adding IVR support.
-     *
-     * @return string[]
-     */
-    public static function actions()
-    {
-        return [
-            RemindEnrollees::class,
-            RemindUnreachablePatients::class,
-            UnreachablesFinalAction::class,
-        ];
     }
 
     /**
@@ -62,17 +40,7 @@ class DispatchSelfEnrollmentDomainAction implements ShouldQueue
      */
     public function handle()
     {
-        [
-            $endDate,
-            $startDate,
-            $practiceId
-        ] = $this->prepareArguments();
-
-        with(new $this->action(
-            $endDate,
-            $startDate,
-            $practiceId
-        ))->run();
+        $this->action->run();
     }
 
     /**
@@ -84,32 +52,7 @@ class DispatchSelfEnrollmentDomainAction implements ShouldQueue
     {
         return [
             'SelfEnrollment',
-            $this->action,
-        ];
-    }
-
-    private function prepareArguments()
-    {
-        if ( ! in_array($this->action, self::actions())) {
-            throw new \Exception("`{$this->action}` is not a valid action.");
-        }
-
-        $testingMode = filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN) || App::environment('testing');
-
-        if ($testingMode) {
-            $practiceId = SelfEnrollmentHelpers::getDemoPractice()->id;
-            $startDate  = now()->startOfDay();
-            $endDate    = $startDate->copy()->endOfDay();
-        } else {
-            $practiceId = null;
-            $startDate  = now()->copy()->subHours(48)->startOfDay();
-            $endDate    = $startDate->copy()->endOfDay();
-        }
-
-        return [
-            $endDate,
-            $startDate,
-            $practiceId,
+            get_class($this->action),
         ];
     }
 }

@@ -8,11 +8,11 @@ namespace App\Http\Controllers\Enrollment;
 
 use App\Helpers\SelfEnrollmentHelpers;
 use App\Http\Controllers\Controller;
+use App\SelfEnrollment\Domain\InviteUnreachablePatients;
 use App\SelfEnrollment\Domain\RemindEnrollees;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
 use App\SelfEnrollment\Jobs\DispatchSelfEnrollmentDomainAction;
 use App\SelfEnrollment\Jobs\InvitePracticeEnrollees;
-use App\SelfEnrollment\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;
@@ -28,7 +28,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function finalActionTest()
     {
-        DispatchSelfEnrollmentDomainAction::dispatch(UnreachablesFinalAction::class);
+        DispatchSelfEnrollmentDomainAction::dispatch(UnreachablesFinalAction::fromTwoDaysAgo());
 
         return redirect(route('ca-director.index'))->with('message', 'Reminders Sent Successfully');
     }
@@ -52,9 +52,11 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function inviteUnreachablesToEnrollTest(Request $request)
     {
-        SendSelfEnrollmentInvitationToUnreachablePatients::dispatchNow(
-            $request->input('amount'),
-            $request->input('practice_id')
+        DispatchSelfEnrollmentDomainAction::dispatch(
+            new InviteUnreachablePatients(
+                $request->input('practice_id'),
+                $request->input('amount')
+            )
         );
 
         return redirect()->back()->with('message', 'Invited Successfully');
@@ -129,7 +131,7 @@ class AutoEnrollmentTestDashboard extends Controller
     public function sendEnrolleesReminderTestMethod()
     {
         try {
-            DispatchSelfEnrollmentDomainAction::dispatch(RemindEnrollees::class);
+            DispatchSelfEnrollmentDomainAction::dispatch(RemindEnrollees::fromTwoDaysAgo());
         } catch (\Exception $e) {
             return 'Something went wrong';
         }

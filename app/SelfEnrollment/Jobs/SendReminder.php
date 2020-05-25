@@ -15,7 +15,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class SendSelfEnrollmentReminder implements ShouldQueue
+class SendReminder implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -62,6 +62,6 @@ class SendSelfEnrollmentReminder implements ShouldQueue
 
         $invitation = $this->patient->enrollee->enrollmentInvitationLinks->first();
 
-        SendSelfEnrollmentInvitation::dispatch($this->patient, optional($invitation)->button_color, true);
+        SendInvitation::dispatch($this->patient, optional($invitation)->button_color, true);
     }
 }

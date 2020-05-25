@@ -8,7 +8,7 @@ namespace Tests\Feature;
 
 use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use App\SelfEnrollment\Jobs\EnrollmentSeletiveInviteEnrollees;
-use App\SelfEnrollment\Jobs\SendSelfEnrollmentReminder;
+use App\SelfEnrollment\Jobs\SendReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\Entities\Role;
@@ -146,7 +146,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
         $patient = $enrollee->fresh()->user;
 
         Notification::fake();
-        SendSelfEnrollmentReminder::dispatchNow($patient);
+        SendReminder::dispatchNow($patient);
 
         $this->check_notification_mail_has_been_sent($patient);
         //        $this->check_notification_sms_has_been_sent($patient);
@@ -210,7 +210,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
 //    {
 //        $patient = $this->patient();
 //        Notification::fake();
-//        SendSelfEnrollmentReminder::dispatchNow($patient);
+//        SendReminder::dispatchNow($patient);
 //
 //        $this->check_notification_mail_has_been_sent($patient);
     ////        $this->check_notification_sms_has_been_sent($patient);

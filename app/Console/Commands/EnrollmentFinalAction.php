@@ -42,6 +42,6 @@ class EnrollmentFinalAction extends Command
      */
     public function handle()
     {
-        DispatchSelfEnrollmentDomainAction::dispatch(UnreachablesFinalAction::class);
+        DispatchSelfEnrollmentDomainAction::dispatch(UnreachablesFinalAction::fromTwoDaysAgo());
     }
 }

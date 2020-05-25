@@ -9,6 +9,7 @@ namespace Tests\Feature\SelfEnrollment;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\Notifications\SelfEnrollmentInviteNotification;
+use App\SelfEnrollment\Domain\RemindEnrollees;
 use App\SelfEnrollment\Jobs\DispatchSelfEnrollmentDomainAction;
 use App\SelfEnrollment\Jobs\InvitePracticeEnrollees;
 use Illuminate\Support\Facades\Mail;
@@ -25,23 +26,14 @@ class SelfEnrollmentTest extends TestCase
      * @var PrepareDataForReEnrollmentTestSeeder
      */
     private $factory;
-
-    /**
-     * Dispatch all SelfEnrollment "Business Logic" classes.
-     * To make sure the Dispatcher works, and that classes containing important business logic are dispatchable.
-     */
+    
     public function test_it_dispatches_domain_actions()
     {
         Queue::fake();
 
-        foreach (DispatchSelfEnrollmentDomainAction::actions() as $domainActionFQN) {
-            //This is to test that the Jobs are proprely queued
-            DispatchSelfEnrollmentDomainAction::dispatch($domainActionFQN);
-            //But also running them synchronously to make sure they actually run
-            DispatchSelfEnrollmentDomainAction::dispatchNow($domainActionFQN);
-        }
+        DispatchSelfEnrollmentDomainAction::dispatch(RemindEnrollees::fromTwoDaysAgo());
 
-        Queue::assertPushed(DispatchSelfEnrollmentDomainAction::class, count(DispatchSelfEnrollmentDomainAction::actions()));
+        Queue::assertPushed(DispatchSelfEnrollmentDomainAction::class, 1);
     }
 
     public function tests_it_does_not_send_sms_if_only_email_selected()

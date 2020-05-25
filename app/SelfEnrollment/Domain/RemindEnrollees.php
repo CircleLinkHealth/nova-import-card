@@ -7,15 +7,15 @@
 namespace App\SelfEnrollment\Domain;
 
 use App\Helpers\SelfEnrollmentHelpers;
-use App\SelfEnrollment\Jobs\SendSelfEnrollmentReminder;
+use App\SelfEnrollment\Jobs\SendReminder;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 
-class RemindEnrollees extends AbstractSelfEnrollableModelIterator
+class RemindEnrollees extends SelfEnrollmentReminder
 {
     public function action(User $user): void
     {
-        SendSelfEnrollmentReminder::dispatch($user);
+        SendReminder::dispatch($user);
     }
 
     public function query(): Builder

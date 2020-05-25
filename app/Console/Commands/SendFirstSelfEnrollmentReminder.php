@@ -44,11 +44,11 @@ class SendFirstSelfEnrollmentReminder extends Command
     public function handle()
     {
         if ($this->option('enrollees')) {
-            DispatchSelfEnrollmentDomainAction::dispatch(RemindEnrollees::class);
+            DispatchSelfEnrollmentDomainAction::dispatch(RemindEnrollees::fromTwoDaysAgo());
         }
 
         if ($this->option('patients')) {
-            DispatchSelfEnrollmentDomainAction::dispatch(RemindUnreachablePatients::class);
+            DispatchSelfEnrollmentDomainAction::dispatch(RemindUnreachablePatients::fromTwoDaysAgo());
         }
     }
 }

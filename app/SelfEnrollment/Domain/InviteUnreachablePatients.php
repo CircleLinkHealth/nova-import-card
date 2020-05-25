@@ -6,16 +6,28 @@
 
 namespace App\SelfEnrollment\Domain;
 
-use App\SelfEnrollment\Jobs\SendSelfEnrollmentInvitation;
+use App\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Builder;
 
-class InviteUnreachablePatients extends AbstractSelfEnrollableModelIterator
+class InviteUnreachablePatients extends AbstractSelfEnrollableUserIterator
 {
-    public function action(User $userModel): void
+    /**
+     * @var int
+     */
+    private $count;
+    private $practiceId;
+
+    public function __construct(int $practiceId, int $count)
     {
-        SendSelfEnrollmentInvitation::dispatch($userModel->user);
+        $this->practiceId = $practiceId;
+        $this->count      = $count;
+    }
+
+    public function action(User $user): void
+    {
+        SendInvitation::dispatch($user);
     }
 
     public function query(): Builder
