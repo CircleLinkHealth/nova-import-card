@@ -19,17 +19,29 @@
         },
         {
             "type": "git",
+            "url": "git@github.com:CircleLinkHealth/shared-models-module.git"
+        },
+        {
+            "type": "git",
             "url": "git@github.com:circlelinkhealth/revisionable-module.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git"
         }
     ],
     "require": {
         "php": ">=7.2.0",
+        "ext-json": "*",
         "ext-simplexml": "*",
+        "ext-redis": "*",
         "barryvdh/laravel-cors": "^0.11.3",
         "barryvdh/laravel-ide-helper": "^2.6",
         "circlelinkhealth/core-module": "1.5.5",
         "circlelinkhealth/customer-module": "1.9.3",
         "circlelinkhealth/revisionable-module": "^6.1",
+        "circlelinkhealth/shared-models-module": "1.5.6",
+        "circlelinkhealth/cpm-migrations-module": "1.8.9",
         "illuminate/redis": "^6",
         "illuminate/session": "^6",
         "laravel/lumen-framework": "^6",
@@ -38,8 +50,7 @@
         "propaganistas/laravel-phone": "^4.1",
         "sentry/sentry-laravel": "1.7.0",
         "twilio/sdk": "5.31.3",
-        "vlucas/phpdotenv": "^3",
-        "ext-json": "*"
+        "vlucas/phpdotenv": "^3"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.4",

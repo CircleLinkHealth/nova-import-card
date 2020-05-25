@@ -80,6 +80,10 @@ $router->group([
         'uses' => 'Twilio\TwilioController@recordingStatusCallback',
         'as'   => 'twilio.call.recording.status',
     ]);
+    $router->post('/debugger-webhook', [
+        'uses' => 'Twilio\TwilioController@debuggerWebhook',
+        'as'    => 'twilio.debugger.webhook',
+    ]);
 });
 
 $router->get('health-check', 'HealthCheckController@isSiteUp');
