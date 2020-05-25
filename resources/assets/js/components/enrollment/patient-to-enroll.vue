@@ -169,10 +169,18 @@
 
                                         <div v-if="onCall === true" style="text-align: center">
 
-                                            <blockquote>Call Status: {{ this.callStatus }}</blockquote>
-                                            <a v-on:click="hangUp" class="waves-effect waves-light btn"
-                                               style="background: red"><i
-                                                    class="material-icons left">call_end</i>Hang Up</a>
+                                            <div>
+                                                <blockquote>Call Status: {{ this.callStatus }}</blockquote>
+                                                <a v-on:click="hangUp" class="waves-effect waves-light btn"
+                                                   style="background: red"><i
+                                                        class="material-icons left">call_end</i>Hang Up</a>
+                                            </div>
+
+                                            <div style="margin-left: 15px; margin-right: 15px">
+                                                <call-numpad wrapper-class="" :on-input="numpadInput"></call-numpad>
+                                            </div>
+
+
                                         </div>
                                         <div v-else style="text-align: center">
                                             <div v-if="home_phone !== ''" class="col s4">
@@ -707,6 +715,7 @@
 <script>
 
     import {rootUrl} from '../../app.config';
+    import CallNumpad from '../call-numpad';
 
     import Loader from '../loader.vue';
 
@@ -723,6 +732,7 @@
         ],
         components: {
             'loader': Loader,
+            'call-numpad': CallNumpad,
         },
         computed: {
             timeTrackerTime: function () {
@@ -1253,6 +1263,9 @@
             },
             hangUp() {
                 App.$emit('enrollable:hang-up');
+            },
+            numpadInput: function (allInput, lastInput) {
+                App.$emit('enrollable:numpad-input', {allInput, lastInput});
             },
         }
     }
