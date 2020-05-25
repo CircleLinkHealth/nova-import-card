@@ -6,9 +6,9 @@
 
 namespace App\SelfEnrollment\Jobs;
 
-use App\SelfEnrollment\Helpers;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Notifications\Channels\CustomTwilioChannel;
+use App\SelfEnrollment\Helpers;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;

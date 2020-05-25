@@ -6,7 +6,6 @@
 
 namespace App\SelfEnrollment\Jobs;
 
-use App\SelfEnrollment\Jobs\AwvPatientReportNotify;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

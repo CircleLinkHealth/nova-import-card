@@ -6,12 +6,12 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use App\SelfEnrollment\Helpers;
 use App\Http\Controllers\Controller;
 use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use App\SelfEnrollment\Domain\InviteUnreachablePatients;
 use App\SelfEnrollment\Domain\RemindEnrollees;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
+use App\SelfEnrollment\Helpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;

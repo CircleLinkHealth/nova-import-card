@@ -6,10 +6,10 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use App\SelfEnrollment\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EnrollmentLinkValidation;
 use App\Http\Requests\EnrollmentValidationRules;
+use App\SelfEnrollment\Helpers;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
