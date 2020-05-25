@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3f0090af3f05f589171e31f4deefa036",
+    "content-hash": "89e391dbe48da50433d8a9c9d5ee6ed6",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -362,11 +362,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-ROAD-93_twilio_debugger_logs",
+            "version": "v1.8.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "655c4ccd440f62ff695cc153f7557c059008c790"
+                "reference": "bab0cdf06e58c50ca70754994640d6f6060984d7"
             },
             "type": "laravel-module",
             "extra": {
@@ -388,7 +388,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-25T12:48:20+00:00"
+            "time": "2020-05-25T18:42:04+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -481,11 +481,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "dev-ROAD-93_twilio_debugger_logs",
+            "version": "v1.5.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "52e4490c8eba74d92a25af152d2454e846fc3e8d"
+                "reference": "1d367b6d8a035bc4eb3b58fd027e7533be8a7dba"
             },
             "type": "laravel-module",
             "autoload": {
@@ -499,7 +499,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-25T12:48:20+00:00"
+            "time": "2020-05-25T18:40:27+00:00"
         },
         {
             "name": "clue/stream-filter",
@@ -9161,10 +9161,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "circlelinkhealth/shared-models-module": 20,
-        "circlelinkhealth/cpm-migrations-module": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
