@@ -167,7 +167,7 @@
                         status: [
                             {id: 'call_queue', text: 'Call Queue'},
                             {id:'enrolled', text: 'Enrolled'},
-                            {id:'consented', text: 'consented'},
+                            {id:'consented', text: 'Consented'},
                             {id:'soft_rejected', text: 'Soft Declined'},
                             {id: 'hard_declined', text: 'Hard Declined'},
                             {id:'utc', text: 'Unreachable'},
@@ -185,7 +185,7 @@
                 enrolleeStatusMap: {
                     call_queue: 'Call Queue',
                     enrolled: 'Enrolled',
-                    consented: 'consented',
+                    consented: 'Consented',
                     soft_rejected: 'Soft Declined',
                     hard_declined: 'Hard Declined',
                     utc: 'Unreachable',
