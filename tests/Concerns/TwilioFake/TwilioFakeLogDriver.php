@@ -10,7 +10,7 @@ use App\Contracts\TwilioInterface;
 use NotificationChannels\Twilio\TwilioMessage;
 use Psr\Log\LoggerInterface;
 
-class LogDriver implements TwilioInterface
+class TwilioFakeLogDriver implements TwilioInterface
 {
     protected $messages = [];
     /**

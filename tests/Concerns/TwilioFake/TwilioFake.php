@@ -19,7 +19,7 @@ class TwilioFake implements TwilioInterface
 
     public function __construct(LoggerInterface $logger)
     {
-        $this->logger = new LogDriver($logger);
+        $this->logger = new TwilioFakeLogDriver($logger);
     }
 
     /**
@@ -29,10 +29,10 @@ class TwilioFake implements TwilioInterface
      *
      * @return $this
      */
-    public function assertMessageNotSent($to, $message, $connection = null)
+    public function assertMessageNotSent($to, $message)
     {
         PHPUnit::assertFalse(
-            1 === $this->sent($this->logger->getMessages(), $to, $message, $connection)->count(),
+            1 === $this->sent($this->logger->getMessages(), $to, $message)->count(),
             "The expected [{$message}] message was not sent."
         );
 
@@ -46,16 +46,44 @@ class TwilioFake implements TwilioInterface
      *
      * @return $this
      */
-    public function assertMessageSent($to, $message, $connection = null)
+    public function assertMessageSent($to, $message)
     {
         PHPUnit::assertTrue(
-            1 === $this->sent($this->logger->getMessages(), $to, $message, $connection)->count(),
+            1 === $this->sent($this->logger->getMessages(), $to, $message)->count(),
             "The expected [{$message}] message was not sent."
         );
 
         return $this;
     }
 
+    public function assertNothingSent()
+    {
+        PHPUnit::assertTrue(
+            0 === $count = count($this->logger->getMessages()),
+            "Failed to assert 0 sent SMS messages. [{$count}] were sent."
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function assertNumberOfMessageSent(int $number)
+    {
+        PHPUnit::assertTrue(
+            $number === $count = count($this->logger->getMessages()),
+            "Failed to send [{$number}] SMS messages. [{$count}] were sent."
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param  string     $to
+     * @param  bool       $useAlphanumericSender
+     * @return mixed|void
+     */
     public function sendMessage(TwilioMessage $message, $to, $useAlphanumericSender = false)
     {
         call_user_func_array([$this->logger, 'sendMessage'], func_get_args());
@@ -69,12 +97,10 @@ class TwilioFake implements TwilioInterface
      *
      * @return \Illuminate\Support\Collection
      */
-    protected function sent($twilioRequests, $to, $message, $connection)
+    protected function sent($twilioRequests, $to, $message)
     {
-        return collect($twilioRequests)->filter(function ($twilioRequest) use ($to, $message, $connection) {
-            return $twilioRequest->to === $to && $twilioRequest->message === $message && (
-                is_null($connection) || $twilioRequest->connection === $connection
-            );
+        return collect($twilioRequests)->filter(function ($twilioRequest) use ($to, $message) {
+            return $twilioRequest->to === $to && $twilioRequest->message === $message;
         });
     }
 }

@@ -9,6 +9,7 @@ namespace App\Jobs;
 // This file is part of CarePlan Manager by CircleLink Health.
 
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use App\Notifications\Channels\CustomTwilioChannel;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
@@ -30,6 +31,10 @@ class SendSelfEnrollmentInvitationToPracticeEnrollees implements ShouldQueue
      * @var int
      */
     private $amount;
+    /**
+     * @var array|string[]
+     */
+    private $channels;
     /**
      * @var null
      */
@@ -57,11 +62,13 @@ class SendSelfEnrollmentInvitationToPracticeEnrollees implements ShouldQueue
     public function __construct(
         int $amount,
         int $practiceId,
-        string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR
+        string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
+        array $channels = ['mail', CustomTwilioChannel::class]
     ) {
         $this->amount     = $amount;
         $this->practiceId = $practiceId;
         $this->color      = $color;
+        $this->channels   = $channels;
     }
 
     /**
@@ -81,7 +88,7 @@ class SendSelfEnrollmentInvitationToPracticeEnrollees implements ShouldQueue
             ->select(['user_id'])
             ->chunk(100, function ($enrollees) {
                 foreach ($enrollees as $enrollee) {
-                    SendSelfEnrollmentInvitation::dispatch($enrollee->user, $this->color);
+                    SendSelfEnrollmentInvitation::dispatch($enrollee->user, $this->color, false, $this->channels);
 
                     if (++$this->dispatched === $this->amount) {
                         //break chunking

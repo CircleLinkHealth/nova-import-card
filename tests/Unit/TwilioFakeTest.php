@@ -14,6 +14,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Notification as NotificationFacade;
 use NotificationChannels\Twilio\TwilioSmsMessage;
+use PHPUnit\Framework\ExpectationFailedException;
 use Tests\Concerns\TwilioFake\Twilio;
 use Tests\Concerns\TwilioFake\WithTwilioMock;
 use Tests\CustomerTestCase;
@@ -21,6 +22,58 @@ use Tests\CustomerTestCase;
 class TwilioFakeTest extends CustomerTestCase
 {
     use WithTwilioMock;
+
+    public function test_assert_nothing_sent()
+    {
+        $msg        = 'fake message';
+        $to         = '+12349010035';
+        $numberSent = 0;
+
+        for ($i = 0; $i < $numberSent; ++$i) {
+            $this->twilio()->sendMessage(
+                (new TwilioSmsMessage())
+                    ->content($msg),
+                $to
+            );
+        }
+
+        try {
+            $wrongNumberSent = $numberSent + 1;
+            $this->twilio()->assertNumberOfMessageSent($wrongNumberSent);
+        } catch (ExpectationFailedException $e) {
+            $expected = "Failed to send [$wrongNumberSent] SMS messages. [$numberSent] were sent.\nFailed asserting that false is true.";
+
+            $this->assertTrue($expected === $e->getMessage(), "Failed asserting that expected `$expected` equals `{$e->getMessage()}`");
+        }
+
+        $this->twilio()->assertNothingSent();
+    }
+
+    public function test_assert_number_sent_counts_correctly()
+    {
+        $msg        = 'fake message';
+        $to         = '+12349010035';
+        $numberSent = 5;
+
+        for ($i = 0; $i < $numberSent; ++$i) {
+            $this->twilio()->sendMessage(
+                (new TwilioSmsMessage())
+                    ->content($msg),
+                $to
+            );
+        }
+
+        try {
+            $wrongNumberSent = $numberSent - 1;
+            $this->twilio()->assertNumberOfMessageSent($wrongNumberSent);
+        } catch (ExpectationFailedException $e) {
+            $expected = "Failed to send [$wrongNumberSent] SMS messages. [$numberSent] were sent.\nFailed asserting that false is true.";
+
+            $this->assertTrue($expected === $e->getMessage(), "Failed asserting that expected `$expected` equals `{$e->getMessage()}`");
+        }
+
+        $this->twilio()->assertNumberOfMessageSent($numberSent);
+    }
 
     public function test_fake_message_is_not_sent_if_notification_does_not_have_twilio_channel()
     {

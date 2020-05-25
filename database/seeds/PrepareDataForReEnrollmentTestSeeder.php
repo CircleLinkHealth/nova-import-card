@@ -28,6 +28,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             'referring_provider_name' => 'Dr. Demo',
             'primary_phone'           => $phoneTester,
             'home_phone'              => $phoneTester,
+            'cell_phone'              => $phoneTester ?? '+12012819204',
             'email'                   => '',
         ]);
         $this->seedEligibilityJobs(collect([$enrolleeForTesting]), $practice);

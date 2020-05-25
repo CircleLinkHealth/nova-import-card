@@ -6,8 +6,7 @@
 
 namespace App\Traits;
 
-use App\Notifications\SendEnrollementSms;
-use App\Notifications\SendEnrollmentEmail;
+use App\Notifications\SelfEnrollmentInviteNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -41,9 +40,7 @@ trait EnrollmentReminderShared
                         ['created_at', '>=', $from],
                         ['created_at', '<=', $to],
                     ])
-                    ->where(function ($q) {
-                        $q->where('type', SendEnrollmentEmail::class)->orWhere('type', SendEnrollementSms::class);
-                    });
+                    ->where('type', SelfEnrollmentInviteNotification::class);
             });
     }
 }

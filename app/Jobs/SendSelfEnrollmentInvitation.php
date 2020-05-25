@@ -8,15 +8,14 @@ namespace App\Jobs;
 
 use App\Helpers\SelfEnrollmentHelpers;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
-use App\Notifications\SendEnrollementSms as Sms;
-use App\Notifications\SendEnrollmentEmail as Email;
+use App\Notifications\Channels\CustomTwilioChannel;
+use App\Notifications\SelfEnrollmentInviteNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
 
 class SendSelfEnrollmentInvitation implements ShouldQueue
@@ -25,6 +24,10 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    /**
+     * @var array|string[]
+     */
+    private $channels;
     /**
      * @var string
      */
@@ -46,11 +49,17 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(User $user, ?string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR, bool $isReminder = false)
+    public function __construct(
+        User $user,
+        ?string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
+        bool $isReminder = false,
+        array $channels = ['mail', CustomTwilioChannel::class]
+    )
     {
         $this->user       = $user;
         $this->isReminder = $isReminder;
         $this->color      = $color;
+        $this->channels   = $channels;
     }
 
     /**
@@ -102,16 +111,11 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
 
     private function sendInvite(string $link)
     {
-        $this->user->notify(new Email($link, $this->isReminder));
-        $this->user->notify(new Sms($link, $this->isReminder));
+        $this->user->notify(new SelfEnrollmentInviteNotification($link, $this->isReminder, $this->channels));
     }
 
     private function shouldRun(): bool
     {
-        if (App::environment(['testing'])) {
-            return false;
-        }
-
         //If an invitation exists already, it means the patient has already been invided and we do not want to invite them again
         if ($this->user->enrollmentInvitationLinks()->exists()) {
             return false;

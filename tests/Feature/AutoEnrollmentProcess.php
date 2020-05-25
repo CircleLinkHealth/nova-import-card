@@ -10,8 +10,7 @@ use App\Jobs\CreateUsersFromEnrollees;
 use App\Jobs\EnrollmentSeletiveInviteEnrollees;
 use App\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
 use App\Jobs\SendSelfEnrollmentReminder;
-use App\Notifications\SendEnrollementSms;
-use App\Notifications\SendEnrollmentEmail;
+use App\Notifications\SelfEnrollmentInviteNotification;
 use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Facades\Notification;
@@ -33,7 +32,7 @@ class AutoEnrollmentProcess extends CustomerTestCase
     {
         Notification::assertSentTo(
             $user,
-            SendEnrollmentEmail::class,
+            'App\Notifications\SendEnrollmentEmail',
             function (SendEnrollmentEmail $notification, $channels, $notifiable) use ($user) {
                 $notification->createInvitationLink($notifiable);
                 self::assertEquals(['database', 'mail'], $channels);
@@ -48,8 +47,8 @@ class AutoEnrollmentProcess extends CustomerTestCase
 //    {
 //        Notification::assertSentTo(
 //            $enrollable,
-//            SendEnrollementSms::class,
-//            function (SendEnrollementSms $notification, $channels, $notifiable) use ($enrollable) {
+//            SelfEnrollmentInviteNotification::class,
+//            function (SelfEnrollmentInviteNotification $notification, $channels, $notifiable) use ($enrollable) {
 //                self::assertEquals(['database', TwilioChannel::class], $channels);
 //
 //                return (int) $notifiable->id === (int) $enrollable->id;

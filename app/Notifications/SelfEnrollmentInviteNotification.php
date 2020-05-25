@@ -6,29 +6,29 @@
 
 namespace App\Notifications;
 
-// This file is part of CarePlan Manager by CircleLink Health.
-
 use App\Notifications\Channels\AutoEnrollmentMailChannel;
+use App\Notifications\Channels\CustomTwilioChannel;
+use App\Traits\EnrollableManagement;
 use App\Traits\EnrollableNotificationContent;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use NotificationChannels\Twilio\TwilioSmsMessage;
 use Spatie\RateLimitedMiddleware\RateLimited;
 
-class SendEnrollmentEmail extends Notification implements ShouldQueue
+class SelfEnrollmentInviteNotification extends Notification
 {
+    use EnrollableManagement;
     use EnrollableNotificationContent;
     use Queueable;
-
-    const USER = User::class;
     /**
-     * @var null
+     * @var array|string[]
      */
-    private $enrolleeModelId;
+    private $channels;
+
     /**
      * @var bool
      */
@@ -41,10 +41,11 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-    public function __construct(string $url, bool $isReminder = false)
+    public function __construct(string $url, bool $isReminder = false, array $channels = ['mail', CustomTwilioChannel::class])
     {
         $this->isReminder = $isReminder;
         $this->url        = $url;
+        $this->channels   = $channels;
     }
 
     public function middleware()
@@ -63,13 +64,10 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     }
 
     /**
-     * Get the array representation of the notification.
-     *
-     * @param mixed $notifiable
-     *
+     * @param  mixed $notifiable
      * @return array
      */
-    public function toArray(User $notifiable)
+    public function toArray($notifiable)
     {
         if ($notifiable->isSurveyOnly()) {
             $enrollee = Enrollee::whereUserId($notifiable->id)->first();
@@ -120,6 +118,27 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
     }
 
     /**
+     * The phone number to send text is in Notifiable Model->routeNotificationForTwilio().
+     *
+     * @param $notifiable
+     *
+     * @throws \Exception
+     * @return TwilioSmsMessage
+     */
+    public function toTwilio(User $notifiable)
+    {
+        if (empty($this->url)) {
+            throw new InvalidArgumentException("`url` cannot be empty. User ID {$notifiable->id}");
+        }
+
+        $notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
+        $smsSubject          = $notificationContent['line1'].$notificationContent['line2'].$this->url;
+
+        return (new TwilioSmsMessage())
+            ->content($smsSubject);
+    }
+
+    /**
      * Get the notification's delivery channels.
      *
      * @param mixed $notifiable
@@ -128,6 +147,6 @@ class SendEnrollmentEmail extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['database', 'mail'];
+        return array_merge(['database'], $this->channels);
     }
 }
