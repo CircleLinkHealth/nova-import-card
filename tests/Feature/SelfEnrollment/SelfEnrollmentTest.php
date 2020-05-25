@@ -29,7 +29,7 @@ class SelfEnrollmentTest extends TestCase
         $this->createEnrollees($number = 2);
         Twilio::fake();
         Mail::fake();
-    
+
         InvitePracticeEnrollees::dispatch(
             $number,
             $this->practice()->id,

@@ -54,6 +54,19 @@ abstract class AbstractSelfEnrollableUserIterator implements ShouldQueue
      */
     abstract public function query(): Builder;
 
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array
+     */
+    public function tags()
+    {
+        return [
+            'SelfEnrollmentAction',
+            get_class($this),
+        ];
+    }
+
     protected function chunkSize(): int
     {
         return 100;
@@ -67,18 +80,5 @@ abstract class AbstractSelfEnrollableUserIterator implements ShouldQueue
     protected function limit(): ?int
     {
         return null;
-    }
-    
-    /**
-     * Get the tags that should be assigned to the job.
-     *
-     * @return array
-     */
-    public function tags()
-    {
-        return [
-            'SelfEnrollmentAction',
-            get_class($this),
-        ];
     }
 }
