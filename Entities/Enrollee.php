@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Eligibility\Entities;
 
 use App\Contracts\Services\TwilioClientable;
-use CircleLinkHealth\Customer\Contracts\SelfEnrollable;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
@@ -186,7 +185,7 @@ use Illuminate\Support\Str;
  * @property int|null                                                                                                        $enrollment_invitation_links_count
  * @property \CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus|null                                                $selfEnrollmentStatus
  */
-class Enrollee extends BaseModel implements SelfEnrollable
+class Enrollee extends BaseModel
 {
     use Filterable;
     use MySQLSearchable;
