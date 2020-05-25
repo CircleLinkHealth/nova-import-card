@@ -3205,8 +3205,33 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function scopeWasSentSelfEnrollmentInvite($query)
     {
         return $query->whereHas('notifications', function ($q) {
-            $q->selfEnrollmentInvites();
+            $q->selfEnrollmentInvites()->where('data->is_reminder', false);
         });
+    }
+    
+    public function scopeHasSelfEnrollmentInviteReminder($query, Carbon $to, Carbon $from, $has = true)
+    {
+        $verb = $has ? 'has': 'DoesntHave';
+        return $query->{"where$verb"}('notifications', function ($notification) use ($to, $from) {
+            $notification
+                ->where('data->is_reminder', true)
+                ->where([
+                    ['created_at', '>=', $from],
+                    ['created_at', '<=', $to],
+                ])
+                ->selfEnrollmentInvites();
+        });
+    }
+    
+    public function scopeEnrollableUsersToRemind($query, Carbon $to, Carbon $from)
+    {
+//         We send the first notification marked as is_reminder => false
+//         We send the second notification(reminder => true).
+//         We dont want to send a second reminder if user has 1 true and 1 false is_reminder.
+        return $query->wasSentSelfEnrollmentInvite()
+            ->whereHas('patientInfo', function ($patient) {
+                $patient->where('ccm_status', Patient::UNREACHABLE);
+            })->hasSelfEnrollmentInviteReminder($to, $from, false);
     }
 
     public function scopeWithCareTeamOfType(
