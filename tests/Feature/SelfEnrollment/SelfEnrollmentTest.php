@@ -14,22 +14,31 @@ use App\SelfEnrollment\Jobs\InvitePracticeEnrollees;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Notification;
+use PrepareDataForReEnrollmentTestSeeder;
 use Tests\Concerns\TwilioFake\Twilio;
 
 class SelfEnrollmentTest extends TestCase
 {
+    /**
+     * Helper to create fake Enrollees.
+     *
+     * @var PrepareDataForReEnrollmentTestSeeder
+     */
     private $factory;
 
     /**
-     * A broad smoke test to ensure that our domain logic dispatcher works, and that domain logic classes are dispatchable.
+     * Dispatch all SelfEnrollment "Business Logic" classes.
+     * To make sure the Dispatcher works, and that classes containing important business logic are dispatchable.
      */
     public function test_it_dispatches_domain_actions()
     {
         Queue::fake();
 
-        // Below classes are domain (aka business) logic events.
         foreach (DispatchSelfEnrollmentDomainAction::actions() as $domainActionFQN) {
+            //This is to test that the Jobs are proprely queued
             DispatchSelfEnrollmentDomainAction::dispatch($domainActionFQN);
+            //But also running them synchronously to make sure they actually run
+            DispatchSelfEnrollmentDomainAction::dispatchNow($domainActionFQN);
         }
 
         Queue::assertPushed(DispatchSelfEnrollmentDomainAction::class, count(DispatchSelfEnrollmentDomainAction::actions()));
@@ -78,7 +87,7 @@ class SelfEnrollmentTest extends TestCase
     private function factory()
     {
         if (is_null($this->factory)) {
-            $this->factory = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class);
+            $this->factory = $this->app->make(PrepareDataForReEnrollmentTestSeeder::class);
         }
 
         return $this->factory;

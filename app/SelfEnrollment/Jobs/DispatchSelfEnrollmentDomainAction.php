@@ -64,7 +64,17 @@ class DispatchSelfEnrollmentDomainAction implements ShouldQueue
      */
     public function handle()
     {
-        with(new $this->action($this->prepareArguments()))->run();
+        [
+            $endDate,
+            $startDate,
+            $practiceId
+        ] = $this->prepareArguments();
+
+        with(new $this->action(
+            $endDate,
+            $startDate,
+            $practiceId
+        ))->run();
     }
 
     /**
@@ -79,15 +89,15 @@ class DispatchSelfEnrollmentDomainAction implements ShouldQueue
             $this->action,
         ];
     }
-    
+
     private function prepareArguments()
     {
         if ( ! in_array($this->action, self::actions())) {
             throw new \Exception("`{$this->action}` is not a valid action.");
         }
-    
+
         $testingMode = filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN) || App::environment('testing');
-    
+
         if ($testingMode) {
             $practiceId = SelfEnrollmentHelpers::getDemoPractice()->id;
             $startDate  = now()->startOfDay();
@@ -97,11 +107,11 @@ class DispatchSelfEnrollmentDomainAction implements ShouldQueue
             $startDate  = now()->copy()->subHours(48)->startOfDay();
             $endDate    = $startDate->copy()->endOfDay();
         }
-        
+
         return [
             $endDate,
             $startDate,
-            $practiceId
+            $practiceId,
         ];
     }
 }

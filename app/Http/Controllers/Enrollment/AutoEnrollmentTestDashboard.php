@@ -8,11 +8,11 @@ namespace App\Http\Controllers\Enrollment;
 
 use App\Helpers\SelfEnrollmentHelpers;
 use App\Http\Controllers\Controller;
-use App\SelfEnrollment\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
 use App\SelfEnrollment\Domain\RemindEnrollees;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
 use App\SelfEnrollment\Jobs\DispatchSelfEnrollmentDomainAction;
 use App\SelfEnrollment\Jobs\InvitePracticeEnrollees;
+use App\SelfEnrollment\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;

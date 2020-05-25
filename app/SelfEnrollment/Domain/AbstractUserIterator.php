@@ -31,25 +31,21 @@ abstract class AbstractUserIterator
         $this->twoDaysAgo    = $startDate;
         $this->practiceId    = $practiceId;
     }
-    
+
     /**
-     * Run an action on a User
-     *
-     * @param User $user
+     * Run an action on a User.
      */
     abstract public function action(User $user): void;
-    
+
     /**
-     * The query to get Users
-     *
-     * @return Builder
+     * The query to get Users.
      */
     abstract public function query(): Builder;
-    
+
     /**
-     * Run an action on Users chunked from the DB
+     * Run an action on Users chunked from the DB.
      */
-    public function run():void
+    public function run(): void
     {
         $this->query()->chunk($this->chunkSize(), function ($users) {
             $users->each(function (User $user) {

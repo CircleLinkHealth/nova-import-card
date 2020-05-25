@@ -7,7 +7,6 @@
 namespace App\SelfEnrollment\Jobs;
 
 use App\Helpers\SelfEnrollmentHelpers;
-use App\SelfEnrollment\Jobs\SendSelfEnrollmentInvitation;
 use CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;

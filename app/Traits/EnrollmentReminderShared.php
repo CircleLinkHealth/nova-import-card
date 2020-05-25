@@ -27,7 +27,7 @@ trait EnrollmentReminderShared
                     ['created_at', '>=', $from],
                     ['created_at', '<=', $to],
                 ])
-                ->wasSentSelfEnrollmentInvite();
+                ->selfEnrollmentInvites();
         })
             // Enrollees also have User and Patient_info this point
             ->whereHas('patientInfo', function ($patient) use ($from, $to) {
