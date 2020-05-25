@@ -903,11 +903,6 @@ class Enrollee extends BaseModel
         return $query->with(['practice.enrollmentTips', 'provider.providerInfo', 'confirmedFamilyMembers']);
     }
 
-    public function selfEnrollmentStatus()
-    {
-        return $this->hasOne(SelfEnrollmentStatus::class, 'enrollee_id');
-    }
-
     public function sendEnrollmentConsentReminderSMS()
     {
         $emjo = 'u"\U0001F31F"';
