@@ -8,10 +8,10 @@ namespace App\Http\Controllers\Enrollment;
 
 use App\Helpers\SelfEnrollmentHelpers;
 use App\Http\Controllers\Controller;
-use App\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
-use App\SelfEnrollment\Actions\RemindEnrollees;
-use App\SelfEnrollment\Actions\UnreachablesFinalAction;
-use App\SelfEnrollment\Jobs\DispatchSelfEnrollmentAction;
+use App\SelfEnrollment\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
+use App\SelfEnrollment\Domain\RemindEnrollees;
+use App\SelfEnrollment\Domain\UnreachablesFinalAction;
+use App\SelfEnrollment\Jobs\DispatchSelfEnrollmentDomainAction;
 use App\SelfEnrollment\Jobs\InvitePracticeEnrollees;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
@@ -28,7 +28,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function finalActionTest()
     {
-        DispatchSelfEnrollmentAction::dispatch(UnreachablesFinalAction::class);
+        DispatchSelfEnrollmentDomainAction::dispatch(UnreachablesFinalAction::class);
 
         return redirect(route('ca-director.index'))->with('message', 'Reminders Sent Successfully');
     }
@@ -129,7 +129,7 @@ class AutoEnrollmentTestDashboard extends Controller
     public function sendEnrolleesReminderTestMethod()
     {
         try {
-            DispatchSelfEnrollmentAction::dispatch(RemindEnrollees::class);
+            DispatchSelfEnrollmentDomainAction::dispatch(RemindEnrollees::class);
         } catch (\Exception $e) {
             return 'Something went wrong';
         }

@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\CreateUsersFromEnrollees;
+use App\SelfEnrollment\Jobs\CreateUsersFromEnrollees;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;
 

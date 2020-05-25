@@ -6,7 +6,7 @@
 
 namespace App\Nova\Actions;
 
-use App\Jobs\SendSelfEnrollmentInvitation;
+use App\SelfEnrollment\Jobs\SendSelfEnrollmentInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;

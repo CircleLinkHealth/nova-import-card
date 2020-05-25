@@ -4,8 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Jobs;
+namespace App\SelfEnrollment\Jobs;
 
+use App\SelfEnrollment\Jobs\SendSelfEnrollmentInvitation;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

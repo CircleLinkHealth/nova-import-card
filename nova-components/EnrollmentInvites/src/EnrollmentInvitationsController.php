@@ -7,7 +7,7 @@
 namespace Circlelinkhealth\EnrollmentInvites;
 
 use App\SelfEnrollment\Jobs\InvitePracticeEnrollees;
-use App\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
+use App\SelfEnrollment\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class EnrollmentInvitationsController

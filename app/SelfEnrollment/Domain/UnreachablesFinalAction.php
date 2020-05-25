@@ -4,14 +4,14 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\SelfEnrollment\Actions;
+namespace App\SelfEnrollment\Domain;
 
 use App\Services\Enrollment\EnrollmentInvitationService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 
-class UnreachablesFinalAction extends SelfEnrollmentAction
+class UnreachablesFinalAction extends AbstractUserIterator
 {
     public function action(User $user): void
     {

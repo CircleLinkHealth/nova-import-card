@@ -6,10 +6,10 @@
 
 namespace Tests\Feature;
 
-use App\Jobs\CreateUsersFromEnrollees;
-use App\Jobs\EnrollmentSeletiveInviteEnrollees;
-use App\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
-use App\Jobs\SendSelfEnrollmentReminder;
+use App\SelfEnrollment\Jobs\CreateUsersFromEnrollees;
+use App\SelfEnrollment\Jobs\EnrollmentSeletiveInviteEnrollees;
+use App\SelfEnrollment\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
+use App\SelfEnrollment\Jobs\SendSelfEnrollmentReminder;
 use App\Notifications\SelfEnrollmentInviteNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Facades\Notification;

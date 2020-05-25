@@ -6,8 +6,8 @@
 
 namespace App\Console\Commands;
 
-use App\SelfEnrollment\Actions\UnreachablesFinalAction;
-use App\SelfEnrollment\Jobs\DispatchSelfEnrollmentAction;
+use App\SelfEnrollment\Domain\UnreachablesFinalAction;
+use App\SelfEnrollment\Jobs\DispatchSelfEnrollmentDomainAction;
 use Illuminate\Console\Command;
 
 class EnrollmentFinalAction extends Command
@@ -42,6 +42,6 @@ class EnrollmentFinalAction extends Command
      */
     public function handle()
     {
-        DispatchSelfEnrollmentAction::dispatch(UnreachablesFinalAction::class);
+        DispatchSelfEnrollmentDomainAction::dispatch(UnreachablesFinalAction::class);
     }
 }

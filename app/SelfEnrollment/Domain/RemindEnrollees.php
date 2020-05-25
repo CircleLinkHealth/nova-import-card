@@ -4,14 +4,14 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\SelfEnrollment\Actions;
+namespace App\SelfEnrollment\Domain;
 
-use App\Jobs\SendSelfEnrollmentReminder;
+use App\SelfEnrollment\Jobs\SendSelfEnrollmentReminder;
 use App\Traits\EnrollmentReminderShared;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 
-class RemindEnrollees extends SelfEnrollmentAction
+class RemindEnrollees extends AbstractUserIterator
 {
     use EnrollmentReminderShared;
 

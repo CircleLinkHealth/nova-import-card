@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Jobs;
+namespace App\SelfEnrollment\Jobs;
 
 use App\Helpers\SelfEnrollmentHelpers;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;

@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Helpers\SelfEnrollmentHelpers;
-use App\Jobs\EnrollableSurveyCompleted;
+use App\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
 use Illuminate\Console\Command;
 
 class ManuallyImportSurveyDonePatientsCommand extends Command

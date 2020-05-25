@@ -6,9 +6,9 @@
 
 namespace App\Console\Commands;
 
-use App\SelfEnrollment\Actions\RemindEnrollees;
-use App\SelfEnrollment\Actions\RemindUnreachablePatients;
-use App\SelfEnrollment\Jobs\DispatchSelfEnrollmentAction;
+use App\SelfEnrollment\Domain\RemindEnrollees;
+use App\SelfEnrollment\Domain\RemindUnreachablePatients;
+use App\SelfEnrollment\Jobs\DispatchSelfEnrollmentDomainAction;
 use Illuminate\Console\Command;
 
 class SendFirstSelfEnrollmentReminder extends Command
@@ -44,11 +44,11 @@ class SendFirstSelfEnrollmentReminder extends Command
     public function handle()
     {
         if ($this->option('enrollees')) {
-            DispatchSelfEnrollmentAction::dispatch(RemindEnrollees::class);
+            DispatchSelfEnrollmentDomainAction::dispatch(RemindEnrollees::class);
         }
 
         if ($this->option('patients')) {
-            DispatchSelfEnrollmentAction::dispatch(RemindUnreachablePatients::class);
+            DispatchSelfEnrollmentDomainAction::dispatch(RemindUnreachablePatients::class);
         }
     }
 }

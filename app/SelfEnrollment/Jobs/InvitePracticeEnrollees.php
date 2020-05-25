@@ -9,7 +9,7 @@ namespace App\SelfEnrollment\Jobs;
 // This file is part of CarePlan Manager by CircleLink Health.
 
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
-use App\Jobs\SendSelfEnrollmentInvitation;
+use App\SelfEnrollment\Jobs\SendSelfEnrollmentInvitation;
 use App\Notifications\Channels\CustomTwilioChannel;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;

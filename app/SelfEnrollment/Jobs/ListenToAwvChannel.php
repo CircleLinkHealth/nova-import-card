@@ -4,8 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Jobs;
+namespace App\SelfEnrollment\Jobs;
 
+use App\Jobs\AwvPatientReportNotify;
+use App\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

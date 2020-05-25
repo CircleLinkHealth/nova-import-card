@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\SendSelfEnrollmentInvitation;
+use App\SelfEnrollment\Jobs\SendSelfEnrollmentInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;
 

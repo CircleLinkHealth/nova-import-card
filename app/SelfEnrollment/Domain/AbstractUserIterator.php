@@ -4,13 +4,13 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\SelfEnrollment\Actions;
+namespace App\SelfEnrollment\Domain;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 
-abstract class SelfEnrollmentAction
+abstract class AbstractUserIterator
 {
     /**
      * @var int|null
@@ -25,18 +25,31 @@ abstract class SelfEnrollmentAction
      */
     protected $untilEndOfDay;
 
-    public function __construct(Carbon $untilEndOfDay, Carbon $twoDaysAgo, ?int $practiceId = null)
+    public function __construct(Carbon $endDate, Carbon $startDate, ?int $practiceId = null)
     {
-        $this->untilEndOfDay = $untilEndOfDay;
-        $this->twoDaysAgo    = $twoDaysAgo;
+        $this->untilEndOfDay = $endDate;
+        $this->twoDaysAgo    = $startDate;
         $this->practiceId    = $practiceId;
     }
-
+    
+    /**
+     * Run an action on a User
+     *
+     * @param User $user
+     */
     abstract public function action(User $user): void;
-
+    
+    /**
+     * The query to get Users
+     *
+     * @return Builder
+     */
     abstract public function query(): Builder;
-
-    public function run()
+    
+    /**
+     * Run an action on Users chunked from the DB
+     */
+    public function run():void
     {
         $this->query()->chunk($this->chunkSize(), function ($users) {
             $users->each(function (User $user) {

@@ -6,7 +6,7 @@
 
 namespace App\Observers;
 
-use App\Jobs\CreateUsersFromEnrollees;
+use App\SelfEnrollment\Jobs\CreateUsersFromEnrollees;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
 class EnrolleeObserver
