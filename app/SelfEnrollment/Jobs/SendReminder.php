@@ -7,6 +7,7 @@
 namespace App\SelfEnrollment\Jobs;
 
 use App\SelfEnrollment\Helpers;
+use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
@@ -42,8 +43,19 @@ class SendReminder implements ShouldQueue
      */
     public function handle()
     {
-        if (Helpers::hasCompletedSelfEnrollmentSurvey($this->patient)) {
+        if ( ! $this->shouldRun()) {
             return;
+        }
+
+        $invitation = $this->patient->enrollee->enrollmentInvitationLinks->first();
+
+        SendInvitation::dispatch($this->patient, optional($invitation)->button_color, true);
+    }
+
+    public function shouldRun(): bool
+    {
+        if (Helpers::hasCompletedSelfEnrollmentSurvey($this->patient)) {
+            return false;
         }
 
         $this->patient->loadMissing(['enrollee.statusRequestsInfo', 'enrollee.enrollmentInvitationLinks']);
@@ -53,15 +65,18 @@ class SendReminder implements ShouldQueue
         }
 
         if ($this->patient->enrollee->statusRequestsInfo instanceof EnrollableRequestInfo) {
-            return;
+            return false;
         }
 
-        if ($this->patient->enrollee->enrollmentInvitationLinks->count() > 1) {
-            return;
+        if ($this->patientHasReminderNotification()) {
+            return false;
         }
 
-        $invitation = $this->patient->enrollee->enrollmentInvitationLinks->first();
+        return true;
+    }
 
-        SendInvitation::dispatch($this->patient, optional($invitation)->button_color, true);
+    private function patientHasReminderNotification(): bool
+    {
+        return DatabaseNotification::whereIn('notifiable_type', [\App\User::class, User::class])->where('notifiable_id', $this->patient->id)->where('data->is_reminder', true)->selfEnrollmentInvites()->exists();
     }
 }

@@ -63,27 +63,9 @@ class AutoEnrollmentProcessTest extends CustomerTestCase
         );
     }
 
-    public function test_it_sends_invitations_to_enrollee()
-    {
-        Notification::fake();
-        //        See. EnrolleeObserver
-        $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)
-            ->createEnrollee($this->practice());
-        $newUser = $enrollee->fresh()->user;
-        SendInvitation::dispatch($newUser);
-        $this->check_notification_mail_has_been_sent($newUser);
-//        $this->check_notification_sms_has_been_sent($enrollle->fresh()->user);
-
-        self::assertTrue($enrollee->enrollmentInvitationLinks()->exists());
-        $this->assertDatabaseHas('enrollables_invitation_links', [
-            'invitationable_type' => get_class($enrollee),
-            'invitationable_id'   => $enrollee->id,
-            'manually_expired'    => false,
-        ]);
-    }
-
+//
 //    public function test_it_sends_one_reminder_to_non_responding_enrollee()
-//    { //@todo:help!
+//    {
 //        Notification::fake();
 //        $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)
 //            ->createEnrollee($this->practice());

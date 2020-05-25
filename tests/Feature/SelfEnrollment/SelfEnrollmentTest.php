@@ -11,7 +11,9 @@ use App\Notifications\Channels\CustomTwilioChannel;
 use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use App\SelfEnrollment\Jobs\SendInvitation;
+use App\SelfEnrollment\Jobs\SendReminder;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Notification;
@@ -100,6 +102,24 @@ class SelfEnrollmentTest extends TestCase
             [CustomTwilioChannel::class]
         );
         Twilio::assertNumberOfMessagesSent($number);
+    }
+
+    public function test_it_sends_one_reminder_to_non_responding_enrollee()
+    {
+        $enrollee = $this->createEnrollees(1);
+        $patient  = $enrollee->fresh()->user;
+        Twilio::fake();
+        Mail::fake();
+
+        SendInvitation::dispatchNow($patient);
+        self::assertTrue(User::wasSentSelfEnrollmentInvite()->where('id', $patient->id)->exists());
+        self::assertTrue(User::enrollableUsersToRemind(now(), now()->subDays(2))->where('id', $patient->id)->exists());
+
+        SendReminder::dispatchNow($patient);
+        self::assertFalse(User::enrollableUsersToRemind(now(), now()->subDays(2))->where('id', $patient->id)->exists());
+
+        //SendReminder should not run if called again if a notification was sent
+        self::assertFalse(with(new SendReminder($patient))->shouldRun());
     }
 
     private function createEnrollees(int $number = 1)
