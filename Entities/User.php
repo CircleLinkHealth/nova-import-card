@@ -29,9 +29,9 @@ use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Rules\PasswordCharacters;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
-use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
+use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\Customer\Traits\TimezoneTrait;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
@@ -309,13 +309,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use HasApiTokens;
     use HasEmrDirectAddress;
     use HasMediaTrait;
-    use SelfEnrollableTrait;
     use Impersonate;
     use MakesOrReceivesCalls;
     use Notifiable;
     use PivotEventTrait;
     use SaasAccountable;
     use Searchable;
+    use SelfEnrollableTrait;
     use SoftDeletes;
     use TimezoneTrait;
 
