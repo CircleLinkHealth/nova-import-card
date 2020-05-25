@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Tests;
 
-use App\Jobs\EnrollableSurveyCompleted;
-use App\Jobs\EnrollmentSeletiveInviteEnrollees;
+use App\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
+use App\SelfEnrollment\Jobs\EnrollmentSeletiveInviteEnrollees;
 use App\Listeners\AssignPatientToStandByNurse;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
