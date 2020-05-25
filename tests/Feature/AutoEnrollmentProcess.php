@@ -11,7 +11,6 @@ use App\Jobs\EnrollmentSeletiveInviteEnrollees;
 use App\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
 use App\Jobs\SendSelfEnrollmentReminder;
 use App\Notifications\SelfEnrollmentInviteNotification;
-
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\Entities\Role;
@@ -22,7 +21,6 @@ use Tests\CustomerTestCase;
 
 class AutoEnrollmentProcess extends CustomerTestCase
 {
-    
     const COMPLETED = 'completed';
 
     const IN_PROGRESS = 'in_progress';

@@ -8,12 +8,11 @@ namespace App\Http\Controllers\Enrollment;
 
 use App\Helpers\SelfEnrollmentHelpers;
 use App\Http\Controllers\Controller;
+use App\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
 use App\SelfEnrollment\Actions\RemindEnrollees;
 use App\SelfEnrollment\Actions\UnreachablesFinalAction;
-use App\SelfEnrollment\Jobs\InvitePracticeEnrollees;
-use App\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
 use App\SelfEnrollment\Jobs\DispatchSelfEnrollmentAction;
-
+use App\SelfEnrollment\Jobs\InvitePracticeEnrollees;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;
@@ -24,8 +23,6 @@ use Illuminate\Support\Facades\DB;
 
 class AutoEnrollmentTestDashboard extends Controller
 {
-    
-
     /**
      * @return string
      */

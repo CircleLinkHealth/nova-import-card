@@ -32,12 +32,9 @@ abstract class SelfEnrollmentAction
         $this->practiceId    = $practiceId;
     }
 
-    abstract protected function action(User $user):void;
+    abstract public function action(User $user): void;
 
-    protected function chunkSize()
-    {
-        return 100;
-    }
+    abstract public function query(): Builder;
 
     public function run()
     {
@@ -48,5 +45,8 @@ abstract class SelfEnrollmentAction
         });
     }
 
-    abstract protected function query(): Builder;
+    protected function chunkSize()
+    {
+        return 100;
+    }
 }

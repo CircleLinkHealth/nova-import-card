@@ -11,7 +11,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\EnrollmentLinkValidation;
 use App\Http\Requests\EnrollmentValidationRules;
 use App\Services\Enrollment\EnrollmentInvitationService;
-
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -28,7 +27,6 @@ use Illuminate\Support\Str;
 class SelfEnrollmentController extends Controller
 {
     use AuthenticatesUsers;
-    
 
     const DEFAULT_BUTTON_COLOR = '#4baf50';
 

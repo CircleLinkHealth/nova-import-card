@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class UnreachablesFinalAction extends SelfEnrollmentAction
 {
-    protected function action(User $user): void
+    public function action(User $user): void
     {
         $enrollmentInvitationService = app(EnrollmentInvitationService::class);
 
@@ -37,7 +37,7 @@ class UnreachablesFinalAction extends SelfEnrollmentAction
         $enrollmentInvitationService->putIntoCallQueue($user->enrollee);
     }
 
-    protected function query(): Builder
+    public function query(): Builder
     {
         return User::whereHas('notifications', function ($notification) {
             $notification->where([

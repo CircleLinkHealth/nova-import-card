@@ -8,7 +8,6 @@ namespace App\Notifications;
 
 use App\Notifications\Channels\AutoEnrollmentMailChannel;
 use App\Notifications\Channels\CustomTwilioChannel;
-
 use App\Traits\EnrollableNotificationContent;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Customer\Entities\User;
@@ -21,7 +20,6 @@ use Spatie\RateLimitedMiddleware\RateLimited;
 
 class SelfEnrollmentInviteNotification extends Notification
 {
-    
     use EnrollableNotificationContent;
     use Queueable;
     /**

@@ -16,12 +16,12 @@ class RemindUnreachablePatients extends SelfEnrollmentAction
 {
     use EnrollmentReminderShared;
 
-    protected function action(User $user): void
+    public function action(User $user): void
     {
         SendSelfEnrollmentReminder::dispatch($user);
     }
 
-    protected function query(): Builder
+    public function query(): Builder
     {
         return $this->sharedReminderQuery($this->untilEndOfDay, $this->twoDaysAgo)
             ->whereHas('enrollee', function ($enrollee) {

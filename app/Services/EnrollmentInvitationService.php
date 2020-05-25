@@ -7,15 +7,12 @@
 namespace App\Services\Enrollment;
 
 use App\Helpers\SelfEnrollmentHelpers;
-
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 
 class EnrollmentInvitationService
 {
-    
-
     /**
      * @param $practiceName
      * @param $practiceLetter
