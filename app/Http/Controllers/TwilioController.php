@@ -7,25 +7,28 @@
 namespace App\Http\Controllers\Twilio;
 
 use App\Http\Controllers\Controller;
+use App\RedisEvents\TwilioDebuggerEvent;
 use App\Services\TwilioClientable;
 use App\TwilioCall;
 use App\TwilioConferenceCallParticipant;
 use App\TwilioRawLog;
 use App\TwilioRecording;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\TwilioDebuggerLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use SimpleXMLElement;
 use Twilio\Exceptions\TwimlException;
 use Twilio\Twiml;
-use Illuminate\Support\Facades\Response;
 
 class TwilioController extends Controller
 {
-    const CLIENT_ANONYMOUS             = 'client:Anonymous';
-    const CONFERENCE_END               = 'conference-end';
-    const CONFERENCE_PARTICIPANT_JOIN  = 'participant-join';
+    const CLIENT_ANONYMOUS = 'client:Anonymous';
+    const CONFERENCE_END = 'conference-end';
+    const CONFERENCE_PARTICIPANT_JOIN = 'participant-join';
     const CONFERENCE_PARTICIPANT_LEAVE = 'participant-leave';
 
     const CONFERENCE_START = 'conference-start';
@@ -61,9 +64,9 @@ class TwilioController extends Controller
      *
      * @param Request $request
      *
+     * @return \Illuminate\Http\Response XML Empty Response
      * @throws TwimlException
      *
-     * @return Twiml XML Empty Response
      */
     public function conferenceStatusCallback(Request $request)
     {
@@ -100,7 +103,7 @@ class TwilioController extends Controller
                     $response->hangup();
                 } else {
                     $call = TwilioCall::where('call_sid', '=', $request->input('ParentCallSid'))
-                        ->first();
+                                      ->first();
                     if ( ! $call) {
                         $response->hangup();
                     } else {
@@ -119,14 +122,14 @@ class TwilioController extends Controller
                             //the patient
                             //conference still runs even on exit
                             //means that the nurse has to explicitly hang up to end the call
-                            $conferenceName = $call->inbound_user_id.'_'.$call->outbound_user_id;
+                            $conferenceName = $call->inbound_user_id . '_' . $call->outbound_user_id;
                             $dial           = $response->dial();
                             $dial->conference($conferenceName, [
-                                'endConferenceOnExit'  => false,
-                                'statusCallbackEvent'  => 'start end join leave',
-                                'statusCallback'       => route('twilio.call.conference.status'),
-                                'statusCallbackMethod' => 'POST',
-                                'record'               => $recordCalls
+                                'endConferenceOnExit'           => false,
+                                'statusCallbackEvent'           => 'start end join leave',
+                                'statusCallback'                => route('twilio.call.conference.status'),
+                                'statusCallbackMethod'          => 'POST',
+                                'record'                        => $recordCalls
                                     ? 'record-from-start'
                                     : 'do-not-record',
                                 'recordingStatusCallback'       => route('twilio.call.recording.status'),
@@ -156,15 +159,15 @@ class TwilioController extends Controller
                         //the nurse
                         //conference starts immediately
                         //conference ends on exit
-                        $conferenceName = $call->inbound_user_id.'_'.$call->outbound_user_id;
+                        $conferenceName = $call->inbound_user_id . '_' . $call->outbound_user_id;
                         $dial           = $response->dial();
                         $dial->conference($conferenceName, [
-                            'startConferenceOnEnter' => true,
-                            'endConferenceOnExit'    => true,
-                            'statusCallbackEvent'    => 'start end join leave',
-                            'statusCallback'         => route('twilio.call.conference.status'),
-                            'statusCallbackMethod'   => 'POST',
-                            'record'                 => $recordCalls
+                            'startConferenceOnEnter'        => true,
+                            'endConferenceOnExit'           => true,
+                            'statusCallbackEvent'           => 'start end join leave',
+                            'statusCallback'                => route('twilio.call.conference.status'),
+                            'statusCallbackMethod'          => 'POST',
+                            'record'                        => $recordCalls
                                 ? 'record-from-start'
                                 : 'do-not-record',
                             'recordingStatusCallback'       => route('twilio.call.recording.status'),
@@ -190,9 +193,9 @@ class TwilioController extends Controller
      *
      * @param Request $request
      *
+     * @return \Illuminate\Http\Response XML Empty Response
      * @throws TwimlException
      *
-     * @return Twiml XML Empty Response
      */
     public function dialNumberStatusCallback(Request $request)
     {
@@ -223,7 +226,7 @@ class TwilioController extends Controller
         }
 
         $this->client->calls($input['CallSid'])
-            ->update(['status' => 'completed']);
+                     ->update(['status' => 'completed']);
 
         return response()->json([]);
     }
@@ -251,7 +254,7 @@ class TwilioController extends Controller
         }
 
         $confs = $this->client->conferences->read([
-            'FriendlyName' => $input['inbound_user_id'].'_'.$input['outbound_user_id'],
+            'FriendlyName' => $input['inbound_user_id'] . '_' . $input['outbound_user_id'],
         ]);
 
         if (empty($confs)) {
@@ -316,8 +319,8 @@ class TwilioController extends Controller
 
         $validation = Validator::make($input, [
             //could be the practice outgoing phone number (in case of enrollment)
-            'From' => 'required|phone:AUTO,US',
-            'To'   => [
+            'From'             => 'required|phone:AUTO,US',
+            'To'               => [
                 'required',
                 $isProduction
                     ? Rule::phone()->detect()->country('US')
@@ -338,7 +341,7 @@ class TwilioController extends Controller
         }
 
         $confs = $this->client->conferences->read([
-            'FriendlyName' => $input['InboundUserId'].'_'.$input['OutboundUserId'],
+            'FriendlyName' => $input['InboundUserId'] . '_' . $input['OutboundUserId'],
             'Status'       => 'in-progress',
         ]);
 
@@ -381,13 +384,13 @@ class TwilioController extends Controller
         }
 
         $dbCall = TwilioCall::where('inbound_user_id', '=', $input['inbound_user_id'])
-            ->where('outbound_user_id', '=', $input['outbound_user_id'])
-            ->where(function ($q) {
+                            ->where('outbound_user_id', '=', $input['outbound_user_id'])
+                            ->where(function ($q) {
                                 $q->where('call_status', '=', 'ringing')
-                                    ->orWhere('call_status', '=', 'in-progress');
+                                  ->orWhere('call_status', '=', 'in-progress');
                             })
-            ->orderBy('updated_at', 'desc')
-            ->first();
+                            ->orderBy('updated_at', 'desc')
+                            ->first();
 
         if ( ! $dbCall) {
             return response()->json(['errors' => ['could not find active call with user ids supplied']]);
@@ -401,7 +404,7 @@ class TwilioController extends Controller
             $dialCallSid = $calls[0]->sid;
 
             $this->client->calls($dialCallSid)
-                ->update(
+                         ->update(
                              [
                                  'method' => 'POST',
                                  'url'    => route('twilio.call.dial.action'),
@@ -431,9 +434,9 @@ class TwilioController extends Controller
      *
      * @param Request $request
      *
+     * @return mixed
      * @throws \Twilio\Exceptions\TwimlException
      *
-     * @return mixed
      */
     public function placeCall(Request $request)
     {
@@ -469,8 +472,8 @@ class TwilioController extends Controller
 
         $validation = Validator::make($input, [
             //could be the practice outgoing phone number (in case of enrollment)
-            'From' => 'required|phone:AUTO,US',
-            'To'   => [
+            'From'             => 'required|phone:AUTO,US',
+            'To'               => [
                 'required',
                 $isProduction
                     ? Rule::phone()->detect()->country('US')
@@ -495,9 +498,9 @@ class TwilioController extends Controller
         $response = new Twiml();
         $dial     = $response->dial('', [
             //action url will tell us the duration of this call and the status of it when it ends
-            'action'   => route('twilio.call.dial.action'),
-            'callerId' => $input['From'],
-            'record'   => config('services.twilio.allow-recording')
+            'action'                        => route('twilio.call.dial.action'),
+            'callerId'                      => $input['From'],
+            'record'                        => config('services.twilio.allow-recording')
                 ? 'record-from-answer'
                 : 'do-not-record',
             'recordingStatusCallback'       => route('twilio.call.recording.status'),
@@ -525,6 +528,30 @@ class TwilioController extends Controller
     {
         $this->logRawToDb($request, 'recording-status-callback');
         $this->logRecordingToDb($request);
+    }
+
+    /**
+     * Called from Twilio Debugger
+     *
+     * @param Request $request
+     */
+    public function debuggerWebhook(Request $request)
+    {
+        $ts = Carbon::parse($request->input('Timestamp'), 'UTC');
+        $ts = $ts->setTimezone(config('app.timezone'));
+
+        $log = TwilioDebuggerLog::create([
+            'sid'                => $request->input('Sid'),
+            'account_sid'        => $request->input('AccountSid'),
+            'parent_account_sid' => $request->input('ParentAccountSid'),
+            'event_timestamp'    => $ts,
+            'level'              => $request->input('Level'),
+            'payload'            => $request->input('Payload'),
+        ]);
+
+        (new TwilioDebuggerEvent($log->id))->publish();
+
+        return $this->responseWithXmlType(response(''));
     }
 
     /**
@@ -572,8 +599,8 @@ class TwilioController extends Controller
                 //callbacks arrive asynchronously
                 //there is high chance that the conference-end will be received and then the participant-leave
                 $shouldUpdateTwilioCallsTable = TwilioCall::where('call_sid', '=', $call->sid)
-                    ->whereNull('conference_status')
-                    ->exists();
+                                                          ->whereNull('conference_status')
+                                                          ->exists();
                 if ($shouldUpdateTwilioCallsTable) {
                     TwilioCall::updateOrCreate(
                         ['call_sid' => $call->sid],
@@ -614,7 +641,7 @@ class TwilioController extends Controller
                 }
             }
         } catch (\Throwable $e) {
-            \Log::critical('Exception while storing twilio conference log: '.$e->getMessage());
+            \Log::critical('Exception while storing twilio conference log: ' . $e->getMessage());
         }
     }
 
@@ -708,12 +735,12 @@ class TwilioController extends Controller
             //this happens because in the conference callbacks we do not have the actual number but a 'client:Anonymous'
             if ( ! empty($fields['from'])) {
                 $conferenceParticipant = TwilioConferenceCallParticipant::where('call_sid', '=', $callSid)
-                    ->where(
+                                                                        ->where(
                                                                             'participant_number',
                                                                             '=',
                                                                             TwilioController::CLIENT_ANONYMOUS
                                                                         )
-                    ->first();
+                                                                        ->first();
 
                 if ($conferenceParticipant) {
                     $conferenceParticipant->participant_number = $fields['from'];
@@ -721,7 +748,7 @@ class TwilioController extends Controller
                 }
             }
         } catch (\Throwable $e) {
-            \Log::critical('Exception while storing twilio log: '.$e->getMessage());
+            \Log::critical('Exception while storing twilio log: ' . $e->getMessage());
         }
     }
 
@@ -774,7 +801,7 @@ class TwilioController extends Controller
                 $fields
             );
         } catch (\Throwable $e) {
-            \Log::critical('Exception while storing twilio log: '.$e->getMessage());
+            \Log::critical('Exception while storing twilio log: ' . $e->getMessage());
         }
     }
 
@@ -792,7 +819,7 @@ class TwilioController extends Controller
                     : $type,
             ]);
         } catch (\Throwable $e) {
-            \Log::critical('Exception while storing twilio raw log: '.$e->getMessage());
+            \Log::critical('Exception while storing twilio raw log: ' . $e->getMessage());
         }
     }
 
@@ -874,7 +901,7 @@ class TwilioController extends Controller
                 );
             }
         } catch (\Throwable $e) {
-            \Log::critical('Exception while storing twilio recording log: '.$e->getMessage());
+            \Log::critical('Exception while storing twilio recording log: ' . $e->getMessage());
         }
     }
 
@@ -886,7 +913,7 @@ class TwilioController extends Controller
         $xml = null
     ) {
         if (is_null($xml)) {
-            $xml = new SimpleXMLElement('<'.$rootElement.'/>');
+            $xml = new SimpleXMLElement('<' . $rootElement . '/>');
         }
 
         foreach ($vars as $key => $value) {
@@ -909,7 +936,7 @@ class TwilioController extends Controller
         return Response::make($xml->asXML(), $status, $header);
     }
 
-    private function responseWithXmlType($response)
+    private function responseWithXmlType(\Illuminate\Http\Response $response)
     {
         return $response->header('Content-Type', 'application/xml');
     }

@@ -25,6 +25,7 @@ $app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config'
 $app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
 
 $app->configure('app');
+$app->configure('database');
 $app->configure('services');
 $app->configure('cors');
 $app->configure('view');
@@ -71,7 +72,6 @@ $app->bind(\Illuminate\Session\SessionManager::class, function () use ($app) {
 */
 
 $app->middleware([
-    //App\Http\Middleware\ExampleMiddleware::class
     \Barryvdh\Cors\HandleCors::class,
     \Illuminate\Session\Middleware\StartSession::class,
 ]);
@@ -98,6 +98,8 @@ $app->register(Propaganistas\LaravelPhone\PhoneServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(\Laravel\Tinker\TinkerServiceProvider::class);
 $app->register(\Sentry\Laravel\ServiceProvider::class);
+$app->register(Illuminate\Redis\RedisServiceProvider::class);
+$app->register(\CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
