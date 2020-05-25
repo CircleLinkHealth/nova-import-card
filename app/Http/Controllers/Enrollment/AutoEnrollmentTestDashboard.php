@@ -27,7 +27,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function finalActionTest()
     {
-        UnreachablesFinalAction::dispatchForInvitesSentTwoDaysAgo();
+        UnreachablesFinalAction::createForInvitesSentTwoDaysAgo()::dispatch();
 
         return redirect(route('ca-director.index'))->with('message', 'Reminders Sent Successfully');
     }
@@ -128,7 +128,7 @@ class AutoEnrollmentTestDashboard extends Controller
     public function sendEnrolleesReminderTestMethod()
     {
         try {
-            RemindEnrollees::dispatchForInvitesSentTwoDaysAgo();
+            RemindEnrollees::createForInvitesSentTwoDaysAgo()::dispatch();
         } catch (\Exception $e) {
             return 'Something went wrong';
         }

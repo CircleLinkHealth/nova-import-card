@@ -32,7 +32,7 @@ abstract class SelfEnrollmentReminder extends AbstractSelfEnrollableUserIterator
         $this->practiceId = $practiceId;
     }
 
-    public static function dispatchForInvitesSentTwoDaysAgo(): void
+    public static function createForInvitesSentTwoDaysAgo()
     {
         $testingMode = filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN) || App::environment('testing');
 
@@ -46,6 +46,6 @@ abstract class SelfEnrollmentReminder extends AbstractSelfEnrollableUserIterator
             $endDate    = $startDate->copy()->endOfDay();
         }
 
-        with(new static($endDate, $startDate, $practiceId))::dispatch();
+        return new static($endDate, $startDate, $practiceId);
     }
 }
