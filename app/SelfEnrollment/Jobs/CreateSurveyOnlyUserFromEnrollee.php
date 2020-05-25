@@ -85,7 +85,7 @@ class CreateSurveyOnlyUserFromEnrollee implements ShouldQueue
         }
 
         try {
-            $dupeCheck = UserRepository::validatePatientDoesNotAlreadyExist(
+            UserRepository::validatePatientDoesNotAlreadyExist(
                 $this->enrollee->practice_id,
                 $this->enrollee->first_name,
                 $this->enrollee->last_name,

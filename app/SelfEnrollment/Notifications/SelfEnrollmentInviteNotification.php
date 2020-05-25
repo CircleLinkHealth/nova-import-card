@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Notifications;
+namespace App\SelfEnrollment\Notifications;
 
 use App\Notifications\Channels\AutoEnrollmentMailChannel;
 use App\Notifications\Channels\CustomTwilioChannel;

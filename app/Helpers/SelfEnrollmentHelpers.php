@@ -7,7 +7,7 @@
 namespace App\Helpers;
 
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
-use App\Notifications\SelfEnrollmentInviteNotification;
+use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
