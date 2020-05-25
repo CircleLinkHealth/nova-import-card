@@ -17,6 +17,7 @@ use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\ResetPassword;
 use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
+use App\SelfEnrollment\Contracts\SelfEnrollable;
 use App\SelfEnrollment\Jobs\InvitePracticeEnrollees;
 use App\Services\UserService;
 use Carbon\Carbon;
@@ -28,7 +29,7 @@ use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Rules\PasswordCharacters;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
-use CircleLinkHealth\Customer\Traits\HasSelfEnrollmentInvitation;
+use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Customer\Traits\TimezoneTrait;
@@ -298,7 +299,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                          $enrollment_invitation_links_count
  * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User wasSentSelfEnrollmentInvite()
  */
-class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
+class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia, SelfEnrollable
 {
     use \Laravel\Nova\Actions\Actionable;
     use Authenticatable;
@@ -308,7 +309,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use HasApiTokens;
     use HasEmrDirectAddress;
     use HasMediaTrait;
-    use HasSelfEnrollmentInvitation;
+    use SelfEnrollableTrait;
     use Impersonate;
     use MakesOrReceivesCalls;
     use Notifiable;

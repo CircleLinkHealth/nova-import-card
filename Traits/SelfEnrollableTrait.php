@@ -9,7 +9,7 @@ namespace CircleLinkHealth\Customer\Traits;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo;
 
-trait HasSelfEnrollmentInvitation
+trait SelfEnrollableTrait
 {
     /**
      * @return mixed
