@@ -191,7 +191,7 @@ class EnrolleesInvitationPanel extends Resource
                 return ! is_null($this->resource->statusRequestsInfo);
             }),
 
-            Boolean::make("Has clicked 'Get my Care Coach'", function () use ($enroleeHasLoggedIn) {
+            Boolean::make("Has clicked 'Get my Care Coach'", function () use ($enroleeHasLoggedIn, $awvUserSurvey) {
                 if (is_null($this->resource->user)) {
                     return false;
                 }
@@ -200,15 +200,11 @@ class EnrolleesInvitationPanel extends Resource
                     return false;
                 }
 
-                $survey = Helpers::getEnrolleeSurvey();
-
-                if (empty($survey)) {
-                    return false;
+                if ( ! empty($awvUserSurvey)) {
+                    return true;
                 }
 
-                $surveyInstance = $this->getSurveyInstance();
-
-                return Helpers::awvUserSurveyQuery($this->resource->user, $surveyInstance)->exists();
+                return false;
             }),
 
             Boolean::make('Survey in progress', function () use ($enroleeHasLoggedIn, $awvUserSurvey) {
@@ -295,10 +291,8 @@ class EnrolleesInvitationPanel extends Resource
 
     private function getSurveyInstance()
     {
-        $survey = Helpers::getEnrolleeSurvey();
-
         return DB::table('survey_instances')
-            ->where('survey_id', '=', $survey->id)
+            ->where('survey_id', '=', Helpers::getEnrolleeSurvey()->id)
             ->first();
     }
 }
