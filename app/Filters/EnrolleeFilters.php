@@ -264,6 +264,7 @@ class EnrolleeFilters extends QueryFilters
             return $this->builder;
         }
 
+        //ca-director page sends multiple options as array
         if (is_array($status)) {
             $statuses = collect($status)->pluck('id')->toArray();
 
