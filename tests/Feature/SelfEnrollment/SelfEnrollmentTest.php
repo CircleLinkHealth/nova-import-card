@@ -92,7 +92,7 @@ class SelfEnrollmentTest extends TestCase
         Twilio::fake();
         Mail::fake();
 
-        SendInvitation::dispatchNow($patient);
+        SendInvitation::dispatchNow($patient, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
         self::assertTrue(User::hasSelfEnrollmentInvite()->where('id', $patient->id)->exists());
         //It should not show up on the list on the "needs reminder" list of patients we invited yesterday
         self::assertFalse(User::haveEnrollableInvitationDontHaveReminder(now()->subDay())->where('id', $patient->id)->exists());
@@ -113,11 +113,11 @@ class SelfEnrollmentTest extends TestCase
         $patient  = $enrollee->fresh()->user;
 
         Notification::fake();
-        SendInvitation::dispatchNow($patient);
+        SendInvitation::dispatchNow($patient, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
 
         Queue::fake();
 
-        SendInvitation::dispatch($patient);
+        SendInvitation::dispatch($patient, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
 
         Queue::assertPushed(SendInvitation::class, function (SendInvitation $job) {
             Notification::fake();
@@ -225,7 +225,7 @@ class SelfEnrollmentTest extends TestCase
         $patient  = $enrollee->fresh()->user;
         Notification::fake();
         Mail::fake();
-        SendInvitation::dispatch($patient);
+        SendInvitation::dispatch($patient, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
         $lastEnrollmentLink = $enrollee->getLastEnrollmentInvitationLink();
         // means the patient has clicked the link and seen login form
         $lastEnrollmentLink->manually_expired = true;

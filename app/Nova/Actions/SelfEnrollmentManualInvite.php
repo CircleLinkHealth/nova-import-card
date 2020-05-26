@@ -39,7 +39,7 @@ class SelfEnrollmentManualInvite extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        $invitationsBatch = EnrollmentInvitationsBatch::manualInvitesBatch();
+        $invitationsBatch = EnrollmentInvitationsBatch::create();
         $models->each(function (Enrollee $enrollee) use ($invitationsBatch) {
             if (is_null($enrollee->user_id)) {
                 Log::warning("Enrollee [$enrollee->id] has null user_id. this is unexpected at this point");
@@ -59,7 +59,7 @@ class SelfEnrollmentManualInvite extends Action
                 return;
             }
 
-            SendInvitation::dispatch($enrollee->user, $invitationsBatch->id);
+            SendInvitation::dispatch($enrollee->user, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
         });
 
         Action::message('Invites should have been sent. Please check invitation panel.');
