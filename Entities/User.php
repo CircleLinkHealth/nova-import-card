@@ -2841,12 +2841,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $query->ofType(['care-center', 'care-center-external']);
     }
-
+    
+    /**
+     * Scope for Enrollable Users we need to send a reminder Self Enrollment Notification to.
+     *
+     *
+     * @param $query
+     * @param Carbon|null $dateInviteSent
+     * @return mixed
+     */
     public function scopeEnrollableUsersToRemind($query, Carbon $dateInviteSent = null)
     {
-//         We send the first notification marked as is_reminder => false
-//         We send the second notification(reminder => true).
-//         We dont want to send a second reminder if user has 1 true and 1 false is_reminder.
         return $query->hasSelfEnrollmentInvite(is_null($dateInviteSent) ? now()->subDays(2) : $dateInviteSent)
             ->whereHas('patientInfo', function ($patient) {
                 $patient->where('ccm_status', Patient::UNREACHABLE);
@@ -2890,6 +2895,33 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     ->whereMemberUserId($billing_provider_id);
             }
         );
+    }
+
+    /*public function hasScheduledCallThisWeek()
+    {
+        $weekStart = Carbon::now()->startOfWeek()->toDateString();
+        $weekEnd = Carbon::now()->endOfWeek()->toDateString();
+
+        return Call::where(function ($q) {
+            $q->whereNull('type')
+              ->orWhere('type', '=', 'call');
+        })
+                   ->where('outbound_cpm_id', $this->id)
+                   ->where('status', 'scheduled')
+                   ->whereBetween('scheduled_date', [$weekStart, $weekEnd])
+                   ->exists();
+    }*/
+
+    public function scopeHasSelfEnrollmentInvite($query, Carbon $date = null)
+    {
+        return $query->whereHas('notifications', function ($q) use ($date) {
+            $q->selfEnrollmentInvites()->where('data->is_reminder', false)->when( ! is_null($date), function ($q) use ($date) {
+                $q->where([
+                    ['created_at', '>=', $date->copy()->startOfDay()],
+                    ['created_at', '<=', $date->copy()->endOfDay()],
+                ]);
+            });
+        });
     }
 
     public function scopeHasSelfEnrollmentInviteReminder($query, $has = true)
@@ -3207,33 +3239,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     ->whereIn('practice_role_user.role_id', $roleIds);
             }
         );
-    }
-
-    /*public function hasScheduledCallThisWeek()
-    {
-        $weekStart = Carbon::now()->startOfWeek()->toDateString();
-        $weekEnd = Carbon::now()->endOfWeek()->toDateString();
-
-        return Call::where(function ($q) {
-            $q->whereNull('type')
-              ->orWhere('type', '=', 'call');
-        })
-                   ->where('outbound_cpm_id', $this->id)
-                   ->where('status', 'scheduled')
-                   ->whereBetween('scheduled_date', [$weekStart, $weekEnd])
-                   ->exists();
-    }*/
-    
-    public function scopeHasSelfEnrollmentInvite($query, Carbon $date = null)
-    {
-        return $query->whereHas('notifications', function ($q) use ($date) {
-            $q->selfEnrollmentInvites()->where('data->is_reminder', false)->when(!is_null($date), function ($q) use ($date){
-                $q->where([
-                    ['created_at', '>=', $date->copy()->startOfDay()],
-                    ['created_at', '<=', $date->copy()->endOfDay()],
-                ]);
-            });
-        });
     }
 
     public function scopeWithCareTeamOfType(
