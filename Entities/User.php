@@ -295,7 +295,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                          $login_events_count
  * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null                              $enrollee
  * @property int|null                                                                          $enrollment_invitation_links_count
- * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User wasSentSelfEnrollmentInvite()
+ * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInvite()
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -2842,15 +2842,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $query->ofType(['care-center', 'care-center-external']);
     }
 
-    public function scopeEnrollableUsersToRemind($query, Carbon $to, Carbon $from)
+    public function scopeEnrollableUsersToRemind($query, Carbon $dateInviteSent = null)
     {
 //         We send the first notification marked as is_reminder => false
 //         We send the second notification(reminder => true).
 //         We dont want to send a second reminder if user has 1 true and 1 false is_reminder.
-        return $query->wasSentSelfEnrollmentInvite()
+        return $query->hasSelfEnrollmentInvite(is_null($dateInviteSent) ? now()->subDays(2) : $dateInviteSent)
             ->whereHas('patientInfo', function ($patient) {
                 $patient->where('ccm_status', Patient::UNREACHABLE);
-            })->hasSelfEnrollmentInviteReminder($to, $from, false);
+            })->hasSelfEnrollmentInviteReminder(false);
     }
 
     /**
@@ -2892,17 +2892,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
     }
 
-    public function scopeHasSelfEnrollmentInviteReminder($query, Carbon $to, Carbon $from, $has = true)
+    public function scopeHasSelfEnrollmentInviteReminder($query, $has = true)
     {
         $verb = $has ? 'has' : 'DoesntHave';
 
-        return $query->{"where$verb"}('notifications', function ($notification) use ($to, $from) {
+        return $query->{"where$verb"}('notifications', function ($notification) {
             $notification
                 ->where('data->is_reminder', true)
-                ->where([
-                    ['created_at', '>=', $from],
-                    ['created_at', '<=', $to],
-                ])
                 ->selfEnrollmentInvites();
         });
     }
@@ -3227,11 +3223,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                    ->whereBetween('scheduled_date', [$weekStart, $weekEnd])
                    ->exists();
     }*/
-
-    public function scopeWasSentSelfEnrollmentInvite($query)
+    
+    public function scopeHasSelfEnrollmentInvite($query, Carbon $date = null)
     {
-        return $query->whereHas('notifications', function ($q) {
-            $q->selfEnrollmentInvites()->where('data->is_reminder', false);
+        return $query->whereHas('notifications', function ($q) use ($date) {
+            $q->selfEnrollmentInvites()->where('data->is_reminder', false)->when(!is_null($date), function ($q) use ($date){
+                $q->where([
+                    ['created_at', '>=', $date->copy()->startOfDay()],
+                    ['created_at', '<=', $date->copy()->endOfDay()],
+                ]);
+            });
         });
     }
 
