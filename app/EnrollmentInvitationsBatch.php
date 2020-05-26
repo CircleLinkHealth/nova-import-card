@@ -6,6 +6,7 @@
 
 namespace App;
 
+use Cache;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use Illuminate\Database\Eloquent\Model;
 
@@ -31,6 +32,16 @@ class EnrollmentInvitationsBatch extends Model
         'practice_id',
         'type',
     ];
+
+    public static function firstOrCreateAndRemember(int $practiceId, string $type, int $minutes = 2)
+    {
+        return Cache::remember("temp_{$practiceId}_{$type}_initial_batch", $minutes, function () use ($practiceId, $type) {
+            return EnrollmentInvitationsBatch::firstOrCreate([
+                'practice_id' => $practiceId,
+                'type'        => $type,
+            ]);
+        });
+    }
 
     public function invitationLinks()
     {
