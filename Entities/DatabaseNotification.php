@@ -6,8 +6,6 @@
 
 namespace CircleLinkHealth\Core\Entities;
 
-use App\Notifications\SendEnrollementSms;
-use App\Notifications\SendEnrollmentEmail;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 
 /**
