@@ -6,6 +6,7 @@
 
 namespace App\SelfEnrollment\Jobs;
 
+use App\EnrollmentInvitationsBatch;
 use App\SelfEnrollment\Helpers;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo;
@@ -47,9 +48,9 @@ class SendReminder implements ShouldQueue
             return;
         }
 
-        $invitation = $this->patient->enrollee->enrollmentInvitationLinks->first();
-
-        SendInvitation::dispatch($this->patient, optional($invitation)->button_color, true);
+        $invitation       = $this->patient->enrollee->enrollmentInvitationLinks->first();
+        $invitationsBatch = EnrollmentInvitationsBatch::create();
+        SendInvitation::dispatch($this->patient, $invitationsBatch->id, optional($invitation)->button_color, true);
     }
 
     public function shouldRun(): bool

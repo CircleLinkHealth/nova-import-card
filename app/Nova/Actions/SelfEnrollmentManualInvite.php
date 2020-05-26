@@ -6,6 +6,7 @@
 
 namespace App\Nova\Actions;
 
+use App\EnrollmentInvitationsBatch;
 use App\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
@@ -38,7 +39,8 @@ class SelfEnrollmentManualInvite extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        $models->each(function (Enrollee $enrollee) {
+        $invitationsBatch = EnrollmentInvitationsBatch::create();
+        $models->each(function (Enrollee $enrollee) use ($invitationsBatch) {
             if (is_null($enrollee->user_id)) {
                 Log::warning("Enrollee [$enrollee->id] has null user_id. this is unexpected at this point");
 
@@ -57,7 +59,7 @@ class SelfEnrollmentManualInvite extends Action
                 return;
             }
 
-            SendInvitation::dispatch($enrollee->user);
+            SendInvitation::dispatch($enrollee->user, $invitationsBatch->id);
         });
 
         Action::message('Invites should have been sent. Please check invitation panel.');

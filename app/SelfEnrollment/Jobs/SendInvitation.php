@@ -33,6 +33,10 @@ class SendInvitation implements ShouldQueue
      */
     private $color;
     /**
+     * @var int
+     */
+    private $invitationsBatchId;
+    /**
      * @var bool
      */
     private $isReminder;
@@ -63,14 +67,16 @@ class SendInvitation implements ShouldQueue
      */
     public function __construct(
         User $user,
+        int $invitationsBatchId,
         ?string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
         bool $isReminder = false,
         array $channels = ['mail', CustomTwilioChannel::class]
     ) {
-        $this->user       = $user;
-        $this->isReminder = $isReminder;
-        $this->color      = $color;
-        $this->channels   = $channels;
+        $this->user               = $user;
+        $this->invitationsBatchId = $invitationsBatchId;
+        $this->isReminder         = $isReminder;
+        $this->color              = $color;
+        $this->channels           = $channels;
     }
 
     public function getLink(): ?string
@@ -113,6 +119,7 @@ class SendInvitation implements ShouldQueue
 
         $notifiable->enrollmentInvitationLinks()->create([
             'link_token'       => $urlToken,
+            'batch_id'         => $this->invitationsBatchId,
             'url'              => $url,
             'manually_expired' => false,
             'button_color'     => $this->color,
