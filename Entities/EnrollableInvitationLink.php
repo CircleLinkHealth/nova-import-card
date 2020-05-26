@@ -47,6 +47,7 @@ class EnrollableInvitationLink extends BaseModel
         'url',
         'manually_expired',
         'button_color',
+        'batch_id',
     ];
 
     protected $table = 'enrollables_invitation_links';
