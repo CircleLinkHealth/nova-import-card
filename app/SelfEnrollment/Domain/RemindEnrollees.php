@@ -20,7 +20,7 @@ class RemindEnrollees extends AbstractSelfEnrollmentReminder
 
     public function query(): Builder
     {
-        return User::enrollableUsersToRemind($this->end, $this->start)
+        return User::haveEnrollableInvitationDontHaveReminder($this->end, $this->start)
             ->whereHas('enrollee', function ($enrollee) {
                 $enrollee->whereNull('source'); //Eliminates unreachable patients, and only fetches enrollees who have not yet enrolled.
             })->doesntHave('statusRequestsInfo')->orderBy('created_at', 'asc')
