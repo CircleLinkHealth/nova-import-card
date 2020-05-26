@@ -40,10 +40,6 @@ class SendInvitation implements ShouldQueue
      * @var bool
      */
     private $isReminder;
-    /**
-     * @var bool
-     */
-    private $isSurveyOnlyUser;
 
     /**
      * A signed URL for enrollables to login to take self enrollment survey.

@@ -15,6 +15,10 @@ abstract class AbstractSelfEnrollmentReminder extends AbstractSelfEnrollableUser
     /**
      * @var Carbon
      */
+    protected $dateInviteSent;
+    /**
+     * @var Carbon
+     */
     protected $end;
     /**
      * @var int|null
@@ -25,11 +29,10 @@ abstract class AbstractSelfEnrollmentReminder extends AbstractSelfEnrollableUser
      */
     protected $start;
 
-    private function __construct(Carbon $endDate, Carbon $startDate, ?int $practiceId = null)
+    public function __construct(Carbon $dateInviteSent, ?int $practiceId = null)
     {
-        $this->end        = $endDate;
-        $this->start      = $startDate;
-        $this->practiceId = $practiceId;
+        $this->practiceId     = $practiceId;
+        $this->dateInviteSent = $dateInviteSent;
     }
 
     public static function createForInvitesSentTwoDaysAgo()
@@ -37,16 +40,14 @@ abstract class AbstractSelfEnrollmentReminder extends AbstractSelfEnrollableUser
         $testingMode = filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN);
 
         if ($testingMode) {
-            $practiceId = Helpers::getDemoPractice()->id;
-            $startDate  = now()->startOfDay();
-            $endDate    = $startDate->copy()->endOfDay();
+            $practiceId     = Helpers::getDemoPractice()->id;
+            $dateInviteSent = now()->startOfDay();
         } else {
-            $practiceId = null;
-            $startDate  = now()->copy()->subHours(48)->startOfDay();
-            $endDate    = $startDate->copy()->endOfDay();
+            $practiceId     = null;
+            $dateInviteSent = now()->copy()->subHours(48)->startOfDay();
         }
 
-        return new static($endDate, $startDate, $practiceId);
+        return new static($dateInviteSent, $practiceId);
     }
 
     public function dispatchToQueue()

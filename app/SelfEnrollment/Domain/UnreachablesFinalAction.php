@@ -40,12 +40,7 @@ class UnreachablesFinalAction extends AbstractSelfEnrollmentReminder
 
     public function query(): Builder
     {
-        return User::whereHas('notifications', function ($notification) {
-            $notification->where([
-                ['created_at', '<=', $this->end],
-                ['created_at', '>=', $this->start],
-            ])->selfEnrollmentInvites();
-        })
+        return User::hasSelfEnrollmentInviteReminder($this->dateInviteSent)
             ->whereHas('patientInfo', function ($patient) {
                 $patient->where('ccm_status', Patient::UNREACHABLE);
             })->when($this->practiceId, function ($q) {

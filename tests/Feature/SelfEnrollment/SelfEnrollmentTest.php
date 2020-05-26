@@ -10,6 +10,7 @@ use App\EnrollmentInvitationsBatch;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
+use App\SelfEnrollment\Domain\RemindEnrollees;
 use App\SelfEnrollment\Helpers;
 use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use App\SelfEnrollment\Jobs\SendInvitation;
@@ -17,6 +18,7 @@ use App\SelfEnrollment\Jobs\SendReminder;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Notification;
@@ -41,7 +43,7 @@ class SelfEnrollmentTest extends TestCase
     {
         $enrollee = $this->createEnrollees();
         CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee);
-        self::assertTrue( ! is_null($enrollee->fresh()->user_id));
+        self::assertTrue( ! is_null($enrollee->user_id));
     }
 
     public function test_it_does_not_send_sms_if_only_email_selected()
@@ -63,7 +65,7 @@ class SelfEnrollmentTest extends TestCase
     public function test_it_only_counts_reminders_sent_after_invitation()
     {
         $enrollee = $this->createEnrollees(1);
-        $patient  = $enrollee->fresh()->user;
+        $patient  = $enrollee->user;
         Twilio::fake();
         Mail::fake();
 
@@ -88,7 +90,7 @@ class SelfEnrollmentTest extends TestCase
     public function test_it_only_sends_one_reminder_to_non_responding_enrollee()
     {
         $enrollee = $this->createEnrollees(1);
-        $patient  = $enrollee->fresh()->user;
+        $patient  = $enrollee->user;
         Twilio::fake();
         Mail::fake();
 
@@ -110,7 +112,7 @@ class SelfEnrollmentTest extends TestCase
     public function test_it_saves_different_enrollment_link_in_db_when_sending_reminder()
     {
         $enrollee = $this->createEnrollees($number = 1);
-        $patient  = $enrollee->fresh()->user;
+        $patient  = $enrollee->user;
 
         Notification::fake();
         SendInvitation::dispatchNow($patient, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
@@ -188,7 +190,7 @@ class SelfEnrollmentTest extends TestCase
     public function test_patient_has_clicked_get_my_care_coach()
     {
         $enrollee       = $this->createEnrollees(1);
-        $patient        = $enrollee->fresh()->user;
+        $patient        = $enrollee->user;
         $surveyInstance = Helpers::createSurveyConditionsAndGetSurveyInstance($patient->id, self::PENDING);
         self::assertTrue(Helpers::awvUserSurveyQuery($patient, $surveyInstance)->exists());
     }
@@ -206,7 +208,7 @@ class SelfEnrollmentTest extends TestCase
     public function test_patient_has_survey_completed()
     {
         $enrollee       = $this->createEnrollees(1);
-        $patient        = $enrollee->fresh()->user;
+        $patient        = $enrollee->user;
         $surveyInstance = Helpers::createSurveyConditionsAndGetSurveyInstance($patient->id, self::COMPLETED);
         self::assertTrue(self::COMPLETED === Helpers::awvUserSurveyQuery($patient, $surveyInstance)->first()->status);
     }
@@ -214,7 +216,7 @@ class SelfEnrollmentTest extends TestCase
     public function test_patient_has_survey_in_progress()
     {
         $enrollee       = $this->createEnrollees(1);
-        $patient        = $enrollee->fresh()->user;
+        $patient        = $enrollee->user;
         $surveyInstance = Helpers::createSurveyConditionsAndGetSurveyInstance($patient->id, self::IN_PROGRESS);
         self::assertTrue(self::IN_PROGRESS === Helpers::awvUserSurveyQuery($patient, $surveyInstance)->first()->status);
     }
@@ -222,7 +224,7 @@ class SelfEnrollmentTest extends TestCase
     public function test_patient_has_viewed_login_form()
     {
         $enrollee = $this->createEnrollees(1);
-        $patient  = $enrollee->fresh()->user;
+        $patient  = $enrollee->user;
         Notification::fake();
         Mail::fake();
         SendInvitation::dispatch($patient, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
@@ -236,7 +238,34 @@ class SelfEnrollmentTest extends TestCase
 
     public function test_remind_enrollees()
     {
-        $enrollee = $this->createEnrollees(1);
+        //enrollees who requested call
+        $requestedInfo = $this->createEnrollees(1);
+        $requestedInfo->each(function (Enrollee $enrollee) {
+            $enrollee->enrollableInfoRequest()->create();
+        });
+
+        $notInvitedYet = $this->createEnrollees(2);
+
+        $expectedReminders = 3;
+        $toMarkAsInvited   = $this->createEnrollees($expectedReminders);
+
+        Mail::fake();
+        Twilio::fake();
+        $toMarkAsInvited->each(function (Enrollee $enrollee) {
+            SendInvitation::dispatchNow($enrollee->user, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
+        });
+
+        Queue::fake();
+
+        RemindEnrollees::dispatchNow(now()->startOfDay(), $toMarkAsInvited->first()->practice_id);
+
+        Queue::assertPushed(SendReminder::class, $expectedReminders);
+        $remindersUserIds = $toMarkAsInvited->pluck('user_id')->all();
+        Queue::assertPushed(SendReminder::class, function (SendReminder $job) use ($remindersUserIds) {
+            $this->assertTrue($result = in_array($job->patient->id, $remindersUserIds), $job->patient->id.' was not founf in .'.implode(',', $remindersUserIds));
+
+            return $result;
+        });
     }
 
     private function createEnrollees(int $number = 1)

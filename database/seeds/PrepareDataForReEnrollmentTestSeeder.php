@@ -4,7 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -38,7 +37,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         ]);
         $enrolleeForTesting->status = Enrollee::QUEUE_AUTO_ENROLLMENT;
 
-        return $enrolleeForTesting;
+        return $enrolleeForTesting->fresh('user');
     }
 
     /**
