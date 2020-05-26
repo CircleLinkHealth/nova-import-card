@@ -10,7 +10,6 @@ use App\Call;
 use App\CareplanAssessment;
 use App\Constants;
 use App\ForeignId;
-use App\Jobs\EnrollmentMassInviteEnrollees;
 use App\LoginLogout;
 use App\Message;
 use App\Models\EmailSettings;
@@ -28,9 +27,9 @@ use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Rules\PasswordCharacters;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
-use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
+use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\Customer\Traits\TimezoneTrait;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
@@ -67,7 +66,6 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -291,11 +289,13 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withTrashed()
  * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withoutTrashed()
  * @mixin \Eloquent
- * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null $enrollmentInvitationLink
- * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null       $statusRequestsInfo
+ * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null $enrollmentInvitationLinks
+ * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null       $enrollableInfoRequest
  * @property \App\LoginLogout[]|\Illuminate\Database\Eloquent\Collection                       $loginEvents
  * @property int|null                                                                          $login_events_count
  * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null                              $enrollee
+ * @property int|null                                                                          $enrollment_invitation_links_count
+ * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInvite()
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -306,7 +306,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use Filterable;
     use HasApiTokens;
     use HasEmrDirectAddress;
-    use HasEnrollableInvitation;
     use HasMediaTrait;
     use Impersonate;
     use MakesOrReceivesCalls;
@@ -314,6 +313,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use PivotEventTrait;
     use SaasAccountable;
     use Searchable;
+    use SelfEnrollableTrait;
     use SoftDeletes;
     use TimezoneTrait;
 
@@ -321,6 +321,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     const FORWARD_ALERTS_INSTEAD_OF_PROVIDER                       = 'forward_alerts_instead_of_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_careplan_approval_emails_in_addition_to_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER     = 'forward_careplan_approval_emails_instead_of_provider';
+
+    const SURVEY_ONLY = 'survey-only';
     /**
      * Package Clockwork is hardcoded to look for $user->name. Adding this so that it will work.
      *
@@ -2257,14 +2259,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
-     * If user has "survey-only" Role, returns true.
-     * note: hasRole() doesnt always produce correct results in this case.
+     * Returns if this is a Survey-Only user. A Survey-Only user is meant to do Self Enrollment as an Enrollee, or Unreachable Patient.
      *
-     * @return mixed
+     * @return bool
      */
     public function isSurveyOnly()
     {
-        return $this->roles()->where('name', EnrollmentMassInviteEnrollees::SURVEY_ONLY)->exists();
+        return $this->hasRole(self::SURVEY_ONLY);
     }
 
     public function lastObservation()
@@ -2836,21 +2837,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         ];
     }
 
-    /*public function hasScheduledCallThisWeek()
-    {
-        $weekStart = Carbon::now()->startOfWeek()->toDateString();
-        $weekEnd = Carbon::now()->endOfWeek()->toDateString();
-
-        return Call::where(function ($q) {
-            $q->whereNull('type')
-              ->orWhere('type', '=', 'call');
-        })
-                   ->where('outbound_cpm_id', $this->id)
-                   ->where('status', 'scheduled')
-                   ->whereBetween('scheduled_date', [$weekStart, $weekEnd])
-                   ->exists();
-    }*/
-
     public function scopeCareCoaches($query)
     {
         return $query->ofType(['care-center', 'care-center-external']);
@@ -2893,6 +2879,71 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     ->whereMemberUserId($billing_provider_id);
             }
         );
+    }
+
+    /*public function hasScheduledCallThisWeek()
+    {
+        $weekStart = Carbon::now()->startOfWeek()->toDateString();
+        $weekEnd = Carbon::now()->endOfWeek()->toDateString();
+
+        return Call::where(function ($q) {
+            $q->whereNull('type')
+              ->orWhere('type', '=', 'call');
+        })
+                   ->where('outbound_cpm_id', $this->id)
+                   ->where('status', 'scheduled')
+                   ->whereBetween('scheduled_date', [$weekStart, $weekEnd])
+                   ->exists();
+    }*/
+
+    public function scopeHasSelfEnrollmentInvite($query, Carbon $date = null, $has = true)
+    {
+        $verb = $has ? 'has' : 'DoesntHave';
+
+        return $query->{"where$verb"}('notifications', function ($q) use ($date) {
+            $q->selfEnrollmentInvites()->where('data->is_reminder', false)->when( ! is_null($date), function ($q) use ($date) {
+                $q->where([
+                    ['created_at', '>=', $date->copy()->startOfDay()],
+                    ['created_at', '<=', $date->copy()->endOfDay()],
+                ]);
+            });
+        });
+    }
+
+    public function scopeHasSelfEnrollmentInviteReminder($query, Carbon $date = null, $has = true)
+    {
+        $verb = $has ? 'has' : 'DoesntHave';
+
+        return $query->{"where$verb"}('notifications', function ($q) use ($date) {
+            $q->selfEnrollmentInvites()->where('data->is_reminder', true)->when( ! is_null($date), function ($q) use ($date) {
+                $q->where([
+                    ['created_at', '>=', $date->copy()->startOfDay()],
+                    ['created_at', '<=', $date->copy()->endOfDay()],
+                ]);
+            });
+        });
+    }
+
+    /**
+     * Scope for Enrollable Users we need to send a reminder Self Enrollment Notification to.
+     *
+     *
+     * @param $query
+     * @return mixed
+     */
+    public function scopeHaveEnrollableInvitationDontHaveReminder($query, Carbon $dateInviteSent = null)
+    {
+        $dateInviteSent = is_null($dateInviteSent) ? now()->subDays(2) : $dateInviteSent;
+
+        return $query->hasSelfEnrollmentInvite($dateInviteSent)
+            ->whereHas('patientInfo', function ($patient) {
+                $patient->where('ccm_status', Patient::UNREACHABLE);
+            })->whereDoesntHave('notifications', function ($notification) use ($dateInviteSent) {
+                $notification
+                    ->where('data->is_reminder', true)
+                    ->selfEnrollmentInvites()
+                    ->where('created_at', '>=', $dateInviteSent->copy()->startOfDay());
+            });
     }
 
     /**
