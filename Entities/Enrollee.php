@@ -16,7 +16,7 @@ use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
+use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Str;
 
@@ -178,19 +178,20 @@ use Illuminate\Support\Str;
  * @property string|null                                                                                                     $source
  * @property int|null                                                                                                        $enrollment_non_responsive
  * @property int                                                                                                             $auto_enrollment_triggered
- * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null                               $enrollmentInvitationLink
+ * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null                               $enrollmentInvitationLinks
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count
- * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null                                     $statusRequestsInfo
+ * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null                                     $enrollableInfoRequest
  * @property \CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus|null                                                $selfEnrollmentStatuses
- * @property \CircleLinkHealth\Customer\Entities\Location|null                                                               $location
+ * @property int|null                                                                                                        $enrollment_invitation_links_count
+ * @property \CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus|null                                                $selfEnrollmentStatus
  */
 class Enrollee extends BaseModel
 {
     use Filterable;
-    use HasEnrollableInvitation;
     use MySQLSearchable;
     use Notifiable;
+    use SelfEnrollableTrait;
 
     // Agent array keys
     const AGENT_EMAIL_KEY        = 'email';
@@ -933,11 +934,6 @@ class Enrollee extends BaseModel
             'location',
             'ccda.location',
         ]);
-    }
-
-    public function selfEnrollmentStatuses()
-    {
-        return $this->hasOne(SelfEnrollmentStatus::class, 'enrollee_id');
     }
 
     public function sendEnrollmentConsentReminderSMS()
