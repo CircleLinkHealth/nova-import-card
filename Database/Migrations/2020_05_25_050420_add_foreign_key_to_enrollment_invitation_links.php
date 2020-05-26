@@ -40,12 +40,7 @@ class AddForeignKeyToEnrollmentInvitationLinks extends Migration
                     $practiceId = Enrollee::find($link->invitationable_id);
                 }
 
-                $batch = Cache::remember("temp_{$practiceId}_{$link->button_color}_initial_batch", 2, function () use ($practiceId, $link) {
-                    return EnrollmentInvitationsBatch::firstOrCreate([
-                        'practice_id' => $practiceId,
-                        'type'        => "Initial:{$link->button_color}",
-                    ]);
-                });
+                $batch = EnrollmentInvitationsBatch::firstOrCreateAndRemember($practiceId, "Initial:{$link->button_color}", 2);
 
                 $link->batch_id = $batch->id;
                 $link->save();
