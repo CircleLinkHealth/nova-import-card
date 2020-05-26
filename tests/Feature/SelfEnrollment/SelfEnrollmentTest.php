@@ -52,6 +52,52 @@ class SelfEnrollmentTest extends TestCase
         Twilio::assertNothingSent();
     }
 
+    public function test_it_only_counts_reminders_sent_after_invitation()
+    {
+        $enrollee = $this->createEnrollees(1);
+        $patient  = $enrollee->fresh()->user;
+        Twilio::fake();
+        Mail::fake();
+
+        \DB::table('notifications')->insert([
+            'notifiable_type' => User::class,
+            'notifiable_id'   => $patient->id,
+            'type'            => SelfEnrollmentInviteNotification::class,
+            'data'            => json_encode([
+                'enrollee_id'    => $enrollee->id,
+                'is_reminder'    => true,
+                'is_survey_only' => true,
+            ]),
+            'created_at' => now()->subDays(2)->toDateTimeString(),
+            'updated_at' => now()->subDays(2)->toDateTimeString(),
+        ]);
+        SendInvitation::dispatchNow($patient);
+        self::assertTrue(User::hasSelfEnrollmentInvite()->where('id', $patient->id)->exists());
+        self::assertTrue(User::haveEnrollableInvitationDontHaveReminder(now())->where('id', $patient->id)->exists());
+    }
+
+    public function test_it_only_sends_one_reminder_to_non_responding_enrollee()
+    {
+        $enrollee = $this->createEnrollees(1);
+        $patient  = $enrollee->fresh()->user;
+        Twilio::fake();
+        Mail::fake();
+
+        SendInvitation::dispatchNow($patient);
+        self::assertTrue(User::hasSelfEnrollmentInvite()->where('id', $patient->id)->exists());
+        //It should not show up on the list on the "needs reminder" list of patients we invited yesterday
+        self::assertFalse(User::haveEnrollableInvitationDontHaveReminder(now()->subDay())->where('id', $patient->id)->exists());
+
+        //It should show up on the list on the "needs reminder" list of patients we invited today
+        self::assertTrue(User::haveEnrollableInvitationDontHaveReminder(now())->where('id', $patient->id)->exists());
+        SendReminder::dispatchNow($patient);
+        //It should not show up because we just sent a reminder
+        self::assertFalse(User::haveEnrollableInvitationDontHaveReminder(now())->where('id', $patient->id)->exists());
+
+        //SendReminder should not run if called again if a notification was sent
+        self::assertFalse(with(new SendReminder($patient))->shouldRun());
+    }
+
     public function test_it_saves_different_enrollment_link_in_db_when_sending_reminder()
     {
         $enrollee = $this->createEnrollees($number = 1);
@@ -128,28 +174,6 @@ class SelfEnrollmentTest extends TestCase
             [CustomTwilioChannel::class]
         );
         Twilio::assertNumberOfMessagesSent($number);
-    }
-
-    public function test_it_sends_one_reminder_to_non_responding_enrollee()
-    {
-        $enrollee = $this->createEnrollees(1);
-        $patient  = $enrollee->fresh()->user;
-        Twilio::fake();
-        Mail::fake();
-
-        SendInvitation::dispatchNow($patient);
-        self::assertTrue(User::hasSelfEnrollmentInvite()->where('id', $patient->id)->exists());
-        //It should not show up on the list on the "needs reminder" list of patients we invited yesterday
-        self::assertFalse(User::haveEnrollableInvitationDontHaveReminder(now()->subDay())->where('id', $patient->id)->exists());
-
-        //It should show up on the list on the "needs reminder" list of patients we invited today
-        self::assertTrue(User::haveEnrollableInvitationDontHaveReminder(now())->where('id', $patient->id)->exists());
-        SendReminder::dispatchNow($patient);
-        //It should not show up because we just sent a reminder
-        self::assertFalse(User::haveEnrollableInvitationDontHaveReminder(now())->where('id', $patient->id)->exists());
-
-        //SendReminder should not run if called again if a notification was sent
-        self::assertFalse(with(new SendReminder($patient))->shouldRun());
     }
 
     private function createEnrollees(int $number = 1)

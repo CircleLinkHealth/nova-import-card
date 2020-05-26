@@ -77,6 +77,6 @@ class SendReminder implements ShouldQueue
 
     private function patientHasReminderNotification(): bool
     {
-        return DatabaseNotification::whereIn('notifiable_type', [\App\User::class, User::class])->where('notifiable_id', $this->patient->id)->where('data->is_reminder', true)->selfEnrollmentInvites()->exists();
+        return DatabaseNotification::whereIn('notifiable_type', [\App\User::class, User::class])->where('notifiable_id', $this->patient->id)->where('data->is_reminder', true)->exists();
     }
 }
