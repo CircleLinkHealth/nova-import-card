@@ -2774,7 +2774,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function routeNotificationForMail($notification)
     {
-        if ($this->primaryPractice && $this->primaryPractice->is_demo) {
+        if ($this->primaryPractice && $this->primaryPractice->is_demo && isSelfEnrollmentTestModeEnabled()) {
             $hasTester = AppConfig::pull('tester_email', null);
 
             return $hasTester ?? $this->email;
@@ -2785,7 +2785,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function routeNotificationForTwilio()
     {
-        if ($this->primaryPractice && $this->primaryPractice->is_demo) {
+        if ($this->primaryPractice && $this->primaryPractice->is_demo && isSelfEnrollmentTestModeEnabled()) {
             $hasTester = AppConfig::pull('tester_phone', null);
 
             return $hasTester ?? $this->getPhoneNumberForSms();
