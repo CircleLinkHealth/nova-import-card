@@ -55,7 +55,7 @@
                 endDate: null,
                 loading: false,
                 tableData: [],
-                columns: [ 'name','total_hours','no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'earnings'],
+                columns: [ 'name','total_hours','total_seconds', 'no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'earnings'],
                 options: {
                     requestAdapter(data) {
                         if (typeof (self) !== 'undefined') {
@@ -67,6 +67,7 @@
                     headings: {
                         name : 'Ambassador Name',
                         total_hours: 'Total Hours',
+                        total_seconds: 'Total Seconds',
                         no_enrolled: '#Enrolled',
                         total_calls: '#Called',
                         calls_per_hour: 'Calls/Hour',
@@ -78,8 +79,8 @@
                     perPageValues: [10, 25, 50, 100, 200],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
-                    filterable: ['name','total_hours','no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'earnings'],
-                    sortable: ['name','total_hours','no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'earnings'],
+                    filterable: ['name','total_hours','total_seconds', 'no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'earnings'],
+                    sortable: ['name','total_hours', 'total_seconds', 'no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'earnings'],
                 },
             }
 
@@ -107,10 +108,11 @@
             },
             exportCSV() {
 
-                const str = 'Ambassador Name,Total Hours,#Enrolled,#Called,Calls/Hour,Mins/Enrollment,Conversion,Hourly Rate,Cost per Enrollment,Earnings\n'
+                const str = 'Ambassador Name,Total Hours,Total Seconds,#Enrolled,#Called,Calls/Hour,Mins/Enrollment,Conversion,Hourly Rate,Cost per Enrollment,Earnings\n'
                     + this.tableData.map(item => [
                         item.name,
                         item.total_hours,
+                        item.total_seconds,
                         item.no_enrolled,
                         item.total_calls,
                         item.calls_per_hour,

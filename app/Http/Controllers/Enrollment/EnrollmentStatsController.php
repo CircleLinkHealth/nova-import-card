@@ -167,6 +167,8 @@ class EnrollmentStatsController extends Controller
 
             $data[$ambassador->id]['total_hours'] = floatval(round($totalTimeInSystemSeconds / 3600, 2));
 
+            $data[$ambassador->id]['total_seconds'] = $totalTimeInSystemSeconds;
+
             $data[$ambassador->id]['no_enrolled'] = $base->sum('no_enrolled');
 
             $data[$ambassador->id]['mins_per_enrollment'] = (0 != $base->sum('no_enrolled'))
