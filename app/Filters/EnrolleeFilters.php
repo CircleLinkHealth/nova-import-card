@@ -85,12 +85,18 @@ class EnrolleeFilters extends QueryFilters
         $query = $this->request->get('query');
 
         $decoded = json_decode($query, true);
-        //We're using this filter class for both CA-Director panel and Enrollment/Enrollee-List,
-        //so let's just say globally hide Enrolled and Legacy only, then anything extra comes from each vue-component
-        $decoded['hideStatus'] = array_merge($decoded['hideStatus'], [
+
+        $hideStatus = [
             Enrollee::ENROLLED,
             Enrollee::LEGACY,
-        ]);
+        ];
+
+        if (array_key_exists('hideStatus', $decoded) && is_array($decoded['hideStatus'])) {
+            $hideStatus = array_merge($decoded['hideStatus'], $hideStatus);
+        }
+
+        //Default filtering will only be added here
+        $decoded['hideStatus']    = $hideStatus;
         $decoded['attempt_count'] = '';
 
         return $decoded;
@@ -102,7 +108,7 @@ class EnrolleeFilters extends QueryFilters
             return $this->builder->where('care_ambassador_name', '=', null);
         }
 
-        return $this->builder->where('care_ambassador_name', '!=', null);
+        return $this->builder;
     }
 
     public function hideStatus($statuses)
@@ -259,10 +265,17 @@ class EnrolleeFilters extends QueryFilters
         return $this->builder->where('source', 'like', '%'.$source.'%');
     }
 
-    public function status($status)
+    public function status($status = null)
     {
         if (empty($status)) {
             return $this->builder;
+        }
+
+        //ca-director page sends multiple options as array
+        if (is_array($status)) {
+            $statuses = collect($status)->pluck('id')->toArray();
+
+            return $this->builder->whereIn('status', $statuses);
         }
 
         return $this->builder->where('status', 'like', '%'.$status.'%');

@@ -6,45 +6,24 @@
                     <notifications ref="notificationsComponent" name="ca-panel"></notifications>
                 </div>
             </div>
-            <div class="col-sm-12 text-left">
-                <button class="btn btn-primary btn-s"
-                        @click="addCustomFilter">Add Custom Filter
-                </button>
-            </div>
+<!--            Not actually being used - leaving here in case anyone needs something similar-->
+<!--            <div class="col-sm-12 text-left">-->
+<!--                <button class="btn btn-primary btn-s"-->
+<!--                        @click="addCustomFilter">Add Custom Filter-->
+<!--                </button>-->
+<!--            </div>-->
         </div>
         <div class="row">
             <div class="row">
             </div>
             <div class="col-sm-12 text-left" style="margin-bottom: 10px; margin-top: 20px">
-                <button class="btn btn-info btn-s" v-bind:class="{'btn-selected': !this.hideAssigned}"
+                <button class="btn btn-info btn-s" v-bind:class="{'btn-selected': this.hideAssigned}"
                         @click="showAssigned">{{this.showAssignedLabel}}
                 </button>
             </div>
             <div class="col-sm-12 text-left" style="margin-bottom: 10px; margin-top: 10px">
                 <button class="btn btn-info btn-s" v-bind:class="{'btn-selected': this.isolateUploadedViaCsv}"
                         @click="isolatePatientsUploadedViaCsv">{{this.showIsolatedViaCsvLabel}}
-                </button>
-            </div>
-            <div class="col-sm-12 text-left">
-                <button class="btn btn-info btn-xs"
-                        v-bind:class="{'btn-selected': !this.hideStatus.includes('queue_auto_enrollment')}"
-                        @click="showSelfEnrollment">Include Queued for Self-Enrollment
-                </button>
-                <button class="btn btn-info btn-xs"
-                        v-bind:class="{'btn-selected': !this.hideStatus.includes('consented')}"
-                        @click="showConsented">Include Consented
-                </button>
-                <button class="btn btn-info btn-xs"
-                        v-bind:class="{'btn-selected': !this.hideStatus.includes('soft_rejected')}"
-                        @click="showSoftRejected">Include Soft Declined
-                </button>
-                <button class="btn btn-info btn-xs"
-                        v-bind:class="{'btn-selected': !this.hideStatus.includes('rejected')}"
-                        @click="showRejected">Include Hard Declined
-                </button>
-                <button class="btn btn-info btn-xs"
-                        v-bind:class="{'btn-selected': !this.hideStatus.includes('ineligible')}"
-                        @click="showIneligible">Include Ineligible
                 </button>
             </div>
             <div class="col-sm-5">
@@ -89,6 +68,19 @@
                         {{enrolleeStatusMap[props.row.status] || props.row.status}}
                     </div>
                 </template>
+                <div slot="filter__status">
+                    <vue-multiselect
+                            placeholder="Select Status"
+                            @input="refreshTable"
+                            label="text"
+                            :multiple="true"
+                            :searchable="false"
+                            track-by="text"
+                            openDirection="below"
+                            v-model="statusFilter"
+                            :options="statusOptions">
+                    </vue-multiselect>
+                </div>
                 <template slot="total_time_spent" slot-scope="props">
                     {{formatSecondsToHHMMSS(props.row.total_time_spent)}}
                 </template>
@@ -114,6 +106,7 @@
     import EditPatientModal from "./comps/modals/edit-patient.modal";
     import Loader from '../../components/loader';
     import Notifications from '../../components/notifications';
+    import Multiselect from 'vue-multiselect';
 
     let self;
 
@@ -127,30 +120,34 @@
             'edit-patient-modal': EditPatientModal,
             'add-custom-filter-modal': AddCustomFilterModal,
             'loader': Loader,
-            'notifications': Notifications
+            'notifications': Notifications,
+            'vue-multiselect': Multiselect
         },
         props: [],
         data() {
             return {
+                statusFilter: [
+                    {id: 'call_queue', text: 'Call Queue'},
+                    {id: 'utc', text: 'Unreachable'},
+                ],
                 loading: false,
                 selectedEnrolleeIds: [],
-                hideStatus: ['ineligible', 'consented', 'queue_auto_enrollment', 'enrolled', 'rejected', 'soft_rejected'],
-                hideAssigned: true,
+                hideAssigned: false,
                 isolateUploadedViaCsv: false,
                 columns: ['select', 'edit', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'source', 'enrollment_non_responsive', 'auto_enrollment_triggered', 'practice_name', 'provider_name', 'requested_callback', 'total_time_spent', 'attempt_count', 'last_attempt_at',
-                    'last_call_outcome', 'last_call_outcome_reason', 'address', 'address_2', 'city', 'state', 'zip', 'primary_phone','home_phone', 'cell_phone',  'other_phone', 'dob', 'preferred_days', 'preferred_window',
+                    'last_call_outcome', 'last_call_outcome_reason', 'address', 'address_2', 'city', 'state', 'zip', 'primary_phone', 'home_phone', 'cell_phone', 'other_phone', 'dob', 'preferred_days', 'preferred_window',
                     'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'has_copay', 'email', 'provider_pronunciation', 'provider_sex', 'last_encounter', 'eligibility_job_id', 'medical_record_id', 'created_at'],
                 options: {
                     requestAdapter(data) {
                         if (typeof (self) !== 'undefined') {
-                            data.query.hideStatus = self.hideStatus;
                             data.query.hideAssigned = self.hideAssigned;
                             data.query.isolateUploadedViaCsv = self.isolateUploadedViaCsv;
+                            data.query.status = self.statusFilter;
                         }
                         return data;
                     },
                     headings: {
-                        enrollment_non_responsive : 'Send Regular Mail'
+                        enrollment_non_responsive: 'Send Regular Mail'
                     },
                     columnsClasses: {
                         'selected': 'blank',
@@ -161,30 +158,18 @@
                         'has-copay': 'min-width-50',
                         'user_id': 'min-width-80',
                         'mrn': 'min-width-80',
-                        'lang': 'min-width-80'
-                    },
-                    listColumns: {
-                        status: [
-                            {id: 'call_queue', text: 'Call Queue'},
-                            {id:'enrolled', text: 'Enrolled'},
-                            {id:'consented', text: 'Consented'},
-                            {id:'soft_rejected', text: 'Soft Declined'},
-                            {id:'rejected', text: 'Hard Declined'},
-                            {id:'utc', text: 'Unreachable'},
-                            {id:'ineligible',text: 'Ineligible'},
-                            {id:'queue_auto_enrollment', text:'Queued for Self-enrollment'},
-                        ],
+                        'lang': 'min-width-80',
+                        'status': 'min-width-300'
                     },
                     perPage: 100,
                     perPageValues: [10, 25, 50, 100, 200],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
-                    filterable: ['hideStatus', 'hideAssigned', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status','source', 'requested_callback', 'eligibility_job_id', 'enrollment_non_responsive', 'primary_phone', 'home_phone', 'cell_phone', 'other_phone','last_attempt_at', 'auto_enrollment_triggered','medical_record_id', 'practice_name', 'provider_name', 'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'attempt_count'],
-                    sortable: ['id', 'user_id', 'first_name', 'last_name', 'practice_name', 'provider_name', 'primary_insurance', 'status', 'source', 'created_at', 'state', 'city','enrollment_non_responsive', 'auto_enrollment_triggered', 'last_attempt_at', 'care_ambassador_name', 'attempt_count', 'requested_callback'],
+                    filterable: ['hideAssigned', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'source', 'requested_callback', 'eligibility_job_id', 'enrollment_non_responsive', 'primary_phone', 'home_phone', 'cell_phone', 'other_phone', 'last_attempt_at', 'auto_enrollment_triggered', 'medical_record_id', 'practice_name', 'provider_name', 'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'attempt_count'],
+                    sortable: ['id', 'user_id', 'first_name', 'last_name', 'practice_name', 'provider_name', 'primary_insurance', 'status', 'source', 'created_at', 'state', 'city', 'enrollment_non_responsive', 'auto_enrollment_triggered', 'last_attempt_at', 'care_ambassador_name', 'attempt_count', 'requested_callback'],
                 },
                 enrolleeStatusMap: {
                     call_queue: 'Call Queue',
-                    enrolled: 'Enrolled',
                     consented: 'Consented',
                     soft_rejected: 'Soft Declined',
                     rejected: 'Hard Declined',
@@ -192,6 +177,16 @@
                     ineligible: 'Ineligible',
                     queue_auto_enrollment: 'Queued for Self-enrollment',
                 },
+                statusOptions: [
+                    {id: 'call_queue', text: 'Call Queue'},
+                    {id: 'consented', text: 'Consented'},
+                    {id: 'soft_rejected', text: 'Soft Declined'},
+                    {id: 'rejected', text: 'Hard Declined'},
+                    {id: 'utc', text: 'Unreachable'},
+                    {id: 'ineligible', text: 'Ineligible'},
+                    {id: 'queue_auto_enrollment', text: 'Queued for Self-enrollment'},
+                ],
+
             }
 
         },
@@ -200,9 +195,9 @@
                 return this.selectedEnrolleeIds.length !== 0;
             },
             showAssignedLabel() {
-                return this.hideAssigned ? 'Show Assigned Patients Only' : 'Show Unassigned Patients'
+                return this.hideAssigned ? 'Show All Patients' : 'Show Unassigned Patients Only';
             },
-            showIsolatedViaCsvLabel(){
+            showIsolatedViaCsvLabel() {
                 return this.isolateUploadedViaCsv ? 'Show Patients from All Sources' : 'Isolate Patients Uploaded via CSV';
             }
         },
@@ -261,11 +256,10 @@
                     this.selectedEnrolleeIds.splice(pos, 1);
                 }
             },
-            updateTable(){
+            updateTable() {
                 const query = {
-                    hideStatus: this.hideStatus,
                     hideAssigned: this.hideAssigned,
-                    isolateUploadedViaCsv : this.isolateUploadedViaCsv
+                    isolateUploadedViaCsv: this.isolateUploadedViaCsv
                 };
                 this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
                     .then(resp => {
@@ -290,60 +284,14 @@
                     return true;
                 }
             },
-            showIneligible() {
-                Event.$emit('notifications-ca-panel:dismissAll');
-                if (this.hideStatus.includes('ineligible'))
-                    this.hideStatus = this.hideStatus.filter(item => item !== 'ineligible');
-                else
-                    this.hideStatus.push('ineligible');
-
-                this.refreshTable();
-            },
-            showSoftRejected() {
-                Event.$emit('notifications-ca-panel:dismissAll');
-                if (this.hideStatus.includes('soft_rejected'))
-                    this.hideStatus = this.hideStatus.filter(item => item !== 'soft_rejected');
-                else
-                    this.hideStatus.push('soft_rejected');
-                this.refreshTable();
-            },
-            showRejected() {
-                Event.$emit('notifications-ca-panel:dismissAll');
-                if (this.hideStatus.includes('rejected'))
-                    this.hideStatus = this.hideStatus.filter(item => item !== 'rejected');
-                else
-                    this.hideStatus.push('soft_rejected');
-                this.refreshTable();
-            },
-            showSelfEnrollment() {
-                Event.$emit('notifications-ca-panel:dismissAll');
-                if (this.hideStatus.includes('queue_auto_enrollment'))
-                    this.hideStatus = this.hideStatus.filter(item => item !== 'queue_auto_enrollment');
-                else
-                    this.hideStatus.push('queue_auto_enrollment');
-
-                this.refreshTable();
-            },
-            showConsented() {
-                Event.$emit('notifications-ca-panel:dismissAll');
-                if (this.hideStatus.includes('consented')) {
-                    this.hideStatus = this.hideStatus.filter(item => item !== 'consented');
-                    this.hideAssigned = false;
-                } else {
-                    this.hideAssigned = true;
-                    this.hideStatus.push('consented');
-                }
-
-                this.refreshTable();
-            },
             showAssigned() {
                 Event.$emit('notifications-ca-panel:dismissAll');
                 this.hideAssigned = !this.hideAssigned;
                 this.refreshTable();
             },
-            isolatePatientsUploadedViaCsv(){
+            isolatePatientsUploadedViaCsv() {
                 Event.$emit('notifications-ca-panel:dismissAll');
-                this.isolateUploadedViaCsv = ! this.isolateUploadedViaCsv;
+                this.isolateUploadedViaCsv = !this.isolateUploadedViaCsv;
                 this.refreshTable();
             },
             listenTo(a) {
@@ -414,11 +362,19 @@
     }
 
     .min-width-50 {
-      min-width: 50px !important;
+        min-width: 50px !important;
     }
 
     .min-width-80 {
         min-width: 80px !important;
+    }
+
+    .min-width-200 {
+        min-width: 200px !important;
+    }
+
+    .min-width-300 {
+        min-width: 300px !important;
     }
 
 </style>

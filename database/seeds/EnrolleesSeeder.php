@@ -4,7 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\SeedEligibilityJobsForEnrollees;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -27,8 +26,18 @@ class EnrolleesSeeder extends Seeder
             ->where('is_demo', true)
             ->first();
 
-        if (isUnitTestingEnv() && ! $practice) {
-            $practice = factory(Practice::class)->create();
+        if ( ! $practice) {
+            if (isUnitTestingEnv() || ! isProductionEnv()) {
+                $practice = factory(Practice::class)->create([
+                    'name'         => 'demo',
+                    'display_name' => 'Demo',
+                    'is_demo'      => true,
+                ]);
+            } else {
+                $this->command->info('Demo Practice not found, aborting creating fake enrollees.');
+
+                return;
+            }
         }
 
         $enrollees = factory(Enrollee::class, 10)->create();
