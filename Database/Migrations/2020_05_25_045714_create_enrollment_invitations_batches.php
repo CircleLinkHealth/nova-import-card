@@ -32,7 +32,7 @@ class CreateEnrollmentInvitationsBatches extends Migration
             $table->integer('practice_id')->unsigned()->nullable()->index('eligibility_batches_practice_id_foreign');
             $table->string('type');
             $table->timestamps();
-            
+
             $table->foreign('practice_id')->references('id')->on('practices')->onDelete('cascade')->onUpdate('cascade');
         });
     }
