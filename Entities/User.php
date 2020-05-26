@@ -2899,7 +2899,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function scopeHasSelfEnrollmentInvite($query, Carbon $date = null, $has = true)
     {
         $verb = $has ? 'has' : 'DoesntHave';
-        
+
         return $query->{"where$verb"}('notifications', function ($q) use ($date) {
             $q->selfEnrollmentInvites()->where('data->is_reminder', false)->when( ! is_null($date), function ($q) use ($date) {
                 $q->where([
@@ -2913,7 +2913,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function scopeHasSelfEnrollmentInviteReminder($query, Carbon $date = null, $has = true)
     {
         $verb = $has ? 'has' : 'DoesntHave';
-    
+
         return $query->{"where$verb"}('notifications', function ($q) use ($date) {
             $q->selfEnrollmentInvites()->where('data->is_reminder', true)->when( ! is_null($date), function ($q) use ($date) {
                 $q->where([
