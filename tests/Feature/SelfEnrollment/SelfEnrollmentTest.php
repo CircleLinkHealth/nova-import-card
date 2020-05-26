@@ -6,6 +6,7 @@
 
 namespace Tests\Feature\SelfEnrollment;
 
+use App\EnrollmentInvitationsBatch;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
@@ -78,7 +79,8 @@ class SelfEnrollmentTest extends TestCase
             'created_at' => now()->subDays(2)->toDateTimeString(),
             'updated_at' => now()->subDays(2)->toDateTimeString(),
         ]);
-        SendInvitation::dispatchNow($patient);
+        $invitationBatch = EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id);
+        SendInvitation::dispatchNow($patient, $invitationBatch->id);
         self::assertTrue(User::hasSelfEnrollmentInvite()->where('id', $patient->id)->exists());
         self::assertTrue(User::haveEnrollableInvitationDontHaveReminder(now())->where('id', $patient->id)->exists());
     }
@@ -194,8 +196,7 @@ class SelfEnrollmentTest extends TestCase
     public function test_patient_has_requested_info()
     {
         $enrollee = $this->createEnrollees(1);
-        // Create Request Info
-        $enrollee->statusRequestsInfo()->create();
+        $enrollee->enrollableInfoRequest()->create();
         $this->assertDatabaseHas('enrollees_request_info', [
             'enrollable_id'   => $enrollee->id,
             'enrollable_type' => get_class($enrollee),
@@ -225,11 +226,17 @@ class SelfEnrollmentTest extends TestCase
         Notification::fake();
         Mail::fake();
         SendInvitation::dispatch($patient);
-        $lastEnrollmentLink                   = $enrollee->getLastEnrollmentInvitationLink();
+        $lastEnrollmentLink = $enrollee->getLastEnrollmentInvitationLink();
+        // means the patient has clicked the link and seen login form
         $lastEnrollmentLink->manually_expired = true;
         $lastEnrollmentLink->save();
-//    If patient has link expired = has opened the link and seen the login form.
+
         self::assertTrue(optional($enrollee->enrollmentInvitationLinks())->where('manually_expired', true)->exists());
+    }
+
+    public function test_remind_enrollees()
+    {
+        $enrollee = $this->createEnrollees(1);
     }
 
     private function createEnrollees(int $number = 1)

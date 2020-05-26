@@ -130,7 +130,7 @@ class CreateSurveyOnlyUserFromEnrollee implements ShouldQueue
                     'state'             => $this->enrollee->state,
                     'zip'               => $this->enrollee->zip,
 
-                    //this will be changed back to Enrolled in  Tasks\ImportPatientInfo
+                    //Important requirement for all "Self Enrollment" workflows.
                     'ccm_status' => Patient::UNREACHABLE,
                 ]
             )

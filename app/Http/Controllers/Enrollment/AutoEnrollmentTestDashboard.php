@@ -85,7 +85,7 @@ class AutoEnrollmentTestDashboard extends Controller
                 $this->deleteTestAwvUser($user, $surveyInstance);
                 $user->notifications()->delete();
                 $user->enrollee->enrollmentInvitationLinks()->delete();
-                $user->enrollee->statusRequestsInfo()->delete();
+                $user->enrollee->enrollableInfoRequest()->delete();
 
                 DB::table('invitation_links')
                     ->where('patient_info_id', $user->patientInfo()->withTrashed()->first()->id)
@@ -99,7 +99,7 @@ class AutoEnrollmentTestDashboard extends Controller
                 $this->deleteTestAwvUser($user, $surveyInstance);
                 $user->notifications()->delete();
                 $user->enrollmentInvitationLinks()->delete();
-                $user->statusRequestsInfo()->delete();
+                $user->enrollableInfoRequest()->delete();
                 $user->patientInfo()->update(
                     [
                         'ccm_status' => \CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE,

@@ -50,7 +50,7 @@ class EnrolleesInvitationPanel extends Resource
      */
     public static $title = 'id';
 
-    public static $with = ['enrollmentInvitationLinks', 'user.patientInfo', 'statusRequestsInfo', 'user.loginEvents'];
+    public static $with = ['enrollmentInvitationLinks', 'user.patientInfo', 'enrollableInfoRequest', 'user.loginEvents'];
 
     /**
      * Get the actions available for the resource.
@@ -146,8 +146,8 @@ class EnrolleesInvitationPanel extends Resource
             ? $firstEnrollmentInvitationLink->created_at->toDateString()
             : 'N/A';
 
-        $requestedInfoDate = ! is_null($this->resource->statusRequestsInfo) && ! is_null($this->resource->statusRequestsInfo->created_at)
-            ? $this->resource->statusRequestsInfo->created_at->toDateString()
+        $requestedInfoDate = ! is_null($this->resource->enrollableInfoRequest) && ! is_null($this->resource->enrollableInfoRequest->created_at)
+            ? $this->resource->enrollableInfoRequest->created_at->toDateString()
             : 'N/A';
 
         $enrolledDate = Enrollee::ENROLLED === $this->resource->status && $this->resource->user && $this->resource->user->patientInfo && ! is_null($this->resource->user->patientInfo->registration_date)
@@ -188,7 +188,7 @@ class EnrolleesInvitationPanel extends Resource
             }),
 
             Boolean::make('Requested Call', function () {
-                return ! is_null($this->resource->statusRequestsInfo);
+                return ! is_null($this->resource->enrollableInfoRequest);
             }),
 
             Boolean::make("Has clicked 'Get my Care Coach'", function () use ($enroleeHasLoggedIn, $awvUserSurvey) {

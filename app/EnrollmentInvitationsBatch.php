@@ -25,8 +25,18 @@ use Illuminate\Database\Eloquent\Model;
  */
 class EnrollmentInvitationsBatch extends Model
 {
+    const MANUAL_INVITES_BATCH_TYPE = 'one-off_invitations';
+
     public function invitationLinks()
     {
         return $this->hasMany(EnrollableInvitationLink::class);
+    }
+
+    public static function manualInvitesBatch(int $practiceId)
+    {
+        return EnrollmentInvitationsBatch::firstOrCreate([
+            'practice_id' => $practiceId,
+            'type'        => self::MANUAL_INVITES_BATCH_TYPE,
+        ]);
     }
 }

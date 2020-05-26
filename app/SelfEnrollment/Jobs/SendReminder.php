@@ -59,13 +59,13 @@ class SendReminder implements ShouldQueue
             return false;
         }
 
-        $this->patient->loadMissing(['enrollee.statusRequestsInfo', 'enrollee.enrollmentInvitationLinks']);
+        $this->patient->loadMissing(['enrollee.enrollableInfoRequest', 'enrollee.enrollmentInvitationLinks']);
 
         if (empty($this->patient->enrollee)) {
             throw new \Exception("user[{$this->patient->id}] does not have an enrollee.");
         }
 
-        if ($this->patient->enrollee->statusRequestsInfo instanceof EnrollableRequestInfo) {
+        if ($this->patient->enrollee->enrollableInfoRequest instanceof EnrollableRequestInfo) {
             return false;
         }
 

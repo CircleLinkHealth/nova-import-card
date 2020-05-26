@@ -92,9 +92,9 @@ class SelfEnrollmentController extends Controller
      *
      * @return mixed
      */
-    public function createEnrollStatusRequestsInfo($enrollable)
+    public function createEnrollenrollableInfoRequest($enrollable)
     {
-        return $enrollable->statusRequestsInfo()->create();
+        return $enrollable->enrollableInfoRequest()->create();
     }
 
     /**
@@ -104,7 +104,7 @@ class SelfEnrollmentController extends Controller
      */
     public function enrollableHasRequestedInfo($enrollable)
     {
-        return $enrollable ? $enrollable->statusRequestsInfo()->exists() : false;
+        return $enrollable ? $enrollable->enrollableInfoRequest()->exists() : false;
     }
 
     /**
@@ -127,8 +127,8 @@ class SelfEnrollmentController extends Controller
             return $this->createUrlAndRedirectToSurvey($enrollee->user);
         }
 
-        if ( ! $enrollee->statusRequestsInfo()->exists()) {
-            $this->createEnrollStatusRequestsInfo($enrollee);
+        if ( ! $enrollee->enrollableInfoRequest()->exists()) {
+            $this->createEnrollenrollableInfoRequest($enrollee);
             $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
         }
 
@@ -152,7 +152,7 @@ class SelfEnrollmentController extends Controller
 
         $enrollable = Helpers::getEnrollableModel($user);
 
-        if ($enrollable->statusRequestsInfo()->exists()) {
+        if ($enrollable->enrollableInfoRequest()->exists()) {
             return $this->returnEnrolleeRequestedInfoMessage($user->enrollee);
         }
 
@@ -451,9 +451,9 @@ class SelfEnrollmentController extends Controller
      */
     private function handleEnrolleeInvitation(User $user)
     {
-        $user->loadMissing(['enrollee.statusRequestsInfo', 'enrollee.practice', 'enrollee.provider']);
+        $user->loadMissing(['enrollee.enrollableInfoRequest', 'enrollee.practice', 'enrollee.provider']);
 
-        if ( ! is_null($user->enrollee->statusRequestsInfo)) {
+        if ( ! is_null($user->enrollee->enrollableInfoRequest)) {
             return $this->returnEnrolleeRequestedInfoMessage($user->enrollee);
         }
 
