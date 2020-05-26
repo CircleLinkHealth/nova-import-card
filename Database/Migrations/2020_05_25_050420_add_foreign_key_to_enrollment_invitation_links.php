@@ -40,6 +40,15 @@ class AddForeignKeyToEnrollmentInvitationLinks extends Migration
                     $practiceId = Enrollee::find($link->invitationable_id);
                 }
 
+                if ( ! isset($practiceId)) {
+                    if (app()->environment('production')) {
+                        continue;
+                    }
+                    
+                    $link->delete();
+                    continue;
+                }
+
                 $batch = EnrollmentInvitationsBatch::firstOrCreateAndRemember($practiceId, "Initial:{$link->button_color}", 2);
 
                 $link->batch_id = $batch->id;
