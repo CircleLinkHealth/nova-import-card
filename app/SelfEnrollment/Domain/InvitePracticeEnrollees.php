@@ -6,6 +6,7 @@
 
 namespace App\SelfEnrollment\Domain;
 
+use App\EnrollmentInvitationsBatch;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\SelfEnrollment\AbstractSelfEnrollableUserIterator;
@@ -57,7 +58,8 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
 
     public function action(User $user): void
     {
-        SendInvitation::dispatch($user, $this->color, false, $this->channels);
+        $invitationsBatch = EnrollmentInvitationsBatch::create();
+        SendInvitation::dispatch($user, $invitationsBatch->id, $this->color, false, $this->channels);
     }
 
     public function query(): Builder

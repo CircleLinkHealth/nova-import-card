@@ -6,6 +6,7 @@
 
 namespace App\SelfEnrollment\Domain;
 
+use App\EnrollmentInvitationsBatch;
 use App\SelfEnrollment\AbstractSelfEnrollableUserIterator;
 use App\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Customer\Entities\User;
@@ -28,7 +29,8 @@ class InviteUnreachablePatients extends AbstractSelfEnrollableUserIterator
 
     public function action(User $user): void
     {
-        SendInvitation::dispatch($user);
+        $invitationsBatch = EnrollmentInvitationsBatch::create();
+        SendInvitation::dispatch($user, $invitationsBatch->id);
     }
 
     public function query(): Builder
