@@ -290,7 +290,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withoutTrashed()
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null $enrollmentInvitationLinks
- * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null       $statusRequestsInfo
+ * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null       $enrollableInfoRequest
  * @property \App\LoginLogout[]|\Illuminate\Database\Eloquent\Collection                       $loginEvents
  * @property int|null                                                                          $login_events_count
  * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null                              $enrollee
@@ -2929,6 +2929,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function scopeHaveEnrollableInvitationDontHaveReminder($query, Carbon $dateInviteSent = null)
     {
         $dateInviteSent = is_null($dateInviteSent) ? now()->subDays(2) : $dateInviteSent;
+
         return $query->hasSelfEnrollmentInvite($dateInviteSent)
             ->whereHas('patientInfo', function ($patient) {
                 $patient->where('ccm_status', Patient::UNREACHABLE);

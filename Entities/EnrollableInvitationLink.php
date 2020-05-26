@@ -18,7 +18,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property int                                                                    $manually_expired
  * @property \Illuminate\Support\Carbon|null                                        $created_at
  * @property \Illuminate\Support\Carbon|null                                        $updated_at
- * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo $statusRequestsInfo
+ * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo $enrollableInfoRequest
  * @property \App\EnrollableInvitationLink                                          $enrollmentInvitationLinks
  * @property \App\EnrollableInvitationLink                                          $invitationable
  * @method   static                                                                 \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink newModelQuery()

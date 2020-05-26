@@ -27,7 +27,7 @@ trait SelfEnrollableTrait
     /**
      * @return mixed
      */
-    public function statusRequestsInfo()
+    public function enrollableInfoRequest()
     {
         return $this->morphOne(EnrollableRequestInfo::class, 'enrollable');
     }
