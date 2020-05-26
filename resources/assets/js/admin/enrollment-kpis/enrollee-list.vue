@@ -48,12 +48,10 @@
                 },
                 enrolleeStatusMap: {
                     call_queue: 'Call Queue',
-                    enrolled: 'Enrolled',
                     consented: 'Consented',
                     soft_rejected: 'Soft Declined',
                     hard_declined: 'Hard Declined',
                     utc: 'Unreachable',
-                    ineligible: 'Ineligible',
                     queue_auto_enrollment: 'Queued for Self-enrollment',
                 },
                 loading: false,
@@ -85,12 +83,10 @@
                     listColumns: {
                         status: [
                             {id: 'call_queue', text: 'Call Queue'},
-                            {id:'enrolled', text: 'Enrolled'},
                             {id:'consented', text: 'Consented'},
                             {id:'soft_rejected', text: 'Soft Declined'},
                             {id: 'hard_declined', text: 'Hard Declined'},
                             {id:'utc', text: 'Unreachable'},
-                            {id:'ineligible',text: 'Ineligible'},
                             {id:'queue_auto_enrollment', text:'Queued for Self-enrollment'},
                         ],
                     },
