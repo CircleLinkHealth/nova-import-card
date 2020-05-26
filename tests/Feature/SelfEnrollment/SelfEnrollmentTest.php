@@ -9,11 +9,13 @@ namespace Tests\Feature\SelfEnrollment;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
+use App\SelfEnrollment\Helpers;
 use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use App\SelfEnrollment\Jobs\SendInvitation;
 use App\SelfEnrollment\Jobs\SendReminder;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Notification;
@@ -22,6 +24,11 @@ use Tests\Concerns\TwilioFake\Twilio;
 
 class SelfEnrollmentTest extends TestCase
 {
+    use  SelfEnrollableTrait;
+
+    const COMPLETED   = 'completed';
+    const IN_PROGRESS = 'in_progress';
+    const PENDING     = 'pending';
     /**
      * Helper to create fake Enrollees.
      *
@@ -174,6 +181,55 @@ class SelfEnrollmentTest extends TestCase
             [CustomTwilioChannel::class]
         );
         Twilio::assertNumberOfMessagesSent($number);
+    }
+
+    public function test_patient_has_clicked_get_my_care_coach()
+    {
+        $enrollee       = $this->createEnrollees(1);
+        $patient        = $enrollee->fresh()->user;
+        $surveyInstance = Helpers::createSurveyConditionsAndGetSurveyInstance($patient->id, self::PENDING);
+        self::assertTrue(Helpers::awvUserSurveyQuery($patient, $surveyInstance)->exists());
+    }
+
+    public function test_patient_has_requested_info()
+    {
+        $enrollee = $this->createEnrollees(1);
+        // Create Request Info
+        $enrollee->statusRequestsInfo()->create();
+        $this->assertDatabaseHas('enrollees_request_info', [
+            'enrollable_id'   => $enrollee->id,
+            'enrollable_type' => get_class($enrollee),
+        ]);
+    }
+
+    public function test_patient_has_survey_completed()
+    {
+        $enrollee       = $this->createEnrollees(1);
+        $patient        = $enrollee->fresh()->user;
+        $surveyInstance = Helpers::createSurveyConditionsAndGetSurveyInstance($patient->id, self::COMPLETED);
+        self::assertTrue(self::COMPLETED === Helpers::awvUserSurveyQuery($patient, $surveyInstance)->first()->status);
+    }
+
+    public function test_patient_has_survey_in_progress()
+    {
+        $enrollee       = $this->createEnrollees(1);
+        $patient        = $enrollee->fresh()->user;
+        $surveyInstance = Helpers::createSurveyConditionsAndGetSurveyInstance($patient->id, self::IN_PROGRESS);
+        self::assertTrue(self::IN_PROGRESS === Helpers::awvUserSurveyQuery($patient, $surveyInstance)->first()->status);
+    }
+
+    public function test_patient_has_viewed_login_form()
+    {
+        $enrollee = $this->createEnrollees(1);
+        $patient  = $enrollee->fresh()->user;
+        Notification::fake();
+        Mail::fake();
+        SendInvitation::dispatch($patient);
+        $lastEnrollmentLink                   = $enrollee->getLastEnrollmentInvitationLink();
+        $lastEnrollmentLink->manually_expired = true;
+        $lastEnrollmentLink->save();
+//    If patient has link expired = has opened the link and seen the login form.
+        self::assertTrue(optional($enrollee->enrollmentInvitationLinks())->where('manually_expired', true)->exists());
     }
 
     private function createEnrollees(int $number = 1)

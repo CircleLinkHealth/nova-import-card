@@ -6,14 +6,11 @@
 
 namespace Tests\Feature;
 
-use App\SelfEnrollment\Jobs\SendInvitation;
 use App\SelfEnrollment\Jobs\SendReminder;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
-use Carbon\Carbon;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Tests\CustomerTestCase;
 
 class AutoEnrollmentProcessTest extends CustomerTestCase
@@ -103,13 +100,6 @@ class AutoEnrollmentProcessTest extends CustomerTestCase
         self::assertTrue($enrollee->enrollmentInvitationLinks()->exists());
     }
 
-    public function test_patient_has_clicked_get_my_care_coach()
-    {
-        $userId         = 666;
-        $surveyInstance = $this->createSurveyConditionsAndGetSurveyInstance($userId, self::PENDING);
-        self::assertTrue($this->getAwvUserSurvey($userId, $surveyInstance)->exists());
-    }
-
     public function test_patient_has_logged_in()
     {
         $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)
@@ -118,34 +108,6 @@ class AutoEnrollmentProcessTest extends CustomerTestCase
         self::assertDatabaseHas('login_logout_events', [
             'user_id' => $enrollee->fresh()->user_id,
         ]);
-    }
-
-    public function test_patient_has_requested_info()
-    {
-        $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)
-            ->createEnrollee($this->practice());
-
-        // Create Request Info
-        $enrollee->statusRequestsInfo()->create();
-
-        $this->assertDatabaseHas('enrollees_request_info', [
-            'enrollable_id'   => $enrollee->id,
-            'enrollable_type' => get_class($enrollee),
-        ]);
-    }
-
-    public function test_patient_has_survey_completed()
-    {
-        $userId         = 666;
-        $surveyInstance = $this->createSurveyConditionsAndGetSurveyInstance($userId, self::COMPLETED);
-        self::assertTrue(self::COMPLETED === $this->getAwvUserSurvey($userId, $surveyInstance)->first()->status);
-    }
-
-    public function test_patient_has_survey_in_progress()
-    {
-        $userId         = 666;
-        $surveyInstance = $this->createSurveyConditionsAndGetSurveyInstance($userId, self::IN_PROGRESS);
-        self::assertTrue(self::IN_PROGRESS === $this->getAwvUserSurvey($userId, $surveyInstance)->first()->status);
     }
 
 //
@@ -167,49 +129,8 @@ class AutoEnrollmentProcessTest extends CustomerTestCase
 //        self::assertTrue($patient->enrollmentInvitationLinks()->exists());
 //    }
 
-    public function test_patient_has_viewed_login_form()
-    {
-        $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)
-            ->createEnrollee($this->practice());
-        SendInvitation::dispatch($enrollee->user);
-        $lastEnrollmentLink                   = $enrollee->getLastEnrollmentInvitationLink();
-        $lastEnrollmentLink->manually_expired = true;
-        $lastEnrollmentLink->save();
-//    If patient has link expired = has opened the link and seen the login form.
-        self::assertTrue(optional($enrollee->enrollmentInvitationLinks())->where('manually_expired', true)->exists());
-    }
-
-    private function createSurveyConditions(int $userId, int $surveyInstanceId, int $surveyId, string $status)
-    {
-        DB::table('users_surveys')->insert(
-            [
-                'user_id'            => $userId,
-                'survey_instance_id' => $surveyInstanceId,
-                'survey_id'          => $surveyId,
-                'status'             => $status,
-                'start_date'         => Carbon::parse(now())->toDateTimeString(),
-            ]
-        );
-    }
-
 //    Meaning they will get physical mail.
 //    public function test_only_patients_taken_no_action_will_be_marked_as_unresponsive()
 //    {
 //    }
-
-    private function createSurveyConditionsAndGetSurveyInstance(string $userId, string $status)
-    {
-        $surveyId = DB::table('surveys')->insertGetId([
-            'name' => 'Enrollees',
-        ]);
-
-        $surveyInstanceId = DB::table('survey_instances')->insertGetId([
-            'survey_id' => $surveyId,
-            'year'      => Carbon::now(),
-        ]);
-
-        $this->createSurveyConditions($userId, $surveyInstanceId, $surveyId, $status);
-
-        return DB::table('survey_instances')->where('id', '=', $surveyInstanceId)->first();
-    }
 }
