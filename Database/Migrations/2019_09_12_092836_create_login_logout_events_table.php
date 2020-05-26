@@ -30,7 +30,7 @@ class CreateLoginLogoutEventsTable extends Migration
                 $table->dateTime('login_time')->nullable();
                 $table->dateTime('logout_time')->nullable();
                 $table->integer('duration_in_sec')->unsigned();
-                $table->string('ip_address');
+                $table->string('ip_address')->nullable();
                 $table->boolean('was_edited')->default(false);
                 $table->timestamps();
             });

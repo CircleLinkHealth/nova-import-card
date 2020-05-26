@@ -5,8 +5,6 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 class CreateSelfEnrollmentStatuses extends Migration
 {
@@ -26,14 +24,7 @@ class CreateSelfEnrollmentStatuses extends Migration
      */
     public function up()
     {
-        Schema::create('self_enrollment_statuses', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('enrollee_id');
-            $table->unsignedInteger('enrollee_user_id')->nullable();
-            $table->unsignedInteger('enrollee_patient_info')->nullable();
-            $table->string('awv_survey_status')->nullable();
-            $table->boolean('logged_in')->default(false);
-            $table->timestamps();
-        });
+        // got rid of this table
+        // leaving migration so rollback does not break
     }
 }
