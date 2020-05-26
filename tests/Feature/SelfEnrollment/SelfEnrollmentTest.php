@@ -198,6 +198,20 @@ class SelfEnrollmentTest extends TestCase
         self::assertTrue(Helpers::awvUserSurveyQuery($patient, $surveyInstance)->exists());
     }
 
+    public function test_patient_has_logged_in()
+    {
+        $enrollee = $this->createEnrollees(1);
+
+        Queue::fake();
+        Auth::loginUsingId($enrollee->user_id);
+
+        Queue::assertPushed(LogSuccessfulLoginToDB::class, function (LogSuccessfulLoginToDB $job) use ($enrollee) {
+            $job->handle();
+
+            return LoginLogout::whereUserId($enrollee->user_id)->exists();
+        });
+    }
+
     public function test_patient_has_requested_info()
     {
         $enrollee = $this->createEnrollees(1);
@@ -268,19 +282,6 @@ class SelfEnrollmentTest extends TestCase
             $this->assertTrue($result = in_array($job->patient->id, $remindersUserIds), $job->patient->id.' was not founf in .'.implode(',', $remindersUserIds));
 
             return $result;
-        });
-    }
-    
-    public function test_patient_has_logged_in()
-    {
-        $enrollee = $this->createEnrollees(1);
-        
-        Queue::fake();
-        Auth::loginUsingId($enrollee->user_id);
-        
-        Queue::assertPushed(LogSuccessfulLoginToDB::class, function (LogSuccessfulLoginToDB $job) use ($enrollee) {
-            $job->handle();
-            return LoginLogout::whereUserId($enrollee->user_id)->exists();
         });
     }
 
