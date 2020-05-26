@@ -2841,22 +2841,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $query->ofType(['care-center', 'care-center-external']);
     }
-    
-    /**
-     * Scope for Enrollable Users we need to send a reminder Self Enrollment Notification to.
-     *
-     *
-     * @param $query
-     * @param Carbon|null $dateInviteSent
-     * @return mixed
-     */
-    public function scopeHaveEnrollableInvitationDontHaveReminder($query, Carbon $dateInviteSent = null)
-    {
-        return $query->hasSelfEnrollmentInvite(is_null($dateInviteSent) ? now()->subDays(2) : $dateInviteSent)
-            ->whereHas('patientInfo', function ($patient) {
-                $patient->where('ccm_status', Patient::UNREACHABLE);
-            })->hasSelfEnrollmentInviteReminder(false);
-    }
 
     /**
      * Scope a query to include users NOT of a given type (Role).
@@ -2933,6 +2917,21 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 ->where('data->is_reminder', true)
                 ->selfEnrollmentInvites();
         });
+    }
+
+    /**
+     * Scope for Enrollable Users we need to send a reminder Self Enrollment Notification to.
+     *
+     *
+     * @param $query
+     * @return mixed
+     */
+    public function scopeHaveEnrollableInvitationDontHaveReminder($query, Carbon $dateInviteSent = null)
+    {
+        return $query->hasSelfEnrollmentInvite(is_null($dateInviteSent) ? now()->subDays(2) : $dateInviteSent)
+            ->whereHas('patientInfo', function ($patient) {
+                $patient->where('ccm_status', Patient::UNREACHABLE);
+            })->hasSelfEnrollmentInviteReminder(false);
     }
 
     /**
