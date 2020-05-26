@@ -4,9 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Jobs;
+namespace App\SelfEnrollment\Jobs;
 
-use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -24,7 +23,7 @@ use Illuminate\Support\Facades\Log;
 class EnrollableSurveyCompleted implements ShouldQueue
 {
     use Dispatchable;
-    use EnrollableManagement;
+
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
@@ -198,8 +197,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
                 return;
             }
-
-            $this->updateEnrolleeSurveyStatuses($enrollee->id, $user->id, self::SURVEY_COMPLETED);
 
             $enrollee->update([
                 'primary_phone'             => $preferredPhoneNumber,

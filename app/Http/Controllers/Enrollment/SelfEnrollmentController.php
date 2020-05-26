@@ -6,12 +6,11 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use App\Helpers\SelfEnrollmentHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EnrollmentLinkValidation;
 use App\Http\Requests\EnrollmentValidationRules;
+use App\SelfEnrollment\Helpers;
 use App\Services\Enrollment\EnrollmentInvitationService;
-use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;
@@ -27,7 +26,6 @@ use Illuminate\Support\Str;
 class SelfEnrollmentController extends Controller
 {
     use AuthenticatesUsers;
-    use EnrollableManagement;
 
     const DEFAULT_BUTTON_COLOR = '#4baf50';
 
@@ -94,9 +92,9 @@ class SelfEnrollmentController extends Controller
      *
      * @return mixed
      */
-    public function createEnrollStatusRequestsInfo($enrollable)
+    public function createEnrollenrollableInfoRequest($enrollable)
     {
-        return $enrollable->statusRequestsInfo()->create();
+        return $enrollable->enrollableInfoRequest()->create();
     }
 
     /**
@@ -106,7 +104,7 @@ class SelfEnrollmentController extends Controller
      */
     public function enrollableHasRequestedInfo($enrollable)
     {
-        return $enrollable ? $enrollable->statusRequestsInfo()->exists() : false;
+        return $enrollable ? $enrollable->enrollableInfoRequest()->exists() : false;
     }
 
     /**
@@ -124,18 +122,14 @@ class SelfEnrollmentController extends Controller
         /** @var Enrollee $enrollee */
         $enrollee = Enrollee::whereUserId($enrollableId)->has('user')->with('user')->firstOrFail();
 
-        if (SelfEnrollmentHelpers::hasCompletedSelfEnrollmentSurvey($enrollee->user)) {
+        if (Helpers::hasCompletedSelfEnrollmentSurvey($enrollee->user)) {
 //            Redirect to Survey Done Page (awv logout)
             return $this->createUrlAndRedirectToSurvey($enrollee->user);
         }
 
-        if ( ! $enrollee->statusRequestsInfo()->exists()) {
-            $this->createEnrollStatusRequestsInfo($enrollee);
+        if ( ! $enrollee->enrollableInfoRequest()->exists()) {
+            $this->createEnrollenrollableInfoRequest($enrollee);
             $this->enrollmentInvitationService->setEnrollmentCallOnDelivery($enrollee);
-            if ($isSurveyOnly) {
-                $userModelEnrollee = User::find($enrollableId);
-                $this->updateEnrolleeSurveyStatuses($enrollee->id, optional($userModelEnrollee)->id);
-            }
         }
 
         return $this->returnEnrolleeRequestedInfoMessage($enrollee);
@@ -156,9 +150,9 @@ class SelfEnrollmentController extends Controller
 
         $user = User::has('enrollee')->with('enrollee')->findOrFail($userId);
 
-        $enrollable = SelfEnrollmentHelpers::getEnrollableModel($user);
+        $enrollable = Helpers::getEnrollableModel($user);
 
-        if ($enrollable->statusRequestsInfo()->exists()) {
+        if ($enrollable->enrollableInfoRequest()->exists()) {
             return $this->returnEnrolleeRequestedInfoMessage($user->enrollee);
         }
 
@@ -177,26 +171,22 @@ class SelfEnrollmentController extends Controller
             ->first();
     }
 
-    public function handleUnreachablePatientInvitation($patientUserId)
+    public function handleUnreachablePatientInvitation(User $patient)
     {
-        /** @var User $userModelEnrollee */
-//        Note: this can be either Unreachable patient Or User created from enrollee
-        $unrechablePatient = User::findOrFail($patientUserId);
-
-        if ($this->hasSurveyInProgress($unrechablePatient)) {
-            return redirect($this->getAwvInvitationLinkForUser($unrechablePatient)->url);
+        if ($this->hasSurveyInProgress($patient)) {
+            return redirect($this->getAwvInvitationLinkForUser($patient)->url);
         }
 
-        if (SelfEnrollmentHelpers::hasCompletedSelfEnrollmentSurvey($unrechablePatient)) {
-            $practiceNumber = $unrechablePatient->primaryPractice->outgoing_phone_number;
-            $doctorName     = $unrechablePatient->getBillingProviderName();
+        if (Helpers::hasCompletedSelfEnrollmentSurvey($patient)) {
+            $practiceNumber = $patient->primaryPractice->outgoing_phone_number;
+            $doctorName     = $patient->getBillingProviderName();
 
             return view('enrollment-consent.enrolledMessagePage', compact('practiceNumber', 'doctorName'));
         }
 
-        $this->expirePastInvitationLink($unrechablePatient);
+        $this->expirePastInvitationLink($patient);
 
-        return $this->generateUrlAndRedirectToSurvey($unrechablePatient->id);
+        return $this->createUrlAndRedirectToSurvey($patient->id);
     }
 
     /**
@@ -210,7 +200,7 @@ class SelfEnrollmentController extends Controller
 //        if (Enrollee::class === get_class($notifiable)) {
 //            return false;
 //        }
-        $surveyLink = SelfEnrollmentHelpers::getSurveyInvitationLink($notifiable->patientInfo);
+        $surveyLink = Helpers::getSurveyInvitationLink($notifiable->patientInfo);
         if ( ! empty($surveyLink)) {
             $surveyInstance = DB::table('survey_instances')
                 ->where('survey_id', '=', $surveyLink->survey_id)
@@ -264,17 +254,8 @@ class SelfEnrollmentController extends Controller
 
     protected function authenticate(EnrollmentValidationRules $request)
     {
-        $userId = (int) $request->input('user_id');
-        $user   = Auth::loginUsingId($userId, true);
-
-        if ($user->isSurveyOnly()) {
-            Enrollee::whereUserId($userId)->firstOrFail()->selfEnrollmentStatus()->update([
-                'logged_in' => true,
-            ]);
-        }
-
         return $this->enrollableInvitationManager(
-            $user
+            Auth::loginUsingId((int) $request->input('user_id'), true)
         );
     }
 
@@ -337,12 +318,12 @@ class SelfEnrollmentController extends Controller
      */
     private function createUrlAndRedirectToSurvey($enrollableId)
     {
-        $enrolleesSurvey = SelfEnrollmentHelpers::getEnrolleeSurvey();
+        $enrolleesSurvey = Helpers::getEnrolleeSurvey();
 
         DB::table('users_surveys')->updateOrInsert(
             [
                 'user_id'            => $enrollableId,
-                'survey_instance_id' => SelfEnrollmentHelpers::getCurrentYearEnrolleeSurveyInstance()->id,
+                'survey_instance_id' => Helpers::getCurrentYearEnrolleeSurveyInstance()->id,
                 'survey_id'          => $enrolleesSurvey->id,
             ],
             [
@@ -359,10 +340,10 @@ class SelfEnrollmentController extends Controller
     private function enrollableInvitationManager(User $user)
     {
         if ($user->isSurveyOnly()) {
-            return $this->handleEnrolleeInvitation($enrollableId);
+            return $this->handleEnrolleeInvitation($user);
         }
 
-        return $this->handleUnreachablePatientInvitation($enrollableId);
+        return $this->handleUnreachablePatientInvitation($user);
     }
 
     /**
@@ -470,9 +451,9 @@ class SelfEnrollmentController extends Controller
      */
     private function handleEnrolleeInvitation(User $user)
     {
-        $user->loadMissing(['enrollee.statusRequestsInfo', 'enrollee.practice', 'enrollee.provider']);
+        $user->loadMissing(['enrollee.enrollableInfoRequest', 'enrollee.practice', 'enrollee.provider']);
 
-        if ( ! is_null($user->enrollee->statusRequestsInfo)) {
+        if ( ! is_null($user->enrollee->enrollableInfoRequest)) {
             return $this->returnEnrolleeRequestedInfoMessage($user->enrollee);
         }
 

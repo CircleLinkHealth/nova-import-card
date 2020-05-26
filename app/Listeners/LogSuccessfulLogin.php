@@ -7,16 +7,18 @@
 namespace App\Listeners;
 
 use App\Jobs\LogSuccessfulLoginToDB;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Auth\Events\Login;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class LogSuccessfulLogin implements ShouldQueue
+class LogSuccessfulLogin
 {
     use InteractsWithQueue;
 
     public function handle(Login $event)
     {
-        LogSuccessfulLoginToDB::dispatch($event)->onQueue('low');
+        if ($event->user instanceof User) {
+            LogSuccessfulLoginToDB::dispatch($event->user)->onQueue('low');
+        }
     }
 }

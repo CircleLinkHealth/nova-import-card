@@ -6,7 +6,7 @@
 
 namespace App\Observers;
 
-use App\Jobs\CreateUsersFromEnrollees;
+use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
 class EnrolleeObserver
@@ -50,7 +50,7 @@ class EnrolleeObserver
     public function saved(Enrollee $enrollee)
     {
         if ($this->shouldCreateSurveyOnlyUser($enrollee)) {
-            CreateUsersFromEnrollees::dispatch([$enrollee->id]);
+            CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee);
         }
     }
 

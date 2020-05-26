@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\CreateUsersFromEnrollees;
+use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;
 
@@ -49,7 +49,7 @@ class MakeSurveyOnlyUsersForAllExistingEnrollees extends Command
             ->chunk(100, function ($enrollees) {
                 $enrollees->each(function ($e) {
                     $this->warn("Create user from enrollee {$e->id}");
-                    CreateUsersFromEnrollees::dispatch([$e->id]);
+                    CreateSurveyOnlyUserFromEnrollee::dispatch($e);
                 });
             });
     }

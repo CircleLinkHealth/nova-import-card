@@ -4,39 +4,54 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Jobs;
+namespace App\SelfEnrollment\Jobs;
 
-use App\Helpers\SelfEnrollmentHelpers;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
-use App\Notifications\SendEnrollementSms as Sms;
-use App\Notifications\SendEnrollmentEmail as Email;
+use App\Notifications\Channels\CustomTwilioChannel;
+use App\SelfEnrollment\Helpers;
+use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
 
-class SendSelfEnrollmentInvitation implements ShouldQueue
+class SendInvitation implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
     /**
+     * @var array|string[]
+     */
+    private $channels;
+    /**
      * @var string
      */
     private $color;
     /**
-     * @var bool
+     * @var int
      */
-    private $isReminder;
+    private $invitationsBatchId;
     /**
      * @var bool
      */
-    private $isSurveyOnlyUser;
+    private $isReminder;
+
+    /**
+     * A signed URL for enrollables to login to take self enrollment survey.
+     *
+     * @var string|null
+     */
+    private $link;
+
+    /**
+     * @var string
+     */
+    private $shortUrl;
 
     /**
      * @var User
@@ -46,11 +61,23 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(User $user, ?string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR, bool $isReminder = false)
+    public function __construct(
+        User $user,
+        int $invitationsBatchId,
+        ?string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
+        bool $isReminder = false,
+        array $channels = ['mail', CustomTwilioChannel::class]
+    ) {
+        $this->user               = $user;
+        $this->invitationsBatchId = $invitationsBatchId;
+        $this->isReminder         = $isReminder;
+        $this->color              = $color;
+        $this->channels           = $channels;
+    }
+
+    public function getLink(): ?string
     {
-        $this->user       = $user;
-        $this->isReminder = $isReminder;
-        $this->color      = $color;
+        return $this->link;
     }
 
     /**
@@ -69,9 +96,13 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
 
     private function createLink(): string
     {
+        if ( ! is_null($this->shortUrl)) {
+            return $this->shortUrl;
+        }
+
         $url = URL::temporarySignedRoute('invitation.enrollment.loginForm', now()->addHours(48), $this->getSignedRouteParams());
 
-        if (empty($urlToken = SelfEnrollmentHelpers::getTokenFromUrl($url))) {
+        if (empty($urlToken = Helpers::getTokenFromUrl($url))) {
             throw new \Exception("`urlToken` cannot be empty. User ID {$this->user->id}");
         }
 
@@ -84,12 +115,16 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
 
         $notifiable->enrollmentInvitationLinks()->create([
             'link_token'       => $urlToken,
+            'batch_id'         => $this->invitationsBatchId,
             'url'              => $url,
             'manually_expired' => false,
             'button_color'     => $this->color,
         ]);
 
-        return shortenUrl(url($url));
+        $this->link     = $url;
+        $this->shortUrl = shortenUrl(url($url));
+
+        return $this->shortUrl;
     }
 
     private function getSignedRouteParams(): array
@@ -102,16 +137,11 @@ class SendSelfEnrollmentInvitation implements ShouldQueue
 
     private function sendInvite(string $link)
     {
-        $this->user->notify(new Email($link, $this->isReminder));
-        $this->user->notify(new Sms($link, $this->isReminder));
+        $this->user->notify(new SelfEnrollmentInviteNotification($link, $this->isReminder, $this->channels));
     }
 
     private function shouldRun(): bool
     {
-        if (App::environment(['testing'])) {
-            return false;
-        }
-
         //If an invitation exists already, it means the patient has already been invided and we do not want to invite them again
         if ($this->user->enrollmentInvitationLinks()->exists()) {
             return false;

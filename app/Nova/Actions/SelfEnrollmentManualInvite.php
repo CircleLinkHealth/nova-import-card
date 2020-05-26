@@ -6,7 +6,8 @@
 
 namespace App\Nova\Actions;
 
-use App\Jobs\SendSelfEnrollmentInvitation;
+use App\EnrollmentInvitationsBatch;
+use App\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -57,7 +58,7 @@ class SelfEnrollmentManualInvite extends Action
                 return;
             }
 
-            SendSelfEnrollmentInvitation::dispatch($enrollee->user);
+            SendInvitation::dispatch($enrollee->user, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
         });
 
         Action::message('Invites should have been sent. Please check invitation panel.');

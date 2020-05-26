@@ -6,12 +6,12 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use App\Helpers\SelfEnrollmentHelpers;
 use App\Http\Controllers\Controller;
-use App\Jobs\SendSelfEnrollmentInvitationToPracticeEnrollees;
-use App\Jobs\SendSelfEnrollmentInvitationToUnreachablePatients;
-use App\Jobs\SendSelfEnrollmentReminders;
-use App\Traits\EnrollableManagement;
+use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
+use App\SelfEnrollment\Domain\InviteUnreachablePatients;
+use App\SelfEnrollment\Domain\RemindEnrollees;
+use App\SelfEnrollment\Domain\UnreachablesFinalAction;
+use App\SelfEnrollment\Helpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;
@@ -22,14 +22,12 @@ use Illuminate\Support\Facades\DB;
 
 class AutoEnrollmentTestDashboard extends Controller
 {
-    use EnrollableManagement;
-
     /**
      * @return string
      */
     public function finalActionTest()
     {
-        SendSelfEnrollmentReminders::dispatch(SendSelfEnrollmentReminders::TAKE_FINAL_ACTION_ON_UNRESPONSIVE_PATIENTS);
+        UnreachablesFinalAction::createForInvitesSentTwoDaysAgo()->dispatchToQueue();
 
         return redirect(route('ca-director.index'))->with('message', 'Reminders Sent Successfully');
     }
@@ -39,7 +37,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function inviteEnrolleesToEnrollTest(Request $request)
     {
-        SendSelfEnrollmentInvitationToPracticeEnrollees::dispatchNow(
+        InvitePracticeEnrollees::dispatch(
             $request->input('amount'),
             $request->input('practice_id'),
             $request->input('color')
@@ -53,9 +51,9 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function inviteUnreachablesToEnrollTest(Request $request)
     {
-        SendSelfEnrollmentInvitationToUnreachablePatients::dispatchNow(
-            $request->input('amount'),
-            $request->input('practice_id')
+        InviteUnreachablePatients::dispatch(
+            $request->input('practice_id'),
+            $request->input('amount')
         );
 
         return redirect()->back()->with('message', 'Invited Successfully');
@@ -66,17 +64,17 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function resetEnrollmentTest()
     {
-        $practice = SelfEnrollmentHelpers::getDemoPractice();
+        $practice = Helpers::getDemoPractice();
         // TEST ONLY
         $users = User::withTrashed()
             ->with('notifications', 'patientInfo', 'enrollee')
             ->where('program_id', '=', $practice->id)
-            ->wasSentSelfEnrollmentInvite()
+            ->hasSelfEnrollmentInvite()
             ->where('created_at', '>', Carbon::parse(now())->startOfMonth())
             ->whereHas('patientInfo')
             ->get();
 
-        $survey = SelfEnrollmentHelpers::getEnrolleeSurvey();
+        $survey = Helpers::getEnrolleeSurvey();
 
         foreach ($users as $user) {
             $surveyInstance = DB::table('survey_instances')
@@ -87,7 +85,7 @@ class AutoEnrollmentTestDashboard extends Controller
                 $this->deleteTestAwvUser($user, $surveyInstance);
                 $user->notifications()->delete();
                 $user->enrollee->enrollmentInvitationLinks()->delete();
-                $user->enrollee->statusRequestsInfo()->delete();
+                $user->enrollee->enrollableInfoRequest()->delete();
 
                 DB::table('invitation_links')
                     ->where('patient_info_id', $user->patientInfo()->withTrashed()->first()->id)
@@ -101,7 +99,7 @@ class AutoEnrollmentTestDashboard extends Controller
                 $this->deleteTestAwvUser($user, $surveyInstance);
                 $user->notifications()->delete();
                 $user->enrollmentInvitationLinks()->delete();
-                $user->statusRequestsInfo()->delete();
+                $user->enrollableInfoRequest()->delete();
                 $user->patientInfo()->update(
                     [
                         'ccm_status' => \CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE,
@@ -130,7 +128,7 @@ class AutoEnrollmentTestDashboard extends Controller
     public function sendEnrolleesReminderTestMethod()
     {
         try {
-            SendSelfEnrollmentReminders::dispatch(SendSelfEnrollmentReminders::REMIND_ENROLLEES);
+            RemindEnrollees::createForInvitesSentTwoDaysAgo()->dispatchToQueue();
         } catch (\Exception $e) {
             return 'Something went wrong';
         }
@@ -206,10 +204,10 @@ class AutoEnrollmentTestDashboard extends Controller
 
     private function deleteTestAwvUser(User $user, $surveyInstance)
     {
-        if ( ! SelfEnrollmentHelpers::awvUserSurveyQuery($user, $surveyInstance)->exists()) {
+        if ( ! Helpers::awvUserSurveyQuery($user, $surveyInstance)->exists()) {
             return;
         }
 
-        SelfEnrollmentHelpers::awvUserSurveyQuery($user, $surveyInstance)->delete();
+        Helpers::awvUserSurveyQuery($user, $surveyInstance)->delete();
     }
 }

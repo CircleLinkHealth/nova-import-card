@@ -6,14 +6,12 @@
 
 namespace App\Console\Commands;
 
-use App\Helpers\SelfEnrollmentHelpers;
-use App\Jobs\EnrollableSurveyCompleted;
-use App\Traits\EnrollableManagement;
+use App\SelfEnrollment\Helpers;
+use App\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
 use Illuminate\Console\Command;
 
 class ManuallyImportSurveyDonePatientsCommand extends Command
 {
-    use EnrollableManagement;
     /**
      * The console command description.
      *
@@ -49,7 +47,7 @@ class ManuallyImportSurveyDonePatientsCommand extends Command
             return info('User id of survey done user is required');
         }
 
-        $surveyInstance = SelfEnrollmentHelpers::getEnrolleeSurvey()->id;
+        $surveyInstance = Helpers::getEnrolleeSurvey()->id;
 
         if (empty($surveyInstance)) {
             return info('Could not find survey instance for enrollees survey');

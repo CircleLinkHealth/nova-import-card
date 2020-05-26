@@ -72,6 +72,7 @@ class PatientObserver
                 ]
             )) {
                 Artisan::queue(
+//                    Do we want to run this if survey-only? I dont see any reason
                     RemoveScheduledCallsForWithdrawnAndPausedPatients::class,
                     ['patientUserIds' => [$patient->user_id]]
                 );
