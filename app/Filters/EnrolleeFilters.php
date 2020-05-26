@@ -85,11 +85,18 @@ class EnrolleeFilters extends QueryFilters
         $query = $this->request->get('query');
 
         $decoded = json_decode($query, true);
-        //Default filtering will only be added here
-        $decoded['hideStatus'] = [
+
+        $hideStatus = [
             Enrollee::ENROLLED,
             Enrollee::LEGACY,
         ];
+
+        if (array_key_exists('hideStatus', $decoded) && is_array($decoded['hideStatus'])) {
+            $hideStatus = array_merge($decoded['hideStatus'], $hideStatus);
+        }
+
+        //Default filtering will only be added here
+        $decoded['hideStatus']    = $hideStatus;
         $decoded['attempt_count'] = '';
 
         return $decoded;
