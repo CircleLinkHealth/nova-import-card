@@ -2896,9 +2896,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                    ->exists();
     }*/
 
-    public function scopeHasSelfEnrollmentInvite($query, Carbon $date = null)
+    public function scopeHasSelfEnrollmentInvite($query, Carbon $date = null, $has = true)
     {
-        return $query->whereHas('notifications', function ($q) use ($date) {
+        $verb = $has ? 'has' : 'DoesntHave';
+        
+        return $query->{"where$verb"}('notifications', function ($q) use ($date) {
             $q->selfEnrollmentInvites()->where('data->is_reminder', false)->when( ! is_null($date), function ($q) use ($date) {
                 $q->where([
                     ['created_at', '>=', $date->copy()->startOfDay()],
@@ -2908,14 +2910,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         });
     }
 
-    public function scopeHasSelfEnrollmentInviteReminder($query, $has = true)
+    public function scopeHasSelfEnrollmentInviteReminder($query, Carbon $date = null, $has = true)
     {
         $verb = $has ? 'has' : 'DoesntHave';
-
-        return $query->{"where$verb"}('notifications', function ($notification) {
-            $notification
-                ->where('data->is_reminder', true)
-                ->selfEnrollmentInvites();
+    
+        return $query->{"where$verb"}('notifications', function ($q) use ($date) {
+            $q->selfEnrollmentInvites()->where('data->is_reminder', true)->when( ! is_null($date), function ($q) use ($date) {
+                $q->where([
+                    ['created_at', '>=', $date->copy()->startOfDay()],
+                    ['created_at', '<=', $date->copy()->endOfDay()],
+                ]);
+            });
         });
     }
 
