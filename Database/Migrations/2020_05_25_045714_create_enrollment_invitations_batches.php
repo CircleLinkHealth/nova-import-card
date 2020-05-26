@@ -29,7 +29,11 @@ class CreateEnrollmentInvitationsBatches extends Migration
     {
         Schema::create('enrollment_invitations_batches', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('practice_id')->unsigned()->nullable()->index('eligibility_batches_practice_id_foreign');
+            $table->string('type');
             $table->timestamps();
+            
+            $table->foreign('practice_id')->references('id')->on('practices')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 }
