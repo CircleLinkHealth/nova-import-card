@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Core\Entities;
 
 use App\Notifications\SendEnrollementSms;
 use App\Notifications\SendEnrollmentEmail;
+use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 
 /**
  * CircleLinkHealth\Core\Entities\DatabaseNotification.
@@ -98,8 +99,8 @@ class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotificatio
     public function scopeSelfEnrollmentInvites($builder)
     {
         return $builder->where(function ($q) {
-            return $q->where('type', SendEnrollmentEmail::class)
-                ->orWhere('type', SendEnrollementSms::class);
+            //legacy and new classes
+            return $q->whereIn('type', ['App\Notifications\SendEnrollementSms', 'App\Notifications\SendEnrollmentEmail', SelfEnrollmentInviteNotification::class]);
         });
     }
 }
