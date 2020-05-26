@@ -11,12 +11,12 @@ use Illuminate\Auth\Events\Login;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class LogSuccessfulLogin implements ShouldQueue
+class LogSuccessfulLogin
 {
     use InteractsWithQueue;
 
     public function handle(Login $event)
     {
-        LogSuccessfulLoginToDB::dispatch($event)->onQueue('low');
+        LogSuccessfulLoginToDB::dispatch($event->user)->onQueue('low');
     }
 }

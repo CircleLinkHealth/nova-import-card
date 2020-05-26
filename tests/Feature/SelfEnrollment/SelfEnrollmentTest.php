@@ -8,6 +8,8 @@ namespace Tests\Feature\SelfEnrollment;
 
 use App\EnrollmentInvitationsBatch;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use App\Jobs\LogSuccessfulLoginToDB;
+use App\LoginLogout;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use App\SelfEnrollment\Domain\RemindEnrollees;
@@ -19,6 +21,7 @@ use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Notification;
@@ -265,6 +268,19 @@ class SelfEnrollmentTest extends TestCase
             $this->assertTrue($result = in_array($job->patient->id, $remindersUserIds), $job->patient->id.' was not founf in .'.implode(',', $remindersUserIds));
 
             return $result;
+        });
+    }
+    
+    public function test_patient_has_logged_in()
+    {
+        $enrollee = $this->createEnrollees(1);
+        
+        Queue::fake();
+        Auth::loginUsingId($enrollee->user_id);
+        
+        Queue::assertPushed(LogSuccessfulLoginToDB::class, function (LogSuccessfulLoginToDB $job) use ($enrollee) {
+            $job->handle();
+            return LoginLogout::whereUserId($enrollee->user_id)->exists();
         });
     }
 
