@@ -65,6 +65,7 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
     public function query(): Builder
     {
         return User::ofPractice($this->practiceId)
+            ->ofType('survey-only')
             ->whereHas('enrollee', function ($q) {
                 $q->whereNull('source')
                 // If an enrollmentInvitationLinks exists, it means we have already invited the patient,

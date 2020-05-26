@@ -9,6 +9,7 @@ namespace App\SelfEnrollment\Domain;
 use App\EnrollmentInvitationsBatch;
 use App\SelfEnrollment\AbstractSelfEnrollableUserIterator;
 use App\SelfEnrollment\Jobs\SendInvitation;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Builder;
@@ -35,17 +36,19 @@ class InviteUnreachablePatients extends AbstractSelfEnrollableUserIterator
 
     public function query(): Builder
     {
-        return Enrollee::whereNotNull('user_id')
-            ->has('user')
-            ->with('user')
-            ->where('source', '=', Enrollee::UNREACHABLE_PATIENT)
-            ->where('practice_id', $this->practiceId)
-            // NOTE: "whereDoesntHave" makes sure we dont invite Unreachable/Non responded - Users (Patients) second time
-            ->whereDoesntHave('enrollmentInvitationLinks')
-            ->whereIn('status', [
-                Enrollee::QUEUE_AUTO_ENROLLMENT,
-            ])
-            ->orderBy('id', 'asc');
+        return User::ofPractice($this->practiceId)
+            ->ofType('participant')
+            ->whereHas('patientInfo', function ($q) {
+                $q->where('ccm_status', Patient::UNREACHABLE);
+            })
+            ->whereHas('enrollee', function ($q) {
+                $q->where('source', '=', Enrollee::UNREACHABLE_PATIENT)
+                    // NOTE: "whereDoesntHave" makes sure we dont invite Unreachable/Non responded - Users (Patients) second time
+                    ->whereDoesntHave('enrollmentInvitationLinks')
+                    ->whereIn('status', [
+                        Enrollee::QUEUE_AUTO_ENROLLMENT,
+                    ]);
+            });
     }
 
     protected function limit(): ?int
