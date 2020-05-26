@@ -29,6 +29,7 @@
             position: absolute !important;
         }
     </style>
+    @include('cpm-module-raygun::partials.real-user-monitoring')
 </head>
 <body>
 @stack('prescripts')
@@ -98,6 +99,7 @@
 
 @yield('content')
 
+@include('partials.sentry-js')
 </body>
 
 </html>

@@ -8,6 +8,21 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\OutgoingSms.
+ *
+ * @property int                             $id
+ * @property int                             $sender_user_id
+ * @property string                          $receiver_phone_number
+ * @property string                          $message
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\OutgoingSms newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\OutgoingSms newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\OutgoingSms query()
+ * @mixin \Eloquent
+ */
 class OutgoingSms extends Model
 {
     protected $fillable = [
