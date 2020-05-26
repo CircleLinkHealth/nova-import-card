@@ -101,7 +101,7 @@ class EnrolleeFilters extends QueryFilters
             return $this->builder->where('care_ambassador_name', '=', null);
         }
 
-        return $this->builder->where('care_ambassador_name', '!=', null);
+        return $this->builder;
     }
 
     public function hideStatus($statuses)

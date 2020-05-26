@@ -6,17 +6,18 @@
                     <notifications ref="notificationsComponent" name="ca-panel"></notifications>
                 </div>
             </div>
-            <div class="col-sm-12 text-left">
-                <button class="btn btn-primary btn-s"
-                        @click="addCustomFilter">Add Custom Filter
-                </button>
-            </div>
+<!--            Not actually being used - leaving here in case anyone needs something similar-->
+<!--            <div class="col-sm-12 text-left">-->
+<!--                <button class="btn btn-primary btn-s"-->
+<!--                        @click="addCustomFilter">Add Custom Filter-->
+<!--                </button>-->
+<!--            </div>-->
         </div>
         <div class="row">
             <div class="row">
             </div>
             <div class="col-sm-12 text-left" style="margin-bottom: 10px; margin-top: 20px">
-                <button class="btn btn-info btn-s" v-bind:class="{'btn-selected': !this.hideAssigned}"
+                <button class="btn btn-info btn-s" v-bind:class="{'btn-selected': this.hideAssigned}"
                         @click="showAssigned">{{this.showAssignedLabel}}
                 </button>
             </div>
@@ -131,7 +132,7 @@
                 ],
                 loading: false,
                 selectedEnrolleeIds: [],
-                hideAssigned: true,
+                hideAssigned: false,
                 isolateUploadedViaCsv: false,
                 columns: ['select', 'edit', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'source', 'enrollment_non_responsive', 'auto_enrollment_triggered', 'practice_name', 'provider_name', 'requested_callback', 'total_time_spent', 'attempt_count', 'last_attempt_at',
                     'last_call_outcome', 'last_call_outcome_reason', 'address', 'address_2', 'city', 'state', 'zip', 'primary_phone', 'home_phone', 'cell_phone', 'other_phone', 'dob', 'preferred_days', 'preferred_window',
@@ -194,7 +195,7 @@
                 return this.selectedEnrolleeIds.length !== 0;
             },
             showAssignedLabel() {
-                return this.hideAssigned ? 'Show Assigned Patients Only' : 'Show Unassigned Patients'
+                return this.hideAssigned ? 'Show All Patients' : 'Show Unassigned Patients Only';
             },
             showIsolatedViaCsvLabel() {
                 return this.isolateUploadedViaCsv ? 'Show Patients from All Sources' : 'Isolate Patients Uploaded via CSV';
