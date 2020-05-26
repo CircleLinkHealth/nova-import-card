@@ -2928,10 +2928,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function scopeHaveEnrollableInvitationDontHaveReminder($query, Carbon $dateInviteSent = null)
     {
-        return $query->hasSelfEnrollmentInvite(is_null($dateInviteSent) ? now()->subDays(2) : $dateInviteSent)
+        $dateInviteSent = is_null($dateInviteSent) ? now()->subDays(2) : $dateInviteSent;
+        return $query->hasSelfEnrollmentInvite($dateInviteSent)
             ->whereHas('patientInfo', function ($patient) {
                 $patient->where('ccm_status', Patient::UNREACHABLE);
-            })->hasSelfEnrollmentInviteReminder(false);
+            })->whereDoesntHave('notifications', function ($notification) use ($dateInviteSent) {
+                $notification
+                    ->where('data->is_reminder', true)
+                    ->selfEnrollmentInvites()
+                    ->where('created_at', '>=', $dateInviteSent->copy()->startOfDay());
+            });
     }
 
     /**
