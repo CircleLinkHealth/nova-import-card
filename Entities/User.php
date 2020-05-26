@@ -2850,7 +2850,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      * @param Carbon|null $dateInviteSent
      * @return mixed
      */
-    public function scopeEnrollableUsersToRemind($query, Carbon $dateInviteSent = null)
+    public function scopeHaveEnrollableInvitationDontHaveReminder($query, Carbon $dateInviteSent = null)
     {
         return $query->hasSelfEnrollmentInvite(is_null($dateInviteSent) ? now()->subDays(2) : $dateInviteSent)
             ->whereHas('patientInfo', function ($patient) {
