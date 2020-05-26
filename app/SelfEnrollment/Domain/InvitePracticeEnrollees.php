@@ -40,7 +40,8 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
      * @var int|mixed
      */
     private $practiceId;
-
+    private $batch;
+    
     /**
      * InvitePracticeEnrollees constructor.
      */
@@ -58,8 +59,7 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
 
     public function action(User $user): void
     {
-        $invitationsBatch = EnrollmentInvitationsBatch::create();
-        SendInvitation::dispatch($user, $invitationsBatch->id, $this->color, false, $this->channels);
+        SendInvitation::dispatch($user, $this->getBatch()->id, $this->color, false, $this->channels);
     }
 
     public function query(): Builder
@@ -68,9 +68,11 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
             ->ofType('survey-only')
             ->whereHas('enrollee', function ($q) {
                 $q->whereNull('source')
-                // If an enrollmentInvitationLinks exists, it means we have already invited the patient,
+                // If an enrollmentInvitationLink generated in the last 5 months exists, it means we have already invited the patient,
                 // and we do not want to send them another invitation.
-                    ->whereDoesntHave('enrollmentInvitationLinks')
+                    ->whereDoesntHave('enrollmentInvitationLinks', function ($q) {
+                        $q->where('created_at', '>', now()->subMonths(5));
+                    })
                     ->whereIn('status', [
                         Enrollee::QUEUE_AUTO_ENROLLMENT,
                     ]);
@@ -80,5 +82,14 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
     protected function limit(): ?int
     {
         return $this->amount;
+    }
+
+    private function getBatch()
+    {
+        if (is_null($this->batch)) {
+            $this->batch = EnrollmentInvitationsBatch::firstOrCreateAndRemember($this->practiceId, now()->format('m/d/Y h T').':'.$this->color);
+        }
+
+        return $this->batch;
     }
 }
