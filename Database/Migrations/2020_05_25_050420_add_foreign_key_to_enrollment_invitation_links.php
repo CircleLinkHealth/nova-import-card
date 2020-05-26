@@ -32,7 +32,7 @@ class AddForeignKeyToEnrollmentInvitationLinks extends Migration
      */
     public function up()
     {
-        CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink::whereNull('batch_id')->chunk(100, function ($links) {
+        CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink::whereNull('batch_id')->orWhere('batch_id', '<', 1)->chunk(100, function ($links) {
             foreach ($links as $link) {
                 if (User::class === $link->enrollable_type) {
                     $practiceId = User::find($link->invitationable_id)->program_id;
