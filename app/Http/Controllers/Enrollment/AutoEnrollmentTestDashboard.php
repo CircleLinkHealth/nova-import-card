@@ -69,7 +69,7 @@ class AutoEnrollmentTestDashboard extends Controller
         $users = User::withTrashed()
             ->with('notifications', 'patientInfo', 'enrollee')
             ->where('program_id', '=', $practice->id)
-            ->wasSentSelfEnrollmentInvite()
+            ->hasSelfEnrollmentInvite()
             ->where('created_at', '>', Carbon::parse(now())->startOfMonth())
             ->whereHas('patientInfo')
             ->get();

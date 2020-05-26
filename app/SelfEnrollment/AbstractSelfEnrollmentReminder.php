@@ -25,7 +25,7 @@ abstract class AbstractSelfEnrollmentReminder extends AbstractSelfEnrollableUser
      */
     protected $start;
 
-    public function __construct(Carbon $endDate, Carbon $startDate, ?int $practiceId = null)
+    private function __construct(Carbon $endDate, Carbon $startDate, ?int $practiceId = null)
     {
         $this->end        = $endDate;
         $this->start      = $startDate;

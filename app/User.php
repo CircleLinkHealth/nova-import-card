@@ -218,7 +218,7 @@ namespace App;
  * @property int|null                                                                          $login_events_count
  * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null                              $enrollee
  * @property int|null                                                                          $enrollment_invitation_links_count
- * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User wasSentSelfEnrollmentInvite()
+ * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInvite()
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {

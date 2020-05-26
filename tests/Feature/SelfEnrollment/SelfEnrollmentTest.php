@@ -138,11 +138,15 @@ class SelfEnrollmentTest extends TestCase
         Mail::fake();
 
         SendInvitation::dispatchNow($patient);
-        self::assertTrue(User::wasSentSelfEnrollmentInvite()->where('id', $patient->id)->exists());
-        self::assertTrue(User::enrollableUsersToRemind(now(), now()->subDays(2))->where('id', $patient->id)->exists());
+        self::assertTrue(User::hasSelfEnrollmentInvite()->where('id', $patient->id)->exists());
+        //It should not show up on the list on the "needs reminder" list of patients we invited yesterday
+        self::assertFalse(User::enrollableUsersToRemind(now()->subDay())->where('id', $patient->id)->exists());
 
+        //It should show up on the list on the "needs reminder" list of patients we invited today
+        self::assertTrue(User::enrollableUsersToRemind(now())->where('id', $patient->id)->exists());
         SendReminder::dispatchNow($patient);
-        self::assertFalse(User::enrollableUsersToRemind(now(), now()->subDays(2))->where('id', $patient->id)->exists());
+        //It should not show up because we just sent a reminder
+        self::assertFalse(User::enrollableUsersToRemind(now())->where('id', $patient->id)->exists());
 
         //SendReminder should not run if called again if a notification was sent
         self::assertFalse(with(new SendReminder($patient))->shouldRun());
