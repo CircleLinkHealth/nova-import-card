@@ -7,6 +7,7 @@
 namespace App\SelfEnrollment\Domain;
 
 use App\EnrollmentInvitationsBatch;
+use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\SelfEnrollment\AbstractSelfEnrollableUserIterator;
 use App\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class InviteUnreachablePatients extends AbstractSelfEnrollableUserIterator
 {
+    private $batch;
     /**
      * @var int
      */
@@ -30,8 +32,7 @@ class InviteUnreachablePatients extends AbstractSelfEnrollableUserIterator
 
     public function action(User $user): void
     {
-        $invitationsBatch = EnrollmentInvitationsBatch::create();
-        SendInvitation::dispatch($user, $invitationsBatch->id);
+        SendInvitation::dispatch($user, $this->getBatch()->id);
     }
 
     public function query(): Builder
@@ -54,5 +55,14 @@ class InviteUnreachablePatients extends AbstractSelfEnrollableUserIterator
     protected function limit(): ?int
     {
         return $this->count;
+    }
+
+    private function getBatch(): EnrollmentInvitationsBatch
+    {
+        if (is_null($this->batch)) {
+            $this->batch = EnrollmentInvitationsBatch::firstOrCreateAndRemember($this->practiceId, now()->format('m/d/Y h T').':'.SelfEnrollmentController::DEFAULT_BUTTON_COLOR);
+        }
+
+        return $this->batch;
     }
 }
