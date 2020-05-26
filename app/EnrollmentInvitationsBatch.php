@@ -27,6 +27,11 @@ class EnrollmentInvitationsBatch extends Model
 {
     const MANUAL_INVITES_BATCH_TYPE = 'one-off_invitations';
 
+    protected $fillable = [
+        'practice_id',
+        'type',
+    ];
+
     public function invitationLinks()
     {
         return $this->hasMany(EnrollableInvitationLink::class);
