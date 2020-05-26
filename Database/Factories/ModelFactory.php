@@ -176,8 +176,8 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factor
 
         if ( ! $practice) {
             $practice = factory(\CircleLinkHealth\Customer\Entities\Practice::class)->create([
-                'name' => 'demo',
-                'is_demo' => true
+                'name'    => 'demo',
+                'is_demo' => true,
             ]);
         }
 
