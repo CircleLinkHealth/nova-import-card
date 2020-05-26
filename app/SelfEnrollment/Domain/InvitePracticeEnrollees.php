@@ -21,6 +21,7 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
      * @var int
      */
     private $amount;
+    private $batch;
     /**
      * @var array|string[]
      */
@@ -40,8 +41,7 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
      * @var int|mixed
      */
     private $practiceId;
-    private $batch;
-    
+
     /**
      * InvitePracticeEnrollees constructor.
      */
