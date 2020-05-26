@@ -14,6 +14,14 @@ trait SelfEnrollableTrait
     /**
      * @return mixed
      */
+    public function enrollableInfoRequest()
+    {
+        return $this->morphOne(EnrollableRequestInfo::class, 'enrollable');
+    }
+
+    /**
+     * @return mixed
+     */
     public function enrollmentInvitationLinks()
     {
         return $this->morphMany(EnrollableInvitationLink::class, 'invitationable');
@@ -22,13 +30,5 @@ trait SelfEnrollableTrait
     public function getLastEnrollmentInvitationLink(): ?EnrollableInvitationLink
     {
         return $this->enrollmentInvitationLinks()->orderBy('created_at', 'desc')->first();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function enrollableInfoRequest()
-    {
-        return $this->morphOne(EnrollableRequestInfo::class, 'enrollable');
     }
 }
