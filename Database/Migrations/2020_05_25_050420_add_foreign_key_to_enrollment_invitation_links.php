@@ -32,7 +32,7 @@ class AddForeignKeyToEnrollmentInvitationLinks extends Migration
      */
     public function up()
     {
-        CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink::chunk(100, function ($links) {
+        CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink::whereNull('batch_id')->chunk(100, function ($links) {
             foreach ($links as $link) {
                 if (User::class === $link->enrollable_type) {
                     $practiceId = User::find($link->invitationable_id)->program_id;
@@ -44,7 +44,7 @@ class AddForeignKeyToEnrollmentInvitationLinks extends Migration
                     if (app()->environment('production')) {
                         continue;
                     }
-                    
+
                     $link->delete();
                     continue;
                 }
@@ -57,7 +57,10 @@ class AddForeignKeyToEnrollmentInvitationLinks extends Migration
         });
 
         Schema::table('enrollables_invitation_links', function (Blueprint $table) {
-            $table->unsignedInteger('batch_id');
+            if ( ! Schema::hasColumn('enrollables_invitation_links', 'batch_id')) {
+                $table->unsignedInteger('batch_id');
+            }
+
             $table->foreign('batch_id')
                 ->references('id')
                 ->on('enrollment_invitations_batches');
