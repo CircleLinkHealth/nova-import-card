@@ -30,7 +30,7 @@ class AddForeignKeyToEnrollmentInvitationLinks extends Migration
     public function up()
     {
         Schema::table('enrollables_invitation_links', function (Blueprint $table) {
-            $table->unsignedBigInteger('batch_id');
+            $table->unsignedInteger('batch_id');
             $table->foreign('batch_id')
                 ->references('id')
                 ->on('enrollment_invitations_batches');
