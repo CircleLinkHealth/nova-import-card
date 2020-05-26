@@ -13,6 +13,7 @@ use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Core\Traits\MySQLSearchable;
 use CircleLinkHealth\Core\Traits\Notifiable;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
@@ -720,6 +721,11 @@ class Enrollee extends BaseModel
         return $this->provider->providerInfo;
     }
 
+    public function location()
+    {
+        return $this->belongsTo(Location::class, 'location_id');
+    }
+
     public function name()
     {
         return "{$this->first_name} {$this->last_name}";
@@ -900,7 +906,34 @@ class Enrollee extends BaseModel
 
     public function scopeWithCaPanelRelationships($query)
     {
-        return $query->with(['practice.enrollmentTips', 'provider.providerInfo', 'confirmedFamilyMembers']);
+        return $query->with(['practice' => function ($p) {
+            $p->with([
+                'enrollmentTips',
+                'locations' => function ($l) {
+                    $l->whereNotNull('timezone');
+                },
+            ]);
+        },
+            'user',
+            'provider' => function ($p) {
+                $p->with([
+                    'providerInfo',
+                    'primaryPractice' => function ($p) {
+                        $p->with([
+                            'locations' => function ($l) {
+                                $l->whereNotNull('timezone');
+                            },
+                        ]);
+                    },
+                    'locations' => function ($l) {
+                        $l->whereNotNull('timezone');
+                    },
+                ]);
+            },
+            'confirmedFamilyMembers',
+            'location',
+            'ccda.location',
+        ]);
     }
 
     public function sendEnrollmentConsentReminderSMS()
