@@ -24,6 +24,7 @@ use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
@@ -32,6 +33,7 @@ use DateTimeZone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PatientCareplanController extends Controller
@@ -561,7 +563,14 @@ class PatientCareplanController extends Controller
                 'careplan_mode'   => CarePlan::WEB,
             ]
         );
-        $newUser = $userRepo->createNewUser($params);
+        try {
+            $newUser = $userRepo->createNewUser($params);
+        } catch (ValidationException|PatientAlreadyExistsException $e) {
+            return redirect()
+                ->back()
+                ->withErrors(['first_name' => $e->getMessage()])
+                ->withInput($request->input());
+        }
 
         if ($request->has('provider_id')) {
             $newUser->setBillingProviderId($request->input('provider_id'));

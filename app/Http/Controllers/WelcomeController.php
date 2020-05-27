@@ -45,8 +45,6 @@ class WelcomeController extends Controller
      */
     public function index(Request $request)
     {
-        $this->checkPracticeNameCookie($request);
-
         if ( ! auth()->check()) {
             return \App::call('App\Http\Controllers\Auth\LoginController@showLoginForm');
         }

@@ -4,9 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Jobs;
+namespace App\SelfEnrollment\Jobs;
 
-use App\Traits\EnrollableManagement;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -24,7 +23,7 @@ use Illuminate\Support\Facades\Log;
 class EnrollableSurveyCompleted implements ShouldQueue
 {
     use Dispatchable;
-    use EnrollableManagement;
+
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
@@ -174,7 +173,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
         $surveyInstanceId = is_json($this->data) ? json_decode($this->data)->survey_instance_id : $this->data['survey_instance_id'];
         $surveyAnswers    = $this->getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId);
         $user             = User::withTrashed()->whereId($enrollableId)->firstOrFail();
-        $isSurveyOnly     = $user->hasRole('survey-only');
         $addressData      = $this->getAddressData($surveyAnswers['address']);
         $emailToString    = $this->getEmail($surveyAnswers['email'], $user->email);
 //        $emailToString               = getStringValueFromAnswerAwvUser($surveyAnswers['email']);
@@ -191,15 +189,13 @@ class EnrollableSurveyCompleted implements ShouldQueue
         $patientContactTimeStart = Carbon::parse($patientContactTimesArray[0])->toTimeString();
         $patientContactTimeEnd   = Carbon::parse($patientContactTimesArray[2])->toTimeString();
 
-        if ($isSurveyOnly) {
+        if ($user->hasRole('survey-only')) {
             $enrollee = Enrollee::whereUserId($user->id)->first();
             if ( ! $enrollee) {
                 Log::critical("Enrolle with user_id[$user->id] not found");
 
                 return;
             }
-
-            $this->updateEnrolleeSurveyStatuses($enrollee->id, $user->id, self::SURVEY_COMPLETED);
 
             $enrollee->update([
                 'primary_phone'             => $preferredPhoneNumber,
@@ -215,7 +211,14 @@ class EnrollableSurveyCompleted implements ShouldQueue
             ]);
 //    It's Duplication but better to make sense. Will refactor later
 
-            $this->updateEnrolleeUser($user, $addressData, $emailToString);
+            $user->update([
+                'address' => $addressData['address'],
+                'city'    => $addressData['city'],
+                'state'   => $addressData['state'],
+                'zip'     => $addressData['zip'],
+                'email'   => $emailToString,
+            ]);
+
             $this->updateEnrolleePatient(
                 $user,
                 $preferredContactDays,
@@ -225,7 +228,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 $preferredContactDaysToArray
             );
 
-            $this->importEnrolleeSurveyOnly($enrollee);
+            ImportConsentedEnrollees::dispatch([$enrollee->id]);
 
             $patientType = 'Initial';
             $id          = $enrollee->id;
@@ -242,11 +245,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
         }
 
         return info("$patientType patient $id has been enrolled");
-    }
-
-    public function importEnrolleeSurveyOnly(Enrollee $enrollee)
-    {
-        ImportConsentedEnrollees::dispatch([$enrollee->id]);
     }
 
     public function reEnrollUnreachablePatient(User $user)
@@ -314,8 +312,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
     private function updateEnrolleAvatarModel($userId)
     {
-        $enrolleAvatar = $this->getEnrollee($userId);
-        $enrolleAvatar->update([
+        Enrollee::whereUserId($userId)->update([
             'status'                    => Enrollee::ENROLLED,
             'auto_enrollment_triggered' => true,
         ]);
@@ -337,18 +334,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
             'daily_contact_window_end'   => $patientContactTimeEnd,
             'auto_enrollment_triggered'  => true,
             'ccm_status'                 => Patient::ENROLLED,
-        ]);
-    }
-
-    private function updateEnrolleeUser(User $user, array $addressData, string $email)
-    {
-//        Its duplication but i prefer it to make sense
-        $user->update([
-            'address' => $addressData['address'],
-            'city'    => $addressData['city'],
-            'state'   => $addressData['state'],
-            'zip'     => $addressData['zip'],
-            'email'   => $email,
         ]);
     }
 

@@ -6,6 +6,7 @@
 
 namespace App\Events;
 
+use App\Jobs\LogSuccessfulLoginToDB;
 use App\Jobs\PostLoginTasks;
 use Illuminate\Auth\Events\Login;
 
@@ -21,6 +22,7 @@ class UpdateUserLoginInfo
         if ( ! empty($event->user->last_login)) {
             session()->put('last_login', $event->user->last_login);
         }
-        PostLoginTasks::dispatch($event);
+        LogSuccessfulLoginToDB::dispatch($event->user)->onQueue('low');
+        PostLoginTasks::dispatch($event->user)->onQueue('low');
     }
 }

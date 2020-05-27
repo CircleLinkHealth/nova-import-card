@@ -4,8 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Jobs;
+namespace App\SelfEnrollment\Jobs;
 
+use App\Jobs\AwvNotifyBillingProviderOfCareDocument;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -44,7 +45,7 @@ class ListenToAwvChannel implements ShouldQueue
     public function handle()
     {
         if (self::AWV_REPORT_CREATED === $this->channel) {
-            AwvPatientReportNotify::dispatch($this->data);
+            AwvNotifyBillingProviderOfCareDocument::createFromAwvPatientReport($this->data)::dispatch();
         }
 
         if (self::ENROLLMENT_SURVEY_COMPLETED === $this->channel) {

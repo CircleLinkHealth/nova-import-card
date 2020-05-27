@@ -6,7 +6,9 @@
 
 namespace App\Nova\Actions;
 
-use App\Jobs\EnrollmentSeletiveInviteEnrollees;
+use App\EnrollmentInvitationsBatch;
+use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
+use App\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -38,20 +40,25 @@ class SelfEnrollmentManualInvite extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        $models->each(function (Enrollee $model) {
-            if (is_null($model->user_id)) {
-                Log::warning("Enrollee [$model->id] has null user_id. this is unexpected at this point");
+        $models->each(function (Enrollee $enrollee) {
+            if (is_null($enrollee->user_id)) {
+                CreateSurveyOnlyUserFromEnrollee::dispatchNow($enrollee);
+                $enrollee->fresh('user');
+            }
+
+            if ($enrollee->enrollmentInvitationLinks()->exists()) {
+                Log::info("Enrollee [$enrollee->id] has already been invited");
 
                 return;
             }
 
-            if ( ! empty(optional($model->enrollmentInvitationLink())->first())) {
-                Log::info("Enrollee [$model->id] has already been invited");
+            $enrollee->loadMissing('user.primaryPractice');
 
+            if (is_null($enrollee->user)) {
                 return;
             }
 
-            EnrollmentSeletiveInviteEnrollees::dispatch([$model->user_id]);
+            SendInvitation::dispatch($enrollee->user, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
         });
 
         Action::message('Invites should have been sent. Please check invitation panel.');

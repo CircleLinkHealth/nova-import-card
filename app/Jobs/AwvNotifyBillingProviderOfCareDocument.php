@@ -18,28 +18,50 @@ use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class AwvPatientReportNotify implements ShouldQueue
+class AwvNotifyBillingProviderOfCareDocument implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
-    protected $keysShouldExist = [
-        'patient_id',
-        'report_media_id',
-    ];
-
     protected $patientReportData;
+    /**
+     * @var int
+     */
+    private $patientUserId;
+    /**
+     * @var int
+     */
+    private $reportMediaId;
 
     /**
      * Create a new job instance.
      *
      * @param mixed $patientReportdata
      */
-    public function __construct($patientReportdata)
+    public function __construct(int $patientUserId, int $reportMediaId)
     {
-        $this->patientReportData = (array) json_decode($patientReportdata);
+        $this->patientUserId = $patientUserId;
+        $this->reportMediaId = $reportMediaId;
+    }
+
+    public static function createFromAwvPatientReport(?string $patientReportdata)
+    {
+        $decoded = json_decode($patientReportdata, true);
+
+        if ( ! is_array($decoded) || empty($decoded)) {
+            throw new \Exception('Invalid patient report data received from AWV');
+        }
+
+        if ( ! array_keys_exist([
+            'patient_id',
+            'report_media_id',
+        ], $decoded)) {
+            throw new \Exception('There are keys missing from patient report data received from AWV.');
+        }
+
+        return new static($decoded['patient_id'], $decoded['report_media_id']);
     }
 
     /**
@@ -47,29 +69,17 @@ class AwvPatientReportNotify implements ShouldQueue
      */
     public function handle()
     {
-        if ( ! is_array($this->patientReportData) || empty($this->patientReportData)) {
-            \Log::error('Invalid patient report data received from AWV');
-
-            return;
-        }
-
-        if ( ! array_keys_exist($this->keysShouldExist, $this->patientReportData)) {
-            \Log::error('There are keys missing from patient report data received from AWV.');
-
-            return;
-        }
-
         $patient = User::ofType('participant')
             ->with('primaryPractice.settings')
-            ->findOrFail($this->patientReportData['patient_id']);
+            ->findOrFail($this->patientUserId);
 
         $media = Media::where('collection_name', 'patient-care-documents')
             ->where('model_id', $patient->id)
             ->whereIn('model_type', [\App\User::class, 'CircleLinkHealth\Customer\Entities\User'])
-            ->find($this->patientReportData['report_media_id']);
+            ->find($this->reportMediaId);
 
         if ( ! $media) {
-            \Log::error("Media with id: {$this->patientReportData['report_media_id']} not found for patient with id: {$patient->id}");
+            \Log::error("Media with id: {$this->reportMediaId} not found for patient with id: {$patient->id}");
 
             return;
         }
@@ -119,7 +129,7 @@ class AwvPatientReportNotify implements ShouldQueue
     public function tags()
     {
         return [
-            AwvPatientReportNotify::class,
+            AwvNotifyBillingProviderOfCareDocument::class,
             'patient_id:'.$this->patientReportData['patient_id'],
             'report_media_id:'.$this->patientReportData['report_media_id'],
         ];

@@ -1423,6 +1423,15 @@ if ( ! function_exists('isTwoFaEnabledForPractice')) {
     }
 }
 
+if ( ! function_exists('isSelfEnrollmentTestModeEnabled')) {
+    function isSelfEnrollmentTestModeEnabled(): bool
+    {
+        return Cache::remember($key = 'is_self_enrollment_test_mode_enabled', 2, function () use ($key) {
+            return filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN);
+        });
+    }
+}
+
 if ( ! function_exists('getSampleNotePdfPath')) {
     function getSampleNotePdfPath()
     {

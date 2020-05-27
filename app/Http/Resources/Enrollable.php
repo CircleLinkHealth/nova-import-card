@@ -23,6 +23,7 @@ class Enrollable extends Resource
      * @param \Illuminate\Http\Request $request
      *
      * @throws \Exception
+     *
      * @return array
      */
     public function toArray($request)

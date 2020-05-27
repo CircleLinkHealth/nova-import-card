@@ -6,8 +6,8 @@
 
 namespace Circlelinkhealth\EnrollmentInvites;
 
-use App\Jobs\EnrollmentMassInviteEnrollees;
-use App\Jobs\SelfEnrollmentUnreachablePatients;
+use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
+use App\SelfEnrollment\Domain\InviteUnreachablePatients;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class EnrollmentInvitationsController
@@ -17,17 +17,17 @@ class EnrollmentInvitationsController
         $this->validation($novaRequest);
 
         if (boolval($novaRequest->input('is_patient'))) {
-            SelfEnrollmentUnreachablePatients::dispatch(
-                intval($novaRequest->input('amount')),
-                intval($novaRequest->input('practice_id'))
+            InviteUnreachablePatients::dispatch(
+                $novaRequest->input('practice_id'),
+                $novaRequest->input('amount')
             );
 
             return $this->response();
         }
-
-        EnrollmentMassInviteEnrollees::dispatch(
-            intval($novaRequest->input('amount')),
-            intval($novaRequest->input('practice_id')),
+    
+        InvitePracticeEnrollees::dispatch(
+            (int) $novaRequest->input('amount'),
+            (int) $novaRequest->input('practice_id'),
             $novaRequest->input('color')
         );
 
@@ -51,7 +51,7 @@ class EnrollmentInvitationsController
                 [
                     'message' => 'Invitations number to be send is required',
                 ],
-                403
+                404
             );
         }
     }

@@ -7,13 +7,11 @@
 namespace App\Http\Controllers\Enrollment;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\EnrollmentMassInviteEnrollees;
-use App\Jobs\FinalActionOnNonResponsivePatients;
-use App\Jobs\SelfEnrollmentEnrolleesReminder;
-use App\Jobs\SelfEnrollmentUnreachablePatients;
-use App\LoginLogout;
-use App\Notifications\SendEnrollmentEmail;
-use App\Traits\EnrollableManagement;
+use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
+use App\SelfEnrollment\Domain\InviteUnreachablePatients;
+use App\SelfEnrollment\Domain\RemindEnrollees;
+use App\SelfEnrollment\Domain\UnreachablesFinalAction;
+use App\SelfEnrollment\Helpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;
@@ -24,14 +22,12 @@ use Illuminate\Support\Facades\DB;
 
 class AutoEnrollmentTestDashboard extends Controller
 {
-    use EnrollableManagement;
-
     /**
      * @return string
      */
     public function finalActionTest()
     {
-        FinalActionOnNonResponsivePatients::dispatch();
+        UnreachablesFinalAction::createForInvitesSentTwoDaysAgo()->dispatchToQueue();
 
         return redirect(route('ca-director.index'))->with('message', 'Reminders Sent Successfully');
     }
@@ -41,7 +37,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function inviteEnrolleesToEnrollTest(Request $request)
     {
-        EnrollmentMassInviteEnrollees::dispatchNow(
+        InvitePracticeEnrollees::dispatch(
             $request->input('amount'),
             $request->input('practice_id'),
             $request->input('color')
@@ -55,9 +51,9 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function inviteUnreachablesToEnrollTest(Request $request)
     {
-        SelfEnrollmentUnreachablePatients::dispatchNow(
-            $request->input('amount'),
-            $request->input('practice_id')
+        InviteUnreachablePatients::dispatch(
+            $request->input('practice_id'),
+            $request->input('amount')
         );
 
         return redirect()->back()->with('message', 'Invited Successfully');
@@ -68,18 +64,17 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function resetEnrollmentTest()
     {
-        $practice = $this->getDemoPractice();
+        $practice = Helpers::getDemoPractice();
         // TEST ONLY
         $users = User::withTrashed()
-            ->with('notifications', 'patientInfo')
+            ->with('notifications', 'patientInfo', 'enrollee')
             ->where('program_id', '=', $practice->id)
-            ->whereHas('notifications', function ($notification) {
-                $notification->where('type', SendEnrollmentEmail::class);
-            })->where('created_at', '>', Carbon::parse(now())->startOfMonth())
+            ->hasSelfEnrollmentInvite()
+            ->where('created_at', '>', Carbon::parse(now())->startOfMonth())
             ->whereHas('patientInfo')
             ->get();
 
-        $survey = $this->getEnrolleeSurvey();
+        $survey = Helpers::getEnrolleeSurvey();
 
         foreach ($users as $user) {
             $surveyInstance = DB::table('survey_instances')
@@ -87,12 +82,10 @@ class AutoEnrollmentTestDashboard extends Controller
                 ->first();
 
             if ($user->isSurveyOnly()) {
-                /** @var Enrollee $enrollee */
-                $enrollee = $this->getEnrollee($user->id);
-                $this->deleteTestAwvUser($user->id, $surveyInstance);
+                $this->deleteTestAwvUser($user, $surveyInstance);
                 $user->notifications()->delete();
-                $enrollee->enrollmentInvitationLink()->delete();
-                $enrollee->statusRequestsInfo()->delete();
+                $user->enrollee->enrollmentInvitationLinks()->delete();
+                $user->enrollee->enrollableInfoRequest()->delete();
 
                 DB::table('invitation_links')
                     ->where('patient_info_id', $user->patientInfo()->withTrashed()->first()->id)
@@ -102,18 +95,11 @@ class AutoEnrollmentTestDashboard extends Controller
                     ->where('user_id', $user->id)
                     ->where('survey_instance_id', $surveyInstance->id)
                     ->delete();
-
-//                $hasLoggedIn = $this->hasViewedLetterOrSurvey($user->id);
-                //                Just for live testing so i can reset the test
-//                if ($hasLoggedIn) {
-//                    LoginLogout::where('user_id', $user->id)->delete();
-//                }
-//                $user->forceDelete();
             } else {
-                $this->deleteTestAwvUser($user->id, $surveyInstance);
+                $this->deleteTestAwvUser($user, $surveyInstance);
                 $user->notifications()->delete();
-                $user->enrollmentInvitationLink()->delete();
-                $user->statusRequestsInfo()->delete();
+                $user->enrollmentInvitationLinks()->delete();
+                $user->enrollableInfoRequest()->delete();
                 $user->patientInfo()->update(
                     [
                         'ccm_status' => \CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE,
@@ -142,7 +128,7 @@ class AutoEnrollmentTestDashboard extends Controller
     public function sendEnrolleesReminderTestMethod()
     {
         try {
-            SelfEnrollmentEnrolleesReminder::dispatch();
+            RemindEnrollees::createForInvitesSentTwoDaysAgo()->dispatchToQueue();
         } catch (\Exception $e) {
             return 'Something went wrong';
         }
@@ -216,10 +202,12 @@ class AutoEnrollmentTestDashboard extends Controller
         return 'You can go back and proceed to Step 2.';
     }
 
-    private function deleteTestAwvUser($userId, $surveyInstance)
+    private function deleteTestAwvUser(User $user, $surveyInstance)
     {
-        if ( ! is_null($this->getAwvUserSurvey($userId, $surveyInstance)->first())) {
-            $this->getAwvUserSurvey($userId, $surveyInstance)->delete();
+        if ( ! Helpers::awvUserSurveyQuery($user, $surveyInstance)->exists()) {
+            return;
         }
+
+        Helpers::awvUserSurveyQuery($user, $surveyInstance)->delete();
     }
 }

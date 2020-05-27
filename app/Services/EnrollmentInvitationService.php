@@ -6,15 +6,13 @@
 
 namespace App\Services\Enrollment;
 
-use App\Traits\EnrollableManagement;
+use App\SelfEnrollment\Helpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 
 class EnrollmentInvitationService
 {
-    use EnrollableManagement;
-
     /**
      * @param $practiceName
      * @param $practiceLetter
@@ -107,7 +105,7 @@ class EnrollmentInvitationService
     public function sendToAwv($enrollable)
     {
         try {
-            $surveyLink = $this->getSurveyInvitationLink($enrollable->patientInfo->id);
+            $surveyLink = Helpers::getSurveyInvitationLink($enrollable->patientInfo);
         } catch (\Exception $exception) {
             \Log::alert($exception);
             throw new \Exception($exception);

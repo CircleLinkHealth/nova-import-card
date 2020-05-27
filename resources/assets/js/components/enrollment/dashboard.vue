@@ -113,6 +113,8 @@
     export default {
         name: 'enrollment-dashboard',
         props: [
+            'cpmToken',
+            'cpmCallerUrl',
             'timeTracker',
             'debug'
         ],
@@ -182,7 +184,7 @@
                 this.loading = true;
                 this.loading_modal.open();
                 this.retrievePatient();
-                this.updateCallStatus()
+                this.updateCallStatus();
             })
 
             App.$on('enrollable:call', (data) => {
@@ -196,17 +198,28 @@
                 this.callStatus = data.callStatus;
 
                 this.call();
-            })
+            });
 
             App.$on('enrollable:hang-up', () => {
-                this.hangUp()
-                this.updateCallStatus()
-            })
+                this.hangUp();
+                this.updateCallStatus();
+            });
+
+            App.$on('enrollable:numpad-input', (input) => {
+                if (this.device) {
+                    const {allInput, lastInput} = input;
+                    console.debug('Sending digits to twilio', lastInput.toString());
+                    const connection = this.device.activeConnection();
+                    if (connection) {
+                        connection.sendDigits(lastInput.toString());
+                    }
+                }
+            });
 
             App.$on('enrollable:load-from-search-bar', () => {
                 this.retrievePatient();
                 this.loading_modal.open();
-            })
+            });
 
             App.$on('enrollable:error', (enrollableId) => {
                 this.patientData = null;
@@ -215,7 +228,7 @@
 
                 this.error = 'Something went wrong while saving patient details. We are investigating the issue. Please click on button to get next Patient.';
                 this.error_modal.open()
-            })
+            });
         },
         methods: {
             getTimeTrackerInfo() {
@@ -346,8 +359,18 @@
                     this.device.disconnectAll();
                 }
             },
+            getUrl: function (path) {
+                if (this.cpmCallerUrl && this.cpmCallerUrl.length > 0) {
+                    if (this.cpmCallerUrl[this.cpmCallerUrl.length - 1] === "/") {
+                        return this.cpmCallerUrl + path;
+                    } else {
+                        return this.cpmCallerUrl + "/" + path;
+                    }
+                }
+                return rootUrl(path);
+            },
             initTwilio: function () {
-                const url = rootUrl(`/twilio/token`);
+                const url = this.getUrl(`twilio/token?cpm-token=${this.cpmToken}`);
 
                 this.$http.get(url)
                     .then(response => {

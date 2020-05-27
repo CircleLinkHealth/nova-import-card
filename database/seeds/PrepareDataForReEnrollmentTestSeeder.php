@@ -4,7 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Traits\EnrollableManagement;
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -15,22 +14,20 @@ use Illuminate\Database\Seeder;
 
 class PrepareDataForReEnrollmentTestSeeder extends Seeder
 {
-    use EnrollableManagement;
     use SeedEligibilityJobsForEnrollees;
     use UserHelpers;
 
     const CCM_STATUS_UNREACHABLE = 'unreachable';
 
-    public function createEnrollee(Practice $practice, ?string $phoneTester = null, ?string $emailTester = null)
+    public function createEnrollee(Practice $practice, ?string $phoneTester = null)
     {
-        $faker = Factory::create();
-
         $enrolleeForTesting = factory(Enrollee::class)->create([
             'practice_id'             => $practice->id,
             'dob'                     => \Carbon\Carbon::parse('1901-01-01'),
             'referring_provider_name' => 'Dr. Demo',
             'primary_phone'           => $phoneTester,
             'home_phone'              => $phoneTester,
+            'cell_phone'              => $phoneTester ?? '+12012819204',
             'email'                   => '',
         ]);
         $this->seedEligibilityJobs(collect([$enrolleeForTesting]), $practice);
@@ -40,7 +37,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         ]);
         $enrolleeForTesting->status = Enrollee::QUEUE_AUTO_ENROLLMENT;
 
-        return $enrolleeForTesting;
+        return $enrolleeForTesting->fresh('user');
     }
 
     /**
@@ -70,7 +67,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         $n     = 1;
         $limit = 5;
         while ($n <= $limit) {
-            $this->createEnrollee($practice, $phoneTester, $emailTester);
+            $this->createEnrollee($practice, $phoneTester);
             ++$n;
         }
 

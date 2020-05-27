@@ -26,18 +26,8 @@ class EnrolleesSeeder extends Seeder
             ->where('is_demo', true)
             ->first();
 
-        if ( ! $practice) {
-            if (isUnitTestingEnv() || ! isProductionEnv()) {
-                $practice = factory(Practice::class)->create([
-                    'name'         => 'demo',
-                    'display_name' => 'Demo',
-                    'is_demo'      => true,
-                ]);
-            } else {
-                $this->command->info('Demo Practice not found, aborting creating fake enrollees.');
-
-                return;
-            }
+        if (app()->environment(['testing', 'review']) && ! $practice) {
+            $practice = factory(Practice::class)->create();
         }
 
         $enrollees = factory(Enrollee::class, 10)->create();

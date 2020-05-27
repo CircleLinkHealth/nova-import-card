@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\FinalActionOnNonResponsivePatients;
+use App\SelfEnrollment\Domain\UnreachablesFinalAction;
 use Illuminate\Console\Command;
 
 class EnrollmentFinalAction extends Command
@@ -41,6 +41,6 @@ class EnrollmentFinalAction extends Command
      */
     public function handle()
     {
-        FinalActionOnNonResponsivePatients::dispatch();
+        UnreachablesFinalAction::createForInvitesSentTwoDaysAgo()->dispatchToQueue();
     }
 }

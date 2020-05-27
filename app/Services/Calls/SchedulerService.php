@@ -332,7 +332,9 @@ class SchedulerService
                 $q->whereIn('outbound_cpm_id', $cb)
                     ->orWhereIn('inbound_cpm_id', $cb);
             }
-        )
+        )->whereHas('inboundUser', function ($q) {
+            return $q->ofType('participant');
+        })
             ->where('status', '=', 'scheduled')
             ->delete();
     }
