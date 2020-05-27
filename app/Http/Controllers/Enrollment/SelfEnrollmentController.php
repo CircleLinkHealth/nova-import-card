@@ -186,7 +186,7 @@ class SelfEnrollmentController extends Controller
 
         $this->expirePastInvitationLink($patient);
 
-        return $this->createUrlAndRedirectToSurvey($patient->id);
+        return $this->createUrlAndRedirectToSurvey($patient);
     }
 
     /**
@@ -316,13 +316,13 @@ class SelfEnrollmentController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    private function createUrlAndRedirectToSurvey($enrollableId)
+    private function createUrlAndRedirectToSurvey(User $user)
     {
         $enrolleesSurvey = Helpers::getEnrolleeSurvey();
 
         DB::table('users_surveys')->updateOrInsert(
             [
-                'user_id'            => $enrollableId,
+                'user_id'            => $user->id,
                 'survey_instance_id' => Helpers::getCurrentYearEnrolleeSurveyInstance()->id,
                 'survey_id'          => $enrolleesSurvey->id,
             ],
@@ -332,7 +332,7 @@ class SelfEnrollmentController extends Controller
             ]
         );
 
-        $enrolleesSurveyUrl = url(config('services.awv.url')."/survey/enrollees/create-url/{$enrollableId}/{$enrolleesSurvey->id}");
+        $enrolleesSurveyUrl = url(config('services.awv.url')."/survey/enrollees/create-url/{$user->id}/{$enrolleesSurvey->id}");
 
         return redirect($enrolleesSurveyUrl);
     }
