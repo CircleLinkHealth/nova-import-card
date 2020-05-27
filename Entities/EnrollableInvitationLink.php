@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Customer\EnrollableInvitationLink;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
-use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
 
 /**
  * CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink.
@@ -19,8 +18,8 @@ use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
  * @property int                                                                    $manually_expired
  * @property \Illuminate\Support\Carbon|null                                        $created_at
  * @property \Illuminate\Support\Carbon|null                                        $updated_at
- * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo $statusRequestsInfo
- * @property \App\EnrollableInvitationLink                                          $enrollmentInvitationLink
+ * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo $enrollableInfoRequest
+ * @property \App\EnrollableInvitationLink                                          $enrollmentInvitationLinks
  * @property \App\EnrollableInvitationLink                                          $invitationable
  * @method   static                                                                 \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink newModelQuery()
  * @method   static                                                                 \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink newQuery()
@@ -33,14 +32,14 @@ use CircleLinkHealth\Customer\Traits\HasEnrollableInvitation;
  * @method   static                                                                 \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereManuallyExpired($value)
  * @method   static                                                                 \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property string      $url
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereUrl($value)
- * @property string|null $button_color
+ * @property string                                                                                      $url
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\EnrollableInvitationLink whereUrl($value)
+ * @property string|null                                                                                 $button_color
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ * @property int|null                                                                                    $revision_history_count
  */
 class EnrollableInvitationLink extends BaseModel
 {
-    use HasEnrollableInvitation;
-
     protected $fillable = [
         'invitationable_id',
         'enrollable_type',
@@ -48,6 +47,7 @@ class EnrollableInvitationLink extends BaseModel
         'url',
         'manually_expired',
         'button_color',
+        'batch_id',
     ];
 
     protected $table = 'enrollables_invitation_links';
