@@ -42,7 +42,7 @@ class SelfEnrollmentManualInvite extends Action
     {
         $models->each(function (Enrollee $enrollee) {
             if (is_null($enrollee->user_id)) {
-                CreateSurveyOnlyUserFromEnrollee::dispatchNow();
+                CreateSurveyOnlyUserFromEnrollee::dispatchNow($enrollee);
                 $enrollee->fresh('user');
             }
 
