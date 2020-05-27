@@ -173,7 +173,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
         $surveyInstanceId = is_json($this->data) ? json_decode($this->data)->survey_instance_id : $this->data['survey_instance_id'];
         $surveyAnswers    = $this->getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId);
         $user             = User::withTrashed()->whereId($enrollableId)->firstOrFail();
-        $isSurveyOnly     = $user->hasRole('survey-only');
         $addressData      = $this->getAddressData($surveyAnswers['address']);
         $emailToString    = $this->getEmail($surveyAnswers['email'], $user->email);
 //        $emailToString               = getStringValueFromAnswerAwvUser($surveyAnswers['email']);
@@ -190,7 +189,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
         $patientContactTimeStart = Carbon::parse($patientContactTimesArray[0])->toTimeString();
         $patientContactTimeEnd   = Carbon::parse($patientContactTimesArray[2])->toTimeString();
 
-        if ($isSurveyOnly) {
+        if ($user->hasRole('survey-only')) {
             $enrollee = Enrollee::whereUserId($user->id)->first();
             if ( ! $enrollee) {
                 Log::critical("Enrolle with user_id[$user->id] not found");
@@ -229,7 +228,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 $preferredContactDaysToArray
             );
 
-            $this->importEnrolleeSurveyOnly($enrollee);
+            ImportConsentedEnrollees::dispatch([$enrollee->id]);
 
             $patientType = 'Initial';
             $id          = $enrollee->id;
@@ -246,11 +245,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
         }
 
         return info("$patientType patient $id has been enrolled");
-    }
-
-    public function importEnrolleeSurveyOnly(Enrollee $enrollee)
-    {
-        ImportConsentedEnrollees::dispatch([$enrollee->id]);
     }
 
     public function reEnrollUnreachablePatient(User $user)

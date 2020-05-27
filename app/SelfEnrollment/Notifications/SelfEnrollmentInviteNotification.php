@@ -49,7 +49,7 @@ class SelfEnrollmentInviteNotification extends Notification
     public function middleware()
     {
         $rateLimitedMiddleware = (new RateLimited())
-            ->allow(10)
+            ->allow(300)
             ->everySeconds(60)
             ->releaseAfterSeconds(90);
 
