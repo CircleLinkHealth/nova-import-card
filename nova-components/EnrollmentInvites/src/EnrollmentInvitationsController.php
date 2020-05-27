@@ -46,7 +46,7 @@ class EnrollmentInvitationsController
 
     private function validation(NovaRequest $novaRequest)
     {
-        if (empty($novaRequest->input('amount'))) {
+        if (empty($amount = $novaRequest->input('amount')) || ! is_numeric($amount)) {
             return response()->json(
                 [
                     'message' => 'Invitations number to be send is required',
