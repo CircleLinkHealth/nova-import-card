@@ -2775,11 +2775,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function routeNotificationForMail($notification)
     {
         $this->loadMissing('primaryPractice');
-    
+
         if ( ! isset($this->primaryPractice->is_demo)) {
             $this->load('primaryPractice');
         }
-        
+
         if ($this->primaryPractice && $this->primaryPractice->is_demo && isSelfEnrollmentTestModeEnabled()) {
             $hasTester = AppConfig::pull('tester_email', null);
 
