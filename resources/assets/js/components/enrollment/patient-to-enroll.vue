@@ -74,13 +74,16 @@
                                                 :title="provider_phone"><b>Provider Phone:</b> {{provider_phone}}</span>
                                         </li>
                                         <li class="sidebar-demo-list"><span
-                                                :title="last_office_visit_at"><b>Last Office Visit:</b> {{last_office_visit_at}}</span>
+                                                :title="timezone"><b>Practice Time Zone:</b> {{timezone}}</span>
                                         </li>
                                         <li class="sidebar-demo-list"><span
                                                 :title="last_attempt_at"><b>Last Attempt:</b> {{last_attempt_at}}</span>
                                         </li>
                                         <li class="sidebar-demo-list"><span
                                                 :title="attempt_count"><b>Attempt Count:</b> {{attempt_count}}</span>
+                                        </li>
+                                        <li class="sidebar-demo-list"><span
+                                                :title="attempt_count"><b>Our Callback Number:</b> {{practice_phone}}</span>
                                         </li>
                                         <li class="sidebar-demo-list"><span> </span>
                                         </li>
@@ -498,14 +501,13 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button name="btnSubmit" type="submit"
-                                :disabled="disable_consented_submit"
-                                class="modal-action waves-effect waves-light btn">Confirm and call next patient
-                        </button>
-                        <div v-if="onCall === true" style="text-align: center">
-                            <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
+                            <a v-if="onCall" v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
                                     class="material-icons left">call_end</i>Hang Up</a>
-                        </div>
+
+                            <button name="btnSubmit" type="submit"
+                                    :disabled="disable_consented_submit"
+                                    class="modal-action waves-effect waves-light btn">Confirm and call next patient
+                            </button>
                     </div>
                 </form>
             </div>
@@ -568,14 +570,12 @@
 
                     </div>
                     <div class="modal-footer">
+                        <a v-if="onCall" v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
+                                class="material-icons left">call_end</i>Hang Up</a>
                         <button name="btnSubmit" type="submit"
                                 :disabled="utc_reason_empty || should_not_perform_action"
                                 class="modal-action waves-effect waves-light btn">Call Next Patient
                         </button>
-                        <div v-if="onCall === true" style="text-align: center">
-                            <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
-                                    class="material-icons left">call_end</i>Hang Up</a>
-                        </div>
                     </div>
                 </form>
             </div>
@@ -594,10 +594,7 @@
                             <div class="col s12 m12">
                                 <label for="reason" class="label">What reason did the Patient convey?</label>
                                 <select class="auto-close" v-model="reason" name="reason" id="reason" required>
-                                    <option value="Worried about co-pay">Worried about co-pay</option>
-                                    <option value="Doesn’t trust medicare">Doesn’t trust medicare</option>
-                                    <option value="Doesn’t need help with Health">Doesn’t need help with health</option>
-                                    <option value="other">Other...</option>
+                                    <option v-for="option in rejectedOptions" v-bind:value="option.id">{{option.text}}</option>
                                 </select>
                             </div>
 
@@ -622,14 +619,12 @@
                         <input type="hidden" name="confirmed_family_members" v-model="confirmed_family_members">
                     </div>
                     <div class="modal-footer" style="padding-right: 60px">
+                        <a v-if="onCall" v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
+                                class="material-icons left">call_end</i>Hang Up</a>
                         <button name="btnSubmit" type="submit"
                                 :disabled="reason_empty || should_not_perform_action"
                                 class="modal-action waves-effect waves-light btn">Call Next Patient
                         </button>
-                        <div v-if="onCall === true" style="text-align: center">
-                            <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
-                                    class="material-icons left">call_end</i>Hang Up</a>
-                        </div>
                     </div>
                 </form>
             </div>
@@ -666,6 +661,8 @@
                     </div>
                 </div>
                 <div class="modal-footer" style="padding-right: 60px">
+                    <a v-if="onCall" v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
+                            class="material-icons left">call_end</i>Hang Up</a>
                     <button class="modal-action waves-effect waves-light btn" type="submit"
                             v-on:click="submitPendingForm()">Proceed
                     </button>
@@ -717,6 +714,7 @@
     import {rootUrl} from '../../app.config';
     import CallNumpad from '../call-numpad';
 
+    import {Logger} from '../../logger-logdna';
     import Loader from '../loader.vue';
 
     const userId = window.userId;
@@ -862,6 +860,9 @@
                 }
                 return suffix + ' ' + this.provider.first_name + ' ' + this.provider.last_name;
             },
+            rejectedOptions(){
+                return this.isSoftDecline ? this.soft_rejected_reasons : this.rejected_reasons;
+            },
             provider_name_for_enrollment_script() {
                 let providerName;
 
@@ -1000,6 +1001,7 @@
                 utcUrl: rootUrl('enrollment/utc'),
                 rejectedUrl: rootUrl('enrollment/rejected'),
 
+                timezone: '',
 
                 isSoftDecline: false,
                 utc_reason: '',
@@ -1032,7 +1034,21 @@
                 times: [],
 
                 provider: [],
-                provider_phone: ''
+                provider_phone: '',
+
+                rejected_reasons: [
+                    {id: 'Worried about co-pay', text: 'Worried about co-pay'},
+                    {id: 'Doesn’t trust medicare', text: 'Doesn’t trust medicare'},
+                    {id:'Doesn’t need help with Health', text: 'Doesn’t need help with Health'},
+                    {id:'other', text: 'Other...'},
+                ],
+                soft_rejected_reasons: [
+                    {id: 'Worried about co-pay', text: 'Worried about co-pay'},
+                    {id: 'Doesn’t trust medicare', text: 'Doesn’t trust medicare'},
+                    {id:'Doesn’t need help with Health', text: 'Doesn’t need help with Health'},
+                    {id:'not at this time - try again later', text: 'Not at this time, but please try again at a later date'},
+                    {id:'other', text: 'Other...'},
+                ],
             };
         },
         mounted: function () {
@@ -1066,9 +1082,13 @@
                             format: 'yyyy-mm-dd'
                         })
                     },
+                    onOpenStart: function(){
+                        self.reasonSelectInitWithOptions();
+                    },
                     onCloseEnd: function () {
                         //always reset when modal is closed
                         self.isSoftDecline = false;
+                        self.reasonSelectInitWithOptions();
                     }
                 });
 
@@ -1115,6 +1135,13 @@
             })
         },
         methods: {
+            reasonSelectInitWithOptions(){
+                let options = this.isSoftDecline ? this.soft_rejected_reasons : this.rejected_reasons;
+
+                M.FormSelect.getInstance(document.getElementById('reason')).destroy()
+
+                M.FormSelect.init(document.getElementById('reason'), options);
+            },
             setDays(event) {
                 if (this.days.includes('all')) {
                     M.FormSelect.getInstance(document.getElementById('days[]')).dropdown.close()
@@ -1169,12 +1196,15 @@
                         this.confirmed_family_members = response.data.suggested_family_members.map(function (member) {
                             return member.is_confirmed ? member.id : null;
                         }).filter(x => !!x);
+
+                        Logger.warn(`Suggested family members for: ${this.enrollable_id}, ids: ${this.suggested_family_members.join(',')}`, {meta: {'connection': 'warning'}});
                     })
                     .catch(err => {
                         this.family_loading = false;
                         this.bannerText = err.response.data.message;
                         this.bannerType = 'danger';
                         this.showBanner = true;
+                        Logger.warn(`WARNING: Suggested family members error ${this.bannerText}`, {meta: {'connection': 'warning'}});
                     });
             },
 

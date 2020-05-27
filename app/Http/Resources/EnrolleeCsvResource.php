@@ -25,7 +25,6 @@ class EnrolleeCsvResource extends Resource
             '"'.$this->mrn.'",'.
             '"'.$this->first_name.'",'.
             '"'.$this->last_name.'",'.
-            '"'.$this->lang.'",'.
             '"'.$this->care_ambassador_name.'",'.
             '"'.$this->status.'",'.
             '"'.$this->source.'",'.
@@ -33,6 +32,7 @@ class EnrolleeCsvResource extends Resource
             '"'.$this->auto_enrollment_triggered.'",'.
             '"'.$this->practice_name.'",'.
             '"'.$this->provider_name.'",'.
+            '"'.$this->lang.'",'.
             '"'.$this->requested_callback.'",'.
             '"'.secondsToMMSS($this->total_time_spent).'",'.
             '"'.$this->attempt_count.'",'.
@@ -50,7 +50,6 @@ class EnrolleeCsvResource extends Resource
             '"'.$this->other_phone.'",'.
             '"'.$this->dob.'",'.
             '"'.$this->preferred_days.'",'.
-            '"'.$this->preferred_window.'",'.
             '"'.$this->preferred_window.'",'.
             '"'.$this->primary_insurance.'",'.
             '"'.$this->secondary_insurance.'",'.

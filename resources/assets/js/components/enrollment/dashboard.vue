@@ -451,7 +451,7 @@
     }
 
     .cookie {
-        margin-top: 10%;
+        margin-top: 15%;
         margin-left: 15%;
     }
 
