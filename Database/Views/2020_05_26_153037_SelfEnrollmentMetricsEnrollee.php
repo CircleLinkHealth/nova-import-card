@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\SelfEnrollment\Helpers;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SqlViews\BaseSqlView;
@@ -17,6 +18,9 @@ class SelfEnrollmentMetricsEnrollee extends BaseSqlView
     {
         $enrolled = Enrollee::ENROLLED;
         $toCall   = Enrollee::TO_CALL;
+        $defaultBtnColor = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
+        $red = '#b1284c';
+        $manualInvite = 'one-off_invitations';
 
         $survey         = Helpers::getEnrolleeSurvey();
         $surveyInstance = DB::table('survey_instances')
@@ -31,7 +35,7 @@ class SelfEnrollmentMetricsEnrollee extends BaseSqlView
        DATE_FORMAT(b.created_at, '%Y-%m-%d') batch_date,
        DATE_FORMAT(b.created_at,'%H:%i:%s') batch_time,
        p.display_name as practice_name,
-       b.type as button_color,
+       CASE WHEN b.type = '$defaultBtnColor' THEN 'Green' WHEN b.type = '$red' THEN 'Red' WHEN b.type = '$manualInvite' THEN 'Green' END as button_color,
        COUNT(i.batch_id) as total_invites_sent,
        SUM(case when i.manually_expired = 1 then 1 else 0 end) as total_invites_opened,
        ROUND(SUM(case when i.manually_expired = 1 then 1 else 0 end) * 100.0 / COUNT(i.batch_id), 1) as percentage_invites_opened,
