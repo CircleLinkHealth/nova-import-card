@@ -52,7 +52,7 @@ class SelfEnrollmentManualInvite extends Action
                 return;
             }
 
-            $enrollee->loadMissing('user');
+            $enrollee->loadMissing('user.primaryPractice');
 
             if (is_null($enrollee->user)) {
                 return;
