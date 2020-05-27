@@ -39,7 +39,7 @@ class AddForeignKeyToEnrollmentInvitationLinks extends Migration
                 $table->unsignedInteger('batch_id');
             });
         }
-    
+
         EnrollableInvitationLink::whereNull('batch_id')->orWhere('batch_id', '<', 1)->chunk(100, function ($links) {
             foreach ($links as $link) {
                 if (User::class === $link->invitationable_type) {
@@ -47,19 +47,19 @@ class AddForeignKeyToEnrollmentInvitationLinks extends Migration
                 } elseif (Enrollee::class === $link->invitationable_type) {
                     $practiceId = optional(Enrollee::find($link->invitationable_id))->practice_id;
                 }
-            
+
                 if ( ! isset($practiceId)) {
                     if (app()->environment('production')) {
                         continue;
                     }
-                
+
                     $link->delete();
                     continue;
                 }
-            
+
                 $color = $link->button_color ?? SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
                 $batch = EnrollmentInvitationsBatch::firstOrCreateAndRemember($practiceId, "Initial:$color", 2);
-            
+
                 $link->batch_id = $batch->id;
                 $link->save();
             }
