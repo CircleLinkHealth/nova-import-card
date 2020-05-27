@@ -307,7 +307,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use HasApiTokens;
     use HasEmrDirectAddress;
     use HasMediaTrait;
-    use HasSelfEnrollmentInvitation;
     use Impersonate;
     use MakesOrReceivesCalls;
     use Notifiable;
