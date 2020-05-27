@@ -42,7 +42,7 @@ class EnrollableInvitationLink extends BaseModel
 {
     protected $fillable = [
         'invitationable_id',
-        'enrollable_type',
+        'invitationable_type',
         'link_token',
         'url',
         'manually_expired',
