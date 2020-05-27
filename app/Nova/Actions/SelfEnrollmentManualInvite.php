@@ -7,6 +7,7 @@
 namespace App\Nova\Actions;
 
 use App\EnrollmentInvitationsBatch;
+use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use App\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
@@ -41,9 +42,8 @@ class SelfEnrollmentManualInvite extends Action
     {
         $models->each(function (Enrollee $enrollee) {
             if (is_null($enrollee->user_id)) {
-                Log::warning("Enrollee [$enrollee->id] has null user_id. this is unexpected at this point");
-
-                return;
+                CreateSurveyOnlyUserFromEnrollee::dispatchNow();
+                $enrollee->fresh('user');
             }
 
             if ($enrollee->enrollmentInvitationLinks()->exists()) {
