@@ -18,13 +18,13 @@ class EnrollmentInvitationsController
 
         if (boolval($novaRequest->input('is_patient'))) {
             InviteUnreachablePatients::dispatch(
-                $novaRequest->input('practice_id'),
-                $novaRequest->input('amount')
+                (int) $novaRequest->input('practice_id'),
+                (int) $novaRequest->input('amount')
             );
 
             return $this->response();
         }
-    
+
         InvitePracticeEnrollees::dispatch(
             (int) $novaRequest->input('amount'),
             (int) $novaRequest->input('practice_id'),

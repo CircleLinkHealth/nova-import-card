@@ -42,7 +42,7 @@ abstract class AbstractSelfEnrollableUserIterator implements ShouldQueue
             $users->each(function (User $user) {
                 $this->action($user);
 
-                if ( ! is_null($this->limit()) && ++$this->dispatched === $this->limit()) {
+                if ( ! is_null($this->limit()) && ++$this->dispatched >= $this->limit()) {
                     return false;
                 }
             });
