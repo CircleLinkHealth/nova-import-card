@@ -16,11 +16,11 @@ class SelfEnrollmentMetricsEnrollee extends BaseSqlView
      */
     public function createSqlView(): bool
     {
-        $enrolled = Enrollee::ENROLLED;
-        $toCall   = Enrollee::TO_CALL;
+        $enrolled        = Enrollee::ENROLLED;
+        $toCall          = Enrollee::TO_CALL;
         $defaultBtnColor = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
-        $red = '#b1284c';
-        $manualInvite = 'one-off_invitations';
+        $red             = '#b1284c';
+        $manualInvite    = 'one-off_invitations';
 
         $survey         = Helpers::getEnrolleeSurvey();
         $surveyInstance = DB::table('survey_instances')
