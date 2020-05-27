@@ -194,8 +194,8 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         if ($mr = MedicalRecordFactory::create($user, $ccda)) {
             if ( ! empty($mr)) {
                 $ccda->json = $mr->toJson();
-                $ccda->save();
                 $ccda->bluebuttonJson(true);
+                $ccda->save();
             }
         }
 
