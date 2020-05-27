@@ -6,13 +6,14 @@
 
 namespace App\Nova;
 
-
+use App\Constants;
+use App\SelfEnrollmentMetricsEnrollee;
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\ID;
-use SelfEnrollmentMetricsEnrollee;
+use Laravel\Nova\Fields\Text;
 
 class SelfEnrollmentMetricsResource extends Resource
 {
+    public static $group = Constants::NOVA_GROUP_ENROLLMENT;
     /**
      * The model the resource corresponds to.
      *
@@ -34,7 +35,7 @@ class SelfEnrollmentMetricsResource extends Resource
      *
      * @var string
      */
-    public static $title = 'id';
+    public static $title = 'batch_id';
 
     /**
      * Get the actions available for the resource.
@@ -44,6 +45,30 @@ class SelfEnrollmentMetricsResource extends Resource
     public function actions(Request $request)
     {
         return [];
+    }
+
+    /**
+     * @return bool
+     */
+    public static function authorizedToCreate(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function authorizedToDelete(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function authorizedToUpdate(Request $request)
+    {
+        return false;
     }
 
     /**
@@ -64,7 +89,10 @@ class SelfEnrollmentMetricsResource extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make()->sortable(),
+            Text::make('Batch Date', 'batch_date')->sortable(),
+            Text::make('Batch Time', 'batch_time')->sortable(),
+            Text::make('Practice Name', 'practice_name')->sortable(),
+            Text::make('Button Color', 'button_color')->sortable(),
         ];
     }
 
@@ -76,6 +104,14 @@ class SelfEnrollmentMetricsResource extends Resource
     public function filters(Request $request)
     {
         return [];
+    }
+
+    /**
+     * @return string
+     */
+    public static function label()
+    {
+        return 'Invitations Panel';
     }
 
     /**
