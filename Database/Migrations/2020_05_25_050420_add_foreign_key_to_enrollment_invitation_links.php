@@ -5,6 +5,7 @@
  */
 
 use App\EnrollmentInvitationsBatch;
+use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -56,7 +57,8 @@ class AddForeignKeyToEnrollmentInvitationLinks extends Migration
                     continue;
                 }
             
-                $batch = EnrollmentInvitationsBatch::firstOrCreateAndRemember($practiceId, "Initial:{$link->button_color}", 2);
+                $color = $link->button_color ?? SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
+                $batch = EnrollmentInvitationsBatch::firstOrCreateAndRemember($practiceId, "Initial:$color", 2);
             
                 $link->batch_id = $batch->id;
                 $link->save();
