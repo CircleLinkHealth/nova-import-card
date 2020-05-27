@@ -213,7 +213,6 @@ class ImportEnrollee
         $ccda = Ccda::create(
             [
                 'practice_id' => $enrollee->practice_id,
-                'vendor_id'   => 1,
                 'xml'         => $ccdaExternal[0]['ccda'],
             ]
         );
@@ -221,7 +220,7 @@ class ImportEnrollee
         $enrollee->medical_record_id   = $ccda->id;
         $enrollee->medical_record_type = Ccda::class;
         $enrollee->save();
-        $imported = $ccda->import();
+        $imported = $ccda->import($enrollee);
 
         $this->enrolleeMedicalRecordImported($enrollee);
 
