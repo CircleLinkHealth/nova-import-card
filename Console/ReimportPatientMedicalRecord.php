@@ -18,6 +18,7 @@ use CircleLinkHealth\Eligibility\Notifications\PatientReimportedNotification;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
 class ReimportPatientMedicalRecord extends Command
@@ -52,6 +53,17 @@ class ReimportPatientMedicalRecord extends Command
     public function __construct()
     {
         parent::__construct();
+    }
+    
+    public static function for(int $patientUserId, ?int $notifiableUserId, string $method = 'queue', array $args = []): void
+    {
+        Artisan::$method(
+            ReimportPatientMedicalRecord::class,
+            array_merge([
+                'patientUserId'   => $patientUserId,
+                'initiatorUserId' => $notifiableUserId,
+            ], $args)
+        );
     }
 
     /**
