@@ -6,7 +6,6 @@
 
 namespace App\SelfEnrollment\Domain;
 
-use App\EnrollmentInvitationsBatch;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\SelfEnrollment\AbstractSelfEnrollableUserIterator;
@@ -37,29 +36,39 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
      */
     private $dispatched = 0;
     /**
+     * @var int
+     */
+    private $invitationBatchId;
+    /**
      * @var int|mixed
      */
     private $practiceId;
-
+    
     /**
      * InvitePracticeEnrollees constructor.
+     * @param int $amount
+     * @param int $practiceId
+     * @param int $invitationBatchId
+     * @param string $color
+     * @param array $channels
      */
     public function __construct(
         int $amount,
         int $practiceId,
+        int $invitationBatchId,
         string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
         array $channels = ['mail', CustomTwilioChannel::class]
     ) {
-        $this->amount     = $amount;
-        $this->practiceId = $practiceId;
-        $this->color      = $color;
-        $this->channels   = $channels;
+        $this->amount            = $amount;
+        $this->practiceId        = $practiceId;
+        $this->invitationBatchId = $invitationBatchId;
+        $this->color             = $color;
+        $this->channels          = $channels;
     }
 
     public function action(User $user): void
     {
-        $invitationsBatch = EnrollmentInvitationsBatch::create();
-        SendInvitation::dispatch($user, $invitationsBatch->id, $this->color, false, $this->channels);
+        SendInvitation::dispatch($user, $this->invitationBatchId, $this->color, false, $this->channels);
     }
 
     public function query(): Builder

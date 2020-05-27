@@ -39,8 +39,7 @@ class SelfEnrollmentManualInvite extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        $invitationsBatch = EnrollmentInvitationsBatch::create();
-        $models->each(function (Enrollee $enrollee) use ($invitationsBatch) {
+        $models->each(function (Enrollee $enrollee) {
             if (is_null($enrollee->user_id)) {
                 Log::warning("Enrollee [$enrollee->id] has null user_id. this is unexpected at this point");
 
