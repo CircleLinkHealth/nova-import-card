@@ -17,6 +17,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Spatie\RateLimitedMiddleware\RateLimited;
 
 class MakeAndDispatchAuditReports implements ShouldQueue
 {
@@ -106,5 +107,20 @@ class MakeAndDispatchAuditReports implements ShouldQueue
         }
 
         \File::delete($path);
+    }
+
+    public function middleware()
+    {
+        $rateLimitedMiddleware = (new RateLimited())
+            ->allow(50)
+            ->everySeconds(60)
+            ->releaseAfterSeconds(90);
+
+        return [$rateLimitedMiddleware];
+    }
+
+    public function retryUntil(): \DateTime
+    {
+        return now()->addMinutes(10);
     }
 }

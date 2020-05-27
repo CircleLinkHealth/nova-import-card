@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "35909c5f48e61aa57b70d8fba34f647c",
+    "content-hash": "5cd6e6ccb9b83c29a0670a64afac6df9",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1120,11 +1120,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "870c95958542c681d98203987bd0572fb4cda1bc"
+                "reference": "118e08799ef01e26a09ed634bf52c08c4b8f926d"
             },
             "type": "laravel-module",
             "extra": {
@@ -1146,7 +1146,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-27T12:43:13+00:00"
+            "time": "2020-05-27T13:18:31+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -3879,12 +3879,6 @@
                 "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git",
                 "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/CircleLinkHealth/laravel-module-installer/zipball/5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0",
-                "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0",
-                "shasum": ""
-            },
             "require": {
                 "composer-plugin-api": "^1.1",
                 "php": "^5.4|7.*"
@@ -3906,9 +3900,6 @@
             "license": [
                 "MIT"
             ],
-            "support": {
-                "source": "https://github.com/CircleLinkHealth/laravel-module-installer/tree/v0.1.5"
-            },
             "time": "2020-01-16T16:56:46+00:00"
         },
         {
