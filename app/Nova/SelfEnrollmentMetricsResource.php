@@ -7,6 +7,7 @@
 namespace App\Nova;
 
 use App\Constants;
+use App\Nova\Actions\DownloadCsv;
 use App\SelfEnrollmentMetricsEnrollee;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Text;
@@ -44,7 +45,29 @@ class SelfEnrollmentMetricsResource extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            (new DownloadCsv())->setOnlyColumns([
+                'batch_date',
+                'batch_time',
+                'practice_name',
+                'button_color',
+                'total_invites_sent',
+                'total_invites_opened',
+                'total_invites_opened',
+                'percentage_invites_opened',
+                'total_saw_letter',
+                'percentage_saw_letter',
+                'total_saw_form',
+                'total_enrolled',
+                'percentage_enrolled',
+                'total_call_requests',
+                'percentage_call_requests',
+            ])->canSee(function () {
+                return true;
+            })->canRun(function () {
+                return true;
+            }),
+        ];
     }
 
     /**
