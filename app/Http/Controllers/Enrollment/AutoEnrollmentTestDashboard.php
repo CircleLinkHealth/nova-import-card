@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Enrollment;
 
+use App\EnrollmentInvitationsBatch;
 use App\Http\Controllers\Controller;
 use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use App\SelfEnrollment\Domain\InviteUnreachablePatients;
@@ -35,24 +36,14 @@ class AutoEnrollmentTestDashboard extends Controller
     /**
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function inviteEnrolleesToEnrollTest(Request $request)
-    {
-        InvitePracticeEnrollees::dispatch(
-            $request->input('amount'),
-            $request->input('practice_id'),
-            $request->input('color')
-        );
-
-        return redirect()->back()->with('message', 'Invited Successfully');
-    }
-
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function inviteUnreachablesToEnrollTest(Request $request)
     {
         InviteUnreachablePatients::dispatch(
             $request->input('practice_id'),
+            EnrollmentInvitationsBatch::massInvitesBatch(
+                $request->input('practice_id'),
+                SelfEnrollmentController::DEFAULT_BUTTON_COLOR
+            ),
             $request->input('amount')
         );
 

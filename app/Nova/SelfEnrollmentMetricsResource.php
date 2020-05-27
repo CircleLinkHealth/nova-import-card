@@ -6,18 +6,19 @@
 
 namespace App\Nova;
 
-use App\SelfEnrollmentMetrics;
+
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
+use SelfEnrollmentMetricsEnrollee;
 
-class AutoEnrollmentMetrics extends Resource
+class SelfEnrollmentMetricsResource extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = SelfEnrollmentMetrics::class;
+    public static $model = SelfEnrollmentMetricsEnrollee::class;
 
     /**
      * The columns that should be searched.

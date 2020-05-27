@@ -48,9 +48,8 @@ class SendReminder implements ShouldQueue
             return;
         }
 
-        $invitation       = $this->patient->enrollee->enrollmentInvitationLinks->first();
-        $invitationsBatch = EnrollmentInvitationsBatch::create();
-        SendInvitation::dispatch($this->patient, $invitationsBatch->id, optional($invitation)->button_color, true);
+        $invitation = $this->patient->enrollee->enrollmentInvitationLinks->first();
+        SendInvitation::dispatch($this->patient, EnrollmentInvitationsBatch::manualInvitesBatch($this->patient->enrollee->practice_id)->id, optional($invitation)->button_color, true);
     }
 
     public function shouldRun(): bool
