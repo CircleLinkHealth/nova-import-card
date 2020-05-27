@@ -7,8 +7,6 @@
 namespace App\Console\Commands;
 
 use App\EnrollmentInvitationsBatch;
-use App\Http\Controllers\Enrollment\SelfEnrollmentController;
-use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use App\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;

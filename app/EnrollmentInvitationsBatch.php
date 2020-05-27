@@ -59,10 +59,8 @@ class EnrollmentInvitationsBatch extends Model
             ]);
         });
     }
-    
+
     /**
-     * @param int $practiceId
-     * @param string $color
      * @return EnrollmentInvitationsBatch|Model
      */
     public static function massInvitesBatch(int $practiceId, string $color)

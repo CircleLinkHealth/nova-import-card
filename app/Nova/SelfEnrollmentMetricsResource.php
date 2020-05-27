@@ -93,6 +93,17 @@ class SelfEnrollmentMetricsResource extends Resource
             Text::make('Batch Time', 'batch_time')->sortable(),
             Text::make('Practice Name', 'practice_name')->sortable(),
             Text::make('Button Color', 'button_color')->sortable(),
+            Text::make('Total Invites Sent', 'total_invites_sent')->sortable(),
+            Text::make('Total Invites Opened', 'total_invites_opened')->sortable(),
+            Text::make('% Invites Opened', 'percentage_invites_opened')->sortable(),
+            Text::make('Total Seen Letter', 'total_saw_letter')->sortable(),
+            Text::make('% Seen Letter', 'percentage_saw_letter')->sortable(),
+            Text::make('Total Seen Form', 'total_saw_form')->sortable(),
+            Text::make('% Seen Form', 'percentage_saw_form')->sortable(),
+            Text::make('Total Enrolled', 'total_enrolled')->sortable(),
+            Text::make('% Enrolled', 'percentage_enrolled')->sortable(),
+            Text::make('Total Call Requests', 'total_call_requests')->sortable(),
+            Text::make('% Call Requests', 'percentage_call_requests')->sortable(),
         ];
     }
 
