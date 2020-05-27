@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\MedicalRecord;
 
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Decorators\CcdaFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\DemographicsFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\InsuranceFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\MedicalHistoryFromAthena;
@@ -48,7 +49,9 @@ class MedicalRecordFactory
                 app(MedicalHistoryFromAthena::class)->decorate(
                     app(InsuranceFromAthena::class)->decorate(
                         app(DemographicsFromAthena::class)->decorate(
-                            $this->getEnrollee($user)->eligibilityJob
+                            app(CcdaFromAthena::class)->decorate(
+                                $this->getEnrollee($user)->eligibilityJob
+                            )
                         )
                     )
                 )

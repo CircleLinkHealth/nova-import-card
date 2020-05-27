@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\DB;
 
 class ReimportPatientMedicalRecord extends Command
 {
-    private const ATTEMPTS = 3;
+    private const ATTEMPTS = 2;
     /**
      * The console command description.
      *
@@ -34,7 +34,7 @@ class ReimportPatientMedicalRecord extends Command
      *
      * @var string
      */
-    protected $signature = 'patient:recreate {patientUserId} {initiatorUserId?} {--clear}';
+    protected $signature = 'patient:recreate {patientUserId} {initiatorUserId?} {--clear} {--without-transaction}';
     /**
      * @var Ccda
      */
@@ -72,20 +72,14 @@ class ReimportPatientMedicalRecord extends Command
 
         \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id}");
 
+        if ($this->option('without-transaction')) {
+            $this->reimport($user);
+
+            return;
+        }
+
         DB::transaction(function () use ($user) {
-            if ( ! $user->hasCcda()) {
-                $this->attemptCreateCcdaFromMrTemplate($user);
-            }
-
-            $this->clearExistingCarePlanData($user);
-
-            if ($this->attemptImportCcda($user)) {
-                $this->line('Ccda imported.');
-
-                return;
-            }
-
-            $this->notifyFailure($user);
+            $this->reimport($user);
         }, self::ATTEMPTS);
     }
 
@@ -380,5 +374,22 @@ class ReimportPatientMedicalRecord extends Command
             $this->warn("Notifying user:$initiatorId");
             User::findOrFail($initiatorId)->notify(new PatientReimportedNotification($user->id));
         }
+    }
+
+    private function reimport(User $user)
+    {
+        if ( ! $user->hasCcda()) {
+            $this->attemptCreateCcdaFromMrTemplate($user);
+        }
+
+        $this->clearExistingCarePlanData($user);
+
+        if ($this->attemptImportCcda($user)) {
+            $this->line('Ccda imported.');
+
+            return;
+        }
+
+        $this->notifyFailure($user);
     }
 }
