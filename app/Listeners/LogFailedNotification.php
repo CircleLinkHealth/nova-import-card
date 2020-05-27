@@ -28,6 +28,6 @@ class LogFailedNotification implements ShouldQueue
      */
     public function handle(NotificationFailed $event)
     {
-        \Log::error("Notification failed for user with id: {$event->notifiable->id}. Data: $event->data");
+        \Log::error("Notification failed for user with id: {$event->notifiable->id}. Data: ".json_encode($event->data));
     }
 }
