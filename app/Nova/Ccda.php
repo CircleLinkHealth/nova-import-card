@@ -8,7 +8,7 @@ namespace App\Nova;
 
 use App\CcdaView;
 use App\Constants;
-use App\Nova\Actions\ClearAndReimportCcda;
+use App\Nova\Actions\ReimportCcda;
 use App\Nova\Actions\DownloadCsv;
 use App\Nova\Actions\ImportCcdaAction;
 use App\Nova\Filters\CpmDateFilter;
@@ -70,7 +70,7 @@ class Ccda extends Resource
             })->canRun(function () {
                 return true;
             }),
-            (new ClearAndReimportCcda())->canSee(function () {
+            (new ReimportCcda())->canSee(function () {
                 return true;
             })->canRun(function () {
                 return true;

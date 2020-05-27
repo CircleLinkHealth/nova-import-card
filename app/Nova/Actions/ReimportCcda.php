@@ -14,13 +14,14 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
+use Laravel\Nova\Fields\Boolean;
 
-class ClearAndReimportCcda extends Action implements ShouldQueue
+class ReimportCcda extends Action implements ShouldQueue
 {
     use InteractsWithQueue;
     use Queueable;
 
-    public $name = 'Clear and re-import';
+    public $name = 'Re-import';
 
     /**
      * Get the fields available on the action.
@@ -29,19 +30,10 @@ class ClearAndReimportCcda extends Action implements ShouldQueue
      */
     public function fields()
     {
-        return [];
-    }
-
-    public static function for(int $patientUserId, ?int $notifiableUserId, string $method = 'queue'): void
-    {
-        Artisan::$method(
-            ReimportPatientMedicalRecord::class,
-            [
-                'patientUserId'   => $patientUserId,
-                'initiatorUserId' => $notifiableUserId,
-                '--clear'         => true,
-            ]
-        );
+        return [
+            Boolean::make('Clear Existing Data', 'clear')->trueValue('on'),
+            Boolean::make('Without Transaction', 'without_transaction')->trueValue('on'),
+        ];
     }
 
     /**
@@ -51,8 +43,15 @@ class ClearAndReimportCcda extends Action implements ShouldQueue
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        $models->pluck('patient_user_id')->filter()->values()->each(function ($patientUserId) {
-            self::for($patientUserId, auth()->id(), 'queue');
+        $models->pluck('patient_user_id')->filter()->values()->each(function ($patientUserId) use ($fields) {
+            $args = [];
+            if ('on' === $fields->clear) {
+                $args['--clear'] = true;
+            }
+            if ('on' === $fields->without_transaction) {
+                $args['--without-transaction'] = true;
+            }
+            ReimportPatientMedicalRecord::for($patientUserId, auth()->id(), 'queue', $args);
         });
 
         return Action::message('CCDAs queued to reimport. We will send you a notification in CPM when done.');
