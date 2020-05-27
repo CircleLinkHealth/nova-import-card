@@ -5,6 +5,7 @@
  */
 
 use App\EnrollmentInvitationsBatch;
+use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Migrations\Migration;
@@ -32,35 +33,37 @@ class AddForeignKeyToEnrollmentInvitationLinks extends Migration
      */
     public function up()
     {
-        CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink::whereNull('batch_id')->orWhere('batch_id', '<', 1)->chunk(100, function ($links) {
+        if ( ! Schema::hasColumn('enrollables_invitation_links', 'batch_id')) {
+            Schema::table('enrollables_invitation_links', function (Blueprint $table) {
+                $table->unsignedInteger('batch_id');
+            });
+        }
+    
+        EnrollableInvitationLink::whereNull('batch_id')->orWhere('batch_id', '<', 1)->chunk(100, function ($links) {
             foreach ($links as $link) {
-                if (User::class === $link->enrollable_type) {
+                if (User::class === $link->invitationable_type) {
                     $practiceId = User::find($link->invitationable_id)->program_id;
-                } elseif (Enrollee::class === $link->enrollable_type) {
-                    $practiceId = Enrollee::find($link->invitationable_id);
+                } elseif (Enrollee::class === $link->invitationable_type) {
+                    $practiceId = optional(Enrollee::find($link->invitationable_id))->practice_id;
                 }
-
+            
                 if ( ! isset($practiceId)) {
                     if (app()->environment('production')) {
                         continue;
                     }
-
+                
                     $link->delete();
                     continue;
                 }
-
+            
                 $batch = EnrollmentInvitationsBatch::firstOrCreateAndRemember($practiceId, "Initial:{$link->button_color}", 2);
-
+            
                 $link->batch_id = $batch->id;
                 $link->save();
             }
         });
 
         Schema::table('enrollables_invitation_links', function (Blueprint $table) {
-            if ( ! Schema::hasColumn('enrollables_invitation_links', 'batch_id')) {
-                $table->unsignedInteger('batch_id');
-            }
-
             $table->foreign('batch_id')
                 ->references('id')
                 ->on('enrollment_invitations_batches');
