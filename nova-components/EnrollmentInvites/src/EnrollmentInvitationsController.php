@@ -6,7 +6,6 @@
 
 namespace Circlelinkhealth\EnrollmentInvites;
 
-use App\EnrollmentInvitationsBatch;
 use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use App\SelfEnrollment\Domain\InviteUnreachablePatients;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -16,16 +15,9 @@ class EnrollmentInvitationsController
     public function handle(NovaRequest $novaRequest)
     {
         $this->validation($novaRequest);
-
-        $invitationsBatch = EnrollmentInvitationsBatch::massInvitesBatch(
-            intval($novaRequest->input('practice_id')),
-            $novaRequest->input('color')
-        );
-
         if (boolval($novaRequest->input('is_patient'))) {
             InviteUnreachablePatients::dispatch(
                 $novaRequest->input('practice_id'),
-                (int) $invitationsBatch->id,
                 $novaRequest->input('amount')
             );
 
@@ -35,7 +27,6 @@ class EnrollmentInvitationsController
         InvitePracticeEnrollees::dispatch(
             intval($novaRequest->input('amount')),
             intval($novaRequest->input('practice_id')),
-            (int) $invitationsBatch->id,
             $novaRequest->input('color')
         );
 
