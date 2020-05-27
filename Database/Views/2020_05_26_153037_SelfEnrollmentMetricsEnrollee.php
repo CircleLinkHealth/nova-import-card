@@ -6,7 +6,7 @@
 
 use CircleLinkHealth\SqlViews\BaseSqlView;
 
-class SelfEnrollmentMetricsView extends BaseSqlView
+class SelfEnrollmentMetricsEnrollee extends BaseSqlView
 {
     /**
      * Create the sql view.
@@ -17,9 +17,11 @@ class SelfEnrollmentMetricsView extends BaseSqlView
         CREATE VIEW {$this->getViewName()}
         AS
         SELECT
-            i.button_color as color
+        i.manually_expired,
+        i.batch_id
         FROM
-            enrollables_invitation_links i
+        enrollables_invitation_links i
+        left join enrollment_invitations_batches b on i.batch_id = b.id
       ");
     }
 
@@ -28,6 +30,6 @@ class SelfEnrollmentMetricsView extends BaseSqlView
      */
     public function getViewName(): string
     {
-        return 'self_enrollment_metrics_view';
+        return 'self_enrollment_metrics_enrollee';
     }
 }
