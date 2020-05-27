@@ -9,12 +9,14 @@ namespace App\Nova;
 use App\Constants;
 use App\Nova\Actions\DownloadCsv;
 use App\SelfEnrollmentMetricsEnrollee;
+use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Text;
 
 class SelfEnrollmentMetricsResource extends Resource
 {
-    public static $group = Constants::NOVA_GROUP_ENROLLMENT;
+    const AUTO_ENROLLMENT_INVITATIONS_PANEL = '/superadmin/resources/auto-enrollment-invitation-panels';
+    public static $group                    = Constants::NOVA_GROUP_ENROLLMENT;
     /**
      * The model the resource corresponds to.
      *
@@ -101,7 +103,14 @@ class SelfEnrollmentMetricsResource extends Resource
      */
     public function cards(Request $request)
     {
-        return [];
+        return [
+            (new EnrollmentInvites())->withMeta(
+                [
+                    'is_redirect' => true,
+                    'redirect_to' => url(config('services.cpm.url').self::AUTO_ENROLLMENT_INVITATIONS_PANEL),
+                ]
+            ),
+        ];
     }
 
     /**
@@ -145,7 +154,7 @@ class SelfEnrollmentMetricsResource extends Resource
      */
     public static function label()
     {
-        return 'Invitations Panel';
+        return 'Invitation Dashboard';
     }
 
     /**
