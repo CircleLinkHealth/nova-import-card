@@ -21,7 +21,7 @@ trait TimezoneTrait
     {
         return $this->timezone
             ? Carbon::now($this->timezone)->format('T')
-            : Carbon::now()->setTimezone()->format('T');
+            : Carbon::now()->setTimezone('America/New_York')->format('T');
     }
 
     public function getTimezoneOffsetAttribute()
