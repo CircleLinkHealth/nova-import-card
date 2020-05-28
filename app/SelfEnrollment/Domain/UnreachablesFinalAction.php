@@ -28,6 +28,11 @@ class UnreachablesFinalAction extends AbstractSelfEnrollmentReminder
         }
 
         if ($user->loginEvents()->exists()) {
+            //if enrollee has already been assigned to CA do not put back to call_queue
+            //because this may result to a CA calling a declined patient again.
+            if ( ! empty($user->enrollee->care_ambassador_user_id)) {
+                return;
+            }
             $enrollmentInvitationService->putIntoCallQueue($user->enrollee);
 
             return;
