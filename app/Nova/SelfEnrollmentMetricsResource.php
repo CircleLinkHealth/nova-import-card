@@ -11,6 +11,7 @@ use App\Nova\Actions\DownloadCsv;
 use App\SelfEnrollmentMetrics;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Laravel\Nova\Fields\Text;
 
 class SelfEnrollmentMetricsResource extends Resource
@@ -107,7 +108,7 @@ class SelfEnrollmentMetricsResource extends Resource
             (new EnrollmentInvites())->withMeta(
                 [
                     'is_redirect' => true,
-                    'redirect_to' => config('services.cpm.url').self::AUTO_ENROLLMENT_INVITATIONS_PANEL,
+                    'redirect_to' => (URL::to('/').self::AUTO_ENROLLMENT_INVITATIONS_PANEL),
                 ]
             ),
         ];
