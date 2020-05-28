@@ -23,14 +23,15 @@ class SelfEnrollmentMetricsView extends BaseSqlView
         $manualInvite    = 'one-off_invitations';
         $green           = 'Green';
         $redString       = 'Red';
-
-        $survey         = Helpers::getEnrolleeSurvey();
-        $surveyInstance = DB::table('survey_instances')
+        $survey          = Helpers::getEnrolleeSurvey();
+        $surveyInstance  = DB::table('survey_instances')
             ->where('survey_id', '=', $survey->id)
             ->first();
 
         $needle  = ':';
         $needle2 = 'EDT';
+
+        $showDemo = \Illuminate\Support\Facades\App::environment(['local', 'review']);
 
         return \DB::statement("
         CREATE VIEW {$this->getViewName()}
@@ -71,7 +72,7 @@ class SelfEnrollmentMetricsView extends BaseSqlView
        left join enrollees_request_info erf on e.id = erf.enrollable_id
 
        WHERE
-       p.is_demo = false
+       p.is_demo = $showDemo
 
        GROUP BY
        batch_id, batch_date, batch_time, practice_name, button_color
@@ -85,6 +86,6 @@ class SelfEnrollmentMetricsView extends BaseSqlView
      */
     public function getViewName(): string
     {
-        return 'self_enrollment_metrics';
+        return 'self_enrollment_metrics_view';
     }
 }
