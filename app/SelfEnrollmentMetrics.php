@@ -9,12 +9,12 @@ namespace App;
 use CircleLinkHealth\Core\Entities\SqlViewModel;
 
 /**
- * App\SelfEnrollmentMetricsEnrollee.
+ * App\SelfEnrollmentMetrics.
  *
  * @property string|null $color
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\SelfEnrollmentMetricsEnrollee newModelQuery()
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\SelfEnrollmentMetricsEnrollee newQuery()
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\SelfEnrollmentMetricsEnrollee query()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\App\SelfEnrollmentMetrics newModelQuery()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\App\SelfEnrollmentMetrics newQuery()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\App\SelfEnrollmentMetrics query()
  * @mixin \Eloquent
  * @property int|null    $batch_id
  * @property string|null $batch_date
@@ -33,7 +33,7 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * @property float|null  $total_call_requests
  * @property float|null  $percentage_call_requests
  */
-class SelfEnrollmentMetricsEnrollee extends SqlViewModel
+class SelfEnrollmentMetrics extends SqlViewModel
 {
     protected $primaryKey = 'batch_id';
     protected $table      = 'self_enrollment_metrics_enrollee';

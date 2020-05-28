@@ -8,7 +8,7 @@ namespace App\Nova;
 
 use App\Constants;
 use App\Nova\Actions\DownloadCsv;
-use App\SelfEnrollmentMetricsEnrollee;
+use App\SelfEnrollmentMetrics;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Text;
@@ -22,7 +22,7 @@ class SelfEnrollmentMetricsResource extends Resource
      *
      * @var string
      */
-    public static $model = SelfEnrollmentMetricsEnrollee::class;
+    public static $model = SelfEnrollmentMetrics::class;
 
     /**
      * The columns that should be searched.
