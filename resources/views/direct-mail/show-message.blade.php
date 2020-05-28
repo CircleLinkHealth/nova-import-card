@@ -12,6 +12,12 @@
                 <div class="panel panel-primary">
                     <div class="panel-heading">Direct Message [{{$dm->id}}]</div>
                     <div class="panel-body">
+                        @if (isset($links) && $links->isNotEmpty())
+                            <p><b>Regarding CPM Patient(s)</b></p>
+                            @foreach($links as $link)
+                                <p>{!! $link !!}</p>
+                            @endforeach
+                        @endif
                         <p><b>Subject:</b> {{$dm->subject}}</p>
                         <p><b>From:</b> {{$dm->from}}</p>
                         <p><b>To:</b> {{$dm->to}}</p>
