@@ -236,7 +236,7 @@ var render = function() {
       "div",
       { staticClass: "px-3 py-3" },
       [
-        _c("h1", { staticClass: "text-left text-3xl text-80 font-light" }, [
+        _c("h4", { staticClass: "text-left text-3xl text-80 font-light" }, [
           _vm._v(_vm._s(this.title()))
         ]),
         _vm._v(" "),
@@ -405,7 +405,7 @@ var render = function() {
                     }
                   }
                 },
-                [_vm._v("Invite by practice")]
+                [_vm._v("Select Practice")]
               )
             ])
       ],

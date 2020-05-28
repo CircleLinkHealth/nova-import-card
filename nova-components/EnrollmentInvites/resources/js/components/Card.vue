@@ -1,7 +1,7 @@
 <template>
     <card class="flex flex-col items-left">
         <div class="px-3 py-3">
-            <h1 class="text-left text-3xl text-80 font-light">{{this.title()}}</h1>
+            <h4 class="text-left text-3xl text-80 font-light">{{this.title()}}</h4>
             <div class="py-2">
                     <span v-if="! this.card.is_redirect"  class="flex">
                        <label for="amount">
@@ -57,7 +57,7 @@
 
                 <div v-else class="button">
                     <a class="btn btn-default btn-primary ml-auto mt-auto"
-                       style="cursor: pointer; background-color: #4baf50" @click="redirectToInvitesDashboard()">Invite by practice</a>
+                       style="cursor: pointer; background-color: #4baf50" @click="redirectToInvitesDashboard()">Select Practice</a>
                 </div>
         </div>
     </card>

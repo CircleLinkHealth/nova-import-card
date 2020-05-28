@@ -133,7 +133,7 @@ class AutoEnrollmentInvitationPanel extends Resource
      */
     public static function label()
     {
-        return 'Invitations Panel - Choose Practice';
+        return 'Auto-Enrollment: Select Practice';
     }
 
     /**
