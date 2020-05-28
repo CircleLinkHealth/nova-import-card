@@ -35,9 +35,9 @@ class EnrolleesSurveyService
         }
 
         return [
-            'dob'          => $birthDate,
-            'address'      => $user->address,
-            'patientEmail' => $this->patientEmail($user->email),
+            'dob'                    => $birthDate,
+            'address'                => $user->address,
+            'patientEmail'           => $this->patientEmail($user->email),
             'preferredContactNumber' => ! empty($primaryPhoneNumber) ? $primaryPhoneNumber : [],
             'isSurveyOnlyRole'       => $isSurveyOnly,
             'letterLink'             => $letterLink,
@@ -50,7 +50,6 @@ class EnrolleesSurveyService
     }
 
     /**
-     * @param string $email
      * @return string
      */
     private function patientEmail(string $email)
