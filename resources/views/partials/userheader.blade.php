@@ -147,7 +147,6 @@
                         style="margin-top: -8px; margin-bottom: 20px !important; margin-left: -20px !important;">
                         @foreach($ccdMonitoredProblems as $problem)
                             @if($problem['name'] != 'Diabetes')
-
                                 <li
                                         @if(($problem['is_behavioral'] ?? false) && $enableBhiAttestation)
                                         title="BHI Condition: Switch to BHI timer when discussing with patient"
@@ -161,7 +160,6 @@
                                                                 checked="checked" disabled="disabled">
                                     <label @if(($problem['is_behavioral'] ?? false) && $enableBhiAttestation) class="bhi-problem" @endif for="item-{{$problem['id']}}"><span> </span>{{$problem['name']}}</label>
                                 </li>
-                                <?php xdebug_break(); ?>
                             @endif
                         @endforeach
                     </ul>
