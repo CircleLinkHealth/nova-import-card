@@ -15,11 +15,11 @@
                         <p><b>Subject:</b> {{$dm->subject}}</p>
                         <p><b>From:</b> {{$dm->from}}</p>
                         <p><b>To:</b> {{$dm->to}}</p>
-                        <p><b>Message:</b> {{$dm->body}}</p>
                         <p><b>Number of attachments:</b> {{$dm->num_attachments}}</p>
                         <p><b>Message ID:</b> {{$dm->message_id}}</p>
                         <p><b>Direction:</b> {{ucfirst($dm->direction)}}</p>
                         <p><b>Status:</b> {{ucfirst($dm->status)}}</p>
+                        <p><b>Message:</b> {!! $dm->body !!}</p>
 
                         <br><br>
 
