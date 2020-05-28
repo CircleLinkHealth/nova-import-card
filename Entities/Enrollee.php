@@ -863,11 +863,7 @@ class Enrollee extends BaseModel
         return $query->whereIn(
             'status',
             $canBeCalledStatuses
-        )
-            ->where(function ($q) {
-                $q->whereNull('attempt_count')
-                    ->orWhere('attempt_count', '<', self::MAX_CALL_ATTEMPTS);
-            });
+        );
     }
 
     public function scopeShouldSuggestAsFamilyForEnrollee($query, Enrollee $enrollee)
