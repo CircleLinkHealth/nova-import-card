@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Customer\Providers;
 
 use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
+use CircleLinkHealth\Customer\Console\Commands\CreateLocationsFromAthenaApi;
 use CircleLinkHealth\Customer\Console\Commands\CreateOrReplacePatientAWVSurveyInstanceStatusTable;
 use CircleLinkHealth\Customer\Console\Commands\CreateRolesPermissionsMigration;
 use CircleLinkHealth\SqlViews\Providers\SqlViewsServiceProvider;
@@ -65,6 +66,7 @@ class CustomerServiceProvider extends ServiceProvider
         $this->commands([
             CreateRolesPermissionsMigration::class,
             CreateOrReplacePatientAWVSurveyInstanceStatusTable::class,
+            CreateLocationsFromAthenaApi::class,
         ]);
     }
 
