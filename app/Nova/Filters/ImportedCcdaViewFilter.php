@@ -11,6 +11,8 @@ use Laravel\Nova\Filters\Filter;
 
 class ImportedCcdaViewFilter extends Filter
 {
+    const STATUS_IMPORTED     = 'imported';
+    const STATUS_NOT_IMPORTED = 'not_imported';
     /**
      * The filter's component.
      *
@@ -23,14 +25,14 @@ class ImportedCcdaViewFilter extends Filter
      * Apply the filter to the given query.
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @param  mixed                                 $imported
+     * @param  mixed                                 $status
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function apply(Request $request, $query, $imported)
+    public function apply(Request $request, $query, $status)
     {
-        return $query->when(true === $imported, function ($q) {
+        return $query->when(self::STATUS_IMPORTED === $status, function ($q) {
             $q->whereNotNull('patient_user_id');
-        })->when(false === $imported, function ($q) {
+        })->when(self::STATUS_NOT_IMPORTED === $status, function ($q) {
             $q->whereNull('patient_user_id');
         });
     }
@@ -43,8 +45,8 @@ class ImportedCcdaViewFilter extends Filter
     public function options(Request $request)
     {
         return [
-            'Imported'     => true,
-            'Not Imported' => false,
+            'Imported'     => self::STATUS_IMPORTED,
+            'Not Imported' => self::STATUS_NOT_IMPORTED,
         ];
     }
 }
