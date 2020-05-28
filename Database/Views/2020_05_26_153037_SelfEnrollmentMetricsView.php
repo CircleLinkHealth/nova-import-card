@@ -9,7 +9,7 @@ use App\SelfEnrollment\Helpers;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SqlViews\BaseSqlView;
 
-class SelfEnrollmentMetricsEnrollee extends BaseSqlView
+class SelfEnrollmentMetricsView extends BaseSqlView
 {
     /**
      * Create the sql view.
@@ -85,6 +85,6 @@ class SelfEnrollmentMetricsEnrollee extends BaseSqlView
      */
     public function getViewName(): string
     {
-        return 'self_enrollment_metrics_enrollee';
+        return 'self_enrollment_metrics';
     }
 }
