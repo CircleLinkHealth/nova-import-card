@@ -109,6 +109,12 @@
                 }
                 return this.$refs.timeDisplay.getTime();
             },
+            bhiTimeInSeconds(){
+                return this.hasBhiTime() ? this.info.monthlyBhiTime : 0;
+            },
+            ccmTimeInSeconds(){
+                return this.shouldShowCcmTime() ? this.info.monthlyBhiTime : 0;
+            },
             totalTime() {
                 return this.seconds
             }
@@ -262,6 +268,8 @@
                 EventBus.$emit("tracker:stop", true, true);
                 return Promise.resolve({});
             });
+
+            window.TimeTracker = this;
         },
         mounted() {
 

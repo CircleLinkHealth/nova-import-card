@@ -23,6 +23,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollmentInvitationsBatch newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrollmentInvitationsBatch query()
  * @mixin \Eloquent
+ *
+ * @property int|null $practice_id
+ * @property string   $type
  */
 class EnrollmentInvitationsBatch extends Model
 {
