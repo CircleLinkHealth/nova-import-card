@@ -21,11 +21,16 @@ class SelfEnrollmentMetricsEnrollee extends BaseSqlView
         $defaultBtnColor = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
         $red             = '#b1284c';
         $manualInvite    = 'one-off_invitations';
+        $green           = 'Green';
+        $redString       = 'Red';
 
         $survey         = Helpers::getEnrolleeSurvey();
         $surveyInstance = DB::table('survey_instances')
             ->where('survey_id', '=', $survey->id)
             ->first();
+
+        $needle  = ':';
+        $needle2 = 'EDT';
 
         return \DB::statement("
         CREATE VIEW {$this->getViewName()}
@@ -35,7 +40,14 @@ class SelfEnrollmentMetricsEnrollee extends BaseSqlView
        DATE_FORMAT(b.created_at, '%Y-%m-%d') batch_date,
        DATE_FORMAT(b.created_at,'%H:%i:%s') batch_time,
        p.display_name as practice_name,
-       CASE WHEN b.type = '$defaultBtnColor' THEN 'Green' WHEN b.type = '$red' THEN 'Red' WHEN b.type = '$manualInvite' THEN 'Green' END as button_color,
+       CASE WHEN b.type = '$defaultBtnColor' THEN '$green'
+       WHEN b.type = '$red' THEN '$redString'
+       WHEN b.type = '$manualInvite' THEN '$green'
+       WHEN b.type LIKE '%{$needle}%' AND b.type LIKE '%{$needle2}%' AND SUBSTRING_INDEX(b.type, ':', '-1') = '$defaultBtnColor'
+       THEN '$green'
+       WHEN b.type LIKE '%{$needle}%' AND b.type LIKE '%{$needle2}%' AND SUBSTRING_INDEX(b.type, ':', '-1') = '$red'
+       THEN '$redString'
+       END as button_color,
        COUNT(i.batch_id) as total_invites_sent,
        SUM(case when i.manually_expired = 1 then 1 else 0 end) as total_invites_opened,
        ROUND(SUM(case when i.manually_expired = 1 then 1 else 0 end) * 100.0 / COUNT(i.batch_id), 1) as percentage_invites_opened,
@@ -57,11 +69,18 @@ class SelfEnrollmentMetricsEnrollee extends BaseSqlView
        left join practices p on b.practice_id = p.id
        left join users_surveys us on e.user_id = us.user_id
        left join enrollees_request_info erf on e.id = erf.enrollable_id
+
       
        GROUP BY
        batch_id, batch_date, batch_time, practice_name, button_color
+       
+       
         ");
     }
+
+    //@todo:add this WHERE
+//      p.is_demo = true
+//
 
     /**
      * Get the name of the sql view.
