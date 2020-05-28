@@ -101,10 +101,8 @@ class PatientContactWindow extends BaseModel
         $offset_date = $offset_date->copy();
 
         $patient_windows = $patient->contactWindows;
-
-        //If no contact window, just return the same date.
+        
         if (0 == $patient_windows->count()) {
-            //to make sure the day returned is a weekday for calls.
             do {
                 $offset_date->addDay();
             } while ( ! $offset_date->isWeekday());
@@ -121,7 +119,13 @@ class PatientContactWindow extends BaseModel
         $adjusted_offset = $offset_date->copy()->subDay();
 
         foreach ($patient_windows as $window) {
-            $days[] = $adjusted_offset->copy()->next(clhToCarbonDayOfWeek($window->day_of_week));
+            $dateOption = $adjusted_offset->copy()->next(clhToCarbonDayOfWeek($window->day_of_week));
+            
+            if ($dateOption->lt(now())) {
+                $dateOption = $dateOption->copy()->next(clhToCarbonDayOfWeek($window->day_of_week));
+            }
+    
+            $days[] = $dateOption;
         }
 
         $date = min($days)->toDateString();
