@@ -70,17 +70,15 @@ class SelfEnrollmentMetricsEnrollee extends BaseSqlView
        left join users_surveys us on e.user_id = us.user_id
        left join enrollees_request_info erf on e.id = erf.enrollable_id
 
-      
+       WHERE
+       p.is_demo = false
+
        GROUP BY
        batch_id, batch_date, batch_time, practice_name, button_color
        
        
         ");
     }
-
-    //@todo:add this WHERE
-//      p.is_demo = true
-//
 
     /**
      * Get the name of the sql view.
