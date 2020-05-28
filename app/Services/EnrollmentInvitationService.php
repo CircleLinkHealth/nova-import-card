@@ -79,6 +79,10 @@ class EnrollmentInvitationService
         return $letterPages;
     }
 
+    /**
+     * Non responsive patients were not reachable during the SelfEnrollment process.
+     * Marking them as unreachable means they will get a physical letter inviting them to enroll mailed to their address.
+     */
     public function markAsNonResponsive(Enrollee $enrollee)
     {
         $enrollee->update([

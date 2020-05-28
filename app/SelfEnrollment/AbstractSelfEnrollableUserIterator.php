@@ -31,7 +31,7 @@ abstract class AbstractSelfEnrollableUserIterator implements ShouldQueue
     /**
      * Run an action on a User.
      */
-    abstract public function action(User $user): void;
+    abstract public function action(User $patient): void;
 
     /**
      * Run an action on Users chunked from the DB.

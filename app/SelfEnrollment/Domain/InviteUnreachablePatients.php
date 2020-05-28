@@ -30,9 +30,9 @@ class InviteUnreachablePatients extends AbstractSelfEnrollableUserIterator
         $this->count      = $count;
     }
 
-    public function action(User $user): void
+    public function action(User $patient): void
     {
-        SendInvitation::dispatch($user, $this->getBatch()->id);
+        SendInvitation::dispatch($patient, $this->getBatch()->id);
     }
 
     public function query(): Builder
