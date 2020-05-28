@@ -352,6 +352,11 @@ class ProcessEligibilityBatch implements ShouldQueue
         return $batch;
     }
 
+    private function queueSingleEligibilityJobs(EligibilityBatch $batch)
+    {
+        $batch->processPendingJobs(100);
+    }
+
     /**
      * Read the file containing patient data for batch type `clh_medical_record_template`, using a fopen.
      *
@@ -386,10 +391,5 @@ class ProcessEligibilityBatch implements ShouldQueue
 
             CreateEligibilityJobFromJsonMedicalRecord::dispatch($batch, $iteration)->onQueue('low');
         }
-    }
-    
-    private function queueSingleEligibilityJobs(EligibilityBatch $batch)
-    {
-        $batch->processPendingJobs(100);
     }
 }
