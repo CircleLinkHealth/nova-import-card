@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a8a23ba76f9ea31c608ced047c121b7c",
+    "content-hash": "1c16766cd6ee3a4f3f3b6ab231acc2f2",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1150,11 +1150,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.6.8",
+            "version": "v2.7.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "0eae13da543f2d9610300d5bf4ffdcbe8e1c1c34"
+                "reference": "b2afc145ca18eafb050fb284c17dc0bcbab9772b"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1188,7 +1188,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-27T01:40:51+00:00"
+            "time": "2020-05-28T02:44:47+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",

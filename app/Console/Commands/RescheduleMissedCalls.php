@@ -42,16 +42,8 @@ class RescheduleMissedCalls extends Command
      */
     public function handle()
     {
-        $handled = $this->service->handle();
+        $this->service->handle();
 
-        if ( ! empty($handled)) {
-            $message = "The CPMbot just rescheduled some calls.\n";
-
-            foreach ($handled as $call) {
-                $message = "We just fixed call: {$call->id}. \n";
-            }
-
-            sendSlackMessage('#background-tasks', $message);
-        }
+        $this->comment('Command ran.');
     }
 }

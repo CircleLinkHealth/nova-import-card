@@ -38,7 +38,7 @@ class ReschedulerHandler
         $this->schedulerService = $schedulerService;
     }
 
-    public function fetchAndRescheduleCalls()
+    public function fetchAndReschedulePastMissedCalls()
     {
         Call::where(function ($q) {
             $q->whereNull('type')
@@ -49,12 +49,6 @@ class ReschedulerHandler
             ->where('scheduled_date', '<=', Carbon::now()->toDateString())
             ->where('window_end', '<=', Carbon::now()->format('H:i'))
             ->chunkById(100, function ($calls) {
-                /*
-                 * Check to see if the call is dropped if it's the current day
-                 * Since we store the date and times separately for other
-                 * considerations, we have to join them and compare
-                 * to see if a call was missed on the same day
-                */
                 foreach ($calls as $call) {
                     $this->reschedule($call);
                 }
@@ -63,7 +57,7 @@ class ReschedulerHandler
 
     public function handle()
     {
-        $this->fetchAndRescheduleCalls();
+        $this->fetchAndReschedulePastMissedCalls();
     }
 
     public function reschedule(Call $call)
