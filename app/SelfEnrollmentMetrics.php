@@ -36,5 +36,5 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
 class SelfEnrollmentMetrics extends SqlViewModel
 {
     protected $primaryKey = 'batch_id';
-    protected $table      = 'self_enrollment_metrics_enrollee';
+    protected $table      = 'self_enrollment_metrics_view';
 }
