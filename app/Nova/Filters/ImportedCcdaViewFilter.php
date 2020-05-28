@@ -9,7 +9,7 @@ namespace App\Nova\Filters;
 use Illuminate\Http\Request;
 use Laravel\Nova\Filters\Filter;
 
-class ImportedCcdaFilter extends Filter
+class ImportedCcdaViewFilter extends Filter
 {
     /**
      * The filter's component.
@@ -29,9 +29,9 @@ class ImportedCcdaFilter extends Filter
     public function apply(Request $request, $query, $imported)
     {
         return $query->when(true === $imported, function ($q) {
-            $q->whereNotNull('patient_id');
+            $q->whereNotNull('patient_user_id');
         })->when(false === $imported, function ($q) {
-            $q->whereNull('patient_id');
+            $q->whereNull('patient_user_id');
         });
     }
 
