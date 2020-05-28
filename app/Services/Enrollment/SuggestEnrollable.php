@@ -41,6 +41,8 @@ class SuggestEnrollable extends EnrollableService
 
         $results = $this->getSuggestions();
 
+        \Log::info("Suggested family members for enrollee: {$this->enrollee->id}, results: {$results->pluck('id')->implode(',')}");
+
         return $this->formatForView($results);
     }
 

@@ -88,7 +88,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(AutoPullEnrolleesFromAthena::class)
             ->monthlyOn(1)->onOneServer();
 
-        $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:01')->onOneServer();
+        $schedule->command(RescheduleMissedCalls::class)->everyFiveMinutes()->onOneServer();
 
         $schedule->command(CheckEnrolledPatientsForScheduledCalls::class)->dailyAt('00:10')->onOneServer();
 

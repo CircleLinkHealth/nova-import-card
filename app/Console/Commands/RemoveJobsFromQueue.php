@@ -6,33 +6,31 @@
 
 namespace App\Console\Commands;
 
-use App\Algorithms\Calls\ReschedulerHandler;
 use Illuminate\Console\Command;
 
-class RescheduleMissedCalls extends Command
+class RemoveJobsFromQueue extends Command
 {
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Reschedule all past scheduled calls that were missed.';
+    protected $description = 'Command description';
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'calls:reschedule';
-    private $service;
+    protected $signature = 'command:name';
 
     /**
      * Create a new command instance.
+     *
+     * @return void
      */
-    public function __construct(ReschedulerHandler $service)
+    public function __construct()
     {
         parent::__construct();
-
-        $this->service = $service;
     }
 
     /**
@@ -42,8 +40,5 @@ class RescheduleMissedCalls extends Command
      */
     public function handle()
     {
-        $this->service->handle();
-
-        $this->comment('Command ran.');
     }
 }

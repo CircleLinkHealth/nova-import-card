@@ -15,9 +15,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 class RemindUnreachablePatients extends AbstractSelfEnrollmentReminder
 {
-    public function action(User $user): void
+    public function action(User $patient): void
     {
-        SendReminder::dispatch($user);
+        SendReminder::dispatch($patient);
     }
 
     public function query(): Builder

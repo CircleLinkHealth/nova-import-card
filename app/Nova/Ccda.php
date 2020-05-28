@@ -8,10 +8,11 @@ namespace App\Nova;
 
 use App\CcdaView;
 use App\Constants;
-use App\Nova\Actions\ClearAndReimportCcda;
 use App\Nova\Actions\DownloadCsv;
 use App\Nova\Actions\ImportCcdaAction;
+use App\Nova\Actions\ReimportCcda;
 use App\Nova\Filters\CpmDateFilter;
+use App\Nova\Filters\ImportedCcdaViewFilter;
 use App\Nova\Filters\PracticeFilter;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Code;
@@ -70,7 +71,7 @@ class Ccda extends Resource
             })->canRun(function () {
                 return true;
             }),
-            (new ClearAndReimportCcda())->canSee(function () {
+            (new ReimportCcda())->canSee(function () {
                 return true;
             })->canRun(function () {
                 return true;
@@ -168,6 +169,7 @@ class Ccda extends Resource
             new PracticeFilter(),
             (new CpmDateFilter('created_at'))->setName('Created on or after')->setOperator('>=')->setDefaultDate(now()->subWeeks(2)->toDateTimeString()),
             (new CpmDateFilter('created_at'))->setName('Created before or on')->setOperator('<=')->setDefaultDate(now()->addDay()->toDateTimeString()),
+            new ImportedCcdaViewFilter(),
         ];
     }
 

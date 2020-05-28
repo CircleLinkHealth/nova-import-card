@@ -57,9 +57,9 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
         $this->channels   = $channels;
     }
 
-    public function action(User $user): void
+    public function action(User $patient): void
     {
-        SendInvitation::dispatch($user, $this->getBatch()->id, $this->color, false, $this->channels);
+        SendInvitation::dispatch($patient, $this->getBatch()->id, $this->color, false, $this->channels);
     }
 
     public function query(): Builder

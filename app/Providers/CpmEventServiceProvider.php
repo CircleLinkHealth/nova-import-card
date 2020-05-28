@@ -26,7 +26,6 @@ use App\Listeners\CreateAndHandlePdfReport;
 use App\Listeners\ForwardApprovedCarePlanToPractice;
 use App\Listeners\ForwardNote;
 use App\Listeners\LogFailedNotification;
-use App\Listeners\LogSuccessfulLogin;
 use App\Listeners\LogSuccessfulLogout;
 use App\Listeners\NotifyPatientOfCarePlanApproval;
 use App\Listeners\NotifySlackChannel;
@@ -58,7 +57,6 @@ class CpmEventServiceProvider extends ServiceProvider
     protected $listen = [
         Login::class => [
             UpdateUserLoginInfo::class,
-            LogSuccessfulLogin::class,
         ],
         Authenticated::class => [
             UpdateUserSessionInfo::class,

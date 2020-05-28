@@ -32,7 +32,8 @@ class ImportCcdaAction extends Action
      */
     public function fields()
     {
-        return [];
+        return [
+        ];
     }
 
     /**
