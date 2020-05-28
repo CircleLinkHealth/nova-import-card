@@ -57,6 +57,7 @@ class ProviderUITimerComposer extends ServiceProvider
             $noBhiSwitch = ! auth()->user()->isCareCoach();
 
             $patient = $view->patient;
+
             if (isset($patient) && ! empty($patient) && is_a($patient, User::class)) {
                 $patientId = $patient->id;
                 $patientProgramId = $patient->program_id;
@@ -105,6 +106,7 @@ class ProviderUITimerComposer extends ServiceProvider
 
             if ($patient) {
                 $ccmSeconds = $patient->getCcmTime();
+                $bhiSeconds = $patient->getBhiTime();
                 $monthlyTime = $patient->formattedTime($ccmSeconds);
                 $monthlyBhiTime = $patient->formattedBhiTime();
 
@@ -121,6 +123,8 @@ class ProviderUITimerComposer extends ServiceProvider
                 $location = empty($patient->getPreferredLocationName())
                     ? 'Not Set'
                     : $patient->getPreferredLocationName();
+
+                $patientIsBhiEligible = optional($patient->primaryPractice)->hasServiceCode('CPT 99484') && ($bhiSeconds || $patient->isBhi());
             } else {
                 $ccm_above = false;
                 $location = 'N/A';
@@ -129,6 +133,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 $provider = 'N/A';
                 $billingDoctor = '';
                 $regularDoctor = '';
+                $patientIsBhiEligible = false;
             }
 
             $view->with(compact([
@@ -139,6 +144,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 'provider',
                 'regularDoctor',
                 'billingDoctor',
+                'patientIsBhiEligible',
             ]));
         });
     }

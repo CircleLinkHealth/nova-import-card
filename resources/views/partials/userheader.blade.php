@@ -134,6 +134,7 @@
 
                 $ccdProblems = $ccdProblemService->getPatientProblems($patient);
 
+                $enableBhiAttestation = auth()->user()->isCareCoach() && (isset($patientIsBhiEligible) && true === $patientIsBhiEligible);
                 $ccdMonitoredProblems = $ccdProblems
                     ->where('is_monitored', 1)
                     ->unique('name')
@@ -148,7 +149,7 @@
                             @if($problem['name'] != 'Diabetes')
 
                                 <li
-                                        @if($problem['is_behavioral'] ?? false)
+                                        @if(($problem['is_behavioral'] ?? false) && $enableBhiAttestation)
                                         title="BHI Condition: Switch to BHI timer when discussing with patient"
                                         class="with-bhi-tooltip bhi-problem inline-block"
                                                 @else
@@ -158,8 +159,9 @@
                                                                 name="item-{{$problem['id']}}"
                                                                 value="Active"
                                                                 checked="checked" disabled="disabled">
-                                    <label @if($problem['is_behavioral'] ?? false) class="bhi-problem" @endif for="item-{{$problem['id']}}"><span> </span>{{$problem['name']}}</label>
+                                    <label @if(($problem['is_behavioral'] ?? false) && $enableBhiAttestation) class="bhi-problem" @endif for="item-{{$problem['id']}}"><span> </span>{{$problem['name']}}</label>
                                 </li>
+                                <?php xdebug_break(); ?>
                             @endif
                         @endforeach
                     </ul>
@@ -340,6 +342,9 @@
 
 @push('scripts')
     <script>
+        window.enableBhiAttestation = @json([
+    'patientIsBhiEligible' => $enableBhiAttestation
+    ]);
         (function ($) {
             $('.glyphicon-flag').click(function (e) {
                 $(".load-hidden-bhi, .modal-mask").show();

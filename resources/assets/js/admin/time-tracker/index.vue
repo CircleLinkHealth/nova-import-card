@@ -110,10 +110,10 @@
                 return this.$refs.timeDisplay.getTime();
             },
             bhiTimeInSeconds(){
-                return this.hasBhiTime() ? this.info.monthlyBhiTime : 0;
+                return this.hasBhiTime() ? this.info.totalBhiTime : 0;
             },
             ccmTimeInSeconds(){
-                return this.shouldShowCcmTime() ? this.info.monthlyBhiTime : 0;
+                return this.info.totalCcmTime || 0;
             },
             totalTime() {
                 return this.seconds

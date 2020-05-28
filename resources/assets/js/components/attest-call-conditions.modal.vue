@@ -16,7 +16,7 @@
                     <div v-for="problem in problemsToAttest">
                         <input type="checkbox" :id="problem.id" :value="problem.id" style="display: none !important"
                                v-model="attestedProblems">
-                        <label :for="problem.id"><span> </span>{{problem.name}}</label><span v-if="problem.code">&nbsp;({{problem.code}})</span>
+                        <label  v-bind:class="{'bhi-problem': problemIsBhi(problem)}" :for="problem.id"><span> </span>{{problem.name}}</label><span v-if="problem.code">&nbsp;({{problem.code}})</span>
                     </div>
                     <div class="col-sm-12 add-condition">
                         <button v-on:click="toggleAddCondition()" type="button" class="btn btn-info">
@@ -157,6 +157,12 @@
             }
         },
         methods: {
+            problemIsBhi(problem){
+                if (! this.isNotesPage){
+                    return false;
+                }
+                return window.enableBhiAttestation.patientIsBhiEligible && problem.is_behavioral;
+            },
             getCpmProblems() {
                 if (!this.cpmProblems) {
                     return this.careplan().allCpmProblems || [];
@@ -214,6 +220,11 @@
                 let p = this.problems.find(function (p) {
                     return p.id === pId;
                 })
+
+                if (p.is_behavioral !== undefined){
+                    return p.is_behavioral;
+                }
+
                 if (!p.cpm_id) {
                     return false;
                 }
@@ -313,6 +324,11 @@
     .btn.btn-secondary.selected, .list-group-item.selected {
         background: #47beab;
         color: white;
+    }
+
+    .bhi-problem {
+        color: #5cc0dd !important;
+        font-weight: bolder;
     }
 
     .m-top-15 {
