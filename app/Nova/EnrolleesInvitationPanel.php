@@ -261,7 +261,11 @@ class EnrolleesInvitationPanel extends Resource
      */
     public static function label()
     {
-        $practice = Practice::$model::where('id', self::$model::first()->practice_id)->first();
+        $model    = EnrolleesInvitationPanel::$model::first();
+        $practice = null;
+        if ( ! empty($model)) {
+            $practice = Practice::$model::where('id', $model->practice_id)->first();
+        }
 
         if ( ! empty($practice)) {
             return  $practice->display_name;
