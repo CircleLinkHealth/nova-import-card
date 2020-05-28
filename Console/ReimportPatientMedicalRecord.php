@@ -54,7 +54,7 @@ class ReimportPatientMedicalRecord extends Command
     {
         parent::__construct();
     }
-    
+
     public static function for(int $patientUserId, ?int $notifiableUserId, string $method = 'queue', array $args = []): void
     {
         Artisan::$method(
