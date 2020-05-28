@@ -180,7 +180,7 @@ __webpack_require__.r(__webpack_exports__);
       window.location.href = this.card.redirect_to;
     },
     title: function title() {
-      return this.card.is_redirect ? "Invite By Practice" : "Enrollment Invites";
+      return this.card.is_redirect ? "Select Practice For Invites" : "Enrollment Invites";
     },
     sendInvites: function sendInvites(color, amount) {
       var _this = this;
@@ -305,99 +305,90 @@ var render = function() {
         ]),
         _vm._v(" "),
         !this.card.is_redirect
-          ? _c("div", [
-              _c("div", { staticClass: "invite-buttons" }, [
-                !this.card.is_patient
-                  ? _c(
-                      "div",
+          ? _c("div", { staticClass: "invite-buttons" }, [
+              !this.card.is_patient
+                ? _c("div", { staticClass: "button" }, [
+                    _c(
+                      "a",
                       {
-                        staticClass: "button",
-                        staticStyle: { display: "flex" }
+                        staticClass:
+                          "btn btn-default btn-primary ml-auto mt-auto",
+                        staticStyle: {
+                          cursor: "pointer",
+                          "background-color": "#4baf50",
+                          "white-space": "nowrap",
+                          width: "275px",
+                          "margin-right": "10px"
+                        },
+                        attrs: { disabled: _vm.sendingInvites },
+                        on: {
+                          click: function($event) {
+                            return _vm.sendInvites("#4baf50", _vm.amount)
+                          }
+                        }
                       },
                       [
-                        _c(
-                          "a",
-                          {
-                            staticClass:
-                              "btn btn-default btn-primary ml-auto mt-auto",
-                            staticStyle: {
-                              cursor: "pointer",
-                              "background-color": "#4baf50",
-                              "white-space": "nowrap",
-                              width: "275px",
-                              "margin-right": "10px"
-                            },
-                            attrs: { disabled: _vm.sendingInvites },
-                            on: {
-                              click: function($event) {
-                                return _vm.sendInvites("#4baf50", _vm.amount)
-                              }
-                            }
-                          },
-                          [
-                            _vm._v(
-                              "\n                  Send SMS/Emails (Green Btn.)\n              "
-                            )
-                          ]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "a",
-                          {
-                            staticClass:
-                              "btn btn-default btn-primary ml-auto mt-auto",
-                            staticStyle: {
-                              cursor: "pointer",
-                              "background-color": "#b1284c",
-                              "white-space": "nowrap",
-                              width: "275px"
-                            },
-                            attrs: { disabled: _vm.sendingInvites },
-                            on: {
-                              click: function($event) {
-                                return _vm.sendInvites("#b1284c", _vm.amount)
-                              }
-                            }
-                          },
-                          [
-                            _vm._v(
-                              "\n                  Send SMS/Emails (Red Btn.)\n              "
-                            )
-                          ]
+                        _vm._v(
+                          "\n                  Send SMS/Emails (Green Btn.)\n              "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "a",
+                      {
+                        staticClass:
+                          "btn btn-default btn-primary ml-auto mt-auto",
+                        staticStyle: {
+                          cursor: "pointer",
+                          "background-color": "#b1284c",
+                          "white-space": "nowrap",
+                          width: "275px"
+                        },
+                        attrs: { disabled: _vm.sendingInvites },
+                        on: {
+                          click: function($event) {
+                            return _vm.sendInvites("#b1284c", _vm.amount)
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                  Send SMS/Emails (Red Btn.)\n              "
                         )
                       ]
                     )
-                  : _vm._e(),
-                _vm._v(" "),
-                this.card.is_patient
-                  ? _c(
-                      "div",
-                      {
-                        staticClass: "button",
-                        attrs: { disabled: _vm.sendingInvites }
-                      },
-                      [
-                        _c(
-                          "a",
-                          {
-                            staticClass:
-                              "btn btn-default btn-primary ml-auto mt-auto",
-                            staticStyle: {
-                              cursor: "pointer",
-                              "background-color": "#4baf50"
-                            },
-                            on: {
-                              click: function($event) {
-                                return _vm.sendInvites("#4baf50", _vm.amount)
-                              }
-                            }
+                  ])
+                : _vm._e(),
+              _vm._v(" "),
+              this.card.is_patient
+                ? _c(
+                    "div",
+                    {
+                      staticClass: "button",
+                      attrs: { disabled: _vm.sendingInvites }
+                    },
+                    [
+                      _c(
+                        "a",
+                        {
+                          staticClass:
+                            "btn btn-default btn-primary ml-auto mt-auto",
+                          staticStyle: {
+                            cursor: "pointer",
+                            "background-color": "#4baf50"
                           },
-                          [_vm._v("Send Invite")]
-                        )
-                      ]
-                    )
-                  : _vm._e()
-              ])
+                          on: {
+                            click: function($event) {
+                              return _vm.sendInvites("#4baf50", _vm.amount)
+                            }
+                          }
+                        },
+                        [_vm._v("Send Invite")]
+                      )
+                    ]
+                  )
+                : _vm._e()
             ])
           : _c("div", { staticClass: "button" }, [
               _c(

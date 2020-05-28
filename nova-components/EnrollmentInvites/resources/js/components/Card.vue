@@ -23,9 +23,9 @@
                     <p class="text-danger mb-1" v-for="error in errors">{{error}}</p>
                 </div>
             </div>
-      <div v-if="! this.card.is_redirect">
-          <div class="invite-buttons">
-              <div v-if="! this.card.is_patient" class="button" style="display: flex">
+
+          <div v-if="! this.card.is_redirect" class="invite-buttons">
+              <div v-if="! this.card.is_patient" class="button">
                   <a class="btn btn-default btn-primary ml-auto mt-auto"
                      :disabled="sendingInvites"
                      style="cursor: pointer;
@@ -54,7 +54,7 @@
                      style="cursor: pointer; background-color: #4baf50" @click="sendInvites('#4baf50', amount)">Send Invite</a>
               </div>
           </div>
-      </div>
+
                 <div v-else class="button">
                     <a class="btn btn-default btn-primary ml-auto mt-auto"
                        style="cursor: pointer; background-color: #4baf50" @click="redirectToInvitesDashboard()">Invite by practice</a>
@@ -90,7 +90,7 @@ export default {
         },
 
         title(){
-          return this.card.is_redirect ? "Invite By Practice" : "Enrollment Invites";
+          return this.card.is_redirect ? "Select Practice For Invites" : "Enrollment Invites";
         },
 
         sendInvites(color, amount){
