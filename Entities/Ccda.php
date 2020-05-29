@@ -821,15 +821,11 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     {
         return optional(DB::table(config('ccda-parser.db_table'))->where('ccda_id', '=', $this->id)->first())->result;
     }
-    
+
     /**
      * If this is a survey only patient who has not yet enrolled, we should not enroll them.
-     *
-     * @param User|null $patient
-     * @param Enrollee|null $enrollee
-     * @return bool
      */
-    private static function isUnenrolledSurveyUser(?User $patient, ?Enrollee $enrollee):bool
+    private static function isUnenrolledSurveyUser(?User $patient, ?Enrollee $enrollee): bool
     {
         if (is_null($patient)) {
             return false;
