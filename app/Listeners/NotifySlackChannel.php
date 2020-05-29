@@ -8,8 +8,10 @@ namespace App\Listeners;
 
 use App\DirectMailMessage;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
+use App\Services\PhiMail\IncomingMessageHandler;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Str;
 
 class NotifySlackChannel implements ShouldQueue
 {
@@ -33,9 +35,7 @@ class NotifySlackChannel implements ShouldQueue
      */
     public function handle(DirectMailMessageReceived $event)
     {
-        if ($event->directMailMessage->num_attachments > 0) {
-            $this->notifyAdmins($event->directMailMessage);
-        }
+        $this->notifyAdmins($event->directMailMessage);
     }
 
     /**
@@ -44,15 +44,29 @@ class NotifySlackChannel implements ShouldQueue
     private function notifyAdmins(
         DirectMailMessage $dm
     ) {
-        if (app()->environment('local')) {
+        if ( ! app()->environment('production')) {
             return;
         }
+
+        $dm->loadMissing('ccdas.practice');
+
+        $greeting = 'DM Received';
+
+        if ($practiceName = $dm->ccdas->pluck('practice.display_name')->filter()->values()->first()) {
+            $purpose = Str::contains(strtolower($dm->body), strtolower(IncomingMessageHandler::KEYWORD_TO_PROCESS_FOR_ELIGIBILITY))
+                ? 'Eligibility Processing'
+                : 'Importing';
+
+            $greeting .= " from $practiceName, containing CCDA(s) for $purpose";
+        }
+
+        $greeting .= '.';
 
         $messageLink = route('direct-mail.show', [$dm->id]);
 
         sendSlackMessage(
             '#ccd-file-status',
-            "We received a message from EMR Direct. \n Click here to see the message {$messageLink}."
+            "$greeting \n Click thhis link to go to the message {$messageLink}."
         );
     }
 }

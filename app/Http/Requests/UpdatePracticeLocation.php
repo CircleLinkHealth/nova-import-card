@@ -38,7 +38,7 @@ class UpdatePracticeLocation extends FormRequest
             'city'                      => 'required',
             'state'                     => 'required',
             'timezone'                  => 'required',
-            'postal_code'               => 'required|digits:5',
+            'postal_code'               => 'required|max:10',
             'emr_direct_address'        => 'nullable|email',
             'clinical_contact.email'    => 'nullable|email',
         ];

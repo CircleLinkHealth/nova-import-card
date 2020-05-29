@@ -380,11 +380,11 @@ class Calls implements AthenaApiImplementation
      * @param $practiceId
      * @param bool $showAllDepartments
      *
+     * @param  bool       $providerlist
      * @throws \Exception
-     *
      * @return mixed
      */
-    public function getDepartments($practiceId, $showAllDepartments = true)
+    public function getDepartments($practiceId, $showAllDepartments = false, $providerlist = false)
     {
         $this->api()->setPracticeId($practiceId);
 
@@ -393,6 +393,7 @@ class Calls implements AthenaApiImplementation
             [
                 'practiceid'         => $practiceId,
                 'showalldepartments' => $showAllDepartments,
+                'providerlist'       => $providerlist,
             ]
         );
 

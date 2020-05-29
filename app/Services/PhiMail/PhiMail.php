@@ -244,6 +244,8 @@ class PhiMail implements DirectMail
             }
         }
 
+        $this->incomingMessageHandler->processCcdas($dm);
+
         $this->connector->acknowledgeMessage();
 
         event(new DirectMailMessageReceived($dm));

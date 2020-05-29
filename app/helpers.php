@@ -258,6 +258,15 @@ if ( ! function_exists('formatPhoneNumber')) {
     }
 }
 
+if ( ! function_exists('capitalizeWords')) {
+    function capitalizeWords(
+        string $string,
+        $delimiters = "- \t\r\n\f\v"
+    ) {
+        return ucwords(strtolower($string), $delimiters);
+    }
+}
+
 if ( ! function_exists('formatPhoneNumberE164')) {
     /**
      * Formats a string of numbers as a phone number delimited by dashes as such: xxx-xxx-xxxx.

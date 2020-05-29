@@ -100,7 +100,7 @@ class SendInvitation implements ShouldQueue
             return $this->shortUrl;
         }
 
-        $url = URL::temporarySignedRoute('invitation.enrollment.loginForm', now()->addHours(48), $this->getSignedRouteParams());
+        $url = URL::temporarySignedRoute('invitation.enrollment.loginForm', now()->addHours(108), $this->getSignedRouteParams());
 
         if (empty($urlToken = Helpers::getTokenFromUrl($url))) {
             throw new \Exception("`urlToken` cannot be empty. User ID {$this->user->id}");

@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Nova\Filters;
+namespace App\Nova\Filters\CcdaView;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Filters\Filter;
