@@ -297,6 +297,7 @@
                     }
                 }
 
+                //if patient wants to bypass bhi validation and does not require +2 ccm validation or already has attested to 2 ccm conditions, then we can bypass
                 let skipBhiValidation =  (!this.attestationRequirements.ccm_2 || this.getCcmAttestedConditionsCount() >= 2) && !!bypassBhiValidation
 
                 if (this.hasEqualOrMoreThan10BhiMins() && ! this.attestationRequirements.bhi_problems_attested && ! skipBhiValidation) {
