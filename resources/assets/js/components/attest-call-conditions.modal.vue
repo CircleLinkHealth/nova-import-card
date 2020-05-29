@@ -299,7 +299,7 @@
 
                 let skipBhiValidation =  (!this.attestationRequirements.ccm_2 || this.getCcmAttestedConditionsCount() >= 2) && !!bypassBhiValidation
 
-                if (this.hasEqualOrMoreThan10BhiMins() && ! this.attestationRequirements.bhi_problems_attested && skipBhiValidation) {
+                if (this.hasEqualOrMoreThan10BhiMins() && ! this.attestationRequirements.bhi_problems_attested && ! skipBhiValidation) {
                     let attestedBhi = this.getBhiAttestedConditionsCount();
                     if (attestedBhi === 0) {
                         bhiError = true;
