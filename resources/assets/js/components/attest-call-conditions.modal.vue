@@ -251,7 +251,7 @@
                 return false;
             },
             hasEqualOrMoreThan10BhiMins(){
-                return window.TimeTracker.bhiTimeInSeconds >= (10 * 60);
+                return window.TimeTracker.bhiTimeInSeconds() >= (10 * 60);
             },
             getCcmAttestedConditionsCount(){
                 let attestedCcm = 0;
@@ -272,6 +272,10 @@
                 })
 
                 return attestedBhi;
+            },
+            passesCcmValidation(){
+                //if patient wants to bypass bhi validation and does not require +2 ccm validation or already has attested to 2 ccm conditions, then we can bypass
+                return !this.attestationRequirements.ccm_2 || this.getCcmAttestedConditionsCount() >= 2;
             },
             validateAttestedConditions(bypassBhiValidation = null) {
                 if (!this.attestationRequirements || this.attestationRequirements.disabled) {
@@ -297,8 +301,8 @@
                     }
                 }
 
-                //if patient wants to bypass bhi validation and does not require +2 ccm validation or already has attested to 2 ccm conditions, then we can bypass
-                let skipBhiValidation =  (!this.attestationRequirements.ccm_2 || this.getCcmAttestedConditionsCount() >= 2) && !!bypassBhiValidation
+
+                let skipBhiValidation =  this.passesCcmValidation() && !!bypassBhiValidation
 
                 if (this.hasEqualOrMoreThan10BhiMins() && ! this.attestationRequirements.bhi_problems_attested && ! skipBhiValidation) {
                     let attestedBhi = this.getBhiAttestedConditionsCount();
