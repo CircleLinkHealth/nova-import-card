@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "42092dccb3835dab922b4c0aacc9b32c",
+    "content-hash": "a4bfa40bd67ac8012ae4bd8adce831ca",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1120,11 +1120,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.9.6",
+            "version": "v1.9.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "99e61ae6088320fb6fd6778fbc4c5cd1c636535d"
+                "reference": "a0a52dd7f49f477f3784cf17a4804737a011307b"
             },
             "type": "laravel-module",
             "extra": {
@@ -1146,15 +1146,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-29T00:06:38+00:00"
+            "time": "2020-05-29T17:21:22+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.7.1",
+            "version": "v2.7.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "03c1129e279c41e111c2580f9b10a30a73bf9f78"
+                "reference": "be7a24ff4742d866b2ca1ccac5c39ab2941e5a12"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1188,15 +1188,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-29T00:06:38+00:00"
+            "time": "2020-05-29T14:29:28+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.8.1",
+            "version": "v2.8.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "9034f2d7e0c86d95848b6ef3e4890094c42a13fe"
+                "reference": "ac5e95b1891f609c991b6447743d3eb5045ee96c"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1221,7 +1221,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-29T02:56:15+00:00"
+            "time": "2020-05-29T17:20:30+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -2267,16 +2267,16 @@
         },
         {
             "name": "doctrine/inflector",
-            "version": "2.0.2",
+            "version": "2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/inflector.git",
-                "reference": "3fc171224a316569faad2df6b18a1fd8cce5a56d"
+                "reference": "9cf661f4eb38f7c881cac67c75ea9b00bf97b210"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/inflector/zipball/3fc171224a316569faad2df6b18a1fd8cce5a56d",
-                "reference": "3fc171224a316569faad2df6b18a1fd8cce5a56d",
+                "url": "https://api.github.com/repos/doctrine/inflector/zipball/9cf661f4eb38f7c881cac67c75ea9b00bf97b210",
+                "reference": "9cf661f4eb38f7c881cac67c75ea9b00bf97b210",
                 "shasum": ""
             },
             "require": {
@@ -2340,7 +2340,7 @@
                 "uppercase",
                 "words"
             ],
-            "time": "2020-05-25T20:08:47+00:00"
+            "time": "2020-05-29T15:13:26+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -8855,16 +8855,16 @@
         },
         {
             "name": "spatie/laravel-rate-limited-job-middleware",
-            "version": "1.3.0",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-rate-limited-job-middleware.git",
-                "reference": "ea050efcbe8374ca09dacddf54e623f6a71d6098"
+                "reference": "8c882dbbe78064d21597a6d15e23b9a470f71a77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-rate-limited-job-middleware/zipball/ea050efcbe8374ca09dacddf54e623f6a71d6098",
-                "reference": "ea050efcbe8374ca09dacddf54e623f6a71d6098",
+                "url": "https://api.github.com/repos/spatie/laravel-rate-limited-job-middleware/zipball/8c882dbbe78064d21597a6d15e23b9a470f71a77",
+                "reference": "8c882dbbe78064d21597a6d15e23b9a470f71a77",
                 "shasum": ""
             },
             "require": {
@@ -8901,7 +8901,7 @@
                 "laravel-rate-limited-job-middleware",
                 "spatie"
             ],
-            "time": "2020-03-02T21:36:38+00:00"
+            "time": "2020-05-29T15:32:18+00:00"
         },
         {
             "name": "spatie/laravel-view-models",

@@ -184,8 +184,7 @@ class Kernel extends ConsoleKernel
             ->monthlyOn(1, '02:00')->onOneServer();
 
         $schedule->command(CheckEmrDirectInbox::class)
-            ->everyMinute()
-            ->withoutOverlapping()->onOneServer();
+            ->everyMinute();
 
         //uncomment when ready
 //        $schedule->command(DownloadTwilioRecordings::class)
