@@ -117,13 +117,18 @@
         },
         methods: {
             bhiTimeInSeconds(){
+                //this makes sure that who ever calls this method gets time dynamically
                 if(this.info.isManualBehavioral){
                     return this.seconds;
                 }
                 return this.lastUpdatedBhiTime ||  this.info.totalBHITime || 0;
             },
             ccmTimeInSeconds(){
-                return this.info.totalCCMTime || 0;
+                //this makes sure that who ever calls this method gets time dynamically
+                if(!this.info.isManualBehavioral){
+                    return this.seconds;
+                }
+                return this.lastUpdatedCcmTime || this.info.totalCCMTime || 0;
             },
             shouldShowCcmTime() {
                 //we show ccm time, even if zero time. we do not show when empty string
