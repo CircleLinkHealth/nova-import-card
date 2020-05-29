@@ -825,8 +825,24 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
         $this->setBillingProviderId($provider->id);
 
-        if ( ! $this->location_id && 1 === count($provider->locations)) {
+        if ($this->location_id) {
+            return;
+        }
+        
+        if (1 === count($provider->locations)) {
             $this->setLocationId($provider->locations->first()->id);
+        }
+    
+        if ($this->location_id) {
+            return;
+        }
+        
+        if ($providerAddress = $this->bluebuttonJson()->demographics->provider->address->street[0] ?? null) {
+            $locations = $provider->locations->where('address_line_1', $providerAddress);
+
+            if (1 === $locations->count()) {
+                $this->setLocationId($locations->first()->id);
+            }
         }
     }
 }
