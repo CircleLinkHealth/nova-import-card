@@ -35,7 +35,7 @@ use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 class Ehr extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     const ATHENA_EHR_NAME = 'Athena';
-    public $fillable = [
+    public $fillable      = [
         'name',
         'pdf_report_handler',
     ];
@@ -45,12 +45,13 @@ class Ehr extends \CircleLinkHealth\Core\Entities\BaseModel
         return $this->hasMany(Practice::class);
     }
 
+    public function scopeAthena($builder)
+    {
+        return $builder->where('name', '=', self::ATHENA_EHR_NAME);
+    }
+
     public function targetPatient()
     {
         return $this->hasMany(TargetPatient::class);
-    }
-    
-    public function scopeAthena($builder) {
-        return $builder->where('name', '=', self::ATHENA_EHR_NAME);
     }
 }

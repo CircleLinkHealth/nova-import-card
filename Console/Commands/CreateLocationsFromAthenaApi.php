@@ -55,7 +55,7 @@ class CreateLocationsFromAthenaApi extends Command
             $this->warn('Fetching locations from Athena');
             $this->importAthenaLocations();
         }
-    
+
         if ($this->option('activate')) {
             $this->warn('Activating locations from where we have patients');
             $this->activateLocationsWeHavePatientsFrom();
@@ -73,6 +73,29 @@ class CreateLocationsFromAthenaApi extends Command
         }
 
         return $this->practice;
+    }
+
+    private function activateLocationsWeHavePatientsFrom()
+    {
+        Location::onlyTrashed()->where('practice_id', $this->practice()->id)->whereIn('external_department_id', function ($q) {
+            $q->select('ehr_department_id')
+                ->from('target_patients')
+                ->where('practice_id', $this->practice()->id)
+                ->whereNotNull('user_id')
+                ->whereIn('user_id', function ($q) {
+                    $q->select('user_id')
+                        ->from('practice_role_user')
+                        ->where('program_id', $this->practice()->id)
+                        ->whereIn('role_id', Role::whereIn('name', ['participant', 'survey-only'])->pluck('id')->all())
+                        ->distinct()
+                    ;
+                })
+                ->distinct()
+            ;
+        })->get()->each(function (Location $location) {
+            $this->warn("Restoring location[$location->id]");
+            $location->restore();
+        });
     }
 
     private function importAthenaLocations()
@@ -105,29 +128,6 @@ class CreateLocationsFromAthenaApi extends Command
             if (true === $softDeleteTillAdminApproves) {
                 $cpmLocation->delete();
             }
-        });
-    }
-    
-    private function activateLocationsWeHavePatientsFrom()
-    {
-        Location::onlyTrashed()->where('practice_id', $this->practice()->id)->whereIn('external_department_id', function ($q) {
-            $q->select('ehr_department_id')
-                ->from('target_patients')
-                ->where('practice_id', $this->practice()->id)
-                ->whereNotNull('user_id')
-                ->whereIn('user_id', function ($q) {
-                    $q->select('user_id')
-                        ->from('practice_role_user')
-                        ->where('program_id', $this->practice()->id)
-                        ->whereIn('role_id', Role::whereIn('name', ['participant', 'survey-only'])->pluck('id')->all())
-                        ->distinct()
-                    ;
-                })
-                ->distinct()
-            ;
-        })->get()->each(function (Location $location){
-            $this->warn("Restoring location[$location->id]");
-            $location->restore();
         });
     }
 }
