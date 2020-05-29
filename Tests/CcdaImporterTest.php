@@ -267,7 +267,7 @@ class CcdaImporterTest extends CustomerTestCase
             'mrn_number'                 => 'fake-record-12345212',
             'preferred_contact_language' => 'EN',
             'preferred_contact_method'   => 'CCT',
-            'preferred_calls_per_month'  => 2,
+            'preferred_calls_per_month'  => 1,
             'daily_contact_window_start' => '09:00:00',
             'daily_contact_window_end'   => '18:00:00',
         ]);

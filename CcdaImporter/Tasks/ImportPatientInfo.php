@@ -144,6 +144,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
                 'general_comment'          => $this->enrollee
                     ? $this->enrollee->other_note
                     : null,
+                'preferred_calls_per_month' => 1,
             ],
             $agentDetails
         );
