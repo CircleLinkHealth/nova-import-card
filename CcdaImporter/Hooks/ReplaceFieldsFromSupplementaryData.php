@@ -47,8 +47,8 @@ class ReplaceFieldsFromSupplementaryData extends BaseCcdaImportHook
             }
         }
 
-        if (optional($dataFromPractice)->mrn) {
-            $this->payload->mrn_number = $dataFromPractice->mrn;
+        if (optional($dataFromPractice)->mrn && is_array($this->payload)) {
+            $this->payload['mrn_number'] = $dataFromPractice->mrn;
         }
 
         return $this->payload;
