@@ -28,6 +28,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportMedications;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeDiabetesAndEndocrineCcda;
@@ -43,6 +44,8 @@ class CcdaImporterTest extends CustomerTestCase
         SendInvitation::dispatch($enrollee->user, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
         $patient = User::findOrFail($enrollee->fresh()->user_id);
         $this->assertTrue($patient->isSurveyOnly());
+        $enrollee->status = Enrollee::ENROLLED;
+        $enrollee->save();
         ImportConsentedEnrollees::dispatch([$enrollee->id]);
         $this->assertTrue($patient->isParticipant());
         $this->assertFalse($patient->isSurveyOnly());
