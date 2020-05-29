@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use App\Notifications\ReportGenerated;
 use App\Repositories\Cache\UserNotificationList;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\Services\OpsDashboardService;
@@ -25,6 +26,7 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    const RECEIVES_DAILY_OPS_DASHBOARD_NOTIFICATION_NOVA_KEY = 'receives_nurse_daily_ops_dashboard_notification';
     /**
      * @var Carbon
      */
@@ -148,6 +150,17 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
         $mediaCollection = "CLH-Ops-CSV-Reports-{$this->date->toDateString()}";
         $media           = $report->storeAndAttachMediaTo($this->user->saasAccount, $mediaCollection);
 
+        $link = $media->getUrl();
+
+        if (isProductionEnv()) {
+            $receivers = User::whereIn('id', function ($q) {
+                $q->select('config_value')
+                    ->from('app_config')
+                    ->where('config_key', self::RECEIVES_DAILY_OPS_DASHBOARD_NOTIFICATION_NOVA_KEY);
+            })->get()->each(function ($user) use ($link) {
+                $user->notify(new ReportGenerated($this->date, $link, 'Ops Dashboard'));
+            });
+        }
         $userNotification = new UserNotificationList($this->user);
 
         $userNotification->push(

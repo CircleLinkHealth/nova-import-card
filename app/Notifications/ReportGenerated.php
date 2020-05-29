@@ -11,7 +11,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NurseDailyReportGenerated extends Notification
+class ReportGenerated extends Notification
 {
     use Queueable;
     /**
@@ -26,16 +26,19 @@ class NurseDailyReportGenerated extends Notification
      * @var
      */
     public $url;
+    /**
+     * @var string
+     */
+    private $reportName;
 
     /**
      * Create a new notification instance.
-     *
-     * @param $url
      */
-    public function __construct(Carbon $date, $url)
+    public function __construct(Carbon $date, string $url, string $reportName)
     {
-        $this->date = $date;
-        $this->url  = $url;
+        $this->date       = $date;
+        $this->url        = $url;
+        $this->reportName = $reportName;
     }
 
     /**
@@ -48,8 +51,9 @@ class NurseDailyReportGenerated extends Notification
     public function toArray($notifiable)
     {
         return [
-            'date' => $this->date->toDateTimeString(),
-            'url'  => $this->url,
+            'date'       => $this->date->toDateTimeString(),
+            'url'        => $this->url,
+            'reportName' => $this->reportName,
         ];
     }
 
@@ -65,7 +69,7 @@ class NurseDailyReportGenerated extends Notification
         return (new MailMessage())
             ->greeting('Hello!')
             ->line(
-                'We would like to inform you that a "Nurse Daily Report" was generated for '.presentDate($this->date)
+                'We would like to inform you that a '.$this->reportName.' was generated for '.presentDate($this->date)
             )
             ->action('Download Report', $this->url)
             ->line('Have a nice day!');

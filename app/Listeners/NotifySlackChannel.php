@@ -66,7 +66,7 @@ class NotifySlackChannel implements ShouldQueue
 
         sendSlackMessage(
             '#ccd-file-status',
-            "$greeting \n Click thhis link to go to the message {$messageLink}."
+            "$greeting \n Click this link to go to the message {$messageLink}."
         );
     }
 }
