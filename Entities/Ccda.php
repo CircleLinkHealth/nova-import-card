@@ -504,6 +504,11 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
         $patient = $ccda->load('patient')->patient ?? null;
 
+        // If this is a survey only patient who has not yet enrolled, we should not enroll them.
+        if (self::isUnenrolledSurveyUser($patient, $enrollee)) {
+            return $this;
+        }
+
         if ($patient) {
             $ccda = self::attemptToDecorateCcda($patient, $ccda);
         }
@@ -816,6 +821,34 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     {
         return optional(DB::table(config('ccda-parser.db_table'))->where('ccda_id', '=', $this->id)->first())->result;
     }
+    
+    /**
+     * If this is a survey only patient who has not yet enrolled, we should not enroll them.
+     *
+     * @param User|null $patient
+     * @param Enrollee|null $enrollee
+     * @return bool
+     */
+    private static function isUnenrolledSurveyUser(?User $patient, ?Enrollee $enrollee):bool
+    {
+        if (is_null($patient)) {
+            return false;
+        }
+
+        if ( ! $patient->isSurveyOnly()) {
+            return false;
+        }
+
+        if (is_null($enrollee)) {
+            return false;
+        }
+
+        if (Enrollee::ENROLLED === $enrollee->status) {
+            return false;
+        }
+
+        return true;
+    }
 
     private function setAllPracticeInfoFromProvider(User $provider)
     {
@@ -828,15 +861,15 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         if ($this->location_id) {
             return;
         }
-        
+
         if (1 === count($provider->locations)) {
             $this->setLocationId($provider->locations->first()->id);
         }
-    
+
         if ($this->location_id) {
             return;
         }
-        
+
         if ($providerAddress = $this->bluebuttonJson()->demographics->provider->address->street[0] ?? null) {
             $locations = $provider->locations->where('address_line_1', $providerAddress);
 
