@@ -134,6 +134,7 @@
 
                 $ccdProblems = $ccdProblemService->getPatientProblems($patient);
 
+                $enableBhiAttestation = auth()->user()->isCareCoach() && (isset($patientIsBhiEligible) && true === $patientIsBhiEligible);
                 $ccdMonitoredProblems = $ccdProblems
                     ->where('is_monitored', 1)
                     ->unique('name')
@@ -146,11 +147,18 @@
                         style="margin-top: -8px; margin-bottom: 20px !important; margin-left: -20px !important;">
                         @foreach($ccdMonitoredProblems as $problem)
                             @if($problem['name'] != 'Diabetes')
-                                <li class="inline-block"><input type="checkbox" id="item-{{$problem['id']}}"
+                                <li
+                                        @if(($problem['is_behavioral'] ?? false) && $enableBhiAttestation)
+                                        title="BHI Condition: Switch to BHI timer when discussing with patient"
+                                        class="with-bhi-tooltip bhi-problem inline-block"
+                                                @else
+                                                class="inline-block"
+                                                @endif
+                                ><input type="checkbox" id="item-{{$problem['id']}}"
                                                                 name="item-{{$problem['id']}}"
                                                                 value="Active"
                                                                 checked="checked" disabled="disabled">
-                                    <label for="item-{{$problem['id']}}"><span> </span>{{$problem['name']}}</label>
+                                    <label @if(($problem['is_behavioral'] ?? false) && $enableBhiAttestation) class="bhi-problem" @endif for="item-{{$problem['id']}}"><span> </span>{{$problem['name']}}</label>
                                 </li>
                             @endif
                         @endforeach
@@ -309,12 +317,32 @@
             font-size: 12px;
         }
 
+        .bhi-tooltip {
+            display: none;
+            z-index: 9999999;
+            position: absolute;
+            border: 1px solid #333;
+            background-color: #5cc0dd;
+            border-radius: 5px;
+            padding: 10px;
+            color: #fff;
+            font-size: 12px;
+        }
+
+        .bhi-problem {
+            color: #5cc0dd !important;
+            font-weight: bolder;
+        }
+
     </style>
 
 @endpush
 
 @push('scripts')
     <script>
+        window.enableBhiAttestation = @json([
+    'patientIsBhiEligible' => $enableBhiAttestation
+    ]);
         (function ($) {
             $('.glyphicon-flag').click(function (e) {
                 $(".load-hidden-bhi, .modal-mask").show();
@@ -343,6 +371,31 @@
                     var mousex = e.pageX + 20; //Get X coordinates
                     var mousey = e.pageY + 10; //Get Y coordinates
                     $('.custom-tooltip').css({top: mousey, left: mousex})
+                });
+
+            $('.with-bhi-tooltip')
+                .hover(function () {
+                    // Hover over code
+                    var title = $(this).attr('title');
+
+                    $(this)
+                        .data('tipText', title)
+                        .removeAttr('title');
+
+                    $('<p class="bhi-tooltip"></p>')
+                        .text(title)
+                        .appendTo('body')
+                        .fadeIn('slow');
+
+                }, function () {
+                    // Hover out code
+                    $(this).attr('title', $(this).data('tipText'));
+                    $('.bhi-tooltip').remove();
+                })
+                .mousemove(function (e) {
+                    var mousex = e.pageX + 20; //Get X coordinates
+                    var mousey = e.pageY + 10; //Get Y coordinates
+                    $('.bhi-tooltip').css({top: mousey, left: mousex})
                 });
 
         })(jQuery);

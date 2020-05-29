@@ -109,7 +109,7 @@ class CcdProblemService
             ? $userId
             : User::findOrFail($userId);
 
-        $user->loadMissing(['ccdProblems.cpmInstruction', 'ccdProblems.codes']);
+        $user->loadMissing(['ccdProblems.cpmInstruction', 'ccdProblems.codes', 'ccdProblems.cpmProblem']);
 
         //exclude generic diabetes type
         $diabetes = genericDiabetes();
@@ -164,6 +164,7 @@ class CcdProblemService
                 'codes'                           => $p->codes,
                 'code'                            => $p->icd10code() ?? '',
                 'is_monitored'                    => $p->is_monitored,
+                'is_behavioral'                   => $p->isBehavioral(),
                 'instruction'                     => $p->cpmInstruction,
                 'should_show_default_instruction' => $shouldShowDefaultInstruction,
             ];

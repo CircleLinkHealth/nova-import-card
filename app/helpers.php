@@ -1176,7 +1176,9 @@ if ( ! function_exists('showDiabetesBanner')) {
 if ( ! function_exists('shortenUrl')) {
     /**
      * @param $url
+     *
      * @throws \AshAllenDesign\ShortURL\Exceptions\ShortURLException
+     *
      * @return string
      */
     function shortenUrl($url)
@@ -1645,6 +1647,21 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
 
             \Cache::put($key, Carbon::now()->toDateTimeString(), 60 * 12);
         }
+    }
+}
+if ( ! function_exists('sendPatientBhiUnattestedWarning')) {
+    /**
+     * @param $patientId
+     */
+    function sendPatientBhiUnattestedWarning($patientId)
+    {
+        $handles    = AppConfig::pull('bhi_unattested_patients_slack_watchers', '');
+        $patientUrl = route('patient.demographics.show', ['patientId' => $patientId]);
+
+        sendSlackMessage(
+            '#clinical',
+            "$handles Warning! This patient has 10+ minutes of BHI time without a BHI attestation. Please review {$patientUrl}"
+        );
     }
 }
 if ( ! function_exists('getDatesForRange')) {

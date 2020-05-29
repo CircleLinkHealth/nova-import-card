@@ -678,6 +678,13 @@
                             .attr("name", "attested_problems[" + i + "][ccd_problem_id]").val(condition).appendTo(form);
                         i++;
                     });
+                    if (data.bypassed_bhi_validation){
+                        $("<input>")
+                            .attr("id", "bypassed_bhi_validation")
+                            .attr("type", "hidden")
+                            .attr("name", "bypassed_bhi_validation").val('true').appendTo(form);
+                    }
+
                     confirmSubmitForm();
                 });
 
