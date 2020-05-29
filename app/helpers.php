@@ -1651,8 +1651,7 @@ if ( ! function_exists('sendPatientBhiUnattestedWarning')) {
 
         sendSlackMessage(
             '#clinical',
-            "$handles Warning! This patient has 10+ minutes of BHI time without a BHI attestation. Please review {$patientUrl}",
-            true
+            "$handles Warning! This patient has 10+ minutes of BHI time without a BHI attestation. Please review {$patientUrl}"
         );
     }
 }
