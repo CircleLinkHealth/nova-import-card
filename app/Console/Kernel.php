@@ -18,6 +18,7 @@ use App\Console\Commands\CreateApprovableBillablePatientsReport;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\EnrollmentFinalAction;
+use App\Console\Commands\GenerateReportForScheduledPAM;
 use App\Console\Commands\NursesPerformanceDailyReport;
 use App\Console\Commands\OverwriteNBIImportedData;
 use App\Console\Commands\OverwriteNBIPatientMRN;
@@ -234,5 +235,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(RemoveDuplicateScheduledCalls::class)->twiceDaily(8, 14);
         $schedule->command(SendFirstSelfEnrollmentReminder::class, ['--enrollees'])->dailyAt('10:27');
         $schedule->command(EnrollmentFinalAction::class)->dailyAt('08:27');
+
+        $schedule->command(GenerateReportForScheduledPAM::class)->monthlyOn(date('t'), '23:30');
     }
 }

@@ -62,7 +62,12 @@ class DirectMailController extends Controller
             ->with('ccdas', 'media')
             ->findOrFail($directMailId);
 
+        $linksToPatients = $dm->ccdas->pluck('patient_id')->filter()->values()->map(function ($patientId) {
+            return link_to_route('patient.note.index', "Patient ID: $patientId", [$patientId]);
+        });
+
         return view('direct-mail.show-message')
-            ->with('dm', $dm);
+            ->with('dm', $dm)
+            ->with('links', $linksToPatients);
     }
 }
