@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3520731593e20fcb1483f220dd247c4e",
+    "content-hash": "42092dccb3835dab922b4c0aacc9b32c",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1192,11 +1192,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.8.0",
+            "version": "v2.8.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "f78f0c7681e5d05751ba618195b48df3e8f0cd70"
+                "reference": "9034f2d7e0c86d95848b6ef3e4890094c42a13fe"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1221,7 +1221,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-29T00:06:38+00:00"
+            "time": "2020-05-29T02:56:15+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1504,11 +1504,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.5.9",
+            "version": "v1.6.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "5e0d891b16c0a6316967137663953dbf906353ed"
+                "reference": "e92aa711c1b46de4460c46d8bd9fcd0f067df620"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1522,7 +1522,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-29T02:19:51+00:00"
+            "time": "2020-05-29T02:56:22+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
