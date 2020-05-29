@@ -7,6 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Call;
+use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Events\NoteFinalSaved;
 use App\Http\Requests\NotesReport;
@@ -950,7 +951,9 @@ class NotesController extends Controller
             }
         }
 
-        if ($services->where('code', ChargeableService::BHI)->isNotEmpty() && $pms->bhiAttestedProblems(true)->count() >= 1) {
+        $patientIsBhiEligible = $pms->bhi_time >= Constants::TEN_MINUTES_IN_SECONDS || $services->where('code', ChargeableService::BHI)->isNotEmpty();
+
+        if ($patientIsBhiEligible && $pms->bhiAttestedProblems(true)->count() >= 1) {
             $requirements['bhi_problems_attested'] = true;
         }
 
