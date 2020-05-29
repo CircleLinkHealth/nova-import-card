@@ -67,6 +67,8 @@ class EnrollmentValidationRules extends FormRequest
 
         $inputToken = Helpers::getTokenFromUrl($input['url_with_token']);
         if (empty($link) || $link->link_token !== $inputToken) {
+            Log::warning("EnrollmentValidationRules: User id [$user->id] has corrupted url token");
+
             return true;
         }
 
@@ -74,6 +76,8 @@ class EnrollmentValidationRules extends FormRequest
         $month = intval($input['birth_date_month']);
         $year  = intval($input['birth_date_year']);
         if (0 === $day || 0 === $month || 0 === $year) {
+            Log::warning("EnrollmentValidationRules: User id [$user->id] has entered wrong date format");
+
             return true;
         }
 
@@ -88,6 +92,8 @@ class EnrollmentValidationRules extends FormRequest
 
         $actualDob = optional($user->patientInfo->birth_date)->startOfDay();
         if ($inputDob->startOfDay()->ne($actualDob)) {
+            Log::critical("EnrollmentValidationRules: User id [$user->id] has entered wrong DOB");
+
             return true;
         }
 
