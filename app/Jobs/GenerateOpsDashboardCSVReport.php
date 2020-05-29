@@ -22,12 +22,11 @@ use Illuminate\Queue\SerializesModels;
 
 class GenerateOpsDashboardCSVReport implements ShouldQueue
 {
-    const RECEIVES_DAILY_OPS_DASHBOARD_NOTIFICATION_NOVA_KEY = 'receives_nurse_daily_ops_dashboard_notification';
-    
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    const RECEIVES_DAILY_OPS_DASHBOARD_NOTIFICATION_NOVA_KEY = 'receives_nurse_daily_ops_dashboard_notification';
     /**
      * @var Carbon
      */
@@ -150,9 +149,9 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
         $report          = (new FromArray($fileName, $reportRows->all(), []));
         $mediaCollection = "CLH-Ops-CSV-Reports-{$this->date->toDateString()}";
         $media           = $report->storeAndAttachMediaTo($this->user->saasAccount, $mediaCollection);
-    
+
         $link = $media->getUrl();
-    
+
         if (isProductionEnv()) {
             $receivers = User::whereIn('id', function ($q) {
                 $q->select('config_value')
