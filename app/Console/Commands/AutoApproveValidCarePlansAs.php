@@ -7,6 +7,7 @@
 namespace App\Console\Commands;
 
 use App\User;
+use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
@@ -24,7 +25,7 @@ class AutoApproveValidCarePlansAs extends Command
      *
      * @var string
      */
-    protected $signature = 'careplans:approve-as {userId} {--dry}';
+    protected $signature = 'careplans:approve-as {userId} {--dry} {--reimport} {--reimport:clear} {--reimport:without-transaction}';
     /**
      * @var Collection|null
      */
@@ -52,6 +53,11 @@ class AutoApproveValidCarePlansAs extends Command
             $patients->each(function (User $patient) {
                 $this->warn('processing user:'.$patient->id);
                 $needsQA = $patient->carePlan->validator()->fails();
+
+                if ($needsQA && $this->option('reimport')) {
+                    $this->reimport($patient->id, $this->argument('userId'));
+                    $needsQA = $patient->carePlan->validator()->fails();
+                }
 
                 $this->log([
                     'link'            => route('patient.careplan.print', [$patient->id]),
@@ -91,5 +97,17 @@ class AutoApproveValidCarePlansAs extends Command
         }
 
         $this->logs->push($array);
+    }
+
+    private function reimport(int $patientUserId, int $approverUserId)
+    {
+        $args = [];
+        if ($this->option('reimport:clear')) {
+            $args['--clear'] = true;
+        }
+        if ($this->option('reimport:without-transaction')) {
+            $args['--without-transaction'] = true;
+        }
+        ReimportPatientMedicalRecord::for($patientUserId, $approverUserId, 'call', $args);
     }
 }
