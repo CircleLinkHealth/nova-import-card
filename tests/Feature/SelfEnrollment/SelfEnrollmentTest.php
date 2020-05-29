@@ -29,7 +29,6 @@ use Illuminate\Support\Facades\Queue;
 use Notification;
 use PrepareDataForReEnrollmentTestSeeder;
 use Tests\Concerns\TwilioFake\Twilio;
-use Tests\DuskTestCase;
 
 class SelfEnrollmentTest extends TestCase
 {
@@ -210,16 +209,15 @@ class SelfEnrollmentTest extends TestCase
 
         $shortLink = 'abcdef';
         ShortURL::where('id', '>', 0)->update(['url_key' => $shortLink]);
-        
-        $this->assertTrue(ShortURL::where('url_key', '!=', $shortLink)->count() === 0);
-    
+
+        $this->assertTrue(0 === ShortURL::where('url_key', '!=', $shortLink)->count());
+
         $invites = EnrollableInvitationLink::whereIn('invitationable_id', $enrollees->pluck('id')->all())->where('invitationable_type', Enrollee::class)->get();
-        
-        $this->assertTrue($invites->count() === 2);
-        
+
+        $this->assertTrue(2 === $invites->count());
+
         foreach ($invites as $invite) {
             $short = ShortURL::where('destination_url', $invite->url)->firstOrFail();
-            
         }
     }
 
