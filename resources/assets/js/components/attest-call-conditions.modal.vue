@@ -13,7 +13,7 @@
                     <span style="color: red"><i class="fas fa-exclamation-circle"></i>&nbsp{{error}}</span>
                     <br>
                     <div v-if="showBhiLink">
-                        <span style="color: red">If you did not discuss a BHI condition click <a v-bind:class="{'disabled': !twoCcmConditionsAttested}" href="javascript:" @click.prevent="submitForm('true')">here</a></span>
+                        <span style="color: red">If you did not discuss a BHI condition click <a v-bind:class="{'disabled': !twoCcmConditionsAttested}" href="javascript:" @click.prevent="submitForm('true')"><strong><u>here</u></strong></a></span>
                     </div>
                 </div>
                 <div>
@@ -296,7 +296,10 @@
                         }
                     }
                 }
-                if (this.hasEqualOrMoreThan10BhiMins() && ! this.attestationRequirements.bhi_problems_attested && !bypassBhiValidation) {
+
+                let skipBhiValidation =  (!this.attestationRequirements.ccm_2 || this.getCcmAttestedConditionsCount() >= 2) && !!bypassBhiValidation
+
+                if (this.hasEqualOrMoreThan10BhiMins() && ! this.attestationRequirements.bhi_problems_attested && skipBhiValidation) {
                     let attestedBhi = this.getBhiAttestedConditionsCount();
                     if (attestedBhi === 0) {
                         bhiError = true;
