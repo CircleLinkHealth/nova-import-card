@@ -72,4 +72,8 @@ class SaasAccount extends BaseModel implements HasMedia
     {
         return $this->hasMany(User::class);
     }
+    
+    public function isCircleLinkHealth() {
+        return 'circlelink-health' == $this->slug;
+    }
 }
