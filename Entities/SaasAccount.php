@@ -57,6 +57,11 @@ class SaasAccount extends BaseModel implements HasMedia
         'logo_path',
     ];
 
+    public function isCircleLinkHealth()
+    {
+        return 'circlelink-health' == $this->slug;
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -71,9 +76,5 @@ class SaasAccount extends BaseModel implements HasMedia
     public function users()
     {
         return $this->hasMany(User::class);
-    }
-    
-    public function isCircleLinkHealth() {
-        return 'circlelink-health' == $this->slug;
     }
 }
