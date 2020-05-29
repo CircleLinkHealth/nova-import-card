@@ -132,9 +132,6 @@ class SurveyService
         if ($instance->pivot->status !== $surveyStatus) {
             $instance->pivot->status = $surveyStatus;
             if (SurveyInstance::COMPLETED === $surveyStatus) {
-                DB::table('self_enrollment_statuses')->where('enrollee_user_id', $user->id)->update([
-                    'awv_survey_status' => SurveyInstance::COMPLETED,
-                ]);
                 $instance->pivot->completed_at = Carbon::now();
             }
         }
