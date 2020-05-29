@@ -18,6 +18,8 @@ use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use App\SelfEnrollment\Jobs\SendInvitation;
 use App\SelfEnrollment\Jobs\SendReminder;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
+use AshAllenDesign\ShortURL\Models\ShortURL;
+use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -27,6 +29,7 @@ use Illuminate\Support\Facades\Queue;
 use Notification;
 use PrepareDataForReEnrollmentTestSeeder;
 use Tests\Concerns\TwilioFake\Twilio;
+use Tests\DuskTestCase;
 
 class SelfEnrollmentTest extends TestCase
 {
@@ -188,6 +191,36 @@ class SelfEnrollmentTest extends TestCase
             [CustomTwilioChannel::class]
         );
         Twilio::assertNumberOfMessagesSent($number);
+    }
+
+    /**
+     * Make up fix to compensate for non unique URLs and making sure patients can log in.
+     */
+    public function test_more_than_one_patients_can_log_in_with_the_same_link()
+    {
+        $enrollees = $this->createEnrollees($number = 3);
+        Notification::fake();
+
+        InvitePracticeEnrollees::dispatchNow(
+            $number,
+            $this->practice()->id,
+            SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
+            ['mail']
+        );
+
+        $shortLink = 'abcdef';
+        ShortURL::where('id', '>', 0)->update(['url_key' => $shortLink]);
+        
+        $this->assertTrue(ShortURL::where('url_key', '!=', $shortLink)->count() === 0);
+    
+        $invites = EnrollableInvitationLink::whereIn('invitationable_id', $enrollees->pluck('id')->all())->where('invitationable_type', Enrollee::class)->get();
+        
+        $this->assertTrue($invites->count() === 2);
+        
+        foreach ($invites as $invite) {
+            $short = ShortURL::where('destination_url', $invite->url)->firstOrFail();
+            
+        }
     }
 
     public function test_patient_has_clicked_get_my_care_coach()

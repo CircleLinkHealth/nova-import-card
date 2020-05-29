@@ -9,6 +9,7 @@ namespace App\SelfEnrollment\Domain;
 use App\SelfEnrollment\AbstractSelfEnrollmentReminder;
 use App\SelfEnrollment\Jobs\SendReminder;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Builder;
 
 class RemindEnrollees extends AbstractSelfEnrollmentReminder
@@ -23,7 +24,9 @@ class RemindEnrollees extends AbstractSelfEnrollmentReminder
         return User::haveEnrollableInvitationDontHaveReminder($this->dateInviteSent)
             ->ofType('survey-only')
             ->whereHas('enrollee', function ($enrollee) {
-                $enrollee->whereNull('source'); //Eliminates unreachable patients, and only fetches enrollees who have not yet enrolled.
+                $enrollee
+                    ->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT)
+                    ->whereNull('source'); //Eliminates unreachable patients, and only fetches enrollees who have not yet enrolled.
             })->doesntHave('enrollableInfoRequest')->orderBy('created_at', 'asc')
             ->when($this->practiceId, function ($q) {
                 return $q->where('program_id', $this->practiceId);
