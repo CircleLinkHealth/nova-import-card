@@ -18,8 +18,6 @@ use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use App\SelfEnrollment\Jobs\SendInvitation;
 use App\SelfEnrollment\Jobs\SendReminder;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
-use AshAllenDesign\ShortURL\Models\ShortURL;
-use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
