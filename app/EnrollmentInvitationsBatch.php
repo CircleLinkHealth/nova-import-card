@@ -28,7 +28,11 @@ use Illuminate\Database\Eloquent\Model;
 class EnrollmentInvitationsBatch extends Model
 {
     const MANUAL_INVITES_BATCH_TYPE = 'one-off_invitations';
-
+    /**
+     * Used in the "type" field to help Users visualize invitations sent per hour.
+     */
+    const TYPE_FIELD_DATE_HUMAN_FORMAT = 'm/d/Y hA';
+    
     protected $fillable = [
         'practice_id',
         'type',
