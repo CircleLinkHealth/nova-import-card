@@ -203,7 +203,7 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factor
         'provider_id' => $provider->id,
         'practice_id' => $practice->id,
         'mrn'         => $faker->randomNumber(6),
-        'dob'         => $faker->date('Y-m-d'),
+        'dob'         => $faker->date('Y-m-d', now()->subYears(18)),
 
         'first_name' => $faker->firstName,
         'last_name'  => $faker->lastName,
