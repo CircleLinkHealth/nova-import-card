@@ -66,8 +66,7 @@ class SelfEnrollableUserAuthRequest extends FormRequest
                 return;
             }
 
-            if ($this->shouldTryAlternative($url, $dob)) {
-                $user = $this->queryUserByDobAndUrl($url, $dob)->first();
+            if ($this->shouldTryAlternative($url, $dob) && $user = $this->queryUserByDobAndUrl($url, $dob)->first()) {
                 $this->replace([
                     'birth_date_day'   => $dob->day,
                     'birth_date_month' => $dob->month,
