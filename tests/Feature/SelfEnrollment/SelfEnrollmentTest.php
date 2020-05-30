@@ -192,35 +192,6 @@ class SelfEnrollmentTest extends TestCase
         Twilio::assertNumberOfMessagesSent($number);
     }
 
-    /**
-     * Make up fix to compensate for non unique URLs and making sure patients can log in.
-     */
-    public function test_more_than_one_patients_can_log_in_with_the_same_link()
-    {
-        $enrollees = $this->createEnrollees($number = 3);
-        Notification::fake();
-
-        InvitePracticeEnrollees::dispatchNow(
-            $number,
-            $this->practice()->id,
-            SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
-            ['mail']
-        );
-
-        $shortLink = 'abcdef';
-        ShortURL::where('id', '>', 0)->update(['url_key' => $shortLink]);
-
-        $this->assertTrue(0 === ShortURL::where('url_key', '!=', $shortLink)->count());
-
-        $invites = EnrollableInvitationLink::whereIn('invitationable_id', $enrollees->pluck('id')->all())->where('invitationable_type', Enrollee::class)->get();
-
-        $this->assertTrue(2 === $invites->count());
-
-        foreach ($invites as $invite) {
-            $short = ShortURL::where('destination_url', $invite->url)->firstOrFail();
-        }
-    }
-
     public function test_patient_has_clicked_get_my_care_coach()
     {
         $enrollee       = $this->createEnrollees(1);
