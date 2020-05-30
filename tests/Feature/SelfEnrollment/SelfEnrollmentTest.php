@@ -218,6 +218,17 @@ class SelfEnrollmentTest extends TestCase
         $enrolled->status = Enrollee::ENROLLED;
         $enrolled->save();
 
+        //Assert it won't take final action before second reminder has been sent
+        Carbon::setTestNow($secondReminderSentAt);
+        UnreachablesFinalAction::dispatchNow($initialInviteSentAt, $toMarkAsInvited->first()->practice_id);
+        $toMarkAsInvited->each(function ($enrollee) {
+            $this->assertDatabaseHas('enrollees', [
+                'id'                        => $enrollee->id,
+                'status'                    => Enrollee::QUEUE_AUTO_ENROLLMENT,
+                'auto_enrollment_triggered' => false,
+            ]);
+        });
+
         Carbon::setTestNow($secondReminderSentAt);
         RemindEnrollees::dispatchNow($initialInviteSentAt, $toMarkAsInvited->first()->practice_id);
 
