@@ -67,12 +67,12 @@ class SelfEnrollableUserAuthRequest extends FormRequest
             }
 
             if ($this->shouldTryAlternative($url, $dob)) {
-                $enrollee = $this->queryEnrolleeByDobAndUrl($url, $dob)->first();
+                $user = $this->queryUserByDobAndUrl($url, $dob)->first();
                 $this->replace([
                     'birth_date_day'   => $dob->day,
                     'birth_date_month' => $dob->month,
                     'birth_date_year'  => $dob->year,
-                    'user_id'          => $enrollee->user_id,
+                    'user_id'          => $user->id,
                 ]);
 
                 return;
@@ -84,31 +84,31 @@ class SelfEnrollableUserAuthRequest extends FormRequest
 
     private function enrolleeQuery(string $url, Carbon $dob, int $userId, bool $IsSurveyOnly): \Illuminate\Database\Eloquent\Builder
     {
-        return $this->queryEnrolleeByDobAndUrl($url, $dob)
-            ->whereHas('user', function ($q) use ($IsSurveyOnly) {
-                $q->ofType($IsSurveyOnly ? 'survey-only' : 'participant');
-            });
+        return $this->queryUserByDobAndUrl($url, $dob)
+            ->where('id', $userId)
+            ->ofType($IsSurveyOnly ? 'survey-only' : 'participant');
     }
 
-    private function queryEnrolleeByDobAndUrl(string $url, Carbon $dob)
+    private function queryUserByDobAndUrl(string $url, Carbon $dob)
     {
-        return Enrollee::where('dob', $dob)
-            ->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT)->where(function ($q) {
-                $q->where('source', '=', Enrollee::UNREACHABLE_PATIENT)
-                    //Enrollee for self enrollment
-                    ->orWhereNull('source');
-            })
-            ->leftJoin('enrollables_invitation_links', function ($join) {
-                $join->on('enrollables_invitation_links.invitationable_id', '=', 'enrollees.id')
-                    ->where('invitationable_type', Enrollee::class);
-            })
-            ->leftJoin('short_urls', function ($join) use ($url) {
-                $join->on('enrollables_invitation_links.url', '=', 'short_urls.destination_url')
-                    ->where('destination_url', $url);
-            })->with('user.patientInfo')
-            ->whereHas('user.patientInfo', function ($q) use ($dob) {
-                $q->where('birth_date', $dob);
-            });
+        return User::whereHas('patientInfo', function ($q) use ($dob) {
+            $q->where('birth_date', $dob);
+        })->whereHas('enrollee', function ($q) use ($dob, $url) {
+            $q->where('dob', $dob)
+                ->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT)->where(function ($q) {
+                    $q->where('source', '=', Enrollee::UNREACHABLE_PATIENT)
+                        //Enrollee for self enrollment
+                        ->orWhereNull('source');
+                })
+                ->leftJoin('enrollables_invitation_links', function ($join) {
+                    $join->on('enrollables_invitation_links.invitationable_id', '=', 'enrollees.id')
+                        ->where('invitationable_type', Enrollee::class);
+                })
+                ->leftJoin('short_urls', function ($join) use ($url) {
+                    $join->on('enrollables_invitation_links.url', '=', 'short_urls.destination_url')
+                        ->where('destination_url', $url);
+                });
+        })->with('patientInfo');
     }
 
     private function shouldTryAlternative(string $url, Carbon $dob): bool
@@ -117,6 +117,6 @@ class SelfEnrollableUserAuthRequest extends FormRequest
             return false;
         }
 
-        return 1 === $this->queryEnrolleeByDobAndUrl($url, $dob)->count();
+        return 1 === $this->queryUserByDobAndUrl($url, $dob)->count();
     }
 }
