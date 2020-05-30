@@ -93,7 +93,11 @@ class SelfEnrollableUserAuthRequest extends FormRequest
     private function queryEnrolleeByDobAndUrl(string $url, Carbon $dob)
     {
         return Enrollee::where('dob', $dob)
-            ->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT)
+            ->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT)->where(function ($q) {
+                $q->where('source', '=', Enrollee::UNREACHABLE_PATIENT)
+                    //Enrollee for self enrollment
+                    ->orWhereNull('source');
+            })
             ->leftJoin('enrollables_invitation_links', function ($join) {
                 $join->on('enrollables_invitation_links.invitationable_id', '=', 'enrollees.id')
                     ->where('invitationable_type', Enrollee::class);
