@@ -105,7 +105,9 @@ class SelfEnrollableUserAuthRequest extends FormRequest
                 })
                 ->leftJoin('short_urls', function ($join) use ($url) {
                     $join->on('enrollables_invitation_links.url', '=', 'short_urls.destination_url')
-                        ->where('destination_url', $url);
+                        ->whereIn('url_key', function ($q) use ($url) {
+                            $q->select('url_key')->from('enrollables_invitation_links')->where('destination_url', $url);
+                        });
                 });
         })->with('patientInfo');
     }

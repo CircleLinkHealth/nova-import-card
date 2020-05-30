@@ -21,7 +21,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class SelfEnrollmentController extends Controller
 {
@@ -133,6 +132,25 @@ class SelfEnrollmentController extends Controller
         }
 
         return $this->returnEnrolleeRequestedInfoMessage($enrollee);
+    }
+
+    public function enrollmentAuthForm(EnrollmentLinkValidation $request)
+    {
+        try {
+            $loginFormData = $this->getLoginFormData($request);
+        } catch (\Exception $e) {
+            return view('EnrollmentSurvey.enrollableError');
+        }
+        $user            = $loginFormData['user'];
+        $urlWithToken    = $loginFormData['url_with_token'];
+        $practiceName    = $loginFormData['practiceName'];
+        $doctorsLastName = $loginFormData['doctorsLastName'];
+        $isSurveyOnly    = $request->input('is_survey_only');
+
+        return view(
+            'EnrollmentSurvey.enrollmentSurveyLogin',
+            compact('userId', 'isSurveyOnly', 'doctorsLastName', 'practiceName', 'urlWithToken')
+        );
     }
 
     /**
@@ -256,33 +274,6 @@ class SelfEnrollmentController extends Controller
     {
         return $this->enrollableInvitationManager(
             Auth::loginUsingId((int) $request->input('user_id'), true)
-        );
-    }
-
-    protected function enrollmentAuthForm(EnrollmentLinkValidation $request)
-    {
-        // Debugging logs
-        $isFromBitly     = Str::contains($request->headers->get('user-agent', ''), 'bitly');
-        $alreadyLoggedIn = auth()->check() ? 'yes' : 'no';
-        $authId          = auth()->id() ?? 'null';
-        $headers         = json_encode($request->headers->all());
-        $userId          = $this->getUserId($request);
-        Log::debug("enrollmentAuthForm - User is already logged in: $alreadyLoggedIn. EnrollableId[$userId]. isFromBitly[$isFromBitly].\nUser Id: $authId.\nHeaders: $headers");
-
-        try {
-            $loginFormData = $this->getLoginFormData($request);
-        } catch (\Exception $e) {
-            return view('EnrollmentSurvey.enrollableError');
-        }
-        $user            = $loginFormData['user'];
-        $urlWithToken    = $loginFormData['url_with_token'];
-        $practiceName    = $loginFormData['practiceName'];
-        $doctorsLastName = $loginFormData['doctorsLastName'];
-        $isSurveyOnly    = $request->input('is_survey_only');
-
-        return view(
-            'EnrollmentSurvey.enrollmentSurveyLogin',
-            compact('userId', 'isSurveyOnly', 'doctorsLastName', 'practiceName', 'urlWithToken')
         );
     }
 
