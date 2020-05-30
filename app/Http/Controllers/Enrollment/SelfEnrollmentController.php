@@ -8,7 +8,7 @@ namespace App\Http\Controllers\Enrollment;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EnrollmentLinkValidation;
-use App\Http\Requests\EnrollmentValidationRules;
+use App\Http\Requests\SelfEnrollableUserAuthRequest;
 use App\SelfEnrollment\Helpers;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use Carbon\Carbon;
@@ -252,7 +252,7 @@ class SelfEnrollmentController extends Controller
         return response()->json([], 200);
     }
 
-    protected function authenticate(EnrollmentValidationRules $request)
+    protected function authenticate(SelfEnrollableUserAuthRequest $request)
     {
         return $this->enrollableInvitationManager(
             Auth::loginUsingId((int) $request->input('user_id'), true)
