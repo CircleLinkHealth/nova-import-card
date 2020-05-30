@@ -10,6 +10,7 @@
 - [ ] Nurses (Notify Ethan well ahead of release to prepare instructions for nurses)
 - [ ] Providers (or other practice staff) (Notify Zach well ahead of release to prepare instructions for nurses)
 - [ ] CLH Admins (Notify #productchat on slack)
+- [ ] Patients
 
 ### Development To Do's
 - [ ] A
@@ -18,6 +19,8 @@
 
 ### Dependencies
 - [ ] [Link to other PR]()
+
+### Deployment Tips
 - [ ] env variable to update 
 - [ ] Seeder to run after deployment. 
 
