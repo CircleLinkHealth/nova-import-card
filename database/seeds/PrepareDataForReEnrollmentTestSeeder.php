@@ -19,17 +19,13 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
 
     const CCM_STATUS_UNREACHABLE = 'unreachable';
 
-    public function createEnrollee(Practice $practice, ?string $phoneTester = null)
+    public function createEnrollee(Practice $practice, array $args = [])
     {
-        $enrolleeForTesting = factory(Enrollee::class)->create([
+        $enrolleeForTesting = factory(Enrollee::class)->create(array_merge($args, [
             'practice_id'             => $practice->id,
-            'dob'                     => \Carbon\Carbon::parse('1901-01-01'),
             'referring_provider_name' => 'Dr. Demo',
-            'primary_phone'           => $phoneTester,
-            'home_phone'              => $phoneTester,
-            'cell_phone'              => $phoneTester ?? '+12012819204',
             'email'                   => '',
-        ]);
+        ]));
         $this->seedEligibilityJobs(collect([$enrolleeForTesting]), $practice);
 //                        Emulating Constantinos dashboard Importing - Mark Enrollees to invite.
         $enrolleeForTesting->update([
@@ -64,10 +60,16 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             ]
         );
 
-        $n     = 1;
-        $limit = 5;
+        $n       = 1;
+        $limit   = 5;
+        $testDob = \Carbon\Carbon::parse('1901-01-01');
         while ($n <= $limit) {
-            $this->createEnrollee($practice, $phoneTester);
+            $this->createEnrollee($practice, [
+                'primary_phone' => $phoneTester,
+                'home_phone'    => $phoneTester,
+                'cell_phone'    => $phoneTester,
+                'dob'           => $testDob,
+            ]);
             ++$n;
         }
 
