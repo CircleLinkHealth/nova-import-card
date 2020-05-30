@@ -112,12 +112,21 @@ class SelfEnrollableUserAuthRequest extends FormRequest
         })->with('patientInfo');
     }
 
+    /**
+     * This is a temporary method to make up for a bug.
+     *
+     * On the week of May 23rd 2020, we sent some self enrollment invitations.
+     * Some patients reported being unable to login after entering correct DOB.
+     * We found Short Url package was generating non-unique URLs, and we already sent invitations out.
+     * To compensate, if there exists an Enrollee with User that has the same short link and DOB provided by the current user, we will log them in.
+     */
     private function shouldTryAlternative(string $url, Carbon $dob): bool
     {
         if (now()->gt(Carbon::create(self::DATE_LAST_DUPLICATE_SHORT_LINKS_EXPIRE))) {
             return false;
         }
 
+        // To be defensive we only do this if there's only one match.
         return 1 === $this->queryUserByDobAndUrl($url, $dob)->count();
     }
 }

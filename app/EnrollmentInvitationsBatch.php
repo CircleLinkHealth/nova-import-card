@@ -32,7 +32,7 @@ class EnrollmentInvitationsBatch extends Model
      * Used in the "type" field to help Users visualize invitations sent per hour.
      */
     const TYPE_FIELD_DATE_HUMAN_FORMAT = 'm/d/Y hA';
-    
+
     protected $fillable = [
         'practice_id',
         'type',
