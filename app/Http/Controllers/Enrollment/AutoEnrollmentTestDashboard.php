@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Enrollment;
 
+use App\Console\Commands\SendSenfEnrollmentReminders;
 use App\Http\Controllers\Controller;
 use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use App\SelfEnrollment\Domain\InviteUnreachablePatients;
@@ -27,7 +28,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function finalActionTest()
     {
-        UnreachablesFinalAction::createForInvitesSentTwoDaysAgo()->dispatchToQueue();
+        UnreachablesFinalAction::dispatch(now()->subDays(4));
 
         return redirect(route('ca-director.index'))->with('message', 'Reminders Sent Successfully');
     }
@@ -128,7 +129,7 @@ class AutoEnrollmentTestDashboard extends Controller
     public function sendEnrolleesReminderTestMethod()
     {
         try {
-            RemindEnrollees::createForInvitesSentTwoDaysAgo()->dispatchToQueue();
+            SendSenfEnrollmentReminders::dispatchEnrolleeReminders();
         } catch (\Exception $e) {
             return 'Something went wrong';
         }

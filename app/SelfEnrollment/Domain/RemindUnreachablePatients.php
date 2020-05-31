@@ -6,15 +6,35 @@
 
 namespace App\SelfEnrollment\Domain;
 
-use App\SelfEnrollment\AbstractSelfEnrollmentReminder;
+use App\SelfEnrollment\AbstractSelfEnrollableUserIterator;
 use App\SelfEnrollment\Jobs\SendReminder;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Builder;
 
-class RemindUnreachablePatients extends AbstractSelfEnrollmentReminder
+class RemindUnreachablePatients extends AbstractSelfEnrollableUserIterator
 {
+    /**
+     * @var Carbon
+     */
+    protected $dateInviteSent;
+    /**
+     * @var int|null
+     */
+    protected $practiceId;
+    
+    /**
+     * UnreachablesFinalAction constructor.
+     */
+    public function __construct(Carbon $dateInviteSent, ?int $practiceId = null, ?int $limit = null)
+    {
+        $this->practiceId     = $practiceId;
+        $this->dateInviteSent = $dateInviteSent;
+        $this->limit          = $limit;
+    }
+    
     public function action(User $patient): void
     {
         SendReminder::dispatch($patient);

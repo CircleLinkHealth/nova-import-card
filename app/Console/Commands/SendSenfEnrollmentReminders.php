@@ -23,7 +23,7 @@ class SendSenfEnrollmentReminders extends Command
      *
      * @var string
      */
-    protected $signature = 'command:sendFirstEnrolleesReminder {limit?} {--patients} {--enrollees}';
+    protected $signature = 'command:sendFirstEnrolleesReminder {limit?} {practiceId?} {--patients} {--enrollees}';
 
     /**
      * Create a new command instance.
@@ -35,6 +35,18 @@ class SendSenfEnrollmentReminders extends Command
         parent::__construct();
     }
 
+    public static function dispatchEnrolleeReminders(?int $practiceId = null, ?int $limit = null)
+    {
+        RemindEnrollees::dispatch(now()->subDays(2), $practiceId, $limit);
+        RemindEnrollees::dispatch(now()->subDays(4), $practiceId, $limit);
+    }
+
+    public static function dispatchUnreachablePatientReminders(?int $practiceId = null, ?int $limit = null)
+    {
+        RemindUnreachablePatients::dispatch(now()->subDays(2), $practiceId, $limit);
+        RemindUnreachablePatients::dispatch(now()->subDays(4), $practiceId, $limit);
+    }
+
     /**
      * Execute the console command.
      *
@@ -42,26 +54,15 @@ class SendSenfEnrollmentReminders extends Command
      */
     public function handle()
     {
-        $job = null;
+        $limit      = $this->argument('limit') ?? null;
+        $practiceId = $this->argument('practiceId') ?? null;
 
         if ($this->option('enrollees')) {
-            $job = RemindEnrollees::createForInvitesSentTwoDaysAgo();
+            self::dispatchEnrolleeReminders($practiceId, $limit);
         }
 
         if ($this->option('patients')) {
-            $job = RemindUnreachablePatients::createForInvitesSentTwoDaysAgo();
+            self::dispatchUnreachablePatientReminders($practiceId, $limit);
         }
-
-        if (is_null($job)) {
-            return;
-        }
-
-        with($job, function ($job) {
-            if (is_numeric($limit = $this->argument('limit'))) {
-                $job->setLimit((int) $limit);
-            }
-
-            $job->dispatchToQueue();
-        });
     }
 }
