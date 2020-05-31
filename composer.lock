@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9b6311fd20f3cc800f0951efa9a6206f",
+    "content-hash": "c14cace0afe247bb61aefafcb1d71d96",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -413,11 +413,11 @@
         },
         {
             "name": "ashallendesign/short-url",
-            "version": "v3.0.1",
+            "version": "v3.0.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/short-url.git",
-                "reference": "fc98324f71d5b58a55b89acec1a42f37a74d0c09"
+                "reference": "6e95b5c05049f2c403e4ee0d239566a9799786cd"
             },
             "require": {
                 "hashids/hashids": "^4.0",
@@ -472,7 +472,7 @@
                 "short-urls",
                 "url-shortener"
             ],
-            "time": "2020-05-22T02:47:10+00:00"
+            "time": "2020-05-31T03:55:48+00:00"
         },
         {
             "name": "authy/php",
