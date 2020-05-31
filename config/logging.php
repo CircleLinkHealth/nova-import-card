@@ -40,7 +40,7 @@ return [
     'channels' => [
         'stack' => [
             'driver'            => 'stack',
-            'channels'          => ['stderr', 'database', 'file'],
+            'channels'          => ['stderr'],
             'ignore_exceptions' => false,
         ],
 
