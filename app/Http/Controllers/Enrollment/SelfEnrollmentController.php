@@ -30,11 +30,11 @@ class SelfEnrollmentController extends Controller
 
     const ENROLLEES_SURVEY_NAME                = 'Enrollees';
     const ENROLLMENT_LETTER_DEFAULT_LOGO       = 'https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png';
+    const ENROLLMENT_SURVEY_COMPLETED          = 'completed';
+    const ENROLLMENT_SURVEY_IN_PROGRESS        = 'in_progress';
+    const ENROLLMENT_SURVEY_PENDING            = 'pending';
     const RED_BUTTON_COLOR                     = '#b1284c';
     const SEND_NOTIFICATIONS_LIMIT_FOR_TESTING = 1;
-    const ENROLLMENT_SURVEY_COMPLETED   = 'completed';
-    const ENROLLMENT_SURVEY_IN_PROGRESS = 'in_progress';
-    const ENROLLMENT_SURVEY_PENDING     = 'pending';
 
     /**
      * @var EnrollmentInvitationService
