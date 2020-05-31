@@ -23,7 +23,7 @@ class SendSenfEnrollmentReminders extends Command
      *
      * @var string
      */
-    protected $signature = 'command:sendFirstEnrolleesReminder {--patients} {--enrollees}';
+    protected $signature = 'command:sendFirstEnrolleesReminder {limit?} {--patients} {--enrollees}';
 
     /**
      * Create a new command instance.
@@ -42,12 +42,26 @@ class SendSenfEnrollmentReminders extends Command
      */
     public function handle()
     {
+        $job = null;
+
         if ($this->option('enrollees')) {
-            RemindEnrollees::createForInvitesSentTwoDaysAgo()->dispatchToQueue();
+            $job = RemindEnrollees::createForInvitesSentTwoDaysAgo();
         }
 
         if ($this->option('patients')) {
-            RemindUnreachablePatients::createForInvitesSentTwoDaysAgo()->dispatchToQueue();
+            $job = RemindUnreachablePatients::createForInvitesSentTwoDaysAgo();
         }
+
+        if (is_null($job)) {
+            return;
+        }
+
+        with($job, function ($job) {
+            if (is_numeric($limit = $this->argument('limit'))) {
+                $job->setLimit((int) $limit);
+            }
+
+            $job->dispatchToQueue();
+        });
     }
 }

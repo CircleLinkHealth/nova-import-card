@@ -30,13 +30,7 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
      * @var null
      */
     private $color;
-
-    /**
-     * The number of patients we dispatched jobs to send invitations to.
-     *
-     * @var int
-     */
-    private $dispatched = 0;
+    
     /**
      * @var int|mixed
      */
@@ -77,11 +71,6 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
                         Enrollee::QUEUE_AUTO_ENROLLMENT,
                     ]);
             });
-    }
-
-    protected function limit(): ?int
-    {
-        return $this->amount;
     }
 
     private function getBatch(): EnrollmentInvitationsBatch
