@@ -87,7 +87,7 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
     private function getBatch(): EnrollmentInvitationsBatch
     {
         if (is_null($this->batch)) {
-            $this->batch = EnrollmentInvitationsBatch::firstOrCreateAndRemember($this->practiceId, now()->format('m/d/Y h T').':'.$this->color);
+            $this->batch = EnrollmentInvitationsBatch::firstOrCreateAndRemember($this->practiceId, now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.$this->color);
         }
 
         return $this->batch;

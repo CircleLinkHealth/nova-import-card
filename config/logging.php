@@ -100,18 +100,6 @@ return [
             ],
         ],
 
-        'logdna' => [
-            'driver'       => 'monolog',
-            'level'        => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
-            'handler'      => LogdnaHandler::class,
-            'handler_with' => [
-                'ingestion_key' => env('LOG_DNA_INGESTION_KEY'),
-                'hostname'      => env('APP_URL'),
-                'level'         => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
-            ],
-            'formatter' => LogdnaFormatter::class,
-        ],
-
         'stderr' => [
             'driver'    => 'monolog',
             'handler'   => StreamHandler::class,

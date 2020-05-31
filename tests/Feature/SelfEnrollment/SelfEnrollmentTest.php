@@ -13,11 +13,13 @@ use App\LoginLogout;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use App\SelfEnrollment\Domain\RemindEnrollees;
+use App\SelfEnrollment\Domain\UnreachablesFinalAction;
 use App\SelfEnrollment\Helpers;
 use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use App\SelfEnrollment\Jobs\SendInvitation;
 use App\SelfEnrollment\Jobs\SendReminder;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -108,8 +110,8 @@ class SelfEnrollmentTest extends TestCase
         //It should not show up because we just sent a reminder
         self::assertFalse(User::haveEnrollableInvitationDontHaveReminder(now())->where('id', $patient->id)->exists());
 
-        //SendReminder should not run if called again if a notification was sent
-        self::assertFalse(with(new SendReminder($patient))->shouldRun());
+        //SendReminder should be allowed to run one more time to send a second reminder
+        self::assertTrue(with(new SendReminder($patient))->shouldRun());
     }
 
     public function test_it_saves_different_enrollment_link_in_db_when_sending_reminder()
@@ -190,6 +192,105 @@ class SelfEnrollmentTest extends TestCase
         Twilio::assertNumberOfMessagesSent($number);
     }
 
+    public function test_it_sends_first_and_second_reminder_to_enrollees_and_then_takes_final_action()
+    {
+        $toMarkAsInvited = $this->createEnrollees($numberOfInvites = 3);
+
+        Mail::fake();
+        Twilio::fake();
+        $toMarkAsInvited->each(function (Enrollee $enrollee) {
+            SendInvitation::dispatchNow($enrollee->user, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
+        });
+
+        $initialInviteSentAt  = now();
+        $firstReminderSentAt  = $initialInviteSentAt->copy()->addDays(2);
+        $secondReminderSentAt = $firstReminderSentAt->copy()->addDays(2);
+        $finalActionRunsAt    = $secondReminderSentAt->copy()->addDays(2);
+
+        Carbon::setTestNow($firstReminderSentAt);
+        RemindEnrollees::dispatchNow($initialInviteSentAt, $toMarkAsInvited->first()->practice_id);
+
+        //one patient enrolled after first reminder
+        //pull last element in the array
+        $enrolled          = $toMarkAsInvited->pull($numberOfInvites - 1);
+        $expectedReminders = $numberOfInvites - 1;
+        $this->assertTrue($toMarkAsInvited->count() === $expectedReminders);
+        $enrolled->status = Enrollee::ENROLLED;
+        $enrolled->save();
+
+        //Assert it won't take final action before second reminder has been sent
+        Carbon::setTestNow($secondReminderSentAt);
+        UnreachablesFinalAction::dispatchNow($initialInviteSentAt, $toMarkAsInvited->first()->practice_id);
+        $toMarkAsInvited->each(function ($enrollee) {
+            $this->assertDatabaseHas('enrollees', [
+                'id'                        => $enrollee->id,
+                'status'                    => Enrollee::QUEUE_AUTO_ENROLLMENT,
+                'auto_enrollment_triggered' => false,
+            ]);
+        });
+
+        Carbon::setTestNow($secondReminderSentAt);
+        RemindEnrollees::dispatchNow($initialInviteSentAt, $toMarkAsInvited->first()->practice_id);
+
+        $toMarkAsInvited->each(function ($enrollee) use ($firstReminderSentAt, $secondReminderSentAt) {
+            $this->assertDatabaseHas('enrollees', [
+                'id'                        => $enrollee->id,
+                'status'                    => Enrollee::QUEUE_AUTO_ENROLLMENT,
+                'auto_enrollment_triggered' => false,
+            ]);
+
+            $this->assertTrue(
+                $enrollee->user
+                    ->hasSelfEnrollmentInviteReminder($firstReminderSentAt)
+                    ->hasSelfEnrollmentInviteReminder($secondReminderSentAt)
+                    ->exists()
+            );
+        });
+
+        Carbon::setTestNow($finalActionRunsAt);
+        UnreachablesFinalAction::dispatchNow($initialInviteSentAt, $toMarkAsInvited->first()->practice_id);
+
+        $toMarkAsInvited->each(function ($enrollee) {
+            $this->assertDatabaseHas('enrollees', [
+                'id'                        => $enrollee->id,
+                'status'                    => Enrollee::TO_CALL,
+                'auto_enrollment_triggered' => true,
+            ]);
+        });
+    }
+
+    public function test_it_sends_first_reminder_to_enrollees()
+    {
+        //enrollees who requested call
+        $requestedInfo = $this->createEnrollees(1);
+        $requestedInfo->each(function (Enrollee $enrollee) {
+            $enrollee->enrollableInfoRequest()->create();
+        });
+
+        $notInvitedYet = $this->createEnrollees(2);
+
+        $expectedReminders = 3;
+        $toMarkAsInvited   = $this->createEnrollees($expectedReminders);
+
+        Mail::fake();
+        Twilio::fake();
+        $toMarkAsInvited->each(function (Enrollee $enrollee) {
+            SendInvitation::dispatchNow($enrollee->user, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
+        });
+
+        Queue::fake();
+
+        RemindEnrollees::dispatchNow(now()->startOfDay(), $toMarkAsInvited->first()->practice_id);
+
+        Queue::assertPushed(SendReminder::class, $expectedReminders);
+        $remindersUserIds = $toMarkAsInvited->pluck('user_id')->all();
+        Queue::assertPushed(SendReminder::class, function (SendReminder $job) use ($remindersUserIds) {
+            $this->assertTrue($result = in_array($job->patient->id, $remindersUserIds), $job->patient->id.' was not founf in .'.implode(',', $remindersUserIds));
+
+            return $result;
+        });
+    }
+
     public function test_patient_has_clicked_get_my_care_coach()
     {
         $enrollee       = $this->createEnrollees(1);
@@ -251,38 +352,6 @@ class SelfEnrollmentTest extends TestCase
         $lastEnrollmentLink->save();
 
         self::assertTrue(optional($enrollee->enrollmentInvitationLinks())->where('manually_expired', true)->exists());
-    }
-
-    public function test_remind_enrollees()
-    {
-        //enrollees who requested call
-        $requestedInfo = $this->createEnrollees(1);
-        $requestedInfo->each(function (Enrollee $enrollee) {
-            $enrollee->enrollableInfoRequest()->create();
-        });
-
-        $notInvitedYet = $this->createEnrollees(2);
-
-        $expectedReminders = 3;
-        $toMarkAsInvited   = $this->createEnrollees($expectedReminders);
-
-        Mail::fake();
-        Twilio::fake();
-        $toMarkAsInvited->each(function (Enrollee $enrollee) {
-            SendInvitation::dispatchNow($enrollee->user, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
-        });
-
-        Queue::fake();
-
-        RemindEnrollees::dispatchNow(now()->startOfDay(), $toMarkAsInvited->first()->practice_id);
-
-        Queue::assertPushed(SendReminder::class, $expectedReminders);
-        $remindersUserIds = $toMarkAsInvited->pluck('user_id')->all();
-        Queue::assertPushed(SendReminder::class, function (SendReminder $job) use ($remindersUserIds) {
-            $this->assertTrue($result = in_array($job->patient->id, $remindersUserIds), $job->patient->id.' was not founf in .'.implode(',', $remindersUserIds));
-
-            return $result;
-        });
     }
 
     private function createEnrollees(int $number = 1)
