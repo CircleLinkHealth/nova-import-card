@@ -10,14 +10,14 @@ use App\SelfEnrollment\Domain\RemindEnrollees;
 use App\SelfEnrollment\Domain\RemindUnreachablePatients;
 use Illuminate\Console\Command;
 
-class SendFirstSelfEnrollmentReminder extends Command
+class SendSenfEnrollmentReminders extends Command
 {
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Send first reminder to unresponsive enrollees 2 days after initial invitation';
+    protected $description = 'Send reminders to unreachables 2 and 4 days after initial invitation';
     /**
      * The name and signature of the console command.
      *
