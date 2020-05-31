@@ -24,7 +24,7 @@ class RemindUnreachablePatients extends AbstractSelfEnrollableUserIterator
      * @var int|null
      */
     protected $practiceId;
-    
+
     /**
      * UnreachablesFinalAction constructor.
      */
@@ -34,7 +34,7 @@ class RemindUnreachablePatients extends AbstractSelfEnrollableUserIterator
         $this->dateInviteSent = $dateInviteSent;
         $this->limit          = $limit;
     }
-    
+
     public function action(User $patient): void
     {
         SendReminder::dispatch($patient);
