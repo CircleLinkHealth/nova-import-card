@@ -84,7 +84,8 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $nurse    = $this->createUser($practice->id, 'care-center');
 
         $twelveHoursInMinutes = 12 * 60;
-        $startTime            = now()->subDay()->endOfDay()->subHours(6);
+        Carbon::setTestNow(now()->setHour(16));
+        $startTime = now()->subDay()->endOfDay()->subHours(6);
 
         $this->addTime($nurse, null, $twelveHoursInMinutes, false, false, false, $startTime);
         $this->addTime($nurse, null, 60, false, false, false);
