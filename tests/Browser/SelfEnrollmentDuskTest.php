@@ -11,7 +11,6 @@ use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use AshAllenDesign\ShortURL\Models\ShortURL;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
-use Illuminate\Support\Facades\DB;
 use Notification;
 use PrepareDataForReEnrollmentTestSeeder;
 use Tests\DuskTestCase;
