@@ -65,6 +65,10 @@ class ImportEnrollee
         if (Enrollee::UPLOADED_CSV === $enrollee->source) {
             return;
         }
+    
+        if (Enrollee::ENROLLED === $enrollee->status) {
+            return;
+        }
 
         Log::error("This should never be reached. enrollee: $enrollee->id");
     }
