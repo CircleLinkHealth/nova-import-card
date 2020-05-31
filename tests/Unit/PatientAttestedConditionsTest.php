@@ -19,10 +19,10 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;
 use Illuminate\Support\Facades\Artisan;
-use Tests\DuskTestCase;
 use Tests\Helpers\CarePlanHelpers;
+use Tests\TestCase;
 
-class PatientAttestedConditionsTest extends DuskTestCase
+class PatientAttestedConditionsTest extends TestCase
 {
     use CarePlanHelpers;
     use UserHelpers;
