@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a4bfa40bd67ac8012ae4bd8adce831ca",
+    "content-hash": "9b6311fd20f3cc800f0951efa9a6206f",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1150,11 +1150,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.7.2",
+            "version": "v2.7.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "be7a24ff4742d866b2ca1ccac5c39ab2941e5a12"
+                "reference": "59c18d65ada817146b1083922e5b3d90e5620cf5"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1188,7 +1188,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-29T14:29:28+00:00"
+            "time": "2020-05-30T06:52:01+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -11195,16 +11195,16 @@
         },
         {
             "name": "yajra/laravel-datatables-oracle",
-            "version": "v9.10.0",
+            "version": "v9.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yajra/laravel-datatables.git",
-                "reference": "b0b9e2c37b5a17ca35bb2c6d3927bf6176393229"
+                "reference": "01b4a4fdbd13e4d77fa2d27916cdafac789d2d1a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/b0b9e2c37b5a17ca35bb2c6d3927bf6176393229",
-                "reference": "b0b9e2c37b5a17ca35bb2c6d3927bf6176393229",
+                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/01b4a4fdbd13e4d77fa2d27916cdafac789d2d1a",
+                "reference": "01b4a4fdbd13e4d77fa2d27916cdafac789d2d1a",
                 "shasum": ""
             },
             "require": {
@@ -11256,13 +11256,13 @@
                     "email": "aqangeles@gmail.com"
                 }
             ],
-            "description": "jQuery DataTables API for Laravel 4|5",
+            "description": "jQuery DataTables API for Laravel 4|5|6|7",
             "keywords": [
                 "datatables",
                 "jquery",
                 "laravel"
             ],
-            "time": "2020-04-23T01:21:11+00:00"
+            "time": "2020-05-30T04:43:39+00:00"
         }
     ],
     "packages-dev": [
@@ -12061,20 +12061,20 @@
         },
         {
             "name": "doctrine/instantiator",
-            "version": "1.3.0",
+            "version": "1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/instantiator.git",
-                "reference": "ae466f726242e637cebdd526a7d991b9433bacf1"
+                "reference": "f350df0268e904597e3bd9c4685c53e0e333feea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/ae466f726242e637cebdd526a7d991b9433bacf1",
-                "reference": "ae466f726242e637cebdd526a7d991b9433bacf1",
+                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/f350df0268e904597e3bd9c4685c53e0e333feea",
+                "reference": "f350df0268e904597e3bd9c4685c53e0e333feea",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1"
+                "php": "^7.1 || ^8.0"
             },
             "require-dev": {
                 "doctrine/coding-standard": "^6.0",
@@ -12113,7 +12113,7 @@
                 "constructor",
                 "instantiate"
             ],
-            "time": "2019-10-21T16:45:58+00:00"
+            "time": "2020-05-29T17:27:14+00:00"
         },
         {
             "name": "evenement/evenement",

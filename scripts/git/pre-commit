@@ -55,14 +55,14 @@ do
 
         ${exec_command} fix ${path} --config=.php_cs_views.php ${args}
 
-        add_file_again=1
+        # add_file_again=1
     elif [[ ${path} == *".php"* ]]; then
         echo "php file"
         echo "$exec_command fix $path --config=.php_cs.dist $args"
 
         ${exec_command} fix ${path} --config=.php_cs.dist ${args}
 
-        add_file_again=1
+        # add_file_again=1
     else
         echo "non-php file"
     fi

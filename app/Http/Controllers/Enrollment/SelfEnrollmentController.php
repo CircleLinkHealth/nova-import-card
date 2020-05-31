@@ -8,7 +8,7 @@ namespace App\Http\Controllers\Enrollment;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EnrollmentLinkValidation;
-use App\Http\Requests\EnrollmentValidationRules;
+use App\Http\Requests\SelfEnrollableUserAuthRequest;
 use App\SelfEnrollment\Helpers;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use Carbon\Carbon;
@@ -21,7 +21,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class SelfEnrollmentController extends Controller
 {
@@ -133,6 +132,28 @@ class SelfEnrollmentController extends Controller
         }
 
         return $this->returnEnrolleeRequestedInfoMessage($enrollee);
+    }
+
+    public function enrollmentAuthForm(EnrollmentLinkValidation $request)
+    {
+        try {
+            $loginFormData = $this->getLoginFormData($request);
+        } catch (\Exception $e) {
+            Log::error(json_encode($e));
+
+            return view('EnrollmentSurvey.enrollableError');
+        }
+
+        return view(
+            'EnrollmentSurvey.enrollmentSurveyLogin',
+            [
+                'userId'          => $loginFormData['user']->id,
+                'isSurveyOnly'    => $request->input('is_survey_only'),
+                'doctorsLastName' => $loginFormData['doctorsLastName'],
+                'urlWithToken'    => $loginFormData['url_with_token'],
+                'practiceName'    => $loginFormData['practiceName'],
+            ]
+        );
     }
 
     /**
@@ -252,37 +273,10 @@ class SelfEnrollmentController extends Controller
         return response()->json([], 200);
     }
 
-    protected function authenticate(EnrollmentValidationRules $request)
+    protected function authenticate(SelfEnrollableUserAuthRequest $request)
     {
         return $this->enrollableInvitationManager(
             Auth::loginUsingId((int) $request->input('user_id'), true)
-        );
-    }
-
-    protected function enrollmentAuthForm(EnrollmentLinkValidation $request)
-    {
-        // Debugging logs
-        $isFromBitly     = Str::contains($request->headers->get('user-agent', ''), 'bitly');
-        $alreadyLoggedIn = auth()->check() ? 'yes' : 'no';
-        $authId          = auth()->id() ?? 'null';
-        $headers         = json_encode($request->headers->all());
-        $userId          = $this->getUserId($request);
-        Log::debug("enrollmentAuthForm - User is already logged in: $alreadyLoggedIn. EnrollableId[$userId]. isFromBitly[$isFromBitly].\nUser Id: $authId.\nHeaders: $headers");
-
-        try {
-            $loginFormData = $this->getLoginFormData($request);
-        } catch (\Exception $e) {
-            return view('EnrollmentSurvey.enrollableError');
-        }
-        $user            = $loginFormData['user'];
-        $urlWithToken    = $loginFormData['url_with_token'];
-        $practiceName    = $loginFormData['practiceName'];
-        $doctorsLastName = $loginFormData['doctorsLastName'];
-        $isSurveyOnly    = $request->input('is_survey_only');
-
-        return view(
-            'EnrollmentSurvey.enrollmentSurveyLogin',
-            compact('userId', 'isSurveyOnly', 'doctorsLastName', 'practiceName', 'urlWithToken')
         );
     }
 
@@ -415,12 +409,9 @@ class SelfEnrollmentController extends Controller
      */
     private function getLoginFormData(Request $request)
     {
-        $userId = $this->getUserId($request);
-
-        $user = User::find($userId);
-        if ( ! $user) {
-            Log::warning("User[$userId] not found.");
-            throw new \Exception('User not found');
+        if ( ! $user = User::find($userId = intval($request->input('enrollable_id')))) {
+            Log::warning($msg = "User[$userId] not found.");
+            throw new \Exception($msg);
         }
 
         $doctor          = $user->billingProviderUser();
@@ -437,11 +428,6 @@ class SelfEnrollmentController extends Controller
             'doctorsLastName' => $doctorsLastName,
             'user'            => $user,
         ];
-    }
-
-    private function getUserId($request)
-    {
-        return intval($request->input('enrollable_id'));
     }
 
     /**

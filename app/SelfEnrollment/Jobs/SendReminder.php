@@ -7,6 +7,7 @@
 namespace App\SelfEnrollment\Jobs;
 
 use App\EnrollmentInvitationsBatch;
+use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\SelfEnrollment\Helpers;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo;
@@ -28,6 +29,7 @@ class SendReminder implements ShouldQueue
      * @var User
      */
     public $patient;
+    private $batch;
 
     /**
      * Create a new job instance.
@@ -48,9 +50,9 @@ class SendReminder implements ShouldQueue
             return;
         }
 
-        $invitation       = $this->patient->enrollee->enrollmentInvitationLinks->first();
-        $invitationsBatch = EnrollmentInvitationsBatch::create();
-        SendInvitation::dispatch($this->patient, $invitationsBatch->id, optional($invitation)->button_color, true);
+        $invitation = $this->patient->enrollee->enrollmentInvitationLinks->sortByDesc('id')->first();
+        $color      = optional($invitation)->button_color ?? SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
+        SendInvitation::dispatch($this->patient, $this->getBatch($this->patient->program_id, $color)->id, $color, true);
     }
 
     public function shouldRun(): bool
@@ -69,15 +71,24 @@ class SendReminder implements ShouldQueue
             return false;
         }
 
-        if ($this->patientHasReminderNotification()) {
+        if ($this->patientHasReminderNotifications()) {
             return false;
         }
 
         return true;
     }
 
-    private function patientHasReminderNotification(): bool
+    private function getBatch(int $practiceId, string $color): EnrollmentInvitationsBatch
     {
-        return DatabaseNotification::whereIn('notifiable_type', [\App\User::class, User::class])->where('notifiable_id', $this->patient->id)->where('data->is_reminder', true)->exists();
+        if (is_null($this->batch)) {
+            $this->batch = EnrollmentInvitationsBatch::firstOrCreateAndRemember($practiceId, now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.$color);
+        }
+
+        return $this->batch;
+    }
+
+    private function patientHasReminderNotifications(): bool
+    {
+        return DatabaseNotification::whereIn('notifiable_type', [\App\User::class, User::class])->where('notifiable_id', $this->patient->id)->where('data->is_reminder', true)->count() >= 2;
     }
 }
