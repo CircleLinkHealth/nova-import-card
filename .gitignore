@@ -21,7 +21,6 @@ public/js/uploader.js.map
 storage/patient/pdf-careplans/
 public/*.js
 public/*.js.map
-/tests/Browser/
 /coverage/
 .php_cs.cache
 CLHPackages/
