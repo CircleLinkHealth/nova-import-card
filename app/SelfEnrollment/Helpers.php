@@ -46,16 +46,6 @@ class Helpers
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
-     */
-    public static function getDemoPractice()
-    {
-        return \Cache::remember('demo_practice_object', 2, function () {
-            return Practice::where('name', '=', 'demo')->firstOrFail();
-        });
-    }
-
-    /**
      * @return \App\User|Enrollee|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
      */
     public static function getEnrollableModel(User &$user)

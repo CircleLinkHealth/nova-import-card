@@ -62,7 +62,8 @@ class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator
 
     public function query(): Builder
     {
-        return User::hasSelfEnrollmentInviteReminder($this->dateInviteSent->copy()->addDays(2))
+        return User::hasSelfEnrollmentInvite($this->dateInviteSent)
+            ->hasSelfEnrollmentInviteReminder($this->dateInviteSent->copy()->addDays(2))
             ->hasSelfEnrollmentInviteReminder($this->dateInviteSent->copy()->addDays(4))
             ->whereHas('patientInfo', function ($patient) {
                 $patient->where('ccm_status', Patient::UNREACHABLE);
