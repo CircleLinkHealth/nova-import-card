@@ -21,7 +21,6 @@ use App\SelfEnrollment\Jobs\SendReminder;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -32,11 +31,6 @@ use Tests\Concerns\TwilioFake\Twilio;
 
 class SelfEnrollmentTest extends TestCase
 {
-    use  SelfEnrollableTrait;
-
-    const COMPLETED   = 'completed';
-    const IN_PROGRESS = 'in_progress';
-    const PENDING     = 'pending';
     /**
      * Helper to create fake Enrollees.
      *
@@ -295,7 +289,7 @@ class SelfEnrollmentTest extends TestCase
     {
         $enrollee       = $this->createEnrollees(1);
         $patient        = $enrollee->user;
-        $surveyInstance = Helpers::createSurveyConditionsAndGetSurveyInstance($patient->id, self::PENDING);
+        $surveyInstance = $this->factory()->createSurveyConditionsAndGetSurveyInstance($patient->id, SelfEnrollmentController::ENROLLMENT_SURVEY_PENDING);
         self::assertTrue(Helpers::awvUserSurveyQuery($patient, $surveyInstance)->exists());
     }
 
@@ -327,16 +321,16 @@ class SelfEnrollmentTest extends TestCase
     {
         $enrollee       = $this->createEnrollees(1);
         $patient        = $enrollee->user;
-        $surveyInstance = Helpers::createSurveyConditionsAndGetSurveyInstance($patient->id, self::COMPLETED);
-        self::assertTrue(self::COMPLETED === Helpers::awvUserSurveyQuery($patient, $surveyInstance)->first()->status);
+        $surveyInstance = $this->factory()->createSurveyConditionsAndGetSurveyInstance($patient->id, SelfEnrollmentController::ENROLLMENT_SURVEY_COMPLETED);
+        self::assertTrue(SelfEnrollmentController::ENROLLMENT_SURVEY_COMPLETED === Helpers::awvUserSurveyQuery($patient, $surveyInstance)->first()->status);
     }
 
     public function test_patient_has_survey_in_progress()
     {
         $enrollee       = $this->createEnrollees(1);
         $patient        = $enrollee->user;
-        $surveyInstance = Helpers::createSurveyConditionsAndGetSurveyInstance($patient->id, self::IN_PROGRESS);
-        self::assertTrue(self::IN_PROGRESS === Helpers::awvUserSurveyQuery($patient, $surveyInstance)->first()->status);
+        $surveyInstance = $this->factory()->createSurveyConditionsAndGetSurveyInstance($patient->id, SelfEnrollmentController::ENROLLMENT_SURVEY_IN_PROGRESS);
+        self::assertTrue(SelfEnrollmentController::ENROLLMENT_SURVEY_IN_PROGRESS === Helpers::awvUserSurveyQuery($patient, $surveyInstance)->first()->status);
     }
 
     public function test_patient_has_viewed_login_form()

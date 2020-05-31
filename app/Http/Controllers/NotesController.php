@@ -10,6 +10,7 @@ use App\Call;
 use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Events\NoteFinalSaved;
+use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Http\Requests\NotesReport;
 use App\Jobs\SendSingleNotification;
 use App\Note;
@@ -189,7 +190,7 @@ class NotesController extends Controller
             $thisYear       = Carbon::now()->year;
             $surveyInstance = DB::table('survey_instances')
                 ->join('surveys', 'survey_instances.survey_id', '=', 'surveys.id')
-                ->where('name', '=', 'Enrollees')
+                ->where('name', '=', SelfEnrollmentController::ENROLLEES_SURVEY_NAME)
                 ->where('year', '=', $thisYear)
                 ->first();
 

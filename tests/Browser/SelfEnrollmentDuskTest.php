@@ -11,6 +11,7 @@ use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use AshAllenDesign\ShortURL\Models\ShortURL;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
+use Illuminate\Support\Facades\DB;
 use Notification;
 use PrepareDataForReEnrollmentTestSeeder;
 use Tests\DuskTestCase;
@@ -53,7 +54,12 @@ class SelfEnrollmentDuskTestTest extends DuskTestCase
                     ->type('birth_date_day', $enrollee->dob->format('d'))
                     ->type('birth_date_year', $enrollee->dob->format('Y'))
                     ->press('CONTINUE')
-                    ->waitForText("Dear {$enrollee->first_name}");
+                    ->waitForText("Dear {$enrollee->first_name}")
+                    ->waitForText($this->practice->display_name)
+                    ->waitForText($enrollee->user->billingProviderUser()->display_name)
+                    //@todo: For the time this does not assert anything. MAke it assert we get to AWV.
+                    //You may visually watch that the test redirects
+                    ->press('GET MY CARE COACH');
             });
         }
     }
@@ -89,6 +95,7 @@ class SelfEnrollmentDuskTestTest extends DuskTestCase
             EnrollmentInvitationLetter::create([
                 'practice_id' => $this->practice->id,
             ]);
+            $this->factory()->firstOrCreateEnrollmentSurvey();
         }
 
         return $this->practice;
