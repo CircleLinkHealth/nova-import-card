@@ -60,6 +60,17 @@ abstract class AbstractSelfEnrollableUserIterator implements ShouldQueue
     abstract public function query(): Builder;
 
     /**
+     * @param  null                               $limit
+     * @return AbstractSelfEnrollableUserIterator
+     */
+    public function setLimit(int $limit)
+    {
+        $this->limit = $limit;
+
+        return $this;
+    }
+
+    /**
      * Get the tags that should be assigned to the job.
      *
      * @return array
@@ -85,15 +96,5 @@ abstract class AbstractSelfEnrollableUserIterator implements ShouldQueue
     protected function limit(): ?int
     {
         return $this->limit;
-    }
-    
-    /**
-     * @param null $limit
-     * @return AbstractSelfEnrollableUserIterator
-     */
-    public function setLimit(int $limit)
-    {
-        $this->limit = $limit;
-        return $this;
     }
 }
