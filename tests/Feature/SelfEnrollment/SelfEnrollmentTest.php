@@ -111,7 +111,7 @@ class SelfEnrollmentTest extends TestCase
         self::assertFalse(User::haveEnrollableInvitationDontHaveReminder(now())->where('id', $patient->id)->exists());
 
         //SendReminder should be allowed to run one more time to send a second reminder
-        self::assertFalse(with(new SendReminder($patient))->shouldRun());
+        self::assertTrue(with(new SendReminder($patient))->shouldRun());
     }
 
     public function test_it_saves_different_enrollment_link_in_db_when_sending_reminder()
