@@ -42,11 +42,13 @@ class SelfEnrollmentMetricsView extends BaseSqlView
        p.display_name as practice_name,
        CASE WHEN b.type = '$defaultBtnColor' THEN '$green'
        WHEN b.type = '$red' THEN '$redString'
-       WHEN b.type = '$manualInvite' THEN '$green'
+       
        WHEN b.type LIKE '%{$needle}%' AND SUBSTRING_INDEX(b.type, ':', '-1') = '$defaultBtnColor'
        THEN '$green'
        WHEN b.type LIKE '%{$needle}%' AND SUBSTRING_INDEX(b.type, ':', '-1') = '$red'
        THEN '$redString'
+       WHEN b.type LIKE '%{$needle}%' AND SUBSTRING_INDEX(b.type, ':', '-1') = '$manualInvite'
+       THEN '$green'
        END as button_color,
        COUNT(i.batch_id) as total_invites_sent,
        SUM(case when i.manually_expired = 1 then 1 else 0 end) as total_invites_opened,
