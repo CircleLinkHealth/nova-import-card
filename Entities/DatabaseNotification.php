@@ -42,6 +42,7 @@ use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification liveNotification()
  * @method static \Illuminate\Notifications\DatabaseNotificationCollection|static[] all($columns = ['*'])
  * @method static \Illuminate\Notifications\DatabaseNotificationCollection|static[] get($columns = ['*'])
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification selfEnrollmentInvites()
  */
 class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotification
 {
