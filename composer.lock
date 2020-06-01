@@ -1194,7 +1194,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "ba307500c539608961a162eb27874d2c7d3d58d3"
+                "reference": "cb189eb4f7d2dae9dc8367959214eb47612e3a84"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1219,7 +1219,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-01T18:47:20+00:00"
+            "time": "2020-06-01T19:59:04+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1524,7 +1524,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "f52488daa02aa2609b43c5c40b075364192694cf"
+                "reference": "87af14ffffec21a84aea62d887e8cfd8c3c219f3"
             },
             "type": "laravel-module",
             "extra": {
@@ -1549,7 +1549,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-01T18:28:39+00:00"
+            "time": "2020-06-01T22:00:50+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
