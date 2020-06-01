@@ -61,13 +61,13 @@ abstract class AbstractSelfEnrollableUserIterator implements ShouldQueue
     abstract public function query(): Builder;
 
     /**
-     * @return int
+     * @return AbstractSelfEnrollableUserIterator
      */
     public function setLimit(int $limit)
     {
         $this->limit = $limit;
 
-        return $this->limit;
+        return $this;
     }
 
     /**
