@@ -19,7 +19,7 @@ class SelfEnrollmentMetricsView extends BaseSqlView
         $enrolled        = Enrollee::ENROLLED;
         $toCall          = Enrollee::TO_CALL;
         $defaultBtnColor = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
-        $red             = '#b1284c';
+        $red             = SelfEnrollmentController::RED_BUTTON_COLOR;
         $manualInvite    = 'one-off_invitations';
         $green           = 'Green';
         $redString       = 'Red';
