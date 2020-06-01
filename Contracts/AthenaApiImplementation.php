@@ -162,11 +162,10 @@ interface AthenaApiImplementation
      * @param $practiceId
      * @param bool $showAllDepartments
      *
-     * @throws \Exception
-     *
+     * @param  bool  $providerlist
      * @return mixed
      */
-    public function getDepartments($practiceId, $showAllDepartments = true);
+    public function getDepartments($practiceId, $showAllDepartments = false, $providerlist = false);
 
     /**
      * Get a patient's medical history.

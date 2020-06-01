@@ -80,6 +80,9 @@ class ProcessEligibilityBatch implements ShouldQueue
             case EligibilityBatch::ATHENA_API:
                 $this->batch = $this->queueAthenaJobs($this->batch);
                 break;
+            case EligibilityBatch::RUNNING:
+                $this->batch = $this->queueSingleEligibilityJobs($this->batch);
+                break;
         }
 
         $this->afterProcessingHook($this->batch);
@@ -347,6 +350,11 @@ class ProcessEligibilityBatch implements ShouldQueue
         $batch->save();
 
         return $batch;
+    }
+
+    private function queueSingleEligibilityJobs(EligibilityBatch $batch)
+    {
+        $batch->processPendingJobs(100);
     }
 
     /**

@@ -31,7 +31,7 @@ class CreateCcdaFromAthenaApi
      */
     public function handle(TargetPatient &$targetPatient): MedicalRecord
     {
-        if ($targetPatient->ccda) {
+        if ($targetPatient->ccda && ! empty($targetPatient->ccda->json)) {
             return $targetPatient->ccda;
         }
 

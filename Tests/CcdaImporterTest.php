@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Tests;
 
+use App\EnrollmentInvitationsBatch;
 use App\Listeners\AssignPatientToStandByNurse;
-use App\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
 use App\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
@@ -28,6 +28,8 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportMedications;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeDiabetesAndEndocrineCcda;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
@@ -37,18 +39,14 @@ class CcdaImporterTest extends CustomerTestCase
 {
     public function test_auto_enrollment_flow()
     {
-//        See. EnrolleeObserver
         Notification::fake();
         $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)->createEnrollee($this->practice());
-        SendInvitation::dispatch($enrollee->user);
+        SendInvitation::dispatch($enrollee->user, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
         $patient = User::findOrFail($enrollee->fresh()->user_id);
         $this->assertTrue($patient->isSurveyOnly());
-
-        $survey = new EnrollableSurveyCompleted([
-            'enrollable_id' => $enrollee->id,
-        ]);
-
-        $survey->importEnrolleeSurveyOnly($enrollee, $patient);
+        $enrollee->status = Enrollee::ENROLLED;
+        $enrollee->save();
+        ImportConsentedEnrollees::dispatch([$enrollee->id]);
         $this->assertTrue($patient->isParticipant());
         $this->assertFalse($patient->isSurveyOnly());
     }
@@ -269,7 +267,7 @@ class CcdaImporterTest extends CustomerTestCase
             'mrn_number'                 => 'fake-record-12345212',
             'preferred_contact_language' => 'EN',
             'preferred_contact_method'   => 'CCT',
-            'preferred_calls_per_month'  => 2,
+            'preferred_calls_per_month'  => 1,
             'daily_contact_window_start' => '09:00:00',
             'daily_contact_window_end'   => '18:00:00',
         ]);

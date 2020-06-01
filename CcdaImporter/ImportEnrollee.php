@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
-use App\Nova\Actions\ClearAndReimportCcda;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -63,6 +63,10 @@ class ImportEnrollee
         //so we can consent them and then ask the practice to send us the CCDs
         //It is expected to reach this point, do not throw error
         if (Enrollee::UPLOADED_CSV === $enrollee->source) {
+            return;
+        }
+    
+        if (Enrollee::ENROLLED === $enrollee->status) {
             return;
         }
 
@@ -125,7 +129,7 @@ class ImportEnrollee
         }
 
         if ($user->restore()) {
-            ClearAndReimportCcda::for($user->id, auth()->id(), 'call');
+            ReimportPatientMedicalRecord::for($user->id, auth()->id(), 'call', ['--clear' => true]);
 
             $this->enrolleeMedicalRecordImported($enrollee);
 
@@ -213,7 +217,6 @@ class ImportEnrollee
         $ccda = Ccda::create(
             [
                 'practice_id' => $enrollee->practice_id,
-                'vendor_id'   => 1,
                 'xml'         => $ccdaExternal[0]['ccda'],
             ]
         );
@@ -221,7 +224,7 @@ class ImportEnrollee
         $enrollee->medical_record_id   = $ccda->id;
         $enrollee->medical_record_type = Ccda::class;
         $enrollee->save();
-        $imported = $ccda->import();
+        $imported = $ccda->import($enrollee);
 
         $this->enrolleeMedicalRecordImported($enrollee);
 
