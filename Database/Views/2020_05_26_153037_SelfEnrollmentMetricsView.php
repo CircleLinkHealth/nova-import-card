@@ -28,8 +28,7 @@ class SelfEnrollmentMetricsView extends BaseSqlView
             ->where('survey_id', '=', $survey->id)
             ->first();
 
-        $needle  = ':';
-        $needle2 = 'EDT';
+        $needle = ':';
 
         $showDemo = \Illuminate\Support\Facades\App::environment(['local', 'review']);
 
@@ -44,9 +43,9 @@ class SelfEnrollmentMetricsView extends BaseSqlView
        CASE WHEN b.type = '$defaultBtnColor' THEN '$green'
        WHEN b.type = '$red' THEN '$redString'
        WHEN b.type = '$manualInvite' THEN '$green'
-       WHEN b.type LIKE '%{$needle}%' AND b.type LIKE '%{$needle2}%' AND SUBSTRING_INDEX(b.type, ':', '-1') = '$defaultBtnColor'
+       WHEN b.type LIKE '%{$needle}%' AND SUBSTRING_INDEX(b.type, ':', '-1') = '$defaultBtnColor'
        THEN '$green'
-       WHEN b.type LIKE '%{$needle}%' AND b.type LIKE '%{$needle2}%' AND SUBSTRING_INDEX(b.type, ':', '-1') = '$red'
+       WHEN b.type LIKE '%{$needle}%' AND SUBSTRING_INDEX(b.type, ':', '-1') = '$red'
        THEN '$redString'
        END as button_color,
        COUNT(i.batch_id) as total_invites_sent,
