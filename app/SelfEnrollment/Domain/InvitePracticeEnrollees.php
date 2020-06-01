@@ -20,7 +20,7 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
     /**
      * @var int
      */
-    private $amount;
+    protected $limit;
     private $batch;
     /**
      * @var array|string[]
@@ -45,7 +45,7 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
         string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
         array $channels = ['mail', CustomTwilioChannel::class]
     ) {
-        $this->amount     = $amount;
+        $this->limit      = $amount;
         $this->practiceId = $practiceId;
         $this->color      = $color;
         $this->channels   = $channels;
