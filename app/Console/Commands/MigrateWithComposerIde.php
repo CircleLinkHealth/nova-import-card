@@ -6,12 +6,15 @@
 
 namespace App\Console\Commands;
 
+use CircleLinkHealth\Core\Traits\RunsConsoleCommands;
 use Illuminate\Console\Command;
 use Illuminate\Database\Console\Migrations\MigrateCommand;
 use Illuminate\Database\Migrations\Migrator;
 
 class MigrateWithComposerIde extends MigrateCommand
 {
+    use RunsConsoleCommands;
+
     /**
      * Create a new command instance.
      *
@@ -30,6 +33,7 @@ class MigrateWithComposerIde extends MigrateCommand
     public function handle()
     {
         parent::handle();
-        shell_exec('composer ide');
+
+        $this->runCpmCommand(['composer', 'ide']);
     }
 }
