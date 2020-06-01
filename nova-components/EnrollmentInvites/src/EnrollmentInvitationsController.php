@@ -25,8 +25,8 @@ class EnrollmentInvitationsController
         }
 
         InvitePracticeEnrollees::dispatch(
-            intval($novaRequest->input('amount')),
-            intval($novaRequest->input('practice_id')),
+            (int) ($novaRequest->input('amount')),
+            (int) ($novaRequest->input('practice_id')),
             $novaRequest->input('color')
         );
 

@@ -108,7 +108,6 @@ class EnrolleesInvitationPanel extends Resource
     public function cards(Request $request)
     {
         $practiceId = self::getPracticeId($this);
-
         return [
             (new EnrollmentInvites())->withMeta(
                 [
@@ -261,16 +260,6 @@ class EnrolleesInvitationPanel extends Resource
      */
     public static function label()
     {
-        $model    = EnrolleesInvitationPanel::$model::first();
-        $practice = null;
-        if ( ! empty($model)) {
-            $practice = Practice::$model::where('id', $model->practice_id)->first();
-        }
-
-        if ( ! empty($practice)) {
-            return  $practice->display_name;
-        }
-
         return 'Enrollees Invitation Panel';
     }
 
@@ -300,7 +289,7 @@ class EnrolleesInvitationPanel extends Resource
 
         return null;
     }
-
+    
     private function getSurveyInstance()
     {
         return DB::table('survey_instances')
