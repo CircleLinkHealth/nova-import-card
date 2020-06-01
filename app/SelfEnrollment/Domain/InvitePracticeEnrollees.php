@@ -40,12 +40,12 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
      * InvitePracticeEnrollees constructor.
      */
     public function __construct(
-        int $amount,
+        int $limit,
         int $practiceId,
         string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
         array $channels = ['mail', CustomTwilioChannel::class]
     ) {
-        $this->amount     = $amount;
+        $this->limit      = $limit;
         $this->practiceId = $practiceId;
         $this->color      = $color;
         $this->channels   = $channels;

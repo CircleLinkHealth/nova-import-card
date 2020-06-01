@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use App\Console\Commands\SendSenfEnrollmentReminders;
+use App\Console\Commands\SendSelfEnrollmentReminders;
 use App\Http\Controllers\Controller;
 use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use App\SelfEnrollment\Domain\InviteUnreachablePatients;
@@ -129,7 +129,7 @@ class AutoEnrollmentTestDashboard extends Controller
     public function sendEnrolleesReminderTestMethod()
     {
         try {
-            SendSenfEnrollmentReminders::dispatchEnrolleeReminders($this->getDemoPractice()->id);
+            SendSelfEnrollmentReminders::dispatchEnrolleeReminders($this->getDemoPractice()->id);
         } catch (\Exception $e) {
             return 'Something went wrong';
         }
