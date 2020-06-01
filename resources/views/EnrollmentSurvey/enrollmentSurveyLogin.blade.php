@@ -58,7 +58,7 @@
                                                 <label class="birth-date" for="birth_date_year">Year</label>
                                                 <input type="number" name="birth_date_year"
                                                        min="1900"
-                                                       max="2000"
+                                                       max="{{now()->subYears(18)->year}}"
                                                        class="login-inputs"
                                                        placeholder="yyyy"
                                                        required

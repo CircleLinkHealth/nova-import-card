@@ -51,7 +51,7 @@ class CheckForYesterdaysActivitiesAndUpdateContactWindows extends Command
             ->where('date', $dateToCheck)
             ->whereHas('nurse', function ($q) {
                 $q->where('status', 'active');
-            })->chunk(100, function ($windows) use ($dateToCheck) {
+            })->chunkById(100, function ($windows) use ($dateToCheck) {
                 collect($windows)->map(function ($window) use ($dateToCheck) {
                     $userId = $window->nurse->user_id;
                     $date = Carbon::parse($dateToCheck)->toDateTimeString();

@@ -91,7 +91,9 @@
                 wsUrl: null,
                 wsUrlFailOver: null,
                 connectedOnce: false,
-                connectionLossTimestamp: null
+                connectionLossTimestamp: null,
+                lastUpdatedBhiTime: 0,
+                lastUpdatedCcmTime: 0,
             }
         },
         components: {
@@ -114,6 +116,20 @@
             }
         },
         methods: {
+            bhiTimeInSeconds(){
+                //this makes sure that who ever calls this method gets time dynamically
+                if(this.info.isManualBehavioral){
+                    return this.seconds;
+                }
+                return this.lastUpdatedBhiTime ||  this.info.totalBHITime || 0;
+            },
+            ccmTimeInSeconds(){
+                //this makes sure that who ever calls this method gets time dynamically
+                if(!this.info.isManualBehavioral){
+                    return this.seconds;
+                }
+                return this.lastUpdatedCcmTime || this.info.totalCCMTime || 0;
+            },
             shouldShowCcmTime() {
                 //we show ccm time, even if zero time. we do not show when empty string
                 return this.info.monthlyBhiTime && this.info.monthlyBhiTime.length > 0;
@@ -177,6 +193,8 @@
                                 const data = JSON.parse(res.data)
                                 if (data.message === 'server:sync') {
                                     self.seconds = self.info.isManualBehavioral ? data.bhiSeconds : data.ccmSeconds
+                                    self.lastUpdatedBhiTime = data.bhiSeconds;
+                                    self.lastUpdatedCcmTime = data.ccmSeconds;
                                     self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
                                     self.showLoader = false;
                                 } else if (data.message === 'server:modal') {
@@ -262,6 +280,8 @@
                 EventBus.$emit("tracker:stop", true, true);
                 return Promise.resolve({});
             });
+
+            window.TimeTracker = this;
         },
         mounted() {
 

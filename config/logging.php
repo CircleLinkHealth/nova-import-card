@@ -40,7 +40,7 @@ return [
     'channels' => [
         'stack' => [
             'driver'            => 'stack',
-            'channels'          => ['stderr', 'database', 'file'],
+            'channels'          => ['stderr'],
             'ignore_exceptions' => false,
         ],
 
@@ -98,18 +98,6 @@ return [
                 'host' => env('PAPERTRAIL_URL'),
                 'port' => env('PAPERTRAIL_PORT'),
             ],
-        ],
-
-        'logdna' => [
-            'driver'       => 'monolog',
-            'level'        => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
-            'handler'      => LogdnaHandler::class,
-            'handler_with' => [
-                'ingestion_key' => env('LOG_DNA_INGESTION_KEY'),
-                'hostname'      => env('APP_URL'),
-                'level'         => env('APP_LOG_LEVEL', \Monolog\Logger::DEBUG),
-            ],
-            'formatter' => LogdnaFormatter::class,
         ],
 
         'stderr' => [

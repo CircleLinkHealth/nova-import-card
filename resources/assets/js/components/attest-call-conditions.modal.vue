@@ -11,12 +11,19 @@
                 </div>
                 <div v-if="error" class="col-sm-12">
                     <span style="color: red"><i class="fas fa-exclamation-circle"></i>&nbsp{{error}}</span>
+                    <br>
+                    <div v-if="showBhiLink">
+                        <span style="color: red">If you did not discuss a BHI condition click <a v-bind:class="{'disabled': !twoCcmConditionsAttested}" href="javascript:" @click.prevent="submitForm('true')"><strong><u>here</u></strong></a></span>
+                    </div>
+                </div>
+                <div>
+
                 </div>
                 <div class="col-sm-12" v-bind:class="sectionSpaceClass">
                     <div v-for="problem in problemsToAttest">
                         <input type="checkbox" :id="problem.id" :value="problem.id" style="display: none !important"
                                v-model="attestedProblems">
-                        <label :for="problem.id"><span> </span>{{problem.name}}</label><span v-if="problem.code">&nbsp;({{problem.code}})</span>
+                        <label  v-bind:class="{'bhi-problem': problemIsBhi(problem)}" :for="problem.id"><span> </span>{{problem.name}}</label><span v-if="problem.code">&nbsp;({{problem.code}})</span>
                     </div>
                     <div class="col-sm-12 add-condition">
                         <button v-on:click="toggleAddCondition()" type="button" class="btn btn-info">
@@ -120,10 +127,14 @@
                 addCondition: false,
                 error: null,
                 isBhi: false,
-                patientHasBhi: false
+                patientHasBhi: false,
+                showBhiLink: false,
             }
         },
         computed: {
+            twoCcmConditionsAttested(){
+                return  this.getCcmAttestedConditionsCount() >= 2;
+            },
             addConditionLabel() {
                 return this.addCondition ? 'Close Other Condition Section' : 'Add Other Condition';
             },
@@ -157,6 +168,12 @@
             }
         },
         methods: {
+            problemIsBhi(problem){
+                if (! this.isNotesPage){
+                    return false;
+                }
+                return window.enableBhiAttestation.patientIsBhiEligible && problem.is_behavioral;
+            },
             getCpmProblems() {
                 if (!this.cpmProblems) {
                     return this.careplan().allCpmProblems || [];
@@ -179,11 +196,11 @@
                 this.error = null;
                 this.$refs['attest-call-conditions-modal'].visible = false;
             },
-            submitForm() {
+            submitForm(bypassBhiValidation = null) {
 
                 if (this.isNotesPage) {
                     //validate and set error messages if you should
-                    if (!this.validateAttestedConditions()) {
+                    if (!this.validateAttestedConditions(bypassBhiValidation)) {
                         return;
                     }
                 }
@@ -204,7 +221,8 @@
                 App.$emit('call-conditions-attested', {
                     attested_problems: this.attestedProblems,
                     patient_id: this.patient_id,
-                    is_bhi: this.isBhi
+                    is_bhi: this.isBhi,
+                    bypassed_bhi_validation: this.getBhiAttestedConditionsCount() === 0 && !!bypassBhiValidation
                 });
             },
             toggleAddCondition() {
@@ -214,6 +232,11 @@
                 let p = this.problems.find(function (p) {
                     return p.id === pId;
                 })
+
+                if (p.is_behavioral !== undefined){
+                    return p.is_behavioral;
+                }
+
                 if (!p.cpm_id) {
                     return false;
                 }
@@ -227,7 +250,34 @@
                 }
                 return false;
             },
-            validateAttestedConditions() {
+            hasEqualOrMoreThan10BhiMins(){
+                return window.TimeTracker.bhiTimeInSeconds() >= (10 * 60);
+            },
+            getCcmAttestedConditionsCount(){
+                let attestedCcm = 0;
+                this.attestedProblems.forEach(function (p) {
+                    if (!self.problemIsBehavioral(p)) {
+                        attestedCcm++;
+                    }
+                })
+
+                return attestedCcm;
+            },
+            getBhiAttestedConditionsCount(){
+                let attestedBhi = 0;
+                this.attestedProblems.forEach(function (p) {
+                    if (self.problemIsBehavioral(p)) {
+                        attestedBhi++;
+                    }
+                })
+
+                return attestedBhi;
+            },
+            passesCcmValidation(){
+                //if patient wants to bypass bhi validation and does not require +2 ccm validation or already has attested to 2 ccm conditions, then we can bypass
+                return !this.attestationRequirements.ccm_2 || this.getCcmAttestedConditionsCount() >= 2;
+            },
+            validateAttestedConditions(bypassBhiValidation = null) {
                 if (!this.attestationRequirements || this.attestationRequirements.disabled) {
                     return true;
                 }
@@ -238,49 +288,49 @@
                 //if complex require 2 CCM attested
                 //else require any 2
                 if (this.attestationRequirements.ccm_2) {
-                    if (this.attestationRequirements.is_complex) {
-                        let attestedCcm = 0;
-                        this.attestedProblems.forEach(function (p) {
-                            if (!self.problemIsBehavioral(p)) {
-                                attestedCcm++;
-                            }
-                        })
+                    if (this.hasEqualOrMoreThan10BhiMins()) {
+                        let attestedCcm = this.getCcmAttestedConditionsCount();
                         if (attestedCcm < 2) {
                             ccmError = true;
                         }
                     } else {
                         if (this.attestedProblems.length < 2) {
-                            this.error = "Please select at least two conditions."
+                            this.error = "Please select at least two conditions.";
                             return false;
                         }
                     }
                 }
-                if (this.attestationRequirements.is_complex && this.attestationRequirements.bhi_1) {
-                    let attestedBhi = 0;
-                    this.attestedProblems.forEach(function (p) {
-                        if (self.problemIsBehavioral(p)) {
-                            attestedBhi++;
-                        }
-                    })
+
+
+                let skipBhiValidation =  this.passesCcmValidation() && !!bypassBhiValidation
+
+                if (this.hasEqualOrMoreThan10BhiMins() && ! this.attestationRequirements.bhi_problems_attested && ! skipBhiValidation) {
+                    let attestedBhi = this.getBhiAttestedConditionsCount();
                     if (attestedBhi === 0) {
                         bhiError = true;
                     }
                 }
+
                 if (!ccmError && !bhiError) {
                     return true
                 }
+
                 let error;
-                if (ccmError) {
-                    error = 'Please select at least two CCM conditions'
+                if (ccmError && !bhiError) {
+                    this.showBhiLink = false;
+                    this.error = 'Please select 2 CCM conditions discussed on this call.'
+                    return false;
                 }
+
                 if (bhiError) {
-                    if (!error) {
-                        error = 'Please select at least one BHI condition';
-                    } else {
-                        error = error + ' and at least one BHI condition';
+                    this.showBhiLink = true;
+                    if (! ccmError) {
+                        error = 'Please select the BHI condition(s) discussed on this call.';
+                    }else{
+                        error = 'Please select 2 CCM conditions and  the BHI condition(s) discussed on this call.';
                     }
                 }
-                this.error = error + '.';
+                this.error = error;
                 return false;
             }
         },
@@ -315,6 +365,11 @@
         color: white;
     }
 
+    .bhi-problem {
+        color: #5cc0dd !important;
+        font-weight: bolder;
+    }
+
     .m-top-15 {
         margin-top: 15px;
     }
@@ -322,4 +377,8 @@
     .m-top-5 {
         margin-top: 5px;
     }
+    a.disabled {
+        cursor: not-allowed;
+    }
+
 </style>

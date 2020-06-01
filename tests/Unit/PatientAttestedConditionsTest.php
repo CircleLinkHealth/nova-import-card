@@ -19,10 +19,10 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;
 use Illuminate\Support\Facades\Artisan;
-use Tests\DuskTestCase;
 use Tests\Helpers\CarePlanHelpers;
+use Tests\TestCase;
 
-class PatientAttestedConditionsTest extends DuskTestCase
+class PatientAttestedConditionsTest extends TestCase
 {
     use CarePlanHelpers;
     use UserHelpers;
@@ -166,9 +166,8 @@ class PatientAttestedConditionsTest extends DuskTestCase
             ->getOriginalContent()->getData();
 
         $this->assertFalse($responseData['attestationRequirements']['disabled']);
-        $this->assertTrue($responseData['attestationRequirements']['bhi_1']);
+        $this->assertFalse($responseData['attestationRequirements']['bhi_problems_attested']);
         $this->assertTrue($responseData['attestationRequirements']['ccm_2']);
-        $this->assertTrue($responseData['attestationRequirements']['is_complex']);
     }
 
     public function test_attestation_validation_for_complex_ccm_and_bhi_code_is_not_applicable_if_conditions_already_attested()
@@ -204,9 +203,8 @@ class PatientAttestedConditionsTest extends DuskTestCase
             ->getOriginalContent()->getData();
 
         $this->assertFalse($responseData['attestationRequirements']['disabled']);
-        $this->assertFalse($responseData['attestationRequirements']['bhi_1']);
+        $this->assertTrue($responseData['attestationRequirements']['bhi_problems_attested']);
         $this->assertFalse($responseData['attestationRequirements']['ccm_2']);
-        $this->assertFalse($responseData['attestationRequirements']['is_complex']);
     }
 
     public function test_complex_validation_rules_disabled_for_practice()

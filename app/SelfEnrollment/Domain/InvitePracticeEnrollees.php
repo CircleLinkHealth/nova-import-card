@@ -32,12 +32,6 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
     private $color;
 
     /**
-     * The number of patients we dispatched jobs to send invitations to.
-     *
-     * @var int
-     */
-    private $dispatched = 0;
-    /**
      * @var int|mixed
      */
     private $practiceId;
@@ -79,15 +73,10 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
             });
     }
 
-    protected function limit(): ?int
-    {
-        return $this->amount;
-    }
-
     private function getBatch(): EnrollmentInvitationsBatch
     {
         if (is_null($this->batch)) {
-            $this->batch = EnrollmentInvitationsBatch::firstOrCreateAndRemember($this->practiceId, now()->format('m/d/Y h T').':'.$this->color);
+            $this->batch = EnrollmentInvitationsBatch::firstOrCreateAndRemember($this->practiceId, now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.$this->color);
         }
 
         return $this->batch;

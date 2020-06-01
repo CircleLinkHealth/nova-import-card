@@ -69,7 +69,7 @@ class EnrollmentInvitationService
             $optionalTitle,
         ];
 
-        $letter      = json_decode($practiceLetter->letter);
+        $letter      = json_decode($practiceLetter->letter) ?? [];
         $letterPages = [];
         foreach ($letter as $page) {
             $body          = $page->body;

@@ -7,7 +7,6 @@
 namespace App\SelfEnrollment;
 
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -28,35 +27,6 @@ class Helpers
             ->where('survey_instance_id', '=', $surveyInstance->id);
     }
 
-    public static function createSurveyConditions(int $userId, int $surveyInstanceId, int $surveyId, string $status)
-    {
-        DB::table('users_surveys')->insert(
-            [
-                'user_id'            => $userId,
-                'survey_instance_id' => $surveyInstanceId,
-                'survey_id'          => $surveyId,
-                'status'             => $status,
-                'start_date'         => Carbon::parse(now())->toDateTimeString(),
-            ]
-        );
-    }
-
-    public static function createSurveyConditionsAndGetSurveyInstance(string $userId, string $status)
-    {
-        $surveyId = DB::table('surveys')->insertGetId([
-            'name' => 'Enrollees',
-        ]);
-
-        $surveyInstanceId = DB::table('survey_instances')->insertGetId([
-            'survey_id' => $surveyId,
-            'year'      => Carbon::now(),
-        ]);
-
-        self::createSurveyConditions($userId, $surveyInstanceId, $surveyId, $status);
-
-        return DB::table('survey_instances')->where('id', '=', $surveyInstanceId)->first();
-    }
-
     public static function getCurrentYearEnrolleeSurveyInstance(): object
     {
         return \Cache::remember('current_year_self_enrollment_survey_instance_'.now()->year.'_'.SelfEnrollmentController::ENROLLEES_SURVEY_NAME, 2, function () {
@@ -72,16 +42,6 @@ class Helpers
             }
 
             return $instance;
-        });
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
-     */
-    public static function getDemoPractice()
-    {
-        return \Cache::remember('demo_practice_object', 2, function () {
-            return Practice::where('name', '=', 'demo')->firstOrFail();
         });
     }
 

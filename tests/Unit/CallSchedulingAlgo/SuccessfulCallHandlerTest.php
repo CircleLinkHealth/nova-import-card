@@ -64,6 +64,10 @@ class SuccessfulCallHandlerTest extends TestCase
         $called  = Carbon::now()->startOfMonth()->addDay(4);
         $patient = $this->fakePatient($called);
 
+        $patient->patientInfo->preferred_calls_per_month = 3;
+        $patient->patientInfo->save();
+
+        Carbon::setTestNow(now()->startOfMonth()->addDays(10));
         $prediction = (new SuccessfulHandler($patient->patientInfo, $called, $patient->inboundCalls->first()))
             ->handle();
 

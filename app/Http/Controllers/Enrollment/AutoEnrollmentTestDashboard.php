@@ -6,13 +6,14 @@
 
 namespace App\Http\Controllers\Enrollment;
 
+use App\Console\Commands\SendSenfEnrollmentReminders;
 use App\Http\Controllers\Controller;
 use App\SelfEnrollment\Domain\InviteUnreachablePatients;
-use App\SelfEnrollment\Domain\RemindEnrollees;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
 use App\SelfEnrollment\Helpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
@@ -26,7 +27,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function finalActionTest()
     {
-        UnreachablesFinalAction::createForInvitesSentTwoDaysAgo()->dispatchToQueue();
+        UnreachablesFinalAction::dispatch(now()->subDays(4));
 
         return redirect(route('ca-director.index'))->with('message', 'Reminders Sent Successfully');
     }
@@ -49,7 +50,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function resetEnrollmentTest()
     {
-        $practice = Helpers::getDemoPractice();
+        $practice = $this->getDemoPractice();
         // TEST ONLY
         $users = User::withTrashed()
             ->with('notifications', 'patientInfo', 'enrollee')
@@ -113,7 +114,7 @@ class AutoEnrollmentTestDashboard extends Controller
     public function sendEnrolleesReminderTestMethod()
     {
         try {
-            RemindEnrollees::createForInvitesSentTwoDaysAgo()->dispatchToQueue();
+            SendSenfEnrollmentReminders::dispatchEnrolleeReminders($this->getDemoPractice()->id);
         } catch (\Exception $e) {
             return 'Something went wrong';
         }
@@ -194,5 +195,15 @@ class AutoEnrollmentTestDashboard extends Controller
         }
 
         Helpers::awvUserSurveyQuery($user, $surveyInstance)->delete();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+     */
+    private function getDemoPractice()
+    {
+        return \Cache::remember('demo_practice_object', 2, function () {
+            return Practice::where('name', '=', 'demo')->firstOrFail();
+        });
     }
 }
