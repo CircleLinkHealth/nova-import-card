@@ -276,8 +276,15 @@ trait UserHelpers
         bool $variableRate = true,
         float $hourlyRate = 29.0,
         bool $enableCcmPlus = false,
-        float $visitFee = null
+        float $visitFee = null,
+        Carbon $startDate = null
     ) {
+        if ( ! $startDate) {
+            $startDate = now()->startOfDay();
+        }
+
+        $nurse->nurseInfo->start_date = $startDate;
+
         $nurse->nurseInfo->is_variable_rate = $variableRate;
         $nurse->nurseInfo->hourly_rate      = $hourlyRate;
         $nurse->nurseInfo->high_rate        = 30.00;
