@@ -56,7 +56,7 @@ class SelfEnrollmentTest extends TestCase
 
     public function test_it_creates_one_batch_for_each_button_color_in_one_hour_range()
     {
-        $enrollees = $this->createEnrollees($num = 6);
+        $enrollees = $this->createEnrollees($num = 7);
         $type      = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
         foreach ($enrollees->take(3) as $enrollee) {
             EnrollmentInvitationsBatch::firstOrCreateAndRemember(
@@ -73,7 +73,16 @@ class SelfEnrollmentTest extends TestCase
             );
         }
 
-        $this->assertTrue(EnrollmentInvitationsBatch::get()->count() === 2);
+        $type = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.SelfEnrollmentController::RED_BUTTON_COLOR;
+        foreach ($enrollees->skip(6)->take(1) as $enrollee) {
+            EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+                $enrollee->practice_id,
+                $type
+            );
+        }
+
+        static::assertTrue(2 === EnrollmentInvitationsBatch::get()->count());
+        static::assertFalse(3 === EnrollmentInvitationsBatch::get()->count());
     }
 
     public function test_it_creates_one_batch_for_each_hour_sent()
