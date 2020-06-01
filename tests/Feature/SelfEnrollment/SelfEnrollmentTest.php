@@ -92,7 +92,7 @@ class SelfEnrollmentTest extends TestCase
         Twilio::assertNothingSent();
     }
 
-    public function test_it_groups_batches_per_hour()
+    public function test_it_creates_batches_per_hour_sent()
     {
         $enrollees = $this->createEnrollees($num = 5);
         $n         = 0;
@@ -107,7 +107,7 @@ class SelfEnrollmentTest extends TestCase
 
         $this->assertTrue($num === EnrollmentInvitationsBatch::get()->count());
     }
-
+    
     public function test_it_only_counts_reminders_sent_after_invitation()
     {
         $enrollee = $this->createEnrollees(1);
