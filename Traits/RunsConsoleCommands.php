@@ -10,14 +10,12 @@ use Symfony\Component\Process\Process;
 
 trait RunsConsoleCommands
 {
-    protected $timeout = 600;
-
     /**
      * @throws \Exception
      *
      * @return Process
      */
-    public function runCpmCommand(array $command, bool $echoOutput = true)
+    public function runCpmCommand(array $command, bool $echoOutput = true, $timeout = null)
     {
         $process = new Process($command);
 
@@ -29,8 +27,14 @@ trait RunsConsoleCommands
 
         echo PHP_EOL;
 
-        $process->setTimeout($this->timeout);
-
+        if ($timeout){
+            if (is_numeric($timeout)){
+                $process->setTimeout($timeout);
+            }else{
+                echo 'Warning: Non numeric value used for process timeout';
+            }
+        }
+        
         $process->run();
 
         $output = (string) trim($process->getOutput());
