@@ -108,6 +108,7 @@ class EnrolleesInvitationPanel extends Resource
     public function cards(Request $request)
     {
         $practiceId = self::getPracticeId($this);
+
         return [
             (new EnrollmentInvites())->withMeta(
                 [
@@ -289,7 +290,7 @@ class EnrolleesInvitationPanel extends Resource
 
         return null;
     }
-    
+
     private function getSurveyInstance()
     {
         return DB::table('survey_instances')

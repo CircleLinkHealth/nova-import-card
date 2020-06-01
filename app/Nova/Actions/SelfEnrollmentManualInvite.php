@@ -58,7 +58,10 @@ class SelfEnrollmentManualInvite extends Action
                 return;
             }
 
-            SendInvitation::dispatch($enrollee->user, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
+            SendInvitation::dispatch($enrollee->user, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+                $enrollee->practice_id,
+                now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
+            )->id);
         });
 
         Action::message('Invites should have been sent. Please check invitation panel.');
