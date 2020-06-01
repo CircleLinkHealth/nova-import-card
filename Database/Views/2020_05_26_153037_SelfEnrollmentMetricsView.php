@@ -13,29 +13,11 @@ class SelfEnrollmentMetricsView extends BaseSqlView
 {
     /**
      * Create the sql view.
+     * @throws Exception
      */
     public function createSqlView(): bool
     {
-        if (\Illuminate\Support\Facades\App::environment('testing')) {
-            DB::table('surveys')->updateOrInsert(
-                [
-                    'name'        => SelfEnrollmentController::ENROLLEES_SURVEY_NAME,
-                    'description' => 'Enrollees Survey',
-                ]
-            );
-            $survey = DB::table('surveys')
-                ->where('name', SelfEnrollmentController::ENROLLEES_SURVEY_NAME)
-                ->first();
-
-            if (empty($survey)) {
-                throw new \Exception('Could not find survey with name '.SelfEnrollmentController::ENROLLEES_SURVEY_NAME);
-            }
-            DB::table('survey_instances')->updateOrInsert([
-                'survey_id' => $survey->id,
-                'year'      => now()->year,
-            ]);
-        }
-
+        $this->createSurveyIfTestingEnvironment();
         $enrolled        = Enrollee::ENROLLED;
         $toCall          = Enrollee::TO_CALL;
         $defaultBtnColor = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
@@ -107,5 +89,67 @@ class SelfEnrollmentMetricsView extends BaseSqlView
     public function getViewName(): string
     {
         return 'self_enrollment_metrics_view';
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function createSurvey()
+    {
+        $survey = DB::table('surveys')->updateOrInsert(
+            [
+                'name'        => SelfEnrollmentController::ENROLLEES_SURVEY_NAME,
+                'description' => 'Enrollees Survey',
+            ]
+        );
+
+        if ( ! $survey) {
+            throw new \Exception('Could not create survey with name '.SelfEnrollmentController::ENROLLEES_SURVEY_NAME);
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function createSurveyIfTestingEnvironment()
+    {
+        if (\Illuminate\Support\Facades\App::environment(['testing'])) {
+            $this->createSurvey();
+            $survey = $this->enrolleesSurvey();
+            $this->createSurveyInstance($survey->id);
+        }
+    }
+
+    /**
+     * @param $surveyId
+     * @throws Exception
+     */
+    private function createSurveyInstance($surveyId)
+    {
+        $surveyInstance = DB::table('survey_instances')->updateOrInsert([
+            'survey_id' => $surveyId,
+            'year'      => now()->year,
+        ]);
+
+        if ( ! $surveyInstance) {
+            throw new \Exception('Could not find survey instance for survey id '.$surveyId);
+        }
+    }
+
+    /**
+     * @throws Exception
+     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Query\Builder|object
+     */
+    private function enrolleesSurvey()
+    {
+        $survey = DB::table('surveys')
+            ->where('name', SelfEnrollmentController::ENROLLEES_SURVEY_NAME)
+            ->first();
+
+        if (empty($survey)) {
+            throw new \Exception('Could not find survey with name '.SelfEnrollmentController::ENROLLEES_SURVEY_NAME);
+        }
+
+        return $survey;
     }
 }
