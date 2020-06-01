@@ -27,6 +27,7 @@ class SelfEnrollmentController extends Controller
     use AuthenticatesUsers;
 
     const DEFAULT_BUTTON_COLOR = '#4baf50';
+    
 
     const ENROLLEES_SURVEY_NAME                = 'Enrollees';
     const ENROLLMENT_LETTER_DEFAULT_LOGO       = 'https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png';
