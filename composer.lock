@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "06ce466bac362bb3461aa3bb82fcb5f4",
+    "content-hash": "e1b4b8539d713a055e2261a805b4cfa1",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -522,16 +522,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.138.10",
+            "version": "3.139.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "cf197a033ad75cd9e3a90a207cf5ec8935aafa48"
+                "reference": "0d8ccd70c76e22f04ec16bff07b7e002dd594c82"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/cf197a033ad75cd9e3a90a207cf5ec8935aafa48",
-                "reference": "cf197a033ad75cd9e3a90a207cf5ec8935aafa48",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0d8ccd70c76e22f04ec16bff07b7e002dd594c82",
+                "reference": "0d8ccd70c76e22f04ec16bff07b7e002dd594c82",
                 "shasum": ""
             },
             "require": {
@@ -602,7 +602,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-05-28T18:12:07+00:00"
+            "time": "2020-06-01T18:11:54+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1190,11 +1190,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.8.3",
+            "version": "dev-ROAD-84_eligibility",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "01870f4ee6072d04e5f16e040e4b165dfdef15c2"
+                "reference": "ba307500c539608961a162eb27874d2c7d3d58d3"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1219,7 +1219,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-31T17:50:11+00:00"
+            "time": "2020-06-01T18:47:20+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1524,7 +1524,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "9fece213ca22133b09dbc0826182082ce20c5b52"
+                "reference": "f52488daa02aa2609b43c5c40b075364192694cf"
             },
             "type": "laravel-module",
             "extra": {
@@ -1549,7 +1549,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-28T16:13:43+00:00"
+            "time": "2020-06-01T18:28:39+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
@@ -2975,22 +2975,22 @@
         },
         {
             "name": "google/apiclient",
-            "version": "v2.4.1",
+            "version": "v2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client.git",
-                "reference": "1fdfe942f9aaf3064e621834a5e3047fccb3a6da"
+                "reference": "9ab9cc07f66e2c7274ea2753f102ae24d1271410"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/1fdfe942f9aaf3064e621834a5e3047fccb3a6da",
-                "reference": "1fdfe942f9aaf3064e621834a5e3047fccb3a6da",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/9ab9cc07f66e2c7274ea2753f102ae24d1271410",
+                "reference": "9ab9cc07f66e2c7274ea2753f102ae24d1271410",
                 "shasum": ""
             },
             "require": {
                 "firebase/php-jwt": "~2.0||~3.0||~4.0||~5.0",
                 "google/apiclient-services": "~0.13",
-                "google/auth": "^1.0",
+                "google/auth": "^1.9",
                 "guzzlehttp/guzzle": "~5.3.1||~6.0",
                 "guzzlehttp/psr7": "^1.2",
                 "monolog/monolog": "^1.17|^2.0",
@@ -3032,20 +3032,20 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-03-26T15:30:32+00:00"
+            "time": "2020-05-26T22:29:38+00:00"
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.137",
+            "version": "v0.138",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "92ae53e812037230b23d373bac12516f90c330cc"
+                "reference": "9e7ea08fbd87e5926d14ef0674626e26843a5508"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/92ae53e812037230b23d373bac12516f90c330cc",
-                "reference": "92ae53e812037230b23d373bac12516f90c330cc",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/9e7ea08fbd87e5926d14ef0674626e26843a5508",
+                "reference": "9e7ea08fbd87e5926d14ef0674626e26843a5508",
                 "shasum": ""
             },
             "require": {
@@ -3069,7 +3069,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-05-25T00:24:28+00:00"
+            "time": "2020-05-31T00:25:32+00:00"
         },
         {
             "name": "google/auth",
@@ -15704,6 +15704,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/sqlviews-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "laravel/scout": 20,

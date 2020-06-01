@@ -38,6 +38,37 @@ class SelfEnrollmentTest extends TestCase
      */
     private $factory;
 
+    public function test_it_creates_batch()
+    {
+        $enrollee = $this->createEnrollees(1);
+        $type     = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE;
+        $batch    = EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+            $enrollee->practice_id,
+            $type
+        );
+
+        $this->assertDatabaseHas('enrollment_invitations_batches', [
+            'id'          => $batch->id,
+            'practice_id' => $enrollee->practice_id,
+            'type'        => $type,
+        ]);
+    }
+
+    public function test_it_creates_one_batch_in_one_hour_range()
+    {
+        $enrollees = $this->createEnrollees($num = 4);
+        $type      = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE;
+//        Attempt to create 4 batches
+        foreach ($enrollees as $enrollee) {
+            EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+                $enrollee->practice_id,
+                $type
+            );
+        }
+
+        $this->assertTrue(1 === EnrollmentInvitationsBatch::get()->count());
+    }
+
     public function test_it_creates_user_from_enrollee()
     {
         $enrollee = $this->createEnrollees();
@@ -59,6 +90,22 @@ class SelfEnrollmentTest extends TestCase
         );
 
         Twilio::assertNothingSent();
+    }
+
+    public function test_it_groups_batches_per_hour()
+    {
+        $enrollees = $this->createEnrollees($num = 5);
+        $n         = 0;
+        foreach ($enrollees as $enrollee) {
+            $type = now()->addHours($n)->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE;
+            EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+                $enrollee->practice_id,
+                $type
+            );
+            ++$n;
+        }
+
+        $this->assertTrue($num === EnrollmentInvitationsBatch::get()->count());
     }
 
     public function test_it_only_counts_reminders_sent_after_invitation()
