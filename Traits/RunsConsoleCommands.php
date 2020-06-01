@@ -11,7 +11,7 @@ use Symfony\Component\Process\Process;
 trait RunsConsoleCommands
 {
     protected $timeout = 600;
-    
+
     /**
      * @throws \Exception
      *
