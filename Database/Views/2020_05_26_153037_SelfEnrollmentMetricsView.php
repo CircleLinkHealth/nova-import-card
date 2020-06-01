@@ -16,6 +16,26 @@ class SelfEnrollmentMetricsView extends BaseSqlView
      */
     public function createSqlView(): bool
     {
+        if (\Illuminate\Support\Facades\App::environment('testing')) {
+            DB::table('surveys')->updateOrInsert(
+                [
+                    'name'        => SelfEnrollmentController::ENROLLEES_SURVEY_NAME,
+                    'description' => 'Enrollees Survey',
+                ]
+            );
+            $survey = DB::table('surveys')
+                ->where('name', SelfEnrollmentController::ENROLLEES_SURVEY_NAME)
+                ->first();
+
+            if (empty($survey)) {
+                throw new \Exception('Could not find survey with name '.SelfEnrollmentController::ENROLLEES_SURVEY_NAME);
+            }
+            DB::table('survey_instances')->updateOrInsert([
+                'survey_id' => $survey->id,
+                'year'      => now()->year,
+            ]);
+        }
+
         $enrolled        = Enrollee::ENROLLED;
         $toCall          = Enrollee::TO_CALL;
         $defaultBtnColor = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
@@ -30,7 +50,7 @@ class SelfEnrollmentMetricsView extends BaseSqlView
 
         $needle = ':';
 
-        $showDemo = \Illuminate\Support\Facades\App::environment(['local', 'review']);
+        $showDemo = \Illuminate\Support\Facades\App::environment(['local', 'review', 'testing']);
 
         return \DB::statement("
         CREATE VIEW {$this->getViewName()}
@@ -42,7 +62,6 @@ class SelfEnrollmentMetricsView extends BaseSqlView
        p.display_name as practice_name,
        CASE WHEN b.type = '$defaultBtnColor' THEN '$green'
        WHEN b.type = '$red' THEN '$redString'
-       
        WHEN b.type LIKE '%{$needle}%' AND SUBSTRING_INDEX(b.type, ':', '-1') = '$defaultBtnColor'
        THEN '$green'
        WHEN b.type LIKE '%{$needle}%' AND SUBSTRING_INDEX(b.type, ':', '-1') = '$red'
