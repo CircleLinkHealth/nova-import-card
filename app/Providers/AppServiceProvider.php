@@ -187,7 +187,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(GoogleDriveServiceProvider::class);
         $this->app->register(\LynX39\LaraPdfMerger\PdfMergerServiceProvider::class);
 
-        $this->app->extend('command.migrate', function () {
+        $this->app->singleton('command.migrate', function () {
             return new MigrateWithComposerIde(app(Migrator::class));
         });
 
