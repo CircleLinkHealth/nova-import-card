@@ -172,6 +172,19 @@ class SelfEnrollmentTest extends TestCase
         );
         Notification::assertTimesSent($number, SelfEnrollmentInviteNotification::class);
     }
+    
+    public function test_it_sends_enrollment_notifications_limited()
+    {
+        $this->createEnrollees($number = 5);
+        Notification::fake();
+        InvitePracticeEnrollees::dispatch(
+            $limit = 2,
+            $this->practice()->id,
+            SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
+            ['mail', CustomTwilioChannel::class]
+        );
+        Notification::assertTimesSent($limit, SelfEnrollmentInviteNotification::class);
+    }
 
     public function test_it_sends_enrollment_sms()
     {
