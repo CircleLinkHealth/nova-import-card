@@ -116,6 +116,35 @@ class SelfEnrollmentTest extends TestCase
         $this->assertTrue(1 === EnrollmentInvitationsBatch::get()->count());
     }
 
+    public function test_it_creates_seperate_batches_for_random_and_manual_invites()
+    {
+        $enrollees  = $this->createEnrollees($num = 2);
+        $typeManual = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE;
+
+        foreach ($enrollees->take(1) as $enrollee) {
+            EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+                $enrollee->practice_id,
+                $typeManual
+            );
+        }
+
+        $typeRandom = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
+        foreach ($enrollees->skip(1)->take(1) as $enrollee) {
+            EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+                $enrollee->practice_id,
+                $typeRandom
+            );
+        }
+        $this->assertDatabaseHas('enrollment_invitations_batches', [
+            'practice_id' => $enrollee->practice_id,
+            'type'        => $typeManual,
+        ]);
+        $this->assertDatabaseHas('enrollment_invitations_batches', [
+            'practice_id' => $enrollee->practice_id,
+            'type'        => $typeRandom,
+        ]);
+    }
+
     public function test_it_creates_user_from_enrollee()
     {
         $enrollee = $this->createEnrollees();
