@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use App\Constants;
 use CircleLinkHealth\Core\Traits\RunsConsoleCommands;
 use Illuminate\Console\Command;
 use Illuminate\Database\Console\Migrations\MigrateCommand;
@@ -34,6 +35,6 @@ class MigrateWithComposerIde extends MigrateCommand
     {
         parent::handle();
 
-        $this->runCpmCommand(['composer', 'ide'], true, 600);
+        $this->runCpmCommand(['composer', 'ide'], true, Constants::TEN_MINUTES_IN_SECONDS);
     }
 }
