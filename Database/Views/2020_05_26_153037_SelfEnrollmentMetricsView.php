@@ -32,7 +32,7 @@ class SelfEnrollmentMetricsView extends BaseSqlView
 
         $needle = ':';
 
-        $showDemo = \Illuminate\Support\Facades\App::environment(['local', 'review', 'testing']);
+        $showDemo = $this->showDemoPracticeDataOnly();
 
         return \DB::statement("
         CREATE VIEW {$this->getViewName()}
@@ -151,5 +151,10 @@ class SelfEnrollmentMetricsView extends BaseSqlView
         }
 
         return $survey;
+    }
+
+    private function showDemoPracticeDataOnly()
+    {
+        return isSelfEnrollmentTestModeEnabled() || \Illuminate\Support\Facades\App::environment(['local', 'testing']);
     }
 }
