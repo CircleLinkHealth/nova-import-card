@@ -43,6 +43,7 @@ abstract class AbstractSelfEnrollableUserIterator implements ShouldQueue
      */
     public function handle()
     {
+        $this->setLimit($this->limit());
         $this->query()->chunk($this->chunkSize(), function ($users) {
             $users->each(function (User $user) {
                 $this->action($user);
@@ -58,9 +59,9 @@ abstract class AbstractSelfEnrollableUserIterator implements ShouldQueue
      * The query to get Users.
      */
     abstract public function query(): Builder;
-
+    
     /**
-     * @param  null                               $limit
+     * @param int $limit
      * @return AbstractSelfEnrollableUserIterator
      */
     public function setLimit(int $limit)

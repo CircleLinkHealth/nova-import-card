@@ -17,10 +17,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
 {
-    /**
-     * @var int
-     */
-    private $amount;
     private $batch;
     /**
      * @var array|string[]
@@ -30,6 +26,10 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
      * @var null
      */
     private $color;
+    /**
+     * @var int
+     */
+    protected $limit;
 
     /**
      * @var int|mixed
@@ -45,7 +45,7 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
         string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
         array $channels = ['mail', CustomTwilioChannel::class]
     ) {
-        $this->amount     = $amount;
+        $this->limit      = $amount;
         $this->practiceId = $practiceId;
         $this->color      = $color;
         $this->channels   = $channels;
