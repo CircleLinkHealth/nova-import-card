@@ -87,6 +87,7 @@ use Illuminate\Support\Collection;
  * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereHighRate3($value)
  * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereVisitFee2($value)
  * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereVisitFee3($value)
+ * @property \Illuminate\Support\Carbon|null                                                                  $start_date
  */
 class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 {
@@ -102,6 +103,10 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         'Monique'  => 2332,
         'Erin'     => 2398,
         'Kerri'    => 2012,
+    ];
+
+    protected $dates = [
+        'start_date',
     ];
 
     protected $fillable = [
