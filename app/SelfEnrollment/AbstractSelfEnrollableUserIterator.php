@@ -66,7 +66,8 @@ abstract class AbstractSelfEnrollableUserIterator implements ShouldQueue
     public function setLimit(int $limit)
     {
         $this->limit = $limit;
-        return $this->limit();
+
+        return $this->limit;
     }
 
     /**
