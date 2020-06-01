@@ -34,6 +34,6 @@ class MigrateWithComposerIde extends MigrateCommand
     {
         parent::handle();
 
-        $this->runCpmCommand(['composer', 'ide']);
+        $this->runCpmCommand(['composer', 'ide'], true, 600);
     }
 }
