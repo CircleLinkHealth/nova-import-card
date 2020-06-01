@@ -10,6 +10,8 @@ use Symfony\Component\Process\Process;
 
 trait RunsConsoleCommands
 {
+    protected $timeout = 600;
+    
     /**
      * @throws \Exception
      *
@@ -26,6 +28,8 @@ trait RunsConsoleCommands
         }
 
         echo PHP_EOL;
+
+        $process->setTimeout($this->timeout);
 
         $process->run();
 
