@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ab66df5f90138956f54435225a634741",
+    "content-hash": "5e91e5001b35a0f957901324e4dc0276",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1120,11 +1120,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.9.8",
+            "version": "dev-ROAD-81_nurse_start_date",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "663cfa1a3a5d369b4baff111b207b1e16e5c8a62"
+                "reference": "ff654ad3b8570f5a0e7061a5c68fc89a8782cb68"
             },
             "type": "laravel-module",
             "extra": {
@@ -1146,15 +1146,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-31T03:02:42+00:00"
+            "time": "2020-06-01T15:22:59+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.7.3",
+            "version": "dev-ROAD-81_nurse_start_date",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "59c18d65ada817146b1083922e5b3d90e5620cf5"
+                "reference": "b5c03b59f97913d0bbd586cfd7c43ce6adc534d2"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1188,7 +1188,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-30T06:52:01+00:00"
+            "time": "2020-06-01T15:22:59+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1363,11 +1363,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.4.1",
+            "version": "dev-ROAD-81_nurse_start_date",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "beafa4cf76e04a1dc255854fdb4e48c2272ef58b"
+                "reference": "c0dc69d2e1284cff609edb32f197298db94039b5"
             },
             "type": "laravel-module",
             "extra": {
@@ -1390,7 +1390,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-15T15:47:46+00:00"
+            "time": "2020-06-01T15:22:59+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -3879,6 +3879,12 @@
                 "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git",
                 "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0"
             },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CircleLinkHealth/laravel-module-installer/zipball/5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0",
+                "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0",
+                "shasum": ""
+            },
             "require": {
                 "composer-plugin-api": "^1.1",
                 "php": "^5.4|7.*"
@@ -3900,6 +3906,9 @@
             "license": [
                 "MIT"
             ],
+            "support": {
+                "source": "https://github.com/CircleLinkHealth/laravel-module-installer/tree/v0.1.5"
+            },
             "time": "2020-01-16T16:56:46+00:00"
         },
         {
@@ -15701,6 +15710,9 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/nurseinvoices-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "laravel/scout": 20,
         "orangehill/iseed": 20
