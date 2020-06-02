@@ -23,7 +23,7 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
 class PrepareCcdaForImport
 {
     const TEMP_VAR_COMMONWEALTH_PRACTICE_NAME = 'commonwealth-pain-associates-pllc';
-    
+
     /**
      * @var Ccda
      */
@@ -40,6 +40,32 @@ class PrepareCcdaForImport
     {
         $this->ccda     = $ccda;
         $this->enrollee = $enrollee;
+    }
+
+    /**
+     * This is a solution for commonwealth importing!
+     * Likely to change.
+     *
+     * If there is a specific template for this practice, decorate the ccda.json.
+     *
+     *
+     * @return \CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord|null
+     */
+    public static function attemptToDecorateCcda(User $user, Ccda $ccda)
+    {
+        if (self::TEMP_VAR_COMMONWEALTH_PRACTICE_NAME !== optional($user->primaryPractice)->name) {
+            return $ccda;
+        }
+
+        if ($mr = MedicalRecordFactory::create($user, $ccda)) {
+            if ( ! empty($mr)) {
+                $ccda->json = $mr->toJson();
+                $ccda->bluebuttonJson(true);
+                $ccda->save();
+            }
+        }
+
+        return $ccda;
     }
 
     public function fillInSupplementaryData()
@@ -180,7 +206,7 @@ class PrepareCcdaForImport
         if ($patient) {
             $this->ccda = self::attemptToDecorateCcda($patient, $this->ccda);
         }
-    
+
         $this->ccda = with(new CcdaImporter($this->ccda, $patient, $this->enrollee))->attemptImport();
 
         if ($this->ccda->isDirty()) {
@@ -199,7 +225,7 @@ class PrepareCcdaForImport
         ]);
 
         event(new CcdaImported($this->ccda->getId()));
-        
+
         return $this->ccda;
     }
 
@@ -296,32 +322,6 @@ class PrepareCcdaForImport
                 $this->ccda->setLocationId($locations->first()->id);
             }
         }
-    }
-    
-    /**
-     * This is a solution for commonwealth importing!
-     * Likely to change.
-     *
-     * If there is a specific template for this practice, decorate the ccda.json.
-     *
-     *
-     * @return \CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord|null
-     */
-    public static function attemptToDecorateCcda(User $user, Ccda $ccda)
-    {
-        if (self::TEMP_VAR_COMMONWEALTH_PRACTICE_NAME !== optional($user->primaryPractice)->name) {
-            return $ccda;
-        }
-        
-        if ($mr = MedicalRecordFactory::create($user, $ccda)) {
-            if ( ! empty($mr)) {
-                $ccda->json = $mr->toJson();
-                $ccda->bluebuttonJson(true);
-                $ccda->save();
-            }
-        }
-        
-        return $ccda;
     }
 
     private function setLocationFromDocumentationOfAddressInCcda(Ccda $ccda)
