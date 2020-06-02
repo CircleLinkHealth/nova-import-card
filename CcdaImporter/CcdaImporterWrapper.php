@@ -343,7 +343,7 @@ class CcdaImporterWrapper
             }
 
             return $address[0];
-        });
+        })->unique();
 
         //only do this if there's a just one address in the CCDA.
         //we don't wanna take a guess on what the actual patient's location may be
