@@ -7,12 +7,13 @@
 namespace App\Listeners;
 
 use App\Jobs\NotificationStatusUpdateJob;
+use App\Notifications\Channels\CustomTwilioChannel;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Events\NotificationFailed;
+use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Queue\InteractsWithQueue;
 
-class LogFailedNotification implements ShouldQueue
+class LogSentNotification implements ShouldQueue
 {
     use InteractsWithQueue;
 
@@ -28,18 +29,25 @@ class LogFailedNotification implements ShouldQueue
      *
      * @param object $event
      */
-    public function handle(NotificationFailed $event)
+    public function handle(NotificationSent $event)
     {
-        \Log::error("Notification failed for user with id: {$event->notifiable->id}. Data: ".json_encode($event->data));
+        \Log::error("Notification sent for user with id: {$event->notifiable->id}.");
 
         if (SelfEnrollmentInviteNotification::class === get_class($event->notification)) {
+            $props = [
+                'value'   => 'pending',
+                'details' => now()->toDateTimeString(),
+            ];
+
+            if ('twilio' === $event->channel || CustomTwilioChannel::class === $event->channel) {
+                $props['sid']        = $event->response->sid;
+                $props['accountSid'] = $event->response->accountSid;
+            }
+
             NotificationStatusUpdateJob::dispatch(
                 $event->notification->id,
                 $event->channel,
-                [
-                    'value'   => 'failed',
-                    'details' => $event->data['message'],
-                ],
+                $props,
             );
         }
     }

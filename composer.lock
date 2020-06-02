@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e7fe9cfb10477a988c73c48bd3b6a8df",
+    "content-hash": "b6cd4ca02a16791594cba0642d3bade3",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1083,11 +1083,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.5.7",
+            "version": "dev-ROAD-108_twilio_sms_status_callback",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "3e1475c7ad711fcdc5a2ebf1258eef0a94aaa66a"
+                "reference": "46891b2c3dcb9f4f0154c95f41a564f89284bea5"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1116,7 +1116,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-26T20:48:18+00:00"
+            "time": "2020-06-02T19:13:49+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -3879,6 +3879,12 @@
                 "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git",
                 "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0"
             },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CircleLinkHealth/laravel-module-installer/zipball/5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0",
+                "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0",
+                "shasum": ""
+            },
             "require": {
                 "composer-plugin-api": "^1.1",
                 "php": "^5.4|7.*"
@@ -3900,6 +3906,9 @@
             "license": [
                 "MIT"
             ],
+            "support": {
+                "source": "https://github.com/CircleLinkHealth/laravel-module-installer/tree/v0.1.5"
+            },
             "time": "2020-01-16T16:56:46+00:00"
         },
         {
@@ -15701,6 +15710,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/core-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "laravel/scout": 20,
         "orangehill/iseed": 20
