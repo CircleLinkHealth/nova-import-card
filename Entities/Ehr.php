@@ -31,6 +31,7 @@ use CircleLinkHealth\Eligibility\Entities\TargetPatient;
  * @property int|null                                                                                        $practices_count
  * @property int|null                                                                                        $revision_history_count
  * @property int|null                                                                                        $target_patient_count
+ * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Ehr athena()
  */
 class Ehr extends \CircleLinkHealth\Core\Entities\BaseModel
 {
