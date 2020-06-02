@@ -65,7 +65,7 @@ class SelfEnrollmentMetricsResource extends Resource
                 'percentage_enrolled',
                 'total_call_requests',
                 'percentage_call_requests',
-            ])->canSee(function () {
+            ], true)->canSee(function () {
                 return true;
             })->canRun(function () {
                 return true;
