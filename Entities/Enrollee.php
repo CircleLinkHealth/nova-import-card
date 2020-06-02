@@ -292,9 +292,13 @@ class Enrollee extends BaseModel
     const TO_SMS = 'sms_queue';
 
     /**
-     * status = utc.
+     * Patients that were never Enrolled, but were found to be Eligible and we are attempting to enroll them via Self Enrollment and CAs.
      */
-    const UNREACHABLE         = 'utc';
+    const UNREACHABLE = 'utc';
+
+    /**
+     * Patients that were once Enrolled but then turned Unreachable.
+     */
     const UNREACHABLE_PATIENT = 'unreachable_patient';
 
     /**
