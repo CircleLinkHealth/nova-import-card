@@ -27,7 +27,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
-use Modules\Eligibility\CcdaImporter\PrepareCcdaForImport;
+use Modules\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
@@ -400,7 +400,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
      */
     public function import(Enrollee $enrollee = null)
     {
-        return with(new PrepareCcdaForImport($this, $enrollee))->handle();
+        return with(new CcdaImporterWrapper($this, $enrollee))->import();
     }
 
     public function location()
