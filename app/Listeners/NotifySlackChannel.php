@@ -67,14 +67,15 @@ class NotifySlackChannel implements ShouldQueue
         $greeting .= '.';
 
         $messageLink = route('direct-mail.show', [$dm->id]);
-
-        $message = "$greeting \n Click this link to go to the message {$messageLink}.";
+    
+        $message = "$greeting \n Click <{$messageLink}|here> to view message.";
 
         if (self::ELIGIBILITY_PROCESSING_PURPOSE === $purpose
             && $runningBatch = EligibilityBatch::where('practice_id', $dm->ccdas->pluck('practice.id')->filter()->values()->first())
                 ->where('status', EligibilityBatch::RUNNING)
                 ->first()) {
-            $message .= "\n Click this link to see the running eligibility batch ".route('eligibility.batch.show', [$runningBatch->id]);
+            $batchLink = route('eligibility.batch.show', [$runningBatch->id]);
+            $message .= "\n Click <{$batchLink}|here> to see the running eligibility batch.";
         }
 
         sendSlackMessage(
