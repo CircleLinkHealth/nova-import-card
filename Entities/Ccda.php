@@ -470,19 +470,19 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         if ($this->location_id) {
             return $this;
         }
-        
+
         //Check if we have any locations whose address line 1 matches that in documentation of
         $this->setLocationFromDocumentationOfAddressInCcda($this);
-    
+
         if ($this->location_id) {
             return $this;
         }
-    
+
         //As a last result check if we have other ccdas
         $this->queryForOtherCcdasForTheSamePatient()->chunkById(5, function ($otherCcdas) use (&$deptId) {
             foreach ($otherCcdas as $otherCcda) {
                 $this->setLocationFromDocumentationOfAddressInCcda($otherCcda);
-    
+
                 if ($this->location_id) {
                     return false;
                 }
@@ -902,7 +902,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             }
         }
     }
-    
+
     private function setLocationFromDocumentationOfAddressInCcda(Ccda $ccda)
     {
         //Get address line 1 from documentation_of section of ccda
@@ -910,10 +910,10 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             if (empty($address[0] ?? null)) {
                 return null;
             }
-        
+
             return $address[0];
         });
-    
+
         //only do this if there's a just one address in the CCDA.
         //we don't wanna take a guess on what the actual patient's location may be
         if (1 === $addresses->count()) {
