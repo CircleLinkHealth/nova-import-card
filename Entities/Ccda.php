@@ -8,32 +8,26 @@ namespace CircleLinkHealth\SharedModels\Entities;
 
 use App\DirectMailMessage;
 use App\Entities\CcdaRequest;
-use App\Search\ProviderByName;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidCcdaException;
-use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
-use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Adapters\CcdaToEligibilityJobAdapter;
-use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporter;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
-use CircleLinkHealth\Eligibility\MedicalRecord\MedicalRecordFactory;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use CircleLinkHealth\SharedModels\Traits\BelongsToPatientUser;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Modules\Eligibility\CcdaImporter\PrepareCcdaForImport;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
@@ -120,13 +114,12 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
     const CCD_MEDIA_COLLECTION_NAME = 'ccd';
 
-    const EMR_DIRECT                          = 'emr_direct';
-    const GOOGLE_DRIVE                        = 'google_drive';
-    const IMPORTER                            = 'importer';
-    const IMPORTER_AWV                        = 'importer_awv';
-    const SFTP_DROPBOX                        = 'sftp_dropbox';
-    const TEMP_VAR_COMMONWEALTH_PRACTICE_NAME = 'commonwealth-pain-associates-pllc';
-    const UPLOADED                            = 'uploaded';
+    const EMR_DIRECT   = 'emr_direct';
+    const GOOGLE_DRIVE = 'google_drive';
+    const IMPORTER     = 'importer';
+    const IMPORTER_AWV = 'importer_awv';
+    const SFTP_DROPBOX = 'sftp_dropbox';
+    const UPLOADED     = 'uploaded';
 
     protected $attributes = [
         'imported' => false,
@@ -175,33 +168,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
      *
      * @var int
      */
-    private $duplicate_id;
-
-    /**
-     * This is a solution for commonwealth importing!
-     * Likely to change.
-     *
-     * If there is a specific template for this practice, decorate the ccda.json.
-     *
-     *
-     * @return \CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord|null
-     */
-    public static function attemptToDecorateCcda(User $user, Ccda $ccda)
-    {
-        if (self::TEMP_VAR_COMMONWEALTH_PRACTICE_NAME !== optional($user->primaryPractice)->name) {
-            return $ccda;
-        }
-
-        if ($mr = MedicalRecordFactory::create($user, $ccda)) {
-            if ( ! empty($mr)) {
-                $ccda->json = $mr->toJson();
-                $ccda->bluebuttonJson(true);
-                $ccda->save();
-            }
-        }
-
-        return $ccda;
-    }
+    public $duplicate_id;
 
     public function batch()
     {
@@ -351,29 +318,6 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         return $this->belongsTo(DirectMailMessage::class, 'direct_mail_message_id');
     }
 
-    public function fillInSupplementaryData()
-    {
-        $supp = SupplementalPatientData::forPatient($this->practice_id, $this->patient_first_name, $this->patient_last_name, $this->patientDob());
-
-        if ( ! $supp) {
-            return  $this;
-        }
-
-        if ( ! $this->location_id) {
-            $this->location_id = $supp->location_id;
-        }
-
-        if ( ! $this->billing_provider_id) {
-            $this->billing_provider_id = $supp->billing_provider_user_id;
-        }
-
-        if ($this->isDirty()) {
-            $this->save();
-        }
-
-        return $this;
-    }
-
     /**
      * @return mixed
      */
@@ -440,59 +384,6 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     }
 
     /**
-     * Attempt to fill in Practice, Location, and Billing Provider on this CCDA.
-     *
-     * @return $this|MedicalRecord
-     */
-    public function guessPracticeLocationProvider(): MedicalRecord
-    {
-        if ($this->practice_id && $this->location_id && $this->billing_provider_id) {
-            return $this;
-        }
-
-        $this->loadMissing(['billingProvider', 'targetPatient']);
-
-        //We assume Athena API has the most up-to-date and reliable date
-        //so we look there first
-        $this->fillLocationFromAthenaDepartmentId();
-
-        $provider = $this->billingProvider;
-
-        //Second most reliable place is ccdas.referring_provider_name.
-        if ( ! $provider && $term = $this->getReferringProviderName()) {
-            $provider = self::searchBillingProvider($term, $this->practice_id);
-        }
-
-        if ($provider instanceof User) {
-            $this->setAllPracticeInfoFromProvider($provider);
-        }
-
-        if ($this->location_id) {
-            return $this;
-        }
-
-        //Check if we have any locations whose address line 1 matches that in documentation of
-        $this->setLocationFromDocumentationOfAddressInCcda($this);
-
-        if ($this->location_id) {
-            return $this;
-        }
-
-        //As a last result check if we have other ccdas
-        $this->queryForOtherCcdasForTheSamePatient()->chunkById(5, function ($otherCcdas) use (&$deptId) {
-            foreach ($otherCcdas as $otherCcda) {
-                $this->setLocationFromDocumentationOfAddressInCcda($otherCcda);
-
-                if ($this->location_id) {
-                    return false;
-                }
-            }
-        });
-
-        return $this;
-    }
-
-    /**
      * Checks the procedues section of the CCDA for codes.
      */
     public function hasProcedureCode(string $code): bool
@@ -509,52 +400,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
      */
     public function import(Enrollee $enrollee = null)
     {
-        $ccda = $this;
-
-        $ccda
-            ->fillInSupplementaryData()
-            ->guessPracticeLocationProvider();
-
-        if ( ! $ccda->json) {
-            $this->bluebuttonJson();
-        }
-
-        if ( ! $this->patient_mrn) {
-            //fetch a fresh instance from the DB to have virtual fields
-            $ccda = $ccda->fresh();
-        }
-
-        $patient = $ccda->load('patient')->patient ?? null;
-
-        // If this is a survey only patient who has not yet enrolled, we should not enroll them.
-        if (self::isUnenrolledSurveyUser($patient, $enrollee)) {
-            return $this;
-        }
-
-        if ($patient) {
-            $ccda = self::attemptToDecorateCcda($patient, $ccda);
-        }
-
-        $ccda = (new CcdaImporter($ccda, $patient, $enrollee))->attemptImport()->raiseConcernsOrAutoQAApprove();
-
-        if ($ccda->isDirty()) {
-            $ccda->save();
-        }
-
-        $this->queryForOtherCcdasForTheSamePatient()->update([
-            'mrn'                     => $ccda->mrn,
-            'referring_provider_name' => $ccda->referring_provider_name,
-            'location_id'             => $ccda->location_id,
-            'practice_id'             => $ccda->practice_id,
-            'billing_provider_id'     => $ccda->billing_provider_id,
-            'patient_id'              => $ccda->patient_id,
-            'status'                  => $ccda->status,
-            'validation_checks'       => null,
-        ]);
-
-        event(new CcdaImported($ccda->getId()));
-
-        return $ccda;
+        return with(new PrepareCcdaForImport($this, $enrollee))->handle();
     }
 
     public function location()
@@ -593,32 +439,6 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             ->where('patient_dob', $this->patient_dob);
     }
 
-    public function raiseConcernsOrAutoQAApprove()
-    {
-        $this->load(['patient.carePlan']);
-
-        if ( ! $this->patient || ! $this->patient->carePlan) {
-            return $this;
-        }
-
-        $validator               = $this->patient->carePlan->validator();
-        $this->validation_checks = null;
-        if ($validator->fails()) {
-            $this->validation_checks = $validator->errors();
-
-            return $this;
-        }
-
-        if (CarePlan::DRAFT === $this->patient->carePlan->status && CarePlanAutoApprover::id()) {
-            $this->patient->carePlan->status         = CarePlan::QA_APPROVED;
-            $this->patient->carePlan->qa_approver_id = CarePlanAutoApprover::id();
-            $this->patient->carePlan->qa_date        = now()->toDateTimeString();
-            $this->patient->carePlan->save();
-        }
-
-        return $this;
-    }
-
     public function scopeExclude($query, $value = [])
     {
         $defaultColumns = ['id', 'created_at', 'updated_at'];
@@ -648,48 +468,6 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
                     )->where('mrn', (string) $this->mrn);
             }
         );
-    }
-
-    /**
-     * Search for a Billing Provider using a search term, and.
-     *
-     * @param string $term
-     * @param int    $practiceId
-     */
-    public static function searchBillingProvider(string $term = null, int $practiceId = null): ?User
-    {
-        if ( ! $practiceId) {
-            return null;
-        }
-        if ( ! $term) {
-            return null;
-        }
-        $baseQuery = (new ProviderByName())->query($term);
-
-        if ('algolia' === config('scout.driver')) {
-            return $baseQuery
-                ->with(
-                    [
-                        'typoTolerance' => true,
-                    ]
-                )->when(
-                    ! empty($practiceId),
-                    function ($q) use ($practiceId) {
-                        $q->whereIn('practice_ids', [$practiceId]);
-                    }
-                )
-                ->first();
-        }
-
-        return $baseQuery->when(
-            ! empty($practiceId),
-            function ($q) use ($practiceId) {
-                if ( ! method_exists($q, 'ofPractice')) {
-                    return $q->whereIn('practice_ids', [$practiceId]);
-                }
-                $q->ofPractice($practiceId);
-            }
-        )->first();
     }
 
     /**
@@ -801,45 +579,6 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         return $name;
     }
 
-    private function fillLocationFromAthenaDepartmentId()
-    {
-        if ($this->location_id) {
-            return;
-        }
-
-        if ( ! $this->practice_id) {
-            return;
-        }
-
-        if ( ! Practice::where('id', $this->practice_id)->whereHas('ehr', function ($q) {
-            $q->where('name', Ehr::ATHENA_EHR_NAME);
-        })->exists()) {
-            return $this;
-        }
-
-        $deptId = optional($this->targetPatient)->ehr_department_id;
-
-        if ( ! $deptId) {
-            $this->queryForOtherCcdasForTheSamePatient()->with('targetPatient')->chunkById(10, function ($otherCcdas) use (&$deptId) {
-                foreach ($otherCcdas as $otherCcda) {
-                    $targetPatient = $otherCcda->targetPatient;
-
-                    if ($targetPatient instanceof TargetPatient && is_numeric($targetPatient->ehr_department_id)) {
-                        $deptId = $targetPatient->ehr_department_id;
-                        //break chunking
-                        return false;
-                    }
-                }
-            });
-        }
-
-        if ($deptId) {
-            $this->location_id = \Cache::remember("cpm_practice_{$this->practice_id}___location_for_athena_department_id_$deptId", 2, function () use ($deptId) {
-                return Location::where('practice_id', $this->practice_id)->where('external_department_id', $deptId)->value('id');
-            });
-        }
-    }
-
     /**
      * Gets the parsed json from the parser's table, if it was already parsed.
      *
@@ -848,78 +587,5 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     private function getParsedJson()
     {
         return optional(DB::table(config('ccda-parser.db_table'))->where('ccda_id', '=', $this->id)->first())->result;
-    }
-
-    /**
-     * If this is a survey only patient who has not yet enrolled, we should not enroll them.
-     */
-    private static function isUnenrolledSurveyUser(?User $patient, ?Enrollee $enrollee): bool
-    {
-        if (is_null($patient)) {
-            return false;
-        }
-
-        if ( ! $patient->isSurveyOnly()) {
-            return false;
-        }
-
-        if (is_null($enrollee)) {
-            return false;
-        }
-
-        if (Enrollee::ENROLLED === $enrollee->status) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private function setAllPracticeInfoFromProvider(User $provider)
-    {
-        if ( ! $this->practice_id) {
-            $this->setPracticeId($provider->program_id);
-        }
-
-        $this->setBillingProviderId($provider->id);
-
-        if ($this->location_id) {
-            return;
-        }
-
-        if (1 === count($provider->locations)) {
-            $this->setLocationId($provider->locations->first()->id);
-        }
-
-        if ($this->location_id) {
-            return;
-        }
-
-        if ($providerAddress = $this->bluebuttonJson()->demographics->provider->address->street[0] ?? null) {
-            $locations = $provider->locations->where('address_line_1', $providerAddress);
-
-            if (1 === $locations->count()) {
-                $this->setLocationId($locations->first()->id);
-            }
-        }
-    }
-
-    private function setLocationFromDocumentationOfAddressInCcda(Ccda $ccda)
-    {
-        //Get address line 1 from documentation_of section of ccda
-        $addresses = collect($ccda->bluebuttonJson()->document->documentation_of)->pluck('address.street')->filter(function ($address) {
-            if (empty($address[0] ?? null)) {
-                return null;
-            }
-
-            return $address[0];
-        });
-
-        //only do this if there's a just one address in the CCDA.
-        //we don't wanna take a guess on what the actual patient's location may be
-        if (1 === $addresses->count()) {
-            if ($location = Location::where('address_line_1', $addresses->last())->where('practice_id', $this->practice_id)->first()) {
-                $this->setLocationId($location->id);
-            }
-        }
     }
 }
