@@ -10,6 +10,7 @@ use App\Nova\Importers\SupplementalPatientDataImporter;
 use CircleLinkHealth\ClhImportCardExtended\ClhImportCardExtended;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
@@ -83,9 +84,9 @@ class SupplementalPatientDataResource extends Resource
     public function fields(Request $request)
     {
         return [
-            Text::make('Practice', 'practice.display_name')
+            BelongsTo::make('Practice', 'practice')
                 ->sortable()
-                ->onlyOnIndex(),
+                ->rules('required'),
             Text::make('first_name')
                 ->sortable()
                 ->creationRules('required', 'string')
@@ -94,13 +95,12 @@ class SupplementalPatientDataResource extends Resource
                 ->sortable()
                 ->creationRules('required', 'string')
                 ->updateRules('required', 'string'),
-            Number::make('mrn')
+            Text::make('mrn')
                 ->sortable()
                 ->creationRules('required', 'integer')
                 ->updateRules('required', 'integer'),
             Date::make('dob')
                 ->sortable()
-                ->format('MM/DD/YYYY')
                 ->rules('required'),
             Text::make('provider')
                 ->sortable(),
