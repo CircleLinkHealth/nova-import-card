@@ -67,7 +67,7 @@ class NotifySlackChannel implements ShouldQueue
         $greeting .= '.';
 
         $messageLink = route('direct-mail.show', [$dm->id]);
-    
+
         $message = "$greeting \n Click <{$messageLink}|here> to view message.";
 
         if (self::ELIGIBILITY_PROCESSING_PURPOSE === $purpose
