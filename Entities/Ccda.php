@@ -120,6 +120,12 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     const IMPORTER_AWV = 'importer_awv';
     const SFTP_DROPBOX = 'sftp_dropbox';
     const UPLOADED     = 'uploaded';
+    /**
+     * Duplicate patient user ID.
+     *
+     * @var int
+     */
+    public $duplicate_id;
 
     protected $attributes = [
         'imported' => false,
@@ -163,12 +169,6 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
     protected $insurances;
 
     private $decodedJson;
-    /**
-     * Duplicate patient user ID.
-     *
-     * @var int
-     */
-    public $duplicate_id;
 
     public function batch()
     {
