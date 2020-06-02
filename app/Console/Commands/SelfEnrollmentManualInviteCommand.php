@@ -33,10 +33,11 @@ class SelfEnrollmentManualInviteCommand extends Command
      */
     public function handle()
     {
-        $enrollee        = Enrollee::with('user.enrollee')->has('user')->whereNotNull('practice_id')->findOrFail($this->argument('enrolleeId'));
-        $invitationBatch = EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+        $enrollee          = Enrollee::with('user.enrollee')->has('user')->whereNotNull('practice_id')->findOrFail($this->argument('enrolleeId'));
+        $manualInviteBatch = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE;
+        $invitationBatch   = EnrollmentInvitationsBatch::firstOrCreateAndRemember(
             $enrollee->practice_id,
-            now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
+            $manualInviteBatch
         );
         SendInvitation::dispatch($enrollee->user, $invitationBatch->id);
     }
