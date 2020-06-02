@@ -126,7 +126,7 @@ class PracticeStaffController extends Controller
                                                        ?? null;
 
         $user->loadMissing('providerInfo');
-        
+
         return [
             'id'              => $user->id,
             'practice_id'     => $primaryPractice->id,
