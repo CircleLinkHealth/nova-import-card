@@ -6,12 +6,9 @@
 
 namespace App\Services;
 
-use App\Services\CPM\CpmMiscService;
-use App\Services\CPM\CpmProblemService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
-use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 use Illuminate\Support\Facades\DB;
 
 class ReportsService
