@@ -148,13 +148,15 @@ class PrepareCcdaForImport
         //so we look there first
         $this->fillLocationFromAthenaDepartmentId();
 
+        $provider = $this->ccda->billingProvider;
+        
         //Second most reliable place is ccdas.referring_provider_name.
-        if ( ! $this->ccda->billingProvider && $term = $this->ccda->getReferringProviderName()) {
-            $this->ccda->billingProvider = self::searchBillingProvider($term, $this->ccda->practice_id);
+        if ( ! $provider && $term = $this->ccda->getReferringProviderName()) {
+            $provider = self::searchBillingProvider($term, $this->ccda->practice_id);
         }
 
-        if ($this->ccda->billingProvider instanceof User) {
-            $this->setAllPracticeInfoFromProvider($this->ccda->billingProvider);
+        if ($provider instanceof User) {
+            $this->setAllPracticeInfoFromProvider($provider);
         }
 
         if ($this->ccda->location_id) {
