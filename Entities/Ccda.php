@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidCcdaException;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
+use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -788,7 +789,14 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         if ( ! $this->practice_id) {
             return;
         }
-
+    
+        if ( ! Practice::where('id', $this->practice_id)->whereHas('ehr', function ($q) {
+            $q->where('name', Ehr::ATHENA_EHR_NAME);
+        })->exists()) {
+            return $this;
+        }
+    
+    
         $deptId = optional($this->targetPatient)->ehr_department_id;
 
         if ( ! $deptId) {
