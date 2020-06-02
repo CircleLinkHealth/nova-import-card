@@ -49,6 +49,10 @@ class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotificatio
     protected $dates = [
         'read_at',
     ];
+    
+    protected $casts = [
+        'data' => 'array'
+    ];
 
     /**
      * Get the attachment that was send with this notification.

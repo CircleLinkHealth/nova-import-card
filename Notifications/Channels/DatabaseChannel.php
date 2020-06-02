@@ -12,6 +12,17 @@ use Illuminate\Notifications\Notification;
 
 class DatabaseChannel extends LaravelDatabaseChannel
 {
+    public function send($notifiable, Notification $notification)
+    {
+        $res = parent::send($notifiable, $notification);
+
+        // in case we are in a DB transaction.
+        // we want to make sure we have the notification in DB, so we can update status in case it fails
+        \DB::commit();
+
+        return $res;
+    }
+
     /**
      * Build an array payload for the DatabaseNotification Model.
      *
