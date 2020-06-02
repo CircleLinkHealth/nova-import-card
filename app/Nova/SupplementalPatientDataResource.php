@@ -12,7 +12,6 @@ use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
-use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 
 class SupplementalPatientDataResource extends Resource
