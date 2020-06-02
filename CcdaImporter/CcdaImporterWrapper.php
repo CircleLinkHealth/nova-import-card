@@ -20,7 +20,7 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 
-class PrepareCcdaForImport
+class CcdaImporterWrapper
 {
     const TEMP_VAR_COMMONWEALTH_PRACTICE_NAME = 'commonwealth-pain-associates-pllc';
 
@@ -34,7 +34,7 @@ class PrepareCcdaForImport
     private $enrollee;
 
     /**
-     * PrepareCcdaForImport constructor.
+     * CcdaImporterWrapper constructor.
      */
     public function __construct(Ccda $ccda, Enrollee $enrollee = null)
     {
@@ -184,7 +184,15 @@ class PrepareCcdaForImport
         return $this;
     }
 
-    public function handle()
+    /**
+     * Wraps CcdaImporter@attemptImport.
+     * Performs some pre and post import steps.
+     *
+     * @see CcdaImporter
+     * @throws \Throwable
+     * @return $this|Ccda
+     */
+    public function import()
     {
         $this->fillInSupplementaryData()
             ->guessPracticeLocationProvider();
