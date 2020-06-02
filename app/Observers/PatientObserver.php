@@ -134,12 +134,8 @@ class PatientObserver
         }
 
         if ($patient->isDirty('ccm_status')) {
-            $oldValue = $patient->getOriginal('ccm_status');
-            $newValue = $patient->ccm_status;
-            if (Patient::ENROLLED == $newValue) {
-                if (Patient::UNREACHABLE == $oldValue) {
-                    $patient->no_call_attempts_since_last_success = 0;
-                }
+            if ($this->statusChangedToEnrolled($patient)) {
+                $patient->no_call_attempts_since_last_success = 0;
             }
         }
     }
