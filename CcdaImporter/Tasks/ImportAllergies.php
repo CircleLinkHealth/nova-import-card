@@ -7,15 +7,16 @@
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
-use CircleLinkHealth\SharedModels\Entities\Allergy;
-use CircleLinkHealth\SharedModels\Entities\CpmMisc;
+use Illuminate\Support\Facades\DB;
 use  Illuminate\Support\Str;
 
 class ImportAllergies extends BaseCcdaImportTask
 {
     protected function import()
     {
-        collect($this->ccda->bluebuttonJson()->allergies ?? [])->each(function ($allergy) {
+        $this->patient->loadMissing('ccdAllergies');
+
+        $allergies = collect($this->ccda->bluebuttonJson()->allergies ?? [])->unique('allergen.name')->map(function ($allergy) {
             $new = $this->transform($allergy);
 
             if ( ! $this->validate($new)) {
@@ -30,25 +31,22 @@ class ImportAllergies extends BaseCcdaImportTask
                 return null;
             }
 
-            Allergy::updateOrCreate(
-                [
-                    'patient_id'    => $this->patient->id,
-                    'allergen_name' => $new['allergen_name'],
-                ]
-            );
-        });
+            if ($this->patient->ccdAllergies->contains('name', '=', $new['allergen_name'])) {
+                return null;
+            }
 
-        $this->patient->load('ccdAllergies');
+            $createdAt = now()->toDateTimeString();
 
-        $unique = $this->patient->ccdAllergies->unique('name')->pluck('id')->all();
+            return[
+                'patient_id'    => $this->patient->id,
+                'allergen_name' => ucfirst($new['allergen_name']),
+                'created_at'    => $createdAt,
+                'updated_at'    => $createdAt,
+            ];
+        })->filter();
 
-        $deleted = $this->patient->ccdAllergies()->whereNotIn('id', $unique)->delete();
-
-        $misc = CpmMisc::whereName(CpmMisc::ALLERGIES)
-            ->first();
-
-        if ( ! empty($unique) && ! $this->hasMisc($this->patient, $misc)) {
-            $this->patient->cpmMiscs()->attach(optional($misc)->id);
+        if ($allergies->isNotEmpty()) {
+            DB::table('ccd_allergies')->insert($allergies->all());
         }
     }
 

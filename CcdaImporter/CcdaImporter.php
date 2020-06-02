@@ -165,9 +165,8 @@ class CcdaImporter
         if ($enrollee) {
             $this->throwExceptionIfSuspicious($enrollee);
             $this->enrollee              = $enrollee;
-            $enrollee->user_id           = $this->patient->id;
-            $enrollee->medical_record_id = $this->ccda->id;
-            $enrollee->save();
+            $this->enrollee->user_id           = $this->patient->id;
+            $this->enrollee->medical_record_id = $this->ccda->id;
         }
 
         if ($this->enrollee) {
@@ -175,7 +174,6 @@ class CcdaImporter
 
             if ($this->enrollee->medical_record_id != $this->ccda->id) {
                 $this->enrollee->medical_record_id = $this->ccda->id;
-                $this->enrollee->save();
             }
         }
 
@@ -224,7 +222,6 @@ class CcdaImporter
                 return $this->ccda;
             } catch (PatientAlreadyExistsException $e) {
                 $this->ccda->patient_id = $e->getPatientUserId();
-                $this->ccda->save();
                 $this->ccda->load('patient');
                 $this->patient = $this->ccda->patient;
             }
