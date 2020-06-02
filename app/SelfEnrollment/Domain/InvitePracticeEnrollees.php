@@ -20,7 +20,7 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
     /**
      * @var int
      */
-    protected $limit;
+    private $amount;
     private $batch;
     /**
      * @var array|string[]
@@ -40,12 +40,12 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
      * InvitePracticeEnrollees constructor.
      */
     public function __construct(
-        int $amount,
+        int $limit,
         int $practiceId,
         string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
         array $channels = ['mail', CustomTwilioChannel::class]
     ) {
-        $this->limit      = $amount;
+        $this->limit      = $limit;
         $this->practiceId = $practiceId;
         $this->color      = $color;
         $this->channels   = $channels;
@@ -76,10 +76,7 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
     private function getBatch(): EnrollmentInvitationsBatch
     {
         if (is_null($this->batch)) {
-            $this->batch = EnrollmentInvitationsBatch::firstOrCreateAndRemember(
-                $this->practiceId,
-                now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.$this->color
-            );
+            $this->batch = EnrollmentInvitationsBatch::firstOrCreateAndRemember($this->practiceId, now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.$this->color);
         }
 
         return $this->batch;

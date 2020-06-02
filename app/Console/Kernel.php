@@ -31,7 +31,7 @@ use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
-use App\Console\Commands\SendSenfEnrollmentReminders;
+use App\Console\Commands\SendSelfEnrollmentReminders;
 use App\Console\Commands\TuneScheduledCalls;
 use App\Notifications\NurseDailyReport;
 use CircleLinkHealth\Core\Console\Commands\RunScheduler;
@@ -76,6 +76,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        ini_set('max_execution_time', 300);
+        ini_set('memory_limit', '800M');
+
         $schedule->command('horizon:snapshot')->everyFiveMinutes();
 
         $schedule->command(DetermineTargetPatientEligibility::class)
@@ -228,7 +231,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(AssignUnassignedPatientsToStandByNurse::class)->twiceDaily(8, 14);
         $schedule->command(RemoveDuplicateScheduledCalls::class)->twiceDaily(8, 14);
-        $schedule->command(SendSenfEnrollmentReminders::class, ['--enrollees'])->dailyAt('10:27');
+        $schedule->command(SendSelfEnrollmentReminders::class, ['--enrollees'])->dailyAt('10:27');
         $schedule->command(EnrollmentFinalAction::class)->dailyAt('08:27');
 
         $schedule->command(GenerateReportForScheduledPAM::class)->monthlyOn(date('t'), '23:30');
