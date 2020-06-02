@@ -253,6 +253,15 @@
             isBhiEligible(){
                 return window.TimeTracker.bhiTimeInSeconds() >= (10 * 60);
             },
+            isCcmEligible(){
+                //check time as well. In some cases the CCM CS is wrongly attached to bhi patients (e.g. They have BHI problems that are not related to CPM Problems)
+                //and the system percieves them as CCM problems while auto-attaching services on PatientMonthlySummary@attachChargeableServicesToFulfill
+                return this.attestationRequirements.has_ccm && window.TimeTracker.ccmTimeInSeconds() > 0;
+            },
+            isPcmEligible(){
+                //same as CCM
+                return this.attestationRequirements.has_pcm && window.TimeTracker.ccmTimeInSeconds() > 0;
+            },
             getCcmAttestedConditionsCount(){
                 let attestedCcm = 0;
 
@@ -306,7 +315,7 @@
 
                 bhiError = this.isBhiEligible() && this.attestationRequirements.bhi_problems_attested === 0 && currentBhiAttestedConditions === 0;
 
-                ccmError = this.attestationRequirements.has_ccm && this.attestationRequirements.ccm_problems_attested === 0 && currentCcmAttestedConditions < 2;
+                ccmError = this.isCcmEligible() && this.attestationRequirements.ccm_problems_attested === 0 && currentCcmAttestedConditions < 2;
 
                 //PCM error is irrelevant if patient HAS bhi and HAS NOT CCM: e.g.
                 //PCM requires only 1 condition to be attested so:
