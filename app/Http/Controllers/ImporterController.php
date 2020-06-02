@@ -134,7 +134,7 @@ class ImporterController extends Controller
                         }
                     }
 
-                    $ccda->checkDuplicity();
+                    $ccda-> checkDuplicity();
 
                     return [
                         'display_name'        => $ccda->patient_first_name.' '.$ccda->patient_last_name,
