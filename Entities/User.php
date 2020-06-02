@@ -2490,7 +2490,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function patientsPendingProviderApproval()
     {
         $approveOwnCarePlans = $this->providerInfo
-            ? $this->providerInfo->approve_own_care_plans
+            ? (bool) $this->providerInfo->approve_own_care_plans
             : false;
 
         return User::intersectPracticesWith($this)
@@ -2504,52 +2504,42 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     $q->whereIn('status', [CarePlan::QA_APPROVED]);
                 }
             )
-            ->whereHas(
-                'careTeamMembers',
-                function ($q) use ($approveOwnCarePlans) {
-                    $q->where(
-                        [
-                            ['type', '=', CarePerson::BILLING_PROVIDER],
-                            ['member_user_id', '=', $this->id],
-                        ]
-                    )
-                        ->when(
-                            ! $approveOwnCarePlans,
-                            function ($q) {
-                                $q->orWhere(
-                                    function ($q) {
-                                        $q->whereHas(
-                                            'user',
-                                            function ($q) {
-                                                $q->whereHas(
-                                                    'forwardAlertsTo',
-                                                    function ($q) {
-                                                        $q->where('contactable_id', $this->id)
-                                                            ->orWhereIn(
-                                                                'name',
-                                                                [
-                                                                    'forward_careplan_approval_emails_instead_of_provider',
-                                                                    'forward_careplan_approval_emails_in_addition_to_provider',
-                                                                ]
-                                                            );
-                                                    }
-                                                );
-                                            }
-                                        )
-                                            ->when($this->canApproveCarePlans(), function ($q) {
-                                                $q->orWhereHas(
-                                                    'user',
-                                                    function ($q) {
-                                                        $q->intersectPracticesWith($this);
-                                                    }
-                                                );
-                                            });
-                                    }
-                                );
-                            }
-                        );
-                }
-            )
+            ->intersectPracticesWith($this)
+            ->when(true === $approveOwnCarePlans, function ($q) use ($approveOwnCarePlans) {
+                $q->whereHas(
+                    'careTeamMembers',
+                    function ($q) use ($approveOwnCarePlans) {
+                        $q->where(
+                            [
+                                ['type', '=', CarePerson::BILLING_PROVIDER],
+                                ['member_user_id', '=', $this->id],
+                            ]
+                        )
+                            ->orWhere(
+                                function ($q) {
+                                    $q->whereHas(
+                                        'user',
+                                        function ($q) {
+                                            $q->whereHas(
+                                                'forwardAlertsTo',
+                                                function ($q) {
+                                                    $q->where('contactable_id', $this->id)
+                                                        ->orWhereIn(
+                                                            'name',
+                                                            [
+                                                                'forward_careplan_approval_emails_instead_of_provider',
+                                                                'forward_careplan_approval_emails_in_addition_to_provider',
+                                                            ]
+                                                        );
+                                                }
+                                            );
+                                        }
+                                    );
+                                }
+                            );
+                    }
+                );
+            })
             ->with(
                 [
                     'observations' => function ($query) {
