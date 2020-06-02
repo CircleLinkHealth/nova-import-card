@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Repositories;
+namespace CircleLinkHealth\Customer\Repositories;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
@@ -15,6 +15,11 @@ use Illuminate\Support\Collection;
 
 class PatientWriteRepository
 {
+    /**
+     * Mark the patient as Unreachable after this number of consecutive unsuccessful call attempts.
+     */
+    const MARK_UNREACHABLE_AFTER_N_UNSUCCESSFUL_ATTEMPTS = 5;
+
     /**
      * Set a patient's ccm_status to paused.
      *
@@ -27,18 +32,18 @@ class PatientWriteRepository
         if (is_a($user, User::class)) {
             $userId = $user->id;
         }
-        
+
         if (is_numeric($user)) {
             $userId = $user;
         }
-        
+
         if ( ! isset($userId)) {
             throw new InvalidArgumentException();
         }
-        
+
         return Patient::where('user_id', $userId)->update(['ccm_status' => 'paused']);
     }
-    
+
     public function setStatus($userId, $status)
     {
         $stati = new Collection([Patient::PAUSED, Patient::ENROLLED, Patient::WITHDRAWN]);
@@ -46,16 +51,16 @@ class PatientWriteRepository
         if ($stati->contains($status) && $user) {
             Patient::where(['user_id' => $userId])->update(['ccm_status' => $status]);
         }
-        
+
         return Patient::where(['user_id' => $userId])->first();
     }
-    
+
     public function storeCcdProblem(User $patient, array $args)
     {
         if ( ! $args['code']) {
             return;
         }
-        
+
         $newProblem = $patient->ccdProblems()->updateOrCreate([
             'name'           => $args['name'],
             'cpm_problem_id' => empty($args['cpm_problem_id'])
@@ -64,10 +69,10 @@ class PatientWriteRepository
             'billable'     => $args['billable'] ?? null,
             'is_monitored' => $args['is_monitored'] ?? false,
         ]);
-        
+
         if ($args['code']) {
             $codeSystemId = getProblemCodeSystemCPMId([$args['code_system_name'], $args['code_system_oid']]);
-            
+
             $code = $newProblem->codes()->create([
                 'code_system_name'       => $args['code_system_name'],
                 'code_system_oid'        => $args['code_system_oid'],
@@ -75,10 +80,10 @@ class PatientWriteRepository
                 'problem_code_system_id' => $codeSystemId,
             ]);
         }
-        
+
         return $newProblem;
     }
-    
+
     /**
      * Updates the patient's call info based on the status of the last call.
      *
@@ -98,7 +103,7 @@ class PatientWriteRepository
         $record    = PatientMonthlySummary::where('patient_id', $patient->user_id)
             ->where('month_year', $day_start)
             ->first();
-        
+
         // set increment var
         $successful_call_increment = 0;
         if ($successfulLastCall) {
@@ -108,7 +113,7 @@ class PatientWriteRepository
         } elseif ( ! $isCallBack) {
             $patient->no_call_attempts_since_last_success = ($patient->no_call_attempts_since_last_success + 1);
         }
-        
+
         // Determine whether to add to record or not
         if ( ! $record) {
             $record                         = new PatientMonthlySummary();
@@ -123,18 +128,18 @@ class PatientWriteRepository
             $record->no_of_successful_calls = ($record->no_of_successful_calls + $successful_call_increment);
             $record->save();
         }
-        
-        if ( ! $successfulLastCall && ! $isCallBack && $patient->no_call_attempts_since_last_success >= 5) {
+
+        if ( ! $successfulLastCall && ! $isCallBack && $patient->no_call_attempts_since_last_success >= self::MARK_UNREACHABLE_AFTER_N_UNSUCCESSFUL_ATTEMPTS) {
             $patient->ccm_status = Patient::UNREACHABLE;
         }
-        
+
         if ($patient->isDirty()) {
             $patient->save();
         }
-        
+
         return $record;
     }
-    
+
     /**
      * @return bool
      */
@@ -143,7 +148,7 @@ class PatientWriteRepository
         if ( ! $dateTime) {
             $dateTime = Carbon::now();
         }
-        
+
         return Patient::whereIn('user_id', $userIdsToPrint)
             ->update([
                 'paused_letter_printed_at' => $dateTime->toDateTimeString(),
