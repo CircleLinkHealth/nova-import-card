@@ -55,13 +55,13 @@ class SelfEnrollmentMetricsView extends BaseSqlView
        SUM(case when i.manually_expired = 1 then 1 else 0 end) as total_invites_opened,
        ROUND(SUM(case when i.manually_expired = 1 then 1 else 0 end) * 100.0 / COUNT(i.batch_id), 1) as percentage_invites_opened,
        COUNT(DISTINCT l.user_id) as total_saw_letter,
-       ROUND((COUNT(DISTINCT l.user_id) * 100) / SUM(case when i.manually_expired = 1 then 1 else 0 end)) as percentage_saw_letter,
+       IFNULL(ROUND((COUNT(DISTINCT l.user_id) * 100) / SUM(case when i.manually_expired = 1 then 1 else 0 end)), 0) as percentage_saw_letter,
        SUM(case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end) as total_saw_form,
-       ROUND((SUM(case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end) * 100) / COUNT(DISTINCT l.user_id)) as percentage_saw_form,
-       SUM(case when e.status = '$enrolled' AND us.status = 'completed' then 1 else 0 end) as total_enrolled,
-       ROUND((SUM(case when e.status = '$enrolled' AND us.status = 'completed' then 1 else 0 end) * 100) / SUM(case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end)) as percentage_enrolled,
+       IFNULL(ROUND((SUM(case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end) * 100) / COUNT(DISTINCT l.user_id)), 0) as percentage_saw_form,
+       IFNULL(SUM(case when e.status = '$enrolled' AND us.status = 'completed' then 1 else 0 end), 0) as total_enrolled,
+       IFNULL(ROUND((SUM(case when e.status = '$enrolled' AND us.status = 'completed' then 1 else 0 end) * 100) / SUM(case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end)),0) as percentage_enrolled,
        SUM(case when e.status = '$toCall' AND erf.enrollable_id = e.id then 1 else 0 end) as total_call_requests,
-       ROUND((SUM(case when e.status = '$toCall' AND erf.enrollable_id = e.id then 1 else 0 end) * 100) / COUNT(DISTINCT l.user_id)) as percentage_call_requests
+       IFNULL(ROUND((SUM(case when e.status = '$toCall' AND erf.enrollable_id = e.id then 1 else 0 end) * 100) / COUNT(DISTINCT l.user_id)),0) as percentage_call_requests
        
        FROM
        enrollables_invitation_links i
