@@ -10,6 +10,7 @@ use Cache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use Illuminate\Support\Collection;
 
 class PatientSummaryEloquentRepository

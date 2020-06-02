@@ -11,7 +11,6 @@ use App\Algorithms\Calls\UnsuccessfulHandler;
 use App\Call;
 use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Note;
-use App\Repositories\PatientWriteRepository;
 use App\Services\NoteService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Family;
@@ -19,6 +18,7 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Support\Facades\Auth;
 
