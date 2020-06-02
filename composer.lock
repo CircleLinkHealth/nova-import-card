@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ab66df5f90138956f54435225a634741",
+    "content-hash": "d38e608d0e5f75e84c4a4db0d00cab04",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -522,16 +522,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.138.10",
+            "version": "3.139.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "cf197a033ad75cd9e3a90a207cf5ec8935aafa48"
+                "reference": "0d8ccd70c76e22f04ec16bff07b7e002dd594c82"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/cf197a033ad75cd9e3a90a207cf5ec8935aafa48",
-                "reference": "cf197a033ad75cd9e3a90a207cf5ec8935aafa48",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0d8ccd70c76e22f04ec16bff07b7e002dd594c82",
+                "reference": "0d8ccd70c76e22f04ec16bff07b7e002dd594c82",
                 "shasum": ""
             },
             "require": {
@@ -602,7 +602,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-05-28T18:12:07+00:00"
+            "time": "2020-06-01T18:11:54+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1150,11 +1150,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.7.3",
+            "version": "v2.7.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "59c18d65ada817146b1083922e5b3d90e5620cf5"
+                "reference": "d7009fea916aaf6f24b65e393defe9435cd2e933"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1188,7 +1188,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-30T06:52:01+00:00"
+            "time": "2020-06-02T02:00:59+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1504,11 +1504,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.6.0",
+            "version": "v1.6.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "e92aa711c1b46de4460c46d8bd9fcd0f067df620"
+                "reference": "c7e0aa575e5e9620ea41571e1d1774afab78322b"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1522,7 +1522,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-29T02:56:22+00:00"
+            "time": "2020-06-02T03:27:43+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -2981,22 +2981,22 @@
         },
         {
             "name": "google/apiclient",
-            "version": "v2.4.1",
+            "version": "v2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client.git",
-                "reference": "1fdfe942f9aaf3064e621834a5e3047fccb3a6da"
+                "reference": "9ab9cc07f66e2c7274ea2753f102ae24d1271410"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/1fdfe942f9aaf3064e621834a5e3047fccb3a6da",
-                "reference": "1fdfe942f9aaf3064e621834a5e3047fccb3a6da",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/9ab9cc07f66e2c7274ea2753f102ae24d1271410",
+                "reference": "9ab9cc07f66e2c7274ea2753f102ae24d1271410",
                 "shasum": ""
             },
             "require": {
                 "firebase/php-jwt": "~2.0||~3.0||~4.0||~5.0",
                 "google/apiclient-services": "~0.13",
-                "google/auth": "^1.0",
+                "google/auth": "^1.9",
                 "guzzlehttp/guzzle": "~5.3.1||~6.0",
                 "guzzlehttp/psr7": "^1.2",
                 "monolog/monolog": "^1.17|^2.0",
@@ -3038,20 +3038,20 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-03-26T15:30:32+00:00"
+            "time": "2020-05-26T22:29:38+00:00"
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.137",
+            "version": "v0.138",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "92ae53e812037230b23d373bac12516f90c330cc"
+                "reference": "9e7ea08fbd87e5926d14ef0674626e26843a5508"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/92ae53e812037230b23d373bac12516f90c330cc",
-                "reference": "92ae53e812037230b23d373bac12516f90c330cc",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/9e7ea08fbd87e5926d14ef0674626e26843a5508",
+                "reference": "9e7ea08fbd87e5926d14ef0674626e26843a5508",
                 "shasum": ""
             },
             "require": {
@@ -3075,7 +3075,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-05-25T00:24:28+00:00"
+            "time": "2020-05-31T00:25:32+00:00"
         },
         {
             "name": "google/auth",
