@@ -76,6 +76,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        ini_set('max_execution_time', 300);
+        ini_set('memory_limit', '800M');
+
         $schedule->command('horizon:snapshot')->everyFiveMinutes();
 
         $schedule->command(DetermineTargetPatientEligibility::class)
