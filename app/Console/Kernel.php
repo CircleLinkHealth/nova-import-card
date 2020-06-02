@@ -7,6 +7,7 @@
 namespace App\Console;
 
 use App\Console\Commands\AssignUnassignedPatientsToStandByNurse;
+use App\Console\Commands\AutoApproveValidCarePlansAs;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\CheckEnrolledPatientsForScheduledCalls;
@@ -235,5 +236,6 @@ class Kernel extends ConsoleKernel
         $schedule->command(EnrollmentFinalAction::class)->dailyAt('08:27');
 
         $schedule->command(GenerateReportForScheduledPAM::class)->monthlyOn(date('t'), '23:30');
+        $schedule->command(AutoApproveValidCarePlansAs::class, ['--reimport:clear', '--reimport:without-transaction'])->hourly();
     }
 }
