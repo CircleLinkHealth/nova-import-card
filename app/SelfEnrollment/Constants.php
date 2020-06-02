@@ -1,0 +1,12 @@
+<?php
+
+
+namespace App\SelfEnrollment;
+
+
+class Constants
+{
+    const DAYS_DIFF_FROM_FIRST_INVITE_TO_FINAL_ACTION = 6;
+    const DAYS_AFTER_FIRST_INVITE_TO_SEND_FIRST_REMINDER = 2;
+    const DAYS_AFTER_FIRST_INVITE_TO_SEND_SECOND_REMINDER = 4;
+}
