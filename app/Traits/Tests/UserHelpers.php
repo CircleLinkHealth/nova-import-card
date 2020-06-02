@@ -129,6 +129,7 @@ trait UserHelpers
                     'status'                => 'draft',
                 ]
             );
+            $this->makePatientMonthlyRecord($user->patientInfo);
         }
 
         $user->load(['practices', 'patientInfo', 'carePlan']);
