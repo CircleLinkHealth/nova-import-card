@@ -452,10 +452,13 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
         $this->loadMissing(['billingProvider', 'targetPatient']);
 
+        //We assume Athena API has the most up-to-date and reliable date
+        //so we look there first
         $this->fillLocationFromAthenaDepartmentId();
 
         $provider = $this->billingProvider;
 
+        //Second most reliable place is ccdas.referring_provider_name.
         if ( ! $provider && $term = $this->getReferringProviderName()) {
             $provider = self::searchBillingProvider($term, $this->practice_id);
         }
@@ -464,9 +467,27 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
             $this->setAllPracticeInfoFromProvider($provider);
         }
 
-        if ($this->isDirty()) {
-            $this->save();
+        if ($this->location_id) {
+            return $this;
         }
+        
+        //Check if we have any locations whose address line 1 matches that in documentation of
+        $this->setLocationFromDocumentationOfAddressInCcda($this);
+    
+        if ($this->location_id) {
+            return $this;
+        }
+    
+        //As a last result check if we have other ccdas
+        $this->queryForOtherCcdasForTheSamePatient()->chunkById(5, function ($otherCcdas) use (&$deptId) {
+            foreach ($otherCcdas as $otherCcda) {
+                $this->setLocationFromDocumentationOfAddressInCcda($otherCcda);
+    
+                if ($this->location_id) {
+                    return false;
+                }
+            }
+        });
 
         return $this;
     }
@@ -789,14 +810,13 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         if ( ! $this->practice_id) {
             return;
         }
-    
+
         if ( ! Practice::where('id', $this->practice_id)->whereHas('ehr', function ($q) {
             $q->where('name', Ehr::ATHENA_EHR_NAME);
         })->exists()) {
             return $this;
         }
-    
-    
+
         $deptId = optional($this->targetPatient)->ehr_department_id;
 
         if ( ! $deptId) {
@@ -879,6 +899,26 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
 
             if (1 === $locations->count()) {
                 $this->setLocationId($locations->first()->id);
+            }
+        }
+    }
+    
+    private function setLocationFromDocumentationOfAddressInCcda(Ccda $ccda)
+    {
+        //Get address line 1 from documentation_of section of ccda
+        $addresses = collect($ccda->bluebuttonJson()->document->documentation_of)->pluck('address.street')->filter(function ($address) {
+            if (empty($address[0] ?? null)) {
+                return null;
+            }
+        
+            return $address[0];
+        });
+    
+        //only do this if there's a just one address in the CCDA.
+        //we don't wanna take a guess on what the actual patient's location may be
+        if (1 === $addresses->count()) {
+            if ($location = Location::where('address_line_1', $addresses->last())->where('practice_id', $this->practice_id)->first()) {
+                $this->setLocationId($location->id);
             }
         }
     }
