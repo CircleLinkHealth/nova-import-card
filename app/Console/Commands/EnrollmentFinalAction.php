@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use App\SelfEnrollment\Constants;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
 use Illuminate\Console\Command;
 
@@ -41,6 +42,6 @@ class EnrollmentFinalAction extends Command
      */
     public function handle()
     {
-        UnreachablesFinalAction::dispatch(now()->subDays(4));
+        UnreachablesFinalAction::dispatch(now()->subDays(Constants::DAYS_DIFF_FROM_FIRST_INVITE_TO_FINAL_ACTION));
     }
 }

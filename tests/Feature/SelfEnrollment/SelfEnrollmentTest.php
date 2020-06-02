@@ -11,6 +11,7 @@ use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Jobs\LogSuccessfulLoginToDB;
 use App\LoginLogout;
 use App\Notifications\Channels\CustomTwilioChannel;
+use App\SelfEnrollment\Constants;
 use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use App\SelfEnrollment\Domain\RemindEnrollees;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
@@ -77,8 +78,8 @@ class SelfEnrollmentTest extends TestCase
                 'is_reminder'    => true,
                 'is_survey_only' => true,
             ]),
-            'created_at' => now()->subDays(2)->toDateTimeString(),
-            'updated_at' => now()->subDays(2)->toDateTimeString(),
+            'created_at' => now()->subDays(Constants::DAYS_AFTER_FIRST_INVITE_TO_SEND_FIRST_REMINDER)->toDateTimeString(),
+            'updated_at' => now()->subDays(Constants::DAYS_AFTER_FIRST_INVITE_TO_SEND_FIRST_REMINDER)->toDateTimeString(),
         ]);
         $invitationBatch = EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id);
         SendInvitation::dispatchNow($patient, $invitationBatch->id);
@@ -197,9 +198,9 @@ class SelfEnrollmentTest extends TestCase
         });
 
         $initialInviteSentAt  = now();
-        $firstReminderSentAt  = $initialInviteSentAt->copy()->addDays(2);
-        $secondReminderSentAt = $firstReminderSentAt->copy()->addDays(2);
-        $finalActionRunsAt    = $secondReminderSentAt->copy()->addDays(2);
+        $firstReminderSentAt  = $initialInviteSentAt->copy()->addDays(Constants::DAYS_AFTER_FIRST_INVITE_TO_SEND_FIRST_REMINDER);
+        $secondReminderSentAt = $initialInviteSentAt->copy()->addDays(Constants::DAYS_AFTER_FIRST_INVITE_TO_SEND_SECOND_REMINDER);
+        $finalActionRunsAt    = $initialInviteSentAt->copy()->addDays(Constants::DAYS_DIFF_FROM_FIRST_INVITE_TO_FINAL_ACTION);
 
         Carbon::setTestNow($firstReminderSentAt);
         RemindEnrollees::dispatchNow($initialInviteSentAt, $toMarkAsInvited->first()->practice_id);

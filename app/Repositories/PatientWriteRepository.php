@@ -124,7 +124,7 @@ class PatientWriteRepository
             $record->save();
         }
 
-        if ( ! $successfulLastCall && ! $isCallBack && $patient->no_call_attempts_since_last_success >= 5 && $record->no_of_successful_calls < 1) {
+        if ( ! $successfulLastCall && ! $isCallBack && $patient->no_call_attempts_since_last_success >= 5) {
             $patient->ccm_status = Patient::UNREACHABLE;
         }
 

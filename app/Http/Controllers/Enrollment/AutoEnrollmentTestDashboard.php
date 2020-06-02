@@ -8,6 +8,7 @@ namespace App\Http\Controllers\Enrollment;
 
 use App\Console\Commands\SendSelfEnrollmentReminders;
 use App\Http\Controllers\Controller;
+use App\SelfEnrollment\Constants;
 use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use App\SelfEnrollment\Domain\InviteUnreachablePatients;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
@@ -28,7 +29,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function finalActionTest()
     {
-        UnreachablesFinalAction::dispatch(now()->subDays(4));
+        UnreachablesFinalAction::dispatch(now()->subDays(Constants::DAYS_DIFF_FROM_FIRST_INVITE_TO_FINAL_ACTION));
 
         return redirect(route('ca-director.index'))->with('message', 'Reminders Sent Successfully');
     }
