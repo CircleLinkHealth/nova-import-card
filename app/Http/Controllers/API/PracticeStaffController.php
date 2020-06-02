@@ -70,7 +70,7 @@ class PracticeStaffController extends Controller
             ->whereHas('practices', function ($q) use ($primaryPractice) {
                 $q->where('practices.id', '=', $primaryPractice->id);
             })
-            ->with('roles')
+            ->with('providerInfo')
             ->get()
             ->sortBy('first_name')
             ->values();
@@ -125,6 +125,8 @@ class PracticeStaffController extends Controller
             })
                                                        ?? null;
 
+        $user->loadMissing('providerInfo');
+        
         return [
             'id'              => $user->id,
             'practice_id'     => $primaryPractice->id,
@@ -140,7 +142,7 @@ class PracticeStaffController extends Controller
                 PhoneNumber::getTypes()
             ) ?? '',
             'sendBillingReports'     => $permissions->pivot->send_billing_reports ?? false,
-            'canApproveAllCareplans' => $user->canApproveCarePlans(),
+            'canApproveAllCareplans' => ! $user->providerInfo->approve_own_care_plans,
             'role_names'             => $roles->map(function ($r) {
                 return $r->name;
             }),
