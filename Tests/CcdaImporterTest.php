@@ -185,10 +185,10 @@ class CcdaImporterTest extends CustomerTestCase
 
         $this->assertCount(3, $allergies);
         $this->assertTrue([
-                0 => 'Macrodantin',
-                1 => 'Albuterol',
-                2 => 'Benazepril HCl',
-            ] === $allergies->pluck('allergen_name')->all());
+            0 => 'Macrodantin',
+            1 => 'Albuterol',
+            2 => 'Benazepril HCl',
+        ] === $allergies->pluck('allergen_name')->all());
     }
 
     public function test_it_imports_csv_ccda_billing_provider()

@@ -164,7 +164,7 @@ class CcdaImporter
 
         if ($enrollee) {
             $this->throwExceptionIfSuspicious($enrollee);
-            $this->enrollee              = $enrollee;
+            $this->enrollee                    = $enrollee;
             $this->enrollee->user_id           = $this->patient->id;
             $this->enrollee->medical_record_id = $this->ccda->id;
         }
