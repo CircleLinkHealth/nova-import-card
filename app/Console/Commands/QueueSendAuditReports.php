@@ -41,13 +41,13 @@ class QueueSendAuditReports extends Command
      */
     public function handle()
     {
-        if ($date = $this->argument('month') ?? null) {
-            Carbon::createFromFormat('Y-m-d', $this->argument('month'))->firstOfMonth();
+        if ($inputDate = $this->argument('month')) {
+            $date = Carbon::createFromFormat('Y-m-d', $inputDate)->firstOfMonth();
         } else {
-            Carbon::now()->subMonth()->firstOfMonth();
+            $date = Carbon::now()->subMonth()->firstOfMonth();
         }
 
-        $this->warn("Creating report for {$date->toDateString()}");
+        $this->warn("Creating Audit Reports for {$date->toDateString()}");
 
         User::ofType('participant')
             ->with('patientInfo')
