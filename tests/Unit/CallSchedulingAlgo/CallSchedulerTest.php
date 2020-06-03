@@ -6,10 +6,10 @@
 
 namespace Tests\Unit\CallSchedulingAlgo;
 
-use App\Repositories\PatientWriteRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
+use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use Tests\CustomerTestCase;
 
 class CallSchedulerTest extends CustomerTestCase

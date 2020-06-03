@@ -1637,7 +1637,7 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
             $handles           = AppConfig::pull('nbi_rwjbarnabas_mrn_slack_watchers', '');
             $patientUrl        = route('patient.demographics.show', ['patientId' => $patientId]);
             $patientProfileUrl = "<$patientUrl|this patient>";
-            $novaUrl           = url('/superadmin/resources/n-b-i-patient-datas');
+            $novaUrl           = url('/superadmin/resources/supplemental-patient-data-resources');
             $novaLink          = "<$novaUrl|NBI's supplementary MRN list>";
             sendSlackMessage(
                 '#nbi_rwjbarnabas',
