@@ -313,6 +313,16 @@ trait UserHelpers
             ]
         );
 
+        //make sure this is false
+        AppConfig::updateOrCreate(
+            [
+                'config_key' => NurseCcmPlusConfig::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_ALL,
+            ],
+            [
+                'config_value' => 'false',
+            ]
+        );
+
         if ($enableCcmPlus && $visitFee) {
             $current = implode(',', NurseCcmPlusConfig::altAlgoEnabledForUserIds());
             AppConfig::updateOrCreate(
