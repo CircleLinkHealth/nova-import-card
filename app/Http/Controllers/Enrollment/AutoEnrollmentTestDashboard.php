@@ -46,7 +46,8 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function finalActionTest()
     {
-        UnreachablesFinalAction::dispatch(now()->subDays(Constants::DAYS_DIFF_FROM_FIRST_INVITE_TO_FINAL_ACTION));
+//        Do not use DAYS_DIFF_FROM_FIRST_INVITE_TO_FINAL_ACTION when testing
+        UnreachablesFinalAction::dispatch(now());
 
         return redirect(route('ca-director.index'))->with('message', 'Reminders Sent Successfully');
     }
