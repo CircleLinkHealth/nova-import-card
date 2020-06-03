@@ -33,7 +33,7 @@ class HasValidNbiMrn implements Rule
      */
     public function message()
     {
-        $route = url('/superadmin/resources/n-b-i-patient-datas');
+        $route = url('/superadmin/resources/supplemental-patient-data-resources');
 
         return "The MRN for this Patient does not correspond to the NBI List. Please visit the NBI Supplementary Data page <a href='{$route}' target=_blank><strong>here</strong></a>.";
     }

@@ -54,7 +54,7 @@ class NBISupplementaryDataNotFound extends Notification
             ->subject('NBI Patient Exception')
             ->line("We could not find patient with id: {$this->patientUser->id} in NBI's supplementary MRN list. Approval process has been locked")
             ->action('Visit Patient Profile', route('patient.demographics.show', ['patientId' => $this->patientUser->id]))
-            ->action('Visit NBI List', url('/superadmin/resources/n-b-i-patient-datas'));
+            ->action('Visit NBI List', url('/superadmin/resources/supplemental-patient-data-resources'));
     }
 
     /**

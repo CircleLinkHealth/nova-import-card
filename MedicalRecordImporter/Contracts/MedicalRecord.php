@@ -83,9 +83,4 @@ interface MedicalRecord
     public function getPracticeId(): ?int;
 
     public function getType(): ?string;
-
-    /**
-     * Guess Practice, Location and Billing Provider.
-     */
-    public function guessPracticeLocationProvider(): MedicalRecord;
 }

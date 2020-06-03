@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter;
 use App\Events\PatientUserCreated;
 use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
@@ -38,7 +39,7 @@ class CcdaImporter
     /**
      * How many times to try the importing process.
      */
-    private const ATTEMPTS = 3;
+    private const ATTEMPTS = 2;
     /**
      * @var CarePlan|\Illuminate\Database\Eloquent\Model
      */
@@ -163,10 +164,9 @@ class CcdaImporter
 
         if ($enrollee) {
             $this->throwExceptionIfSuspicious($enrollee);
-            $this->enrollee              = $enrollee;
-            $enrollee->user_id           = $this->patient->id;
-            $enrollee->medical_record_id = $this->ccda->id;
-            $enrollee->save();
+            $this->enrollee                    = $enrollee;
+            $this->enrollee->user_id           = $this->patient->id;
+            $this->enrollee->medical_record_id = $this->ccda->id;
         }
 
         if ($this->enrollee) {
@@ -174,7 +174,6 @@ class CcdaImporter
 
             if ($this->enrollee->medical_record_id != $this->ccda->id) {
                 $this->enrollee->medical_record_id = $this->ccda->id;
-                $this->enrollee->save();
             }
         }
 
@@ -223,7 +222,6 @@ class CcdaImporter
                 return $this->ccda;
             } catch (PatientAlreadyExistsException $e) {
                 $this->ccda->patient_id = $e->getPatientUserId();
-                $this->ccda->save();
                 $this->ccda->load('patient');
                 $this->patient = $this->ccda->patient;
             }
@@ -253,7 +251,8 @@ class CcdaImporter
 //            ->importVitals()
             ->updateCcdaPostImport()
             ->updateEnrolleePostImport()
-            ->updatePatientUserPostImport();
+            ->updatePatientUserPostImport()
+            ->raiseConcernsOrAutoQAApprove();
 
         event(new PatientUserCreated($this->patient));
     }
@@ -392,6 +391,32 @@ class CcdaImporter
         }
 
         return $email;
+    }
+
+    private function raiseConcernsOrAutoQAApprove()
+    {
+        $this->ccda->load(['patient.carePlan']);
+
+        if ( ! $this->ccda->patient || ! $this->ccda->patient->carePlan) {
+            return $this;
+        }
+
+        $validator               = $this->ccda->patient->carePlan->validator();
+        $this->validation_checks = null;
+        if ($validator->fails()) {
+            $this->validation_checks = $validator->errors();
+
+            return $this;
+        }
+
+        if (CarePlan::DRAFT === $this->ccda->patient->carePlan->status && CarePlanAutoApprover::id()) {
+            $this->ccda->patient->carePlan->status         = CarePlan::QA_APPROVED;
+            $this->ccda->patient->carePlan->qa_approver_id = CarePlanAutoApprover::id();
+            $this->ccda->patient->carePlan->qa_date        = now()->toDateTimeString();
+            $this->ccda->patient->carePlan->save();
+        }
+
+        return $this;
     }
 
     private function throwExceptionIfSuspicious(Enrollee $enrollee)

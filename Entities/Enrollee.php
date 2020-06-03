@@ -181,9 +181,11 @@ use Illuminate\Support\Str;
  * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null                               $enrollmentInvitationLinks
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count
- * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null                                     $statusRequestsInfo
- * @property int|null                                                                                                        $enrollment_invitation_links_count
  * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null                                     $enrollableInfoRequest
+ * @property \CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus|null                                                $selfEnrollmentStatuses
+ * @property int|null                                                                                                        $enrollment_invitation_links_count
+ * @property \CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus|null                                                $selfEnrollmentStatus
+ * @property \CircleLinkHealth\Customer\Entities\Location|null                                                               $location
  */
 class Enrollee extends BaseModel
 {
@@ -290,9 +292,13 @@ class Enrollee extends BaseModel
     const TO_SMS = 'sms_queue';
 
     /**
-     * status = utc.
+     * Patients that were never Enrolled, but were found to be Eligible and we are attempting to enroll them via Self Enrollment and CAs.
      */
-    const UNREACHABLE         = 'utc';
+    const UNREACHABLE = 'utc';
+
+    /**
+     * Patients that were once Enrolled but then turned Unreachable.
+     */
     const UNREACHABLE_PATIENT = 'unreachable_patient';
 
     /**
