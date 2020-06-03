@@ -233,6 +233,10 @@
                     return p.id === pId;
                 })
 
+                if (!p){
+                    return false;
+                }
+
                 if (p.is_behavioral !== undefined){
                     return p.is_behavioral;
                 }
@@ -264,10 +268,6 @@
                 return attestedCcm;
             },
             getBhiAttestedConditionsCount(){
-                if (! this.isNotesPage){
-                    return 0;
-                }
-
                 let attestedBhi = 0;
                 this.attestedProblems.forEach(function (p) {
                     if (self.problemIsBehavioral(p)) {
