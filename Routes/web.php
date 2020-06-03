@@ -27,6 +27,8 @@ Route::group(['prefix' => 'api'], function () {
 
                         Route::post('attest-summary-problems', 'AttestedConditionsController@update')
                             ->middleware('permission:attestedProblems.update,attestedProblems.delete');
+                        Route::get('unique-to-attest', 'AttestedConditionsController@getUniqueConditionsToAttest')
+                            ->middleware('permission:patientProblem.read');
                     }
                 );
 
