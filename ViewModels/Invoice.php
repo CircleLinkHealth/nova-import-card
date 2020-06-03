@@ -66,6 +66,11 @@ class Invoice extends ViewModel
      */
     public $timePerDay;
 
+    /**
+     * @var int
+     */
+    public $totalSystemTime;
+
     public $totalTimeAfterCcmInHours;
     public $totalTimeTowardsCcmInHours;
     /**
@@ -93,6 +98,7 @@ class Invoice extends ViewModel
      * @return bool
      */
     public $visitsPerDayAvailable;
+
     /**
      * @var Carbon
      */
@@ -114,10 +120,6 @@ class Invoice extends ViewModel
     protected $startDate;
 
     /**
-     * @var int
-     */
-    protected $totalSystemTime;
-    /**
      * @var Collection
      */
     protected $variablePayForNurse;
@@ -125,6 +127,7 @@ class Invoice extends ViewModel
      * @var mixed
      */
     private $bonus;
+
     /**
      * @var \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
@@ -154,7 +157,7 @@ class Invoice extends ViewModel
         $this->user                  = $user;
         $this->startDate             = $startDate;
         $this->endDate               = $endDate;
-        $this->aggregatedTotalTime   = $aggregatedTotalTime->flatten();
+        $this->aggregatedTotalTime   = $this->getPayableTotalTime($aggregatedTotalTime);
         $this->variablePay           = (bool) $user->nurseInfo->is_variable_rate;
         $this->totalSystemTime       = $this->totalSystemTimeInSeconds();
         $this->bonus                 = $this->getBonus($user->nurseBonuses);
@@ -165,14 +168,7 @@ class Invoice extends ViewModel
         $this->nurseVisitFee         = $user->nurseInfo->visit_fee;
         $this->nurseFullName         = $user->getFullName();
         $this->variablePayCalculator = $variablePayCalculator;
-
-        $variablePayMap = $this->variablePayCalculator->getForNurses();
-
-        $variablePaySummary = $variablePayMap->filter(function ($f) use ($user) {
-            return $f->nurse_id === $user->nurseInfo->id;
-        });
-
-        $this->variablePayForNurse = $variablePaySummary;
+        $this->variablePayForNurse   = $this->getVariablePaySummaryForNurse();
 
         $this->determineBaseSalary();
 
@@ -411,6 +407,30 @@ class Invoice extends ViewModel
     private function getFixedRatePay()
     {
         return $this->systemTimeInHours() * $this->user->nurseInfo->hourly_rate;
+    }
+
+    private function getPayableTotalTime(Collection $aggregatedTotalTime)
+    {
+        $flat = $aggregatedTotalTime->flatten();
+        if (empty($this->user->nurseInfo->start_date)) {
+            return $flat;
+        }
+        $nurseStartDate = $this->user->nurseInfo->start_date;
+
+        return $flat->filter(function ($value) use ($nurseStartDate) {
+            $date = Carbon::parse($value->date)->startOfDay();
+
+            return $date->greaterThanOrEqualTo($nurseStartDate);
+        });
+    }
+
+    private function getVariablePaySummaryForNurse()
+    {
+        $variablePayMap = $this->variablePayCalculator->getForNurses();
+
+        return $variablePayMap->filter(function ($f, $key) {
+            return $f->nurse_id === $this->user->nurseInfo->id;
+        });
     }
 
     /**
