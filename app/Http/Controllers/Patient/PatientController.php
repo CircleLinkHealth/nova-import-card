@@ -42,7 +42,9 @@ class PatientController extends Controller
     {
         if (SeesAutoQAButton::userId($userId)) {
             Artisan::queue(AutoApproveValidCarePlansAs::class, [
-                'userId' => $userId,
+                'userId'                         => $userId,
+                '--reimport:clear'               => true,
+                '--reimport:without-transaction' => true,
             ]);
         }
 
