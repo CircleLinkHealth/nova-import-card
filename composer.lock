@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2f2db119c629bae19a934ce2a12aa1d7",
+    "content-hash": "0939b050120cba0d54ef65e176257fcf",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1083,11 +1083,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.5.7",
+            "version": "v1.5.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "3e1475c7ad711fcdc5a2ebf1258eef0a94aaa66a"
+                "reference": "4f367e1573d799741066392bd08357b24c6b31a8"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1116,15 +1116,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-26T20:48:18+00:00"
+            "time": "2020-06-03T21:16:32+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.9.9",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "0dd60d529ad4f70262136f788d5f3cb2bdfdb666"
+                "reference": "9245d7caba441791a4a4cdab66a58f2955ce346b"
             },
             "type": "laravel-module",
             "extra": {
@@ -1146,7 +1146,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-03T07:09:33+00:00"
+            "time": "2020-06-03T17:31:07+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -3879,6 +3879,12 @@
                 "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git",
                 "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0"
             },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CircleLinkHealth/laravel-module-installer/zipball/5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0",
+                "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0",
+                "shasum": ""
+            },
             "require": {
                 "composer-plugin-api": "^1.1",
                 "php": "^5.4|7.*"
@@ -3900,6 +3906,9 @@
             "license": [
                 "MIT"
             ],
+            "support": {
+                "source": "https://github.com/CircleLinkHealth/laravel-module-installer/tree/v0.1.5"
+            },
             "time": "2020-01-16T16:56:46+00:00"
         },
         {
