@@ -721,9 +721,6 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
     });
 
-    //CCD Parser Demo Route
-    Route::get('ccd-parser-demo', 'CCDParserDemoController@index');
-
     //CPM-2167 - moved outside of manage-patients, because
     //           AuthyMiddleware was interfering with PatientProgramSecurity
     Route::group(['prefix' => 'settings'], function () {
