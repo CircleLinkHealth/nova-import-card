@@ -182,7 +182,7 @@ class Kernel extends ConsoleKernel
 //            ->cron('0 */2 * * *');
 
         $schedule->command(QueueSendAuditReports::class)
-            ->monthlyOn(1, '02:00')->onOneServer();
+            ->monthlyOn(1, '08:00')->onOneServer();
 
         $schedule->command(CheckEmrDirectInbox::class)
             ->everyMinute();

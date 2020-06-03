@@ -41,7 +41,11 @@ class QueueSendAuditReports extends Command
      */
     public function handle()
     {
-        $date = $this->hasArgument('month') ? Carbon::createFromFormat('Y-m-d', $this->argument('month'))->firstOfMonth() : Carbon::now()->subMonth()->firstOfMonth();
+        if ($date = $this->argument('month') ?? null) {
+            Carbon::createFromFormat('Y-m-d', $this->argument('month'))->firstOfMonth();
+        } else {
+            Carbon::now()->subMonth()->firstOfMonth();
+        }
 
         $this->warn("Creating report for {$date->toDateString()}");
 
