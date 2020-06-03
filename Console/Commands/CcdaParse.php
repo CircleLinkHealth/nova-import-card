@@ -84,7 +84,7 @@ class CcdaParse extends Command
             '--ccda-xml-path="$inputPath"',
         ];
 
-        if ($this->hasArgument('outputPath')) {
+        if ($this->argument('outputPath')) {
             $cmdArgs[] = '--ccda-json-target-path="$outputPath"';
         }
 
@@ -113,7 +113,7 @@ class CcdaParse extends Command
             'inputPath'        => $this->argument('inputPath'),
         ];
 
-        if ($this->hasArgument('outputPath')) {
+        if ($this->argument('outputPath')) {
             $args['outputPath'] = $this->argument('outputPath');
         }
 
