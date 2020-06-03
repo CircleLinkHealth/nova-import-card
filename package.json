@@ -16,7 +16,7 @@
         "bower_install": "./node_modules/bower/bin/bower -V install",
         "build-import-practice-staff-csv": "cd nova-components/ImportPracticeStaffCsv && npm run dev",
         "build-import-practice-staff-csv-prod": "cd nova-components/ImportPracticeStaffCsv && npm run prod",
-        "postinstall": "npm run bower_install && if [ \"$NODE_ENV\" = \"production\" ]; then npm run prod; else npm run dev; fi",
+        "postinstall": "npm run bower_install && if [ \"$NODE_ENV\" = \"production\" ]; then npm run prod && npm run build-import-practice-staff-csv-prod && npm run build-generate-patient-call-data-csv-prod && npm run build-clhImportCardExtended-prod && npm run build-generate-success-stories-report-prod && npm run build-enrollment-invites-prod; else npm run dev; fi",
         "heroku-postbuild": "rm -rf node_modules/.cache",
         "build-generate-patient-call-data-csv": "cd nova-components/GeneratePatientCallDataCsv && npm run dev",
         "build-generate-patient-call-data-csv-prod": "cd nova-components/GeneratePatientCallDataCsv && npm run prod",
