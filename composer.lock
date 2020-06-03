@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b6cd4ca02a16791594cba0642d3bade3",
+    "content-hash": "370517ddb61db89e3525b970104ec021",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1083,11 +1083,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "dev-ROAD-108_twilio_sms_status_callback",
+            "version": "v1.5.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "46891b2c3dcb9f4f0154c95f41a564f89284bea5"
+                "reference": "3e1475c7ad711fcdc5a2ebf1258eef0a94aaa66a"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1116,15 +1116,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-02T19:13:49+00:00"
+            "time": "2020-05-26T20:48:18+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.9.8",
+            "version": "v1.9.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "663cfa1a3a5d369b4baff111b207b1e16e5c8a62"
+                "reference": "0dd60d529ad4f70262136f788d5f3cb2bdfdb666"
             },
             "type": "laravel-module",
             "extra": {
@@ -1146,15 +1146,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-31T03:02:42+00:00"
+            "time": "2020-06-03T07:09:33+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.7.6",
+            "version": "v2.7.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "482ecd6e09d0e905cfb2ff2418707d8c10514a87"
+                "reference": "a6abfa959dcd148d74b779e43378ad439525625a"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1188,7 +1188,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-02T18:40:21+00:00"
+            "time": "2020-06-03T07:12:28+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1363,11 +1363,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.4.1",
+            "version": "v1.4.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "beafa4cf76e04a1dc255854fdb4e48c2272ef58b"
+                "reference": "421fe59349ae49c46fff4feca58d8d00359b50e4"
             },
             "type": "laravel-module",
             "extra": {
@@ -1390,7 +1390,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-15T15:47:46+00:00"
+            "time": "2020-06-03T07:11:13+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -4384,16 +4384,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v6.18.17",
+            "version": "v6.18.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "ce163cfb182c9f464401975d6bbc42d5c2209cc6"
+                "reference": "9e5226ecc28f960cba1bd38b6d1d82a52e072dc3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/ce163cfb182c9f464401975d6bbc42d5c2209cc6",
-                "reference": "ce163cfb182c9f464401975d6bbc42d5c2209cc6",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/9e5226ecc28f960cba1bd38b6d1d82a52e072dc3",
+                "reference": "9e5226ecc28f960cba1bd38b6d1d82a52e072dc3",
                 "shasum": ""
             },
             "require": {
@@ -4527,7 +4527,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-06-02T14:25:01+00:00"
+            "time": "2020-06-02T22:32:07+00:00"
         },
         {
             "name": "laravel/horizon",
@@ -6400,16 +6400,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v4.4.0",
+            "version": "v4.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "bd43ec7152eaaab3bd8c6d0aa95ceeb1df8ee120"
+                "reference": "53c2753d756f5adb586dca79c2ec0e2654dd9463"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/bd43ec7152eaaab3bd8c6d0aa95ceeb1df8ee120",
-                "reference": "bd43ec7152eaaab3bd8c6d0aa95ceeb1df8ee120",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/53c2753d756f5adb586dca79c2ec0e2654dd9463",
+                "reference": "53c2753d756f5adb586dca79c2ec0e2654dd9463",
                 "shasum": ""
             },
             "require": {
@@ -6448,7 +6448,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2020-04-10T16:34:50+00:00"
+            "time": "2020-06-03T07:24:19+00:00"
         },
         {
             "name": "nvanheuverzwijn/monolog-logdna",
@@ -15710,7 +15710,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/core-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "laravel/scout": 20,
         "orangehill/iseed": 20
