@@ -187,8 +187,7 @@
     import {registerHandler, sendRequest} from "./bc-job-manager";
     import {Logger} from '../logger-logdna';
     import CallNumpad from './call-numpad';
-
-    import Twilio from 'twilio-client';
+    import {Device} from 'twilio-client';
 
     let self;
 
@@ -701,7 +700,7 @@
                 self.axios.get(url, {withCredentials: true})
                     .then(response => {
                         self.log = 'Initializing Twilio';
-                        self.device = new Twilio.Device(response.data.token, {
+                        self.device = new Device(response.data.token, {
                             closeProtection: true, //show warning when closing the page with active call - NOT WORKING
                             debug: true,
                             warnings: true,
