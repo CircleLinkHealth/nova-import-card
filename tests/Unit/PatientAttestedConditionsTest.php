@@ -8,6 +8,7 @@ namespace Tests\Unit;
 
 use App\Call;
 use App\Repositories\PatientSummaryEloquentRepository;
+use App\Services\CCD\CcdProblemService;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
@@ -102,6 +103,37 @@ class PatientAttestedConditionsTest extends TestCase
 
         //assert that asserted attached to calls exist on the summary
         $this->assertEquals($pms->attestedProblems()->count(), $patientProblems->count());
+    }
+    
+    /**
+     * A basic unit test example.
+     *
+     * @return void
+     */
+    public function test_api_fetches_unique_conditions_for_nurse_attestation_modal()
+    {
+        $patientProblems = $this->patient->ccdProblems()->get();
+    
+        $problem = $patientProblems->first();
+    
+        $ccdProblem = [
+            'name'           => 'another random ccd problem',
+            'userId'         => $this->patient->id,
+            'is_monitored'   => 1,
+            'cpm_problem_id' => null,
+            //add already attached problem icd10code to create duplicate
+            'icd10'          => $problem->icd10Code(),
+        ];
+    
+        (app(CcdProblemService::class))->addPatientCcdProblem($ccdProblem);
+        
+        
+        $responseData = $this->actingAs($this->nurse)->call('GET', url("/api/patients/{$this->patient->id}/problems/unique-to-attest"))
+            ->assertOk()
+            ->getOriginalContent();
+        
+        //assert that duplicate will not be fetched
+        $this->assertNotEquals($responseData->count(),  $allProblemsCount = $this->patient->ccdProblems()->count());
     }
 
     public function test_attest_bhi_problems_exist_in_ccm_column_if_practice_does_not_have_bhi_enabled()
@@ -503,6 +535,7 @@ class PatientAttestedConditionsTest extends TestCase
         foreach ($problemsForPatient as $problem) {
             $this->patient->ccdProblems()->create([
                 'name'           => $problem->name,
+                'is_monitored'   => 1,
                 'cpm_problem_id' => $problem->id,
             ]);
         }
