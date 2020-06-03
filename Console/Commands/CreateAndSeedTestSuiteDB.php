@@ -31,7 +31,7 @@ class CreateAndSeedTestSuiteDB extends Command
         $this->warn('Creating and seeding test DB.'.PHP_EOL);
         $start = microtime(true);
 
-        $dbName = $this->hasArgument('dbName') ? $this->argument('dbName') : null;
+        $dbName = $this->argument('dbName');
         $this->createDB($dbName);
 
         $duration = round((microtime(true) - $start) * 1000);
