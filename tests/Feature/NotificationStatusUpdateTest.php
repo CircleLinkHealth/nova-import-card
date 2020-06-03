@@ -10,9 +10,8 @@ use App\Jobs\NotificationStatusUpdateJob;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
-use CircleLinkHealth\Core\Facades\Notification;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
+use Tests\Concerns\TwilioFake\Twilio;
 use Tests\CustomerTestCase;
 
 class NotificationStatusUpdateTest extends CustomerTestCase
@@ -44,11 +43,33 @@ class NotificationStatusUpdateTest extends CustomerTestCase
     {
         // 1. create notification
         $patient = $this->patient();
+        $patient->clearAllPhonesAndAddNewPrimary('+12025550193', 'mobile', true);
 
         //id field has 36 length in db
         $id = Str::substr('test-'.Str::uuid()->toString(), 0, 36);
 
-        $notification     = new SelfEnrollmentInviteNotification('http://test?123', false, []);
+        $notification     = new SelfEnrollmentInviteNotification('http://test?123', false, [CustomTwilioChannel::class]);
+        $notification->id = $id;
+        $patient->notify($notification);
+
+        // 2. assert that notification status is updated
+        $dbRecord = DatabaseNotification::findOrFail($id);
+
+        self::assertEquals('pending', $dbRecord->data['status']['twilio']['value']);
+    }
+
+    public function test_it_updates_notification_status_in_db_from_notification_failed_event()
+    {
+        Twilio::fake();
+
+        // 1. create notification
+        $patient = $this->patient();
+        $patient->clearAllPhonesAndAddNewPrimary('+12025550193', 'mobile', true);
+
+        //id field has 36 length in db
+        $id = Str::substr('test-'.Str::uuid()->toString(), 0, 36);
+
+        $notification     = new SelfEnrollmentInviteNotification('http://test?123', false, [CustomTwilioChannel::class]);
         $notification->id = $id;
         $patient->notify($notification);
 
@@ -61,50 +82,5 @@ class NotificationStatusUpdateTest extends CustomerTestCase
         $dbRecord = DatabaseNotification::findOrFail($id);
 
         self::assertEquals('failed', $dbRecord->data['status']['twilio']['value']);
-    }
-
-    public function test_it_updates_notification_status_in_db_from_notification_failed_event()
-    {
-        // 1. make sure twilio creds are invalid
-        $key1    = 'services.twilio.enabled';
-        $config1 = config($key1);
-        Config::set($key1, true);
-
-        $key2    = 'services.twilio.account_sid';
-        $config2 = config($key2);
-        Config::set($key2, 'somestring');
-
-        $key3    = 'services.twilio.auth_token';
-        $config3 = config($key3);
-        Config::set($key3, 'somestring');
-
-        $key4    = 'services.twilio.twiml-app-sid';
-        $config4 = config($key4);
-        Config::set($key4, 'somestring');
-
-        // 2. create notification
-        $patient = $this->patient();
-
-        //id field has 36 length in db
-        $id = Str::substr('test-'.Str::uuid()->toString(), 0, 36);
-
-        try {
-            $notification     = new SelfEnrollmentInviteNotification('http://test?123', false, [CustomTwilioChannel::class]);
-            $notification->id = $id;
-            $patient->notify($notification);
-        } catch (\Exception $e) {
-            //should throw exception because queue is sync
-        }
-
-        // 3. assert that notification status is updated with error and message and correct channel
-        $dbRecord = DatabaseNotification::findOrFail($id);
-
-        self::assertEquals('failed', $dbRecord->data['status']['twilio']['value']);
-
-        // 4. reset config
-        Config::set($key1, $config1);
-        Config::set($key2, $config2);
-        Config::set($key3, $config3);
-        Config::set($key4, $config4);
     }
 }

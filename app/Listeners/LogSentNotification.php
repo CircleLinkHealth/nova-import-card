@@ -34,32 +34,9 @@ class LogSentNotification implements ShouldQueue
         if (property_exists(get_class($event->notifiable), 'id')) {
             \Log::info("Notification sent for user with id: {$event->notifiable->id}.");
         }
-
-        if (SelfEnrollmentInviteNotification::class === get_class($event->notification)) {
-            $props = [
-                'value'   => 'pending',
-                'details' => now()->toDateTimeString(),
-            ];
-
-            $channel = $event->channel;
-            if ('twilio' === $event->channel || CustomTwilioChannel::class === $event->channel) {
-                $channel = 'twilio';
-            }
-
-            if ($event->response && 'twilio' === $channel) {
-                if ($event->response->sid) {
-                    $props['sid'] = $event->response->sid;
-                }
-                if ($event->response->accountSid) {
-                    $props['accountSid'] = $event->response->accountSid;
-                }
-            }
-
-            NotificationStatusUpdateJob::dispatch(
-                $event->notification->id,
-                $channel,
-                $props,
-            );
+    
+        if (method_exists($event->notification, 'sent')) {
+            $event->notification->sent($event);
         }
     }
 }

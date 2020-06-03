@@ -32,15 +32,8 @@ class LogFailedNotification implements ShouldQueue
     {
         \Log::error("Notification failed for user with id: {$event->notifiable->id}. Data: ".json_encode($event->data));
 
-        if (SelfEnrollmentInviteNotification::class === get_class($event->notification)) {
-            NotificationStatusUpdateJob::dispatch(
-                $event->notification->id,
-                $event->channel,
-                [
-                    'value'   => 'failed',
-                    'details' => $event->data['message'],
-                ],
-            );
+        if (method_exists($event->notification, 'failed')) {
+            $event->notification->failed($event);
         }
     }
 }
