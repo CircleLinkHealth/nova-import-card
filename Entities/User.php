@@ -296,6 +296,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null                              $enrollee
  * @property int|null                                                                          $enrollment_invitation_links_count
  * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInvite()
+ * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInviteReminder(\Carbon\Carbon $date = null, $has = true)
+ * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User haveEnrollableInvitationDontHaveReminder(\Carbon\Carbon $dateInviteSent = null)
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {

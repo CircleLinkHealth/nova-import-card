@@ -37,6 +37,8 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property string|null                                                                                 $button_color
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
+ * @property string|null                                                                                 $short_url
+ * @property int                                                                                         $batch_id
  */
 class EnrollableInvitationLink extends BaseModel
 {
