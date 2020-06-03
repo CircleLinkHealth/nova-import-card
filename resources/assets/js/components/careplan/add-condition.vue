@@ -197,6 +197,7 @@
                 this.newProblem.icd10 = (autoCompleteProblem || {}).code || (this.problems.find(p => p.name == this.newProblem.name) || {}).code
                 this.newProblem.cpm_problem_id = (autoCompleteProblem || {}).id
 
+                this.checkForIcd10CodeDuplicates();
             },
             checkForIcd10CodeDuplicates() {
                 if (this.isNotesPage && !this.showNoProblemSelected && this.newProblem.icd10.length > 0) {
