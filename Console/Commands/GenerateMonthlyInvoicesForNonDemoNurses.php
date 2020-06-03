@@ -48,16 +48,15 @@ class GenerateMonthlyInvoicesForNonDemoNurses extends Command
     {
         $start = $this->month()->startOfMonth();
 
+        if ($this->option('allow-same-day')) {
+            $end = now()->endOfDay();
+        }
         //if it's the first of the month, process the the last day of the previous month
-        if (1 === now()->day && $start->isCurrentMonth(true)) {
+        elseif (1 === now()->day && $start->isCurrentMonth(true)) {
             $start = now()->subMonth()->startOfMonth();
             $end   = $start->copy()->endOfMonth();
         } elseif ($this->month()->isCurrentMonth(true)) {
-            if ($this->option('allow-same-day')) {
-                $end = now()->endOfDay();
-            } else {
-                $end = now()->subDay()->endOfDay();
-            }
+            $end = now()->subDay()->endOfDay();
         } else {
             $end = $this->month()->endOfMonth();
         }

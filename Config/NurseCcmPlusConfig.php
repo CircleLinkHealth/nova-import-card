@@ -29,7 +29,7 @@ class NurseCcmPlusConfig
         return \Cache::remember(self::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_ALL, 2, function () {
             $val = AppConfig::pull(self::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_ALL, null);
             if (null === $val) {
-                return setAppConfig(self::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_ALL, false);
+                return setAppConfig(self::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_ALL, true);
             }
 
             return filter_var($val, FILTER_VALIDATE_BOOLEAN);
@@ -52,8 +52,10 @@ class NurseCcmPlusConfig
     public static function enabledForAll(): bool
     {
         return \Cache::remember(self::NURSE_CCM_PLUS_ENABLED_FOR_ALL, 2, function () {
-            $val = AppConfig::where('config_key', '=', self::NURSE_CCM_PLUS_ENABLED_FOR_ALL)
-                ->firstOrFail()->config_value;
+            $val = AppConfig::pull(self::NURSE_CCM_PLUS_ENABLED_FOR_ALL, null);
+            if (null === $val) {
+                return setAppConfig(self::NURSE_CCM_PLUS_ENABLED_FOR_ALL, true);
+            }
 
             return filter_var($val, FILTER_VALIDATE_BOOLEAN);
         });

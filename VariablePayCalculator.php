@@ -16,6 +16,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class VariablePayCalculator
 {
@@ -55,8 +56,7 @@ class VariablePayCalculator
     }
 
     /**
-     * @throws \Exception when patient not found
-     *
+     * @throws \Exception        when patient not found
      * @return CalculationResult
      */
     public function calculate(User $nurse)
@@ -133,15 +133,24 @@ class VariablePayCalculator
             return $this->nurseCareRateLogs;
         }
 
-        $this->nurseCareRateLogs = NurseCareRateLog::whereIn('patient_user_id', function ($query) {
-            $query->select('patient_user_id')
-                ->from((new NurseCareRateLog())->getTable())
-                ->whereIn('nurse_id', $this->nurseInfoIds)
-                ->whereBetween('created_at', [$this->startDate, $this->endDate])
-                ->distinct();
-        })
-            ->whereBetween('created_at', [$this->startDate, $this->endDate])
-            ->get();
+        $nurseCareRateLogTable   = (new NurseCareRateLog())->getTable();
+        $nurseInfoTable          = (new Nurse())->getTable();
+        $this->nurseCareRateLogs = NurseCareRateLog
+            ::select(["$nurseCareRateLogTable.*", "$nurseInfoTable.start_date"])
+                ->leftJoin($nurseInfoTable, "$nurseInfoTable.id", '=', "$nurseCareRateLogTable.nurse_id")
+                ->whereIn("$nurseCareRateLogTable.patient_user_id", function ($query) {
+                    $query->select('patient_user_id')
+                        ->from((new NurseCareRateLog())->getTable())
+                        ->whereIn('nurse_id', $this->nurseInfoIds)
+                        ->whereBetween('created_at', [$this->startDate, $this->endDate])
+                        ->distinct();
+                })
+                ->whereBetween("$nurseCareRateLogTable.created_at", [$this->startDate, $this->endDate])
+                ->where(function ($q) use ($nurseCareRateLogTable, $nurseInfoTable) {
+                    $q->whereNull("$nurseInfoTable.start_date")
+                        ->orWhere(DB::raw("DATE($nurseCareRateLogTable.performed_at)"), '>=', DB::raw("DATE($nurseInfoTable.start_date)"));
+                })
+                ->get();
 
         return $this->nurseCareRateLogs;
     }
@@ -258,7 +267,6 @@ class VariablePayCalculator
      * @param $patientCareRateLogs
      *
      * @throws \Exception
-     *
      * @return PatientPayCalculationResult
      */
     private function getPayForPatient(
@@ -607,13 +615,13 @@ class VariablePayCalculator
                 break;
             case 1:
                 if ( ! $isBehavioral && $hasSuccessfulCall && $practiceHasCcmPlus &&
-                     $totalTime >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS) {
+                    $totalTime >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS) {
                     $rate = $nurseInfo->high_rate_2;
                 }
                 break;
             case 2:
                 if ( ! $isBehavioral && $hasSuccessfulCall && $practiceHasCcmPlus &&
-                     $totalTime >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS) {
+                    $totalTime >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS) {
                     $rate = $nurseInfo->high_rate_3;
                 }
                 break;
