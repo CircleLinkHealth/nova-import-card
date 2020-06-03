@@ -51,7 +51,7 @@ trait TakesMonthAndUsersAsInputArguments
      */
     public function usersIds()
     {
-        return $this->hasArgument('userIds') ? (array) $this->argument('userIds') : [];
+        return (array) $this->argument('userIds') ?? [];
     }
 
     /**
@@ -107,7 +107,7 @@ trait TakesMonthAndUsersAsInputArguments
      */
     protected function initDateInstance()
     {
-        $input = $this->hasArgument('month') ? $this->argument('month') : null;
+        $input = $this->argument('month');
 
         if ( ! $input) {
             $this->dateInstance = $this->defaultMonth();
