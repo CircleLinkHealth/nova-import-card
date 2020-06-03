@@ -253,6 +253,11 @@ class Call extends BaseModel implements AttachableToNotification
             : $this->inbound_cpm_id;
     }
 
+    public function resolveChildRouteBinding($childType, $value, $field)
+    {
+        // TODO: Implement resolveChildRouteBinding() method.
+    }
+
     public function schedulerUser()
     {
         return $this->belongsTo(User::class, 'scheduler', 'id');
@@ -337,10 +342,5 @@ class Call extends BaseModel implements AttachableToNotification
         return $this->outbound_cpm_id !== auth()->id()
             && true === $this->asap
             && 'addendum_response' !== $this->sub_type;
-    }
-    
-    public function resolveChildRouteBinding($childType, $value, $field)
-    {
-        // TODO: Implement resolveChildRouteBinding() method.
     }
 }
