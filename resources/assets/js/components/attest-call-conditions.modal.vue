@@ -182,12 +182,9 @@
                 }
             },
             getPatientBillableProblems() {
-                this.axios.get(rootUrl(`/api/patients/` + this.patientId + `/problems/ccd`))
+                this.axios.get(rootUrl(`/api/patients/` + this.patientId + `/problems/unique-to-attest`))
                     .then(resp => {
-                        //filter unique code
-                        let monitoredProblems = resp.data.filter(p => p.is_monitored)
-                        this.problems = Array.from(new Set(monitoredProblems.map(x=>x.code)))
-                            .map(code => { return monitoredProblems.find(p => p.code === code)});
+                        this.problems = resp.data;
                     })
                     .catch(err => {
                         this.error = err;
