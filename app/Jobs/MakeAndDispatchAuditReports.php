@@ -114,13 +114,13 @@ class MakeAndDispatchAuditReports implements ShouldQueue
         $rateLimitedMiddleware = (new RateLimited())
             ->allow(50)
             ->everySeconds(60)
-            ->releaseAfterSeconds(90);
+            ->releaseAfterSeconds(10);
 
         return [$rateLimitedMiddleware];
     }
 
     public function retryUntil(): \DateTime
     {
-        return now()->addMinutes(10);
+        return now()->addHour();
     }
 }
