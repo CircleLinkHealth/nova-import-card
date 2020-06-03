@@ -30,12 +30,14 @@ class AttestedConditionsController extends Controller
 
     public function getUniqueConditionsToAttest($userId, SafeRequest $request)
     {
-        $allCcdProblems = $this->ccdProblemService->getPatientProblems($userId);
+        $allCcdProblems = $this->ccdProblemService->getPatientProblems($userId)->filter(function ($p) {
+            return $p['is_monitored'];
+        });
 
         $uniqueCode = $allCcdProblems->unique(function ($p) {
             return $p['code'];
         });
-        
+
         $uniqueCodeAndName = $uniqueCode->unique(function ($p) {
             return strtolower($p['name']);
         });
