@@ -47,6 +47,7 @@ class EnrollableInvitationLink extends BaseModel
         'invitationable_type',
         'link_token',
         'url',
+        'short_url',
         'manually_expired',
         'button_color',
         'batch_id',
