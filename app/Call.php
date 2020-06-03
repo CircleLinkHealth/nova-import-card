@@ -338,4 +338,9 @@ class Call extends BaseModel implements AttachableToNotification
             && true === $this->asap
             && 'addendum_response' !== $this->sub_type;
     }
+    
+    public function resolveChildRouteBinding($childType, $value, $field)
+    {
+        // TODO: Implement resolveChildRouteBinding() method.
+    }
 }
