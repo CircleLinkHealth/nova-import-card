@@ -10,7 +10,6 @@ use App\Console\Commands\AutoApproveValidCarePlansAs;
 use App\Contracts\ReportFormatter;
 use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
-use App\Services\CarePlanViewService;
 use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\PdfService;
@@ -367,8 +366,7 @@ class PatientController extends Controller
      */
     public function showPatientSummary(
         Request $request,
-        $patientId,
-        CarePlanViewService $carePlanViewService
+        $patientId
     ) {
         $messages = \Session::get('messages');
 

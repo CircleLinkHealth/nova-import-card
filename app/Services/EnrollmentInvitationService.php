@@ -91,12 +91,13 @@ class EnrollmentInvitationService
         ]);
     }
 
-    public function putIntoCallQueue(Enrollee $enrollee)
+    public function putIntoCallQueue(Enrollee $enrollee, Carbon $earliestDayToCall)
     {
         $enrollee->update(
             [
                 'status'                    => Enrollee::TO_CALL,
                 'auto_enrollment_triggered' => true,
+                'requested_callback'        => $earliestDayToCall,
             ]
         );
     }
