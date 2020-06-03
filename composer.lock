@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5db34f19c9732112069f1088971d6b04",
+    "content-hash": "8c1b522e53845ad4f803ba988579eb06",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -522,16 +522,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.139.1",
+            "version": "3.140.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "31fc7fc73d550e237b34f7c6802250fd4ade9a01"
+                "reference": "9798418d4f0cdc0cf11dab453eca96e1d072df79"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/31fc7fc73d550e237b34f7c6802250fd4ade9a01",
-                "reference": "31fc7fc73d550e237b34f7c6802250fd4ade9a01",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9798418d4f0cdc0cf11dab453eca96e1d072df79",
+                "reference": "9798418d4f0cdc0cf11dab453eca96e1d072df79",
                 "shasum": ""
             },
             "require": {
@@ -602,7 +602,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-06-02T18:12:38+00:00"
+            "time": "2020-06-03T18:12:30+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1150,11 +1150,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.7.6",
+            "version": "v2.7.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "482ecd6e09d0e905cfb2ff2418707d8c10514a87"
+                "reference": "0eeddb342e163453e414fc88e2c0b9590e2b88ab"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1188,7 +1188,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-02T18:40:21+00:00"
+            "time": "2020-06-03T16:30:09+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -2864,22 +2864,22 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.12.4",
+            "version": "8.12.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "cb79970730aacaedb74c8288214a5576572fa7b0"
+                "reference": "476a40b044a953725d5abb75fcbfa1303fd429a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/cb79970730aacaedb74c8288214a5576572fa7b0",
-                "reference": "cb79970730aacaedb74c8288214a5576572fa7b0",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/476a40b044a953725d5abb75fcbfa1303fd429a2",
+                "reference": "476a40b044a953725d5abb75fcbfa1303fd429a2",
                 "shasum": ""
             },
             "require": {
-                "ext-mbstring": "*",
                 "giggsey/locale": "^1.7",
-                "php": ">=5.3.2"
+                "php": ">=5.3.2",
+                "symfony/polyfill-mbstring": "^1.17"
             },
             "require-dev": {
                 "pear/pear-core-minimal": "^1.9",
@@ -2928,7 +2928,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2020-05-19T11:20:54+00:00"
+            "time": "2020-06-03T08:58:23+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -4375,16 +4375,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v6.18.17",
+            "version": "v6.18.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "ce163cfb182c9f464401975d6bbc42d5c2209cc6"
+                "reference": "9e5226ecc28f960cba1bd38b6d1d82a52e072dc3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/ce163cfb182c9f464401975d6bbc42d5c2209cc6",
-                "reference": "ce163cfb182c9f464401975d6bbc42d5c2209cc6",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/9e5226ecc28f960cba1bd38b6d1d82a52e072dc3",
+                "reference": "9e5226ecc28f960cba1bd38b6d1d82a52e072dc3",
                 "shasum": ""
             },
             "require": {
@@ -4518,7 +4518,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-06-02T14:25:01+00:00"
+            "time": "2020-06-02T22:32:07+00:00"
         },
         {
             "name": "laravel/horizon",
@@ -6391,16 +6391,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v4.4.0",
+            "version": "v4.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "bd43ec7152eaaab3bd8c6d0aa95ceeb1df8ee120"
+                "reference": "53c2753d756f5adb586dca79c2ec0e2654dd9463"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/bd43ec7152eaaab3bd8c6d0aa95ceeb1df8ee120",
-                "reference": "bd43ec7152eaaab3bd8c6d0aa95ceeb1df8ee120",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/53c2753d756f5adb586dca79c2ec0e2654dd9463",
+                "reference": "53c2753d756f5adb586dca79c2ec0e2654dd9463",
                 "shasum": ""
             },
             "require": {
@@ -6439,7 +6439,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2020-04-10T16:34:50+00:00"
+            "time": "2020-06-03T07:24:19+00:00"
         },
         {
             "name": "nvanheuverzwijn/monolog-logdna",
@@ -11799,16 +11799,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "1.10.6",
+            "version": "1.10.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "be81b9c4735362c26876bdbfd3b5bc7e7f711c88"
+                "reference": "956608ea4f7de9e58c53dfb019d85ae62b193c39"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/be81b9c4735362c26876bdbfd3b5bc7e7f711c88",
-                "reference": "be81b9c4735362c26876bdbfd3b5bc7e7f711c88",
+                "url": "https://api.github.com/repos/composer/composer/zipball/956608ea4f7de9e58c53dfb019d85ae62b193c39",
+                "reference": "956608ea4f7de9e58c53dfb019d85ae62b193c39",
                 "shasum": ""
             },
             "require": {
@@ -11816,7 +11816,7 @@
                 "composer/semver": "^1.0",
                 "composer/spdx-licenses": "^1.2",
                 "composer/xdebug-handler": "^1.1",
-                "justinrainbow/json-schema": "^3.0 || ^4.0 || ^5.0",
+                "justinrainbow/json-schema": "^5.2.10",
                 "php": "^5.3.2 || ^7.0",
                 "psr/log": "^1.0",
                 "seld/jsonlint": "^1.4",
@@ -11876,7 +11876,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2020-05-06T08:28:10+00:00"
+            "time": "2020-06-03T08:03:56+00:00"
         },
         {
             "name": "composer/semver",
