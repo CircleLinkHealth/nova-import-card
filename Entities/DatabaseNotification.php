@@ -46,12 +46,11 @@ use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
  */
 class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotification
 {
+    protected $casts = [
+        'data' => 'array',
+    ];
     protected $dates = [
         'read_at',
-    ];
-    
-    protected $casts = [
-        'data' => 'array'
     ];
 
     /**
