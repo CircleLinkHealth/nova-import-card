@@ -39,7 +39,7 @@ class NotificationStatusUpdateJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(string $notificationId, string $channel, array $props)
+    public function __construct(?string $notificationId, string $channel, array $props)
     {
         $this->channel        = $channel;
         $this->props          = $props;

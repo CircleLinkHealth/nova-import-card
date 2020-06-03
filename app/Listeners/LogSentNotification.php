@@ -39,14 +39,23 @@ class LogSentNotification implements ShouldQueue
                 'details' => now()->toDateTimeString(),
             ];
 
+            $channel = $event->channel;
             if ('twilio' === $event->channel || CustomTwilioChannel::class === $event->channel) {
-                $props['sid']        = $event->response->sid;
-                $props['accountSid'] = $event->response->accountSid;
+                $channel = 'twilio';
+            }
+
+            if ($event->response && 'twilio' === $channel) {
+                if ($event->response->sid) {
+                    $props['sid'] = $event->response->sid;
+                }
+                if ($event->response->accountSid) {
+                    $props['accountSid'] = $event->response->accountSid;
+                }
             }
 
             NotificationStatusUpdateJob::dispatch(
                 $event->notification->id,
-                $event->channel,
+                $channel,
                 $props,
             );
         }

@@ -15,6 +15,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property int                             $sender_user_id
  * @property string                          $receiver_phone_number
  * @property string                          $message
+ * @property string                          $status
+ * @property string                          $status_details
+ * @property string                          $sid
+ * @property string                          $account_sid
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\OutgoingSms newModelQuery()
@@ -28,5 +32,9 @@ class OutgoingSms extends Model
         'sender_user_id',
         'receiver_phone_number',
         'message',
+        'status',
+        'status_details',
+        'sid',
+        'account_sid',
     ];
 }

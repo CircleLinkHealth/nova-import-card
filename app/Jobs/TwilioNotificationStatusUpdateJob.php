@@ -19,12 +19,9 @@ class TwilioNotificationStatusUpdateJob extends NotificationStatusUpdateJob
      * @var string
      */
     protected $sid;
-    
+
     /**
      * Create a new job instance.
-     * @param string|null $sid
-     * @param string|null $accountSid
-     * @param array $props
      */
     public function __construct(string $sid = null, string $accountSid = null, array $props)
     {
