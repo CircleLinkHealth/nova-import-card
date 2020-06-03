@@ -7,6 +7,7 @@
 namespace App\Console\Commands;
 
 use App\User;
+use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Console\Command;
@@ -25,7 +26,7 @@ class AutoApproveValidCarePlansAs extends Command
      *
      * @var string
      */
-    protected $signature = 'careplans:approve-as {userId} {--dry} {--reimport} {--reimport:clear} {--reimport:without-transaction}';
+    protected $signature = 'careplans:approve-as {userId?} {--dry} {--reimport} {--reimport:clear} {--reimport:without-transaction}';
     /**
      * @var Collection|null
      */
@@ -39,7 +40,7 @@ class AutoApproveValidCarePlansAs extends Command
     public function handle()
     {
         /** @var User $user */
-        $user = User::ofType('administrator')->findOrFail($this->argument('userId'));
+        $user = User::ofType('administrator')->findOrFail($this->argument('userId') ?? CarePlanAutoApprover::id());
 
         if ( ! $user->canQAApproveCarePlans()) {
             $this->error($user->id.' is not authorized to approve CarePlans');

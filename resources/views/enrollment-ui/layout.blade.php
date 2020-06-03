@@ -30,6 +30,7 @@
         }
     </style>
     @include('cpm-module-raygun::partials.real-user-monitoring')
+    @include('partials.new-relic-tracking')
 </head>
 <body>
 @stack('prescripts')

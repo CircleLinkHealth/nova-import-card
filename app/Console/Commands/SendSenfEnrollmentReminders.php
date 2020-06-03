@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use App\SelfEnrollment\Constants;
 use App\SelfEnrollment\Domain\RemindEnrollees;
 use App\SelfEnrollment\Domain\RemindUnreachablePatients;
 use Illuminate\Console\Command;
@@ -37,14 +38,14 @@ class SendSenfEnrollmentReminders extends Command
 
     public static function dispatchEnrolleeReminders(?int $practiceId = null, ?int $limit = null)
     {
-        RemindEnrollees::dispatch(now()->subDays(2), $practiceId, $limit);
-        RemindEnrollees::dispatch(now()->subDays(4), $practiceId, $limit);
+        RemindEnrollees::dispatch(now()->subDays(Constants::DAYS_AFTER_FIRST_INVITE_TO_SEND_FIRST_REMINDER), $practiceId, $limit);
+        RemindEnrollees::dispatch(now()->subDays(Constants::DAYS_AFTER_FIRST_INVITE_TO_SEND_SECOND_REMINDER), $practiceId, $limit);
     }
 
     public static function dispatchUnreachablePatientReminders(?int $practiceId = null, ?int $limit = null)
     {
-        RemindUnreachablePatients::dispatch(now()->subDays(2), $practiceId, $limit);
-        RemindUnreachablePatients::dispatch(now()->subDays(4), $practiceId, $limit);
+        RemindUnreachablePatients::dispatch(now()->subDays(Constants::DAYS_AFTER_FIRST_INVITE_TO_SEND_FIRST_REMINDER), $practiceId, $limit);
+        RemindUnreachablePatients::dispatch(now()->subDays(Constants::DAYS_AFTER_FIRST_INVITE_TO_SEND_SECOND_REMINDER), $practiceId, $limit);
     }
 
     /**

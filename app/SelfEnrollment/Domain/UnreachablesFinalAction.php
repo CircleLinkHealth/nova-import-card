@@ -19,6 +19,10 @@ use Illuminate\Database\Eloquent\Builder;
 class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator
 {
     /**
+     * Before we put the patient in CA queue, we want to allow 5 days to pass, hoping that the enrollment letter will have reached patients before we call them.
+     */
+    const TO_CALL_AFTER_DAYS_HAVE_PASSED = 5;
+    /**
      * @var Carbon
      */
     protected $dateInviteSent;
@@ -57,7 +61,7 @@ class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator
             $this->service()->markAsNonResponsive($patient->enrollee);
         }
 
-        $this->service()->putIntoCallQueue($patient->enrollee);
+        $this->service()->putIntoCallQueue($patient->enrollee, now()->addDays(self::TO_CALL_AFTER_DAYS_HAVE_PASSED));
     }
 
     public function query(): Builder
@@ -68,7 +72,10 @@ class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator
                 $patient->where('ccm_status', Patient::UNREACHABLE);
             })->when($this->practiceId, function ($q) {
                 return $q->where('program_id', $this->practiceId);
-            })->has('enrollee')->with('enrollee');
+            })->whereHas('enrollee', function ($q) {
+                $q->where('status', Enrollee::UNREACHABLE)
+                    ->whereNull('source');
+            })->with('enrollee');
     }
 
     /**
