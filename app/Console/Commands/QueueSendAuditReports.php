@@ -41,9 +41,13 @@ class QueueSendAuditReports extends Command
      */
     public function handle()
     {
-        $date = $this->hasArgument('month') ? Carbon::createFromFormat('Y-m-d', $this->argument('month'))->firstOfMonth() : Carbon::now()->subMonth()->firstOfMonth();
+        if ($inputDate = $this->argument('month')) {
+            $date = Carbon::createFromFormat('Y-m-d', $inputDate)->firstOfMonth();
+        } else {
+            $date = Carbon::now()->subMonth()->firstOfMonth();
+        }
 
-        $this->warn("Creating report for {$date->toDateString()}");
+        $this->warn("Creating Audit Reports for {$date->toDateString()}");
 
         User::ofType('participant')
             ->with('patientInfo')
@@ -55,7 +59,7 @@ class QueueSendAuditReports extends Command
                     ->whereHas('settings', function ($query) {
                         $query->where('dm_audit_reports', '=', true)
                             ->orWhere('efax_audit_reports', '=', true);
-                    })->when($this->hasArgument('practiceId'), function ($q) {
+                    })->when($this->argument('practiceId'), function ($q) {
                         $q->where('id', '=', $this->argument('practiceId'));
                     });
             })
