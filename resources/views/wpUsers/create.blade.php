@@ -41,7 +41,12 @@
                                         <div class="col-xs-12 col-md-6">{!! Form::select('role', $roles, '', ['class' => 'form-control select-picker']) !!}</div>
                                     </div>
                                 </div>
-                                <br>
+                                <div class="form-group" id="care-coach-start-date" style="visibility: hidden;">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-md-2">{!! Form::label('start_date', 'Start Date:') !!}</div>
+                                        <div class="col-xs-12 col-md-6">{!! Form::date('start_date', now(), ['class' => 'form-control', 'placeholder' => 'Official start date']) !!}</div>
+                                    </div>
+                                </div>
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-12 col-md-2">{!! Form::label('password', 'Password:') !!}</div>
@@ -137,9 +142,9 @@
                                     </div>
                                 </div>
                             </div>
-
-                            </form>
                         </div>
+
+                        {!! Form::close() !!}
                     </div>
                 </div>
             </div>
@@ -181,6 +186,18 @@
                 $('[name="program_id"]').change(function () {
                     setBillingProvider($(this).val())
                 })
+
+                const CLH_CARE_COACH = 'CLH Care Coach';
+                $('[name="role"]').change(function () {
+                    const roleName = $('[name="role"] option:selected').text();
+
+                    if (roleName === CLH_CARE_COACH) {
+                        $('#care-coach-start-date').css('visibility', 'visible');
+                    }
+                    else {
+                        $('#care-coach-start-date').css('visibility', 'hidden');
+                    }
+                });
 
                 setBillingProvider($('[name="program_id"]').val())
             })();
