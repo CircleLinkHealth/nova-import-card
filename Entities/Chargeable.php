@@ -11,5 +11,5 @@ use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
 class Chargeable extends MorphPivot
 {
-//    protected $table = 'chargeables';
+    protected $table = 'chargeables';
 }
