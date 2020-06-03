@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Customer\Traits;
 
 use Cache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use Modules\Customer\Entities\Chargeable;
 
 trait HasChargeableServices
 {
@@ -25,6 +26,7 @@ trait HasChargeableServices
     public function allChargeableServices()
     {
         return $this->morphToMany(ChargeableService::class, 'chargeable')
+            ->using(Chargeable::class)
             ->withPivot([
                 'amount',
                 'is_fulfilled',
@@ -35,6 +37,7 @@ trait HasChargeableServices
     public function chargeableServices()
     {
         return $this->morphToMany(ChargeableService::class, 'chargeable')
+            ->using(Chargeable::class)
             ->withPivot([
                 'amount',
                 'is_fulfilled',
