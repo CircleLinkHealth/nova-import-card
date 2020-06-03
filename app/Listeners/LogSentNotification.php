@@ -31,7 +31,9 @@ class LogSentNotification implements ShouldQueue
      */
     public function handle(NotificationSent $event)
     {
-        \Log::error("Notification sent for user with id: {$event->notifiable->id}.");
+        if (property_exists(get_class($event->notifiable), 'id')) {
+            \Log::info("Notification sent for user with id: {$event->notifiable->id}.");
+        }
 
         if (SelfEnrollmentInviteNotification::class === get_class($event->notification)) {
             $props = [
