@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use App\SelfEnrollment\Domain\InviteUnreachablePatients;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
 use App\SelfEnrollment\Helpers;
+use App\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -22,6 +23,22 @@ use Illuminate\Support\Facades\DB;
 
 class AutoEnrollmentTestDashboard extends Controller
 {
+    public function evaluateEnrolledForSurveyTest(Request $request)
+    {
+        $survey         = Helpers::getEnrolleeSurvey();
+        $surveyInstance = DB::table('survey_instances')->where('survey_id', '=', $survey->id)->first();
+
+        if (is_null($surveyInstance)) {
+            throw new \Exception('Could not find survey instance for survey id '.$survey->id);
+        }
+        $data = [
+            'enrollable_id'      => (int) $request->input('enrolleeId'),
+            'survey_instance_id' => $surveyInstance->id,
+        ];
+
+        EnrollableSurveyCompleted::dispatch($data);
+    }
+
     /**
      * @return string
      */
