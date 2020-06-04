@@ -184,7 +184,10 @@
             getPatientBillableProblems() {
                 this.axios.get(rootUrl(`/api/patients/` + this.patientId + `/problems/ccd`))
                     .then(resp => {
-                        this.problems = resp.data;
+                        //filter unique code
+                        let monitoredProblems = resp.data.filter(p => p.is_monitored)
+                        this.problems = Array.from(new Set(monitoredProblems.map(x=>x.code)))
+                            .map(code => { return monitoredProblems.find(p => p.code === code)});
                     })
                     .catch(err => {
                         this.error = err;
@@ -232,6 +235,10 @@
                 let p = this.problems.find(function (p) {
                     return p.id === pId;
                 })
+
+                if (!p){
+                    return false;
+                }
 
                 if (p.is_behavioral !== undefined){
                     return p.is_behavioral;
