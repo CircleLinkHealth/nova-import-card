@@ -24,10 +24,10 @@ class InviteUnreachablePatients extends AbstractSelfEnrollableUserIterator
     private $count;
     private $practiceId;
 
-    public function __construct(int $practiceId, int $count)
+    public function __construct(int $practiceId, int $limit)
     {
         $this->practiceId = $practiceId;
-        $this->count      = $count;
+        $this->limit      = $limit;
     }
 
     public function action(User $patient): void
@@ -50,11 +50,6 @@ class InviteUnreachablePatients extends AbstractSelfEnrollableUserIterator
                         Enrollee::QUEUE_AUTO_ENROLLMENT,
                     ]);
             });
-    }
-
-    protected function limit(): ?int
-    {
-        return $this->count;
     }
 
     private function getBatch(): EnrollmentInvitationsBatch

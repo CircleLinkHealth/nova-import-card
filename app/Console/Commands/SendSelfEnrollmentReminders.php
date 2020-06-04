@@ -11,7 +11,7 @@ use App\SelfEnrollment\Domain\RemindEnrollees;
 use App\SelfEnrollment\Domain\RemindUnreachablePatients;
 use Illuminate\Console\Command;
 
-class SendSenfEnrollmentReminders extends Command
+class SendSelfEnrollmentReminders extends Command
 {
     /**
      * The console command description.

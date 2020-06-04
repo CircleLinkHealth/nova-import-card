@@ -8,7 +8,6 @@ namespace App\SelfEnrollment;
 
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Query\Builder;
@@ -42,16 +41,6 @@ class Helpers
             }
 
             return $instance;
-        });
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
-     */
-    public static function getDemoPractice()
-    {
-        return \Cache::remember('demo_practice_object', 2, function () {
-            return Practice::where('name', '=', 'demo')->firstOrFail();
         });
     }
 
