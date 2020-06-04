@@ -33,7 +33,7 @@
                             {{addConditionLabel}}
                         </button>
                         <div v-if="addCondition" style="padding-top: 20px">
-                            <add-condition :cpm-problems="cpmProblems" :patient-id="patient_id"
+                            <add-condition :is-notes-page="isNotesPage" :cpm-problems="cpmProblems" :patient-id="patient_id"
                                            :problems="problems" :code-is-required="true"
                                            :is-approve-billable-page="!isNotesPage"
                                            :patient-has-bhi="patientHasBhi"
@@ -185,12 +185,9 @@
                 }
             },
             getPatientBillableProblems() {
-                this.axios.get(rootUrl(`/api/patients/` + this.patientId + `/problems/ccd`))
+                this.axios.get(rootUrl(`/api/patients/` + this.patientId + `/problems/unique-to-attest`))
                     .then(resp => {
-                        //filter unique code
-                        let monitoredProblems = resp.data.filter(p => p.is_monitored)
-                        this.problems = Array.from(new Set(monitoredProblems.map(x=>x.code)))
-                            .map(code => { return monitoredProblems.find(p => p.code === code)});
+                        this.problems = resp.data;
                     })
                     .catch(err => {
                         this.error = err;
