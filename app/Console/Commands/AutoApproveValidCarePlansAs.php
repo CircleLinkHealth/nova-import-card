@@ -50,13 +50,13 @@ class AutoApproveValidCarePlansAs extends Command
             $this->warn('DRY RUN. CarePlans will not actually be approved.');
         }
 
-        $user->patientsPendingCLHApproval()->chunkById(50, function ($patients) {
-            $patients->each(function (User $patient) {
+        $user->patientsPendingCLHApproval()->chunkById(50, function ($patients) use ($user) {
+            $patients->each(function (User $patient) use ($user) {
                 $this->warn('processing user:'.$patient->id);
                 $needsQA = $patient->carePlan->validator()->fails();
 
                 if ($needsQA && $this->option('reimport')) {
-                    $this->reimport($patient->id, $this->argument('userId'));
+                    $this->reimport($patient->id, $user->id);
                     $needsQA = $patient->carePlan->validator()->fails();
                 }
 
@@ -68,7 +68,7 @@ class AutoApproveValidCarePlansAs extends Command
 
                 if ( ! $needsQA) {
                     $patient->carePlan->status = CarePlan::QA_APPROVED;
-                    $patient->carePlan->qa_approver_id = $this->argument('userId');
+                    $patient->carePlan->qa_approver_id = $user->id;
                     $patient->carePlan->qa_date = now()->toDateTimeString();
 
                     if ( ! $this->option('dry')) {
