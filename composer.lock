@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "407d7ea3297fe8986b9fe72b9c6ff937",
+    "content-hash": "76e240b607b704d47d68b2e5aeef8601",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -522,16 +522,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.140.0",
+            "version": "3.140.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "9798418d4f0cdc0cf11dab453eca96e1d072df79"
+                "reference": "52645498aea4dd2d090884322121270daf3e0f06"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9798418d4f0cdc0cf11dab453eca96e1d072df79",
-                "reference": "9798418d4f0cdc0cf11dab453eca96e1d072df79",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/52645498aea4dd2d090884322121270daf3e0f06",
+                "reference": "52645498aea4dd2d090884322121270daf3e0f06",
                 "shasum": ""
             },
             "require": {
@@ -602,7 +602,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-06-03T18:12:30+00:00"
+            "time": "2020-06-04T18:19:47+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1081,11 +1081,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.5.7",
+            "version": "v1.5.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "3e1475c7ad711fcdc5a2ebf1258eef0a94aaa66a"
+                "reference": "4f367e1573d799741066392bd08357b24c6b31a8"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1114,7 +1114,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-26T20:48:18+00:00"
+            "time": "2020-06-03T21:16:32+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1388,11 +1388,11 @@
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "v1.3.2",
+            "version": "v1.3.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "907bca6d1781ef52bf2b844986804cc94b328b38"
+                "reference": "111967deacd7119dcd89cb7f1d55fc140174ab3e"
             },
             "type": "laravel-module",
             "extra": {
@@ -1414,7 +1414,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-27T09:25:18+00:00"
+            "time": "2020-06-04T17:38:51+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -2522,16 +2522,16 @@
         },
         {
             "name": "epartment/nova-dependency-container",
-            "version": "1.2.10",
+            "version": "1.2.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/epartment/nova-dependency-container.git",
-                "reference": "d4081499c45b86111d5d95ef3c4457db4dd4bbdf"
+                "reference": "b29aa381673a397878652525dea366aebda33455"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/epartment/nova-dependency-container/zipball/d4081499c45b86111d5d95ef3c4457db4dd4bbdf",
-                "reference": "d4081499c45b86111d5d95ef3c4457db4dd4bbdf",
+                "url": "https://api.github.com/repos/epartment/nova-dependency-container/zipball/b29aa381673a397878652525dea366aebda33455",
+                "reference": "b29aa381673a397878652525dea366aebda33455",
                 "shasum": ""
             },
             "require": {
@@ -2559,7 +2559,7 @@
                 "laravel",
                 "nova"
             ],
-            "time": "2019-12-01T02:45:45+00:00"
+            "time": "2020-05-17T03:35:34+00:00"
         },
         {
             "name": "fico7489/laravel-pivot",
