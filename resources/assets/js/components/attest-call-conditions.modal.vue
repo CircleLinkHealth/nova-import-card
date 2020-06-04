@@ -284,42 +284,37 @@
                 return this.attestationRequirements.has_pcm && window.TimeTracker.ccmTimeInSeconds() > 0;
             },
             getCcmAttestedConditionsCount(){
-                let attestedCcm = 0;
-
                 //if a patient is BHI eligible we distinguish between ccm and bhi problems
                 //if they don't, bhi problems can be considered as ccm
                 if (this.isBhiEligible()){
-                    this.attestedProblems.forEach(function (p) {
-                        if (!self.problemIsBehavioral(p)) {
-                            attestedCcm++;
-                        }
-                    })
-
-                    return attestedCcm;
+                    return this.attestedProblems.reduce( (previousValue, currentValue) => !self.problemIsBehavioral(currentValue) ? previousValue + 1 : previousValue, 0);
                 }
 
-                attestedCcm = this.attestedProblems.length;
-
-                return attestedCcm;
+                return this.attestedProblems.length;
             },
             getBhiAttestedConditionsCount(){
                 let attestedBhi = 0;
 
                 //only count BHI problems if patient is BHI eligible
                 if (this.isBhiEligible()){
-                    this.attestedProblems.forEach(function (p) {
-                        if (self.problemIsBehavioral(p)) {
-                            attestedBhi++;
-                        }
-                    })
+                    attestedBhi = this.attestedProblems.reduce( (previousValue, currentValue) => self.problemIsBehavioral(currentValue) ? previousValue + 1 : previousValue, 0);
                 }
 
                 return attestedBhi;
             },
             passesCcmValidation(){
-                //include pcm
+
                 //if patient wants to bypass bhi validation and does not require +2 ccm validation or already has attested to 2 ccm conditions, then we can bypass
-                return !this.attestationRequirements.has_ccm || (this.attestationRequirements.attested_ccm_problems >= 2 || this.getCcmAttestedConditionsCount() >= 2);
+                if (this.attestationRequirements.has_ccm){
+                    return this.attestationRequirements.attested_ccm_problems >= 2 || this.getCcmAttestedConditionsCount() >= 2
+                }
+
+                if (this.attestationRequirements.has_pcm){
+                    return this.attestationRequirements.attested_ccm_problems >= 1 || this.getCcmAttestedConditionsCount() >= 1
+                }
+
+                //if no ccm or no pcm - automatically pass ccm validation
+                return true;
             },
             validateAttestedConditions(bypassBhiValidation = null) {
 
@@ -373,6 +368,12 @@
                             message = 'Please select 1 CCM condition and  the BHI condition(s) discussed on this call.';
                         }else{
                             message = 'Please select the BHI condition(s) discussed on this call.';
+                        }
+                    }else{
+                        if (ccmError){
+                            message = 'Please select 2 CCM conditions discussed on this call.'
+                        }else if(pcmError){
+                            message = 'Please select at least 1 CCM condition discussed on this call.'
                         }
                     }
                     this.error = message;
