@@ -6,9 +6,6 @@
 
 namespace App\Listeners;
 
-use App\Jobs\NotificationStatusUpdateJob;
-use App\Notifications\Channels\CustomTwilioChannel;
-use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Queue\InteractsWithQueue;
@@ -34,7 +31,7 @@ class LogSentNotification implements ShouldQueue
         if (property_exists(get_class($event->notifiable), 'id')) {
             \Log::info("Notification sent for user with id: {$event->notifiable->id}.");
         }
-    
+
         if (method_exists($event->notification, 'sent')) {
             $event->notification->sent($event);
         }

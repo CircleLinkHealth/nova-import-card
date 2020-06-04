@@ -6,8 +6,6 @@
 
 namespace App\Listeners;
 
-use App\Jobs\NotificationStatusUpdateJob;
-use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Queue\InteractsWithQueue;

@@ -6,7 +6,7 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use CircleLinkHealth\Core\Entities\BaseModel;
 
 /**
  * App\OutgoingSms.
@@ -25,8 +25,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\OutgoingSms newQuery()
  * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\OutgoingSms query()
  * @mixin \Eloquent
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ * @property int|null                                                                                    $revision_history_count
  */
-class OutgoingSms extends Model
+class OutgoingSms extends BaseModel
 {
     protected $fillable = [
         'sender_user_id',
