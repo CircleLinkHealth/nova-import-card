@@ -54,6 +54,9 @@ class CustomTwilioChannel extends TwilioChannel
                 throw CouldNotSendNotification::invalidMessageObject($message);
             }
 
+            $message->statusCallback       = route('twilio.sms.status');
+            $message->statusCallbackMethod = 'POST';
+
             return $this->twilio->sendMessage($message, $to, $useSender);
         } catch (\Exception $exception) {
             $event = new NotificationFailed($notifiable, $notification, 'twilio', ['message' => $exception->getMessage()]);
@@ -62,6 +65,8 @@ class CustomTwilioChannel extends TwilioChannel
             } else {
                 $this->events->fire($event);
             }
+            //we want to throw so that NotificationSent event will not be raised.
+            throw $exception;
         }
     }
 }

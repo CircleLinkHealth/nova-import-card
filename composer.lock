@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a5ac033ce9ce789b476b995f4b9952eb",
+    "content-hash": "4a99ee5c2f2f06bf2b5597a124c06cd8",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1083,11 +1083,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.5.7",
+            "version": "v1.5.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "3e1475c7ad711fcdc5a2ebf1258eef0a94aaa66a"
+                "reference": "4f367e1573d799741066392bd08357b24c6b31a8"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1116,7 +1116,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-26T20:48:18+00:00"
+            "time": "2020-06-03T21:16:32+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -3879,6 +3879,12 @@
                 "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git",
                 "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0"
             },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CircleLinkHealth/laravel-module-installer/zipball/5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0",
+                "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0",
+                "shasum": ""
+            },
             "require": {
                 "composer-plugin-api": "^1.1",
                 "php": "^5.4|7.*"
@@ -3900,6 +3906,9 @@
             "license": [
                 "MIT"
             ],
+            "support": {
+                "source": "https://github.com/CircleLinkHealth/laravel-module-installer/tree/v0.1.5"
+            },
             "time": "2020-01-16T16:56:46+00:00"
         },
         {
