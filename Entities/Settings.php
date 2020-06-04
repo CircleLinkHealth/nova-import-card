@@ -94,6 +94,7 @@ class Settings extends \CircleLinkHealth\Core\Entities\BaseModel
         'efax_pdf_careplan',
         'efax_pdf_notes',
         'efax_audit_reports',
+        'batch_efax_audit_reports',
         'efax_awv_reports',
         'note_font_size',
 
