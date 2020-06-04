@@ -554,7 +554,7 @@ class NotesController extends Controller
         if (isset($input['bypassed_bhi_validation'])) {
             sendPatientBhiUnattestedWarning($patientId);
         }
-    
+
         if (isset($input['bypassed_all_validation'])) {
             sendPatientBypassedAttestationWarning($patientId);
         }

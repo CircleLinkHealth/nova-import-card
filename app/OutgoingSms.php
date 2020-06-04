@@ -21,6 +21,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\OutgoingSms newQuery()
  * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\OutgoingSms query()
  * @mixin \Eloquent
+ * @property string $status
+ * @property string $status_details
+ * @property string $sid
+ * @property string $account_sid
  */
 class OutgoingSms extends Model
 {
