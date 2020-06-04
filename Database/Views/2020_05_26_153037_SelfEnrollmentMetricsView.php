@@ -51,17 +51,17 @@ class SelfEnrollmentMetricsView extends BaseSqlView
        WHEN b.type LIKE '%{$needle}%' AND SUBSTRING_INDEX(b.type, ':', '-1') = '$manualInvite'
        THEN '$green'
        END as button_color,
-       COUNT(i.batch_id) as total_invites_sent,
-       SUM(case when i.manually_expired = 1 then 1 else 0 end) as total_invites_opened,
-       CONCAT(ROUND(SUM(case when i.manually_expired = 1 then 1 else 0 end) * 100.0 / COUNT(i.batch_id), 1), '%') as percentage_invites_opened,
+       COUNT(DISTINCT i.id) as total_invites_sent,
+       COUNT(DISTINCT i.manually_expired = true) as total_invites_opened,
+       CONCAT(ROUND(COUNT(DISTINCT i.manually_expired = true) * 100.0 / COUNT(DISTINCT i.id), 0), '%') as percentage_invites_opened,
        COUNT(DISTINCT l.user_id) as total_saw_letter,
-       CONCAT(IFNULL(ROUND((COUNT(DISTINCT l.user_id) * 100) / SUM(case when i.manually_expired = 1 then 1 else 0 end)), 0), '%') as percentage_saw_letter,
-       SUM(case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end) as total_saw_form,
-       CONCAT(IFNULL(ROUND((SUM(case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end) * 100) / COUNT(DISTINCT l.user_id)), 0), '%') as percentage_saw_form,
-       IFNULL(SUM(case when e.status = '$enrolled' AND us.status = 'completed' then 1 else 0 end), 0) as total_enrolled,
-       CONCAT(IFNULL(ROUND((SUM(case when e.status = '$enrolled' AND us.status = 'completed' then 1 else 0 end) * 100) / SUM(case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end)),0), '%') as percentage_enrolled,
-       SUM(case when e.status = '$toCall' AND erf.enrollable_id = e.id then 1 else 0 end) as total_call_requests,
-       CONCAT(IFNULL(ROUND((SUM(case when e.status = '$toCall' AND erf.enrollable_id = e.id then 1 else 0 end) * 100) / COUNT(DISTINCT l.user_id)),0), '%') as percentage_call_requests
+       CONCAT(IFNULL(ROUND((COUNT(DISTINCT l.id) * 100) / SUM(i.manually_expired = true)), 0), '%') as percentage_saw_letter,
+       COUNT(DISTINCT us.user_id) as total_saw_form,
+       CONCAT(IFNULL(ROUND((COUNT(DISTINCT case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end) * 100) / COUNT(DISTINCT l.user_id)), 0), '%') as percentage_saw_form,
+       IFNULL(SUM(DISTINCT case when e.status = '$enrolled' AND us.status = 'completed' then 1 else 0 end), 0) as total_enrolled,
+       CONCAT(IFNULL(ROUND((SUM(DISTINCT case when e.status = '$enrolled' AND us.status = 'completed' then 1 else 0 end) * 100) / COUNT(DISTINCT case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end)),0), '%') as percentage_enrolled,
+       SUM(DISTINCT case when e.status = '$toCall' AND erf.enrollable_id = e.id then 1 else 0 end) as total_call_requests,
+       CONCAT(IFNULL(ROUND((SUM(DISTINCT case when e.status = '$toCall' AND erf.enrollable_id = e.id then 1 else 0 end) * 100) / COUNT(DISTINCT l.user_id)),0), '%') as percentage_call_requests
        
        FROM
        enrollables_invitation_links i
@@ -77,7 +77,7 @@ class SelfEnrollmentMetricsView extends BaseSqlView
        p.is_demo = $showDemo
 
        GROUP BY
-       batch_id, batch_date, batch_time, practice_name, button_color
+       batch_id
        
        
         ");
