@@ -24,7 +24,9 @@ class QueueSendAuditReports extends Command
      *
      * @var string
      */
-    protected $signature = 'send:audit-reports {practiceId?} {month?}';
+    protected $signature = 'send:audit-reports {practiceId?} {month?} {limit?} {--dry}';
+
+    private static $dispatched = 0;
 
     /**
      * Create a new command instance.
@@ -68,13 +70,19 @@ class QueueSendAuditReports extends Command
                     ->where('month_year', $date->toDateString());
             })
             ->chunkById(100, function ($patients) use ($date) {
-                $delay = 2;
-
                 foreach ($patients as $patient) {
                     $this->warn("Creating audit report for $patient->id");
-                    MakeAndDispatchAuditReports::dispatch($patient, $date)
-                        ->onQueue('high')->delay(now()->addSeconds($delay));
-                    ++$delay;
+
+                    if ( ! $this->option('dry')) {
+                        MakeAndDispatchAuditReports::dispatch($patient, $date, true, (bool) $patient->primaryPractice->cpmSettings()->batch_efax_audit_reports)
+                            ->onQueue('high');
+                    }
+
+                    if ( ! is_null($this->argument('limit')) && ++self::$dispatched >= (int) $this->argument('limit')) {
+                        $this->warn('Existing after dispatching '.self::$dispatched.' jobs.');
+
+                        return false;
+                    }
                 }
             });
 
