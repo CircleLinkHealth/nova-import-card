@@ -96,7 +96,7 @@
 
 <script>
 
-    import Twilio from 'twilio-client';
+    import {Device} from 'twilio-client';
 
     import PatientToEnroll from './patient-to-enroll';
 
@@ -375,7 +375,7 @@
                 this.$http.get(url)
                     .then(response => {
                         this.log = 'Initializing';
-                        this.device = new Twilio.Device(response.data.token, {
+                        this.device = new Device(response.data.token, {
                             closeProtection: true
                         });
 

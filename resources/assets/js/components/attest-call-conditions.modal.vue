@@ -285,7 +285,6 @@
                 if (!this.attestationRequirements || this.attestationRequirements.disabled) {
                     return true;
                 }
-                let self = this;
                 let ccmError;
                 let bhiError;
                 //if ccm 2
