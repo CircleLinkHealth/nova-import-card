@@ -13,7 +13,10 @@
                     <span style="color: red"><i class="fas fa-exclamation-circle"></i>&nbsp{{error}}</span>
                     <br>
                     <div v-if="showBhiLink">
-                        <span style="color: red">If you did not discuss a BHI condition click <a v-bind:class="{'disabled': !twoCcmConditionsAttested}" href="javascript:" @click.prevent="submitForm('true')"><strong><u>here</u></strong></a></span>
+                        <span style="color: red">If you did not discuss a BHI condition click <a v-bind:class="{'disabled': !twoCcmConditionsAttested}" href="javascript:" @click.prevent="submitFormBypassingBhiValidation"><strong><u>here</u></strong></a></span>
+                    </div>
+                    <div v-if="isNotesPage" style="margin-top: 10px">
+                        <span class="bypass-attestation-validation">If the attestation box isn’t working properly, please click <a href="javascript:" @click.prevent="submitFormBypassingAllValidation"><strong><u>here</u></strong></a> to submit note.</span>
                     </div>
                 </div>
                 <div>
@@ -199,20 +202,27 @@
                 this.error = null;
                 this.$refs['attest-call-conditions-modal'].visible = false;
             },
-            submitForm(bypassBhiValidation = null) {
+            submitForm(bypassValidationType = null) {
 
-                if (this.isNotesPage) {
-                    //validate and set error messages if you should
-                    if (!this.validateAttestedConditions(bypassBhiValidation)) {
+                let bypassAllValidation = bypassValidationType === 'all' && this.isNotesPage;
+
+                //nurse user has encountered a bug that is blocking them from submitting note. Bypass all validation, submit note, and send slack warning
+                //CPM-2440
+                if (!bypassAllValidation){
+                    if (this.isNotesPage) {
+                        //validate and set error messages if you should
+                        if (!this.validateAttestedConditions(bypassValidationType === 'bhi')) {
+                            return;
+                        }
+                    }
+
+                    //default - still run even if custom requirements get passed in. There's no scenario in which we would allow no problem to be attested on a call.
+                    if (this.attestedProblems.length == 0) {
+                        this.error = "Please select at least one condition."
                         return;
                     }
                 }
 
-                //default - still run even if custom requirements get passed in. There's no scenario in which we would allow no problem to be attested on a call.
-                if (this.attestedProblems.length == 0) {
-                    this.error = "Please select at least one condition."
-                    return;
-                }
 
                 if (this.addCondition) {
                     this.error = "It looks like you are still trying to enter a condition manually. Please press 'Add Condition' when you are finished, or 'Close Other Condition Section' if you are not adding a condition manually."
@@ -225,8 +235,15 @@
                     attested_problems: this.attestedProblems,
                     patient_id: this.patient_id,
                     is_bhi: this.isBhi,
-                    bypassed_bhi_validation: this.getBhiAttestedConditionsCount() === 0 && !!bypassBhiValidation
+                    bypassed_bhi_validation: this.getBhiAttestedConditionsCount() === 0 && bypassValidationType === 'bhi',
+                    bypassed_all_validation: bypassAllValidation
                 });
+            },
+            submitFormBypassingBhiValidation(){
+                this.submitForm('bhi');
+            },
+            submitFormBypassingAllValidation(){
+                this.submitForm('all');
             },
             toggleAddCondition() {
                 this.addCondition = !this.addCondition;
@@ -413,6 +430,12 @@
     }
     a.disabled {
         cursor: not-allowed;
+    }
+
+    .bypass-attestation-validation{
+        color: grey;
+        font-size: medium;
+        font-style: italic;
     }
 
 </style>

@@ -1664,6 +1664,21 @@ if ( ! function_exists('sendPatientBhiUnattestedWarning')) {
         );
     }
 }
+if ( ! function_exists('sendPatientBypassedAttestationWarning')) {
+    /**
+     * @param $patientId
+     */
+    function sendPatientBypassedAttestationWarning($patientId)
+    {
+        $handles    = AppConfig::pull('failed_attestation_validation_slack_watchers', '');
+        $patientUrl = route('patient.demographics.show', ['patientId' => $patientId]);
+
+        sendSlackMessage(
+            '#clinical',
+            "$handles Warning! Nurse bypassed attestation validation for patient: {$patientId} (Possible bug). Please review {$patientUrl}"
+        );
+    }
+}
 if ( ! function_exists('getDatesForRange')) {
     /**
      * @return array
