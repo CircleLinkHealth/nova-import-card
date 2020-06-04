@@ -30,7 +30,7 @@
                             {{addConditionLabel}}
                         </button>
                         <div v-if="addCondition" style="padding-top: 20px">
-                            <add-condition :cpm-problems="cpmProblems" :patient-id="patient_id"
+                            <add-condition :is-notes-page="isNotesPage" :cpm-problems="cpmProblems" :patient-id="patient_id"
                                            :problems="problems" :code-is-required="true"
                                            :is-approve-billable-page="!isNotesPage"
                                            :patient-has-bhi="patientHasBhi"

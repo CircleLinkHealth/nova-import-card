@@ -84,6 +84,7 @@
             'cpmProblems': Array,
             'codeIsRequired': Boolean,
             'isApproveBillablePage': Boolean,
+            'isNotesPage': Boolean,
             'patientHasBhi': Boolean,
             'isBhi': Boolean
         },
@@ -154,10 +155,6 @@
                     .distinct(p => p.name)
                     .sort((a, b) => (+b.is_snomed) - (+a.is_snomed) || b.name.localeCompare(a.name));
             },
-            isNotesPage() {
-                //if patient id prop has been passed in, then this is for the notes pages, else, approve billable patients page
-                return !!this.patientId
-            }
         },
         methods: {
             addCcdProblem(e) {
