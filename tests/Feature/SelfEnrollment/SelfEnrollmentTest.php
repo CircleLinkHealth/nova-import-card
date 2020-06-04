@@ -10,7 +10,6 @@ use App\EnrollmentInvitationsBatch;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Jobs\LogSuccessfulLoginToDB;
 use App\LoginLogout;
-use App\Notifications\Channels\CustomTwilioChannel;
 use App\SelfEnrollment\Constants;
 use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use App\SelfEnrollment\Domain\RemindEnrollees;
@@ -145,7 +144,7 @@ class SelfEnrollmentTest extends TestCase
             $number,
             $this->practice()->id,
             $color = SelfEnrollmentController::RED_BUTTON_COLOR,
-            ['mail', CustomTwilioChannel::class]
+            ['mail', 'twilio']
         );
 
         Queue::assertPushed(SendInvitation::class, function (SendInvitation $job) use ($color) {
@@ -169,7 +168,7 @@ class SelfEnrollmentTest extends TestCase
             $number,
             $this->practice()->id,
             SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
-            ['mail', CustomTwilioChannel::class]
+            ['mail', 'twilio']
         );
         Notification::assertTimesSent($number, SelfEnrollmentInviteNotification::class);
     }
@@ -182,7 +181,7 @@ class SelfEnrollmentTest extends TestCase
             $number,
             $this->practice()->id,
             SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
-            [CustomTwilioChannel::class]
+            ['twilio']
         );
         Twilio::assertNumberOfMessagesSent($number);
     }

@@ -7,7 +7,6 @@
 namespace App\SelfEnrollment\Jobs;
 
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
-use App\Notifications\Channels\CustomTwilioChannel;
 use App\SelfEnrollment\Helpers;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use CircleLinkHealth\Customer\Entities\User;
@@ -24,6 +23,7 @@ class SendInvitation implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
     /**
      * @var array|string[]
      */
@@ -66,7 +66,7 @@ class SendInvitation implements ShouldQueue
         int $invitationsBatchId,
         ?string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
         bool $isReminder = false,
-        array $channels = ['mail', CustomTwilioChannel::class]
+        array $channels = ['mail', 'twilio']
     ) {
         $this->user               = $user;
         $this->invitationsBatchId = $invitationsBatchId;
