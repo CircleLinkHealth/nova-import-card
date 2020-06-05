@@ -27,7 +27,7 @@ class AutoApproveValidCarePlansAs extends Command
      *
      * @var string
      */
-    protected $signature = 'careplans:approve-as {userId?} {--dry} {--reimport} {--reimport:clear} {--reimport:without-transaction}';
+    protected $signature = 'careplans:approve-as {userId?} {--dry} {--reimport} {--reimport:clear} {--reimport:without-transaction} {--only-consented-enrollees}';
     /**
      * @var Collection|null
      */
@@ -51,15 +51,21 @@ class AutoApproveValidCarePlansAs extends Command
             $this->warn('DRY RUN. CarePlans will not actually be approved.');
         }
 
-        $approver->patientsPendingCLHApproval()->chunkById(50, function ($patients) use ($approver) {
-            $patients->each(function (User $patient) use ($approver) {
-                $this->process($patient, $approver);
+        if ( ! $this->option('only-consented-enrollees')) {
+            $approver->patientsPendingCLHApproval()->chunkById(50, function ($patients) use ($approver) {
+                $patients->each(function (User $patient) use ($approver) {
+                    $this->process($patient, $approver);
+                });
             });
-        });
+        }
 
         $this->consentedEnrollees()->chunkById(50, function ($patients) use ($approver) {
             $patients->each(function (Enrollee $enrollee) use ($approver) {
-                $this->process($enrollee->user, $approver);
+                $needsQA = $this->process($enrollee->user, $approver);
+                if ( ! $this->option('dry') && ! $needsQA) {
+                    $enrollee->status = Enrollee::ENROLLED;
+                    $enrollee->save();
+                }
             });
         });
 
@@ -92,12 +98,22 @@ class AutoApproveValidCarePlansAs extends Command
         $this->logs->push($array);
     }
 
-    private function process(User $patient, User $approver)
+    /**
+     * Processes auto QA approval for patient. Returns true if the CarePlan needs QA.
+     *
+     * @throws \Exception
+     */
+    private function process(User $patient, User $approver): bool
     {
         $this->warn('processing user:'.$patient->id);
-        $needsQA = $patient->carePlan->validator()->fails();
+        $needsQA = true;
+
+        if ( ! is_null($patient->carePlan)) {
+            $needsQA = $patient->carePlan->validator()->fails();
+        }
 
         if ($needsQA && $this->option('reimport')) {
+            $this->warn('reimporting user:'.$patient->id);
             $this->reimport($patient->id, $approver->id);
             $needsQA = $patient->carePlan->validator()->fails();
         }
@@ -117,6 +133,8 @@ class AutoApproveValidCarePlansAs extends Command
                 $patient->carePlan->save();
             }
         }
+
+        return (bool) $needsQA;
     }
 
     private function reimport(int $patientUserId, int $approverUserId)

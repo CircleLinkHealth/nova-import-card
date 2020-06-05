@@ -9,6 +9,7 @@ namespace App\Nova;
 use App\Constants;
 use App\Nova\Actions\ImportEnrolees;
 use App\Nova\Actions\ImportEnrollee;
+use App\Nova\Actions\SelfEnrollmentManualInvite;
 use App\Nova\Filters\EnrolleeStatus;
 use App\Nova\Filters\PatientAutoEnrollmentStatus;
 use App\Nova\Filters\PracticeFilter;
@@ -21,7 +22,7 @@ use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 
-class EnroleeData extends Resource
+class Enrollees extends Resource
 {
     /**
      * The logical group associated with the resource.
@@ -72,6 +73,7 @@ class EnroleeData extends Resource
         return [
             new ImportEnrollee(),
             new ImportEnrolees(),
+            new SelfEnrollmentManualInvite()
             //try to implement in a future date - coordinate with Zak
             //            new MarkEnrolleesForAutoEnrollment(),
         ];
@@ -183,7 +185,7 @@ class EnroleeData extends Resource
      */
     public static function label()
     {
-        return 'All Eligible Patients';
+        return 'Enrollees';
     }
 
     /**
