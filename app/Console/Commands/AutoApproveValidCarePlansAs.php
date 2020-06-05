@@ -51,7 +51,7 @@ class AutoApproveValidCarePlansAs extends Command
             $this->warn('DRY RUN. CarePlans will not actually be approved.');
         }
 
-        $approver-> patientsPendingCLHApproval()->chunkById(50, function ($patients) use ($approver) {
+        $approver->patientsPendingCLHApproval()->chunkById(50, function ($patients) use ($approver) {
             $patients->each(function (User $patient) use ($approver) {
                 $this->process($patient, $approver);
             });

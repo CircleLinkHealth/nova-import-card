@@ -41,54 +41,21 @@ fi
 
 printf '%s\n' "${STAGED_FILES}"
 
-args="--verbose --show-progress=dots --diff --path-mode=override"
+args="--show-progress=dots --path-mode=override"
 PHP_ERRORS_FOUND=false
 error_message=""
 
 # Run the command on each file
 for FILE in "${STAGED_FILES[@]}"
 do
-    echo "checking ${FILE}"
-
     if [[ ${FILE} == *"resources/views/"* ]]; then
-        echo "php view file"
-
         echo "$exec_command fix $PATH --config=.php_cs_views.php $args"
-
         ${exec_command} fix ${FILE} --config=.php_cs_views.php ${args}
-
-        if [[ "$?" == 0 ]]; then
-            echo "\t\033[32mPHPCS Passed: $FILE\033[0m"
-          else
-            echo "\t\033[41mPHPCS Failed: $FILE\033[0m"
-            PHP_ERRORS_FOUND=true
-            git add ${FILE}
-        fi
-    elif [[ ${FILE} == *".php"* ]]; then
-        echo "php file"
-        echo "$exec_command fix $PATH --config=.php_cs.dist $args"
-
-        ${exec_command} fix ${FILE} --config=.php_cs.dist ${args}
-
-        if [[ "$?" == 0 ]]; then
-                    echo "\t\033[32mPHPCS Passed: $FILE\033[0m"
-        else
-                    echo "\t\033[41mPHPCS Failed: $FILE\033[0m"
-                    git add ${FILE}
-                    PHP_ERRORS_FOUND=true
-        fi
-    else
-        echo "non-php file"
-    fi
-
-    if [ $? -ne 0 ]; then
-        echo "errors"
-        error_message+="  - ${txtred}${FILE}${txtrst}\n"
-        PHP_ERRORS_FOUND=true
-     elif [[ $add_file_again == 1 ]]; then
-        echo "re-adding $FILE"
         git add ${FILE}
-        echo "😍"
+    elif [[ ${FILE} == *".php"* ]]; then
+        echo "$exec_command fix $PATH --config=.php_cs.dist $args"
+        ${exec_command} fix ${FILE} --config=.php_cs.dist ${args}
+        git add ${FILE}
     fi
 done;
 
