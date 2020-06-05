@@ -142,7 +142,9 @@ class CcdaImporterWrapper
             return $this;
         }
 
-        $this->ccda->loadMissing(['billingProvider', 'targetPatient']);
+        $this->ccda->loadMissing(['billingProvider', 'targetPatient', 'directMessage.senderDmAddress' => function ($q) {
+            $q->whereIn('emrDirectable_type', [User::class, \App\User::class])->with('users');
+        }]);
 
         //We assume Athena API has the most up-to-date and reliable date
         //so we look there first
@@ -153,6 +155,10 @@ class CcdaImporterWrapper
         //Second most reliable place is ccdas.referring_provider_name.
         if ( ! $provider && $term = $this->ccda->getReferringProviderName()) {
             $provider = self::searchBillingProvider($term, $this->ccda->practice_id);
+        }
+
+        if ( ! $provider && $this->ccda->directMessage && $this->ccda->directMessage->senderDmAddress && $this->ccda->directMessage->senderDmAddress->users) {
+            $provider = $this->ccda->directMessage->senderDmAddress->users->first() ?? null;
         }
 
         if ($provider instanceof User) {
