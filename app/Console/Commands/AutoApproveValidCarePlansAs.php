@@ -6,9 +6,10 @@
 
 namespace App\Console\Commands;
 
-use App\User;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
@@ -39,42 +40,26 @@ class AutoApproveValidCarePlansAs extends Command
      */
     public function handle()
     {
-        /** @var User $user */
-        $user = User::ofType('administrator')->findOrFail($this->argument('userId') ?? CarePlanAutoApprover::id());
+        /** @var User $approver */
+        $approver = User::ofType('administrator')->findOrFail($this->argument('userId') ?? CarePlanAutoApprover::id());
 
-        if ( ! $user->canQAApproveCarePlans()) {
-            $this->error($user->id.' is not authorized to approve CarePlans');
+        if ( ! $approver->canQAApproveCarePlans()) {
+            $this->error($approver->id.' is not authorized to approve CarePlans');
         }
 
         if ($this->option('dry')) {
             $this->warn('DRY RUN. CarePlans will not actually be approved.');
         }
 
-        $user->patientsPendingCLHApproval()->chunkById(50, function ($patients) use ($user) {
-            $patients->each(function (User $patient) use ($user) {
-                $this->warn('processing user:'.$patient->id);
-                $needsQA = $patient->carePlan->validator()->fails();
+//        $approver->patientsPendingCLHApproval()->chunkById(50, function ($patients) use ($approver) {
+//            $patients->each(function (User $patient) use ($approver) {
+//                $this->process($patient, $approver);
+//            });
+//        });
 
-                if ($needsQA && $this->option('reimport')) {
-                    $this->reimport($patient->id, $user->id);
-                    $needsQA = $patient->carePlan->validator()->fails();
-                }
-
-                $this->log([
-                    'link'            => route('patient.careplan.print', [$patient->id]),
-                    'patient_user_id' => $patient->id,
-                    'needs_qa'        => $needsQA,
-                ]);
-
-                if ( ! $needsQA) {
-                    $patient->carePlan->status = CarePlan::QA_APPROVED;
-                    $patient->carePlan->qa_approver_id = $user->id;
-                    $patient->carePlan->qa_date = now()->toDateTimeString();
-
-                    if ( ! $this->option('dry')) {
-                        $patient->carePlan->save();
-                    }
-                }
+        $this->consentedEnrollees()->chunkById(50, function ($patients) use ($approver) {
+            $patients->each(function (Enrollee $enrollee) use ($approver) {
+                $this->process($enrollee->user, $approver);
             });
         });
 
@@ -83,6 +68,13 @@ class AutoApproveValidCarePlansAs extends Command
         }
 
         $this->line('All done.');
+    }
+
+    private function consentedEnrollees()
+    {
+        return Enrollee::where('status', Enrollee::CONSENTED)->whereHas('practice', function ($q) {
+            $q->activeBillable();
+        })->has('user')->with('user');
     }
 
     private function log(array $array)
@@ -98,6 +90,33 @@ class AutoApproveValidCarePlansAs extends Command
         }
 
         $this->logs->push($array);
+    }
+
+    private function process(User $patient, User $approver)
+    {
+        $this->warn('processing user:'.$patient->id);
+        $needsQA = $patient->carePlan->validator()->fails();
+
+        if ($needsQA && $this->option('reimport')) {
+            $this->reimport($patient->id, $approver->id);
+            $needsQA = $patient->carePlan->validator()->fails();
+        }
+
+        $this->log([
+            'link'            => route('patient.careplan.print', [$patient->id]),
+            'patient_user_id' => $patient->id,
+            'needs_qa'        => $needsQA,
+        ]);
+
+        if ( ! $needsQA) {
+            $patient->carePlan->status         = CarePlan::QA_APPROVED;
+            $patient->carePlan->qa_approver_id = $approver->id;
+            $patient->carePlan->qa_date        = now()->toDateTimeString();
+
+            if ( ! $this->option('dry')) {
+                $patient->carePlan->save();
+            }
+        }
     }
 
     private function reimport(int $patientUserId, int $approverUserId)
