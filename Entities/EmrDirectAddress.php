@@ -44,4 +44,12 @@ class EmrDirectAddress extends \CircleLinkHealth\Core\Entities\BaseModel
     {
         return $this->morphTo();
     }
+    
+    /**
+     * Get all of the owning contactCardable models.
+     */
+    public function users()
+    {
+        return $this->morphedByMany(User::class, 'emrDirectable', 'emr_direct_addresses', 'id');
+    }
 }
