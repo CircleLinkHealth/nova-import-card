@@ -67,7 +67,7 @@ class AutoApproveValidCarePlansAs extends Command
             $this->table(array_keys($this->logs->first()), $this->logs->all());
         }
 
-        $this->line('All done.');
+        $this->line('Command done done.');
     }
 
     private function consentedEnrollees()
