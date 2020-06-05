@@ -254,7 +254,7 @@ class CcdaImporter
             ->updatePatientUserPostImport()
             ->raiseConcernsOrAutoQAApprove();
 
-        event(new PatientUserCreated($this->patient));
+        event(new PatientUserCreated($this->ccda->patient));
     }
 
     /**
