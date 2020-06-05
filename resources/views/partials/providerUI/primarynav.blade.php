@@ -19,9 +19,9 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
 if ($userIsCareCoach) {
     $scheduleIconClass = $user->nurseInfo->currentWeekWindows()->exists()
         ? 'top-nav-item-icon glyphicon glyphicon-calendar'
-        : "fa fa-exclamation";
+        : 'fa fa-exclamation';
 
-    $iClassStyle = "fa fa-exclamation" === $scheduleIconClass
+    $iClassStyle = 'fa fa-exclamation' === $scheduleIconClass
           ? 'color: background: rgb(255, 255, 255);
     font-size: 12px;
     background: rgb(238, 66, 20);
@@ -32,7 +32,6 @@ if ($userIsCareCoach) {
     margin-right: 5px;
     text-align: center;
     width: 1.6em;'
-
 
           : '';
 }
@@ -230,7 +229,7 @@ if ($userIsCareCoach) {
                             <li>
                                 <a href="{{ route('care.center.work.schedule.index') }}"
                                    class="text-white"
-                                   title="Please enter your schedule.">
+                                   title="Schedule has 0 hours for current week. Please enter your schedule.">
                                         <i class="{{$scheduleIconClass}}" style="{{$iClassStyle}}"></i>
                                     Schedule</a>
 
