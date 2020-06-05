@@ -208,6 +208,7 @@ class CcdaImporter
      * Outlines the procedure of creating a Care Plan from a CCDA.
      *
      * @throws \Exception
+     *
      * @return Ccda
      */
     private function importCcda()
@@ -401,7 +402,7 @@ class CcdaImporter
             return $this;
         }
 
-        $validator               = $this->ccda->patient->carePlan->validator();
+        $validator                     = $this->ccda->patient->carePlan->validator();
         $this->ccda->validation_checks = null;
         if ($validator->fails()) {
             $this->ccda->validation_checks = $validator->errors();
@@ -520,11 +521,11 @@ class CcdaImporter
         $this->enrollee->user_id             = $this->ccda->patient_id;
         $this->enrollee->provider_id         = $this->ccda->billing_provider_id;
         $this->enrollee->location_id         = $this->ccda->location_id;
-        $this->enrollee->status     = Enrollee::ENROLLED;
+        $this->enrollee->status              = Enrollee::ENROLLED;
         if ($this->enrollee->isDirty()) {
             $this->enrollee->save();
         }
-  
+
         return $this;
     }
 
