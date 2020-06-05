@@ -1,4 +1,5 @@
 #!/bin/bash
+
 ################################################################################
 #
 # Bash PHP Coding Standards Fixer
@@ -23,7 +24,29 @@ title="PHP Code Fixer"
 # Possible command names of this tool
 local_command="php-cs-fixer.phar"
 vendor_command="vendor/bin/php-cs-fixer"
-global_command="php-cs-fixer"
+global_command="../../"$vendor_command
+
+BLADE_FILES_CONFIG=".php_cs_views.php"
+
+if [[ ! -f "$BLADE_FILES_CONFIG" ]]; then
+    BLADE_FILES_CONFIG="../../.php_cs_views.php"
+fi
+
+if [[ ! -f "$BLADE_FILES_CONFIG" ]]; then
+    echo -en "\n${txtwht}${bakred} $BLADE_FILES_CONFIG not found ${txtrst}\n"
+    exit 1
+fi
+
+PHP_FILES_CONFIG=".php_cs.dist"
+
+if [[ ! -f "$PHP_FILES_CONFIG" ]]; then
+    PHP_FILES_CONFIG="../../.php_cs_views.php"
+fi
+
+if [[ ! -f "$PHP_FILES_CONFIG" ]]; then
+    echo -en "\n${txtwht}${bakred} $PHP_FILES_CONFIG not found ${txtrst}\n"
+    exit 1
+fi
 
 # Print a welcome and locate the exec for this tool
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -41,7 +64,7 @@ fi
 
 printf '%s\n' "${STAGED_FILES}"
 
-args="--show-progress=dots --path-mode=override"
+ARGS="--verbose --show-progress=dots --path-mode=override"
 PHP_ERRORS_FOUND=false
 error_message=""
 
@@ -49,12 +72,12 @@ error_message=""
 for FILE in "${STAGED_FILES[@]}"
 do
     if [[ ${FILE} == *"resources/views/"* ]]; then
-        echo "$exec_command fix $PATH --config=.php_cs_views.php $args"
-        ${exec_command} fix ${FILE} --config=.php_cs_views.php ${args}
+        echo "$exec_command fix $PATH --config=$BLADE_FILES_CONFIG $ARGS"
+        ${exec_command} fix ${FILE} --config=$BLADE_FILES_CONFIG ${ARGS}
         git add ${FILE}
     elif [[ ${FILE} == *".php"* ]]; then
-        echo "$exec_command fix $PATH --config=.php_cs.dist $args"
-        ${exec_command} fix ${FILE} --config=.php_cs.dist ${args}
+        echo "$exec_command fix $PATH --config=$PHP_FILES_CONFIG $ARGS"
+        ${exec_command} fix ${FILE} --config=$PHP_FILES_CONFIG ${ARGS}
         git add ${FILE}
     fi
 done;
