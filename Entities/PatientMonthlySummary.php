@@ -218,13 +218,12 @@ class PatientMonthlySummary extends BaseModel
 
             $practiceBhiCode = $practiceCodes->where('code', ChargeableService::BHI)->first();
 
-            //Opting for this instead of "if patient has 1+ BHI problem and practice has BHI, attach BHI code"
-            //There have been cases of Practice having BHI code, and patient having BHI problems,
-            //But not a BHI code. Avoiding this here (for patients with no last month summaries case)
-            //so that we can nurses being wrongly blocked on attestation
-            //If patient does have BHI 20 mins and BHI problems it will get automatically attahed by job using PMS->autoAttestConditionsIfYouShould()
+            //Attestation BHI rules have changed
+            //BHI attestation is no longer required so we can be loose with attaching to patient.
+            //also bhi attestation validation depends on bhi time, so we can consider it as a factor for attaching CS
             $patientOnlyHasBhiProblems = $patientProblems->where('cpmProblem.is_behavioral', true)->count() === $patientProblems->count();
-            if ($patientOnlyHasBhiProblems && $practiceBhiCode) {
+            $pmsHasBhiTime             = $this->bhi_time > 0;
+            if (($pmsHasBhiTime || $patientOnlyHasBhiProblems) && $practiceBhiCode) {
                 $this->chargeableServices()->attach($practiceBhiCode->id, ['is_fulfilled' => false]);
             } else {
                 $practiceCcmCode = $practiceCodes->where('code', ChargeableService::CCM)->first();
