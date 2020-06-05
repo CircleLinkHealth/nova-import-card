@@ -8,7 +8,6 @@ namespace App\SelfEnrollment\Notifications;
 
 use App\Jobs\NotificationStatusUpdateJob;
 use App\Notifications\Channels\AutoEnrollmentMailChannel;
-use App\Notifications\Channels\CustomTwilioChannel;
 use App\Traits\EnrollableNotificationContent;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Customer\Entities\User;
@@ -25,6 +24,7 @@ class SelfEnrollmentInviteNotification extends Notification
 {
     use EnrollableNotificationContent;
     use Queueable;
+
     /**
      * @var array|string[]
      */
@@ -42,7 +42,7 @@ class SelfEnrollmentInviteNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(string $url, bool $isReminder = false, array $channels = ['mail', CustomTwilioChannel::class])
+    public function __construct(string $url, bool $isReminder = false, array $channels = ['mail', 'twilio'])
     {
         $this->isReminder = $isReminder;
         $this->url        = $url;
@@ -56,9 +56,6 @@ class SelfEnrollmentInviteNotification extends Notification
     public function failed(NotificationFailed $event)
     {
         $channel = $event->channel;
-        if ('twilio' === $event->channel || CustomTwilioChannel::class === $event->channel) {
-            $channel = 'twilio';
-        }
 
         NotificationStatusUpdateJob::dispatch(
             $event->notification->id,
@@ -97,9 +94,6 @@ class SelfEnrollmentInviteNotification extends Notification
         ];
 
         $channel = $event->channel;
-        if ('twilio' === $event->channel || CustomTwilioChannel::class === $event->channel) {
-            $channel = 'twilio';
-        }
 
         if ($event->response && 'twilio' === $channel) {
             if ($event->response->sid) {
