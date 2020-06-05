@@ -6,6 +6,7 @@
 
 namespace App;
 
+use CircleLinkHealth\Customer\Entities\EmrDirectAddress;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
@@ -76,5 +77,10 @@ class DirectMailMessage extends Model implements HasMedia
     public function ccdas()
     {
         return $this->hasMany(Ccda::class);
+    }
+
+    public function senderDmAddress()
+    {
+        return $this->belongsTo(EmrDirectAddress::class, 'from', 'address');
     }
 }
