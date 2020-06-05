@@ -59,7 +59,11 @@ class AutoApproveValidCarePlansAs extends Command
 
         $this->consentedEnrollees()->chunkById(50, function ($patients) use ($approver) {
             $patients->each(function (Enrollee $enrollee) use ($approver) {
-                $this->process($enrollee->user, $approver);
+                $needsQA = $this->process($enrollee->user, $approver);
+                if ( ! $needsQA) {
+                    $enrollee->status = Enrollee::ENROLLED;
+                    $enrollee->save();
+                }
             });
         });
 
@@ -92,12 +96,18 @@ class AutoApproveValidCarePlansAs extends Command
         $this->logs->push($array);
     }
 
-    private function process(User $patient, User $approver)
+    /**
+     * Processes auto QA approval for patient. Returns true if the CarePlan needs QA.
+     *
+     * @throws \Exception
+     */
+    private function process(User $patient, User $approver): bool
     {
         $this->warn('processing user:'.$patient->id);
         $needsQA = $patient->carePlan->validator()->fails();
 
         if ($needsQA && $this->option('reimport')) {
+            $this->warn('reimporting user:'.$patient->id);
             $this->reimport($patient->id, $approver->id);
             $needsQA = $patient->carePlan->validator()->fails();
         }
@@ -117,6 +127,8 @@ class AutoApproveValidCarePlansAs extends Command
                 $patient->carePlan->save();
             }
         }
+
+        return (bool) $needsQA;
     }
 
     private function reimport(int $patientUserId, int $approverUserId)
