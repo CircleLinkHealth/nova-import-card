@@ -20,7 +20,6 @@ use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
-use Laravel\Nova\Http\Requests\NovaRequest;
 
 class EnroleeData extends Resource
 {
@@ -180,23 +179,11 @@ class EnroleeData extends Resource
     }
 
     /**
-     * Build an "index" query for the given resource.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public static function indexQuery(NovaRequest $request, $query)
-    {
-        return $query->whereNotIn('status', [Enrollee::LEGACY, Enrollee::INELIGIBLE, Enrollee::ENROLLED, Enrollee::SOFT_REJECTED, Enrollee::REJECTED]);
-    }
-
-    /**
      * @return string
      */
     public static function label()
     {
-        return 'Patients to Enroll';
+        return 'All Eligible Patients';
     }
 
     /**
