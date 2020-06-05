@@ -7,7 +7,6 @@
 namespace Tests\Feature;
 
 use App\Jobs\NotificationStatusUpdateJob;
-use App\Notifications\Channels\CustomTwilioChannel;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use Illuminate\Support\Str;
@@ -48,7 +47,7 @@ class NotificationStatusUpdateTest extends CustomerTestCase
         //id field has 36 length in db
         $id = Str::substr('test-'.Str::uuid()->toString(), 0, 36);
 
-        $notification     = new SelfEnrollmentInviteNotification('http://test?123', false, [CustomTwilioChannel::class]);
+        $notification     = new SelfEnrollmentInviteNotification('http://test?123', false, ['twilio']);
         $notification->id = $id;
         $patient->notify($notification);
 
@@ -69,7 +68,7 @@ class NotificationStatusUpdateTest extends CustomerTestCase
         //id field has 36 length in db
         $id = Str::substr('test-'.Str::uuid()->toString(), 0, 36);
 
-        $notification     = new SelfEnrollmentInviteNotification('http://test?123', false, [CustomTwilioChannel::class]);
+        $notification     = new SelfEnrollmentInviteNotification('http://test?123', false, ['twilio']);
         $notification->id = $id;
         $patient->notify($notification);
 
