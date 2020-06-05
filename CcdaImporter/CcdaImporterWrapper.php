@@ -195,7 +195,6 @@ class CcdaImporterWrapper
     }
 
     /**
-     *
      * Wraps CcdaImporter@attemptImport.
      * Performs some pre and post import steps.
      *
@@ -309,7 +308,7 @@ class CcdaImporterWrapper
             return false;
         }
 
-        if (Enrollee::ENROLLED === $enrollee->status) {
+        if (in_array($enrollee->status, [Enrollee::ENROLLED, Enrollee::CONSENTED])) {
             return false;
         }
 
