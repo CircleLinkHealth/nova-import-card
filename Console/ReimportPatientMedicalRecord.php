@@ -388,7 +388,7 @@ class ReimportPatientMedicalRecord extends Command
         }
     }
 
-    private function reimport(User $user)
+    private function reimport(User $user): bool
     {
         if ( ! $user->hasCcda()) {
             $this->attemptCreateCcdaFromMrTemplate($user);
@@ -399,9 +399,11 @@ class ReimportPatientMedicalRecord extends Command
         if ($this->attemptImportCcda($user)) {
             $this->line('Ccda imported.');
 
-            return;
+            return true;
         }
 
         $this->notifyFailure($user);
+
+        return false;
     }
 }
