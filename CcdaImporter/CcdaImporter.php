@@ -520,6 +520,7 @@ class CcdaImporter
         $this->enrollee->user_id             = $this->ccda->patient_id;
         $this->enrollee->provider_id         = $this->ccda->billing_provider_id;
         $this->enrollee->location_id         = $this->ccda->location_id;
+        $this->enrollee->status     = Enrollee::ENROLLED;
         if ($this->enrollee->isDirty()) {
             $this->enrollee->save();
         }
@@ -533,7 +534,8 @@ class CcdaImporter
         $participantRoleId = Role::whereName('participant')->firstOrFail()->id;
 
         $this->patient->roles()->sync([
-            $participantRoleId => ['program_id' => $this->patient->program_id,
+            $participantRoleId => [
+                'program_id' => $this->patient->program_id,
             ],
         ]);
 
