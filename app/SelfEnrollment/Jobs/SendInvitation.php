@@ -9,6 +9,7 @@ namespace App\SelfEnrollment\Jobs;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\SelfEnrollment\Helpers;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -142,6 +143,10 @@ class SendInvitation implements ShouldQueue
 
     private function shouldRun(): bool
     {
+        if (Patient::UNREACHABLE !== $this->user->getCcmStatus()) {
+            return false;
+        }
+
         if ( ! in_array($this->color, [
             SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
             SelfEnrollmentController::RED_BUTTON_COLOR,
