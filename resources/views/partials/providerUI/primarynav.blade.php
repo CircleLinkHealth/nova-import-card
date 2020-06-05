@@ -17,9 +17,23 @@ $patientListDropdown = getPatientListDropdown($user);
 $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
 
 if ($userIsCareCoach) {
-    $scheduleIconClass = $user->nurseInfo->currentWeekWindows()->exists() ? '' : 'fa fa-exclamation-circle';
-    $iClassStyle       = 'fa fa-exclamation-circle' === $scheduleIconClass
-          ? 'color:rgb(238, 66, 20); z-index: -1; margin-left: -15px; font-size:18px;'
+    $scheduleIconClass = $user->nurseInfo->currentWeekWindows()->exists()
+        ? 'top-nav-item-icon glyphicon glyphicon-calendar'
+        : "fa fa-exclamation";
+
+    $iClassStyle = "fa fa-exclamation" === $scheduleIconClass
+          ? 'color: background: rgb(255, 255, 255);
+    font-size: 12px;
+    background: rgb(238, 66, 20);
+    border-radius: 0.8em;
+    display: inline-block;
+    font-weight: bold;
+    line-height: 1.6em;
+    margin-right: 5px;
+    text-align: center;
+    width: 1.6em;'
+
+
           : '';
 }
 
@@ -214,8 +228,9 @@ if ($userIsCareCoach) {
                                             class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
                             </li>
                             <li>
-                                <a href="{{ route('care.center.work.schedule.index') }}" class="text-white">
-                                        <i class="top-nav-item-icon glyphicon glyphicon-calendar"></i>
+                                <a href="{{ route('care.center.work.schedule.index') }}"
+                                   class="text-white"
+                                   title="Please enter your schedule.">
                                         <i class="{{$scheduleIconClass}}" style="{{$iClassStyle}}"></i>
                                     Schedule</a>
 
