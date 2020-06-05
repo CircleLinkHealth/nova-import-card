@@ -28,6 +28,8 @@ namespace CircleLinkHealth\Customer\Entities;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress newQuery()
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress query()
  * @property int|null                                                                                    $revision_history_count
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection         $users
+ * @property int|null                                                                                    $users_count
  */
 class EmrDirectAddress extends \CircleLinkHealth\Core\Entities\BaseModel
 {
@@ -44,7 +46,7 @@ class EmrDirectAddress extends \CircleLinkHealth\Core\Entities\BaseModel
     {
         return $this->morphTo();
     }
-    
+
     /**
      * Get all of the owning contactCardable models.
      */
