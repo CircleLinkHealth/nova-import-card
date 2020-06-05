@@ -142,11 +142,6 @@ class SendInvitation implements ShouldQueue
 
     private function shouldRun(): bool
     {
-        //If an invitation exists already, it means the patient has already been invided and we do not want to invite them again
-        if ($this->user->enrollmentInvitationLinks()->exists()) {
-            return false;
-        }
-
         if ( ! in_array($this->color, [
             SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
             SelfEnrollmentController::RED_BUTTON_COLOR,
