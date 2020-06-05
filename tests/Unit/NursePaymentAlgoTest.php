@@ -63,12 +63,6 @@ class NursePaymentAlgoTest extends TestCase
     /** @var User */
     protected $provider;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        (new \ChargeableServiceSeeder())->run();
-    }
-
     /**
      * - Hourly Rate $20
      * - High Rate $29
