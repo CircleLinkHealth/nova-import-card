@@ -161,6 +161,10 @@ class CcdaImporterWrapper
             $provider = $this->ccda->directMessage->senderDmAddress->users->first() ?? null;
         }
 
+        if ( ! $provider && $this->ccda->bluebuttonJson()->document->author->name && $name = $this->ccda->bluebuttonJson()->document->author->name->given) {
+            $provider = $name[0].' '.$this->ccda->bluebuttonJson()->document->author->name->family;
+        }
+
         if ($provider instanceof User) {
             $this->setAllPracticeInfoFromProvider($provider);
         }
