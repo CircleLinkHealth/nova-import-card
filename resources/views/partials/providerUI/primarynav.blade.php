@@ -10,9 +10,19 @@ if (isset($patient)) {
 } else {
     $monthlyTime = '';
 }
+
 $user                = auth()->user();
+$userIsCareCoach     = $user->isCareCoach();
 $patientListDropdown = getPatientListDropdown($user);
 $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
+
+if ($userIsCareCoach) {
+    $scheduleIconClass = $user->nurseInfo->currentWeekWindows()->exists() ? '' : 'fa fa-exclamation-circle';
+    $iClassStyle       = 'fa fa-exclamation-circle' === $scheduleIconClass
+          ? 'color:rgb(238, 66, 20); z-index: -1; margin-left: -15px; font-size:18px;'
+          : '';
+}
+
 ?>
 @push('styles')
     <style>
@@ -83,7 +93,7 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                 <div class="collapse navbar-collapse" id="navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
                         @if(!$isTwoFaRoute)
-                            @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $user->isCareCoach() && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking)
+                            @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $userIsCareCoach && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking)
                                 <li>
                                     <time-tracker-call-mode ref="timeTrackerCallMode"
                                                             :twilio-enabled="@json(config('services.twilio.enabled') && ($patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : false))"
@@ -156,7 +166,7 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                             @endif
 
 
-                            @if(! $user->isCareCoach())
+                            @if(! $userIsCareCoach)
                                 <li>
                                     <a href="{{ route('patients.dashboard') }}" class="text-white"><i
                                                 class="top-nav-item-icon glyphicon glyphicon-home"></i>Home</a>
@@ -198,14 +208,17 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                                 @endif
                         @endif
 
-                        @if($user->isCareCoach())
+                        @if($userIsCareCoach)
                             <li>
                                 <a href="{{ route('patientCallList.index') }}" class="text-white"><i
                                             class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
                             </li>
                             <li>
-                                <a href="{{ route('care.center.work.schedule.index') }}" class="text-white"><i
-                                            class="top-nav-item-icon glyphicon glyphicon-calendar"></i>Schedule</a>
+                                <a href="{{ route('care.center.work.schedule.index') }}" class="text-white">
+                                        <i class="top-nav-item-icon glyphicon glyphicon-calendar"></i>
+                                        <i class="{{$scheduleIconClass}}" style="{{$iClassStyle}}"></i>
+                                    Schedule</a>
+
                             </li>
                         @endif
 
