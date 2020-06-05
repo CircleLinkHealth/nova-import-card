@@ -402,9 +402,9 @@ class CcdaImporter
         }
 
         $validator               = $this->ccda->patient->carePlan->validator();
-        $this->validation_checks = null;
+        $this->ccda->validation_checks = null;
         if ($validator->fails()) {
-            $this->validation_checks = $validator->errors();
+            $this->ccda->validation_checks = $validator->errors();
 
             return $this;
         }

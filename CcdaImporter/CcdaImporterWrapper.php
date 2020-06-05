@@ -195,6 +195,7 @@ class CcdaImporterWrapper
     }
 
     /**
+     *
      * Wraps CcdaImporter@attemptImport.
      * Performs some pre and post import steps.
      *
