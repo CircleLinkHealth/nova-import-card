@@ -17,7 +17,6 @@ use CircleLinkHealth\Eligibility\Notifications\PatientNotReimportedNotification;
 use CircleLinkHealth\Eligibility\Notifications\PatientReimportedNotification;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
@@ -140,7 +139,7 @@ class ReimportPatientMedicalRecord extends Command
             );
         }
 
-        if (in_array($user->primaryPractice->name, ['marillac-clinic-inc', 'calvary-medical-clinic']) && ! empty($this->getEnrollee($user)->eligibilityJob)) {
+        if (in_array($user->primaryPractice->name, ['marillac-clinic-inc', 'calvary-medical-clinic']) && ! empty($this->getEnrollee($user)) && ! empty($this->getEnrollee($user)->eligibilityJob)) {
             $this->warn(
                 "ReimportPatientMedicalRecord:user_id:{$user->id}:enrollee_id:{$this->getEnrollee($user)->id} Running 'csv-with-json' decorator:ln:".__LINE__
             );
@@ -265,6 +264,10 @@ class ReimportPatientMedicalRecord extends Command
 
     private function correctMrnIfWrong(User $user)
     {
+        if (empty($this->getEnrollee($user))) {
+            return;
+        }
+
         if (empty($user->patientInfo->mrn_number) && ! empty($this->getEnrollee($user)->mrn)) {
             \Log::debug(
                 "ReimportPatientMedicalRecord:user_id:{$user->id} Saving mrn from enrollee_id:{$this->getEnrollee($user)->id}:ln:".__LINE__
@@ -394,9 +397,9 @@ class ReimportPatientMedicalRecord extends Command
             $ccda->save();
         }
 
-        try {
-            $ccda->import($this->getEnrollee($user));
-        } catch (ModelNotFoundException $e) {
+        if ($enrollee = $this->getEnrollee($user)) {
+            $ccda->import($enrollee);
+        } else {
             $ccda->import();
         }
 
