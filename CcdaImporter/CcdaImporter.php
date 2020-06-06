@@ -112,7 +112,7 @@ class CcdaImporter
 
         $demographics = $this->ccda->bluebuttonJson()->demographics;
 
-        $this->ccda->patient = (new UserRepository())->createNewUser(
+        $newPatientUser = (new UserRepository())->createNewUser(
             new ParameterBag(
                 [
                     'email'        => $email,
@@ -144,7 +144,27 @@ class CcdaImporter
             )
         );
 
-        $this->ccda->patient_id = $this->ccda->patient->id;
+        $this->ccda->patient_id = $newPatientUser->id;
+    }
+
+    private function firstOrCreatePatient()
+    {
+        if (is_null($this->ccda->patient)) {
+            try {
+                $this->createNewPatient();
+            } catch (ValidationException $e) {
+                $this->ccda->validation_checks = $e->errors();
+                $this->ccda->save();
+
+                return $this->ccda;
+            } catch (PatientAlreadyExistsException $e) {
+                $this->ccda->patient_id = $e->getPatientUserId();
+            }
+        }
+
+        $this->ccda->loadMissing(['location', 'patient.primaryPractice', 'patient.patientInfo']);
+
+        return $this;
     }
 
     private function handleDuplicateEnrollees()
@@ -207,25 +227,9 @@ class CcdaImporter
      */
     private function importCcda()
     {
-        if (is_null($this->ccda->patient)) {
-            try {
-                $this->createNewPatient();
-            } catch (ValidationException $e) {
-                $this->ccda->validation_checks = $e->errors();
-                $this->ccda->save();
-
-                return $this->ccda;
-            } catch (PatientAlreadyExistsException $e) {
-                $this->ccda->patient_id = $e->getPatientUserId();
-                $this->ccda->load('patient');
-                $this->ccda->patient = $this->ccda->patient;
-            }
-        }
-
-        $this->ccda->patient->loadMissing(['primaryPractice', 'patientInfo']);
-        $this->ccda->loadMissing(['location', 'patient']);
-
-        $this->handleDuplicateEnrollees()
+        $this
+            ->firstOrCreatePatient()
+            ->handleDuplicateEnrollees()
             ->updateAddressesFromCareAmbassadorInput()
             ->createNewCarePlan()
             ->importAllergies()
