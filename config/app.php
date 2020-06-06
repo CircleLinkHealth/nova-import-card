@@ -6,7 +6,6 @@
 
 use App\Providers\CpmArtisanServiceProvider;
 use App\Providers\PrimaryNavComposer;
-use App\View\Composers\NurseWeeklyContactWindows;
 use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
 use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
