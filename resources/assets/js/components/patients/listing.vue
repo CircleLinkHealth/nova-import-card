@@ -380,8 +380,13 @@
                         total: pagination.meta.total
                     }
                     const patients = (pagination.data || []).map(patient => {
-                        if (((patient.careplan || {}).status || '').startsWith('{')) {
-                            (patient.careplan || {}).status = JSON.parse((patient.careplan || {}).status).status
+                        if (patient.careplan &&
+                            typeof patient.careplan.status === "string" &&
+                            patient.careplan.status.startsWith('{')) {
+                            const statusObj = JSON.parse(patient.careplan.status);
+                            if (statusObj && statusObj.status) {
+                                patient.careplan.status = statusObj.status;
+                            }
                         }
                         if (patient.patient_info) {
                             if (patient.patient_info.created_at) patient.patient_info.created_at = patient.patient_info.created_at.split('T')[0]

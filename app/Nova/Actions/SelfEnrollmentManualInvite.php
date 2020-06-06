@@ -13,7 +13,6 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
 
@@ -21,6 +20,8 @@ class SelfEnrollmentManualInvite extends Action
 {
     use InteractsWithQueue;
     use Queueable;
+
+    public $name = 'Send Self Enrollment SMS/Email';
 
     /**
      * Get the fields available on the action.
@@ -44,12 +45,6 @@ class SelfEnrollmentManualInvite extends Action
             if (is_null($enrollee->user_id)) {
                 CreateSurveyOnlyUserFromEnrollee::dispatchNow($enrollee);
                 $enrollee->fresh('user');
-            }
-
-            if ($enrollee->enrollmentInvitationLinks()->exists()) {
-                Log::info("Enrollee [$enrollee->id] has already been invited");
-
-                return;
             }
 
             $enrollee->loadMissing('user.primaryPractice');
