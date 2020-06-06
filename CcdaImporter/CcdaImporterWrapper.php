@@ -48,7 +48,6 @@ class CcdaImporterWrapper
      *
      * If there is a specific template for this practice, decorate the ccda.json.
      *
-     *
      * @return \CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord|null
      */
     public static function attemptToDecorateCcda(User $user, Ccda $ccda)
@@ -199,7 +198,9 @@ class CcdaImporterWrapper
      * Performs some pre and post import steps.
      *
      * @see CcdaImporter
+     *
      * @throws \Throwable
+     *
      * @return $this|Ccda
      */
     public function import()
@@ -227,7 +228,7 @@ class CcdaImporterWrapper
             $this->ccda = self::attemptToDecorateCcda($patient, $this->ccda);
         }
 
-        $this->ccda = with(new CcdaImporter($this->ccda, $patient, $this->enrollee))->attemptImport();
+        $this->ccda = with(new CcdaImporter($this->ccda, $this->enrollee))->attemptImport();
 
         if ($this->ccda->isDirty()) {
             $this->ccda->save();

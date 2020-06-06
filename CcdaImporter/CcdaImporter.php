@@ -53,22 +53,16 @@ class CcdaImporter
      */
     protected $enrollee;
     /**
-     * @var User
-     */
-    protected $patient;
-    /**
      * @var StringManipulation
      */
     protected $str;
 
     public function __construct(
         Ccda $ccda,
-        User $patient = null,
         Enrollee $enrollee = null
     ) {
         $this->str      = new StringManipulation();
         $this->ccda     = $ccda;
-        $this->patient  = $patient;
         $this->enrollee = $enrollee;
     }
 
@@ -93,7 +87,7 @@ class CcdaImporter
      */
     private function createNewCarePlan()
     {
-        $this->carePlan = FirstOrCreateCarePlan::for($this->patient, $this->ccda);
+        $this->carePlan = FirstOrCreateCarePlan::for($this->ccda->patient, $this->ccda);
 
         return $this;
     }
@@ -118,7 +112,7 @@ class CcdaImporter
 
         $demographics = $this->ccda->bluebuttonJson()->demographics;
 
-        $this->patient = (new UserRepository())->createNewUser(
+        $this->ccda->patient = (new UserRepository())->createNewUser(
             new ParameterBag(
                 [
                     'email'        => $email,
@@ -150,12 +144,12 @@ class CcdaImporter
             )
         );
 
-        $this->ccda->patient_id = $this->patient->id;
+        $this->ccda->patient_id = $this->ccda->patient->id;
     }
 
     private function handleDuplicateEnrollees()
     {
-        $enrollee = Enrollee::duplicates($this->patient, $this->ccda)->when(
+        $enrollee = Enrollee::duplicates($this->ccda->patient, $this->ccda)->when(
             $this->enrollee instanceof Enrollee,
             function ($q) {
                 $q->where('id', '!=', $this->enrollee->id);
@@ -165,7 +159,7 @@ class CcdaImporter
         if ($enrollee) {
             $this->throwExceptionIfSuspicious($enrollee);
             $this->enrollee                    = $enrollee;
-            $this->enrollee->user_id           = $this->patient->id;
+            $this->enrollee->user_id           = $this->ccda->patient->id;
             $this->enrollee->medical_record_id = $this->ccda->id;
         }
 
@@ -187,7 +181,7 @@ class CcdaImporter
      */
     private function importAllergies()
     {
-        ImportAllergies::for($this->patient, $this->ccda);
+        ImportAllergies::for($this->ccda->patient, $this->ccda);
 
         return $this;
     }
@@ -199,7 +193,7 @@ class CcdaImporter
      */
     private function importBillingProvider()
     {
-        AttachBillingProvider::for($this->patient, $this->ccda);
+        AttachBillingProvider::for($this->ccda->patient, $this->ccda);
 
         return $this;
     }
@@ -213,7 +207,7 @@ class CcdaImporter
      */
     private function importCcda()
     {
-        if (is_null($this->patient)) {
+        if (is_null($this->ccda->patient)) {
             try {
                 $this->createNewPatient();
             } catch (ValidationException $e) {
@@ -224,11 +218,11 @@ class CcdaImporter
             } catch (PatientAlreadyExistsException $e) {
                 $this->ccda->patient_id = $e->getPatientUserId();
                 $this->ccda->load('patient');
-                $this->patient = $this->ccda->patient;
+                $this->ccda->patient = $this->ccda->patient;
             }
         }
 
-        $this->patient->loadMissing(['primaryPractice', 'patientInfo']);
+        $this->ccda->patient->loadMissing(['primaryPractice', 'patientInfo']);
         $this->ccda->loadMissing(['location', 'patient']);
 
         $this->handleDuplicateEnrollees()
@@ -265,7 +259,7 @@ class CcdaImporter
      */
     private function importInsurance()
     {
-        ImportInsurances::for($this->patient, $this->ccda);
+        ImportInsurances::for($this->ccda->patient, $this->ccda);
 
         return $this;
     }
@@ -277,7 +271,7 @@ class CcdaImporter
      */
     private function importLocation()
     {
-        AttachLocation::for($this->patient, $this->ccda);
+        AttachLocation::for($this->ccda->patient, $this->ccda);
 
         return $this;
     }
@@ -289,7 +283,7 @@ class CcdaImporter
      */
     private function importMedications()
     {
-        ImportMedications::for($this->patient, $this->ccda);
+        ImportMedications::for($this->ccda->patient, $this->ccda);
 
         return $this;
     }
@@ -301,7 +295,7 @@ class CcdaImporter
      */
     private function importPatientContactWindows()
     {
-        AttachDefaultPatientContactWindows::for($this->patient, $this->ccda, $this->enrollee);
+        AttachDefaultPatientContactWindows::for($this->ccda->patient, $this->ccda, $this->enrollee);
 
         return $this;
     }
@@ -313,7 +307,7 @@ class CcdaImporter
      */
     private function importPatientInfo()
     {
-        ImportPatientInfo::for($this->patient, $this->ccda, $this->enrollee);
+        ImportPatientInfo::for($this->ccda->patient, $this->ccda, $this->enrollee);
 
         return $this;
     }
@@ -325,14 +319,14 @@ class CcdaImporter
      */
     private function importPhones()
     {
-        ImportPhones::for($this->patient, $this->ccda);
+        ImportPhones::for($this->ccda->patient, $this->ccda);
 
         return $this;
     }
 
     private function importPractice()
     {
-        AttachPractice::for($this->patient, $this->ccda);
+        AttachPractice::for($this->ccda->patient, $this->ccda);
 
         return $this;
     }
@@ -344,7 +338,7 @@ class CcdaImporter
      */
     private function importProblems()
     {
-        ImportProblems::for($this->patient, $this->ccda);
+        ImportProblems::for($this->ccda->patient, $this->ccda);
 
         return $this;
     }
@@ -358,7 +352,7 @@ class CcdaImporter
      */
     private function importVitals()
     {
-        ImportVitals::for($this->patient, $this->ccda);
+        ImportVitals::for($this->ccda->patient, $this->ccda);
 
         return $this;
     }
@@ -422,27 +416,27 @@ class CcdaImporter
 
     private function throwExceptionIfSuspicious(Enrollee $enrollee)
     {
-        if (strtolower($this->patient->last_name) != strtolower($enrollee->last_name)) {
+        if (strtolower($this->ccda->patient->last_name) != strtolower($enrollee->last_name)) {
             throw new \Exception("
             Something mucho fishy is going on.
             Enrollee {$enrollee->id} has user {$enrollee->user_id},
-            which does not have the same `Last Name` as user:{$this->patient->id}.");
+            which does not have the same `Last Name` as user:{$this->ccda->patient->id}.");
         }
 
-        if (strtolower($this->patient->first_name) === strtolower($enrollee->first_name)) {
+        if (strtolower($this->ccda->patient->first_name) === strtolower($enrollee->first_name)) {
             return;
         }
 
-        if ($enrollee->user_id && ($enrollee->user_id !== $this->patient->id)) {
+        if ($enrollee->user_id && ($enrollee->user_id !== $this->ccda->patient->id)) {
             throw new \Exception("
             Something no bueno is going on.
             Enrollee {$enrollee->id} has user {$enrollee->user_id},
-            and now we are trying to attach user {$this->patient->id}.
+            and now we are trying to attach user {$this->ccda->patient->id}.
             ");
         }
 
         //Both names are the same, but one includes a middle name
-        if ($this->isSameNameButOneHasMiddleInitial($this->patient->first_name, $enrollee->first_name)) {
+        if ($this->isSameNameButOneHasMiddleInitial($this->ccda->patient->first_name, $enrollee->first_name)) {
             return;
         }
 
@@ -450,7 +444,7 @@ class CcdaImporter
         Something fishy of undefined proportions is going on friend.
         You have unleashed the anger of the Gods by reaching the unreachable code block.
         Enrollee {$enrollee->id} has User {$enrollee->user_id},
-        and now we are trying to attach user {$this->patient->id}.
+        and now we are trying to attach user {$this->ccda->patient->id}.
         ");
     }
 
@@ -463,28 +457,28 @@ class CcdaImporter
             return $this;
         }
 
-        if ($this->patient->email !== $this->enrollee->email) {
-            $this->patient->email = $this->enrollee->email;
+        if ($this->ccda->patient->email !== $this->enrollee->email) {
+            $this->ccda->patient->email = $this->enrollee->email;
         }
 
-        if ($this->patient->address !== $this->enrollee->address) {
-            $this->patient->address = $this->enrollee->address;
+        if ($this->ccda->patient->address !== $this->enrollee->address) {
+            $this->ccda->patient->address = $this->enrollee->address;
         }
 
-        if ($this->patient->address2 !== $this->enrollee->address_2) {
-            $this->patient->address2 = $this->enrollee->address_2;
+        if ($this->ccda->patient->address2 !== $this->enrollee->address_2) {
+            $this->ccda->patient->address2 = $this->enrollee->address_2;
         }
 
-        if ($this->patient->state !== $this->enrollee->state) {
-            $this->patient->state = $this->enrollee->state;
+        if ($this->ccda->patient->state !== $this->enrollee->state) {
+            $this->ccda->patient->state = $this->enrollee->state;
         }
 
-        if ($this->patient->city !== $this->enrollee->city) {
-            $this->patient->city = $this->enrollee->city;
+        if ($this->ccda->patient->city !== $this->enrollee->city) {
+            $this->ccda->patient->city = $this->enrollee->city;
         }
 
-        if ($this->patient->zip !== $this->enrollee->zip) {
-            $this->patient->zip = $this->enrollee->zip;
+        if ($this->ccda->patient->zip !== $this->enrollee->zip) {
+            $this->ccda->patient->zip = $this->enrollee->zip;
         }
 
         //no need to save - these will be saved at updatePatientUserPostImport if changes did exist
@@ -496,13 +490,13 @@ class CcdaImporter
     {
         //This CarePlan is now ready to be QA'ed by a CLH Admin
         $this->ccda->imported = true;
-        if (in_array($this->patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::PROVIDER_APPROVED])) {
+        if (in_array($this->ccda->patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::PROVIDER_APPROVED])) {
             $this->ccda->status = Ccda::CAREPLAN_CREATED;
         } else {
             $this->ccda->status = Ccda::QA;
         }
         if ( ! $this->ccda->mrn) {
-            $this->ccda->mrn = $this->patient->patientInfo->mrn_number;
+            $this->ccda->mrn = $this->ccda->patient->patientInfo->mrn_number;
         }
         if ($this->ccda->isDirty()) {
             $this->ccda->save();
@@ -534,14 +528,14 @@ class CcdaImporter
         //Make sure Patient does not have survey-only role moving forward
         $participantRoleId = Role::whereName('participant')->firstOrFail()->id;
 
-        $this->patient->roles()->sync([
+        $this->ccda->patient->roles()->sync([
             $participantRoleId => [
-                'program_id' => $this->patient->program_id,
+                'program_id' => $this->ccda->patient->program_id,
             ],
         ]);
 
-        if ($this->patient->isDirty()) {
-            $this->patient->save();
+        if ($this->ccda->patient->isDirty()) {
+            $this->ccda->patient->save();
         }
 
         return $this;
