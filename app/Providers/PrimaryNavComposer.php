@@ -21,15 +21,17 @@ class PrimaryNavComposer extends ServiceProvider
     {
         View::composer(['partials.providerUI.primarynav'], function ($view) {
             $user = auth()->user();
-            $viewParams = Cache::remember('view_params', 10, function () use ($user) {
-                return [
-                    'hasCurrentWeekWindows' => $user->nurseInfo->currentWeekWindows()->exists(),
-                    'userIsCareCoach'       => $user->isCareCoach(),
-                ];
-            });
+            $userIsCareCoach = $user->isCareCoach();
+            $scheduleIconClass = '';
+            $iClassStyle = '';
 
-            $userIsCareCoach = $viewParams['userIsCareCoach'];
             if ($userIsCareCoach) {
+                $viewParams = Cache::remember('view_params', 10, function () use ($user) {
+                    return [
+                        'hasCurrentWeekWindows' => $user->nurseInfo->currentWeekWindows()->exists(),
+                    ];
+                });
+
                 $scheduleIconClass = $viewParams['hasCurrentWeekWindows']
                     ? 'top-nav-item-icon glyphicon glyphicon-calendar'
                     : 'fa fa-exclamation';
