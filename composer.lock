@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6efe1ea46fea458a1d16bd2df21a6759",
+    "content-hash": "93ad4a3cdf33b2171ba301f79aad736d",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -606,16 +606,16 @@
         },
         {
             "name": "balping/json-raw-encoder",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/balping/json-raw-encoder.git",
-                "reference": "c404b7fc0e04ddf5d298e53105c5fc306f523195"
+                "url": "https://gitlab.com/balping/json-raw-encoder.git",
+                "reference": "e2b0ab888342b0716f1f0628e2fa13b345c5f276"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/balping/json-raw-encoder/zipball/c404b7fc0e04ddf5d298e53105c5fc306f523195",
-                "reference": "c404b7fc0e04ddf5d298e53105c5fc306f523195",
+                "url": "https://gitlab.com/api/v4/projects/balping%2Fjson-raw-encoder/repository/archive.zip?sha=e2b0ab888342b0716f1f0628e2fa13b345c5f276",
+                "reference": "e2b0ab888342b0716f1f0628e2fa13b345c5f276",
                 "shasum": ""
             },
             "require": {
@@ -645,7 +645,7 @@
                 "encode",
                 "json"
             ],
-            "time": "2018-05-04T15:38:02+00:00"
+            "time": "2020-06-06T16:24:31+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -1192,11 +1192,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.8.9",
+            "version": "v2.9.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "a9b54ad618d9c5a6a59cbab879b06fac72e62aad"
+                "reference": "9ffa96f5920d099bb260785de67fae28f341bfa9"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1221,7 +1221,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-06T01:35:16+00:00"
+            "time": "2020-06-06T18:39:50+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
