@@ -73,6 +73,8 @@ class ReimportPatientMedicalRecord extends Command
      */
     public function handle()
     {
+        $this->clearState();
+
         /** @var User $user */
         $user = $this->getUser();
 
@@ -250,6 +252,15 @@ class ReimportPatientMedicalRecord extends Command
             $user->ccdProblems()->delete();
         }
         $user->ccdAllergies()->delete();
+    }
+
+    /**
+     * In the case of AutoApproveValidCarePlansAs where we programmatically call this command on each user in a dataset, the state does not reset when calling this on the next user. Adding this to confirm issue.
+     */
+    private function clearState()
+    {
+        $this->ccda     = null;
+        $this->enrollee = null;
     }
 
     private function correctMrnIfWrong(User $user)
