@@ -279,6 +279,24 @@ class ReimportPatientMedicalRecord extends Command
         }
     }
 
+    private function enrolleeQuery(User $user)
+    {
+        return Enrollee::where(
+            [
+                ['mrn', '=', $user->getMRN()],
+                ['practice_id', '=', $user->program_id],
+                ['first_name', '=', $user->first_name],
+                ['last_name', '=', $user->last_name],
+            ]
+        )->where(
+            function ($q) use ($user) {
+                $q->whereNull('user_id')->orWhere('user_id', $user->id);
+            }
+        )->with(
+            'eligibilityJob'
+        )->has('eligibilityJob');
+    }
+
     /**
      * @throws \Exception
      */
@@ -318,20 +336,21 @@ class ReimportPatientMedicalRecord extends Command
         if ( ! $this->enrollee) {
             \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Fetching enrollee ln:".__LINE__);
 
-            $this->enrollee = Enrollee::where(
-                [
-                    ['mrn', '=', $user->getMRN()],
-                    ['practice_id', '=', $user->program_id],
-                    ['first_name', '=', $user->first_name],
-                    ['last_name', '=', $user->last_name],
-                ]
-            )->where(
-                function ($q) use ($user) {
-                    $q->whereNull('user_id')->orWhere('user_id', $user->id);
-                }
-            )->with(
-                'eligibilityJob'
-            )->has('eligibilityJob')->orderByDesc('id')->firstOrFail();
+            $enrollees = $this->enrolleeQuery($user)->get();
+
+            if ($enrollees->isEmpty()) {
+                throw new \Exception("Could not find enrollee for user {$user->id}");
+            }
+
+            if ($e = $enrollees->where('status', Enrollee::CONSENTED)->first()) {
+                $this->enrollee = $e;
+            } elseif ($e = $enrollees->where('status', Enrollee::ENROLLED)->first()) {
+                $this->enrollee = $e;
+            } elseif ($e = $enrollees->where('status', Enrollee::TO_CALL)->first()) {
+                $this->enrollee = $e;
+            } else {
+                $this->enrollee = $enrollees->first();
+            }
             \Log::debug(
                 "ReimportPatientMedicalRecord:user_id:{$user->id} Fetched enrollee_id:{$this->enrollee->id}:ln:".__LINE__
             );
