@@ -60,7 +60,7 @@ class PracticeKPIs
         $data['consented'] = Enrollee::where('practice_id', $this->practice->id)
             ->where('last_attempt_at', '>=', $this->start)
             ->where('last_attempt_at', '<=', $this->end)
-            ->where('status', Enrollee::CONSENTED)
+            ->whereIn('status', [Enrollee::CONSENTED, Enrollee::ENROLLED])
             ->count();
 
         $data['utc'] = Enrollee::where('practice_id', $this->practice->id)
