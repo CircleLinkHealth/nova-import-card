@@ -1649,6 +1649,21 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
         }
     }
 }
+if ( ! function_exists('sendPatientAttestationValidationFailedWarning')) {
+    /**
+     * @param $patientId
+     */
+    function sendPatientAttestationValidationFailedWarning($patientId)
+    {
+        $handles    = AppConfig::pull('bhi_unattested_patients_slack_watchers', '');
+        $patientUrl = route('patient.demographics.show', ['patientId' => $patientId]);
+
+        sendSlackMessage(
+            '#clinical',
+            "$handles Warning! Something went wrong with condition attestation regarding patient: {$patientId}. This is possibly a bug. Please review {$patientUrl}"
+        );
+    }
+}
 if ( ! function_exists('sendPatientBhiUnattestedWarning')) {
     /**
      * @param $patientId

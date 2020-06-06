@@ -550,13 +550,20 @@ class NotesController extends Controller
         $attestedProblems = isset($input['attested_problems'])
             ? $input['attested_problems']
             : null;
+        $bypassedAllAttestationValidation = isset($input['bypassed_all_validation']);
+
+        if ($bypassedAllAttestationValidation) {
+            sendPatientBypassedAttestationWarning($patientId);
+        }
+
+        if ( ! $bypassedAllAttestationValidation && ! $attestedProblems) {
+            \Log::critical("Attestation Validation failed for patient: {$patientId}");
+
+            sendPatientAttestationValidationFailedWarning($patientId);
+        }
 
         if (isset($input['bypassed_bhi_validation'])) {
             sendPatientBhiUnattestedWarning($patientId);
-        }
-
-        if (isset($input['bypassed_all_validation'])) {
-            sendPatientBypassedAttestationWarning($patientId);
         }
 
         $editingNoteId = ! empty($input['noteId'])
