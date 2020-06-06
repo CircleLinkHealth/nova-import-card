@@ -11,32 +11,9 @@ if (isset($patient)) {
     $monthlyTime = '';
 }
 
-$user                = auth()->user();
-$userIsCareCoach     = $user->isCareCoach();
+
 $patientListDropdown = getPatientListDropdown($user);
 $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
-
-if ($userIsCareCoach) {
-    $scheduleIconClass = $user->nurseInfo->currentWeekWindows()->exists()
-        ? 'top-nav-item-icon glyphicon glyphicon-calendar'
-        : 'fa fa-exclamation';
-
-    $iClassStyle = 'fa fa-exclamation' === $scheduleIconClass
-          ? 'color: background: rgb(255, 255, 255);
-    font-size: 12px;
-    background: rgb(238, 66, 20);
-    border-radius: 0.8em;
-    display: inline-block;
-    font-weight: bold;
-    line-height: 1.6em;
-    margin-right: 5px;
-    text-align: center;
-    width: 1.6em;
- animation: shake-animation 3.72s ease infinite;
-  transform-origin: 50% 50%;;'
-
-          : '';
-}
 
 ?>
 @push('styles')
