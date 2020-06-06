@@ -146,30 +146,6 @@ class CcdaImporter
         $this->ccda->patient_id = $newPatientUser->id;
     }
 
-    private function firstOrCreatePatient()
-    {
-        if (is_null($this->ccda->patient)) {
-            try {
-                $this->createNewPatient();
-            } catch (ValidationException $e) {
-                $this->ccda->validation_checks = $e->errors();
-                $this->ccda->save();
-
-                return $this->ccda;
-            } catch (PatientAlreadyExistsException $e) {
-                $this->ccda->patient_id = $e->getPatientUserId();
-            }
-        }
-
-        $this->ccda->load(['patient.primaryPractice', 'patient.patientInfo']);
-
-        if (is_null($this->ccda->patient)) {
-            throw new \Exception("Could not create patient for CCDA[{$this->ccda->id}]");
-        }
-
-        return $this;
-    }
-
     private function handleDuplicateEnrollees()
     {
         $enrollee = Enrollee::duplicates($this->ccda->patient, $this->ccda)->when(
@@ -230,8 +206,26 @@ class CcdaImporter
      */
     private function importCcda()
     {
+        if (is_null($this->ccda->patient)) {
+            try {
+                $this->createNewPatient();
+            } catch (ValidationException $e) {
+                $this->ccda->validation_checks = $e->errors();
+                $this->ccda->save();
+
+                return $this->ccda;
+            } catch (PatientAlreadyExistsException $e) {
+                $this->ccda->patient_id = $e->getPatientUserId();
+            }
+        }
+
+        $this->ccda->load(['patient.primaryPractice', 'patient.patientInfo']);
+
+        if (is_null($this->ccda->patient)) {
+            throw new \Exception("Could not create patient for CCDA[{$this->ccda->id}]");
+        }
+
         $this
-            ->firstOrCreatePatient()
             ->handleDuplicateEnrollees()
             ->updateAddressesFromCareAmbassadorInput()
             ->createNewCarePlan()
