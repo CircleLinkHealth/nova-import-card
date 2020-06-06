@@ -1655,7 +1655,7 @@ if ( ! function_exists('sendPatientAttestationValidationFailedWarning')) {
      */
     function sendPatientAttestationValidationFailedWarning($patientId)
     {
-        $handles    = AppConfig::pull('bhi_unattested_patients_slack_watchers', '');
+        $handles    = AppConfig::pull('attestation_validation_slack_watchers', '');
         $patientUrl = route('patient.demographics.show', ['patientId' => $patientId]);
 
         sendSlackMessage(
@@ -1670,7 +1670,7 @@ if ( ! function_exists('sendPatientBhiUnattestedWarning')) {
      */
     function sendPatientBhiUnattestedWarning($patientId)
     {
-        $handles    = AppConfig::pull('bhi_unattested_patients_slack_watchers', '');
+        $handles    = AppConfig::pull('attestation_validation_slack_watchers', '');
         $patientUrl = route('patient.demographics.show', ['patientId' => $patientId]);
 
         sendSlackMessage(
@@ -1685,7 +1685,7 @@ if ( ! function_exists('sendPatientBypassedAttestationWarning')) {
      */
     function sendPatientBypassedAttestationWarning($patientId)
     {
-        $handles    = AppConfig::pull('failed_attestation_validation_slack_watchers', '');
+        $handles    = AppConfig::pull('attestation_validation_slack_watchers', '');
         $patientUrl = route('patient.demographics.show', ['patientId' => $patientId]);
 
         sendSlackMessage(
