@@ -140,7 +140,7 @@ class ReimportPatientMedicalRecord extends Command
             );
         }
 
-        if (in_array($user->primaryPractice->name, ['marillac-clinic-inc', 'calvary-medical-clinic'])) {
+        if (in_array($user->primaryPractice->name, ['marillac-clinic-inc', 'calvary-medical-clinic']) && ! empty($this->getEnrollee($user)->eligibilityJob)) {
             $this->warn(
                 "ReimportPatientMedicalRecord:user_id:{$user->id}:enrollee_id:{$this->getEnrollee($user)->id} Running 'csv-with-json' decorator:ln:".__LINE__
             );
@@ -305,7 +305,7 @@ class ReimportPatientMedicalRecord extends Command
             }
         )->with(
             'eligibilityJob'
-        )->has('eligibilityJob');
+        );
     }
 
     /**
