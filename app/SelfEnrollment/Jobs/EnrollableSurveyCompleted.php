@@ -206,7 +206,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
                 'state'                     => $addressData['state'],
                 'zip'                       => $addressData['zip'],
                 'email'                     => $emailToString,
-                'status'                    => Enrollee::ENROLLED,
+                'status'                    => Enrollee::CONSENTED,
                 'auto_enrollment_triggered' => true,
             ]);
 //    It's Duplication but better to make sense. Will refactor later
