@@ -115,9 +115,7 @@ class AutoApproveValidCarePlansAs extends Command
         if ($needsQA && $this->option('reimport')) {
             $this->warn('reimporting user:'.$patient->id);
             $this->reimport($patient->id, $approver->id);
-            if (is_null($patient->carePlan)) {
-                $patient->load('carePlan');
-            }
+            $patient = $patient->fresh('carePlan');
             $needsQA = $patient->carePlan->validator()->fails();
         }
 
