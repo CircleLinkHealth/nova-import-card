@@ -556,7 +556,7 @@ class NotesController extends Controller
             sendPatientBypassedAttestationWarning($patientId);
         }
 
-        if ( ! $bypassedAllAttestationValidation && ! $attestedProblems) {
+        if ( ! $bypassedAllAttestationValidation && empty($attestedProblems)) {
             \Log::critical("Attestation Validation failed for patient: {$patientId}");
 
             sendPatientAttestationValidationFailedWarning($patientId);
