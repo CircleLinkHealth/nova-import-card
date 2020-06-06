@@ -85,6 +85,9 @@ class ProcessEligibilityBatch implements ShouldQueue
                 break;
         }
 
+        if (empty($this->batch)) {
+            return;
+        }
         $this->afterProcessingHook($this->batch);
     }
 
@@ -93,7 +96,7 @@ class ProcessEligibilityBatch implements ShouldQueue
      *
      * @param $batch
      */
-    private function afterProcessingHook($batch)
+    private function afterProcessingHook(EligibilityBatch $batch)
     {
         if ($batch->isCompleted() && $batch->hasJobs()) {
             $this->processEligibilityService
@@ -103,6 +106,7 @@ class ProcessEligibilityBatch implements ShouldQueue
 
     /**
      * @throws \Exception
+     *
      * @return EligibilityBatch|null
      */
     private function createEligibilityJobsFromJsonFile(EligibilityBatch $batch)
