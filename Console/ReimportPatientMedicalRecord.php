@@ -333,28 +333,32 @@ class ReimportPatientMedicalRecord extends Command
 
     private function getEnrollee(User $user): Enrollee
     {
-        if ( ! $this->enrollee) {
-            \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Fetching enrollee ln:".__LINE__);
+        if ($this->enrollee) {
+            \Log::debug("ReimportPatientMedicalRecord:user_id[{$user->id}] Enrollee[{$this->enrollee->id}] had already bbeen fetched, and was just returend ln:".__LINE__);
 
-            $enrollees = $this->enrolleeQuery($user)->get();
-
-            if ($enrollees->isEmpty()) {
-                throw new \Exception("Could not find enrollee for user {$user->id}");
-            }
-
-            if ($e = $enrollees->where('status', Enrollee::CONSENTED)->first()) {
-                $this->enrollee = $e;
-            } elseif ($e = $enrollees->where('status', Enrollee::ENROLLED)->first()) {
-                $this->enrollee = $e;
-            } elseif ($e = $enrollees->where('status', Enrollee::TO_CALL)->first()) {
-                $this->enrollee = $e;
-            } else {
-                $this->enrollee = $enrollees->first();
-            }
-            \Log::debug(
-                "ReimportPatientMedicalRecord:user_id:{$user->id} Fetched enrollee_id:{$this->enrollee->id}:ln:".__LINE__
-            );
+            return $this->enrollee;
         }
+
+        \Log::debug("ReimportPatientMedicalRecord:user_id:{$user->id} Fetching enrollee ln:".__LINE__);
+
+        $enrollees = $this->enrolleeQuery($user)->get();
+
+        if ($enrollees->isEmpty()) {
+            throw new \Exception("Could not find enrollee for user {$user->id}");
+        }
+
+        if ($e = $enrollees->where('status', Enrollee::CONSENTED)->first()) {
+            $this->enrollee = $e;
+        } elseif ($e = $enrollees->where('status', Enrollee::ENROLLED)->first()) {
+            $this->enrollee = $e;
+        } elseif ($e = $enrollees->where('status', Enrollee::TO_CALL)->first()) {
+            $this->enrollee = $e;
+        } else {
+            $this->enrollee = $enrollees->first();
+        }
+        \Log::debug(
+            "ReimportPatientMedicalRecord:user_id:{$user->id} Fetched enrollee_id:{$this->enrollee->id}:ln:".__LINE__
+        );
 
         return $this->enrollee;
     }
@@ -409,7 +413,7 @@ class ReimportPatientMedicalRecord extends Command
 
     private function reimport(User $user): bool
     {
-        if ( ! $user->hasCcda()) {
+        if ( ! $user->ccdas()->exists()) {
             $this->attemptCreateCcdaFromMrTemplate($user);
         }
 
