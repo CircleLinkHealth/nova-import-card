@@ -11,7 +11,6 @@ use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\Entities\Role;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
@@ -162,7 +161,11 @@ class CcdaImporter
             }
         }
 
-        $this->ccda->loadMissing(['location', 'patient.primaryPractice', 'patient.patientInfo']);
+        $this->ccda->load(['patient.primaryPractice', 'patient.patientInfo']);
+
+        if (is_null($this->ccda->patient)) {
+            throw new \Exception("Could not create patient for CCDA[{$this->ccda->id}]");
+        }
 
         return $this;
     }
