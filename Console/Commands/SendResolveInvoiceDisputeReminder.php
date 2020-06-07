@@ -35,7 +35,7 @@ class SendResolveInvoiceDisputeReminder extends Command
      *
      * @var string
      */
-    protected $signature = 'nurseinvoice:resolveDispute';
+    protected $name = 'nurseinvoice:resolveDispute';
 
     public function emailsToSendNotif()
     {

@@ -30,7 +30,7 @@ class SendMonthlyNurseInvoiceLAN extends Command
      *
      * @var string
      */
-    protected $signature = 'nurseinvoices:lan';
+    protected $name = 'nurseinvoices:lan';
 
     /**
      * @var \Carbon|null

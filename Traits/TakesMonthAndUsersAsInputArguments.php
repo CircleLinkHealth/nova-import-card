@@ -107,7 +107,7 @@ trait TakesMonthAndUsersAsInputArguments
      */
     protected function initDateInstance()
     {
-        $input = $this->argument('month');
+        $input = $this->argument('month') ?? null;
 
         if ( ! $input) {
             $this->dateInstance = $this->defaultMonth();
