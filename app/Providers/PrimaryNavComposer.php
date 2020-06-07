@@ -6,7 +6,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,13 +25,11 @@ class PrimaryNavComposer extends ServiceProvider
             $iClassStyle = '';
 
             if ($userIsCareCoach) {
-                $viewParams = Cache::remember('view_params', 10, function () use ($user) {
-                    return [
-                        'hasCurrentWeekWindows' => $user->nurseInfo->currentWeekWindows()->exists(),
-                    ];
+                $hasCurrentWeekWindows = \Cache::remember("current_week_windows_for_nurse_user_id_[$user->id]", 2, function () use ($user) {
+                    return  $user->nurseInfo->currentWeekWindows()->exists();
                 });
 
-                $scheduleIconClass = $viewParams['hasCurrentWeekWindows']
+                $scheduleIconClass = $hasCurrentWeekWindows
                     ? 'top-nav-item-icon glyphicon glyphicon-calendar'
                     : 'fa fa-exclamation';
 
