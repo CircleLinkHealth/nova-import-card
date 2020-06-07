@@ -1649,18 +1649,48 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
         }
     }
 }
+if ( ! function_exists('sendPatientAttestationValidationFailedWarning')) {
+    /**
+     * @param $patientId
+     */
+    function sendPatientAttestationValidationFailedWarning($patientId)
+    {
+        $handles    = AppConfig::pull('attestation_validation_slack_watchers', '');
+        $patientUrl = route('patient.demographics.show', ['patientId' => $patientId]);
+
+        sendSlackMessage(
+            '#clinical',
+            "$handles Warning! Something went wrong with condition attestation regarding patient: {$patientId}. This is possibly a bug. Please review {$patientUrl}"
+        );
+    }
+}
 if ( ! function_exists('sendPatientBhiUnattestedWarning')) {
     /**
      * @param $patientId
      */
     function sendPatientBhiUnattestedWarning($patientId)
     {
-        $handles    = AppConfig::pull('bhi_unattested_patients_slack_watchers', '');
+        $handles    = AppConfig::pull('attestation_validation_slack_watchers', '');
         $patientUrl = route('patient.demographics.show', ['patientId' => $patientId]);
 
         sendSlackMessage(
             '#clinical',
             "$handles Warning! This patient has 10+ minutes of BHI time without a BHI attestation. Please review {$patientUrl}"
+        );
+    }
+}
+if ( ! function_exists('sendPatientBypassedAttestationWarning')) {
+    /**
+     * @param $patientId
+     */
+    function sendPatientBypassedAttestationWarning($patientId)
+    {
+        $handles    = AppConfig::pull('attestation_validation_slack_watchers', '');
+        $patientUrl = route('patient.demographics.show', ['patientId' => $patientId]);
+
+        sendSlackMessage(
+            '#clinical',
+            "$handles Warning! Nurse bypassed attestation validation for patient: {$patientId} (Possible bug). Please review {$patientUrl}"
         );
     }
 }

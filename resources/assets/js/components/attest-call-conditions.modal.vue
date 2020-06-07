@@ -13,7 +13,10 @@
                     <span style="color: red"><i class="fas fa-exclamation-circle"></i>&nbsp{{error}}</span>
                     <br>
                     <div v-if="showBhiLink">
-                        <span style="color: red">If you did not discuss a BHI condition click <a v-bind:class="{'disabled': !twoCcmConditionsAttested}" href="javascript:" @click.prevent="submitForm('true')"><strong><u>here</u></strong></a></span>
+                        <span style="color: red">If you did not discuss a BHI condition click <a v-bind:class="{'disabled': !twoCcmConditionsAttested}" href="javascript:" @click.prevent="submitFormBypassingBhiValidation"><strong><u>here</u></strong></a></span>
+                    </div>
+                    <div v-if="isNotesPage" style="margin-top: 10px">
+                        <span class="bypass-attestation-validation">If the attestation box isn’t working properly, please click <a href="javascript:" @click.prevent="submitFormBypassingAllValidation"><strong><u>here</u></strong></a> to submit note.</span>
                     </div>
                 </div>
                 <div>
@@ -196,20 +199,27 @@
                 this.error = null;
                 this.$refs['attest-call-conditions-modal'].visible = false;
             },
-            submitForm(bypassBhiValidation = null) {
+            submitForm(bypassValidationType = null) {
 
-                if (this.isNotesPage) {
-                    //validate and set error messages if you should
-                    if (!this.validateAttestedConditions(bypassBhiValidation)) {
+                let bypassAllValidation = bypassValidationType === 'all' && this.isNotesPage;
+
+                //nurse user has encountered a bug that is blocking them from submitting note. Bypass all validation, submit note, and send slack warning
+                //CPM-2440
+                if (!bypassAllValidation){
+                    if (this.isNotesPage) {
+                        //validate and set error messages if you should
+                        if (!this.validateAttestedConditions(bypassValidationType === 'bhi')) {
+                            return;
+                        }
+                    }
+
+                    //default - still run even if custom requirements get passed in. There's no scenario in which we would allow no problem to be attested on a call.
+                    if (this.attestedProblems.length == 0) {
+                        this.error = "Please select at least one condition."
                         return;
                     }
                 }
 
-                //default - still run even if custom requirements get passed in. There's no scenario in which we would allow no problem to be attested on a call.
-                if (this.attestedProblems.length == 0) {
-                    this.error = "Please select at least one condition."
-                    return;
-                }
 
                 if (this.addCondition) {
                     this.error = "It looks like you are still trying to enter a condition manually. Please press 'Add Condition' when you are finished, or 'Close Other Condition Section' if you are not adding a condition manually."
@@ -222,8 +232,15 @@
                     attested_problems: this.attestedProblems,
                     patient_id: this.patient_id,
                     is_bhi: this.isBhi,
-                    bypassed_bhi_validation: this.getBhiAttestedConditionsCount() === 0 && !!bypassBhiValidation
+                    bypassed_bhi_validation: this.getBhiAttestedConditionsCount() === 0 && bypassValidationType === 'bhi',
+                    bypassed_all_validation: bypassAllValidation
                 });
+            },
+            submitFormBypassingBhiValidation(){
+                this.submitForm('bhi');
+            },
+            submitFormBypassingAllValidation(){
+                this.submitForm('all');
             },
             toggleAddCondition() {
                 this.addCondition = !this.addCondition;
@@ -254,87 +271,116 @@
                 }
                 return false;
             },
-            hasEqualOrMoreThan10BhiMins(){
+            isBhiEligible(){
                 return window.TimeTracker.bhiTimeInSeconds() >= (10 * 60);
             },
+            isCcmEligible(){
+                //check time as well. In some cases the CCM CS is wrongly attached to bhi patients (e.g. They have BHI problems that are not related to CPM Problems)
+                //and the system percieves them as CCM problems while auto-attaching services on PatientMonthlySummary@attachChargeableServicesToFulfill
+                return this.attestationRequirements.has_ccm && window.TimeTracker.ccmTimeInSeconds() > 0;
+            },
+            isPcmEligible(){
+                //same as CCM
+                return this.attestationRequirements.has_pcm && window.TimeTracker.ccmTimeInSeconds() > 0;
+            },
             getCcmAttestedConditionsCount(){
-                let attestedCcm = 0;
-                this.attestedProblems.forEach(function (p) {
-                    if (!self.problemIsBehavioral(p)) {
-                        attestedCcm++;
-                    }
-                })
+                //if a patient is BHI eligible we distinguish between ccm and bhi problems
+                //if they don't, bhi problems can be considered as ccm
+                if (this.isBhiEligible()){
+                    return this.attestedProblems.reduce( (previousValue, currentValue) => !self.problemIsBehavioral(currentValue) ? previousValue + 1 : previousValue, 0);
+                }
 
-                return attestedCcm;
+                return this.attestedProblems.length;
             },
             getBhiAttestedConditionsCount(){
                 let attestedBhi = 0;
-                this.attestedProblems.forEach(function (p) {
-                    if (self.problemIsBehavioral(p)) {
-                        attestedBhi++;
-                    }
-                })
+
+                //only count BHI problems if patient is BHI eligible
+                if (this.isBhiEligible()){
+                    attestedBhi = this.attestedProblems.reduce( (previousValue, currentValue) => self.problemIsBehavioral(currentValue) ? previousValue + 1 : previousValue, 0);
+                }
 
                 return attestedBhi;
             },
             passesCcmValidation(){
+
                 //if patient wants to bypass bhi validation and does not require +2 ccm validation or already has attested to 2 ccm conditions, then we can bypass
-                return !this.attestationRequirements.ccm_2 || this.getCcmAttestedConditionsCount() >= 2;
+                if (this.attestationRequirements.has_ccm){
+                    return this.attestationRequirements.attested_ccm_problems >= 2 || this.getCcmAttestedConditionsCount() >= 2
+                }
+
+                if (this.attestationRequirements.has_pcm){
+                    return this.attestationRequirements.attested_ccm_problems >= 1 || this.getCcmAttestedConditionsCount() >= 1
+                }
+
+                //if no ccm or no pcm - automatically pass ccm validation
+                return true;
             },
             validateAttestedConditions(bypassBhiValidation = null) {
+
                 if (!this.attestationRequirements || this.attestationRequirements.disabled) {
                     return true;
                 }
+
+                let self = this;
                 let ccmError;
                 let bhiError;
-                //if ccm 2
-                //if complex require 2 CCM attested
-                //else require any 2
-                if (this.attestationRequirements.ccm_2) {
-                    if (this.hasEqualOrMoreThan10BhiMins()) {
-                        let attestedCcm = this.getCcmAttestedConditionsCount();
-                        if (attestedCcm < 2) {
-                            ccmError = true;
-                        }
-                    } else {
-                        if (this.attestedProblems.length < 2) {
-                            this.error = "Please select at least two conditions.";
-                            return false;
-                        }
-                    }
+                let pcmError;
+                let currentCcmAttestedConditions = this.getCcmAttestedConditionsCount();
+                let currentBhiAttestedConditions = this.getBhiAttestedConditionsCount();
+
+                bhiError = this.isBhiEligible() && this.attestationRequirements.bhi_problems_attested === 0 && currentBhiAttestedConditions === 0;
+
+                ccmError = this.isCcmEligible() && this.attestationRequirements.ccm_problems_attested === 0 && currentCcmAttestedConditions < 2;
+
+                //PCM error is irrelevant if patient HAS bhi and HAS NOT CCM: e.g.
+                //PCM requires only 1 condition to be attested so:
+                //if CCM exists we need +2 CCM conditions, so it cancels out
+                //if patient is not bhi eligible, that condition can be BHI OR CMM, and this falls under default validation of we need any 1 problem to be attested
+                pcmError = this.attestationRequirements.has_pcm && ! this.attestationRequirements.has_ccm && this.isBhiEligible() && currentCcmAttestedConditions === 0
+
+                let skipBhiValidation =  this.passesCcmValidation() && !!bypassBhiValidation;
+
+                if (skipBhiValidation){
+                    bhiError = null;
                 }
 
 
-                let skipBhiValidation =  this.passesCcmValidation() && !!bypassBhiValidation
-
-                if (this.hasEqualOrMoreThan10BhiMins() && ! this.attestationRequirements.bhi_problems_attested && ! skipBhiValidation) {
-                    let attestedBhi = this.getBhiAttestedConditionsCount();
-                    if (attestedBhi === 0) {
-                        bhiError = true;
-                    }
+                if (!ccmError && !bhiError && !pcmError){
+                    return true;
                 }
 
-                if (!ccmError && !bhiError) {
-                    return true
-                }
+                let message;
 
-                let error;
-                if (ccmError && !bhiError) {
-                    this.showBhiLink = false;
-                    this.error = 'Please select 2 CCM conditions discussed on this call.'
+                if (! this.isBhiEligible() && ccmError){
+                    this.error = "Please select at least two conditions.";
                     return false;
                 }
 
-                if (bhiError) {
-                    this.showBhiLink = true;
-                    if (! ccmError) {
-                        error = 'Please select the BHI condition(s) discussed on this call.';
+                this.showBhiLink = false;
+
+                if (this.isBhiEligible()){
+                    if (bhiError) {
+                        this.showBhiLink = true;
+                        if (ccmError){
+                            message = 'Please select 2 CCM conditions and  the BHI condition(s) discussed on this call.';
+                        }else if(pcmError){
+                            message = 'Please select 1 CCM condition and  the BHI condition(s) discussed on this call.';
+                        }else{
+                            message = 'Please select the BHI condition(s) discussed on this call.';
+                        }
                     }else{
-                        error = 'Please select 2 CCM conditions and  the BHI condition(s) discussed on this call.';
+                        if (ccmError){
+                            message = 'Please select 2 CCM conditions discussed on this call.'
+                        }else if(pcmError){
+                            message = 'Please select at least 1 CCM condition discussed on this call.'
+                        }
                     }
+                    this.error = message;
+                    return false;
                 }
-                this.error = error;
-                return false;
+
+                return true;
             }
         },
     }
@@ -382,6 +428,12 @@
     }
     a.disabled {
         cursor: not-allowed;
+    }
+
+    .bypass-attestation-validation{
+        color: grey;
+        font-size: medium;
+        font-style: italic;
     }
 
 </style>
