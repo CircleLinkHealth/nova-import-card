@@ -25,6 +25,7 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Str;
 use Notification;
 use PrepareDataForReEnrollmentTestSeeder;
 use Tests\Concerns\TwilioFake\Twilio;
@@ -69,6 +70,7 @@ class SelfEnrollmentTest extends TestCase
         Mail::fake();
 
         \DB::table('notifications')->insert([
+            'id'              => Str::uuid(),
             'notifiable_type' => User::class,
             'notifiable_id'   => $patient->id,
             'type'            => SelfEnrollmentInviteNotification::class,
@@ -77,8 +79,8 @@ class SelfEnrollmentTest extends TestCase
                 'is_reminder'    => true,
                 'is_survey_only' => true,
             ]),
-            'created_at' => now()->subDays(Constants::DAYS_AFTER_FIRST_INVITE_TO_SEND_FIRST_REMINDER)->toDateTimeString(),
-            'updated_at' => now()->subDays(Constants::DAYS_AFTER_FIRST_INVITE_TO_SEND_FIRST_REMINDER)->toDateTimeString(),
+            'created_at' => now()->subMonth()->toDateTimeString(),
+            'updated_at' => now()->subMonth()->toDateTimeString(),
         ]);
         $invitationBatch = EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id);
         SendInvitation::dispatchNow($patient, $invitationBatch->id);

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6fa0805827a9f20349329d5967e44591",
+    "content-hash": "41680128bfb796c746a38774be0cc27e",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -522,16 +522,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.140.1",
+            "version": "3.140.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "52645498aea4dd2d090884322121270daf3e0f06"
+                "reference": "7e37960c1103ee211932be51b2282b41c948a5f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/52645498aea4dd2d090884322121270daf3e0f06",
-                "reference": "52645498aea4dd2d090884322121270daf3e0f06",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/7e37960c1103ee211932be51b2282b41c948a5f0",
+                "reference": "7e37960c1103ee211932be51b2282b41c948a5f0",
                 "shasum": ""
             },
             "require": {
@@ -602,20 +602,20 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-06-04T18:19:47+00:00"
+            "time": "2020-06-05T18:12:25+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/balping/json-raw-encoder.git",
-                "reference": "c404b7fc0e04ddf5d298e53105c5fc306f523195"
+                "url": "https://gitlab.com/balping/json-raw-encoder.git",
+                "reference": "e2b0ab888342b0716f1f0628e2fa13b345c5f276"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/balping/json-raw-encoder/zipball/c404b7fc0e04ddf5d298e53105c5fc306f523195",
-                "reference": "c404b7fc0e04ddf5d298e53105c5fc306f523195",
+                "url": "https://gitlab.com/api/v4/projects/balping%2Fjson-raw-encoder/repository/archive.zip?sha=e2b0ab888342b0716f1f0628e2fa13b345c5f276",
+                "reference": "e2b0ab888342b0716f1f0628e2fa13b345c5f276",
                 "shasum": ""
             },
             "require": {
@@ -645,7 +645,7 @@
                 "encode",
                 "json"
             ],
-            "time": "2018-05-04T15:38:02+00:00"
+            "time": "2020-06-06T16:24:31+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -1192,11 +1192,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.8.7",
+            "version": "v2.9.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "30a37aa12137c778569e6e4c5531913419eaa2f1"
+                "reference": "6557796f887f6893cf58c247dc7963d96a0fdecb"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1221,7 +1221,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-05T00:07:28+00:00"
+            "time": "2020-06-06T19:21:58+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1829,16 +1829,16 @@
         },
         {
             "name": "danielme85/laravel-log-to-db",
-            "version": "v2.3.2",
+            "version": "v2.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/danielme85/laravel-log-to-db.git",
-                "reference": "77ba74a6e7722a9b3f89dc1cc196380251eb85e9"
+                "reference": "ada71d9bbc992276273f44299035e4c9ded5fa79"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danielme85/laravel-log-to-db/zipball/77ba74a6e7722a9b3f89dc1cc196380251eb85e9",
-                "reference": "77ba74a6e7722a9b3f89dc1cc196380251eb85e9",
+                "url": "https://api.github.com/repos/danielme85/laravel-log-to-db/zipball/ada71d9bbc992276273f44299035e4c9ded5fa79",
+                "reference": "ada71d9bbc992276273f44299035e4c9ded5fa79",
                 "shasum": ""
             },
             "require": {
@@ -1887,7 +1887,7 @@
                 "mysql",
                 "sql"
             ],
-            "time": "2020-05-06T20:33:05+00:00"
+            "time": "2020-06-05T03:15:21+00:00"
         },
         {
             "name": "defuse/php-encryption",
@@ -12045,16 +12045,16 @@
         },
         {
             "name": "darkaonline/l5-swagger",
-            "version": "6.0.3",
+            "version": "6.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DarkaOnLine/L5-Swagger.git",
-                "reference": "df9e72d705e7757a700ac58d41c62b10c6ddc48c"
+                "reference": "690a2db0db6091139504f454c42fcdfb7a46f405"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DarkaOnLine/L5-Swagger/zipball/df9e72d705e7757a700ac58d41c62b10c6ddc48c",
-                "reference": "df9e72d705e7757a700ac58d41c62b10c6ddc48c",
+                "url": "https://api.github.com/repos/DarkaOnLine/L5-Swagger/zipball/690a2db0db6091139504f454c42fcdfb7a46f405",
+                "reference": "690a2db0db6091139504f454c42fcdfb7a46f405",
                 "shasum": ""
             },
             "require": {
@@ -12105,7 +12105,7 @@
                 "laravel",
                 "swagger"
             ],
-            "time": "2019-11-08T17:08:43+00:00"
+            "time": "2020-06-05T05:07:26+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -12736,16 +12736,16 @@
         },
         {
             "name": "jkocik/laravel-profiler",
-            "version": "1.3.0",
+            "version": "1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jkocik/laravel-profiler.git",
-                "reference": "b0502392a1d113e4dff43a8eb9148c386751618b"
+                "reference": "89347e640895fdac7c27e0921b2002305f6e1abc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jkocik/laravel-profiler/zipball/b0502392a1d113e4dff43a8eb9148c386751618b",
-                "reference": "b0502392a1d113e4dff43a8eb9148c386751618b",
+                "url": "https://api.github.com/repos/jkocik/laravel-profiler/zipball/89347e640895fdac7c27e0921b2002305f6e1abc",
+                "reference": "89347e640895fdac7c27e0921b2002305f6e1abc",
                 "shasum": ""
             },
             "require": {
@@ -12794,7 +12794,7 @@
                 "laravel",
                 "profiler"
             ],
-            "time": "2019-11-21T00:39:11+00:00"
+            "time": "2020-06-05T02:17:39+00:00"
         },
         {
             "name": "jolicode/jolinotif",
@@ -15151,16 +15151,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.25.5",
+            "version": "v3.26.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "28b7d7c54866f3581f0f703f3971422a09ebd649"
+                "reference": "b9064157e710d0c56d4459b5a7c16751ad0ae72c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/28b7d7c54866f3581f0f703f3971422a09ebd649",
-                "reference": "28b7d7c54866f3581f0f703f3971422a09ebd649",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/b9064157e710d0c56d4459b5a7c16751ad0ae72c",
+                "reference": "b9064157e710d0c56d4459b5a7c16751ad0ae72c",
                 "shasum": ""
             },
             "type": "library",
@@ -15204,7 +15204,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2020-05-28T17:37:47+00:00"
+            "time": "2020-06-05T00:57:11+00:00"
         },
         {
             "name": "symfony/dom-crawler",
