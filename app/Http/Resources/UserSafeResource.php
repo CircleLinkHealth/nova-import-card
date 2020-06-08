@@ -25,11 +25,13 @@ class UserSafeResource extends Resource
         $observation  = $this->observations->first();
         $phone        = $this->phoneNumbers->first();
         $locationName = 'N/A';
+        $locationId   = null;
 
         /** @var Patient $patientInfo */
         $patientInfo = $this->whenLoaded('patientInfo');
         if ( ! is_null($patientInfo) && $patientInfo->relationLoaded('location') && ! is_null($patientInfo->location)) {
             $locationName = $patientInfo->location->name;
+            $locationId   = $patientInfo->location->id;
         }
 
         return [
@@ -49,6 +51,7 @@ class UserSafeResource extends Resource
             'billing_provider_name' => $this->getBillingProviderName(),
             'billing_provider_id'   => $this->getBillingProviderId(),
             'location_name'         => $locationName,
+            'location_id'           => $locationId,
             'careplan'              => optional($careplan)->safe(),
             'last_read'             => optional($observation)->obs_date,
             'phone'                 => $this->getPhone() ?? optional($phone)->number,

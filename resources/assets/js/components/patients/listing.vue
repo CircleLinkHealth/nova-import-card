@@ -250,6 +250,7 @@
                     customSorting: {
                         name: (ascending) => iSort,
                         provider: (ascending) => iSort,
+                        location: (ascending) => iSort,
                         ccmStatus: (ascending) => iSort,
                         ccmStatusDate: (ascending) => iSort,
                         careplanStatus: (ascending) => iSort,
@@ -435,8 +436,9 @@
                         patient.firstName = patient.name.split(' ')[0]
                         patient.lastName = patient.name.split(' ').slice(1).join(' ')
                         patient.provider = patient.billing_provider_id
-                        patient.location = patient.location_name || 'N/A'
                         patient.provider_name = patient.billing_provider_name
+                        patient.location = patient.location_id || 'N/A'
+                        patient.location_name = patient.location_name || 'N/A'
                         patient.ccmStatus = (patient.patient_info || {}).ccm_status || 'none'
                         patient.careplanStatus = (patient.careplan || {}).status || 'none'
                         patient.dob = (patient.patient_info || {}).birth_date || ''
@@ -648,6 +650,8 @@
             Event.$on('vue-tables.filter::provider', this.activateFilters)
 
             Event.$on('vue-tables.filter::practice', this.activateFilters)
+
+            Event.$on('vue-tables.filter::location', this.activateFilters)
 
             Event.$on('vue-tables.filter::ccmStatus', this.activateFilters)
 
