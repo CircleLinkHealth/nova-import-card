@@ -34,6 +34,9 @@
                 <div>
                 </div>
             </template>
+            <template slot="location" slot-scope="props">
+                <div>{{ props.row.location_name }}</div>
+            </template>
             <template slot="ccmStatus" slot-scope="props">
                 <div>
                     {{ccmStatusMap[props.row.ccmStatus] || props.row.ccmStatus}}
@@ -153,7 +156,6 @@
             },
         },
         data() {
-
             let carePlanStatusMap;
             if (this.isAdmin) {
                 carePlanStatusMap = {
@@ -176,6 +178,7 @@
                 tableData: [],
                 practices: [],
                 providersForSelect: [],
+                locationsForSelect: [],
                 showPracticePatients: false,
                 nameDisplayType: NameDisplayType.FirstName,
                 columns: ['name', 'provider', 'location', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'mrn', 'phone', 'age', 'registeredOn', 'bhi', 'ccm'],
@@ -183,6 +186,7 @@
                     next: false,
                     practices: null,
                     providers: false,
+                    locations: false,
                     excel: false,
                     pdf: false
                 },
@@ -218,9 +222,10 @@
                 return {
                     filterByColumn: true,
                     sortable: ['name', 'provider', 'practice', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'age', 'mrn', 'registeredOn', 'bhi', 'ccm'],
-                    filterable: ['name', 'provider', 'practice', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'phone', 'age', 'mrn', 'registeredOn'],
+                    filterable: ['name', 'provider', 'practice', 'location', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'phone', 'age', 'mrn', 'registeredOn'],
                     listColumns: {
                         provider: this.providersForSelect,
+                        location: this.locationsForSelect,
                         ccmStatus: [
                             {id: 'enrolled', text: 'Enrolled'},
                             {id: 'paused', text: 'Paused'},
@@ -351,6 +356,20 @@
                 }).catch(err => {
                     console.error('patient-list:providers', err)
                     this.loaders.providers = false
+                })
+            },
+            getLocations() {
+                this.loaders.locations = true
+                return this.axios.get(rootUrl('api/locations/list')).then(response => {
+                    this.locationsForSelect = (response.data || []).map(location => ({
+                        id: location.id,
+                        text: location.name
+                    })).filter(location => !!location.text).sort((a, b) => a.text < b.text ? -1 : 1)
+                    this.loaders.locations = false
+                    return this.locationsForSelect
+                }).catch(err => {
+                    console.error('patient-list:locations', err)
+                    this.loaders.locations = false
                 })
             },
             getStatusDate(patient) {
@@ -611,6 +630,7 @@
             })
 
             this.getProviders()
+            this.getLocations()
 
             /**
              * listen to table pagination event and ...
