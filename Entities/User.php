@@ -2448,7 +2448,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     },
                     'carePlan.providerApproverUser',
                     'primaryPractice',
-                    'patientInfo',
+                    'patientInfo.location',
                 ]
             )
             ->get();
