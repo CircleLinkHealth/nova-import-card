@@ -50,9 +50,10 @@ class PatientReadRepository
             ->with([
                 'carePlan',
                 'phoneNumbers',
-                'patientInfo',
+                'patientInfo.location',
                 'primaryPractice',
                 'providerInfo',
+                'billingProvider',
                 'observations' => function ($q) {
                     $q
                         ->latest();

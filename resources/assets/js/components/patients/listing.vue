@@ -21,7 +21,7 @@
         <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options"
                         id="patient-list-table">
             <template slot="name" slot-scope="props">
-                <div><a :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')" target="_blank">{{props.row.name}}</a>
+                <div><a class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')" target="_blank">{{props.row.name}}</a>
                 </div>
             </template>
             <template slot="provider" slot-scope="props">
@@ -43,7 +43,7 @@
                 CCM Status Change
             </template>
             <template slot="careplanStatus" slot-scope="props">
-                <a :href="props.row.careplanStatus === 'qa_approved' ? rootUrl('manage-patients/' + props.row.id + '/view-careplan') : null">
+                <a class="in-table-link" :href="props.row.careplanStatus === 'qa_approved' ? rootUrl('manage-patients/' + props.row.id + '/view-careplan') : null">
                     <b>{{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}</b>
                 </a>
             </template>
@@ -171,7 +171,7 @@
                 providersForSelect: [],
                 showPracticePatients: false,
                 nameDisplayType: NameDisplayType.FirstName,
-                columns: ['name', 'provider', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'mrn', 'phone', 'age', 'registeredOn', 'bhi', 'ccm'],
+                columns: ['name', 'provider', 'location', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'mrn', 'phone', 'age', 'registeredOn', 'bhi', 'ccm'],
                 loaders: {
                     next: false,
                     practices: null,
@@ -407,6 +407,7 @@
                         patient.firstName = patient.name.split(' ')[0]
                         patient.lastName = patient.name.split(' ').slice(1).join(' ')
                         patient.provider = patient.billing_provider_id
+                        patient.location = patient.location_name || 'N/A'
                         patient.provider_name = patient.billing_provider_name
                         patient.ccmStatus = (patient.patient_info || {}).ccm_status || 'none'
                         patient.careplanStatus = (patient.careplan || {}).status || 'none'
@@ -682,7 +683,7 @@
         text-decoration: underline;
     }
 
-    a {
+    .in-table-link {
         color: #337ab7 !important;
         text-decoration: underline;
     }
