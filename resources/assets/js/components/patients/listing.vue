@@ -37,6 +37,10 @@
             <template slot="location" slot-scope="props">
                 <div>{{ props.row.location_name }}</div>
             </template>
+            <template slot="filter__location">
+                <div>
+                </div>
+            </template>
             <template slot="ccmStatus" slot-scope="props">
                 <div>
                     {{ccmStatusMap[props.row.ccmStatus] || props.row.ccmStatus}}
@@ -237,7 +241,7 @@
                         practice: this.practices.map(practice => ({
                             id: practice.id,
                             text: practice.display_name
-                        })).sort((p1, p2) => p1.id > p2.id ? 1 : -1).distinct(practice => practice.id)
+                        })).sort((p1, p2) => p1.text > p2.text ? 1 : -1).distinct(practice => practice.id)
                     },
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`

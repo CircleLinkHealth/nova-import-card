@@ -28,7 +28,7 @@ class UserSafeResource extends Resource
 
         /** @var Patient $patientInfo */
         $patientInfo = $this->whenLoaded('patientInfo');
-        if ( ! is_null($patientInfo) && $patientInfo->relationLoaded('location')) {
+        if ( ! is_null($patientInfo) && $patientInfo->relationLoaded('location') && ! is_null($patientInfo->location)) {
             $locationName = $patientInfo->location->name;
         }
 
