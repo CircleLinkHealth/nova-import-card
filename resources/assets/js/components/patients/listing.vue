@@ -92,15 +92,13 @@
                        @click="changeNameDisplayType">
                 <span class="pad-10"></span>
 
-                <div v-if="! this.hideDownloadButtons">
-                    <a class="btn btn-patients-table" :class="{ disabled: loaders.pdf }" @click="exportPdf"
-                       :href="rootUrl('manage-patients/listing/pdf')" download="patient-list.pdf">Export as PDF</a>
-                    <span class="pad-10"></span>
+                <a v-if="! this.hideDownloadButtons" class="btn btn-patients-table" :class="{ disabled: loaders.pdf }" @click="exportPdf"
+                   :href="rootUrl('manage-patients/listing/pdf')" download="patient-list.pdf">Export as PDF</a>
+                <span class="pad-10"></span>
 
-                    <input type="button" class="btn btn-patients-table" :class="{ disabled: loaders.excel }"
-                           :value="exportCSVText" @click="exportCSV">
-                    <span class="pad-10"></span>
-                </div>
+                <input v-if="! this.hideDownloadButtons" type="button" class="btn btn-patients-table" :class="{ disabled: loaders.excel }"
+                       :value="exportCSVText" @click="exportCSV">
+                <span class="pad-10"></span>
 
                 <input type="button" class="btn btn-patients-table"
                        :value="(columns.includes('practice') ? 'Hide' : 'Show') + ' Practice'"
