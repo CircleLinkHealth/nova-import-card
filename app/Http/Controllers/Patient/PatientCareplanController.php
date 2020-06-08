@@ -18,9 +18,9 @@ use App\Services\PatientService;
 use Auth;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\PdfService;
-use CircleLinkHealth\Customer\AppConfig\PracticesRequiringMedicareDisclaimer;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
+use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
@@ -180,7 +180,8 @@ class PatientCareplanController extends Controller
 
         $fileNameWithPathBlankPage = $this->pdfService->blankPage();
 
-        $users = User::with(PatientCareplanRelations::get())->has('patientInfo')->has('billingProvider.user')->findMany($userIds);
+        $users = User::with(array_merge(PatientCareplanRelations::get(), ['patientInfo', 'primaryPractice']))
+            ->has('patientInfo')->has('billingProvider.user')->findMany($userIds);
 
         // create pdf for each user
         $p = 1;
@@ -191,20 +192,28 @@ class PatientCareplanController extends Controller
                 return false;
             }
 
-            $pageCount                    = 0;
-            $shouldShowMedicareDisclaimer = PracticesRequiringMedicareDisclaimer::shouldShowMedicareDisclaimer($user->primaryPractice->name);
+            $pageCount         = 0;
+            $gender            = $user->patientInfo->gender;
+            $title             = 'm' === strtolower($gender) ? 'Mr.' : ('f' === strtolower($gender) ? 'Ms.' : null);
+            $practiceNumber    = $user->primaryPractice->number_with_dashes;
+            $assignedNurseName = optional(PatientNurse::getPermanentNurse($user->id))->first_name;
 
             if ($request->filled('render') && 'html' == $request->input('render')) {
                 return view(
                     'wpUsers.patient.multiview',
                     [
-                        'careplans'                    => [$user->id => $careplan],
-                        'isPdf'                        => true,
-                        'letter'                       => $letter,
-                        'problemNames'                 => $careplan['problem'],
-                        'careTeam'                     => $user->careTeamMembers,
-                        'shouldShowMedicareDisclaimer' => $shouldShowMedicareDisclaimer,
-                        'data'                         => $careplanService->careplan($user->id),
+                        'careplans'         => [$user->id => $careplan],
+                        'isPdf'             => true,
+                        'letter'            => $letter,
+                        'problemNames'      => $careplan['problem'],
+                        'patient'           => $user,
+                        'careTeam'          => $user->careTeamMembers,
+                        'data'              => $careplanService->careplan($user->id),
+                        'billingDoctor'     => $user->billingProviderUser(),
+                        'regularDoctor'     => $user->regularDoctorUser(),
+                        'title'             => $title,
+                        'practiceNumber'    => $practiceNumber,
+                        'assignedNurseName' => $assignedNurseName,
                     ]
                 );
             }
@@ -217,14 +226,19 @@ class PatientCareplanController extends Controller
             $fileNameWithPath = $this->pdfService->createPdfFromView(
                 'wpUsers.patient.multiview',
                 [
-                    'careplans'                    => [$user->id => $careplan],
-                    'isPdf'                        => true,
-                    'letter'                       => $letter,
-                    'problemNames'                 => $careplan['problem'],
-                    'careTeam'                     => $user->careTeamMembers,
-                    'data'                         => $careplanService->careplan($user->id),
-                    'shouldShowMedicareDisclaimer' => $shouldShowMedicareDisclaimer,
-                    'pdfCareplan'                  => $pdfCareplan,
+                    'careplans'         => [$user->id => $careplan],
+                    'isPdf'             => true,
+                    'letter'            => $letter,
+                    'problemNames'      => $careplan['problem'],
+                    'careTeam'          => $user->careTeamMembers,
+                    'patient'           => $user,
+                    'data'              => $careplanService->careplan($user->id),
+                    'pdfCareplan'       => $pdfCareplan,
+                    'billingDoctor'     => $user->billingProviderUser(),
+                    'regularDoctor'     => $user->regularDoctorUser(),
+                    'title'             => $title,
+                    'practiceNumber'    => $practiceNumber,
+                    'assignedNurseName' => $assignedNurseName,
                 ],
                 null,
                 Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
