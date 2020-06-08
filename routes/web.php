@@ -1420,11 +1420,6 @@ Route::group(['middleware' => 'auth'], function () {
                 ])->middleware('permission:salesReport.create');
             });
 
-            Route::get('ethnicity', [
-                'uses' => 'Admin\Reports\EthnicityReportController@getReport',
-                'as'   => 'EthnicityReportController.getReport',
-            ])->middleware('permission:ethnicityReport.create');
-
             Route::get('call-v2', [
                 'uses' => 'Admin\Reports\CallReportController@exportxlsV2',
                 'as'   => 'CallReportController.exportxlsv2',
@@ -2264,7 +2259,7 @@ Route::post('nurses/nurse-calendar-data', [
     'as'   => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');
 
-Route::get('login-enrollees-survey/{user}/{survey}', 'SelfEnrollmentController@sendToSurvey')
+Route::get('login-enrollees-survey/{user}/{survey}', 'Enrollment\SelfEnrollmentController@sendToSurvey')
     ->name('enrollee.login.signed')
     ->middleware('signed');
 
