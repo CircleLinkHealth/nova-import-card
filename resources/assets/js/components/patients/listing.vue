@@ -27,10 +27,10 @@
             <template slot="provider" slot-scope="props">
                 <div>{{ props.row.provider_name }}</div>
             </template>
-            <template slot="program" slot-scope="props">
-                <div>{{ props.row.program_name }}</div>
+            <template slot="practice" slot-scope="props">
+                <div>{{ props.row.practice_name }}</div>
             </template>
-            <template slot="filter__program">
+            <template slot="filter__practice">
                 <div>
                 </div>
             </template>
@@ -44,7 +44,7 @@
             </template>
             <template slot="careplanStatus" slot-scope="props">
                 <a :href="props.row.careplanStatus === 'qa_approved' ? rootUrl('manage-patients/' + props.row.id + '/view-careplan') : null">
-                    {{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}
+                    <b>{{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}</b>
                 </a>
             </template>
             <template slot="filter__ccm">
@@ -98,7 +98,7 @@
                 <span class="pad-10"></span>
 
                 <input type="button" class="btn btn-patients-table"
-                       :value="(columns.includes('program') ? 'Hide' : 'Show') + ' Practice'"
+                       :value="(columns.includes('practice') ? 'Hide' : 'Show') + ' Practice'"
                        @click="toggleProgramColumn">
             </div>
         </div>
@@ -139,10 +139,10 @@
                 type: Boolean,
                 required: true,
             },
-            defaultFilters: {
-                type: Array,
+            urlFilter: {
+                type: String,
                 required: false,
-                default: () => []
+                default: () => ''
             }
         },
         data() {
@@ -210,8 +210,8 @@
 
                 return {
                     filterByColumn: true,
-                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'age', 'mrn', 'registeredOn', 'bhi', 'ccm'],
-                    filterable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'phone', 'age', 'mrn', 'registeredOn'],
+                    sortable: ['name', 'provider', 'practice', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'age', 'mrn', 'registeredOn', 'bhi', 'ccm'],
+                    filterable: ['name', 'provider', 'practice', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'phone', 'age', 'mrn', 'registeredOn'],
                     listColumns: {
                         provider: this.providersForSelect,
                         ccmStatus: [
@@ -224,7 +224,7 @@
                             {id: 'patient_rejected', text: 'Patient Rejected'}
                         ],
                         careplanStatus,
-                        program: this.practices.map(practice => ({
+                        practice: this.practices.map(practice => ({
                             id: practice.id,
                             text: practice.display_name
                         })).sort((p1, p2) => p1.id > p2.id ? 1 : -1).distinct(practice => practice.id)
@@ -247,7 +247,7 @@
                         registeredOn: (ascending) => iSort,
                         bhi: (ascending) => iSort,
                         ccm: (ascending) => iSort,
-                        program: (ascending) => iSort
+                        practice: (ascending) => iSort
                     }
                 }
             }
@@ -259,7 +259,7 @@
             },
             columnMapping(name) {
                 const columns = {
-                    program: 'practice'
+
                 }
                 return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
             },
@@ -272,10 +272,11 @@
                     value: query[key]
                 })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
                 const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
+
                 if (this.pagination) {
-                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}`)
+                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}&${this.urlFilter}`)
                 } else {
-                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}`)
+                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}&${this.urlFilter}`)
                 }
             },
             filterData() {
@@ -292,10 +293,10 @@
                 }, {})
             },
             toggleProgramColumn() {
-                if (this.columns.indexOf('program') >= 0) {
-                    this.columns.splice(this.columns.indexOf('program'), 1)
+                if (this.columns.indexOf('practice') >= 0) {
+                    this.columns.splice(this.columns.indexOf('practice'), 1)
                 } else {
-                    this.columns.splice(2, 0, 'program')
+                    this.columns.splice(2, 0, 'practice')
                 }
             },
             togglePracticePatients() {
@@ -411,8 +412,8 @@
                         patient.careplanStatus = (patient.careplan || {}).status || 'none'
                         patient.dob = (patient.patient_info || {}).birth_date || ''
                         patient.sort_dob = new Date((patient.patient_info || {}).birth_date || '')
-                        patient.program = patient.program_id
-                        patient.program_name = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
+                        patient.practice = patient.program_id
+                        patient.practice_name = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
                         patient.age = (patient.patient_info || {}).age || ''
                         patient.mrn = (patient.patient_info || {}).mrn_number || ''
                         patient.withdrawnReason = (patient.patient_info || {}).withdrawn_reason || ''
@@ -442,7 +443,7 @@
                         // loadColumnList(this.options.listColumns.provider, patient.provider)
                         //loadColumnList(this.options.listColumns.ccmStatus, patient.ccmStatus)
                         //loadColumnList(this.options.listColumns.careplanStatus, patient.careplanStatus)
-                        // loadColumnList(this.options.listColumns.program, patient.program)
+                        // loadColumnList(this.options.listColumns.practice, patient.practice)
                         return patient
                     })
 
@@ -514,7 +515,7 @@
                 }
                 return download().then(res => {
 
-                    const str = 'name,provider,program,ccm status,careplan status, withdrawn reason, dob,mrn,phone,age,registered on,bhi,ccm,ccm status change\n'
+                    const str = 'name,provider,practice,ccm status,careplan status, withdrawn reason, dob,mrn,phone,age,registered on,bhi,ccm,ccm status change\n'
                         + patients.join('\n');
                     const csvData = new Blob([str], {type: 'text/csv'});
                     const csvUrl = URL.createObjectURL(csvData);
@@ -594,12 +595,6 @@
             }
         },
         mounted() {
-            for (let i = 0, len = this.defaultFilters.length; i < len; i++) {
-                let filter = this.defaultFilters[i];
-                this.$refs.tblPatientList.setFilter(filter)
-                this.activateFilters()
-            }
-
             /**
              * load practices, then patients
              */
@@ -622,7 +617,7 @@
 
             Event.$on('vue-tables.filter::provider', this.activateFilters)
 
-            Event.$on('vue-tables.filter::program', this.activateFilters)
+            Event.$on('vue-tables.filter::practice', this.activateFilters)
 
             Event.$on('vue-tables.filter::ccmStatus', this.activateFilters)
 
@@ -684,6 +679,11 @@
     }
 
     a[href]:hover {
+        text-decoration: underline;
+    }
+
+    a {
+        color: #337ab7 !important;
         text-decoration: underline;
     }
 </style>

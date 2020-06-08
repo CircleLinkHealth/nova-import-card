@@ -58,6 +58,13 @@ class PatientReadRepository
                         ->latest();
                 },
             ])
+            ->when(array_key_exists('patientsPendingAuthUserApproval', $filtersInput), function ($q) {
+                if (auth()->user()->isProvider()) {
+                    $q->patientsPendingProviderApproval(auth()->user());
+                } elseif (auth()->user()->isAdmin()) {
+                    $q->patientsPendingCLHApproval(auth()->user());
+                }
+            })
             ->when(
                 auth()->user()->isProvider() && 'false' == $showPracticePatients,
                 function ($query) {

@@ -40,9 +40,9 @@ class ProviderController extends Controller
 
         if ($viewNext && auth()->user()->hasRole(['administrator', 'provider'])) {
             if (auth()->user()->isProvider()) {
-                $nextPatient = auth()->user()->patientsPendingProviderApproval()->first();
+                $nextPatient = User::patientsPendingProviderApproval(auth()->user())->first();
             } elseif (auth()->user()->isAdmin()) {
-                $nextPatient = auth()->user()->patientsPendingCLHApproval()->first();
+                $nextPatient = User::patientsPendingCLHApproval(auth()->user())->first();
             }
 
             if ( ! $nextPatient) {
@@ -83,9 +83,7 @@ class ProviderController extends Controller
         }
 
         if ($viewNext) {
-            $nextPatient = auth()->user()->patientsPendingProviderApproval()->get()->filter(function ($user) {
-                return CarePlan::QA_APPROVED == $user->getCarePlanStatus();
-            })->first();
+            $nextPatient = User::patientsPendingProviderApproval(auth()->user())->first();
 
             if ( ! $nextPatient) {
                 return redirect()->to('/');
