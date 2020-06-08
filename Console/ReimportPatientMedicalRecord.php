@@ -345,7 +345,7 @@ class ReimportPatientMedicalRecord extends Command
         return $this->ccda;
     }
 
-    private function getEnrollee(User $user): Enrollee
+    private function getEnrollee(User $user): ?Enrollee
     {
         if ($this->enrollee) {
             \Log::debug("ReimportPatientMedicalRecord:user_id[{$user->id}] Enrollee[{$this->enrollee->id}] had already bbeen fetched, and was just returend ln:".__LINE__);
@@ -358,7 +358,7 @@ class ReimportPatientMedicalRecord extends Command
         $enrollees = $this->enrolleeQuery($user)->get();
 
         if ($enrollees->isEmpty()) {
-            throw new \Exception("Could not find enrollee for user {$user->id}");
+            return null;
         }
 
         if ($e = $enrollees->where('status', Enrollee::CONSENTED)->first()) {
