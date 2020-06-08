@@ -13,6 +13,7 @@
                         <patient-list :show-provider-patients-button="{{json_encode(auth()->user()->isProvider())}}"
                                       :is-admin="{{json_encode(auth()->user()->isAdmin())}}"
                                       url-filter="patientsPendingAuthUserApproval"
+                                      :hide-download-buttons="{{json_encode(true)}}"
                                       ref="patientList">
                         </patient-list>
                     @else
