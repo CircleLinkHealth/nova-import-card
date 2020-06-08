@@ -194,37 +194,12 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     </div>
                                     <br>
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        We are happy you have decided to enroll in this invite-only program for
-                                        continued health.
+                                        We’re happy you’ve decided to join this program so you can get the benefits of better health.
                                     </div>
                                     <br>
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        As Dr. {{$billingDoctor->getFullName()}} mentioned, this program is an important
-                                        part
-                                        of
-                                        better
-                                        self-management of your health. By participating, you benefit in a number ways:
-                                    </div>
-                                    <div class="row gutter"><BR>
-                                        <ul type="disc" style="line-height: 1.0em;list-style-type: disc;">
-                                            <li style="list-style-type: disc;margin: 15px 0;">Regular calls to check-in
-                                                on behalf of Dr. {{$billingDoctor->getFullName()}}, so (s)he can help
-                                                keep
-                                                you
-                                                healthy between visits
-
-                                            </li>
-                                            <li style="list-style-type: disc;margin: 15px 0;">Avoid the inconvenience of
-                                                frequent office visits and co-pays by using this program's remote care
-                                            </li>
-                                            <li style="list-style-type: disc;margin: 15px 0;">All of the information
-                                                gathered will be available to your doctor and will allow them to see how
-                                                you are doing even when you are not in their office
-                                            </li>
-                                            <li style="list-style-type: disc;margin: 5px 0;">Help you take better care
-                                                of yourself by staying connected to your care team and doctor
-                                            </li>
-                                        </ul>
+                                        Enclosed is a copy of the care plan we've discussed or will discuss soon. 
+                                        Please take a moment to read it; we'll continue to refer to it throughout our coaching sessions.
                                     </div>
                                     @if($shouldShowMedicareDisclaimer)
                                         <div class="row gutter" style="line-height: 1.0em;">
