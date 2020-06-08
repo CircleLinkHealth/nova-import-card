@@ -84,21 +84,21 @@
         </v-client-table>
         <div class="row">
             <div class="col-sm-8">
-                <input type="button" class="btn btn-success"
+                <input type="button" class="btn btn-patients-table"
                        :value="'Show by ' + (nameDisplayType ? 'First' : 'Last') + ' Name'"
                        @click="changeNameDisplayType">
                 <span class="pad-10"></span>
 
-                <a class="btn btn-success" :class="{ disabled: loaders.pdf }" @click="exportPdf"
+                <a class="btn btn-patients-table" :class="{ disabled: loaders.pdf }" @click="exportPdf"
                    :href="rootUrl('manage-patients/listing/pdf')" download="patient-list.pdf">Export as PDF</a>
                 <span class="pad-10"></span>
 
-                <input type="button" class="btn btn-success" :class="{ disabled: loaders.excel }"
+                <input type="button" class="btn btn-patients-table" :class="{ disabled: loaders.excel }"
                        :value="exportCSVText" @click="exportCSV">
                 <span class="pad-10"></span>
 
-                <input type="button" class="btn btn-success"
-                       :value="(columns.includes('program') ? 'Hide' : 'Show') + ' Program'"
+                <input type="button" class="btn btn-patients-table"
+                       :value="(columns.includes('program') ? 'Hide' : 'Show') + ' Practice'"
                        @click="toggleProgramColumn">
             </div>
         </div>
@@ -138,6 +138,11 @@
             showProviderPatientsButton: {
                 type: Boolean,
                 required: true,
+            },
+            defaultFilters: {
+                type: Array,
+                required: false,
+                default: () => []
             }
         },
         data() {
@@ -589,6 +594,12 @@
             }
         },
         mounted() {
+            for (let i = 0, len = this.defaultFilters.length; i < len; i++) {
+                let filter = this.defaultFilters[i];
+                this.$refs.tblPatientList.setFilter(filter)
+                this.activateFilters()
+            }
+
             /**
              * load practices, then patients
              */
@@ -606,7 +617,6 @@
             Event.$on('vue-tables.pagination', (page) => {
                 this.getPatients()
             })
-
 
             Event.$on('vue-tables.filter::name', this.activateFilters)
 
@@ -655,6 +665,16 @@
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
+    }
+
+    .btn-patients-table {
+        color: #fff;
+        background-color: #47beaa;
+        border-color: #47beaa;
+    }
+
+    #patient-list-table > div.table-responsive > table > thead {
+        background-color: #d2e2ef !important;
     }
 </style>
 

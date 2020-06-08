@@ -19,7 +19,11 @@
                     </form>
                 @endif
 
-                @include('partials.webix.patient-list')
+                <patient-list :show-provider-patients-button="{{json_encode(auth()->user()->isProvider())}}"
+                              :is-admin="{{json_encode(auth()->user()->isAdmin())}}"
+                              :default-filters="[{'careplanStatus': 'qa_approved'}]"
+                              ref="patientList">
+                </patient-list>
             </div>
         </div>
     </div>
