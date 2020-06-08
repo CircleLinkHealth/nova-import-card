@@ -199,12 +199,12 @@ class PatientController extends Controller
             $showPatientsPendingApprovalBox = true;
             $patients                       = $user->patientsPendingProviderApproval()->limit(40)->get();
             $patientsPendingApproval        = $this->formatter->patientListing($patients);
-            $pendingApprovals               = $patients->count();
+            $pendingApprovals               = $user->patientsPendingProviderApproval()->count();
         } elseif ($user->isAdmin() && $user->canQAApproveCarePlans()) {
             $showPatientsPendingApprovalBox = true;
             $patients                       = $user->patientsPendingCLHApproval()->get();
             $patientsPendingApproval        = $this->formatter->patientListing($patients);
-            $pendingApprovals               = $patients->count();
+            $pendingApprovals               = $user->patientsPendingProviderApproval()->count();
             $seesAutoApprovalButton         = SeesAutoQAButton::userId(auth()->id());
         }
 
