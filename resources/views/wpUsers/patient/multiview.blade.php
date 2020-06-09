@@ -192,7 +192,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     <div class="row gutter"><BR><BR>
                                     </div>
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        Enclosed is a copy of the care plan we've discussed or will discuss soon. 
+                                        Enclosed is a copy of the care plan we've discussed or will discuss soon. <br>
                                         Please take a moment to read it; we'll continue to refer to it throughout our coaching sessions.
                                     </div>
                                     <div class="row gutter"><BR><BR>
