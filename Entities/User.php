@@ -83,7 +83,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *
  * @property int                                                                                                             $id
  * @property int|null                                                                                                        $saas_account_id
- * @property int                                                                                                             $skip_browser_checks                                                                                                                                                    Skip compatible browser checks when the user logs in
+ * @property int                                                                                                             $skip_browser_checks                          Skip compatible browser checks when the user logs in
  * @property int                                                                                                             $count_ccm_time
  * @property string                                                                                                          $username
  * @property string                                                                                                          $program_id
@@ -232,72 +232,75 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $tokens_count
  * @property \App\CPRulesUCP[]|\Illuminate\Database\Eloquent\Collection                                                      $ucp
  * @property int|null                                                                                                        $ucp_count
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User careCoaches()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User exceptType($type)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User filter(\App\Filters\QueryFilters $filters)
- * @method   static                                                                                                          bool|null forceDelete()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasBillingProvider($billing_provider_id)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User intersectLocationsWith($user)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User intersectPracticesWith(\CircleLinkHealth\Customer\Entities\User $user, $withDemo = true)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isBhiChargeable()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isBhiEligible()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isNotDemo()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User newModelQuery()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User newQuery()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User notOfPracticeRequiringSpecialBhiConsent()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofActiveBillablePractice()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofPractice($practiceId)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofPracticeRequiringSpecialBhiConsent()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofType($type, $excludeAwv = true)
- * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User onlyTrashed()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User practiceStaff()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User practicesWhereHasRoles($roleIds, $onlyActive = false)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User query()
- * @method   static                                                                                                          bool|null restore()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereAccessDisabled($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereAddress($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereAddress2($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereAutoAttachPrograms($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereCity($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereCountCcmTime($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereCreatedAt($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereDeletedAt($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereDisplayName($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereEmail($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereFirstName($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereId($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereIsAutoGenerated($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereIsOnline($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereLastLogin($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereLastName($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereLastSessionId($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User wherePassword($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereProgramId($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereRememberToken($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereSaasAccountId($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereSkipBrowserChecks($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereState($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereStatus($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereSuffix($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereTimezone($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereUpdatedAt($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereUserRegistered($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereUserStatus($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereUsername($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereZip($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User withCareTeamOfType($type)
- * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withTrashed()
- * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withoutTrashed()
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User careCoaches()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User exceptType($type)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User filter(\App\Filters\QueryFilters $filters)
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasBillingProvider($billing_provider_id)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User intersectLocationsWith($user)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User intersectPracticesWith(\CircleLinkHealth\Customer\Entities\User $user, $withDemo = true)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isBhiChargeable()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isBhiEligible()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isNotDemo()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User notOfPracticeRequiringSpecialBhiConsent()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofActiveBillablePractice()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofPractice($practiceId)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofPracticeRequiringSpecialBhiConsent()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofType($type, $excludeAwv = true)
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User practiceStaff()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User practicesWhereHasRoles($roleIds, $onlyActive = false)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereAccessDisabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereAddress2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereAutoAttachPrograms($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereCity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereCountCcmTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereDisplayName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereIsAutoGenerated($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereIsOnline($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereLastLogin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereLastName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereLastSessionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereProgramId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereSaasAccountId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereSkipBrowserChecks($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereState($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereSuffix($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereTimezone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereUserRegistered($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereUserStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereUsername($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereZip($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User withCareTeamOfType($type)
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withoutTrashed()
  * @mixin \Eloquent
+ *
  * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null $enrollmentInvitationLinks
  * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null       $enrollableInfoRequest
  * @property \App\LoginLogout[]|\Illuminate\Database\Eloquent\Collection                       $loginEvents
  * @property int|null                                                                          $login_events_count
  * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null                              $enrollee
  * @property int|null                                                                          $enrollment_invitation_links_count
- * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInvite()
- * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInviteReminder(\Carbon\Carbon $date = null, $has = true)
- * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User haveEnrollableInvitationDontHaveReminder(\Carbon\Carbon $dateInviteSent = null)
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInvite()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInviteReminder(\Carbon\Carbon $date = null, $has = true)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User haveEnrollableInvitationDontHaveReminder(\Carbon\Carbon $dateInviteSent = null)
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -2445,7 +2448,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     },
                     'carePlan.providerApproverUser',
                     'primaryPractice',
-                    'patientInfo',
+                    'patientInfo.location',
                 ]
             )
             ->get();
@@ -2454,109 +2457,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function patientNurseAsPatient()
     {
         return $this->hasOne(PatientNurse::class, 'patient_user_id');
-    }
-
-    /**
-     * @return \Illuminate\Database\Query\Builder
-     */
-    public function patientsPendingCLHApproval()
-    {
-        return User::intersectPracticesWith($this, false)
-            ->ofType('participant')
-            ->whereHas('patientInfo', function ($q) {
-                $q->enrolled();
-            })
-            ->whereHas(
-                'carePlan',
-                function ($q) {
-                    $q->whereIn('status', [CarePlan::DRAFT]);
-                }
-            )
-            ->with(
-                [
-                    'observations' => function ($query) {
-                        $query->where('obs_key', '!=', 'Outbound');
-                        $query->orderBy('obs_date', 'DESC');
-                        $query->first();
-                    },
-                    'phoneNumbers' => function ($q) {
-                        $q->where('type', '=', PhoneNumber::HOME);
-                    },
-                    'patientInfo.location',
-                    'primaryPractice',
-                    'carePlan',
-                ]
-            );
-    }
-
-    public function patientsPendingProviderApproval()
-    {
-        $approveOwnCarePlans = $this->providerInfo
-            ? (bool) $this->providerInfo->approve_own_care_plans
-            : false;
-
-        return User::intersectPracticesWith($this)
-            ->ofType('participant')
-            ->whereHas('patientInfo', function ($q) {
-                $q->enrolled();
-            })
-            ->whereHas(
-                'carePlan',
-                function ($q) {
-                    $q->whereIn('status', [CarePlan::QA_APPROVED]);
-                }
-            )
-            ->intersectPracticesWith($this)
-            ->when(true === $approveOwnCarePlans, function ($q) use ($approveOwnCarePlans) {
-                $q->whereHas(
-                    'careTeamMembers',
-                    function ($q) use ($approveOwnCarePlans) {
-                        $q->where(
-                            [
-                                ['type', '=', CarePerson::BILLING_PROVIDER],
-                                ['member_user_id', '=', $this->id],
-                            ]
-                        )
-                            ->orWhere(
-                                function ($q) {
-                                    $q->whereHas(
-                                        'user',
-                                        function ($q) {
-                                            $q->whereHas(
-                                                'forwardAlertsTo',
-                                                function ($q) {
-                                                    $q->where('contactable_id', $this->id)
-                                                        ->orWhereIn(
-                                                            'name',
-                                                            [
-                                                                'forward_careplan_approval_emails_instead_of_provider',
-                                                                'forward_careplan_approval_emails_in_addition_to_provider',
-                                                            ]
-                                                        );
-                                                }
-                                            );
-                                        }
-                                    );
-                                }
-                            );
-                    }
-                );
-            })
-            ->with(
-                [
-                    'observations' => function ($query) {
-                        $query->where('obs_key', '!=', 'Outbound');
-                        $query->orderBy('obs_date', 'DESC');
-                        $query->first();
-                    },
-                    'phoneNumbers' => function ($q) {
-                        $q->where('type', '=', PhoneNumber::HOME);
-                    },
-                    'patientInfo.location',
-                    'primaryPractice',
-                    'carePlan',
-                ]
-            );
     }
 
     public function patientSummaries()
@@ -2931,8 +2831,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     /**
      * Scope for Enrollable Users we need to send a reminder Self Enrollment Notification to.
      *
-     *
      * @param $query
+     *
      * @return mixed
      */
     public function scopeHaveEnrollableInvitationDontHaveReminder($query, Carbon $dateInviteSent = null)
@@ -3227,6 +3127,109 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     ->orWhereDoesntHave('patientInfo');
             });
         });
+    }
+
+    /**
+     * @param mixed $query
+     *
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function scopePatientsPendingCLHApproval($query, User $approver)
+    {
+        return $query->intersectPracticesWith($approver, false)
+            ->ofType('participant')
+            ->whereHas('patientInfo', function ($q) {
+                $q->enrolled();
+            })
+            ->whereHas(
+                'carePlan',
+                function ($q) {
+                    $q->whereIn('status', [CarePlan::DRAFT]);
+                }
+            )
+            ->with(
+                [
+                    'observations' => function ($query) {
+                        $query->where('obs_key', '!=', 'Outbound');
+                        $query->orderBy('obs_date', 'DESC');
+                        $query->limit(1);
+                    },
+                    'phoneNumbers' => function ($q) {
+                        $q->where('type', '=', PhoneNumber::HOME);
+                    },
+                    'patientInfo.location',
+                    'primaryPractice',
+                    'carePlan',
+                ]
+            );
+    }
+
+    public function scopePatientsPendingProviderApproval($query, User $approver)
+    {
+        $approveOwnCarePlansOnly = $approver->providerInfo
+            ? (bool) $approver->providerInfo->approve_own_care_plans
+            : false;
+
+        return $query->intersectPracticesWith($approver)
+            ->ofType('participant')
+            ->whereHas('patientInfo', function ($q) {
+                $q->enrolled();
+            })
+            ->whereHas(
+                'carePlan',
+                function ($q) {
+                    $q->whereIn('status', [CarePlan::QA_APPROVED]);
+                }
+            )
+            ->intersectPracticesWith($approver)
+            ->when(true === $approveOwnCarePlansOnly, function ($q) use ($approveOwnCarePlansOnly, $approver) {
+                $q->whereHas(
+                    'careTeamMembers',
+                    function ($q) use ($approveOwnCarePlansOnly, $approver) {
+                        $q->where(
+                            [
+                                ['type', '=', CarePerson::BILLING_PROVIDER],
+                                ['member_user_id', '=', $approver->id],
+                            ]
+                        )
+                            ->orWhere(
+                                function ($q) use ($approver) {
+                                    $q->whereHas(
+                                        'user',
+                                        function ($q) use ($approver) {
+                                            $q->whereHas(
+                                                'forwardAlertsTo',
+                                                function ($q) use ($approver) {
+                                                    $q->where('contactable_id', $approver->id)
+                                                        ->orWhereIn(
+                                                            'name',
+                                                            [
+                                                                'forward_careplan_approval_emails_instead_of_provider',
+                                                                'forward_careplan_approval_emails_in_addition_to_provider',
+                                                            ]
+                                                        );
+                                                }
+                                            );
+                                        }
+                                    );
+                                }
+                            );
+                    }
+                );
+            })
+            ->with(
+                [
+                    'observations' => function ($query) {
+                        $query->where('obs_key', '!=', 'Outbound')->orderBy('obs_date', 'DESC')->limit(1);
+                    },
+                    'phoneNumbers' => function ($q) {
+                        $q->where('type', '=', PhoneNumber::HOME);
+                    },
+                    'patientInfo.location',
+                    'primaryPractice',
+                    'carePlan',
+                ]
+            );
     }
 
     public function scopePracticeStaff($query)
