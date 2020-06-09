@@ -16,9 +16,6 @@ if (isset($patient)) {
 $user                = auth()->user();
 $patientListDropdown = getPatientListDropdown($user);
 $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
-
-$reportData = (new NurseCalendarService())->prepareDailyReportsForNurse($user, true);
-
 ?>
 @push('styles')
     <style>
@@ -89,7 +86,7 @@ $reportData = (new NurseCalendarService())->prepareDailyReportsForNurse($user, t
                 <div class="collapse navbar-collapse" id="navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
                         @if(!$isTwoFaRoute)
-                            @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $user->isCareCoach() && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking)
+                            @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $userIsCareCoach && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking)
                                 <li>
                                     <time-tracker-call-mode ref="timeTrackerCallMode"
                                                             :twilio-enabled="@json(config('services.twilio.enabled') && ($patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : false))"
@@ -162,7 +159,7 @@ $reportData = (new NurseCalendarService())->prepareDailyReportsForNurse($user, t
                             @endif
 
 
-                            @if(! $user->isCareCoach())
+                            @if(! $userIsCareCoach)
                                 <li>
                                     <a href="{{ route('patients.dashboard') }}" class="text-white"><i
                                                 class="top-nav-item-icon glyphicon glyphicon-home"></i>Home</a>
@@ -204,7 +201,7 @@ $reportData = (new NurseCalendarService())->prepareDailyReportsForNurse($user, t
                                 @endif
                         @endif
 
-                        @if($user->isCareCoach())
+                        @if($userIsCareCoach)
                             <li>
                                 <a href="{{ route('patientCallList.index') }}" class="text-white"><i
                                             class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
@@ -259,16 +256,12 @@ $reportData = (new NurseCalendarService())->prepareDailyReportsForNurse($user, t
 
                         @include('partials.user-account-dropdown')
 
-                            @if(true)
-                                <div>
+                            @if(!empty($reportData))
                                     <calendar-daily-report style="color: black;"
                                             :report-data="{{json_encode($reportData->first()['data']['reportData'])}}"
                                             :report-date="{{json_encode(\Carbon\Carbon::parse('2020-06-08')->toDateString())}}"
-                                            :report-flags="{{json_encode($reportData[0]['data']['reportFlags'])}}"
-                                            :pop-up-now={{true}}
-                                    ></calendar-daily-report>
-                                </div>
-
+                                            :report-flags="{{json_encode($reportData->first()['data']['reportFlags'])}}"
+                                            :pop-up-now={{true}}></calendar-daily-report>
                             @endif
 
                     </ul>

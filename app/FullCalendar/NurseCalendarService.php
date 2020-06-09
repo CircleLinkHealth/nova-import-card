@@ -6,6 +6,7 @@
 
 namespace App\FullCalendar;
 
+use App\LoginLogout;
 use App\Services\NursesPerformanceReportService;
 use App\Traits\ValidatesWorkScheduleCalendar;
 use Carbon\Carbon;
@@ -19,11 +20,12 @@ class NurseCalendarService
     use ValidatesWorkScheduleCalendar;
     const COMPANY_HOLIDAY = 'companyHoliday';
 
-    const END      = 'end';
-    const SATURDAY = 6;
-    const START    = 'start';
-    const SUNDAY   = 0;
-    const TITLE    = 'title';
+    const END                = 'end';
+    const FIRST_LOGIN_OF_DAY = 1;
+    const SATURDAY           = 6;
+    const START              = 'start';
+    const SUNDAY             = 0;
+    const TITLE              = 'title';
 
     /**
      * @param $diffRange
@@ -302,6 +304,66 @@ class NurseCalendarService
     }
 
     /**
+     * @return int
+     */
+    public function loginActivityCountFor(int $userId, Carbon $date)
+    {
+        return LoginLogout::where('user_id', $userId)
+            ->where([
+                [
+                    'login_time', '>=', $date->copy()->startOfDay(),
+                ],
+                [
+                    'login_time', '<=', $date->copy()->endOfDay(),
+                ],
+            ])->count();
+    }
+
+    /**
+     * @param $user
+     *
+     * @return array|\Collection|\Illuminate\Support\Collection
+     */
+    public function nurseDailyReportForDate(int $userId, Carbon $date)
+    {
+        $loginActivityCount = $this->loginActivityCountFor($userId, $date);
+
+        if ($loginActivityCount <= self::FIRST_LOGIN_OF_DAY) {
+            \Cache::remember(
+                "daily-report-for-{$userId}-{$date->toDateString()}",
+                $date->copy()->endOfDay(),
+                function () use ($loginActivityCount) {
+                    return $loginActivityCount;
+                }
+            );
+
+            return $this->prepareDailyReportsForNurse(User::whereId($userId)->first(), $date);
+        }
+
+        return [];
+    }
+
+    /**
+     * @param $authId
+     *
+     * @return array
+     */
+    public function nurseReportForDate($authId, Carbon $date)
+    {
+        $service      = new NursesPerformanceReportService();
+        $reportForDay = $service->getDailyReportJson($date);
+
+        $report = [];
+        if ( ! $reportForDay || ! is_json($reportForDay)) {
+            $report[$date->toDateString()] = [];
+        } else {
+            $report[$date->toDateString()] = collect(json_decode($reportForDay, true))->where('nurse_id', $authId)->first();
+        }
+
+        return $report;
+    }
+
+    /**
      * @param Collection $nurses
      * @param mixed      $startDate
      * @param mixed      $endDate
@@ -318,16 +380,16 @@ class NurseCalendarService
     }
 
     /**
-     * @param $auth
-     * @param $yesterdayOnly
+     * @param mixed $auth
+     * @param null  $date
      *
-     * @return \Illuminate\Support\Collection
+     * @return \Collection|\Illuminate\Support\Collection
      */
-    public function prepareDailyReportsForNurse($auth, bool $yesterdayOnly = false)
+    public function prepareDailyReportsForNurse($auth, $date = null)
     {
         $reports = $this->dailyReportsForNurse($auth->id);
-        if ($yesterdayOnly) {
-            $reports = $this->yesterdayReportForNurse($auth->id);
+        if ($date) {
+            $reports = $this->nurseReportForDate($auth->id, $date);
         }
         $title = 'Daily Report';
 
@@ -336,7 +398,7 @@ class NurseCalendarService
             if (empty($report)) {
                 continue;
             }
-//            @todo:This should have been false. Changed. Should set all true in CPM_config if not already
+//            @todo:This should have been false. Changed. Should set all true in CPM_config if not true already.
             $showEfficiencyMetric       = false;
             $enableDailyReportMetrics   = false;
             $patientsCompletedRemaining = false;
@@ -515,21 +577,5 @@ class NurseCalendarService
                     ]
                 );
             });
-    }
-
-    public function yesterdayReportForNurse($authId)
-    {
-        $date         = Carbon::yesterday();
-        $service      = new NursesPerformanceReportService();
-        $reportForDay = $service->getDailyReportJson($date);
-
-        $report = [];
-        if ( ! $reportForDay || ! is_json($reportForDay)) {
-            $report[$date->toDateString()] = [];
-        } else {
-            $report[$date->toDateString()] = collect(json_decode($reportForDay, true))->where('nurse_id', $authId)->first();
-        }
-
-        return $report;
     }
 }

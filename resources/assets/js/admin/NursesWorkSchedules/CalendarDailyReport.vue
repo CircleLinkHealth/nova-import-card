@@ -148,8 +148,6 @@
 </template>
 
 <script>
-    import axios from "../../bootstrap-axios";
-
     export default {
         name: "CalendarDailyReport",
         props: ['reportData', 'reportDate', 'reportFlags', 'popUpNow'],
