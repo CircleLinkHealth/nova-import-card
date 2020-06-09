@@ -16,8 +16,8 @@ class MedicationObserver
      */
     public function creating(Medication $medication)
     {
-        if ( ! $medication->medication_group_id && $medication->name) {
-            $medication->medication_group_id = MedicationGroupsMap::getGroup($medication->name);
+        if ( ! $medication->medication_group_id && ($medication->name || $medication->sig)) {
+            $medication->medication_group_id = MedicationGroupsMap::getGroup($medication->name) ?? MedicationGroupsMap::getGroup($medication->sig);
         }
     }
 }
