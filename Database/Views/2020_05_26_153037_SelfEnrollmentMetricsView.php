@@ -86,17 +86,13 @@ class SelfEnrollmentMetricsView extends BaseSqlView
              FROM login_logout_events l2
              WHERE l.user_id = l2.user_id
                 AND l2.id < l.id)
-                
-                
-                
-       AND
+        AND
        p.is_demo = $showDemo
 
        GROUP BY
        batch_id
        
-       
-        ");
+       ");
     }
 
     /**
