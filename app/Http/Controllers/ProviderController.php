@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Events\CarePlanWasApproved;
 use App\Services\ProviderInfoService;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Http\Request;
@@ -40,9 +41,9 @@ class ProviderController extends Controller
 
         if ($viewNext && auth()->user()->hasRole(['administrator', 'provider'])) {
             if (auth()->user()->isProvider()) {
-                $nextPatient = auth()->user()->patientsPendingProviderApproval()->first();
+                $nextPatient = User::patientsPendingProviderApproval(auth()->user())->first();
             } elseif (auth()->user()->isAdmin()) {
-                $nextPatient = auth()->user()->patientsPendingCLHApproval()->first();
+                $nextPatient = User::patientsPendingCLHApproval(auth()->user())->first();
             }
 
             if ( ! $nextPatient) {
@@ -68,6 +69,16 @@ class ProviderController extends Controller
         return $this->providerInfoService->list();
     }
 
+    public function listLocations()
+    {
+        return Location::whereIn('practice_id', auth()->user()->viewableProgramIds())->whereNotNull('name')->get()->transform(function ($location) {
+            return [
+                'id'   => $location->id,
+                'name' => $location->name,
+            ];
+        });
+    }
+
     public function removePatient($patientId, $viewNext = false)
     {
         $user = User::find($patientId);
@@ -83,9 +94,7 @@ class ProviderController extends Controller
         }
 
         if ($viewNext) {
-            $nextPatient = auth()->user()->patientsPendingProviderApproval()->get()->filter(function ($user) {
-                return CarePlan::QA_APPROVED == $user->getCarePlanStatus();
-            })->first();
+            $nextPatient = User::patientsPendingProviderApproval(auth()->user())->first();
 
             if ( ! $nextPatient) {
                 return redirect()->to('/');

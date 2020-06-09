@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3a4d7b45c45085f4585fa52ea8bfde56",
+    "content-hash": "81da162adb7eb8e8aa3325ccf31e18be",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -522,16 +522,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.140.2",
+            "version": "3.140.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "7e37960c1103ee211932be51b2282b41c948a5f0"
+                "reference": "aebd17510b6220b6e5b239730b02eaf7b9b2b816"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/7e37960c1103ee211932be51b2282b41c948a5f0",
-                "reference": "7e37960c1103ee211932be51b2282b41c948a5f0",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/aebd17510b6220b6e5b239730b02eaf7b9b2b816",
+                "reference": "aebd17510b6220b6e5b239730b02eaf7b9b2b816",
                 "shasum": ""
             },
             "require": {
@@ -602,7 +602,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-06-05T18:12:25+00:00"
+            "time": "2020-06-08T18:19:35+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1150,11 +1150,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.8.0",
+            "version": "v2.8.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "e2f8831c0642cf4d1d2caf874fc3491a6e1219f2"
+                "reference": "b1b7fd999a8d50cb40bd4abb981bad9b4595cf1d"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1188,7 +1188,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-05T00:09:02+00:00"
+            "time": "2020-06-09T00:08:18+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -13849,16 +13849,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.26",
+            "version": "0.12.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "f108dabe757a584fafc3baabc0fabf4d45e040f1"
+                "reference": "2abbd3253e38a258137f647f4e5fdbcb13142c3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/f108dabe757a584fafc3baabc0fabf4d45e040f1",
-                "reference": "f108dabe757a584fafc3baabc0fabf4d45e040f1",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/2abbd3253e38a258137f647f4e5fdbcb13142c3e",
+                "reference": "2abbd3253e38a258137f647f4e5fdbcb13142c3e",
                 "shasum": ""
             },
             "require": {
@@ -13887,7 +13887,7 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2020-06-07T22:01:45+00:00"
+            "time": "2020-06-08T21:28:12+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",

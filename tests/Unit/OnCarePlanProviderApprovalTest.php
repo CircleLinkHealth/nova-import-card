@@ -14,6 +14,7 @@ use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Support\Facades\Notification;
@@ -246,8 +247,8 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
 
         $this->assertNotEquals($this->provider(2)[0]->id, $this->provider(2)[1]->id);
 
-        $this->assertTrue(1 === $this->provider(2)[0]->patientsPendingProviderApproval()->count());
-        $this->assertTrue(1 === $this->provider(2)[1]->patientsPendingProviderApproval()->count());
+        $this->assertTrue(1 === User::patientsPendingProviderApproval($this->provider(2)[0])->count());
+        $this->assertTrue(1 === User::patientsPendingProviderApproval($this->provider(2)[1])->count());
 
         $response = $this->actingAs($this->provider(2)[1])->get(
             route(

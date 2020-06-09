@@ -271,7 +271,13 @@ Route::group(['middleware' => 'auth'], function () {
         ], function () {
             Route::get('list', 'ProviderController@list');
             Route::get('{id}', 'ProviderController@show');
-            Route::resource('', 'ProviderController');
+        });
+
+        Route::group([
+            'prefix'     => 'locations',
+            'middleware' => ['permission:location.read'],
+        ], function () {
+            Route::get('list', 'ProviderController@listLocations');
         });
 
         Route::group([

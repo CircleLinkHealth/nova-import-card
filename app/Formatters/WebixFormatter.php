@@ -523,7 +523,8 @@ class WebixFormatter implements ReportFormatter
     public function patients(Collection $patients = null)
     {
         $patientData = [];
-        $auth        = \Auth::user();
+        /** @var User $auth */
+        $auth = \Auth::user();
 
         if ( ! $patients) {
             $patients = $auth->patientList();
@@ -532,7 +533,7 @@ class WebixFormatter implements ReportFormatter
         $foundUsers    = []; // save resources, no duplicate db calls
         $foundPrograms = []; // save resources, no duplicate db calls
 
-        $canApproveCarePlans   = $auth->canApproveCareplans();
+        $canApproveCarePlans   = $auth->canApproveCarePlans();
         $canQAApproveCarePlans = $auth->canQAApproveCarePlans();
         $isCareCenter          = $auth->isCareCoach();
         $isAdmin               = $auth->isAdmin();

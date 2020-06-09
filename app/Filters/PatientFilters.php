@@ -130,6 +130,13 @@ class PatientFilters extends QueryFilters
         });
     }
 
+    public function location($location)
+    {
+        return $this->builder->whereHas('patientInfo.location', function ($q) use ($location) {
+            $q->where('name', $location)->orWhere('id', $location);
+        });
+    }
+
     public function mrn($mrn)
     {
         return $this->builder->whereHas('patientInfo', function ($query) use ($mrn) {
