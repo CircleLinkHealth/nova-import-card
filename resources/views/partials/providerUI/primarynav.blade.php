@@ -14,6 +14,27 @@ if (isset($patient)) {
 $patientListDropdown = getPatientListDropdown($user);
 $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
 
+if ($userIsCareCoach) {
+    $scheduleIconClass = $hasCurrentWeekWindows
+        ? 'top-nav-item-icon glyphicon glyphicon-calendar'
+        : 'fa fa-exclamation';
+
+    $iClassStyle = 'fa fa-exclamation' === $scheduleIconClass
+        ? 'color: background: rgb(255, 255, 255);
+                    font-size: 12px;
+                    background: rgb(238, 66, 20);
+                    border-radius: 0.8em;
+                    display: inline-block;
+                    font-weight: bold;
+                    line-height: 1.6em;
+                    margin-right: 5px;
+                    text-align: center;
+                    width: 1.6em;
+                    animation: shake-animation 3.72s ease infinite;
+                    transform-origin: 50% 50%;;'
+        : '';
+}
+
 ?>
 @push('styles')
     <style>
