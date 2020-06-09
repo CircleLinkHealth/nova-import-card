@@ -145,8 +145,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-4 col-xs-offset-1 print-row text-right">
-                                                    <div>290 Harbor Drive</div>
-                                                    <div>Stamford, CT 06902</div>
+                                                    <div>115 E 23rd St</div>
+                                                    <div>New York, NY 10010</div>
                                                     <div class="omr-bar"></div>
                                                 </div>
                                             </div>
@@ -185,9 +185,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     <div class="row gutter" style="line-height: 1.0em;">
                                         Welcome to @if('UPG' === $patient->primaryPractice->name)CircleLink Health's @else {{$patient->primaryPractice->display_name}}'s @endif Personalized Care Program!
                                     </div>
-                                    <br>
+                                    <br><br>
                                     <div class="row gutter" style="line-height: 1.0em;">
                                         We’re happy you’ve decided to join this program so you can get the benefits of better health.
+                                    </div>
+                                    <div class="row gutter"><BR><BR>
                                     </div>
                                     <div class="row gutter" style="line-height: 1.0em;">
                                         Enclosed is a copy of the care plan we've discussed or will discuss soon. 
