@@ -180,8 +180,19 @@ class PatientCareplanController extends Controller
 
         $fileNameWithPathBlankPage = $this->pdfService->blankPage();
 
-        $users = User::with(array_merge(PatientCareplanRelations::get(), ['patientInfo', 'primaryPractice']))
-            ->has('patientInfo')->has('billingProvider.user')->findMany($userIds);
+        $users = User::with(
+            array_merge(PatientCareplanRelations::get(), [
+                'patientInfo',
+                'primaryPractice',
+                'inboundCalls' => function ($c) {
+                    $c->with(['outboundUser'])
+                        ->where('status', 'scheduled')
+                        ->where('called_date', '=', null);
+                }, ])
+        )
+            ->has('patientInfo')
+            ->has('billingProvider.user')
+            ->findMany($userIds);
 
         // create pdf for each user
         $p = 1;
@@ -198,48 +209,39 @@ class PatientCareplanController extends Controller
             $practiceNumber    = $user->primaryPractice->number_with_dashes;
             $assignedNurseName = optional(PatientNurse::getPermanentNurse($user->id))->first_name;
 
+            //if permanent assigned nurse does not exist, get nurse from scheduled call - CPM-1829
+            if ( ! $assignedNurseName) {
+                $call              = $user->inboundCalls->first();
+                $assignedNurseName = optional($call->outboundUser)->first_name ?? null;
+            }
+
+            $viewParams = [
+                'careplans'         => [$user->id => $careplan],
+                'isPdf'             => true,
+                'letter'            => $letter,
+                'problemNames'      => $careplan['problem'],
+                'patient'           => $user,
+                'careTeam'          => $user->careTeamMembers,
+                'data'              => $careplanService->careplan($user->id),
+                'billingDoctor'     => $user->billingProviderUser(),
+                'regularDoctor'     => $user->regularDoctorUser(),
+                'title'             => $title,
+                'practiceNumber'    => $practiceNumber,
+                'assignedNurseName' => $assignedNurseName,
+            ];
+
             if ($request->filled('render') && 'html' == $request->input('render')) {
-                return view(
-                    'wpUsers.patient.multiview',
-                    [
-                        'careplans'         => [$user->id => $careplan],
-                        'isPdf'             => true,
-                        'letter'            => $letter,
-                        'problemNames'      => $careplan['problem'],
-                        'patient'           => $user,
-                        'careTeam'          => $user->careTeamMembers,
-                        'data'              => $careplanService->careplan($user->id),
-                        'billingDoctor'     => $user->billingProviderUser(),
-                        'regularDoctor'     => $user->regularDoctorUser(),
-                        'title'             => $title,
-                        'practiceNumber'    => $practiceNumber,
-                        'assignedNurseName' => $assignedNurseName,
-                    ]
-                );
+                return view('wpUsers.patient.multiview', $viewParams);
             }
 
             $pdfCareplan = null;
             if (true == $letter && 'pdf' == $user->carePlan->mode) {
-                $pdfCareplan = $user->carePlan->pdfs->sortByDesc('created_at')->first();
+                $viewParams['pdfCarePlan'] = $user->carePlan->pdfs->sortByDesc('created_at')->first();
             }
 
             $fileNameWithPath = $this->pdfService->createPdfFromView(
                 'wpUsers.patient.multiview',
-                [
-                    'careplans'         => [$user->id => $careplan],
-                    'isPdf'             => true,
-                    'letter'            => $letter,
-                    'problemNames'      => $careplan['problem'],
-                    'careTeam'          => $user->careTeamMembers,
-                    'patient'           => $user,
-                    'data'              => $careplanService->careplan($user->id),
-                    'pdfCareplan'       => $pdfCareplan,
-                    'billingDoctor'     => $user->billingProviderUser(),
-                    'regularDoctor'     => $user->regularDoctorUser(),
-                    'title'             => $title,
-                    'practiceNumber'    => $practiceNumber,
-                    'assignedNurseName' => $assignedNurseName,
-                ],
+                $viewParams,
                 null,
                 Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
             );

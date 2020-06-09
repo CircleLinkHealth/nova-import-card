@@ -178,10 +178,9 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             <div class="row gutter">
                                 <div class="col-xs-10 welcome-copy">
                                     <div class="row gutter">
-                                        Dear @if($title) {{$title}} @else {{ucfirst(strtolower($patient->first_name))}} @endif {{ucfirst(strtolower($patient->last_name))}}
-                                        ,
+                                        Dear @if($title) {{$title}} @else {{ucfirst(strtolower($patient->first_name))}} @endif {{ucfirst(strtolower($patient->last_name))}},
                                     </div>
-                                    <div class="row gutter">
+                                    <div class="row gutter"><BR><BR>
                                     </div>
                                     <div class="row gutter" style="line-height: 1.0em;">
                                         Welcome to @if('UPG' === $patient->primaryPractice->name)CircleLink Health's @else {{$patient->primaryPractice->display_name}}'s @endif Personalized Care Program!
@@ -216,7 +215,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     <div class="row gutter">
                                     </div>
                                     <div class="row gutter">
-                                        @if($assignedNurseName) {{$assignedNueseName}} @else Your Registered Nurse Care Coach @endif
+                                        @if($assignedNurseName) {{$assignedNurseName}} @else Your Registered Nurse Care Coach @endif
                                     </div>
                                     <div class="row gutter">
                                     </div>
