@@ -108,9 +108,7 @@
             <br>
 
             <div class="request-info-href" style="padding-top: 20px;">
-                <h5>Enter patient's / enrolee's 'ID' that got enrolled</h5>
-                <p>This will update patient or enrollee fields and display them where they should be (see. flow)</p>
-                <strong>This will be automated on production</strong>
+                <h5>Enter patient 'ID' that got enrolled</h5>
                 <form action="{{route('evaluate.survey.completed')}}" target="_blank">
                     <label for="enrolleeId">Enter Id:</label><br>
                     <input type="text" id="enrolleeId" name="enrolleeId" placeholder="ex.1616"><br>
