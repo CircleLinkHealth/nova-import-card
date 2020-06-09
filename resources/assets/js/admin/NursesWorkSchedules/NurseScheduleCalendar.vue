@@ -52,7 +52,8 @@
             <calendar-daily-report
                     :report-data="reportData"
                     :report-date="reportDate"
-                    :report-flags="reportFlags">
+                    :report-flags="reportFlags"
+                    :pop-up-now="false">
             </calendar-daily-report>
             <!-- Daily Report Modal End-->
 

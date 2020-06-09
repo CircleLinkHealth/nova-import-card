@@ -154,9 +154,9 @@ class NurseCalendarService
      */
     public function dailyReportsForNurse($authId)
     {
-        $yesterday = now()->copy()->subDay(1);
-        $startDate = $yesterday->copy()->subDays(6);
-        $dates     = getDatesForRange($startDate, $yesterday);
+        $endDate   = now()->copy()->subDay(1);
+        $startDate = $endDate->copy()->subDays(6);
+        $dates     = getDatesForRange($startDate, $endDate);
 
         $service = new NursesPerformanceReportService();
 
@@ -319,22 +319,27 @@ class NurseCalendarService
 
     /**
      * @param $auth
+     * @param $yesterdayOnly
      *
      * @return \Illuminate\Support\Collection
      */
-    public function prepareDailyReportsForNurse($auth)
+    public function prepareDailyReportsForNurse($auth, bool $yesterdayOnly = false)
     {
         $reports = $this->dailyReportsForNurse($auth->id);
-        $title   = 'Daily Report';
+        if ($yesterdayOnly) {
+            $reports = $this->yesterdayReportForNurse($auth->id);
+        }
+        $title = 'Daily Report';
 
         $reportsForCalendarView = [];
         foreach ($reports as $date => $report) {
             if (empty($report)) {
                 continue;
             }
-            $showEfficiencyMetric       = true;
-            $enableDailyReportMetrics   = true;
-            $patientsCompletedRemaining = true;
+//            @todo:This should have been false. Changed. Should set all true in CPM_config if not already
+            $showEfficiencyMetric       = false;
+            $enableDailyReportMetrics   = false;
+            $patientsCompletedRemaining = false;
 
             if (showNurseMetricsInDailyEmailReport($auth->id, 'efficiency_metrics')) {
                 $showEfficiencyMetric = true;
@@ -510,5 +515,21 @@ class NurseCalendarService
                     ]
                 );
             });
+    }
+
+    public function yesterdayReportForNurse($authId)
+    {
+        $date         = Carbon::yesterday();
+        $service      = new NursesPerformanceReportService();
+        $reportForDay = $service->getDailyReportJson($date);
+
+        $report = [];
+        if ( ! $reportForDay || ! is_json($reportForDay)) {
+            $report[$date->toDateString()] = [];
+        } else {
+            $report[$date->toDateString()] = collect(json_decode($reportForDay, true))->where('nurse_id', $authId)->first();
+        }
+
+        return $report;
     }
 }

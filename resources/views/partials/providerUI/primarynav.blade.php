@@ -1,4 +1,7 @@
 <?php
+
+use App\FullCalendar\NurseCalendarService;
+
 $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
 if (isset($patient)) {
     //$patient can be a User or Patient model.
@@ -13,6 +16,9 @@ if (isset($patient)) {
 $user                = auth()->user();
 $patientListDropdown = getPatientListDropdown($user);
 $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
+
+$reportData = (new NurseCalendarService())->prepareDailyReportsForNurse($user, true);
+
 ?>
 @push('styles')
     <style>
@@ -252,6 +258,19 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                         @endif
 
                         @include('partials.user-account-dropdown')
+
+                            @if(true)
+                                <div>
+                                    <calendar-daily-report style="color: black;"
+                                            :report-data="{{json_encode($reportData->first()['data']['reportData'])}}"
+                                            :report-date="{{json_encode(\Carbon\Carbon::parse('2020-06-08')->toDateString())}}"
+                                            :report-flags="{{json_encode($reportData[0]['data']['reportFlags'])}}"
+                                            :pop-up-now={{true}}
+                                    ></calendar-daily-report>
+                                </div>
+
+                            @endif
+
                     </ul>
                 </div>
             </div>

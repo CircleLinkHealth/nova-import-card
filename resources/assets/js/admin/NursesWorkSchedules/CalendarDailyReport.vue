@@ -148,10 +148,14 @@
 </template>
 
 <script>
+    import axios from "../../bootstrap-axios";
+
     export default {
         name: "CalendarDailyReport",
-        props: ['reportData', 'reportDate', 'reportFlags'],
-        components: {},
+        props: ['reportData', 'reportDate', 'reportFlags', 'popUpNow'],
+        components: {
+
+        },
 
         computed: {
             surplusDeficitColor() {
@@ -167,7 +171,13 @@
             closeModal() {
                 $("#dailyReport").modal('toggle');
             },
-        }
+        },
+
+        mounted() {
+            if (this.popUpNow){
+                $("#dailyReport").modal('toggle');
+            }
+        },
     }
 </script>
 

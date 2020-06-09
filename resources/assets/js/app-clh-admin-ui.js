@@ -52,6 +52,7 @@ const NotificationsComponent = () => import(/* webpackChunkName: "chunk-admin" *
 const LoaderComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/loader')
 const NurseScheduleCalendar = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/NurseScheduleCalendar');
 const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/FullScreenLoader');
+const CalendarDailyReport = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/CalendarDailyReport');
 
 
 Vue.use(ClientTable, {}, false)
@@ -76,6 +77,7 @@ Vue.component('notifications', NotificationsComponent);
 Vue.component('loader', LoaderComponent);
 Vue.component('nurse-schedule-calendar', NurseScheduleCalendar);
 Vue.component('calendar-loader', CalendarLoader);
+Vue.component('calendar-daily-report', CalendarDailyReport);
 
 
 
