@@ -56,6 +56,8 @@ class NotifySlackChannel implements ShouldQueue
 
         $greeting = 'DM Received';
 
+        $purpose = null;
+
         if ($practiceName = $dm->ccdas->pluck('practice.display_name')->filter()->values()->first()) {
             $purpose = Str::contains(strtolower($dm->body), strtolower(IncomingMessageHandler::KEYWORD_TO_PROCESS_FOR_ELIGIBILITY))
                 ? self::ELIGIBILITY_PROCESSING_PURPOSE
@@ -71,7 +73,7 @@ class NotifySlackChannel implements ShouldQueue
         $message = "$greeting \n Click <{$messageLink}|here> to view message.";
 
         if (self::ELIGIBILITY_PROCESSING_PURPOSE === $purpose
-            && $runningBatch = EligibilityBatch::where('practice_id', $dm->ccdas->pluck('practice.id')->filter()->values()->first())
+            && $runningBatch = EligibilityBatch::where('practice_id', $dm->ccdas->pluck('practice_id')->filter()->values()->first())
                 ->where('status', EligibilityBatch::RUNNING)
                 ->first()) {
             $batchLink = route('eligibility.batch.show', [$runningBatch->id]);

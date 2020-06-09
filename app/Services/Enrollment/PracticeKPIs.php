@@ -58,24 +58,28 @@ class PracticeKPIs
             ->count();
 
         $data['consented'] = Enrollee::where('practice_id', $this->practice->id)
+            ->whereNotNull('care_ambassador_user_id')
             ->where('last_attempt_at', '>=', $this->start)
             ->where('last_attempt_at', '<=', $this->end)
-            ->where('status', Enrollee::CONSENTED)
+            ->whereIn('status', [Enrollee::CONSENTED, Enrollee::ENROLLED])
             ->count();
 
         $data['utc'] = Enrollee::where('practice_id', $this->practice->id)
+            ->whereNotNull('care_ambassador_user_id')
             ->where('last_attempt_at', '>=', $this->start)
             ->where('last_attempt_at', '<=', $this->end)
             ->where('status', Enrollee::UNREACHABLE)
             ->count();
 
         $data['hard_declined'] = Enrollee::where('practice_id', $this->practice->id)
+            ->whereNotNull('care_ambassador_user_id')
             ->where('last_attempt_at', '>=', $this->start)
             ->where('last_attempt_at', '<=', $this->end)
             ->where('status', Enrollee::REJECTED)
             ->count();
 
         $data['soft_declined'] = Enrollee::where('practice_id', $this->practice->id)
+            ->whereNotNull('care_ambassador_user_id')
             ->where('last_attempt_at', '>=', $this->start)
             ->where('last_attempt_at', '<=', $this->end)
             ->where('status', Enrollee::SOFT_REJECTED)

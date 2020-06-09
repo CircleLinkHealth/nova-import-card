@@ -197,7 +197,8 @@
                 this.checkForIcd10CodeDuplicates();
             },
             checkForIcd10CodeDuplicates() {
-                if (this.isNotesPage && !this.showNoProblemSelected && this.newProblem.icd10.length > 0) {
+                let isNotCareAreasModal = this.isNotesPage || this.isApproveBillablePage;
+                if (isNotCareAreasModal && !this.showNoProblemSelected && this.newProblem.icd10.length > 0) {
                     let matchingProblem = this.problems.find(p => p.code == this.newProblem.icd10)
 
                     if (matchingProblem) {

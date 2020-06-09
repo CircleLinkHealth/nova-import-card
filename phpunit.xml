@@ -22,6 +22,9 @@
         <testsuite name="EligibilityModule">
             <directory suffix="Test.php">./Modules/Eligibility/Tests</directory>
         </testsuite>
+        <testsuite name="NurseInvoicesModule">
+            <directory suffix="Test.php">./Modules/Nurseinvoices/Tests</directory>
+        </testsuite>
         <testsuite name="Feature">
             <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>

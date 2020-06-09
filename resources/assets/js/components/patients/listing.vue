@@ -21,16 +21,23 @@
         <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options"
                         id="patient-list-table">
             <template slot="name" slot-scope="props">
-                <div><a :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')" target="_blank">{{props.row.name}}</a>
+                <div><a class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')" target="_blank">{{props.row.name}}</a>
                 </div>
             </template>
             <template slot="provider" slot-scope="props">
                 <div>{{ props.row.provider_name }}</div>
             </template>
-            <template slot="program" slot-scope="props">
-                <div>{{ props.row.program_name }}</div>
+            <template slot="practice" slot-scope="props">
+                <div>{{ props.row.practice_name }}</div>
             </template>
-            <template slot="filter__program">
+            <template slot="filter__practice">
+                <div>
+                </div>
+            </template>
+            <template slot="location" slot-scope="props">
+                <div>{{ props.row.location_name }}</div>
+            </template>
+            <template slot="filter__location">
                 <div>
                 </div>
             </template>
@@ -43,9 +50,17 @@
                 CCM Status Change
             </template>
             <template slot="careplanStatus" slot-scope="props">
-                <a :href="props.row.careplanStatus === 'qa_approved' ? rootUrl('manage-patients/' + props.row.id + '/view-careplan') : null">
-                    {{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}
+                <a v-if="canApproveCareplans && props.row.careplanStatus === 'qa_approved'" class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
+                    <b>{{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}</b>
                 </a>
+
+                <a v-else-if="isAdmin && props.row.careplanStatus === 'draft'" class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
+                    <b>{{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}</b>
+                </a>
+
+                <p v-else>
+                    {{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}
+                </p>
             </template>
             <template slot="filter__ccm">
                 <div>(HH:MM:SS)</div>
@@ -84,21 +99,21 @@
         </v-client-table>
         <div class="row">
             <div class="col-sm-8">
-                <input type="button" class="btn btn-success"
+                <input type="button" class="btn btn-patients-table"
                        :value="'Show by ' + (nameDisplayType ? 'First' : 'Last') + ' Name'"
                        @click="changeNameDisplayType">
                 <span class="pad-10"></span>
 
-                <a class="btn btn-success" :class="{ disabled: loaders.pdf }" @click="exportPdf"
+                <a v-if="! this.hideDownloadButtons" class="btn btn-patients-table" :class="{ disabled: loaders.pdf }" @click="exportPdf"
                    :href="rootUrl('manage-patients/listing/pdf')" download="patient-list.pdf">Export as PDF</a>
                 <span class="pad-10"></span>
 
-                <input type="button" class="btn btn-success" :class="{ disabled: loaders.excel }"
+                <input v-if="! this.hideDownloadButtons" type="button" class="btn btn-patients-table" :class="{ disabled: loaders.excel }"
                        :value="exportCSVText" @click="exportCSV">
                 <span class="pad-10"></span>
 
-                <input type="button" class="btn btn-success"
-                       :value="(columns.includes('program') ? 'Hide' : 'Show') + ' Program'"
+                <input type="button" class="btn btn-patients-table"
+                       :value="(columns.includes('practice') ? 'Hide' : 'Show') + ' Practice'"
                        @click="toggleProgramColumn">
             </div>
         </div>
@@ -138,18 +153,32 @@
             showProviderPatientsButton: {
                 type: Boolean,
                 required: true,
-            }
+            },
+            urlFilter: {
+                type: String,
+                required: false,
+                default: () => ''
+            },
+            hideDownloadButtons: {
+                type: Boolean,
+                required: false,
+                default: false
+            },
+            canApproveCareplans: {
+                type: Boolean,
+                required: false,
+                default: false,
+            },
         },
         data() {
-
             let carePlanStatusMap;
             if (this.isAdmin) {
                 carePlanStatusMap = {
                     to_enroll: 'To Enroll',
-                    qa_approved: 'QA Approved',
+                    qa_approved: 'CLH Approved',
                     provider_approved: 'Provider Approved',
                     none: 'None',
-                    draft: 'Draft',
+                    draft: 'Approve Now',
                     g0506: 'G0506'
                 };
             } else {
@@ -164,13 +193,15 @@
                 tableData: [],
                 practices: [],
                 providersForSelect: [],
+                locationsForSelect: [],
                 showPracticePatients: false,
                 nameDisplayType: NameDisplayType.FirstName,
-                columns: ['name', 'provider', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'mrn', 'phone', 'age', 'registeredOn', 'bhi', 'ccm'],
+                columns: ['name', 'provider', 'location', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'mrn', 'phone', 'age', 'registeredOn', 'bhi', 'ccm'],
                 loaders: {
                     next: false,
                     practices: null,
                     providers: false,
+                    locations: false,
                     excel: false,
                     pdf: false
                 },
@@ -205,10 +236,11 @@
 
                 return {
                     filterByColumn: true,
-                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'age', 'mrn', 'registeredOn', 'bhi', 'ccm'],
-                    filterable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'phone', 'age', 'mrn', 'registeredOn'],
+                    sortable: ['name', 'provider', 'practice', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'age', 'mrn', 'registeredOn', 'bhi', 'ccm'],
+                    filterable: ['name', 'provider', 'practice', 'location', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'phone', 'age', 'mrn', 'registeredOn'],
                     listColumns: {
                         provider: this.providersForSelect,
+                        location: this.locationsForSelect,
                         ccmStatus: [
                             {id: 'enrolled', text: 'Enrolled'},
                             {id: 'paused', text: 'Paused'},
@@ -219,10 +251,10 @@
                             {id: 'patient_rejected', text: 'Patient Rejected'}
                         ],
                         careplanStatus,
-                        program: this.practices.map(practice => ({
+                        practice: this.practices.map(practice => ({
                             id: practice.id,
                             text: practice.display_name
-                        })).sort((p1, p2) => p1.id > p2.id ? 1 : -1).distinct(practice => practice.id)
+                        })).sort((p1, p2) => p1.text > p2.text ? 1 : -1).distinct(practice => practice.id)
                     },
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
@@ -231,6 +263,7 @@
                     customSorting: {
                         name: (ascending) => iSort,
                         provider: (ascending) => iSort,
+                        location: (ascending) => iSort,
                         ccmStatus: (ascending) => iSort,
                         ccmStatusDate: (ascending) => iSort,
                         careplanStatus: (ascending) => iSort,
@@ -242,8 +275,9 @@
                         registeredOn: (ascending) => iSort,
                         bhi: (ascending) => iSort,
                         ccm: (ascending) => iSort,
-                        program: (ascending) => iSort
-                    }
+                        practice: (ascending) => iSort
+                    },
+                    noResults: 'No patients match these criteria at this time.'
                 }
             }
         },
@@ -254,7 +288,7 @@
             },
             columnMapping(name) {
                 const columns = {
-                    program: 'practice'
+
                 }
                 return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
             },
@@ -267,10 +301,11 @@
                     value: query[key]
                 })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
                 const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
+
                 if (this.pagination) {
-                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}`)
+                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}&${this.urlFilter}`)
                 } else {
-                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}`)
+                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}&${this.urlFilter}`)
                 }
             },
             filterData() {
@@ -287,10 +322,10 @@
                 }, {})
             },
             toggleProgramColumn() {
-                if (this.columns.indexOf('program') >= 0) {
-                    this.columns.splice(this.columns.indexOf('program'), 1)
+                if (this.columns.indexOf('practice') >= 0) {
+                    this.columns.splice(this.columns.indexOf('practice'), 1)
                 } else {
-                    this.columns.splice(2, 0, 'program')
+                    this.columns.splice(2, 0, 'practice')
                 }
             },
             togglePracticePatients() {
@@ -338,6 +373,20 @@
                 }).catch(err => {
                     console.error('patient-list:providers', err)
                     this.loaders.providers = false
+                })
+            },
+            getLocations() {
+                this.loaders.locations = true
+                return this.axios.get(rootUrl('api/locations/list')).then(response => {
+                    this.locationsForSelect = (response.data || []).map(location => ({
+                        id: location.id,
+                        text: location.name
+                    })).filter(location => !!location.text).sort((a, b) => a.text < b.text ? -1 : 1)
+                    this.loaders.locations = false
+                    return this.locationsForSelect
+                }).catch(err => {
+                    console.error('patient-list:locations', err)
+                    this.loaders.locations = false
                 })
             },
             getStatusDate(patient) {
@@ -402,12 +451,14 @@
                         patient.lastName = patient.name.split(' ').slice(1).join(' ')
                         patient.provider = patient.billing_provider_id
                         patient.provider_name = patient.billing_provider_name
+                        patient.location = patient.location_id || 'N/A'
+                        patient.location_name = patient.location_name || 'N/A'
                         patient.ccmStatus = (patient.patient_info || {}).ccm_status || 'none'
                         patient.careplanStatus = (patient.careplan || {}).status || 'none'
                         patient.dob = (patient.patient_info || {}).birth_date || ''
                         patient.sort_dob = new Date((patient.patient_info || {}).birth_date || '')
-                        patient.program = patient.program_id
-                        patient.program_name = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
+                        patient.practice = patient.program_id
+                        patient.practice_name = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
                         patient.age = (patient.patient_info || {}).age || ''
                         patient.mrn = (patient.patient_info || {}).mrn_number || ''
                         patient.withdrawnReason = (patient.patient_info || {}).withdrawn_reason || ''
@@ -437,7 +488,7 @@
                         // loadColumnList(this.options.listColumns.provider, patient.provider)
                         //loadColumnList(this.options.listColumns.ccmStatus, patient.ccmStatus)
                         //loadColumnList(this.options.listColumns.careplanStatus, patient.careplanStatus)
-                        // loadColumnList(this.options.listColumns.program, patient.program)
+                        // loadColumnList(this.options.listColumns.practice, patient.practice)
                         return patient
                     })
 
@@ -509,7 +560,7 @@
                 }
                 return download().then(res => {
 
-                    const str = 'name,provider,program,ccm status,careplan status, withdrawn reason, dob,mrn,phone,age,registered on,bhi,ccm,ccm status change\n'
+                    const str = 'name,provider,practice,location,ccm status,careplan status, withdrawn reason, dob,mrn,phone,age,registered on,bhi,ccm,ccm status change\n'
                         + patients.join('\n');
                     const csvData = new Blob([str], {type: 'text/csv'});
                     const csvUrl = URL.createObjectURL(csvData);
@@ -597,6 +648,7 @@
             })
 
             this.getProviders()
+            this.getLocations()
 
             /**
              * listen to table pagination event and ...
@@ -607,12 +659,13 @@
                 this.getPatients()
             })
 
-
             Event.$on('vue-tables.filter::name', this.activateFilters)
 
             Event.$on('vue-tables.filter::provider', this.activateFilters)
 
-            Event.$on('vue-tables.filter::program', this.activateFilters)
+            Event.$on('vue-tables.filter::practice', this.activateFilters)
+
+            Event.$on('vue-tables.filter::location', this.activateFilters)
 
             Event.$on('vue-tables.filter::ccmStatus', this.activateFilters)
 
@@ -656,6 +709,16 @@
         overflow: hidden;
         white-space: nowrap;
     }
+
+    .btn-patients-table {
+        color: #fff;
+        background-color: #47beaa;
+        border-color: #47beaa;
+    }
+
+    #patient-list-table > div.table-responsive > table > thead {
+        background-color: #d2e2ef !important;
+    }
 </style>
 
 <style scoped>
@@ -664,6 +727,11 @@
     }
 
     a[href]:hover {
+        text-decoration: underline;
+    }
+
+    .in-table-link {
+        color: #337ab7 !important;
         text-decoration: underline;
     }
 </style>

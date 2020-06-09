@@ -7,7 +7,6 @@
 namespace App\Http\Controllers;
 
 use App\Call;
-use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Events\NoteFinalSaved;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
@@ -551,6 +550,17 @@ class NotesController extends Controller
         $attestedProblems = isset($input['attested_problems'])
             ? $input['attested_problems']
             : null;
+        $bypassedAllAttestationValidation = isset($input['bypassed_all_validation']);
+
+        if ($bypassedAllAttestationValidation) {
+            sendPatientBypassedAttestationWarning($patientId);
+        }
+
+        if ( ! $bypassedAllAttestationValidation && empty($attestedProblems)) {
+            \Log::critical("Attestation Validation failed for patient: {$patientId}");
+
+            sendPatientAttestationValidationFailedWarning($patientId);
+        }
 
         if (isset($input['bypassed_bhi_validation'])) {
             sendPatientBhiUnattestedWarning($patientId);
@@ -908,12 +918,11 @@ class NotesController extends Controller
     private function getAttestationRequirementsIfYouShould(User $patient)
     {
         $requirements = [
-            'disabled' => true,
-            //if we need to attest to 2 ccm condition
-            'ccm_2' => false,
-            //checks if bhi conditions have already been attested
-            //If Bhi validation needs to happen will be determined by looking at the timer CPM-2342
-            'bhi_problems_attested' => false,
+            'disabled'              => true,
+            'has_ccm'               => false,
+            'has_pcm'               => false,
+            'ccm_problems_attested' => 0,
+            'bhi_problems_attested' => 0,
         ];
 
         if ( ! complexAttestationRequirementsEnabledForPractice($patient->primaryPractice->id)) {
@@ -947,16 +956,16 @@ class NotesController extends Controller
         $services = $pms->allChargeableServices;
 
         if ($services->where('code', ChargeableService::CCM)->isNotEmpty()) {
-            if ($pms->ccmAttestedProblems(true)->count() < 2) {
-                $requirements['ccm_2'] = true;
-            }
+            $requirements['has_ccm'] = true;
         }
 
-        $patientIsBhiEligible = $pms->bhi_time >= Constants::TEN_MINUTES_IN_SECONDS || $services->where('code', ChargeableService::BHI)->isNotEmpty();
-
-        if ($patientIsBhiEligible && $pms->bhiAttestedProblems(true)->count() >= 1) {
-            $requirements['bhi_problems_attested'] = true;
+        if ($services->where('code', ChargeableService::PCM)->isNotEmpty()) {
+            $requirements['has_pcm'] = true;
         }
+
+        $requirements['ccm_problems_attested'] = $pms->ccmAttestedProblems(true)->count();
+
+        $requirements['bhi_problems_attested'] = $pms->bhiAttestedProblems(true)->count();
 
         return $requirements;
     }
