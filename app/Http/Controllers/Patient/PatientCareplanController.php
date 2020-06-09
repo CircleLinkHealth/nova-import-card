@@ -212,7 +212,7 @@ class PatientCareplanController extends Controller
             //if permanent assigned nurse does not exist, get nurse from scheduled call - CPM-1829
             if ( ! $assignedNurseName) {
                 $call              = $user->inboundCalls->first();
-                $assignedNurseName = optional($call->outboundUser)->first_name ?? null;
+                $assignedNurseName = $call ? optional($call->outboundUser)->first_name : null;
             }
 
             $viewParams = [
