@@ -40,6 +40,9 @@
             <div class="col-sm-12" style="margin-top: 1%">
                 <button class="btn btn-primary btn-xs" @click="clearSelected">Clear Selected Patients</button>
             </div>
+            <div class="col-sm-12" style="margin-top: 1%">
+                <button class="btn btn-primary btn-xs" @click="assignCallback">Assign Callback</button>
+            </div>
         </div>
         <div class="panel-body" id="enrollees">
             <v-server-table class="table" v-on:filter="listenTo" :url="getUrl()" :columns="columns" :options="options"
@@ -92,6 +95,7 @@
                                :selected-enrollee-ids="selectedEnrolleeIds"></mark-ineligible-modal>
         <edit-patient-modal ref="editPatientModal"></edit-patient-modal>
         <add-custom-filter-modal></add-custom-filter-modal>
+        <assign-callback-modal ref="assignCallbackModal" ></assign-callback-modal>
     </div>
 </template>
 
@@ -102,6 +106,7 @@
     import UnassignCaModal from './comps/modals/unassign-ca.modal'
     import {Event} from 'vue-tables-2'
     import MarkIneligibleModal from "./comps/modals/mark-ineligible.modal";
+    import AssignCallbackModal from "./comps/modals/assign-callback.modal";
     import AddCustomFilterModal from "./comps/modals/add-custom-filter.modal";
     import EditPatientModal from "./comps/modals/edit-patient.modal";
     import Loader from '../../components/loader';
@@ -119,6 +124,7 @@
             'unassign-ca-modal': UnassignCaModal,
             'edit-patient-modal': EditPatientModal,
             'add-custom-filter-modal': AddCustomFilterModal,
+            'assign-callback-modal': AssignCallbackModal,
             'loader': Loader,
             'notifications': Notifications,
             'vue-multiselect': Multiselect
@@ -229,6 +235,9 @@
             },
             markSelectedAsIneligible() {
                 Event.$emit("modal-mark-ineligible:show");
+            },
+            assignCallback(){
+                Event.$emit("modal-assign-callback:show");
             },
             editPatient(patient) {
                 Event.$emit("modal-edit-patient:show", patient);

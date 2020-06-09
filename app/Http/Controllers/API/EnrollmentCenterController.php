@@ -55,8 +55,8 @@ class EnrollmentCenterController extends ApiController
         $searchTerms = explode(' ', $input['enrollables']);
 
         $query = Enrollee::withCaPanelRelationships()
-            ->shouldBeCalled()
-            ->where('care_ambassador_user_id', auth()->user()->id);
+            ->shouldBeCalled();
+//            ->where('care_ambassador_user_id', auth()->user()->id);
 
         foreach ($searchTerms as $term) {
             $query->where(function ($q) use ($term) {
