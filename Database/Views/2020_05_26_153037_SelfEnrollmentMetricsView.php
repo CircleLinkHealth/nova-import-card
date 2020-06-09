@@ -13,6 +13,7 @@ class SelfEnrollmentMetricsView extends BaseSqlView
 {
     /**
      * Create the sql view.
+     *
      * @throws Exception
      */
     public function createSqlView(): bool
@@ -52,28 +53,43 @@ class SelfEnrollmentMetricsView extends BaseSqlView
        THEN '$green'
        END as button_color,
        COUNT(DISTINCT i.id) as total_invites_sent,
-       COUNT(DISTINCT i.manually_expired = true) as total_invites_opened,
-       CONCAT(ROUND(COUNT(DISTINCT i.manually_expired = true) * 100.0 / COUNT(DISTINCT i.id), 0), '%') as percentage_invites_opened,
-       COUNT(DISTINCT l.user_id) as total_saw_letter,
-       CONCAT(IFNULL(ROUND((COUNT(DISTINCT l.id) * 100) / SUM(i.manually_expired = true)), 0), '%') as percentage_saw_letter,
+       SUM(i.manually_expired = true) as total_invites_opened,
+       CONCAT(ROUND(SUM(i.manually_expired = true) * 100.0 / COUNT(DISTINCT i.id), 0), '%') as percentage_invites_opened,
+       COUNT(l.user_id) as total_saw_letter,
+       CONCAT(IFNULL(ROUND((COUNT(l.id) * 100) / SUM(i.manually_expired = true)), 0), '%') as percentage_saw_letter,
        COUNT(DISTINCT us.user_id) as total_saw_form,
-       CONCAT(IFNULL(ROUND((COUNT(DISTINCT case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end) * 100) / COUNT(DISTINCT l.user_id)), 0), '%') as percentage_saw_form,
-       IFNULL(SUM(DISTINCT case when e.status = '$enrolled' AND us.status = 'completed' then 1 else 0 end), 0) as total_enrolled,
-       CONCAT(IFNULL(ROUND((SUM(DISTINCT case when e.status = '$enrolled' AND us.status = 'completed' then 1 else 0 end) * 100) / COUNT(DISTINCT case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end)),0), '%') as percentage_enrolled,
-       SUM(DISTINCT case when e.status = '$toCall' AND erf.enrollable_id = e.id then 1 else 0 end) as total_call_requests,
-       CONCAT(IFNULL(ROUND((SUM(DISTINCT case when e.status = '$toCall' AND erf.enrollable_id = e.id then 1 else 0 end) * 100) / COUNT(DISTINCT l.user_id)),0), '%') as percentage_call_requests
+       CONCAT(IFNULL(ROUND((SUM(case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end) * 100) / COUNT(l.user_id)), 0), '%') as percentage_saw_form,
+       IFNULL(SUM(case when e.status = '$enrolled' AND us.status = 'completed' then 1 else 0 end), 0) as total_enrolled,
+       CONCAT(IFNULL(ROUND((SUM(case when e.status = '$enrolled' AND us.status = 'completed' then 1 else 0 end) * 100) / COUNT(DISTINCT case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end)),0), '%') as percentage_enrolled,
+       SUM(case when e.status = '$toCall' AND erf.enrollable_id = e.id then 1 else 0 end) as total_call_requests,
+       CONCAT(IFNULL(ROUND((SUM(case when e.status = '$toCall' AND erf.enrollable_id = e.id then 1 else 0 end) * 100) / COUNT(l.user_id)),0), '%') as percentage_call_requests
        
        FROM
        enrollables_invitation_links i
-
+       
        left join enrollment_invitations_batches b on i.batch_id = b.id
-       left join enrollees e on i.invitationable_id = e.id
-       left join login_logout_events l on e.user_id = l.user_id
+       left join enrollees e on e.id = i.invitationable_id
+       left join login_logout_events l on l.user_id = e.user_id
        left join practices p on b.practice_id = p.id
        left join users_surveys us on e.user_id = us.user_id
        left join enrollees_request_info erf on e.id = erf.enrollable_id
-
-       WHERE
+       
+       -- Tables joining to has multiple rows for a single row in other tables:
+       -- DISTINCT wil not help:
+       
+       WHERE 0 = (SELECT COUNT(e2.id)
+             FROM enrollees e2
+             WHERE e.user_id = e2.user_id
+                AND e2.id < e.id)
+                
+       AND 0 = (SELECT COUNT(l2.id)
+             FROM login_logout_events l2
+             WHERE l.user_id = l2.user_id
+                AND l2.id < l.id)
+                
+                
+                
+       AND
        p.is_demo = $showDemo
 
        GROUP BY
@@ -122,6 +138,7 @@ class SelfEnrollmentMetricsView extends BaseSqlView
 
     /**
      * @param $surveyId
+     *
      * @throws Exception
      */
     private function createSurveyInstance($surveyId)
@@ -138,6 +155,7 @@ class SelfEnrollmentMetricsView extends BaseSqlView
 
     /**
      * @throws Exception
+     *
      * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Query\Builder|object
      */
     private function enrolleesSurvey()
