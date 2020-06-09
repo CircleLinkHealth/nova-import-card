@@ -11,8 +11,8 @@ use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\ConsolidatesMedicationInfo;
-use CircleLinkHealth\SharedModels\Entities\CpmMisc;
-use CircleLinkHealth\SharedModels\Entities\Medication;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class ImportMedications extends BaseCcdaImportTask
 {
@@ -24,76 +24,27 @@ class ImportMedications extends BaseCcdaImportTask
     {
         $this->fireImportingHook(self::HOOK_IMPORTING_MEDICATIONS, $this->patient, $this->ccda, []);
 
+        $this->patient->loadMissing('ccdMedications');
+        $this->patient->loadMissing('cpmMedicationGroups');
+
         $medicationGroups = [];
 
-        collect($this->getRawMedications())->each(
-            function ($medication) use (&$medicationGroups) {
-                $new = (array) $this->consolidateMedicationInfo((object) $this->transform($medication));
+        $medications = $this->processCollection(collect($this->getRawMedications()), $medicationGroups);
 
-                if ($this->containsSigKeywords($new['cons_name'])) {
-                    return null;
-                }
-
-                if ( ! $this->validate($new)) {
-                    return null;
-                }
-
-                if ( ! $new['cons_name'] && ! $new['cons_text']) {
-                    return null;
-                }
-
-                $sig = ucfirst(
-                    (new StringManipulation())->stringDiff(
-                        $new['cons_name'],
-                        $new['cons_text']
-                    )
-                );
-
-                $medicationGroupId = MedicationGroupsMap::getGroup($new['cons_name']) ?? MedicationGroupsMap::getGroup($sig);
-
-                $ccdMedication = Medication::updateOrCreate(
-                    [
-                        'patient_id' => $this->patient->id,
-                        'name'       => ucwords(strtolower($new['cons_name'])),
-                        'sig'        => $sig,
-                    ],
-                    [
-                        'medication_group_id' => $medicationGroupId,
-                        'code'                => $new['cons_code'],
-                        'code_system'         => $new['cons_code_system'],
-                        'code_system_name'    => $new['cons_code_system_name'],
-                        'ccda_id'             => $this->ccda->id,
-                    ]
-                );
-
-                if ($medicationGroupId) {
-                    $medicationGroups[] = $medicationGroupId;
-                }
-            }
-        );
-
-        $this->patient->load('ccdMedications');
-
-        if ($this->patient->ccdMedications->isEmpty()) {
-            $this->importAll();
-            $this->patient->load('ccdMedications');
+        if ($this->patient->ccdMedications->isEmpty() && $medications->isEmpty()) {
+            $medications = $this->processCollection(collect($this->ccda->bluebuttonJson()->medications ?? []), $medicationGroups);
         }
 
-        $unique = $this->patient->ccdMedications->unique('name')->pluck('id')->all();
+        if ( ! empty($medicationGroups = array_filter($medicationGroups))) {
+            DB::table('cpm_medication_groups_users')->insert($medicationGroups);
+        }
 
-        $deleted = $this->patient->ccdMedications()->whereNotIn('id', $unique)->delete();
-
-        $this->patient->cpmMedicationGroups()->sync(array_filter($medicationGroups));
-
-        $misc = CpmMisc::whereName(CpmMisc::MEDICATION_LIST)
-            ->first();
-
-        if ( ! $this->hasMisc($this->patient, $misc)) {
-            $this->patient->cpmMiscs()->attach(optional($misc)->id);
+        if ($medications->isNotEmpty()) {
+            DB::table('ccd_medications')->insert($medications->all());
         }
     }
 
-    private function getMedsFromOtherCcda()
+    private function getMedsFromOtherCcda(): array
     {
         $otherMeds = [];
 
@@ -121,58 +72,77 @@ class ImportMedications extends BaseCcdaImportTask
 
     private function getRawMedications(): array
     {
-        $meds = $this->ccda->bluebuttonJson()->medications ?? [];
-
-        if (empty($meds)) {
+        if (empty($meds = $this->ccda->bluebuttonJson()->medications ?? [])) {
             return $this->getMedsFromOtherCcda();
         }
 
         return $meds;
     }
 
-    private function importAll()
+    private function process(array $newMed, array &$medicationGroups): ?array
     {
-        collect($this->ccda->bluebuttonJson()->medications ?? [])->each(
-            function ($medication) use (&$medicationGroups) {
-                $new = (array) $this->consolidateMedicationInfo((object) $this->transform($medication));
+        if ( ! $newMed['cons_name'] && ! $newMed['cons_text']) {
+            return null;
+        }
 
-                if ($this->containsSigKeywords($new['cons_name'])) {
-                    return null;
-                }
+        if ($this->containsSigKeywords($newMed['cons_name'])) {
+            return null;
+        }
 
-                if ( ! $new['cons_name'] && ! $new['cons_text']) {
-                    return null;
-                }
+        if ($this->patient->ccdMedications->contains('name', '=', $newMed['cons_name'])) {
+            return null;
+        }
 
-                $sig = ucfirst(
-                    (new StringManipulation())->stringDiff(
-                        $new['cons_name'],
-                        $new['cons_text']
-                    )
-                );
+        if ( ! $this->validate($newMed)) {
+            return null;
+        }
 
-                $medicationGroupId = MedicationGroupsMap::getGroup($new['cons_name']) ?? MedicationGroupsMap::getGroup($sig);
-
-                $ccdMedication = Medication::updateOrCreate(
-                    [
-                        'patient_id' => $this->patient->id,
-                        'name'       => ucwords(strtolower($new['cons_name'])),
-                        'sig'        => $sig,
-                    ],
-                    [
-                        'medication_group_id' => $medicationGroupId,
-                        'code'                => $new['cons_code'],
-                        'code_system'         => $new['cons_code_system'],
-                        'code_system_name'    => $new['cons_code_system_name'],
-                        'ccda_id'             => $this->ccda->id,
-                    ]
-                );
-
-                if ($medicationGroupId) {
-                    $medicationGroups[] = $medicationGroupId;
-                }
-            }
+        $sig = ucfirst(
+            (new StringManipulation())->stringDiff(
+                $newMed['cons_name'],
+                $newMed['cons_text']
+            )
         );
+
+        $medGroupId = MedicationGroupsMap::getGroup($newMed['cons_name']) ?? MedicationGroupsMap::getGroup($sig);
+
+        if (is_numeric($medGroupId) && ! in_array($medGroupId, $medicationGroups)) {
+            $groupCreatedAt = now()->toDateTimeString();
+
+            array_push($medicationGroups, [
+                'patient_id'              => $this->patient->id,
+                'cpm_medication_group_id' => $medGroupId,
+                'created_at'              => $groupCreatedAt,
+                'updated_at'              => $groupCreatedAt,
+            ]);
+        }
+
+        $medCreatedAt = now()->toDateTimeString();
+
+        return [
+            'patient_id'          => $this->patient->id,
+            'name'                => ucwords(strtolower($newMed['cons_name'])),
+            'sig'                 => $sig,
+            'medication_group_id' => $medGroupId,
+            'code'                => $newMed['cons_code'],
+            'code_system'         => $newMed['cons_code_system'],
+            'code_system_name'    => $newMed['cons_code_system_name'],
+            'ccda_id'             => $this->ccda->id,
+            'created_at'          => $medCreatedAt,
+            'updated_at'          => $medCreatedAt,
+        ];
+    }
+
+    private function processCollection(Collection $rawMedications, array &$medicationGroups): Collection
+    {
+        return $rawMedications->map(function (object $medication) {
+            return (array) $this->consolidateMedicationInfo((object) $this->transform($medication));
+        })->unique('cons_name')
+            ->transform(
+                function ($medication) use (&$medicationGroups) {
+                    return $this->process($medication, $medicationGroups);
+                }
+            )->filter();
     }
 
     private function transform(object $medication): array
