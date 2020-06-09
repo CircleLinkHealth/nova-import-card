@@ -376,7 +376,8 @@
                     .then(response => {
                         this.log = 'Initializing';
                         this.device = new Device(response.data.token, {
-                            closeProtection: true
+                            closeProtection: true,
+                            edge: ['ashburn', 'roaming'],
                         });
 
                         this.device.on('disconnect', () => {
