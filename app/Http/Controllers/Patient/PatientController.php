@@ -184,7 +184,6 @@ class PatientController extends Controller
         $pendingApprovals = 0;
 
         $nurse                          = null;
-        $patientsPendingApproval        = [];
         $showPatientsPendingApprovalBox = false;
         $seesAutoApprovalButton         = false;
 
@@ -197,14 +196,10 @@ class PatientController extends Controller
 
         if ($user->canApproveCarePlans()) {
             $showPatientsPendingApprovalBox = true;
-            $patients                       = $user->patientsPendingProviderApproval()->get();
-            $patientsPendingApproval        = $this->formatter->patientListing($patients);
-            $pendingApprovals               = $patients->count();
+            $pendingApprovals               = User::patientsPendingProviderApproval($user)->count();
         } elseif ($user->isAdmin() && $user->canQAApproveCarePlans()) {
             $showPatientsPendingApprovalBox = true;
-            $patients                       = $user->patientsPendingCLHApproval()->get();
-            $patientsPendingApproval        = $this->formatter->patientListing($patients);
-            $pendingApprovals               = $patients->count();
+            $pendingApprovals               = User::patientsPendingCLHApproval($user)->count();
             $seesAutoApprovalButton         = SeesAutoQAButton::userId(auth()->id());
         }
 
@@ -213,17 +208,14 @@ class PatientController extends Controller
 
         return view(
             'wpUsers.patient.dashboard',
-            array_merge(
-                compact([
-                    'pendingApprovals',
-                    'nurse',
-                    'showPatientsPendingApprovalBox',
-                    'noLiveCountTimeTracking',
-                    'authData',
-                    'seesAutoApprovalButton',
-                ]),
-                $patientsPendingApproval
-            )
+            compact([
+                'pendingApprovals',
+                'nurse',
+                'showPatientsPendingApprovalBox',
+                'noLiveCountTimeTracking',
+                'authData',
+                'seesAutoApprovalButton',
+            ]),
         );
     }
 

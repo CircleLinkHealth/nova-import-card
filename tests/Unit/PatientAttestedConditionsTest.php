@@ -175,7 +175,7 @@ class PatientAttestedConditionsTest extends TestCase
             ->getOriginalContent()->getData();
 
         $this->assertFalse($responseData['attestationRequirements']['disabled']);
-        $this->assertTrue($responseData['attestationRequirements']['ccm_2']);
+        $this->assertTrue($responseData['attestationRequirements']['has_ccm']);
     }
 
     public function test_attestation_validation_for_complex_ccm_and_bhi_code()
@@ -197,8 +197,9 @@ class PatientAttestedConditionsTest extends TestCase
             ->getOriginalContent()->getData();
 
         $this->assertFalse($responseData['attestationRequirements']['disabled']);
-        $this->assertFalse($responseData['attestationRequirements']['bhi_problems_attested']);
-        $this->assertTrue($responseData['attestationRequirements']['ccm_2']);
+        $this->assertTrue(0 === $responseData['attestationRequirements']['bhi_problems_attested']);
+        $this->assertTrue($responseData['attestationRequirements']['has_ccm']);
+        $this->assertTrue(0 === $responseData['attestationRequirements']['ccm_problems_attested']);
     }
 
     public function test_attestation_validation_for_complex_ccm_and_bhi_code_is_not_applicable_if_conditions_already_attested()
@@ -234,8 +235,8 @@ class PatientAttestedConditionsTest extends TestCase
             ->getOriginalContent()->getData();
 
         $this->assertFalse($responseData['attestationRequirements']['disabled']);
-        $this->assertTrue($responseData['attestationRequirements']['bhi_problems_attested']);
-        $this->assertFalse($responseData['attestationRequirements']['ccm_2']);
+        $this->assertTrue(1 === $responseData['attestationRequirements']['bhi_problems_attested']);
+        $this->assertTrue(2 === $responseData['attestationRequirements']['ccm_problems_attested']);
     }
 
     public function test_complex_validation_rules_disabled_for_practice()
