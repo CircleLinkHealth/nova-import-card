@@ -50,6 +50,10 @@ class MakeAndDispatchAuditReports implements ShouldQueue
     /**
      * @var bool
      */
+    private $batch;
+    /**
+     * @var bool
+     */
     private $send;
 
     /**
@@ -57,13 +61,14 @@ class MakeAndDispatchAuditReports implements ShouldQueue
      *
      * @param Carbon $date
      */
-    public function __construct(User $patient, Carbon $date = null, bool $send = true)
+    public function __construct(User $patient, Carbon $date = null, bool $send = true, bool $batch = true)
     {
         $this->patient    = $patient;
         $this->date       = $date ?? Carbon::now();
         $this->directMail = app(DirectMail::class);
         $this->eFax       = app(Efax::class);
         $this->send       = $send;
+        $this->batch      = $batch;
     }
 
     /**
@@ -99,7 +104,12 @@ class MakeAndDispatchAuditReports implements ShouldQueue
 
                 if ($settings->efax_audit_reports && $fax) {
                     $number = (new StringManipulation())->formatPhoneNumberE164($fax);
-                    $this->eFax->createFaxFor($number)->send(['file' => $path, 'batch_delay' => 60, 'batch_collision_avoidance' => true]);
+                    $args = ['file' => $path];
+                    if (true === $this->batch) {
+                        $args['batch_delay'] = 60;
+                        $args['batch_collision_avoidance'] = true;
+                    }
+                    $this->eFax->createFaxFor($number)->send($args);
                 }
 
                 return $location;
@@ -114,13 +124,13 @@ class MakeAndDispatchAuditReports implements ShouldQueue
         $rateLimitedMiddleware = (new RateLimited())
             ->allow(50)
             ->everySeconds(60)
-            ->releaseAfterSeconds(90);
+            ->releaseAfterSeconds(10);
 
         return [$rateLimitedMiddleware];
     }
 
     public function retryUntil(): \DateTime
     {
-        return now()->addMinutes(10);
+        return now()->addHour();
     }
 }

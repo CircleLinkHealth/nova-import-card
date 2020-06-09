@@ -22,7 +22,7 @@ class OutgoingSms extends Resource
      *
      * @var string
      */
-    public static $model = 'App\OutgoingSms';
+    public static $model = \App\OutgoingSms::class;
 
     /**
      * The columns that should be searched.
@@ -30,7 +30,7 @@ class OutgoingSms extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'sender_user_id', 'receiver_phone_number', 'message',
+        'id', 'sender_user_id', 'receiver_phone_number', 'message', 'status',
     ];
 
     /**
@@ -71,6 +71,8 @@ class OutgoingSms extends Resource
             ID::make()->sortable(),
             Number::make('Sent By (User ID)', 'sender_user_id')->sortable()->hideWhenCreating(),
             Text::make('Receiver', 'receiver_phone_number')->sortable(),
+            Text::make('Status', 'status')->sortable()->hideWhenCreating(),
+            Text::make('Status Details', 'status_details')->sortable()->hideWhenCreating(),
             Textarea::make('Message', 'message')->sortable()->withMeta([
                 'extraAttributes' => [
                     'placeholder' => 'Only text patients who texted back the Self Enrollment SMS we sent out. The Received SMS\'s can be found on Twilio Dashboard. Ask Zach or Pangratios for access.

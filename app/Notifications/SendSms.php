@@ -6,7 +6,6 @@
 
 namespace App\Notifications;
 
-use App\Notifications\Channels\CustomTwilioChannel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\Twilio\TwilioSmsMessage;
@@ -58,6 +57,6 @@ class SendSms extends Notification
      */
     public function via($notifiable)
     {
-        return [CustomTwilioChannel::class];
+        return ['twilio'];
     }
 }

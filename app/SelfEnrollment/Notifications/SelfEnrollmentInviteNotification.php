@@ -6,13 +6,15 @@
 
 namespace App\SelfEnrollment\Notifications;
 
+use App\Jobs\NotificationStatusUpdateJob;
 use App\Notifications\Channels\AutoEnrollmentMailChannel;
-use App\Notifications\Channels\CustomTwilioChannel;
 use App\Traits\EnrollableNotificationContent;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Events\NotificationFailed;
+use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\Twilio\TwilioSmsMessage;
@@ -22,6 +24,7 @@ class SelfEnrollmentInviteNotification extends Notification
 {
     use EnrollableNotificationContent;
     use Queueable;
+
     /**
      * @var array|string[]
      */
@@ -39,11 +42,29 @@ class SelfEnrollmentInviteNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(string $url, bool $isReminder = false, array $channels = ['mail', CustomTwilioChannel::class])
+    public function __construct(string $url, bool $isReminder = false, array $channels = ['mail', 'twilio'])
     {
         $this->isReminder = $isReminder;
         $this->url        = $url;
         $this->channels   = $channels;
+    }
+
+    /**
+     * Called when notification was not sent.
+     * NOTE: called for each channel separately!
+     */
+    public function failed(NotificationFailed $event)
+    {
+        $channel = $event->channel;
+
+        NotificationStatusUpdateJob::dispatch(
+            $event->notification->id,
+            $channel,
+            [
+                'value'   => 'failed',
+                'details' => $event->data['message'],
+            ],
+        );
     }
 
     public function middleware()
@@ -59,6 +80,35 @@ class SelfEnrollmentInviteNotification extends Notification
     public function retryUntil(): \DateTime
     {
         return now()->addMinutes(10);
+    }
+
+    /**
+     * Called when notification is sent.
+     * NOTE: called for each channel separately!
+     */
+    public function sent(NotificationSent $event)
+    {
+        $props = [
+            'value'   => 'pending',
+            'details' => now()->toDateTimeString(),
+        ];
+
+        $channel = $event->channel;
+
+        if ($event->response && 'twilio' === $channel) {
+            if ($event->response->sid) {
+                $props['sid'] = $event->response->sid;
+            }
+            if ($event->response->accountSid) {
+                $props['accountSid'] = $event->response->accountSid;
+            }
+        }
+
+        NotificationStatusUpdateJob::dispatch(
+            $event->notification->id,
+            $channel,
+            $props,
+        );
     }
 
     /**

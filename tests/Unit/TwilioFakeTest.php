@@ -6,7 +6,6 @@
 
 namespace Tests\Unit;
 
-use App\Notifications\Channels\CustomTwilioChannel;
 use App\Notifications\SendSms;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use Illuminate\Bus\Queueable;
@@ -82,7 +81,7 @@ class TwilioFakeTest extends CustomerTestCase
 
         Twilio::fake();
 
-        NotificationFacade::route(CustomTwilioChannel::class, $to)->notify(new FakeNotification($msg, ['mail']));
+        NotificationFacade::route('twilio', $to)->notify(new FakeNotification($msg, ['mail']));
 
         Twilio::assertMessageNotSent($to, $msg);
     }
@@ -93,7 +92,7 @@ class TwilioFakeTest extends CustomerTestCase
         $to  = '+12349010035';
 
         Twilio::fake();
-        NotificationFacade::route('twilio', $to)->notify(new FakeNotification($msg, [CustomTwilioChannel::class]));
+        NotificationFacade::route('twilio', $to)->notify(new FakeNotification($msg, ['twilio']));
         Twilio::assertMessageSent($to, $msg);
     }
 
@@ -134,6 +133,7 @@ class TwilioFakeTest extends CustomerTestCase
 class FakeNotification extends Notification
 {
     use Queueable;
+
     public $id = 'fake-id';
 
     /**
@@ -145,7 +145,7 @@ class FakeNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(string $message, array $via = [CustomTwilioChannel::class])
+    public function __construct(string $message, array $via = ['twilio'])
     {
         $this->message = $message;
         $this->via     = $via;

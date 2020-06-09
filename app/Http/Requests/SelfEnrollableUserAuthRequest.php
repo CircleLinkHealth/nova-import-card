@@ -85,6 +85,7 @@ class SelfEnrollableUserAuthRequest extends FormRequest
                     ->whereIn('status', [
                         Enrollee::QUEUE_AUTO_ENROLLMENT,
                         Enrollee::TO_CALL,
+                        Enrollee::SOFT_REJECTED,
                     ])
                     ->where(function ($q) {
                         $q->where('source', '=', Enrollee::UNREACHABLE_PATIENT)

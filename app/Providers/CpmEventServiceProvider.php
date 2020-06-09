@@ -26,6 +26,7 @@ use App\Listeners\CreateAndHandlePdfReport;
 use App\Listeners\ForwardApprovedCarePlanToPractice;
 use App\Listeners\ForwardNote;
 use App\Listeners\LogFailedNotification;
+use App\Listeners\LogSentNotification;
 use App\Listeners\LogSuccessfulLogout;
 use App\Listeners\NotifyPatientOfCarePlanApproval;
 use App\Listeners\NotifySlackChannel;
@@ -46,6 +47,7 @@ use Illuminate\Auth\Events\Logout;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Notifications\Events\NotificationFailed;
+use Illuminate\Notifications\Events\NotificationSent;
 
 class CpmEventServiceProvider extends ServiceProvider
 {
@@ -73,6 +75,9 @@ class CpmEventServiceProvider extends ServiceProvider
         ],
         NoteFinalSaved::class => [
             ForwardNote::class,
+        ],
+        NotificationSent::class => [
+            LogSentNotification::class,
         ],
         NotificationFailed::class => [
             LogFailedNotification::class,

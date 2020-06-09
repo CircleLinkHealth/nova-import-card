@@ -8,7 +8,6 @@ namespace App\SelfEnrollment\Domain;
 
 use App\EnrollmentInvitationsBatch;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
-use App\Notifications\Channels\CustomTwilioChannel;
 use App\SelfEnrollment\AbstractSelfEnrollableUserIterator;
 use App\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Customer\Entities\User;
@@ -43,7 +42,7 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
         int $limit,
         int $practiceId,
         string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
-        array $channels = ['mail', CustomTwilioChannel::class]
+        array $channels = ['mail', 'twilio']
     ) {
         $this->limit      = $limit;
         $this->practiceId = $practiceId;
@@ -62,8 +61,8 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
             ->ofType('survey-only')
             ->whereHas('enrollee', function ($q) {
                 $q->whereNull('source')
-                // If an enrollmentInvitationLink generated in the last 5 months exists, it means we have already invited the patient,
-                // and we do not want to send them another invitation.
+                    // If an enrollmentInvitationLink generated in the last 5 months exists, it means we have already invited the patient,
+                    // and we do not want to send them another invitation.
                     ->whereDoesntHave('enrollmentInvitationLinks', function ($q) {
                         $q->where('created_at', '>', now()->subMonths(5));
                     })

@@ -271,7 +271,13 @@ Route::group(['middleware' => 'auth'], function () {
         ], function () {
             Route::get('list', 'ProviderController@list');
             Route::get('{id}', 'ProviderController@show');
-            Route::resource('', 'ProviderController');
+        });
+
+        Route::group([
+            'prefix'     => 'locations',
+            'middleware' => ['permission:location.read'],
+        ], function () {
+            Route::get('list', 'ProviderController@listLocations');
         });
 
         Route::group([
@@ -1420,11 +1426,6 @@ Route::group(['middleware' => 'auth'], function () {
                 ])->middleware('permission:salesReport.create');
             });
 
-            Route::get('ethnicity', [
-                'uses' => 'Admin\Reports\EthnicityReportController@getReport',
-                'as'   => 'EthnicityReportController.getReport',
-            ])->middleware('permission:ethnicityReport.create');
-
             Route::get('call-v2', [
                 'uses' => 'Admin\Reports\CallReportController@exportxlsV2',
                 'as'   => 'CallReportController.exportxlsv2',
@@ -1967,57 +1968,11 @@ Route::get('/downloadInvoice/{practice}/{name}', [
 ]);
 
 Route::group([
-    'prefix'     => 'twilio',
-    'middleware' => 'auth',
-], function () {
-    Route::get('/token', [
-        'uses' => 'Twilio\TwilioController@obtainToken',
-        'as'   => 'twilio.token',
-    ]);
-    Route::post('/call/js-create-conference', [
-        'uses' => 'Twilio\TwilioController@jsCreateConference',
-        'as'   => 'twilio.js.create.conference',
-    ]);
-    Route::post('/call/get-conference-info', [
-        'uses' => 'Twilio\TwilioController@getConferenceInfo',
-        'as'   => 'twilio.js.get.conference.info',
-    ]);
-    Route::post('/call/join-conference', [
-        'uses' => 'Twilio\TwilioController@joinConference',
-        'as'   => 'twilio.call.join.conference',
-    ]);
-    Route::post('/call/end', [
-        'uses' => 'Twilio\TwilioController@endCall',
-        'as'   => 'twilio.call.leave.conference',
-    ]);
-});
-
-Route::group([
     'prefix' => 'twilio',
 ], function () {
-    Route::post('/call/place', [
-        'uses' => 'Twilio\TwilioController@placeCall',
-        'as'   => 'twilio.call.place',
-    ]);
-    Route::post('/call/status', [
-        'uses' => 'Twilio\TwilioController@callStatusCallback',
-        'as'   => 'twilio.call.status',
-    ]);
-    Route::post('/call/number-status', [
-        'uses' => 'Twilio\TwilioController@dialNumberStatusCallback',
-        'as'   => 'twilio.call.number.status',
-    ]);
-    Route::post('/call/dial-action', [
-        'uses' => 'Twilio\TwilioController@dialActionCallback',
-        'as'   => 'twilio.call.dial.action',
-    ]);
-    Route::post('/call/conference-status', [
-        'uses' => 'Twilio\TwilioController@conferenceStatusCallback',
-        'as'   => 'twilio.call.conference.status',
-    ]);
-    Route::post('/call/recording-status', [
-        'uses' => 'Twilio\TwilioController@recordingStatusCallback',
-        'as'   => 'twilio.call.recording.status',
+    Route::post('/sms/status', [
+        'uses' => 'Twilio\TwilioController@smsStatusCallback',
+        'as'   => 'twilio.sms.status',
     ]);
 });
 
@@ -2310,7 +2265,7 @@ Route::post('nurses/nurse-calendar-data', [
     'as'   => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');
 
-Route::get('login-enrollees-survey/{user}/{survey}', 'SelfEnrollmentController@sendToSurvey')
+Route::get('login-enrollees-survey/{user}/{survey}', 'Enrollment\SelfEnrollmentController@sendToSurvey')
     ->name('enrollee.login.signed')
     ->middleware('signed');
 

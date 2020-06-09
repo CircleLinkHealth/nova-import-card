@@ -7,9 +7,9 @@
 namespace App\SelfEnrollment\Jobs;
 
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
-use App\Notifications\Channels\CustomTwilioChannel;
 use App\SelfEnrollment\Helpers;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -25,6 +25,7 @@ class SendInvitation implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
     /**
      * @var array|string[]
      */
@@ -67,7 +68,7 @@ class SendInvitation implements ShouldQueue
         int $invitationsBatchId,
         ?string $color = SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
         bool $isReminder = false,
-        array $channels = ['mail', CustomTwilioChannel::class]
+        array $channels = ['mail', 'twilio']
     ) {
         $this->user               = $user;
         $this->invitationsBatchId = $invitationsBatchId;
@@ -147,8 +148,7 @@ class SendInvitation implements ShouldQueue
 
     private function shouldRun(): bool
     {
-        //If an invitation exists already, it means the patient has already been invided and we do not want to invite them again
-        if ($this->user->enrollmentInvitationLinks()->exists()) {
+        if (Patient::UNREACHABLE !== $this->user->getCcmStatus()) {
             return false;
         }
 
