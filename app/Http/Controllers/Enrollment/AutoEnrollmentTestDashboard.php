@@ -9,7 +9,6 @@ namespace App\Http\Controllers\Enrollment;
 use App\Console\Commands\SendSelfEnrollmentReminders;
 use App\Http\Controllers\Controller;
 use App\SelfEnrollment\Constants;
-use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use App\SelfEnrollment\Domain\InviteUnreachablePatients;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
 use App\SelfEnrollment\Helpers;
