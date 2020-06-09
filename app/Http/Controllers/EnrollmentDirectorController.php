@@ -18,6 +18,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
 
 class EnrollmentDirectorController extends Controller
 {
@@ -174,6 +175,71 @@ END ASC, attempt_count ASC");
         Enrollee::whereIn('id', $request->input('enrolleeIds'))->update(['status' => Enrollee::INELIGIBLE]);
 
         return response()->json([], 200);
+    }
+
+    public function queryEnrollables(\App\SafeRequest $request)
+    {
+        $input = $request->allSafe();
+
+        if ( ! array_key_exists('enrollables', $input)) {
+            return response()->json([], 400);
+        }
+
+        $searchTerms = explode(' ', $input['enrollables']);
+
+        $query = Enrollee::withCaPanelRelationships();
+
+        foreach ($searchTerms as $term) {
+            $query->where(function ($q) use ($term) {
+                $q->where('id', $term)
+                    ->orWhere('first_name', 'like', "%${term}%")
+                    ->orWhere('last_name', 'like', "%${term}%")
+                    ->orWhere(function ($query) use ($term) {
+                        $query->hasPhone($term);
+                    });
+            });
+        }
+
+        $results     = $query->get();
+        $enrollables = [];
+        $i           = 0;
+        foreach ($results as $e) {
+            $matchingPhones = collect([]);
+
+            foreach ($searchTerms as $term) {
+                //remove dashes for e164 format
+                $sanitizedTerm = trim(str_replace('-', '', $term));
+                if (Str::contains($e->home_phone_e164, $sanitizedTerm)) {
+                    $matchingPhones->push($e->home_phone);
+                }
+                if (Str::contains($e->cell_phone_e164, $sanitizedTerm)) {
+                    $matchingPhones->push($e->cell_phone);
+                }
+                if (Str::contains($e->other_phone_e164, $sanitizedTerm)) {
+                    $matchingPhones->push($e->other_phone);
+                }
+            }
+
+            if ($matchingPhones->isEmpty()) {
+                $matchingPhones = collect([
+                    $e->home_phone,
+                    $e->cell_phone,
+                    $e->other_phone,
+                ]);
+            }
+
+            $phonesString = $matchingPhones->unique()->implode(', ');
+
+            $enrollables[$i]['id']       = $e->id;
+            $enrollables[$i]['name']     = $e->first_name.' '.$e->last_name;
+            $enrollables[$i]['mrn']      = $e->mrn;
+            $enrollables[$i]['program']  = optional($e->practice)->display_name ?? '';
+            $enrollables[$i]['provider'] = optional($e->provider)->getFullName() ?? '';
+            $enrollables[$i]['hint']     = "{$enrollables[$i]['name']} ({$enrollables[$i]['id']}) {$phonesString} PROVIDER: [{$enrollables[$i]['provider']}] [{$enrollables[$i]['program']}]";
+            ++$i;
+        }
+
+        return response()->json($enrollables);
     }
 
     public function runCreateEnrolleesSeeder(Request $request)

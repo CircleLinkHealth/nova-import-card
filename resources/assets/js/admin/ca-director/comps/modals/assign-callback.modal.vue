@@ -35,7 +35,10 @@
                                        placeholder="Search information..."
                                        value-attribute="id"
                                        display-attribute="text"
-                                       @suggestion-click="onSuggestSelect"
+                                       @select="onSuggestSelect"
+                                       @request-start="onRequestStart"
+                                       @request-done="onRequestDone"
+                                       @request-failed="onRequestFailed"
                                       >
                                 <!-- <input type="text"> -->
 
@@ -80,7 +83,7 @@
                             <notifications ref="notificationsComponent" name="assign-callback-modal"></notifications>
                         </div>
                     </div>
-                    <loader v-if="loading"/>
+<!--                    <loader v-if="loading"/>-->
                 </template>
             </template>
         </modal>
@@ -89,9 +92,6 @@
 </template>
 
 <script>
-    import JQuery from 'jquery';
-    import Bloodhound from 'corejs-typeahead/dist/bloodhound';
-    import typeahead from 'corejs-typeahead/dist/typeahead.jquery';
 
     import {rootUrl} from '../../../../app.config.js';
     import Modal from '../../../common/modal';
@@ -186,5 +186,10 @@
 </script>
 
 <style>
+
+    .modal-assign-callback .modal-container {
+        width: 80%;
+        height: 60%;
+    }
 
 </style>

@@ -1183,7 +1183,7 @@ Route::group(['middleware' => 'auth'], function () {
             ]);
 
             Route::get('queryEnrollable', [
-                'uses' => 'API\EnrollmentCenterController@queryEnrollables',
+                'uses' => 'EnrollmentDirectorController@queryEnrollables',
                 'as'   => 'enrollables.query',
             ]);
 
