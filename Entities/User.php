@@ -3166,9 +3166,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function scopePatientsPendingProviderApproval($query, User $approver)
     {
-        $approveOwnCarePlansOnly = $approver->providerInfo
-            ? (bool) $approver->providerInfo->approve_own_care_plans
-            : false;
+        $approveOwnCarePlansOnly = (bool) optional($approver->providerInfo)->approve_own_care_plans;
 
         return $query->intersectPracticesWith($approver)
             ->ofType('participant')
