@@ -276,7 +276,8 @@
                         bhi: (ascending) => iSort,
                         ccm: (ascending) => iSort,
                         practice: (ascending) => iSort
-                    }
+                    },
+                    noResults: 'No patients match these criteria at this time.'
                 }
             }
         },

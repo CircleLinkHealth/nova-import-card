@@ -9,17 +9,13 @@
                 @endif
             </div>
             <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                    @if($pendingApprovals > 0)
-                        <patient-list :show-provider-patients-button="{{json_encode(auth()->user()->isProvider())}}"
-                                      :is-admin="{{json_encode(auth()->user()->isAdmin())}}"
-                                      :can-approve-careplans="{{json_encode(auth()->user()->canApproveCarePlans())}}"
-                                      url-filter="patientsPendingAuthUserApproval"
-                                      :hide-download-buttons="{{json_encode(true)}}"
-                                      ref="patientList">
-                        </patient-list>
-                    @else
-                        <h5>There are no CarePlans pending approval at this time.</h5>
-                    @endif
+                    <patient-list :show-provider-patients-button="{{json_encode(auth()->user()->isProvider())}}"
+                                  :is-admin="{{json_encode(auth()->user()->isAdmin())}}"
+                                  :can-approve-careplans="{{json_encode(auth()->user()->canApproveCarePlans())}}"
+                                  url-filter="patientsPendingAuthUserApproval"
+                                  :hide-download-buttons="{{json_encode(true)}}"
+                                  ref="patientList">
+                    </patient-list>
             </div>
         </div>
     </div>
