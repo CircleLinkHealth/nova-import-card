@@ -50,9 +50,17 @@
                 CCM Status Change
             </template>
             <template slot="careplanStatus" slot-scope="props">
-                <a class="in-table-link" :href="props.row.careplanStatus === 'qa_approved' ? rootUrl('manage-patients/' + props.row.id + '/view-careplan') : null">
+                <a v-if="canApproveCareplans && props.row.careplanStatus === 'qa_approved'" class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
                     <b>{{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}</b>
                 </a>
+
+                <a v-else-if="isAdmin && props.row.careplanStatus === 'draft'" class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
+                    <b>{{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}</b>
+                </a>
+
+                <p v-else>
+                    {{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}
+                </p>
             </template>
             <template slot="filter__ccm">
                 <div>(HH:MM:SS)</div>
@@ -156,16 +164,21 @@
                 required: false,
                 default: false
             },
+            canApproveCareplans: {
+                type: Boolean,
+                required: false,
+                default: false,
+            },
         },
         data() {
             let carePlanStatusMap;
             if (this.isAdmin) {
                 carePlanStatusMap = {
                     to_enroll: 'To Enroll',
-                    qa_approved: 'QA Approved',
+                    qa_approved: 'CLH Approved',
                     provider_approved: 'Provider Approved',
                     none: 'None',
-                    draft: 'Draft',
+                    draft: 'Approve Now',
                     g0506: 'G0506'
                 };
             } else {
