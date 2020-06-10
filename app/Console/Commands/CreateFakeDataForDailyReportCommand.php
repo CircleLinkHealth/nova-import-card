@@ -15,6 +15,7 @@ use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\App;
 
 class CreateFakeDataForDailyReportCommand extends Command
 {
@@ -94,6 +95,12 @@ class CreateFakeDataForDailyReportCommand extends Command
     {
         $userId = $this->argument('nurseUserId') ?? null;
         $user   = $user   = User::findOrFail($userId);
+
+        if (App::environment(['testing'])) {
+            $this->createNurseFakeData($user);
+
+            return;
+        }
 
         if ( ! $user->primaryPractice->is_demo) {
             $this->error('You are not allowed to perform this action on a non-demo user');

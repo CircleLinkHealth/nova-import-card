@@ -14,6 +14,7 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -153,6 +154,50 @@ class NurseCalendarService
                 'updated_at'        => Carbon::parse(now())->toDateTimeString(),
             ];
         });
+    }
+
+    /**
+     * @param $auth
+     * @return array
+     */
+    public function dailyReportDataForCalendar($auth, array $dataReport, string $date)
+    {
+        $title = 'Daily Report';
+        //            @todo:This should have been false. Changed. Should set all true in CPM_config if not true already.
+        $showEfficiencyMetric       = false;
+        $enableDailyReportMetrics   = false;
+        $patientsCompletedRemaining = false;
+
+        if (showNurseMetricsInDailyEmailReport($auth->id, 'efficiency_metrics')) {
+            $showEfficiencyMetric = true;
+        }
+
+        if (showNurseMetricsInDailyEmailReport($auth->id, 'enable_daily_report_metrics')) {
+            $enableDailyReportMetrics = true;
+        }
+
+        if (showNurseMetricsInDailyEmailReport($auth->id, 'patients_completed_and_remaining')) {
+            $patientsCompletedRemaining = true;
+        }
+
+        return [
+            self::TITLE => $title,
+            self::START => $date,
+            'allDay'    => true,
+            'color'     => '#d79ef0',
+            'data'      => [
+                //                    'name' => $report['nurse_full_name'],
+                'date'        => $date,
+                'day'         => clhDayOfWeekToDayName(clhToCarbonDayOfWeek(Carbon::parse($date)->dayOfWeek)),
+                'eventType'   => 'dailyReport',
+                'reportData'  => $dataReport,
+                'reportFlags' => [
+                    'showEfficiencyMetrics'      => $showEfficiencyMetric,
+                    'enableDailyReportMetrics'   => $enableDailyReportMetrics,
+                    'patientsCompletedRemaining' => $patientsCompletedRemaining,
+                ],
+            ],
+        ];
     }
 
     /**
@@ -326,6 +371,37 @@ class NurseCalendarService
     }
 
     /**
+     * @return array
+     */
+    public function manipulateReportData(?array $nextUpcomingWindow, array $report)
+    {
+        return  [
+            'windowStart' => $nextUpcomingWindow
+                ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A')
+                : null,
+            'windowEnd' => $nextUpcomingWindow
+                ? Carbon::parse($nextUpcomingWindow['window_time_end'])->format('g:i A')
+                : null,
+
+            'nextUpcomingWindowDay' => $nextUpcomingWindow
+                ? Carbon::parse($nextUpcomingWindow['date'])->format('l')
+                : null,
+
+            'nextUpcomingWindowMonth' => $nextUpcomingWindow
+                ? Carbon::parse($nextUpcomingWindow['date'])->format('F d')
+                : null,
+
+            'deficitTextColor' => $report['surplusShortfallHours'] < 0
+                ? '#f44336'
+                : '#009688',
+
+            'deficitOrSurplusText' => $report['surplusShortfallHours'] < 0
+                ? 'Deficit'
+                : 'Surplus',
+        ];
+    }
+
+    /**
      * @param $cacheKey
      * @return \Collection|\Illuminate\Support\Collection
      */
@@ -333,10 +409,10 @@ class NurseCalendarService
     {
         $this->cacheKey     = $cacheKey;
         $loginActivityCount = $this->loginActivityCountFor($userId, Carbon::now());
-        $time               = Carbon::now()->endOfDay();
+        $cacheTime          = Carbon::now()->endOfDay();
 
         if ($loginActivityCount <= self::FIRST_LOGIN_OF_DAY) {
-            Cache::put($cacheKey, "Daily Report $userId", $time);
+            Cache::put($cacheKey, "Daily Report $userId", $cacheTime);
 
             try {
                 return $this->prepareDailyReportsForNurse(User::findOrFail($userId), $date);
@@ -397,79 +473,23 @@ class NurseCalendarService
         if ($date && ! Cache::has($this->cacheKey)) {
             $reports = $this->nurseReportForDate($auth->id, $date);
         }
-        $title = 'Daily Report';
 
         $reportsForCalendarView = [];
         foreach ($reports as $date => $report) {
             if (empty($report)) {
                 continue;
             }
-//            @todo:This should have been false. Changed. Should set all true in CPM_config if not true already.
-            $showEfficiencyMetric       = false;
-            $enableDailyReportMetrics   = false;
-            $patientsCompletedRemaining = false;
-
-            if (showNurseMetricsInDailyEmailReport($auth->id, 'efficiency_metrics')) {
-                $showEfficiencyMetric = true;
-            }
-
-            if (showNurseMetricsInDailyEmailReport($auth->id, 'enable_daily_report_metrics')) {
-                $enableDailyReportMetrics = true;
-            }
-
-            if (showNurseMetricsInDailyEmailReport($auth->id, 'patients_completed_and_remaining')) {
-                $patientsCompletedRemaining = true;
-            }
-
             $nextUpcomingWindow = ! empty($report) ? $report['nextUpcomingWindow'] : false;
-
-            $reportCalculations = [
-                'windowStart' => $nextUpcomingWindow
-                    ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A')
-                    : null,
-                'windowEnd' => $nextUpcomingWindow
-                    ? Carbon::parse($nextUpcomingWindow['window_time_end'])->format('g:i A')
-                    : null,
-
-                'nextUpcomingWindowDay' => $nextUpcomingWindow
-                    ? Carbon::parse($nextUpcomingWindow['date'])->format('l')
-                    : null,
-
-                'nextUpcomingWindowMonth' => $nextUpcomingWindow
-                    ? Carbon::parse($nextUpcomingWindow['date'])->format('F d')
-                    : null,
-
-                'deficitTextColor' => $report['surplusShortfallHours'] < 0
-                    ? '#f44336'
-                    : '#009688',
-
-                'deficitOrSurplusText' => $report['surplusShortfallHours'] < 0
-                    ? 'Deficit'
-                    : 'Surplus',
-            ];
-
-            $dataReport = array_merge($report, $reportCalculations);
+            $reportCalculations = $this->manipulateReportData($nextUpcomingWindow, $report);
+            $dataReport         = array_merge($report, $reportCalculations);
 
             if ( ! empty($report)) {
+                if (App::environment(['testing'])) {
+                    $reportsForCalendarView[] = $this->dailyReportDataForCalendar($auth, $dataReport, $date);
+                }
+
                 if (0 !== $report['systemTime'] && $auth->nurseInfo->hourly_rate > 1) {
-                    $reportsForCalendarView[] = [
-                        self::TITLE => $title,
-                        self::START => $date,
-                        'allDay'    => true,
-                        'color'     => '#d79ef0',
-                        'data'      => [
-                            //                    'name' => $report['nurse_full_name'],
-                            'date'        => $date,
-                            'day'         => clhDayOfWeekToDayName(clhToCarbonDayOfWeek(Carbon::parse($date)->dayOfWeek)),
-                            'eventType'   => 'dailyReport',
-                            'reportData'  => $dataReport,
-                            'reportFlags' => [
-                                'showEfficiencyMetrics'      => $showEfficiencyMetric,
-                                'enableDailyReportMetrics'   => $enableDailyReportMetrics,
-                                'patientsCompletedRemaining' => $patientsCompletedRemaining,
-                            ],
-                        ],
-                    ];
+                    $reportsForCalendarView[] = $this->dailyReportDataForCalendar($auth, $dataReport, $date);
                 }
             }
         }
