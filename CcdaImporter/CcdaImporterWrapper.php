@@ -150,12 +150,12 @@ class CcdaImporterWrapper
         $this->fillLocationFromAthenaDepartmentId();
 
         $provider = $this->ccda->billingProvider;
-    
+
         //Try this before algolia to save costs
         if ( ! $provider && $this->ccda->directMessage && $this->ccda->directMessage->senderDmAddress && $this->ccda->directMessage->senderDmAddress->users) {
             $provider = $this->ccda->directMessage->senderDmAddress->users->first() ?? null;
         }
-        
+
         //Second most reliable place is ccdas.referring_provider_name.
         if ( ! $provider && $term = $this->ccda->getReferringProviderName()) {
             $provider = self::searchBillingProvider($term, $this->ccda->practice_id);
@@ -175,6 +175,12 @@ class CcdaImporterWrapper
 
         //Check if we have any locations whose address line 1 matches that in documentation of
         $this->setLocationFromDocumentationOfAddressInCcda($this->ccda);
+
+        if ($this->ccda->location_id) {
+            return $this;
+        }
+
+        $this->setLocationFromEncountersInCcda($this->ccda);
 
         if ($this->ccda->location_id) {
             return $this;
@@ -349,13 +355,33 @@ class CcdaImporterWrapper
     private function setLocationFromDocumentationOfAddressInCcda(Ccda $ccda)
     {
         //Get address line 1 from documentation_of section of ccda
-        $addresses = collect($ccda->bluebuttonJson()->document->documentation_of)->pluck('address.street')->filter(function ($address) {
+        $addresses = collect($ccda->bluebuttonJson()->document->documentation_of)->pluck('address.street')->map(function ($address) {
             if (empty($address[0] ?? null)) {
                 return null;
             }
 
             return $address[0];
-        })->unique();
+        })->filter()->unique();
+
+        //only do this if there's a just one address in the CCDA.
+        //we don't wanna take a guess on what the actual patient's location may be
+        if (1 === $addresses->count()) {
+            if ($location = Location::where('address_line_1', $addresses->last())->where('practice_id', $this->ccda->practice_id)->first()) {
+                $this->ccda->setLocationId($location->id);
+            }
+        }
+    }
+
+    private function setLocationFromEncountersInCcda(Ccda $ccda)
+    {
+        //Get address line 1 from documentation_of section of ccda
+        $addresses = collect($ccda->bluebuttonJson()->encounters)->pluck('location.street')->map(function ($address) {
+            if (empty($address[0] ?? null)) {
+                return null;
+            }
+
+            return $address[0];
+        })->filter()->unique();
 
         //only do this if there's a just one address in the CCDA.
         //we don't wanna take a guess on what the actual patient's location may be
