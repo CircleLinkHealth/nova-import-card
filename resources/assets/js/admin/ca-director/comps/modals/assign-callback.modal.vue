@@ -53,8 +53,8 @@
                                 >
                                     <!-- <input type="text"> -->
 
-                                    <div class="g">
-                                        <input type="text">
+                                    <div>
+                                        <input class="form-control" type="text">
                                     </div>
 
                                     <!-- <test-input placeholder="Search information..." /> -->
@@ -94,7 +94,15 @@
                                 <p>Select Date</p>
                             </div>
                             <div>
-                                <input  class="form-control" type="date">
+                                <input class="form-control" v-model="callback_date" type="date">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div>
+                                <p>Add note:</p>
+                            </div>
+                            <div>
+                                <input class="form-control" v-model="callback_note" type="text">
                             </div>
                         </div>
                     </div>
@@ -118,10 +126,11 @@
     import Notifications from '../../../../components/notifications';
     import Loader from '../../../../components/loader';
     import VueSelect from 'vue-select';
-    import {Event} from 'vue-tables-2'
+    import {Event} from 'vue-tables-2';
+    import moment from 'moment';
 
-    import VueSimpleSuggest from 'vue-simple-suggest'
-    import 'vue-simple-suggest/dist/styles.css' //
+    import VueSimpleSuggest from 'vue-simple-suggest';
+    import 'vue-simple-suggest/dist/styles.css';
 
 
     export default {
@@ -135,6 +144,8 @@
         },
         data() {
             return {
+                callback_date: null,
+                callback_note: null,
                 selectedAmbassador: null,
                 ambassadorList: [],
                 selected: null,
@@ -178,7 +189,7 @@
                             reject()
                         }
 
-                        let result = []
+                        let result = [];
 
 
                         response.data.forEach(el => {
@@ -190,11 +201,11 @@
                         })
 
 
-                        resolve(result)
+                        resolve(result);
 
 
                     }).catch(error => {
-                        this.loading = false
+                        this.loading = false;
                         reject(error)
                     })
                 })
@@ -203,8 +214,10 @@
         mounted() {
             const self = this;
 
+            this.callback_date = moment().format('YYYY-MM-DD');
+
             Event.$on('ambassadors-loaded', (ambassadors) =>{
-                this.ambassadorList = ambassadors
+                this.ambassadorList = ambassadors;
             })
         }
     }
@@ -217,54 +230,6 @@
         height: 60%;
     }
 
-    #app .example {
-        width: 506px;
-    }
 
-    #app pre.selected {
-        margin: 8px 0;
-        height: 295px;
-        overflow-x: scroll;
-        overflow-y: scroll;
-        border: 1px solid #cde;
-        border-radius: 4px;
-    }
-    #app .v-model-event {
-        background-color: white;
-        border: 1px solid #cde;
-        border-radius: 4px;
-    }
-    #app .v-model-event.selected {
-        color: red;
-    }
-    #app .v-model-event:hover {
-        border: 1px solid #2874D5;
-        background-color: #2874D5;
-        color: white;
-    }
-    #app .vue-simple-suggest .suggest-item .text {
-        display: inline-block;
-        line-height: 1;
-        vertical-align: text-bottom;
-        overflow: hidden;
-        max-width: 72%;
-        text-overflow: ellipsis;
-    }
-    #app .vue-simple-suggest .suggest-item .text span {
-        white-space: nowrap;
-    }
-    #app .vue-simple-suggest .suggest-item button {
-        float: right;
-        line-height: 1;
-        margin-left: 4px;
-    }
-    .vue-simple-suggest-enter-active.suggestions,
-    .vue-simple-suggest-leave-active.suggestions {
-        transition: opacity .2s;
-    }
-    .vue-simple-suggest-enter.suggestions,
-    .vue-simple-suggest-leave-to.suggestions {
-        opacity: 0 !important;
-    }
 
 </style>
