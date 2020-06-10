@@ -265,6 +265,20 @@
                     this.selectedEnrolleeIds.splice(pos, 1);
                 }
             },
+            getAmbassadors() {
+                return this.axios
+                    .get(rootUrl('/admin/ca-director/ambassadors'))
+                    .then(response => {
+                        this.loading = false;
+                        let ambassadorList = response.data.map(x => {
+                            return {label: x.display_name, value: x.id};
+                        });
+                        Event.$emit('ambassadors-loaded', ambassadorList)
+                    })
+                    .catch(err => {
+                        this.loading = false;
+                    });
+            },
             updateTable() {
                 const query = {
                     hideAssigned: this.hideAssigned,
@@ -318,6 +332,8 @@
             Event.$on('clear-selected-enrollees', this.clearSelected)
             Event.$on('refresh-table', this.refreshTable)
             console.info('mounted');
+
+            this.getAmbassadors();
 
             Event.$on('vue-tables.loading', function (data) {
                 self.loading = true;

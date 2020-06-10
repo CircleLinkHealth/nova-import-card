@@ -235,7 +235,7 @@ END ASC, attempt_count ASC");
             $enrollables[$i]['mrn']      = $e->mrn;
             $enrollables[$i]['program']  = optional($e->practice)->display_name ?? '';
             $enrollables[$i]['provider'] = optional($e->provider)->getFullName() ?? '';
-            $enrollables[$i]['hint']     = "{$enrollables[$i]['name']} ({$enrollables[$i]['id']}) {$phonesString} PROVIDER: [{$enrollables[$i]['provider']}] [{$enrollables[$i]['program']}]";
+            $enrollables[$i]['hint']     = "{$enrollables[$i]['name']} ({$enrollables[$i]['id']}) PROVIDER: [{$enrollables[$i]['provider']}] [{$enrollables[$i]['program']}]  {$phonesString} ";
             ++$i;
         }
 
