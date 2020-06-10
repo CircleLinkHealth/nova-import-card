@@ -28,6 +28,10 @@ class NurseCalendarService
     const START              = 'start';
     const SUNDAY             = 0;
     const TITLE              = 'title';
+    /**
+     * @var string
+     */
+    private $cacheKey;
 
     /**
      * @param $diffRange
@@ -327,6 +331,7 @@ class NurseCalendarService
      */
     public function nurseDailyReportForDate(int $userId, Carbon $date, string $cacheKey)
     {
+        $this->cacheKey     = $cacheKey;
         $loginActivityCount = $this->loginActivityCountFor($userId, Carbon::now());
         $time               = Carbon::now()->endOfDay();
 
@@ -389,7 +394,7 @@ class NurseCalendarService
     {
         $reports = $this->dailyReportsForNurse($auth->id);
 
-        if ($date && ! Cache::has("daily-report-for-{$auth->id}-{$date->toDateString()}")) {
+        if ($date && ! Cache::has($this->cacheKey)) {
             $reports = $this->nurseReportForDate($auth->id, $date);
         }
         $title = 'Daily Report';
