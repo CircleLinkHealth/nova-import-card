@@ -76,6 +76,7 @@ class Enrollable extends Resource
                 'practice'                 => $enrollable->practice->attributesToArray(),
                 'last_call_outcome'        => $enrollable->last_call_outcome ?? '',
                 'last_call_outcome_reason' => $enrollable->last_call_outcome_reason ?? '',
+                'callback_note'            => $enrollable->callback_note ?? '',
                 'name'                     => $enrollable->first_name.' '.$enrollable->last_name,
                 'lang'                     => $enrollable->lang,
                 'practice_id'              => $enrollable->practice->id,
