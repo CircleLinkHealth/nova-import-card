@@ -484,7 +484,7 @@ class NurseCalendarService
             $dataReport         = array_merge($report, $reportCalculations);
 
             if ( ! empty($report)) {
-                if (App::environment(['testing'])) {
+                if (App::environment(['testing', 'review'])) {
                     $reportsForCalendarView[] = $this->dailyReportDataForCalendar($auth, $dataReport, $date);
                 }
 
