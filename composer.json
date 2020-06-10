@@ -139,7 +139,7 @@
         "circlelinkhealth/eligibility-module": "2.4.1",
         "circlelinkhealth/revisionable-module": "6.1.1",
         "circlelinkhealth/shared-models-module": "1.4.9",
-        "circlelinkhealth/sqlviews-module": "1.1.5",
+        "circlelinkhealth/sqlviews-module": "1.1.6",
         "circlelinkhealth/timetracking-module": "1.2.2",
         "doctrine/dbal": "^2.9",
         "fideloper/proxy": "^4.0",
