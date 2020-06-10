@@ -85,6 +85,7 @@ class Enrollable extends Resource
                 'other_phone'              => $enrollable->other_phone,
                 'cell_phone'               => $enrollable->cell_phone,
                 'home_phone'               => $enrollable->home_phone,
+                'requested_callback'       => optional($enrollable->requested_callback)->toDateString() ?? '',
 
                 'extra' => $extra,
 
