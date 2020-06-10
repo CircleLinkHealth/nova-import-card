@@ -52,14 +52,14 @@ class AutoApproveValidCarePlansAs extends Command
         }
 
         if ( ! $this->option('only-consented-enrollees')) {
-            User::patientsPendingCLHApproval($approver)->chunkById(50, function ($patients) use ($approver) {
+            User::patientsPendingCLHApproval($approver)->orderByDesc('id')->chunkById(50, function ($patients) use ($approver) {
                 $patients->each(function (User $patient) use ($approver) {
                     $this->process($patient, $approver);
                 });
             });
         }
 
-        $this->consentedEnrollees()->chunkById(50, function ($patients) use ($approver) {
+        $this->consentedEnrollees()->orderByDesc('id')->chunkById(50, function ($patients) use ($approver) {
             $patients->each(function (Enrollee $enrollee) use ($approver) {
                 $needsQA = $this->process($enrollee->user, $approver);
                 if ( ! $this->option('dry') && ! $needsQA) {
