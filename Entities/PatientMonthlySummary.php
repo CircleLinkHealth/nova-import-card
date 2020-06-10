@@ -36,6 +36,7 @@ use Illuminate\Support\Facades\DB;
  * @property int                                         $total_time
  * @property \CircleLinkHealth\Customer\Entities\User    $actor
  * @property \CircleLinkHealth\Customer\Entities\Patient $patient_info
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
  *     getCurrent()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
@@ -71,6 +72,7 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
  *     whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property string|null                                          $closed_ccm_status
  * @property int|null                                             $problem_1
  * @property int|null                                             $problem_2
@@ -85,6 +87,7 @@ use Illuminate\Support\Facades\DB;
  * @property \CircleLinkHealth\Customer\Entities\User $patient
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection
  *     $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
  *     hasServiceCode($code)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
@@ -109,6 +112,7 @@ use Illuminate\Support\Facades\DB;
  *     whereProblem2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
  *     whereTotalTime($value)
+ *
  * @property int|null                                                                                         $billable_problems_count
  * @property int|null                                                                                         $chargeable_services_count
  * @property int|null                                                                                         $revision_history_count
@@ -221,7 +225,7 @@ class PatientMonthlySummary extends BaseModel
             //Attestation BHI rules have changed
             //BHI attestation is no longer required so we can be loose with attaching to patient.
             //also bhi attestation validation depends on bhi time, so we can consider it as a factor for attaching CS
-            $patientHasBhiProblems = $patientProblems->where('cpmProblem.is_behavioral', true)->count() > 1;
+            $patientHasBhiProblems = $patientProblems->contains('cpmProblem.is_behavioral', true);
             $pmsHasBhiTime         = $this->bhi_time > 0;
             if (($pmsHasBhiTime || $patientHasBhiProblems) && $practiceBhiCode) {
                 $this->chargeableServices()->attach($practiceBhiCode->id, ['is_fulfilled' => false]);
@@ -233,7 +237,7 @@ class PatientMonthlySummary extends BaseModel
             }
 
             $practicePcmCode = $practiceCodes->where('code', ChargeableService::PCM)->first();
-            if ($practicePcmCode && 1 === $patientProblems->where('cpmProblem.is_behavioral', false)->count()) {
+            if ($practicePcmCode && $patientProblems->contains('cpmProblem.is_behavioral', false)) {
                 $this->chargeableServices()->attach($practicePcmCode->id, ['is_fulfilled' => false]);
             }
 
@@ -277,7 +281,8 @@ class PatientMonthlySummary extends BaseModel
     }
 
     /**
-     * @param  bool              $includeUnfulfilledChargeableServices
+     * @param bool $includeUnfulfilledChargeableServices
+     *
      * @return Collection|static
      */
     public function bhiAttestedProblems($includeUnfulfilledChargeableServices = false)
@@ -320,7 +325,8 @@ class PatientMonthlySummary extends BaseModel
     }
 
     /**
-     * @param  bool                                                                      $includeUnfulfilledChargeableServices
+     * @param bool $includeUnfulfilledChargeableServices
+     *
      * @return \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection|static
      */
     public function ccmAttestedProblems($includeUnfulfilledChargeableServices = false)
