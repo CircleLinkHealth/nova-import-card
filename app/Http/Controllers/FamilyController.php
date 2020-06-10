@@ -44,7 +44,7 @@ class FamilyController extends Controller
             ]
         )->whereUserId($patientId)->first();
 
-        if ($patient) {
+        if ($patient && ! empty($patient->family)) {
             $members = $patient
                 ->family
                 ->patients
