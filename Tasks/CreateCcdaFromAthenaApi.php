@@ -11,6 +11,7 @@ use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Exceptions\CcdaWasNotFetchedFromAthenaApi;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use Illuminate\Support\Facades\DB;
 
 class CreateCcdaFromAthenaApi
 {
@@ -59,6 +60,7 @@ class CreateCcdaFromAthenaApi
             function (Ccda $ccda) use (&$targetPatient) {
                 $targetPatient->ccda_id = $ccda->id;
                 $targetPatient->save();
+                DB::commit();
             }
         );
     }

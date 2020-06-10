@@ -348,7 +348,7 @@ class ReimportPatientMedicalRecord extends Command
     private function getEnrollee(User $user): ?Enrollee
     {
         if ($this->enrollee) {
-            \Log::debug("ReimportPatientMedicalRecord:user_id[{$user->id}] Enrollee[{$this->enrollee->id}] had already bbeen fetched, and was just returend ln:".__LINE__);
+            \Log::debug("ReimportPatientMedicalRecord:user_id[{$user->id}] Enrollee[{$this->enrollee->id}] had already been fetched, and was just returned ln:".__LINE__);
 
             return $this->enrollee;
         }
