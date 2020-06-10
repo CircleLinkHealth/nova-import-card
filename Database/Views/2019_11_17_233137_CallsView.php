@@ -41,6 +41,7 @@ class CallsView extends BaseSqlView
             if (u5.no_of_successful_calls is null, 0, u5.no_of_successful_calls) as no_of_successful_calls,
             u7.practice_id,
             u7.practice,
+            u10.state,
             u1.timezone,
             c.window_start as call_time_start,
             c.window_end as call_time_end,
@@ -55,6 +56,7 @@ class CallsView extends BaseSqlView
             u4.ccm_status,
             u9.patient_nurse_id,
             u9.patient_nurse
+            
         FROM
             calls c
             join (select u.id as patient_id, CONCAT(u.display_name) as patient, u.timezone from users u where u.deleted_at is null) as u1 on c.inbound_cpm_id = u1.patient_id
@@ -78,9 +80,18 @@ class CallsView extends BaseSqlView
             left join (select pbp.user_id as patient_id, u.display_name as billing_provider from users u join (select pctm.user_id, pctm.member_user_id from users u 		left join patient_care_team_members pctm on u.id = pctm.user_id where pctm.type = 'billing_provider') pbp on pbp.member_user_id = u.id) u8 on c.inbound_cpm_id = u8.patient_id
 
             left join (select pi.patient_user_id as patient_id, u.id as patient_nurse_id, CONCAT(u.first_name, ' ', u.last_name, ' ', (if (u.suffix is null, '', u.suffix))) as patient_nurse from users u join patients_nurses pi on u.id = pi.nurse_user_id where u.deleted_at is null) as u9 on c.inbound_cpm_id = u9.patient_id
+            
+            left join (select pi.user_id as patient_id, l.state from locations l left join patient_info pi on l.id = pi.preferred_contact_location where pi.deleted_at is null) as u10 on c.inbound_cpm_id = u10.patient_id
 
         WHERE
             c.scheduled_date is not null
+            AND (
+                # calls need to be scheduled and in the future
+                c.sub_type is null and c.status = 'scheduled' and c.scheduled_date >= DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York'))
+                OR
+                # tasks can be in the past
+                c.sub_type is not null
+            )
       ");
 
         // we are using DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')) instead of CURDATE()
@@ -90,6 +101,9 @@ class CallsView extends BaseSqlView
         // calls table is now an actions table.
         // we have tasks that may be due in the past
         // assuming that re-scheduler service is dropping past calls, we will only have type `task` that are in the past
+
+        // update:
+        // modified where clause to optimize query and cover comments above
     }
 
     /**
