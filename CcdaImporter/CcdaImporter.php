@@ -245,10 +245,10 @@ class CcdaImporter
 //                 - Not useful because in the case of BP we don't have a starting value.
 //            Uncomment after we have refactored vitals/observations.
 //            ->importVitals()
+            ->raiseConcernsOrAutoQAApprove()
             ->updateCcdaPostImport()
             ->updateEnrolleePostImport()
-            ->updatePatientUserPostImport()
-            ->raiseConcernsOrAutoQAApprove();
+            ->updatePatientUserPostImport();
 
         event(new PatientUserCreated($this->ccda->patient));
     }
