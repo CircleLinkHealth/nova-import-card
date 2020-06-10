@@ -47,6 +47,9 @@ class DemographicsFromAthena implements MedicalRecordDecorator
 
     private function getDemographicsFromApi(EligibilityJob &$eligibilityJob)
     {
+        if (is_null($eligibilityJob->targetPatient)) {
+            return;
+        }
         $demographics = $this->athenaApiImplementation->getDemographics(
             $eligibilityJob->targetPatient->ehr_patient_id,
             $eligibilityJob->targetPatient->ehr_practice_id
