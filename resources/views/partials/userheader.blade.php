@@ -101,6 +101,9 @@
                         </li>
                         <li class="inline-block">{{formatPhoneNumber($patient->getPhone()) ?? 'N/A'}} </li>
                     </b>
+                    <li style="margin-bottom: 10px">
+                        <patient-spouse :patient-id="{{json_encode($patient->id, JSON_HEX_QUOT)}}"></patient-spouse>
+                    </li>
                     <li><span> <b>Billing Dr.</b>: {{$provider}}  </span></li>
                     @if($regularDoctor)
                         <li><span> <b>Regular Dr.</b>: {{$regularDoctor->getFullName()}}  </span></li>
@@ -116,9 +119,6 @@
                             <b>General comment</b>: {{$patient->patientInfo->general_comment}}
                         </li>
                     @endif
-                    <li>
-                        <patient-spouse :patient-id="{{json_encode($patient->id, JSON_HEX_QUOT)}}"></patient-spouse>
-                    </li>
                     <li>
                         <patient-next-call
                                 :patient-id="{{json_encode($patient->id, JSON_HEX_QUOT)}}"

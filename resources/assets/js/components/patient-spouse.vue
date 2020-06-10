@@ -1,6 +1,6 @@
 <template>
     <div v-if="!loaders.family && familyMembers.length > 0">
-        <b>Family Member(s)</b>:
+        <b>Family</b>:
         <span v-for="(member, index) in familyMembers">
             <a :href="getPatientUrl(member.user_id)">{{member.display_name}}</a>
             <span v-if="familyMembers.length > 0 && (familyMembers.length - 1) !== index">&nbsp;|&nbsp;&nbsp;</span>
