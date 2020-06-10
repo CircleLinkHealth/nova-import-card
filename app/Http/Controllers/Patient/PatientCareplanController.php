@@ -18,9 +18,9 @@ use App\Services\PatientService;
 use Auth;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\PdfService;
-use CircleLinkHealth\Customer\AppConfig\PracticesRequiringMedicareDisclaimer;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
+use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
@@ -180,7 +180,19 @@ class PatientCareplanController extends Controller
 
         $fileNameWithPathBlankPage = $this->pdfService->blankPage();
 
-        $users = User::with(PatientCareplanRelations::get())->has('patientInfo')->has('billingProvider.user')->findMany($userIds);
+        $users = User::with(
+            array_merge(PatientCareplanRelations::get(), [
+                'patientInfo',
+                'primaryPractice',
+                'inboundCalls' => function ($c) {
+                    $c->with(['outboundUser'])
+                        ->where('status', 'scheduled')
+                        ->where('called_date', '=', null);
+                }, ])
+        )
+            ->has('patientInfo')
+            ->has('billingProvider.user')
+            ->findMany($userIds);
 
         // create pdf for each user
         $p = 1;
@@ -191,41 +203,45 @@ class PatientCareplanController extends Controller
                 return false;
             }
 
-            $pageCount                    = 0;
-            $shouldShowMedicareDisclaimer = PracticesRequiringMedicareDisclaimer::shouldShowMedicareDisclaimer($user->primaryPractice->name);
+            $pageCount         = 0;
+            $gender            = $user->patientInfo->gender;
+            $title             = 'm' === strtolower($gender) ? 'Mr.' : ('f' === strtolower($gender) ? 'Ms.' : null);
+            $practiceNumber    = $user->primaryPractice->number_with_dashes;
+            $assignedNurseName = optional(PatientNurse::getPermanentNurse($user->id))->first_name;
+
+            //if permanent assigned nurse does not exist, get nurse from scheduled call - CPM-1829
+            if ( ! $assignedNurseName) {
+                $call              = $user->inboundCalls->first();
+                $assignedNurseName = $call ? optional($call->outboundUser)->first_name : null;
+            }
+
+            $viewParams = [
+                'careplans'         => [$user->id => $careplan],
+                'isPdf'             => true,
+                'letter'            => $letter,
+                'problemNames'      => $careplan['problem'],
+                'patient'           => $user,
+                'careTeam'          => $user->careTeamMembers,
+                'data'              => $careplanService->careplan($user->id),
+                'billingDoctor'     => $user->billingProviderUser(),
+                'regularDoctor'     => $user->regularDoctorUser(),
+                'title'             => $title,
+                'practiceNumber'    => $practiceNumber,
+                'assignedNurseName' => $assignedNurseName,
+            ];
 
             if ($request->filled('render') && 'html' == $request->input('render')) {
-                return view(
-                    'wpUsers.patient.multiview',
-                    [
-                        'careplans'                    => [$user->id => $careplan],
-                        'isPdf'                        => true,
-                        'letter'                       => $letter,
-                        'problemNames'                 => $careplan['problem'],
-                        'careTeam'                     => $user->careTeamMembers,
-                        'shouldShowMedicareDisclaimer' => $shouldShowMedicareDisclaimer,
-                        'data'                         => $careplanService->careplan($user->id),
-                    ]
-                );
+                return view('wpUsers.patient.multiview', $viewParams);
             }
 
             $pdfCareplan = null;
             if (true == $letter && 'pdf' == $user->carePlan->mode) {
-                $pdfCareplan = $user->carePlan->pdfs->sortByDesc('created_at')->first();
+                $viewParams['pdfCarePlan'] = $user->carePlan->pdfs->sortByDesc('created_at')->first();
             }
 
             $fileNameWithPath = $this->pdfService->createPdfFromView(
                 'wpUsers.patient.multiview',
-                [
-                    'careplans'                    => [$user->id => $careplan],
-                    'isPdf'                        => true,
-                    'letter'                       => $letter,
-                    'problemNames'                 => $careplan['problem'],
-                    'careTeam'                     => $user->careTeamMembers,
-                    'data'                         => $careplanService->careplan($user->id),
-                    'shouldShowMedicareDisclaimer' => $shouldShowMedicareDisclaimer,
-                    'pdfCareplan'                  => $pdfCareplan,
-                ],
+                $viewParams,
                 null,
                 Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
             );
