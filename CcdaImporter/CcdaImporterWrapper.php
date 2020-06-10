@@ -142,7 +142,7 @@ class CcdaImporterWrapper
         }
 
         $this->ccda->loadMissing(['billingProvider', 'targetPatient', 'directMessage.senderDmAddress' => function ($q) {
-            $q->whereIn('emrDirectable_type', [User::class, \App\User::class])->with('users');
+            $q->has('users')->with('users');
         }]);
 
         //We assume Athena API has the most up-to-date and reliable date
