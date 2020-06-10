@@ -15,6 +15,7 @@ use Illuminate\Database\Seeder;
 
 class DailyNurseMetricsReportSeeder extends Seeder
 {
+//    This should only be used for testing ROAD 151. It does not produce any data that make sense
     /**
      * @var NurseCalendarService
      */
