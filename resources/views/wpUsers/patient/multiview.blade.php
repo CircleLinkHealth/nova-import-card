@@ -30,11 +30,6 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 @section('activity', 'Care Plan View/Print')
 @section('content')
     @foreach($careplans as $id => $careplan)
-        <?php
-        $patient       = \CircleLinkHealth\Customer\Entities\User::find($id);
-        $billingDoctor = $patient->billingProviderUser();
-        $regularDoctor = $patient->regularDoctorUser();
-        ?>
         @push('styles')
             <style type="text/css">
                 body {
@@ -150,8 +145,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-4 col-xs-offset-1 print-row text-right">
-                                                    <div>290 Harbor Drive</div>
-                                                    <div>Stamford, CT 06902</div>
+                                                    <div>115 E 23rd St</div>
+                                                    <div>New York, NY 10010</div>
                                                     <div class="omr-bar"></div>
                                                 </div>
                                             </div>
@@ -183,76 +178,37 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             <div class="row gutter">
                                 <div class="col-xs-10 welcome-copy">
                                     <div class="row gutter">
-                                        Dear {{ucfirst(strtolower($patient->first_name))}} {{ucfirst(strtolower($patient->last_name))}}
-                                        ,
+                                        Dear @if($title) {{$title}} @else {{ucfirst(strtolower($patient->first_name))}} @endif {{ucfirst(strtolower($patient->last_name))}},
                                     </div>
-                                    <div class="row gutter">
+                                    <div class="row gutter"><BR><BR>
                                     </div>
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        Welcome to @if('UPG' === $patient->primaryPractice->name)CircleLink Health's @else Dr. {{$billingDoctor->getFullName()}}'s @endif Personalized Care Management
-                                        program!
+                                        Welcome to @if('UPG' === $patient->primaryPractice->name)CircleLink Health's @else {{$patient->primaryPractice->display_name}}'s @endif Personalized Care Program!
                                     </div>
-                                    <br>
+                                    <br><br>
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        We are happy you have decided to enroll in this invite-only program for
-                                        continued health.
+                                        We’re happy you’ve decided to join this program so you can get the benefits of better health.
                                     </div>
-                                    <br>
+                                    <div class="row gutter"><BR><BR>
+                                    </div>
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        As Dr. {{$billingDoctor->getFullName()}} mentioned, this program is an important
-                                        part
-                                        of
-                                        better
-                                        self-management of your health. By participating, you benefit in a number ways:
+                                        Enclosed is a copy of the care plan we've discussed or will discuss soon. <br>
+                                        Please take a moment to read it; we'll continue to refer to it throughout our coaching sessions.
                                     </div>
-                                    <div class="row gutter"><BR>
-                                        <ul type="disc" style="line-height: 1.0em;list-style-type: disc;">
-                                            <li style="list-style-type: disc;margin: 15px 0;">Regular calls to check-in
-                                                on behalf of Dr. {{$billingDoctor->getFullName()}}, so (s)he can help
-                                                keep
-                                                you
-                                                healthy between visits
-
-                                            </li>
-                                            <li style="list-style-type: disc;margin: 15px 0;">Avoid the inconvenience of
-                                                frequent office visits and co-pays by using this program's remote care
-                                            </li>
-                                            <li style="list-style-type: disc;margin: 15px 0;">All of the information
-                                                gathered will be available to your doctor and will allow them to see how
-                                                you are doing even when you are not in their office
-                                            </li>
-                                            <li style="list-style-type: disc;margin: 5px 0;">Help you take better care
-                                                of yourself by staying connected to your care team and doctor
-                                            </li>
-                                        </ul>
+                                    <div class="row gutter"><BR><BR>
                                     </div>
-                                    @if($shouldShowMedicareDisclaimer)
-                                        <div class="row gutter" style="line-height: 1.0em;">
-                                            As a reminder this program is covered under Medicare Part B.
-                                            However, some health insurance plans may charge a co-payment. You can contact
-                                            your health plan if you are not sure or you can ask for assistance from your
-                                            care coach when they reach out to you.
-                                        </div>
-                                    @endif
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        Enclosed please find a copy of your personalized care plan. Please take a few
-                                        minutes to review the care plan and call us if you have any questions. You can
-                                        leave a message for your care team 24/7 at the following number:
-                                    </div>
-                                    <div class="row gutter">
-                                    </div>
-                                    <div class="row gutter text-bold text-center">
-                                        (888) 729-4045
+                                        If you have any questions or concerns, please feel free to call me at {{$practiceNumber}}.
                                     </div>
                                     <div class="row gutter"><BR><BR>
                                     </div>
                                     <div class="row gutter">
-                                        Thanks so much. We are eager to have you benefit from this worthwhile program!
+                                        I look forward to speaking with you again soon!
                                     </div>
                                     <div class="row gutter">
                                     </div>
                                     <div class="row gutter">
-                                        <br>Best,<br><br><br>
+                                        <br>Best regards,<br><br><br>
                                     </div>
                                     <div class="row gutter">
                                     </div>
@@ -261,7 +217,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     <div class="row gutter">
                                     </div>
                                     <div class="row gutter">
-                                        Ethan Roney
+                                        @if($assignedNurseName) {{$assignedNurseName}} @else Your Registered Nurse Care Coach @endif
                                     </div>
                                     <div class="row gutter">
                                     </div>

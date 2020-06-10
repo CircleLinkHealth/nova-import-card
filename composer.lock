@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "81da162adb7eb8e8aa3325ccf31e18be",
+    "content-hash": "daae4c0901743719af73ab57c45deb4f",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -522,16 +522,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.140.3",
+            "version": "3.140.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "aebd17510b6220b6e5b239730b02eaf7b9b2b816"
+                "reference": "298ec070adad5760c4b90348219bb3e6bd7a9322"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/aebd17510b6220b6e5b239730b02eaf7b9b2b816",
-                "reference": "aebd17510b6220b6e5b239730b02eaf7b9b2b816",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/298ec070adad5760c4b90348219bb3e6bd7a9322",
+                "reference": "298ec070adad5760c4b90348219bb3e6bd7a9322",
                 "shasum": ""
             },
             "require": {
@@ -602,7 +602,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-06-08T18:19:35+00:00"
+            "time": "2020-06-09T18:11:16+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1118,11 +1118,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.0.1",
+            "version": "v2.0.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "3d35f18e63baf5c891e7833ba9f58ee5f87e0a15"
+                "reference": "636bd3a507dfb77169f68b155ecd40535ae06d7d"
             },
             "type": "laravel-module",
             "extra": {
@@ -1144,7 +1144,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-04T03:23:49+00:00"
+            "time": "2020-06-10T17:18:44+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1190,11 +1190,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-master",
+            "version": "v2.9.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "ece010bd5b53a6e42bafaaec73ba314c7a84e452"
+                "reference": "80e6e740368738128181ebd3b79627d7fe0c744a"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1219,7 +1219,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-08T17:28:07+00:00"
+            "time": "2020-06-10T00:37:15+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1520,11 +1520,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v1.1.5",
+            "version": "v1.1.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "5dcb9ca07096c6d1c108052183aea1c17498b74f"
+                "reference": "866cd6c047d15fb5b8526edd08b77430e84f58c9"
             },
             "type": "laravel-module",
             "extra": {
@@ -1549,7 +1549,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-20T19:56:34+00:00"
+            "time": "2020-06-10T17:18:44+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
@@ -4378,16 +4378,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v6.18.18",
+            "version": "v6.18.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "9e5226ecc28f960cba1bd38b6d1d82a52e072dc3"
+                "reference": "69321afec31f4a908112e5dc8995fc91024fd971"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/9e5226ecc28f960cba1bd38b6d1d82a52e072dc3",
-                "reference": "9e5226ecc28f960cba1bd38b6d1d82a52e072dc3",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/69321afec31f4a908112e5dc8995fc91024fd971",
+                "reference": "69321afec31f4a908112e5dc8995fc91024fd971",
                 "shasum": ""
             },
             "require": {
@@ -4521,7 +4521,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-06-02T22:32:07+00:00"
+            "time": "2020-06-09T13:59:34+00:00"
         },
         {
             "name": "laravel/horizon",
@@ -13852,16 +13852,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.27",
+            "version": "0.12.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "2abbd3253e38a258137f647f4e5fdbcb13142c3e"
+                "reference": "76c0c4ec90b1eed66fa4855b8b4b53fa9054353f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/2abbd3253e38a258137f647f4e5fdbcb13142c3e",
-                "reference": "2abbd3253e38a258137f647f4e5fdbcb13142c3e",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/76c0c4ec90b1eed66fa4855b8b4b53fa9054353f",
+                "reference": "76c0c4ec90b1eed66fa4855b8b4b53fa9054353f",
                 "shasum": ""
             },
             "require": {
@@ -13890,7 +13890,7 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2020-06-08T21:28:12+00:00"
+            "time": "2020-06-10T06:20:14+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -15704,7 +15704,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/eligibility-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "laravel/scout": 20,
         "orangehill/iseed": 20

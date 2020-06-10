@@ -73,7 +73,7 @@ class Enrollees extends Resource
         return [
             new ImportEnrollee(),
             new ImportEnrolees(),
-            new SelfEnrollmentManualInvite()
+            new SelfEnrollmentManualInvite(),
             //try to implement in a future date - coordinate with Zak
             //            new MarkEnrolleesForAutoEnrollment(),
         ];
