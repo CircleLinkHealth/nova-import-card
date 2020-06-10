@@ -23,12 +23,13 @@ class PrimaryNavComposer extends ServiceProvider
         View::composer(['partials.providerUI.primarynav'], function ($view) {
             $user = auth()->user();
             $userIsCareCoach = $user->isCareCoach();
-            $reportData = collect();
+            $reportData = [];
 
             if ($userIsCareCoach) {
                 $date = Carbon::yesterday();
-                if ( ! \Cache::has("daily-report-for-{$user->id}-{$date->toDateString()}")) {
-                    $reportData = (new NurseCalendarService())->nurseDailyReportForDate($user->id, $date)->first();
+                $cacheKey = "daily-report-for-{$user->id}-{$date->toDateString()}";
+                if ( ! \Cache::has($cacheKey)) {
+                    $reportData = (new NurseCalendarService())->nurseDailyReportForDate($user->id, $date, $cacheKey)->first();
                 }
             }
 

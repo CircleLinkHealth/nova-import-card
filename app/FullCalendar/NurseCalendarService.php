@@ -322,20 +322,16 @@ class NurseCalendarService
     }
 
     /**
+     * @param $cacheKey
      * @return \Collection|\Illuminate\Support\Collection
      */
-    public function nurseDailyReportForDate(int $userId, Carbon $date)
+    public function nurseDailyReportForDate(int $userId, Carbon $date, string $cacheKey)
     {
         $loginActivityCount = $this->loginActivityCountFor($userId, Carbon::now());
+        $time               = Carbon::now()->endOfDay();
 
         if ($loginActivityCount <= self::FIRST_LOGIN_OF_DAY) {
-            \Cache::remember(
-                "daily-report-for-{$userId}-{$date->toDateString()}",
-                $date->copy()->endOfDay(),
-                function () use ($loginActivityCount) {
-                    return $loginActivityCount;
-                }
-            );
+            Cache::put($cacheKey, "Daily Report $userId", $time);
 
             try {
                 return $this->prepareDailyReportsForNurse(User::findOrFail($userId), $date);
