@@ -27,6 +27,43 @@ class FamilyController extends Controller
     {
     }
 
+    public function getMembers($patientId)
+    {
+        $members = [];
+        /** @var Patient $patient */
+        $patient = Patient::with(
+            [
+                'family.patients' => function ($q) {
+                    $q->with([
+                        'user' => function ($q) {
+                            $q->without(['roles', 'perms'])
+                                ->select(['id', 'display_name']);
+                        },
+                    ])->select(['id', 'user_id', 'family_id']);
+                },
+            ]
+        )->whereUserId($patientId)->first();
+
+        if ($patient) {
+            $members = $patient
+                ->family
+                ->patients
+                ->reject(function (Patient $p) use ($patientId) {
+                    // exclude current patient
+                    return $p->user_id == $patientId;
+                })
+                ->map(function (Patient $p) {
+                    return [
+                        'user_id'      => $p->user->id,
+                        'display_name' => $p->user->display_name,
+                    ];
+                })
+                ->values();
+        }
+
+        return response()->json(['members' => $members]);
+    }
+
     public function index()
     {
         $families = Family::all();

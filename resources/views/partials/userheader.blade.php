@@ -117,6 +117,9 @@
                         </li>
                     @endif
                     <li>
+                        <patient-spouse :patient-id="{{json_encode($patient->id, JSON_HEX_QUOT)}}"></patient-spouse>
+                    </li>
+                    <li>
                         <patient-next-call
                                 :patient-id="{{json_encode($patient->id, JSON_HEX_QUOT)}}"
                                 :patient-preferences="{{json_encode($patient->patientInfo()->exists() ? $patient->patientInfo->getPreferences() : new stdClass,JSON_HEX_QUOT)}}"
