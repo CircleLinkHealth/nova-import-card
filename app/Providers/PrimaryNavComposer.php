@@ -23,12 +23,9 @@ class PrimaryNavComposer extends ServiceProvider
         View::composer(['partials.providerUI.primarynav'], function ($view) {
             $user = auth()->user();
             $userIsCareCoach = $user->isCareCoach();
-            $hasCurrentWeekWindows = false;
             $reportData = collect();
 
             if ($userIsCareCoach) {
-                $hasCurrentWeekWindows = $this->getCurrentWeekWindows($user);
-
                 $date = Carbon::yesterday();
                 if ( ! \Cache::has("daily-report-for-{$user->id}-{$date->toDateString()}")) {
                     $reportData = (new NurseCalendarService())->nurseDailyReportForDate($user->id, $date)->first();
@@ -38,7 +35,6 @@ class PrimaryNavComposer extends ServiceProvider
             $view->with(compact(
                 'user',
                 'userIsCareCoach',
-                'hasCurrentWeekWindows',
                 'reportData'
             ));
         });
