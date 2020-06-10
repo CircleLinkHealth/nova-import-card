@@ -61,6 +61,13 @@ class CallsViewNurses extends BaseSqlView
 
         WHERE
             c.scheduled_date is not null
+            AND (
+                # calls need to be scheduled and in the future
+                c.sub_type is null and c.status = 'scheduled' and c.scheduled_date >= DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York'))
+                OR
+                # tasks can be in the past
+                c.sub_type is not null
+            )
       ");
 
         // we are using DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')) instead of CURDATE()
@@ -70,6 +77,9 @@ class CallsViewNurses extends BaseSqlView
         // calls table is now an actions table.
         // we have tasks that may be due in the past
         // assuming that re-scheduler service is dropping past calls, we will only have type `task` that are in the past
+
+        // update:
+        // modified where clause to optimize query and cover comments above
     }
 
     /**
