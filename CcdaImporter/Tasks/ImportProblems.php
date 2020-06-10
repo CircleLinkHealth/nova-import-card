@@ -43,8 +43,8 @@ class ImportProblems extends BaseCcdaImportTask
         );
 
         $this->processProblems()->each(
-            function ($problemCollection, $problemType) use (&$medicationGroups) {
-                $problemCollection->each(function ($problem) use (&$medicationGroups, $problemType) {
+            function ($problemCollection, $problemType) {
+                $problemCollection->each(function ($problem) use ($problemType) {
                     if ( ! array_key_exists('attributes', $problem) || 'do_not_import' === $problemType) {
                         return false;
                     }
@@ -91,13 +91,6 @@ class ImportProblems extends BaseCcdaImportTask
         $unique = $this->patient->ccdProblems->unique('name')->pluck('id')->all();
 
         $deleted = $this->patient->ccdProblems()->whereNotIn('id', $unique)->delete();
-
-        $misc = CpmMisc::whereName(CpmMisc::OTHER_CONDITIONS)
-            ->first();
-
-        if ( ! $this->hasMisc($this->patient, $misc)) {
-            $this->patient->cpmMiscs()->attach(optional($misc)->id);
-        }
     }
 
     private function fetchNamesFromApi(Collection &$problemsGroups)
@@ -234,7 +227,7 @@ class ImportProblems extends BaseCcdaImportTask
     private function processProblems()
     {
         $problemsGroups = collect($this->ccda->bluebuttonJson()->problems ?? [])->map(
-            function ($problem) use (&$medicationGroups) {
+            function ($problem) {
                 return $this->transform($problem);
             }
         );

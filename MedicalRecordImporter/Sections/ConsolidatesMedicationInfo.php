@@ -36,7 +36,7 @@ trait ConsolidatesMedicationInfo
             $consolidatedMedication->cons_code             = $medicationLog->translation_code;
             $consolidatedMedication->cons_code_system      = $medicationLog->translation_code_system;
             $consolidatedMedication->cons_code_system_name = $medicationLog->translation_code_system_name;
-            $consolidatedMedication->cons_name             = $medicationLog->reference_title;
+            $consolidatedMedication->cons_name             = trim($medicationLog->reference_title);
 
             $consolidatedMedication = $this->consolidateName($consolidatedMedication, $medicationLog);
 
@@ -46,7 +46,7 @@ trait ConsolidatesMedicationInfo
         $consolidatedMedication->cons_code             = $medicationLog->product_code;
         $consolidatedMedication->cons_code_system      = $medicationLog->product_code_system;
         $consolidatedMedication->cons_code_system_name = $medicationLog->product_code_system_name ?? null;
-        $consolidatedMedication->cons_name             = $medicationLog->reference_title;
+        $consolidatedMedication->cons_name             = trim($medicationLog->reference_title);
 
         $consolidatedMedication = $this->consolidateName($consolidatedMedication, $medicationLog);
 
@@ -63,7 +63,7 @@ trait ConsolidatesMedicationInfo
             $medicationLog->translation_name,
         ])->each(function ($c) use (&$consolidatedMedication) {
             if ( ! empty($c) && ! $this->containsSigKeywords($c)) {
-                $consolidatedMedication->cons_name = $c;
+                $consolidatedMedication->cons_name = trim($c);
 
                 return false;
             }
@@ -83,7 +83,7 @@ trait ConsolidatesMedicationInfo
             $medicationLog->reference_title,
         ])->each(function ($c) use (&$consolidatedMedication) {
             if ( ! empty($c) && $this->containsSigKeywords($c)) {
-                $consolidatedMedication->cons_text = $c;
+                $consolidatedMedication->cons_text = trim($c);
 
                 return false;
             }
