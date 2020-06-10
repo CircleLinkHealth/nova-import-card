@@ -375,7 +375,7 @@ class CcdaImporterWrapper
     private function setLocationFromEncountersInCcda(Ccda $ccda)
     {
         //Get address line 1 from documentation_of section of ccda
-        $addresses = collect($ccda->bluebuttonJson()->encounters)->pluck('location.street')->map(function ($address) {
+        $addresses = collect(optional($ccda->bluebuttonJson())->encounters ?? [])->pluck('location.street')->map(function ($address) {
             if (empty($address[0] ?? null)) {
                 return null;
             }
