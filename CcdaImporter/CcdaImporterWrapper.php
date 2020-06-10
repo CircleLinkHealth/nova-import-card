@@ -150,14 +150,15 @@ class CcdaImporterWrapper
         $this->fillLocationFromAthenaDepartmentId();
 
         $provider = $this->ccda->billingProvider;
-
+    
+        //Try this before algolia to save costs
+        if ( ! $provider && $this->ccda->directMessage && $this->ccda->directMessage->senderDmAddress && $this->ccda->directMessage->senderDmAddress->users) {
+            $provider = $this->ccda->directMessage->senderDmAddress->users->first() ?? null;
+        }
+        
         //Second most reliable place is ccdas.referring_provider_name.
         if ( ! $provider && $term = $this->ccda->getReferringProviderName()) {
             $provider = self::searchBillingProvider($term, $this->ccda->practice_id);
-        }
-
-        if ( ! $provider && $this->ccda->directMessage && $this->ccda->directMessage->senderDmAddress && $this->ccda->directMessage->senderDmAddress->users) {
-            $provider = $this->ccda->directMessage->senderDmAddress->users->first() ?? null;
         }
 
         if ( ! $provider && $this->ccda->bluebuttonJson()->document->author->name && $name = $this->ccda->bluebuttonJson()->document->author->name->given) {
