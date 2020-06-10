@@ -329,7 +329,7 @@ class NurseCalendarService
         $loginActivityCount = $this->loginActivityCountFor($userId, Carbon::now());
 
         if ($loginActivityCount <= self::FIRST_LOGIN_OF_DAY) {
-            Cache::remember(
+            \Cache::remember(
                 "daily-report-for-{$userId}-{$date->toDateString()}",
                 $date->copy()->endOfDay(),
                 function () use ($loginActivityCount) {
