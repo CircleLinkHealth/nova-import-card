@@ -24,14 +24,14 @@ class PrimaryNavComposer extends ServiceProvider
             $user = auth()->user();
             $userIsCareCoach = $user->isCareCoach();
             $hasCurrentWeekWindows = false;
-            $reportData = [];
+            $reportData = collect();
 
             if ($userIsCareCoach) {
                 $hasCurrentWeekWindows = $this->getCurrentWeekWindows($user);
 
-                $date = Carbon::now();
+                $date = Carbon::yesterday();
                 if ( ! \Cache::has("daily-report-for-{$user->id}-{$date->toDateString()}")) {
-                    $reportData = (new NurseCalendarService())->nurseDailyReportForDate($user->id, $date);
+                    $reportData = (new NurseCalendarService())->nurseDailyReportForDate($user->id, $date)->first();
                 }
             }
 

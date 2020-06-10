@@ -14,6 +14,8 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class NurseCalendarService
 {
@@ -337,10 +339,14 @@ class NurseCalendarService
                 }
             );
 
-            return $this->prepareDailyReportsForNurse(User::whereId($userId)->first(), $date);
+            try {
+                return $this->prepareDailyReportsForNurse(User::findOrFail($userId), $date);
+            } catch (\Exception $e) {
+                Log::error("User for $userId not found. Cannot prepare yesterday's daily report.");
+            }
         }
 
-        return [];
+        return collect();
     }
 
     /**
@@ -388,7 +394,8 @@ class NurseCalendarService
     public function prepareDailyReportsForNurse($auth, $date = null)
     {
         $reports = $this->dailyReportsForNurse($auth->id);
-        if ($date) {
+
+        if ($date && ! Cache::has("daily-report-for-{$auth->id}-{$date->toDateString()}")) {
             $reports = $this->nurseReportForDate($auth->id, $date);
         }
         $title = 'Daily Report';

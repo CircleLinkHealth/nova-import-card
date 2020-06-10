@@ -257,10 +257,10 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                         @include('partials.user-account-dropdown')
 
                             @if(!empty($reportData))
-                                    <calendar-daily-report style="color: black;"
-                                            :report-data="{{json_encode($reportData->first()['data']['reportData'])}}"
-                                            :report-date="{{json_encode(\Carbon\Carbon::parse('2020-06-08')->toDateString())}}"
-                                            :report-flags="{{json_encode($reportData->first()['data']['reportFlags'])}}"
+                                    <calendar-daily-report style="color: black; letter-spacing: 1px;"
+                                            :report-data="{{json_encode($reportData['data']['reportData'])}}"
+                                            :report-date="{{json_encode(\Carbon\Carbon::parse($reportData['data']['date'])->toDateString())}}"
+                                            :report-flags="{{json_encode($reportData['data']['reportFlags'])}}"
                                             :pop-up-now={{true}}></calendar-daily-report>
                             @endif
 
