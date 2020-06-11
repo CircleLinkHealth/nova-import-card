@@ -32,7 +32,7 @@ class ImportMedications extends BaseCcdaImportTask
         $medications = $this->processCollection(collect($this->getRawMedications()), $medicationGroups);
 
         if ($this->patient->ccdMedications->isEmpty() && $medications->isEmpty()) {
-            $medications = $this->processCollection(collect($this->ccda->bluebuttonJson()->medications ?? []), $medicationGroups);
+            $medications = $this->processCollection(collect($this->ccda->bluebuttonJson()->medications ?? []), $medicationGroups, true);
         }
 
         if ( ! empty($medicationGroups = array_filter($medicationGroups))) {
@@ -79,7 +79,7 @@ class ImportMedications extends BaseCcdaImportTask
         return $meds;
     }
 
-    private function process(array $newMed, array &$medicationGroups): ?array
+    private function process(array $newMed, array &$medicationGroups, bool $forceImport = false): ?array
     {
         if ( ! $newMed['cons_name'] && ! $newMed['cons_text']) {
             return null;
@@ -93,7 +93,7 @@ class ImportMedications extends BaseCcdaImportTask
             return null;
         }
 
-        if ( ! $this->validate($newMed)) {
+        if ( ! $forceImport && ! $this->validate($newMed)) {
             return null;
         }
 
@@ -133,14 +133,14 @@ class ImportMedications extends BaseCcdaImportTask
         ];
     }
 
-    private function processCollection(Collection $rawMedications, array &$medicationGroups): Collection
+    private function processCollection(Collection $rawMedications, array &$medicationGroups, bool $importAll = false): Collection
     {
         return $rawMedications->map(function (object $medication) {
             return (array) $this->consolidateMedicationInfo((object) $this->transform($medication));
         })->unique('cons_name')
             ->transform(
-                function ($medication) use (&$medicationGroups) {
-                    return $this->process($medication, $medicationGroups);
+                function ($medication) use (&$medicationGroups, $importAll) {
+                    return $this->process($medication, $medicationGroups, $importAll);
                 }
             )->filter();
     }
