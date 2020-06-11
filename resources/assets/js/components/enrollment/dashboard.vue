@@ -242,15 +242,22 @@
                 // we need to have the timeTrackerInfo object up to date
                 window['timeTrackerInfo'] = info;
             },
-            notifyTimeTracker() {
+            notifyTimeTracker(loadingTime) {
                 const info = this.getTimeTrackerInfo();
-                info.enrolleeId = this.enrollable_id;
-                if (this.shouldShowCookie) {
-                    info.activity = ACTIVITY_TITLE_TO_SKIP_FROM_CA_TIME;
-                } else if (+this.enrollable_id === 0) {
+
+                if (loadingTime) {
+                    info.enrolleeId = 0;
                     info.activity = ACTIVITY_TITLE_LOADING_PATIENT;
-                } else {
-                    info.activity = `CA - ${this.enrollable_id}`;
+                }
+                else {
+                    info.enrolleeId = this.enrollable_id;
+                    if (this.shouldShowCookie) {
+                        info.activity = ACTIVITY_TITLE_TO_SKIP_FROM_CA_TIME;
+                    } else if (+this.enrollable_id === 0) {
+                        info.activity = ACTIVITY_TITLE_LOADING_PATIENT;
+                    } else {
+                        info.activity = `CA - ${this.enrollable_id}`;
+                    }
                 }
 
                 this.setTimeTrackerInfo(info);
@@ -282,9 +289,7 @@
                     }
                 }
 
-                //question: should I set this.enrollable_id = 0; and call notifyTimeTracker()
-                //          in order to not have this 'waiting' time spent on the current enrolee?
-                //          it might be unnecessary because next patient should be 1-2 seconds max
+                this.notifyTimeTracker(true);
 
                 return this.axios
                     .get(url, errorData)
