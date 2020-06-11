@@ -21,7 +21,7 @@
                                            v-model="model"
                                            :list="getList"
                                            :max-suggestions="10"
-                                           :min-length="3"
+                                           :min-length="1"
                                            :debounce="200"
                                            :filter-by-query="false"
                                            :controls="{
