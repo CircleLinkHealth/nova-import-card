@@ -55,13 +55,13 @@ class SelfEnrollmentMetricsView extends BaseSqlView
        COUNT(DISTINCT i.id) as total_invites_sent,
        SUM(i.manually_expired = true) as total_invites_opened,
        CONCAT(ROUND(SUM(i.manually_expired = true) * 100.0 / COUNT(DISTINCT i.id), 0), '%') as percentage_invites_opened,
-       COUNT(l.user_id) as total_saw_letter,
-       CONCAT(IFNULL(ROUND((COUNT(l.id) * 100) / SUM(i.manually_expired = true)), 0), '%') as percentage_saw_letter,
-       COUNT(DISTINCT us.user_id) as total_saw_form,
-       CONCAT(IFNULL(ROUND((SUM(case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end) * 100) / COUNT(l.user_id)), 0), '%') as percentage_saw_form,
+       CAST(COUNT(l.user_id) as CHAR(50)) as total_seen_letter,
+       CONCAT(IFNULL(ROUND((COUNT(l.id) * 100) / SUM(i.manually_expired = true)), 0), '%') as percentage_seen_letter,
+       CAST(COUNT(DISTINCT us.user_id) as CHAR(50)) as total_seen_form,
+       CONCAT(IFNULL(ROUND((SUM(case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end) * 100) / COUNT(l.user_id)), 0), '%') as percentage_seen_form,
        IFNULL(SUM(case when e.status = '$enrolled' AND us.status = 'completed' then 1 else 0 end), 0) as total_enrolled,
        CONCAT(IFNULL(ROUND((SUM(case when e.status = '$enrolled' AND us.status = 'completed' then 1 else 0 end) * 100) / COUNT(DISTINCT case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end)),0), '%') as percentage_enrolled,
-       SUM(case when e.status = '$toCall' AND erf.enrollable_id = e.id then 1 else 0 end) as total_call_requests,
+       CAST(SUM(case when e.status = '$toCall' AND erf.enrollable_id = e.id then 1 else 0 end) as CHAR(50)) as total_call_requests,
        CONCAT(IFNULL(ROUND((SUM(case when e.status = '$toCall' AND erf.enrollable_id = e.id then 1 else 0 end) * 100) / COUNT(l.user_id)),0), '%') as percentage_call_requests
        
        FROM
