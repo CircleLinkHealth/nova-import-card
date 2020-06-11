@@ -407,7 +407,7 @@ class ReimportPatientMedicalRecord extends Command
 
     private function notifyFailure(User $user)
     {
-        $this->warn($msg = "Could not find any records for User[{$user->id}].");
+        $this->warn($msg = "Could not find any CCDAs for User[{$user->id}].");
         $this->log($msg);
 
         if ($initiatorId = $this->argument('initiatorUserId')) {
