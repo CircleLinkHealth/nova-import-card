@@ -382,17 +382,21 @@ class ReimportPatientMedicalRecord extends Command
         $this->log($msg);
 
         if ( ! $ccda->patient_id) {
+            $this->log("User[{$user->id}] CCDA[{$ccda->id}] has no patient_id. Bailing.");
+
             $ccda->patient_id = $user->id;
             $ccda->save();
         }
 
         if ($enrollee = $this->getEnrollee($user)) {
+            $this->log("Importing User[{$user->id}] CCDA[{$ccda->id}] Enrollee[{$enrollee->id}]");
             $ccda->import($enrollee);
         } else {
+            $this->log("Importing User[{$user->id}] CCDA[{$ccda->id}]");
             $ccda->import();
         }
 
-        $this->log("User[{$user->id}] CCDA[{$ccda->id}]");
+        $this->log("Finished Importing User[{$user->id}] CCDA[{$ccda->id}]");
     }
 
     private function log(string $string)
