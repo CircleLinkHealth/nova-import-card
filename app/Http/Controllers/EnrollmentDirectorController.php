@@ -207,10 +207,7 @@ END ASC, attempt_count ASC");
             $query->where(function ($q) use ($term) {
                 $q->where('id', $term)
                     ->orWhere('first_name', 'like', "%${term}%")
-                    ->orWhere('last_name', 'like', "%${term}%")
-                    ->orWhere(function ($query) use ($term) {
-                        $query->hasPhone($term);
-                    });
+                    ->orWhere('last_name', 'like', "%${term}%");
             });
         }
 
