@@ -19,6 +19,7 @@ use CircleLinkHealth\Eligibility\MedicalRecord\MedicalRecordFactory;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use Illuminate\Support\Str;
 
 class CcdaImporterWrapper
 {
@@ -186,6 +187,12 @@ class CcdaImporterWrapper
             return $this;
         }
 
+        $this->setLocationFromAuthorAddressInCcda($this->ccda);
+
+        if ($this->ccda->location_id) {
+            return $this;
+        }
+
         //As a last result check if we have other ccdas
         $this->ccda->queryForOtherCcdasForTheSamePatient()->chunkById(5, function ($otherCcdas) use (&$deptId) {
             foreach ($otherCcdas as $otherCcda) {
@@ -193,6 +200,18 @@ class CcdaImporterWrapper
 
                 if ($this->ccda->location_id) {
                     return false;
+                }
+
+                $this->setLocationFromEncountersInCcda($otherCcda);
+
+                if ($this->ccda->location_id) {
+                    return false;
+                }
+
+                $this->setLocationFromAuthorAddressInCcda($otherCcda);
+
+                if ($this->ccda->location_id) {
+                    return $this;
                 }
             }
         });
@@ -323,6 +342,19 @@ class CcdaImporterWrapper
         return true;
     }
 
+    private function replaceCommonAddressVariations($providerAddress)
+    {
+        if (Str::contains($providerAddress = strtolower($providerAddress), 'road')) {
+            $providerAddress = str_replace('road', 'rd', $providerAddress);
+        }
+
+        if (Str::contains($providerAddress = strtolower($providerAddress), 'avenue')) {
+            $providerAddress = str_replace('avenue', 'ave', $providerAddress);
+        }
+
+        return $providerAddress;
+    }
+
     private function setAllPracticeInfoFromProvider(User $provider)
     {
         if ( ! $this->ccda->practice_id) {
@@ -344,7 +376,7 @@ class CcdaImporterWrapper
         }
 
         if ($providerAddress = $this->ccda->bluebuttonJson()->demographics->provider->address->street[0] ?? null) {
-            $locations = $provider->locations->where('address_line_1', $providerAddress);
+            $locations = $provider->locations->whereIn('address_line_1', [$providerAddress, $this->replaceCommonAddressVariations($providerAddress)]);
 
             if (1 === $locations->count()) {
                 $this->ccda->setLocationId($locations->first()->id);
@@ -352,10 +384,22 @@ class CcdaImporterWrapper
         }
     }
 
+    private function setLocationFromAuthorAddressInCcda(Ccda $ccda)
+    {
+        //Get address line 1 from documentation_of section of ccda
+        $address = ((array) $ccda->bluebuttonJson()->document->author->address)['street'][0] ?? null;
+
+        if ($location = Location::whereIn('address_line_1', [$address, $this->replaceCommonAddressVariations($address)])->where('practice_id', $this->ccda->practice_id)->first()) {
+            $this->ccda->setLocationId($location->id);
+        }
+    }
+
     private function setLocationFromDocumentationOfAddressInCcda(Ccda $ccda)
     {
         //Get address line 1 from documentation_of section of ccda
-        $addresses = collect($ccda->bluebuttonJson()->document->documentation_of)->pluck('address.street')->map(function ($address) {
+        $addresses = collect($ccda->bluebuttonJson()->document->documentation_of)->map(function ($address) {
+            $address = ((array) $address->address)['street'];
+
             if (empty($address[0] ?? null)) {
                 return null;
             }
@@ -366,7 +410,8 @@ class CcdaImporterWrapper
         //only do this if there's a just one address in the CCDA.
         //we don't wanna take a guess on what the actual patient's location may be
         if (1 === $addresses->count()) {
-            if ($location = Location::where('address_line_1', $addresses->last())->where('practice_id', $this->ccda->practice_id)->first()) {
+            $address = $addresses->last();
+            if ($location = Location::whereIn('address_line_1', [$address, $this->replaceCommonAddressVariations($address)])->where('practice_id', $this->ccda->practice_id)->first()) {
                 $this->ccda->setLocationId($location->id);
             }
         }
@@ -375,7 +420,9 @@ class CcdaImporterWrapper
     private function setLocationFromEncountersInCcda(Ccda $ccda)
     {
         //Get address line 1 from documentation_of section of ccda
-        $addresses = collect(optional($ccda->bluebuttonJson())->encounters ?? [])->pluck('location.street')->map(function ($address) {
+        $addresses = collect(optional($ccda->bluebuttonJson())->encounters ?? [])->map(function ($address) {
+            $address = ((array) $address->address)['street'];
+
             if (empty($address[0] ?? null)) {
                 return null;
             }
@@ -386,7 +433,8 @@ class CcdaImporterWrapper
         //only do this if there's a just one address in the CCDA.
         //we don't wanna take a guess on what the actual patient's location may be
         if (1 === $addresses->count()) {
-            if ($location = Location::where('address_line_1', $addresses->last())->where('practice_id', $this->ccda->practice_id)->first()) {
+            $address = $addresses->last();
+            if ($location = Location::whereIn('address_line_1', [$address, $this->replaceCommonAddressVariations($address)])->where('practice_id', $this->ccda->practice_id)->first()) {
                 $this->ccda->setLocationId($location->id);
             }
         }
