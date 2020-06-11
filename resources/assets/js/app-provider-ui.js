@@ -74,6 +74,7 @@ const PatientList = () => import(/* webpackChunkName: "chunk-patient-listing" */
 const DatepickerComponent = () => import(/* webpackChunkName: "chunk-datepicker" */ 'vuejs-datepicker')
 const ImporterTrainerComponent = () => import(/* webpackChunkName: "chunk-importer-trainer" */ './components/importer/trainer')
 const PatientNextCallComponent = () => import(/* webpackChunkName: "chunk-patient-next-call" */ './components/patient-next-call');
+const PatientSpouseComponent = () => import(/* webpackChunkName: "chunk-patient-spouse" */ './components/patient-spouse');
 const CallNumberComponent = () => import(/* webpackChunkName: "chunk-call-number" */ './components/call-number');
 const UserAccountSettings = () => import(/* webpackChunkName: "chunk-user-account-settings" */ './components/user-account-settings');
 const AuthyPerform2FA = () => import(/* webpackChunkName: "chunk-authy-perform-2fa" */ './components/authy-perform-2fa');
@@ -130,6 +131,7 @@ Vue.component('patient-list', PatientList);
 Vue.component('v-datepicker', DatepickerComponent);
 Vue.component('importer-trainer', ImporterTrainerComponent);
 Vue.component('patient-next-call', PatientNextCallComponent);
+Vue.component('patient-spouse', PatientSpouseComponent);
 Vue.component('add-task-modal', AddTaskModalComponent);
 Vue.component('call-number', CallNumberComponent);
 Vue.component('user-account-settings', UserAccountSettings);
