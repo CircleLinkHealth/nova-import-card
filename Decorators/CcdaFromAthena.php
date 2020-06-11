@@ -28,10 +28,23 @@ class CcdaFromAthena implements MedicalRecordDecorator
     ): EligibilityJob {
         $eligibilityJob->loadMissing('targetPatient.ccda');
 
-        if ($eligibilityJob->targetPatient && empty(optional($eligibilityJob->targetPatient->ccda)->json)) {
-            $ccda    = AthenaEligibilityCheckableFactory::getCCDFromAthenaApi($eligibilityJob->targetPatient);
-            $decoded = $ccda->bluebuttonJson(true);
+        if ( ! $eligibilityJob->targetPatient) {
+            return $eligibilityJob;
         }
+
+        // We already have a parsed CCDA, so nothing else to do here
+        if ( ! empty(optional($eligibilityJob->targetPatient->ccda)->json)) {
+            return $eligibilityJob;
+        }
+
+        // We have a CCDA, but it's not parsed. Attempt to parse it.
+        if ($parsed = $eligibilityJob->targetPatient->ccda->bluebuttonJson(true)) {
+            return $eligibilityJob;
+        }
+
+        // If we could not parse th eexisting CCDA, fetch a new one from Athena
+        $ccda    = AthenaEligibilityCheckableFactory::getCCDFromAthenaApi($eligibilityJob->targetPatient);
+        $decoded = $ccda->bluebuttonJson(true);
 
         return $eligibilityJob;
     }

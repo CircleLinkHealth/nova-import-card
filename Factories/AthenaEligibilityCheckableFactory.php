@@ -56,7 +56,7 @@ class AthenaEligibilityCheckableFactory
         $ccda = $targetPatient->ccda;
 
         if ( ! $ccda) {
-            self::getCCDFromAthenaApi($targetPatient);
+            $ccda = self::getCCDFromAthenaApi($targetPatient);
         }
 
         if ( ! $ccda) {
