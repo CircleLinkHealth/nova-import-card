@@ -252,7 +252,9 @@ class PatientMonthlySummary extends BaseModel
 
             //AUTO ATTACH PCM SECTION
             $practicePcmCode = $practiceCodes->where('code', ChargeableService::PCM)->first();
-            if ($practicePcmCode && $patientProblems->contains('cpmProblem.is_behavioral', false)) {
+            //check specifically for 1 problem, otherwise 2+ problems would mean CCM
+            $pcmEligible = 1 === $patientCcmProblemsCount;
+            if ($practicePcmCode && $pcmEligible) {
                 $this->chargeableServices()->attach($practicePcmCode->id, ['is_fulfilled' => false]);
             }
 
