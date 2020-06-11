@@ -18,7 +18,7 @@
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('search'),
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
-                    url: '{!! route('enrollables.query') . '?enrollables=%QUERY' !!}',
+                    url: '{!! route('enrollables.enrollment.query') . '?enrollables=%QUERY' !!}',
                     wildcard: '%QUERY'
                 }
             });
