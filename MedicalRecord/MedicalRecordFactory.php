@@ -50,7 +50,7 @@ class MedicalRecordFactory
                     app(InsuranceFromAthena::class)->decorate(
                         app(DemographicsFromAthena::class)->decorate(
                             app(CcdaFromAthena::class)->decorate(
-                                $this->getEnrollee($user)->eligibilityJob
+                                $this->getEligibilityJobWithTargetPatient($user, $ccda)->eligibilityJob
                             )
                         )
                     )
@@ -65,7 +65,7 @@ class MedicalRecordFactory
         return new CcdaMedicalRecord(json_decode($ccda->json));
     }
 
-    private function getEnrollee(User $user): Enrollee
+    private function getEligibilityJobWithTargetPatient(User $user, Ccda $ccda)
     {
         if ( ! $this->enrollee) {
             $this->enrollee = Enrollee::where(
@@ -80,8 +80,8 @@ class MedicalRecordFactory
                     $q->whereNull('user_id')->orWhere('user_id', $user->id);
                 }
             )->with(
-                'eligibilityJob'
-            )->has('eligibilityJob')->orderByDesc('id')->firstOrFail();
+                'eligibilityJob.targetPatient'
+            )->has('eligibilityJob.targetPatient')->orderByRaw('care_ambassador_user_id, preferred_days, preferred_window, id desc')->firstOrFail();
 
             if (is_null($this->enrollee->user_id)) {
                 $this->enrollee->user_id = $user->id;
