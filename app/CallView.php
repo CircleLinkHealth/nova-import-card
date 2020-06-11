@@ -32,6 +32,7 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * @property int|null    $no_of_successful_calls
  * @property int|null    $practice_id
  * @property string|null $practice
+ * @property string|null $state
  * @property string|null $timezone
  * @property string|null $preferred_call_days
  * @property int         $is_ccm
@@ -88,6 +89,7 @@ class CallView extends SqlViewModel
 
     public $phi = [
         'patient',
+        'state',
     ];
 
     protected $table = 'calls_view';

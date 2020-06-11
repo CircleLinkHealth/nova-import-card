@@ -136,6 +136,16 @@ class CallViewFilters extends QueryFilters
         return $this->builder->orderBy('scheduler', $term);
     }
 
+    public function sort_state($term)
+    {
+        return $this->builder->orderBy('state', $term);
+    }
+
+    public function state($state)
+    {
+        return $this->builder->where('state', 'like', '%'.$state.'%');
+    }
+
     public function type($type)
     {
         return $this->builder->where('type', 'like', '%'.$type.'%');
