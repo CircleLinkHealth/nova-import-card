@@ -200,6 +200,7 @@ use Illuminate\Support\Str;
  * @property int|null                                                                                                        $enrollment_invitation_links_count
  * @property \CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus|null                                                $selfEnrollmentStatus
  * @property \CircleLinkHealth\Customer\Entities\Location|null                                                               $location
+ * @property string|null                                                                                                     $callback_note
  */
 class Enrollee extends BaseModel
 {
