@@ -26,6 +26,9 @@
                         @click="isolatePatientsUploadedViaCsv">{{this.showIsolatedViaCsvLabel}}
                 </button>
             </div>
+            <div class="col-sm-12 text-right" style="margin-bottom: 10px">
+                <button class="btn btn-success btn-s" @click="assignCallback">Assign Callback</button>
+            </div>
             <div class="col-sm-5">
 
             </div>
@@ -39,9 +42,6 @@
             </div>
             <div class="col-sm-12" style="margin-top: 1%">
                 <button class="btn btn-primary btn-xs" @click="clearSelected">Clear Selected Patients</button>
-            </div>
-            <div class="col-sm-12" style="margin-top: 1%">
-                <button class="btn btn-primary btn-xs" @click="assignCallback">Assign Callback</button>
             </div>
         </div>
         <div class="panel-body" id="enrollees">

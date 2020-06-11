@@ -301,7 +301,6 @@
                     </blockquote>
 
                     <div class="enrollment-script font-size-20">
-                        <p>{{callback_message}}</p>
                         <p v-html="care_ambassador_script"></p>
                     </div>
                 </div>
