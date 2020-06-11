@@ -250,6 +250,8 @@ class UpdateEnrollable extends EnrollableService
         if ('requested callback' == $this->data->get('reason')) {
             if ($this->data->has('utc_callback')) {
                 $this->enrollee->requested_callback = $this->data->get('utc_callback');
+                //reset admin's callback note if exists, if patient has requested callback again.
+                $this->enrollee->callback_note = null;
             }
         }
 
