@@ -155,13 +155,17 @@
                 model: null,
                 mode: 'input',
                 loading: false,
-                log: [],
                 assignCallbackModalInfo: {
                     okHandler: () => {
                         Event.$emit('notifications-assign-callback-modal:dismissAll');
                         this.assignCallbackToAmbassador();
                     },
                     cancelHandler: () => {
+                        this.selected = null;
+                        this.selectedAmbassador = null;
+                        this.callback_date = moment().format('YYYY-MM-DD');
+                        this.callback_note = null;
+                        this.model = null;
                         Event.$emit('notifications-assign-callback-modal:dismissAll');
                         Event.$emit("modal-assign-callback:hide");
                     }
