@@ -28,10 +28,8 @@ class AssignCallbackToEnrollee extends FormRequest
      */
     public function rules()
     {
-        $x = 1;
-
         return [
-            'care_ambassador_user_id' => 'required|exists:users,id',
+            'care_ambassador_user_id' => 'required|exists:practices,name',
             'enrollee_id'             => 'required|exists:enrollees,id',
             'callback_date'           => ['required', new DateEqualOrAfterUsingCarbon()],
             'callback_note'           => 'sometimes',

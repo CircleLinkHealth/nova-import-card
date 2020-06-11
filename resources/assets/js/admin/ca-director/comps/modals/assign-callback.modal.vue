@@ -6,15 +6,15 @@
                 <template slot="title">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h3>Assign Callback to Care Ambassador</h3>
+                            <h4>Assign Callback to Care Ambassador</h4>
                         </div>
                     </div>
                 </template>
                 <template class="modal-body">
                     <div class="row">
                         <div class="col-md-3">
-                            <div>
-                                <p ref="title">Enrollee <span class="required">*</span></p>
+                            <div style="height: 30px">
+                                <span ref="title">Enrollee <span class="required">*</span></span>
                             </div>
                             <div class="suggest-div">
                                 <v-suggest pattern="\w+"
@@ -42,13 +42,10 @@
                                            @request-done="onRequestDone"
                                            @request-failed="onRequestFailed"
                                 >
-                                    <!-- <input type="text"> -->
 
                                     <div>
                                         <input class="form-control" type="text">
                                     </div>
-
-                                    <!-- <test-input placeholder="Search information..." /> -->
 
                                     <template slot="misc-item-above" slot-scope="{ suggestions, query }">
                                         <div class="misc-item">
@@ -79,7 +76,6 @@
                                         <span>Loading...</span>
                                     </div>
                                 </v-suggest>
-                                <loader v-if="loading"/>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -115,7 +111,9 @@
                             <notifications ref="notificationsComponent" name="assign-callback-modal"></notifications>
                         </div>
                     </div>
-
+                    <div class="row">
+                        <div class="col-sm-12"><loader class="assign-loader" v-if="loading"/></div>
+                    </div>
                 </template>
             </template>
         </modal>
@@ -231,11 +229,27 @@
             },
             assignCallbackToAmbassador() {
 
-                // this.loading = true;
+                this.loading = true;
 
-                //check selected enrollee
-                //check selected CA
-                //fix response errors
+                if (! this.selected){
+                    Event.$emit('notifications-assign-callback-modal:create', {
+                        noTimeout: true,
+                        text: 'Please select a Enrollee to proceed',
+                        type: 'error'
+                    });
+                    this.loading = false;
+                    return;
+                }
+
+                if (! this.selectedAmbassador){
+                    Event.$emit('notifications-assign-callback-modal:create', {
+                        noTimeout: true,
+                        text: 'Please select a Care Ambassador to proceed',
+                        type: 'error'
+                    });
+                    this.loading = false;
+                    return;
+                }
 
                 this.axios.post(rootUrl('/admin/ca-director/assign-callback'), {
                     care_ambassador_user_id: this.selectedAmbassador.value,
@@ -244,25 +258,17 @@
                     callback_note: this.callback_note
                 })
                     .then(resp => {
-                        // this.loading = false;
+                        this.loading = false;
 
-                        // if (resp.data.enrollees_unassigned){
-                        //     Event.$emit('notifications-ca-panel:create', {
-                        //         noTimeout: true,
-                        //         text: resp.data.message,
-                        //         type: 'error'
-                        //     });
-                        // }
                         Event.$emit('refresh-table');
                         Event.$emit("modal-assign-callback:hide");
                     })
                     .catch(err => {
                         this.loading = false;
-                        let errors = err.response.data.errors ? err.response.data.errors : [];
 
                         Event.$emit('notifications-assign-callback-modal:create', {
                             noTimeout: true,
-                            text: errors,
+                            text: err.message,
                             type: 'error'
                         });
                     });
@@ -296,4 +302,10 @@
     }
 
 
+    .assign-loader{
+        height: 20px !important;
+        width: 20px !important;
+        padding-top: 10px;
+        margin: auto;
+    }
 </style>
