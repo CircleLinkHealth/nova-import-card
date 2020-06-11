@@ -112,7 +112,9 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-12"><loader class="assign-loader" v-if="loading"/></div>
+                        <div class="col-sm-12">
+                            <loader class="assign-loader" v-if="loading"/>
+                        </div>
                     </div>
                 </template>
             </template>
@@ -202,40 +204,38 @@
                 this.loading = false
             },
             getList(inputValue) {
-                return new Promise((resolve, reject) => {
-                    let url = rootUrl('admin/ca-director/queryEnrollable') + `?enrollables=${inputValue}`
-                    this.$refs.suggestComponent.clearSuggestions()
-                    this.axios.get(url).then(response => {
-                        if (response.status !== 200) {
-                            reject()
-                        }
+                let url = rootUrl('admin/ca-director/queryEnrollable') + `?enrollables=${inputValue}`
+                this.$refs.suggestComponent.clearSuggestions()
+                return this.axios.get(url).then(response => {
+                    if (response.status !== 200) {
+                        return;
+                    }
 
-                        let result = [];
+                    let result = [];
 
 
-                        response.data.forEach(el => {
-                            result.push({
-                                text: el.hint,
-                                description: el.hint,
-                                id: el.id
-                            })
+                    response.data.forEach(el => {
+                        result.push({
+                            text: el.hint,
+                            description: el.hint,
+                            id: el.id
                         })
+                    });
 
 
-                        resolve(result);
+                    return result;
 
 
-                    }).catch(error => {
-                        this.loading = false;
-                        reject(error)
-                    })
-                })
+                }).catch(error => {
+                    this.loading = false;
+                    return error;
+                });
             },
             assignCallbackToAmbassador() {
 
                 this.loading = true;
 
-                if (! this.selected){
+                if (!this.selected) {
                     Event.$emit('notifications-assign-callback-modal:create', {
                         noTimeout: true,
                         text: 'Please select a Enrollee to proceed',
@@ -245,7 +245,7 @@
                     return;
                 }
 
-                if (! this.selectedAmbassador){
+                if (!this.selectedAmbassador) {
                     Event.$emit('notifications-assign-callback-modal:create', {
                         noTimeout: true,
                         text: 'Please select a Care Ambassador to proceed',
@@ -306,7 +306,7 @@
     }
 
 
-    .assign-loader{
+    .assign-loader {
         height: 20px !important;
         width: 20px !important;
         padding-top: 10px;
