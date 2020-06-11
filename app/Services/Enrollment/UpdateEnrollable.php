@@ -236,6 +236,7 @@ class UpdateEnrollable extends EnrollableService
         //action is performed on patient, thus reset callback date
         //EnrollableQueue only gets Unreachable patients at the day they requested callback (to avoid calling them at any other time)
         //Thus reset requested_callback here. If they request another date it will be added below.
+        //todo: if we ever add another action on patient that allows them to be called again, we will need to reset requested_callback again
         $this->enrollee->requested_callback = null;
         $this->enrollee->last_call_outcome  = $this->data->get('reason');
 
