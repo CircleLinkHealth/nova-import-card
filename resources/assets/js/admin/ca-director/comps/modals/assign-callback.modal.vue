@@ -312,4 +312,13 @@
         padding-top: 10px;
         margin: auto;
     }
+
+    .vue-simple-suggest > ul {
+        max-height: 200px !important;
+        overflow: scroll !important;
+    }
+
+    .modal-container {
+        overflow-y: inherit !important;
+    }
 </style>
