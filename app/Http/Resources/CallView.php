@@ -35,6 +35,7 @@ class CallView extends Resource
             'no_of_successful_calls' => $this->no_of_successful_calls,
             'practice_id'            => $this->practice_id,
             'practice'               => $this->practice,
+            'state'                  => $this->state,
             'call_time_start'        => $this->call_time_start,
             'call_time_end'          => $this->call_time_end,
             'preferred_call_days'    => $this->preferredCallDaysToString(),
