@@ -328,6 +328,23 @@ class NurseCalendarService
     }
 
     /**
+     * @param $auth
+     */
+    public function getTotalVisitsCount($auth, string $date)
+    {
+        $totalVisitsCount = '';
+        $nurseInvoice     = \Cache::remember("total_time_visits_for_{$auth->id}_$date", 2, function () use ($auth, $date) {
+            return $auth->nurseInfo->invoices()->where('month_year', Carbon::parse($date)->startOfMonth())->first();
+        });
+
+        if ( ! empty($nurseInvoice)) {
+            $totalVisitsCount = $nurseInvoice->invoice_data['visitsCount'];
+        }
+
+        return $totalVisitsCount;
+    }
+
+    /**
      * @param $eventDate
      * @param $repeatUntil
      * @param $repeatFrequency
@@ -482,6 +499,11 @@ class NurseCalendarService
             $nextUpcomingWindow = ! empty($report) ? $report['nextUpcomingWindow'] : false;
             $reportCalculations = $this->manipulateReportData($nextUpcomingWindow, $report);
             $dataReport         = array_merge($report, $reportCalculations);
+            $totalVisitsCount   = $this->getTotalVisitsCount($auth, $date);
+
+            if ( ! empty($totalVisitsCount)) {
+                $dataReport = array_merge($dataReport, ['totalVisits' => $totalVisitsCount]);
+            }
 
             if ( ! empty($report)) {
                 if (App::environment(['testing', 'review'])) {
