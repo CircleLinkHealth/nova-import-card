@@ -25,16 +25,7 @@ class ProcessEligibilityController extends Controller
 
     public function fromGoogleDrive(Request $request)
     {
-        if ($request['localDir']) {
-            $this->processEligibilityService
-                ->handleAlreadyDownloadedZip(
-                    $request['dir'],
-                    $request['practiceName'],
-                    $request['filterLastEncounter'],
-                    $request['filterInsurance'],
-                    $request['filterProblems']
-                );
-        } elseif ((bool) $request->get('file')) {
+        if ((bool) $request->get('file')) {
             $practice = Practice::whereName($request['practiceName'])->firstOrFail();
 
             $batch = $this->processEligibilityService
@@ -60,16 +51,5 @@ class ProcessEligibilityController extends Controller
         }
 
         return redirect()->route('eligibility.batch.show', [$batch->id]);
-    }
-
-    public function fromGoogleDriveDownloadedLocally(
-        $dir,
-        $practiceName,
-        $filterLastEncounter,
-        $filterInsurance,
-        $filterProblems
-    ) {
-        return $this->processEligibilityService
-            ->handleAlreadyDownloadedZip($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems);
     }
 }

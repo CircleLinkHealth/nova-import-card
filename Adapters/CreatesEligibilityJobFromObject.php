@@ -56,13 +56,23 @@ trait CreatesEligibilityJobFromObject
             function ($prob) {
                 $problem = array_merge($this->getCcdaTransformer()->problem($prob));
 
-                $code = collect($this->getCcdaTransformer()->problemCodes($prob))->sortByDesc(
-                    function ($code) {
-                        return empty($code['code'])
-                                ? false
-                                : $code['code'];
+                $code = collect($this->getCcdaTransformer()->problemCodes($prob))->filter(function ($code) {
+                    if ( ! $code['code']) {
+                        return false;
                     }
-                )->filter()->values()->first() ?? ['name' => null, 'code' => null, 'code_system_name' => null];
+
+                    //LOINC is a codesystem that tells us what this element is (eg Problem, Medication, etc)
+                    if ('LOINC' === strtoupper($code['code_system_name'])) {
+                        return false;
+                    }
+
+                    //Ignore if OID says it's LOINC
+                    if ('2.16.840.1.113883.6.1' === $code['code_system_oid']) {
+                        return false;
+                    }
+
+                    return true;
+                })->values()->first() ?? ['name' => null, 'code' => null, 'code_system_name' => null];
 
                 return Problem::create(
                     [

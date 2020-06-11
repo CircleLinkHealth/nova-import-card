@@ -10,14 +10,6 @@ Route::prefix('eligibility')->group(function () {
         'as'   => 'process.eligibility.google.drive',
     ])->middleware(['auth', 'role:administrator']);
 
-    Route::get(
-        'process-eligibility/local-zip-from-drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}',
-        [
-            'uses' => 'ProcessEligibilityController@fromGoogleDriveDownloadedLocally',
-            'as'   => 'process.eligibility.local.zip',
-        ]
-    )->middleware(['auth', 'role:administrator']);
-
     Route::group([
         'middleware' => [
             'auth',
