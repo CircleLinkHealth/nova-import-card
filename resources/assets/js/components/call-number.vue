@@ -704,7 +704,7 @@
                             closeProtection: true, //show warning when closing the page with active call - NOT WORKING
                             debug: true,
                             warnings: true,
-                            region: 'us1' //default to US East Coast (Virginia)
+                            edge: ['ashburn', 'roaming'],
                         });
 
                         self.device.on('disconnect', () => {

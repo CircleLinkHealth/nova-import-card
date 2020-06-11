@@ -58,25 +58,34 @@ class IncomingMessageHandler
         $dm->loadMissing('ccdas.practice');
 
         $dm->ccdas->each(function (Ccda $ccda) use ($dm) {
-            if ($ccda->practice instanceof Practice
-                && Str::contains(strtolower($dm->body), strtolower(self::KEYWORD_TO_PROCESS_FOR_ELIGIBILITY))
-            ) {
-                $batch = EligibilityBatch::runningBatch($ccda->practice);
+            if ( ! Str::contains(strtolower($dm->body), strtolower(self::KEYWORD_TO_PROCESS_FOR_ELIGIBILITY))) {
+                ImportCcda::withChain(
+                    [
+                        new DecorateUPG0506CcdaWithPdfData($ccda),
+                    ]
+                )->dispatch($ccda)->onQueue('low');
+            }
+
+            $practice = null;
+            if ($ccda->practice instanceof Practice) {
+                $practice = $ccda->practice;
+            }
+
+            if ( ! $practice && ! empty($ccda->practice_id)) {
+                $practice = Practice::find($ccda->practice_id);
+            }
+
+            if ($practice) {
+                $batch = EligibilityBatch::runningBatch($practice);
 
                 $ccda->status = Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY;
                 $ccda->batch_id = $batch->id;
                 $ccda->save();
 
-                CheckCcdaEnrollmentEligibility::dispatch($ccda, $ccda->practice, $batch);
+                CheckCcdaEnrollmentEligibility::dispatch($ccda, $practice, $batch);
 
                 return;
             }
-
-            ImportCcda::withChain(
-                [
-                    new DecorateUPG0506CcdaWithPdfData($ccda),
-                ]
-            )->dispatch($ccda)->onQueue('low');
         });
     }
 

@@ -40,6 +40,8 @@ export default (App, Event) => {
 
     Event.$on('vue-tables.filter::Practice', App.activateFilters)
 
+    Event.$on('vue-tables.filter::State', App.activateFilters)
+
     Event.$on('vue-tables.filter::Billing Provider', App.activateFilters)
 
     Event.$on('vue-tables.filter::Scheduler', App.activateFilters)
