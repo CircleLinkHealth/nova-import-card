@@ -1043,7 +1043,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'call.reschedule',
             ])->middleware('permission:call.update');
         });
-    
+
         Route::get('family-members', [
             'uses' => 'FamilyController@getMembers',
             'as'   => 'family.get',
