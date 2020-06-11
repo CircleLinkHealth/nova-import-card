@@ -220,22 +220,37 @@ class PatientMonthlySummary extends BaseModel
 
             $patientProblems = $patient->billableProblems()->get();
 
+            //temporary solution until we implement cpmProblems - chargeableServices relationship
+            //depression and dementia are both CCM and BHI. If patient has those, add relevant codes
+            $hasDepression = $patientProblems->contains('name', 'Depression');
+            $hasDementia   = $patientProblems->contains('name', 'Dementia');
+
             $practiceBhiCode = $practiceCodes->where('code', ChargeableService::BHI)->first();
 
-            //Attestation BHI rules have changed
-            //BHI attestation is no longer required so we can be loose with attaching to patient.
-            //also bhi attestation validation depends on bhi time, so we can consider it as a factor for attaching CS
+            //AUTO ATTACH BHI SECTION
             $patientHasBhiProblems = $patientProblems->contains('cpmProblem.is_behavioral', true);
             $pmsHasBhiTime         = $this->bhi_time > 0;
-            if (($pmsHasBhiTime || $patientHasBhiProblems) && $practiceBhiCode) {
+            $patientIsBhiEligible  = $pmsHasBhiTime || $patientHasBhiProblems || $hasDementia || $hasDepression;
+            if ($patientIsBhiEligible && $practiceBhiCode) {
                 $this->chargeableServices()->attach($practiceBhiCode->id, ['is_fulfilled' => false]);
             }
 
-            $practiceCcmCode = $practiceCodes->where('code', ChargeableService::CCM)->first();
-            if ($patientProblems->where('cpmProblem.is_behavioral', false)->count() >= 2 && $practiceCcmCode) {
+            //AUTO ATTACH CCM SECTION
+            $practiceCcmCode         = $practiceCodes->where('code', ChargeableService::CCM)->first();
+            $patientCcmProblemsCount = $patientProblems->where('cpmProblem.is_behavioral', false)->count();
+
+            if ($hasDementia) {
+                ++$patientCcmProblemsCount;
+            }
+            if ($hasDepression) {
+                ++$patientCcmProblemsCount;
+            }
+
+            if ($patientCcmProblemsCount >= 2 && $practiceCcmCode) {
                 $this->chargeableServices()->attach($practiceCcmCode->id, ['is_fulfilled' => false]);
             }
 
+            //AUTO ATTACH PCM SECTION
             $practicePcmCode = $practiceCodes->where('code', ChargeableService::PCM)->first();
             if ($practicePcmCode && $patientProblems->contains('cpmProblem.is_behavioral', false)) {
                 $this->chargeableServices()->attach($practicePcmCode->id, ['is_fulfilled' => false]);
