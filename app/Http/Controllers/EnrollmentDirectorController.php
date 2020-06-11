@@ -204,7 +204,7 @@ END ASC, attempt_count ASC");
 
         $searchTerms = explode(' ', $input['enrollables']);
 
-        $query = Enrollee::withCaPanelRelationships();
+        $query = Enrollee::with(['provider', 'practice']);
 
         foreach ($searchTerms as $term) {
             $query->where(function ($q) use ($term) {
