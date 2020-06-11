@@ -36,7 +36,6 @@
     import VueSelect from 'vue-select';
     import {Event} from 'vue-tables-2'
 
-
     let self;
 
     export default {
@@ -85,7 +84,7 @@
                     .then(resp => {
                         this.loading = false;
 
-                        if (resp.data.enrollees_unassigned){
+                        if (resp.data.enrollees_unassigned) {
                             Event.$emit('notifications-ca-panel:create', {
                                 noTimeout: true,
                                 text: resp.data.message,
@@ -102,18 +101,19 @@
 
                         Event.$emit('notifications-select-ca-modal:create', {
                             noTimeout: true,
-                            text:  errors,
+                            text: errors,
                             type: 'error'
                         });
                     });
             }
         },
-        mounted: function () {
+        created() {
             self = this;
-
-           Event.$on('ambassadors-loaded', (ambassadors) =>{
-               this.ambassadorList = ambassadors
-           })
+        },
+        mounted: function () {
+            Event.$on('ambassadors-loaded', (ambassadors) => {
+                this.ambassadorList = ambassadors
+            })
         }
     }
 </script>
@@ -136,8 +136,6 @@
     }
 
 
-
-
     .modal-select-ca .loader {
         position: absolute;
         right: 5px;
@@ -145,7 +143,6 @@
         width: 20px;
         height: 20px;
     }
-
 
 
     .dropdown.v-select.form-control {

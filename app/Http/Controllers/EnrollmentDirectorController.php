@@ -10,6 +10,7 @@ use App\EnrolleeCustomFilter;
 use App\EnrolleeView;
 use App\Filters\EnrolleeFilters;
 use App\Http\Requests\AddEnrolleeCustomFilter;
+use App\Http\Requests\AssignCallbackToEnrollee;
 use App\Http\Requests\EditEnrolleeData;
 use App\Http\Requests\UpdateMultipleEnrollees;
 use Carbon\Carbon;
@@ -39,6 +40,19 @@ class EnrollmentDirectorController extends Controller
 
             $practice->enrolleeCustomFilters()->attach($customFilter->id, ['include' => 1]);
         }
+
+        return response()->json([], 200);
+    }
+
+    public function assignCallback(AssignCallbackToEnrollee $request)
+    {
+        $enrollee = Enrollee::findOrFail($request->input('enrollee_id'));
+
+        $enrollee->update([
+            'care_ambassador_user_id' => $request->input('care_ambassador_user_id'),
+            'requested_callback'      => Carbon::parse($request->input('callback_date')),
+            'callback_note'           => htmlspecialchars($request->input('callback_note'), ENT_NOQUOTES),
+        ]);
 
         return response()->json([], 200);
     }

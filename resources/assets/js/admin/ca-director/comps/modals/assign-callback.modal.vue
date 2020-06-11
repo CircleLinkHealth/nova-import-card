@@ -1,6 +1,7 @@
 <template>
     <div>
-        <modal ref="assignCallbackModal" name="assign-callback" class="modal-assign-callback" :no-footer="true">
+        <modal ref="assignCallbackModal" name="assign-callback" class="modal-assign-callback"
+               :info="assignCallbackModalInfo" :no-footer="true">
             <template class="modal-container">
                 <template slot="title">
                     <div class="row">
@@ -13,20 +14,10 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div>
-                                <p>Select Care Ambassador:</p>
-                            </div>
-                            <div>
-                                <v-select max-height="200px" class="form-control" v-model="selectedAmbassador"
-                                          :options="ambassadorList">
-                                </v-select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div>
-                                <p ref="title">Select Enrollee:</p>
+                                <p ref="title">Enrollee <span class="required">*</span></p>
                             </div>
                             <div class="suggest-div">
-                                <v-suggest class="asdad" pattern="\w+"
+                                <v-suggest pattern="\w+"
                                            v-model="model"
                                            :list="getList"
                                            :max-suggestions="10"
@@ -76,7 +67,8 @@
                                         </div>
                                     </template>
 
-                                    <div slot="suggestion-item" slot-scope="scope" :title="scope.suggestion.description">
+                                    <div slot="suggestion-item" slot-scope="scope"
+                                         :title="scope.suggestion.description">
                                         <div class="text">
                                             <span v-html="boldenSuggestion(scope)"></span>
                                         </div>
@@ -87,22 +79,34 @@
                                         <span>Loading...</span>
                                     </div>
                                 </v-suggest>
+                                <loader v-if="loading"/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div>
-                                <p>Select Date</p>
+                                <p>Care Ambassador<span class="required">*</span></p>
                             </div>
                             <div>
-                                <input class="form-control" v-model="callback_date" type="date">
+                                <v-select max-height="200px" class="form-control" v-model="selectedAmbassador"
+                                          :options="ambassadorList">
+                                </v-select>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div>
-                                <p>Add note:</p>
+                                <p>Callback Date<span class="required">*</span></p>
                             </div>
                             <div>
-                                <input class="form-control" v-model="callback_note" type="text">
+                                <input class="form-control" :min="today" v-model="callback_date" type="date">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div>
+                                <p>Note</p>
+                            </div>
+                            <div>
+                                <input class="form-control" v-model="callback_note"
+                                       placeholder="Add note for Care Ambassador..." type="text">
                             </div>
                         </div>
                     </div>
@@ -111,7 +115,7 @@
                             <notifications ref="notificationsComponent" name="assign-callback-modal"></notifications>
                         </div>
                     </div>
-<!--                    <loader v-if="loading"/>-->
+
                 </template>
             </template>
         </modal>
@@ -132,6 +136,7 @@
     import VueSimpleSuggest from 'vue-simple-suggest';
     import 'vue-simple-suggest/dist/styles.css';
 
+    let self;
 
     export default {
         name: "assign-callback",
@@ -152,7 +157,22 @@
                 model: null,
                 mode: 'input',
                 loading: false,
-                log: []
+                log: [],
+                assignCallbackModalInfo: {
+                    okHandler: () => {
+                        Event.$emit('notifications-assign-callback-modal:dismissAll');
+                        this.assignCallbackToAmbassador();
+                    },
+                    cancelHandler: () => {
+                        Event.$emit('notifications-assign-callback-modal:dismissAll');
+                        Event.$emit("modal-assign-callback:hide");
+                    }
+                }
+            }
+        },
+        computed: {
+            today() {
+                return moment().format('YYYY-MM-DD');
             }
         },
         methods: {
@@ -172,7 +192,6 @@
             },
             onRequestStart(value) {
                 this.loading = true
-
             },
             onRequestDone(e) {
                 this.loading = false
@@ -183,7 +202,7 @@
             getList(inputValue) {
                 return new Promise((resolve, reject) => {
                     let url = rootUrl('admin/ca-director/queryEnrollable') + `?enrollables=${inputValue}`
-                    // this.$refs.suggestComponent.clearSuggestions()
+                    this.$refs.suggestComponent.clearSuggestions()
                     this.axios.get(url).then(response => {
                         if (response.status !== 200) {
                             reject()
@@ -209,14 +228,53 @@
                         reject(error)
                     })
                 })
+            },
+            assignCallbackToAmbassador() {
+
+                // this.loading = true;
+
+                //check selected enrollee
+                //check selected CA
+                //fix response errors
+
+                this.axios.post(rootUrl('/admin/ca-director/assign-callback'), {
+                    care_ambassador_user_id: this.selectedAmbassador.value,
+                    enrollee_id: this.selected.id,
+                    callback_date: this.callback_date,
+                    callback_note: this.callback_note
+                })
+                    .then(resp => {
+                        // this.loading = false;
+
+                        // if (resp.data.enrollees_unassigned){
+                        //     Event.$emit('notifications-ca-panel:create', {
+                        //         noTimeout: true,
+                        //         text: resp.data.message,
+                        //         type: 'error'
+                        //     });
+                        // }
+                        Event.$emit('refresh-table');
+                        Event.$emit("modal-assign-callback:hide");
+                    })
+                    .catch(err => {
+                        this.loading = false;
+                        let errors = err.response.data.errors ? err.response.data.errors : [];
+
+                        Event.$emit('notifications-assign-callback-modal:create', {
+                            noTimeout: true,
+                            text: errors,
+                            type: 'error'
+                        });
+                    });
             }
         },
-        mounted() {
+        created() {
             const self = this;
-
+        },
+        mounted() {
             this.callback_date = moment().format('YYYY-MM-DD');
 
-            Event.$on('ambassadors-loaded', (ambassadors) =>{
+            Event.$on('ambassadors-loaded', (ambassadors) => {
                 this.ambassadorList = ambassadors;
             })
         }
@@ -227,9 +285,15 @@
 
     .modal-assign-callback .modal-container {
         width: 80%;
-        height: 60%;
+        height: 40%;
     }
 
+    span.required {
+        color: red;
+        font-size: 18px;
+        position: absolute;
+        top: 2px;
+    }
 
 
 </style>

@@ -1202,6 +1202,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'ca-director.assign-ambassador',
             ]);
 
+            Route::post('/assign-callback', [
+                'uses' => 'EnrollmentDirectorController@assignCallback',
+                'as'   => 'ca-director.assign-callback',
+            ]);
+
             Route::post('/mark-ineligible', [
                 'uses' => 'EnrollmentDirectorController@markEnrolleesAsIneligible',
                 'as'   => 'ca-director.mark-ineligible',
