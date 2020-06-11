@@ -108,7 +108,7 @@
             "urlFull": '{{$urlFull}}',
             "urlShort": '{{$urlShort}}',
             "ipAddr": '{{$ipAddr}}',
-            "activity": 'CA Enrollment',
+            "activity": 'CA - Loading next patient',
             "title": '{{$title}}',
             "submitUrl": '{{route("api.pagetracking")}}',
             "timeSyncUrl": undefined,

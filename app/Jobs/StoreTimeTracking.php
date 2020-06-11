@@ -24,6 +24,10 @@ class StoreTimeTracking implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    const UNTRACKED_CA_ACTIVITIES = [
+        'CA - No more patients',
+    ];
+
     // Do not count time for these routes
     const UNTRACKED_ROUTES = [
         'patient.activity.create',
@@ -79,7 +83,7 @@ class StoreTimeTracking implements ShouldQueue
                 ProcessNurseMonthlyLogs::dispatchNow($newActivity);
             }
 
-            if ($provider->isCareAmbassador()) {
+            if ($this->isProcessableCareAmbassadorActivity($activity, $provider)) {
                 ProcessCareAmbassadorTime::dispatchNow($provider->id, $activity);
             }
         }
@@ -171,5 +175,16 @@ class StoreTimeTracking implements ShouldQueue
                    || ! (bool) $provider->isCCMCountable()
                    || 0 == $pageTimer->patient_id
                    || in_array($pageTimer->title, self::UNTRACKED_ROUTES));
+    }
+
+    /**
+     * If user is a care ambassador, then we should process their time in CA logs.
+     * Unless activity is marked in {@link UNTRACKED_CA_ACTIVITIES}.
+     *
+     * @return bool
+     */
+    private function isProcessableCareAmbassadorActivity(array $activity, User $provider = null)
+    {
+        return ! in_array($activity['name'], self::UNTRACKED_CA_ACTIVITIES) && $provider->isCareAmbassador();
     }
 }
