@@ -389,6 +389,10 @@ class CcdaImporterWrapper
         //Get address line 1 from documentation_of section of ccda
         $address = ((array) $ccda->bluebuttonJson()->document->author->address)['street'][0] ?? null;
 
+        if (empty($address)) {
+            return;
+        }
+
         if ($location = Location::whereIn('address_line_1', [$address, $this->replaceCommonAddressVariations($address)])->where('practice_id', $this->ccda->practice_id)->first()) {
             $this->ccda->setLocationId($location->id);
         }
@@ -398,7 +402,7 @@ class CcdaImporterWrapper
     {
         //Get address line 1 from documentation_of section of ccda
         $addresses = collect($ccda->bluebuttonJson()->document->documentation_of)->map(function ($address) {
-            $address = ((array) $address->address)['street'];
+            $address = ((array) $address->address)['street'] ?? null;
 
             if (empty($address[0] ?? null)) {
                 return null;
@@ -421,7 +425,7 @@ class CcdaImporterWrapper
     {
         //Get address line 1 from documentation_of section of ccda
         $addresses = collect(optional($ccda->bluebuttonJson())->encounters ?? [])->map(function ($address) {
-            $address = ((array) $address->address)['street'];
+            $address = ((array) $address->address)['street'] ?? null;
 
             if (empty($address[0] ?? null)) {
                 return null;
