@@ -330,7 +330,7 @@ class NurseCalendarService
     /**
      * @param $auth
      */
-    public function getTotalVisitsCount($auth, string $date)
+    public function getTotalVisits($auth, string $date)
     {
         $totalVisitsCount = '';
         $nurseInvoice     = \Cache::remember("total_time_visits_for_{$auth->id}_$date", 2, function () use ($auth, $date) {
@@ -338,7 +338,10 @@ class NurseCalendarService
         });
 
         if ( ! empty($nurseInvoice)) {
-            $totalVisitsCount = $nurseInvoice->invoice_data['visitsCount'];
+            $totalVisitsCount = [
+                'totalVisitsCount' => $nurseInvoice->invoice_data['visitsCount'],
+                'invoiceId'        => $nurseInvoice->id,
+            ];
         }
 
         return $totalVisitsCount;
@@ -499,10 +502,10 @@ class NurseCalendarService
             $nextUpcomingWindow = ! empty($report) ? $report['nextUpcomingWindow'] : false;
             $reportCalculations = $this->manipulateReportData($nextUpcomingWindow, $report);
             $dataReport         = array_merge($report, $reportCalculations);
-            $totalVisitsCount   = $this->getTotalVisitsCount($auth, $date);
+            $totalVisits        = $this->getTotalVisits($auth, $date);
 
-            if ( ! empty($totalVisitsCount)) {
-                $dataReport = array_merge($dataReport, ['totalVisits' => $totalVisitsCount]);
+            if ( ! empty($totalVisits)) {
+                $dataReport = array_merge($dataReport, $totalVisits);
             }
 
             if ( ! empty($report)) {

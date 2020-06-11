@@ -29,6 +29,9 @@
                             </li>
                             <li>Total calls completed: {{this.reportData.actualCalls}}</li>
                             <li>Total successful calls: {{this.reportData.successful}}</li>
+                            <li v-if="this.reportData.hasOwnProperty('totalVisitsCount')"
+                            class="total-visits">
+                                <a @click="redirectToInvoice()">Total visits completed: {{this.reportData.totalVisitsCount}}</a></li>
                         </ul>
                         <p>&nbsp;</p>
                         <ol class="metrics-header">
@@ -156,6 +159,10 @@
         },
 
         methods: {
+            redirectToInvoice(){
+                window.location.href = "nurseinvoices/review";
+            },
+
             closeModal() {
                 $("#dailyReport").modal('toggle');
             },
@@ -177,5 +184,14 @@
 
     .metrics-header{
         margin-bottom: 8px;
+    }
+
+    .total-visits a{
+        color: #4fb2e2;
+    }
+
+    .total-visits a:hover {
+        text-decoration: underline;
+        cursor: pointer;
     }
 </style>
