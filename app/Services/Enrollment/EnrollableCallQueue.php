@@ -152,6 +152,7 @@ class EnrollableCallQueue
             ->lessThanThreeAttempts()
             ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
             ->where('status', Enrollee::TO_CALL)
+            ->whereNull('requested_callback')
             ->first();
     }
 
@@ -172,15 +173,16 @@ class EnrollableCallQueue
     private function getRequestedCallbackToday()
     {
         return Enrollee::withCaPanelRelationships()
-            ->lessThanThreeAttempts()
             //added < just in case CA missed them/did not work etc.
             ->where('requested_callback', '<=', Carbon::now()->toDateString())
+            ->whereNotNull('requested_callback')
             ->whereIn('status', [
                 Enrollee::TO_CALL,
                 Enrollee::UNREACHABLE,
             ])
             ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
-            ->orderBy('attempt_count')
+            //make sure that most recently updated comes first: e.g. Enrollee that just has been marked for callback from CA Director
+            ->orderByDesc('updated_at')
             ->first();
     }
 
