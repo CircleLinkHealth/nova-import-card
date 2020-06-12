@@ -152,6 +152,7 @@ class EnrollableCallQueue
             ->lessThanThreeAttempts()
             ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
             ->where('status', Enrollee::TO_CALL)
+            ->whereNull('requested_callback')
             ->first();
     }
 
