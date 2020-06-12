@@ -6,8 +6,10 @@
 
 namespace App\Services\Enrollment;
 
+use App\ProviderSignature;
 use App\SelfEnrollment\Helpers;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 
@@ -22,7 +24,7 @@ class EnrollmentInvitationService
      *
      * @return array
      */
-    public function createLetter($practiceName, EnrollmentInvitationLetter $practiceLetter, $practiceNumber, $provider, $hideButtons = false)
+    public function createLetter($practiceName, EnrollmentInvitationLetter $practiceLetter, $practiceNumber, User $provider, $hideButtons = false)
     {
         $varsToBeReplaced = [
             EnrollmentInvitationLetter::PROVIDER_LAST_NAME,
@@ -55,7 +57,13 @@ class EnrollmentInvitationService
         // order has to be the same as the $varsToBeReplaced
         $practiceSigSrc = '';
         if ( ! empty($practiceLetter->customer_signature_src)) {
-            $practiceSigSrc = "<img src='$practiceLetter->customer_signature_src'  alt='$practiceName' style='max-width: 100%;'/>";
+            if (ProviderSignature::SIGNATURE_VALUE === $practiceLetter->customer_signature_src) {
+                $npiNumber      = $provider->load('providerInfo')->providerInfo->npi_number;
+                $type           = ProviderSignature::SIGNATURE_PIC_TYPE;
+                $practiceSigSrc = "<img src='/img/signatures/$practiceName/$npiNumber$type' alt='$practiceName' style='max-width: 100%;'/>";
+            } else {
+                $practiceSigSrc = "<img src='$practiceLetter->customer_signature_src'  alt='$practiceName' style='max-width: 100%;'/>";
+            }
         }
         $replacementVars = [
             $provider->last_name,

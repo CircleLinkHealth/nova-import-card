@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\ProviderSignature;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Seeder;
@@ -75,7 +76,7 @@ class GenerateToledoSignatures extends Seeder
                     foreach ($users as $user) {
                         if ($user->providerInfo->npi_number === $npiNumber) {
                             $providerNpiNumber = $user->providerInfo->npi_number;
-                            $type = '_signature.png';
+                            $type = ProviderSignature::SIGNATURE_PIC_TYPE;
 
                             $user->providerInfo->signature()->updateOrCreate(
                                 [
