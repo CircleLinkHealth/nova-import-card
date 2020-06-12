@@ -175,6 +175,7 @@ class EnrollableCallQueue
         return Enrollee::withCaPanelRelationships()
             //added < just in case CA missed them/did not work etc.
             ->where('requested_callback', '<=', Carbon::now()->toDateString())
+            ->whereNotNull('requested_callback')
             ->whereIn('status', [
                 Enrollee::TO_CALL,
                 Enrollee::UNREACHABLE,
