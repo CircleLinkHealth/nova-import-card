@@ -215,11 +215,10 @@ END ASC, attempt_count ASC");
 
         $results     = $query->get();
         $enrollables = [];
-        $i           = 0;
         foreach ($results as $e) {
             $phonesString = "{$e->home_phone}, {$e->cell_phone}, {$e->other_phone}";
 
-            $enrollables[$i] = [
+            $item = [
                 'id'       => $e->id,
                 'name'     => $e->first_name.' '.$e->last_name,
                 'mrn'      => $e->mrn,
@@ -227,9 +226,9 @@ END ASC, attempt_count ASC");
                 'provider' => optional($e->provider)->getFullName() ?? '',
             ];
 
-            $enrollables[$i]['hint'] = "{$enrollables[$i]['name']} ({$enrollables[$i]['id']}) PROVIDER: [{$enrollables[$i]['provider']}] [{$enrollables[$i]['program']}]  {$phonesString}";
+            $item['hint'] = "{$item['name']} ({$item['id']}) PROVIDER: [{$item['provider']}] [{$item['program']}]  {$phonesString}";
 
-            ++$i;
+            $enrollables[] = $item;
         }
 
         return response()->json($enrollables);
