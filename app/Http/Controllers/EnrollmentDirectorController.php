@@ -19,7 +19,6 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Str;
 
 class EnrollmentDirectorController extends Controller
 {
@@ -218,38 +217,18 @@ END ASC, attempt_count ASC");
         $enrollables = [];
         $i           = 0;
         foreach ($results as $e) {
-            $matchingPhones = collect([]);
+            $phonesString = "{$e->home_phone}, {$e->cell_phone}, {$e->other_phone}";
 
-            foreach ($searchTerms as $term) {
-                //remove dashes for e164 format
-                $sanitizedTerm = trim(str_replace('-', '', $term));
-                if (Str::contains($e->home_phone_e164, $sanitizedTerm)) {
-                    $matchingPhones->push($e->home_phone);
-                }
-                if (Str::contains($e->cell_phone_e164, $sanitizedTerm)) {
-                    $matchingPhones->push($e->cell_phone);
-                }
-                if (Str::contains($e->other_phone_e164, $sanitizedTerm)) {
-                    $matchingPhones->push($e->other_phone);
-                }
-            }
+            $enrollables[$i] = [
+                'id'       => $e->id,
+                'name'     => $e->first_name.' '.$e->last_name,
+                'mrn'      => $e->mrn,
+                'program'  => optional($e->practice)->display_name ?? '',
+                'provider' => optional($e->provider)->getFullName() ?? '',
+            ];
 
-            if ($matchingPhones->isEmpty()) {
-                $matchingPhones = collect([
-                    $e->home_phone,
-                    $e->cell_phone,
-                    $e->other_phone,
-                ]);
-            }
+            $enrollables[$i]['hint'] = "{$enrollables[$i]['name']} ({$enrollables[$i]['id']}) PROVIDER: [{$enrollables[$i]['provider']}] [{$enrollables[$i]['program']}]  {$phonesString}";
 
-            $phonesString = $matchingPhones->unique()->implode(', ');
-
-            $enrollables[$i]['id']       = $e->id;
-            $enrollables[$i]['name']     = $e->first_name.' '.$e->last_name;
-            $enrollables[$i]['mrn']      = $e->mrn;
-            $enrollables[$i]['program']  = optional($e->practice)->display_name ?? '';
-            $enrollables[$i]['provider'] = optional($e->provider)->getFullName() ?? '';
-            $enrollables[$i]['hint']     = "{$enrollables[$i]['name']} ({$enrollables[$i]['id']}) PROVIDER: [{$enrollables[$i]['provider']}] [{$enrollables[$i]['program']}]  {$phonesString} ";
             ++$i;
         }
 

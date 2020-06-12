@@ -98,12 +98,16 @@ class EnrollmentCenterController extends ApiController
 
             $phonesString = $matchingPhones->unique()->implode(', ');
 
-            $enrollables[$i]['id']       = $e->id;
-            $enrollables[$i]['name']     = $e->first_name.' '.$e->last_name;
-            $enrollables[$i]['mrn']      = $e->mrn;
-            $enrollables[$i]['program']  = optional($e->practice)->display_name ?? '';
-            $enrollables[$i]['provider'] = optional($e->provider)->getFullName() ?? '';
-            $enrollables[$i]['hint']     = "{$enrollables[$i]['name']} {$phonesString} PROVIDER: [{$enrollables[$i]['provider']}] [{$enrollables[$i]['program']}]";
+            $enrollables[$i] = [
+                'id'       => $e->id,
+                'name'     => $e->first_name.' '.$e->last_name,
+                'mrn'      => $e->mrn,
+                'program'  => optional($e->practice)->display_name ?? '',
+                'provider' => optional($e->provider)->getFullName() ?? '',
+            ];
+
+            $enrollables[$i]['hint'] = "{$enrollables[$i]['name']} {$phonesString} PROVIDER: [{$enrollables[$i]['provider']}] [{$enrollables[$i]['program']}]";
+
             ++$i;
         }
 
