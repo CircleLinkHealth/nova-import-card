@@ -48,20 +48,20 @@
             <v-server-table class="table" v-on:filter="listenTo" :url="getUrl()" :columns="columns" :options="options"
                             ref="table">
                 <template slot="edit" slot-scope="props">
-                    <input class="btn btn-warning btn-s" value="Edit" @click="editPatient(props.row)" type="button"/>
+                    <input class="btn btn-warning btn-s edit-button" value="Edit" @click="editPatient(props.row)" type="button"/>
                 </template>
                 <template slot="h__edit" slot-scope="props">
 
                 </template>
                 <div slot="filter__select">
                     <input type="checkbox"
-                           class="form-control check-all"
+                           class="form-control check-all select-enrollee"
                            :checked="allSelected()"
                            @change="toggleAll()">
                 </div>
                 <template slot="select" slot-scope="props">
                     <input type="checkbox"
-                           class="form-control"
+                           class="form-control select-enrollee"
                            :v-model="props.row.select"
                            :checked="selected(props.row.id)"
                            @change="toggleId(props.row.id)">
@@ -400,6 +400,15 @@
 
     .min-width-300 {
         min-width: 300px !important;
+    }
+
+    .select-enrollee{
+        width: 50% !important;
+        height: 20px !important;
+    }
+
+    .edit-button{
+        margin: 3px;
     }
 
 </style>
