@@ -13,31 +13,22 @@ if (isset($patient)) {
 
 $patientListDropdown = getPatientListDropdown($user);
 $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
-
-if ($userIsCareCoach) {
-    $scheduleIconClass = $hasCurrentWeekWindows
-        ? 'top-nav-item-icon glyphicon glyphicon-calendar'
-        : 'fa fa-exclamation';
-
-    $iClassStyle = 'fa fa-exclamation' === $scheduleIconClass
-        ? 'color: background: rgb(255, 255, 255);
-                    font-size: 12px;
-                    background: rgb(238, 66, 20);
-                    border-radius: 0.8em;
-                    display: inline-block;
-                    font-weight: bold;
-                    line-height: 1.6em;
-                    margin-right: 5px;
-                    text-align: center;
-                    width: 1.6em;
-                    animation: shake-animation 3.72s ease infinite;
-                    transform-origin: 50% 50%;;'
-        : '';
-}
-
 ?>
 @push('styles')
     <style>
+        .fa-exclamation{
+            font-size: 12px;
+            background: rgb(238, 66, 20);
+            border-radius: 0.8em;
+            display: inline-block;
+            font-weight: bold;
+            line-height: 1.6em;
+            margin-right: 5px;
+            text-align: center;
+            width: 1.6em;
+            animation: shake-animation 3.72s ease infinite;
+            transform-origin: 50%;
+        }
 
         @keyframes shake-animation {
             0% { transform:translate(0,0) }
@@ -236,14 +227,26 @@ if ($userIsCareCoach) {
                                 <a href="{{ route('patientCallList.index') }}" class="text-white"><i
                                             class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
                             </li>
-                            <li>
-                                <a href="{{ route('care.center.work.schedule.index') }}"
-                                   class="text-white"
-                                   title="Schedule has 0 hours for current week. Please enter your schedule.">
-                                        <i class="{{$scheduleIconClass}}" style="{{$iClassStyle}}"></i>
-                                    Schedule</a>
 
-                            </li>
+                                @if($hasCurrentWeekWindows)
+                                        <li>
+                                            <a href="{{ route('care.center.work.schedule.index') }}"
+                                               class="text-white"
+                                               title="Schedule has 0 hours for current week. Please enter your schedule.">
+                                                <i class="top-nav-item-icon glyphicon glyphicon-calendar"></i>
+                                                Schedule</a>
+                                        </li>
+                                    @else
+                                        <li>
+                                            <a href="{{ route('care.center.work.schedule.index') }}"
+                                               class="text-white"
+                                               title="Schedule has 0 hours for current week. Please enter your schedule.">
+                                                <i class="fa fa-exclamation"></i>
+                                                Schedule</a>
+                                        </li>
+
+                                    @endif
+
                         @endif
 
                             <li class="dropdown">
