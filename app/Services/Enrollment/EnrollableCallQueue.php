@@ -179,7 +179,8 @@ class EnrollableCallQueue
                 Enrollee::UNREACHABLE,
             ])
             ->whereCareAmbassadorUserId($this->careAmbassadorInfo->user_id)
-            ->orderBy('attempt_count')
+            //make sure that most recently updated comes first: e.g. Enrollee that just has been marked for callback from CA Director
+            ->orderByDesc('updated_at')
             ->first();
     }
 

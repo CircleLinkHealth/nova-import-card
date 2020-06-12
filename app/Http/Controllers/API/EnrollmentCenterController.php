@@ -70,7 +70,6 @@ class EnrollmentCenterController extends ApiController
 
         $results     = $query->get();
         $enrollables = [];
-        $i           = 0;
         foreach ($results as $e) {
             $matchingPhones = collect([]);
 
@@ -98,7 +97,7 @@ class EnrollmentCenterController extends ApiController
 
             $phonesString = $matchingPhones->unique()->implode(', ');
 
-            $enrollables[$i] = [
+            $item = [
                 'id'       => $e->id,
                 'name'     => $e->first_name.' '.$e->last_name,
                 'mrn'      => $e->mrn,
@@ -106,9 +105,9 @@ class EnrollmentCenterController extends ApiController
                 'provider' => optional($e->provider)->getFullName() ?? '',
             ];
 
-            $enrollables[$i]['hint'] = "{$enrollables[$i]['name']} {$phonesString} PROVIDER: [{$enrollables[$i]['provider']}] [{$enrollables[$i]['program']}]";
+            $item['hint'] = "{$item['name']} {$phonesString} PROVIDER: [{$item['provider']}] [{$item['program']}]";
 
-            ++$i;
+            $enrollables[] = $item;
         }
 
         return response()->json($enrollables);
