@@ -26,6 +26,9 @@
                         @click="isolatePatientsUploadedViaCsv">{{this.showIsolatedViaCsvLabel}}
                 </button>
             </div>
+            <div class="col-sm-12 text-right" style="margin-bottom: 10px">
+                <button class="btn btn-success btn-s" @click="assignCallback">Assign Callback</button>
+            </div>
             <div class="col-sm-5">
 
             </div>
@@ -92,6 +95,7 @@
                                :selected-enrollee-ids="selectedEnrolleeIds"></mark-ineligible-modal>
         <edit-patient-modal ref="editPatientModal"></edit-patient-modal>
         <add-custom-filter-modal></add-custom-filter-modal>
+        <assign-callback-modal ref="assignCallbackModal" ></assign-callback-modal>
     </div>
 </template>
 
@@ -102,6 +106,7 @@
     import UnassignCaModal from './comps/modals/unassign-ca.modal'
     import {Event} from 'vue-tables-2'
     import MarkIneligibleModal from "./comps/modals/mark-ineligible.modal";
+    import AssignCallbackModal from "./comps/modals/assign-callback.modal";
     import AddCustomFilterModal from "./comps/modals/add-custom-filter.modal";
     import EditPatientModal from "./comps/modals/edit-patient.modal";
     import Loader from '../../components/loader';
@@ -119,6 +124,7 @@
             'unassign-ca-modal': UnassignCaModal,
             'edit-patient-modal': EditPatientModal,
             'add-custom-filter-modal': AddCustomFilterModal,
+            'assign-callback-modal': AssignCallbackModal,
             'loader': Loader,
             'notifications': Notifications,
             'vue-multiselect': Multiselect
@@ -134,7 +140,7 @@
                 selectedEnrolleeIds: [],
                 hideAssigned: false,
                 isolateUploadedViaCsv: false,
-                columns: ['select', 'edit', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'source', 'enrollment_non_responsive', 'auto_enrollment_triggered', 'practice_name', 'provider_name', 'requested_callback', 'total_time_spent', 'attempt_count', 'last_attempt_at',
+                columns: ['select', 'edit', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'source', 'enrollment_non_responsive', 'auto_enrollment_triggered', 'practice_name', 'provider_name', 'requested_callback', 'callback_note', 'total_time_spent', 'attempt_count', 'last_attempt_at',
                     'last_call_outcome', 'last_call_outcome_reason', 'address', 'address_2', 'city', 'state', 'zip', 'primary_phone', 'home_phone', 'cell_phone', 'other_phone', 'dob', 'preferred_days', 'preferred_window',
                     'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'has_copay', 'email', 'provider_pronunciation', 'provider_sex', 'last_encounter', 'eligibility_job_id', 'medical_record_id', 'created_at'],
                 options: {
@@ -230,6 +236,9 @@
             markSelectedAsIneligible() {
                 Event.$emit("modal-mark-ineligible:show");
             },
+            assignCallback(){
+                Event.$emit("modal-assign-callback:show");
+            },
             editPatient(patient) {
                 Event.$emit("modal-edit-patient:show", patient);
             },
@@ -255,6 +264,20 @@
                 } else {
                     this.selectedEnrolleeIds.splice(pos, 1);
                 }
+            },
+            getAmbassadors() {
+                return this.axios
+                    .get(rootUrl('/admin/ca-director/ambassadors'))
+                    .then(response => {
+                        this.loading = false;
+                        let ambassadorList = response.data.map(x => {
+                            return {label: x.display_name, value: x.id};
+                        });
+                        Event.$emit('ambassadors-loaded', ambassadorList)
+                    })
+                    .catch(err => {
+                        this.loading = false;
+                    });
             },
             updateTable() {
                 const query = {
@@ -309,6 +332,8 @@
             Event.$on('clear-selected-enrollees', this.clearSelected)
             Event.$on('refresh-table', this.refreshTable)
             console.info('mounted');
+
+            this.getAmbassadors();
 
             Event.$on('vue-tables.loading', function (data) {
                 self.loading = true;
