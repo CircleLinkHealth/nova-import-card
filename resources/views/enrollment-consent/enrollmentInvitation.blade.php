@@ -10,7 +10,7 @@
                 </div>
             @endif
             <div class="headers">
-                <div class="logo">
+                <div class="logo" style="{{$logoStyleRequest}}">
                     @include('enrollment-consent.practiceLogo')
                 </div>
                 <br>

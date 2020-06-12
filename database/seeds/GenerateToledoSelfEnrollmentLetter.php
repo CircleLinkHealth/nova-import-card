@@ -10,6 +10,8 @@ use Illuminate\Database\Seeder;
 
 class GenerateToledoSelfEnrollmentLetter extends Seeder
 {
+    const UI_REQUESTS = 'ui_requests';
+
     /**
      * Run the database seeds.
      *
@@ -52,6 +54,16 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
                         ],
                     ]
                 ),
+                self::UI_REQUESTS => [
+                    'logo_position'            => 'text-align:right',
+                    'extra_credentials_header' => [
+                        Practice::class => [
+                            'address',
+                            'state',
+                            //                        'zip',
+                        ],
+                    ],
+                ],
             ]
         );
     }

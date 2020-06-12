@@ -348,6 +348,7 @@ class SelfEnrollmentController extends Controller
      * @param $hideButtons
      *
      * @throws \Exception
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     private function enrollmentLetterView(User $userEnrollee, $isSurveyOnlyUser, Enrollee $enrollee, $hideButtons)
@@ -378,6 +379,12 @@ class SelfEnrollmentController extends Controller
             $buttonColor    = $invitationLink->button_color;
         }
 
+//        $uiRequests             = json_decode($practiceLetter->ui_requests);
+//        $uiRequestsExists       = ! is_null($uiRequests);
+//        $logoStyleRequest       = $uiRequestsExists ? $uiRequests->logo_position : '';
+//        $extraCredentialsHeader = $uiRequestsExists ? $uiRequests->extra_credentials_header : [];
+
+//        @todo:Its time to abstract.
         return view('enrollment-consent.enrollmentInvitation', compact(
             'userEnrollee',
             'isSurveyOnlyUser',
@@ -388,6 +395,7 @@ class SelfEnrollmentController extends Controller
             'dateLetterSent',
             'hideButtons',
             'buttonColor',
+            'logoStyleRequest'
         ));
     }
 
