@@ -19,17 +19,18 @@ use Illuminate\Database\Eloquent\Model;
  * @property mixed                           $letter
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter newModelQuery()
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter newQuery()
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter query()
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter whereCreatedAt($value)
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter whereCustomerSignatureSrc($value)
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter whereId($value)
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter whereLetter($value)
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter wherePracticeId($value)
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter wherePracticeLogoSrc($value)
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter whereSignatoryName($value)
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter whereUpdatedAt($value)
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter whereCustomerSignatureSrc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter whereLetter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter wherePracticeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter wherePracticeLogoSrc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter whereSignatoryName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class EnrollmentInvitationLetter extends Model
@@ -51,5 +52,6 @@ class EnrollmentInvitationLetter extends Model
         'customer_signature_src',
         'signatory_name',
         'letter',
+        'ui_requests',
     ];
 }
