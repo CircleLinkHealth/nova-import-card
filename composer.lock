@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0873ad245d075d06a554f080d091f4c3",
+    "content-hash": "730c6f710dd4a90c449ffe71ecddb06d",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1119,11 +1119,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-ROAD-88",
+            "version": "v2.0.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "cc9fdbae661377a1eccb4126adf9e75c8a082e3f"
+                "reference": "bd76800e456e3d743dcdc1f684a43e8c78901380"
             },
             "type": "laravel-module",
             "extra": {
@@ -1145,7 +1145,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-10T15:11:48+00:00"
+            "time": "2020-06-12T07:22:33+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1191,11 +1191,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-ROAD-88",
+            "version": "v2.9.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "a30a9d211c114e17d92fecc9e8021ee36f266dba"
+                "reference": "76fed11ea89a2b473f4140d26849baf9cb068aac"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1220,7 +1220,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-11T23:28:58+00:00"
+            "time": "2020-06-12T07:20:49+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -15991,8 +15991,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/cpm-migrations-module": 20,
-        "circlelinkhealth/eligibility-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "laravel/scout": 20,
         "orangehill/iseed": 20
