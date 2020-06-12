@@ -172,7 +172,6 @@ class EnrollableCallQueue
     private function getRequestedCallbackToday()
     {
         return Enrollee::withCaPanelRelationships()
-            ->lessThanThreeAttempts()
             //added < just in case CA missed them/did not work etc.
             ->where('requested_callback', '<=', Carbon::now()->toDateString())
             ->whereIn('status', [

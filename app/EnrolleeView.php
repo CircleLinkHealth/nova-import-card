@@ -143,6 +143,7 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereOtherNote($value)
  * @property int                                                                                         $auto_enrollment_triggered
  * @property string|null                                                                                 $source
+ * @property string|null                                                                                 $callback_note
  */
 class EnrolleeView extends SqlViewModel
 {
