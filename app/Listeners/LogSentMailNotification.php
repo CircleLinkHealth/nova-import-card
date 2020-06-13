@@ -45,7 +45,7 @@ class LogSentMailNotification implements ShouldQueue
         ];
 
         if ($event->message) {
-            $props['smtp-id'] = $event->message->getId();
+            $props['smtp_id'] = $event->message->getId();
         }
 
         NotificationStatusUpdateJob::dispatch(

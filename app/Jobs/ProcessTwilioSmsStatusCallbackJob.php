@@ -112,8 +112,7 @@ class ProcessTwilioSmsStatusCallbackJob implements ShouldQueue
 
     private function handleSmsNotificationCallback(string $sid, string $accountSid, string $status, string $statusDetails = null)
     {
-        //we are already in a job, so dispatchNow
-        TwilioNotificationStatusUpdateJob::dispatchNow(
+        TwilioNotificationStatusUpdateJob::dispatch(
             $sid,
             $accountSid,
             [

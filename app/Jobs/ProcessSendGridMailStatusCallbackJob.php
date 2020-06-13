@@ -19,6 +19,9 @@ class ProcessSendGridMailStatusCallbackJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    /**
+     * @var array
+     */
     private $input;
 
     /**
@@ -39,5 +42,15 @@ class ProcessSendGridMailStatusCallbackJob implements ShouldQueue
      */
     public function handle()
     {
+        foreach ($this->input as $event) {
+            SendGridNotificationStatusUpdateJob::dispatch(
+                $event['smtp-id'],
+                [
+                    'value'   => $event['event'],
+                    'details' => $event['timestamp'],
+                    'email'   => $event['email'],
+                ],
+            );
+        }
     }
 }
