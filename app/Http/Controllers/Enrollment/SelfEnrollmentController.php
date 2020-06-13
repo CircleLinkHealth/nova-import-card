@@ -381,11 +381,6 @@ class SelfEnrollmentController extends Controller
             $buttonColor    = $invitationLink->button_color;
         }
 
-        // Please pay attention here. Each Practice will need different letters. Differences might be small like the case bellow.
-        // How about we use   enrollmentLetterView() as base function to get the letter for each practice, then instead of having
-        // conditional logic which is based on values passed in DB's json field; will have separated logic for each practice requirement.
-        // I am not sure how to deal with the enrollmentInvitation.blade file.
-
         $uiRequests       = json_decode($practiceLetter->ui_requests);
         $uiRequestsExists = ! is_null($uiRequests);
 //        Toledo needs logo on the right.
@@ -441,17 +436,14 @@ class SelfEnrollmentController extends Controller
      */
     private function getExtraAddressValues(array $props, Practice $enrollablePrimaryPractice)
     {
-        $practiceLocation = $this->getPracticeLocation($enrollablePrimaryPractice);
-        if ( ! is_null($practiceLocation)) {
-            $practiceLocationArray = $practiceLocation->toArray();
+        $practiceLocation      = $this->getPracticeLocation($enrollablePrimaryPractice);
+        $practiceLocationArray = $practiceLocation->toArray();
 
-            return collect($props[0])->mapWithKeys(function ($prop) use ($practiceLocationArray) {
-                return  [
-                    $prop => $practiceLocationArray[$prop],
-                ];
-            })->toArray();
-        }
-        Log::warning("Location for practice [$enrollablePrimaryPractice->id] not found");
+        return collect($props[0])->mapWithKeys(function ($prop) use ($practiceLocationArray) {
+            return  [
+                $prop => $practiceLocationArray[$prop],
+            ];
+        })->toArray();
     }
 
     /**
@@ -490,12 +482,19 @@ class SelfEnrollmentController extends Controller
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Relations\HasMany|object|null
+     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Relations\HasMany|object|void
      */
     private function getPracticeLocation(Practice $enrollablePrimaryPractice)
     {
-//        Cant use Practice::getAddress(). It throws exception.
-        return $enrollablePrimaryPractice->locations()->where('is_primary', 1)->first();
+//        Can't use Practice::getAddress(). It throws an exception.
+        $practiceLocation = $enrollablePrimaryPractice->locations()->where('is_primary', 1)->first();
+        if (is_null($practiceLocation)) {
+            Log::warning("Location for practice [$enrollablePrimaryPractice->id] not found");
+
+            return;
+        }
+
+        return $practiceLocation;
     }
 
     /**
