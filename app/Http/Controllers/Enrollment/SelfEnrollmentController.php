@@ -13,6 +13,7 @@ use App\SelfEnrollment\Helpers;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
@@ -35,6 +36,7 @@ class SelfEnrollmentController extends Controller
     const ENROLLMENT_SURVEY_PENDING            = 'pending';
     const RED_BUTTON_COLOR                     = '#b1284c';
     const SEND_NOTIFICATIONS_LIMIT_FOR_TESTING = 1;
+    const TOLEDO_CLINIC                        = 'Toledo Clinic';
 
     /**
      * @var EnrollmentInvitationService
@@ -379,12 +381,31 @@ class SelfEnrollmentController extends Controller
             $buttonColor    = $invitationLink->button_color;
         }
 
-//        $uiRequests             = json_decode($practiceLetter->ui_requests);
-//        $uiRequestsExists       = ! is_null($uiRequests);
-//        $logoStyleRequest       = $uiRequestsExists ? $uiRequests->logo_position : '';
-//        $extraCredentialsHeader = $uiRequestsExists ? $uiRequests->extra_credentials_header : [];
+        // Please pay attention here. Each Practice will need different letters. Differences might be small like the case bellow.
+        // How about we use   enrollmentLetterView() as base function to get the letter for each practice, then instead of having
+        // conditional logic which is based on values passed in DB's json field; will have separated logic for each practice requirement.
+        // I am not sure how to deal with the enrollmentInvitation.blade file.
 
-//        @todo:Its time to abstract.
+        $uiRequests       = json_decode($practiceLetter->ui_requests);
+        $uiRequestsExists = ! is_null($uiRequests);
+//        Toledo needs logo on the right.
+        $logoStyleRequest = $uiRequestsExists ? $uiRequests->logo_position : '';
+//        Toledo needs some extra data in letter top left. (I could just have done if practice = toledo)
+        $extraAddressHeader = $uiRequestsExists ? collect($uiRequests->extra_address_header) : collect();
+
+        $extraAddressValues = collect()->first();
+        if ( ! empty($extraAddressHeader)) {
+            $models = $this->getModelsContainingNeededValues($extraAddressHeader);
+            foreach ($models as $model => $props) {
+                if ($enrollablePrimaryPractice->display_name === $model) {
+                    $extraAddressValues[] = $this->getExtraAddressValues($props, $enrollablePrimaryPractice);
+                }
+//                Else use $model to query.
+            }
+        }
+
+        $extraAddressValuesRequested = ! empty($extraAddressValues);
+
         return view('enrollment-consent.enrollmentInvitation', compact(
             'userEnrollee',
             'isSurveyOnlyUser',
@@ -395,7 +416,9 @@ class SelfEnrollmentController extends Controller
             'dateLetterSent',
             'hideButtons',
             'buttonColor',
-            'logoStyleRequest'
+            'logoStyleRequest',
+            'extraAddressValues',
+            'extraAddressValuesRequested'
         ));
     }
 
@@ -411,6 +434,25 @@ class SelfEnrollmentController extends Controller
         if ($pastInvitationLinksQuery->exists()) {
             $pastInvitationLinksQuery->update(['manually_expired' => true]);
         }
+    }
+
+    /**
+     * @return array
+     */
+    private function getExtraAddressValues(array $props, Practice $enrollablePrimaryPractice)
+    {
+        $practiceLocation = $this->getPracticeLocation($enrollablePrimaryPractice);
+        if ( ! is_null($practiceLocation)) {
+            $practiceLocationArray = $practiceLocation->toArray();
+
+            return collect($props[0])->mapWithKeys(function ($prop) use ($practiceLocationArray) {
+                return  [
+                    $prop => $practiceLocationArray[$prop],
+                ];
+            })->toArray();
+        }
+
+        Log::warning("Location for practice [$enrollablePrimaryPractice->id] not found");
     }
 
     /**
@@ -439,6 +481,22 @@ class SelfEnrollmentController extends Controller
             'doctorsLastName' => $doctorsLastName,
             'user'            => $user,
         ];
+    }
+
+    private function getModelsContainingNeededValues(\Illuminate\Support\Collection $extraAddressHeader)
+    {
+        return $extraAddressHeader->map(function ($model) {
+            return [$model];
+        });
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Relations\HasMany|object|null
+     */
+    private function getPracticeLocation(Practice $enrollablePrimaryPractice)
+    {
+//        Cant use Practice::getAddress(). It throws exception.
+        return $enrollablePrimaryPractice->locations()->where('is_primary', 1)->first();
     }
 
     /**

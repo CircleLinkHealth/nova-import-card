@@ -24,7 +24,7 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
         $practiceName         = EnrollmentInvitationLetter::PRACTICE_NAME;
         $customerSignaturePic = EnrollmentInvitationLetter::CUSTOMER_SIGNATURE_PIC;
 
-        $toledoPracticeId = $this->getPractice();
+        $toledoPracticeId = $this->getPractice()->id;
 
         $bodyPageOne = "
 <p>$practiceName has invested in a new Personalized Care Program to help patients get care at home, which is especially important given current events, and I'm inviting you to join.</p>
@@ -37,7 +37,7 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
 <p>What's Next?<br />In a few days, you'll get a call from one of our care coordinators from $practiceNumber. They'll be happy to answer your questions, and help you get started if you decide to join during that call.</p>
 <p>I look forward to having you join this program to continue keeping you healthy between office visits.</p>
 <p>Sincerely,</p>
-<p>$customerSignaturePic<br />$signatoryName<br />[PRACTICE LEADER/DOCTOR TITLE]</p>";
+<p>$customerSignaturePic<br />$signatoryName<br/></p>";
 
         EnrollmentInvitationLetter::updateOrCreate(
             [
@@ -55,10 +55,11 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
                     ]
                 ),
                 self::UI_REQUESTS => [
-                    'logo_position'            => 'text-align:right',
-                    'extra_credentials_header' => [
-                        Practice::class => [
-                            'address',
+                    'logo_position'        => 'text-align:right',
+                    'extra_address_header' => [
+                        $this->getPractice()->display_name => [
+                            'address_line_1',
+                            'city',
                             'state',
                             //                        'zip',
                         ],
@@ -76,6 +77,6 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
             throw new Exception('Toledo Practice not found in Practices');
         }
 
-        return $toledoPractice->id;
+        return $toledoPractice;
     }
 }

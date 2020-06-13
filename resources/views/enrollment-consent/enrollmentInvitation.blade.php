@@ -21,6 +21,14 @@
                         {{$signatoryNameForHeader}}
                         <br>
                         {{$practiceName}}
+
+                        @if($extraAddressValuesRequested)
+                            <br>
+                            {{$extraAddressValues[0]['address_line_1']}}
+                            <br>
+                            {{$extraAddressValues[0]['city']}}
+                            {{$extraAddressValues[0]['state']}}
+                        @endif
                     </div>
 
                     <div class="letter-sent">
@@ -35,7 +43,7 @@
                         </div>
                     </div>
                     <div class="logo" style="margin-bottom: 10px">
-                        <div class="logo">
+                        <div class="logo" style="{{$logoStyleRequest}}">
                             @include('enrollment-consent.practiceLogo')
                         </div>
                     </div>

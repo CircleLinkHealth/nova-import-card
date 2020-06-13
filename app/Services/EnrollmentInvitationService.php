@@ -12,7 +12,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
-use GenerateToledoSelfEnrollmentLetter;
 
 class EnrollmentInvitationService
 {
