@@ -9,28 +9,11 @@
                     @include('enrollment-consent.enrollableInvitationButtons')
                 </div>
             @endif
-            <div class="headers">
-                <div class="logo" style="{{$logoStyleRequest}}">
-                    @include('enrollment-consent.practiceLogo')
-                </div>
-                <br>
-                <hr>
-            </div>
-                <div class="flow-text" style="max-height: 590px; overflow-y: scroll;">
-                    <div class="header">
-                        {{$signatoryNameForHeader}}
-                        <br>
-                        {{$practiceName}}
-
-                        @if($extraAddressValuesRequested)
-                            <br>
-                            {{$extraAddressValues[0]['address_line_1']}}
-                            <br>
-                            {{$extraAddressValues[0]['city']}}
-                            {{$extraAddressValues[0]['state']}}
-                        @endif
-                    </div>
-
+                @if(! $extraAddressValuesRequested)
+                @include('enrollment-consent.headers.commonwealth')
+                @else
+                    @include('enrollment-consent.headers.toledo')
+                @endif
                     <div class="letter-sent">
                         {{$dateLetterSent}}
                     </div>
@@ -42,11 +25,15 @@
                             @include('enrollment-consent.enrollmentLetter')
                         </div>
                     </div>
+
+                @if(! $extraAddressValuesRequested)
                     <div class="logo" style="margin-bottom: 10px">
                         <div class="logo" style="{{$logoStyleRequest}}">
                             @include('enrollment-consent.practiceLogo')
                         </div>
                     </div>
+                @endif
+
                     @if(!$hideButtons)
                         <div class="header-buttons">
                             @include('enrollment-consent.enrollableInvitationButtons')

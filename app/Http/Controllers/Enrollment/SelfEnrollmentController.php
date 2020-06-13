@@ -451,7 +451,6 @@ class SelfEnrollmentController extends Controller
                 ];
             })->toArray();
         }
-
         Log::warning("Location for practice [$enrollablePrimaryPractice->id] not found");
     }
 
