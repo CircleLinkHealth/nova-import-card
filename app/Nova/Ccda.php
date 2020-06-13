@@ -85,7 +85,7 @@ class Ccda extends Resource
                 'provider',
                 'practice_display_name',
                 'patient_user_id',
-            ])->canSee(function () {
+            ], false)->canSee(function () {
                 return true;
             })->canRun(function () {
                 return true;

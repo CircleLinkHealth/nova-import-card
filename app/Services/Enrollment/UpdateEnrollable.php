@@ -73,7 +73,6 @@ class UpdateEnrollable extends EnrollableService
      * So we can copy primary phone number and immediately attach to confirm family members
      * And we also see if any address field has changed and we save it.
      *
-     *
      * @param $ids
      */
     private function updateConfirmedFamilyMembersAndAssignToCareAmbassador($ids)
