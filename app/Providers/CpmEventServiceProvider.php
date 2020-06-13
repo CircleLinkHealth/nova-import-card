@@ -26,6 +26,7 @@ use App\Listeners\CreateAndHandlePdfReport;
 use App\Listeners\ForwardApprovedCarePlanToPractice;
 use App\Listeners\ForwardNote;
 use App\Listeners\LogFailedNotification;
+use App\Listeners\LogSentMailNotification;
 use App\Listeners\LogSentNotification;
 use App\Listeners\LogSuccessfulLogout;
 use App\Listeners\NotifyPatientOfCarePlanApproval;
@@ -46,6 +47,7 @@ use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Notifications\Events\NotificationSent;
 
@@ -75,6 +77,9 @@ class CpmEventServiceProvider extends ServiceProvider
         ],
         NoteFinalSaved::class => [
             ForwardNote::class,
+        ],
+        MessageSent::class => [
+            LogSentMailNotification::class,
         ],
         NotificationSent::class => [
             LogSentNotification::class,

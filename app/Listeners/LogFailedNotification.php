@@ -6,6 +6,7 @@
 
 namespace App\Listeners;
 
+use App\Jobs\NotificationStatusUpdateJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Queue\InteractsWithQueue;
@@ -32,6 +33,24 @@ class LogFailedNotification implements ShouldQueue
 
         if (method_exists($event->notification, 'failed')) {
             $event->notification->failed($event);
+
+            return;
         }
+
+        $this->defaultHandler($event);
+    }
+
+    private function defaultHandler(NotificationFailed $event)
+    {
+        $channel = $event->channel;
+
+        NotificationStatusUpdateJob::dispatch(
+            $event->notification->id,
+            $channel,
+            [
+                'value'   => 'failed',
+                'details' => $event->data['message'],
+            ],
+        );
     }
 }

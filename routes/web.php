@@ -1992,6 +1992,15 @@ Route::group([
 });
 
 Route::group([
+    'prefix' => 'sendgrid',
+], function () {
+    Route::post('/status', [
+        'uses' => 'SendGridController@statusCallback',
+        'as'   => 'sendgrid.status',
+    ]);
+});
+
+Route::group([
     'prefix'     => 'saas/admin',
     'middleware' => ['auth', 'role:saas-admin,administrator,saas-admin-view-only'],
 ], function () {

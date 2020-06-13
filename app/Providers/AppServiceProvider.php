@@ -8,6 +8,7 @@ namespace App\Providers;
 
 use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
+use App\Notifications\Channels\CustomMailChannel;
 use App\Notifications\Channels\CustomTwilioChannel;
 use App\Notifications\NotificationStrategies\SendsNotification;
 use App\Services\AWV\DirectPatientDocument;
@@ -110,6 +111,9 @@ class AppServiceProvider extends ServiceProvider
         $cm = $this->app->make(ChannelManager::class);
         $cm->extend('twilio', function (Application $app) {
             return $app->make(CustomTwilioChannel::class);
+        });
+        $cm->extend('mail', function (Application $app) {
+            return $app->make(CustomMailChannel::class);
         });
 
         if ($this->app->runningUnitTests() && \Config::get('database.default')) {
