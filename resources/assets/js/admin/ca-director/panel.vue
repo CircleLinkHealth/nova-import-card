@@ -403,8 +403,9 @@
     }
 
     .select-enrollee{
-        width: 50% !important;
-        height: 20px !important;
+        width: 2rem !important;
+        height: 2rem !important;
+        margin: auto !important;
     }
 
     .edit-button{
