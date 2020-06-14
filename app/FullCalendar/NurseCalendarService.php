@@ -332,19 +332,19 @@ class NurseCalendarService
      */
     public function getTotalVisits($auth, string $date)
     {
-        $totalVisitsCount = '';
-        $nurseInvoice     = \Cache::remember("total_time_visits_for_{$auth->id}_$date", 2, function () use ($auth, $date) {
-            return $auth->nurseInfo->invoices()->where('month_year', Carbon::parse($date)->startOfMonth())->first();
+        return \Cache::remember("total_time_visits_for_{$auth->id}_$date", 2, function () use ($auth, $date) {
+            $invoice = $auth->nurseInfo->invoices()->where('month_year', Carbon::parse($date)->startOfMonth())->first();
+            if ( ! empty($invoice)) {
+                return [
+                    'totalVisitsCount' => $invoice->invoice_data['visitsCount'],
+                    'invoiceId'        => $invoice->id,
+                ];
+            }
+
+            Log::warning("Invoice for nurse with user id: [$auth->id] not found.");
+
+            return [];
         });
-
-        if ( ! empty($nurseInvoice)) {
-            $totalVisitsCount = [
-                'totalVisitsCount' => $nurseInvoice->invoice_data['visitsCount'],
-                'invoiceId'        => $nurseInvoice->id,
-            ];
-        }
-
-        return $totalVisitsCount;
     }
 
     /**
