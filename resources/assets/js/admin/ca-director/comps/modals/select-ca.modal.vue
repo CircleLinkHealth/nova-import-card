@@ -14,7 +14,7 @@
                 </div>
                 <div class="row">
                     <v-select max-height="200px" class="form-control" v-model="selectedAmbassador"
-                              :options="list">
+                              :options="ambassadorList">
                     </v-select>
                 </div>
                 <div class="row">
@@ -36,7 +36,6 @@
     import VueSelect from 'vue-select';
     import {Event} from 'vue-tables-2'
 
-    let ambassadors = null;
     let self;
 
     export default {
@@ -55,6 +54,7 @@
         },
         data: () => {
             return {
+                ambassadorList: [],
                 loading: false,
                 list: [],
                 selectedAmbassador: null,
@@ -72,21 +72,7 @@
         },
         methods: {
 
-            getAmbassadors() {
-                return this.axios
-                    .get(rootUrl('/admin/ca-director/ambassadors'))
-                    .then(response => {
-                        this.loading = false;
-                        ambassadors = response.data;
-                        this.list = ambassadors.map(x => {
-                            return {label: x.display_name, value: x.id};
-                        });
-                        return this.list;
-                    })
-                    .catch(err => {
-                        this.loading = false;
-                    });
-            },
+
             assignEnrolleesToAmbassador() {
 
                 this.loading = true;
@@ -98,7 +84,7 @@
                     .then(resp => {
                         this.loading = false;
 
-                        if (resp.data.enrollees_unassigned){
+                        if (resp.data.enrollees_unassigned) {
                             Event.$emit('notifications-ca-panel:create', {
                                 noTimeout: true,
                                 text: resp.data.message,
@@ -115,23 +101,19 @@
 
                         Event.$emit('notifications-select-ca-modal:create', {
                             noTimeout: true,
-                            text:  errors,
+                            text: errors,
                             type: 'error'
                         });
                     });
             }
         },
-        mounted: function () {
+        created() {
             self = this;
-
-            if (ambassadors != null) {
-                this.loading = false;
-                this.list = ambassadors;
-                return;
-            }
-
-            this.getAmbassadors();
-
+        },
+        mounted: function () {
+            Event.$on('ambassadors-loaded', (ambassadors) => {
+                this.ambassadorList = ambassadors
+            })
         }
     }
 </script>
@@ -154,8 +136,6 @@
     }
 
 
-
-
     .modal-select-ca .loader {
         position: absolute;
         right: 5px;
@@ -163,7 +143,6 @@
         width: 20px;
         height: 20px;
     }
-
 
 
     .dropdown.v-select.form-control {

@@ -52,14 +52,4 @@ class EnrollmentInvitationsBatch extends Model
     {
         return $this->hasMany(EnrollableInvitationLink::class);
     }
-
-    public static function manualInvitesBatch(int $practiceId)
-    {
-        return \Cache::remember("manual_invites_running_enrollment_batch_for_$practiceId", 2, function () use ($practiceId) {
-            return EnrollmentInvitationsBatch::firstOrCreate([
-                'practice_id' => $practiceId,
-                'type'        => self::MANUAL_INVITES_BATCH_TYPE,
-            ]);
-        });
-    }
 }

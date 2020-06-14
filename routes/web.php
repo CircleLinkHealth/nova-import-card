@@ -496,7 +496,7 @@ Route::group(['middleware' => 'auth'], function () {
 
             Route::get('queryEnrollable', [
                 'uses' => 'API\EnrollmentCenterController@queryEnrollables',
-                'as'   => 'enrollables.query',
+                'as'   => 'enrollables.enrollment.query',
             ]);
 
             Route::get('/show/{enrollableId?}', [
@@ -1043,7 +1043,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'call.reschedule',
             ])->middleware('permission:call.update');
         });
-    
+
         Route::get('family-members', [
             'uses' => 'FamilyController@getMembers',
             'as'   => 'family.get',
@@ -1187,6 +1187,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'ca-director.index',
             ]);
 
+            Route::get('queryEnrollable', [
+                'uses' => 'EnrollmentDirectorController@queryEnrollables',
+                'as'   => 'enrollables.ca-director.query',
+            ]);
+
             Route::get('/enrollees', [
                 'uses' => 'EnrollmentDirectorController@getEnrollees',
                 'as'   => 'ca-director.enrollees',
@@ -1200,6 +1205,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/assign-ambassador', [
                 'uses' => 'EnrollmentDirectorController@assignCareAmbassadorToEnrollees',
                 'as'   => 'ca-director.assign-ambassador',
+            ]);
+
+            Route::post('/assign-callback', [
+                'uses' => 'EnrollmentDirectorController@assignCallback',
+                'as'   => 'ca-director.assign-callback',
             ]);
 
             Route::post('/mark-ineligible', [
