@@ -250,63 +250,6 @@ class OpsDashboardController extends Controller
         ]));
     }
 
-    public function getLostAdded(Request $request)
-    {
-        return 'This page is under construction.';
-        $today   = Carbon::today();
-        $maxDate = $today->copy()->subDay(1);
-
-        if ($request['fromDate'] && $request['toDate']) {
-            $fromDate = $request['fromDate'];
-            $toDate   = $request['toDate'];
-        } else {
-            $toDate   = $today->copy()->subDay(1)->setTimeFromTimeString('23:00');
-            $fromDate = $toDate->copy()->subDay(1);
-        }
-
-        $practices = Practice::activeBillable()
-            ->with([
-                'patients' => function ($p) use ($fromDate) {
-                    $p->with([
-                        'activities' => function ($a) use ($fromDate) {
-                            $a->where(
-                                'performed_at',
-                                '>=',
-                                $fromDate->copy()->startOfMonth()->startOfDay()
-                            );
-                        },
-                        'revisionHistory' => function ($r) use ($fromDate) {
-                            $r->where('key', 'ccm_status')
-                                ->where('created_at', '>=', $fromDate->copy()->startOfDay());
-                        },
-                        'patientInfo',
-                    ]);
-                },
-            ])
-            ->whereHas('patients.patientInfo')
-            ->get()
-            ->sortBy('display_name');
-
-        $rows = [];
-        foreach ($practices as $practice) {
-            $patients = $practice->patients->where('program_id', $practice->id);
-            $row      = $this->service->lostAddedRow($patients, $fromDate);
-            if (null != $row) {
-                $rows[$practice->display_name] = $row;
-            }
-        }
-
-        $rows['Total'] = $this->calculateLostAddedRow($rows);
-        $rows          = collect($rows);
-
-        return view('admin.opsDashboard.lost-added', compact([
-            'fromDate',
-            'toDate',
-            'maxDate',
-            'rows',
-        ]));
-    }
-
     public function getMonths(Carbon $date, $number)
     {
         $months = [];
@@ -316,79 +259,6 @@ class OpsDashboardController extends Controller
         }
 
         return collect($months);
-    }
-
-    public function getPatientList(Request $request)
-    {
-        $today   = Carbon::today();
-        $maxDate = $today->copy()->subDay(1);
-
-        $requestToDate = new Carbon($request['toDate']);
-        $toDate        = $requestToDate->copy()->setTimeFromTimeString('23:00');
-        $fromDate      = new Carbon($request['fromDate']);
-
-        $status     = $request['status'];
-        $practiceId = $request['practice_id'];
-
-        $practices = Practice::activeBillable()->get()->sortBy('display_name');
-
-        $patients = $this->repo->getPatientsByStatus(
-            $fromDate->startOfDay()->toDateTimeString(),
-            $toDate->endOfDay()->toDateTimeString()
-        );
-
-        $patients = $patients->whereIn('program_id', $practices->pluck('id')->all());
-
-        if ('all' != $practiceId) {
-            $patients = $this->service->filterPatientsByPractice($patients, $practiceId);
-        }
-        if ('all' !== $status) {
-            $patients = $this->service->filterPatientsByStatus($patients, $status);
-        }
-
-        $patients = $this->paginatePatients($patients);
-        $patients = $patients->withPath('admin/reports/ops-dashboard/patient-list');
-
-        return view('admin.opsDashboard.patient-list', compact([
-            'patients',
-            'practices',
-            'fromDate',
-            'toDate',
-            'maxDate',
-            'status',
-            'practiceId',
-        ]));
-    }
-
-    public function getPatientListIndex()
-    {
-        return 'This page is under construction';
-        $today   = Carbon::today();
-        $maxDate = $today->copy()->subDay(1);
-
-        $toDate     = $today->copy()->subDay(1)->setTimeFromTimeString('23:00');
-        $fromDate   = $toDate->copy()->subDay(1);
-        $status     = 'all';
-        $practiceId = 'all';
-
-        $practices = Practice::activeBillable()->get()->sortBy('display_name');
-
-        $patients = $this->repo->getPatientsByStatus($fromDate->toDateTimeString(), $toDate->toDateTimeString());
-
-        $patients = $patients->whereIn('program_id', $practices->pluck('id')->all());
-
-        $patients = $this->paginatePatients($patients);
-        $patients = $patients->withPath('admin/reports/ops-dashboard/patient-list-index');
-
-        return view('admin.opsDashboard.patient-list', compact([
-            'patients',
-            'practices',
-            'fromDate',
-            'toDate',
-            'maxDate',
-            'status',
-            'practiceId',
-        ]));
     }
 
     /**
@@ -447,18 +317,6 @@ class OpsDashboardController extends Controller
             'rows',
             'dateGenerated',
         ]));
-    }
-
-    public function makeExcelPatientReport(Request $request)
-    {
-        $toDate     = new Carbon($request['toDate']);
-        $fromDate   = new Carbon($request['fromDate']);
-        $status     = $request['status'];
-        $practiceId = $request['practice_id'];
-
-        $report = $this->service->getExcelReport($fromDate, $toDate, $status, $practiceId);
-
-        return $this->downloadMedia($report);
     }
 
     public function opsGraph()

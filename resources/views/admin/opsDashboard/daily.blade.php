@@ -68,9 +68,10 @@
     @endpush
 
     <div class="container">
-        <div class="col-md-12">
-            @include('admin.opsDashboard.panel')
-        </div>
+{{--        Currently not in use, remove until and if needed--}}
+{{--        <div class="col-md-12">--}}
+{{--            @include('admin.opsDashboard.panel')--}}
+{{--        </div>--}}
         <div class="col-md-4">
             <form action="{{route('OpsDashboard.index')}}" method="GET">
                 <div class="form-group">

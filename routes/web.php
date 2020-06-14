@@ -1746,19 +1746,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'OpsDashboard.makeCsv',
         ])->middleware('permission:opsReport.read');
 
-        Route::get('/lost-added', [
-            'uses' => 'OpsDashboardController@getLostAdded',
-            'as'   => 'OpsDashboard.lostAdded',
-        ])->middleware('permission:opsReport.read');
-        Route::get('/patient-list-index', [
-            'uses' => 'OpsDashboardController@getPatientListIndex',
-            'as'   => 'OpsDashboard.patientListIndex',
-        ])->middleware('permission:opsReport.read');
-
-        Route::get('/patient-list', [
-            'uses' => 'OpsDashboardController@getPatientList',
-            'as'   => 'OpsDashboard.patientList',
-        ])->middleware('permission:opsReport.read');
         Route::post('/make-excel', [
             'uses' => 'OpsDashboardController@makeExcelPatientReport',
             'as'   => 'OpsDashboard.makeExcel',
@@ -1769,20 +1756,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'OpsDashboardController@getBillingChurn',
             'as'   => 'OpsDashboard.billingChurn',
         ])->middleware('permission:opsReport.read');
-
-        //old dashboard
-        Route::get('/total-data', [
-            'uses' => 'OpsDashboardController@getTotalPatientData',
-            'as'   => 'OpsDashboard.totalData',
-        ]);
-        Route::get('/paused-patient-list', [
-            'uses' => 'OpsDashboardController@getPausedPatientList',
-            'as'   => 'OpsDashboard.pausedPatientList',
-        ]);
-        Route::get('/patients-by-practice', [
-            'uses' => 'OpsDashboardController@getPatientsByPractice',
-            'as'   => 'OpsDashboard.patientsByPractice',
-        ]);
     });
 
     //NURSE PERFORMANCE REPORT
