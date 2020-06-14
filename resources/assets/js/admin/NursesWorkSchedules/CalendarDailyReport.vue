@@ -33,7 +33,7 @@
                             class="total-visits">
                                 <a @click="redirectToInvoice()">Total visits completed: {{this.reportData.totalVisitsCount}}</a></li>
                         </ul>
-                        <p>&nbsp;</p>
+                        <br>
                         <ol class="metrics-header">
                             <li><strong>2.  Monthly Case Completion ({{this.reportData.caseLoadComplete}})</strong></li>
                         </ol>
@@ -48,7 +48,6 @@
                         </ul>
                         <br>
                         <div v-if="reportFlags.showEfficiencyMetrics">
-                            <p>&nbsp;</p>
                             <ol class="metrics-header">
                                 <li><strong>3.  Efficiency Metrics</strong></li>
                             </ol>
@@ -62,19 +61,15 @@
                                         amount of completed
                                         patients for the month">*</a>
                                 </li>
-
-
                                 <li>Average time to complete a patient: {{this.reportData.avgCompletionTime}} minutes
                                     (goal is to be under
                                     30 minutes)
                                     <a class="asterisk" data-tooltip="Calculated by dividing your total
                                     CPM time by the number of completed patients for the month">*</a>
-
                                 </li>
                             </ul>
-                            <p>&nbsp;</p>
                         </div>
-
+                        <br>
                         <div style="margin-bottom: 8px;" v-if="reportFlags.enableDailyReportMetrics">
                             <ol class="metrics-header">
                                 <li><strong>4.  Scheduling and Monthly Hours</strong></li>
@@ -86,7 +81,6 @@
                                     time to complete a patient (above) by total remaining patients
                                     and dividing by 60 minutes to get an hour total">*</a>
                                 </li>
-
                                 <li>Committed hours for remainder of month:
                                     {{this.reportData.hoursCommittedRestOfMonth}} hrs
                                     <a class="asterisk" data-tooltip="For more accuracy, enter your schedule for the entire month.
@@ -95,7 +89,7 @@
                                         estimates based
                                         off the current week's hours">*</a>
                                 </li>
-
+                                <br>
                                 <li>Surplus or deficit for the remainder of month: <a
                                         :style="surplusDeficitColor">{{this.reportData.surplusShortfallHours}}</a> hr
                                     {{this.reportData.deficitOrSurplusText}}
@@ -119,19 +113,19 @@
                                 </li>
                             </ul>
                         </div>
-
-                        <p style="letter-spacing: 0px;">If you have any questions, concerns or schedule changes, please reach out to your CLH
-                            managers over Slack.</p>
-                        <p style="letter-spacing: 0px;">Have a great day and keep up the good work!</p>
-                        <p style="letter-spacing: 0px;">The CircleLink Health Team</p>
+                        <br>
+                        <div>If you have any questions, concerns or schedule changes, please reach out to your CLH
+                            managers over Slack.<br>
+                        Have a great day and keep up the good work!<br>
+                        The CircleLink Health Team
+                        </div>
                     </div>
-
 
                     <div class="modal-footer">
                         <button type="button"
                                 class="btn btn-primary"
                                 style="float: right; background-color:#d9534f;"
-                                @click="closeModal">Cancel
+                                @click="closeModal">Close
                         </button>
                     </div>
                 </div>
