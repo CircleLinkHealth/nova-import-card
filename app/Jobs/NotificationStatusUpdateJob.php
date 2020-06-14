@@ -57,6 +57,8 @@ class NotificationStatusUpdateJob implements ShouldQueue
         if ( ! $notification) {
             $identifier = $this->getIdentifier();
             Log::warning("could not find notification [$identifier]");
+
+            return;
         }
 
         $data = $notification->data;
