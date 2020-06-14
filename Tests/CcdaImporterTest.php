@@ -41,7 +41,10 @@ class CcdaImporterTest extends CustomerTestCase
     {
         Notification::fake();
         $enrollee = $this->app->make(\PrepareDataForReEnrollmentTestSeeder::class)->createEnrollee($this->practice());
-        SendInvitation::dispatch($enrollee->user, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
+        SendInvitation::dispatch($enrollee->user, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+            $enrollee->practice_id,
+            now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
+        )->id);
         $patient = User::findOrFail($enrollee->fresh()->user_id);
         $this->assertTrue($patient->isSurveyOnly());
         $enrollee->status = Enrollee::ENROLLED;
