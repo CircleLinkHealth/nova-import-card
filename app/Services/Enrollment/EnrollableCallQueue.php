@@ -71,9 +71,10 @@ class EnrollableCallQueue
         $nextAttempt          = null;
 
         if (0 !== $patientsPendingCount) {
-            $lastAttempt = $patientsPending
+            $lastAttempt = optional($patientsPending
+                ->where('last_attempt_at', '!=', null)
                 ->sortBy('last_attempt_at')
-                ->first()
+                ->first())
                 ->last_attempt_at;
 
             if ($lastAttempt) {
