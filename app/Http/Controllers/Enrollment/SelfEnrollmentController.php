@@ -393,9 +393,7 @@ class SelfEnrollmentController extends Controller
             $models = $this->getModelsContainingNeededValues($extraAddressHeader);
             foreach ($models as $model => $props) {
                 if ($enrollablePrimaryPractice->display_name === $model) {
-//                    $extraAddressValues[] = $this->getExtraAddressValues($props, $enrollablePrimaryPractice);
-                    $x = $userEnrollee->billingProvider();
-                    $x = 1;
+                    $extraAddressValues[] = $this->getExtraAddressValues($props, $enrollablePrimaryPractice);
                 }
 //                Else use $model to query.
             }
