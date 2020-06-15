@@ -24,7 +24,7 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
         $practiceName         = EnrollmentInvitationLetter::PRACTICE_NAME;
         $customerSignaturePic = EnrollmentInvitationLetter::CUSTOMER_SIGNATURE_PIC;
 
-        $toledoPracticeId = $this->getPractice()->id;
+        $toledoPractice = $this->getPractice();
 
         $bodyPageOne = "
 <p>$practiceName has invested in a new Personalized Care Program to help patients get care at home, which is especially important given current events, and I'm inviting you to join.</p>
@@ -41,7 +41,7 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
 
         EnrollmentInvitationLetter::updateOrCreate(
             [
-                'practice_id' => $toledoPracticeId,
+                'practice_id' => $toledoPractice->id,
             ],
             [
                 'practice_logo_src'      => '/img/logos/Toledo/toledo_logo.png',
@@ -57,7 +57,7 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
                 self::UI_REQUESTS => [
                     'logo_position'        => 'text-align:right',
                     'extra_address_header' => [
-                        $this->getPractice()->display_name => [
+                        $toledoPractice->display_name => [
                             'address_line_1',
                             'city',
                             'state',
@@ -88,7 +88,7 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
 
     private function getPractice()
     {
-        $toledoPractice = \Illuminate\Support\Facades\App::environment(['review']) ?
+        $toledoPractice = \Illuminate\Support\Facades\App::environment(['review', 'local', 'testing']) ?
             $this->createToledoPracticeForReviewApp()
             : Practice::where('display_name', '=', 'Toledo Clinic')->first();
 
