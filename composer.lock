@@ -984,8 +984,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
-                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8",
-                "shasum": null
+                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1018,8 +1017,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
-                "reference": "6ecab1c47b37727c17819ad31972bbd437c4a44a",
-                "shasum": null
+                "reference": "6ecab1c47b37727c17819ad31972bbd437c4a44a"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1230,8 +1228,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EnrollmentInvites",
-                "reference": "3d7e5ac1e98048bb2f469171feb8cb1532131c9c",
-                "shasum": null
+                "reference": "3d7e5ac1e98048bb2f469171feb8cb1532131c9c"
             },
             "require": {
                 "anaseqal/nova-import": "^0.0.3",
@@ -1265,8 +1262,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
-                "reference": "8b21629514943da628f3f5acb602c7610c2d9167",
-                "shasum": null
+                "reference": "8b21629514943da628f3f5acb602c7610c2d9167"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1299,8 +1295,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
-                "reference": "647bc07cacc81615878d4210f947957280127fdc",
-                "shasum": null
+                "reference": "647bc07cacc81615878d4210f947957280127fdc"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1333,8 +1328,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "f0df8eb877194dea1489f870e9d57de695feff3b",
-                "shasum": null
+                "reference": "f0df8eb877194dea1489f870e9d57de695feff3b"
             },
             "require": {
                 "php": ">=7.1.0",
@@ -3649,16 +3643,16 @@
         },
         {
             "name": "jenssegers/agent",
-            "version": "v2.6.3",
+            "version": "v2.6.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jenssegers/agent.git",
-                "reference": "bcb895395e460478e101f41cdab139c48dc721ce"
+                "reference": "daa11c43729510b3700bc34d414664966b03bffe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jenssegers/agent/zipball/bcb895395e460478e101f41cdab139c48dc721ce",
-                "reference": "bcb895395e460478e101f41cdab139c48dc721ce",
+                "url": "https://api.github.com/repos/jenssegers/agent/zipball/daa11c43729510b3700bc34d414664966b03bffe",
+                "reference": "daa11c43729510b3700bc34d414664966b03bffe",
                 "shasum": ""
             },
             "require": {
@@ -3671,7 +3665,7 @@
                 "phpunit/phpunit": "^5.0|^6.0|^7.0"
             },
             "suggest": {
-                "illuminate/support": "^4.0|^5.0"
+                "illuminate/support": "Required for laravel service providers"
             },
             "type": "library",
             "extra": {
@@ -3714,7 +3708,7 @@
                 "user agent",
                 "useragent"
             ],
-            "time": "2019-01-19T21:32:55+00:00"
+            "time": "2020-06-13T08:05:20+00:00"
         },
         {
             "name": "jenssegers/model",
@@ -6891,16 +6885,16 @@
         },
         {
             "name": "php-http/discovery",
-            "version": "1.7.4",
+            "version": "1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/discovery.git",
-                "reference": "82dbef649ccffd8e4f22e1953c3a5265992b83c0"
+                "reference": "10d9019f393773345aedc0dc79e7fd678da874ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/discovery/zipball/82dbef649ccffd8e4f22e1953c3a5265992b83c0",
-                "reference": "82dbef649ccffd8e4f22e1953c3a5265992b83c0",
+                "url": "https://api.github.com/repos/php-http/discovery/zipball/10d9019f393773345aedc0dc79e7fd678da874ee",
+                "reference": "10d9019f393773345aedc0dc79e7fd678da874ee",
                 "shasum": ""
             },
             "require": {
@@ -6952,7 +6946,7 @@
                 "message",
                 "psr7"
             ],
-            "time": "2020-01-03T11:25:47+00:00"
+            "time": "2020-06-14T10:44:12+00:00"
         },
         {
             "name": "php-http/guzzle6-adapter",
@@ -12456,16 +12450,16 @@
         },
         {
             "name": "filp/whoops",
-            "version": "2.7.2",
+            "version": "2.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filp/whoops.git",
-                "reference": "17d0d3f266c8f925ebd035cd36f83cf802b47d4a"
+                "reference": "5d5fe9bb3d656b514d455645b3addc5f7ba7714d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/17d0d3f266c8f925ebd035cd36f83cf802b47d4a",
-                "reference": "17d0d3f266c8f925ebd035cd36f83cf802b47d4a",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/5d5fe9bb3d656b514d455645b3addc5f7ba7714d",
+                "reference": "5d5fe9bb3d656b514d455645b3addc5f7ba7714d",
                 "shasum": ""
             },
             "require": {
@@ -12513,7 +12507,7 @@
                 "throwable",
                 "whoops"
             ],
-            "time": "2020-05-05T12:28:07+00:00"
+            "time": "2020-06-14T09:00:00+00:00"
         },
         {
             "name": "friendsofphp/php-cs-fixer",
@@ -13859,16 +13853,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.28",
+            "version": "0.12.29",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "76c0c4ec90b1eed66fa4855b8b4b53fa9054353f"
+                "reference": "9771daaf6b95c6313b908d0bcdee0afcd51f838a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/76c0c4ec90b1eed66fa4855b8b4b53fa9054353f",
-                "reference": "76c0c4ec90b1eed66fa4855b8b4b53fa9054353f",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/9771daaf6b95c6313b908d0bcdee0afcd51f838a",
+                "reference": "9771daaf6b95c6313b908d0bcdee0afcd51f838a",
                 "shasum": ""
             },
             "require": {
@@ -13897,7 +13891,7 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2020-06-10T06:20:14+00:00"
+            "time": "2020-06-14T14:10:59+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -14153,16 +14147,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "8.5.5",
+            "version": "8.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "63dda3b212a0025d380a745f91bdb4d8c985adb7"
+                "reference": "3f9c4079d1407cd84c51c02c6ad1df6ec2ed1348"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/63dda3b212a0025d380a745f91bdb4d8c985adb7",
-                "reference": "63dda3b212a0025d380a745f91bdb4d8c985adb7",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3f9c4079d1407cd84c51c02c6ad1df6ec2ed1348",
+                "reference": "3f9c4079d1407cd84c51c02c6ad1df6ec2ed1348",
                 "shasum": ""
             },
             "require": {
@@ -14232,7 +14226,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2020-05-22T13:51:52+00:00"
+            "time": "2020-06-15T10:45:47+00:00"
         },
         {
             "name": "react/event-loop",
