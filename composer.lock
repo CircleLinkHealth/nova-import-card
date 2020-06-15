@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "84e1c98337dac55c7ca48c796650a425",
+    "content-hash": "70f4e9e323f5cfe5f9663567cd609c6f",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1425,11 +1425,11 @@
         },
         {
             "name": "circlelinkhealth/raygun-module",
-            "version": "v1.0",
+            "version": "v1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "f6ae28fa6906a14c684fd00ee7c0ec5d9e170763"
+                "reference": "3aa02384331ebf0ae819d0522c0e6fecf3104980"
             },
             "require": {
                 "mindscape/raygun4php": "1.*"
@@ -1454,7 +1454,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-01T01:36:50+00:00"
+            "time": "2020-06-15T06:47:02+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",

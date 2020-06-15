@@ -63,6 +63,7 @@
         function emitLogout() {
             if (typeof App !== 'undefined' && App.EventBus) {
                 App.EventBus.$emit('tracker:stop', true);
+                App.EventBus.$emit('user:logout', true);
             }
         }
     </script>
