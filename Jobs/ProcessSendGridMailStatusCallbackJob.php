@@ -11,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
 
 class ProcessSendGridMailStatusCallbackJob implements ShouldQueue
 {
@@ -44,10 +45,19 @@ class ProcessSendGridMailStatusCallbackJob implements ShouldQueue
     public function handle()
     {
         foreach ($this->input as $event) {
+            if ('pagcosma@gmail.com' !== $event['email']) {
+                continue;
+            }
+
             if (isset($event['smtp-id'])) {
+                $smtpId = $event['smtp-id'];
+                if (Str::startsWith($smtpId, ['<'])) {
+                    $smtpId = Str::substr($smtpId, 1);
+                    $smtpId = Str::substr($smtpId, 0, Str::length($smtpId) - 1);
+                }
                 //DELIVERABILITY DATA has smtp-id
                 SendGridNotificationStatusUpdateJob::dispatch(
-                    $event['smtp-id'],
+                    $smtpId,
                     false,
                     [
                         'sg_event_id'   => $event['sg_event_id'] ?? null,

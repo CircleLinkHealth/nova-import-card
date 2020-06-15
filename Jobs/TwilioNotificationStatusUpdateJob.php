@@ -50,8 +50,8 @@ class TwilioNotificationStatusUpdateJob extends NotificationStatusUpdateJob
     protected function getNotification()
     {
         return DatabaseNotification
-            ::where('data->status->twilio->sid', '=', $this->sid)
-                ->where('data->status->twilio->accountSid', '=', $this->accountSid)
+            ::where('twilio_sid', '=', $this->sid)
+                ->where('twilio_account_sid', '=', $this->accountSid)
                 ->first();
     }
 }

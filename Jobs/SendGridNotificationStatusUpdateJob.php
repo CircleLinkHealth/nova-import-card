@@ -47,7 +47,7 @@ class SendGridNotificationStatusUpdateJob extends NotificationStatusUpdateJob
 
     protected function getNotification()
     {
-        return ($this->isSgMessageId ? DatabaseNotification::where('data->status->mail->sg_message_id', '=', $this->id) :
-            DatabaseNotification::where('data->status->mail->smtp_id', '=', $this->id))->first();
+        return ($this->isSgMessageId ? DatabaseNotification::where('mail_sg_message_id', '=', $this->id) :
+            DatabaseNotification::where('mail_smtp_id', '=', $this->id))->first();
     }
 }

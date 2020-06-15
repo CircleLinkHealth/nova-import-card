@@ -57,7 +57,7 @@ class LogSentNotification implements ShouldQueue
                 $props['sid'] = $event->response->sid;
             }
             if ($event->response->accountSid) {
-                $props['accountSid'] = $event->response->accountSid;
+                $props['account_sid'] = $event->response->accountSid;
             }
         }
 
