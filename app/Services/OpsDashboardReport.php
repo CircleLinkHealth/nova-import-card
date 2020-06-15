@@ -7,8 +7,11 @@
 namespace App\Services;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\DB;
 
 class OpsDashboardReport
@@ -20,8 +23,12 @@ class OpsDashboardReport
     protected $enrolledPatients = [];
     protected $g0506Patients    = [];
     protected $patients;
-    protected $pausedpatients = [];
+    protected $pausedPatients = [];
     protected $practice;
+    protected $revisionsAddedPatients       = [];
+    protected $revisionsPausedPatients      = [];
+    protected $revisionsUnreachablePatients = [];
+    protected $revisionsWithdrawnPatients   = [];
 
     protected $stats = [
         //how many patients are in each CCM or BHI time category
@@ -56,7 +63,8 @@ class OpsDashboardReport
     ];
 
     protected $timeGoal;
-    protected $withdrawnPatients = [];
+    protected $unreachablePatients = [];
+    protected $withdrawnPatients   = [];
 
     public function __construct(Practice $practice, Carbon $date)
     {
@@ -177,7 +185,8 @@ class OpsDashboardReport
                 'total_withdrawn_count'       => 0,
                 'total_g0506_to_enroll_count' => 0,
                 'prior_day_report_updated_at' => 0,
-                'report_updated_at'           => 0,
+                //will be added outside this method - when db entry will be created
+                'report_updated_at' => 0,
                 //adding to help us generate hours behind metric,
                 'total_ccm_time' => array_sum($totalCcmTime),
             ]
@@ -200,6 +209,89 @@ class OpsDashboardReport
         return true;
     }
 
+    private function categorizePatientByStatusUsingPatientInfo(User $patient)
+    {
+        $ccmStatus = $patient->patientInfo->ccm_status;
+        if (Patient::TO_ENROLL == $ccmStatus) {
+            $this->g0506Patients[] = $patient;
+        }
+        if (Patient::PAUSED == $ccmStatus) {
+            $this->pausedPatients[] = $patient;
+        }
+        if (in_array($ccmStatus, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
+            $this->withdrawnPatients[] = $patient;
+        }
+        if (Patient::UNREACHABLE == $ccmStatus) {
+            $this->unreachablePatients = $patient;
+        }
+
+        //enrolled are added in parent function
+    }
+
+    private function categorizePatientByStatusUsingRevisions(User $patient)
+    {
+        $revisionHistory = $patient->patientInfo->revisionHistory->sortByDesc('created_at');
+
+        if ($revisionHistory->isNotEmpty()) {
+            if (Patient::ENROLLED == $revisionHistory->last()->old_value) {
+                if (Patient::UNREACHABLE == $revisionHistory->first()->new_value) {
+                    $this->revisionsUnreachablePatients[] = $patient;
+                }
+                if (Patient::PAUSED == $revisionHistory->first()->new_value) {
+                    $this->revisionsPausedPatients[] = $patient;
+                }
+                if (in_array($revisionHistory->first()->new_value, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
+                    $this->revisionsWithdrawnPatients[] = $patient;
+                }
+            }
+            if (Patient::ENROLLED !== $revisionHistory->last()->old_value &&
+                Patient::ENROLLED == $revisionHistory->first()->new_value) {
+                $this->revisionsAddedPatients[] = $patient;
+            }
+        }
+    }
+
+    private function consolidateStatsUsingPriorDayReport()
+    {
+        $priorDayReport = OpsDashboardPracticeReport::where('practice_id', $this->practice->id)
+            ->where('date', $this->date->copy()->subDay(1))
+            ->whereNotNull('data')
+            ->where('is_processed', 1)
+            ->first();
+
+        //if no prior day report OR
+        //if new keys do not exist in yesterday's report, generate deltas from revisions
+        //todo: make sure to manual test
+        if ( ! $priorDayReport || ! array_keys_exist([
+            'total_enrolled_count' => 0,
+            'total_paused_count' => 0,
+            'total_unreachable_count' => 0,
+            'total_withdrawn_count' => 0,
+            'total_g0506_to_enroll_count' => 0,
+            'prior_day_report_updated_at' => 0,
+            'report_updated_at' => 0,
+        ], $priorDayReport->data)) {
+            $this->stats['Added']            = count($this->revisionsAddedPatients);
+            $this->stats['Paused']           = count($this->revisionsPausedPatients);
+            $this->stats['Withdrawn']        = count($this->revisionsAddedPatients);
+            $this->stats['Unreachable']      = count($this->revisionsAddedPatients);
+            $this->stats['Total']            = count($this->enrolledPatients);
+            $this->stats['Prior Day totals'] = $this->calculateDelta(
+                $this->stats['Total'],
+                $this->stats['Paused'],
+                $this->stats['Withdrawn'],
+                $this->stats['Unreachable']
+            );
+            //make sure to add totals dor today
+        }
+
+        return $this;
+    }
+
+    private function formatStats()
+    {
+    }
+
     /**
      * Loop through all the patients once and calculate:
      * Their Ccm time category
@@ -210,86 +302,25 @@ class OpsDashboardReport
      */
     private function generateStatsFromPatientCollection()
     {
-        //revisions
         $totalCcmTime = [];
-        $paused       = [];
-        $withdrawn    = [];
-        $enrolled     = [];
-        $unreachable  = [];
-        $to_enroll    = [];
 
         foreach ($this->patients as $patient) {
             if (Patient::ENROLLED == $patient->patientInfo->ccm_status) {
                 $this->enrolledPatients[] = $patient;
                 $pms                      = $patient->patientSummaries->first();
                 if ($pms) {
-                    $bhiTime        = $pms->bhi_time;
-                    $totalCcmTime[] = $ccmTime = $pms->ccm_time;
-
-                    if (0 === $ccmTime || null == $ccmTime) {
-                        ++$this->stats['0 mins'];
-                    }
-                    if ($ccmTime > 0 and $ccmTime <= 300) {
-                        ++$this->stats['0-5'];
-                    }
-                    if ($ccmTime > 300 and $ccmTime <= 600) {
-                        ++$this->stats['5-10'];
-                    }
-                    if ($ccmTime > 600 and $ccmTime <= 900) {
-                        ++$this->stats['10-15'];
-                    }
-                    if ($ccmTime > 900 and $ccmTime <= $this::TWENTY_MINUTES) {
-                        ++$this->stats['15-20'];
-                    }
-                    if ($ccmTime > $this::TWENTY_MINUTES) {
-                        ++$this->stats['20+'];
-                    }
-                    if ($bhiTime > $this::TWENTY_MINUTES) {
-                        ++$this->stats['20+ BHI'];
-                    }
+                    $totalCcmTime[] = $pms->ccm_time;
+                    $this->incrementTimeRangeCount($pms);
                 } else {
-                    if (Patient::ENROLLED == $patient->patientInfo->ccm_status) {
-                        ++$this->stats['0 mins'];
-                    }
+                    ++$this->stats['0 mins'];
                 }
             }
-            $revisionHistory = $patient->patientInfo->revisionHistory->sortByDesc('created_at');
-
-            if ($revisionHistory->isNotEmpty()) {
-                if (Patient::ENROLLED == $revisionHistory->last()->old_value) {
-                    if (Patient::UNREACHABLE == $revisionHistory->first()->new_value) {
-                        $unreachable[] = $patient;
-                    }
-                    if (Patient::PAUSED == $revisionHistory->first()->new_value) {
-                        $paused[] = $patient;
-                    }
-                    if (in_array($revisionHistory->first()->new_value, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
-                        $withdrawn[] = $patient;
-                    }
-                }
-                if (Patient::ENROLLED !== $revisionHistory->last()->old_value &&
-                    Patient::ENROLLED == $revisionHistory->first()->new_value) {
-                    $enrolled[] = $patient;
-                }
-            }
-            if (Patient::TO_ENROLL == $patient->patientInfo->ccm_status) {
-                $to_enroll[] = $patient;
-            }
+            $this->categorizePatientByStatusUsingRevisions($patient);
+            $this->categorizePatientByStatusUsingPatientInfo($patient);
         }
 
-        $this->stats = array_merge($this->stats, [
-            'total_ccm_time'        => array_sum($totalCcmTime),
-            'revisions_enrolled'    => $enrolled,
-            'revisions_paused'      => $paused,
-            'revisions_withdrawn'   => $withdrawn,
-            'revisions_unreachable' => $unreachable,
-            'to_enroll'             => $to_enroll,
-        ]);
+        $this->stats['total_ccm_time'] = array_sum($totalCcmTime);
 
-        return $this;
-    }
-    
-    private function consolidateStatsUsingPriorDayReport(){
         return $this;
     }
 
@@ -299,8 +330,32 @@ class OpsDashboardReport
 
         return $this;
     }
-    
-    private function formatStats(){
-    
+
+    private function incrementTimeRangeCount(PatientMonthlySummary $pms)
+    {
+        $ccmTime = $pms->ccm_time;
+        $bhiTime = $pms->bhi_time;
+
+        if (0 === $ccmTime || null == $ccmTime) {
+            ++$this->stats['0 mins'];
+        }
+        if ($ccmTime > 0 and $ccmTime <= 300) {
+            ++$this->stats['0-5'];
+        }
+        if ($ccmTime > 300 and $ccmTime <= 600) {
+            ++$this->stats['5-10'];
+        }
+        if ($ccmTime > 600 and $ccmTime <= 900) {
+            ++$this->stats['10-15'];
+        }
+        if ($ccmTime > 900 and $ccmTime <= $this::TWENTY_MINUTES) {
+            ++$this->stats['15-20'];
+        }
+        if ($ccmTime > $this::TWENTY_MINUTES) {
+            ++$this->stats['20+'];
+        }
+        if ($bhiTime > $this::TWENTY_MINUTES) {
+            ++$this->stats['20+ BHI'];
+        }
     }
 }
