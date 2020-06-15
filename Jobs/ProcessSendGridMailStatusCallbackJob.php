@@ -44,14 +44,31 @@ class ProcessSendGridMailStatusCallbackJob implements ShouldQueue
     public function handle()
     {
         foreach ($this->input as $event) {
-            SendGridNotificationStatusUpdateJob::dispatch(
-                $event['smtp-id'],
-                [
-                    'value'   => $event['event'],
-                    'details' => $event['timestamp'],
-                    'email'   => $event['email'],
-                ],
-            );
+            if (isset($event['smtp-id'])) {
+                //DELIVERABILITY DATA has smtp-id
+                SendGridNotificationStatusUpdateJob::dispatch(
+                    $event['smtp-id'],
+                    false,
+                    [
+                        'event_id'   => $event['sg_event_id'] ?? null,
+                        'message_id' => $event['sg_message_id'] ?? null,
+                        'value'      => $event['event'],
+                        'details'    => $event['timestamp'],
+                        'email'      => $event['email'],
+                    ],
+                );
+            } else {
+                //ENGAGEMENT DATA has sg_message_id
+                SendGridNotificationStatusUpdateJob::dispatch(
+                    $event['sg_message_id'],
+                    true,
+                    [
+                        'value'   => $event['event'],
+                        'details' => $event['timestamp'],
+                        'email'   => $event['email'],
+                    ],
+                );
+            }
         }
     }
 }

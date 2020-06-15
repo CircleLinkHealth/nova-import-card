@@ -72,7 +72,7 @@ class NotificationStatusUpdateJob implements ShouldQueue
             $data['status'][$this->channel] = [];
         }
 
-        if ($this->isOutOfDateUpdate($data)) {
+        if ($this->isOutOfDateUpdate($data['status'][$this->channel]['value'] ?? null, $this->props['value'])) {
             return;
         }
 
@@ -104,14 +104,18 @@ class NotificationStatusUpdateJob implements ShouldQueue
      * So, by the time {@link NotificationSent} is handled, we already have a status 'sent',
      * therefore we skip processing it.
      */
-    private function isOutOfDateUpdate(array $notificationData): bool
+    private function isOutOfDateUpdate(?string $currentStatus, ?string $newStatus): bool
     {
-        if ( ! isset($notificationData['status'][$this->channel]['value'])) {
+        if ( ! $currentStatus) {
             return false;
         }
 
-        $statusUpdate = $this->props['value'] ?? null;
+        if ('mail' === $this->channel) {
+            //for mail, we set 'sent' on MessageSent event (could be after the status callback from SendGrid)
+            //so we will only accept 'sent' if current status is processed
+            return 'sent' === $newStatus && 'processed' !== $currentStatus;
+        }
 
-        return 'pending' === $statusUpdate;
+        return 'pending' === $newStatus;
     }
 }

@@ -11,17 +11,21 @@ use CircleLinkHealth\Core\Entities\DatabaseNotification;
 class SendGridNotificationStatusUpdateJob extends NotificationStatusUpdateJob
 {
     /**
-     * @var string
+     * @var string could be smtp-id or sg_message_id
      */
-    protected $smtpId;
+    protected $id;
+
+    /** @var bool */
+    protected $isSgMessageId;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(string $smtpId, array $props)
+    public function __construct(string $id, bool $isSgMessageId, array $props)
     {
         parent::__construct(null, 'mail', $props);
-        $this->smtpId = $smtpId;
+        $this->id            = $id;
+        $this->isSgMessageId = $isSgMessageId;
     }
 
     /**
@@ -38,13 +42,12 @@ class SendGridNotificationStatusUpdateJob extends NotificationStatusUpdateJob
 
     protected function getIdentifier()
     {
-        return "smtp-id[$this->smtpId]";
+        return $this->isSgMessageId ? "sg_message_id[$this->id]" : "smtp-id[$this->id]";
     }
 
     protected function getNotification()
     {
-        return DatabaseNotification
-            ::where('data->status->mail->smtp_id', '=', $this->smtpId)
-                ->first();
+        return ($this->isSgMessageId ? DatabaseNotification::where('data->status->mail->sg_message_id', '=', $this->id) :
+            DatabaseNotification::where('data->status->mail->smtp_id', '=', $this->id))->first();
     }
 }
