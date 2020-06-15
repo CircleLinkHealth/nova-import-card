@@ -9,7 +9,7 @@ namespace App\Jobs;
 use App\Notifications\ReportGenerated;
 use App\Repositories\Cache\UserNotificationList;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
-use App\Services\OpsDashboardService;
+use App\Services\OpsDashboardReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -33,7 +33,7 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
     protected $date;
 
     /**
-     * @var OpsDashboardService
+     * @var OpsDashboardReport
      */
     protected $service;
 
@@ -48,7 +48,7 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
     public function __construct(User $user)
     {
         $this->user    = $user;
-        $this->service = new OpsDashboardService(new OpsDashboardPatientEloquentRepository());
+        $this->service = new OpsDashboardReport(new OpsDashboardPatientEloquentRepository());
         $this->date    = Carbon::now();
     }
 

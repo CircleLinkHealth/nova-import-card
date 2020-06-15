@@ -7,7 +7,7 @@
 namespace App\Jobs;
 
 use App\Charts\OpsChart;
-use App\Services\OpsDashboardService;
+use App\Services\OpsDashboardReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
@@ -103,7 +103,7 @@ class GenerateOpsDailyReport implements ShouldQueue
      *
      * @throws \Exception
      */
-    public function handle(OpsDashboardService $opsDashboardService)
+    public function handle(OpsDashboardReport $opsDashboardService)
     {
         ini_set('memory_limit', self::MEMORY_LIMIT);
         ini_set('max_input_time', $this->timeout);

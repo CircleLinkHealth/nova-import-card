@@ -1741,17 +1741,8 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'OpsDashboardController@dailyCsv',
             'as'   => 'OpsDashboard.dailyCsv',
         ])->middleware('permission:opsReport.read');
-        Route::get('/ops-csv/{fileName}/{collection}', [
-            'uses' => 'OpsDashboardController@downloadCsvReport',
-            'as'   => 'OpsDashboard.makeCsv',
-        ])->middleware('permission:opsReport.read');
 
-        Route::post('/make-excel', [
-            'uses' => 'OpsDashboardController@makeExcelPatientReport',
-            'as'   => 'OpsDashboard.makeExcel',
-        ])->middleware('permission:opsReport.read');
-
-        //billing churn
+        //billing churn - not working, may fix in the future if it becomes a priority
         Route::get('/billing-churn', [
             'uses' => 'OpsDashboardController@getBillingChurn',
             'as'   => 'OpsDashboard.billingChurn',

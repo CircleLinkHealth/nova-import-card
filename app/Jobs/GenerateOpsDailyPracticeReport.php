@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Services\OpsDashboardService;
+use App\Services\OpsDashboardReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -85,7 +85,7 @@ class GenerateOpsDailyPracticeReport implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(OpsDashboardService $opsDashboardService)
+    public function handle()
     {
         ini_set('memory_limit', self::MEMORY_LIMIT);
         ini_set('max_input_time', $this->timeout);
@@ -101,7 +101,7 @@ class GenerateOpsDailyPracticeReport implements ShouldQueue
             'date'        => $this->date->toDateString(),
         ]);
 
-        $row = $opsDashboardService->dailyReportRow($practice->patients->unique('id'), $this->date);
+        $row = OpsDashboardReport::generate($practice, $this->date);
 
         //row can be null -> if practice has no enrolled patients and no added or remove, exclude from total report.
         //check exists on GenerateOpsDailyReport

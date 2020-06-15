@@ -7,95 +7,13 @@
 namespace App\Http\Controllers;
 
 use App\Charts\OpsChart;
-use App\Repositories\OpsDashboardPatientEloquentRepository;
-use App\Services\OpsDashboardService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class OpsDashboardController extends Controller
 {
-    private $repo;
-    private $service;
-
-    /**
-     * OpsDashboardController constructor.
-     */
-    public function __construct(
-        OpsDashboardService $service,
-        OpsDashboardPatientEloquentRepository $repo
-    ) {
-        $this->service = $service;
-        $this->repo    = $repo;
-    }
-
-    public function calculateBillingChurnTotalRow($rows, $months)
-    {
-        $total['Billed']            = [];
-        $total['Added to Billing']  = [];
-        $total['Lost from Billing'] = [];
-
-        foreach ($rows as $practice => $patients) {
-            foreach ($patients['Billed'] as $month => $count) {
-                $total['Billed'][$month][] = $count;
-            }
-
-            foreach ($patients['Added to Billing'] as $month => $count) {
-                $total['Added to Billing'][$month][] = $count;
-            }
-
-            foreach ($patients['Lost from Billing'] as $month => $count) {
-                $total['Lost from Billing'][$month][] = $count;
-            }
-        }
-
-        foreach ($months as $month) {
-            $totalRow['Billed'][$month->format('m, Y')]            = array_sum($total['Billed'][$month->format('m, Y')]);
-            $totalRow['Added to Billing'][$month->format('m, Y')]  = array_sum($total['Added to Billing'][$month->format('m, Y')]);
-            $totalRow['Lost from Billing'][$month->format('m, Y')] = array_sum($total['Lost from Billing'][$month->format('m, Y')]);
-        }
-
-        return collect($totalRow);
-    }
-
-    public function calculateDailyTotalRow($rows)
-    {
-        $totalCounts = [];
-
-        foreach ($rows as $row) {
-            foreach ($row as $key => $value) {
-                $totalCounts[$key][] = $value;
-            }
-        }
-        foreach ($totalCounts as $key => $value) {
-            $totalCounts[$key] = array_sum($value);
-        }
-
-        return $totalCounts;
-    }
-
-    public function calculateLostAddedRow($rows)
-    {
-        $total    = [];
-        $totalRow = [];
-        foreach ($rows as $key => $value) {
-            $total['Added'][]     = $value['Added'];
-            $total['Paused'][]    = $value['Paused'];
-            $total['Withdrawn'][] = $value['Withdrawn'];
-            $total['Delta'][]     = $value['Delta'];
-        }
-
-        $totalRow['Added']     = array_sum($total['Added']);
-        $totalRow['Paused']    = array_sum($total['Paused']);
-        $totalRow['Withdrawn'] = array_sum($total['Withdrawn']);
-        $totalRow['Delta']     = array_sum($total['Delta']);
-
-        return collect($totalRow);
-    }
-
     public function dailyCsv(Request $request)
     {
         if ($request->has('date')) {
@@ -190,64 +108,53 @@ class OpsDashboardController extends Controller
         return (new FromArray($fileName, $reportRows->all(), []))->download($fileName);
     }
 
-    public function downloadCsvReport($fileName, $collection)
-    {
-        $csv = auth()->user()
-            ->saasAccount
-            ->getMedia($collection)
-            ->where('file_name', $fileName)
-            ->first();
-
-        return $this->downloadMedia($csv);
-    }
-
     public function getBillingChurn(Request $request)
     {
         //Page times out. We should implement solution similar to OpsDashbboard (queue job save data on S3), or SQL view, or Nova page with metrics
         return 'Page is unavailable. To be fixed in CPM-1717';
-        if ($request->has('months')) {
-            $months = $request['months'];
-            if ('all' == $months) {
-                $months = 8;
-            }
-        } else {
-            $months = 6;
-        }
-
-        $date     = Carbon::today();
-        $fromDate = $date->copy()->subMonth($months)->startOfMonth()->startOfDay();
-        $months   = $this->getMonths($date, $months);
-
-        $practices = Practice::activeBillable()
-            ->with([
-                'patients' => function ($u) use ($fromDate) {
-                    $u->with([
-                        'patientSummaries' => function ($s) use ($fromDate) {
-                            $s->whereNotNull('actor_id')
-                                ->where('approved', 1)
-                                ->where('month_year', '>=', $fromDate->toDateString());
-                        },
-                    ]);
-                },
-            ])->get()
-            ->sortBy('display_name');
-
-        foreach ($practices as $practice) {
-            $summaries = $practice->patients->map(function ($p) {
-                return $p->patientSummaries;
-            })->filter()->flatten();
-            $rows[$practice->display_name] = $this->service->billingChurnRow($summaries, $months);
-        }
-        $total = $this->calculateBillingChurnTotalRow($rows, $months);
-        $rows  = collect($rows);
-
-        return view('admin.opsDashboard.billing-churn', compact([
-            'date',
-            'fromDate',
-            'rows',
-            'months',
-            'total',
-        ]));
+//        if ($request->has('months')) {
+//            $months = $request['months'];
+//            if ('all' == $months) {
+//                $months = 8;
+//            }
+//        } else {
+//            $months = 6;
+//        }
+//
+//        $date     = Carbon::today();
+//        $fromDate = $date->copy()->subMonth($months)->startOfMonth()->startOfDay();
+//        $months   = $this->getMonths($date, $months);
+//
+//        $practices = Practice::activeBillable()
+//            ->with([
+//                'patients' => function ($u) use ($fromDate) {
+//                    $u->with([
+//                        'patientSummaries' => function ($s) use ($fromDate) {
+//                            $s->whereNotNull('actor_id')
+//                                ->where('approved', 1)
+//                                ->where('month_year', '>=', $fromDate->toDateString());
+//                        },
+//                    ]);
+//                },
+//            ])->get()
+//            ->sortBy('display_name');
+//
+//        foreach ($practices as $practice) {
+//            $summaries = $practice->patients->map(function ($p) {
+//                return $p->patientSummaries;
+//            })->filter()->flatten();
+//            $rows[$practice->display_name] = $this->service->billingChurnRow($summaries, $months);
+//        }
+//        $total = $this->calculateBillingChurnTotalRow($rows, $months);
+//        $rows  = collect($rows);
+//
+//        return view('admin.opsDashboard.billing-churn', compact([
+//            'date',
+//            'fromDate',
+//            'rows',
+//            'months',
+//            'total',
+//        ]));
     }
 
     public function getMonths(Carbon $date, $number)
@@ -266,7 +173,6 @@ class OpsDashboardController extends Controller
      * for today, for specific day.
      *
      * @throws \Exception
-     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index(Request $request)
@@ -322,14 +228,5 @@ class OpsDashboardController extends Controller
     public function opsGraph()
     {
         return view('charts.ops')->with('chart', OpsChart::clhGrowthChart());
-    }
-
-    private function paginatePatients($patients)
-    {
-        $currentPage              = LengthAwarePaginator::resolveCurrentPage();
-        $perPage                  = 20;
-        $currentPageSearchResults = $patients->slice(($currentPage - 1) * $perPage, $perPage)->all();
-
-        return new LengthAwarePaginator($currentPageSearchResults, count($patients), $perPage);
     }
 }
