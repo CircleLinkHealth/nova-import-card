@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Core\Notifications\Channels;
 
-use App\Contracts\TwilioInterface;
+use CircleLinkHealth\Core\TwilioInterface;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Notifications\Notification;
