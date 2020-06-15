@@ -107,17 +107,19 @@ class EnrolleesInvitationPanel extends Resource
      */
     public function cards(Request $request)
     {
+        $practiceId = self::getPracticeId($this);
+
         return [
             (new EnrollmentInvites())->withMeta(
                 [
-                    'practice_id' => self::getPracticeId($this),
+                    'practice_id' => $practiceId,
                     'is_patient'  => false,
                 ]
             ),
-            (new SelfEnrolledPatientTotal(self::getPracticeId($this))),
-            (new SelfEnrolledButtonColor(self::getPracticeId($this))),
-            (new AllInvitesButtonColor(self::getPracticeId($this))),
-            (new TotalInvitationsSentHourly(self::getPracticeId($this))),
+            (new SelfEnrolledPatientTotal($practiceId)),
+            (new SelfEnrolledButtonColor($practiceId)),
+            (new AllInvitesButtonColor($practiceId)),
+            (new TotalInvitationsSentHourly($practiceId)),
         ];
     }
 
@@ -259,7 +261,7 @@ class EnrolleesInvitationPanel extends Resource
      */
     public static function label()
     {
-        return 'Invitations Panel';
+        return 'Enrollees Invitation Panel';
     }
 
     /**

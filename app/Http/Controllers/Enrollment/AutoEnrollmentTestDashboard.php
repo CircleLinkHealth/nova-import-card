@@ -9,10 +9,10 @@ namespace App\Http\Controllers\Enrollment;
 use App\Console\Commands\SendSelfEnrollmentReminders;
 use App\Http\Controllers\Controller;
 use App\SelfEnrollment\Constants;
-use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use App\SelfEnrollment\Domain\InviteUnreachablePatients;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
 use App\SelfEnrollment\Helpers;
+use App\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -24,6 +24,22 @@ use Illuminate\Support\Facades\DB;
 
 class AutoEnrollmentTestDashboard extends Controller
 {
+    public function evaluateEnrolledForSurveyTest(Request $request)
+    {
+        $survey         = Helpers::getEnrolleeSurvey();
+        $surveyInstance = DB::table('survey_instances')->where('survey_id', '=', $survey->id)->first();
+
+        if (is_null($surveyInstance)) {
+            throw new \Exception('Could not find survey instance for survey id '.$survey->id);
+        }
+        $data = [
+            'enrollable_id'      => (int) $request->input('enrolleeId'),
+            'survey_instance_id' => $surveyInstance->id,
+        ];
+
+        EnrollableSurveyCompleted::dispatch($data);
+    }
+
     /**
      * @return string
      */
@@ -32,20 +48,6 @@ class AutoEnrollmentTestDashboard extends Controller
         UnreachablesFinalAction::dispatch(now()->subDays(Constants::DAYS_DIFF_FROM_FIRST_INVITE_TO_FINAL_ACTION));
 
         return redirect(route('ca-director.index'))->with('message', 'Reminders Sent Successfully');
-    }
-
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function inviteEnrolleesToEnrollTest(Request $request)
-    {
-        InvitePracticeEnrollees::dispatch(
-            $request->input('amount'),
-            $request->input('practice_id'),
-            $request->input('color')
-        );
-
-        return redirect()->back()->with('message', 'Invited Successfully');
     }
 
     /**
