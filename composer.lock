@@ -1195,7 +1195,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "beb3871bbcb4b06f175577f6a585a81ddc4337ba"
+                "reference": "4dd96d12fb82cb4be6eb33426afa2c48f9179f70"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1220,7 +1220,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-12T22:27:43+00:00"
+            "time": "2020-06-15T19:18:41+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -3543,16 +3543,16 @@
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.95",
+            "version": "v1.2.96",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "a7936c4b60c78f8ae9024eeecf7e8d4cf470b730"
+                "reference": "5a53c78644c54a628c3f5ead915c35b489c92239"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/a7936c4b60c78f8ae9024eeecf7e8d4cf470b730",
-                "reference": "a7936c4b60c78f8ae9024eeecf7e8d4cf470b730",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/5a53c78644c54a628c3f5ead915c35b489c92239",
+                "reference": "5a53c78644c54a628c3f5ead915c35b489c92239",
                 "shasum": ""
             },
             "require": {
@@ -3588,7 +3588,7 @@
                 "crawlerdetect",
                 "php crawler detect"
             ],
-            "time": "2020-04-14T20:42:56+00:00"
+            "time": "2020-06-14T20:37:24+00:00"
         },
         {
             "name": "jean85/pretty-package-versions",
