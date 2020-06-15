@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\ProcessSendGridMailStatusCallbackJob;
+use CircleLinkHealth\Core\Jobs\ProcessSendGridMailStatusCallbackJob;
 use Illuminate\Http\Request;
 
 class SendGridController extends Controller

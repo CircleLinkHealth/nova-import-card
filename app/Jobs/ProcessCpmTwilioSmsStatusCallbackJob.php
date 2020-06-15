@@ -4,43 +4,22 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Jobs;
+namespace CircleLinkHealth\Core\Jobs;
 
-use App\Contracts\Services\TwilioClientable;
 use App\OutgoingSms;
+use CircleLinkHealth\Core\TwilioClientable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-/**
- * Process Twilio Sms Status Callbacks.
- *
- * UPDATE: we cannot be sure that status callbacks will be processed in order
- *         from our server, so it's better to actually go back to twilio and fetch the
- *         status of the message.
- *         This would not have been necessary if the timestamp was included in the request.
- *
- * Class ProcessTwilioSmsStatusCallbackJob
- */
-class ProcessTwilioSmsStatusCallbackJob implements ShouldQueue
+class ProcessCpmTwilioSmsStatusCallbackJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-
-    public const TWILIO_MESSAGE_DELIVERY_CODES = [
-        '30001' => 'Queue overflow',
-        '30002' => 'Account suspended',
-        '30003' => 'Unreachable destination handset',
-        '30004' => 'Message blocked',
-        '30005' => 'Unknown destination handset',
-        '30006' => 'Landline or unreachable carrier',
-        '30007' => 'Carrier violation',
-        '30008' => 'Unknown error',
-    ];
 
     /** @var array */
     private $input;
@@ -75,8 +54,8 @@ class ProcessTwilioSmsStatusCallbackJob implements ShouldQueue
         } catch (\Exception $e) {
             $status        = $this->input['MessageStatus'];
             $statusDetails = $this->input['ErrorCode'] ?? null;
-            if ($statusDetails && isset(self::TWILIO_MESSAGE_DELIVERY_CODES[$statusDetails])) {
-                $statusDetails = self::TWILIO_MESSAGE_DELIVERY_CODES[$statusDetails];
+            if ($statusDetails && isset(ProcessTwilioSmsStatusCallbackJob::TWILIO_MESSAGE_DELIVERY_CODES[$statusDetails])) {
+                $statusDetails = ProcessTwilioSmsStatusCallbackJob::TWILIO_MESSAGE_DELIVERY_CODES[$statusDetails];
             }
         }
 
@@ -84,7 +63,9 @@ class ProcessTwilioSmsStatusCallbackJob implements ShouldQueue
         //if not, assume it's a notification
         $handled = $this->handleOutgoingSmsCallback($messageSid, $accountSid, $status, $statusDetails);
         if ( ! $handled) {
-            $this->handleSmsNotificationCallback($messageSid, $accountSid, $status, $statusDetails);
+            $this->input['MessageStatus'] = $status;
+            $this->input['ErrorCode']     = $statusDetails;
+            ProcessTwilioSmsStatusCallbackJob::dispatchNow($this->input, false);
         }
     }
 
@@ -108,17 +89,5 @@ class ProcessTwilioSmsStatusCallbackJob implements ShouldQueue
         }
 
         return false;
-    }
-
-    private function handleSmsNotificationCallback(string $sid, string $accountSid, string $status, string $statusDetails = null)
-    {
-        TwilioNotificationStatusUpdateJob::dispatch(
-            $sid,
-            $accountSid,
-            [
-                'value'   => $status,
-                'details' => $statusDetails,
-            ],
-        );
     }
 }
