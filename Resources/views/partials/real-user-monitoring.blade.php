@@ -24,6 +24,20 @@
 
         @if(auth()->check())
             rg4js('setUser', {!! json_encode($raygunUser()) !!});
+
+            function addLogoutListener() {
+                if (typeof App === 'undefined') {
+                    setTimeout(addLogoutListener, 500);
+                    return;
+                }
+
+                if (App.EventBus) {
+                    App.EventBus.$on('user:logout', function () {
+                        rg4js('endSession');
+                    });
+                }
+            }
+            addLogoutListener();
         @endif
     </script>
 @endif
