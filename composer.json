@@ -173,7 +173,7 @@
     "circlelinkhealth/clh-nova-theme": "*",
     "circlelinkhealth/condition-code-lookup-module": "1.1.5",
     "circlelinkhealth/core-module": "dev-ROAD-109_send_grid_event_webhook",
-    "circlelinkhealth/cpm-migrations-module": "2.0.4",
+    "circlelinkhealth/cpm-migrations-module": "dev-ROAD-109_send_grid_event_webhook",
     "circlelinkhealth/customer-module": "2.8.1",
     "circlelinkhealth/eligibility-module": "dev-ROAD_109_send_grid_event_webhook",
     "circlelinkhealth/enrollment-invites": "*",
