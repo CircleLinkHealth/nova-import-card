@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "70f4e9e323f5cfe5f9663567cd609c6f",
+    "content-hash": "0dc58a180ff5b9e1a4e5b07600235201",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1084,11 +1084,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.5.9",
+            "version": "dev-ROAD-109_send_grid_event_webhook",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "4f367e1573d799741066392bd08357b24c6b31a8"
+                "reference": "b594536c01a4c4328dd49d9cc60c39c604eb6097"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1117,7 +1117,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-03T21:16:32+00:00"
+            "time": "2020-06-15T11:03:33+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1193,11 +1193,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.9.6",
+            "version": "dev-ROAD_109_send_grid_event_webhook",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "299a103f84369d67f1c2d166063b7eb74ccd5a46"
+                "reference": "8ccb30cf666b2732d8b5762549b193a7e41ac813"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1222,7 +1222,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-14T08:23:26+00:00"
+            "time": "2020-06-15T11:03:32+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1364,11 +1364,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.4.4",
+            "version": "dev-ROAD_109_send_grid_event_webhook",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "16095673a72e6f02402381b701545a71d3cc4c43"
+                "reference": "4882136a4f323c0bd0ee099d65465abaede35611"
             },
             "type": "laravel-module",
             "extra": {
@@ -1391,7 +1391,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-07T22:34:29+00:00"
+            "time": "2020-06-15T11:03:31+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -1505,11 +1505,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.6.4",
+            "version": "dev-ROAD_109_send_grid_event_webhook",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "42ac708aafc6c827e7d6153fae5ef2dbc27074db"
+                "reference": "fda8b22ebb2f42eedb1e774909a05656c86bc465"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1523,7 +1523,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-02T19:59:48+00:00"
+            "time": "2020-06-15T11:03:32+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -15711,6 +15711,10 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/core-module": 20,
+        "circlelinkhealth/eligibility-module": 20,
+        "circlelinkhealth/nurseinvoices-module": 20,
+        "circlelinkhealth/shared-models-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "laravel/scout": 20,
         "orangehill/iseed": 20
