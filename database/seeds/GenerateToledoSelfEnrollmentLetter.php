@@ -54,7 +54,7 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
                         ],
                     ]
                 ),
-                self::UI_REQUESTS => [
+                self::UI_REQUESTS => json_encode([
                     'logo_position'        => 'text-align:right',
                     'extra_address_header' => [
                         $toledoPractice->display_name => [
@@ -64,7 +64,7 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
                             //                        'zip',
                         ],
                     ],
-                ],
+                ]),
             ]
         );
     }
