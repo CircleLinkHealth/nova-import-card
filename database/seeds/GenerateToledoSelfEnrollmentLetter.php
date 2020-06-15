@@ -69,9 +69,28 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
         );
     }
 
+    private function createToledoPracticeForReviewApp()
+    {
+        return Practice::firstOrCreate(
+            [
+                'name' => 'toledo-clinic',
+            ],
+            [
+                'active'                => 1,
+                'display_name'          => 'Toledo Clinic',
+                'is_demo'               => 1,
+                'clh_pppm'              => 0,
+                'term_days'             => 30,
+                'outgoing_phone_number' => 2025550196,
+            ]
+        );
+    }
+
     private function getPractice()
     {
-        $toledoPractice = Practice::where('name', '=', 'toledo-clinic')->first();
+        $toledoPractice = \Illuminate\Support\Facades\App::environment(['review']) ?
+            $this->createToledoPracticeForReviewApp()
+            : Practice::where('display_name', '=', 'Toledo Clinic')->first();
 
         if ( ! $toledoPractice) {
             throw new Exception('Toledo Practice not found in Practices');
