@@ -138,6 +138,7 @@ class OpsDashboardReport
     {
         return $this->getPatients()
             ->generateStatsFromPatientCollection()
+            ->addCurrentTotalsToStats()
             ->consolidateStatsUsingPriorDayReport()
             ->formatStats();
 
@@ -184,9 +185,9 @@ class OpsDashboardReport
                 'total_unreachable_count'     => 0,
                 'total_withdrawn_count'       => 0,
                 'total_g0506_to_enroll_count' => 0,
-                'prior_day_report_updated_at' => 0,
+                'prior_day_report_updated_at' => null,
                 //will be added outside this method - when db entry will be created
-                'report_updated_at' => 0,
+                'report_updated_at' => null,
                 //adding to help us generate hours behind metric,
                 'total_ccm_time' => array_sum($totalCcmTime),
             ]
@@ -207,6 +208,16 @@ class OpsDashboardReport
             : '35';
 
         return true;
+    }
+
+    private function addCurrentTotalsToStats()
+    {
+        $this->stats['total_enrolled_count']    = count($this->enrolledPatients);
+        $this->stats['total_paused_count']      = count($this->pausedPatients);
+        $this->stats['total_withdrawn_count']   = count($this->withdrawnPatients);
+        $this->stats['total_unreachable_count'] = count($this->unreachablePatients);
+
+        return $this;
     }
 
     private function categorizePatientByStatusUsingPatientInfo(User $patient)
@@ -253,6 +264,11 @@ class OpsDashboardReport
 
     private function consolidateStatsUsingPriorDayReport()
     {
+        $countRevisionsAdded       = count($this->revisionsAddedPatients);
+        $countRevisionsPaused      = count($this->revisionsPausedPatients);
+        $countRevisionsWithdrawn   = count($this->revisionsWithdrawnPatients);
+        $countRevisionsUnreachable = count($this->revisionsUnreachablePatients);
+
         $priorDayReport = OpsDashboardPracticeReport::where('practice_id', $this->practice->id)
             ->where('date', $this->date->copy()->subDay(1))
             ->whereNotNull('data')
@@ -271,25 +287,32 @@ class OpsDashboardReport
             'prior_day_report_updated_at' => 0,
             'report_updated_at' => 0,
         ], $priorDayReport->data)) {
-            $this->stats['Added']            = count($this->revisionsAddedPatients);
-            $this->stats['Paused']           = count($this->revisionsPausedPatients);
-            $this->stats['Withdrawn']        = count($this->revisionsAddedPatients);
-            $this->stats['Unreachable']      = count($this->revisionsAddedPatients);
-            $this->stats['Total']            = count($this->enrolledPatients);
+            $this->stats['Added']            = $countRevisionsAdded;
+            $this->stats['Paused']           = $countRevisionsPaused;
+            $this->stats['Withdrawn']        = $countRevisionsWithdrawn;
+            $this->stats['Unreachable']      = $countRevisionsUnreachable;
+            $this->stats['Total']            = $this->stats['total_enrolled_count'];
             $this->stats['Prior Day totals'] = $this->calculateDelta(
                 $this->stats['Total'],
                 $this->stats['Paused'],
                 $this->stats['Withdrawn'],
                 $this->stats['Unreachable']
             );
-            //make sure to add totals dor today
+
+            return $this;
         }
+
+        $newPatientsAddedCount = $this->stats['total_enrolled_count'] - $priorDayReport->data['total_enrolled_count'];
+
+        //check each status and send slack message with ids if you should.
+        //use whereNotIn? and filterout ids to include in slack message
 
         return $this;
     }
 
     private function formatStats()
     {
+        return $this;
     }
 
     /**
