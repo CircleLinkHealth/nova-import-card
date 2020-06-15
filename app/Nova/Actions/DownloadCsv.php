@@ -21,6 +21,10 @@ class DownloadCsv extends Action
     use Queueable;
 
     protected $filename;
+    /**
+     * @var bool
+     */
+    protected $keepColumnsOrder;
 
     protected $onlyColumns = [];
 
@@ -75,9 +79,10 @@ class DownloadCsv extends Action
         return $this;
     }
 
-    public function setOnlyColumns(array $onlyColumns): DownloadCsv
+    public function setOnlyColumns(array $onlyColumns, $keepColumnsOrder): DownloadCsv
     {
-        $this->onlyColumns = $onlyColumns;
+        $this->onlyColumns      = $onlyColumns;
+        $this->keepColumnsOrder = $keepColumnsOrder;
 
         return $this;
     }
@@ -97,6 +102,10 @@ class DownloadCsv extends Action
         }
 
         return $models->map(function ($m) {
+            if ($this->keepColumnsOrder) {
+                return collect($m->toArray())->only($this->onlyColumns)->all();
+            }
+
             return collect($m->toArray())->only($this->onlyColumns)->sortKeys()->all();
         })->all();
     }
