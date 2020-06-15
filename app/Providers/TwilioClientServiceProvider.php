@@ -6,10 +6,10 @@
 
 namespace App\Providers;
 
-use App\Contracts\TwilioInterface;
-use App\Services\CustomTwilioService;
 use App\Services\TwilioClientService;
+use CircleLinkHealth\Core\Services\CustomTwilioService;
 use CircleLinkHealth\Core\TwilioClientable;
+use CircleLinkHealth\Core\TwilioInterface;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
