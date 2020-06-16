@@ -169,6 +169,6 @@ class SelfEnrollmentMetricsView extends BaseSqlView
 
     private function showDemoPracticeDataOnly()
     {
-        return isSelfEnrollmentTestModeEnabled() || \Illuminate\Support\Facades\App::environment(['local', 'testing']);
+        return (isSelfEnrollmentTestModeEnabled() || \Illuminate\Support\Facades\App::environment(['local', 'testing'])) ? 1 : 0;
     }
 }
