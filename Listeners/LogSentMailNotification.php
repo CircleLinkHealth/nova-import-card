@@ -43,7 +43,7 @@ class LogSentMailNotification implements ShouldQueue
             'value'   => 'sent',
             'details' => now()->toDateTimeString(),
         ];
-    
+
         NotificationStatusUpdateJob::dispatch(
             $event->data['__laravel_notification_id'],
             'mail',
