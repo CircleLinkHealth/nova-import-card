@@ -89,6 +89,7 @@
         "vue-mdl": "^1.1.1",
         "vue-multiselect": "^2.1.6",
         "vue-select": "^2.5.1",
+        "vue-simple-suggest": "^1.10.1",
         "vue-tables-2": "^0.6.99",
         "vue-touch-keyboard": "^0.3.0",
         "vue-trix": "^1.1.9",

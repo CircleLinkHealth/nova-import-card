@@ -32,8 +32,13 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * @property float|null  $percentage_enrolled
  * @property float|null  $total_call_requests
  * @property float|null  $percentage_call_requests
+ * @property string      $total_seen_letter
+ * @property string      $percentage_seen_letter
+ * @property string      $total_seen_form
+ * @property string      $percentage_seen_form
  */
 class SelfEnrollmentMetrics extends SqlViewModel
 {
-    protected $table = 'self_enrollment_metrics_view';
+    protected $primaryKey = 'batch_id';
+    protected $table      = 'self_enrollment_metrics_view';
 }

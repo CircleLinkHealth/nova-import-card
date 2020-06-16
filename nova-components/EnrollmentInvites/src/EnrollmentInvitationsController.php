@@ -15,7 +15,6 @@ class EnrollmentInvitationsController
     public function handle(NovaRequest $novaRequest)
     {
         $this->validation($novaRequest);
-
         if (boolval($novaRequest->input('is_patient'))) {
             InviteUnreachablePatients::dispatch(
                 (int) $novaRequest->input('practice_id'),

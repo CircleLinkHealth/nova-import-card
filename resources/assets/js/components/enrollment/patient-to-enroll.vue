@@ -293,6 +293,12 @@
                         Note: {{ utc_note }}
                         </span>
                     </blockquote>
+                    <blockquote v-if="is_callback">
+                        <span>
+                        <strong>Callback</strong> and <strong>Message</strong>: {{ callback_message }}
+                        </span>
+                        <br/>
+                    </blockquote>
 
                     <div class="enrollment-script font-size-20">
                         <p v-html="care_ambassador_script"></p>
@@ -716,6 +722,7 @@
 
     import {Logger} from '../../logger-logdna';
     import Loader from '../loader.vue';
+    import moment from 'moment';
 
     const userId = window.userId;
     const userFullName = window.userFullName;
@@ -733,6 +740,24 @@
             'call-numpad': CallNumpad,
         },
         computed: {
+            is_callback: function(){
+                //if it's callback for today, so we know to show message
+                return moment().format('YYYY-MM-DD') === this.requested_callback;
+            },
+            callback_message: function (){
+                //fetch message for top of script
+                //primarily we need the note that the admin left
+                if (this.callback_note && this.callback_note.length > 0){
+                    return this.callback_note;
+                }
+
+                //if it does not exist check if the user actually requested callback
+                if (this.last_call_outcome === 'requested callback'){
+                    return 'Patient requested to be called today during their last call.'
+                }
+
+                return 'N/A';
+            },
             timeTrackerTime: function () {
                 if (!this.timeTracker || !this.timeTracker.formattedTime) {
                     return 'Loading...';
@@ -1011,6 +1036,8 @@
                 last_encounter: null,
                 attempt_count: null,
                 last_attempt_at: null,
+                callback_note: '',
+                requested_callback: '',
 
                 //twilio
                 device: null,
