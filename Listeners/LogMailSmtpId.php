@@ -8,11 +8,10 @@ namespace CircleLinkHealth\Core\Listeners;
 
 use CircleLinkHealth\Core\Jobs\NotificationStatusUpdateJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Mail\Events\MessageSent;
+use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Log;
 
-class LogSentMailNotification implements ShouldQueue
+class LogMailSmtpId implements ShouldQueue
 {
     use InteractsWithQueue;
 
@@ -26,24 +25,17 @@ class LogSentMailNotification implements ShouldQueue
     /**
      * Handle the event.
      */
-    public function handle(MessageSent $event)
-    {
-        if ( ! isset($event->data['__laravel_notification_id'])) {
-            Log::warning('could not find notification id in MessageSent event');
-
-            return;
-        }
-
-        $this->defaultHandler($event);
-    }
-
-    private function defaultHandler(MessageSent $event)
+    public function handle(MessageSending $event)
     {
         $props = [
-            'value'   => 'sent',
+            'value'   => 'sending',
             'details' => now()->toDateTimeString(),
         ];
-    
+
+        if ($event->message) {
+            $props['smtp_id'] = $event->message->getId();
+        }
+
         NotificationStatusUpdateJob::dispatch(
             $event->data['__laravel_notification_id'],
             'mail',

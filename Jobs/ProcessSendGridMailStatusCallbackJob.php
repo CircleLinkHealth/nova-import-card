@@ -45,10 +45,6 @@ class ProcessSendGridMailStatusCallbackJob implements ShouldQueue
     public function handle()
     {
         foreach ($this->input as $event) {
-            if ('pagcosma@gmail.com' !== $event['email']) {
-                continue;
-            }
-
             if (isset($event['smtp-id'])) {
                 $smtpId = $event['smtp-id'];
                 if (Str::startsWith($smtpId, ['<'])) {

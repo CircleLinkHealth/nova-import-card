@@ -111,9 +111,13 @@ class NotificationStatusUpdateJob implements ShouldQueue
         }
 
         if ('mail' === $this->channel) {
-            //for mail, we set 'sent' on MessageSent event (could be after the status callback from SendGrid)
-            //so we will only accept 'sent' if current status is processed
-            return 'pending' === $newStatus || ('sent' === $newStatus && 'processed' !== $currentStatus);
+            if ('sending' === $currentStatus && 'pending' === $newStatus) {
+                return true;
+            }
+
+            if ('sent' === $currentStatus && ('pending' === $newStatus || 'sending' === $newStatus)) {
+                return true;
+            }
         }
 
         return 'pending' === $newStatus;
