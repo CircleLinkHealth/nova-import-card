@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Customer\Entities;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Traits\HasChargeableServices;
+use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Support\Collection;
@@ -252,8 +253,26 @@ class PatientMonthlySummary extends BaseModel
 
             //AUTO ATTACH PCM SECTION
             $practicePcmCode = $practiceCodes->where('code', ChargeableService::PCM)->first();
-            //check specifically for 1 problem, otherwise 2+ problems would mean CCM
-            $pcmEligible = 1 === $patientCcmProblemsCount;
+
+            $icd10Codes = $patientProblems->map(function (Problem $p) {
+                return $p->icd10Code();
+            })->filter()->toArray();
+
+            $cpmProblemNames = $patientProblems->pluck('cpmProblem.name')->filter()->toArray();
+
+            $pcmEligible = PcmProblem::where('practice_id', $practice->id)
+                ->where(
+                    function ($q) use ($cpmProblemNames, $icd10Codes) {
+                        $q->whereIn(
+                            'code',
+                            $icd10Codes
+                        )->orWhereIn(
+                            'description',
+                            $cpmProblemNames
+                        );
+                    }
+                )->exists();
+
             if ($practicePcmCode && $pcmEligible) {
                 $this->chargeableServices()->attach($practicePcmCode->id, ['is_fulfilled' => false]);
             }
