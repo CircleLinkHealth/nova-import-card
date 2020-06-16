@@ -108,7 +108,7 @@ class SelfEnrollmentMetricsResource extends Resource
             (new EnrollmentInvites())->withMeta(
                 [
                     'is_redirect' => true,
-                    'redirect_to' => (URL::to(self::AUTO_ENROLLMENT_INVITATIONS_PANEL)),
+                    'redirect_to' => URL::to(self::AUTO_ENROLLMENT_INVITATIONS_PANEL),
                 ]
             ),
         ];
