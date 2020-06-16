@@ -76,7 +76,7 @@ class CareAmbassadorPanelAPITest extends TestCase
     public function test_ca_director_query_enrollables_fetches_suggestions()
     {
         //using id
-        $data = $this->actingAs($this->admin)->get(route('enrollables.ca-director.query', [
+        $data = $this->actingAs($this->admin)->get(route('enrollables.ca-director.search', [
             'enrollables' => (string) $this->enrollee->id,
         ]))->assertOk()
             ->getOriginalContent();
@@ -84,7 +84,7 @@ class CareAmbassadorPanelAPITest extends TestCase
         $this->assertTrue(collect($data)->contains('id', $this->enrollee->id));
 
         //using first name
-        $data = $this->actingAs($this->admin)->get(route('enrollables.ca-director.query', [
+        $data = $this->actingAs($this->admin)->get(route('enrollables.ca-director.search', [
             'enrollables' => $this->enrollee->first_name,
         ]))->assertOk()
             ->getOriginalContent();
@@ -92,7 +92,7 @@ class CareAmbassadorPanelAPITest extends TestCase
         $this->assertTrue(collect($data)->contains('id', $this->enrollee->id));
 
         //using last name
-        $data = $this->actingAs($this->admin)->get(route('enrollables.ca-director.query', [
+        $data = $this->actingAs($this->admin)->get(route('enrollables.ca-director.search', [
             'enrollables' => $this->enrollee->last_name,
         ]))->assertOk()
             ->getOriginalContent();

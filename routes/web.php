@@ -1187,9 +1187,9 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'ca-director.index',
             ]);
 
-            Route::get('queryEnrollable', [
-                'uses' => 'EnrollmentDirectorController@queryEnrollables',
-                'as'   => 'enrollables.ca-director.query',
+            Route::get('searchEnrollables', [
+                'uses' => 'EnrollmentDirectorController@searchEnrollables',
+                'as'   => 'enrollables.ca-director.search',
             ]);
 
             Route::get('/enrollees', [

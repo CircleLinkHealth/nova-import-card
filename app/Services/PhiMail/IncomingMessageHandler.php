@@ -23,7 +23,7 @@ use Illuminate\Support\Str;
  */
 class IncomingMessageHandler
 {
-    const KEYWORD_TO_PROCESS_FOR_ELIGIBILITY = '#eligibility';
+    const KEYWORD_TO_PROCESS_FOR_ELIGIBILITY = 'eligibility';
 
     /**
      * Creates a new Direct Message.
@@ -64,6 +64,8 @@ class IncomingMessageHandler
                         new DecorateUPG0506CcdaWithPdfData($ccda),
                     ]
                 )->dispatch($ccda)->onQueue('low');
+
+                return;
             }
 
             $practice = null;
