@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Imports\ToledoPracticeProviders\RenameProvidersSignaturesPaths;
+use App\Imports\ToledoPracticeProviders\UpdateProvidersFromExcel;
 use Illuminate\Console\Command;
 
 class UpdateToledoProviderFromExcelCommand extends Command
@@ -41,6 +41,6 @@ class UpdateToledoProviderFromExcelCommand extends Command
      */
     public function handle()
     {
-        \Excel::import(new RenameProvidersSignaturesPaths(), 'storage/toledo-provider-signatures/pcp_signature_file_for_clh.xlsx');
+        \Excel::import(new UpdateProvidersFromExcel(), 'storage/toledo-provider-signatures/pcp_signature_file_for_clh.xlsx');
     }
 }

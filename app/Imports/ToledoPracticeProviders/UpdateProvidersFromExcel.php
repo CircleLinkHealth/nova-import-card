@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 
-class RenameProvidersSignaturesPaths implements ToCollection, WithStartRow
+class UpdateProvidersFromExcel implements ToCollection, WithStartRow
 {
     const PUBLIC_PATH = '/img/signatures/Toledo Clinic';
 
