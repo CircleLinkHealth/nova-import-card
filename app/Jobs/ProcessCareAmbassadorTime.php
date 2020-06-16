@@ -7,10 +7,8 @@
 namespace App\Jobs;
 
 use App\CareAmbassadorLog;
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -63,12 +61,7 @@ class ProcessCareAmbassadorTime implements ShouldQueue
         }
 
         $report                       = CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id);
-        $report->total_time_in_system = PageTimer::where('provider_id', '=', $user->id)
-            ->where('start_time', '>=', Carbon::now()->startOfDay())
-            ->where('start_time', '<', Carbon::now()->endOfDay())
-            ->where('end_time', '>', Carbon::now()->startOfDay())
-            ->where('end_time', '<=', Carbon::now()->endOfDay())
-            ->sum('duration');
+        $report->total_time_in_system = $this->activity['duration'];
         $report->save();
     }
 }
