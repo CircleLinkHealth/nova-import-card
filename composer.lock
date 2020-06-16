@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "70f4e9e323f5cfe5f9663567cd609c6f",
+    "content-hash": "00dc4d9200ac3491f87571253f4227b1",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1527,11 +1527,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v1.1.9",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "a1f98b8911f927e8ac490951c23f9c15c42b0a85"
+                "reference": "4ab4cb491a97dd0c7ab44e30b44ec1593396dbb2"
             },
             "type": "laravel-module",
             "extra": {
@@ -1556,7 +1556,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-12T13:17:56+00:00"
+            "time": "2020-06-16T22:47:36+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
@@ -15711,6 +15711,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/sqlviews-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "laravel/scout": 20,
         "orangehill/iseed": 20
