@@ -3,7 +3,7 @@
         <div class="px-3 py-3">
             <h4 class="text-left text-3xl text-80 font-light">{{this.title()}}</h4>
             <div class="py-2">
-                    <span v-if="! this.card.is_redirect"  class="flex">
+                    <span v-if="! this.card.use_redirect_button"  class="flex">
                        <label for="amount">
                            Input number of patients to <br> send enrollment sms/emails to:
                        </label>
@@ -24,7 +24,7 @@
                 </div>
             </div>
 
-          <div v-if="! this.card.is_redirect" class="invite-buttons">
+          <div v-if="! this.card.use_redirect_button" class="invite-buttons">
               <div v-if="! this.card.is_patient" class="button">
                   <a class="btn btn-default btn-primary ml-auto mt-auto"
                      :disabled="sendingInvites"
@@ -86,11 +86,11 @@ export default {
         redirectToInvitesDashboard(){
             // tried to redirect using Action::push() or simple redirect in controller, but it doesnt work, no errors / feedback.
             // Keeping this solution temporarily
-            window.location.href = this.card.redirect_to
+            window.location.href = this.card.redirect_url
         },
 
         title(){
-          return this.card.is_redirect ? "Select Practice For Invites" : "Enrollment Invites";
+          return this.card.use_redirect_button ? "Select Practice For Invites" : "Enrollment Invites";
         },
 
         sendInvites(color, amount){
