@@ -6,11 +6,9 @@
 
 namespace App\Imports\ToledoPracticeProviders;
 
-use App\ProviderSignature;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToCollection;
 
 class ProvidersImport implements ToCollection
@@ -24,41 +22,19 @@ class ProvidersImport implements ToCollection
         $excelData = $this->excelProvidersData($rows);
         $users     = [];
 
-        $signaturePicsPaths = $this->getSignaturesPicsPathData();
+        $signaturePicsPaths = $this->getSignaturesPicsPathDataFromPublic();
         foreach ($excelData  as $data) {
             /** @var User $user */
             $user = $this->getUserProvider($data, $practice);
             if ( ! is_null($user)) {
-                $users[] = $user;
-                $this->updateProviderNpiNumber($user, $data['npi_number']);
-                foreach ($signaturePicsPaths as $path) {
-                    if ($path['npiNumberFromPath'] === $user->npi_number) {
-                        $userId      = $user->id;
-                        $type        = ProviderSignature::SIGNATURE_PIC_TYPE;
-                        $publicPath  = public_path(self::PUBLIC_PATH);
-                        $newPathName = "$userId$type";
-
-                        return \File::move("$publicPath/$path", "$publicPath/$newPathName");
-                    }
+                if (empty($user->providerInfo->npi_number)) {
+                    $user->providerInfo->update([
+                        'npi_number' => $data['npi_number'],
+                    ]);
                 }
-            } else {
-                Log::critical('ssdfsdfs');
+//                return;
             }
         }
-
-//        $user = $users->each(function ($user) use ($npiNumberFromPath) {
-//            return $user->providerInfo->where('npi_number', $npiNumberFromPath);
-//        })->first();
-//
-//        if ( ! is_null($user)) {
-//            $userId      = $user->id;
-//            $type        = ProviderSignature::SIGNATURE_PIC_TYPE;
-//            $publicPath  = public_path(self::PUBLIC_PATH);
-//            $newPathName = "$userId$type";
-//            \File::move("$publicPath/$signaturePicPath", "$publicPath/$newPathName");
-//        }
-
-        $x = 1;
     }
 
     /**
@@ -68,14 +44,15 @@ class ProvidersImport implements ToCollection
     {
         return $rows->map(function ($row) {
             return [
-                'email'      => $row[3],
-                'location'   => $row[4],
-                'npi_number' => $row[5],
+                'npi_number'      => $row[0],
+                'email'           => $row[4],
+                'location'        => $row[5],
+                'npi_cross_check' => $row[6],
             ];
         });
     }
 
-    private function getSignaturesPicsPathData()
+    private function getSignaturesPicsPathDataFromPublic()
     {
         $toledoSignatures = \File::allFiles(public_path(self::PUBLIC_PATH));
 
@@ -100,12 +77,5 @@ class ProvidersImport implements ToCollection
             ->where('email', $data['email'])
             ->whereHas('providerInfo')
             ->first();
-    }
-
-    private function updateProviderNpiNumber(User $user, $npiNumber)
-    {
-        $user->providerInfo->update([
-            'npi_number' => $npiNumber,
-        ]);
     }
 }
