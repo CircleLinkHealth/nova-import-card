@@ -204,7 +204,7 @@
                 this.loading = false
             },
             getList(inputValue) {
-                let url = rootUrl('admin/ca-director/queryEnrollable') + `?enrollables=${inputValue}`
+                let url = rootUrl('admin/ca-director/searchEnrollables') + `?enrollables=${inputValue}`
                 this.$refs.suggestComponent.clearSuggestions()
                 return this.axios.get(url).then(response => {
                     if (response.status !== 200) {
@@ -295,7 +295,7 @@
 
     .modal-assign-callback .modal-container {
         width: 80%;
-        height: 40%;
+        height: 50%;
     }
 
     span.required {
