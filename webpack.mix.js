@@ -50,10 +50,8 @@ mix.webpackConfig(webpackConfig);
  * CSS
  *
  */
-mix.sass('resources/assets/sass/css/provider/dashboard.scss', 'public/compiled/css/provider-dashboard.css');
-
 mix.combine([
-    'public/compiled/css/provider-dashboard.css',
+    'resources/assets/sass/css/provider/dashboard.css',
 ], 'public/compiled/css/provider-dashboard.css');
 
 
@@ -100,8 +98,7 @@ const walkSync = function (dir, fileList) {
     files.forEach(function (file) {
         if (fs.statSync(path.join(dir, file)).isDirectory()) {
             fileList = walkSync(path.join(dir, file), fileList);
-        }
-        else {
+        } else {
             fileList.push(path.join(dir, file));
         }
     });
