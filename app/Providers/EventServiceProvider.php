@@ -9,11 +9,13 @@ namespace App\Providers;
 use App\Events\SurveyInstancePivotSaved;
 use App\Listeners\GeneratePatientReports;
 use CircleLinkHealth\Core\Listeners\LogFailedNotification;
+use CircleLinkHealth\Core\Listeners\LogMailSmtpId;
 use CircleLinkHealth\Core\Listeners\LogSentMailNotification;
 use CircleLinkHealth\Core\Listeners\LogSentNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Notifications\Events\NotificationSent;
@@ -31,6 +33,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         SurveyInstancePivotSaved::class => [
             GeneratePatientReports::class,
+        ],
+        MessageSending::class => [
+            LogMailSmtpId::class,
         ],
         MessageSent::class => [
             LogSentMailNotification::class,
