@@ -38,6 +38,7 @@ use App\Listeners\UPG0506Handler;
 use App\Listeners\UserLoggedOut;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Core\Listeners\LogFailedNotification;
+use CircleLinkHealth\Core\Listeners\LogMailSmtpId;
 use CircleLinkHealth\Core\Listeners\LogSentMailNotification;
 use CircleLinkHealth\Core\Listeners\LogSentNotification;
 use CircleLinkHealth\Customer\Events\PatientContactWindowUpdatedEvent;
@@ -73,6 +74,7 @@ class CpmEventServiceProvider extends ServiceProvider
             LogSuccessfulLogout::class,
         ],
         MessageSending::class => [
+            LogMailSmtpId::class, //this needs to be first
             CheckBeforeSendMessageListener::class,
         ],
         NoteFinalSaved::class => [
