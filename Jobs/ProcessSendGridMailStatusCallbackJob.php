@@ -67,7 +67,7 @@ class ProcessSendGridMailStatusCallbackJob implements ShouldQueue
                         'email'         => $event['email'],
                     ],
                 );
-            } else {
+            } elseif (isset($event['sg_message_id'])) {
                 //ENGAGEMENT DATA has sg_message_id
                 SendGridNotificationStatusUpdateJob::dispatch(
                     $event['sg_message_id'],
@@ -78,6 +78,9 @@ class ProcessSendGridMailStatusCallbackJob implements ShouldQueue
                         'email'   => $event['email'],
                     ],
                 );
+            } else {
+                $ev = json_encode($event);
+                Log::debug("could not process sendgrid event: $ev");
             }
         }
     }
@@ -86,9 +89,9 @@ class ProcessSendGridMailStatusCallbackJob implements ShouldQueue
     {
         try {
             SendGridRawLog::create([
-                'events' => $this->input,
+                'events' => json_encode($this->input),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::warning($e->getMessage());
         }
     }
