@@ -8,7 +8,7 @@ namespace Tests\Feature;
 
 use App\Http\Controllers\NotesController;
 use App\Note;
-use Illuminate\Foundation\Testing\TestResponse;
+use Illuminate\Testing\TestResponse;
 use Tests\CustomerTestCase;
 use Tests\Helpers\MakesSafeRequests;
 
