@@ -9,6 +9,7 @@ const createActivity = (info) => {
         name: info.activity || 'unknown',
         title: info.title || 'unknown',
         enrolleeId: info.enrolleeId,
+        forceSkip: !!info.forceSkip,
         duration: 0,
         url: info.urlFull,
         url_short: info.urlShort,
