@@ -193,7 +193,24 @@ END ASC, attempt_count ASC");
         return response()->json([], 200);
     }
 
-    public function queryEnrollables(Request $request)
+    public function runCreateEnrolleesSeeder(Request $request)
+    {
+        if ($request->input('erase')) {
+            Artisan::call('enrollees:erase-test');
+            $message = 'Queued job to erase all demo patients. CareAmbassador Logs related to these patients will be reset. This may take a minute. Please refresh the page.';
+        } else {
+            Artisan::call('db:seed', ['--class' => 'EnrolleesSeeder']);
+            $message = 'Created 10 Demo Patients. Please refresh the page.';
+        }
+
+        if ($request->input('redirect')) {
+            return redirect()->back()->withErrors(['messages' => [$message]]);
+        }
+
+        return 'Test Patients have been created. Please close this window.';
+    }
+
+    public function searchEnrollables(Request $request)
     {
         $input = $request->input();
 
@@ -213,42 +230,26 @@ END ASC, attempt_count ASC");
             });
         }
 
-        $results     = $query->get();
         $enrollables = [];
-        foreach ($results as $e) {
-            $phonesString = "{$e->home_phone}, {$e->cell_phone}, {$e->other_phone}";
+        $query->chunk(100, function ($enrollees) use (&$enrollables) {
+            foreach ($enrollees as $e) {
+                $phonesString = "{$e->home_phone}, {$e->cell_phone}, {$e->other_phone}";
 
-            $item = [
-                'id'       => $e->id,
-                'name'     => $e->first_name.' '.$e->last_name,
-                'mrn'      => $e->mrn,
-                'program'  => optional($e->practice)->display_name ?? '',
-                'provider' => optional($e->provider)->getFullName() ?? '',
-            ];
+                $item = [
+                    'id'       => $e->id,
+                    'name'     => $e->first_name.' '.$e->last_name,
+                    'mrn'      => $e->mrn,
+                    'program'  => optional($e->practice)->display_name ?? '',
+                    'provider' => optional($e->provider)->getFullName() ?? '',
+                ];
 
-            $item['hint'] = "{$item['name']} ({$item['id']}) PROVIDER: [{$item['provider']}] [{$item['program']}]  {$phonesString}";
+                $item['hint'] = "{$item['name']} ({$item['id']}) PROVIDER: [{$item['provider']}] [{$item['program']}]  {$phonesString}";
 
-            $enrollables[] = $item;
-        }
+                $enrollables[] = $item;
+            }
+        });
 
         return response()->json($enrollables);
-    }
-
-    public function runCreateEnrolleesSeeder(Request $request)
-    {
-        if ($request->input('erase')) {
-            Artisan::call('enrollees:erase-test');
-            $message = 'Queued job to erase all demo patients. CareAmbassador Logs related to these patients will be reset. This may take a minute. Please refresh the page.';
-        } else {
-            Artisan::call('db:seed', ['--class' => 'EnrolleesSeeder']);
-            $message = 'Created 10 Demo Patients. Please refresh the page.';
-        }
-
-        if ($request->input('redirect')) {
-            return redirect()->back()->withErrors(['messages' => [$message]]);
-        }
-
-        return 'Test Patients have been created. Please close this window.';
     }
 
     public function unassignCareAmbassadorFromEnrollees(UpdateMultipleEnrollees $request)
