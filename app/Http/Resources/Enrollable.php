@@ -12,7 +12,7 @@ use Carbon\CarbonTimeZone;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Log;
 
 class Enrollable extends JsonResource

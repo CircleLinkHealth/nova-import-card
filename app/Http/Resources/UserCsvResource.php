@@ -8,7 +8,7 @@ namespace App\Http\Resources;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserCsvResource extends JsonResource
 {
