@@ -39,10 +39,18 @@ use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
  * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereType($value)
  * @method   static                                        \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereUpdatedAt($value)
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification liveNotification()
- * @method static \Illuminate\Notifications\DatabaseNotificationCollection|static[] all($columns = ['*'])
- * @method static \Illuminate\Notifications\DatabaseNotificationCollection|static[] get($columns = ['*'])
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification selfEnrollmentInvites()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification liveNotification()
+ * @method   static      \Illuminate\Notifications\DatabaseNotificationCollection|static[] all($columns = ['*'])
+ * @method   static      \Illuminate\Notifications\DatabaseNotificationCollection|static[] get($columns = ['*'])
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification selfEnrollmentInvites()
+ * @property string|null $mail_smtp_id
+ * @property string|null $mail_sg_message_id
+ * @property string|null $mail_status
+ * @property string|null $mail_details
+ * @property string|null $twilio_sid
+ * @property string|null $twilio_account_sid
+ * @property string|null $twilio_status
+ * @property string|null $twilio_details
  */
 class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotification
 {
