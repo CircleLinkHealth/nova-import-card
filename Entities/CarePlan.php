@@ -19,7 +19,7 @@ use App\Rules\HasEnoughProblems;
 use App\Services\Calls\SchedulerService;
 use App\Services\CareplanService;
 use CircleLinkHealth\Core\Entities\BaseModel;
-use CircleLinkHealth\Core\PdfService;
+use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
