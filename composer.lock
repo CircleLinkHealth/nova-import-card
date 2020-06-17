@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6d5b90876fac9421834711f457e19bea",
+    "content-hash": "515c162f0a20e8a5166279ebd3fe212f",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -626,11 +626,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.6.1",
+            "version": "v1.6.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "df8b92d240f3bc4be5df038cd1b740a31b8d0b39"
+                "reference": "36713c0e2800cba67286294e80a4f0ef476c9e3e"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -659,7 +659,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-17T09:15:39+00:00"
+            "time": "2020-06-17T12:17:44+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",

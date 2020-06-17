@@ -133,7 +133,7 @@
         "appstract/laravel-opcache": "^3.2.1",
         "barryvdh/laravel-snappy": "0.4.7",
         "circlelinkhealth/cerberus-gatekeeper-module": "3.1.4",
-        "circlelinkhealth/core-module": "1.6.1",
+        "circlelinkhealth/core-module": "1.6.2",
         "circlelinkhealth/cpm-migrations-module": "2.0.5",
         "circlelinkhealth/customer-module": "2.4.4",
         "circlelinkhealth/eligibility-module": "2.9.7",
