@@ -27,6 +27,10 @@ class LogMailSmtpId implements ShouldQueue
      */
     public function handle(MessageSending $event)
     {
+        if ( ! isset($event->data['__laravel_notification_id'])) {
+            return;
+        }
+
         $props = [
             'value'   => 'sending',
             'details' => now()->toDateTimeString(),
