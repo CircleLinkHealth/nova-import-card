@@ -13,5 +13,5 @@ interface Pdfable
      *
      * @param mixed|null $scale
      */
-    public function toPdf($scale = null): string;
+    public function toPdf($scale = null): ?string;
 }

@@ -6,7 +6,7 @@
 
 namespace Tests\Concerns\TwilioFake;
 
-use App\Contracts\TwilioInterface;
+use CircleLinkHealth\Core\TwilioInterface;
 use Illuminate\Support\Facades\Facade;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\ConsoleOutput;

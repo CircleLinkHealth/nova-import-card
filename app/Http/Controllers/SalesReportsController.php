@@ -12,7 +12,7 @@ use App\Reports\Sales\Practice\SalesByPracticeReport;
 use App\Reports\Sales\Provider\SalesByProviderReport;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\PdfService;
+use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;

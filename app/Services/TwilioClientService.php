@@ -6,7 +6,7 @@
 
 namespace App\Services;
 
-use App\Contracts\Services\TwilioClientable;
+use CircleLinkHealth\Core\TwilioClientable;
 use Twilio\Jwt\ClientToken;
 use Twilio\Rest\Client;
 
