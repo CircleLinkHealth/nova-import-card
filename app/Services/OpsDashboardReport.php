@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\DB;
 
 class OpsDashboardReport
 {
+    const DEFAULT_TIME_GOAL = '35';
+
     const FIFTEEN_MINUTES = 900;
 
     const FIVE_MINUTES = 300;
@@ -110,10 +112,6 @@ class OpsDashboardReport
     ];
 
     /**
-     * @var
-     */
-    protected $timeGoal;
-    /**
      * @var array
      */
     protected $unreachablePatients = [];
@@ -156,12 +154,10 @@ class OpsDashboardReport
      *
      * @return float|int
      */
-    public function calculateHoursBehind(Carbon $date, int $totalNumberOfEnrolledPatients, int $totalPatientCcmTime)
+    public static function calculateHoursBehind(Carbon $date, int $totalNumberOfEnrolledPatients, int $totalPatientCcmTime)
     {
-        $this->setTimeGoal();
-
         $totActPt                = $totalNumberOfEnrolledPatients;
-        $targetMinutesPerPatient = floatval($this->timeGoal);
+        $targetMinutesPerPatient = floatval(self::getTimeGoal());
 
         $startOfMonth       = $date->copy()->startOfMonth();
         $endOfMonth         = $date->copy()->endOfMonth();
@@ -214,15 +210,13 @@ class OpsDashboardReport
     /**
      * @return bool
      */
-    public function setTimeGoal()
+    public static function getTimeGoal()
     {
         $timeGoal = DB::table('report_settings')->where('name', 'time_goal_per_billable_patient')->first();
 
-        $this->timeGoal = $timeGoal
+        return $timeGoal
             ? $timeGoal->value
             : '35';
-
-        return true;
     }
 
     /**

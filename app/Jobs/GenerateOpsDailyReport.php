@@ -103,7 +103,7 @@ class GenerateOpsDailyReport implements ShouldQueue
      *
      * @throws \Exception
      */
-    public function handle(OpsDashboardReport $opsDashboardService)
+    public function handle()
     {
         ini_set('memory_limit', self::MEMORY_LIMIT);
         ini_set('max_input_time', $this->timeout);
@@ -152,7 +152,7 @@ class GenerateOpsDailyReport implements ShouldQueue
             return $report->data['total_ccm_time'];
         });
 
-        $hoursBehind = $opsDashboardService->calculateHoursBehind($this->date, $totalEnrolledPatientsCount, $totalPatientCcmTime);
+        $hoursBehind = OpsDashboardReport::calculateHoursBehind($this->date, $totalEnrolledPatientsCount, $totalPatientCcmTime);
 
         foreach ($reports as $report) {
             $row = $report->data;
