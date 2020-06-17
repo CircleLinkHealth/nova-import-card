@@ -71,6 +71,8 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioCall whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property-read int|null $revision_history_count
+ * @property string|null $source
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioCall whereSource($value)
  */
 class TwilioCall extends BaseModel
 {
@@ -98,6 +100,7 @@ class TwilioCall extends BaseModel
         'in_conference',
         'is_unlisted_number',
         'dial_conference_duration',
+        'source'
     ];
     protected $table = 'twilio_calls';
 }

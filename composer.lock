@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "89e391dbe48da50433d8a9c9d5ee6ed6",
+    "content-hash": "d2f5054aa396c206e98c450a161fe0c6",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -362,11 +362,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.8.9",
+            "version": "dev-ROAD-176_twilio_calls_source",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "bab0cdf06e58c50ca70754994640d6f6060984d7"
+                "reference": "d7f9757795d01f5e7028bf627367a147a67549aa"
             },
             "type": "laravel-module",
             "extra": {
@@ -388,7 +388,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-05-25T18:42:04+00:00"
+            "time": "2020-06-17T16:47:30+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -9161,7 +9161,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "circlelinkhealth/cpm-migrations-module": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
