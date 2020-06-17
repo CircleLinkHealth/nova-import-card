@@ -11,11 +11,11 @@ use Symfony\Component\Process\Process;
 trait RunsConsoleCommands
 {
     /**
+     * @param  mixed|null $timeout
      * @throws \Exception
-     *
      * @return Process
      */
-    public function runCpmCommand(array $command, bool $echoOutput = true)
+    public function runCpmCommand(array $command, bool $echoOutput = true, int $timeoutSeconds = null)
     {
         $process = new Process($command);
 
@@ -26,6 +26,10 @@ trait RunsConsoleCommands
         }
 
         echo PHP_EOL;
+
+        if ($timeoutSeconds) {
+            $process->setTimeout($timeoutSeconds);
+        }
 
         $process->run();
 

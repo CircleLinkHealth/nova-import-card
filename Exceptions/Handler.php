@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Core\Exceptions;
 
+use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException as ModelNotFoundException;
@@ -15,7 +16,6 @@ use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -38,7 +38,6 @@ class Handler extends ExceptionHandler
         AuthenticationException::class,
         AuthorizationException::class,
         HttpException::class,
-        ModelNotFoundException::class,
         TokenMismatchException::class,
         ValidationException::class,
     ];
@@ -63,7 +62,7 @@ class Handler extends ExceptionHandler
      */
     public function render(
         $request,
-        Throwable $e
+        Exception $e
     ) {
         if ($e instanceof ModelNotFoundException) {
             return response($e->getMessage(), 400);
@@ -82,7 +81,7 @@ class Handler extends ExceptionHandler
      *
      * @return mixed|void
      */
-    public function report(Throwable $e)
+    public function report(Exception $e)
     {
         if ( ! $this->shouldReport($e)) {
             return;

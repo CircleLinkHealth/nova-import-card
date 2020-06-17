@@ -6,6 +6,8 @@
 
 namespace CircleLinkHealth\Core\Entities;
 
+use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
+
 /**
  * CircleLinkHealth\Core\Entities\DatabaseNotification.
  *
@@ -40,9 +42,13 @@ namespace CircleLinkHealth\Core\Entities;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification liveNotification()
  * @method static \Illuminate\Notifications\DatabaseNotificationCollection|static[] all($columns = ['*'])
  * @method static \Illuminate\Notifications\DatabaseNotificationCollection|static[] get($columns = ['*'])
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification selfEnrollmentInvites()
  */
 class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotification
 {
+    protected $casts = [
+        'data' => 'array',
+    ];
     protected $dates = [
         'read_at',
     ];
@@ -90,5 +96,13 @@ class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotificatio
     {
         return $builder->where('created_at', '>=', config('live-notifications.only_show_notifications_created_after'))
             ->whereIn('type', config('live-notifications.classes'));
+    }
+
+    public function scopeSelfEnrollmentInvites($builder)
+    {
+        return $builder->where(function ($q) {
+            //legacy and new classes
+            return $q->whereIn('type', ['App\Notifications\SendEnrollementSms', 'App\Notifications\SendEnrollmentEmail', SelfEnrollmentInviteNotification::class]);
+        });
     }
 }

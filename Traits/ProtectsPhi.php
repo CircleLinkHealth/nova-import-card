@@ -27,7 +27,8 @@ trait ProtectsPhi
     {
         $user = auth()->user();
 
-        if ($user) {
+        // trait might be used with User classes that do not have the method implemented (Cpm Caller)
+        if ($user && method_exists($user, 'canSeePhi')) {
             if ( ! $user->canSeePhi()) {
                 static::retrieved(function ($model) {
                     //this protects phi from getting the model attributes from ->toArray()
@@ -49,7 +50,16 @@ trait ProtectsPhi
     {
         $value = parent::getAttribute($key);
 
-        if ('id' === $key || ($this instanceof User && ! $this->isParticipant())) {
+        if ('id' === $key) {
+            return $value;
+        }
+
+        if ( ! in_array($key, $this->phi)) {
+            return $value;
+        }
+
+        $isUser = $this instanceof User;
+        if ($isUser && ! $this->isParticipant()) {
             return $value;
         }
 

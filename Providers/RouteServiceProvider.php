@@ -25,7 +25,15 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        parent::boot();
+        $this->setRootControllerNamespace();
+
+        if ($this->routesAreCached()) {
+            //routes are all in one file
+            //we need to make sure that at least one Service Provider will
+            //load from cache (see app/Providers/RouteServiceProvider.php)
+            return;
+        }
+        $this->loadRoutes();
     }
 
     /**
