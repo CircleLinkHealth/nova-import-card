@@ -6,12 +6,14 @@
 
 namespace App\Services;
 
+use CircleLinkHealth\Core\TwilioClientable;
 use Log;
+use Symfony\Component\Intl\Exception\NotImplementedException;
 use Twilio\Exceptions\TwilioException;
 use Twilio\Jwt\ClientToken;
 use Twilio\Rest\Client;
 
-class TwilioClientService
+class TwilioClientService implements TwilioClientable
 {
     private const TOKEN_LIFETIME_SECONDS = 7200; //2 hours
 
@@ -44,6 +46,11 @@ class TwilioClientService
         );
         $this->capability->allowClientOutgoing(config('services.twilio.twiml_app_sid'));
         $this->outgoingNumber = config('services.twilio.from');
+    }
+
+    public function downloadMedia($url)
+    {
+        throw new NotImplementedException('downloadMedia not implemented. see cpm project if you need this.');
     }
 
     /**
