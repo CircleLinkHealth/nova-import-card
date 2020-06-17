@@ -6,11 +6,13 @@
 
 namespace CircleLinkHealth\Core\Jobs;
 
+use App\SendGridRawLog;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class ProcessSendGridMailStatusCallbackJob implements ShouldQueue
@@ -44,6 +46,8 @@ class ProcessSendGridMailStatusCallbackJob implements ShouldQueue
      */
     public function handle()
     {
+        $this->storeRawLogs();
+
         foreach ($this->input as $event) {
             if (isset($event['smtp-id'])) {
                 $smtpId = $event['smtp-id'];
@@ -75,6 +79,17 @@ class ProcessSendGridMailStatusCallbackJob implements ShouldQueue
                     ],
                 );
             }
+        }
+    }
+
+    private function storeRawLogs(): void
+    {
+        try {
+            SendGridRawLog::create([
+                'events' => $this->input,
+            ]);
+        } catch (\Exception $e) {
+            Log::warning($e->getMessage());
         }
     }
 }
