@@ -224,6 +224,7 @@ class OpsDashboardReport
         $this->stats['total_paused_count']      = count($this->pausedPatients);
         $this->stats['total_withdrawn_count']   = count($this->withdrawnPatients);
         $this->stats['total_unreachable_count'] = count($this->unreachablePatients);
+        //todo: add g0506
 
         //Add enrolled patient ids to stats so that they can be used the next day, to help us calculate deltas
         $this->stats['enrolled_patient_ids'] = collect($this->enrolledPatients)->pluck('id')->filter()->toArray();
@@ -250,7 +251,7 @@ class OpsDashboardReport
             }
         }
         if (Patient::UNREACHABLE == $ccmStatus) {
-            $this->unreachablePatients = $patient;
+            $this->unreachablePatients[] = $patient;
             if ($patientWasEnrolledPriorDay) {
                 ++$this->stats['Unreachable'];
             }
@@ -303,19 +304,29 @@ class OpsDashboardReport
             'report_updated_at',
             'enrolled_patient_ids',
         ], $this->priorDayReportData)) {
-            $this->stats['Added']            = $countRevisionsAdded;
-            $this->stats['Paused']           = $countRevisionsPaused;
-            $this->stats['Withdrawn']        = $countRevisionsWithdrawn;
-            $this->stats['Unreachable']      = $countRevisionsUnreachable;
-            $this->stats['Total']            = $this->stats['total_enrolled_count'];
-            $this->stats['Prior Day totals'] = $this->calculateDelta(
-                $this->stats['Total'],
+            $this->stats['Added']       = $countRevisionsAdded;
+            $this->stats['Paused']      = $countRevisionsPaused;
+            $this->stats['Withdrawn']   = $countRevisionsWithdrawn;
+            $this->stats['Unreachable'] = $countRevisionsUnreachable;
+            $this->stats['Total']       = $this->stats['total_enrolled_count'];
+            $this->stats['Delta']       = $this->calculateDelta(
+                $this->stats['Added'],
                 $this->stats['Paused'],
                 $this->stats['Withdrawn'],
                 $this->stats['Unreachable']
             );
+            $this->stats['Prior Day totals'] = $this->stats['Total'] - $this->stats['Delta'];
 
             return $this;
+        }
+
+        $this->stats['Total'] = $this->stats['total_enrolled_count'];
+        $this->stats['Delta'] = $this->calculateDelta($this->stats['Added'], $this->stats['Paused'], $this->stats['Withdrawn'], $this->stats['Unreachable']);
+
+        $this->stats['Prior Day totals'] = $this->priorDayReportData['total_enrolled_count'];
+
+        if ($this->stats['Total'] - $this->stats['Delta'] !== $this->stats['Prior Day totals']) {
+            sendSlackMessage('#ops_dashboard_alers', "<?U8B3S8UBS> Warning! DELTA for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}' does not match.");
         }
 
         //check each status and send slack message with ids if you should.
@@ -362,6 +373,7 @@ class OpsDashboardReport
 
     private function formatStats()
     {
+        //CHECK DATA INTEGRITY
         return collect($this->stats);
     }
 
@@ -378,8 +390,8 @@ class OpsDashboardReport
         $totalCcmTime = [];
 
         foreach ($this->patients as $patient) {
+            $patientWasEnrolledPriorDay = $this->patientWasEnrolledPriorDay($patient->id);
             if (Patient::ENROLLED == $patient->patientInfo->ccm_status) {
-                $patientWasEnrolledPriorDay = $this->patientWasEnrolledPriorDay($patient->id);
                 if ( ! $patientWasEnrolledPriorDay) {
                     ++$this->stats['Added'];
                 }
@@ -412,7 +424,7 @@ class OpsDashboardReport
     private function getPriorDayReportData()
     {
         $priorDayReport = OpsDashboardPracticeReport::where('practice_id', $this->practice->id)
-            ->where('date', $this->date->copy()->subDay(1))
+            ->where('date', $this->date->copy()->subDay()->toDateString())
             ->whereNotNull('data')
             ->where('is_processed', 1)
             ->first();
