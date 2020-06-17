@@ -30,20 +30,17 @@ class EditEnrolleeData extends FormRequest
     public function rules()
     {
         return [
-            'id'                  => 'required',
-            'first_name'          => 'required',
-            'last_name'           => 'required',
-            'lang'                => 'required',
-            'status'              => 'required',
-            'phones'              => ['required', new EligibilityPhones()],
-            'address'             => 'required',
-            'address_2'           => 'nullable',
-            'state'               => 'required',
-            'city'                => 'required',
-            'zip'                 => 'required',
-            'primary_insurance'   => 'required',
-            'secondary_insurance' => 'nullable',
-            'tertiary_insurance'  => 'nullable',
+            'id'         => 'required',
+            'first_name' => 'required',
+            'last_name'  => 'required',
+            'lang'       => 'required',
+            'status'     => 'required',
+            'phones'     => ['required', new EligibilityPhones()],
+            'address'    => 'required',
+            'address_2'  => 'nullable',
+            'state'      => 'required',
+            'city'       => 'required',
+            'zip'        => 'required',
         ];
     }
 }

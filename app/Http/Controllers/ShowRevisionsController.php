@@ -126,6 +126,8 @@ class ShowRevisionsController extends Controller
 
         $submitUrl = route('revisions.patient.phi', $userId);
 
+        $errors = collect();
+
         return view('admin.allActivity.index', compact([
             'errors',
             'startDate',

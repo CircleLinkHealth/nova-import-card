@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Traits\EnrollableManagement;
+use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -15,32 +15,74 @@ use Illuminate\Database\Seeder;
 
 class PrepareDataForReEnrollmentTestSeeder extends Seeder
 {
-    use EnrollableManagement;
     use SeedEligibilityJobsForEnrollees;
     use UserHelpers;
 
     const CCM_STATUS_UNREACHABLE = 'unreachable';
 
-    public function createEnrollee(Practice $practice, ?string $phoneTester = null, ?string $emailTester = null)
+    public function createEnrollee(Practice $practice, array $args = [])
     {
-        $faker = Factory::create();
-
-        $enrolleeForTesting = factory(Enrollee::class)->create([
+        $enrolleeForTesting = factory(Enrollee::class)->create(array_merge($args, [
             'practice_id'             => $practice->id,
-            'dob'                     => \Carbon\Carbon::parse('1901-01-01'),
             'referring_provider_name' => 'Dr. Demo',
-            'primary_phone'           => $phoneTester,
-            'home_phone'              => $phoneTester,
-            'email'                   => $faker->unique()->safeEmail,
-        ]);
+            'email'                   => '',
+        ]));
         $this->seedEligibilityJobs(collect([$enrolleeForTesting]), $practice);
 //                        Emulating Constantinos dashboard Importing - Mark Enrollees to invite.
         $enrolleeForTesting->update([
             'status' => Enrollee::QUEUE_AUTO_ENROLLMENT,
         ]);
-        $this->updateEnrolleeSurveyStatuses($enrolleeForTesting->id);
+        $enrolleeForTesting->status = Enrollee::QUEUE_AUTO_ENROLLMENT;
 
-        return $enrolleeForTesting;
+        return $enrolleeForTesting->fresh('user.billingProvider');
+    }
+
+    public function createSurveyConditions(int $userId, int $surveyInstanceId, int $surveyId, string $status)
+    {
+        DB::table('users_surveys')->insert(
+            [
+                'user_id'            => $userId,
+                'survey_instance_id' => $surveyInstanceId,
+                'survey_id'          => $surveyId,
+                'status'             => $status,
+                'start_date'         => Carbon::parse(now())->toDateTimeString(),
+            ]
+        );
+    }
+
+    public function createSurveyConditionsAndGetSurveyInstance(string $userId, string $status)
+    {
+        $surveyId = $this->firstOrCreateEnrollmentSurvey();
+
+        $surveyInstanceId = DB::table('survey_instances')->insertGetId([
+            'survey_id' => $surveyId,
+            'year'      => Carbon::now(),
+        ]);
+
+        self::createSurveyConditions($userId, $surveyInstanceId, $surveyId, $status);
+
+        return DB::table('survey_instances')->where('id', '=', $surveyInstanceId)->first();
+    }
+
+    public function firstOrCreateEnrollmentSurvey()
+    {
+        $surveyId = optional(DB::table('surveys')
+            ->where('name', SelfEnrollmentController::ENROLLEES_SURVEY_NAME)
+            ->first())->id;
+
+        if ( ! $surveyId) {
+            $surveyId = DB::table('surveys')
+                ->insertGetId([
+                    'name' => SelfEnrollmentController::ENROLLEES_SURVEY_NAME,
+                ]);
+        }
+
+        DB::table('survey_instances')->insertGetId([
+            'survey_id' => $surveyId,
+            'year'      => now()->year,
+        ]);
+
+        return $surveyId;
     }
 
     /**
@@ -67,10 +109,16 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             ]
         );
 
-        $n     = 1;
-        $limit = 5;
+        $n       = 1;
+        $limit   = 5;
+        $testDob = \Carbon\Carbon::parse('1901-01-01');
         while ($n <= $limit) {
-            $this->createEnrollee($practice, $phoneTester, $emailTester);
+            $this->createEnrollee($practice, [
+                'primary_phone' => $phoneTester,
+                'home_phone'    => $phoneTester,
+                'cell_phone'    => $phoneTester,
+                'dob'           => $testDob,
+            ]);
             ++$n;
         }
 

@@ -72,6 +72,7 @@ return [
         base_path().'/vendor/laravel/framework/src/Illuminate/Support/helpers.php',
         base_path().'/app/helpers.php',
         base_path().'/Modules/Core/Helpers/helpers.php',
+        base_path().'/tests/Concerns/TwilioFake/Twilio.php',
     ],
 
     /*

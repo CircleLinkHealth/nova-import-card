@@ -174,15 +174,7 @@
 
             <br/>
 
-            <div class="row" v-show="isCurrentlyOnPhone">
-                <input class="form-control" type="text" placeholder="Numeric Keypad" @focus="numpadShow"/>
-                <vue-touch-keyboard v-if="numpadVisible"
-                                    :layout="numpadCustomLayout"
-                                    :change="numpadChanged"
-                                    :cancel="numpadHide"
-                                    :accept="numpadDone"
-                                    :input="numpadInputElement"/>
-            </div>
+            <call-numpad v-if="isCurrentlyOnPhone" :on-input="numpadInput"></call-numpad>
 
         </template>
 
@@ -194,12 +186,8 @@
     import LoaderComponent from '../components/loader';
     import {registerHandler, sendRequest} from "./bc-job-manager";
     import {Logger} from '../logger-logdna';
-
-    import Twilio from 'twilio-client';
-    import VueTouchKeyboard from "vue-touch-keyboard";
-
-    require("vue-touch-keyboard/dist/vue-touch-keyboard.css");
-    window.Vue.use(VueTouchKeyboard);
+    import CallNumpad from './call-numpad';
+    import {Device} from 'twilio-client';
 
     let self;
 
@@ -209,6 +197,7 @@
         name: 'call-number',
         components: {
             loader: LoaderComponent,
+            'call-numpad': CallNumpad
         },
         props: {
             cpmToken: {
@@ -241,24 +230,6 @@
         },
         data() {
             return {
-                numpadRegex: new RegExp('[0-9]|[*]|#'),
-                numpadVisible: false,
-                numpadInputElement: null,
-                numpadCustomLayout: {
-
-                    _meta: {
-                        "backspace": {func: "backspace", classes: "control"},
-                        "accept": {func: "accept", text: "Hide", classes: "control featured"},
-                        "zero": {key: "0", width: 130}
-                    },
-
-                    default: [
-                        "1 2 3",
-                        "4 5 6",
-                        "7 8 9",
-                        "* {zero} # {backspace} {accept}"
-                    ]
-                },
                 ready: false,
                 waiting: false,
                 waitingForConference: false,
@@ -324,28 +295,11 @@
                 return rootUrl(path);
             },
 
-            numpadChanged: function (allInput, lastInput) {
-
-                if (!lastInput || lastInput.length > 1 || !this.numpadRegex.test(lastInput)) {
-                    return;
-                }
+            numpadInput: function (allInput, lastInput) {
                 if (this.connection) {
                     console.debug('Sending digits to twilio', lastInput.toString());
                     this.connection.sendDigits(lastInput.toString());
                 }
-            },
-
-            numpadDone: function (val) {
-                this.numpadHide();
-            },
-
-            numpadShow: function (e) {
-                this.numpadInputElement = e.target;
-                this.numpadVisible = true;
-            },
-
-            numpadHide: function () {
-                this.numpadVisible = false;
             },
 
             toggleMuteMessage: function (number) {
@@ -443,10 +397,8 @@
                                 self.warningEvents = Array.from(temp);
                                 Logger.warn(`WARNING-CLEARED: ${warningName}`, {meta: {'connection': 'warning-cleared'}});
                             });
-
                         }
                     }
-
 
                     EventBus.$emit('tracker:call-mode:enter');
 
@@ -748,11 +700,11 @@
                 self.axios.get(url, {withCredentials: true})
                     .then(response => {
                         self.log = 'Initializing Twilio';
-                        self.device = new Twilio.Device(response.data.token, {
+                        self.device = new Device(response.data.token, {
                             closeProtection: true, //show warning when closing the page with active call - NOT WORKING
                             debug: true,
                             warnings: true,
-                            region: 'us1' //default to US East Coast (Virginia)
+                            edge: ['ashburn', 'roaming'],
                         });
 
                         self.device.on('disconnect', () => {
@@ -954,9 +906,5 @@
 
     .error-logs {
         color: red;
-    }
-
-    .vue-touch-keyboard {
-        margin-top: 3px;
     }
 </style>

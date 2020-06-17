@@ -21,12 +21,11 @@
         ],
 
         created() {
+            self = this;
             this.getPatientCarePlan(this.patientId)
             this.apiUrl = this.axios.defaults.baseURL + '/care-plans/' + this.patientCareplanId + '/pdfs'
         },
-        mounted(){
-            self = this;
-
+        mounted() {
             App.$on('set-patient-problems', (problems) => {
                 this.patientProblemNames = problems;
             });
@@ -120,7 +119,7 @@
                         }).sort((pdfA, pdfB) => pdfB.updated_at - pdfA.updated_at)
 
                         // console.log(carePlan)
-                        
+
                         this.patientCarePlan = carePlan;
                         // console.log('patient-careplan', this.patientCarePlan)
                     }, error => {
@@ -160,7 +159,7 @@
                     this.modeBeforeUpload = this.patientCarePlan.mode
 
                     console.log('mode:before:upload', this.modeBeforeUpload)
-                    
+
                     if (this.modeBeforeUpload === 'web') {
                         location.href = rootUrl(`manage-patients/${this.patientId}/view-careplan/pdf`)
                     }
@@ -213,8 +212,8 @@
                         <object :data="pdf.url" type="application/pdf" width="100%" height="100%">
                             <iframe :src="pdf.url" width="100%" height="100%" style="border: none;">
                                 <div>
-                                    Sorry, your browser does not support PDF Embeds ... 
-                                    
+                                    Sorry, your browser does not support PDF Embeds ...
+
                                     Please update it as soon as possible, or click <a :href="pdf.url">here</a> to download the PDF
                                 </div>
                             </iframe>

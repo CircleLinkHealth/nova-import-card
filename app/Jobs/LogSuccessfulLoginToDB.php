@@ -7,14 +7,12 @@
 namespace App\Jobs;
 
 use App\LoginLogout;
-use Illuminate\Auth\Events\Login;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Http\Request;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
 class LogSuccessfulLoginToDB implements ShouldQueue
 {
@@ -22,32 +20,29 @@ class LogSuccessfulLoginToDB implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
     /**
-     * @var Login
+     * @var User
      */
-    private $event;
+    private $user;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(Login $event)
+    public function __construct(User $user)
     {
-        $this->event = $event;
+        $this->user = $user;
     }
 
     /**
      * Execute the job.
      */
-    public function handle(Request $request)
+    public function handle()
     {
-        try {
-            LoginLogout::create([
-                'user_id'    => $this->event->user->id,
-                'login_time' => now(),
-                'ip_address' => getIpAddress(),
-            ]);
-        } catch (\Exception $exception) {
-            Log::error($exception->getMessage());
-        }
+        LoginLogout::create([
+            'user_id'    => $this->user->id,
+            'login_time' => now(),
+            'ip_address' => getIpAddress(),
+        ]);
     }
 }

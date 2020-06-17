@@ -52,10 +52,14 @@ class ResetCcmTime extends Command
                 }
             });
 
-        AppConfig::updateOrCreate([
-            'config_key'   => 'add_new_patient_monthly_summary_record',
-            'config_value' => Carbon::now(),
-        ]);
+        AppConfig::updateOrCreate(
+            [
+                'config_key' => 'add_new_patient_monthly_summary_record',
+            ],
+            [
+                'config_value' => Carbon::now(),
+            ]
+        );
 
         $this->info('CCM Time reset.');
     }

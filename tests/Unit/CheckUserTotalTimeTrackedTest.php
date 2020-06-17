@@ -9,6 +9,7 @@ namespace Tests\Unit;
 use App\Traits\Tests\TimeHelpers;
 use App\Traits\Tests\UserHelpers;
 use App\UserTotalTimeChecker;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;
 
@@ -83,7 +84,8 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $nurse    = $this->createUser($practice->id, 'care-center');
 
         $twelveHoursInMinutes = 12 * 60;
-        $startTime            = now()->subDay()->endOfDay()->subHours(6);
+        Carbon::setTestNow(now()->setHour(16));
+        $startTime = now()->subDay()->endOfDay()->subHours(6);
 
         $this->addTime($nurse, null, $twelveHoursInMinutes, false, false, false, $startTime);
         $this->addTime($nurse, null, 60, false, false, false);
@@ -102,6 +104,7 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $practice = factory(Practice::class)->create();
         $nurse    = $this->createUser($practice->id, 'care-center');
 
+        Carbon::setTestNow(now()->setHour(11));
         $this->addTime($nurse, null, 120, false, false);
         $this->addTime($nurse, null, 120, false, false);
         $this->addTime($nurse, null, 120, false, false);

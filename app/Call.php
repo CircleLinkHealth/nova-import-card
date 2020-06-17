@@ -89,7 +89,8 @@ use CircleLinkHealth\SharedModels\Entities\Problem;
  *
  * @property \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection $attestedProblems
  * @property int|null                                                           $attested_problems_count
- * @method   static                                                             \Illuminate\Database\Eloquent\Builder|\App\Call unassigned()
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call unassigned()
  */
 class Call extends BaseModel implements AttachableToNotification
 {
@@ -172,7 +173,8 @@ class Call extends BaseModel implements AttachableToNotification
 
     public function attestedProblems()
     {
-        return $this->belongsToMany(Problem::class, 'call_problems', 'call_id', 'ccd_problem_id');
+        return $this->belongsToMany(Problem::class, 'call_problems', 'call_id', 'ccd_problem_id')
+            ->withTimestamps();
     }
 
     public function getIsFromCareCenterAttribute()

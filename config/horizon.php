@@ -119,7 +119,7 @@ return [
                 'queue'        => ['high', 'default', 'low'],
                 'balance'      => 'auto',
                 'minProcesses' => 1,
-                'maxProcesses' => 1,
+                'maxProcesses' => 3,
                 'tries'        => 3,
                 'timeout'      => 300,
             ],
@@ -146,7 +146,7 @@ return [
                 'timeout'      => 300,
             ],
         ],
-        'production_v3' => [
+        'production' => [
             'supervisor-1' => [
                 'connection'   => 'redis',
                 'queue'        => ['high', 'default', 'low'],
@@ -154,7 +154,7 @@ return [
                 'minProcesses' => 5,
                 'maxProcesses' => 10,
                 'tries'        => 3,
-                'timeout'      => 900,
+                'timeout'      => 420,
             ],
         ],
     ],

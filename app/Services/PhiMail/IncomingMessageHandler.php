@@ -7,7 +7,14 @@
 namespace App\Services\PhiMail;
 
 use App\DirectMailMessage;
+use App\Jobs\DecorateUPG0506CcdaWithPdfData;
+use App\Jobs\ImportCcda;
 use App\Services\PhiMail\Incoming\Factory as IncomingMessageHandlerFactory;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Jobs\CheckCcdaEnrollmentEligibility;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
+use Illuminate\Support\Str;
 
 /**
  * Handle an incoming message from EMR Direct Mail API.
@@ -16,6 +23,8 @@ use App\Services\PhiMail\Incoming\Factory as IncomingMessageHandlerFactory;
  */
 class IncomingMessageHandler
 {
+    const KEYWORD_TO_PROCESS_FOR_ELIGIBILITY = 'eligibility';
+
     /**
      * Creates a new Direct Message.
      *
@@ -42,6 +51,44 @@ class IncomingMessageHandler
     public function handleMessageAttachment(DirectMailMessage $dm, ShowResult $showRes)
     {
         return IncomingMessageHandlerFactory::create($dm, $showRes)->handle();
+    }
+
+    public function processCcdas(DirectMailMessage $dm)
+    {
+        $dm->loadMissing('ccdas.practice');
+
+        $dm->ccdas->each(function (Ccda $ccda) use ($dm) {
+            if ( ! Str::contains(strtolower($dm->body), strtolower(self::KEYWORD_TO_PROCESS_FOR_ELIGIBILITY))) {
+                ImportCcda::withChain(
+                    [
+                        new DecorateUPG0506CcdaWithPdfData($ccda),
+                    ]
+                )->dispatch($ccda)->onQueue('low');
+
+                return;
+            }
+
+            $practice = null;
+            if ($ccda->practice instanceof Practice) {
+                $practice = $ccda->practice;
+            }
+
+            if ( ! $practice && ! empty($ccda->practice_id)) {
+                $practice = Practice::find($ccda->practice_id);
+            }
+
+            if ($practice) {
+                $batch = EligibilityBatch::runningBatch($practice);
+
+                $ccda->status = Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY;
+                $ccda->batch_id = $batch->id;
+                $ccda->save();
+
+                CheckCcdaEnrollmentEligibility::dispatch($ccda, $practice, $batch);
+
+                return;
+            }
+        });
     }
 
     /**

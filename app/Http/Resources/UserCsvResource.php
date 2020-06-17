@@ -7,7 +7,8 @@
 namespace App\Http\Resources;
 
 use Carbon\Carbon;
-use Illuminate\Http\Resources\Json\JsonResource;
+use CircleLinkHealth\Customer\Entities\Patient;
+use Illuminate\Http\Resources\Json\Resource;
 
 class UserCsvResource extends JsonResource
 {
@@ -40,9 +41,16 @@ class UserCsvResource extends JsonResource
             $ccmStatusDate = $patient->date_unreachable;
         }
 
+        /** @var Patient $patientInfo */
+        $patientInfo = $this->whenLoaded('patientInfo');
+        if ( ! is_null($patientInfo) && $patientInfo->relationLoaded('location')) {
+            $locationName = $patientInfo->location->name;
+        }
+
         return ('"'.$this->display_name ?? $this->name()).'",'.
                '"'.$this->getBillingProviderName().'",'.
                '"'.optional($practice)->display_name.'",'.
+               '"'.$locationName.'",'.
                '"'.$patient->ccm_status.'",'.
                '"'.optional($careplan)->status.'",'.
                '"'.$patient->withdrawn_reason.'",'.

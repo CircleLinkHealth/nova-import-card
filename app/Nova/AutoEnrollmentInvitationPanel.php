@@ -6,7 +6,6 @@
 
 namespace App\Nova;
 
-use App\Constants;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
@@ -14,7 +13,6 @@ use Laravel\Nova\Nova;
 
 class AutoEnrollmentInvitationPanel extends Resource
 {
-    public static $group = Constants::NOVA_GROUP_ENROLLMENT;
     /**
      * The model the resource corresponds to.
      *
@@ -74,6 +72,14 @@ class AutoEnrollmentInvitationPanel extends Resource
     }
 
     /**
+     * @return bool
+     */
+    public static function availableForNavigation(Request $request)
+    {
+        return false;
+    }
+
+    /**
      * Get the cards available for the request.
      *
      * @return array
@@ -127,7 +133,7 @@ class AutoEnrollmentInvitationPanel extends Resource
      */
     public static function label()
     {
-        return 'Invitations Panel';
+        return 'Auto-Enrollment: Select Practice';
     }
 
     /**

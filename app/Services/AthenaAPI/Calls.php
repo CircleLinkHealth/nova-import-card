@@ -379,12 +379,13 @@ class Calls implements AthenaApiImplementation
      *
      * @param $practiceId
      * @param bool $showAllDepartments
+     * @param bool $providerlist
      *
      * @throws \Exception
      *
      * @return mixed
      */
-    public function getDepartments($practiceId, $showAllDepartments = true)
+    public function getDepartments($practiceId, $showAllDepartments = false, $providerlist = false)
     {
         $this->api()->setPracticeId($practiceId);
 
@@ -393,6 +394,7 @@ class Calls implements AthenaApiImplementation
             [
                 'practiceid'         => $practiceId,
                 'showalldepartments' => $showAllDepartments,
+                'providerlist'       => $providerlist,
             ]
         );
 
@@ -444,6 +446,27 @@ class Calls implements AthenaApiImplementation
     {
         $response = $this->api()->GET(
             "${practiceId}/chart/${patientId}/medicalhistory",
+            [
+                'departmentid' => $departmentId,
+                'patientid'    => $patientId,
+                'practiceid'   => $practiceId,
+            ]
+        );
+
+        return $this->response($response);
+    }
+
+    /**
+     * Get patient medications.
+     *
+     * @throws \Exception
+     *
+     * @return array|mixed
+     */
+    public function getMedications(int $patientId, int $practiceId, int $departmentId)
+    {
+        $response = $this->api()->GET(
+            "${practiceId}/chart/${patientId}/medications",
             [
                 'departmentid' => $departmentId,
                 'patientid'    => $patientId,

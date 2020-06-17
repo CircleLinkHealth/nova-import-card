@@ -56,6 +56,7 @@ class StoreTimeTracking implements ShouldQueue
      */
     public function handle()
     {
+        /** @var User $provider */
         $provider = User::with(['nurseInfo'])
             ->findOrFail($this->params->get('providerId', null));
 
@@ -78,7 +79,7 @@ class StoreTimeTracking implements ShouldQueue
                 ProcessNurseMonthlyLogs::dispatchNow($newActivity);
             }
 
-            if (isset($activity['enrolleeId'])) {
+            if ($provider->isCareAmbassador()) {
                 ProcessCareAmbassadorTime::dispatchNow($provider->id, $activity);
             }
         }

@@ -8,6 +8,7 @@ namespace Tests\Unit;
 
 use App\Call;
 use App\Repositories\PatientSummaryEloquentRepository;
+use App\Services\CCD\CcdProblemService;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
@@ -19,10 +20,10 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;
 use Illuminate\Support\Facades\Artisan;
-use Tests\DuskTestCase;
 use Tests\Helpers\CarePlanHelpers;
+use Tests\TestCase;
 
-class PatientAttestedConditionsTest extends DuskTestCase
+class PatientAttestedConditionsTest extends TestCase
 {
     use CarePlanHelpers;
     use UserHelpers;
@@ -80,6 +81,36 @@ class PatientAttestedConditionsTest extends DuskTestCase
      *
      * @return void
      */
+    public function test_api_fetches_unique_conditions_for_nurse_attestation_modal()
+    {
+        $patientProblems = $this->patient->ccdProblems()->get();
+
+        $problem = $patientProblems->first();
+
+        $ccdProblem = [
+            'name'           => 'another random ccd problem',
+            'userId'         => $this->patient->id,
+            'is_monitored'   => 1,
+            'cpm_problem_id' => null,
+            //add already attached problem icd10code to create duplicate
+            'icd10' => $problem->icd10Code(),
+        ];
+
+        (app(CcdProblemService::class))->addPatientCcdProblem($ccdProblem);
+
+        $responseData = $this->actingAs($this->nurse)->call('GET', url("/api/patients/{$this->patient->id}/problems/unique-to-attest"))
+            ->assertOk()
+            ->getOriginalContent();
+
+        //assert that duplicate will not be fetched
+        $this->assertNotEquals($responseData->count(), $this->patient->ccdProblems()->count());
+    }
+
+    /**
+     * A basic unit test example.
+     *
+     * @return void
+     */
     public function test_asserted_problems_are_attached_to_scheduled_call()
     {
         $this->actingAs($this->nurse);
@@ -96,6 +127,9 @@ class PatientAttestedConditionsTest extends DuskTestCase
 
         //check call
         $this->assertEquals($call->attestedProblems()->count(), $patientProblems->count());
+
+        //check timestamps exist
+        $this->assertNotNull($call->attestedProblems()->first()->created_at);
 
         //assert that asserted attached to calls exist on the summary
         $this->assertEquals($pms->attestedProblems()->count(), $patientProblems->count());
@@ -141,7 +175,7 @@ class PatientAttestedConditionsTest extends DuskTestCase
             ->getOriginalContent()->getData();
 
         $this->assertFalse($responseData['attestationRequirements']['disabled']);
-        $this->assertTrue($responseData['attestationRequirements']['ccm_2']);
+        $this->assertTrue($responseData['attestationRequirements']['has_ccm']);
     }
 
     public function test_attestation_validation_for_complex_ccm_and_bhi_code()
@@ -163,9 +197,46 @@ class PatientAttestedConditionsTest extends DuskTestCase
             ->getOriginalContent()->getData();
 
         $this->assertFalse($responseData['attestationRequirements']['disabled']);
-        $this->assertTrue($responseData['attestationRequirements']['bhi_1']);
-        $this->assertTrue($responseData['attestationRequirements']['ccm_2']);
-        $this->assertTrue($responseData['attestationRequirements']['is_complex']);
+        $this->assertTrue(0 === $responseData['attestationRequirements']['bhi_problems_attested']);
+        $this->assertTrue($responseData['attestationRequirements']['has_ccm']);
+        $this->assertTrue(0 === $responseData['attestationRequirements']['ccm_problems_attested']);
+    }
+
+    public function test_attestation_validation_for_complex_ccm_and_bhi_code_is_not_applicable_if_conditions_already_attested()
+    {
+        AppConfig::create([
+            'config_key'   => 'complex_attestation_requirements_for_practice',
+            'config_value' => $this->practice->id,
+        ]);
+
+        $charggeableServiceIds = ChargeableService::whereIn('code', [
+            ChargeableService::BHI,
+            ChargeableService::CCM,
+        ])->pluck('id')->toArray();
+
+        //this should work even with unfulfilled services
+        $pms = $this->setupPms($charggeableServiceIds, Carbon::now()->startOfMonth(), true);
+
+        //attest 2 ccm and 1 bhi condition
+        $problems = $this->patient->ccdProblems()->with(['cpmProblem'])->get();
+
+        $attestedProblems = $problems->where('cpmProblem.is_behavioral', true)
+            ->take(1)
+            ->merge(
+                $problems->where('cpmProblem.is_behavioral', false)->take(2)
+            )
+            ->pluck('id')
+            ->toArray();
+
+        $pms->syncAttestedProblems($attestedProblems);
+
+        $responseData = $this->actingAs($this->nurse)->call('GET', route('patient.note.create', ['patientId' => $this->patient->id]))
+            ->assertOk()
+            ->getOriginalContent()->getData();
+
+        $this->assertFalse($responseData['attestationRequirements']['disabled']);
+        $this->assertTrue(1 === $responseData['attestationRequirements']['bhi_problems_attested']);
+        $this->assertTrue(2 === $responseData['attestationRequirements']['ccm_problems_attested']);
     }
 
     public function test_complex_validation_rules_disabled_for_practice()
@@ -464,6 +535,7 @@ class PatientAttestedConditionsTest extends DuskTestCase
         foreach ($problemsForPatient as $problem) {
             $this->patient->ccdProblems()->create([
                 'name'           => $problem->name,
+                'is_monitored'   => 1,
                 'cpm_problem_id' => $problem->id,
             ]);
         }
@@ -489,7 +561,7 @@ class PatientAttestedConditionsTest extends DuskTestCase
         ]);
     }
 
-    private function setupPms(array $chargeableServiceIds, Carbon $month = null)
+    private function setupPms(array $chargeableServiceIds, Carbon $month = null, $attachAsUnfulfilled = false)
     {
         if ( ! $month) {
             $month = Carbon::now();
@@ -503,7 +575,18 @@ class PatientAttestedConditionsTest extends DuskTestCase
             'no_of_successful_calls' => 1,
         ]);
 
-        $pms->chargeableServices()->sync($chargeableServiceIds);
+        $toSync = $chargeableServiceIds;
+
+        if ($attachAsUnfulfilled) {
+            $toSync = [];
+            foreach ($chargeableServiceIds as $id) {
+                $toSync[$id] = [
+                    'is_fulfilled' => false,
+                ];
+            }
+        }
+
+        $pms->chargeableServices()->sync($toSync);
 
         return $pms;
     }

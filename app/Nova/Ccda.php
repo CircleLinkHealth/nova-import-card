@@ -8,9 +8,11 @@ namespace App\Nova;
 
 use App\CcdaView;
 use App\Constants;
-use App\Nova\Actions\ClearAndReimportCcda;
 use App\Nova\Actions\DownloadCsv;
 use App\Nova\Actions\ImportCcdaAction;
+use App\Nova\Actions\ReimportCcda;
+use App\Nova\Filters\CcdaView\ImportedCcdaViewFilter;
+use App\Nova\Filters\CcdaView\ValidationErrorsCcdaFilter;
 use App\Nova\Filters\CpmDateFilter;
 use App\Nova\Filters\PracticeFilter;
 use Illuminate\Http\Request;
@@ -70,7 +72,7 @@ class Ccda extends Resource
             })->canRun(function () {
                 return true;
             }),
-            (new ClearAndReimportCcda())->canSee(function () {
+            (new ReimportCcda())->canSee(function () {
                 return true;
             })->canRun(function () {
                 return true;
@@ -83,7 +85,7 @@ class Ccda extends Resource
                 'provider',
                 'practice_display_name',
                 'patient_user_id',
-            ])->canSee(function () {
+            ], false)->canSee(function () {
                 return true;
             })->canRun(function () {
                 return true;
@@ -168,6 +170,8 @@ class Ccda extends Resource
             new PracticeFilter(),
             (new CpmDateFilter('created_at'))->setName('Created on or after')->setOperator('>=')->setDefaultDate(now()->subWeeks(2)->toDateTimeString()),
             (new CpmDateFilter('created_at'))->setName('Created before or on')->setOperator('<=')->setDefaultDate(now()->addDay()->toDateTimeString()),
+            new ImportedCcdaViewFilter(),
+            new ValidationErrorsCcdaFilter(),
         ];
     }
 

@@ -69,9 +69,13 @@ class CareAmbassadorLog extends \CircleLinkHealth\Core\Entities\BaseModel
 //
 //    }
 
-    public static function createOrGetLogs($enroller_id)
+    public static function createOrGetLogs($enroller_id, Carbon $date = null)
     {
-        $date   = Carbon::now()->format('Y-m-d');
+        if ( ! $date) {
+            $date = Carbon::now();
+        }
+        $date = $date->format('Y-m-d');
+
         $report = self
                     ::where('enroller_id', $enroller_id)
                         ->where('day', $date)

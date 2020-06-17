@@ -6,15 +6,13 @@
 
 namespace App\Services\Enrollment;
 
-use App\Traits\EnrollableManagement;
+use App\SelfEnrollment\Helpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 
 class EnrollmentInvitationService
 {
-    use EnrollableManagement;
-
     /**
      * @param $practiceName
      * @param $practiceLetter
@@ -71,7 +69,7 @@ class EnrollmentInvitationService
             $optionalTitle,
         ];
 
-        $letter      = json_decode($practiceLetter->letter);
+        $letter      = json_decode($practiceLetter->letter) ?? [];
         $letterPages = [];
         foreach ($letter as $page) {
             $body          = $page->body;
@@ -81,6 +79,10 @@ class EnrollmentInvitationService
         return $letterPages;
     }
 
+    /**
+     * Non responsive patients were not reachable during the SelfEnrollment process.
+     * Marking them as unreachable means they will get a physical letter inviting them to enroll mailed to their address.
+     */
     public function markAsNonResponsive(Enrollee $enrollee)
     {
         $enrollee->update([
@@ -89,12 +91,13 @@ class EnrollmentInvitationService
         ]);
     }
 
-    public function putIntoCallQueue(Enrollee $enrollee)
+    public function putIntoCallQueue(Enrollee $enrollee, Carbon $earliestDayToCall)
     {
         $enrollee->update(
             [
                 'status'                    => Enrollee::TO_CALL,
                 'auto_enrollment_triggered' => true,
+                'requested_callback'        => $earliestDayToCall,
             ]
         );
     }
@@ -107,7 +110,7 @@ class EnrollmentInvitationService
     public function sendToAwv($enrollable)
     {
         try {
-            $surveyLink = $this->getSurveyInvitationLink($enrollable->patientInfo->id);
+            $surveyLink = Helpers::getSurveyInvitationLink($enrollable->patientInfo);
         } catch (\Exception $exception) {
             \Log::alert($exception);
             throw new \Exception($exception);

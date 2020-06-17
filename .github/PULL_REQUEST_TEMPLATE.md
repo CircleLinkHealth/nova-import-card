@@ -1,4 +1,4 @@
-Jira Ticket: https://circlelinkhealth.atlassian.net/browse/CPM-
+[Jira Ticket](https://circlelinkhealth.atlassian.net/browse/ROAD-)
 
 ### What is the change?
 -
@@ -10,19 +10,27 @@ Jira Ticket: https://circlelinkhealth.atlassian.net/browse/CPM-
 - [ ] Nurses (Notify Ethan well ahead of release to prepare instructions for nurses)
 - [ ] Providers (or other practice staff) (Notify Zach well ahead of release to prepare instructions for nurses)
 - [ ] CLH Admins (Notify #productchat on slack)
+- [ ] Patients
 
-### Development Milestones
-- [ ] Create migration
-- [ ] Change billing logic to not account for appointments
-- [ ] Write tests
+### Development To Do's
+- [ ] A
+- [ ] B
+- [ ] C
 
 ### Dependencies
-- Link any other PRs, module updates, env variables, seeders needed to run on prod, integrations 
+- [ ] [Link to other PR]()
+
+### Deployment Tips
+- [ ] env variable to update 
+- [ ] Seeder to run after deployment. 
 
 ### How has this been tested?
 Please describe the tests that you ran to verify your changes. Provide instructions so we can reproduce. Please also list any relevant details for your test configuration.
-- [ ] Wrote Unit tests
-- [ ] Created review app and manually tested
+- [ ] Unit tests
+- [ ] Manually
+- [ ] Review app
+- [ ] Tester QA 
+- [ ] Production
 
 ### How can other people test this?
 - Please specify here any setup configuration needed to be able to test this PR (for code reviewer to prepare on staging/production environment).

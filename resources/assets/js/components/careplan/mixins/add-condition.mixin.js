@@ -13,7 +13,6 @@ export default {
                 cpm_problem_id: null
             },
             patient_id: null,
-            cpm_problems: [],
             showNoProblemSelected: false
         }
     },
@@ -30,7 +29,7 @@ export default {
          */
         checkPatientBehavioralStatus() {
             const problems = this.problems || [];
-            const cpmProblems = this.cpm_problems || [];
+            const cpmProblems = this.getAddConditionCpmProblems() || [];
 
             const ccmCount = problems.filter(problem => {
                 if (problem.is_monitored) {
@@ -63,14 +62,15 @@ export default {
                 console.error('full-conditions:get-system-codes', err)
             })
         },
+        getAddConditionCpmProblems(){
+            if(! this.cpmProblems){
+                return this.careplan().allCpmProblems || [];
+            }else{
+                return this.cpmProblems;
+            }
+        }
     },
     mounted() {
-        if(! this.cpmProblems){
-            this.cpm_problems = this.careplan().allCpmProblems || []
-        }else{
-            this.cpm_problems = this.cpmProblems
-        }
-
         if (this.patientId){
             this.patient_id = this.patientId;
         }

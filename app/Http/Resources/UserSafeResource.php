@@ -6,9 +6,10 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
+use CircleLinkHealth\Customer\Entities\Patient;
+use Illuminate\Http\Resources\Json\Resource;
 
-class UserSafeResource extends JsonResource
+class UserSafeResource extends Resource
 {
     /**
      * Transform the resource into an array.
@@ -20,9 +21,18 @@ class UserSafeResource extends JsonResource
      */
     public function toArray($request)
     {
-        $careplan    = $this->carePlan;
-        $observation = $this->observations->first();
-        $phone       = $this->phoneNumbers->first();
+        $careplan     = $this->carePlan;
+        $observation  = $this->observations->first();
+        $phone        = $this->phoneNumbers->first();
+        $locationName = 'N/A';
+        $locationId   = null;
+
+        /** @var Patient $patientInfo */
+        $patientInfo = $this->whenLoaded('patientInfo');
+        if ( ! is_null($patientInfo) && $patientInfo->relationLoaded('location') && ! is_null($patientInfo->location)) {
+            $locationName = $patientInfo->location->name;
+            $locationId   = $patientInfo->location->id;
+        }
 
         return [
             'id'                    => $this->id,
@@ -40,6 +50,8 @@ class UserSafeResource extends JsonResource
             'provider_info'         => $this->providerInfo,
             'billing_provider_name' => $this->getBillingProviderName(),
             'billing_provider_id'   => $this->getBillingProviderId(),
+            'location_name'         => $locationName,
+            'location_id'           => $locationId,
             'careplan'              => optional($careplan)->safe(),
             'last_read'             => optional($observation)->obs_date,
             'phone'                 => $this->getPhone() ?? optional($phone)->number,

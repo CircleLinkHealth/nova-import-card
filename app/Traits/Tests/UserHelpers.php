@@ -7,7 +7,6 @@
 namespace App\Traits\Tests;
 
 use App\Call;
-use App\Repositories\PatientWriteRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\StringManipulation;
@@ -19,6 +18,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
@@ -129,6 +129,7 @@ trait UserHelpers
                     'status'                => 'draft',
                 ]
             );
+            $this->makePatientMonthlyRecord($user->patientInfo);
         }
 
         $user->load(['practices', 'patientInfo', 'carePlan']);
@@ -276,8 +277,15 @@ trait UserHelpers
         bool $variableRate = true,
         float $hourlyRate = 29.0,
         bool $enableCcmPlus = false,
-        float $visitFee = null
+        float $visitFee = null,
+        Carbon $startDate = null
     ) {
+        if ( ! $startDate) {
+            $startDate = now()->startOfDay();
+        }
+
+        $nurse->nurseInfo->start_date = $startDate;
+
         $nurse->nurseInfo->is_variable_rate = $variableRate;
         $nurse->nurseInfo->hourly_rate      = $hourlyRate;
         $nurse->nurseInfo->high_rate        = 30.00;
@@ -302,6 +310,16 @@ trait UserHelpers
                 'config_value' => $enableCcmPlus
                     ? 'true'
                     : 'false',
+            ]
+        );
+
+        //make sure this is false
+        AppConfig::updateOrCreate(
+            [
+                'config_key' => NurseCcmPlusConfig::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_ALL,
+            ],
+            [
+                'config_value' => 'false',
             ]
         );
 

@@ -10,10 +10,9 @@ use App\Console\Commands\AutoApproveValidCarePlansAs;
 use App\Contracts\ReportFormatter;
 use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
-use App\Services\CarePlanViewService;
 use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\PdfService;
+use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\AppConfig\SeesAutoQAButton;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -42,7 +41,9 @@ class PatientController extends Controller
     {
         if (SeesAutoQAButton::userId($userId)) {
             Artisan::queue(AutoApproveValidCarePlansAs::class, [
-                'userId' => $userId,
+                'userId'                         => $userId,
+                '--reimport:clear'               => true,
+                '--reimport:without-transaction' => true,
             ]);
         }
 
@@ -183,7 +184,6 @@ class PatientController extends Controller
         $pendingApprovals = 0;
 
         $nurse                          = null;
-        $patientsPendingApproval        = [];
         $showPatientsPendingApprovalBox = false;
         $seesAutoApprovalButton         = false;
 
@@ -196,14 +196,10 @@ class PatientController extends Controller
 
         if ($user->canApproveCarePlans()) {
             $showPatientsPendingApprovalBox = true;
-            $patients                       = $user->patientsPendingProviderApproval()->get();
-            $patientsPendingApproval        = $this->formatter->patientListing($patients);
-            $pendingApprovals               = $patients->count();
+            $pendingApprovals               = User::patientsPendingProviderApproval($user)->count();
         } elseif ($user->isAdmin() && $user->canQAApproveCarePlans()) {
             $showPatientsPendingApprovalBox = true;
-            $patients                       = $user->patientsPendingCLHApproval()->get();
-            $patientsPendingApproval        = $this->formatter->patientListing($patients);
-            $pendingApprovals               = $patients->count();
+            $pendingApprovals               = User::patientsPendingCLHApproval($user)->count();
             $seesAutoApprovalButton         = SeesAutoQAButton::userId(auth()->id());
         }
 
@@ -212,17 +208,14 @@ class PatientController extends Controller
 
         return view(
             'wpUsers.patient.dashboard',
-            array_merge(
-                compact([
-                    'pendingApprovals',
-                    'nurse',
-                    'showPatientsPendingApprovalBox',
-                    'noLiveCountTimeTracking',
-                    'authData',
-                    'seesAutoApprovalButton',
-                ]),
-                $patientsPendingApproval
-            )
+            compact([
+                'pendingApprovals',
+                'nurse',
+                'showPatientsPendingApprovalBox',
+                'noLiveCountTimeTracking',
+                'authData',
+                'seesAutoApprovalButton',
+            ]),
         );
     }
 
@@ -365,8 +358,7 @@ class PatientController extends Controller
      */
     public function showPatientSummary(
         Request $request,
-        $patientId,
-        CarePlanViewService $carePlanViewService
+        $patientId
     ) {
         $messages = \Session::get('messages');
 

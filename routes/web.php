@@ -4,8 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-Route::get('/debug-sentry', 'DemoController@sentry');
-Route::get('/debug-sentry-log', 'DemoController@sentryLog');
+Route::get('/e/{shortURLKey}', '\AshAllenDesign\ShortURL\Controllers\ShortURLController')->name('short-url.visit');
 
 Route::get('passwordless-login-for-cp-approval/{token}/{patientId}', 'Auth\LoginController@login')
     ->name('passwordless.login.for.careplan.approval');
@@ -74,7 +73,7 @@ Route::group([
     ]);
 
     Route::get('enrollment-logout', [
-        'uses' => 'Enrollment\Auth\AutoEnrollmentLogin@logoutEnrollee',
+        'uses' => 'Enrollment\SelfEnrollmentController@logoutEnrollee',
         'as'   => 'user.enrollee.logout',
     ]);
 });
@@ -272,7 +271,13 @@ Route::group(['middleware' => 'auth'], function () {
         ], function () {
             Route::get('list', 'ProviderController@list');
             Route::get('{id}', 'ProviderController@show');
-            Route::resource('', 'ProviderController');
+        });
+
+        Route::group([
+            'prefix'     => 'locations',
+            'middleware' => ['permission:location.read'],
+        ], function () {
+            Route::get('list', 'ProviderController@listLocations');
         });
 
         Route::group([
@@ -491,7 +496,7 @@ Route::group(['middleware' => 'auth'], function () {
 
             Route::get('queryEnrollable', [
                 'uses' => 'API\EnrollmentCenterController@queryEnrollables',
-                'as'   => 'enrollables.query',
+                'as'   => 'enrollables.enrollment.query',
             ]);
 
             Route::get('/show/{enrollableId?}', [
@@ -721,9 +726,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'upload.ccda',
         ]);
     });
-
-    //CCD Parser Demo Route
-    Route::get('ccd-parser-demo', 'CCDParserDemoController@index');
 
     //CPM-2167 - moved outside of manage-patients, because
     //           AuthyMiddleware was interfering with PatientProgramSecurity
@@ -1041,6 +1043,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'call.reschedule',
             ])->middleware('permission:call.update');
         });
+
+        Route::get('family-members', [
+            'uses' => 'FamilyController@getMembers',
+            'as'   => 'family.get',
+        ])->middleware('permission:patient.read');
     });
 
     //
@@ -1180,6 +1187,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'ca-director.index',
             ]);
 
+            Route::get('searchEnrollables', [
+                'uses' => 'EnrollmentDirectorController@searchEnrollables',
+                'as'   => 'enrollables.ca-director.search',
+            ]);
+
             Route::get('/enrollees', [
                 'uses' => 'EnrollmentDirectorController@getEnrollees',
                 'as'   => 'ca-director.enrollees',
@@ -1193,6 +1205,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/assign-ambassador', [
                 'uses' => 'EnrollmentDirectorController@assignCareAmbassadorToEnrollees',
                 'as'   => 'ca-director.assign-ambassador',
+            ]);
+
+            Route::post('/assign-callback', [
+                'uses' => 'EnrollmentDirectorController@assignCallback',
+                'as'   => 'ca-director.assign-callback',
             ]);
 
             Route::post('/mark-ineligible', [
@@ -1423,11 +1440,6 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'reports.sales.practice.report',
                 ])->middleware('permission:salesReport.create');
             });
-
-            Route::get('ethnicity', [
-                'uses' => 'Admin\Reports\EthnicityReportController@getReport',
-                'as'   => 'EthnicityReportController.getReport',
-            ])->middleware('permission:ethnicityReport.create');
 
             Route::get('call-v2', [
                 'uses' => 'Admin\Reports\CallReportController@exportxlsV2',
@@ -1971,57 +1983,20 @@ Route::get('/downloadInvoice/{practice}/{name}', [
 ]);
 
 Route::group([
-    'prefix'     => 'twilio',
-    'middleware' => 'auth',
+    'prefix' => 'twilio',
 ], function () {
-    Route::get('/token', [
-        'uses' => 'Twilio\TwilioController@obtainToken',
-        'as'   => 'twilio.token',
-    ]);
-    Route::post('/call/js-create-conference', [
-        'uses' => 'Twilio\TwilioController@jsCreateConference',
-        'as'   => 'twilio.js.create.conference',
-    ]);
-    Route::post('/call/get-conference-info', [
-        'uses' => 'Twilio\TwilioController@getConferenceInfo',
-        'as'   => 'twilio.js.get.conference.info',
-    ]);
-    Route::post('/call/join-conference', [
-        'uses' => 'Twilio\TwilioController@joinConference',
-        'as'   => 'twilio.call.join.conference',
-    ]);
-    Route::post('/call/end', [
-        'uses' => 'Twilio\TwilioController@endCall',
-        'as'   => 'twilio.call.leave.conference',
+    Route::post('/sms/status', [
+        'uses' => 'Twilio\TwilioController@smsStatusCallback',
+        'as'   => 'twilio.sms.status',
     ]);
 });
 
 Route::group([
-    'prefix' => 'twilio',
+    'prefix' => 'sendgrid',
 ], function () {
-    Route::post('/call/place', [
-        'uses' => 'Twilio\TwilioController@placeCall',
-        'as'   => 'twilio.call.place',
-    ]);
-    Route::post('/call/status', [
-        'uses' => 'Twilio\TwilioController@callStatusCallback',
-        'as'   => 'twilio.call.status',
-    ]);
-    Route::post('/call/number-status', [
-        'uses' => 'Twilio\TwilioController@dialNumberStatusCallback',
-        'as'   => 'twilio.call.number.status',
-    ]);
-    Route::post('/call/dial-action', [
-        'uses' => 'Twilio\TwilioController@dialActionCallback',
-        'as'   => 'twilio.call.dial.action',
-    ]);
-    Route::post('/call/conference-status', [
-        'uses' => 'Twilio\TwilioController@conferenceStatusCallback',
-        'as'   => 'twilio.call.conference.status',
-    ]);
-    Route::post('/call/recording-status', [
-        'uses' => 'Twilio\TwilioController@recordingStatusCallback',
-        'as'   => 'twilio.call.recording.status',
+    Route::post('/status', [
+        'uses' => 'SendGridController@statusCallback',
+        'as'   => 'sendgrid.status',
     ]);
 });
 
@@ -2248,7 +2223,7 @@ Route::group([
 
 // TEMPORARY SIGNED ROUTE
 //Route::get('/patient-self-enrollment', [
-//    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrollableInvitationManager',
+//    'uses' => 'Enrollment\Auth\SelfEnrollmentController@enrollableInvitationManager',
 //    'as'   => 'invitation.enrollment',
 //]);
 
@@ -2260,37 +2235,37 @@ Route::group([
     Route::get(
         '/patient-self-enrollment',
         [
-            'uses' => 'Enrollment\Auth\AutoEnrollmentLogin@enrollmentAuthForm',
+            'uses' => 'Enrollment\SelfEnrollmentController@enrollmentAuthForm',
             'as'   => 'invitation.enrollment.loginForm',
         ]
     )->middleware('signed');
 
     Route::post('login-enrollment-survey', [
-        'uses' => 'Enrollment\Auth\AutoEnrollmentLogin@authenticate',
+        'uses' => 'Enrollment\SelfEnrollmentController@authenticate',
         'as'   => 'invitation.enrollment.login',
     ]);
 });
 // TEMPORARY SIGNED ROUTE
 
 Route::get('/enrollment-survey', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrollNow',
+    'uses' => 'Enrollment\SelfEnrollmentController@enrollNow',
     'as'   => 'patient.self.enroll.now',
 ]);
 
 Route::get('/enrollment-info', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrolleeRequestsInfo',
+    'uses' => 'Enrollment\SelfEnrollmentController@enrolleeRequestsInfo',
     'as'   => 'patient.requests.enroll.info',
 ]);
 
 // Redirects to view with enrollees details to contact.
 Route::get('/enrollee-contact-details', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@enrolleeContactDetails',
+    'uses' => 'Enrollment\SelfEnrollmentController@enrolleeContactDetails',
     'as'   => 'enrollee.to.call.details',
 ])->middleware('auth');
 
 // Incoming from AWV
 Route::get('/review-letter/{userId}', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@reviewLetter',
+    'uses' => 'Enrollment\SelfEnrollmentController@reviewLetter',
     'as'   => 'enrollee.to.review.letter',
 ]);
 
@@ -2314,12 +2289,12 @@ Route::post('nurses/nurse-calendar-data', [
     'as'   => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');
 
-Route::get('login-enrollees-survey/{user}/{survey}', 'AutoEnrollmentCenterController@sendToSurvey')
+Route::get('login-enrollees-survey/{user}/{survey}', 'Enrollment\SelfEnrollmentController@sendToSurvey')
     ->name('enrollee.login.signed')
     ->middleware('signed');
 
 Route::post('enrollee-login-viewed', [
-    'uses' => 'Enrollment\AutoEnrollmentCenterController@viewFormVisited',
+    'uses' => 'Enrollment\SelfEnrollmentController@viewFormVisited',
     'as'   => 'enrollee.login.viewed',
 ])->middleware('guest');
 

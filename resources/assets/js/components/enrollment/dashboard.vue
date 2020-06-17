@@ -96,7 +96,7 @@
 
 <script>
 
-    import Twilio from 'twilio-client';
+    import {Device} from 'twilio-client';
 
     import PatientToEnroll from './patient-to-enroll';
 
@@ -113,6 +113,8 @@
     export default {
         name: 'enrollment-dashboard',
         props: [
+            'cpmToken',
+            'cpmCallerUrl',
             'timeTracker',
             'debug'
         ],
@@ -175,15 +177,14 @@
 
             this.retrievePatient();
 
-            let self = this;
-            self.initTwilio();
+            this.initTwilio();
 
             App.$on('enrollable:action-complete', () => {
                 this.patientData = null;
                 this.loading = true;
                 this.loading_modal.open();
                 this.retrievePatient();
-                this.updateCallStatus()
+                this.updateCallStatus();
             })
 
             App.$on('enrollable:call', (data) => {
@@ -196,18 +197,29 @@
                 this.onCall = data.onCall;
                 this.callStatus = data.callStatus;
 
-                this.call()
-            })
+                this.call();
+            });
 
             App.$on('enrollable:hang-up', () => {
-                this.hangUp()
-                this.updateCallStatus()
-            })
+                this.hangUp();
+                this.updateCallStatus();
+            });
+
+            App.$on('enrollable:numpad-input', (input) => {
+                if (this.device) {
+                    const {allInput, lastInput} = input;
+                    console.debug('Sending digits to twilio', lastInput.toString());
+                    const connection = this.device.activeConnection();
+                    if (connection) {
+                        connection.sendDigits(lastInput.toString());
+                    }
+                }
+            });
 
             App.$on('enrollable:load-from-search-bar', () => {
                 this.retrievePatient();
                 this.loading_modal.open();
-            })
+            });
 
             App.$on('enrollable:error', (enrollableId) => {
                 this.patientData = null;
@@ -216,7 +228,7 @@
 
                 this.error = 'Something went wrong while saving patient details. We are investigating the issue. Please click on button to get next Patient.';
                 this.error_modal.open()
-            })
+            });
         },
         methods: {
             getTimeTrackerInfo() {
@@ -307,10 +319,10 @@
 
             updateCallStatus() {
                 App.$emit('enrollable:update-call-status', {
-                    'onCall': self.onCall,
-                    'callStatus': self.callStatus,
-                    'log': self.log,
-                    'callError': self.callError
+                    'onCall': this.onCall,
+                    'callStatus': this.callStatus,
+                    'log': this.log,
+                    'callError': this.callError
                 })
             },
 
@@ -328,6 +340,7 @@
             },
 
             call() {
+                TimeTrackerEventBus.$emit('tracker:call-mode:enter');
                 this.device.connect({
                     To: this.phone,
                     From: this.practice_phone ? this.practice_phone : undefined,
@@ -337,6 +350,7 @@
                 });
             },
             hangUp() {
+                TimeTrackerEventBus.$emit('tracker:call-mode:exit');
                 this.onCall = false;
                 this.callStatus = "Ended Call";
                 M.toast({html: this.callStatus, displayLength: 3000});
@@ -345,46 +359,57 @@
                     this.device.disconnectAll();
                 }
             },
+            getUrl: function (path) {
+                if (this.cpmCallerUrl && this.cpmCallerUrl.length > 0) {
+                    if (this.cpmCallerUrl[this.cpmCallerUrl.length - 1] === "/") {
+                        return this.cpmCallerUrl + path;
+                    } else {
+                        return this.cpmCallerUrl + "/" + path;
+                    }
+                }
+                return rootUrl(path);
+            },
             initTwilio: function () {
-                const self = this;
-                const url = rootUrl(`/twilio/token`);
+                const url = this.getUrl(`twilio/token?cpm-token=${this.cpmToken}`);
 
-                self.$http.get(url)
+                this.$http.get(url)
                     .then(response => {
-                        self.log = 'Initializing';
-                        self.device = new Twilio.Device(response.data.token, {
-                            closeProtection: true
+                        this.log = 'Initializing';
+                        this.device = new Device(response.data.token, {
+                            closeProtection: true,
+                            edge: ['ashburn', 'roaming'],
                         });
 
-                        self.device.on('disconnect', () => {
+                        this.device.on('disconnect', () => {
                             console.log('twilio device: disconnect');
-                            self.log = 'Call ended.';
-                            self.onCall = false;
+                            this.log = 'Call ended.';
+                            this.onCall = false;
+                            TimeTrackerEventBus.$emit('tracker:call-mode:exit');
                             this.updateCallStatus()
                         });
 
-                        self.device.on('offline', () => {
+                        this.device.on('offline', () => {
                             console.log('twilio device: offline');
-                            self.log = 'Offline.';
+                            this.log = 'Offline.';
                             this.updateCallStatus()
                         });
 
-                        self.device.on('error', (err) => {
+                        this.device.on('error', (err) => {
                             console.error('twilio device: error', err);
-                            self.callError = err.message;
+                            this.callError = err.message;
                             this.updateCallStatus()
                         });
 
-                        self.device.on('ready', () => {
+                        this.device.on('ready', () => {
                             console.log('twilio device: ready');
-                            self.log = 'Ready to make call';
-                            M.toast({html: self.log, displayLength: 5000});
+                            this.log = 'Ready to make call';
+                            M.toast({html: this.log, displayLength: 5000});
                             this.updateCallStatus()
                         });
                     })
                     .catch(error => {
                         console.log(error);
-                        self.log = 'Could not fetch token, see console.log';
+                        this.log = 'Could not fetch token, see console.log';
                         this.updateCallStatus()
                     });
             }
@@ -427,7 +452,7 @@
     }
 
     .cookie {
-        margin-top: 10%;
+        margin-top: 15%;
         margin-left: 15%;
     }
 

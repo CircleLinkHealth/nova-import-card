@@ -5,6 +5,9 @@
                 <label class="label label-danger font-14" v-if="patientHasSelectedProblem">
                     Condition is already in care plan. Please add a new condition.
                 </label>
+                <label class="label label-danger font-14" v-if="newProblemIcd10CodeDuplicateError">
+                    {{newProblemIcd10CodeDuplicateError}}
+                </label>
                 <label class="label label-danger font-14" v-if="showNoProblemSelected">
                     Please select a condition from the dropdown below.
                 </label>
@@ -46,13 +49,14 @@
                 </div>
                 <div class="col-sm-12 top-20" v-if="newProblem.is_monitored">
                     <input type="text" :required="codeIsRequired" class="form-control" v-model="newProblem.icd10"
+                           @input="checkForIcd10CodeDuplicates"
                            placeholder="ICD10 Code"/>
                 </div>
             </div>
             <div class="col-sm-12 text-right top-20">
                 <loader v-if="loaders.addProblem"></loader>
                 <input type="submit" class="btn btn-secondary right-0 selected" value="Add Condition"
-                       :disabled="patientHasSelectedProblem"/>
+                       :disabled="shouldDisableSubmitNewCondition"/>
             </div>
         </form>
     </div>
@@ -80,6 +84,7 @@
             'cpmProblems': Array,
             'codeIsRequired': Boolean,
             'isApproveBillablePage': Boolean,
+            'isNotesPage': Boolean,
             'patientHasBhi': Boolean,
             'isBhi': Boolean
         },
@@ -103,20 +108,24 @@
                     removeInstruction: null,
                     addCode: null,
                     removeCode: null,
-                    editCode: null
+                    editCode: null,
                 },
                 patient_id: null,
                 is_approve_billable_page: false,
                 patient_has_bhi: true,
                 is_bhi: false,
+                newProblemIcd10CodeDuplicateError: null,
             }
         },
         computed: {
+            shouldDisableSubmitNewCondition() {
+                return this.patientHasSelectedProblem || !!this.newProblemIcd10CodeDuplicateError;
+            },
             cpmProblemsForBHISelect() {
                 return self.cpmProblemsForAutoComplete
             },
             cpmProblemsForAutoComplete() {
-                let probs = self.cpm_problems;
+                let probs = self.getAddConditionCpmProblems();
 
                 if (self.isApproveBillablePage && self.patient_has_bhi) {
                     probs = probs.filter(function (p) {
@@ -131,25 +140,21 @@
 
                 return probs.filter(p => p && p.name)
                     .reduce((pA, pB) => {
-                    return pA.concat([{
-                        name: pB.name,
-                        id: pB.id,
-                        code: pB.code,
-                        is_snomed: false,
-                    }, ...(pB.is_behavioral ? pB.snomeds.map(snomed => ({
-                        name: snomed.icd_10_name,
-                        id: pB.id,
-                        code: snomed.icd_10_code,
-                        is_snomed: true,
-                    })) : [])])
-                }, [])
+                        return pA.concat([{
+                            name: pB.name,
+                            id: pB.id,
+                            code: pB.code,
+                            is_snomed: false,
+                        }, ...(pB.is_behavioral ? pB.snomeds.map(snomed => ({
+                            name: snomed.icd_10_name,
+                            id: pB.id,
+                            code: snomed.icd_10_code,
+                            is_snomed: true,
+                        })) : [])])
+                    }, [])
                     .distinct(p => p.name)
                     .sort((a, b) => (+b.is_snomed) - (+a.is_snomed) || b.name.localeCompare(a.name));
             },
-            isNotesPage() {
-                //if patient id prop has been passed in, then this is for the notes pages, else, approve billable patients page
-                return !!this.patientId
-            }
         },
         methods: {
             addCcdProblem(e) {
@@ -188,6 +193,20 @@
                 const autoCompleteProblem = this.cpmProblemsForAutoComplete.find(p => p.name == this.newProblem.name)
                 this.newProblem.icd10 = (autoCompleteProblem || {}).code || (this.problems.find(p => p.name == this.newProblem.name) || {}).code
                 this.newProblem.cpm_problem_id = (autoCompleteProblem || {}).id
+
+                this.checkForIcd10CodeDuplicates();
+            },
+            checkForIcd10CodeDuplicates() {
+                let isNotCareAreasModal = this.isNotesPage || this.isApproveBillablePage;
+                if (isNotCareAreasModal && !this.showNoProblemSelected && this.newProblem.icd10.length > 0) {
+                    let matchingProblem = this.problems.find(p => p.code == this.newProblem.icd10)
+
+                    if (matchingProblem) {
+                        this.newProblemIcd10CodeDuplicateError = matchingProblem.name + ' has the same ICD-10 code as this one.';
+                    } else {
+                        this.newProblemIcd10CodeDuplicateError = null;
+                    }
+                }
             },
             reset() {
                 this.newProblem.name = ''

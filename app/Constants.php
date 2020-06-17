@@ -66,8 +66,9 @@ class Constants
         'margin-bottom'      => '15',
         'margin-right'       => '0.75',
     ];
-    const SNOMED      = ProblemCodeSystem::SNOMED;
-    const SNOMED_NAME = ProblemCodeSystem::SNOMED_NAME;
+    const SNOMED                 = ProblemCodeSystem::SNOMED;
+    const SNOMED_NAME            = ProblemCodeSystem::SNOMED_NAME;
+    const TEN_MINUTES_IN_SECONDS = 600;
 
     const THIRTY_DAYS_IN_MINUTES     = 43200;
     const TRIX_ALLOWABLE_TAGS_STRING = '<div><strong><h1><em><del><blockquote><pre><br><ul><ol><li><span><a>';

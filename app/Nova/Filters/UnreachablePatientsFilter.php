@@ -22,6 +22,7 @@ class UnreachablePatientsFilter extends Filter
 
     /**
      * UnreachablePatientsFilter constructor.
+     *
      * @param $practiceId
      */
     public function __construct($practiceId)
@@ -32,14 +33,15 @@ class UnreachablePatientsFilter extends Filter
     /**
      * Apply the filter to the given query.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @param  mixed                                 $value
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param mixed                                 $value
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function apply(Request $request, $query, $value)
     {
         return $query->with('patientInfo')
-            ->whereDoesntHave('enrollmentInvitationLink')
+            ->whereDoesntHave('enrollmentInvitationLinks')
             ->where('program_id', '=', $value)
             ->whereHas('patientInfo', function ($patient) {
                 $patient->where('ccm_status', '=', Patient::UNREACHABLE);

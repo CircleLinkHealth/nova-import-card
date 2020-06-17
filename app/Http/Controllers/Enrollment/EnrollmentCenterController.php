@@ -6,13 +6,23 @@
 
 namespace App\Http\Controllers\Enrollment;
 
+use App\CareAmbassadorLog;
 use App\Http\Controllers\Controller;
+use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Support\Carbon;
 
 class EnrollmentCenterController extends Controller
 {
     public function dashboard()
     {
-        return view('enrollment-ui.dashboard');
+        /** @var User $user */
+        $user    = auth()->user();
+        $ccmTime = optional(CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id))->total_time_in_system ?? 0;
+
+        //naive authentication for the CPM Caller Service
+        $cpmToken = \Hash::make(config('app.key').Carbon::today()->toDateString());
+
+        return view('enrollment-ui.dashboard', compact('ccmTime', 'cpmToken'));
     }
 
     public function training()

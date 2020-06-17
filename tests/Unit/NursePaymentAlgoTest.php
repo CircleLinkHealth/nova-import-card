@@ -63,12 +63,6 @@ class NursePaymentAlgoTest extends TestCase
     /** @var User */
     protected $provider;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        (new \ChargeableServiceSeeder())->run();
-    }
-
     /**
      * - Hourly Rate $20
      * - High Rate $29
@@ -206,7 +200,7 @@ class NursePaymentAlgoTest extends TestCase
      * - Visit Fee $12.50
      * - Variable Pay = true.
      *
-     * Two nurses, 1 patient with ccm plus algo.
+     * 3 nurses, 1 patient with ccm plus algo.
      * Nurse 1 0-17 minutes, no call.
      * Nurse 2 17-23 minutes, call.
      * Nurse 3 23-38 minutes, call.
@@ -1977,6 +1971,159 @@ class NursePaymentAlgoTest extends TestCase
     }
 
     /**
+     * Total time in db should be 70 minutes.
+     * Total time in invoice should be 70 minutes.
+     * Nurse pay should be equivalent to 2 visits.
+     *
+     * @return void
+     */
+    public function test_nurse_time_tracked_after_start_date()
+    {
+        $visitFee        = 12.50;
+        $nurseHourlyRate = 30.0;
+        $practice        = $this->setupPractice(true, true, true);
+        $this->createUser($practice->id);
+        $nurse   = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $visitFee, now()->startOfDay());
+        $patient = $this->setupPatient($practice, true);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        $this->addTime($nurse, null, 20, false, false, false);
+        $this->addTime($nurse, $patient, 25, true, true, false);
+        $this->addTime($nurse, $patient, 25, true, true, false);
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $totalSystemTime = $invoiceData['totalSystemTime'];
+        $fixedRatePay    = $invoiceData['fixedRatePay'];
+        $variableRatePay = $invoiceData['variableRatePay'];
+        $pay             = $invoiceData['baseSalary'];
+
+        self::assertEquals(70 * 60, $totalSystemTime);
+        self::assertEquals(12.50 + 12.00, $variableRatePay);
+        self::assertEquals($nurseHourlyRate * 2, $fixedRatePay);
+        self::assertEquals($nurseHourlyRate * 2, $pay);
+    }
+
+    /**
+     * Total time in db should be 90 minutes.
+     * Total time in invoice should be 30 minutes.
+     * Nurse pay should be equivalent to 1 hour of work (30 minutes rounded to 1 hour, 1 visit fee pays less).
+     *
+     * @return void
+     */
+    public function test_nurse_time_tracked_before_and_after_start_date()
+    {
+        Carbon::setTestNow(now()->startOfMonth());
+
+        $visitFee        = 12.50;
+        $nurseHourlyRate = 30.0;
+        $practice        = $this->setupPractice(true, true, true);
+        $this->createUser($practice->id);
+        $nurse    = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $visitFee, now()->addDays(1)->startOfDay());
+        $patient1 = $this->setupPatient($practice, true);
+        $patient2 = $this->setupPatient($practice, true);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        $this->addTime($nurse, null, 28, false, false, false);
+        $this->addTime($nurse, $patient1, 29, true, true, false);
+        $this->addTime($nurse, $patient2, 30, true, true, false, now()->addDays(2));
+
+        //go forward to the future, so that we are in a moment of time where patient 1 and patient 2 times are in the past
+        Carbon::setTestNow(now()->addDays(3));
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $totalSystemTime = $invoiceData['totalSystemTime'];
+        $fixedRatePay    = $invoiceData['fixedRatePay'];
+        $variableRatePay = $invoiceData['variableRatePay'];
+        $pay             = $invoiceData['baseSalary'];
+
+        self::assertEquals(30 * 60, $totalSystemTime);
+        self::assertEquals($visitFee, $variableRatePay);
+        self::assertEquals($nurseHourlyRate / 2, $fixedRatePay);
+        self::assertEquals($nurseHourlyRate / 2, $pay);
+
+        Carbon::setTestNow(null);
+    }
+
+    /**
+     * Total time in db should be 70 minutes.
+     * Total time in invoice should be 0.
+     * Nurse pay should be $0.
+     *
+     * @return void
+     */
+    public function test_nurse_time_tracked_before_start_date()
+    {
+        Carbon::setTestNow(now()->startOfMonth());
+
+        $visitFee        = 12.50;
+        $nurseHourlyRate = 30.0;
+        $practice        = $this->setupPractice(true, true, true);
+        $this->createUser($practice->id);
+        $nurse   = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $visitFee, now()->addDays(1)->startOfDay());
+        $patient = $this->setupPatient($practice, true);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        $this->addTime($nurse, null, 20, false, false, false);
+        $this->addTime($nurse, $patient, 25, true, true, false);
+        $this->addTime($nurse, $patient, 25, true, true, false);
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $totalSystemTime = $invoiceData['totalSystemTime'];
+        $fixedRatePay    = $invoiceData['fixedRatePay'];
+        $variableRatePay = $invoiceData['variableRatePay'];
+        $pay             = $invoiceData['baseSalary'];
+
+        self::assertEquals(0, $totalSystemTime);
+        self::assertEquals(0, $variableRatePay);
+        self::assertEquals(0, $fixedRatePay);
+        self::assertEquals(0, $pay);
+
+        Carbon::setTestNow(null);
+    }
+
+    /**
      * - Hourly Rate $20
      * - High Rate $29
      * - Low Rate $10
@@ -2000,10 +2147,13 @@ class NursePaymentAlgoTest extends TestCase
      */
     public function test_two_nurses_one_patient_one_nurse_has_more_successful_calls()
     {
+        //this test fails if run on first of month
+        Carbon::setTestNow(now()->startOfMonth()->addDays(5));
+
         $nurseVisitFee   = 12.50;
         $nurseHourlyRate = 20.0;
         $practice        = $this->setupPractice(true, true);
-        $nurse1          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse1          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee, now()->subDay());
         $nurse2          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
         $patient         = $this->setupPatient($practice);
 
@@ -2044,6 +2194,8 @@ class NursePaymentAlgoTest extends TestCase
         self::assertEquals(10.00, $fixedRatePay);
         self::assertEquals(15.13, $variableRatePay);
         self::assertEquals(15.13, $pay);
+
+        Carbon::setTestNow(null);
     }
 
     /**
@@ -2227,10 +2379,11 @@ class NursePaymentAlgoTest extends TestCase
         bool $variableRate = true,
         float $hourlyRate = 29.0,
         bool $enableCcmPlus = false,
-        float $visitFee = null
+        float $visitFee = null,
+        Carbon $startDate = null
     ) {
         $nurse = $this->createUser($practiceId, 'care-center');
 
-        return $this->setupNurse($nurse, $variableRate, $hourlyRate, $enableCcmPlus, $visitFee);
+        return $this->setupNurse($nurse, $variableRate, $hourlyRate, $enableCcmPlus, $visitFee, $startDate);
     }
 }

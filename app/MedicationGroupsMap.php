@@ -7,6 +7,7 @@
 namespace App;
 
 use CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 /**
@@ -58,7 +59,9 @@ class MedicationGroupsMap extends \CircleLinkHealth\Core\Entities\BaseModel
      */
     public static function getGroup($name)
     {
-        $maps = MedicationGroupsMap::all();
+        $maps = Cache::remember('all_medication_groups', 2, function () {
+            return MedicationGroupsMap::all();
+        });
 
         foreach ($maps as $map) {
             if (Str::contains(strtolower($name), strtolower($map->keyword))) {

@@ -6,7 +6,8 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\FinalActionOnNonResponsivePatients;
+use App\SelfEnrollment\Constants;
+use App\SelfEnrollment\Domain\UnreachablesFinalAction;
 use Illuminate\Console\Command;
 
 class EnrollmentFinalAction extends Command
@@ -41,6 +42,6 @@ class EnrollmentFinalAction extends Command
      */
     public function handle()
     {
-        FinalActionOnNonResponsivePatients::dispatch();
+        UnreachablesFinalAction::dispatch(now()->subDays(Constants::DAYS_DIFF_FROM_FIRST_INVITE_TO_FINAL_ACTION));
     }
 }

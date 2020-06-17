@@ -12,7 +12,7 @@ use App\Notifications\SendAssessmentNotification;
 use App\Repositories\CareplanAssessmentRepository;
 use App\Repositories\CareplanRepository;
 use App\Repositories\NoteRepository;
-use App\Repositories\PatientWriteRepository;
+use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 
 class CareplanAssessmentService
 {

@@ -54,7 +54,7 @@ class EnrollmentCenterController extends ApiController
 
         $searchTerms = explode(' ', $input['enrollables']);
 
-        $query = Enrollee::withCaPanelRelationships()
+        $query = Enrollee::with(['provider', 'practice'])
             ->shouldBeCalled()
             ->where('care_ambassador_user_id', auth()->user()->id);
 
@@ -70,7 +70,6 @@ class EnrollmentCenterController extends ApiController
 
         $results     = $query->get();
         $enrollables = [];
-        $i           = 0;
         foreach ($results as $e) {
             $matchingPhones = collect([]);
 
@@ -98,13 +97,17 @@ class EnrollmentCenterController extends ApiController
 
             $phonesString = $matchingPhones->unique()->implode(', ');
 
-            $enrollables[$i]['id']       = $e->id;
-            $enrollables[$i]['name']     = $e->first_name.' '.$e->last_name;
-            $enrollables[$i]['mrn']      = $e->mrn;
-            $enrollables[$i]['program']  = optional($e->practice)->display_name ?? '';
-            $enrollables[$i]['provider'] = optional($e->provider)->getFullName() ?? '';
-            $enrollables[$i]['hint']     = "{$enrollables[$i]['name']} {$phonesString} PROVIDER: [{$enrollables[$i]['provider']}] [{$enrollables[$i]['program']}]";
-            ++$i;
+            $item = [
+                'id'       => $e->id,
+                'name'     => $e->first_name.' '.$e->last_name,
+                'mrn'      => $e->mrn,
+                'program'  => optional($e->practice)->display_name ?? '',
+                'provider' => optional($e->provider)->getFullName() ?? '',
+            ];
+
+            $item['hint'] = "{$item['name']} {$phonesString} PROVIDER: [{$item['provider']}] [{$item['program']}]";
+
+            $enrollables[] = $item;
         }
 
         return response()->json($enrollables);
@@ -168,7 +171,7 @@ class EnrollmentCenterController extends ApiController
                 auth()->user()->careAmbassador
             );
         }
-
+        //return stats and cookie if enrollable does not exist
         if ( ! $enrollable) {
             $stats = EnrollableCallQueue::getCareAmbassadorPendingCallStatus(auth()->user()->id);
 

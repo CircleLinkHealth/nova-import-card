@@ -7,7 +7,7 @@
 namespace App\Nova\Importers;
 
 use App\EligiblePatientView;
-use App\Nova\Actions\ClearAndReimportCcda;
+use App\Nova\Actions\ReimportCcda;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -282,7 +282,7 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
                     }
 
                     if ($enrollee->user_id) {
-                        ClearAndReimportCcda::for($enrollee->user_id, auth()->id());
+                        ReimportCcda::for($enrollee->user_id, auth()->id());
 
                         return;
                     }

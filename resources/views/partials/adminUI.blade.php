@@ -62,6 +62,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/introjs.min.css"
           integrity="sha256-/oZ7h/Jkj6AfibN/zTWrCoba0L+QhP9Tf/ZSgyZJCnY=" crossorigin="anonymous"/>
     @include('cpm-module-raygun::partials.real-user-monitoring')
+    @include('partials.new-relic-tracking')
 </head>
 <body>
 <div id="app">
@@ -135,6 +136,9 @@
                                aria-expanded="false">Enrollment<span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
+                                <li role="presentation" class="dropdown">
+                                    <a href="{{ route('ca-director.index') }}">CA Director</a>
+                                </li>
                                 <li role="presentation" class="dropdown">
                                     <a href="{{ route('patient.enroll.makeReport') }}">Enrollee List</a>
                                 </li>
@@ -251,7 +255,6 @@
                                 <li><a href="{{ route('report-writer.dashboard') }}">Report Writer Panel</a></li>
                                 <li><a href="{{ getEhrReportWritersFolderUrl() }}" target="_blank">EHR Report Writers
                                         Google Folder</a></li>
-                                <li><a href="{{ route('ca-director.index') }}">CA Director</a></li>
                             </ul>
                         </li>
                     </ul>

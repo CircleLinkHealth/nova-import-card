@@ -117,6 +117,10 @@ class NoteService
             $requestInput['type'] = $note->type;
         }
 
+        if (empty($requestInput['logger_id'])) {
+            $requestInput['logger_id'] = auth()->id();
+        }
+
         $note->logger_id = $requestInput['logger_id'];
         $note->isTCM     = isset($requestInput['tcm'])
             ? 'true' === $requestInput['tcm']

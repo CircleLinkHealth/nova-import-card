@@ -65,6 +65,7 @@ class TrixField extends Model
         if (stringMeansSpanish($language)) {
             $scriptLanguage = self::SPANISH_LANGUAGE;
         }
+
         $type = $enrollableIsUnreachableUser ? self::CARE_AMBASSADOR_UNREACHABLE_USER_SCRIPT : self::CARE_AMBASSADOR_SCRIPT;
 
         $builder->where('type', $type)

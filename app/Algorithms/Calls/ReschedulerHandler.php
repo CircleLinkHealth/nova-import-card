@@ -38,96 +38,79 @@ class ReschedulerHandler
         $this->schedulerService = $schedulerService;
     }
 
-    public function collectCallsToBeRescheduled()
+    public function fetchAndReschedulePastMissedCalls()
     {
-        $calls = Call
-            ::where(function ($q) {
-                $q->whereNull('type')
-                    ->orWhere('type', '=', 'call');
-            })
-                ->whereStatus('scheduled')
-                ->with(['inboundUser'])
-                ->where('scheduled_date', '<=', Carbon::now()->toDateString())
-                ->get();
-
-        $missed = [];
-
-        /*
-         * Check to see if the call is dropped if it's the current day
-         * Since we store the date and times separately for other
-         * considerations, we have to join them and compare
-         * to see if a call was missed on the same day
-        */
-
-        foreach ($calls as $call) {
-            $end_carbon = Carbon::parse($call->scheduled_date);
-
-            $carbon_hour_end    = Carbon::parse($call->window_end)->format('H');
-            $carbon_minutes_end = Carbon::parse($call->window_end)->format('i');
-
-            $end_time = $end_carbon->setTime($carbon_hour_end, $carbon_minutes_end)->toDateTimeString();
-
-            $now_carbon = Carbon::now()->toDateTimeString();
-
-            if ($end_time < $now_carbon) {
-                $missed[] = $call;
-            }
-        }
-
-        return $missed;
+        Call::where(function ($q) {
+            $q->whereNull('type')
+                ->orWhere('type', '=', 'call');
+        })
+            ->whereStatus('scheduled')
+            ->with('inboundUser.patientInfo')
+            ->where('scheduled_date', '<=', Carbon::now()->toDateString())
+            ->where('window_end', '<=', Carbon::now()->format('H:i'))
+            ->chunkById(100, function ($calls) {
+                foreach ($calls as $call) {
+                    $this->reschedule($call);
+                }
+            });
     }
 
     public function handle()
     {
-        //Collect all calls that were missed.
-        $this->callsToReschedule = $this->collectCallsToBeRescheduled();
-
-        $this->handleCalls();
-
-        return $this->rescheduledCalls;
+        $this->fetchAndReschedulePastMissedCalls();
     }
 
-    public function handleCalls()
+    public function reschedule(Call $call)
     {
-        foreach ($this->callsToReschedule as $call) {
-            //Handle Previous Call
-            try {
-                $call->status    = 'dropped';
-                $call->scheduler = 'rescheduler algorithm';
-                $call->save();
+        try {
+            $call->status    = 'dropped';
+            $call->scheduler = 'rescheduler algorithm';
+            $call->save();
 
-                $patient = $call->inboundUser
-                    ->patientInfo;
+            $patient = $call->inboundUser->patientInfo;
 
-                if (is_a($patient, Patient::class)) {
-                    if ($patient->hasFamilyId()) {
-                        //a call might have already been scheduled for this patient, since its family
-                        //so just skip this patient
-                        $familyCall = $this->schedulerService->getScheduledCallForPatient($patient->user);
-                        if ($familyCall) {
-                            continue;
-                        }
-                    }
-
-                    //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
-                    $next_predicted_contact_window = (new PatientContactWindow())->getEarliestWindowForPatientFromDate(
-                        $patient,
-                        Carbon::now()
-                    );
-
-                    $window_start = Carbon::parse($next_predicted_contact_window['window_start'])->format('H:i');
-                    $window_end   = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
-                    $day          = Carbon::parse($next_predicted_contact_window['day'])->toDateString();
-
-                    $this->storeNewCallForPatient($patient, $call, $window_start, $window_end, $day);
-                    $this->storeNewCallForFamilyMembers($patient, $call, $window_start, $window_end, $day);
-                }
-            } catch (\Exception $exception) {
-                \Log::critical($exception);
-                \Log::info("Call Id {$call->id}");
-                continue;
+            if ( ! $patient instanceof Patient) {
+                return;
             }
+
+            if ($patient->hasFamilyId() && $this->schedulerService->getScheduledCallForPatient($call->inboundUser)) {
+                return;
+            }
+
+            //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
+            $next_predicted_contact_window = (new PatientContactWindow())->getEarliestWindowForPatientFromDate(
+                $patient,
+                Carbon::now()
+            );
+
+            $window_start = Carbon::parse($next_predicted_contact_window['window_start'])->format('H:i');
+            $window_end   = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
+            $day          = Carbon::parse($next_predicted_contact_window['day'])->toDateString();
+
+            $this->storeNewCallForPatient($patient, $call, $window_start, $window_end, $day);
+            $this->storeNewCallForFamilyMembers($patient, $call, $window_start, $window_end, $day);
+        } catch (\Exception $exception) {
+            \Log::critical($exception);
+            \Log::info("Call Id {$call->id}");
+
+            return;
         }
+    }
+
+    public static function shouldReschedule(Call $call): bool
+    {
+        $end_carbon = Carbon::parse($call->scheduled_date);
+
+        $carbon_hour_end    = Carbon::parse($call->window_end)->format('H');
+        $carbon_minutes_end = Carbon::parse($call->window_end)->format('i');
+
+        $end_time = $end_carbon->setTime($carbon_hour_end, $carbon_minutes_end);
+
+        if ($end_time->lt(now())) {
+            return true;
+        }
+
+        return false;
     }
 
     private function storeNewCallForFamilyMembers(Patient $patient, $oldCall, $window_start, $window_end, $day)

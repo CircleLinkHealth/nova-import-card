@@ -8,9 +8,12 @@ namespace App\Http\Resources;
 
 use App\CareAmbassadorLog;
 use App\TrixField;
+use Carbon\CarbonTimeZone;
 use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Support\Facades\Log;
 
 class Enrollable extends JsonResource
 {
@@ -20,6 +23,7 @@ class Enrollable extends JsonResource
      * @param \Illuminate\Http\Request $request
      *
      * @throws \Exception
+     *
      * @return array
      */
     public function toArray($request)
@@ -37,15 +41,9 @@ class Enrollable extends JsonResource
 
         $careAmbassador = $this->careAmbassador->careAmbassador;
 
-        //get script
-        $enrollableIsUnreachableUser = Enrollee::UNREACHABLE_PATIENT === $enrollable->source;
+        $timezone = $this->getTimezone($enrollable);
 
-        $script = TrixField::careAmbassador($enrollable->lang, $enrollableIsUnreachableUser)->first();
-
-        if ( ! $script) {
-            //default to english, just so we can avoid cases where something went wrong with enrollee->language
-            $script = TrixField::careAmbassador(TrixField::ENGLISH_LANGUAGE, $enrollableIsUnreachableUser)->first();
-        }
+        $script = $this->getScript($enrollable);
 
         $familyAttributes = $this->getFamilyAttributes($enrollable);
 
@@ -75,9 +73,10 @@ class Enrollable extends JsonResource
             [
                 'enrollable_id'            => $enrollable->id,
                 'enrollable_user_id'       => optional($enrollable->user)->id,
-                'practice'                 => $enrollable->practice->toArray(),
+                'practice'                 => $enrollable->practice->attributesToArray(),
                 'last_call_outcome'        => $enrollable->last_call_outcome ?? '',
                 'last_call_outcome_reason' => $enrollable->last_call_outcome_reason ?? '',
+                'callback_note'            => $enrollable->callback_note ?? '',
                 'name'                     => $enrollable->first_name.' '.$enrollable->last_name,
                 'lang'                     => $enrollable->lang,
                 'practice_id'              => $enrollable->practice->id,
@@ -86,8 +85,11 @@ class Enrollable extends JsonResource
                 'other_phone'              => $enrollable->other_phone,
                 'cell_phone'               => $enrollable->cell_phone,
                 'home_phone'               => $enrollable->home_phone,
+                'requested_callback'       => optional($enrollable->requested_callback)->toDateString() ?? '',
 
                 'extra' => $extra,
+
+                'timezone' => $timezone,
 
                 'utc_note'        => $utcNote,
                 'last_encounter'  => $enrollable->last_encounter ?? 'N/A',
@@ -109,7 +111,7 @@ class Enrollable extends JsonResource
                     ? $this->timeRangeToPanelWindows($enrollable->preferred_window)
                     : [],
 
-                'provider'       => $this->provider->toArray(),
+                'provider'       => $this->provider->attributesToArray(),
                 'provider_phone' => (new StringManipulation())->formatPhoneNumber($this->provider->getPhone()),
                 'has_tips'       => (bool) $this->practice->enrollmentTips,
 
@@ -170,16 +172,16 @@ class Enrollable extends JsonResource
     private function getPhoneAttributes($enrollable)
     {
         //These phone numbers will be used to call by Twilio.
-        //This will allow us to use custom numbers on non-prod environments
-        $otherPhoneSanitized = isProductionEnv()
+        //This will allow us to use custom numbers on non-prod environments or on production with demo practices
+        $otherPhoneSanitized = isProductionEnv() && ! $enrollable->practice->is_demo
             ? $enrollable->other_phone_e164
             : $enrollable->getOriginal('other_phone');
 
-        $cellPhoneSanitized = isProductionEnv()
+        $cellPhoneSanitized = isProductionEnv() && ! $enrollable->practice->is_demo
             ? $enrollable->cell_phone_e164
             : $enrollable->getOriginal('cell_phone');
 
-        $homePhoneSanitized = isProductionEnv()
+        $homePhoneSanitized = isProductionEnv() && ! $enrollable->practice->is_demo
             ? $enrollable->home_phone_e164
             : $enrollable->getOriginal('home_phone');
 
@@ -226,6 +228,86 @@ class Enrollable extends JsonResource
             'reason'           => $reason,
             'reason_other'     => $reasonOther,
         ];
+    }
+
+    private function getScript($enrollable): TrixField
+    {
+        $enrollableIsUnreachableUser = Enrollee::UNREACHABLE_PATIENT === $enrollable->source;
+
+        if (empty($enrollable->lang)) {
+            //default to english, just so we can avoid cases where something went wrong with enrollee->language
+            $script = TrixField::careAmbassador(TrixField::ENGLISH_LANGUAGE, $enrollableIsUnreachableUser)->first();
+        } else {
+            $script = TrixField::careAmbassador($enrollable->lang, $enrollableIsUnreachableUser)->first();
+        }
+
+        if ( ! $script) {
+            //default to english, just so we can avoid cases where something went wrong with enrollee->language
+            $script = TrixField::careAmbassador(TrixField::ENGLISH_LANGUAGE, $enrollableIsUnreachableUser)->first();
+        }
+
+        return $script;
+    }
+
+    private function getTimezone($enrollable)
+    {
+        $timezone = optional($enrollable->user)->timezone;
+
+        //check enrollee location id
+        if ( ! $timezone && ! empty($enrollable->location_id)) {
+            $timezone = optional($enrollable->location)->timezone;
+        }
+
+        //check ccda
+        if ( ! $timezone && $enrollable->ccda) {
+            $timezone = optional($enrollable->ccda->location)->timezone;
+        }
+
+        //check provider location
+        $provider = $enrollable->provider;
+        if ( ! $timezone && $provider) {
+            $timezone = $provider->timezone;
+            if ( ! $timezone) {
+                //pre-loaded only locations with timezone
+                $location = $provider->locations->first();
+                $timezone = $location->timezone;
+            }
+
+            if ( ! $timezone) {
+                //pre-loaded only locations with timezone
+                $providerPractice = $provider->primaryPractice;
+                $location         = $providerPractice->locations->first();
+                if ($location) {
+                    $timezone = $location->timezone;
+                }
+            }
+        }
+
+        //check practice first location that has timezone
+        if ( ! $timezone) {
+            $practice = $enrollable->practice;
+            //pre-filter from relationship to only load locations with timezone
+            $location = $practice->locations->first();
+            if ($location) {
+                $timezone = $location->timezone;
+            }
+        }
+
+        if ($timezone) {
+            try {
+                $tz     = CarbonTimeZone::create($timezone);
+                $region = $tz->toRegionName();
+                $offset = $tz->toOffsetName();
+
+                return  "$region ($offset)";
+            } catch (\Exception $exception) {
+                Log::critical("Invalid timezone for enrollee: {$enrollable->id}");
+
+                return 'N/A';
+            }
+        }
+
+        return 'N/A';
     }
 
     private function timeRangeToPanelWindows(string $timeRange)

@@ -197,7 +197,7 @@
             return {
                 pagination: null,
                 selected: false,
-                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler', 'Patient\'s Care Coach'],
+                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'State', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler', 'Patient\'s Care Coach'],
                 tableData: [],
                 loaders: {
                     calls: false
@@ -234,8 +234,8 @@
                         'Patient ID': !this.isAdmin ? 'hidden' : '',
                         'Patient': this.patientNamesClass
                     },
-                    sortable: ['Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'Scheduler'],
-                    filterable: ['Type', 'Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'Practice', 'Billing Provider', 'Patient\'s Care Coach'],
+                    sortable: ['Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'State', 'Scheduler'],
+                    filterable: ['Type', 'Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'Practice', 'State', 'Billing Provider', 'Patient\'s Care Coach'],
                     filterByColumn: true,
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
@@ -254,6 +254,7 @@
                         'CCM Time': (ascending) => (a, b) => 0,
                         'BHI Time': (ascending) => (a, b) => 0,
                         Practice: (ascending) => (a, b) => 0,
+                        State: (ascending) => (a, b) => 0,
                         Scheduler: (ascending) => (a, b) => 0,
                         'Patient\'s Care Coach': (ascending) => (a, b) => 0,
                     }
@@ -284,6 +285,7 @@
                     'BHI Time': 'bhi_time',
                     'Successful Calls': 'no_of_successful_calls',
                     'Practice': 'practice',
+                    'State': 'state',
                     'Activity Start': 'call_time_start',
                     'Activity End': 'call_time_end',
                     'Preferred Call Days': 'preferred_call_days',
@@ -489,6 +491,7 @@
                     NurseId: call.nurse_id,
                     Patient: call.patient,
                     Practice: call.practice,
+                    State: call.state,
                     Scheduler: call.scheduler,
                     'Billing Provider': call.billing_provider,
                     'Last Call': call.last_call,
@@ -686,6 +689,11 @@
 </script>
 
 <style>
+
+    /* State column is too small and search input is barely visible */
+    .VueTables__sortable {
+        min-width: 60px;
+    }
     .VueTables__child-row-toggler {
         display: block;
         width: 20px;

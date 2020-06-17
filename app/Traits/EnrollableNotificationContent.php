@@ -7,7 +7,6 @@
 namespace App\Traits;
 
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Support\Facades\Log;
 
 trait EnrollableNotificationContent
@@ -20,9 +19,9 @@ trait EnrollableNotificationContent
      *
      * @return array|string
      */
-    public function emailAndSmsContent(User $notifiable, $isReminder)
+    private function emailAndSmsContent(User $notifiable, bool $isReminder)
     {
-        $enrollableEmailContent = $this->getEmailContent($notifiable, $isReminder);
+        $enrollableEmailContent = $this->getMessageContent($notifiable, $isReminder);
         $providerName           = $enrollableEmailContent['providerLastName'];
         $practiceName           = $enrollableEmailContent['practiceName'];
         $line2                  = $enrollableEmailContent['line2'];
@@ -52,23 +51,6 @@ trait EnrollableNotificationContent
     }
 
     /**
-     * @param $notifiable
-     * @param bool $isReminder
-     *
-     * @throws \Exception
-     *
-     * @return array
-     */
-    public function getEmailContent(User $notifiable, $isReminder = false)
-    {
-        $notifiableIsSurveyOnly = $notifiable->isSurveyOnly();
-
-        return $notifiableIsSurveyOnly
-            ? $this->getEnrolleeEmailContent($notifiable, $isReminder)
-            : $this->getUserEmailContent($notifiable, $isReminder);
-    }
-
-    /**
      * Should only pass User model which has enrollee -> user_id.
      *
      * @param $notifiable
@@ -78,51 +60,34 @@ trait EnrollableNotificationContent
      *
      * @return array
      */
-    public function getEnrolleeEmailContent(User $notifiable, $isReminder)
+    private function getEnrolleeMessageContent(User $notifiable, bool $isReminder)
     {
-        /** @var Enrollee $enrollee */
-        $enrollee = Enrollee::with([
-            'provider' => function ($q) {
-                return $q->select(['id', 'last_name']);
-            },
-            'practice' => function ($q) {
-                return $q->select(['id', 'display_name']);
-            },
-        ])
-            ->whereUserId($notifiable->id)->first();
+        $provider = $notifiable->billingProviderUser();
 
-        if ( ! $enrollee) {
-            throw new \Exception("could not find enrollee for user[$notifiable->id]");
+        if (empty($provider)) {
+            throw new \InvalidArgumentException("User[$notifiable->id] does not have a billing provider.");
         }
 
-        if ( ! $enrollee->provider) {
-            throw new \Exception("could not find provider for enrollee[$enrollee->id]");
-        }
+        $providerLastName = ucwords($provider->last_name);
 
-        if ( ! $enrollee->practice) {
-            throw new \Exception("could not find practice for enrollee[$enrollee->id]");
-        }
-
-        $providerLastName = $enrollee->provider->last_name;
-        $line2            = $isReminder
+        $line2 = $isReminder
             ? "Just circling back on Dr. $providerLastName's new Personalized Care program. Please enroll or get more info here: "
             : "Dr. $providerLastName has invested in a new wellness program for you. Please enroll or get more info here: ";
 
         return [
             'providerLastName' => $providerLastName,
-            'practiceName'     => $enrollee->practice->display_name,
+            'practiceName'     => ucwords($notifiable->primaryPractice->display_name),
             'line2'            => $line2,
             'isSurveyOnly'     => true,
         ];
     }
 
     /**
-     * @param $notifiable
-     * @param $isReminder
+     * @throws \Exception
      *
      * @return array
      */
-    public function getUserEmailContent(User $notifiable, $isReminder)
+    private function getMessageContent(User $notifiable, bool $isReminder = false)
     {
         $notifiable->loadMissing([
             'billingProvider',
@@ -132,9 +97,23 @@ trait EnrollableNotificationContent
             },
         ]);
 
+        return $notifiable->isSurveyOnly()
+            ? $this->getEnrolleeMessageContent($notifiable, $isReminder)
+            : $this->getUnreachablePatientMessageContent($notifiable, $isReminder);
+    }
+
+    /**
+     * @param $notifiable
+     * @param $isReminder
+     *
+     * @return array
+     */
+    private function getUnreachablePatientMessageContent(User $notifiable, $isReminder)
+    {
         $provider                       = $notifiable->billingProviderUser();
         $lastNurseThatPerformedActivity = $notifiable->patientInfo->lastNurseThatPerformedActivity();
-        $nurseFirstName                 = ! empty($lastNurseThatPerformedActivity) ? $lastNurseThatPerformedActivity->user->display_name
+        $nurseFirstName                 = ! empty($lastNurseThatPerformedActivity)
+            ? ucwords($lastNurseThatPerformedActivity->user->display_name)
             : '';
 
         if ( ! empty($nurseFirstName)) {
@@ -142,13 +121,11 @@ trait EnrollableNotificationContent
                 ? "Just circling back because $nurseFirstName, our telephone nurse was unable to reach you this month. Please re-start calls in this link: "
                 : "$nurseFirstName, our nurse, was unable to reach you this month. Please re-start calls in this link: ";
         } else {
-            // Should never be empty with production data.
             $line2 = $isReminder
                 ? 'Just circling back because our telephone nurse, was unable to reach you this month. Please re-start calls in this link: '
                 : 'Your Nurse Care Coach was unable to reach you this month. Please re-start calls in this link: ';
         }
 
-        // Should never be empty with production data.
         if ( ! empty($provider)) {
             $providerLastName = $provider->last_name;
         } else {
@@ -157,9 +134,9 @@ trait EnrollableNotificationContent
         }
 
         return [
-            'providerLastName' => $providerLastName,
+            'providerLastName' => ucwords($providerLastName),
             'nurseFirstName'   => $nurseFirstName,
-            'practiceName'     => $notifiable->getPrimaryPracticeName(),
+            'practiceName'     => ucwords($notifiable->getPrimaryPracticeName()),
             'line2'            => $line2,
             'isSurveyOnly'     => false,
         ];

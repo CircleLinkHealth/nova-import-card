@@ -6,9 +6,11 @@
 
 namespace App\Nova;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Titasgailius\SearchRelations\SearchesRelations;
@@ -54,6 +56,8 @@ class Nurse extends Resource
      * @return
      */
     public static $title = 'user_id';
+
+    public static $with = ['user'];
 
     /**
      * Get the actions available for the resource.
@@ -107,6 +111,27 @@ class Nurse extends Resource
                 ->hideWhenUpdating()
                 ->hideWhenCreating()
                 ->readonly(),
+
+            Date::make('Start Date', 'start_date')
+                ->readonly(function () {
+                    // user has not logged in into the system yet
+                    // start date can be edited, so readOnly should be false
+                    if (is_null($this->resource->user->last_session_id)) {
+                        return false;
+                    }
+
+                    /** @var Carbon $startDate */
+                    $startDate = $this->resource->start_date;
+                    if ( ! $startDate) {
+                        //user has logged in at least once, so we cannot change start date
+                        return true;
+                    }
+
+                    // start date is in the future. so readOnly should be false
+                    $isTodayOrInTheFuture = $startDate->greaterThanOrEqualTo(now()->startOfDay());
+
+                    return ! $isTodayOrInTheFuture;
+                }),
 
             Text::make('+ Days Payment', 'pay_interval')
                 ->rules('required'),

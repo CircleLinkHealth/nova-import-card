@@ -90,22 +90,22 @@ return [
             'seeder'        => ['path' => 'Database/Seeders', 'generate' => false],
             'factory'       => ['path' => 'Database/factories', 'generate' => false],
             'model'         => ['path' => 'Entities', 'generate' => true],
-            'controller'    => ['path' => 'Http/Controllers', 'generate' => false],
+            'controller'    => ['path' => 'Http/Controllers', 'generate' => true],
             'filter'        => ['path' => 'Http/Middleware', 'generate' => false],
             'request'       => ['path' => 'Http/Requests', 'generate' => false],
-            'provider'      => ['path' => 'Providers', 'generate' => false],
-            'assets'        => ['path' => 'Resources/assets', 'generate' => false],
+            'provider'      => ['path' => 'Providers', 'generate' => true],
+            'assets'        => ['path' => 'Resources/assets', 'generate' => true],
             'lang'          => ['path' => 'Resources/lang', 'generate' => false],
-            'views'         => ['path' => 'Resources/views', 'generate' => false],
-            'test'          => ['path' => 'Tests', 'generate' => false],
+            'views'         => ['path' => 'Resources/views', 'generate' => true],
+            'test'          => ['path' => 'Tests', 'generate' => true],
             'repository'    => ['path' => 'Repositories', 'generate' => false],
             'event'         => ['path' => 'Events', 'generate' => false],
             'listener'      => ['path' => 'Listeners', 'generate' => false],
             'policies'      => ['path' => 'Policies', 'generate' => false],
             'rules'         => ['path' => 'Rules', 'generate' => false],
-            'jobs'          => ['path' => 'Jobs', 'generate' => false],
+            'jobs'          => ['path' => 'Jobs', 'generate' => true],
             'emails'        => ['path' => 'Emails', 'generate' => false],
-            'notifications' => ['path' => 'Notifications', 'generate' => false],
+            'notifications' => ['path' => 'Notifications', 'generate' => true],
             'resource'      => ['path' => 'Transformers', 'generate' => false],
         ],
     ],
@@ -137,8 +137,26 @@ return [
     'composer' => [
         'vendor' => 'circlelinkhealth',
         'author' => [
-            'name'  => 'Michalis Antoniou',
-            'email' => 'mantoniou@cirlelinkhealth.com',
+            [
+                'name'  => 'Antonis Antoniou',
+                'email' => 'antonis@cirlelinkhealth.com',
+                'role'  => 'Developer',
+            ],
+            [
+                'name'  => 'Constantinos Kakoushias',
+                'email' => 'constantinos@cirlelinkhealth.com',
+                'role'  => 'Developer',
+            ],
+            [
+                'name'  => 'Michalis Antoniou',
+                'email' => 'mantoniou@cirlelinkhealth.com',
+                'role'  => 'Lead Developer',
+            ],
+            [
+                'name'  => 'Pangratios Cosma',
+                'email' => 'pangratios@cirlelinkhealth.com',
+                'role'  => 'Lead Developer',
+            ],
         ],
     ],
     /*
@@ -162,7 +180,7 @@ return [
     |--------------------------------------------------------------------------
     */
     'register' => [
-        'translations' => true,
+        'translations' => false,
         /*
          * load files on boot or register method
          *

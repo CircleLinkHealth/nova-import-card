@@ -9,10 +9,10 @@ namespace App\Http\Controllers;
 use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Events\NoteFinalSaved;
+use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Http\Requests\NotesReport;
 use App\Jobs\SendSingleNotification;
 use App\Note;
-use App\Repositories\PatientWriteRepository;
 use App\Rules\PatientEmailAttachments;
 use App\Rules\PatientEmailDoesNotContainPhi;
 use App\SafeRequest;
@@ -28,6 +28,7 @@ use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -188,7 +189,7 @@ class NotesController extends Controller
             $thisYear       = Carbon::now()->year;
             $surveyInstance = DB::table('survey_instances')
                 ->join('surveys', 'survey_instances.survey_id', '=', 'surveys.id')
-                ->where('name', '=', 'Enrollees')
+                ->where('name', '=', SelfEnrollmentController::ENROLLEES_SURVEY_NAME)
                 ->where('year', '=', $thisYear)
                 ->first();
 
@@ -535,6 +536,13 @@ class NotesController extends Controller
 
         $patient = User::findOrFail($patientId);
 
+        if ( ! isset($input['body']) || null === $input['body']) {
+            return redirect()
+                ->back()
+                ->withErrors(['Cannot create note with empty body.'])
+                ->withInput();
+        }
+
         // validating attested problems by nurse. Checking existence since we are about to attach them below
         $request->validate([
             'attested_problems.ccd_problem_id' => 'exists:ccd_problems',
@@ -542,6 +550,21 @@ class NotesController extends Controller
         $attestedProblems = isset($input['attested_problems'])
             ? $input['attested_problems']
             : null;
+        $bypassedAllAttestationValidation = isset($input['bypassed_all_validation']);
+
+        if ($bypassedAllAttestationValidation) {
+            sendPatientBypassedAttestationWarning($patientId);
+        }
+
+        if ( ! $bypassedAllAttestationValidation && empty($attestedProblems)) {
+            \Log::critical("Attestation Validation failed for patient: {$patientId}");
+
+            sendPatientAttestationValidationFailedWarning($patientId);
+        }
+
+        if (isset($input['bypassed_bhi_validation'])) {
+            sendPatientBhiUnattestedWarning($patientId);
+        }
 
         $editingNoteId = ! empty($input['noteId'])
             ? $input['noteId']
@@ -837,6 +860,13 @@ class NotesController extends Controller
 
         $input = $request->allSafe();
 
+        // we should not reach here because we make this check on client
+        // however, an sql error shows that the js client check failed (CPM-2370)
+        // so, we put this here for extra safety
+        if ( ! isset($input['body']) || null === $input['body']) {
+            return response()->json(['error' => 'cannot store draft. body is null']);
+        }
+
         $patient = User::findOrFail($patientId);
 
         $noteId = ! empty($input['note_id'])
@@ -888,10 +918,11 @@ class NotesController extends Controller
     private function getAttestationRequirementsIfYouShould(User $patient)
     {
         $requirements = [
-            'disabled'   => true,
-            'ccm_2'      => false,
-            'bhi_1'      => false,
-            'is_complex' => false,
+            'disabled'              => true,
+            'has_ccm'               => false,
+            'has_pcm'               => false,
+            'ccm_problems_attested' => 0,
+            'bhi_problems_attested' => 0,
         ];
 
         if ( ! complexAttestationRequirementsEnabledForPractice($patient->primaryPractice->id)) {
@@ -925,15 +956,16 @@ class NotesController extends Controller
         $services = $pms->allChargeableServices;
 
         if ($services->where('code', ChargeableService::CCM)->isNotEmpty()) {
-            if ($pms->ccmAttestedProblems()->count() < 2) {
-                $requirements['ccm_2'] = true;
-            }
-
-            if ($services->where('code', ChargeableService::BHI)->isNotEmpty() && $pms->bhiAttestedProblems()->count() < 1) {
-                $requirements['is_complex'] = true;
-                $requirements['bhi_1']      = true;
-            }
+            $requirements['has_ccm'] = true;
         }
+
+        if ($services->where('code', ChargeableService::PCM)->isNotEmpty()) {
+            $requirements['has_pcm'] = true;
+        }
+
+        $requirements['ccm_problems_attested'] = $pms->ccmAttestedProblems(true)->count();
+
+        $requirements['bhi_problems_attested'] = $pms->bhiAttestedProblems(true)->count();
 
         return $requirements;
     }

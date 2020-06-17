@@ -8,7 +8,7 @@ namespace App\Billing\Practices;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
-use CircleLinkHealth\Core\PdfService;
+use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Invoices\ItemizedBillablePatientsReport;
 

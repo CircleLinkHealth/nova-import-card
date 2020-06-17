@@ -195,11 +195,10 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
             ->from("no-reply@${slugSaasAccountName}.com", $saasAccountName)
             ->subject($this->getSubject());
 
-        if ('circlelink-health' == $notifiable->saasAccount->slug) {
+        if ($notifiable->saasAccount->isCircleLinkHealth()) {
             return $mail->bcc([
                 'raph@circlelinkhealth.com',
                 'abigail@circlelinkhealth.com',
-                'sheller@circlelinkhealth.com',
             ]);
         }
 

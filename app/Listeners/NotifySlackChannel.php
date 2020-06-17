@@ -8,12 +8,18 @@ namespace App\Listeners;
 
 use App\DirectMailMessage;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
+use App\Services\PhiMail\IncomingMessageHandler;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Str;
 
 class NotifySlackChannel implements ShouldQueue
 {
     use InteractsWithQueue;
+
+    const ELIGIBILITY_PROCESSING_PURPOSE = 'Eligibility Processing';
+    const IMPORTING_PURPOSE              = 'Importing';
 
     /**
      * Create the event listener.
@@ -33,9 +39,7 @@ class NotifySlackChannel implements ShouldQueue
      */
     public function handle(DirectMailMessageReceived $event)
     {
-        if ($event->directMailMessage->num_attachments > 0) {
-            $this->notifyAdmins($event->directMailMessage);
-        }
+        $this->notifyAdmins($event->directMailMessage);
     }
 
     /**
@@ -44,15 +48,41 @@ class NotifySlackChannel implements ShouldQueue
     private function notifyAdmins(
         DirectMailMessage $dm
     ) {
-        if (app()->environment('local')) {
+        if ( ! app()->environment('production')) {
             return;
         }
 
+        $dm->loadMissing('ccdas.practice');
+
+        $greeting = 'DM Received';
+
+        $purpose = null;
+
+        if ($practiceName = $dm->ccdas->pluck('practice.display_name')->filter()->values()->first()) {
+            $purpose = Str::contains(strtolower($dm->body), strtolower(IncomingMessageHandler::KEYWORD_TO_PROCESS_FOR_ELIGIBILITY))
+                ? self::ELIGIBILITY_PROCESSING_PURPOSE
+                : self::IMPORTING_PURPOSE;
+
+            $greeting .= " from $practiceName, containing CCDA(s) for $purpose";
+        }
+
+        $greeting .= '.';
+
         $messageLink = route('direct-mail.show', [$dm->id]);
+
+        $message = "$greeting \n Click <{$messageLink}|here> to view message.";
+
+        if (self::ELIGIBILITY_PROCESSING_PURPOSE === $purpose
+            && $runningBatch = EligibilityBatch::where('practice_id', $dm->ccdas->pluck('practice_id')->filter()->values()->first())
+                ->where('status', EligibilityBatch::RUNNING)
+                ->first()) {
+            $batchLink = route('eligibility.batch.show', [$runningBatch->id]);
+            $message .= "\n Click <{$batchLink}|here> to see the running eligibility batch.";
+        }
 
         sendSlackMessage(
             '#ccd-file-status',
-            "We received a message from EMR Direct. \n Click here to see the message {$messageLink}."
+            $message
         );
     }
 }

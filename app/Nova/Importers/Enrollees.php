@@ -11,7 +11,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -123,7 +122,7 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
         }
 
         //Currently not accomodating for cases where enrollee does not exist.
-        $enrollee = Enrollee::with(['user', 'enrollmentInvitationLink'])
+        $enrollee = Enrollee::with(['user', 'enrollmentInvitationLinks'])
             ->whereId($row['eligible_patient_id'])
             ->where('practice_id', $this->practiceId)
             ->where('mrn', $row['mrn'])
@@ -138,20 +137,11 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
         }
 
         //if enrollee has already been marked or invited return.
-        if (Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->status || $enrollee->enrollmentInvitationLink) {
+        if (Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->status || $enrollee->enrollmentInvitationLinks->isNotEmpty()) {
             Log::channel('database')->warning("Patient for CSV:{$this->fileName}, for row: {$this->rowNumber} has already been marked for auto-enrollment.");
 
             return;
         }
-
-        SelfEnrollmentStatus::updateOrCreate(
-            [
-                'enrollee_id' => $enrollee->id,
-            ],
-            [
-                'enrollee_user_id' => optional($enrollee->user)->id,
-            ]
-        );
 
         //set for Auto Enrollment
         $enrollee->status = Enrollee::QUEUE_AUTO_ENROLLMENT;
@@ -168,10 +158,9 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
 
     private function updateOrCreateEnrolleeFromCsv(array $row)
     {
-        //not sure if we should accept null dobs
         //also, still proceed with Enrollee creation if dob fails validation, e.g false ?
         if ($row['dob']) {
-            if (is_int($row['dob'])) {
+            if (is_numeric($row['dob'])) {
                 $row['dob'] = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['dob']);
             }
 
@@ -179,6 +168,13 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
 
             $row['dob'] = $date;
         }
+
+        if (empty($row['dob']) || false === $row['dob']) {
+            Log::channel('database')->critical("Import for:{$this->fileName}, Invalid DOB for Enrollee at row: {$this->rowNumber}.");
+
+            return;
+        }
+
         $provider = ProviderByName::first($row['provider']);
 
         if ( ! $provider) {

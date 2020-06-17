@@ -18,11 +18,12 @@ trait UnreachablePatientsToCaPanel
     {
         Enrollee::updateOrCreate(
             [
-                'user_id' => $user->id,
+                'user_id'     => $user->id,
+                'practice_id' => $user->primaryPractice->id,
             ],
             [
-                'practice_id'             => $user->primaryPractice->id,
                 'dob'                     => $user->patientInfo->birth_date,
+                'location_id'             => $user->patientInfo->preferred_contact_location,
                 'first_name'              => $user->first_name,
                 'last_name'               => $user->last_name,
                 'address'                 => $user->address,

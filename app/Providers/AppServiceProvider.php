@@ -13,14 +13,17 @@ use App\Services\AWV\DirectPatientDocument;
 use App\Services\AWV\EmailPatientDocument;
 use App\Services\AWV\FaxPatientDocument;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Notifications\Channels\CustomMailChannel;
+use CircleLinkHealth\Core\Notifications\Channels\CustomTwilioChannel;
 use CircleLinkHealth\Core\Providers\GoogleDriveServiceProvider;
 use DB;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\SQLiteBuilder;
 use Illuminate\Database\SQLiteConnection;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Notifications\ChannelManager;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Fluent;
@@ -86,8 +89,8 @@ class AppServiceProvider extends ServiceProvider
                         return preg_replace(
                             '/\?/',
                             is_numeric($binding)
-                                                ? $binding
-                                                : "'".$binding."'",
+                                ? $binding
+                                : "'".$binding."'",
                             $sql,
                             1
                         );
@@ -103,6 +106,15 @@ class AppServiceProvider extends ServiceProvider
                 return $this->getQuery()->toRawSql();
             }
         );
+
+        /** @var ChannelManager $cm */
+        $cm = $this->app->make(ChannelManager::class);
+        $cm->extend('twilio', function (Application $app) {
+            return $app->make(CustomTwilioChannel::class);
+        });
+        $cm->extend('mail', function (Application $app) {
+            return $app->make(CustomMailChannel::class);
+        });
 
         if ($this->app->runningUnitTests() && \Config::get('database.default')) {
             \Illuminate\Database\Connection::resolverFor('sqlite', function ($connection, $database, $prefix, $config) {
@@ -182,7 +194,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(\jeremykenedy\Slack\Laravel\ServiceProvider::class);
         $this->app->register(EmailArrayValidatorServiceProvider::class);
         $this->app->register(\Propaganistas\LaravelPhone\PhoneServiceProvider::class);
-        $this->app->register(\Waavi\UrlShortener\UrlShortenerServiceProvider::class);
         $this->app->register(GoogleDriveServiceProvider::class);
         $this->app->register(\LynX39\LaraPdfMerger\PdfMergerServiceProvider::class);
 

@@ -22,7 +22,6 @@
     $urlShort   = $pieces[0];
 
     $bhiTime     = 0;
-    $ccmTime     = optional(App\CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id))->total_time_in_system ?? 0;
     $monthlyTime = $user->formattedTime($ccmTime);
     ?>
 
@@ -128,7 +127,12 @@
     </script>
 
     <div id="app">
-        <enrollment-dashboard :debug="{{json_encode(!isProductionEnv())}}"></enrollment-dashboard>
+        <enrollment-dashboard
+                cpm-caller-url="{{config('services.twilio.cpm-caller-url')}}"
+                cpm-token="{{$cpmToken}}"
+                :debug="{{json_encode(!isProductionEnv())}}">
+
+        </enrollment-dashboard>
     </div>
 
     <script src="{{mix('compiled/js/app-enrollment-ui.js')}}"></script>

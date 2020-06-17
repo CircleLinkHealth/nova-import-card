@@ -9,7 +9,6 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeStaff;
 use CircleLinkHealth\Customer\Entities\Nurse;
-use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\ProviderInfo;
@@ -71,7 +70,7 @@ class PracticeStaffController extends Controller
             ->whereHas('practices', function ($q) use ($primaryPractice) {
                 $q->where('practices.id', '=', $primaryPractice->id);
             })
-            ->with('roles')
+            ->with('providerInfo')
             ->get()
             ->sortBy('first_name')
             ->values();
@@ -126,6 +125,8 @@ class PracticeStaffController extends Controller
             })
                                                        ?? null;
 
+        $user->loadMissing('providerInfo');
+
         return [
             'id'              => $user->id,
             'practice_id'     => $primaryPractice->id,
@@ -141,7 +142,7 @@ class PracticeStaffController extends Controller
                 PhoneNumber::getTypes()
             ) ?? '',
             'sendBillingReports'     => $permissions->pivot->send_billing_reports ?? false,
-            'canApproveAllCareplans' => $user->canApproveCarePlans(),
+            'canApproveAllCareplans' => ! optional($user->providerInfo)->approve_own_care_plans,
             'role_names'             => $roles->map(function ($r) {
                 return $r->name;
             }),
@@ -203,13 +204,6 @@ class PracticeStaffController extends Controller
             $user->emr_direct_address = $formData['emr_direct_address'];
         }
 
-        $careplanApprove = Permission::where('name', 'care-plan-approve')->first();
-        if ($formData['canApproveAllCareplans']) {
-            $user->attachPermission($careplanApprove->id);
-        } elseif ($user->hasPermission('care-plan-approve')) {
-            $user->detachPermission($careplanApprove->id);
-        }
-
         //Attach the locations
         $user->locations()->sync([]);
         $user->attachLocation($formData['locations']);
@@ -240,8 +234,10 @@ class PracticeStaffController extends Controller
         }
 
         if (in_array('provider', $roleNames)) {
-            $providerInfo = ProviderInfo::firstOrCreate([
+            $providerInfo = ProviderInfo::updateOrCreate([
                 'user_id' => $user->id,
+            ], [
+                'approve_own_care_plans' => ! $formData['canApproveAllCareplans'],
             ]);
 
             if ('billing_provider' != $formData['forward_careplan_approval_emails_to']['who']) {

@@ -10,6 +10,7 @@ use App\EnrolleeCustomFilter;
 use App\EnrolleeView;
 use App\Filters\EnrolleeFilters;
 use App\Http\Requests\AddEnrolleeCustomFilter;
+use App\Http\Requests\AssignCallbackToEnrollee;
 use App\Http\Requests\EditEnrolleeData;
 use App\Http\Requests\UpdateMultipleEnrollees;
 use Carbon\Carbon;
@@ -38,6 +39,22 @@ class EnrollmentDirectorController extends Controller
 
             $practice->enrolleeCustomFilters()->attach($customFilter->id, ['include' => 1]);
         }
+
+        return response()->json([], 200);
+    }
+
+    public function assignCallback(AssignCallbackToEnrollee $request)
+    {
+        $enrollee = Enrollee::findOrFail($request->input('enrollee_id'));
+
+        $enrollee->update([
+            'status' => Enrollee::TO_CALL,
+            //if enrollee already has max attempt count, and CA calls them, if they are unreachable, they will never be brought again - so reset attempt_count as well
+            'attempt_count'           => 0,
+            'care_ambassador_user_id' => $request->input('care_ambassador_user_id'),
+            'requested_callback'      => Carbon::parse($request->input('callback_date')),
+            'callback_note'           => htmlspecialchars($request->input('callback_note'), ENT_NOQUOTES),
+        ]);
 
         return response()->json([], 200);
     }
@@ -100,7 +117,7 @@ class EnrollmentDirectorController extends Controller
                 'address_2'           => $request->input('address_2'),
                 'primary_phone'       => $phones['primary_phone'],
                 'home_phone'          => $phones['home_phone'],
-                'other_phone'         => $phones['other_phone'],
+                'other_phone'         => $phones['other_phone'] ?? $phones['work_phone'] ?? null,
                 'cell_phone'          => $phones['cell_phone'],
                 'primary_insurance'   => $request->input('primary_insurance'),
                 'secondary_insurance' => $request->input('secondary_insurance'),
@@ -191,6 +208,48 @@ END ASC, attempt_count ASC");
         }
 
         return 'Test Patients have been created. Please close this window.';
+    }
+
+    public function searchEnrollables(Request $request)
+    {
+        $input = $request->input();
+
+        if ( ! array_key_exists('enrollables', $input)) {
+            return response()->json([], 400);
+        }
+
+        $searchTerms = explode(' ', $input['enrollables']);
+
+        $query = Enrollee::with(['provider', 'practice']);
+
+        foreach ($searchTerms as $term) {
+            $query->where(function ($q) use ($term) {
+                $q->where('id', $term)
+                    ->orWhere('first_name', 'like', "%${term}%")
+                    ->orWhere('last_name', 'like', "%${term}%");
+            });
+        }
+
+        $enrollables = [];
+        $query->chunk(100, function ($enrollees) use (&$enrollables) {
+            foreach ($enrollees as $e) {
+                $phonesString = "{$e->home_phone}, {$e->cell_phone}, {$e->other_phone}";
+
+                $item = [
+                    'id'       => $e->id,
+                    'name'     => $e->first_name.' '.$e->last_name,
+                    'mrn'      => $e->mrn,
+                    'program'  => optional($e->practice)->display_name ?? '',
+                    'provider' => optional($e->provider)->getFullName() ?? '',
+                ];
+
+                $item['hint'] = "{$item['name']} ({$item['id']}) PROVIDER: [{$item['provider']}] [{$item['program']}]  {$phonesString}";
+
+                $enrollables[] = $item;
+            }
+        });
+
+        return response()->json($enrollables);
     }
 
     public function unassignCareAmbassadorFromEnrollees(UpdateMultipleEnrollees $request)

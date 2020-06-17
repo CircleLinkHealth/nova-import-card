@@ -11,7 +11,6 @@ use App\Algorithms\Calls\UnsuccessfulHandler;
 use App\Call;
 use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Note;
-use App\Repositories\PatientWriteRepository;
 use App\Services\NoteService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Family;
@@ -19,6 +18,7 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Support\Facades\Auth;
 
@@ -332,7 +332,9 @@ class SchedulerService
                 $q->whereIn('outbound_cpm_id', $cb)
                     ->orWhereIn('inbound_cpm_id', $cb);
             }
-        )
+        )->whereHas('inboundUser', function ($q) {
+            return $q->ofType('participant');
+        })
             ->where('status', '=', 'scheduled')
             ->delete();
     }

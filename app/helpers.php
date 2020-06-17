@@ -6,6 +6,7 @@
 
 use App\Constants;
 use App\Jobs\SendSlackMessage;
+use AshAllenDesign\ShortURL\Classes\Builder as ShortUrlBuilder;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Exceptions\CsvFieldNotFoundException;
@@ -44,25 +45,25 @@ if ( ! function_exists('sanitize_array_keys')) {
         );
     }
 }
-    if ( ! function_exists('getStringValueFromAnswerAwvUser')) {
-        function getStringValueFromAnswerAwvUser($val, $default = '')
-        {
-            if (empty($val)) {
-                return $default;
-            }
-            if (is_string($val)) {
-                return $val;
-            }
-            if (is_array($val)) {
-                return getStringValueFromAnswerAwvUser(reset($val));
-            }
-            if ($val instanceof Collection) {
-                return getStringValueFromAnswerAwvUser($val->first());
-            }
-
+if ( ! function_exists('getStringValueFromAnswerAwvUser')) {
+    function getStringValueFromAnswerAwvUser($val, $default = '')
+    {
+        if (empty($val)) {
+            return $default;
+        }
+        if (is_string($val)) {
             return $val;
         }
+        if (is_array($val)) {
+            return getStringValueFromAnswerAwvUser(reset($val));
+        }
+        if ($val instanceof Collection) {
+            return getStringValueFromAnswerAwvUser($val->first());
+        }
+
+        return $val;
     }
+}
 if ( ! function_exists('getIpAddress')) {
     /**
      * Get the IP address. This also works with Heroku, where we are behind a load balancer.
@@ -257,6 +258,15 @@ if ( ! function_exists('formatPhoneNumber')) {
     }
 }
 
+if ( ! function_exists('capitalizeWords')) {
+    function capitalizeWords(
+        string $string,
+        $delimiters = "- \t\r\n\f\v"
+    ) {
+        return ucwords(strtolower($string), $delimiters);
+    }
+}
+
 if ( ! function_exists('formatPhoneNumberE164')) {
     /**
      * Formats a string of numbers as a phone number delimited by dashes as such: xxx-xxx-xxxx.
@@ -295,6 +305,22 @@ if ( ! function_exists('extractNumbers')) {
     function extractNumbers($string)
     {
         preg_match_all('/([\d]+)/', $string, $match);
+
+        return implode($match[0]);
+    }
+}
+
+if ( ! function_exists('extractLetters')) {
+    /**
+     * Returns only letters in a string.
+     *
+     * @param $string
+     *
+     * @return string
+     */
+    function extractLetters($string)
+    {
+        preg_match_all('/[^a-zA-Z]/', $string, $match);
 
         return implode($match[0]);
     }
@@ -1149,17 +1175,15 @@ if ( ! function_exists('showDiabetesBanner')) {
 
 if ( ! function_exists('shortenUrl')) {
     /**
-     * Create a short URL.
-     *
      * @param $url
      *
-     * @throws \Waavi\UrlShortener\InvalidResponseException
+     * @throws \AshAllenDesign\ShortURL\Exceptions\ShortURLException
      *
      * @return string
      */
     function shortenUrl($url)
     {
-        return \UrlShortener::driver('bitly-gat')->shorten($url);
+        return (new ShortUrlBuilder())->destinationUrl($url)->make()->default_short_url;
     }
 }
 
@@ -1410,6 +1434,15 @@ if ( ! function_exists('isTwoFaEnabledForPractice')) {
     }
 }
 
+if ( ! function_exists('isSelfEnrollmentTestModeEnabled')) {
+    function isSelfEnrollmentTestModeEnabled(): bool
+    {
+        return Cache::remember($key = 'is_self_enrollment_test_mode_enabled', 2, function () use ($key) {
+            return filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN);
+        });
+    }
+}
+
 if ( ! function_exists('getSampleNotePdfPath')) {
     function getSampleNotePdfPath()
     {
@@ -1604,7 +1637,7 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
             $handles           = AppConfig::pull('nbi_rwjbarnabas_mrn_slack_watchers', '');
             $patientUrl        = route('patient.demographics.show', ['patientId' => $patientId]);
             $patientProfileUrl = "<$patientUrl|this patient>";
-            $novaUrl           = url('/superadmin/resources/n-b-i-patient-datas');
+            $novaUrl           = url('/superadmin/resources/supplemental-patient-data-resources');
             $novaLink          = "<$novaUrl|NBI's supplementary MRN list>";
             sendSlackMessage(
                 '#nbi_rwjbarnabas',
@@ -1614,6 +1647,51 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
 
             \Cache::put($key, Carbon::now()->toDateTimeString(), 60 * 12);
         }
+    }
+}
+if ( ! function_exists('sendPatientAttestationValidationFailedWarning')) {
+    /**
+     * @param $patientId
+     */
+    function sendPatientAttestationValidationFailedWarning($patientId)
+    {
+        $handles    = AppConfig::pull('attestation_validation_slack_watchers', '');
+        $patientUrl = route('patient.demographics.show', ['patientId' => $patientId]);
+
+        sendSlackMessage(
+            '#clinical',
+            "$handles Warning! Something went wrong with condition attestation regarding patient: {$patientId}. This is possibly a bug. Please review {$patientUrl}"
+        );
+    }
+}
+if ( ! function_exists('sendPatientBhiUnattestedWarning')) {
+    /**
+     * @param $patientId
+     */
+    function sendPatientBhiUnattestedWarning($patientId)
+    {
+        $handles    = AppConfig::pull('attestation_validation_slack_watchers', '');
+        $patientUrl = route('patient.demographics.show', ['patientId' => $patientId]);
+
+        sendSlackMessage(
+            '#clinical',
+            "$handles Warning! This patient has 10+ minutes of BHI time without a BHI attestation. Please review {$patientUrl}"
+        );
+    }
+}
+if ( ! function_exists('sendPatientBypassedAttestationWarning')) {
+    /**
+     * @param $patientId
+     */
+    function sendPatientBypassedAttestationWarning($patientId)
+    {
+        $handles    = AppConfig::pull('attestation_validation_slack_watchers', '');
+        $patientUrl = route('patient.demographics.show', ['patientId' => $patientId]);
+
+        sendSlackMessage(
+            '#clinical',
+            "$handles Warning! Nurse bypassed attestation validation for patient: {$patientId} (Possible bug). Please review {$patientUrl}"
+        );
     }
 }
 if ( ! function_exists('getDatesForRange')) {
@@ -2044,8 +2122,12 @@ if ( ! function_exists('levenshteinPercent')) {
 }
 
 if ( ! function_exists('stringMeansEnglish')) {
-    function stringMeansEnglish(string $string): bool
+    function stringMeansEnglish(string $string = null): bool
     {
+        if ( ! $string) {
+            return false;
+        }
+
         return in_array(strtolower($string), [
             'e',
             'en',
@@ -2057,8 +2139,12 @@ if ( ! function_exists('stringMeansEnglish')) {
 }
 
 if ( ! function_exists('stringMeansSpanish')) {
-    function stringMeansSpanish(string $string): bool
+    function stringMeansSpanish(string $string = null): bool
     {
+        if ( ! $string) {
+            return false;
+        }
+
         return in_array(strtolower($string), [
             'sp',
             'es',

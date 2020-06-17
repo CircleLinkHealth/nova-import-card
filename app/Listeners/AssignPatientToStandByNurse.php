@@ -77,6 +77,10 @@ class AssignPatientToStandByNurse
 
     private static function shouldBail(User $patient)
     {
+        if ( ! $patient->isParticipant()) {
+            return true;
+        }
+
         $patient->loadMissing('carePlan');
 
         if ( ! $patient->carePlan) {

@@ -72,6 +72,7 @@ class PatientObserver
                 ]
             )) {
                 Artisan::queue(
+//                    Do we want to run this if survey-only? I dont see any reason
                     RemoveScheduledCallsForWithdrawnAndPausedPatients::class,
                     ['patientUserIds' => [$patient->user_id]]
                 );
@@ -133,18 +134,17 @@ class PatientObserver
         }
 
         if ($patient->isDirty('ccm_status')) {
-            $oldValue = $patient->getOriginal('ccm_status');
-            $newValue = $patient->ccm_status;
-            if (Patient::ENROLLED == $newValue) {
-                if (Patient::UNREACHABLE == $oldValue) {
-                    $patient->no_call_attempts_since_last_success = 0;
-                }
+            if ($this->statusChangedToEnrolled($patient)) {
+                $patient->no_call_attempts_since_last_success = 0;
             }
         }
     }
 
     private function assignToStandByNurseIfChangedToEnrolled(Patient $patient)
     {
+        if ( ! $patient->user->isParticipant()) {
+            return;
+        }
         if ($patient->isDirty('ccm_status')) {
             if ($this->statusChangedToEnrolled($patient)) {
                 $patient->loadMissing('user');

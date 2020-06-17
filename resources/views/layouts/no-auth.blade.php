@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CarePlanManager | Log In</title>
 
-    @include('partials.hotjar-code')
     @include('cpm-module-raygun::partials.real-user-monitoring')
+    @include('partials.new-relic-tracking')
 
     <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
     <link href="{{ mix('/img/favicon.png') }}" rel="icon">

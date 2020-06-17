@@ -178,7 +178,7 @@
                 return this.problems.distinct((p) => p.name)
             },
             cpmProblemsForSelect() {
-                return this.cpm_problems.map(p => ({
+                return this.getAddConditionCpmProblems().map(p => ({
                     label: p.name,
                     value: p.id
                 })).sort((a, b) => a.label < b.label ? -1 : 1)
@@ -217,7 +217,7 @@
                 this.selectedInstruction = instruction
             },
             updateInstructions(event) {
-                let cpmProblem = this.cpm_problems.find(problem => {
+                let cpmProblem = this.getAddConditionCpmProblems().find(problem => {
                     return problem.id == event.target.value
                 })
 
@@ -308,7 +308,7 @@
              */
             checkPatientBehavioralStatus() {
                 const problems = this.problems || [];
-                const cpmProblems = this.cpm_problems || [];
+                const cpmProblems = this.getAddConditionCpmProblems() || [];
 
                 const ccmCount = problems.filter(problem => {
                     if (problem.is_monitored) {

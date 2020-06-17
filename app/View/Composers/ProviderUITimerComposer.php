@@ -6,6 +6,9 @@
 
 namespace App\View\Composers;
 
+use App\Constants;
+use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Request;
@@ -57,6 +60,7 @@ class ProviderUITimerComposer extends ServiceProvider
             $noBhiSwitch = ! auth()->user()->isCareCoach();
 
             $patient = $view->patient;
+
             if (isset($patient) && ! empty($patient) && is_a($patient, User::class)) {
                 $patientId = $patient->id;
                 $patientProgramId = $patient->program_id;
@@ -104,23 +108,39 @@ class ProviderUITimerComposer extends ServiceProvider
             $patient = $view->patient;
 
             if ($patient) {
-                $ccmSeconds = $patient->getCcmTime();
+                $patient->load([
+                    'patientSummaries' => function ($pms) {
+                        $pms->select(['bhi_time', 'ccm_time', 'id'])
+                            ->orderBy('id', 'desc')
+                            ->whereMonthYear(Carbon::now()->startOfMonth());
+                    },
+                    'careTeamMembers.user',
+                    'patientInfo.location',
+                ]);
+
+                $currentPms = $patient->patientSummaries->first();
+
+                $ccmSeconds = $currentPms->ccm_time ?? 0;
+                $bhiSeconds = $currentPms->bhi_time ?? 0;
                 $monthlyTime = $patient->formattedTime($ccmSeconds);
-                $monthlyBhiTime = $patient->formattedBhiTime();
+                $monthlyBhiTime = $patient->formattedTime($bhiSeconds);
 
                 $ccm_above = false;
-                if ($ccmSeconds > 1199) {
+                if ($ccmSeconds >= Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS) {
                     $ccm_above = true;
                 }
 
-                $regularDoctor = $patient->regularDoctorUser();
-                $billingDoctor = $patient->billingProviderUser();
+                $regularDoctor = optional($patient->careTeamMembers->where('type', '=', CarePerson::REGULAR_DOCTOR)->first())->user;
+                $billingDoctor = optional($patient->careTeamMembers->where('type', '=', CarePerson::BILLING_PROVIDER)->first())->user;
 
                 $provider = optional($billingDoctor)->getFullName() ?? 'No Provider Selected';
 
-                $location = empty($patient->getPreferredLocationName())
+                $preferredLocationName = $patient->getPreferredLocationName();
+                $location = empty($preferredLocationName)
                     ? 'Not Set'
-                    : $patient->getPreferredLocationName();
+                    : $preferredLocationName;
+
+                $patientIsBhiEligible = optional($patient->primaryPractice)->hasServiceCode('CPT 99484') && ($bhiSeconds || $patient->isBhi());
             } else {
                 $ccm_above = false;
                 $location = 'N/A';
@@ -129,6 +149,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 $provider = 'N/A';
                 $billingDoctor = '';
                 $regularDoctor = '';
+                $patientIsBhiEligible = false;
             }
 
             $view->with(compact([
@@ -139,6 +160,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 'provider',
                 'regularDoctor',
                 'billingDoctor',
+                'patientIsBhiEligible',
             ]));
         });
     }

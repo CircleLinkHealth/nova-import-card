@@ -6,7 +6,8 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\SelfEnrollmentEnrollees;
+use App\EnrollmentInvitationsBatch;
+use App\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;
 
@@ -17,7 +18,7 @@ class SelfEnrollmentManualInviteCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Send a Self Enrollment Invite to an Enrollee. If the Enrollee does not have a User ID, it will throw an Exception';
     /**
      * The name and signature of the console command.
      *
@@ -26,23 +27,18 @@ class SelfEnrollmentManualInviteCommand extends Command
     protected $signature = 'self-enrollment:invite {enrolleeId}';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
      * @return mixed
      */
     public function handle()
     {
-        $model = Enrollee::find($this->argument('enrolleeId'));
-        SelfEnrollmentEnrollees::dispatch($model);
+        $enrollee          = Enrollee::with('user.enrollee')->has('user')->whereNotNull('practice_id')->findOrFail($this->argument('enrolleeId'));
+        $manualInviteBatch = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE;
+        $invitationBatch   = EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+            $enrollee->practice_id,
+            $manualInviteBatch
+        );
+        SendInvitation::dispatch($enrollee->user, $invitationBatch->id);
     }
 }
