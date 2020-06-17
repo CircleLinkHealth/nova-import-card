@@ -13,15 +13,13 @@ export function storeTime(key: string, activities: { title: string, is_behaviora
     let finalBhi = totalBhi;
     activities.forEach(a => {
         // remove time for activities that have force_skip or are included in the UNTRACKED_ROUTES array
-        if (!a.force_skip || UNTRACKED_ROUTES.indexOf(a.title) === -1) {
-            return;
-        }
-
-        console.debug(`activity[${a.title}] has force_skip, will not store in cache`);
-        if (a.is_behavioral) {
-            finalBhi -= a.duration;
-        } else {
-            finalCcm -= a.duration;
+        if (a.force_skip || UNTRACKED_ROUTES.indexOf(a.title) > -1) {
+            console.debug(`activity[${a.title}] has force_skip, will not store in cache`);
+            if (a.is_behavioral) {
+                finalBhi -= a.duration;
+            } else {
+                finalCcm -= a.duration;
+            }
         }
     });
     _usersTime[key] = {ccm: finalCcm, bhi: finalBhi};
