@@ -112,49 +112,7 @@ class OpsDashboardController extends Controller
     {
         //Page times out. We should implement solution similar to OpsDashbboard (queue job save data on S3), or SQL view, or Nova page with metrics
         return 'Page is unavailable. To be fixed in CPM-1717';
-//        if ($request->has('months')) {
-//            $months = $request['months'];
-//            if ('all' == $months) {
-//                $months = 8;
-//            }
-//        } else {
-//            $months = 6;
-//        }
-//
-//        $date     = Carbon::today();
-//        $fromDate = $date->copy()->subMonth($months)->startOfMonth()->startOfDay();
-//        $months   = $this->getMonths($date, $months);
-//
-//        $practices = Practice::activeBillable()
-//            ->with([
-//                'patients' => function ($u) use ($fromDate) {
-//                    $u->with([
-//                        'patientSummaries' => function ($s) use ($fromDate) {
-//                            $s->whereNotNull('actor_id')
-//                                ->where('approved', 1)
-//                                ->where('month_year', '>=', $fromDate->toDateString());
-//                        },
-//                    ]);
-//                },
-//            ])->get()
-//            ->sortBy('display_name');
-//
-//        foreach ($practices as $practice) {
-//            $summaries = $practice->patients->map(function ($p) {
-//                return $p->patientSummaries;
-//            })->filter()->flatten();
-//            $rows[$practice->display_name] = $this->service->billingChurnRow($summaries, $months);
-//        }
-//        $total = $this->calculateBillingChurnTotalRow($rows, $months);
-//        $rows  = collect($rows);
-//
-//        return view('admin.opsDashboard.billing-churn', compact([
-//            'date',
-//            'fromDate',
-//            'rows',
-//            'months',
-//            'total',
-//        ]));
+        //check git for previous version
     }
 
     public function getMonths(Carbon $date, $number)
