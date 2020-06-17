@@ -244,6 +244,7 @@
             },
             notifyTimeTracker(loadingTime) {
                 const info = this.getTimeTrackerInfo();
+                info.forceSkip = false;
 
                 if (loadingTime) {
                     info.enrolleeId = 0;
@@ -253,6 +254,7 @@
                     info.enrolleeId = this.enrollable_id;
                     if (this.shouldShowCookie) {
                         info.activity = ACTIVITY_TITLE_TO_SKIP_FROM_CA_TIME;
+                        info.forceSkip = true;
                     } else if (+this.enrollable_id === 0) {
                         info.activity = ACTIVITY_TITLE_LOADING_PATIENT;
                     } else {

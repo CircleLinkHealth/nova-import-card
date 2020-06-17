@@ -24,11 +24,10 @@ class StoreTimeTracking implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    const UNTRACKED_CA_ACTIVITIES = [
-        'CA - No more patients',
-    ];
-
-    // Do not count time for these routes
+    /**
+     * Do not count time for these routes
+     * force_skip is set in {@link ProviderUITimerComposer}.
+     */
     const UNTRACKED_ROUTES = [
         'patient.activity.create',
         'patient.activity.providerUIIndex',
@@ -77,7 +76,7 @@ class StoreTimeTracking implements ShouldQueue
 
             $pageTimer = $this->createPageTimer($activity);
 
-            if ($this->isBillableActivity($pageTimer, $provider)) {
+            if ($this->isBillableActivity($pageTimer, $activity, $provider)) {
                 $newActivity = $this->createActivity($pageTimer, $isBehavioral);
                 ProcessMonthltyPatientTime::dispatchNow($patientId);
                 ProcessNurseMonthlyLogs::dispatchNow($newActivity);
@@ -169,12 +168,13 @@ class StoreTimeTracking implements ShouldQueue
      *
      * @return bool
      */
-    private function isBillableActivity(PageTimer $pageTimer, User $provider = null)
+    private function isBillableActivity(PageTimer $pageTimer, array $activity, User $provider = null)
     {
         return ! ( ! $provider
                    || ! (bool) $provider->isCCMCountable()
                    || 0 == $pageTimer->patient_id
-                   || in_array($pageTimer->title, self::UNTRACKED_ROUTES));
+                   || in_array($pageTimer->title, self::UNTRACKED_ROUTES)
+                   || $activity['force_skip']);
     }
 
     /**
@@ -185,6 +185,6 @@ class StoreTimeTracking implements ShouldQueue
      */
     private function isProcessableCareAmbassadorActivity(array $activity, User $provider = null)
     {
-        return ! in_array($activity['name'], self::UNTRACKED_CA_ACTIVITIES) && $provider->isCareAmbassador();
+        return ! $activity['force_skip'] && $provider->isCareAmbassador();
     }
 }
