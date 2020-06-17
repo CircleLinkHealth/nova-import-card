@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Core;
+namespace CircleLinkHealth\Core\Services;
 
 /**
  * This is a wrapper for the service used to generate PDFs from html.
