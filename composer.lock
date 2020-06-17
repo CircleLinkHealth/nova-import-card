@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bc8c749ee3e9fdad97d7de3a5810f577",
+    "content-hash": "f5f98f322c8cebb10593a46e02e6b6fa",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1033,6 +1033,42 @@
                 "laravel",
                 "nova"
             ]
+        },
+        {
+            "name": "circlelinkhealth/condition-code-lookup-module",
+            "version": "v1.1.5",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/condition-code-lookup-module.git",
+                "reference": "077e8e77c7894d2d44ae55350b65fd67f90fcd65"
+            },
+            "require": {
+                "ext-curl": "*",
+                "laravel/framework": "*",
+                "php": "*"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\ConditionCodeLookup\\Providers\\ConditionCodeLookupServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\ConditionCodeLookup\\": ""
+                },
+                "files": []
+            },
+            "authors": [
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pagcosma@gmail.com"
+                }
+            ],
+            "time": "2020-05-04T15:54:31+00:00"
         },
         {
             "name": "circlelinkhealth/core-module",

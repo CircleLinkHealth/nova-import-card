@@ -64,6 +64,7 @@ class ResetPassword extends Notification
         $this->notifiable = $notifiable;
 
         return (new MailMessage())
+            ->mailer('postmark')
             //If notifiable is patient, we need to replace any references to CircleLink Health with Practice Name
             ->from('noreply@circlelinkhealth.com', $notifiable->isParticipant() ? $notifiable->getPrimaryPracticeName() : 'CircleLink Health')
             ->view('vendor.notifications.email', [
