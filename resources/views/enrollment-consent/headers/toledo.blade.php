@@ -4,11 +4,13 @@
             {{$signatoryNameForHeader}}
             <br>
             {{$practiceName}}
-            <br>
-            {{$extraAddressValues[0]['address_line_1']}}
-            <br>
-            {{$extraAddressValues[0]['city']}}
-            {{$extraAddressValues[0]['state']}}
+       @if($extraAddressValuesRequested)
+                <br>
+                {{$extraAddressValues[0]['address_line_1']}}
+                <br>
+                {{$extraAddressValues[0]['city']}}
+                {{$extraAddressValues[0]['state']}}
+            @endif
         </div>
         <div class="logo" style="{{$logoStyleRequest}}; opacity: 90%;">
             @include('enrollment-consent.practiceLogo')

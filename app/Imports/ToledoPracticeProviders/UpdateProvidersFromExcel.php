@@ -23,35 +23,26 @@ class UpdateProvidersFromExcel implements ToCollection, WithStartRow
         /** @var Practice $practice */
         $practice           = Practice::where('display_name', 'Toledo Clinic')->first();
         $excelProvidersData = $this->excelProvidersData($rows);
-//        $users              = [];
-
-//        $signaturePicsPaths      = $this->getSignaturesPicsPathDataFromPublic();
-//        $signaturePicsPathsCount = count($signaturePicsPaths);
-
+        
+        $users=[];
         foreach ($excelProvidersData  as $data) {
             if (is_null($data['email'])) {
                 throw new \Exception("Email is required for provider with npi_number {$data['npi_number']}");
-            }
-
-            /** @var User $user */
+            }/** @var User $user */
             $user = $this->getUserProvider($data['email'], $practice);
 //            Feels weird that im doing the same check again.
-            if ( ! is_null($user)) {
+            if ( ! is_null($user) && empty($user->providerInfo->npi_number)) {
 //                Update npi number. Currently no toledo provider has any.
-                if (empty($user->providerInfo->npi_number)) {
                     $user->providerInfo->update([
                         'npi_number' => $data['npi_number'],
                     ]);
-                }
-//                $users[] = $user;
+//                    @todo: Update zip codes i locations
+                $users[] = $user;
             }
         }
 
-//        $usersCount = count($users);
-//        Log::info("$usersCount providers found in cpm from $signaturePicsPathsCount that were listed in excel sheet.");
-
-        //        No reason to rename except if we want to for any reason.
-//        $this->renameSignaturesPath($signaturePicsPaths, $users);
+        $usersCount = count($users);
+        Log::info("Npi_number has been updated for $usersCount enrollees");
     }
 
     public function startRow(): int
@@ -80,22 +71,6 @@ class UpdateProvidersFromExcel implements ToCollection, WithStartRow
         return $nullFiltered->filter()->all();
     }
 
-//    private function getSignaturesPicsPathDataFromPublic()
-//    {
-//        $toledoSignatures = \File::allFiles(public_path(self::PUBLIC_PATH));
-//
-//        $pathData = [];
-//        foreach ($toledoSignatures as $signaturePicPath) {
-//            $relativePath = $signaturePicPath->getRelativePathname();
-//            $pathData[]   = [
-//                'npiNumberFromPath' => substr($relativePath, 0, strpos($relativePath, '_')),
-//                'signaturePicPath'  => $relativePath,
-//            ];
-//        }
-//
-//        return $pathData;
-//    }
-
     /**
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
      */
@@ -114,25 +89,5 @@ class UpdateProvidersFromExcel implements ToCollection, WithStartRow
 
         return $user;
     }
-
-//    private function renameSignaturesPath(array $signaturePicsPaths, array $users)
-//    {
-//        foreach ($users as $user) {
-//            $npiNumber = $user->providerInfo->npi_number;
-//            if (is_null($npiNumber)) {
-//                Log::error("Provider with user_id [$user->id] has null npi_number");
-//
-//                return;
-//            }
-//            if (in_array($npiNumber, collect($signaturePicsPaths)->flatten()->toArray())) {
-//                $userId      = $user->id;
-//                $type        = ProviderSignature::SIGNATURE_PIC_TYPE;
-//                $publicPath  = public_path(self::PUBLIC_PATH);
-//                $oldPathName = "$npiNumber$type";
-//                $newPathName = "$userId$type";
-//                \File::move("$publicPath/$oldPathName", "$publicPath/$newPathName");
-//                Log::info("$oldPathName renamed to $newPathName for provider with user_id [$user->id]");
-//            }
-//        }
-//    }
+    
 }

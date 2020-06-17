@@ -13,6 +13,7 @@ use App\SelfEnrollment\Helpers;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -393,13 +394,13 @@ class SelfEnrollmentController extends Controller
             $models = $this->getModelsContainingNeededValues($extraAddressHeader);
             foreach ($models as $model => $props) {
                 if ($enrollablePrimaryPractice->display_name === $model) {
-                    $extraAddressValues[] = $this->getExtraAddressValues($props, $enrollablePrimaryPractice);
+                    $extraAddressValues[] = $this->getExtraAddressValues($props, $userEnrollee);
                 }
 //                Else use $model to query.
             }
         }
 
-        $extraAddressValuesRequested = ! empty($extraAddressValues);
+        $extraAddressValuesRequested = ! empty(collect($extraAddressValues)->filter()->all());
 
         return view('enrollment-consent.enrollmentInvitation', compact(
             'userEnrollee',
@@ -434,10 +435,14 @@ class SelfEnrollmentController extends Controller
     /**
      * @return array
      */
-    private function getExtraAddressValues(array $props, Practice $enrollablePrimaryPractice)
+    private function getExtraAddressValues(array $props, User $userEnrollee)
     {
-        $practiceLocation      = $this->getPracticeLocation($enrollablePrimaryPractice);
+        $practiceLocation      = $this->getPracticeLocation($userEnrollee);
         $practiceLocationArray = $practiceLocation->toArray();
+
+        if (empty($practiceLocationArray)) {
+            return [];
+        }
 
         return collect($props[0])->mapWithKeys(function ($prop) use ($practiceLocationArray) {
             return  [
@@ -482,16 +487,21 @@ class SelfEnrollmentController extends Controller
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Relations\HasMany|object|void
+     * @return \App\Location|\Collection|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|\Illuminate\Support\Collection|object
      */
-    private function getPracticeLocation(Practice $enrollablePrimaryPractice)
+    private function getPracticeLocation(User $userEnrollee)
     {
-//        Can't use Practice::getAddress(). It throws an exception.
-        $practiceLocation = $enrollablePrimaryPractice->locations()->where('is_primary', 1)->first();
-        if (is_null($practiceLocation)) {
-            Log::warning("Location for practice [$enrollablePrimaryPractice->id] not found");
+        $enrolleePracticeLocationId = $userEnrollee->enrollee->location_id;
 
-            return;
+        $practiceLocation = collect();
+        if ( ! empty($enrolleePracticeLocationId)) {
+            $practiceLocation = Location::whereId($enrolleePracticeLocationId)->first();
+        }
+
+        if (is_null($practiceLocation)) {
+            Log::info("Location for practice [$userEnrollee->id] not found. No practice location address will be displayed on letter");
+
+            return collect();
         }
 
         return $practiceLocation;
