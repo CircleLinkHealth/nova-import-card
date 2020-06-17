@@ -236,6 +236,10 @@ class Kernel extends ConsoleKernel
         $schedule->command(EnrollmentFinalAction::class)->dailyAt('08:27');
 
         $schedule->command(GenerateReportForScheduledPAM::class)->monthlyOn(date('t'), '23:30');
-        $schedule->command(AutoApproveValidCarePlansAs::class, ['--reimport:clear', '--reimport:without-transaction'])->hourly();
+        $schedule->command(AutoApproveValidCarePlansAs::class, ['--reimport'])
+            ->weekdays()
+            ->everyTenMinutes()
+            ->timezone('America/New_York')
+            ->between('8:00', '19:00');
     }
 }
