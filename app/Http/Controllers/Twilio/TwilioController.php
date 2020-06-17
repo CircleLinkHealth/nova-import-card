@@ -7,7 +7,7 @@
 namespace App\Http\Controllers\Twilio;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\ProcessTwilioSmsStatusCallbackJob;
+use CircleLinkHealth\Core\Jobs\ProcessTwilioSmsStatusCallbackJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 

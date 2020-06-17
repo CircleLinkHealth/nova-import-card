@@ -8,7 +8,7 @@ namespace App\Reports;
 
 use App\Note;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\PdfService;
+use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Support\Facades\DB;
