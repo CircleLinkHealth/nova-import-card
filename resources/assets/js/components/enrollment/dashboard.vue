@@ -291,6 +291,7 @@
                         this.patientData = patientData;
 
                         this.enrollable_id = patientData.enrollable_id;
+                        this.enrollable_user_id = patientData.enrollable_user_id;
 
                         this.notifyTimeTracker();
 
@@ -346,7 +347,8 @@
                     From: this.practice_phone ? this.practice_phone : undefined,
                     IsUnlistedNumber: false,
                     InboundUserId: this.enrollable_user_id,
-                    OutboundUserId: userId
+                    OutboundUserId: userId,
+                    Source: "enrolment-dashboard"
                 });
             },
             hangUp() {
