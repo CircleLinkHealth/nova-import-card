@@ -16,15 +16,20 @@ use Illuminate\Support\Facades\DB;
 
 class OpsDashboardReport
 {
-    const MIN_CALL       = 1;
-    const TWENTY_MINUTES = 1200;
-
+    const FIFTEEN_MINUTES                = 900;
+    const FIVE_MINUTES                   = 300;
+    const MIN_CALL                       = 1;
+    const TEN_MINUTES                    = 600;
+    const TWENTY_MINUTES                 = 1200;
+    protected $currentEnrolledPatientIds = [];
     protected $date;
     protected $enrolledPatients = [];
     protected $g0506Patients    = [];
     protected $patients;
     protected $pausedPatients = [];
     protected $practice;
+
+    protected $priorDayReportData           = [];
     protected $revisionsAddedPatients       = [];
     protected $revisionsPausedPatients      = [];
     protected $revisionsUnreachablePatients = [];
@@ -58,6 +63,8 @@ class OpsDashboardReport
         'total_g0506_to_enroll_count' => 0,
         'prior_day_report_updated_at' => 0,
         'report_updated_at'           => 0,
+        //will help us produce accurate deltas when comparing last day with current day totals per status
+        'enrolled_patient_ids' => [],
         //adding to help us generate hours behind metric,
         'total_ccm_time' => 0,
     ];
@@ -137,6 +144,7 @@ class OpsDashboardReport
     public function dailyReportRow()
     {
         return $this->getPatients()
+            ->getPriorDayReportData()
             ->generateStatsFromPatientCollection()
             ->addCurrentTotalsToStats()
             ->consolidateStatsUsingPriorDayReport()
@@ -217,10 +225,13 @@ class OpsDashboardReport
         $this->stats['total_withdrawn_count']   = count($this->withdrawnPatients);
         $this->stats['total_unreachable_count'] = count($this->unreachablePatients);
 
+        //Add enrolled patient ids to stats so that they can be used the next day, to help us calculate deltas
+        $this->stats['enrolled_patient_ids'] = collect($this->enrolledPatients)->pluck('id')->filter()->toArray();
+
         return $this;
     }
 
-    private function categorizePatientByStatusUsingPatientInfo(User $patient)
+    private function categorizePatientByStatusUsingPatientInfo(User $patient, $patientWasEnrolledPriorDay = false)
     {
         $ccmStatus = $patient->patientInfo->ccm_status;
         if (Patient::TO_ENROLL == $ccmStatus) {
@@ -228,12 +239,21 @@ class OpsDashboardReport
         }
         if (Patient::PAUSED == $ccmStatus) {
             $this->pausedPatients[] = $patient;
+            if ($patientWasEnrolledPriorDay) {
+                ++$this->stats['Paused'];
+            }
         }
         if (in_array($ccmStatus, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
             $this->withdrawnPatients[] = $patient;
+            if ($patientWasEnrolledPriorDay) {
+                ++$this->stats['Withdrawn'];
+            }
         }
         if (Patient::UNREACHABLE == $ccmStatus) {
             $this->unreachablePatients = $patient;
+            if ($patientWasEnrolledPriorDay) {
+                ++$this->stats['Unreachable'];
+            }
         }
 
         //enrolled are added in parent function
@@ -269,24 +289,20 @@ class OpsDashboardReport
         $countRevisionsWithdrawn   = count($this->revisionsWithdrawnPatients);
         $countRevisionsUnreachable = count($this->revisionsUnreachablePatients);
 
-        $priorDayReport = OpsDashboardPracticeReport::where('practice_id', $this->practice->id)
-            ->where('date', $this->date->copy()->subDay(1))
-            ->whereNotNull('data')
-            ->where('is_processed', 1)
-            ->first();
-
+        //add toggle to disable?
         //if no prior day report OR
         //if new keys do not exist in yesterday's report, generate deltas from revisions
         //todo: make sure to manual test
-        if ( ! $priorDayReport || ! array_keys_exist([
-            'total_enrolled_count' => 0,
-            'total_paused_count' => 0,
-            'total_unreachable_count' => 0,
-            'total_withdrawn_count' => 0,
-            'total_g0506_to_enroll_count' => 0,
-            'prior_day_report_updated_at' => 0,
-            'report_updated_at' => 0,
-        ], $priorDayReport->data)) {
+        if ( ! array_keys_exist([
+            'total_enrolled_count',
+            'total_paused_count',
+            'total_unreachable_count',
+            'total_withdrawn_count',
+            'total_g0506_to_enroll_count',
+            'prior_day_report_updated_at',
+            'report_updated_at',
+            'enrolled_patient_ids',
+        ], $this->priorDayReportData)) {
             $this->stats['Added']            = $countRevisionsAdded;
             $this->stats['Paused']           = $countRevisionsPaused;
             $this->stats['Withdrawn']        = $countRevisionsWithdrawn;
@@ -302,17 +318,51 @@ class OpsDashboardReport
             return $this;
         }
 
-        $newPatientsAddedCount = $this->stats['total_enrolled_count'] - $priorDayReport->data['total_enrolled_count'];
-
         //check each status and send slack message with ids if you should.
         //use whereNotIn? and filterout ids to include in slack message
+        //if prior day data exist, numbers should have been processed by now. Check if they match
+        if ($this->stats['Added'] != $countRevisionsAdded) {
+            //ops dashboard watcher
+            //slack revision patient ids. Enrolled patient IDs exist in db ops_dashboard_practice_reports
+            $revisionIds = collect($this->revisionsAddedPatients)->pluck('id')->implode(',');
+            sendSlackMessage('#ops_dashboard_alers', "<?U8B3S8UBS> Warning! Added Patients for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}' do not match.
+            Totals using status: {$this->stats['Paused']} - Totals using revisions: $countRevisionsAdded. Revisionable IDs: $revisionIds");
+        }
+
+        if ($this->stats['Paused'] != $countRevisionsPaused) {
+            //ops dashboard watcher
+            //slack revision patient ids. Enrolled patient IDs exist in db ops_dashboard_practice_reports
+            $revisionIds = collect($this->revisionsPausedPatients)->pluck('id')->implode(',');
+            sendSlackMessage('#ops_dashboard_alers', "<?U8B3S8UBS> Warning! Paused Patients for Ops dashboard report for {$this->date->toDateString()} do not match.
+            Totals using status: {$this->stats['Paused']} - Totals using revisions: $countRevisionsPaused. Revisionable IDs: $revisionIds");
+        }
+
+        if ($this->stats['Withdrawn'] != $countRevisionsPaused) {
+            //ops dashboard watcher
+            //slack revision patient ids. Enrolled patient IDs exist in db ops_dashboard_practice_reports
+            $revisionIds = collect($this->revisionsWithdrawnPatients)->pluck('id')->implode(',');
+            sendSlackMessage('#ops_dashboard_alers', "<?U8B3S8UBS> Warning! Withdrawn Patients for Ops dashboard report for {$this->date->toDateString()} do not match.
+            Totals using status: {$this->stats['Withdrawn']} - Totals using revisions: $countRevisionsWithdrawn. Revisionable IDs: $revisionIds");
+        }
+
+        if ($this->stats['Unreachable'] != $countRevisionsPaused) {
+            //ops dashboard watcher
+            //slack revision patient ids. Enrolled patient IDs exist in db ops_dashboard_practice_reports
+            $revisionIds = collect($this->revisionsUnreachablePatients)->pluck('id')->implode(',');
+            sendSlackMessage('#ops_dashboard_alers', "<?U8B3S8UBS> Warning! Unreachable Patients for Ops dashboard report for {$this->date->toDateString()} do not match.
+            Totals using status: {$this->stats['Unreachable']} - Totals using revisions: $countRevisionsUnreachable. Revisionable IDs: $revisionIds");
+        }
+
+        //produce delta and check validity
+        //set to added, paused e.g. N/A if they don't match?
+        //or set whichever delta matches total - prior day totals
 
         return $this;
     }
 
     private function formatStats()
     {
-        return $this;
+        return collect($this->stats);
     }
 
     /**
@@ -329,6 +379,11 @@ class OpsDashboardReport
 
         foreach ($this->patients as $patient) {
             if (Patient::ENROLLED == $patient->patientInfo->ccm_status) {
+                $patientWasEnrolledPriorDay = $this->patientWasEnrolledPriorDay($patient->id);
+                if ( ! $patientWasEnrolledPriorDay) {
+                    ++$this->stats['Added'];
+                }
+
                 $this->enrolledPatients[] = $patient;
                 $pms                      = $patient->patientSummaries->first();
                 if ($pms) {
@@ -339,7 +394,7 @@ class OpsDashboardReport
                 }
             }
             $this->categorizePatientByStatusUsingRevisions($patient);
-            $this->categorizePatientByStatusUsingPatientInfo($patient);
+            $this->categorizePatientByStatusUsingPatientInfo($patient, $patientWasEnrolledPriorDay);
         }
 
         $this->stats['total_ccm_time'] = array_sum($totalCcmTime);
@@ -354,6 +409,21 @@ class OpsDashboardReport
         return $this;
     }
 
+    private function getPriorDayReportData()
+    {
+        $priorDayReport = OpsDashboardPracticeReport::where('practice_id', $this->practice->id)
+            ->where('date', $this->date->copy()->subDay(1))
+            ->whereNotNull('data')
+            ->where('is_processed', 1)
+            ->first();
+
+        if ($priorDayReport) {
+            $this->priorDayReportData = $priorDayReport->data;
+        }
+
+        return $this;
+    }
+
     private function incrementTimeRangeCount(PatientMonthlySummary $pms)
     {
         $ccmTime = $pms->ccm_time;
@@ -362,16 +432,16 @@ class OpsDashboardReport
         if (0 === $ccmTime || null == $ccmTime) {
             ++$this->stats['0 mins'];
         }
-        if ($ccmTime > 0 and $ccmTime <= 300) {
+        if ($ccmTime > 0 and $ccmTime <= self::FIVE_MINUTES) {
             ++$this->stats['0-5'];
         }
-        if ($ccmTime > 300 and $ccmTime <= 600) {
+        if ($ccmTime > self::FIVE_MINUTES and $ccmTime <= self::TEN_MINUTES) {
             ++$this->stats['5-10'];
         }
-        if ($ccmTime > 600 and $ccmTime <= 900) {
+        if ($ccmTime > self::TEN_MINUTES and $ccmTime <= self::FIFTEEN_MINUTES) {
             ++$this->stats['10-15'];
         }
-        if ($ccmTime > 900 and $ccmTime <= $this::TWENTY_MINUTES) {
+        if ($ccmTime > self::FIFTEEN_MINUTES and $ccmTime <= $this::TWENTY_MINUTES) {
             ++$this->stats['15-20'];
         }
         if ($ccmTime > $this::TWENTY_MINUTES) {
@@ -380,5 +450,14 @@ class OpsDashboardReport
         if ($bhiTime > $this::TWENTY_MINUTES) {
             ++$this->stats['20+ BHI'];
         }
+    }
+
+    private function patientWasEnrolledPriorDay($patientId)
+    {
+        if (array_key_exists('enrolled_patient_ids', $this->priorDayReportData)) {
+            return in_array($patientId, $this->priorDayReportData['enrolled_patient_ids']);
+        }
+
+        return false;
     }
 }
