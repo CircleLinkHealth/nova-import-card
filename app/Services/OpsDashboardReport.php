@@ -16,25 +16,65 @@ use Illuminate\Support\Facades\DB;
 
 class OpsDashboardReport
 {
-    const FIFTEEN_MINUTES                = 900;
-    const FIVE_MINUTES                   = 300;
-    const MIN_CALL                       = 1;
-    const TEN_MINUTES                    = 600;
-    const TWENTY_MINUTES                 = 1200;
-    protected $currentEnrolledPatientIds = [];
+    const FIFTEEN_MINUTES = 900;
+
+    const FIVE_MINUTES = 300;
+
+    const MIN_CALL = 1;
+
+    const TEN_MINUTES = 600;
+
+    const TWENTY_MINUTES = 1200;
+
+    /**
+     * @var Carbon
+     */
     protected $date;
+    /**
+     * @var array
+     */
     protected $enrolledPatients = [];
-    protected $g0506Patients    = [];
+    /**
+     * @var array
+     */
+    protected $g0506Patients = [];
+    /**
+     * @var
+     */
     protected $patients;
+    /**
+     * @var array
+     */
     protected $pausedPatients = [];
+    /**
+     * @var Practice
+     */
     protected $practice;
 
-    protected $priorDayReportData           = [];
-    protected $revisionsAddedPatients       = [];
-    protected $revisionsPausedPatients      = [];
+    /**
+     * @var array
+     */
+    protected $priorDayReportData = [];
+    /**
+     * @var array
+     */
+    protected $revisionsAddedPatients = [];
+    /**
+     * @var array
+     */
+    protected $revisionsPausedPatients = [];
+    /**
+     * @var array
+     */
     protected $revisionsUnreachablePatients = [];
-    protected $revisionsWithdrawnPatients   = [];
+    /**
+     * @var array
+     */
+    protected $revisionsWithdrawnPatients = [];
 
+    /**
+     * @var array
+     */
     protected $stats = [
         //how many patients are in each CCM or BHI time category
         '0 mins'  => 0,
@@ -69,10 +109,22 @@ class OpsDashboardReport
         'total_ccm_time' => 0,
     ];
 
+    /**
+     * @var
+     */
     protected $timeGoal;
+    /**
+     * @var array
+     */
     protected $unreachablePatients = [];
-    protected $withdrawnPatients   = [];
+    /**
+     * @var array
+     */
+    protected $withdrawnPatients = [];
 
+    /**
+     * OpsDashboardReport constructor.
+     */
     public function __construct(Practice $practice, Carbon $date)
     {
         $this->practice = $practice;
@@ -89,9 +141,9 @@ class OpsDashboardReport
      *
      * @return mixed
      */
-    public function calculateDelta($enrolled, $paused, $withdrawn, $unreachable)
+    public function calculateDelta()
     {
-        return $enrolled - $paused - $withdrawn - $unreachable;
+        return $this->stats['Added'] - $this->stats['Paused'] - $this->stats['Withdrawn'] - $this->stats['Unreachable'];
     }
 
     /**
@@ -151,11 +203,17 @@ class OpsDashboardReport
             ->formatStats();
     }
 
+    /**
+     * @return \Illuminate\Support\Collection
+     */
     public static function generate(Practice $practice, Carbon $date)
     {
         return (new static($practice, $date))->dailyReportRow();
     }
 
+    /**
+     * @return bool
+     */
     public function setTimeGoal()
     {
         $timeGoal = DB::table('report_settings')->where('name', 'time_goal_per_billable_patient')->first();
@@ -167,13 +225,16 @@ class OpsDashboardReport
         return true;
     }
 
+    /**
+     * @return $this
+     */
     private function addCurrentTotalsToStats()
     {
-        $this->stats['total_enrolled_count']    = count($this->enrolledPatients);
-        $this->stats['total_paused_count']      = count($this->pausedPatients);
-        $this->stats['total_withdrawn_count']   = count($this->withdrawnPatients);
-        $this->stats['total_unreachable_count'] = count($this->unreachablePatients);
-        //todo: add g0506
+        $this->stats['total_enrolled_count']        = count($this->enrolledPatients);
+        $this->stats['total_paused_count']          = count($this->pausedPatients);
+        $this->stats['total_withdrawn_count']       = count($this->withdrawnPatients);
+        $this->stats['total_unreachable_count']     = count($this->unreachablePatients);
+        $this->stats['total_g0506_to_enroll_count'] = $this->stats['G0506 To Enroll'] = count($this->g0506Patients);
 
         //Add enrolled patient ids to stats so that they can be used the next day, to help us calculate deltas
         $this->stats['enrolled_patient_ids'] = collect($this->enrolledPatients)->pluck('id')->filter()->toArray();
@@ -181,6 +242,9 @@ class OpsDashboardReport
         return $this;
     }
 
+    /**
+     * @param bool $patientWasEnrolledPriorDay
+     */
     private function categorizePatientByStatusUsingPatientInfo(User $patient, $patientWasEnrolledPriorDay = false)
     {
         $ccmStatus = $patient->patientInfo->ccm_status;
@@ -205,7 +269,6 @@ class OpsDashboardReport
                 ++$this->stats['Unreachable'];
             }
         }
-
         //enrolled are added in parent function
     }
 
@@ -232,6 +295,9 @@ class OpsDashboardReport
         }
     }
 
+    /**
+     * @return $this
+     */
     private function consolidateStatsUsingPriorDayReport()
     {
         $countRevisionsAdded       = count($this->revisionsAddedPatients);
@@ -239,39 +305,20 @@ class OpsDashboardReport
         $countRevisionsWithdrawn   = count($this->revisionsWithdrawnPatients);
         $countRevisionsUnreachable = count($this->revisionsUnreachablePatients);
 
-        //add toggle to disable?
-        //if no prior day report OR
-        //if new keys do not exist in yesterday's report, generate deltas from revisions
-        //todo: make sure to manual test
-        if ( ! array_keys_exist([
-            'total_enrolled_count',
-            'total_paused_count',
-            'total_unreachable_count',
-            'total_withdrawn_count',
-            'total_g0506_to_enroll_count',
-            'prior_day_report_updated_at',
-            'report_updated_at',
-            'enrolled_patient_ids',
-        ], $this->priorDayReportData)) {
-            $this->stats['Added']       = $countRevisionsAdded;
-            $this->stats['Paused']      = $countRevisionsPaused;
-            $this->stats['Withdrawn']   = $countRevisionsWithdrawn;
-            $this->stats['Unreachable'] = $countRevisionsUnreachable;
-            $this->stats['Total']       = $this->stats['total_enrolled_count'];
-            $this->stats['Delta']       = $this->calculateDelta(
-                $this->stats['Added'],
-                $this->stats['Paused'],
-                $this->stats['Withdrawn'],
-                $this->stats['Unreachable']
-            );
+        if ($this->shouldCalculateStatsUsingRevisionsOnly()) {
+            $this->stats['Added']            = $countRevisionsAdded;
+            $this->stats['Paused']           = $countRevisionsPaused;
+            $this->stats['Withdrawn']        = $countRevisionsWithdrawn;
+            $this->stats['Unreachable']      = $countRevisionsUnreachable;
+            $this->stats['Total']            = $this->stats['total_enrolled_count'];
+            $this->stats['Delta']            = $this->calculateDelta();
             $this->stats['Prior Day totals'] = $this->stats['Total'] - $this->stats['Delta'];
 
             return $this;
         }
 
-        $this->stats['Total'] = $this->stats['total_enrolled_count'];
-        $this->stats['Delta'] = $this->calculateDelta($this->stats['Added'], $this->stats['Paused'], $this->stats['Withdrawn'], $this->stats['Unreachable']);
-
+        $this->stats['Total']            = $this->stats['total_enrolled_count'];
+        $this->stats['Delta']            = $this->calculateDelta();
         $this->stats['Prior Day totals'] = $this->priorDayReportData['total_enrolled_count'];
 
         if ($this->stats['Total'] - $this->stats['Delta'] !== $this->stats['Prior Day totals']) {
@@ -313,13 +360,12 @@ class OpsDashboardReport
             Totals using status: {$this->stats['Unreachable']} - Totals using revisions: $countRevisionsUnreachable. Revisionable IDs: $revisionIds");
         }
 
-        //produce delta and check validity
-        //set to added, paused e.g. N/A if they don't match?
-        //or set whichever delta matches total - prior day totals
-
         return $this;
     }
 
+    /**
+     * @return \Illuminate\Support\Collection
+     */
     private function formatStats()
     {
         //CHECK DATA INTEGRITY
@@ -371,6 +417,9 @@ class OpsDashboardReport
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     private function getPatients()
     {
         $this->patients = $this->practice->patients->unique('id');
@@ -378,6 +427,9 @@ class OpsDashboardReport
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     private function getPriorDayReportData()
     {
         $priorDayReport = OpsDashboardPracticeReport::where('practice_id', $this->practice->id)
@@ -421,6 +473,10 @@ class OpsDashboardReport
         }
     }
 
+    /**
+     * @param $patientId
+     * @return bool
+     */
     private function patientWasEnrolledPriorDay($patientId)
     {
         if (array_key_exists('enrolled_patient_ids', $this->priorDayReportData)) {
@@ -428,5 +484,25 @@ class OpsDashboardReport
         }
 
         return false;
+    }
+
+    /**
+     *  If last day report does not exist or does not contain new keys to calculate DELTA
+     * Use revisions (old way) - This should only run on deployment date, or for the first ever generated report for a practice.
+     *
+     * @return bool
+     */
+    private function shouldCalculateStatsUsingRevisionsOnly()
+    {
+        return ! array_keys_exist([
+            'total_enrolled_count',
+            'total_paused_count',
+            'total_unreachable_count',
+            'total_withdrawn_count',
+            'total_g0506_to_enroll_count',
+            'prior_day_report_updated_at',
+            'report_updated_at',
+            'enrolled_patient_ids',
+        ], $this->priorDayReportData);
     }
 }
