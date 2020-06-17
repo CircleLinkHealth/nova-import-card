@@ -149,57 +149,6 @@ class OpsDashboardReport
             ->addCurrentTotalsToStats()
             ->consolidateStatsUsingPriorDayReport()
             ->formatStats();
-
-        $count['Total'] = $patients->filter(function ($value, $key) {
-            return 'enrolled' == $value->patientInfo->ccm_status;
-        })->count();
-
-        $pausedCount      = count($paused);
-        $withdrawnCount   = count($withdrawn);
-        $enrolledCount    = count($enrolled);
-        $unreachableCount = count($unreachable);
-        $toEnrollCount    = count($to_enroll);
-        $delta            = $this->calculateDelta($enrolledCount, $pausedCount, $withdrawnCount, $unreachableCount);
-
-        if (0 == $count['Total'] &&
-            $count['Total'] - $delta == 0 &&
-            0 == $enrolledCount &&
-            0 == $pausedCount &&
-            0 == $withdrawnCount &&
-            0 == $unreachableCount) {
-            return null;
-        }
-
-        return collect(
-            [
-                '0 mins'           => $count['0 mins'],
-                '0-5'              => $count['0-5'],
-                '5-10'             => $count['5-10'],
-                '10-15'            => $count['10-15'],
-                '15-20'            => $count['15-20'],
-                '20+'              => $count['20+'],
-                '20+ BHI'          => $count['20+ BHI'],
-                'Total'            => $count['Total'],
-                'Prior Day totals' => $count['Total'] - $delta,
-                'Added'            => $enrolledCount,
-                'Paused'           => $pausedCount,
-                'Unreachable'      => $unreachableCount,
-                'Withdrawn'        => $withdrawnCount,
-                'Delta'            => $delta,
-                'G0506 To Enroll'  => $toEnrollCount,
-                //added to help us generate next day's report
-                'total_enrolled_count'        => 0,
-                'total_paused_count'          => 0,
-                'total_unreachable_count'     => 0,
-                'total_withdrawn_count'       => 0,
-                'total_g0506_to_enroll_count' => 0,
-                'prior_day_report_updated_at' => null,
-                //will be added outside this method - when db entry will be created
-                'report_updated_at' => null,
-                //adding to help us generate hours behind metric,
-                'total_ccm_time' => array_sum($totalCcmTime),
-            ]
-        );
     }
 
     public static function generate(Practice $practice, Carbon $date)
@@ -374,6 +323,14 @@ class OpsDashboardReport
     private function formatStats()
     {
         //CHECK DATA INTEGRITY
+//        if (0 == $count['Total'] &&
+//            $count['Total'] - $delta == 0 &&
+//            0 == $enrolledCount &&
+//            0 == $pausedCount &&
+//            0 == $withdrawnCount &&
+//            0 == $unreachableCount) {
+//            return null;
+//        }
         return collect($this->stats);
     }
 
