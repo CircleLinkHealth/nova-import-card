@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Core\Jobs;
 
-use App\SendGridRawLog;
+use CircleLinkHealth\Core\Entities\SendGridRawLog;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
