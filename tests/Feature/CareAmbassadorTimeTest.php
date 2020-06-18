@@ -28,7 +28,7 @@ class CareAmbassadorTimeTest extends CustomerTestCase
         $enrollee = $this->enrollee();
         $this->addTime($ca, $enrollee->user, 1, false, false, false, null, 0, self::ACTIVITY_TITLE_LOADING_PATIENT);
         $this->addTime($ca, $enrollee->user, 10, false, false, false, null, $enrollee->id, "CA - $enrollee->id");
-        $this->addTime($ca, $enrollee->user, 1, false, false, false, null, 0, self::ACTIVITY_TITLE_TO_SKIP_FROM_CA_TIME);
+        $this->addTime($ca, $enrollee->user, 1, false, false, false, null, 0, self::ACTIVITY_TITLE_TO_SKIP_FROM_CA_TIME, true);
 
         $report = CareAmbassadorLog::createOrGetLogs($ca->careAmbassador->id);
         self::assertEquals((1 * 60) + (10 * 60), $report->total_time_in_system);

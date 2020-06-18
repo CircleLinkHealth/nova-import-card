@@ -21,6 +21,7 @@ trait TimeHelpers
      * @param User|null  $patient
      * @param mixed      $enrolleeId
      * @param mixed|null $activityName
+     * @param mixed      $forceSkip
      */
     private function addTime(
         User $nurse,
@@ -31,7 +32,8 @@ trait TimeHelpers
         bool $bhiTime = false,
         Carbon $startTime = null,
         $enrolleeId = 0,
-        $activityName = null
+        $activityName = null,
+        $forceSkip = false
     ) {
         if ($withSuccessfulCall) {
             /** @var Note $fakeNote */
@@ -75,6 +77,7 @@ trait TimeHelpers
                     'url'           => 'test',
                     'url_short'     => 'test',
                     'enrolleeId'    => $enrolleeId,
+                    'force_skip'    => $forceSkip,
                 ],
             ],
         ]);
