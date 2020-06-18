@@ -61,7 +61,7 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
                             'address_line_1',
                             'city',
                             'state',
-                            //                        'zip',
+                            'postal_code', // zip
                         ],
                     ],
                 ]),

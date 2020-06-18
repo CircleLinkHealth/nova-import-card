@@ -498,6 +498,7 @@ class SelfEnrollmentController extends Controller
             $practiceLocation = Location::whereId($enrolleePracticeLocationId)->first();
         }
 
+        // We want keep code execution if no practice location exists.
         if (is_null($practiceLocation)) {
             Log::info("Location for practice [$userEnrollee->id] not found. No practice location address will be displayed on letter");
 

@@ -10,6 +10,7 @@
                 <br>
                 {{$extraAddressValues[0]['city']}}
                 {{$extraAddressValues[0]['state']}}
+                {{$extraAddressValues[0]['postal_code']}}
             @endif
         </div>
         <div class="logo" style="{{$logoStyleRequest}}; opacity: 90%;">
