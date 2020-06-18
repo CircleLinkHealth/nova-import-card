@@ -65,8 +65,7 @@ class ResetPassword extends Notification
 
         return (new MailMessage())
             ->mailer('postmark')
-            //If notifiable is patient, we need to replace any references to CircleLink Health with Practice Name
-            ->from('noreply@circlelinkhealth.com', $notifiable->isParticipant() ? $notifiable->getPrimaryPracticeName() : 'CircleLink Health')
+            ->from(config('mail.transactional_from.address') ?? config('mail.from.address'), $notifiable->isParticipant() ? $notifiable->getPrimaryPracticeName() : config('mail.transactional_from.name') ?? config('mail.from.name'))
             ->view('vendor.notifications.email', [
                 'greeting'     => 'You are receiving this email because we received a password reset request for your account.',
                 'actionText'   => 'Reset Password',

@@ -90,6 +90,11 @@ return [
         'name'    => env('MAIL_FROM_NAME', 'CircleLink Health'),
     ],
 
+    'transactional_from' => [
+        'address' => env('TRANSACTIONAL_MAIL_FROM_ADDRESS', 'no-reply@careplanmanager.com'),
+        'name'    => env('TRANSACTIONAL_MAIL_FROM_NAME', 'CircleLink Health'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | E-Mail Encryption Protocol
