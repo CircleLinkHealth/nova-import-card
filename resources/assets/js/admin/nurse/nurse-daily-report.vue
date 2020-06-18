@@ -28,11 +28,6 @@
         props: [],
         data() {
             return {
-                exportCSVText: 'Export as CSV',
-                loaders: {
-                    next: false,
-                    excel: false,
-                },
                 loading: false,
                 columns: ['name', 'Time Since Last Activity', '# Scheduled Calls Today', '# Completed Calls Today', '# Successful Calls Today', 'CCM Mins Today', 'last_activity'],
                 options: {
