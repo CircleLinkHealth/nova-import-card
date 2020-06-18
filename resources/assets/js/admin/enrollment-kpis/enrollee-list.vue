@@ -36,7 +36,6 @@
             'modal': Modal,
             'loader': Loader,
             'notifications': Notifications
-
         },
         props: [],
         data() {
@@ -98,7 +97,6 @@
                     sortable: ['id', 'user_id', 'first_name', 'last_name', 'practice_name', 'provider_name', 'primary_insurance', 'status', 'source', 'created_at', 'state', 'city','enrollment_non_responsive', 'auto_enrollment_triggered', 'last_attempt_at', 'care_ambassador_name', 'attempt_count', 'requested_callback'],
                 },
             }
-
         },
         methods: {
             formatSecondsToHHMMSS(seconds) {
