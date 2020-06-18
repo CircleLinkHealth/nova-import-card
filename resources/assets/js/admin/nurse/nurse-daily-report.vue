@@ -42,6 +42,9 @@
                     filterByColumn: true,
                     filterable: ['name'],
                     sortable: ['name'],
+                    rowClassCallback(row){
+                        return row.lessThan20MinsAgo === true ? 'less-than-20-mins-ago' : null;
+                    },
                 },
             }
         },
@@ -79,12 +82,9 @@
     th {
         min-width: 130px;
     }
-    .min-width-50 {
-        min-width: 50px !important;
-    }
 
-    .min-width-80 {
-        min-width: 80px !important;
+    tr.less-than-20-mins-ago {
+        background-color: rgba(151, 218, 172, 1);
     }
 
 </style>
