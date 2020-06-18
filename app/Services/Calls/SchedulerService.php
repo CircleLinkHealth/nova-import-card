@@ -43,7 +43,7 @@ class SchedulerService
         $this->noteService            = $noteService;
     }
 
-    public function ensurePatientHasScheduledCall(User $patient)
+    public function ensurePatientHasScheduledCall(User $patient, string $scheduler = null)
     {
         $call = $this->getScheduledCallForPatient($patient);
         if ($call) {
@@ -88,12 +88,15 @@ class SchedulerService
             }
         }
 
+        if ( ! $scheduler) {
+            $scheduler = 'call checker algorithm';
+        }
         $this->storeScheduledCall(
             $patient->id,
             $next_predicted_contact_window['window_start'],
             $next_predicted_contact_window['window_end'],
             $next_predicted_contact_window['day'],
-            'call checker algorithm',
+            $scheduler,
             $nurseId,
             '',
             false

@@ -73,7 +73,7 @@ class CheckEnrolledPatientsForScheduledCalls extends Command
                     ++$fixed;
 
                     if ($this->shouldScheduleCall($patient)) {
-                        $schedulerService->ensurePatientHasScheduledCall($patient);
+                        $schedulerService->ensurePatientHasScheduledCall($patient, 'calls:check');
                     }
                 }
             );
