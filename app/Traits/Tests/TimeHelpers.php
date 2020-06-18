@@ -18,7 +18,10 @@ trait TimeHelpers
     /**
      * Add billable or not to a patient and credit nurse.
      *
-     * @param User|null $patient
+     * @param User|null  $patient
+     * @param mixed      $enrolleeId
+     * @param mixed|null $activityName
+     * @param mixed      $forceSkip
      */
     private function addTime(
         User $nurse,
@@ -27,7 +30,10 @@ trait TimeHelpers
         bool $billable,
         bool $withSuccessfulCall = false,
         bool $bhiTime = false,
-        Carbon $startTime = null
+        Carbon $startTime = null,
+        $enrolleeId = 0,
+        $activityName = null,
+        $forceSkip = false
     ) {
         if ($withSuccessfulCall) {
             /** @var Note $fakeNote */
@@ -48,6 +54,12 @@ trait TimeHelpers
             $fakeCall->save();
         }
 
+        if ( ! $activityName) {
+            $activityName = $withSuccessfulCall
+                ? 'Patient Note Creation'
+                : 'test';
+        }
+
         $seconds = $minutes * 60;
         $bag     = new ParameterBag();
         $bag->add([
@@ -60,12 +72,12 @@ trait TimeHelpers
                     'is_behavioral' => $bhiTime,
                     'duration'      => $seconds,
                     'start_time'    => $startTime ?? Carbon::now(),
-                    'name'          => $withSuccessfulCall
-                        ? 'Patient Note Creation'
-                        : 'test',
-                    'title'     => 'test',
-                    'url'       => 'test',
-                    'url_short' => 'test',
+                    'name'          => $activityName,
+                    'title'         => 'test',
+                    'url'           => 'test',
+                    'url_short'     => 'test',
+                    'enrolleeId'    => $enrolleeId,
+                    'force_skip'    => $forceSkip,
                 ],
             ],
         ]);

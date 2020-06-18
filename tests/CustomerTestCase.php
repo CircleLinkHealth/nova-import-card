@@ -17,6 +17,12 @@ class CustomerTestCase extends TestCase
 {
     use UserHelpers;
     use WithFaker;
+
+    /**
+     * @var array|User
+     */
+    private $careAmbassador;
+
     /**
      * @var array|User
      */
@@ -52,6 +58,18 @@ class CustomerTestCase extends TestCase
      * @var array|User
      */
     private $surveyOnly;
+
+    /**
+     * @return array|User
+     */
+    protected function careAmbassador(int $number = 1)
+    {
+        if ( ! $this->careAmbassador) {
+            $this->careAmbassador = $this->createUsersOfType('care-ambassador', $number);
+        }
+
+        return $this->careAmbassador;
+    }
 
     /**
      * @return array|User

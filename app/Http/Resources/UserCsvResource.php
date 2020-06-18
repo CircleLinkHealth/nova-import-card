@@ -8,9 +8,9 @@ namespace App\Http\Resources;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserCsvResource extends Resource
+class UserCsvResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -42,8 +42,9 @@ class UserCsvResource extends Resource
         }
 
         /** @var Patient $patientInfo */
-        $patientInfo = $this->whenLoaded('patientInfo');
-        if ( ! is_null($patientInfo) && $patientInfo->relationLoaded('location')) {
+        $patientInfo  = $this->whenLoaded('patientInfo');
+        $locationName = 'n/a';
+        if ( ! is_null($patientInfo) && $patientInfo->relationLoaded('location') && $patientInfo->location) {
             $locationName = $patientInfo->location->name;
         }
 

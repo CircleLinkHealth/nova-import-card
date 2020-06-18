@@ -10,12 +10,12 @@ use App\Contracts\DirectMailableNotification;
 use App\Contracts\FaxableNotification;
 use App\Contracts\HasAttachment;
 use App\Note;
+use App\Notifications\Messages\PostmarkMailMessage;
 use App\ValueObjects\SimpleNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 
@@ -165,7 +165,7 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, 
         $saasAccountName     = $notifiable->saasAccountName();
         $slugSaasAccountName = strtolower(Str::slug($saasAccountName, ''));
 
-        $mail = (new MailMessage())
+        $mail = (new PostmarkMailMessage($notifiable))
             ->view(
                 'vendor.notifications.email',
                 [

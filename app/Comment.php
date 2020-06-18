@@ -32,31 +32,35 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \Carbon\Carbon                           $updated_at
  * @property \App\Observation                         $observation
  * @property \CircleLinkHealth\Customer\Entities\User $user
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentAgent($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentApproved($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentAuthor($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentAuthorEmail($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentAuthorIP($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentAuthorUrl($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentContent($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentDate($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentDateGmt($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentKarma($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentParent($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentPostID($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentType($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereCreatedAt($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereId($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereLegacyCommentId($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereProgramId($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereUpdatedAt($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereUserId($value)
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentAgent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentApproved($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentAuthor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentAuthorEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentAuthorIP($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentAuthorUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentDateGmt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentKarma($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentParent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentPostID($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereLegacyCommentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereProgramId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereUserId($value)
  * @mixin \Eloquent
+ *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Comment newModelQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Comment newQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Comment query()
- * @property int|null                                                                                    $revision_history_count
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment query()
+ *
+ * @property int|null $revision_history_count
  */
 class Comment extends \CircleLinkHealth\Core\Entities\BaseModel
 {

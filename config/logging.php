@@ -127,5 +127,9 @@ return [
             // Whether the messages that are handled can bubble up the stack or not
             'bubble' => true,
         ],
+
+        'emergency' => [
+            'path' => storage_path('logs/laravel.log'),
+        ],
     ],
 ];

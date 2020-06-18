@@ -28,27 +28,29 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * @property string|null $approver_full_name
  * @property string|null $provider_full_name
  * @property int|null    $patient_ccm_time
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView newModelQuery()
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView newQuery()
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView query()
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereApproverFullName($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereCarePlanId($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereCarePlanStatus($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereLastPrinted($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePatientCcmStatus($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePatientCcmTime($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePatientDob($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePatientFirstName($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePatientFullName($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePatientId($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePatientInfoId($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePatientLastName($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePatientRegistered($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePracticeName($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePrimaryPracticeId($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereProviderDate($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereProviderFullName($value)
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereApproverFullName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereCarePlanId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereCarePlanStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereLastPrinted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePatientCcmStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePatientCcmTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePatientDob($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePatientFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePatientFullName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePatientInfoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePatientLastName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePatientRegistered($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePracticeName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView wherePrimaryPracticeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereProviderDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereProviderFullName($value)
  * @mixin \Eloquent
+ *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
  */
