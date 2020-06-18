@@ -80,8 +80,9 @@ class TwilioFake implements TwilioInterface
     }
 
     /**
-     * @param  string     $to
-     * @param  bool       $useAlphanumericSender
+     * @param string $to
+     * @param bool   $useAlphanumericSender
+     *
      * @return mixed|void
      */
     public function sendMessage(TwilioMessage $message, $to, $useAlphanumericSender = false)

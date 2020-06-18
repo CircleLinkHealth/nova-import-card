@@ -22,23 +22,27 @@ namespace App;
  * @property \App\CPRulesItemMeta[]|\Illuminate\Database\Eloquent\Collection $meta
  * @property \App\CPRulesPCP|null                                            $pcp
  * @property \App\CPRulesQuestions|null                                      $question
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereCareItemId($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereDeletedAt($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereDescription($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereDisplayName($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereItemsId($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereItemsParent($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereItemsText($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereName($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem wherePcpId($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereQid($value)
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereCareItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereDisplayName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereItemsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereItemsParent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereItemsText($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem wherePcpId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereQid($value)
  * @mixin \Eloquent
+ *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem newModelQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem newQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem query()
- * @property int|null                                                                                    $meta_count
- * @property int|null                                                                                    $revision_history_count
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem query()
+ *
+ * @property int|null $meta_count
+ * @property int|null $revision_history_count
  */
 class CPRulesItem extends \CircleLinkHealth\Core\Entities\BaseModel
 {

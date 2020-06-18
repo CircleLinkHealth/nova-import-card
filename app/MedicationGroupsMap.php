@@ -19,17 +19,21 @@ use Illuminate\Support\Str;
  * @property \Carbon\Carbon|null                                        $created_at
  * @property \Carbon\Carbon|null                                        $updated_at
  * @property \CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup $cpmMedicationGroup
- * @method   static                                                     \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap whereCreatedAt($value)
- * @method   static                                                     \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap whereId($value)
- * @method   static                                                     \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap whereKeyword($value)
- * @method   static                                                     \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap whereMedicationGroupId($value)
- * @method   static                                                     \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap whereUpdatedAt($value)
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap whereKeyword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap whereMedicationGroupId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap newModelQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap newQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap query()
- * @property int|null                                                                                    $revision_history_count
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap query()
+ *
+ * @property int|null $revision_history_count
  */
 class MedicationGroupsMap extends \CircleLinkHealth\Core\Entities\BaseModel
 {
