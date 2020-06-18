@@ -7,6 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\CareCoachMonthlyReport;
+use App\Filters\NurseDailyReportFilters;
 use App\Reports\NurseDailyReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
@@ -15,16 +16,43 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class NurseController extends Controller
 {
-    public function dailyReport(Request $request)
+    public function dailyReport(Request $request, NurseDailyReportFilters $filters)
     {
-        $report = NurseDailyReport::data();
+        $fields    = ['*'];
+        $byColumn  = $request->get('byColumn');
+        $query     = $request->get('query');
+        $limit     = $request->get('limit');
+        $orderBy   = $request->get('orderBy');
+        $ascending = $request->get('ascending');
+        $page      = $request->get('page');
+
+        $nursesQuery = User::careCoaches()
+            ->whereHas('pageTimersAsProvider', function ($t) {
+                $t->whereNotNull('end_time');
+            })
+            ->where('access_disabled', 0)
+            ->filter($filters);
+
+        $count = $nursesQuery->count();
+
+        $nursesQuery->limit($limit)
+            ->skip($limit * ($page - 1));
+
+        if (isset($orderBy)) {
+            $direction = 1 == $ascending
+                ? 'ASC'
+                : 'DESC';
+            $nursesQuery->orderBy($orderBy, $direction);
+        }
+
+        $nurses = $nursesQuery->get();
+        $report = NurseDailyReport::data(Carbon::now(), $nurses);
         $data   = [
             'data'  => $report,
-            'count' => count($report),
+            'count' => $count,
         ];
 
         return response()->json($data);
-//        return datatables()->collection(NurseDailyReport::data())->make(true);
     }
 
     public function makeDailyReport()
