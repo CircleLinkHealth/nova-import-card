@@ -126,10 +126,6 @@ class AddNewDefaultCarePlanTemplate extends Seeder
             'instructions' => '',
         ];
 
-        $problems['Cataract'] = [
-            'instructions' => '',
-        ];
-
         $problems['Kidney Disease'] = [
             'instructions' => '- Check your blood pressure regularly and report blood pressure over 140/90 to your MD right away.
 
