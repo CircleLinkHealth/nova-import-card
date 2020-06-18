@@ -307,6 +307,7 @@
                             patientData.callError = this.callError;
                             this.patientData = patientData;
                             this.enrollable_id = patientData.enrollable_id;
+                            this.enrollable_user_id = patientData.enrollable_user_id;
                         } else {
                             this.enrollable_id = 0;
                             this.patientData = null;
