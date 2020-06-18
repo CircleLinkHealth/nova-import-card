@@ -25,6 +25,7 @@ use App\Listeners\CheckBeforeSendMessageListener;
 use App\Listeners\CreateAndHandlePdfReport;
 use App\Listeners\ForwardApprovedCarePlanToPractice;
 use App\Listeners\ForwardNote;
+use App\Listeners\LogScheduledTask;
 use App\Listeners\LogSuccessfulLogout;
 use App\Listeners\NotifyPatientOfCarePlanApproval;
 use App\Listeners\NotifySlackChannel;
@@ -46,6 +47,8 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Console\Events\ScheduledTaskFinished;
+use Illuminate\Console\Events\ScheduledTaskStarting;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Mail\Events\MessageSent;
@@ -121,6 +124,12 @@ class CpmEventServiceProvider extends ServiceProvider
         CarePlanWasProviderApproved::class => [
             ForwardApprovedCarePlanToPractice::class,
             NotifyPatientOfCarePlanApproval::class,
+        ],
+        ScheduledTaskStarting::class => [
+            LogScheduledTask::class,
+        ],
+        ScheduledTaskFinished::class => [
+            LogScheduledTask::class,
         ],
     ];
 
