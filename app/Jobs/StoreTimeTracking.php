@@ -174,7 +174,7 @@ class StoreTimeTracking implements ShouldQueue
                    || ! (bool) $provider->isCCMCountable()
                    || 0 == $pageTimer->patient_id
                    || in_array($pageTimer->title, self::UNTRACKED_ROUTES)
-                   || $activity['force_skip']);
+                   || ($activity['force_skip'] ?? false));
     }
 
     /**
