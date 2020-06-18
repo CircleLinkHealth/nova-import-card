@@ -6,13 +6,13 @@
 
 namespace CircleLinkHealth\Eligibility\Entities;
 
-use App\Contracts\Services\TwilioClientable;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Core\Traits\MySQLSearchable;
 use CircleLinkHealth\Core\Traits\Notifiable;
+use CircleLinkHealth\Core\TwilioClientable;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -186,6 +186,7 @@ use Illuminate\Support\Str;
  * @property int|null                                                                                                        $enrollment_invitation_links_count
  * @property \CircleLinkHealth\Eligibility\Entities\SelfEnrollmentStatus|null                                                $selfEnrollmentStatus
  * @property \CircleLinkHealth\Customer\Entities\Location|null                                                               $location
+ * @property string|null                                                                                                     $callback_note
  */
 class Enrollee extends BaseModel
 {
@@ -423,6 +424,7 @@ class Enrollee extends BaseModel
         'cpm_problem_2',
 
         'requested_callback',
+        'callback_note',
 
         //contains array of agent details, similar to patient_info fields
         'agent_details',
