@@ -49,7 +49,7 @@ class NurseController extends Controller
             ->skip($limit * ($page - 1));
 
         $nurses = $nursesQuery->get();
-        $report = NurseDailyReport::data(Carbon::now(), $nurses, true);
+        $report = NurseDailyReport::data(Carbon::now(), $nurses, isset($orderBy));
 
         return response()->json([
             'data'  => $report->toArray(),
