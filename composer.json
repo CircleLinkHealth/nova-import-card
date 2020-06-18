@@ -200,6 +200,7 @@
     "epartment/nova-dependency-container": "^1.2",
     "fideloper/proxy": "^4.2",
     "fourstacks/nova-checkboxes": "^0.1.5",
+    "fruitcake/laravel-cors": "^1.0",
     "fzaninotto/faker": "~1.4",
     "genealabs/laravel-caffeine": "^7.0",
     "guzzlehttp/guzzle": "^6.3",
@@ -217,6 +218,7 @@
     "laravel/nova": "^3.0",
     "laravel/scout": "^8.0",
     "laravel/tinker": "^2.0",
+    "laravel/ui": "^2.0",
     "laravelcollective/html": "^6.1",
     "league/flysystem-aws-s3-v3": "^1.0",
     "maatwebsite/excel": "^3.1.19",
@@ -239,9 +241,8 @@
     "twilio/sdk": "~5.16",
     "vink/nova-cache-card": "^1.0",
     "waynestate/nova-ckeditor4-field": "^0.4.0",
-    "yajra/laravel-datatables-oracle": "~9.0",
-    "laravel/ui": "^2.0",
-    "fruitcake/laravel-cors": "^1.0"
+    "wildbit/swiftmailer-postmark": "^3.1",
+    "yajra/laravel-datatables-oracle": "~9.0"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",
