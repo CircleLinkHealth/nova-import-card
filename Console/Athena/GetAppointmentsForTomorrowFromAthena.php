@@ -8,17 +8,18 @@ namespace CircleLinkHealth\Eligibility\Console\Athena;
 
 use App\Services\AthenaAPI\CreateAndPostPdfCareplan;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Console\Command;
 
-class GetAppointments extends Command
+class GetAppointmentsForTomorrowFromAthena extends Command
 {
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Poll Athena for appointments from our clients for today.';
+    protected $description = 'Poll Athena for appointments from our clients for tomorrow.';
     /**
      * The name and signature of the console command.
      *
@@ -46,13 +47,13 @@ class GetAppointments extends Command
     public function handle()
     {
         $practices = Practice::whereHas('ehr', function ($q) {
-            $q->where('name', '=', 'Athena');
+            $q->where('name', '=', Ehr::ATHENA_EHR_NAME);
         })
             ->whereNotNull('external_id')
             ->get();
 
-        $endDate   = Carbon::today();
-        $startDate = $endDate->copy()->subWeeks(2);
+        $endDate   = Carbon::tomorrow()->endOfDay();
+        $startDate = $endDate->copy()->startOfDay();
 
         foreach ($practices as $practice) {
             if (isProductionEnv()) {

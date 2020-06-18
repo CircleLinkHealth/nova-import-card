@@ -11,7 +11,7 @@ use App\Services\AthenaAPI\Connection;
 use CircleLinkHealth\Eligibility\Console\Athena\AutoPullEnrolleesFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\DetermineTargetPatientEligibility;
 use CircleLinkHealth\Eligibility\Console\Athena\FixBatch235;
-use CircleLinkHealth\Eligibility\Console\Athena\GetAppointments;
+use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
 use CircleLinkHealth\Eligibility\Console\Athena\GetPatientIdFromAppointments;
 use CircleLinkHealth\Eligibility\Console\Athena\GetPatientIdFromLastYearAppointments;
@@ -51,7 +51,7 @@ class EligibilityServiceProvider extends ServiceProvider
             CreatePCMListForCommonWealth::class,
             DetermineTargetPatientEligibility::class,
             FixBatch235::class,
-            GetAppointments::class,
+            GetAppointmentsForTomorrowFromAthena::class,
             GetCcds::class,
             GetPatientIdFromAppointments::class,
             GetPatientIdFromLastYearAppointments::class,

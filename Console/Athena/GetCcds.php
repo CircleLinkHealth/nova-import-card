@@ -43,6 +43,6 @@ class GetCcds extends Command
      */
     public function handle()
     {
-        $this->service->getCcdsFromRequestQueue(5);
+        $this->service->getCcdsFromRequestQueue(10);
     }
 }
