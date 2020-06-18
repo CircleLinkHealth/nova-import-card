@@ -19,15 +19,16 @@ class SelfEnrollmentMetricsView extends BaseSqlView
     public function createSqlView(): bool
     {
         $this->createSurveyIfTestingEnvironment();
-        $enrolled        = Enrollee::ENROLLED;
-        $toCall          = Enrollee::TO_CALL;
-        $defaultBtnColor = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
-        $red             = SelfEnrollmentController::RED_BUTTON_COLOR;
-        $manualInvite    = 'one-off_invitations';
-        $green           = 'Green';
-        $redString       = 'Red';
-        $survey          = Helpers::getEnrolleeSurvey();
-        $surveyInstance  = DB::table('survey_instances')
+        $enrolled            = Enrollee::ENROLLED;
+        $toCall              = Enrollee::TO_CALL;
+        $queueAutoEnrollment = Enrollee::QUEUE_AUTO_ENROLLMENT;
+        $defaultBtnColor     = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
+        $red                 = SelfEnrollmentController::RED_BUTTON_COLOR;
+        $manualInvite        = 'one-off_invitations';
+        $green               = 'Green';
+        $redString           = 'Red';
+        $survey              = Helpers::getEnrolleeSurvey();
+        $surveyInstance      = DB::table('survey_instances')
             ->where('survey_id', '=', $survey->id)
             ->first();
 
@@ -55,13 +56,13 @@ class SelfEnrollmentMetricsView extends BaseSqlView
        COUNT(DISTINCT i.id) as total_invites_sent,
        SUM(i.manually_expired = true) as total_invites_opened,
        CONCAT(ROUND(SUM(i.manually_expired = true) * 100.0 / COUNT(DISTINCT i.id), 0), '%') as percentage_invites_opened,
-       CAST(COUNT(l.user_id) as CHAR(50)) as total_seen_letter,
-       CONCAT(IFNULL(ROUND((COUNT(l.id) * 100) / SUM(i.manually_expired = true)), 0), '%') as percentage_seen_letter,
+       SUM(case when EXISTS(SELECT * FROM login_logout_events WHERE user_id = l.user_id) AND (e.status = '$queueAutoEnrollment' OR e.auto_enrollment_triggered = true) then 1 else 0 end) as total_seen_letter,
+       CONCAT(IFNULL(ROUND((SUM(case when EXISTS(select * from login_logout_events where user_id = l.user_id) AND (e.status = '$queueAutoEnrollment' OR e.auto_enrollment_triggered = true) then 1 end) * 100) / SUM(i.manually_expired = true)), 0), '%') as percentage_seen_letter,
        CAST(COUNT(DISTINCT us.user_id) as CHAR(50)) as total_seen_form,
        CONCAT(IFNULL(ROUND((SUM(case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end) * 100) / COUNT(l.user_id)), 0), '%') as percentage_seen_form,
-       IFNULL(SUM(case when e.status = '$enrolled' AND us.status = 'completed' then 1 else 0 end), 0) as total_enrolled,
-       CONCAT(IFNULL(ROUND((SUM(case when e.status = '$enrolled' AND us.status = 'completed' then 1 else 0 end) * 100) / COUNT(DISTINCT case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end)),0), '%') as percentage_enrolled,
-       CAST(SUM(case when e.status = '$toCall' AND erf.enrollable_id = e.id then 1 else 0 end) as CHAR(50)) as total_call_requests,
+       IFNULL(SUM(case when e.status = '$enrolled' AND us.status = 'completed' AND e.auto_enrollment_triggered = true then 1 else 0 end), 0) as total_enrolled,
+       CONCAT(IFNULL(ROUND((SUM(case when e.status = '$enrolled' AND us.status = 'completed' AND e.auto_enrollment_triggered = true then 1 else 0 end) * 100) / COUNT(DISTINCT case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end)),0), '%') as percentage_enrolled,
+       CAST(SUM(case when e.status = '$toCall' AND erf.enrollable_id = e.id AND e.auto_enrollment_triggered = true then 1 else 0 end) as CHAR(50)) as total_call_requests,
        CONCAT(IFNULL(ROUND((SUM(case when e.status = '$toCall' AND erf.enrollable_id = e.id then 1 else 0 end) * 100) / COUNT(l.user_id)),0), '%') as percentage_call_requests
        
        FROM
