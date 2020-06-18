@@ -7,10 +7,8 @@
 namespace App\Jobs;
 
 use App\CareAmbassadorLog;
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -23,14 +21,14 @@ class ProcessCareAmbassadorTime implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-
+    
     /**
      * @var array
      */
     private $activity;
-
+    
     private $userId;
-
+    
     /**
      * Create a new job instance.
      *
@@ -38,10 +36,10 @@ class ProcessCareAmbassadorTime implements ShouldQueue
      */
     public function __construct($userId, array $activity)
     {
-        $this->userId   = $userId;
+        $this->userId = $userId;
         $this->activity = $activity;
     }
-
+    
     /**
      * Execute the job.
      *
@@ -51,24 +49,19 @@ class ProcessCareAmbassadorTime implements ShouldQueue
     {
         $user = User::with(['careAmbassador'])
             ->findOrFail($this->userId);
-
+        
         if (isset($this->activity['enrolleeId'])) {
             $enrolleeId = $this->activity['enrolleeId'];
-
+            
             $enrollee = Enrollee::find($enrolleeId);
             if ($enrollee) {
                 $enrollee->total_time_spent += $this->activity['duration'];
                 $enrollee->save();
             }
         }
-
-        $report                       = CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id);
-        $report->total_time_in_system = PageTimer::where('provider_id', '=', $user->id)
-            ->where('start_time', '>=', Carbon::now()->startOfDay())
-            ->where('start_time', '<', Carbon::now()->endOfDay())
-            ->where('end_time', '>', Carbon::now()->startOfDay())
-            ->where('end_time', '<=', Carbon::now()->endOfDay())
-            ->sum('duration');
+        
+        $report = CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id);
+        $report->total_time_in_system += $this->activity['duration'];
         $report->save();
     }
 }

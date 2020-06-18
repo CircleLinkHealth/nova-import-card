@@ -110,6 +110,9 @@
     const userId = window.userId;
     const userFullName = window.userFullName;
 
+    const ACTIVITY_TITLE_TO_SKIP_FROM_CA_TIME = 'CA - No more patients';
+    const ACTIVITY_TITLE_LOADING_PATIENT = 'CA - Loading next patient';
+
     export default {
         name: 'enrollment-dashboard',
         props: [
@@ -239,9 +242,26 @@
                 // we need to have the timeTrackerInfo object up to date
                 window['timeTrackerInfo'] = info;
             },
-            notifyTimeTracker() {
+            notifyTimeTracker(loadingTime) {
                 const info = this.getTimeTrackerInfo();
-                info.enrolleeId = this.enrollable_id;
+                info.forceSkip = false;
+
+                if (loadingTime) {
+                    info.enrolleeId = 0;
+                    info.activity = ACTIVITY_TITLE_LOADING_PATIENT;
+                }
+                else {
+                    info.enrolleeId = this.enrollable_id;
+                    if (this.shouldShowCookie) {
+                        info.activity = ACTIVITY_TITLE_TO_SKIP_FROM_CA_TIME;
+                        info.forceSkip = true;
+                    } else if (+this.enrollable_id === 0) {
+                        info.activity = ACTIVITY_TITLE_LOADING_PATIENT;
+                    } else {
+                        info.activity = `CA - ${this.enrollable_id}`;
+                    }
+                }
+
                 this.setTimeTrackerInfo(info);
                 TimeTrackerEventBus.$emit('tracker:activity', info);
             },
@@ -271,6 +291,8 @@
                     }
                 }
 
+                this.notifyTimeTracker(true);
+
                 return this.axios
                     .get(url, errorData)
                     .then(response => new Promise(resolve => setTimeout(() => {
@@ -278,25 +300,29 @@
                         this.loading_modal.close()
 
                         let patientData = response.data.data;
+                        if (patientData) {
+                            patientData.onCall = this.onCall;
+                            patientData.callStatus = this.callStatus;
+                            patientData.log = this.log;
+                            patientData.callError = this.callError;
+                            this.patientData = patientData;
+                            this.enrollable_id = patientData.enrollable_id;
+                        } else {
+                            this.enrollable_id = 0;
+                            this.patientData = null;
+                        }
 
                         if (response.data.patients_pending !== undefined) {
-                            this.patients_pending = response.data.patients_pending
-                            this.next_attempt_at = response.data.next_attempt_at
-                            return;
+                            this.patients_pending = response.data.patients_pending;
+                            this.next_attempt_at = response.data.next_attempt_at;
                         }
-                        patientData.onCall = this.onCall
-                        patientData.callStatus = this.callStatus
-                        patientData.log = this.log
-                        patientData.callError = this.callError
-                        this.patientData = patientData;
-
-                        this.enrollable_id = patientData.enrollable_id;
 
                         this.notifyTimeTracker();
 
                         App.$emit('enrollable:loaded', {
-                            has_tips: this.patientData.has_tips
-                        })
+                            has_tips: this.patientData ? this.patientData.has_tips : false
+                        });
+
                     }, 2000)))
                     .catch(err => {
                         //to implement
