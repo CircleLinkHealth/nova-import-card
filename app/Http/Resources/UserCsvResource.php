@@ -42,7 +42,8 @@ class UserCsvResource extends JsonResource
         }
 
         /** @var Patient $patientInfo */
-        $patientInfo = $this->whenLoaded('patientInfo');
+        $patientInfo  = $this->whenLoaded('patientInfo');
+        $locationName = 'n/a';
         if ( ! is_null($patientInfo) && $patientInfo->relationLoaded('location') && $patientInfo->location) {
             $locationName = $patientInfo->location->name;
         }
