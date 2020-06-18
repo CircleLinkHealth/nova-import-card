@@ -7,9 +7,9 @@
 namespace App\Http\Resources;
 
 use App\Services\Enrollment\PracticeKPIs;
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class PracticeKPIsCSVResource extends Resource
+class PracticeKPIsCSVResource extends JsonResource
 {
     protected $end;
     protected $start;

@@ -69,7 +69,8 @@ class DownloadCsv extends Action
     }
 
     /**
-     * @param  mixed       $filename
+     * @param mixed $filename
+     *
      * @return DownloadCsv
      */
     public function setFilename(string $filename)

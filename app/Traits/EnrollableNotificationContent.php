@@ -84,6 +84,7 @@ trait EnrollableNotificationContent
 
     /**
      * @throws \Exception
+     *
      * @return array
      */
     private function getMessageContent(User $notifiable, bool $isReminder = false)

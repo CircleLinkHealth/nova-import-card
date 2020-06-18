@@ -29,6 +29,7 @@ abstract class AbstractSelfEnrollableUserIterator implements ShouldQueue
     protected $dispatched = 0;
     /**
      * The limit on how many invites to send. Set to null for unlimited.
+     *
      * @var null
      */
     protected $limit;

@@ -27,7 +27,8 @@ class ProcessCpmTwilioSmsStatusCallbackJob implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param  mixed $input
+     * @param mixed $input
+     *
      * @return void
      */
     public function __construct($input)

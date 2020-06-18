@@ -21,6 +21,7 @@ class TwilioController extends Controller
      * Route called from Twilio whenever there is a status update on the SMS.
      *
      * @throws \Twilio\Exceptions\TwilioException
+     *
      * @return mixed
      */
     public function smsStatusCallback(Request $request)
