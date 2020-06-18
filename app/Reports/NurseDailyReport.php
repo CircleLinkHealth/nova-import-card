@@ -14,7 +14,7 @@ use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 
 class NurseDailyReport
 {
-    public static function data(Carbon $forDate = null, $nurse_users = null)
+    public static function data(Carbon $forDate = null, $nurse_users = null, $bypassSorting = false)
     {
         $date = $forDate ?? Carbon::now();
 
@@ -86,7 +86,9 @@ class NurseDailyReport
         }
 
         $nurses = collect($nurses);
-        $nurses->sortBy('last_activity');
+        if ( ! $bypassSorting) {
+            $nurses->sortBy('last_activity');
+        }
 
         return $nurses;
     }

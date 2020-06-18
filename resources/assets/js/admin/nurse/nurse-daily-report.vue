@@ -63,6 +63,14 @@
         mounted() {
             Event.$on('refresh-table', this.refreshTable)
             console.info('mounted');
+
+            Event.$on('vue-tables.loading', function (data) {
+                self.loading = true;
+            });
+
+            Event.$on('vue-tables.loaded', function (data) {
+                self.loading = false
+            });
         }
     }
 </script>

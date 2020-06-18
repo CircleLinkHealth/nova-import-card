@@ -35,24 +35,26 @@ class NurseController extends Controller
 
         $count = $nursesQuery->count();
 
-        $nursesQuery->limit($limit)
-            ->skip($limit * ($page - 1));
-
         if (isset($orderBy)) {
+            if ('name' === $orderBy) {
+                $orderBy = 'first_name';
+            }
             $direction = 1 == $ascending
                 ? 'ASC'
                 : 'DESC';
             $nursesQuery->orderBy($orderBy, $direction);
         }
 
-        $nurses = $nursesQuery->get();
-        $report = NurseDailyReport::data(Carbon::now(), $nurses);
-        $data   = [
-            'data'  => $report,
-            'count' => $count,
-        ];
+        $nursesQuery->limit($limit)
+            ->skip($limit * ($page - 1));
 
-        return response()->json($data);
+        $nurses = $nursesQuery->get();
+        $report = NurseDailyReport::data(Carbon::now(), $nurses, true);
+
+        return response()->json([
+            'data'  => $report->toArray(),
+            'count' => $count,
+        ]);
     }
 
     public function makeDailyReport()
