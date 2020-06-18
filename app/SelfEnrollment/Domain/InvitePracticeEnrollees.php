@@ -26,11 +26,6 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
      */
     private $color;
     /**
-     * @var int
-     */
-    private $limit;
-
-    /**
      * @var int|mixed
      */
     private $practiceId;

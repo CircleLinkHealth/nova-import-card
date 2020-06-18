@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "69d8341ebba6c3be4f0c78b9de72ec18",
+    "content-hash": "8a1caf95aa6d8f0ed2250eff47257651",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1072,7 +1072,7 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "dev-master",
+            "version": "v1.6.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
@@ -1139,11 +1139,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.8.1",
+            "version": "v2.8.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "b1b7fd999a8d50cb40bd4abb981bad9b4595cf1d"
+                "reference": "429f1ac098289e3952515179affcca34e1f94cfd"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1177,15 +1177,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-09T00:08:18+00:00"
+            "time": "2020-06-18T22:48:30+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.9.7",
+            "version": "v2.9.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "cede9cffa874017de8267668c500ff186bd505d2"
+                "reference": "7ebfecbd2ff30bf142a13351e207354da3db297a"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1210,7 +1210,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-17T09:06:37+00:00"
+            "time": "2020-06-18T22:46:14+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1317,7 +1317,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-shift-26679",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
@@ -15851,7 +15851,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/core-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "orangehill/iseed": 20
     },
