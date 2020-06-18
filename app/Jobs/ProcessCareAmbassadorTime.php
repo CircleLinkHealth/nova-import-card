@@ -21,14 +21,14 @@ class ProcessCareAmbassadorTime implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    
+
     /**
      * @var array
      */
     private $activity;
-    
+
     private $userId;
-    
+
     /**
      * Create a new job instance.
      *
@@ -36,10 +36,10 @@ class ProcessCareAmbassadorTime implements ShouldQueue
      */
     public function __construct($userId, array $activity)
     {
-        $this->userId = $userId;
+        $this->userId   = $userId;
         $this->activity = $activity;
     }
-    
+
     /**
      * Execute the job.
      *
@@ -49,17 +49,17 @@ class ProcessCareAmbassadorTime implements ShouldQueue
     {
         $user = User::with(['careAmbassador'])
             ->findOrFail($this->userId);
-        
+
         if (isset($this->activity['enrolleeId'])) {
             $enrolleeId = $this->activity['enrolleeId'];
-            
+
             $enrollee = Enrollee::find($enrolleeId);
             if ($enrollee) {
                 $enrollee->total_time_spent += $this->activity['duration'];
                 $enrollee->save();
             }
         }
-        
+
         $report = CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id);
         $report->total_time_in_system += $this->activity['duration'];
         $report->save();
