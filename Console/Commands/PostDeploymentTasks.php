@@ -48,11 +48,13 @@ class PostDeploymentTasks extends Command
         collect(
             [
                 'view:clear',
-                'view:cache',
-                'route:cache',
-                'config:cache',
+                'route:clear',
+                'config:clear',
                 'opcache:clear',
                 'opcache:compile',
+                'config:cache',
+                'view:cache',
+                'route:cache',
                 'horizon:terminate',
                 'queue:restart',
             ]

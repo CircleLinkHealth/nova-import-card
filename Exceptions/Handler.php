@@ -56,11 +56,13 @@ class Handler extends ExceptionHandler
      *
      * @param \Illuminate\Http\Request $request
      *
+     * @throws \Throwable
+     *
      * @return \Illuminate\Http\Response
      */
     public function render(
         $request,
-        Exception $e
+        \Throwable $e
     ) {
         if ($e instanceof ModelNotFoundException) {
             return response($e->getMessage(), 400);
@@ -79,7 +81,7 @@ class Handler extends ExceptionHandler
      *
      * @return mixed|void
      */
-    public function report(Exception $e)
+    public function report(\Throwable $e)
     {
         if ( ! $this->shouldReport($e)) {
             return;
