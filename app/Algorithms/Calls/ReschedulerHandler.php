@@ -46,8 +46,8 @@ class ReschedulerHandler
         })
             ->whereStatus('scheduled')
             ->with('inboundUser.patientInfo')
-            ->where('scheduled_date', '<=', Carbon::now()->toDateString())
-            ->where('window_end', '<=', Carbon::now()->format('H:i'))
+            ->where('scheduled_date', '<=', now()->toDateString())
+            ->where('window_end', '<=', now()->subHour()->format('H:i'))
             ->chunkById(100, function ($calls) {
                 foreach ($calls as $call) {
                     $this->reschedule($call);
