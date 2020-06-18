@@ -6,13 +6,13 @@
 
 namespace CircleLinkHealth\Eligibility\Entities;
 
-use App\Contracts\Services\TwilioClientable;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Core\Traits\MySQLSearchable;
 use CircleLinkHealth\Core\Traits\Notifiable;
+use CircleLinkHealth\Core\TwilioClientable;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -78,58 +78,56 @@ use Illuminate\Support\Str;
  * @property \CircleLinkHealth\Customer\Entities\User|null     $provider
  * @property mixed                                             $primary_phone_number
  * @property \CircleLinkHealth\Customer\Entities\User|null     $user
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee toCall()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee toSMS()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAddress2($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAttemptCount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCareAmbassadorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCellPhone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCity($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereColor($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereConfidentProviderGuess($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereConsentedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCpmProblem1($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCpmProblem2($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereDob($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereFirstName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereHasCopay($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereHomePhone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereInviteCode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereInviteOpenedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereInviteSentAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereLang($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereLastAttemptAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereLastCallOutcome($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereLastCallOutcomeReason($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereLastEncounter($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereLastName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereMedicalRecordId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereMedicalRecordType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereMrn($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereOtherPhone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee wherePracticeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee wherePreferredDays($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee wherePreferredWindow($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee wherePrimaryInsurance($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee wherePrimaryPhone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereProblems($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereProviderId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereReferringProviderName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereSecondaryInsurance($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereState($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereTertiaryInsurance($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereTotalTimeSpent($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereZip($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee toCall()
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee toSMS()
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAddress($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAddress2($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAttemptCount($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCareAmbassadorId($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCellPhone($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCity($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereColor($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereConfidentProviderGuess($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereConsentedAt($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCpmProblem1($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCpmProblem2($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCreatedAt($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereDob($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereEmail($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereFirstName($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereHasCopay($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereHomePhone($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereId($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereInviteCode($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereInviteOpenedAt($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereInviteSentAt($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereLang($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereLastAttemptAt($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereLastCallOutcome($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereLastCallOutcomeReason($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereLastEncounter($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereLastName($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereMedicalRecordId($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereMedicalRecordType($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereMrn($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereOtherPhone($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee wherePracticeId($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee wherePreferredDays($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee wherePreferredWindow($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee wherePrimaryInsurance($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee wherePrimaryPhone($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereProblems($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereProviderId($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereReferringProviderName($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereSecondaryInsurance($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereState($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereStatus($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereTertiaryInsurance($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereTotalTimeSpent($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereUpdatedAt($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereUserId($value)
+ * @method   static                                            \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereZip($value)
  * @mixin \Eloquent
- *
  * @property int|null                                                   $batch_id
  * @property int|null                                                   $eligibility_job_id
  * @property int|null                                                   $care_ambassador_user_id
@@ -141,32 +139,25 @@ use Illuminate\Support\Str;
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection
  *     $revisionHistory
  * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient $targetPatient
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee filter(\App\Filters\QueryFilters $filters)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereBatchId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCareAmbassadorUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereEligibilityJobId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereSoftRejectedCallback($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereRequestedCallback($value)
- *
- * @property int|null   $revision_history_count
- * @property array|null $agent_details
- * @property mixed      $agent
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAgentDetails($value)
- *
- * @property int|null $family_enrollee_id
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereFamilyEnrolleeId($value)
- *
- * @property string|null $soft_rejected_callback
+ * @method   static                                               \Illuminate\Database\Eloquent\Builder|\App\Enrollee filter(\App\Filters\QueryFilters $filters)
+ * @method   static                                               \Illuminate\Database\Eloquent\Builder|\App\Enrollee newModelQuery()
+ * @method   static                                               \Illuminate\Database\Eloquent\Builder|\App\Enrollee newQuery()
+ * @method   static                                               \Illuminate\Database\Eloquent\Builder|\App\Enrollee query()
+ * @method   static                                               \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereBatchId($value)
+ * @method   static                                               \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCareAmbassadorUserId($value)
+ * @method   static                                               \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereEligibilityJobId($value)
+ * @method   static                                               \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereSoftRejectedCallback($value)
+ * @method   static                                               \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereRequestedCallback($value)
+ * @property int|null                                             $revision_history_count
+ * @property array|null                                           $agent_details
+ * @property mixed                                                $agent
+ * @method   static                                               \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAgentDetails($value)
+ * @property int|null                                             $family_enrollee_id
+ * @method   static                                               \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereFamilyEnrolleeId($value)
+ * @property string|null                                          $soft_rejected_callback
  * @property \CircleLinkHealth\Eligibility\Entities\Enrollee[]|\Illuminate\Database\Eloquent\Collection
  *     $confirmedFamilyMembers
  * @property int|null $confirmed_family_members_count
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
  *     mySQLSearch($columns, $term, $mode = 'BOOLEAN', $shouldRequireAll = true, $shouldRequireIntegers = true)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
@@ -175,20 +166,15 @@ use Illuminate\Support\Str;
  *     searchPhones($term)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee
  *     shouldSuggestAsFamilyForEnrollee($enrolleeId)
- *
- * @property int|null                                          $location_id
- * @property \CircleLinkHealth\SharedModels\Entities\Ccda|null $ccda
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee duplicates(\CircleLinkHealth\Customer\Entities\User $patient, \CircleLinkHealth\SharedModels\Entities\Ccda $ccda)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee whereLocationId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee hasPhone($phone)
- *
- * @property string|null $other_note
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee shouldBeCalled()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee lessThanThreeAttempts()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee withCaPanelRelationships()
- *
+ * @property int|null                                                                                                        $location_id
+ * @property \CircleLinkHealth\SharedModels\Entities\Ccda|null                                                               $ccda
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee duplicates(\CircleLinkHealth\Customer\Entities\User $patient, \CircleLinkHealth\SharedModels\Entities\Ccda $ccda)
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee whereLocationId($value)
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee hasPhone($phone)
+ * @property string|null                                                                                                     $other_note
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee shouldBeCalled()
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee lessThanThreeAttempts()
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee withCaPanelRelationships()
  * @property string|null                                                                                                     $source
  * @property int|null                                                                                                        $enrollment_non_responsive
  * @property int                                                                                                             $auto_enrollment_triggered
