@@ -475,7 +475,8 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
                 url: activity.url,
                 url_short: activity.url_short,
                 start_time: activity.start_time,
-                is_behavioral: activity.isBehavioral
+                is_behavioral: activity.isBehavioral,
+                force_skip: activity.forceSkip
             }))
         };
 
