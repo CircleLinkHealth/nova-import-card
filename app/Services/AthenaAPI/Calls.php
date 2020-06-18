@@ -379,9 +379,10 @@ class Calls implements AthenaApiImplementation
      *
      * @param $practiceId
      * @param bool $showAllDepartments
+     * @param bool $providerlist
      *
-     * @param  bool       $providerlist
      * @throws \Exception
+     *
      * @return mixed
      */
     public function getDepartments($practiceId, $showAllDepartments = false, $providerlist = false)
@@ -459,6 +460,7 @@ class Calls implements AthenaApiImplementation
      * Get patient medications.
      *
      * @throws \Exception
+     *
      * @return array|mixed
      */
     public function getMedications(int $patientId, int $practiceId, int $departmentId)

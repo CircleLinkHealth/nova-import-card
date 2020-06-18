@@ -172,7 +172,7 @@ class ProtectPHITest extends TestCase
             ])) {
                 continue;
             }
-            $response->assertDontSee(sanitizeString($phi));
+            $response->assertDontSee($phi);
         }
     }
 

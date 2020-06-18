@@ -8,12 +8,13 @@ namespace App\Providers;
 
 use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
-use App\Notifications\Channels\CustomTwilioChannel;
 use App\Notifications\NotificationStrategies\SendsNotification;
 use App\Services\AWV\DirectPatientDocument;
 use App\Services\AWV\EmailPatientDocument;
 use App\Services\AWV\FaxPatientDocument;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Notifications\Channels\CustomMailChannel;
+use CircleLinkHealth\Core\Notifications\Channels\CustomTwilioChannel;
 use CircleLinkHealth\Core\Providers\GoogleDriveServiceProvider;
 use DB;
 use Illuminate\Contracts\Foundation\Application;
@@ -110,6 +111,9 @@ class AppServiceProvider extends ServiceProvider
         $cm = $this->app->make(ChannelManager::class);
         $cm->extend('twilio', function (Application $app) {
             return $app->make(CustomTwilioChannel::class);
+        });
+        $cm->extend('mail', function (Application $app) {
+            return $app->make(CustomMailChannel::class);
         });
 
         if ($this->app->runningUnitTests() && \Config::get('database.default')) {

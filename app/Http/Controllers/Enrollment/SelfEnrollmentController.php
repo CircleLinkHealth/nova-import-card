@@ -348,6 +348,7 @@ class SelfEnrollmentController extends Controller
      * @param $hideButtons
      *
      * @throws \Exception
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     private function enrollmentLetterView(User $userEnrollee, $isSurveyOnlyUser, Enrollee $enrollee, $hideButtons)

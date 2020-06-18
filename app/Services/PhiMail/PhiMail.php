@@ -78,6 +78,7 @@ class PhiMail implements DirectMail
      * @param mixed|null $sender
      *
      *@throws \Exception
+     *
      * @return bool|SendResult[]
      */
     public function send(

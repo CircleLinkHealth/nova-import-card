@@ -8,7 +8,7 @@ namespace App\Jobs;
 
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\FaxChannel;
-use CircleLinkHealth\Core\PdfService;
+use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Location;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -7,9 +7,9 @@
 namespace App\Http\Resources;
 
 use CircleLinkHealth\Customer\Entities\User as UserModel;
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class Call extends Resource
+class Call extends JsonResource
 {
     /**
      * Transform the resource into an array.

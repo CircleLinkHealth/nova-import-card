@@ -1,4 +1,4 @@
-@if($patient->carePlan)
+@if(isset($patient) && $patient->carePlan)
     @if(! auth()->guest() && auth()->user()->isParticipant() && $patient->carePlan->status != CircleLinkHealth\SharedModels\Entities\CarePlan::PROVIDER_APPROVED)
         <div class="col-xs-12">
             <div class="pull-right print-row text-right" style="background: hsla(10, 50%, 50%, .10); padding: 10px">

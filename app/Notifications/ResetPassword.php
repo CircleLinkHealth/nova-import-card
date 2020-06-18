@@ -8,10 +8,11 @@ namespace App\Notifications;
 
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ResetPassword extends Notification
+class ResetPassword extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -64,8 +65,8 @@ class ResetPassword extends Notification
         $this->notifiable = $notifiable;
 
         return (new MailMessage())
-            //If notifiable is patient, we need to replace any references to CircleLink Health with Practice Name
-            ->from('noreply@circlelinkhealth.com', $notifiable->isParticipant() ? $notifiable->getPrimaryPracticeName() : 'CircleLink Health')
+            ->mailer('postmark')
+            ->from(config('mail.transactional_from.address') ?? config('mail.from.address'), $notifiable->isParticipant() ? $notifiable->getPrimaryPracticeName() : config('mail.transactional_from.name') ?? config('mail.from.name'))
             ->view('vendor.notifications.email', [
                 'greeting'     => 'You are receiving this email because we received a password reset request for your account.',
                 'actionText'   => 'Reset Password',

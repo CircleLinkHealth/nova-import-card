@@ -6,7 +6,7 @@
 
 namespace Tests\Concerns\TwilioFake;
 
-use App\Contracts\TwilioInterface;
+use CircleLinkHealth\Core\TwilioInterface;
 use NotificationChannels\Twilio\TwilioMessage;
 use PHPUnit\Framework\Assert as PHPUnit;
 use Psr\Log\LoggerInterface;
@@ -80,8 +80,9 @@ class TwilioFake implements TwilioInterface
     }
 
     /**
-     * @param  string     $to
-     * @param  bool       $useAlphanumericSender
+     * @param string $to
+     * @param bool   $useAlphanumericSender
+     *
      * @return mixed|void
      */
     public function sendMessage(TwilioMessage $message, $to, $useAlphanumericSender = false)

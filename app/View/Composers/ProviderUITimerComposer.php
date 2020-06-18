@@ -7,6 +7,7 @@
 namespace App\View\Composers;
 
 use App\Constants;
+use App\Jobs\StoreTimeTracking;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -36,6 +37,7 @@ class ProviderUITimerComposer extends ServiceProvider
 
             //fall back to uri if route name is null
             $title = empty($routeName) ? $route->uri : $routeName;
+            $forceSkip = in_array($title, StoreTimeTracking::UNTRACKED_ROUTES);
 
             $ipAddr = Request::ip();
 
@@ -100,6 +102,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 'noBhiSwitch',
                 'monthlyTime',
                 'monthlyBhiTime',
+                'forceSkip',
             ]));
         });
 

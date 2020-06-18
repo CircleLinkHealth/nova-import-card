@@ -6,7 +6,7 @@
 
 namespace Tests\Concerns\TwilioFake;
 
-use App\Contracts\TwilioInterface;
+use CircleLinkHealth\Core\TwilioInterface;
 
 trait WithTwilioMock
 {
