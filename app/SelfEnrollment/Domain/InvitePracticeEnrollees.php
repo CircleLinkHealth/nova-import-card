@@ -16,10 +16,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
 {
-    /**
-     * @var int
-     */
-    private $amount;
     private $batch;
     /**
      * @var array|string[]
@@ -29,6 +25,10 @@ class InvitePracticeEnrollees extends AbstractSelfEnrollableUserIterator
      * @var null
      */
     private $color;
+    /**
+     * @var int
+     */
+    private $limit;
 
     /**
      * @var int|mixed
