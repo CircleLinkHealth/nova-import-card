@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Core\Notifications\Channels;
 
+use Illuminate\Contracts\Mail\Factory as MailFactory;
 use Illuminate\Contracts\Mail\Mailable;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Mail\Markdown;
@@ -25,7 +26,7 @@ class CustomMailChannel extends MailChannel
     /**
      * TwilioChannel constructor.
      */
-    public function __construct(Mailer $mailer, Markdown $markdown)
+    public function __construct(MailFactory $mailer, Markdown $markdown)
     {
         parent::__construct($mailer, $markdown);
     }
