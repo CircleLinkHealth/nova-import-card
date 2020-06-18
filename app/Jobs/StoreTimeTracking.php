@@ -170,11 +170,13 @@ class StoreTimeTracking implements ShouldQueue
      */
     private function isBillableActivity(PageTimer $pageTimer, array $activity, User $provider = null)
     {
+        $forceSkip = $activity['force_skip'] ?? false;
+
         return ! ( ! $provider
                    || ! (bool) $provider->isCCMCountable()
                    || 0 == $pageTimer->patient_id
                    || in_array($pageTimer->title, self::UNTRACKED_ROUTES)
-                   || ($activity['force_skip'] ?? false));
+                   || $forceSkip);
     }
 
     /**
@@ -185,6 +187,8 @@ class StoreTimeTracking implements ShouldQueue
      */
     private function isProcessableCareAmbassadorActivity(array $activity, User $provider = null)
     {
-        return ! $activity['force_skip'] && $provider->isCareAmbassador();
+        $forceSkip = $activity['force_skip'] ?? false;
+
+        return ! $forceSkip && $provider->isCareAmbassador();
     }
 }
