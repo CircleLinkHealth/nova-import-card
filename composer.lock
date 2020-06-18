@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "515c162f0a20e8a5166279ebd3fe212f",
+    "content-hash": "36065e364f801567ab44011b29b23670",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -663,11 +663,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.0.5",
+            "version": "dev-CPM-182_v2_migrations",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "7bec4a3e41e0d1da0a3ec6c014e36c306d0fc18d"
+                "reference": "6926318deca389b0451d1d8163c5c9192d7978e5"
             },
             "type": "laravel-module",
             "extra": {
@@ -689,7 +689,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-17T09:09:40+00:00"
+            "time": "2020-06-18T13:34:20+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -735,11 +735,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v2.9.7",
+            "version": "dev-ROAD-182_eligibility",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "cede9cffa874017de8267668c500ff186bd505d2"
+                "reference": "bbfa4c4117c51a7c503a134c5fd4598f1c36a869"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -764,7 +764,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-17T09:06:37+00:00"
+            "time": "2020-06-18T13:34:20+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
@@ -11884,6 +11884,8 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
+        "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/eligibility-module": 20,
         "waavi/url-shortener": 20
     },
     "prefer-stable": true,
