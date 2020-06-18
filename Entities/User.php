@@ -2448,7 +2448,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     },
                     'carePlan.providerApproverUser',
                     'primaryPractice',
-                    'patientInfo',
+                    'patientInfo.location',
                 ]
             )
             ->get();
@@ -2457,109 +2457,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function patientNurseAsPatient()
     {
         return $this->hasOne(PatientNurse::class, 'patient_user_id');
-    }
-
-    /**
-     * @return \Illuminate\Database\Query\Builder
-     */
-    public function patientsPendingCLHApproval()
-    {
-        return User::intersectPracticesWith($this, false)
-            ->ofType('participant')
-            ->whereHas('patientInfo', function ($q) {
-                $q->enrolled();
-            })
-            ->whereHas(
-                'carePlan',
-                function ($q) {
-                    $q->whereIn('status', [CarePlan::DRAFT]);
-                }
-            )
-            ->with(
-                [
-                    'observations' => function ($query) {
-                        $query->where('obs_key', '!=', 'Outbound');
-                        $query->orderBy('obs_date', 'DESC');
-                        $query->first();
-                    },
-                    'phoneNumbers' => function ($q) {
-                        $q->where('type', '=', PhoneNumber::HOME);
-                    },
-                    'patientInfo.location',
-                    'primaryPractice',
-                    'carePlan',
-                ]
-            );
-    }
-
-    public function patientsPendingProviderApproval()
-    {
-        $approveOwnCarePlans = $this->providerInfo
-            ? (bool) $this->providerInfo->approve_own_care_plans
-            : false;
-
-        return User::intersectPracticesWith($this)
-            ->ofType('participant')
-            ->whereHas('patientInfo', function ($q) {
-                $q->enrolled();
-            })
-            ->whereHas(
-                'carePlan',
-                function ($q) {
-                    $q->whereIn('status', [CarePlan::QA_APPROVED]);
-                }
-            )
-            ->intersectPracticesWith($this)
-            ->when(true === $approveOwnCarePlans, function ($q) use ($approveOwnCarePlans) {
-                $q->whereHas(
-                    'careTeamMembers',
-                    function ($q) use ($approveOwnCarePlans) {
-                        $q->where(
-                            [
-                                ['type', '=', CarePerson::BILLING_PROVIDER],
-                                ['member_user_id', '=', $this->id],
-                            ]
-                        )
-                            ->orWhere(
-                                function ($q) {
-                                    $q->whereHas(
-                                        'user',
-                                        function ($q) {
-                                            $q->whereHas(
-                                                'forwardAlertsTo',
-                                                function ($q) {
-                                                    $q->where('contactable_id', $this->id)
-                                                        ->orWhereIn(
-                                                            'name',
-                                                            [
-                                                                'forward_careplan_approval_emails_instead_of_provider',
-                                                                'forward_careplan_approval_emails_in_addition_to_provider',
-                                                            ]
-                                                        );
-                                                }
-                                            );
-                                        }
-                                    );
-                                }
-                            );
-                    }
-                );
-            })
-            ->with(
-                [
-                    'observations' => function ($query) {
-                        $query->where('obs_key', '!=', 'Outbound');
-                        $query->orderBy('obs_date', 'DESC');
-                        $query->first();
-                    },
-                    'phoneNumbers' => function ($q) {
-                        $q->where('type', '=', PhoneNumber::HOME);
-                    },
-                    'patientInfo.location',
-                    'primaryPractice',
-                    'carePlan',
-                ]
-            );
     }
 
     public function patientSummaries()
@@ -3230,6 +3127,107 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     ->orWhereDoesntHave('patientInfo');
             });
         });
+    }
+
+    /**
+     * @param mixed $query
+     *
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function scopePatientsPendingCLHApproval($query, User $approver)
+    {
+        return $query->intersectPracticesWith($approver, false)
+            ->ofType('participant')
+            ->whereHas('patientInfo', function ($q) {
+                $q->enrolled();
+            })
+            ->whereHas(
+                'carePlan',
+                function ($q) {
+                    $q->whereIn('status', [CarePlan::DRAFT]);
+                }
+            )
+            ->with(
+                [
+                    'observations' => function ($query) {
+                        $query->where('obs_key', '!=', 'Outbound');
+                        $query->orderBy('obs_date', 'DESC');
+                        $query->limit(1);
+                    },
+                    'phoneNumbers' => function ($q) {
+                        $q->where('type', '=', PhoneNumber::HOME);
+                    },
+                    'patientInfo.location',
+                    'primaryPractice',
+                    'carePlan',
+                ]
+            );
+    }
+
+    public function scopePatientsPendingProviderApproval($query, User $approver)
+    {
+        $approveOwnCarePlansOnly = (bool) optional($approver->providerInfo)->approve_own_care_plans;
+
+        return $query->intersectPracticesWith($approver)
+            ->ofType('participant')
+            ->whereHas('patientInfo', function ($q) {
+                $q->enrolled();
+            })
+            ->whereHas(
+                'carePlan',
+                function ($q) {
+                    $q->whereIn('status', [CarePlan::QA_APPROVED]);
+                }
+            )
+            ->intersectPracticesWith($approver)
+            ->when(true === $approveOwnCarePlansOnly, function ($q) use ($approveOwnCarePlansOnly, $approver) {
+                $q->whereHas(
+                    'careTeamMembers',
+                    function ($q) use ($approveOwnCarePlansOnly, $approver) {
+                        $q->where(
+                            [
+                                ['type', '=', CarePerson::BILLING_PROVIDER],
+                                ['member_user_id', '=', $approver->id],
+                            ]
+                        )
+                            ->orWhere(
+                                function ($q) use ($approver) {
+                                    $q->whereHas(
+                                        'user',
+                                        function ($q) use ($approver) {
+                                            $q->whereHas(
+                                                'forwardAlertsTo',
+                                                function ($q) use ($approver) {
+                                                    $q->where('contactable_id', $approver->id)
+                                                        ->orWhereIn(
+                                                            'name',
+                                                            [
+                                                                'forward_careplan_approval_emails_instead_of_provider',
+                                                                'forward_careplan_approval_emails_in_addition_to_provider',
+                                                            ]
+                                                        );
+                                                }
+                                            );
+                                        }
+                                    );
+                                }
+                            );
+                    }
+                );
+            })
+            ->with(
+                [
+                    'observations' => function ($query) {
+                        $query->where('obs_key', '!=', 'Outbound')->orderBy('obs_date', 'DESC')->limit(1);
+                    },
+                    'phoneNumbers' => function ($q) {
+                        $q->where('type', '=', PhoneNumber::HOME);
+                    },
+                    'patientInfo.location',
+                    'primaryPractice',
+                    'carePlan',
+                ]
+            );
     }
 
     public function scopePracticeStaff($query)
