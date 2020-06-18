@@ -17,39 +17,41 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading">Nurse Daily Report</div>
-
                             <div class="panel-body">
-                                <table class="table table-striped" id="nurse_daily">
-                                    <thead>
-                                    <tr>
-                                        <th>
-                                            Nurse Name
-                                        </th>
-                                        <th>
-                                            Time Since Last Activity
-                                        </th>
-                                        <th>
-                                            # Scheduled Calls Today
-                                        </th>
-                                        <th>
-                                            # Completed Calls Today
-                                        </th>
-                                        <th>
-                                            # Successful Calls Today
-                                        </th>
-                                        <th>
-                                            CCM Mins Today
-                                        </th>
-                                        {{--<th>--}}
-                                            {{--Total Mins Today--}}
-                                        {{--</th>--}}
-                                        <th id="last" class="last">
-                                            Last Activity
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                </table>
+                                <nurse-daily-report></nurse-daily-report>
                             </div>
+{{--                            <div class="panel-body">--}}
+{{--                                <table class="table table-striped" id="nurse_daily">--}}
+{{--                                    <thead>--}}
+{{--                                    <tr>--}}
+{{--                                        <th>--}}
+{{--                                            Nurse Name--}}
+{{--                                        </th>--}}
+{{--                                        <th>--}}
+{{--                                            Time Since Last Activity--}}
+{{--                                        </th>--}}
+{{--                                        <th>--}}
+{{--                                            # Scheduled Calls Today--}}
+{{--                                        </th>--}}
+{{--                                        <th>--}}
+{{--                                            # Completed Calls Today--}}
+{{--                                        </th>--}}
+{{--                                        <th>--}}
+{{--                                            # Successful Calls Today--}}
+{{--                                        </th>--}}
+{{--                                        <th>--}}
+{{--                                            CCM Mins Today--}}
+{{--                                        </th>--}}
+{{--                                        --}}{{--<th>--}}
+{{--                                            --}}{{--Total Mins Today--}}
+{{--                                        --}}{{--</th>--}}
+{{--                                        <th id="last" class="last">--}}
+{{--                                            Last Activity--}}
+{{--                                        </th>--}}
+{{--                                    </tr>--}}
+{{--                                    </thead>--}}
+{{--                                </table>--}}
+{{--                            </div>--}}
                         </div>
                     </div>
             </div>

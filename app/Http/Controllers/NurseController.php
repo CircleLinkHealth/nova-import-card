@@ -15,9 +15,16 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class NurseController extends Controller
 {
-    public function dailyReport()
+    public function dailyReport(Request $request)
     {
-        return datatables()->collection(NurseDailyReport::data())->make(true);
+        $report = NurseDailyReport::data();
+        $data   = [
+            'data'  => $report,
+            'count' => count($report),
+        ];
+
+        return response()->json($data);
+//        return datatables()->collection(NurseDailyReport::data())->make(true);
     }
 
     public function makeDailyReport()

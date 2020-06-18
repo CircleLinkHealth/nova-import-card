@@ -10,14 +10,6 @@
             </div>
             <v-server-table class="table" v-on:filter="listenTo" :url="getUrl()" :columns="columns" :options="options"
                             ref="table">
-                <template slot="status" slot-scope="props">
-                    <div>
-                        {{enrolleeStatusMap[props.row.status] || props.row.status}}
-                    </div>
-                </template>
-                <template slot="total_time_spent" slot-scope="props">
-                    {{formatSecondsToHHMMSS(props.row.total_time_spent)}}
-                </template>
             </v-server-table>
         </div>
     </div>
@@ -31,7 +23,7 @@
     import Notifications from '../../components/notifications';
 
     export default {
-        name: "enrollee-list",
+        name: "nurse-daily-report",
         components: {
             'modal': Modal,
             'loader': Loader,
@@ -45,56 +37,15 @@
                     next: false,
                     excel: false,
                 },
-                enrolleeStatusMap: {
-                    call_queue: 'Call Queue',
-                    consented: 'Consented',
-                    soft_rejected: 'Soft Declined',
-                    hard_declined: 'Hard Declined',
-                    utc: 'Unreachable',
-                    queue_auto_enrollment: 'Queued for Self-enrollment',
-                },
                 loading: false,
-                hideStatus: ['ineligible'],
-                columns: ['id', 'user_id', 'mrn', 'first_name', 'last_name', 'care_ambassador_name','status', 'source', 'enrollment_non_responsive', 'auto_enrollment_triggered', 'practice_name', 'provider_name', 'lang', 'requested_callback', 'total_time_spent', 'attempt_count', 'last_attempt_at',
-                    'last_call_outcome', 'last_call_outcome_reason', 'address', 'address_2', 'city', 'state', 'zip', 'primary_phone','home_phone', 'cell_phone',  'other_phone', 'dob', 'preferred_days', 'preferred_window',
-                    'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'has_copay', 'email', 'last_encounter', 'created_at', 'updated_at'],
+                columns: ['name', 'Time Since Last Activity', '# Scheduled Calls Today', '# Completed Calls Today', '# Successful Calls Today', 'CCM Mins Today', 'last_activity'],
                 options: {
-                    requestAdapter(data) {
-                        if (typeof (self) !== 'undefined') {
-                            data.query.hideStatus = self.hideStatus;
-                        }
-                        return data;
-                    },
-                    headings: {
-                        enrollment_non_responsive : 'Send Regular Mail'
-                    },
-                    columnsClasses: {
-                        'selected': 'blank',
-                        'Type': 'padding-2',
-                        'id': 'min-width-80',
-                        'edit': 'min-width-50',
-                        'select': 'min-width-50',
-                        'has-copay': 'min-width-50',
-                        'user_id': 'min-width-80',
-                        'mrn': 'min-width-80',
-                        'lang': 'min-width-80'
-                    },
-                    listColumns: {
-                        status: [
-                            {id: 'call_queue', text: 'Call Queue'},
-                            {id:'consented', text: 'Consented'},
-                            {id:'soft_rejected', text: 'Soft Declined'},
-                            {id: 'hard_declined', text: 'Hard Declined'},
-                            {id:'utc', text: 'Unreachable'},
-                            {id:'queue_auto_enrollment', text:'Queued for Self-enrollment'},
-                        ],
-                    },
                     perPage: 50,
                     perPageValues: [10, 25, 50, 100, 200],
                     skin: "table-striped table-bordered table-hover",
-                    filterByColumn: true,
-                    filterable: ['hideStatus', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status','source', 'requested_callback', 'eligibility_job_id', 'enrollment_non_responsive', 'last_attempt_at', 'auto_enrollment_triggered','medical_record_id', 'practice_name', 'provider_name', 'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'attempt_count', 'primary_phone', 'home_phone', 'cell_phone', 'other_phone'],
-                    sortable: ['id', 'user_id', 'first_name', 'last_name', 'practice_name', 'provider_name', 'primary_insurance', 'status', 'source', 'created_at', 'state', 'city','enrollment_non_responsive', 'auto_enrollment_triggered', 'last_attempt_at', 'care_ambassador_name', 'attempt_count', 'requested_callback'],
+                    // filterByColumn: true,
+                    // filterable: ['name'],
+                    // sortable: ['name'],
                 },
             }
         },
@@ -112,7 +63,7 @@
                 return data;
             },
             getUrl() {
-                return rootUrl('/admin/enrollment/list/data');
+                return rootUrl('/admin/reports/nurse/daily/data');
             },
             selected(id) {
                 const pos = this.selectedEnrolleeIds.indexOf(id);
