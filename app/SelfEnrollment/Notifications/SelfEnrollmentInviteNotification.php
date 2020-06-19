@@ -6,7 +6,6 @@
 
 namespace App\SelfEnrollment\Notifications;
 
-use App\Notifications\Channels\AutoEnrollmentMailChannel;
 use App\Traits\EnrollableNotificationContent;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Customer\Entities\User;
@@ -62,7 +61,8 @@ class SelfEnrollmentInviteNotification extends Notification
     }
 
     /**
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
     public function toArray($notifiable)
@@ -98,17 +98,26 @@ class SelfEnrollmentInviteNotification extends Notification
     {
         $notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
 
-        $fromName = config('mail.from.name'); //@todo: We dont need to show CircleLinkHealth as default
+        $fromName = null;
+
         if ( ! empty($notifiable->primaryPractice) && ! empty($notifiable->primaryPractice->display_name)) {
             $fromName = $notifiable->primaryPractice->display_name;
+        }
+
+        if (empty($fromName)) {
+            $fromName = config('mail.marketing_from.name');
         }
 
         if (empty($this->url)) {
             throw new InvalidArgumentException("`url` cannot be empty. User ID {$notifiable->id}");
         }
 
-        return (new AutoEnrollmentMailChannel($fromName))
-            ->from(config('mail.from.address'), $fromName)
+        $mailMessage           = new MailMessage();
+        $mailMessage->viewData = ['excludeLogo' => true, 'practiceName' => $fromName];
+
+        return $mailMessage
+            ->mailer('smtp')
+            ->from(config('mail.marketing_from.address'), $fromName)
             ->subject('Wellness Program')
             ->line($notificationContent['line1'])
             ->line($notificationContent['line2'])
@@ -121,6 +130,7 @@ class SelfEnrollmentInviteNotification extends Notification
      * @param $notifiable
      *
      * @throws \Exception
+     *
      * @return TwilioSmsMessage
      */
     public function toTwilio(User $notifiable)
