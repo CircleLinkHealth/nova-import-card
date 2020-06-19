@@ -6,6 +6,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Actions\ExportTwilioCalls;
 use App\Nova\Filters\TimestampFilter;
 use App\Nova\Filters\TwilioCallSourceFilter;
 use App\Nova\Metrics\TwilioCallCosts;
@@ -76,7 +77,9 @@ class TwilioCall extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            new ExportTwilioCalls(),
+        ];
     }
 
     /**
@@ -134,6 +137,8 @@ class TwilioCall extends Resource
             Text::make('From', 'from')->sortable(),
 
             Text::make('RN/CA', 'outboundUser.display_name')->sortable(),
+    
+            Text::make('To', 'to')->sortable(),
 
             Text::make('Patient', function ($row) {
                 if ($row->inboundUser) {
@@ -145,8 +150,6 @@ class TwilioCall extends Resource
 
                 return null;
             })->sortable(),
-
-            Text::make('To', 'to')->sortable(),
 
             Text::make('Call Status', function ($row) {
                 return $row->dial_call_status ?? $row->call_status;
@@ -162,7 +165,7 @@ class TwilioCall extends Resource
                 return secondsToMMSS($row->call_duration ?? 0);
             })->hideFromIndex(true),
 
-            Text::make("API Connection Fee ($$twilioJsFlatFee/min)", function ($row) {
+            Text::make("API Cost ($$twilioJsFlatFee/min)", function ($row) {
                 $cost = $this->getCostFormatted($row->call_duration, self::TWILIO_JS_FLAT_FEE_PER_MIN, self::CURRENCY_PRECISION);
 
                 return "$$cost";
