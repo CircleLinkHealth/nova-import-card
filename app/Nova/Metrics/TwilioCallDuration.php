@@ -28,6 +28,7 @@ class TwilioCallDuration extends Value
      */
     public function __construct(string $name, string $source)
     {
+        parent::__construct();
         $this->name   = $name;
         $this->source = $source;
     }
@@ -59,7 +60,7 @@ class TwilioCallDuration extends Value
 
         return $this->result(TwilioCall::whereBetween('created_at', $this->currentRange($request->range, $timezone))
             ->where('source', '=', $this->source)
-            ->sum($calculationStatement))->previous($previousValue)->suffix('minutes');
+            ->sum($calculationStatement))->previous($previousValue)->suffix('minutes')->allowZeroResult();
     }
 
     /**

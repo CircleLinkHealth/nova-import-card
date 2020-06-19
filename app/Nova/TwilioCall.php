@@ -6,9 +6,11 @@
 
 namespace App\Nova;
 
+use App\Nova\Filters\TimestampFilter;
 use App\Nova\Filters\TwilioCallSourceFilter;
 use App\Nova\Metrics\TwilioCallCosts;
 use App\Nova\Metrics\TwilioCallDuration;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
@@ -19,9 +21,9 @@ class TwilioCall extends Resource
 {
     use SearchesRelations;
 
-    const CURRENCY_PRECISION          = 3;
-    const TWILIO_JS_FLAT_FEE_PER_MIN  = 0.004;
-    const TWILIO_US_CALL_COST_PER_MIN = 0.0013;
+    const CURRENCY_PRECISION          = 4;
+    const TWILIO_JS_FLAT_FEE_PER_MIN  = 0.0040;
+    const TWILIO_US_CALL_COST_PER_MIN = 0.0130;
 
     /**
      * The model the resource corresponds to.
@@ -104,9 +106,9 @@ class TwilioCall extends Resource
     {
         return [
             new TwilioCallDuration('RN Call Duration', TwilioCallSourceFilter::PATIENT_CALL),
-            new TwilioCallCosts('RN Call Costs', TwilioCallSourceFilter::PATIENT_CALL),
+            new TwilioCallCosts('RN Call Costs', TwilioCallSourceFilter::PATIENT_CALL, 2),
             new TwilioCallDuration('CA Call Duration', TwilioCallSourceFilter::ENROLMENT_DASHBOARD),
-            new TwilioCallCosts('CA Call Costs', TwilioCallSourceFilter::ENROLMENT_DASHBOARD),
+            new TwilioCallCosts('CA Call Costs', TwilioCallSourceFilter::ENROLMENT_DASHBOARD, 2),
         ];
     }
 
@@ -203,6 +205,8 @@ class TwilioCall extends Resource
     {
         return [
             new TwilioCallSourceFilter(),
+            new TimestampFilter('From', 'created_at', 'from', Carbon::now()->startOfMonth()),
+            new TimestampFilter('To', 'created_at', 'to', Carbon::now()->endOfMonth()),
         ];
     }
 

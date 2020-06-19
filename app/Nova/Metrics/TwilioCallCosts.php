@@ -25,11 +25,14 @@ class TwilioCallCosts extends Value
 
     /**
      * TwilioCallCosts constructor.
+     * @param mixed $precision
      */
-    public function __construct(string $name, string $source)
+    public function __construct(string $name, string $source, $precision = 4)
     {
-        $this->name   = $name;
-        $this->source = $source;
+        parent::__construct();
+        $this->name      = $name;
+        $this->source    = $source;
+        $this->precision = $precision;
     }
 
     /**
@@ -54,15 +57,17 @@ class TwilioCallCosts extends Value
         $fee  = \App\Nova\TwilioCall::TWILIO_JS_FLAT_FEE_PER_MIN;
         $cost = \App\Nova\TwilioCall::TWILIO_US_CALL_COST_PER_MIN;
 
-        $calculationQuery = DB::raw("(ceil(call_duration / 60) * $fee) + (ceil(dial_conference_duration / 60) * $cost)");
+        $calculationQuery = DB::raw("round(((ceil(call_duration / 60) * $fee) + (ceil(dial_conference_duration / 60) * $cost)), $this->precision)");
 
         $previousValue = TwilioCall::whereBetween('created_at', $this->previousRange($request->range, $timezone))
             ->where('source', '=', $this->source)
             ->sum($calculationQuery);
 
-        return $this->result(TwilioCall::whereBetween('created_at', $this->currentRange($request->range, $timezone))
+        $result = TwilioCall::whereBetween('created_at', $this->currentRange($request->range, $timezone))
             ->where('source', '=', $this->source)
-            ->sum($calculationQuery))->previous($previousValue)->prefix('$');
+            ->sum($calculationQuery);
+
+        return $this->result($result)->previous($previousValue)->prefix('$')->allowZeroResult(true);
     }
 
     /**
