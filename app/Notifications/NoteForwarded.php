@@ -175,7 +175,7 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, 
             )
             ->subject($this->getSubject());
 
-        if ('circlelink-health' == $notifiable->saasAccount->slug) {
+        if ('circlelink-health' == $notifiable->saasAccount->slug && app()->environment('production')) {
             return $mail->bcc(
                 [
                     'raph@circlelinkhealth.com',

@@ -83,9 +83,9 @@ class Kernel extends ConsoleKernel
             ->everyMinute();
 
         $schedule->command(AutoApproveValidCarePlansAs::class, ['--reimport'])
-            ->weekdays()
-            ->everyTenMinutes()
-            ->between('8:00', '19:00');
+            ->daily()
+            ->everyThirtyMinutes()
+            ->between('8:00', '23:00');
 
         $schedule->command(AssignUnassignedPatientsToStandByNurse::class)->twiceDaily(8, 14);
         $schedule->command(RemoveDuplicateScheduledCalls::class)
