@@ -45,7 +45,7 @@ class CreateAndPostPdfCareplan
     public function getCcdsFromRequestQueue($number = 5)
     {
         $imported = CcdaRequest::whereNull('successful_call')
-            ->chunk($number, function ($ccdaRequests) {
+            ->chunkById($number, function ($ccdaRequests) {
                 foreach ($ccdaRequests as $ccdaRequest) {
                     $xmlCcda = $this->api->getCcd(
                         $ccdaRequest->patient_id,

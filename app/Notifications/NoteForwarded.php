@@ -17,7 +17,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Str;
 
 class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, FaxableNotification, DirectMailableNotification
 {
@@ -162,31 +161,25 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, 
      */
     public function toMail($notifiable)
     {
-        $saasAccountName     = $notifiable->saasAccountName();
-        $slugSaasAccountName = strtolower(Str::slug($saasAccountName, ''));
-
         $mail = (new PostmarkMailMessage($notifiable))
             ->view(
                 'vendor.notifications.email',
                 [
-                    'greeting'        => $this->getEmailBody(),
-                    'actionText'      => 'View Note',
-                    'actionUrl'       => $this->note->link(),
-                    'introLines'      => [],
-                    'outroLines'      => [],
-                    'level'           => '',
-                    'saasAccountName' => $saasAccountName,
+                    'greeting'   => $this->getEmailBody(),
+                    'actionText' => 'View Note',
+                    'actionUrl'  => $this->note->link(),
+                    'introLines' => [],
+                    'outroLines' => [],
+                    'level'      => '',
                 ]
             )
-            ->from("no-reply@${slugSaasAccountName}.com", $saasAccountName)
             ->subject($this->getSubject());
 
-        if ('circlelink-health' == $notifiable->saasAccount->slug) {
+        if ('circlelink-health' == $notifiable->saasAccount->slug && app()->environment('production')) {
             return $mail->bcc(
                 [
                     'raph@circlelinkhealth.com',
                     'abigail@circlelinkhealth.com',
-                    'sheller@circlelinkhealth.com',
                 ]
             );
         }
