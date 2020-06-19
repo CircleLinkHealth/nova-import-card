@@ -73,6 +73,8 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property-read int|null $revision_history_count
  * @property string|null $source
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioCall whereSource($value)
+ * @property int|null $inbound_enrollee_id
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioCall whereInboundEnrolleeId($value)
  */
 class TwilioCall extends BaseModel
 {
