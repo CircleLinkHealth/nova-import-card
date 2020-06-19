@@ -19,6 +19,16 @@ class AddSourceInTwilioCallsTable extends Migration
                       ->nullable()
                       ->after('id')
                       ->index();
+
+                $table->unsignedInteger('inbound_enrollee_id')
+                      ->nullable()
+                      ->after('inbound_user_id');
+
+                $table->foreign('inbound_enrollee_id')
+                      ->references('id')
+                      ->on('enrollees')
+                      ->onUpdate('CASCADE')
+                      ->onDelete('SET NULL');
             });
         }
     }
@@ -33,6 +43,8 @@ class AddSourceInTwilioCallsTable extends Migration
         if (Schema::hasColumn('twilio_calls', 'source')) {
             Schema::table('twilio_calls', function (Blueprint $table) {
                 $table->dropColumn('source');
+                $table->dropForeign(['inbound_enrollee_id']);
+                $table->dropColumn('inbound_enrollee_id');
             });
         }
     }
