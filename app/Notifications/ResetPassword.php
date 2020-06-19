@@ -6,9 +6,9 @@
 
 namespace App\Notifications;
 
-use App\Notifications\Messages\PostmarkMailMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class ResetPassword extends Notification implements ShouldQueue
@@ -54,7 +54,10 @@ class ResetPassword extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new PostmarkMailMessage($notifiable))
+        $fromName = $notifiable->isParticipant() ? $notifiable->getPrimaryPracticeName() : config('mail.from.name');
+
+        return (new MailMessage())
+            ->from(config('mail.from.address'), $fromName)
             ->view('vendor.notifications.email', [
                 'greeting'     => 'You are receiving this email because we received a password reset request for your account.',
                 'actionText'   => 'Reset Password',
@@ -63,8 +66,6 @@ class ResetPassword extends Notification implements ShouldQueue
                 'outroLines'   => ['If you did not request a password reset, no further action is required.'],
                 'level'        => '',
                 'practiceName' => $notifiable->isParticipant() ? $notifiable->getPrimaryPracticeName() : null,
-                //todo: fix - this is not used in the email currently
-                'saasAccountName' => $notifiable->saasAccountName(),
             ]);
     }
 
