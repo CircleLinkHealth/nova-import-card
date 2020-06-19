@@ -11,7 +11,7 @@ $opcacheUrl = str_replace('${HEROKU_APP_NAME}', getenv('HEROKU_APP_NAME'), $opca
 return [
     'url'         => $opcacheUrl,
     'prefix'      => 'opcache-api',
-    'verify'      => false,
+    'verify'      => true,
     'headers'     => [],
     'directories' => [
         base_path('app'),
