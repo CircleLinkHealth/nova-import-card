@@ -57,9 +57,9 @@ class SelfEnrollmentTest extends TestCase
 
     public function test_it_creates_one_batch_for_each_button_color_in_one_hour_range()
     {
-        $enrollees = $this->createEnrollees($num = 7);
+        $enrollees = $this->createEnrollees(3);
         $type      = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
-        foreach ($enrollees->take(3) as $enrollee) {
+        foreach ($enrollees->take(1) as $enrollee) {
             EnrollmentInvitationsBatch::firstOrCreateAndRemember(
                 $enrollee->practice_id,
                 $type
@@ -67,7 +67,7 @@ class SelfEnrollmentTest extends TestCase
         }
 
         $type = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.SelfEnrollmentController::RED_BUTTON_COLOR;
-        foreach ($enrollees->skip(3)->take(3) as $enrollee) {
+        foreach ($enrollees->skip(1)->take(1) as $enrollee) {
             EnrollmentInvitationsBatch::firstOrCreateAndRemember(
                 $enrollee->practice_id,
                 $type
@@ -75,20 +75,19 @@ class SelfEnrollmentTest extends TestCase
         }
 
         $type = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.SelfEnrollmentController::RED_BUTTON_COLOR;
-        foreach ($enrollees->skip(6)->take(1) as $enrollee) {
+        foreach ($enrollees->skip(2)->take(1) as $enrollee) {
             EnrollmentInvitationsBatch::firstOrCreateAndRemember(
                 $enrollee->practice_id,
                 $type
             );
         }
 
-        static::assertTrue(2 === EnrollmentInvitationsBatch::get()->count());
-        static::assertFalse(3 === EnrollmentInvitationsBatch::get()->count());
+        static::assertTrue(2 === EnrollmentInvitationsBatch::where('practice_id', $enrollee->practice_id)->count());
     }
 
     public function test_it_creates_one_batch_for_each_hour_sent()
     {
-        $enrollees = $this->createEnrollees($num = 5);
+        $enrollees = $this->createEnrollees($num = 2);
         $n         = 0;
         foreach ($enrollees as $enrollee) {
             $type = now()->addHours($n)->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE;
@@ -99,14 +98,14 @@ class SelfEnrollmentTest extends TestCase
             ++$n;
         }
 
-        $this->assertTrue($num === EnrollmentInvitationsBatch::get()->count());
+        $this->assertTrue($num === EnrollmentInvitationsBatch::where('practice_id', $enrollee->practice_id)->count());
     }
 
     public function test_it_creates_one_batch_in_one_hour_range()
     {
-        $enrollees = $this->createEnrollees($num = 4);
+        $enrollees = $this->createEnrollees($num = 2);
         $type      = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE;
-//        Attempt to create 4 batches
+//        Attempt to create 2 batches
         foreach ($enrollees as $enrollee) {
             EnrollmentInvitationsBatch::firstOrCreateAndRemember(
                 $enrollee->practice_id,
@@ -114,7 +113,7 @@ class SelfEnrollmentTest extends TestCase
             );
         }
 
-        $this->assertTrue(1 === EnrollmentInvitationsBatch::get()->count());
+        $this->assertTrue(1 === EnrollmentInvitationsBatch::where('practice_id', $enrollee->practice_id)->count());
     }
 
     public function test_it_creates_seperate_batches_for_random_and_manual_invites()
