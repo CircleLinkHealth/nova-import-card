@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'smtp'),
+    'default' => env('MAIL_MAILER', env('POSTMARK_TOKEN', null) ? 'postmark' : 'smtp'),
 
     /*
     |--------------------------------------------------------------------------
@@ -86,13 +86,13 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'no-reply@circlelinkhealth.com'),
-        'name'    => env('MAIL_FROM_NAME', 'CircleLink Health'),
-    ],
-
-    'transactional_from' => [
         'address' => env('TRANSACTIONAL_MAIL_FROM_ADDRESS', 'no-reply@careplanmanager.com'),
         'name'    => env('TRANSACTIONAL_MAIL_FROM_NAME', 'CircleLink Health'),
+    ],
+
+    'marketing_from' => [
+        'address' => env('MAIL_FROM_ADDRESS', 'no-reply@circlelinkhealth.com'),
+        'name'    => env('MAIL_FROM_NAME', 'CircleLink Health'),
     ],
 
     /*
