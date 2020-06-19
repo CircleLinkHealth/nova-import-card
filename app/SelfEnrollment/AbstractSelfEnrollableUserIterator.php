@@ -26,13 +26,13 @@ abstract class AbstractSelfEnrollableUserIterator implements ShouldQueue
      *
      * @var int
      */
-    protected $dispatched = 0;
+    public $dispatched = 0;
     /**
      * The limit on how many invites to send. Set to null for unlimited.
      *
      * @var null
      */
-    protected $limit;
+    public $limit;
 
     /**
      * Run an action on a User.
@@ -44,9 +44,6 @@ abstract class AbstractSelfEnrollableUserIterator implements ShouldQueue
      */
     public function handle()
     {
-        if ( ! is_null($this->limit)) {
-            $this->setLimit($this->limit);
-        }
         $this->query()->chunk($this->chunkSize(), function ($users) {
             $users->each(function (User $user) {
                 $this->action($user);
