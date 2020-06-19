@@ -8,15 +8,10 @@ $opcacheUrl = env('OPCACHE_URL', env('APP_URL', null));
 
 $opcacheUrl = str_replace('${HEROKU_APP_NAME}', getenv('HEROKU_APP_NAME'), $opcacheUrl);
 
-$verify = true;
-if (\Illuminate\Support\Facades\App::environment(['review'])) {
-    $verify = false;
-}
-
 return [
     'url'         => $opcacheUrl,
     'prefix'      => 'opcache-api',
-    'verify'      => $verify,
+    'verify'      => false,
     'headers'     => [],
     'directories' => [
         base_path('app'),
