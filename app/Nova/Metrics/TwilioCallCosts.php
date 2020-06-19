@@ -90,6 +90,6 @@ class TwilioCallCosts extends Value
      */
     public function uriKey()
     {
-        return 'twilio-call-costs-r-n';
+        return 'twilio-call-costs';
     }
 }
