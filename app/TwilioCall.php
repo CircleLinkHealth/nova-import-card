@@ -85,6 +85,7 @@ class TwilioCall extends BaseModel
         'from',
         'to',
         'inbound_user_id',
+        'inbound_enrollee_id',
         'outbound_user_id',
         'call_duration',
         'direction',

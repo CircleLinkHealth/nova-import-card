@@ -460,18 +460,19 @@ class TwilioController extends Controller
 
         $validation = Validator::make($input, [
             //could be the practice outgoing phone number (in case of enrollment)
-            'From'             => 'required|phone:AUTO,US',
-            'To'               => [
+            'From'              => 'required|phone:AUTO,US',
+            'To'                => [
                 'required',
                 $isProduction
                     ? Rule::phone()->detect()->country('US')
                     : '',
             ],
             //could be null in case of Enrollee without a User model
-            'InboundUserId'    => '',
-            'OutboundUserId'   => 'required|numeric',
-            'IsUnlistedNumber' => 'nullable|boolean',
-            'IsCallToPatient'  => 'nullable|boolean',
+            'InboundUserId'     => '',
+            'InboundEnrolleeId' => '',
+            'OutboundUserId'    => 'required|numeric',
+            'IsUnlistedNumber'  => 'nullable|boolean',
+            'IsCallToPatient'   => 'nullable|boolean',
         ]);
 
         if ($validation->fails()) {
@@ -771,6 +772,10 @@ class TwilioController extends Controller
 
             if ( ! empty($input['InboundUserId'])) {
                 $fields['inbound_user_id'] = intValue($input['InboundUserId'], null);
+            }
+
+            if ( ! empty($input['InboundEnrolleeId'])) {
+                $fields['inbound_enrollee_id'] = intValue($input['InboundEnrolleeId'], null);
             }
 
             if ( ! empty($input['OutboundUserId'])) {
