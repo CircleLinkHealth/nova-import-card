@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b1e890f3d2f8f59b752ca1a42ffb9a62",
+    "content-hash": "208f67aecdba382cc0d8ee334f00d204",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1317,7 +1317,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-master",
+            "version": "dev-shift-26679",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
