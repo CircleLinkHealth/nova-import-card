@@ -181,7 +181,7 @@ $style = [
 
                                 <!-- Salutation -->
                                     <p style="{{ $style['paragraph'] }}">
-                                        {{--                                        Regards,<br> {{ $saasAccountName ?? 'CircleLink' }} Team--}}
+
                                     </p>
 
                                     <!-- Sub Copy -->
