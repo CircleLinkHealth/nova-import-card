@@ -7,6 +7,7 @@
 namespace App\Jobs;
 
 use App\Services\OpsDashboardReport;
+use App\ValueObjects\OpsDashboardPracticeReportData;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -101,12 +102,16 @@ class GenerateOpsDailyPracticeReport implements ShouldQueue
             'date'        => $this->date->toDateString(),
         ]);
 
-        $row = OpsDashboardReport::generate($practice, $this->date);
+        /**
+         * @var OpsDashboardPracticeReportData
+         */
+        $data = OpsDashboardReport::generate($practice, $this->date);
 
         //row can be null -> if practice has no enrolled patients and no added or remove, exclude from total report.
         //check exists on GenerateOpsDailyReport
         //however since since it's still an active practice, still log report in db as processed
-        $report->data         = $row ? $row->toArray() : null;
+        //deal with null reports
+        $report->data         = $data->toArray();
         $report->is_processed = true;
         $report->save();
     }
