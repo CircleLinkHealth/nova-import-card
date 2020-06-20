@@ -81,7 +81,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             'survey_id' => $surveyId,
             'year'      => now()->year,
         ]);
-        
+
         return $surveyId;
     }
 

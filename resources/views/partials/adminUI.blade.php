@@ -137,6 +137,9 @@
                             </a>
                             <ul class="dropdown-menu" role="menu">
                                 <li role="presentation" class="dropdown">
+                                    <a href="{{ route('ca-director.index') }}">CA Director</a>
+                                </li>
+                                <li role="presentation" class="dropdown">
                                     <a href="{{ route('patient.enroll.makeReport') }}">Enrollee List</a>
                                 </li>
                                 <li role="presentation" class="dropdown">
@@ -252,7 +255,6 @@
                                 <li><a href="{{ route('report-writer.dashboard') }}">Report Writer Panel</a></li>
                                 <li><a href="{{ getEhrReportWritersFolderUrl() }}" target="_blank">EHR Report Writers
                                         Google Folder</a></li>
-                                <li><a href="{{ route('ca-director.index') }}">CA Director</a></li>
                             </ul>
                         </li>
                     </ul>

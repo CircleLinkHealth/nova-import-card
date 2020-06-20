@@ -6,12 +6,12 @@
 
 namespace App\Notifications;
 
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ResetPassword extends Notification
+class ResetPassword extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -21,13 +21,6 @@ class ResetPassword extends Notification
      * @var string
      */
     public $token;
-
-    /**
-     * Only Users can reset passwords.
-     *
-     * @var User
-     */
-    private $notifiable;
 
     /**
      * Create a new notification instance.
@@ -61,21 +54,18 @@ class ResetPassword extends Notification
      */
     public function toMail($notifiable)
     {
-        $this->notifiable = $notifiable;
+        $fromName = $notifiable->isParticipant() ? $notifiable->getPrimaryPracticeName() : config('mail.from.name');
 
         return (new MailMessage())
-            //If notifiable is patient, we need to replace any references to CircleLink Health with Practice Name
-            ->from('noreply@circlelinkhealth.com', $notifiable->isParticipant() ? $notifiable->getPrimaryPracticeName() : 'CircleLink Health')
+            ->from(config('mail.from.address'), $fromName)
             ->view('vendor.notifications.email', [
                 'greeting'     => 'You are receiving this email because we received a password reset request for your account.',
                 'actionText'   => 'Reset Password',
-                'actionUrl'    => $this->resetUrl(),
+                'actionUrl'    => $this->resetUrl($notifiable),
                 'introLines'   => ['Click on the button below to reset your password. As a security measure, your reset token expires in one hour.'],
                 'outroLines'   => ['If you did not request a password reset, no further action is required.'],
                 'level'        => '',
                 'practiceName' => $notifiable->isParticipant() ? $notifiable->getPrimaryPracticeName() : null,
-                //todo: fix - this is not used in the email currently
-                'saasAccountName' => $notifiable->saasAccountName(),
             ]);
     }
 
@@ -95,17 +85,19 @@ class ResetPassword extends Notification
      * Send email so we prefill email-input
      * If notifiable is patient, sent practice ID so we can replace CLH logo with Practice Name.
      *
+     * @param mixed $notifiable
+     *
      * @return string
      */
-    private function resetUrl()
+    private function resetUrl($notifiable)
     {
         $args = [
             'token' => $this->token,
-            'email' => $this->notifiable->email,
+            'email' => $notifiable->email,
         ];
 
-        if ($this->notifiable->isParticipant()) {
-            $args['practice_id'] = $this->notifiable->getPrimaryPracticeId();
+        if ($notifiable->isParticipant()) {
+            $args['practice_id'] = $notifiable->getPrimaryPracticeId();
         }
 
         return route('password.reset', $args);

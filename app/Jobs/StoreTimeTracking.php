@@ -24,7 +24,10 @@ class StoreTimeTracking implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    // Do not count time for these routes
+    /**
+     * Do not count time for these routes
+     * force_skip is set in {@link ProviderUITimerComposer}.
+     */
     const UNTRACKED_ROUTES = [
         'patient.activity.create',
         'patient.activity.providerUIIndex',
@@ -73,13 +76,13 @@ class StoreTimeTracking implements ShouldQueue
 
             $pageTimer = $this->createPageTimer($activity);
 
-            if ($this->isBillableActivity($pageTimer, $provider)) {
+            if ($this->isBillableActivity($pageTimer, $activity, $provider)) {
                 $newActivity = $this->createActivity($pageTimer, $isBehavioral);
                 ProcessMonthltyPatientTime::dispatchNow($patientId);
                 ProcessNurseMonthlyLogs::dispatchNow($newActivity);
             }
 
-            if ($provider->isCareAmbassador()) {
+            if ($this->isProcessableCareAmbassadorActivity($activity, $provider)) {
                 ProcessCareAmbassadorTime::dispatchNow($provider->id, $activity);
             }
         }
@@ -165,11 +168,27 @@ class StoreTimeTracking implements ShouldQueue
      *
      * @return bool
      */
-    private function isBillableActivity(PageTimer $pageTimer, User $provider = null)
+    private function isBillableActivity(PageTimer $pageTimer, array $activity, User $provider = null)
     {
+        $forceSkip = $activity['force_skip'] ?? false;
+
         return ! ( ! $provider
                    || ! (bool) $provider->isCCMCountable()
                    || 0 == $pageTimer->patient_id
-                   || in_array($pageTimer->title, self::UNTRACKED_ROUTES));
+                   || in_array($pageTimer->title, self::UNTRACKED_ROUTES)
+                   || $forceSkip);
+    }
+
+    /**
+     * If user is a care ambassador, then we should process their time in CA logs.
+     * Unless activity is marked in {@link UNTRACKED_CA_ACTIVITIES}.
+     *
+     * @return bool
+     */
+    private function isProcessableCareAmbassadorActivity(array $activity, User $provider = null)
+    {
+        $forceSkip = $activity['force_skip'] ?? false;
+
+        return ! $forceSkip && $provider->isCareAmbassador();
     }
 }

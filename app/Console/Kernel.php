@@ -40,8 +40,7 @@ use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Console\Athena\DetermineTargetPatientEligibility;
-use CircleLinkHealth\Eligibility\Console\Athena\GetAppointments;
+use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
 use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
@@ -80,16 +79,29 @@ class Kernel extends ConsoleKernel
         ini_set('max_execution_time', 300);
         ini_set('memory_limit', '800M');
 
-        $schedule->command('horizon:snapshot')->everyFiveMinutes();
+        $schedule->command(CheckEmrDirectInbox::class)
+            ->everyMinute();
 
-        $schedule->command(DetermineTargetPatientEligibility::class)
-            ->dailyAt('04:00')->onOneServer();
+        $schedule->command(AutoApproveValidCarePlansAs::class, ['--reimport'])
+            ->daily()
+            ->everyThirtyMinutes()
+            ->between('8:00', '23:00');
+
+        $schedule->command(AssignUnassignedPatientsToStandByNurse::class)->twiceDaily(8, 14);
+        $schedule->command(RemoveDuplicateScheduledCalls::class)
+            ->everyTenMinutes()
+            ->between('8:00', '19:00');
+
+        $schedule->command(SendSelfEnrollmentReminders::class, ['--enrollees'])->dailyAt('10:27');
+        $schedule->command(EnrollmentFinalAction::class)->dailyAt('08:27');
+
+        $schedule->command('horizon:snapshot')->everyFiveMinutes();
 
         $schedule->command(ProcessNextEligibilityBatchChunk::class)
             ->everyFiveMinutes()
             ->withoutOverlapping();
 
-        $schedule->command(RescheduleMissedCalls::class)->everyFiveMinutes();
+        $schedule->command(RescheduleMissedCalls::class)->everyFiveMinutes()->onOneServer();
 
         $schedule->command(CheckEnrolledPatientsForScheduledCalls::class)->dailyAt('00:10')->onOneServer();
 
@@ -98,16 +110,16 @@ class Kernel extends ConsoleKernel
         //family calls will be scheduled in RescheduleMissedCalls
         //$schedule->command(SyncFamilialCalls::class)->dailyAt('00:30')->onOneServer();
 
-        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyMinute()->withoutOverlapping()->onOneServer();
-
-        $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
-            ->weeklyOn(1, '10:00')->onOneServer();
+        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyFiveMinutes()->onOneServer();
 
         $schedule->command(SendCarePlanApprovalReminders::class)
             ->weekdays()
             ->at('08:00')->onOneServer();
 
-        $schedule->command(GetAppointments::class)
+        $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
+            ->weeklyOn(1, '10:00')->onOneServer();
+
+        $schedule->command(GetAppointmentsForTomorrowFromAthena::class)
             ->dailyAt('22:30')->onOneServer();
 
         $schedule->command(GetCcds::class)
@@ -165,27 +177,8 @@ class Kernel extends ConsoleKernel
             ->dailyAt('07:00')
             ->onOneServer();
 
-//        $schedule->command('ccda:determineEligibility')
-//                 ->everyFiveMinutes()
-//                 ->withoutOverlapping();
-
-//        $schedule->command('ccda:toJson')
-//            ->everyMinute()
-//            ->withoutOverlapping();
-
-//        $schedule->command('ccda:process')
-//            ->everyMinute()
-//            ->withoutOverlapping();
-
-        //every 2 hours
-//        $schedule->command('ccdas:split-merged')
-//            ->cron('0 */2 * * *');
-
         $schedule->command(QueueSendAuditReports::class)
             ->monthlyOn(1, '08:00')->onOneServer();
-
-        $schedule->command(CheckEmrDirectInbox::class)
-            ->everyMinute();
 
         //uncomment when ready
 //        $schedule->command(DownloadTwilioRecordings::class)
@@ -230,12 +223,6 @@ class Kernel extends ConsoleKernel
             ->dailyAt('01:10')
             ->onOneServer();
 
-        $schedule->command(AssignUnassignedPatientsToStandByNurse::class)->twiceDaily(8, 14);
-        $schedule->command(RemoveDuplicateScheduledCalls::class)->twiceDaily(8, 14);
-        $schedule->command(SendSelfEnrollmentReminders::class, ['--enrollees'])->dailyAt('10:27');
-        $schedule->command(EnrollmentFinalAction::class)->dailyAt('08:27');
-
         $schedule->command(GenerateReportForScheduledPAM::class)->monthlyOn(date('t'), '23:30');
-        $schedule->command(AutoApproveValidCarePlansAs::class, ['--reimport:clear', '--reimport:without-transaction'])->hourly();
     }
 }

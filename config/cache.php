@@ -1,8 +1,6 @@
 <?php
 
-/*
- * This file is part of CarePlan Manager by CircleLink Health.
- */
+// This file is part of CarePlan Manager by CircleLink Health.
 
 return [
     /*
@@ -38,7 +36,8 @@ return [
         ],
 
         'array' => [
-            'driver' => 'array',
+            'driver'    => 'array',
+            'serialize' => false,
         ],
 
         'database' => [

@@ -206,9 +206,9 @@ Route::group(['middleware' => 'auth'], function () {
                 ])->middleware('permission:call.delete');
             });
 
-            Route::resource(
+            Route::post(
                 'user.outbound-calls',
-                'API\UserOutboundCallController'
+                'API\UserOutboundCallController@store'
             )->middleware('permission:call.create');
         });
 
@@ -234,7 +234,7 @@ Route::group(['middleware' => 'auth'], function () {
             'prefix'     => 'symptoms',
             'middleware' => ['permission:symptom.read'],
         ], function () {
-            Route::resource('', 'SymptomController');
+            Route::get('', 'SymptomController@index');
         });
 
         Route::group([
@@ -243,7 +243,7 @@ Route::group(['middleware' => 'auth'], function () {
         ], function () {
             Route::get('{id}', 'LifestyleController@show');
             Route::get('{id}/patients', 'LifestyleController@patients');
-            Route::resource('', 'LifestyleController');
+            Route::get('', 'LifestyleController@index');
         });
 
         Route::group([
@@ -252,17 +252,15 @@ Route::group(['middleware' => 'auth'], function () {
         ], function () {
             Route::get('{id}', 'MiscController@show');
             Route::get('{id}/patients', 'MiscController@patients');
-            Route::resource('', 'MiscController');
+            Route::get('', 'MiscController@index');
         });
-
-        Route::get('test', 'MiscController@test');
 
         Route::group([
             'prefix'     => 'appointments',
             'middleware' => ['permission:appointment.read'],
         ], function () {
             Route::get('{id}', 'API\AppointmentController@show');
-            Route::resource('', 'API\AppointmentController');
+            Route::get('', 'API\AppointmentController@index');
         });
 
         Route::group([
@@ -285,7 +283,8 @@ Route::group(['middleware' => 'auth'], function () {
             'middleware' => ['permission:ccda.read'],
         ], function () {
             Route::get('{id}', 'CcdaController@show');
-            Route::resource('', 'CcdaController')->middleware('permission:ccda.create');
+            Route::get('', 'CcdaController@index')->middleware('permission:ccda.create');
+            Route::post('', 'CcdaController@store')->middleware('permission:ccda.create');
         });
 
         Route::group([
@@ -293,14 +292,14 @@ Route::group(['middleware' => 'auth'], function () {
             'middleware' => ['permission:medication.read'],
         ], function () {
             Route::get('search', 'MedicationController@search');
-            Route::resource('', 'MedicationController');
+            Route::get('', 'MedicationController@index');
 
             Route::group([
                 'prefix'     => 'groups',
                 'middleware' => ['permission:medication.read'],
             ], function () {
                 Route::get('{id}', 'MedicationGroupController@show');
-                Route::resource('', 'MedicationGroupController');
+                Route::get('', 'MedicationGroupController@index');
             });
         });
 
@@ -417,9 +416,9 @@ Route::group(['middleware' => 'auth'], function () {
             ])->middleware('permission:patient.read');
         });
 
-        Route::resource('profile', 'API\ProfileController')->middleware('permission:user.read,role.read');
+        Route::get('profile', 'API\ProfileController@index')->middleware('permission:user.read,role.read');
 
-        Route::resource('nurses', 'API\NurseController')->middleware('permission:nurse.read');
+        Route::get('nurses', 'API\NurseController@index')->middleware('permission:nurse.read');
 
         Route::group([
             'middleware' => [
@@ -496,7 +495,7 @@ Route::group(['middleware' => 'auth'], function () {
 
             Route::get('queryEnrollable', [
                 'uses' => 'API\EnrollmentCenterController@queryEnrollables',
-                'as'   => 'enrollables.query',
+                'as'   => 'enrollables.enrollment.query',
             ]);
 
             Route::get('/show/{enrollableId?}', [
@@ -605,7 +604,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource(
         'settings/email',
         'EmailSettingsController'
-    )->middleware('permission:emailSettings.update,emailSettings.create');
+    )->middleware('permission:emailSettings.update,emailSettings.create')->only(['create', 'store']);
 
     Route::get(
         '/CCDModels/Items/MedicationListItem',
@@ -1187,6 +1186,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'ca-director.index',
             ]);
 
+            Route::get('searchEnrollables', [
+                'uses' => 'EnrollmentDirectorController@searchEnrollables',
+                'as'   => 'enrollables.ca-director.search',
+            ]);
+
             Route::get('/enrollees', [
                 'uses' => 'EnrollmentDirectorController@getEnrollees',
                 'as'   => 'ca-director.enrollees',
@@ -1200,6 +1204,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/assign-ambassador', [
                 'uses' => 'EnrollmentDirectorController@assignCareAmbassadorToEnrollees',
                 'as'   => 'ca-director.assign-ambassador',
+            ]);
+
+            Route::post('/assign-callback', [
+                'uses' => 'EnrollmentDirectorController@assignCallback',
+                'as'   => 'ca-director.assign-callback',
             ]);
 
             Route::post('/mark-ineligible', [
@@ -1460,11 +1469,6 @@ Route::group(['middleware' => 'auth'], function () {
                 ])->middleware('permission:call.create');
             });
         });
-
-        Route::resource('report-settings', 'ReportSettingsController')->names([
-            'index'  => 'report-settings.index',
-            'update' => 'report-settings.update',
-        ]);
 
         Route::group(
             [
@@ -1942,6 +1946,15 @@ Route::group([
     Route::post('/sms/status', [
         'uses' => 'Twilio\TwilioController@smsStatusCallback',
         'as'   => 'twilio.sms.status',
+    ]);
+});
+
+Route::group([
+    'prefix' => 'sendgrid',
+], function () {
+    Route::post('/status', [
+        'uses' => 'SendGridController@statusCallback',
+        'as'   => 'sendgrid.status',
     ]);
 });
 

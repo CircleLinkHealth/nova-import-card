@@ -150,7 +150,8 @@ use CircleLinkHealth\Customer\Entities\Patient;
                     "patientFamilyId": "{{ $patientFamilyId ?? 0 }}",
                     "isCcm": ('{{ $patientIsCcm }}' == '1') ? true : false,
                     "isBehavioral": ('{{ $patientIsBehavioral }}' == '1') ? true : false,
-                    "noBhiSwitch": ('{{ $noBhiSwitch }}' == '1') ? true : false
+                    "noBhiSwitch": ('{{ $noBhiSwitch }}' == '1') ? true : false,
+                    "forceSkip": ('{{ $forceSkip }}' == '1') ? true : false
                 }
             </script>
         @endpush

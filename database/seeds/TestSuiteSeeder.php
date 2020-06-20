@@ -37,5 +37,6 @@ class TestSuiteSeeder extends Seeder
         $this->call(PatientSeeder::class);
         $this->call(EnrolleesSeeder::class);
         $this->call(PrepareDataForReEnrollmentTestSeeder::class);
+        $this->call(CareAmbassadorDefaultScriptsSeeder::class);
     }
 }

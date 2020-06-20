@@ -27,27 +27,31 @@ namespace App;
  * @property mixed                                                                                       $meta_key
  * @property \App\CareItem                                                                               $parents
  * @property \App\CPRulesQuestions                                                                       $question
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareItem whereCreatedAt($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareItem whereDescription($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareItem whereDisplayName($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareItem whereId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareItem whereModelFieldName($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareItem whereName($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareItem whereObsKey($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareItem whereParentId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareItem whereQid($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareItem whereRelationshipFnName($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareItem whereType($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareItem whereTypeId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareItem whereUpdatedAt($value)
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereDisplayName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereModelFieldName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereObsKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereParentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereQid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereRelationshipFnName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareItem newModelQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareItem newQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareItem query()
- * @property int|null                                                                                    $care_plans_count
- * @property int|null                                                                                    $children_count
- * @property int|null                                                                                    $revision_history_count
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem query()
+ *
+ * @property int|null $care_plans_count
+ * @property int|null $children_count
+ * @property int|null $revision_history_count
  */
 class CareItem extends \CircleLinkHealth\Core\Entities\BaseModel
 {

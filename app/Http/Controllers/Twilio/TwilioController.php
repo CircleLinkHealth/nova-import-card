@@ -7,7 +7,7 @@
 namespace App\Http\Controllers\Twilio;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\ProcessTwilioSmsStatusCallbackJob;
+use CircleLinkHealth\Core\Jobs\ProcessTwilioSmsStatusCallbackJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -21,6 +21,7 @@ class TwilioController extends Controller
      * Route called from Twilio whenever there is a status update on the SMS.
      *
      * @throws \Twilio\Exceptions\TwilioException
+     *
      * @return mixed
      */
     public function smsStatusCallback(Request $request)

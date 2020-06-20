@@ -87,7 +87,7 @@ class CarePlanObserver
             $carePlan->provider_date        = null;
             /** @var SchedulerService $schedulerService */
             $schedulerService = app()->make(SchedulerService::class);
-            $schedulerService->ensurePatientHasScheduledCall($carePlan->patient);
+            $schedulerService->ensurePatientHasScheduledCall($carePlan->patient, self::class);
         }
 
         if ($carePlan->isDirty('first_printed')) {

@@ -39,6 +39,112 @@ class SelfEnrollmentTest extends TestCase
      */
     private $factory;
 
+    public function test_it_creates_batch()
+    {
+        $enrollee = $this->createEnrollees(1);
+        $type     = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE;
+        $batch    = EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+            $enrollee->practice_id,
+            $type
+        );
+
+        $this->assertDatabaseHas('enrollment_invitations_batches', [
+            'id'          => $batch->id,
+            'practice_id' => $enrollee->practice_id,
+            'type'        => $type,
+        ]);
+    }
+
+    public function test_it_creates_one_batch_for_each_button_color_in_one_hour_range()
+    {
+        $enrollees = $this->createEnrollees(3);
+        $type      = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
+        foreach ($enrollees->take(1) as $enrollee) {
+            EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+                $enrollee->practice_id,
+                $type
+            );
+        }
+
+        $type = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.SelfEnrollmentController::RED_BUTTON_COLOR;
+        foreach ($enrollees->skip(1)->take(1) as $enrollee) {
+            EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+                $enrollee->practice_id,
+                $type
+            );
+        }
+
+        $type = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.SelfEnrollmentController::RED_BUTTON_COLOR;
+        foreach ($enrollees->skip(2)->take(1) as $enrollee) {
+            EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+                $enrollee->practice_id,
+                $type
+            );
+        }
+
+        static::assertTrue(2 === EnrollmentInvitationsBatch::where('practice_id', $enrollee->practice_id)->count());
+    }
+
+    public function test_it_creates_one_batch_for_each_hour_sent()
+    {
+        $enrollees = $this->createEnrollees($num = 2);
+        $n         = 0;
+        foreach ($enrollees as $enrollee) {
+            $type = now()->addHours($n)->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE;
+            EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+                $enrollee->practice_id,
+                $type
+            );
+            ++$n;
+        }
+
+        $this->assertTrue($num === EnrollmentInvitationsBatch::where('practice_id', $enrollee->practice_id)->count());
+    }
+
+    public function test_it_creates_one_batch_in_one_hour_range()
+    {
+        $enrollees = $this->createEnrollees($num = 2);
+        $type      = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE;
+//        Attempt to create 2 batches
+        foreach ($enrollees as $enrollee) {
+            EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+                $enrollee->practice_id,
+                $type
+            );
+        }
+
+        $this->assertTrue(1 === EnrollmentInvitationsBatch::where('practice_id', $enrollee->practice_id)->count());
+    }
+
+    public function test_it_creates_seperate_batches_for_random_and_manual_invites()
+    {
+        $enrollees  = $this->createEnrollees($num = 2);
+        $typeManual = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE;
+
+        foreach ($enrollees->take(1) as $enrollee) {
+            EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+                $enrollee->practice_id,
+                $typeManual
+            );
+        }
+
+        $typeRandom = now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
+        foreach ($enrollees->skip(1)->take(1) as $enrollee) {
+            EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+                $enrollee->practice_id,
+                $typeRandom
+            );
+        }
+        $this->assertDatabaseHas('enrollment_invitations_batches', [
+            'practice_id' => $enrollee->practice_id,
+            'type'        => $typeManual,
+        ]);
+        $this->assertDatabaseHas('enrollment_invitations_batches', [
+            'practice_id' => $enrollee->practice_id,
+            'type'        => $typeRandom,
+        ]);
+    }
+
     public function test_it_creates_user_from_enrollee()
     {
         $enrollee = $this->createEnrollees();
@@ -82,7 +188,10 @@ class SelfEnrollmentTest extends TestCase
             'created_at' => now()->subMonth()->toDateTimeString(),
             'updated_at' => now()->subMonth()->toDateTimeString(),
         ]);
-        $invitationBatch = EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id);
+        $invitationBatch = EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+            $enrollee->practice_id,
+            now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
+        );
         SendInvitation::dispatchNow($patient, $invitationBatch->id);
         self::assertTrue(User::hasSelfEnrollmentInvite()->where('id', $patient->id)->exists());
         self::assertTrue(User::haveEnrollableInvitationDontHaveReminder(now())->where('id', $patient->id)->exists());
@@ -95,7 +204,10 @@ class SelfEnrollmentTest extends TestCase
         Twilio::fake();
         Mail::fake();
 
-        SendInvitation::dispatchNow($patient, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
+        SendInvitation::dispatchNow($patient, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+            $enrollee->practice_id,
+            now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
+        )->id);
         self::assertTrue(User::hasSelfEnrollmentInvite()->where('id', $patient->id)->exists());
         //It should not show up on the list on the "needs reminder" list of patients we invited yesterday
         self::assertFalse(User::haveEnrollableInvitationDontHaveReminder(now()->subDay())->where('id', $patient->id)->exists());
@@ -116,11 +228,17 @@ class SelfEnrollmentTest extends TestCase
         $patient  = $enrollee->user;
 
         Notification::fake();
-        SendInvitation::dispatchNow($patient, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
+        SendInvitation::dispatchNow($patient, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+            $enrollee->practice_id,
+            now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
+        )->id);
 
         Queue::fake();
 
-        SendInvitation::dispatch($patient, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
+        SendInvitation::dispatch($patient, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+            $enrollee->practice_id,
+            now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
+        )->id);
 
         Queue::assertPushed(SendInvitation::class, function (SendInvitation $job) {
             Notification::fake();
@@ -195,7 +313,10 @@ class SelfEnrollmentTest extends TestCase
         Mail::fake();
         Twilio::fake();
         $toMarkAsInvited->each(function (Enrollee $enrollee) {
-            SendInvitation::dispatchNow($enrollee->user, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
+            SendInvitation::dispatchNow($enrollee->user, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+                $enrollee->practice_id,
+                now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
+            )->id);
         });
 
         $initialInviteSentAt  = now();
@@ -271,7 +392,10 @@ class SelfEnrollmentTest extends TestCase
         Mail::fake();
         Twilio::fake();
         $toMarkAsInvited->each(function (Enrollee $enrollee) {
-            SendInvitation::dispatchNow($enrollee->user, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
+            SendInvitation::dispatchNow($enrollee->user, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+                $enrollee->practice_id,
+                now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
+            )->id);
         });
 
         Queue::fake();
@@ -341,7 +465,10 @@ class SelfEnrollmentTest extends TestCase
         $patient  = $enrollee->user;
         Notification::fake();
         Mail::fake();
-        SendInvitation::dispatch($patient, EnrollmentInvitationsBatch::manualInvitesBatch($enrollee->practice_id)->id);
+        SendInvitation::dispatch($patient, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+            $enrollee->practice_id,
+            now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
+        )->id);
         $lastEnrollmentLink = $enrollee->getLastEnrollmentInvitationLink();
         // means the patient has clicked the link and seen login form
         $lastEnrollmentLink->manually_expired = true;

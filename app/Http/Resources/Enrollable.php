@@ -12,10 +12,10 @@ use Carbon\CarbonTimeZone;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Log;
 
-class Enrollable extends Resource
+class Enrollable extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -76,6 +76,7 @@ class Enrollable extends Resource
                 'practice'                 => $enrollable->practice->attributesToArray(),
                 'last_call_outcome'        => $enrollable->last_call_outcome ?? '',
                 'last_call_outcome_reason' => $enrollable->last_call_outcome_reason ?? '',
+                'callback_note'            => $enrollable->callback_note ?? '',
                 'name'                     => $enrollable->first_name.' '.$enrollable->last_name,
                 'lang'                     => $enrollable->lang,
                 'practice_id'              => $enrollable->practice->id,
@@ -84,6 +85,7 @@ class Enrollable extends Resource
                 'other_phone'              => $enrollable->other_phone,
                 'cell_phone'               => $enrollable->cell_phone,
                 'home_phone'               => $enrollable->home_phone,
+                'requested_callback'       => optional($enrollable->requested_callback)->toDateString() ?? '',
 
                 'extra' => $extra,
 

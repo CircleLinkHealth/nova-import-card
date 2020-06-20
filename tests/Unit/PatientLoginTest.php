@@ -119,9 +119,9 @@ class PatientLoginTest extends CustomerTestCase
         $resp->assertRedirect(route('patient-user.careplan'));
 
         $this->call('GET', route('patient-user.careplan'))
-            ->assertSeeText(sanitizeString('This Care Plan is pending Dr. approval'))
-            ->assertSeeText(sanitizeString($this->patient->first_name))
-            ->assertSeeText(sanitizeString($this->patient->first_name));
+            ->assertSeeText('This Care Plan is pending Dr. approval')
+            ->assertSeeText($this->patient->first_name)
+            ->assertSeeText($this->patient->first_name);
     }
 
     public function test_patient_cannot_go_to_page_if_careplan_is_draft()

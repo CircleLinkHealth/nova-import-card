@@ -73,7 +73,6 @@ class UpdateEnrollable extends EnrollableService
      * So we can copy primary phone number and immediately attach to confirm family members
      * And we also see if any address field has changed and we save it.
      *
-     *
      * @param $ids
      */
     private function updateConfirmedFamilyMembersAndAssignToCareAmbassador($ids)
@@ -236,6 +235,7 @@ class UpdateEnrollable extends EnrollableService
         //action is performed on patient, thus reset callback date
         //EnrollableQueue only gets Unreachable patients at the day they requested callback (to avoid calling them at any other time)
         //Thus reset requested_callback here. If they request another date it will be added below.
+        //todo: if we ever add another action on patient that allows them to be called again, we will need to reset requested_callback again
         $this->enrollee->requested_callback = null;
         $this->enrollee->last_call_outcome  = $this->data->get('reason');
 
@@ -250,6 +250,8 @@ class UpdateEnrollable extends EnrollableService
         if ('requested callback' == $this->data->get('reason')) {
             if ($this->data->has('utc_callback')) {
                 $this->enrollee->requested_callback = $this->data->get('utc_callback');
+                //reset admin's callback note if exists, if patient has requested callback again.
+                $this->enrollee->callback_note = null;
             }
         }
 
