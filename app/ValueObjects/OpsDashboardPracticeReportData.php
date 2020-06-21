@@ -116,7 +116,7 @@ class OpsDashboardPracticeReportData
             $this->priorDayTotals = $this->getTotal() - $this->getDelta();
         }
 
-        return $priorDayTotals ?? 0;
+        return $this->priorDayTotals ?? 0;
     }
 
     /**

@@ -250,7 +250,7 @@ class OpsDashboardReport
             return $this;
         }
 
-        $this->report->setPriorDayTotals($this->priorDayReportData['total_enrolled_count']);
+        $this->report->setPriorDayTotals($this->priorDayReportData['Total']);
 
         if ($this->report->getTotal() - $this->report->getDelta() !== $this->report->getPriorDayTotals()) {
             sendSlackMessage('#ops_dashboard_alers', "<?U8B3S8UBS> Warning! DELTA for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}' does not match.");
@@ -427,11 +427,9 @@ class OpsDashboardReport
     private function shouldCalculateStatsUsingRevisionsOnly()
     {
         return ! array_keys_exist([
-            'total_enrolled_count',
             'total_paused_count',
             'total_unreachable_count',
             'total_withdrawn_count',
-            'total_g0506_to_enroll_count',
             'prior_day_report_updated_at',
             'report_updated_at',
             'enrolled_patient_ids',
