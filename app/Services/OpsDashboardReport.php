@@ -135,12 +135,12 @@ class OpsDashboardReport
         return round($hoursBehind, 1);
     }
 
-    public static function generate(Practice $practice, Carbon $date): OpsDashboardPracticeReportData
+    public static function generate(Practice $practice, Carbon $date): array
     {
         return (new static($practice, $date))->getReport();
     }
 
-    public function getReport()
+    public function getReport(): array
     {
         return $this->getPatients()
             ->getPriorDayReportData()
@@ -294,10 +294,7 @@ class OpsDashboardReport
         return $this;
     }
 
-    /**
-     * @return \Illuminate\Support\Collection
-     */
-    private function formatStats()
+    private function formatStats(): array
     {
         //CHECK DATA INTEGRITY
 //        if (0 == $count['Total'] &&
@@ -308,7 +305,7 @@ class OpsDashboardReport
 //            0 == $unreachableCount) {
 //            return null;
 //        }
-        return $this->report;
+        return $this->report->toArray();
     }
 
     /**
@@ -373,7 +370,6 @@ class OpsDashboardReport
             ->first();
 
         if ($priorDayReport) {
-            //todo: set everything we want from this report here jie kanei?
             $this->priorDayReportData = $priorDayReport->data;
             $this->report->setPriorDayReportUpdatedAt($priorDayReport->updated_at);
         }
@@ -389,23 +385,23 @@ class OpsDashboardReport
         if (0 === $ccmTime || null == $ccmTime) {
             $this->report->incrementZeroMins();
         }
-        if ($ccmTime > 0 and $ccmTime <= self::FIVE_MINUTES) {
+        if ($ccmTime > 0 and $ccmTime < self::FIVE_MINUTES) {
             $this->report->incrementZeroToFiveMins();
         }
-        if ($ccmTime > self::FIVE_MINUTES and $ccmTime <= self::TEN_MINUTES) {
+        if ($ccmTime >= self::FIVE_MINUTES and $ccmTime < self::TEN_MINUTES) {
             $this->report->incrementFiveToTenMins();
         }
-        if ($ccmTime > self::TEN_MINUTES and $ccmTime <= self::FIFTEEN_MINUTES) {
+        if ($ccmTime >= self::TEN_MINUTES and $ccmTime < self::FIFTEEN_MINUTES) {
             $this->report->incrementTenToFifteenMins();
         }
-        if ($ccmTime > self::FIFTEEN_MINUTES and $ccmTime <= $this::TWENTY_MINUTES) {
+        if ($ccmTime >= self::FIFTEEN_MINUTES and $ccmTime < $this::TWENTY_MINUTES) {
             $this->report->incrementFifteenToTwentyMins();
         }
-        if ($ccmTime > $this::TWENTY_MINUTES) {
+        if ($ccmTime >= $this::TWENTY_MINUTES) {
             $this->report->incrementTwentyPlusMins();
         }
-        if ($bhiTime > $this::TWENTY_MINUTES) {
-            $this->report->incrementTwentyPlusMins();
+        if ($bhiTime >= $this::TWENTY_MINUTES) {
+            $this->report->incrementTwentyPlusBhiMins();
         }
     }
 
