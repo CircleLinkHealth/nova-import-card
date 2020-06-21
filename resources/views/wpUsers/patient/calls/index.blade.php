@@ -71,6 +71,7 @@
                                         :allow-conference="{{json_encode(config('services.twilio.allow-conference'))}}"
                                         inbound-user-id="{{$patient->id}}"
                                         outbound-user-id="{{auth()->id()}}"
+                                        source="patient-call-page"
                                         :patient-numbers="{{$phoneNumbers}}"
                                         clinical-escalation-number="{{$clinicalEscalationNumber}}">
                                 </call-number>

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8a1caf95aa6d8f0ed2250eff47257651",
+    "content-hash": "208f67aecdba382cc0d8ee334f00d204",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1109,11 +1109,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.0.5",
+            "version": "v2.0.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "7bec4a3e41e0d1da0a3ec6c014e36c306d0fc18d"
+                "reference": "a5c0b69720c422268f3ea79b6b81ca17fd267864"
             },
             "type": "laravel-module",
             "extra": {
@@ -1135,7 +1135,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-17T09:09:40+00:00"
+            "time": "2020-06-19T14:47:38+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1317,7 +1317,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-master",
+            "version": "dev-shift-26679",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
@@ -3928,6 +3928,12 @@
                 "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git",
                 "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0"
             },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CircleLinkHealth/laravel-module-installer/zipball/5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0",
+                "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0",
+                "shasum": ""
+            },
             "require": {
                 "composer-plugin-api": "^1.1",
                 "php": "^5.4|7.*"
@@ -3949,6 +3955,9 @@
             "license": [
                 "MIT"
             ],
+            "support": {
+                "source": "https://github.com/CircleLinkHealth/laravel-module-installer/tree/v0.1.5"
+            },
             "time": "2020-01-16T16:56:46+00:00"
         },
         {
