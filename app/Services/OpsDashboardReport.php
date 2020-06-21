@@ -29,6 +29,8 @@ class OpsDashboardReport
 
     const TWENTY_MINUTES = 1200;
 
+    protected $calculateLostAddedUsingRevisionsOnly;
+
     /**
      * @var Carbon
      */
@@ -240,17 +242,14 @@ class OpsDashboardReport
         $countRevisionsWithdrawn   = count($this->revisionsWithdrawnPatients);
         $countRevisionsUnreachable = count($this->revisionsUnreachablePatients);
 
-        if ($this->shouldCalculateStatsUsingRevisionsOnly()) {
+        if ($this->shouldCalculateLostAddedUsingRevisionsOnly()) {
             $this->report->setAdded($countRevisionsAdded);
             $this->report->setPaused($countRevisionsPaused);
             $this->report->setWithdrawn($countRevisionsWithdrawn);
             $this->report->setUnreachable($countRevisionsUnreachable);
-            $this->report->setTotal(count($this->enrolledPatients));
 
             return $this;
         }
-
-        $this->report->setPriorDayTotals($this->priorDayReportData['Total']);
 
         if ($this->report->getTotal() - $this->report->getDelta() !== $this->report->getPriorDayTotals()) {
             sendSlackMessage('#ops_dashboard_alers', "<?U8B3S8UBS> Warning! DELTA for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}' does not match.");
@@ -372,6 +371,9 @@ class OpsDashboardReport
         if ($priorDayReport) {
             $this->priorDayReportData = $priorDayReport->data;
             $this->report->setPriorDayReportUpdatedAt($priorDayReport->updated_at);
+            if ($this->shouldCalculateLostAddedUsingRevisionsOnly()) {
+                $this->report->setTotal($this->priorDayReportData['Total']);
+            }
         }
 
         return $this;
@@ -421,18 +423,20 @@ class OpsDashboardReport
     /**
      *  If last day report does not exist or does not contain new keys to calculate DELTA
      * Use revisions (old way) - This should only run on deployment date, or for the first ever generated report for a practice.
-     *
-     * @return bool
      */
-    private function shouldCalculateStatsUsingRevisionsOnly()
+    private function shouldCalculateLostAddedUsingRevisionsOnly(): bool
     {
-        return ! array_keys_exist([
-            'total_paused_count',
-            'total_unreachable_count',
-            'total_withdrawn_count',
-            'prior_day_report_updated_at',
-            'report_updated_at',
-            'enrolled_patient_ids',
-        ], $this->priorDayReportData);
+        if (null === $this->$this->calculateLostAddedUsingRevisionsOnly) {
+            $this->calculateLostAddedUsingRevisionsOnly = ! array_keys_exist([
+                'total_paused_count',
+                'total_unreachable_count',
+                'total_withdrawn_count',
+                'prior_day_report_updated_at',
+                'report_updated_at',
+                'enrolled_patient_ids',
+            ], $this->priorDayReportData);
+        }
+
+        return $this->calculateLostAddedUsingRevisionsOnly;
     }
 }
