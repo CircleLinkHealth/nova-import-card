@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
+use App\ProviderSignature;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -167,6 +168,11 @@ class ProviderInfo extends \CircleLinkHealth\Core\Entities\BaseModel
         $this->user->save();
 
         return true;
+    }
+
+    public function signature()
+    {
+        return $this->hasOne(ProviderSignature::class, 'provider_info_id');
     }
 
     public function user()
