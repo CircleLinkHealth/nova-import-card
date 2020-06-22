@@ -11,7 +11,7 @@ use App\Contracts\FaxableNotification;
 use App\Contracts\HasAttachment;
 use App\Note;
 use App\ValueObjects\SimpleNotification;
-use CircleLinkHealth\Customer\AppConfig\ReiceiveAllForwardedNotes;
+use CircleLinkHealth\Customer\AppConfig\ReceiveAllForwardedNotes;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -178,7 +178,7 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, 
 
         if ('circlelink-health' == $notifiable->saasAccount->slug && app()->environment('production')) {
             return $mail->bcc(
-                ReiceiveAllForwardedNotes::emails()
+                ReceiveAllForwardedNotes::emails()
             );
         }
 
