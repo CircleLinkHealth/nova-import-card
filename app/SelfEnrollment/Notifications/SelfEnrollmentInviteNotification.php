@@ -6,15 +6,11 @@
 
 namespace App\SelfEnrollment\Notifications;
 
-use App\Jobs\NotificationStatusUpdateJob;
-use App\Notifications\Channels\AutoEnrollmentMailChannel;
 use App\Traits\EnrollableNotificationContent;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Events\NotificationFailed;
-use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\Twilio\TwilioSmsMessage;
@@ -49,24 +45,6 @@ class SelfEnrollmentInviteNotification extends Notification
         $this->channels   = $channels;
     }
 
-    /**
-     * Called when notification was not sent.
-     * NOTE: called for each channel separately!
-     */
-    public function failed(NotificationFailed $event)
-    {
-        $channel = $event->channel;
-
-        NotificationStatusUpdateJob::dispatch(
-            $event->notification->id,
-            $channel,
-            [
-                'value'   => 'failed',
-                'details' => $event->data['message'],
-            ],
-        );
-    }
-
     public function middleware()
     {
         $rateLimitedMiddleware = (new RateLimited())
@@ -83,36 +61,8 @@ class SelfEnrollmentInviteNotification extends Notification
     }
 
     /**
-     * Called when notification is sent.
-     * NOTE: called for each channel separately!
-     */
-    public function sent(NotificationSent $event)
-    {
-        $props = [
-            'value'   => 'pending',
-            'details' => now()->toDateTimeString(),
-        ];
-
-        $channel = $event->channel;
-
-        if ($event->response && 'twilio' === $channel) {
-            if ($event->response->sid) {
-                $props['sid'] = $event->response->sid;
-            }
-            if ($event->response->accountSid) {
-                $props['accountSid'] = $event->response->accountSid;
-            }
-        }
-
-        NotificationStatusUpdateJob::dispatch(
-            $event->notification->id,
-            $channel,
-            $props,
-        );
-    }
-
-    /**
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
     public function toArray($notifiable)
@@ -148,17 +98,26 @@ class SelfEnrollmentInviteNotification extends Notification
     {
         $notificationContent = $this->emailAndSmsContent($notifiable, $this->isReminder);
 
-        $fromName = config('mail.from.name'); //@todo: We dont need to show CircleLinkHealth as default
+        $fromName = null;
+
         if ( ! empty($notifiable->primaryPractice) && ! empty($notifiable->primaryPractice->display_name)) {
             $fromName = $notifiable->primaryPractice->display_name;
+        }
+
+        if (empty($fromName)) {
+            $fromName = config('mail.marketing_from.name');
         }
 
         if (empty($this->url)) {
             throw new InvalidArgumentException("`url` cannot be empty. User ID {$notifiable->id}");
         }
 
-        return (new AutoEnrollmentMailChannel($fromName))
-            ->from(config('mail.from.address'), $fromName)
+        $mailMessage           = new MailMessage();
+        $mailMessage->viewData = ['excludeLogo' => true, 'practiceName' => $fromName];
+
+        return $mailMessage
+            ->mailer('smtp')
+            ->from(config('mail.marketing_from.address'), $fromName)
             ->subject('Wellness Program')
             ->line($notificationContent['line1'])
             ->line($notificationContent['line2'])
@@ -171,6 +130,7 @@ class SelfEnrollmentInviteNotification extends Notification
      * @param $notifiable
      *
      * @throws \Exception
+     *
      * @return TwilioSmsMessage
      */
     public function toTwilio(User $notifiable)

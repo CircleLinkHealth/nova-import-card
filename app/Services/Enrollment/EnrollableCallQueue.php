@@ -61,9 +61,9 @@ class EnrollableCallQueue
                 })
                     //include those that CA-Director assigned callback for
                     ->orWhere(function ($subQ) {
-                      $subQ->where('status', Enrollee::TO_CALL)
-                          ->where('requested_callback', '>', Carbon::now()->startOfDay());
-                  });
+                        $subQ->where('status', Enrollee::TO_CALL)
+                            ->where('requested_callback', '>', Carbon::now()->startOfDay());
+                    });
             })
             ->get();
 
@@ -71,15 +71,18 @@ class EnrollableCallQueue
         $nextAttempt          = null;
 
         if (0 !== $patientsPendingCount) {
-            $lastAttempt = $patientsPending
+            $lastAttempt = optional($patientsPending
+                ->where('last_attempt_at', '!=', null)
                 ->sortBy('last_attempt_at')
-                ->first()
+                ->first())
                 ->last_attempt_at;
 
-            /**
-             * @var Carbon
-             */
-            $nextAttempt = $lastAttempt->addDays(self::DAYS_FOR_NEXT_ATTEMPT);
+            if ($lastAttempt) {
+                /**
+                 * @var Carbon
+                 */
+                $nextAttempt = $lastAttempt->addDays(self::DAYS_FOR_NEXT_ATTEMPT);
+            }
 
             $patientWithRequestedCallback = $patientsPending->filter(function ($p) {
                 return ! empty(trim($p->requested_callback));
@@ -93,7 +96,7 @@ class EnrollableCallQueue
                  */
                 $callback = $patientWithRequestedCallback->requested_callback;
 
-                if ($callback && $callback->lt($nextAttempt)) {
+                if ($callback && $nextAttempt && $callback->lt($nextAttempt)) {
                     $nextAttempt = $callback;
                 }
             }

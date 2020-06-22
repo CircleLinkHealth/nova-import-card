@@ -4,14 +4,14 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-$opcacheUrl = env('OPCACHE_URL', config('app.url'));
+$opcacheUrl = env('OPCACHE_URL', env('APP_URL', null));
 
 $opcacheUrl = str_replace('${HEROKU_APP_NAME}', getenv('HEROKU_APP_NAME'), $opcacheUrl);
 
 return [
     'url'         => $opcacheUrl,
-    'verify_ssl'  => true,
-    'verify_host' => 2,
+    'prefix'      => 'opcache-api',
+    'verify'      => true,
     'headers'     => [],
     'directories' => [
         base_path('app'),
@@ -24,5 +24,17 @@ return [
         base_path('vendor/composer'),
         base_path('vendor/laravel/framework'),
         base_path('vendor/circlelinkhealth/'),
+    ],
+    'exclude' => [
+        'test',
+        'Test',
+        'tests',
+        'Tests',
+        'stub',
+        'Stub',
+        'stubs',
+        'Stubs',
+        'dumper',
+        'Dumper',
     ],
 ];

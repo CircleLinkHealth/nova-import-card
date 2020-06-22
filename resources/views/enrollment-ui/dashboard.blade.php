@@ -108,7 +108,7 @@
             "urlFull": '{{$urlFull}}',
             "urlShort": '{{$urlShort}}',
             "ipAddr": '{{$ipAddr}}',
-            "activity": 'CA Enrollment',
+            "activity": 'CA - Loading next patient',
             "title": '{{$title}}',
             "submitUrl": '{{route("api.pagetracking")}}',
             "timeSyncUrl": undefined,
@@ -123,6 +123,7 @@
             //new fields for ca panel
             "isFromCaPanel": true,
             "enrolleeId": '0',
+            "forceSkip": false,
         };
     </script>
 

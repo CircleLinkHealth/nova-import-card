@@ -29,6 +29,10 @@ use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 
 class ReschedulerHandler
 {
+    /**
+     * We are allowing the nurse some extra hours of time to reschedule calls that were not successful for the day.
+     */
+    const CUSHION_FOR_NURSE_TO_RESCHEDULE_IN_HOURS = 2;
     protected $callsToReschedule;
     protected $rescheduledCalls = [];
     private $schedulerService;
@@ -46,8 +50,8 @@ class ReschedulerHandler
         })
             ->whereStatus('scheduled')
             ->with('inboundUser.patientInfo')
-            ->where('scheduled_date', '<=', Carbon::now()->toDateString())
-            ->where('window_end', '<=', Carbon::now()->format('H:i'))
+            ->where('scheduled_date', '<=', now()->toDateString())
+            ->where('window_end', '<=', now()->format('H:i'))
             ->chunkById(100, function ($calls) {
                 foreach ($calls as $call) {
                     $this->reschedule($call);
@@ -63,11 +67,25 @@ class ReschedulerHandler
     public function reschedule(Call $call)
     {
         try {
+            $patientUser = $call->inboundUser;
+
+            if (is_null($patientUser)) {
+                return;
+            }
+
+            if (now()
+                ->setTimezone($patientUser->timezone ?? config('app.timezone'))
+                ->setTimeFromTimeString($call->window_end)
+                ->addHours(self::CUSHION_FOR_NURSE_TO_RESCHEDULE_IN_HOURS)
+                ->isFuture()) {
+                return;
+            }
+
             $call->status    = 'dropped';
             $call->scheduler = 'rescheduler algorithm';
             $call->save();
 
-            $patient = $call->inboundUser->patientInfo;
+            $patient = $patientUser->patientInfo;
 
             if ( ! $patient instanceof Patient) {
                 return;

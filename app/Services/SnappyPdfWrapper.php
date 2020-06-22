@@ -7,7 +7,7 @@
 namespace App\Services;
 
 use Barryvdh\Snappy\PdfWrapper;
-use CircleLinkHealth\Core\HtmlToPdfService;
+use CircleLinkHealth\Core\Services\HtmlToPdfService;
 
 class SnappyPdfWrapper extends PdfWrapper implements HtmlToPdfService
 {

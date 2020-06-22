@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Contracts\Services\TwilioClientable;
+use CircleLinkHealth\Core\TwilioClientable;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;

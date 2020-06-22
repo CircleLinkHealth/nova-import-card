@@ -55,8 +55,8 @@ class TimeTracker extends Resource
      * @var array
      */
     public static $searchRelations = [
-        'logger.user'  => ['display_name', 'first_name', 'last_name'],
-        'patient.user' => ['display_name', 'first_name', 'last_name'],
+        'logger'  => ['display_name', 'first_name', 'last_name'],
+        'patient' => ['display_name', 'first_name', 'last_name'],
     ];
 
     /**
@@ -65,6 +65,8 @@ class TimeTracker extends Resource
      * @var string
      */
     public static $title = 'title';
+
+    public static $with = ['logger', 'patient'];
 
     /**
      * Get the actions available for the resource.

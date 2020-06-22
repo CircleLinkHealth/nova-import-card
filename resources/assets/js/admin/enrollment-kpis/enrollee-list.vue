@@ -36,7 +36,6 @@
             'modal': Modal,
             'loader': Loader,
             'notifications': Notifications
-
         },
         props: [],
         data() {
@@ -98,7 +97,6 @@
                     sortable: ['id', 'user_id', 'first_name', 'last_name', 'practice_name', 'provider_name', 'primary_insurance', 'status', 'source', 'created_at', 'state', 'city','enrollment_non_responsive', 'auto_enrollment_triggered', 'last_attempt_at', 'care_ambassador_name', 'attempt_count', 'requested_callback'],
                 },
             }
-
         },
         methods: {
             formatSecondsToHHMMSS(seconds) {
@@ -161,7 +159,7 @@
                 }
                 return download().then(res => {
 
-                    const str = 'id, user_id, mrn, first_name, last_name, care_ambassador_name, status, source, enrollment_non_responsive, auto_enrollment_triggered, practice_name, provider_name, lang, requested_callback, total_time_spent, attempt_count, last_attempt_at, last_call_outcome, last_call_outcome_reason, address, address_2, city, state, zip, primary_phone, home_phone, cell_phone, other_phone, dob, preferred_days, preferred_window, primary_insurance, secondary_insurance, tertiary_insurance, has_copay, email, last_encounter, created_at, updated_at\n'
+                    const str = 'id, user_id, mrn, first_name, last_name, care_ambassador_name, status, source, send_regular_mail, auto_enrollment_triggered, practice_name, provider_name, lang, requested_callback, total_time_spent, attempt_count, last_attempt_at, last_call_outcome, last_call_outcome_reason, address, address_2, city, state, zip, primary_phone, home_phone, cell_phone, other_phone, dob, preferred_days, preferred_window, primary_insurance, secondary_insurance, tertiary_insurance, has_copay, email, last_encounter, created_at, updated_at\n'
                         + patients.join('\n');
                     const csvData = new Blob([str], {type: 'text/csv'});
                     const csvUrl = URL.createObjectURL(csvData);

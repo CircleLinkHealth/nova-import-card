@@ -9,6 +9,7 @@ namespace Tests\Unit;
 use App\Notifications\SendSms;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Notification as NotificationFacade;
@@ -79,9 +80,13 @@ class TwilioFakeTest extends CustomerTestCase
         $msg = 'fake message from mars';
         $to  = '+12349010035';
 
+        NotificationFacade::fake();
         Twilio::fake();
 
-        NotificationFacade::route('twilio', $to)->notify(new FakeNotification($msg, ['mail']));
+        /** @var AnonymousNotifiable $anonymous */
+        $anonymous = NotificationFacade::route('twilio', $to);
+        $anonymous->route('mail', 'test@test.com');
+        $anonymous->notify(new FakeNotification($msg, ['mail']));
 
         Twilio::assertMessageNotSent($to, $msg);
     }
@@ -154,7 +159,8 @@ class FakeNotification extends Notification
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
     public function toArray($notifiable)
@@ -184,7 +190,8 @@ class FakeNotification extends Notification
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
     public function via($notifiable)
