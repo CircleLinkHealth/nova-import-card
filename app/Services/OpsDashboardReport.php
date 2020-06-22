@@ -262,27 +262,27 @@ class OpsDashboardReport
         //if prior day data exist, numbers should have been processed by now. Check if they match
         if ($this->report->getAdded() != $countRevisionsAdded) {
             $addedRevisionIds = collect($this->revisionsAddedPatients)->pluck('id')->implode(',');
-            $alerts[]         = "Added: Total using status: {$this->report->getAdded()} - Totals using revisions: $countRevisionsAdded. Revisionable User IDs: $addedRevisionIds ";
+            $alerts[]         = "Added: Total using status: {$this->report->getAdded()} - Totals using revisions: $countRevisionsAdded. Revisionable User IDs: $addedRevisionIds.";
         }
 
         if ($this->report->getPaused() != $countRevisionsPaused) {
             $pausedRevisionIds = collect($this->revisionsPausedPatients)->pluck('id')->implode(',');
-            $alerts[]          = "Paused: Total using status: {$this->report->getPaused()} - Totals using revisions: $countRevisionsPaused. Revisionable User IDs: $pausedRevisionIds";
+            $alerts[]          = "Paused: Total using status: {$this->report->getPaused()} - Totals using revisions: $countRevisionsPaused. Revisionable User IDs: $pausedRevisionIds.";
         }
 
         if ($this->report->getWithdrawn() != $countRevisionsWithdrawn) {
             $withdrawnRevisionIds = collect($this->revisionsWithdrawnPatients)->pluck('id')->implode(',');
-            $alerts[]             = "Withdrawn: Total using status: {$this->report->getWithdrawn()} - Totals using revisions: $countRevisionsWithdrawn. Revisionable User IDs: $withdrawnRevisionIds";
+            $alerts[]             = "Withdrawn: Total using status: {$this->report->getWithdrawn()} - Totals using revisions: $countRevisionsWithdrawn. Revisionable User IDs: $withdrawnRevisionIds.";
         }
 
         if ($this->report->getUnreachable() != $countRevisionsUnreachable) {
             $unreachableRevisionIds = collect($this->revisionsUnreachablePatients)->pluck('id')->implode(',');
-            $alerts[]               = "Unreachable: Total using status: {$this->report->getUnreachable()} - Totals using revisions: $countRevisionsUnreachable. Revisionable User IDs: $unreachableRevisionIds";
+            $alerts[]               = "Unreachable: Total using status: {$this->report->getUnreachable()} - Totals using revisions: $countRevisionsUnreachable. Revisionable User IDs: $unreachableRevisionIds.";
         }
 
         if ( ! empty($alerts)) {
             $watchers = opsDashboardAlertWatchers();
-            $message  = "$watchers Warning! The following descrepancies were found for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}'. \n".implode("\n", $alerts);
+            $message  = "$watchers Warning! The following discrepancies were found for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}'. \n".implode("\n", $alerts);
             sendSlackMessage('#ops_dashboard_alers', $message);
         }
 
