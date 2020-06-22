@@ -187,26 +187,32 @@ class OpsDashboardReport
     private function categorizePatientByStatusUsingPatientInfo(User $patient, $patientWasEnrolledPriorDay = false)
     {
         $ccmStatus = $patient->patientInfo->ccm_status;
-        if (Patient::TO_ENROLL == $ccmStatus) {
-            $this->g0506Patients[] = $patient;
-        }
-        if (Patient::PAUSED == $ccmStatus) {
-            $this->pausedPatients[] = $patient;
-            if ($patientWasEnrolledPriorDay) {
-                $this->report->incrementPaused();
-            }
-        }
-        if (in_array($ccmStatus, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
-            $this->withdrawnPatients[] = $patient;
-            if ($patientWasEnrolledPriorDay) {
-                $this->report->incrementWithdrawn();
-            }
-        }
-        if (Patient::UNREACHABLE == $ccmStatus) {
-            $this->unreachablePatients[] = $patient;
-            if ($patientWasEnrolledPriorDay) {
-                $this->report->incrementUnreachable();
-            }
+
+        switch ($ccmStatus) {
+            case Patient::TO_ENROLL:
+                $this->g0506Patients[] = $patient;
+                break;
+            case Patient::PAUSED:
+                $this->pausedPatients[] = $patient;
+                if ($patientWasEnrolledPriorDay) {
+                    $this->report->incrementPaused();
+                }
+                break;
+            case in_array($ccmStatus, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL]):
+                if (Patient::WITHDRAWN_1ST_CALL === $ccmStatus) {
+                    echo 'reached for '.$ccmStatus;
+                }
+                $this->withdrawnPatients[] = $patient;
+                if ($patientWasEnrolledPriorDay) {
+                    $this->report->incrementWithdrawn();
+                }
+                break;
+            case Patient::UNREACHABLE:
+                $this->unreachablePatients[] = $patient;
+                if ($patientWasEnrolledPriorDay) {
+                    $this->report->incrementUnreachable();
+                }
+                break;
         }
     }
 
@@ -392,7 +398,7 @@ class OpsDashboardReport
         if ($priorDayReport) {
             $this->priorDayReportData = $priorDayReport->data;
             $this->report->setPriorDayReportUpdatedAt($priorDayReport->updated_at);
-            $this->report->setTotal($this->priorDayReportData['Total']);
+            $this->report->setPriorDayTotals($this->priorDayReportData['Total']);
         }
 
         return $this;
@@ -404,7 +410,7 @@ class OpsDashboardReport
      */
     private function shouldCalculateLostAddedUsingRevisionsOnly(): bool
     {
-        if (null === $this->$this->calculateLostAddedUsingRevisionsOnly) {
+        if (null === $this->calculateLostAddedUsingRevisionsOnly) {
             $this->calculateLostAddedUsingRevisionsOnly = ! array_keys_exist([
                 'total_paused_count',
                 'total_unreachable_count',
