@@ -156,11 +156,13 @@ class OpsDashboardReport
      */
     public static function getTimeGoal()
     {
-        $timeGoal = DB::table('report_settings')->where('name', 'time_goal_per_billable_patient')->first();
+        return \Cache::remember('time_goal_per_billable_patient', 2, function () {
+            $timeGoal = DB::table('report_settings')->where('name', 'time_goal_per_billable_patient')->first();
 
-        return $timeGoal
-            ? $timeGoal->value
-            : self::DEFAULT_TIME_GOAL;
+            return $timeGoal
+                ? $timeGoal->value
+                : self::DEFAULT_TIME_GOAL;
+        });
     }
 
     /**
