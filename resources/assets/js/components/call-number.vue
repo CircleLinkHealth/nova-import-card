@@ -219,6 +219,7 @@
             allowConference: Boolean,
             inboundUserId: String,
             outboundUserId: String,
+            source: String,
             patientNumbers: {
                 type: Object,
                 default: {}
@@ -458,6 +459,7 @@
                     IsCallToPatient: isCallToPatient ? 1 : 0,
                     InboundUserId: this.inboundUserId,
                     OutboundUserId: this.outboundUserId,
+                    Source: this.source
                 };
             },
             createConference: function () {
