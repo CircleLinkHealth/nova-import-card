@@ -199,9 +199,6 @@ class OpsDashboardReport
                 }
                 break;
             case in_array($ccmStatus, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL]):
-                if (Patient::WITHDRAWN_1ST_CALL === $ccmStatus) {
-                    echo 'reached for '.$ccmStatus;
-                }
                 $this->withdrawnPatients[] = $patient;
                 if ($patientWasEnrolledPriorDay) {
                     $this->report->incrementWithdrawn();
