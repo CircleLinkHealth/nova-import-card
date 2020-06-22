@@ -8,7 +8,7 @@ namespace CircleLinkHealth\Customer\AppConfig;
 
 use CircleLinkHealth\Core\Entities\AppConfig;
 
-class ReiceiveAllForwardedNotes
+class ReceiveAllForwardedNotes
 {
     /**
      * This flag is for practices that exclusively has requested us to show BHI flag for their patients.
