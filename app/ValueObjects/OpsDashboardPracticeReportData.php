@@ -15,28 +15,28 @@ use Illuminate\Support\Collection;
  */
 class OpsDashboardPracticeReportData
 {
-    protected $added;
+    protected $added = 0;
     protected $enrolledPatientIds;
-    protected $fifteenToTwentyMins;
-    protected $fiveToTenMins;
-    protected $g0506ToEnroll;
-    protected $paused;
+    protected $fifteenToTwentyMins               = 0;
+    protected $fiveToTenMins                     = 0;
+    protected $g0506ToEnroll                     = 0;
+    protected $lostAddedCalculatedUsingRevisions = false;
+    protected $paused                            = 0;
     protected $priorDayReportUpdatedAt;
     protected $priorDayTotals;
     protected $reportUpdatedAt;
-    protected $tenToFifteenMins;
-
-    protected $total;
+    protected $tenToFifteenMins = 0;
+    protected $total            = 0;
     protected $totalCcmTime;
-    protected $totalPausedCount;
-    protected $totalUnreachableCount;
-    protected $totalWithdrawnCount;
-    protected $twentyPlusBhiMins;
-    protected $twentyPlusMins;
-    protected $unreachable;
-    protected $withdrawn;
-    protected $zeroMins;
-    protected $zeroToFiveMins;
+    protected $totalPausedCount      = 0;
+    protected $totalUnreachableCount = 0;
+    protected $totalWithdrawnCount   = 0;
+    protected $twentyPlusBhiMins     = 0;
+    protected $twentyPlusMins        = 0;
+    protected $unreachable           = 0;
+    protected $withdrawn             = 0;
+    protected $zeroMins              = 0;
+    protected $zeroToFiveMins        = 0;
 
     /**
      * @return mixed
@@ -88,6 +88,11 @@ class OpsDashboardPracticeReportData
         return $this->g0506ToEnroll ?? 0;
     }
 
+    public function getLostAddedCalculatedUsingRevisions(): bool
+    {
+        return $this->lostAddedCalculatedUsingRevisions;
+    }
+
     /**
      * @return mixed
      */
@@ -112,10 +117,6 @@ class OpsDashboardPracticeReportData
      */
     public function getPriorDayTotals()
     {
-        if ( ! $this->priorDayTotals) {
-            $this->priorDayTotals = $this->getTotal() - $this->getDelta();
-        }
-
         return $this->priorDayTotals ?? 0;
     }
 
@@ -225,131 +226,66 @@ class OpsDashboardPracticeReportData
 
     public function incrementAdded(): void
     {
-        if ( ! $this->added) {
-            $this->setAdded(1);
-
-            return;
-        }
         ++$this->added;
     }
 
     public function incrementFifteenToTwentyMins(): void
     {
-        if ( ! $this->fifteenToTwentyMins) {
-            $this->setFifteenToTwentyMins(1);
-
-            return;
-        }
         ++$this->fifteenToTwentyMins;
     }
 
     public function incrementFiveToTenMins(): void
     {
-        if ( ! $this->fiveToTenMins) {
-            $this->setFiveToTenMins(1);
-
-            return;
-        }
         ++$this->fiveToTenMins;
     }
 
     public function incrementG0506ToEnroll(): void
     {
-        if ( ! $this->g0506ToEnroll) {
-            $this->setG0506ToEnroll(1);
-
-            return;
-        }
         ++$this->g0506ToEnroll;
     }
 
     public function incrementPaused(): void
     {
-        if ( ! $this->paused) {
-            $this->setPaused(1);
-
-            return;
-        }
         ++$this->paused;
     }
 
     public function incrementTenToFifteenMins(): void
     {
-        if ( ! $this->tenToFifteenMins) {
-            $this->setTenToFifteenMins(1);
-
-            return;
-        }
         ++$this->tenToFifteenMins;
     }
 
     public function incrementTotal(): void
     {
-        if ( ! $this->total) {
-            $this->setTotal(1);
-
-            return;
-        }
         ++$this->total;
     }
 
     public function incrementTwentyPlusBhiMins(): void
     {
-        if ( ! $this->twentyPlusBhiMins) {
-            $this->setTwentyPlusBhiMins(1);
-
-            return;
-        }
         ++$this->twentyPlusBhiMins;
     }
 
     public function incrementTwentyPlusMins(): void
     {
-        if ( ! $this->twentyPlusMins) {
-            $this->setTwentyPlusMins(1);
-
-            return;
-        }
         ++$this->twentyPlusMins;
     }
 
     public function incrementUnreachable(): void
     {
-        if ( ! $this->unreachable) {
-            $this->setUnreachable(1);
-
-            return;
-        }
         ++$this->unreachable;
     }
 
     public function incrementWithdrawn(): void
     {
-        if ( ! $this->withdrawn) {
-            $this->setWithdrawn(1);
-
-            return;
-        }
         ++$this->withdrawn;
     }
 
     public function incrementZeroMins(): void
     {
-        if ( ! $this->zeroMins) {
-            $this->setZeroMins(1);
-
-            return;
-        }
         ++$this->zeroMins;
     }
 
     public function incrementZeroToFiveMins(): void
     {
-        if ( ! $this->zeroToFiveMins) {
-            $this->setZeroToFiveMins(1);
-
-            return;
-        }
         ++$this->zeroToFiveMins;
     }
 
@@ -391,6 +327,11 @@ class OpsDashboardPracticeReportData
     public function setG0506ToEnroll($g0506ToEnroll): void
     {
         $this->g0506ToEnroll = $g0506ToEnroll;
+    }
+
+    public function setLostAddedCalculatedUsingRevisions(bool $lostAddedCalculatedUsingRevisions): void
+    {
+        $this->lostAddedCalculatedUsingRevisions = $lostAddedCalculatedUsingRevisions;
     }
 
     /**
@@ -554,7 +495,8 @@ class OpsDashboardPracticeReportData
             //will help us produce accurate deltas when comparing last day with current day totals per status
             'enrolled_patient_ids' => $this->getEnrolledPatientIds(),
             //adding to help us generate hours behind metric,
-            'total_ccm_time' => $this->getTotalCcmTime(),
+            'total_ccm_time'                        => $this->getTotalCcmTime(),
+            'lost_added_calculated_using_revisions' => $this->getLostAddedCalculatedUsingRevisions(),
         ];
     }
 

@@ -148,8 +148,7 @@ class OpsDashboardReport
             ->setPriorDayReportData()
             ->generateStatsFromPatientCollection()
             ->addCurrentTotalsToStats()
-            ->consolidateStatsUsingPriorDayReport()
-            ->formatStats();
+            ->consolidateStatsUsingPriorDayReport();
     }
 
     /**
@@ -237,10 +236,7 @@ class OpsDashboardReport
         }
     }
 
-    /**
-     * @return $this
-     */
-    private function consolidateStatsUsingPriorDayReport()
+    private function consolidateStatsUsingPriorDayReport(): array
     {
         $countRevisionsAdded       = count($this->revisionsAddedPatients);
         $countRevisionsPaused      = count($this->revisionsPausedPatients);
@@ -252,8 +248,9 @@ class OpsDashboardReport
             $this->report->setPaused($countRevisionsPaused);
             $this->report->setWithdrawn($countRevisionsWithdrawn);
             $this->report->setUnreachable($countRevisionsUnreachable);
+            $this->report->setLostAddedCalculatedUsingRevisions(true);
 
-            return $this;
+            return $this->report->toArray();
         }
 
         $watchers = opsDashboardAlertWatchers();
@@ -285,20 +282,6 @@ class OpsDashboardReport
             Totals using status: {$this->report->getUnreachable()} - Totals using revisions: $countRevisionsUnreachable. Revisionable IDs: $revisionIds");
         }
 
-        return $this;
-    }
-
-    private function formatStats(): array
-    {
-        //CHECK DATA INTEGRITY
-//        if (0 == $count['Total'] &&
-//            $count['Total'] - $delta == 0 &&
-//            0 == $enrolledCount &&
-//            0 == $pausedCount &&
-//            0 == $withdrawnCount &&
-//            0 == $unreachableCount) {
-//            return null;
-//        }
         return $this->report->toArray();
     }
 
@@ -407,9 +390,7 @@ class OpsDashboardReport
         if ($priorDayReport) {
             $this->priorDayReportData = $priorDayReport->data;
             $this->report->setPriorDayReportUpdatedAt($priorDayReport->updated_at);
-            if ( ! $this->shouldCalculateLostAddedUsingRevisionsOnly()) {
-                $this->report->setTotal($this->priorDayReportData['Total']);
-            }
+            $this->report->setTotal($this->priorDayReportData['Total']);
         }
 
         return $this;
