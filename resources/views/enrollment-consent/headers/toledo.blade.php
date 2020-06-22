@@ -1,6 +1,6 @@
 <div class="flow-text" style="max-height: 590px; overflow-y: scroll;">
     <div style="display: inline-flex">
-        <div class="header" style="padding-right: 190px; font-size: 23px;">
+        <div class="header">
             {{$signatoryNameForHeader}}
             <br>
             {{$practiceName}}
@@ -18,3 +18,18 @@
         </div>
     </div>
 </div>
+
+<style>
+    .header{
+        padding-right: 190px;
+        font-size: 23px;
+    }
+
+    @media (max-width: 490px) {
+        .header{
+            padding-right: 18px;
+            font-size: 15px;
+        }
+
+    }
+</style>
