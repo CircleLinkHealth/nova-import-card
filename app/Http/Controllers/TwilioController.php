@@ -182,6 +182,9 @@ class TwilioController extends Controller
 
             return $this->responseWithXmlType(response($response));
         } catch (TwimlException $e) {
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
             return $this->responseWithXmlData(['error' => $e->getMessage()], 400);
         }
     }
@@ -306,15 +309,11 @@ class TwilioController extends Controller
 
         //why do I have to do this?
         if ( ! empty($input['IsUnlistedNumber'])) {
-            $input['IsUnlistedNumber'] = '1' === $input['IsUnlistedNumber']
-                ? true
-                : false;
+            $input['IsUnlistedNumber'] = boolValue($input['IsUnlistedNumber']);
         }
 
         if ( ! empty($input['IsCallToPatient'])) {
-            $input['IsCallToPatient'] = '1' === $input['IsCallToPatient']
-                ? true
-                : false;
+            $input['IsCallToPatient'] = boolValue($input['IsCallToPatient']);
         }
 
         $validation = Validator::make($input, [
@@ -326,8 +325,8 @@ class TwilioController extends Controller
                     ? Rule::phone()->detect()->country('US')
                     : '',
             ],
-            'InboundUserId'    => 'required',
-            'OutboundUserId'   => 'required',
+            'InboundUserId'    => 'required|numeric',
+            'OutboundUserId'   => 'required|numeric',
             'IsUnlistedNumber' => 'nullable|boolean',
             'IsCallToPatient'  => 'nullable|boolean',
         ]);
@@ -413,6 +412,9 @@ class TwilioController extends Controller
 
             return response()->json([]);
         } catch (\Exception $e) {
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
             return response()->json(['errors' => [$e->getMessage()]]);
         }
     }
@@ -455,34 +457,28 @@ class TwilioController extends Controller
 
         //why do I have to do this?
         if ( ! empty($input['IsUnlistedNumber'])) {
-            $input['IsUnlistedNumber'] = '1' === $input['IsUnlistedNumber']
-                ? true
-                : false;
-        } else {
-            $input['IsUnlistedNumber'] = false;
+            $input['IsUnlistedNumber'] = boolValue($input['IsUnlistedNumber']);
         }
 
         if ( ! empty($input['IsCallToPatient'])) {
-            $input['IsCallToPatient'] = '1' === $input['IsCallToPatient']
-                ? true
-                : false;
-        } else {
-            $input['IsCallToPatient'] = false;
+            $input['IsCallToPatient'] = boolValue($input['IsCallToPatient']);
         }
 
         $validation = Validator::make($input, [
             //could be the practice outgoing phone number (in case of enrollment)
-            'From'             => 'required|phone:AUTO,US',
-            'To'               => [
+            'From'              => 'required|phone:AUTO,US',
+            'To'                => [
                 'required',
                 $isProduction
                     ? Rule::phone()->detect()->country('US')
                     : '',
             ],
-            'InboundUserId'    => '',
-            'OutboundUserId'   => '',
-            'IsUnlistedNumber' => 'nullable|boolean',
-            'IsCallToPatient'  => 'nullable|boolean',
+            //could be null in case of Enrollee without a User model
+            'InboundUserId'     => '',
+            'InboundEnrolleeId' => '',
+            'OutboundUserId'    => 'required|numeric',
+            'IsUnlistedNumber'  => 'nullable|boolean',
+            'IsCallToPatient'   => 'nullable|boolean',
         ]);
 
         if ($validation->fails()) {
@@ -642,6 +638,9 @@ class TwilioController extends Controller
             }
         } catch (\Throwable $e) {
             \Log::critical('Exception while storing twilio conference log: ' . $e->getMessage());
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
         }
     }
 
@@ -719,7 +718,7 @@ class TwilioController extends Controller
             }
 
             if ( ! empty($input['CallDuration'])) {
-                $fields['dial_conference_duration'] = $input['CallDuration'];
+                $fields['dial_conference_duration'] = intValue($input['CallDuration']);
             }
 
             if ( ! empty($input['CallStatus'])) {
@@ -749,6 +748,9 @@ class TwilioController extends Controller
             }
         } catch (\Throwable $e) {
             \Log::critical('Exception while storing twilio log: ' . $e->getMessage());
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
         }
     }
 
@@ -777,23 +779,31 @@ class TwilioController extends Controller
 
             //only present in 'completed' status event
             if ( ! empty($input['CallDuration'])) {
-                $fields['call_duration'] = $input['CallDuration'];
+                $fields['call_duration'] = intValue($input['CallDuration']);
             }
 
             if ( ! empty($input['InboundUserId'])) {
-                $fields['inbound_user_id'] = $input['InboundUserId'];
+                $fields['inbound_user_id'] = intValue($input['InboundUserId'], null);
+            }
+
+            if ( ! empty($input['InboundEnrolleeId'])) {
+                $fields['inbound_enrollee_id'] = intValue($input['InboundEnrolleeId'], null);
             }
 
             if ( ! empty($input['OutboundUserId'])) {
-                $fields['outbound_user_id'] = $input['OutboundUserId'];
+                $fields['outbound_user_id'] = intValue($input['OutboundUserId']);
             }
 
             if ( ! empty($input['IsUnlistedNumber'])) {
-                $fields['is_unlisted_number'] = $input['IsUnlistedNumber'];
+                $fields['is_unlisted_number'] = boolValue($input['IsUnlistedNumber']);
             }
 
             if ( ! empty($input['SequenceNumber'])) {
                 $fields['sequence_number'] = $input['SequenceNumber'];
+            }
+
+            if ( ! empty($input['Source'])) {
+                $fields['source'] = $input['Source'];
             }
 
             TwilioCall::updateOrCreate(
@@ -802,6 +812,9 @@ class TwilioController extends Controller
             );
         } catch (\Throwable $e) {
             \Log::critical('Exception while storing twilio log: ' . $e->getMessage());
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
         }
     }
 
@@ -820,6 +833,9 @@ class TwilioController extends Controller
             ]);
         } catch (\Throwable $e) {
             \Log::critical('Exception while storing twilio raw log: ' . $e->getMessage());
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
         }
     }
 
@@ -902,6 +918,9 @@ class TwilioController extends Controller
             }
         } catch (\Throwable $e) {
             \Log::critical('Exception while storing twilio recording log: ' . $e->getMessage());
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
         }
     }
 

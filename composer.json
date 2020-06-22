@@ -41,7 +41,7 @@
         "circlelinkhealth/customer-module": "1.9.3",
         "circlelinkhealth/revisionable-module": "^6.1",
         "circlelinkhealth/shared-models-module": "1.5.6",
-        "circlelinkhealth/cpm-migrations-module": "1.8.9",
+        "circlelinkhealth/cpm-migrations-module": "2.0.6",
         "illuminate/redis": "^6",
         "illuminate/session": "^6",
         "laravel/lumen-framework": "^6",
