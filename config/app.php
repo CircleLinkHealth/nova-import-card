@@ -5,6 +5,7 @@
  */
 
 use App\Providers\CpmArtisanServiceProvider;
+use App\Providers\PrimaryNavComposer;
 use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
 use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
@@ -217,6 +218,7 @@ return [
         App\View\Composers\FabComposer::class,
         App\View\Composers\SAAS\Admin\ManageInternalUser::class,
         App\Providers\EligibilityBatchViewComposerServiceProvider::class,
+        PrimaryNavComposer::class,
 
         NurseInvoicesServiceProvider::class,
         NurseInvoicesDeferredBindingsServiceProvider::class,

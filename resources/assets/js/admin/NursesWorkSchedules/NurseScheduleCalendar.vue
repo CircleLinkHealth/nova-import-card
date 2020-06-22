@@ -269,7 +269,7 @@
 
     let self;
 
-    const viewDefault = 'agendaWeek';
+    const viewDefault = 'month';
     const defaultEventType = 'workDay';
     const holidayEventType = 'holiday';
 
