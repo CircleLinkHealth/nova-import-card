@@ -60,6 +60,7 @@ class Demographics extends BaseModel
         'gender',
         'lang',
         'referring_provider_name',
+        'facility_name',
         'cell_phone',
         'home_phone',
         'other_phone',
