@@ -471,10 +471,16 @@ class SelfEnrollmentController extends Controller
             //remove +1 from phone number
             $practiceNumber = formatPhoneNumber($practiceNumber);
         }
-        $providerName    = $enrollee->provider->last_name;
+
+        $providerName    = optional($enrollee->provider)->last_name;
         $practiceName    = $enrollee->practice->display_name;
         $practiceLogoSrc = self::ENROLLMENT_LETTER_DEFAULT_LOGO;
         $practiceLetter  = EnrollmentInvitationLetter::wherePracticeId($enrollee->practice_id)->first();
+
+        if (empty($providerName)) {
+            Log::info("Enrollee with id [$enrollee->id] does not have a provider");
+        }
+
         if ($practiceLetter && ! empty($practiceLetter->practice_logo_src)) {
             $practiceLogoSrc = $practiceLetter->practice_logo_src;
         }
