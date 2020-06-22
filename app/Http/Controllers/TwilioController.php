@@ -182,6 +182,9 @@ class TwilioController extends Controller
 
             return $this->responseWithXmlType(response($response));
         } catch (TwimlException $e) {
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
             return $this->responseWithXmlData(['error' => $e->getMessage()], 400);
         }
     }
@@ -409,6 +412,9 @@ class TwilioController extends Controller
 
             return response()->json([]);
         } catch (\Exception $e) {
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
             return response()->json(['errors' => [$e->getMessage()]]);
         }
     }
@@ -632,6 +638,9 @@ class TwilioController extends Controller
             }
         } catch (\Throwable $e) {
             \Log::critical('Exception while storing twilio conference log: ' . $e->getMessage());
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
         }
     }
 
@@ -739,6 +748,9 @@ class TwilioController extends Controller
             }
         } catch (\Throwable $e) {
             \Log::critical('Exception while storing twilio log: ' . $e->getMessage());
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
         }
     }
 
@@ -800,6 +812,9 @@ class TwilioController extends Controller
             );
         } catch (\Throwable $e) {
             \Log::critical('Exception while storing twilio log: ' . $e->getMessage());
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
         }
     }
 
@@ -818,6 +833,9 @@ class TwilioController extends Controller
             ]);
         } catch (\Throwable $e) {
             \Log::critical('Exception while storing twilio raw log: ' . $e->getMessage());
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
         }
     }
 
@@ -900,6 +918,9 @@ class TwilioController extends Controller
             }
         } catch (\Throwable $e) {
             \Log::critical('Exception while storing twilio recording log: ' . $e->getMessage());
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
         }
     }
 
