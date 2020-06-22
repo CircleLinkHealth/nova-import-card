@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter whereSignatoryName($value)
  * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property mixed $ui_requests
  */
 class EnrollmentInvitationLetter extends Model
 {
@@ -51,5 +52,6 @@ class EnrollmentInvitationLetter extends Model
         'customer_signature_src',
         'signatory_name',
         'letter',
+        'ui_requests',
     ];
 }
