@@ -137,7 +137,7 @@ class TwilioCall extends Resource
             Text::make('From', 'from')->sortable(),
 
             Text::make('RN/CA', 'outboundUser.display_name')->sortable(),
-    
+
             Text::make('To', 'to')->sortable(),
 
             Text::make('Patient', function ($row) {

@@ -25,6 +25,7 @@ class TwilioCallCosts extends Value
 
     /**
      * TwilioCallCosts constructor.
+     *
      * @param mixed $precision
      */
     public function __construct(string $name, string $source, $precision = 4)
