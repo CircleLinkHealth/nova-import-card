@@ -370,6 +370,7 @@ class OpsDashboardReport
 
     /**
      * @param $patientId
+     *
      * @return bool
      */
     private function patientWasEnrolledPriorDay($patientId)
@@ -394,7 +395,7 @@ class OpsDashboardReport
 
         if ($priorDayReport) {
             $this->priorDayReportData = $priorDayReport->data;
-            $this->report->setPriorDayReportUpdatedAt($priorDayReport->updated_at);
+            $this->report->setPriorDayReportUpdatedAt($priorDayReport->updated_at->toDateTimeString());
             $this->report->setPriorDayTotals($this->priorDayReportData['Total']);
         }
 

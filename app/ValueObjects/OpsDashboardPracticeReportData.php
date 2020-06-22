@@ -125,7 +125,7 @@ class OpsDashboardPracticeReportData
      */
     public function getReportUpdatedAt()
     {
-        return Carbon::now()->toDateString();
+        return Carbon::now()->toDateTimeString();
     }
 
     /**
