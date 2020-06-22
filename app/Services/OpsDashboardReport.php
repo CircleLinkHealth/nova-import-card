@@ -227,15 +227,12 @@ class OpsDashboardReport
         if (Patient::ENROLLED == $oldestStatus) {
             if (Patient::UNREACHABLE == $newestStatus) {
                 $this->revisionsUnreachablePatients[] = $patient;
-            }
-            if (Patient::PAUSED == $newestStatus) {
+            } elseif (Patient::PAUSED == $newestStatus) {
                 $this->revisionsPausedPatients[] = $patient;
-            }
-            if (in_array($newestStatus, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
+            } elseif (in_array($newestStatus, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
                 $this->revisionsWithdrawnPatients[] = $patient;
             }
-        }
-        if (Patient::ENROLLED !== $oldestStatus &&
+        } elseif (Patient::ENROLLED !== $oldestStatus &&
                 Patient::ENROLLED == $newestStatus) {
             $this->revisionsAddedPatients[] = $patient;
         }
@@ -258,33 +255,35 @@ class OpsDashboardReport
             return $this->report->toArray();
         }
 
-        $watchers = opsDashboardAlertWatchers();
+        $alerts = [];
         if ($this->report->getTotal() - $this->report->getDelta() !== $this->report->getPriorDayTotals()) {
-            sendSlackMessage('#ops_dashboard_alers', "$watchers Warning! DELTA for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}' does not match.");
+            $alerts[] = 'DELTA does not match.';
         }
         //if prior day data exist, numbers should have been processed by now. Check if they match
         if ($this->report->getAdded() != $countRevisionsAdded) {
-            $revisionIds = collect($this->revisionsAddedPatients)->pluck('id')->implode(',');
-            sendSlackMessage('#ops_dashboard_alers', "$watchers Warning! Added Patients for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}' do not match.
-            Totals using status: {$this->report->getAdded()} - Totals using revisions: $countRevisionsAdded. Revisionable IDs: $revisionIds");
+            $addedRevisionIds = collect($this->revisionsAddedPatients)->pluck('id')->implode(',');
+            $alerts[]         = "Added: Total using status: {$this->report->getAdded()} - Totals using revisions: $countRevisionsAdded. Revisionable User IDs: $addedRevisionIds ";
         }
 
         if ($this->report->getPaused() != $countRevisionsPaused) {
-            $revisionIds = collect($this->revisionsPausedPatients)->pluck('id')->implode(',');
-            sendSlackMessage('#ops_dashboard_alers', "$watchers Warning! Paused Patients for Ops dashboard report for {$this->date->toDateString()} do not match.
-            Totals using status: {$this->report->getPaused()} - Totals using revisions: $countRevisionsPaused. Revisionable IDs: $revisionIds");
+            $pausedRevisionIds = collect($this->revisionsPausedPatients)->pluck('id')->implode(',');
+            $alerts[]          = "Paused: Total using status: {$this->report->getPaused()} - Totals using revisions: $countRevisionsPaused. Revisionable User IDs: $pausedRevisionIds";
         }
 
         if ($this->report->getWithdrawn() != $countRevisionsWithdrawn) {
-            $revisionIds = collect($this->revisionsWithdrawnPatients)->pluck('id')->implode(',');
-            sendSlackMessage('#ops_dashboard_alers', "$watchers Warning! Withdrawn Patients for Ops dashboard report for {$this->date->toDateString()} do not match.
-            Totals using status: {$this->report->getWithdrawn()} - Totals using revisions: $countRevisionsWithdrawn. Revisionable IDs: $revisionIds");
+            $withdrawnRevisionIds = collect($this->revisionsWithdrawnPatients)->pluck('id')->implode(',');
+            $alerts[]             = "Withdrawn: Total using status: {$this->report->getWithdrawn()} - Totals using revisions: $countRevisionsWithdrawn. Revisionable User IDs: $withdrawnRevisionIds";
         }
 
         if ($this->report->getUnreachable() != $countRevisionsUnreachable) {
-            $revisionIds = collect($this->revisionsUnreachablePatients)->pluck('id')->implode(',');
-            sendSlackMessage('#ops_dashboard_alers', "$watchers Warning! Unreachable Patients for Ops dashboard report for {$this->date->toDateString()} do not match.
-            Totals using status: {$this->report->getUnreachable()} - Totals using revisions: $countRevisionsUnreachable. Revisionable IDs: $revisionIds");
+            $unreachableRevisionIds = collect($this->revisionsUnreachablePatients)->pluck('id')->implode(',');
+            $alerts[]               = "Unreachable: Total using status: {$this->report->getUnreachable()} - Totals using revisions: $countRevisionsUnreachable. Revisionable User IDs: $unreachableRevisionIds";
+        }
+
+        if ( ! empty($alerts)) {
+            $watchers = opsDashboardAlertWatchers();
+            $message  = "$watchers Warning! The following descrepancies were found for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}'. \n".implode("\n", $alerts);
+            sendSlackMessage('#ops_dashboard_alers', $message);
         }
 
         return $this->report->toArray();
