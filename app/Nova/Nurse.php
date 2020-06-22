@@ -112,26 +112,7 @@ class Nurse extends Resource
                 ->hideWhenCreating()
                 ->readonly(),
 
-            Date::make('Start Date', 'start_date')
-                ->readonly(function () {
-                    // user has not logged in into the system yet
-                    // start date can be edited, so readOnly should be false
-                    if (is_null($this->resource->user->last_session_id)) {
-                        return false;
-                    }
-
-                    /** @var Carbon $startDate */
-                    $startDate = $this->resource->start_date;
-                    if ( ! $startDate) {
-                        //user has logged in at least once, so we cannot change start date
-                        return true;
-                    }
-
-                    // start date is in the future. so readOnly should be false
-                    $isTodayOrInTheFuture = $startDate->greaterThanOrEqualTo(now()->startOfDay());
-
-                    return ! $isTodayOrInTheFuture;
-                }),
+            Date::make('Start Date', 'start_date'),
 
             Text::make('+ Days Payment', 'pay_interval')
                 ->rules('required'),
