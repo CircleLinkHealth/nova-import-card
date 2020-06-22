@@ -6,7 +6,6 @@
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Seeder;
 
@@ -21,22 +20,13 @@ class OpsDashboardDataSeeder extends Seeder
             Patient::UNREACHABLE,
             Patient::PAUSED,
             Patient::WITHDRAWN,
+            Patient::WITHDRAWN_1ST_CALL,
         ]);
-        $nurses           = User::ofType('care-center')->pluck('id');
-        $practiceIds      = Practice::active()->get()->pluck('id');
-        $date             = Carbon::now();
-        $activityDuration = collect([150, 275, 348, 567, 764, 895, 988, 1010, 1111, 1235, 1300]);
-        $activityType     = collect([
-            'CarePlanSetup',
-            'ReviewProgress',
-            'CareCoordination',
-            'MedicationReconciliation',
-            'Alerts Review',
-        ]);
+        $date = Carbon::now()->startOfMonth();
 
-        $patients = User::with(['patientInfo', 'patientSummaries' => function ($s) use ($date) {
-            $s->where('month_year', '=', $date->copy()->startOfMonth()->toDateString());
-        }])
+        $timeDuration = collect([150, 275, 348, 567, 764, 895, 988, 1010, 1111, 1235, 1300]);
+
+        $patients = User::with(['patientInfo'])
             ->whereHas('patientInfo', function ($p) {
                 $p->enrolled();
             })
@@ -44,44 +34,25 @@ class OpsDashboardDataSeeder extends Seeder
 
         $patientsToLose = $patients->random(40);
         foreach ($patientsToLose as $p) {
-            $p->patientInfo->ccm_status = $ccmStatuses->random();
-            $p->save();
+            try {
+                $p->patientInfo->ccm_status = $ccmStatuses->random();
+                $p->save();
+            } catch (\Exception $e) {
+                //do nothing
+            }
         }
 
         foreach ($patients as $patient) {
-            $summary = $patient->patientSummaries()->first();
+            $summary = $patient->patientSummaries()->firstOrCreate(
+                [
+                    'month_year' => $date->toDateString(),
+                ]
+            );
             if ($summary) {
-                $summary->ccm_time = $activityDuration->random();
-                $summary->bhi_time = $activityDuration->random();
+                $summary->ccm_time = $timeDuration->random();
+                $summary->bhi_time = $timeDuration->random();
                 $summary->save();
             }
         }
-//        $sum = new \CircleLinkHealth\Customer\Entities\PatientMonthlySummary();
-//        $sum->createCallReportsForCurrentMonth();
-
-        //create ccm time from activities
-//        foreach ($patients as $patient) {
-//            if ($patient->primaryPractice) {
-//                $patient->activities()->createMany([
-//                    [
-//                        'type'          => $activityType->random(),
-//                        'duration'      => $activityDuration->random(),
-//                        'duration_unit' => 'seconds',
-//                        'performed_at'  => $date->copy()->subDay(1)->toDateTimeString(),
-//                        'provider_id'   => $nurses->random(),
-//                    ],
-//                ]);
-//            } else {
-//                $patient->attachPractice($practiceIds->random(), null, null, 2);
-//                $patient->activities()->createMany([
-//                    [
-//                        'type'          => $activityType->random(),
-//                        'duration'      => $activityDuration->random(),
-//                        'duration_unit' => 'seconds',
-//                        'performed_at'  => $date->copy()->subDay(5)->toDateTimeString(),
-//                        'provider_id'   => $nurses->random(), ],
-//                ]);
-//            }
-//        }
     }
 }
