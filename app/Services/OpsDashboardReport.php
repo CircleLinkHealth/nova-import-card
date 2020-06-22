@@ -255,38 +255,31 @@ class OpsDashboardReport
             sendSlackMessage('#ops_dashboard_alers', "<?U8B3S8UBS> Warning! DELTA for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}' does not match.");
         }
 
-        //check each status and send slack message with ids if you should.
-        //use whereNotIn? and filterout ids to include in slack message
         //if prior day data exist, numbers should have been processed by now. Check if they match
+        $watchers = opsDashboardAlertWatchers();
         if ($this->report->getAdded() != $countRevisionsAdded) {
             //ops dashboard watcher
             //slack revision patient ids. Enrolled patient IDs exist in db ops_dashboard_practice_reports
             $revisionIds = collect($this->revisionsAddedPatients)->pluck('id')->implode(',');
-            sendSlackMessage('#ops_dashboard_alers', "<?U8B3S8UBS> Warning! Added Patients for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}' do not match.
+            sendSlackMessage('#ops_dashboard_alers', "$watchers Warning! Added Patients for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}' do not match.
             Totals using status: {$this->report->getAdded()} - Totals using revisions: $countRevisionsAdded. Revisionable IDs: $revisionIds");
         }
 
         if ($this->report->getPaused() != $countRevisionsPaused) {
-            //ops dashboard watcher
-            //slack revision patient ids. Enrolled patient IDs exist in db ops_dashboard_practice_reports
             $revisionIds = collect($this->revisionsPausedPatients)->pluck('id')->implode(',');
-            sendSlackMessage('#ops_dashboard_alers', "<?U8B3S8UBS> Warning! Paused Patients for Ops dashboard report for {$this->date->toDateString()} do not match.
+            sendSlackMessage('#ops_dashboard_alers', "$watchers Warning! Paused Patients for Ops dashboard report for {$this->date->toDateString()} do not match.
             Totals using status: {$this->report->getPaused()} - Totals using revisions: $countRevisionsPaused. Revisionable IDs: $revisionIds");
         }
 
         if ($this->report->getWithdrawn() != $countRevisionsWithdrawn) {
-            //ops dashboard watcher
-            //slack revision patient ids. Enrolled patient IDs exist in db ops_dashboard_practice_reports
             $revisionIds = collect($this->revisionsWithdrawnPatients)->pluck('id')->implode(',');
-            sendSlackMessage('#ops_dashboard_alers', "<?U8B3S8UBS> Warning! Withdrawn Patients for Ops dashboard report for {$this->date->toDateString()} do not match.
+            sendSlackMessage('#ops_dashboard_alers', "$watchers Warning! Withdrawn Patients for Ops dashboard report for {$this->date->toDateString()} do not match.
             Totals using status: {$this->report->getWithdrawn()} - Totals using revisions: $countRevisionsWithdrawn. Revisionable IDs: $revisionIds");
         }
 
         if ($this->report->getUnreachable() != $countRevisionsUnreachable) {
-            //ops dashboard watcher
-            //slack revision patient ids. Enrolled patient IDs exist in db ops_dashboard_practice_reports
             $revisionIds = collect($this->revisionsUnreachablePatients)->pluck('id')->implode(',');
-            sendSlackMessage('#ops_dashboard_alers', "<?U8B3S8UBS> Warning! Unreachable Patients for Ops dashboard report for {$this->date->toDateString()} do not match.
+            sendSlackMessage('#ops_dashboard_alers', "$watchers Warning! Unreachable Patients for Ops dashboard report for {$this->date->toDateString()} do not match.
             Totals using status: {$this->report->getUnreachable()} - Totals using revisions: $countRevisionsUnreachable. Revisionable IDs: $revisionIds");
         }
 
@@ -371,7 +364,7 @@ class OpsDashboardReport
         if ($priorDayReport) {
             $this->priorDayReportData = $priorDayReport->data;
             $this->report->setPriorDayReportUpdatedAt($priorDayReport->updated_at);
-            if ($this->shouldCalculateLostAddedUsingRevisionsOnly()) {
+            if ( ! $this->shouldCalculateLostAddedUsingRevisionsOnly()) {
                 $this->report->setTotal($this->priorDayReportData['Total']);
             }
         }

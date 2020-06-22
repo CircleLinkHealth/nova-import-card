@@ -2199,3 +2199,10 @@ if ( ! function_exists('isCpm')) {
         return 'CarePlan Manager' === config('app.name');
     }
 }
+
+if ( ! function_exists('opsDashboardAlertWatchers')) {
+    function opsDashboardAlertWatchers()
+    {
+        return AppConfig::pull('ops_dashboard_alert_watchers', '');
+    }
+}
