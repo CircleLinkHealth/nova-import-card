@@ -8,7 +8,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSendgridRawLogsTable extends Migration
+class AddUiRequestsToEnrollmentLetter extends Migration
 {
     /**
      * Reverse the migrations.
@@ -17,7 +17,9 @@ class CreateSendgridRawLogsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sendgrid_raw_logs');
+        Schema::table('enrollment_invitation_letters', function (Blueprint $table) {
+            $table->dropColumn('ui_requests');
+        });
     }
 
     /**
@@ -27,10 +29,8 @@ class CreateSendgridRawLogsTable extends Migration
      */
     public function up()
     {
-        Schema::create('sendgrid_raw_logs', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->json('events')->nullable();
-            $table->timestamps();
+        Schema::table('enrollment_invitation_letters', function (Blueprint $table) {
+            $table->json('ui_requests')->nullable()->default(null);
         });
     }
 }

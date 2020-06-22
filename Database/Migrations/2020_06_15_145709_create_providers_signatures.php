@@ -8,7 +8,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSendgridRawLogsTable extends Migration
+class CreateProvidersSignatures extends Migration
 {
     /**
      * Reverse the migrations.
@@ -17,7 +17,7 @@ class CreateSendgridRawLogsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sendgrid_raw_logs');
+        Schema::dropIfExists('providers_signatures');
     }
 
     /**
@@ -27,10 +27,16 @@ class CreateSendgridRawLogsTable extends Migration
      */
     public function up()
     {
-        Schema::create('sendgrid_raw_logs', function (Blueprint $table) {
+        Schema::create('providers_signatures', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->json('events')->nullable();
+            $table->unsignedInteger('provider_info_id');
+            $table->string('signature_src')->unique();
             $table->timestamps();
+
+            $table->foreign('provider_info_id')
+                ->references('id')
+                ->on('provider_info')
+                ->onDelete('cascade');
         });
     }
 }
