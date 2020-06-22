@@ -20,19 +20,18 @@ use Illuminate\Database\Eloquent\Model;
  * @property array                           $response
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\FaxLog newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\FaxLog newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\FaxLog query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\FaxLog whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\FaxLog whereDirection($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\FaxLog whereEventType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\FaxLog whereFaxId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\FaxLog whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\FaxLog whereResponse($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\FaxLog whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\FaxLog whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\FaxLog whereVendor($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\FaxLog newModelQuery()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\FaxLog newQuery()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\FaxLog query()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\FaxLog whereCreatedAt($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\FaxLog whereDirection($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\FaxLog whereEventType($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\FaxLog whereFaxId($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\FaxLog whereId($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\FaxLog whereResponse($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\FaxLog whereStatus($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\FaxLog whereUpdatedAt($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\FaxLog whereVendor($value)
  * @mixin \Eloquent
  */
 class FaxLog extends Model

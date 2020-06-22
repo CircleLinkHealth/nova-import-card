@@ -44,7 +44,8 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Demographics newQuery()
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Demographics query()
  * @mixin \Eloquent
- * @property int|null $eligibility_job_id
+ * @property int|null    $eligibility_job_id
+ * @property string|null $facility_name
  */
 class Demographics extends BaseModel
 {

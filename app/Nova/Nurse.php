@@ -6,7 +6,6 @@
 
 namespace App\Nova;
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
