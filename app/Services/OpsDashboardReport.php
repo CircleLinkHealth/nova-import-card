@@ -145,7 +145,7 @@ class OpsDashboardReport
     public function getReport(): array
     {
         return $this->getPatients()
-            ->getPriorDayReportData()
+            ->setPriorDayReportData()
             ->generateStatsFromPatientCollection()
             ->addCurrentTotalsToStats()
             ->consolidateStatsUsingPriorDayReport()
@@ -213,22 +213,27 @@ class OpsDashboardReport
     {
         $revisionHistory = $patient->patientInfo->revisionHistory->sortByDesc('created_at');
 
-        if ($revisionHistory->isNotEmpty()) {
-            if (Patient::ENROLLED == $revisionHistory->last()->old_value) {
-                if (Patient::UNREACHABLE == $revisionHistory->first()->new_value) {
-                    $this->revisionsUnreachablePatients[] = $patient;
-                }
-                if (Patient::PAUSED == $revisionHistory->first()->new_value) {
-                    $this->revisionsPausedPatients[] = $patient;
-                }
-                if (in_array($revisionHistory->first()->new_value, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
-                    $this->revisionsWithdrawnPatients[] = $patient;
-                }
+        if ($revisionHistory->isEmpty()) {
+            return;
+        }
+
+        $oldestStatus = $revisionHistory->last()->old_value;
+        $newestStatus = $revisionHistory->first()->new_value;
+
+        if (Patient::ENROLLED == $oldestStatus) {
+            if (Patient::UNREACHABLE == $newestStatus) {
+                $this->revisionsUnreachablePatients[] = $patient;
             }
-            if (Patient::ENROLLED !== $revisionHistory->last()->old_value &&
-                Patient::ENROLLED == $revisionHistory->first()->new_value) {
-                $this->revisionsAddedPatients[] = $patient;
+            if (Patient::PAUSED == $newestStatus) {
+                $this->revisionsPausedPatients[] = $patient;
             }
+            if (in_array($newestStatus, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
+                $this->revisionsWithdrawnPatients[] = $patient;
+            }
+        }
+        if (Patient::ENROLLED !== $oldestStatus &&
+                Patient::ENROLLED == $newestStatus) {
+            $this->revisionsAddedPatients[] = $patient;
         }
     }
 
@@ -251,15 +256,12 @@ class OpsDashboardReport
             return $this;
         }
 
-        if ($this->report->getTotal() - $this->report->getDelta() !== $this->report->getPriorDayTotals()) {
-            sendSlackMessage('#ops_dashboard_alers', "<?U8B3S8UBS> Warning! DELTA for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}' does not match.");
-        }
-
-        //if prior day data exist, numbers should have been processed by now. Check if they match
         $watchers = opsDashboardAlertWatchers();
+        if ($this->report->getTotal() - $this->report->getDelta() !== $this->report->getPriorDayTotals()) {
+            sendSlackMessage('#ops_dashboard_alers', "$watchers Warning! DELTA for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}' does not match.");
+        }
+        //if prior day data exist, numbers should have been processed by now. Check if they match
         if ($this->report->getAdded() != $countRevisionsAdded) {
-            //ops dashboard watcher
-            //slack revision patient ids. Enrolled patient IDs exist in db ops_dashboard_practice_reports
             $revisionIds = collect($this->revisionsAddedPatients)->pluck('id')->implode(',');
             sendSlackMessage('#ops_dashboard_alers', "$watchers Warning! Added Patients for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}' do not match.
             Totals using status: {$this->report->getAdded()} - Totals using revisions: $countRevisionsAdded. Revisionable IDs: $revisionIds");
@@ -350,28 +352,6 @@ class OpsDashboardReport
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    private function getPriorDayReportData()
-    {
-        $priorDayReport = OpsDashboardPracticeReport::where('practice_id', $this->practice->id)
-            ->where('date', $this->date->copy()->subDay()->toDateString())
-            ->whereNotNull('data')
-            ->where('is_processed', 1)
-            ->first();
-
-        if ($priorDayReport) {
-            $this->priorDayReportData = $priorDayReport->data;
-            $this->report->setPriorDayReportUpdatedAt($priorDayReport->updated_at);
-            if ( ! $this->shouldCalculateLostAddedUsingRevisionsOnly()) {
-                $this->report->setTotal($this->priorDayReportData['Total']);
-            }
-        }
-
-        return $this;
-    }
-
     private function incrementTimeRangeCount(PatientMonthlySummary $pms)
     {
         $ccmTime = $pms->ccm_time;
@@ -411,6 +391,28 @@ class OpsDashboardReport
         }
 
         return false;
+    }
+
+    /**
+     * @return $this
+     */
+    private function setPriorDayReportData()
+    {
+        $priorDayReport = OpsDashboardPracticeReport::where('practice_id', $this->practice->id)
+            ->where('date', $this->date->copy()->subDay()->toDateString())
+            ->whereNotNull('data')
+            ->where('is_processed', 1)
+            ->first();
+
+        if ($priorDayReport) {
+            $this->priorDayReportData = $priorDayReport->data;
+            $this->report->setPriorDayReportUpdatedAt($priorDayReport->updated_at);
+            if ( ! $this->shouldCalculateLostAddedUsingRevisionsOnly()) {
+                $this->report->setTotal($this->priorDayReportData['Total']);
+            }
+        }
+
+        return $this;
     }
 
     /**
