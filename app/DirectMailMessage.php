@@ -26,31 +26,27 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \Illuminate\Support\Carbon|null                                                         $updated_at
  * @property \CircleLinkHealth\SharedModels\Entities\Ccda[]|\Illuminate\Database\Eloquent\Collection $ccdas
  * @property \App\Media[]|\Illuminate\Database\Eloquent\Collection                                   $media
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereBody($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereFrom($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereMessageId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereNumAttachments($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereSubject($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereTo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereUpdatedAt($value)
+ * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage newModelQuery()
+ * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage newQuery()
+ * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage query()
+ * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereBody($value)
+ * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereCreatedAt($value)
+ * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereFrom($value)
+ * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereId($value)
+ * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereMessageId($value)
+ * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereNumAttachments($value)
+ * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereSubject($value)
+ * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereTo($value)
+ * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereUpdatedAt($value)
  * @mixin \Eloquent
- *
- * @property int|null    $ccdas_count
- * @property int|null    $media_count
- * @property string      $direction
- * @property string      $status
- * @property string|null $error_text
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereDirection($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereErrorText($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereStatus($value)
- *
+ * @property int|null                                             $ccdas_count
+ * @property int|null                                             $media_count
+ * @property string                                               $direction
+ * @property string                                               $status
+ * @property string|null                                          $error_text
+ * @method   static                                               \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereDirection($value)
+ * @method   static                                               \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereErrorText($value)
+ * @method   static                                               \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereStatus($value)
  * @property \CircleLinkHealth\Customer\Entities\EmrDirectAddress $senderDmAddress
  */
 class DirectMailMessage extends Model implements HasMedia
