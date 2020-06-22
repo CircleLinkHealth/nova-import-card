@@ -4,11 +4,11 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\Eligibility\Database\Seeders\CreateEnrolleesSurveySeeder;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEnrolleesSurvey extends Migration
+class CreateSendgridRawLogsTable extends Migration
 {
     /**
      * Reverse the migrations.
@@ -17,7 +17,7 @@ class CreateEnrolleesSurvey extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('');
+        Schema::dropIfExists('sendgrid_raw_logs');
     }
 
     /**
@@ -27,10 +27,10 @@ class CreateEnrolleesSurvey extends Migration
      */
     public function up()
     {
-        if ( ! isUnitTestingEnv()) {
-            Artisan::call('db:seed', [
-                '--class' => CreateEnrolleesSurveySeeder::class,
-            ]);
-        }
+        Schema::create('sendgrid_raw_logs', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->json('events')->nullable();
+            $table->timestamps();
+        });
     }
 }
