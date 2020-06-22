@@ -34,7 +34,8 @@ class MigrateWithComposerIde extends MigrateCommand
     public function handle()
     {
         parent::handle();
-
-        $this->runCpmCommand(['composer', 'ide'], true, Constants::TEN_MINUTES_IN_SECONDS);
+        if (app()->environment('local')) {
+            $this->runCpmCommand(['composer', 'ide'], true, Constants::TEN_MINUTES_IN_SECONDS);
+        }
     }
 }
