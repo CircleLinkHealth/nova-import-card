@@ -22,6 +22,7 @@ use App\Services\CPM\CpmProblemService;
 use App\Services\NoteService;
 use App\Services\PatientCustomEmail;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
@@ -67,43 +68,54 @@ class NotesController extends Controller
         }
 
         // patient view
-        $patient = User::find($patientId);
+        /** @var User $patient */
+        $patient = User::with([
+            'patientSummaries' => function ($q) {
+                return $q->where('month_year', Carbon::now()->startOfMonth());
+            },
+            'primaryPractice' => function ($q) {
+                return $q->with(['settings']);
+            },
+            'patientInfo' => function ($q) {
+                return $q->with(['contactWindows']);
+            },
+            'careTeamMembers' => function ($q) {
+                return $q->with([
+                    'user' => function ($q) {
+                        return $q->select(['id', 'first_name', 'last_name', 'suffix']);
+                    },
+                ]);
+            },
+        ])->find($patientId);
         if ( ! $patient) {
             return response('User not found', 401);
         }
 
-        //set contact flag
-        $patient_contact_window_exists = false;
-
-        if (0 != count($patient->patientInfo->contactWindows)) {
-            $patient_contact_window_exists = true;
-        }
-
         $patient_name = $patient->getFullName();
 
-        //Pull up user's call information.
-
-        //Gather details to generate form
-
-        $careteam_info = $this->service->getPatientCareTeamMembers($patientId);
+        $careteam_info = $patient
+            ->careTeamMembers
+            ->mapWithKeys(function (CarePerson $member) {
+                return [$member->member_user_id => $member->user->getFullName()];
+            });
+        asort($careteam_info);
 
         $userTimeZone = empty($patient->timezone)
             ? 'America/New_York'
             : $patient->timezone;
 
-        //Check for User's blog
         if (empty($patient->program_id)) {
             return response("User's Program not found", 401);
         }
-
-        //providers
-        $provider_info = [];
 
         $author      = Auth::user();
         $author_id   = $author->id;
         $author_name = $author->getFullName();
 
         //Patient Call Windows:
+        //set contact flag
+        $patient_contact_window_exists = $patient->patientInfo->contactWindows->isNotEmpty();
+        //this will create a new one if there are no contactWindows
         $window = PatientContactWindow::getPreferred($patient->patientInfo);
 
         $contact_days_array = [];
@@ -111,12 +123,12 @@ class NotesController extends Controller
             $contact_days_array = array_merge(explode(',', $patient->patientInfo->preferred_cc_contact_days));
         }
 
-        asort($provider_info);
-        asort($careteam_info);
-
         $existingNote = null;
+        $existingCall = null;
         if ($noteId) {
-            $existingNote = Note::findOrFail($noteId);
+            /** @var Note $existingNote */
+            $existingNote = Note::with(['call'])->findOrFail($noteId);
+            $existingCall = $existingNote->call;
         } else {
             $existingNote = Note::where('patient_id', '=', $patientId)
                 ->where('author_id', '=', $author_id)
@@ -154,12 +166,9 @@ class NotesController extends Controller
                 ->get();
         }
 
-        $isCareCoach = Auth::user()->isCareCoach();
-        $meds        = [];
-        if ($isCareCoach && $this->shouldPrePopulateWithMedications($patient)) {
-            $meds = $medicationService->repo()->patientMedicationsList($patientId, true);
-        }
-
+        // we used to send $meds for Phoenix Heart
+        // removed server side implementation because it could use optimization
+        $meds    = [];
         $reasons = [
             'No Longer Interested',
             'Moving out of Area',
@@ -175,40 +184,15 @@ class NotesController extends Controller
         $withdrawnReasons       = array_combine($reasons, $reasons);
         $patientWithdrawnReason = $patient->getWithdrawnReason();
 
-        $existingCall = $existingNote
-            ? Call::where('note_id', '=', $existingNote->id)->first()
-            : null;
-
         $performedAt = optional($existingNote)->performed_at ?? Carbon::now();
 
         $hasSuccessfulCall = ! empty($patient->patientInfo->last_successful_contact_time);
 
-        $surveyAnswer = [];
-
+        $answerFromMoreInfo = '';
         if ( ! $hasSuccessfulCall) {
-            $thisYear       = Carbon::now()->year;
-            $surveyInstance = DB::table('survey_instances')
-                ->join('surveys', 'survey_instances.survey_id', '=', 'surveys.id')
-                ->where('name', '=', SelfEnrollmentController::ENROLLEES_SURVEY_NAME)
-                ->where('year', '=', $thisYear)
-                ->first();
-
-//            NOTE: $patientId is $user->id.
-            if ($surveyInstance) {
-                $surveyAnswer = DB::table('questions')
-                    ->join('answers', 'questions.id', '=', 'answers.question_id')
-                    ->where('user_id', '=', $patientId)
-                    ->where('identifier', '=', 'Q_REQUESTS_INFO')
-                    ->where('survey_instance_id', '=', $surveyInstance->id)
-                    ->first();
-            } else {
-                $surveyAnswer = [];
-            }
+            // this should have been in a separate ajax call
+            $answerFromMoreInfo = $this->getAnswerFromSelfEnrolmentSurvey($patientId);
         }
-
-        $answerFromMoreInfo = ! empty($surveyAnswer)
-            ? json_decode($surveyAnswer->value)[0]->name
-            : '';
 
         $view_data = [
             'userTime'                => $performedAt->setTimezone($patient->timezone)->format('Y-m-d\TH:i'),
@@ -438,9 +422,24 @@ class NotesController extends Controller
         $note = Note::with('author')
             ->where('id', $noteId)
             ->where('patient_id', $patientId)
-            ->with(['call', 'notifications', 'patient'])
+            ->with([
+                'call',
+                'notifications',
+                'patient' => function ($q) {
+                    return $q->with([
+                        'careTeamMembers' => function ($q) {
+                            return $q->with([
+                                'user' => function ($q) {
+                                    return $q->select(['id', 'first_name', 'last_name', 'suffix']);
+                                },
+                            ]);
+                        },
+                    ]);
+                },
+            ])
             ->firstOrFail();
 
+        /** @var User $patient */
         $patient = $note->patient;
 
         $this->service->markNoteAsRead(auth()->user(), $note);
@@ -472,7 +471,11 @@ class NotesController extends Controller
         $data['comment']      = $note->body;
         $data['addendums']    = $note->addendums->sortByDesc('created_at');
 
-        $careteam_info = $this->service->getPatientCareTeamMembers($patientId);
+        $careteam_info = $patient
+            ->careTeamMembers
+            ->mapWithKeys(function (CarePerson $member) {
+                return [$member->member_user_id => $member->user->getFullName()];
+            });
 
         asort($careteam_info);
 
@@ -901,6 +904,41 @@ class NotesController extends Controller
     }
 
     /**
+     * 1. This can be converted to one query.
+     * 2. The json_decode is risky at the bottom and more error control is needed.
+     *
+     * @param $patientId
+     * @return |null
+     */
+    private function getAnswerFromSelfEnrolmentSurvey($patientId)
+    {
+        $thisYear       = Carbon::now()->year;
+        $surveyInstance = DB::table('survey_instances')
+            ->join('surveys', 'survey_instances.survey_id', '=', 'surveys.id')
+            ->where('name', '=', SelfEnrollmentController::ENROLLEES_SURVEY_NAME)
+            ->where('year', '=', $thisYear)
+            ->first();
+
+        if ( ! $surveyInstance) {
+            return null;
+        }
+
+        $surveyAnswer = DB::table('questions')
+            ->join('answers', 'questions.id', '=', 'answers.question_id')
+            ->where('user_id', '=', $patientId)
+            ->where('identifier', '=', 'Q_REQUESTS_INFO')
+            ->where('survey_instance_id', '=', $surveyInstance->id)
+            ->first();
+
+        if ( ! $surveyAnswer) {
+            return null;
+        }
+
+        // this is risky
+        return json_decode($surveyAnswer->value)[0]->name;
+    }
+
+    /**
      * Per CPM-2259
      * Default behaviour for attesting patient conditions is: Require at least 1 condition to be attested on call.
      *
@@ -931,7 +969,7 @@ class NotesController extends Controller
 
         $requirements['disabled'] = false;
 
-        if ( ! PatientMonthlySummary::existsForCurrentMonthForPatient($patient->id)) {
+        if ( ! PatientMonthlySummary::existsForCurrentMonthForPatient($patient)) {
             PatientMonthlySummary::createFromPatient($patient->id, Carbon::now()->startOfMonth());
         }
 
@@ -1013,32 +1051,6 @@ class NotesController extends Controller
             $note->id,
             $input['email-subject']
         ));
-    }
-
-//    /**
-//     * @param $senderId
-//     *
-//     * @return JsonResponse
-//     */
-//    public function getAddendumSenderName($senderId)
-//    {
-//        $senderName = User::find($senderId)->display_name;
-//
-//        return response()->json([
-//            'senderName' => $senderName,
-//        ], 200);
-//    }
-
-    private function shouldPrePopulateWithMedications(User $patient)
-    {
-        return Practice::whereId($patient->program_id)
-            ->where(
-                function ($q) {
-                    $q->where('name', '=', 'phoenix-heart')
-                        ->orWhere('name', '=', 'demo');
-                }
-            )
-            ->exists();
     }
 
     private function updatePatientCallWindows(Patient $info, $input)
