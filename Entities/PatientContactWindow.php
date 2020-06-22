@@ -293,9 +293,13 @@ class PatientContactWindow extends BaseModel
 
     public static function getPreferred(Patient $patientInfo)
     {
-        $window = PatientContactWindow::firstOrNew([
-            'patient_info_id' => $patientInfo->id,
-        ]);
+        if ($patientInfo->relationLoaded('contactWindows') && $patientInfo->contactWindows->isNotEmpty()) {
+            $window = $patientInfo->contactWindows->first();
+        } else {
+            $window = PatientContactWindow::firstOrNew([
+                'patient_info_id' => $patientInfo->id,
+            ]);
+        }
 
         $window_start = Carbon::parse($window->window_time_start)->format('H:i');
         $window_end   = Carbon::parse($window->window_time_end)->format('H:i');
