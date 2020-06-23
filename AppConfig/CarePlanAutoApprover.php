@@ -19,9 +19,6 @@ class CarePlanAutoApprover
 
     public static function id()
     {
-        return \Cache::remember(self::CARE_PLAN_AUTO_APPROVER_USER_ID_NOVA_KEY, 2, function () {
-            return optional(AppConfig::where('config_key', '=', self::CARE_PLAN_AUTO_APPROVER_USER_ID_NOVA_KEY)
-                ->first())->config_value;
-        });
+        return AppConfig::pull(self::CARE_PLAN_AUTO_APPROVER_USER_ID_NOVA_KEY, null);
     }
 }
