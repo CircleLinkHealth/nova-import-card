@@ -88,6 +88,6 @@ class TwilioCallDuration extends Value
      */
     public function uriKey()
     {
-        return 'twilio-call-duration';
+        return "twilio-call-duration-$this->source";
     }
 }
