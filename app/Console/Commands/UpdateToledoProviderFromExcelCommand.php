@@ -7,6 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Imports\ToledoPracticeProviders\UpdateProvidersFromExcel;
+use GenerateToledoSignatures;
 use Illuminate\Console\Command;
 
 class UpdateToledoProviderFromExcelCommand extends Command
@@ -41,6 +42,9 @@ class UpdateToledoProviderFromExcelCommand extends Command
      */
     public function handle()
     {
-        \Excel::import(new UpdateProvidersFromExcel(), 'storage/toledo-provider-signatures/pcp_signature_file_for_clh.xlsx');
+        $practiceName = \Illuminate\Support\Facades\App::environment(['testing'])
+            ? GenerateToledoSignatures::TOLEDO_DEMO
+            : GenerateToledoSignatures::TOLEDO_CLINIC;
+        \Excel::import(new UpdateProvidersFromExcel($practiceName), 'storage/toledo-provider-signatures/pcp_signature_file_for_clh.xlsx');
     }
 }

@@ -15,9 +15,22 @@ use Maatwebsite\Excel\Concerns\WithStartRow;
 
 class UpdateProvidersFromExcel implements ToCollection, WithStartRow
 {
+    /**
+     * @var string
+     */
+    private $practiceName;
+
+    /**
+     * UpdateProvidersFromExcel constructor.
+     */
+    public function __construct(string $practiceName)
+    {
+        $this->practiceName = $practiceName;
+    }
+
     public function collection(Collection $rows)
     {
-        $practice           = Practice::where('name', 'toledo-clinic')->first();
+        $practice           = Practice::where('name', $this->practiceName)->first();
         $excelProvidersData = $this->excelProvidersData($rows);
 
         $users = [];

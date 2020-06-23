@@ -11,6 +11,9 @@ use Illuminate\Database\Seeder;
 
 class GenerateToledoSignatures extends Seeder
 {
+    const TOLEDO_CLINIC = 'toledo-clinic';
+    const TOLEDO_DEMO   = 'toledo-demo';
+
     /**
      * Run the database seeds.
      *
@@ -64,7 +67,8 @@ class GenerateToledoSignatures extends Seeder
             '1962409979',
         ];
 
-        $practiceId = $this->getPractice('toledo-clinic');
+        $practiceName = \Illuminate\Support\Facades\App::environment(['testing']) ? self::TOLEDO_DEMO : self::TOLEDO_CLINIC;
+        $practiceId   = $this->getPractice($practiceName);
 
         User::ofType('provider')
             ->with('providerInfo.signature')
@@ -94,7 +98,7 @@ class GenerateToledoSignatures extends Seeder
         $toledoPractice = Practice::where('name', '=', $practiceName)->first();
 
         if ( ! $toledoPractice) {
-            throw new Exception('Toledo Practice not found in Practices');
+            throw new Exception("$practiceName Practice not found in Practices");
         }
 
         return $toledoPractice->id;
