@@ -72,8 +72,7 @@ class UpdateProvidersFromExcel implements ToCollection, WithStartRow
      */
     private function getUserProvider(string $email, $practice)
     {
-        $user = User::
-        with('providerInfo')->where('program_id', $practice->id)
+        $user = User::with('providerInfo')->where('program_id', $practice->id)
             ->where('email', $email)
             ->whereHas('providerInfo')
             ->first();
