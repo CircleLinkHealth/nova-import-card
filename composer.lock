@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cf4f2ddaf07437c14c83126eb4f3f990",
+    "content-hash": "5072bc3aab532c311efb4630461a9f3f",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -58,16 +58,16 @@
         },
         {
             "name": "algolia/algoliasearch-client-php",
-            "version": "2.6.1",
+            "version": "2.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/algolia/algoliasearch-client-php.git",
-                "reference": "dd7eb942ff15c45179043b4cce51e53b4cf10112"
+                "reference": "6721dd2bff8c5a9de6152d550c896d147e013e40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/algolia/algoliasearch-client-php/zipball/dd7eb942ff15c45179043b4cce51e53b4cf10112",
-                "reference": "dd7eb942ff15c45179043b4cce51e53b4cf10112",
+                "url": "https://api.github.com/repos/algolia/algoliasearch-client-php/zipball/6721dd2bff8c5a9de6152d550c896d147e013e40",
+                "reference": "6721dd2bff8c5a9de6152d550c896d147e013e40",
                 "shasum": ""
             },
             "require": {
@@ -124,7 +124,7 @@
                 "php",
                 "search"
             ],
-            "time": "2020-04-16T08:45:30+00:00"
+            "time": "2020-06-23T15:16:17+00:00"
         },
         {
             "name": "algolia/scout-extended",
@@ -511,16 +511,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.142.7",
+            "version": "3.142.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "42f1b348f28388233aa6a0c395f8adc29e8cb752"
+                "reference": "a9cffb2442b63ca8a99ed3e68aef19df221e2a54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/42f1b348f28388233aa6a0c395f8adc29e8cb752",
-                "reference": "42f1b348f28388233aa6a0c395f8adc29e8cb752",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a9cffb2442b63ca8a99ed3e68aef19df221e2a54",
+                "reference": "a9cffb2442b63ca8a99ed3e68aef19df221e2a54",
                 "shasum": ""
             },
             "require": {
@@ -592,7 +592,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-06-22T18:15:41+00:00"
+            "time": "2020-06-23T18:46:28+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1076,11 +1076,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.6.3",
+            "version": "dev-ROAD-200",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "e7c07196ddec0cc01e2c7e59a22333149155ec9f"
+                "reference": "b7c4bc91a169079bc9fe6dc9accf3ae86046028c"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1109,7 +1109,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-18T18:15:48+00:00"
+            "time": "2020-06-23T21:12:01+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -4445,16 +4445,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v7.16.1",
+            "version": "v7.17.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "dc9cd8338d222dec2d9962553639e08c4585fa5b"
+                "reference": "6633c4017b311d3aaae842edabd567c637afc39c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/dc9cd8338d222dec2d9962553639e08c4585fa5b",
-                "reference": "dc9cd8338d222dec2d9962553639e08c4585fa5b",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/6633c4017b311d3aaae842edabd567c637afc39c",
+                "reference": "6633c4017b311d3aaae842edabd567c637afc39c",
                 "shasum": ""
             },
             "require": {
@@ -4598,7 +4598,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-06-16T14:31:25+00:00"
+            "time": "2020-06-23T15:22:07+00:00"
         },
         {
             "name": "laravel/horizon",
@@ -4675,17 +4675,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "v3.6.0",
+            "version": "v3.7.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "fd5584ece923cc03f3514c6e8cd53a292683c5b5"
+                "reference": "93019ac546a9aa187a3c26fe2000c634f9da16b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-fd5584ece923cc03f3514c6e8cd53a292683c5b5-zip-303b8a.zip",
-                "reference": "fd5584ece923cc03f3514c6e8cd53a292683c5b5",
-                "shasum": "05c64fbebe214635756015793c2093e250053fe7"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-93019ac546a9aa187a3c26fe2000c634f9da16b2-zip-beba42.zip",
+                "reference": "93019ac546a9aa187a3c26fe2000c634f9da16b2",
+                "shasum": "c2235762456135feb8f02502453ef31b99047443"
             },
             "require": {
                 "brick/money": "^0.4.2",
@@ -4745,7 +4745,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2020-05-12T15:15:04+00:00"
+            "time": "2020-06-23T16:57:56+00:00"
         },
         {
             "name": "laravel/passport",
@@ -13301,16 +13301,16 @@
         },
         {
             "name": "kitloong/laravel-migrations-generator",
-            "version": "4.3.2",
+            "version": "4.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kitloong/laravel-migrations-generator.git",
-                "reference": "d1d2ef179fd414bfa616898be34c6a92fd3f1d34"
+                "reference": "94edf958ff1ee220a7c33b26e897e5d9a572163e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kitloong/laravel-migrations-generator/zipball/d1d2ef179fd414bfa616898be34c6a92fd3f1d34",
-                "reference": "d1d2ef179fd414bfa616898be34c6a92fd3f1d34",
+                "url": "https://api.github.com/repos/kitloong/laravel-migrations-generator/zipball/94edf958ff1ee220a7c33b26e897e5d9a572163e",
+                "reference": "94edf958ff1ee220a7c33b26e897e5d9a572163e",
                 "shasum": ""
             },
             "require": {
@@ -13357,7 +13357,7 @@
                 "migration",
                 "migrations"
             ],
-            "time": "2020-06-22T15:27:01+00:00"
+            "time": "2020-06-23T15:40:43+00:00"
         },
         {
             "name": "laravel/dusk",
@@ -16033,6 +16033,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/core-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "orangehill/iseed": 20
     },
