@@ -14,11 +14,13 @@ use App\Notifications\NoteForwarded;
 use App\Traits\Addendumable;
 use App\Traits\NotificationAttachable;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\PdfReportTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * App\Note.
@@ -166,7 +168,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         }
 
         if ($notifySupport) {
-            $recipients->push(User::find(PatientSupportUser::id()));
+            $this->forwardToSlack();
         }
 
         $channelsForLocation = [];
@@ -375,5 +377,26 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         $pdf->save($filePath, true);
 
         return $filePath;
+    }
+
+    private function forwardToSlack()
+    {
+        $handles = Cache::remember($key = 'patient_support_notes_forwarded_slack_handles', 2, function () use ($key) {
+            return AppConfig::pull($key, null);
+        });
+
+        if ( ! $handles) {
+            return;
+        }
+
+        $channel = Cache::remember($key = 'patient_support_notes_forwarded_slack_channel', 2, function () use ($key) {
+            return AppConfig::pull($key, null);
+        });
+
+        if ( ! $channel) {
+            return;
+        }
+
+        sendSlackMessage($channel, "$handles <{$this->link()}|the following note> was forwarded to CLH support.");
     }
 }
