@@ -107,7 +107,7 @@ class ImportConsentedEnrollees implements ShouldQueue
 
     private function getDefaultPatientReimportNotifiableId(): ?int
     {
-        return AppConfig::whereConfigKey('default_patient_reimport_notifiable_id')->pluck('config_value')->first();
+        return AppConfig::pull('default_patient_reimport_notifiable_id', null);
     }
 
     private function handleExistingUser(Enrollee $enrollee): ?User

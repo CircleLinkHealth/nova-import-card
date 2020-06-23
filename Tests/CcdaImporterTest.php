@@ -330,17 +330,11 @@ class CcdaImporterTest extends CustomerTestCase
 
     private function enableQaAutoApprover()
     {
-        AppConfig::create([
-            'config_key'   => CarePlanAutoApprover::CARE_PLAN_AUTO_APPROVER_USER_ID_NOVA_KEY,
-            'config_value' => $this->superadmin()->id,
-        ]);
+        AppConfig::set(CarePlanAutoApprover::CARE_PLAN_AUTO_APPROVER_USER_ID_NOVA_KEY, $this->superadmin()->id);
     }
 
     private function enableStandByNurse()
     {
-        AppConfig::create([
-            'config_key'   => StandByNurseUser::STAND_BY_NURSE_USER_ID_NOVA_KEY,
-            'config_value' => $this->superadmin()->id,
-        ]);
+        AppConfig::set(StandByNurseUser::STAND_BY_NURSE_USER_ID_NOVA_KEY, $this->superadmin()->id);
     }
 }
