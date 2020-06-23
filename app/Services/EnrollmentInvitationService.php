@@ -16,15 +16,13 @@ use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 class EnrollmentInvitationService
 {
     /**
-     * @param $practiceName
-     * @param $practiceLetter
+     * @param $practice
      * @param mixed $practiceNumber
-     * @param $provider
-     * @param bool $hideButtons
+     * @param bool  $hideButtons
      *
      * @return array
      */
-    public function createLetter($practiceName, EnrollmentInvitationLetter $practiceLetter, $practiceNumber, User $provider, $hideButtons = false)
+    public function createLetter($practice, EnrollmentInvitationLetter $practiceLetter, $practiceNumber, User $provider, $hideButtons = false)
     {
         $varsToBeReplaced = [
             EnrollmentInvitationLetter::PROVIDER_LAST_NAME,
@@ -58,14 +56,16 @@ class EnrollmentInvitationService
         $practiceSigSrc = '';
         if ( ! empty($practiceLetter->customer_signature_src)) {
             if (ProviderSignature::SIGNATURE_VALUE === $practiceLetter->customer_signature_src) {
+                $practiceNameToGetSignature = $practice->name;
                 if (isSelfEnrollmentTestModeEnabled()) {
-                    $practiceName = 'Toledo Clinic';
+//                    We need real practice's name and not toledo-demo. Signatures are saved: public/img/toledo-clinic/signatures
+                    $practiceNameToGetSignature = 'toledo-clinic';
                 }
                 $npiNumber      = $provider->load('providerInfo')->providerInfo->npi_number;
                 $type           = ProviderSignature::SIGNATURE_PIC_TYPE;
-                $practiceSigSrc = "<img src='/img/signatures/$practiceName/$npiNumber$type' alt='$practiceName' style='max-width: 100%;'/>";
+                $practiceSigSrc = "<img src='/img/signatures/$practiceNameToGetSignature/$npiNumber$type' alt='$practice->dipslay_name' style='max-width: 100%;'/>";
             } else {
-                $practiceSigSrc = "<img src='$practiceLetter->customer_signature_src'  alt='$practiceName' style='max-width: 100%;'/>";
+                $practiceSigSrc = "<img src='$practiceLetter->customer_signature_src'  alt='$practice->dipslay_name' style='max-width: 100%;'/>";
             }
         }
 
@@ -73,7 +73,7 @@ class EnrollmentInvitationService
             $provider->last_name,
             $practiceNumber,
             $provider->display_name,
-            $practiceName,
+            $practice->display_name,
             $buttonsLocation,
             $practiceSigSrc,
             $optionalParagraph,
