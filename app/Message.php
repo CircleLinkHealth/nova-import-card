@@ -25,28 +25,24 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property string|null                              $seen_on
  * @property \CircleLinkHealth\Customer\Entities\User $recipient
  * @property \CircleLinkHealth\Customer\Entities\User $sender
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereBody($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereNoteId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereReceiverCpmId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereReceiverEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereSeenOn($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereSenderCpmId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereSenderEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereSubject($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereUpdatedAt($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Message whereBody($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Message whereCreatedAt($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Message whereId($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Message whereNoteId($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Message whereReceiverCpmId($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Message whereReceiverEmail($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Message whereSeenOn($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Message whereSenderCpmId($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Message whereSenderEmail($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Message whereSubject($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Message whereType($value)
+ * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Message whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Message newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Message newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Message query()
- *
- * @property int|null $revision_history_count
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Message newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Message newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Message query()
+ * @property int|null                                                                                    $revision_history_count
  */
 class Message extends \CircleLinkHealth\Core\Entities\BaseModel
 {

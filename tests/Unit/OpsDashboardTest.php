@@ -12,6 +12,7 @@ use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
@@ -69,6 +70,91 @@ class OpsDashboardTest extends \Tests\TestCase
         $this->nurse    = $this->createUser($this->practice->id, 'care-center');
 
         $this->patient = $this->setupPatient($this->practice);
+    }
+
+    public function test_deltas_are_accurate()
+    {
+        //setup practice and patients
+        $practice = factory(Practice::class)->create();
+
+        $patients = [];
+        for ($i = 10; $i > 0; --$i) {
+            $patients[] = $this->setupPatient($practice);
+        }
+
+        //generate report for 1 day
+        $yesterday = Carbon::now()->subDay();
+        $this->runJobToGenerateDBDataForPractice($practice->id, $yesterday);
+
+        $dbReport1 = OpsDashboardPracticeReport::where('practice_id', $practice->id)
+            ->where('date', $yesterday->toDateString())
+            ->first();
+        //assert true numbers
+
+        $this->assertNotNull($dbReport1);
+
+        $dbReport1Data = $dbReport1->data;
+        $this->assertTrue( ! empty($dbReport1Data));
+        $this->assertTrue(array_keys_exist([
+            'total_paused_count',
+            'total_unreachable_count',
+            'total_withdrawn_count',
+            'prior_day_report_updated_at',
+            'report_updated_at',
+            'enrolled_patient_ids',
+        ], $dbReport1Data));
+        $this->assertTrue(10 === $dbReport1Data['Added']);
+        $this->assertTrue(0 === $dbReport1Data['Paused']);
+        $this->assertTrue(0 === $dbReport1Data['Withdrawn']);
+        $this->assertTrue(0 === $dbReport1Data['Unreachable']);
+        $this->assertTrue(10 === $dbReport1Data['Delta']);
+        $this->assertTrue(10 === $dbReport1Data['Total']);
+
+        //change patient statuses
+        $patient0                          = $patients[0];
+        $patient0->patientInfo->ccm_status = Patient::PAUSED;
+        $patient0->save();
+
+        $patient0                          = $patients[1];
+        $patient0->patientInfo->ccm_status = Patient::WITHDRAWN_1ST_CALL;
+        $patient0->save();
+
+        $patient0                          = $patients[2];
+        $patient0->patientInfo->ccm_status = Patient::UNREACHABLE;
+        $patient0->save();
+
+        //add new patient
+        $this->setupPatient($practice);
+
+        //generate report for next day
+        $today = Carbon::now();
+        $this->runJobToGenerateDBDataForPractice($practice->id, $today);
+
+        //assert deltas are correct
+        $dbReport2 = OpsDashboardPracticeReport::where('practice_id', $practice->id)
+            ->where('date', $today->toDateString())
+            ->first();
+        //assert true numbers
+
+        $this->assertNotNull($dbReport2);
+
+        $dbReport2Data = $dbReport2->data;
+        $this->assertTrue( ! empty($dbReport2Data));
+        $this->assertTrue(array_keys_exist([
+            'total_paused_count',
+            'total_unreachable_count',
+            'total_withdrawn_count',
+            'prior_day_report_updated_at',
+            'report_updated_at',
+            'enrolled_patient_ids',
+        ], $dbReport2Data));
+        $this->assertTrue(1 === $dbReport2Data['Added']);
+        $this->assertTrue(1 === $dbReport2Data['Paused']);
+        $this->assertTrue(1 === $dbReport2Data['Withdrawn']);
+        $this->assertTrue(1 === $dbReport2Data['Unreachable']);
+        $this->assertTrue(-2 === $dbReport2Data['Delta']);
+        $this->assertTrue($dbReport2Data['Prior Day totals'] === $dbReport1Data['Total']);
+        $this->assertTrue($dbReport1Data['Total'] + $dbReport2Data['Delta'] === $dbReport2Data['Total']);
     }
 
     /**
@@ -176,9 +262,9 @@ class OpsDashboardTest extends \Tests\TestCase
         );
     }
 
-    private function runJobToGenerateDBDataForPractice($practiceId)
+    private function runJobToGenerateDBDataForPractice($practiceId, $date = null)
     {
         //this will produce DB entry with data for given practice
-        GenerateOpsDailyPracticeReport::dispatch($practiceId);
+        GenerateOpsDailyPracticeReport::dispatch($practiceId, $date);
     }
 }

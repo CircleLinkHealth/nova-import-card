@@ -109,9 +109,9 @@ class TwilioCall extends Resource
     {
         return [
             new TwilioCallDuration('RN Call Duration', TwilioCallSourceFilter::PATIENT_CALL),
-            new TwilioCallCosts('RN Call Costs', TwilioCallSourceFilter::PATIENT_CALL, 2),
+            new TwilioCallCosts('RN Call Costs', TwilioCallSourceFilter::PATIENT_CALL, 4),
             new TwilioCallDuration('CA Call Duration', TwilioCallSourceFilter::ENROLMENT_DASHBOARD),
-            new TwilioCallCosts('CA Call Costs', TwilioCallSourceFilter::ENROLMENT_DASHBOARD, 2),
+            new TwilioCallCosts('CA Call Costs', TwilioCallSourceFilter::ENROLMENT_DASHBOARD, 4),
         ];
     }
 
@@ -137,7 +137,7 @@ class TwilioCall extends Resource
             Text::make('From', 'from')->sortable(),
 
             Text::make('RN/CA', 'outboundUser.display_name')->sortable(),
-    
+
             Text::make('To', 'to')->sortable(),
 
             Text::make('Patient', function ($row) {

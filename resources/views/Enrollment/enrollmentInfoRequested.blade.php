@@ -17,7 +17,9 @@
                     Please save this number
                     <br>
                     <br>
+                    @if(!empty($providerName))
                     <strong>Dr. {{$providerName}}'s care team</strong>
+                    @endif
                 </p>
             </div>
             <div class="logout">

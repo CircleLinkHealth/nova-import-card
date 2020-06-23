@@ -9,20 +9,11 @@
                     @include('enrollment-consent.enrollableInvitationButtons')
                 </div>
             @endif
-            <div class="headers">
-                <div class="logo">
-                    @include('enrollment-consent.practiceLogo')
-                </div>
-                <br>
-                <hr>
-            </div>
-                <div class="flow-text" style="max-height: 590px; overflow-y: scroll;">
-                    <div class="header">
-                        {{$signatoryNameForHeader}}
-                        <br>
-                        {{$practiceName}}
-                    </div>
-
+                @if(! $extraAddressValuesRequested)
+                @include('enrollment-consent.headers.commonwealth')
+                @else
+                    @include('enrollment-consent.headers.toledo')
+                @endif
                     <div class="letter-sent">
                         {{$dateLetterSent}}
                     </div>
@@ -34,11 +25,15 @@
                             @include('enrollment-consent.enrollmentLetter')
                         </div>
                     </div>
+
+                @if(! $extraAddressValuesRequested)
                     <div class="logo" style="margin-bottom: 10px">
-                        <div class="logo">
+                        <div class="logo" style="{{$logoStyleRequest}}">
                             @include('enrollment-consent.practiceLogo')
                         </div>
                     </div>
+                @endif
+
                     @if(!$hideButtons)
                         <div class="header-buttons">
                             @include('enrollment-consent.enrollableInvitationButtons')
@@ -46,7 +41,6 @@
                     @endif
                 </div>
             </div>
-        </div>
     </div>
 
 

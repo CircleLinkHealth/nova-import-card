@@ -222,6 +222,16 @@ class SelfEnrollmentTest extends TestCase
         self::assertTrue(with(new SendReminder($patient))->shouldRun());
     }
 
+    public function test_it_removes_email_channel_if_fake_email()
+    {
+        $enrollee = $this->createEnrollees();
+
+        $enrollee->user->email = 'test@careplanmanager.com';
+        $enrollee->user->save();
+
+        $this->assertFalse(in_array('mail', (new SelfEnrollmentInviteNotification('hello'))->via($enrollee->user)));
+    }
+
     public function test_it_saves_different_enrollment_link_in_db_when_sending_reminder()
     {
         $enrollee = $this->createEnrollees($number = 1);
@@ -291,6 +301,19 @@ class SelfEnrollmentTest extends TestCase
             ['mail', 'twilio']
         );
         Notification::assertTimesSent($number, SelfEnrollmentInviteNotification::class);
+    }
+
+    public function test_it_sends_enrollment_notifications_limited()
+    {
+        $this->createEnrollees($number = 5);
+        Notification::fake();
+        InvitePracticeEnrollees::dispatch(
+            $limit = 2,
+            $this->practice()->id,
+            SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
+            ['mail', CustomTwilioChannel::class]
+        );
+        Notification::assertTimesSent($limit, SelfEnrollmentInviteNotification::class);
     }
 
     public function test_it_sends_enrollment_sms()

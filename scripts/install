@@ -8,9 +8,13 @@ function copyHooksTo {
     # copy git hooks to ./.git/hooks/ folder
     for FILE in $SCRIPTS_DIR/*;do
         if [ -d "$FILE" ]; then
-            cp -R $FILE $1
+            if [ -d "$1" ]; then
+                cp -R $FILE $1
+            fi
         else
-            install -m 755 "$FILE" $1
+            if [ -d "$1" ]; then
+                install -m 755 "$FILE" $1
+            fi
         fi
     done
 }

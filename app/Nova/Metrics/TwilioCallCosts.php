@@ -25,6 +25,7 @@ class TwilioCallCosts extends Value
 
     /**
      * TwilioCallCosts constructor.
+     *
      * @param mixed $precision
      */
     public function __construct(string $name, string $source, $precision = 4)
@@ -95,6 +96,6 @@ class TwilioCallCosts extends Value
      */
     public function uriKey()
     {
-        return 'twilio-call-costs';
+        return "twilio-call-costs-$this->source";
     }
 }
