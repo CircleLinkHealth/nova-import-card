@@ -32,9 +32,6 @@ class AddPracticesToShowMedicareDisclaimer extends Migration
             $practiceName = 'demo';
         }
 
-        AppConfig::create([
-            'config_key'   => PracticesRequiringMedicareDisclaimer::PRACTICE_REQUIRES_MEDICARE_DISCLAIMER_NOVA_KEY,
-            'config_value' => $practiceName,
-        ]);
+        AppConfig::set(PracticesRequiringMedicareDisclaimer::PRACTICE_REQUIRES_MEDICARE_DISCLAIMER_NOVA_KEY, $practiceName);
     }
 }

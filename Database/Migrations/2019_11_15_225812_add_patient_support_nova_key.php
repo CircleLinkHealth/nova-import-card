@@ -39,15 +39,7 @@ class AddPatientSupportNovaKey extends Migration
             ])->id;
         }
 
-        AppConfig::whereConfigKey(PatientSupportUser::PATIENT_SUPPORT_USER_ID_NOVA_KEY)->delete();
-
-        AppConfig::updateOrCreate(
-            [
-                'config_key' => PatientSupportUser::PATIENT_SUPPORT_USER_ID_NOVA_KEY,
-            ],
-            [
-                'config_value' => $patientSupportUserId,
-            ]
-        );
+        AppConfig::remove(PatientSupportUser::PATIENT_SUPPORT_USER_ID_NOVA_KEY);
+        AppConfig::set(PatientSupportUser::PATIENT_SUPPORT_USER_ID_NOVA_KEY, $patientSupportUserId);
     }
 }
