@@ -78,7 +78,9 @@ class AppConfig extends BaseModel
 
         $len = $conf->count();
         if (1 === $len) {
-            return $conf->first()['config_value'];
+            $result = $conf->first()['config_value'];
+
+            return is_array($default) ? [$result] : $result;
         }
 
         if ($len > 1) {
@@ -89,6 +91,29 @@ class AppConfig extends BaseModel
         }
 
         return $default;
+    }
+
+    public static function remove(string $key, $value = null)
+    {
+        static::setup();
+
+        if ($value) {
+            static::$config = static::$config->reject(function ($item) use ($key, $value) {
+                return $item['config_key'] == $key && $item['config_value'] == $value;
+            });
+            AppConfig::whereConfigKey($key)
+                ->whereConfigValue($value)
+                ->delete();
+
+            return;
+        }
+
+        static::$config = static::$config->reject(function ($item) use ($key) {
+            return $item['config_key'] == $key;
+        });
+
+        AppConfig::whereConfigKey($key)
+            ->delete();
     }
 
     public static function set(string $key, $value)
@@ -104,6 +129,10 @@ class AppConfig extends BaseModel
 
         if ($conf) {
             static::setup();
+            // any better ideas? i need to replace an entry
+            static::$config = static::$config->reject(function ($item) use ($key) {
+                return $item['config_key'] == $key;
+            });
             static::$config->push([
                 'config_key'   => $conf->config_key,
                 'config_value' => $conf->config_value,
