@@ -1602,11 +1602,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'admin.reports.nurse.daily.data',
         ])->middleware('permission:nurseReport.create');
 
-        Route::get('reports/nurse/allocation', [
-            'uses' => 'NurseController@monthlyOverview',
-            'as'   => 'admin.reports.nurse.allocation',
-        ])->middleware('permission:nurseReport.read');
-
         Route::get('reports/nurse/monthly', [
             'uses' => 'NurseController@monthlyReport',
             'as'   => 'admin.reports.nurse.monthly',

@@ -124,10 +124,6 @@
                                 <li><a href="{{ route('get.admin.nurse.schedules') }}">Schedules</a>
                                 <li><a href="{{ route('admin.reports.nurse.daily') }}">Daily
                                         Report</a></li>
-                                <li><a href="{{ route('admin.reports.nurse.allocation') }}">
-                                        Allocation</a></li>
-                                <li><a href="{{ route('admin.reports.nurse.allocation', ['v2']) }}">
-                                        Allocation (V2)</a></li>
                             </ul>
                         </li>
 
