@@ -55,24 +55,24 @@
           </div>
 
   </div>
-        <div class="row">
-            <div style="display: inline-flex;">
-          <div class="request-info-href">
-              <h5>Test Case 1.</h5>
-              <p>Send 1st. Reminder to non responding patients</p>
-              <ul class="browser-default">
-                  <li>
-                      For this to work,<br> you should just invite test patients and take no action after.
-                  </li>
-              </ul>
-            <div>
-                <a href="{{route('send.reminder.enrollee.qa')}}" target="_blank">
-                    <button type="button" class="btn btn-warning">
-                        Fast Forward 2 days and send reminders to Enrollees
-                    </button>
-                </a>
-            </div>
-<br>
+{{--        <div class="row">--}}
+{{--            <div style="display: inline-flex;">--}}
+{{--          <div class="request-info-href">--}}
+{{--              <h5>Test Case 1.</h5>--}}
+{{--              <p>Send 1st. Reminder to non responding patients</p>--}}
+{{--              <ul class="browser-default">--}}
+{{--                  <li>--}}
+{{--                      For this to work,<br> you should just invite test patients and take no action after.--}}
+{{--                  </li>--}}
+{{--              </ul>--}}
+{{--            <div>--}}
+{{--                <a href="{{route('send.reminder.enrollee.qa')}}" target="_blank">--}}
+{{--                    <button type="button" class="btn btn-warning">--}}
+{{--                        Fast Forward 2 days and send reminders to Enrollees--}}
+{{--                    </button>--}}
+{{--                </a>--}}
+{{--            </div>--}}
+{{--<br>--}}
 {{--             <div>--}}
 {{--                 <a href="{{route('send.reminder.patient.qa')}}" target="_blank">--}}
 {{--                     <button type="button" class="btn btn-warning">--}}
@@ -82,30 +82,30 @@
 {{--             </div>--}}
 {{--          </div>--}}
 
-          <br>
+{{--          <br>--}}
 
-          <div class="request-info-href">
-              <h5>Test Case 2</h5>
-              <p>Take Final Action on Non Responding Patients</p>
-              <ul class="browser-default">
-                  <li>
-                      For this to work, you should just invite test patients and take no action after.
-                  </li>
-                  <li>
-                      Should go through "Test Case 1." first
-                  </li>
-              </ul>
-              <a href="{{route('final.action.qa')}}" target="_blank">
-                  <button type="button" class="btn btn-warning">
-                      Fast forward 4 days. Final Step<br>
-                  </button>
-              </a>
-              <p> After Final Step is done, you will be redirected to "Care Ambassador Director Panel"<br>
-                  You can check if patient is listed there marked as "Send Regular Mail" and "Auto enrollment triggered".</p>
-          </div>
-      </div>
+{{--          <div class="request-info-href">--}}
+{{--              <h5>Test Case 2</h5>--}}
+{{--              <p>Take Final Action on Non Responding Patients</p>--}}
+{{--              <ul class="browser-default">--}}
+{{--                  <li>--}}
+{{--                      For this to work, you should just invite test patients and take no action after.--}}
+{{--                  </li>--}}
+{{--                  <li>--}}
+{{--                      Should go through "Test Case 1." first--}}
+{{--                  </li>--}}
+{{--              </ul>--}}
+{{--              <a href="{{route('final.action.qa')}}" target="_blank">--}}
+{{--                  <button type="button" class="btn btn-warning">--}}
+{{--                      Fast forward 4 days. Final Step<br>--}}
+{{--                  </button>--}}
+{{--              </a>--}}
+{{--              <p> After Final Step is done, you will be redirected to "Care Ambassador Director Panel"<br>--}}
+{{--                  You can check if patient is listed there marked as "Send Regular Mail" and "Auto enrollment triggered".</p>--}}
+{{--          </div>--}}
+{{--      </div>--}}
 
-            <br>
+{{--            <br>--}}
 
             <div class="request-info-href" style="padding-top: 20px;">
                 <h5>Enter patient 'ID' that got enrolled</h5>
