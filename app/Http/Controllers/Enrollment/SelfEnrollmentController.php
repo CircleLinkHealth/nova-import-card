@@ -80,10 +80,8 @@ class SelfEnrollmentController extends Controller
             $provider = $userForEnrollment->billingProviderUser();
         }
 
-        $practiceName = $enrollablePrimaryPractice->display_name;
-
         return $this->enrollmentInvitationService->createLetter(
-            $practiceName,
+            $enrollablePrimaryPractice,
             $letter,
             $practiceNumber,
             $provider,

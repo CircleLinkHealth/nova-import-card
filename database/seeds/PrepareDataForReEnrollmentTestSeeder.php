@@ -15,6 +15,7 @@ use Illuminate\Database\Seeder;
 
 class PrepareDataForReEnrollmentTestSeeder extends Seeder
 {
+//    We can create UI for tester to choose for which practice to create patients
     use SeedEligibilityJobsForEnrollees;
     use UserHelpers;
 
@@ -97,11 +98,11 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
 
         $practice = Practice::firstOrCreate(
             [
-                'name' => 'toledo-clinic',
+                'name' => 'toledo-demo',
             ],
             [
                 'active'                => 1,
-                'display_name'          => 'Toledo Clinic',
+                'display_name'          => 'Toledo Demo',
                 'is_demo'               => 1,
                 'clh_pppm'              => 0,
                 'term_days'             => 30,
@@ -113,11 +114,16 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         $limit   = 5;
         $testDob = \Carbon\Carbon::parse('1901-01-01');
         while ($n <= $limit) {
-            $this->createEnrollee($practice, [
+            $enrollee = $this->createEnrollee($practice, [
                 'primary_phone' => $phoneTester,
                 'home_phone'    => $phoneTester,
                 'cell_phone'    => $phoneTester,
                 'dob'           => $testDob,
+            ]);
+
+            $enrollee->provider->providerInfo->update([
+                //                This is a real npi number of a real provider. We need this to display signature in letter.
+                'npi_number' => 1962409979,
             ]);
             ++$n;
         }
