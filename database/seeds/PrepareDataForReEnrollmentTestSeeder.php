@@ -4,7 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -24,67 +23,28 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
 
     public function createEnrollee(Practice $practice, array $args = [])
     {
+        $provider = \CircleLinkHealth\Customer\Entities\User::ofType('provider')
+            ->ofPractice($practice->id)
+            ->first();
+        if ( ! $provider) {
+            $provider = $this->createUser($practice->id, 'provider');
+        }
         $enrolleeForTesting = factory(Enrollee::class)->create(array_merge($args, [
+            'provider_id'             => $provider->id,
             'practice_id'             => $practice->id,
-            'referring_provider_name' => 'Dr. Demo',
-            'email'                   => '',
+            'referring_provider_name' => $provider->getFullName(),
+            // UserRepository will create a unique fake email
+            'email' => '',
         ]));
         $this->seedEligibilityJobs(collect([$enrolleeForTesting]), $practice);
-//                        Emulating Constantinos dashboard Importing - Mark Enrollees to invite.
+
+        // Emulating Constantinos dashboard Importing - Mark Enrollees to invite.
         $enrolleeForTesting->update([
             'status' => Enrollee::QUEUE_AUTO_ENROLLMENT,
         ]);
         $enrolleeForTesting->status = Enrollee::QUEUE_AUTO_ENROLLMENT;
 
         return $enrolleeForTesting->fresh('user.billingProvider');
-    }
-
-    public function createSurveyConditions(int $userId, int $surveyInstanceId, int $surveyId, string $status)
-    {
-        DB::table('users_surveys')->insert(
-            [
-                'user_id'            => $userId,
-                'survey_instance_id' => $surveyInstanceId,
-                'survey_id'          => $surveyId,
-                'status'             => $status,
-                'start_date'         => Carbon::parse(now())->toDateTimeString(),
-            ]
-        );
-    }
-
-    public function createSurveyConditionsAndGetSurveyInstance(string $userId, string $status)
-    {
-        $surveyId = $this->firstOrCreateEnrollmentSurvey();
-
-        $surveyInstanceId = DB::table('survey_instances')->insertGetId([
-            'survey_id' => $surveyId,
-            'year'      => Carbon::now(),
-        ]);
-
-        self::createSurveyConditions($userId, $surveyInstanceId, $surveyId, $status);
-
-        return DB::table('survey_instances')->where('id', '=', $surveyInstanceId)->first();
-    }
-
-    public function firstOrCreateEnrollmentSurvey()
-    {
-        $surveyId = optional(DB::table('surveys')
-            ->where('name', SelfEnrollmentController::ENROLLEES_SURVEY_NAME)
-            ->first())->id;
-
-        if ( ! $surveyId) {
-            $surveyId = DB::table('surveys')
-                ->insertGetId([
-                    'name' => SelfEnrollmentController::ENROLLEES_SURVEY_NAME,
-                ]);
-        }
-
-        DB::table('survey_instances')->insertGetId([
-            'survey_id' => $surveyId,
-            'year'      => now()->year,
-        ]);
-
-        return $surveyId;
     }
 
     /**
@@ -95,7 +55,6 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
     public function run()
     {
         $phoneTester = AppConfig::pull('tester_phone', null) ?? config('services.tester.phone');
-        $emailTester = AppConfig::pull('tester_email', null) ?? config('services.tester.email');
 
         $practice = Practice::firstOrCreate(
             [
