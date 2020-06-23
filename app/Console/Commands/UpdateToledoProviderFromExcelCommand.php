@@ -48,7 +48,7 @@ class UpdateToledoProviderFromExcelCommand extends Command
             : GenerateToledoSignatures::TOLEDO_CLINIC;
 
         if (GenerateToledoSignatures::TOLEDO_DEMO === $practiceName) {
-            return Practice::firstOrCreate(
+            Practice::firstOrCreate(
                 [
                     'name' => GenerateToledoSignatures::TOLEDO_DEMO,
                 ],

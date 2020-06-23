@@ -145,40 +145,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function sendInvitesPanelTest()
     {
-        $invitedPatientsUrls = EnrollableInvitationLink::select(['url', 'invitationable_id', 'invitationable_type', 'manually_expired'])->get();
-
-        $invitationData = $invitedPatientsUrls->transform(function ($url) {
-            $isEnrolleeClass = Enrollee::class === $url->invitationable_type;
-            /** @var EnrollableInvitationLink $url */
-            $invitationable = $url->invitationable()->first(); // If empty = was enrollee and its user model got deleted caused got enrolled.
-            $isManuallyExpired = $url->manually_expired;
-
-            if ($isManuallyExpired || empty($invitationable)) {
-                return [
-                    'invitationUrl'   => '',
-                    'isEnrolleeClass' => '',
-                    'name'            => '',
-                    'dob'             => '',
-                ];
-            }
-
-            $patientInfo = $isEnrolleeClass
-                ? $invitationable->user()->withTrashed()->first()->patientInfo()->withTrashed()->first()
-                : $invitationable->patientInfo()->withTrashed()->first();
-
-            $name = $isEnrolleeClass
-                ? $invitationable->user()->withTrashed()->first()->display_name
-                : $invitationable->display_name;
-
-            return [
-                'invitationUrl'   => $url->url,
-                'isEnrolleeClass' => $isEnrolleeClass,
-                'name'            => $name,
-                'dob'             => Carbon::parse($patientInfo->birth_date)->toDateString(),
-            ];
-        });
-
-        return view('enrollment-consent.unreachablesInvitationPanel', compact('invitedPatientsUrls', 'invitationData'));
+        return view('enrollment-consent.unreachablesInvitationPanel');
     }
 
     public function sendPatientsReminderTestMethod()
