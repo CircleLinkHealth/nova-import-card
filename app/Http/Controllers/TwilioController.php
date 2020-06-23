@@ -6,18 +6,32 @@
 
 namespace App\Http\Controllers;
 
-use Request;
+use CircleLinkHealth\Core\Jobs\ProcessTwilioSmsStatusCallbackJob;
+use Illuminate\Support\Facades\Log;
 
 class TwilioController extends Controller
 {
     /**
-     * NOTE: make sure to white list this route in {@link \App\Http\Middleware\VerifyCsrfToken} middleware.
+     * Route called from Twilio whenever there is a status update on the SMS.
+     *
+     * @throws \Twilio\Exceptions\TwilioException
+     * @return mixed
      */
-    public function smsStatusCallback(Request $request)
+    public function smsStatusCallback(\Illuminate\Http\Request $request)
     {
-        //https://www.twilio.com/docs/sms/tutorials/how-to-confirm-delivery-php?code-sample=code-send-an-sms-with-a-statuscallback-url-1&code-language=PHP&code-sdk-version=5.x
-        $sid    = $request->input('MessageSid');
-        $status = $request->input('MessageStatus');
-        //todo: save in db
+        $accountSid = $request->input('AccountSid');
+        $messageSid = $request->input('MessageSid');
+        if (empty($accountSid) || empty($messageSid)) {
+            Log::warning("smsStatusCallback has missing params: accountSid[$accountSid] | messageSid[$messageSid]");
+        } else {
+            ProcessTwilioSmsStatusCallbackJob::dispatch($request->all());
+        }
+
+        return $this->responseWithXmlType(response(''));
+    }
+
+    private function responseWithXmlType($response)
+    {
+        return $response->header('Content-Type', 'application/xml');
     }
 }
