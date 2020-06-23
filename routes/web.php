@@ -1395,11 +1395,6 @@ Route::group(['middleware' => 'auth'], function () {
                 ])->middleware('permission:patientSummary.read');
             });
 
-            Route::get('patients-for-insurance-check', [
-                'uses' => 'Reports\PatientsForInsuranceCheck@make',
-                'as'   => 'get.patients.for.insurance.check',
-            ])->middleware('permission:patient.read,practice.read,insurance.read');
-
             Route::group([
                 'prefix' => 'sales',
             ], function () {

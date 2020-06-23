@@ -155,9 +155,6 @@
                             </a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                 <li><a href="{{ route('import.ccd.remix', ['v3']) }}">CCDs To Import</a></li>
-                                <li><a href="{{ route('get.patients.for.insurance.check') }}">Patients For Insurance
-                                        Check
-                                    </a></li>
 
                                 <li><a href="{{ route('monthly.billing.make') }}">Approve Billable Patients</a></li>
 
@@ -172,9 +169,10 @@
                                 <li>
                                     <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
                                 </li>
-                                <li>
-                                    <a href="{{route('OpsDashboard.index.chart')}}">Ops Chart</a>
-                                </li>
+{{--                                to remove?--}}
+{{--                                <li>--}}
+{{--                                    <a href="{{route('OpsDashboard.index.chart')}}">Ops Chart</a>--}}
+{{--                                </li>--}}
                                 <li><a href="{{ route('admin.reports.nurse.metrics') }}">
                                         Nurse Performance Report</a></li>
                                 <li>
