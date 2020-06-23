@@ -159,6 +159,10 @@ class SendInvitation implements ShouldQueue
             throw new \InvalidArgumentException("Invalid color `{$this->color}`. Valid values are `".SelfEnrollmentController::RED_BUTTON_COLOR.'` and `'.SelfEnrollmentController::DEFAULT_BUTTON_COLOR.'`.');
         }
 
+        if (empty($this->user->billingProviderUser())) {
+            return false;
+        }
+
         return true;
     }
 }
