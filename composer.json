@@ -176,7 +176,7 @@
     "circlelinkhealth/clh-import-card-extended": "*",
     "circlelinkhealth/clh-nova-theme": "*",
     "circlelinkhealth/condition-code-lookup-module": "1.1.5",
-    "circlelinkhealth/core-module": "1.6.3",
+    "circlelinkhealth/core-module": "dev-ROAD-187_optimize_create_note",
     "circlelinkhealth/cpm-migrations-module": "2.0.9",
     "circlelinkhealth/customer-module": "2.9.1",
     "circlelinkhealth/eligibility-module": "3.0.1",
