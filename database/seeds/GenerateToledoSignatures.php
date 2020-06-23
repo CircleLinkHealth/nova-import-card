@@ -67,7 +67,7 @@ class GenerateToledoSignatures extends Seeder
             '1962409979',
         ];
 
-        $practiceName = \Illuminate\Support\Facades\App::environment(['testing, staging, review']) ? self::TOLEDO_DEMO : self::TOLEDO_CLINIC;
+        $practiceName = \Illuminate\Support\Facades\App::environment(['testing', 'staging', 'review', 'local']) ? self::TOLEDO_DEMO : self::TOLEDO_CLINIC;
         $practiceId   = $this->getPractice($practiceName);
 
         User::ofType('provider')

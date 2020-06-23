@@ -42,7 +42,7 @@ class UpdateToledoProviderFromExcelCommand extends Command
      */
     public function handle()
     {
-        $practiceName = \Illuminate\Support\Facades\App::environment(['testing', 'staging', 'review'])
+        $practiceName = \Illuminate\Support\Facades\App::environment(['testing', 'staging', 'review', 'local'])
             ? GenerateToledoSignatures::TOLEDO_DEMO
             : GenerateToledoSignatures::TOLEDO_CLINIC;
         \Excel::import(new UpdateProvidersFromExcel($practiceName), 'storage/toledo-provider-signatures/pcp_signature_file_for_clh.xlsx');

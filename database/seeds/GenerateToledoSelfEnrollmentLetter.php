@@ -71,7 +71,7 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
 
     private function getPractice()
     {
-        $toledoPractice = \Illuminate\Support\Facades\App::environment(['review', 'local', 'testing']) || isSelfEnrollmentTestModeEnabled() ?
+        $toledoPractice = \Illuminate\Support\Facades\App::environment(['review', 'local', 'testing', 'staging']) || isSelfEnrollmentTestModeEnabled() ?
             $this->getToledoPracticeForReviewApp()
             : Practice::where('name', '=', 'toledo-clinic')->first();
 
@@ -86,7 +86,7 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
     {
         return Practice::firstOrCreate(
             [
-                'name' => 'toledo-demo',
+                'name' => GenerateToledoSignatures::TOLEDO_DEMO,
             ],
             [
                 'active'                => 1,
