@@ -69,33 +69,33 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
         );
     }
 
-    private function createToledoPracticeForReviewApp()
-    {
-        return Practice::firstOrCreate(
-            [
-                'name' => 'toledo-clinic',
-            ],
-            [
-                'active'                => 1,
-                'display_name'          => 'Toledo Clinic',
-                'is_demo'               => 1,
-                'clh_pppm'              => 0,
-                'term_days'             => 30,
-                'outgoing_phone_number' => 2025550196,
-            ]
-        );
-    }
-
     private function getPractice()
     {
-        $toledoPractice = \Illuminate\Support\Facades\App::environment(['review', 'local', 'testing']) ?
-            $this->createToledoPracticeForReviewApp()
-            : Practice::where('display_name', '=', 'Toledo Clinic')->first();
+        $toledoPractice = \Illuminate\Support\Facades\App::environment(['review', 'local', 'testing', 'staging']) || isSelfEnrollmentTestModeEnabled() ?
+            $this->getToledoPracticeForReviewApp()
+            : Practice::where('name', '=', 'toledo-clinic')->first();
 
         if ( ! $toledoPractice) {
             throw new Exception('Toledo Practice not found in Practices');
         }
 
         return $toledoPractice;
+    }
+
+    private function getToledoPracticeForReviewApp()
+    {
+        return Practice::firstOrCreate(
+            [
+                'name' => GenerateToledoSignatures::TOLEDO_DEMO,
+            ],
+            [
+                'active'                => 1,
+                'display_name'          => 'Toledo Demo',
+                'is_demo'               => 1,
+                'clh_pppm'              => 0,
+                'term_days'             => 30,
+                'outgoing_phone_number' => 2025550196,
+            ]
+        );
     }
 }

@@ -15,25 +15,37 @@ use Maatwebsite\Excel\Concerns\WithStartRow;
 
 class UpdateProvidersFromExcel implements ToCollection, WithStartRow
 {
-    const PUBLIC_PATH = '/img/signatures/Toledo Clinic';
+    /**
+     * @var string
+     */
+    private $practiceName;
+
+    /**
+     * UpdateProvidersFromExcel constructor.
+     */
+    public function __construct(string $practiceName)
+    {
+        $this->practiceName = $practiceName;
+    }
 
     public function collection(Collection $rows)
     {
-        $practice           = Practice::where('display_name', 'Toledo Clinic')->first();
+        $practice           = Practice::where('name', $this->practiceName)->first();
         $excelProvidersData = $this->excelProvidersData($rows);
 
         $users = [];
         foreach ($excelProvidersData  as $data) {
             if (is_null($data['email'])) {
                 throw new \Exception("Email is required for provider with npi_number {$data['npi_number']}");
-                $user = $this->getUserProvider($data['email'], $practice);
+            }
 
-                if ( ! is_null($user) && empty($user->providerInfo->npi_number)) {
-                    $user->providerInfo->update([
-                        'npi_number' => $data['npi_number'],
-                    ]);
-                    $users[] = $user;
-                }
+            $user = $this->getUserProvider($data['email'], $practice);
+
+            if ( ! is_null($user) && empty($user->providerInfo->npi_number)) {
+                $user->providerInfo->update([
+                    'npi_number' => $data['npi_number'],
+                ]);
+                $users[] = $user;
             }
 
             $usersCount = count($users);
@@ -68,12 +80,12 @@ class UpdateProvidersFromExcel implements ToCollection, WithStartRow
     }
 
     /**
+     * @param $practice
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
      */
-    private function getUserProvider(string $email, Practice $practice)
+    private function getUserProvider(string $email, $practice)
     {
-        $user = User::
-        with('providerInfo')->where('program_id', $practice->id)
+        $user = User::with('providerInfo')->where('program_id', $practice->id)
             ->where('email', $email)
             ->whereHas('providerInfo')
             ->first();
