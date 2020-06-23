@@ -2670,7 +2670,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         $this->loadMissing('primaryPractice');
 
-        if ($this->primaryPractice && $this->primaryPractice->is_demo && $this->isSurveyOnly() && isSelfEnrollmentTestModeEnabled()) {
+        if ($this->primaryPractice && $this->primaryPractice->is_demo && isSelfEnrollmentTestModeEnabled()) {
             $hasTester = AppConfig::pull('tester_email', null);
 
             return $hasTester ?? $this->email;
