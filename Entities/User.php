@@ -2674,8 +2674,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             $this->load('primaryPractice');
         }
 
-//         Why do we need $this->isSurveyOnly()? What if is not enrollee but unreachable ?
-        if ($this->primaryPractice && $this->isSurveyOnly() && isSelfEnrollmentTestModeEnabled()) {
+        if ($this->primaryPractice && $this->primaryPractice->is_demo && $this->isSurveyOnly() && isSelfEnrollmentTestModeEnabled()) {
             $hasTester = AppConfig::pull('tester_email', null);
 
             return $hasTester ?? $this->email;
@@ -2691,7 +2690,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ( ! isset($this->primaryPractice->is_demo)) {
             $this->load('primaryPractice');
         }
-        if ($this->primaryPractice && isSelfEnrollmentTestModeEnabled()) {
+
+        if ($this->primaryPractice && $this->primaryPractice->is_demo && isSelfEnrollmentTestModeEnabled()) {
             $hasTester = AppConfig::pull('tester_phone', null);
 
             return $hasTester ?? $this->getPhoneNumberForSms();
