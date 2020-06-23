@@ -24,6 +24,7 @@ class MigrateWithComposerIde extends MigrateCommand
     public function __construct(Migrator $migrator)
     {
         parent::__construct($migrator);
+        $this->migrator = $migrator;
     }
 
     /**
@@ -37,5 +38,15 @@ class MigrateWithComposerIde extends MigrateCommand
         if (app()->environment('local')) {
             $this->runCpmCommand(['composer', 'ide'], true, Constants::TEN_MINUTES_IN_SECONDS);
         }
+    }
+
+    /**
+     * Get the path to the migration directory.
+     *
+     * @return string
+     */
+    protected function getMigrationPath()
+    {
+        return app()->basePath().DIRECTORY_SEPARATOR.'Modules'.DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR.'CpmMigrations'.DIRECTORY_SEPARATOR.'Database'.DIRECTORY_SEPARATOR.'Migrations';
     }
 }
