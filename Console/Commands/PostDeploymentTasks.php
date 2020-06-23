@@ -45,19 +45,25 @@ class PostDeploymentTasks extends Command
             return;
         }
         echo \Config::get('opcache.url');
+        $arr = [
+            'view:clear',
+            'route:clear',
+            'config:clear',
+        ];
+        if ( ! app()->environment(['review'])) {
+            $arr[] = 'opcache:clear';
+            $arr[] = ' opcache:compile';
+        }
+        $arr = array_merge($arr, [
+            'config:cache',
+            'view:cache',
+            'route:cache',
+            'horizon:terminate',
+            'queue:restart',
+        ]);
+
         collect(
-            [
-                'view:clear',
-                'route:clear',
-                'config:clear',
-                'opcache:clear',
-                'opcache:compile',
-                'config:cache',
-                'view:cache',
-                'route:cache',
-                'horizon:terminate',
-                'queue:restart',
-            ]
+            $arr
         )->each(
             function ($command) {
                 $this->output->note("Running ${command}");
