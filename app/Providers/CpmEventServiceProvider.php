@@ -30,6 +30,7 @@ use App\Listeners\LogSuccessfulLogout;
 use App\Listeners\NotifyPatientOfCarePlanApproval;
 use App\Listeners\NotifySlackChannel;
 use App\Listeners\PatientContactWindowUpdated;
+use App\Listeners\RunComposerIde;
 use App\Listeners\SendCarePlanForDMProviderApproval;
 use App\Listeners\UpdateCarePlanStatus;
 use App\Listeners\UpdateCcdaStatus;
@@ -49,6 +50,7 @@ use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Console\Events\ScheduledTaskFinished;
 use Illuminate\Console\Events\ScheduledTaskStarting;
+use Illuminate\Database\Events\MigrationsEnded;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Mail\Events\MessageSent;
@@ -130,6 +132,9 @@ class CpmEventServiceProvider extends ServiceProvider
         ],
         ScheduledTaskFinished::class => [
             LogScheduledTask::class,
+        ],
+        MigrationsEnded::class => [
+            RunComposerIde::class,
         ],
     ];
 

@@ -249,8 +249,7 @@
                 if (loadingTime) {
                     info.enrolleeId = 0;
                     info.activity = ACTIVITY_TITLE_LOADING_PATIENT;
-                }
-                else {
+                } else {
                     info.enrolleeId = this.enrollable_id;
                     if (this.shouldShowCookie) {
                         info.activity = ACTIVITY_TITLE_TO_SKIP_FROM_CA_TIME;
@@ -373,7 +372,9 @@
                     From: this.practice_phone ? this.practice_phone : undefined,
                     IsUnlistedNumber: false,
                     InboundUserId: this.enrollable_user_id,
-                    OutboundUserId: userId
+                    InboundEnrolleeId: this.enrollable_id,
+                    OutboundUserId: userId,
+                    Source: "enrolment-dashboard"
                 });
             },
             hangUp() {

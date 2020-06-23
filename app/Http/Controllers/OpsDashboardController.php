@@ -131,6 +131,7 @@ class OpsDashboardController extends Controller
      * for today, for specific day.
      *
      * @throws \Exception
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index(Request $request)

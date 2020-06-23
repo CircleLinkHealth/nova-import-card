@@ -14,13 +14,15 @@ use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 
 class NurseDailyReport
 {
-    public static function data(Carbon $forDate = null)
+    public static function data(Carbon $forDate = null, $nurse_users = null, $bypassSorting = false)
     {
         $date = $forDate ?? Carbon::now();
 
-        $nurse_users = User::careCoaches()
-            ->where('access_disabled', 0)
-            ->get();
+        if ( ! $nurse_users) {
+            $nurse_users = User::careCoaches()
+                ->where('access_disabled', 0)
+                ->get();
+        }
 
         $aggregatedTime = new AggregatedTotalTimePerNurse(
             $nurse_users->pluck('id')->all(),
@@ -84,7 +86,9 @@ class NurseDailyReport
         }
 
         $nurses = collect($nurses);
-        $nurses->sortBy('last_activity');
+        if ( ! $bypassSorting) {
+            $nurses->sortBy('last_activity');
+        }
 
         return $nurses;
     }

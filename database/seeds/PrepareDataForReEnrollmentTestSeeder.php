@@ -97,11 +97,11 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
 
         $practice = Practice::firstOrCreate(
             [
-                'name' => 'demo',
+                'name' => 'toledo-clinic',
             ],
             [
                 'active'                => 1,
-                'display_name'          => 'Demo',
+                'display_name'          => 'Toledo Clinic',
                 'is_demo'               => 1,
                 'clh_pppm'              => 0,
                 'term_days'             => 30,

@@ -36,6 +36,7 @@ import { ClientTable, ServerTable } from 'vue-tables-2'
 const DatepickerComponent = () => import(/* webpackChunkName: "chunk-datepicker" */ 'vuejs-datepicker')
 const CallMgmtApp = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app') // resources/assets/js/admin/calls/app.vue
 const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app-v2')
+const NurseDailyReport = () => import(/* webpackChunkName: "chunk-admin" */ './admin/nurse/nurse-daily-report')
 const CaDirectorPanel = () => import(/* webpackChunkName: "chunk-admin" */ './admin/ca-director/panel')
 const EnrolleeList = () => import(/* webpackChunkName: "chunk-admin" */ './admin/enrollment-kpis/enrollee-list')
 const PracticeKPIs = () => import(/* webpackChunkName: "chunk-admin" */ './admin/enrollment-kpis/practice-kpis')
@@ -57,6 +58,7 @@ const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ './adm
 Vue.use(ClientTable, {}, false)
 Vue.use(ServerTable, {}, false)
 
+Vue.component('nurse-daily-report', NurseDailyReport)
 Vue.component('v-datepicker', DatepickerComponent)
 Vue.component('call-mgmt-app', CallMgmtApp)
 Vue.component('call-mgmt-app-v2', CallMgmtAppV2)
