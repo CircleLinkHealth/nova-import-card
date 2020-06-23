@@ -177,14 +177,14 @@
     "circlelinkhealth/clh-nova-theme": "*",
     "circlelinkhealth/condition-code-lookup-module": "1.1.5",
     "circlelinkhealth/core-module": "dev-ROAD-187_optimize_create_note",
-    "circlelinkhealth/cpm-migrations-module": "2.0.9",
+    "circlelinkhealth/cpm-migrations-module": "dev-ROAD-187_optimize_create_note",
     "circlelinkhealth/customer-module": "dev-ROAD-187_optimize_create_note",
-    "circlelinkhealth/eligibility-module": "3.0.1",
+    "circlelinkhealth/eligibility-module": "dev-ROAD-187_optimize_create_note",
     "circlelinkhealth/enrollment-invites": "*",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/generate-success-stories-report": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
-    "circlelinkhealth/nurseinvoices-module": "1.4.5",
+    "circlelinkhealth/nurseinvoices-module": "dev-ROAD-187_optimize_create_note",
     "circlelinkhealth/patientapi-module": "1.3.3",
     "circlelinkhealth/raygun-module": "1.1",
     "circlelinkhealth/revisionable-module": "6.1.1",
@@ -344,7 +344,7 @@
     "github-oauth": {
       "github.com": "e0e31db02693e426dc2be482ecbee4daeafd8196"
     },
-    "process-timeout": 1000
+    "process-timeout": 3000
   },
   "extra": {
     "laravel": {

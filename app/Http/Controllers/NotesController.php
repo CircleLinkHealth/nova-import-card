@@ -97,7 +97,8 @@ class NotesController extends Controller
             ->careTeamMembers
             ->mapWithKeys(function (CarePerson $member) {
                 return [$member->member_user_id => $member->user->getFullName()];
-            });
+            })
+            ->toArray();
         asort($careteam_info);
 
         $userTimeZone = empty($patient->timezone)
@@ -475,8 +476,8 @@ class NotesController extends Controller
             ->careTeamMembers
             ->mapWithKeys(function (CarePerson $member) {
                 return [$member->member_user_id => $member->user->getFullName()];
-            });
-
+            })
+            ->toArray();
         asort($careteam_info);
 
         $view_data = [
