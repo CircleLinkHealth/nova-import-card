@@ -83,7 +83,7 @@
                 </label>
             </div>
             <div class="col-sm-12 no-padding-left no-padding-right">
-                @if(Route::is('patient.note.create'))
+                @if($shouldShowForwardNoteSummaryBox)
                     <div class="col-sm-1 no-padding-left custom-radio">
                         <input id='fyi' type="radio" name="summary_type" value="{{\App\Note::SUMMARY_FYI}}">
                         <label for="fyi"><span> </span>FYI</label>
@@ -141,10 +141,9 @@
 
 @push('scripts')
     <script>
-        const isCreateNotePage = @json(Route::is('patient.note.create'));
         const hasSummary = @json(isset($note['summary']) && !empty($note['summary']));
 
-        if (isCreateNotePage) {
+        if (@json($shouldShowForwardNoteSummaryBox)) {
             (function ($) {
                 //hacky way to display summary input required when notify-careteam is checked, and also make summary required
                 $('#notify-careteam').change(function (e) {

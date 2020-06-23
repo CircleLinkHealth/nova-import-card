@@ -39,12 +39,8 @@ class ProviderController extends Controller
         event(new CarePlanWasApproved(User::find($patientId), auth()->user()));
         $viewNext = (bool) $viewNext;
 
-        if ($viewNext && auth()->user()->hasRole(['administrator', 'provider'])) {
-            if (auth()->user()->isProvider()) {
-                $nextPatient = User::patientsPendingProviderApproval(auth()->user())->first();
-            } elseif (auth()->user()->isAdmin()) {
-                $nextPatient = User::patientsPendingCLHApproval(auth()->user())->first();
-            }
+        if ($viewNext) {
+            $nextPatient = $this->getNextPatient(auth()->user());
 
             if ( ! $nextPatient) {
                 return redirect()->to('/');
@@ -79,7 +75,7 @@ class ProviderController extends Controller
         });
     }
 
-    public function removePatient($patientId, $viewNext = false)
+    public function removePatient($patientId)
     {
         $user = User::find($patientId);
 
@@ -93,22 +89,22 @@ class ProviderController extends Controller
             report($e);
         }
 
-        if ($viewNext) {
-            $nextPatient = User::patientsPendingProviderApproval(auth()->user())->first();
+        $nextPatient = $this->getNextPatient(auth()->user());
 
-            if ( ! $nextPatient) {
-                return redirect()->to('/');
-            }
-
-            $patientId = $nextPatient->id;
-
-            return redirect()->to(route('patient.careplan.print', [
-                'patientId'    => $patientId,
-                'clearSession' => $viewNext,
-            ]));
+        if ( ! $nextPatient) {
+            return redirect()->to('/');
         }
 
-        return redirect()->to('/');
+        $patientId = $nextPatient->id;
+
+        if ( ! $patientId) {
+            return redirect()->to('/');
+        }
+
+        return redirect()->to(route('patient.careplan.print', [
+            'patientId'    => $patientId,
+            'clearSession' => true,
+        ]));
     }
 
     public function show($id)
@@ -128,5 +124,18 @@ class ProviderController extends Controller
         $user->providerInfo->save();
 
         return redirect()->route('patients.dashboard');
+    }
+
+    private function getNextPatient(User $user)
+    {
+        if ($user->canApproveCarePlans()) {
+            return User::patientsPendingProviderApproval($user)->first();
+        }
+
+        if ($user->canQAApproveCarePlans()) {
+            return User::patientsPendingCLHApproval($user)->first();
+        }
+
+        return null;
     }
 }
