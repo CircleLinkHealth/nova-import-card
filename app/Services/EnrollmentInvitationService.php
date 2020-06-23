@@ -58,6 +58,9 @@ class EnrollmentInvitationService
         $practiceSigSrc = '';
         if ( ! empty($practiceLetter->customer_signature_src)) {
             if (ProviderSignature::SIGNATURE_VALUE === $practiceLetter->customer_signature_src) {
+                if (isSelfEnrollmentTestModeEnabled()) {
+                    $practiceName = 'Toledo Clinic';
+                }
                 $npiNumber      = $provider->load('providerInfo')->providerInfo->npi_number;
                 $type           = ProviderSignature::SIGNATURE_PIC_TYPE;
                 $practiceSigSrc = "<img src='/img/signatures/$practiceName/$npiNumber$type' alt='$practiceName' style='max-width: 100%;'/>";

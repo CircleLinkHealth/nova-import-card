@@ -73,11 +73,11 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
     {
         return Practice::firstOrCreate(
             [
-                'name' => 'toledo-clinic',
+                'name' => 'toleido',
             ],
             [
                 'active'                => 1,
-                'display_name'          => 'Toledo Clinic',
+                'display_name'          => 'Toledo Demo',
                 'is_demo'               => 1,
                 'clh_pppm'              => 0,
                 'term_days'             => 30,
@@ -88,9 +88,9 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
 
     private function getPractice()
     {
-        $toledoPractice = \Illuminate\Support\Facades\App::environment(['review', 'local', 'testing']) ?
+        $toledoPractice = \Illuminate\Support\Facades\App::environment(['review', 'local', 'testing']) || isSelfEnrollmentTestModeEnabled() ?
             $this->createToledoPracticeForReviewApp()
-            : Practice::where('display_name', '=', 'Toledo Clinic')->first();
+            : Practice::where('name', '=', 'toledo-clinic')->first();
 
         if ( ! $toledoPractice) {
             throw new Exception('Toledo Practice not found in Practices');
