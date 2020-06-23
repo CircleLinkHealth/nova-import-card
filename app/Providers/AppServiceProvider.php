@@ -6,7 +6,6 @@
 
 namespace App\Providers;
 
-use App\Console\Commands\MigrateWithComposerIde;
 use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
 use App\Notifications\NotificationStrategies\SendsNotification;
@@ -20,7 +19,6 @@ use CircleLinkHealth\Core\Providers\GoogleDriveServiceProvider;
 use DB;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\SQLiteBuilder;
@@ -198,10 +196,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(\Propaganistas\LaravelPhone\PhoneServiceProvider::class);
         $this->app->register(GoogleDriveServiceProvider::class);
         $this->app->register(\LynX39\LaraPdfMerger\PdfMergerServiceProvider::class);
-
-        $this->app->extend('command.migrate', function () {
-            return new MigrateWithComposerIde(app(Migrator::class));
-        });
 
 //        Auth::provider('enrollmentLogin', function ($app, array $config) {
 //            return new AutoEnrollmentLoginProvider($app['hash'], $config['model']);
