@@ -101,7 +101,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             ],
             [
                 'active'                => 1,
-                'display_name'          => 'Toledo Clinic',
+                'display_name'          => 'Toledo DEMO',
                 'is_demo'               => 1,
                 'clh_pppm'              => 0,
                 'term_days'             => 30,
