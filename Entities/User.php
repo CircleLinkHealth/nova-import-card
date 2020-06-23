@@ -2691,7 +2691,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ( ! isset($this->primaryPractice->is_demo)) {
             $this->load('primaryPractice');
         }
-
         if ($this->primaryPractice && isSelfEnrollmentTestModeEnabled()) {
             $hasTester = AppConfig::pull('tester_phone', null);
 
