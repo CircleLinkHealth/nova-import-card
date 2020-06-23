@@ -7,6 +7,8 @@
 namespace App;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
 /**
  * Structured twilio call logs.
@@ -70,8 +72,12 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioCall whereTo($value)
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioCall whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property int|null    $revision_history_count
- * @property string|null $source
+ * @property int|null                                             $revision_history_count
+ * @property string|null                                          $source
+ * @property \CircleLinkHealth\Customer\Entities\User|null        $inboundUser
+ * @property \CircleLinkHealth\Customer\Entities\User|null        $outboundUser
+ * @property int|null                                             $inbound_enrollee_id
+ * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null $inboundEnrollee
  */
 class TwilioCall extends BaseModel
 {
@@ -84,6 +90,7 @@ class TwilioCall extends BaseModel
         'from',
         'to',
         'inbound_user_id',
+        'inbound_enrollee_id',
         'outbound_user_id',
         'call_duration',
         'direction',
@@ -99,6 +106,22 @@ class TwilioCall extends BaseModel
         'in_conference',
         'is_unlisted_number',
         'dial_conference_duration',
+        'source',
     ];
     protected $table = 'twilio_calls';
+
+    public function inboundEnrollee()
+    {
+        return $this->belongsTo(Enrollee::class, 'inbound_enrollee_id', 'id');
+    }
+
+    public function inboundUser()
+    {
+        return $this->belongsTo(User::class, 'inbound_user_id', 'id');
+    }
+
+    public function outboundUser()
+    {
+        return $this->belongsTo(User::class, 'outbound_user_id', 'id');
+    }
 }
