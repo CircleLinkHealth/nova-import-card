@@ -222,6 +222,16 @@ class SelfEnrollmentTest extends TestCase
         self::assertTrue(with(new SendReminder($patient))->shouldRun());
     }
 
+    public function test_it_removes_email_channel_if_fake_email()
+    {
+        $enrollee = $this->createEnrollees();
+
+        $enrollee->user->email = 'test@careplanmanager.com';
+        $enrollee->user->save();
+
+        $this->assertFalse(in_array('mail', (new SelfEnrollmentInviteNotification('hello'))->via($enrollee->user)));
+    }
+
     public function test_it_saves_different_enrollment_link_in_db_when_sending_reminder()
     {
         $enrollee = $this->createEnrollees($number = 1);
