@@ -179,11 +179,11 @@ class Enrollable extends JsonResource
             ? $enrollable->other_phone_e164
             : $attributes['other_phone'];
 
-        $cellPhoneSanitized = isProductionEnv() && ! $enrollable->practice->is_demo
+        $cellPhoneSanitized = $shouldSanitizeNumbers
             ? $enrollable->cell_phone_e164
             : $attributes['cell_phone'];
 
-        $homePhoneSanitized = isProductionEnv() && ! $enrollable->practice->is_demo
+        $homePhoneSanitized = $shouldSanitizeNumbers
             ? $enrollable->home_phone_e164
             : $attributes['home_phone'];
 
