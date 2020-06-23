@@ -26,38 +26,31 @@ class NurseCcmPlusConfig
 
     public static function altAlgoEnabledForAll(): bool
     {
-        return \Cache::remember(self::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_ALL, 2, function () {
-            $val = AppConfig::pull(self::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_ALL, null);
-            if (null === $val) {
-                return setAppConfig(self::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_ALL, true);
-            }
+        $val = AppConfig::pull(self::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_ALL, null);
+        if (null === $val) {
+            return AppConfig::set(self::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_ALL, true);
+        }
 
-            return filter_var($val, FILTER_VALIDATE_BOOLEAN);
-        });
+        return filter_var($val, FILTER_VALIDATE_BOOLEAN);
     }
 
     public static function altAlgoEnabledForUserIds(): array
     {
-        return \Cache::remember(self::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_USER_IDS, 2, function () {
-            $val = AppConfig::where('config_key', '=', self::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_USER_IDS)
-                ->firstOrFail()->config_value;
-            if (empty($val)) {
-                return [];
-            }
+        $val = AppConfig::pull(self::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_USER_IDS);
+        if (empty($val)) {
+            return [];
+        }
 
-            return explode(',', $val);
-        });
+        return explode(',', $val);
     }
 
     public static function enabledForAll(): bool
     {
-        return \Cache::remember(self::NURSE_CCM_PLUS_ENABLED_FOR_ALL, 2, function () {
-            $val = AppConfig::pull(self::NURSE_CCM_PLUS_ENABLED_FOR_ALL, null);
-            if (null === $val) {
-                return setAppConfig(self::NURSE_CCM_PLUS_ENABLED_FOR_ALL, true);
-            }
+        $val = AppConfig::pull(self::NURSE_CCM_PLUS_ENABLED_FOR_ALL, null);
+        if (null === $val) {
+            return AppConfig::set(self::NURSE_CCM_PLUS_ENABLED_FOR_ALL, true);
+        }
 
-            return filter_var($val, FILTER_VALIDATE_BOOLEAN);
-        });
+        return filter_var($val, FILTER_VALIDATE_BOOLEAN);
     }
 }
