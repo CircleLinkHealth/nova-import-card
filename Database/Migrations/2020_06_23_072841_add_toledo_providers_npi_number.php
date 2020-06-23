@@ -25,6 +25,8 @@ class AddToledoProvidersNpiNumber extends Migration
      */
     public function up()
     {
-        \Illuminate\Support\Facades\Artisan::call(UpdateToledoProviderFromExcelCommand::class);
+        if (isCpm()) {
+            \Illuminate\Support\Facades\Artisan::call(UpdateToledoProviderFromExcelCommand::class);
+        }
     }
 }
