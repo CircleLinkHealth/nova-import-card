@@ -120,6 +120,24 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 'cell_phone'    => $phoneTester,
                 'dob'           => $testDob,
             ]);
+            $location = $enrollee->location()->firstOrCreate(
+                [
+                    'practice_id' => $practice->id,
+                ],
+                [
+                    'is_primary'     => 1,
+                    'name'           => $practice->name,
+                    'address_line_1' => '84982 Sipes Manor Theoborough, AZ 58735-9955',
+                    'city'           => 'West Jeraldbury',
+                    'state'          => 'MD',
+                    'postal_code'    => '21335 - 9764',
+                ]
+            );
+            $enrollee->update(
+                [
+                    'location_id' => $location->id,
+                ]
+            );
 
             $enrollee->provider->providerInfo->update([
                 //                This is a real npi number of a real provider. We need this to display signature in letter.
