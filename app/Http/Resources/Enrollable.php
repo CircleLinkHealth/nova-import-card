@@ -171,19 +171,21 @@ class Enrollable extends JsonResource
 
     private function getPhoneAttributes($enrollable)
     {
+        $attributes            = $enrollable->getAttributes();
+        $shouldSanitizeNumbers = isProductionEnv() && ! $enrollable->practice->is_demo;
         //These phone numbers will be used to call by Twilio.
         //This will allow us to use custom numbers on non-prod environments or on production with demo practices
-        $otherPhoneSanitized = isProductionEnv() && ! $enrollable->practice->is_demo
+        $otherPhoneSanitized = $shouldSanitizeNumbers
             ? $enrollable->other_phone_e164
-            : $enrollable->getOriginal('other_phone');
+            : $attributes['other_phone'];
 
         $cellPhoneSanitized = isProductionEnv() && ! $enrollable->practice->is_demo
             ? $enrollable->cell_phone_e164
-            : $enrollable->getOriginal('cell_phone');
+            : $attributes['cell_phone'];
 
         $homePhoneSanitized = isProductionEnv() && ! $enrollable->practice->is_demo
             ? $enrollable->home_phone_e164
-            : $enrollable->getOriginal('home_phone');
+            : $attributes['home_phone'];
 
         return [
             'home_phone_sanitized'  => $homePhoneSanitized,
