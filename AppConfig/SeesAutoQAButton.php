@@ -20,12 +20,7 @@ class SeesAutoQAButton
     public static function userId(int $userId)
     {
         $values = AppConfig::pull(self::SEES_AUTO_QA_BUTTON, []);
-        foreach ($values as $value) {
-            if ($value == $userId) {
-                return true;
-            }
-        }
 
-        return false;
+        return in_array($userId, $values);
     }
 }
