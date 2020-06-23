@@ -58,16 +58,16 @@
         },
         {
             "name": "algolia/algoliasearch-client-php",
-            "version": "2.6.1",
+            "version": "2.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/algolia/algoliasearch-client-php.git",
-                "reference": "dd7eb942ff15c45179043b4cce51e53b4cf10112"
+                "reference": "6721dd2bff8c5a9de6152d550c896d147e013e40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/algolia/algoliasearch-client-php/zipball/dd7eb942ff15c45179043b4cce51e53b4cf10112",
-                "reference": "dd7eb942ff15c45179043b4cce51e53b4cf10112",
+                "url": "https://api.github.com/repos/algolia/algoliasearch-client-php/zipball/6721dd2bff8c5a9de6152d550c896d147e013e40",
+                "reference": "6721dd2bff8c5a9de6152d550c896d147e013e40",
                 "shasum": ""
             },
             "require": {
@@ -124,7 +124,7 @@
                 "php",
                 "search"
             ],
-            "time": "2020-04-16T08:45:30+00:00"
+            "time": "2020-06-23T15:16:17+00:00"
         },
         {
             "name": "algolia/scout-extended",
@@ -4418,16 +4418,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v7.16.1",
+            "version": "v7.17.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "dc9cd8338d222dec2d9962553639e08c4585fa5b"
+                "reference": "6633c4017b311d3aaae842edabd567c637afc39c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/dc9cd8338d222dec2d9962553639e08c4585fa5b",
-                "reference": "dc9cd8338d222dec2d9962553639e08c4585fa5b",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/6633c4017b311d3aaae842edabd567c637afc39c",
+                "reference": "6633c4017b311d3aaae842edabd567c637afc39c",
                 "shasum": ""
             },
             "require": {
@@ -4571,7 +4571,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-06-16T14:31:25+00:00"
+            "time": "2020-06-23T15:22:07+00:00"
         },
         {
             "name": "laravel/horizon",
@@ -13152,16 +13152,16 @@
         },
         {
             "name": "kitloong/laravel-migrations-generator",
-            "version": "4.3.2",
+            "version": "4.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kitloong/laravel-migrations-generator.git",
-                "reference": "d1d2ef179fd414bfa616898be34c6a92fd3f1d34"
+                "reference": "94edf958ff1ee220a7c33b26e897e5d9a572163e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kitloong/laravel-migrations-generator/zipball/d1d2ef179fd414bfa616898be34c6a92fd3f1d34",
-                "reference": "d1d2ef179fd414bfa616898be34c6a92fd3f1d34",
+                "url": "https://api.github.com/repos/kitloong/laravel-migrations-generator/zipball/94edf958ff1ee220a7c33b26e897e5d9a572163e",
+                "reference": "94edf958ff1ee220a7c33b26e897e5d9a572163e",
                 "shasum": ""
             },
             "require": {
@@ -13208,7 +13208,7 @@
                 "migration",
                 "migrations"
             ],
-            "time": "2020-06-22T15:27:01+00:00"
+            "time": "2020-06-23T15:40:43+00:00"
         },
         {
             "name": "laravel/dusk",
