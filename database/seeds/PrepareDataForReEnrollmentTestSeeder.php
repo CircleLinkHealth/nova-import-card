@@ -98,7 +98,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
 
         $practice = Practice::firstOrCreate(
             [
-                'name' => 'toleido',
+                'name' => 'toledo-demo',
             ],
             [
                 'active'                => 1,
@@ -122,6 +122,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             ]);
 
             $enrollee->provider->providerInfo->update([
+                //                This is a real npi number of a real provider. We need this to display signature in letter.
                 'npi_number' => 1962409979,
             ]);
             ++$n;
