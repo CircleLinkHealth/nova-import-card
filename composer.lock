@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9d3d782e2c916ce3a357ea4db0de514e",
+    "content-hash": "3e20ce3fdff9c5ec99271b074b83e9c3",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1107,11 +1107,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.0.8",
+            "version": "dev-ROAD-182_migration_update_toledo_providers",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "25a2be5b7cdc7162af94a7e7f28468e5634b7e36"
+                "reference": "8b294f13f884500a74eb8b61a9be97112d7ce889"
             },
             "type": "laravel-module",
             "extra": {
@@ -1133,7 +1133,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-22T17:39:02+00:00"
+            "time": "2020-06-23T11:38:46+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -15884,6 +15884,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "orangehill/iseed": 20
     },
