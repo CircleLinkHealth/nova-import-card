@@ -706,7 +706,7 @@ class EligibilityChecker
             $args['lang'] = $args['language'];
         }
 
-        $args['status'] = Enrollee::TO_CALL;
+        $args['status'] = Enrollee::ELIGIBLE;
 
 //            if (isset($args['cell_phone'])) {
 //                $args['status'] = Enrollee::TO_SMS;
