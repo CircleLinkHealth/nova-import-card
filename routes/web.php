@@ -1395,11 +1395,6 @@ Route::group(['middleware' => 'auth'], function () {
                 ])->middleware('permission:patientSummary.read');
             });
 
-            Route::get('patients-for-insurance-check', [
-                'uses' => 'Reports\PatientsForInsuranceCheck@make',
-                'as'   => 'get.patients.for.insurance.check',
-            ])->middleware('permission:patient.read,practice.read,insurance.read');
-
             Route::group([
                 'prefix' => 'sales',
             ], function () {
@@ -1601,11 +1596,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'NurseController@dailyReport',
             'as'   => 'admin.reports.nurse.daily.data',
         ])->middleware('permission:nurseReport.create');
-
-        Route::get('reports/nurse/allocation', [
-            'uses' => 'NurseController@monthlyOverview',
-            'as'   => 'admin.reports.nurse.allocation',
-        ])->middleware('permission:nurseReport.read');
 
         Route::get('reports/nurse/monthly', [
             'uses' => 'NurseController@monthlyReport',
