@@ -98,6 +98,7 @@ class OpsDashboardReport
     {
         return $this->getPatients()
             ->setPriorDayReportData()
+            ->countDeletedPatients()
             ->generateStatsFromPatientCollection()
             ->consolidateStatsUsingPriorDayReport();
     }
@@ -169,11 +170,11 @@ class OpsDashboardReport
                 $this->report->incrementRevisionsPausedCount();
             } elseif (in_array($newestStatus, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
                 $this->report->revisionsWithdrawnIds[] = $patient;
-                $this->report->incrementWithdrawnCount();
+                $this->report->incrementRevisionsWithdrawnCount();
             }
         } elseif (Patient::ENROLLED !== $oldestStatus &&
                 Patient::ENROLLED == $newestStatus) {
-            $this->report->incrementAddedCount();
+            $this->report->incrementRevisionsAddedCount();
             $this->report->revisionsAddedIds[] = $patientId;
         }
     }
@@ -218,6 +219,26 @@ class OpsDashboardReport
         }
 
         return $this->report->toArray();
+    }
+
+    private function countDeletedPatients()
+    {
+        if (isset($this->priorDayReportData['enrolled_patient_ids'])) {
+            $deletedIds = User::onlyTrashed()
+                ->ofPractice($this->practice->id)
+                ->where([
+                    ['deleted_at', '>=', $this->date->copy()->subDay()],
+                    ['deleted_at', '<=', $this->date],
+                ])
+                ->whereIn('id', $this->priorDayReportData['enrolled_patient_ids'])
+                ->pluck('id')
+                ->toArray();
+
+            $this->report->deletedCount = count($deletedIds);
+            $this->report->deletedIds[] = $deletedIds;
+        }
+
+        return $this;
     }
 
     /**
