@@ -69,6 +69,8 @@ class Enrollable extends JsonResource
             $utcNote = $enrollable->other_note;
         }
 
+        $providerPhone = $this->getProviderPhone($enrollable);
+
         return array_merge(
             [
                 'enrollable_id'            => $enrollable->id,
@@ -112,7 +114,7 @@ class Enrollable extends JsonResource
                     : [],
 
                 'provider'       => $this->provider->attributesToArray(),
-                'provider_phone' => (new StringManipulation())->formatPhoneNumber($this->provider->getPhone()),
+                'provider_phone' => $providerPhone,
                 'has_tips'       => (bool) $this->practice->enrollmentTips,
 
                 'is_confirmed_family' => Enrollee::statusIsToConfirm($enrollable->status),
@@ -192,6 +194,25 @@ class Enrollable extends JsonResource
             'cell_phone_sanitized'  => $cellPhoneSanitized,
             'other_phone_sanitized' => $otherPhoneSanitized,
         ];
+    }
+
+    private function getProviderPhone($enrollable)
+    {
+        $provider = $enrollable->provider;
+        $phone    = $provider->getPhone();
+
+        if (empty($phone)) {
+            $location = $provider->locations->where('phone', '!=', null)->first();
+            if ($location) {
+                $phone = $location->phone;
+            }
+        }
+
+        if (empty($phone)) {
+            $phone = $enrollable->practice->outgoing_phone_number;
+        }
+
+        return (new StringManipulation())->formatPhoneNumber($phone);
     }
 
     private function getReasonAttributes($enrollable)
