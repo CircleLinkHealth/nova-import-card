@@ -29,6 +29,8 @@ class OpsDashboardReport
 
     const TWENTY_MINUTES = 1200;
 
+    protected $addedPatientIds = [];
+
     protected $calculateLostAddedUsingRevisionsOnly;
 
     /**
@@ -68,19 +70,19 @@ class OpsDashboardReport
     /**
      * @var array
      */
-    protected $revisionsAddedPatients = [];
+    protected $revisionsAddedPatientIds = [];
     /**
      * @var array
      */
-    protected $revisionsPausedPatients = [];
+    protected $revisionsPausedPatientIds = [];
     /**
      * @var array
      */
-    protected $revisionsUnreachablePatients = [];
+    protected $revisionsUnreachablePatientIds = [];
     /**
      * @var array
      */
-    protected $revisionsWithdrawnPatients = [];
+    protected $revisionsWithdrawnPatientIds = [];
 
     /**
      * @var array
@@ -174,6 +176,13 @@ class OpsDashboardReport
         $this->report->setTotalWithdrawnCount(count($this->withdrawnPatients));
         $this->report->setTotalUnreachableCount(count($this->unreachablePatients));
 
+        //will help us debug
+        $this->report->setAddedIds($this->addedPatientIds);
+
+        $this->report->setPausedIds(collect($this->pausedPatients)->pluck('id')->toArray());
+        $this->report->setWithdrawnIds(collect($this->withdrawnPatients)->pluck('id')->toArray());
+        $this->report->setUnreachableIds(collect($this->unreachablePatients)->pluck('id')->toArray());
+
         //Add enrolled patient ids to stats so that they can be used the next day, to help us calculate delta
         $enrolledIds = collect($this->enrolledPatients)->pluck('id')->filter()->toArray();
         $this->report->setEnrolledPatientIds($enrolledIds);
@@ -223,27 +232,27 @@ class OpsDashboardReport
 
         $oldestStatus = $revisionHistory->last()->old_value;
         $newestStatus = $revisionHistory->first()->new_value;
-
+        $patientId    = $patient->id;
         if (Patient::ENROLLED == $oldestStatus) {
             if (Patient::UNREACHABLE == $newestStatus) {
-                $this->revisionsUnreachablePatients[] = $patient;
+                $this->revisionsUnreachablePatientIds[] = $patientId;
             } elseif (Patient::PAUSED == $newestStatus) {
-                $this->revisionsPausedPatients[] = $patient;
+                $this->revisionsPausedPatientIds[] = $patientId;
             } elseif (in_array($newestStatus, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
-                $this->revisionsWithdrawnPatients[] = $patient;
+                $this->revisionsWithdrawnPatientIds[] = $patient;
             }
         } elseif (Patient::ENROLLED !== $oldestStatus &&
                 Patient::ENROLLED == $newestStatus) {
-            $this->revisionsAddedPatients[] = $patient;
+            $this->revisionsAddedPatientIds[] = $patient;
         }
     }
 
     private function consolidateStatsUsingPriorDayReport(): array
     {
-        $countRevisionsAdded       = count($this->revisionsAddedPatients);
-        $countRevisionsPaused      = count($this->revisionsPausedPatients);
-        $countRevisionsWithdrawn   = count($this->revisionsWithdrawnPatients);
-        $countRevisionsUnreachable = count($this->revisionsUnreachablePatients);
+        $countRevisionsAdded       = count($this->revisionsAddedPatientIds);
+        $countRevisionsPaused      = count($this->revisionsPausedPatientIds);
+        $countRevisionsWithdrawn   = count($this->revisionsWithdrawnPatientIds);
+        $countRevisionsUnreachable = count($this->revisionsUnreachablePatientIds);
 
         if ($this->shouldCalculateLostAddedUsingRevisionsOnly()) {
             $this->report->setAdded($countRevisionsAdded);
@@ -255,28 +264,37 @@ class OpsDashboardReport
             return $this->report->toArray();
         }
 
+        $this->report->setRevisionsAddedCount($countRevisionsAdded);
+        $this->report->setRevisionsPausedCount($countRevisionsPaused);
+        $this->report->setRevisionsWithdrawnCount($countRevisionsWithdrawn);
+        $this->report->setRevisionsUnreachableCount($countRevisionsUnreachable);
+        $this->report->setRevisionsAddedIds($this->revisionsAddedPatientIds);
+        $this->report->setRevisionsPausedIds($this->revisionsPausedPatientIds);
+        $this->report->setRevisionsWithdrawnIds($this->revisionsWithdrawnPatientIds);
+        $this->report->setRevisionsUnreachableIds($this->revisionsUnreachablePatientIds);
+
         $alerts = [];
         if ($this->report->getTotal() - $this->report->getDelta() !== $this->report->getPriorDayTotals()) {
             $alerts[] = 'DELTA does not match.';
         }
         //if prior day data exist, numbers should have been processed by now. Check if they match
         if ($this->report->getAdded() != $countRevisionsAdded) {
-            $addedRevisionIds = collect($this->revisionsAddedPatients)->pluck('id')->implode(',');
+            $addedRevisionIds = implode(',', $this->revisionsAddedPatientIds);
             $alerts[]         = "Added: Total using status: {$this->report->getAdded()} - Totals using revisions: $countRevisionsAdded. Revisionable User IDs: $addedRevisionIds.";
         }
 
         if ($this->report->getPaused() != $countRevisionsPaused) {
-            $pausedRevisionIds = collect($this->revisionsPausedPatients)->pluck('id')->implode(',');
+            $pausedRevisionIds = implode(',', $this->revisionsPausedPatientIds);
             $alerts[]          = "Paused: Total using status: {$this->report->getPaused()} - Totals using revisions: $countRevisionsPaused. Revisionable User IDs: $pausedRevisionIds.";
         }
 
         if ($this->report->getWithdrawn() != $countRevisionsWithdrawn) {
-            $withdrawnRevisionIds = collect($this->revisionsWithdrawnPatients)->pluck('id')->implode(',');
+            $withdrawnRevisionIds = implode(',', $this->revisionsWithdrawnPatientIds);
             $alerts[]             = "Withdrawn: Total using status: {$this->report->getWithdrawn()} - Totals using revisions: $countRevisionsWithdrawn. Revisionable User IDs: $withdrawnRevisionIds.";
         }
 
         if ($this->report->getUnreachable() != $countRevisionsUnreachable) {
-            $unreachableRevisionIds = collect($this->revisionsUnreachablePatients)->pluck('id')->implode(',');
+            $unreachableRevisionIds = implode(',', $this->revisionsUnreachablePatientIds);
             $alerts[]               = "Unreachable: Total using status: {$this->report->getUnreachable()} - Totals using revisions: $countRevisionsUnreachable. Revisionable User IDs: $unreachableRevisionIds.";
         }
 
@@ -306,6 +324,7 @@ class OpsDashboardReport
             if (Patient::ENROLLED == $patient->patientInfo->ccm_status) {
                 $this->report->incrementTotal();
                 if ( ! $patientWasEnrolledPriorDay) {
+                    $this->addedPatientIds[] = $patient->id;
                     $this->report->incrementAdded();
                 }
 
