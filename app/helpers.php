@@ -1307,9 +1307,13 @@ if ( ! function_exists('getEhrReportWritersFolderUrl')) {
             return null;
         }
 
-        return 'https://drive.google.com/drive/folders/1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
+        $key = 'ehr_report_writers_folder_url';
+
+        return \Cache::remember($key, 2, function () use ($key) {
+            return AppConfig::pull($key, null);
+        });
+
 //        Commenting out due to Heroku migration
-//        @todo:heroku change this to a nova variable
 //        $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
 //
 //        if ( ! $dir) {
@@ -2197,5 +2201,12 @@ if ( ! function_exists('isCpm')) {
     function isCpm()
     {
         return 'CarePlan Manager' === config('app.name');
+    }
+}
+
+if ( ! function_exists('opsDashboardAlertWatchers')) {
+    function opsDashboardAlertWatchers()
+    {
+        return AppConfig::pull('ops_dashboard_alert_watchers', '');
     }
 }

@@ -2,9 +2,9 @@
     <div class="col-md-12">
         <nav role="navigation" >
             <ul class="nav nav-tabs">
-                <li><a href="{{route('OpsDashboard.index')}}">Daily</a></li>
-                <li><a href="{{route('OpsDashboard.lostAdded')}}">Lost/Added Patients</a></li>
-                <li><a href="{{route('OpsDashboard.patientListIndex')}}">Added/Withdrawn/Paused List</a></li>
+                <li><a href="">Daily</a></li>
+                <li><a href="">Lost/Added Patients</a></li>
+                <li><a href="">Added/Withdrawn/Paused List</a></li>
             </ul>
         </nav>
     </div>

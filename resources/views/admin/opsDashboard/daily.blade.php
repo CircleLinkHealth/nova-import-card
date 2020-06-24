@@ -64,13 +64,15 @@
             .color-red {
                 color: red;
             }
+
         </style>
     @endpush
 
     <div class="container">
-        <div class="col-md-12">
-            @include('admin.opsDashboard.panel')
-        </div>
+{{--        Currently not in use, remove until and if needed--}}
+{{--        <div class="col-md-12">--}}
+{{--            @include('admin.opsDashboard.panel')--}}
+{{--        </div>--}}
         <div class="col-md-4">
             <form action="{{route('OpsDashboard.index')}}" method="GET">
                 <div class="form-group">
@@ -188,8 +190,8 @@
                                         @else
                                             <td>N/A</td>
                                         @endif
-                                        <td>{{$value['Total']}}</td>
-                                        <td>{{$value['Prior Day totals']}}</td>
+                                        <td @if(isset($value['report_updated_at'])) title="Report generated at: {{$value['report_updated_at']}}"@endif>{{$value['Total']}}</td>
+                                        <td @if(isset($value['prior_day_report_updated_at'])) title="Prior day report generated at: {{$value['prior_day_report_updated_at']}}"@endif>{{$value['Prior Day totals']}}</td>
                                         @if($value['Added'] != 0)
                                             <td class="color-green">{{$value['Added']}}</td>@else
                                             <td>{{$value['Added']}}</td>@endif
@@ -202,7 +204,8 @@
                                         @if($value['Withdrawn'] != 0)
                                             <td class="color-red">-{{$value['Withdrawn']}}</td>@else
                                             <td>{{$value['Withdrawn']}}</td>@endif
-                                        <td>{{$value['Delta']}}</td>
+                                        <td @if(isset($value['lost_added_calculated_using_revisions']) && $value['lost_added_calculated_using_revisions']== true)
+                                            title="Calculated using Revisions" @endif>{{$value['Delta']}}</td>
                                         <td>{{$value['G0506 To Enroll']}}</td>
                                     </tr>
                                 </div>
@@ -251,8 +254,6 @@
         </script>
 
     @endpush
-
-
 @endsection
 
 

@@ -13,12 +13,36 @@ if (isset($patient)) {
 } else {
     $monthlyTime = '';
 }
-$user                = auth()->user();
+
 $patientListDropdown = getPatientListDropdown($user);
 $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
 ?>
 @push('styles')
     <style>
+        .fa-exclamation{
+            font-size: 12px;
+            background: rgb(238, 66, 20);
+            border-radius: 0.8em;
+            display: inline-block;
+            font-weight: bold;
+            line-height: 1.6em;
+            margin-right: 5px;
+            text-align: center;
+            width: 1.6em;
+            animation: shake-animation 3.72s ease infinite;
+            transform-origin: 50%;
+        }
+
+        @keyframes shake-animation {
+            0% { transform:translate(0,0) }
+            1.78571% { transform:translate(5px,0) }
+            3.57143% { transform:translate(0,0) }
+            5.35714% { transform:translate(5px,0) }
+            7.14286% { transform:translate(0,0) }
+            8.92857% { transform:translate(5px,0) }
+            10.71429% { transform:translate(0,0) }
+            100% { transform:translate(0,0) }
+        }
         .full-width {
             width: 100%;
         }
@@ -206,10 +230,26 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                                 <a href="{{ route('patientCallList.index') }}" class="text-white"><i
                                             class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
                             </li>
-                            <li>
-                                <a href="{{ route('care.center.work.schedule.index') }}" class="text-white"><i
-                                            class="top-nav-item-icon glyphicon glyphicon-calendar"></i>Schedule</a>
-                            </li>
+
+                                @if($hasCurrentWeekWindows)
+                                        <li>
+                                            <a href="{{ route('care.center.work.schedule.index') }}"
+                                               class="text-white"
+                                               title="Schedule has 0 hours for current week. Please enter your schedule.">
+                                                <i class="top-nav-item-icon glyphicon glyphicon-calendar"></i>
+                                                Schedule</a>
+                                        </li>
+                                    @else
+                                        <li>
+                                            <a href="{{ route('care.center.work.schedule.index') }}"
+                                               class="text-white"
+                                               title="Schedule has 0 hours for current week. Please enter your schedule.">
+                                                <i class="fa fa-exclamation"></i>
+                                                Schedule</a>
+                                        </li>
+
+                                    @endif
+
                         @endif
 
                             <li class="dropdown">

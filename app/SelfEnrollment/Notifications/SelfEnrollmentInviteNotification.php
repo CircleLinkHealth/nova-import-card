@@ -13,6 +13,7 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
 use NotificationChannels\Twilio\TwilioSmsMessage;
 use Spatie\RateLimitedMiddleware\RateLimited;
 
@@ -155,6 +156,13 @@ class SelfEnrollmentInviteNotification extends Notification
      */
     public function via($notifiable)
     {
+        if (in_array('mail', $this->channels) && (
+            Str::contains($notifiable->email, ['@careplanmanager.com', '@example.com', '@noEmail.com']) || empty($notifiable->email)
+        )) {
+            // Do not attempt to send via mail if the email is fake or invalid
+            unset($this->channels[array_search('mail', $this->channels)]);
+        }
+
         return array_merge(['database'], $this->channels);
     }
 }

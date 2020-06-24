@@ -6,27 +6,28 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\GenerateOpsDashboardCSVReport;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
-class QueueGenerateOpsDashboardCSVReport extends Command
+class FixRemoveNoEmailAtNoEmailDotCom extends Command
 {
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'This command queues a job to produce a CSV with data from the ops dashboard, from the previous dat at 23:00 up until the job runs. This is mainly used for testing.';
+    protected $description = 'Command description';
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'ops:csv';
+    protected $signature = 'fix:remove-no-email-at-no-email-dot-com';
 
     /**
      * Create a new command instance.
+     *
+     * @return void
      */
     public function __construct()
     {
@@ -40,7 +41,13 @@ class QueueGenerateOpsDashboardCSVReport extends Command
      */
     public function handle()
     {
-        $user = User::find(8935);
-        GenerateOpsDashboardCSVReport::dispatch($user);
+        User::withTrashed()->where('email', 'like', '%@noemail.com%')->chunkById(500, function ($users) {
+            foreach ($users as $user) {
+                $email = "u{$user->id}@careplanmanager.com";
+                $this->warn("Saving $email");
+                $user->email = $email;
+                $user->save();
+            }
+        });
     }
 }
