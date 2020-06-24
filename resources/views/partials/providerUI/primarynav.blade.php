@@ -231,7 +231,7 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                                             class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
                             </li>
 
-                                @if($hasCurrentWeekWindows)
+                                @if($hasNotCurrentWeekWindows)
                                         <li>
                                             <a href="{{ route('care.center.work.schedule.index') }}"
                                                class="text-white"

@@ -158,6 +158,7 @@ class NurseCalendarService
 
     /**
      * @param $auth
+     *
      * @return array
      */
     public function dailyReportDataForCalendar($auth, array $dataReport, string $date)
@@ -334,16 +335,13 @@ class NurseCalendarService
     {
         return \Cache::remember("total_time_visits_for_{$auth->id}_$date", 2, function () use ($auth, $date) {
             $invoice = $auth->nurseInfo->invoices()->where('month_year', Carbon::parse($date)->startOfMonth())->first();
-            if ( ! empty($invoice)) {
-                return [
-                    'totalVisitsCount' => $invoice->invoice_data['visitsCount'],
-                    'invoiceId'        => $invoice->id,
-                ];
-            }
 
-            Log::warning("Invoice for nurse with user id: [$auth->id] not found.");
+            $this->validateInvoiceData($invoice, $auth);
 
-            return [];
+            return [
+                'totalVisitsCount' => $invoice->invoice_data['visitsCount'],
+                'invoiceId'        => $invoice->id,
+            ];
         });
     }
 
@@ -423,6 +421,7 @@ class NurseCalendarService
 
     /**
      * @param $cacheKey
+     *
      * @return \Collection|\Illuminate\Support\Collection
      */
     public function nurseDailyReportForDate(int $userId, Carbon $date, string $cacheKey)
@@ -628,5 +627,32 @@ class NurseCalendarService
                     ]
                 );
             });
+    }
+
+    /**
+     * @param $invoice
+     * @param $auth
+     *
+     * @return array
+     */
+    private function validateInvoiceData($invoice, $auth)
+    {
+        if (empty($invoice)) {
+            Log::warning("Invoice for nurse with user id: [$auth->id] not found.");
+
+            return [];
+        }
+
+        if (empty($invoice->invoice_data)) {
+            Log::warning("Invoice data for nurse with user id: [$auth->id] not found.");
+
+            return [];
+        }
+
+        if (is_null($invoice->invoice_data['visitsCount'])) {
+            Log::warning("Total visits for nurse with user id: [$auth->id] not found.");
+
+            return [];
+        }
     }
 }

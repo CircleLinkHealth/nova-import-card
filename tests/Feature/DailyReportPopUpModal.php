@@ -31,7 +31,7 @@ class DailyReportPopUpModal extends TestCase
     }
 
     public function test_it_caches_data_for_pop_up_modal()
-    {
+    { // Only shows pop up once / day
         $nurse     = $this->createUsersOfType('care-center');
         $date      = Carbon::yesterday();
         $cacheTime = Carbon::now()->endOfDay();
