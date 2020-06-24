@@ -15,18 +15,28 @@ use Illuminate\Support\Collection;
  */
 class OpsDashboardPracticeReportData
 {
-    protected $added = 0;
+    protected $added    = 0;
+    protected $addedIds = [];
     protected $enrolledPatientIds;
     protected $fifteenToTwentyMins               = 0;
     protected $fiveToTenMins                     = 0;
     protected $g0506ToEnroll                     = 0;
     protected $lostAddedCalculatedUsingRevisions = false;
     protected $paused                            = 0;
+    protected $pausedIds                         = [];
     protected $priorDayReportUpdatedAt;
     protected $priorDayTotals;
     protected $reportUpdatedAt;
-    protected $tenToFifteenMins = 0;
-    protected $total            = 0;
+    protected $revisionsAddedCount       = 0;
+    protected $revisionsAddedIds         = [];
+    protected $revisionsPausedCount      = 0;
+    protected $revisionsPausedIds        = [];
+    protected $revisionsUnreachableCount = 0;
+    protected $revisionsUnreachableIds   = [];
+    protected $revisionsWithdrawnCount   = 0;
+    protected $revisionsWithdrawnIds     = [];
+    protected $tenToFifteenMins          = 0;
+    protected $total                     = 0;
     protected $totalCcmTime;
     protected $totalPausedCount      = 0;
     protected $totalUnreachableCount = 0;
@@ -34,7 +44,9 @@ class OpsDashboardPracticeReportData
     protected $twentyPlusBhiMins     = 0;
     protected $twentyPlusMins        = 0;
     protected $unreachable           = 0;
+    protected $unreachableIds        = [];
     protected $withdrawn             = 0;
+    protected $withdrawnIds          = [];
     protected $zeroMins              = 0;
     protected $zeroToFiveMins        = 0;
 
@@ -44,6 +56,11 @@ class OpsDashboardPracticeReportData
     public function getAdded()
     {
         return $this->added ?? 0;
+    }
+
+    public function getAddedIds(): array
+    {
+        return $this->addedIds;
     }
 
     /**
@@ -101,6 +118,11 @@ class OpsDashboardPracticeReportData
         return $this->paused ?? 0;
     }
 
+    public function getPausedIds(): array
+    {
+        return $this->pausedIds;
+    }
+
     /**
      * @return mixed
      */
@@ -126,6 +148,46 @@ class OpsDashboardPracticeReportData
     public function getReportUpdatedAt()
     {
         return Carbon::now()->toDateTimeString();
+    }
+
+    public function getRevisionsAddedCount(): int
+    {
+        return $this->revisionsAddedCount;
+    }
+
+    public function getRevisionsAddedIds(): array
+    {
+        return $this->revisionsAddedIds;
+    }
+
+    public function getRevisionsPausedCount(): int
+    {
+        return $this->revisionsPausedCount;
+    }
+
+    public function getRevisionsPausedIds(): array
+    {
+        return $this->revisionsPausedIds;
+    }
+
+    public function getRevisionsUnreachableCount(): int
+    {
+        return $this->revisionsUnreachableCount;
+    }
+
+    public function getRevisionsUnreachableIds(): array
+    {
+        return $this->revisionsUnreachableIds;
+    }
+
+    public function getRevisionsWithdrawnCount(): int
+    {
+        return $this->revisionsWithdrawnCount;
+    }
+
+    public function getRevisionsWithdrawnIds(): array
+    {
+        return $this->revisionsWithdrawnIds;
     }
 
     /**
@@ -200,12 +262,22 @@ class OpsDashboardPracticeReportData
         return $this->unreachable ?? 0;
     }
 
+    public function getUnreachableIds(): array
+    {
+        return $this->unreachableIds;
+    }
+
     /**
      * @return mixed
      */
     public function getWithdrawn()
     {
         return $this->withdrawn ?? 0;
+    }
+
+    public function getWithdrawnIds(): array
+    {
+        return $this->withdrawnIds;
     }
 
     /**
@@ -297,6 +369,11 @@ class OpsDashboardPracticeReportData
         $this->added = $added;
     }
 
+    public function setAddedIds(array $addedIds): void
+    {
+        $this->addedIds = $addedIds;
+    }
+
     /**
      * @param mixed $enrolledPatientIds
      */
@@ -342,6 +419,11 @@ class OpsDashboardPracticeReportData
         $this->paused = $paused;
     }
 
+    public function setPausedIds(array $pausedIds): void
+    {
+        $this->pausedIds = $pausedIds;
+    }
+
     /**
      * @param mixed $priorDayReportUpdatedAt
      */
@@ -364,6 +446,46 @@ class OpsDashboardPracticeReportData
     public function setReportUpdatedAt($reportUpdatedAt): void
     {
         $this->reportUpdatedAt = $reportUpdatedAt;
+    }
+
+    public function setRevisionsAddedCount(int $revisionsAddedCount): void
+    {
+        $this->revisionsAddedCount = $revisionsAddedCount;
+    }
+
+    public function setRevisionsAddedIds(array $revisionsAddedIds): void
+    {
+        $this->revisionsAddedIds = $revisionsAddedIds;
+    }
+
+    public function setRevisionsPausedCount(int $revisionsPausedCount): void
+    {
+        $this->revisionsPausedCount = $revisionsPausedCount;
+    }
+
+    public function setRevisionsPausedIds(array $revisionsPausedIds): void
+    {
+        $this->revisionsPausedIds = $revisionsPausedIds;
+    }
+
+    public function setRevisionsUnreachableCount(int $revisionsUnreachableCount): void
+    {
+        $this->revisionsUnreachableCount = $revisionsUnreachableCount;
+    }
+
+    public function setRevisionsUnreachableIds(array $revisionsUnreachableIds): void
+    {
+        $this->revisionsUnreachableIds = $revisionsUnreachableIds;
+    }
+
+    public function setRevisionsWithdrawnCount(int $revisionsWithdrawnCount): void
+    {
+        $this->revisionsWithdrawnCount = $revisionsWithdrawnCount;
+    }
+
+    public function setRevisionsWithdrawnIds(array $revisionsWithdrawnIds): void
+    {
+        $this->revisionsWithdrawnIds = $revisionsWithdrawnIds;
     }
 
     /**
@@ -438,12 +560,22 @@ class OpsDashboardPracticeReportData
         $this->unreachable = $unreachable;
     }
 
+    public function setUnreachableIds(array $unreachableIds): void
+    {
+        $this->unreachableIds = $unreachableIds;
+    }
+
     /**
      * @param mixed $withdrawn
      */
     public function setWithdrawn($withdrawn): void
     {
         $this->withdrawn = $withdrawn;
+    }
+
+    public function setWithdrawnIds(array $withdrawnIds): void
+    {
+        $this->withdrawnIds = $withdrawnIds;
     }
 
     /**
@@ -497,6 +629,24 @@ class OpsDashboardPracticeReportData
             //adding to help us generate hours behind metric,
             'total_ccm_time'                        => $this->getTotalCcmTime(),
             'lost_added_calculated_using_revisions' => $this->getLostAddedCalculatedUsingRevisions(),
+
+            //to help us debug
+            //delta ids
+            'added_ids'       => $this->getAddedIds(),
+            'withdrawn_ids'   => $this->getWithdrawnIds(),
+            'paused_ids'      => $this->getPausedIds(),
+            'unreachable_ids' => $this->getUnreachableIds(),
+
+            //revision info
+            'revisions_added_ids'       => $this->getRevisionsAddedIds(),
+            'revisions_paused_ids'      => $this->getRevisionsPausedIds(),
+            'revisions_withdrawn_ids'   => $this->getRevisionsWithdrawnIds(),
+            'revisions_unreachable_ids' => $this->getRevisionsUnreachableIds(),
+
+            'revisions_added_count'       => $this->getRevisionsAddedCount(),
+            'revisions_paused_count'      => $this->getRevisionsPausedCount(),
+            'revisions_withdrawn_count'   => $this->getRevisionsWithdrawnCount(),
+            'revisions_unreachable_count' => $this->getRevisionsUnreachableCount(),
         ];
     }
 
