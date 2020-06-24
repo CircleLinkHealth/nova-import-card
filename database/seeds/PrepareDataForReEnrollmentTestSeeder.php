@@ -7,6 +7,7 @@
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\SeedEligibilityJobsForEnrollees;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -110,6 +111,20 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             ]
         );
 
+        $location = Location::firstOrCreate(
+            [
+                'practice_id' => $practice->id,
+            ],
+            [
+                'is_primary'     => 1,
+                'name'           => $practice->name,
+                'address_line_1' => '84982 Sipes Manor Theoborough, AZ 58735-9955',
+                'city'           => 'West Jeraldbury',
+                'state'          => 'MD',
+                'postal_code'    => '21335 - 9764',
+            ]
+        );
+
         $n       = 1;
         $limit   = 5;
         $testDob = \Carbon\Carbon::parse('1901-01-01');
@@ -120,6 +135,12 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 'cell_phone'    => $phoneTester,
                 'dob'           => $testDob,
             ]);
+
+            $enrollee->update(
+                [
+                    'location_id' => $location->id,
+                ]
+            );
 
             $enrollee->provider->providerInfo->update([
                 //                This is a real npi number of a real provider. We need this to display signature in letter.

@@ -205,7 +205,7 @@ if (isset($patient) && ! empty($patient)) {
                                                         and View Next">
                                                     </form>
 
-                                                    <form action="{{route('patient.careplan.not.eligible', ['patientId' => $patient->id, 'viewNext' => true])}}"
+                                                    <form action="{{route('patient.careplan.not.eligible', ['patientId' => $patient->id])}}"
                                                           method="POST" id="not-eligible-form" style="display: inline">
                                                         {{ csrf_field() }}
                                                         <button type="button" style="margin-right:10px;"
