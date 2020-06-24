@@ -336,12 +336,7 @@ class NurseCalendarService
         return \Cache::remember("total_time_visits_for_{$auth->id}_$date", 2, function () use ($auth, $date) {
             $invoice = $auth->nurseInfo->invoices()->where('month_year', Carbon::parse($date)->startOfMonth())->first();
 
-            $this->validateInvoiceData($invoice, $auth);
-
-            return [
-                'totalVisitsCount' => $invoice->invoice_data['visitsCount'],
-                'invoiceId'        => $invoice->id,
-            ];
+            return  $this->validatedInvoiceData($invoice, $auth);
         });
     }
 
@@ -378,14 +373,7 @@ class NurseCalendarService
     public function loginActivityCountFor(int $userId, Carbon $date)
     {
         return LoginLogout::where('user_id', $userId)
-            ->where([
-                [
-                    'login_time', '>=', $date->copy()->startOfDay(),
-                ],
-                [
-                    'login_time', '<=', $date->copy()->endOfDay(),
-                ],
-            ])->count();
+            ->whereBetween('login_time', [$date->copy()->startOfDay(), $date->copy()->endOfDay()])->count();
     }
 
     /**
@@ -635,7 +623,7 @@ class NurseCalendarService
      *
      * @return array
      */
-    private function validateInvoiceData($invoice, $auth)
+    private function validatedInvoiceData($invoice, $auth)
     {
         if (empty($invoice)) {
             Log::warning("Invoice for nurse with user id: [$auth->id] not found.");
@@ -654,5 +642,10 @@ class NurseCalendarService
 
             return [];
         }
+
+        return [
+            'totalVisitsCount' => $invoice->invoice_data['visitsCount'],
+            'invoiceId'        => $invoice->id,
+        ];
     }
 }
