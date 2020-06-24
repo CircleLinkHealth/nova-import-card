@@ -211,7 +211,7 @@ trait NursePerformanceCalculations
         return $caseLoad
             ->filter(function ($q) {
                 return $q->patient_time < 20
-                    || $q->successful_calls < OpsDashboardReport::MIN_CALL;
+                    || $q->successful_calls < NursesPerformanceReportService::MIN_CALL;
             })
             ->count();
 

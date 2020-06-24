@@ -93,7 +93,7 @@ class GenerateOpsDailyPracticeReport implements ShouldQueue
 
         $practice = Practice::select(['id', 'display_name'])
             ->activeBillable()
-            ->opsDashboardQuery($this->date->copy()->startOfMonth(), $this->fromDate)
+            ->opsDashboardQuery($this->date, $this->fromDate)
             ->findOrFail($this->practiceId);
 
         $report = OpsDashboardPracticeReport::firstOrCreate([
