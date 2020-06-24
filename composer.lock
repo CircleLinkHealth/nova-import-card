@@ -972,7 +972,8 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
-                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8"
+                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8",
+                "shasum": null
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1005,7 +1006,8 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
-                "reference": "6ecab1c47b37727c17819ad31972bbd437c4a44a"
+                "reference": "6ecab1c47b37727c17819ad31972bbd437c4a44a",
+                "shasum": null
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1074,7 +1076,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "6e27b76226235b4fe20c2fd07abdbece91de8536"
+                "reference": "c7e11a9bd49472860cb01e8483a7c9da03813039"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1103,7 +1105,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-23T20:36:14+00:00"
+            "time": "2020-06-24T09:09:44+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1216,7 +1218,8 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EnrollmentInvites",
-                "reference": "3d7e5ac1e98048bb2f469171feb8cb1532131c9c"
+                "reference": "3d7e5ac1e98048bb2f469171feb8cb1532131c9c",
+                "shasum": null
             },
             "require": {
                 "anaseqal/nova-import": "^0.0.3",
@@ -1250,7 +1253,8 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
-                "reference": "8b21629514943da628f3f5acb602c7610c2d9167"
+                "reference": "8b21629514943da628f3f5acb602c7610c2d9167",
+                "shasum": null
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1283,7 +1287,8 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
-                "reference": "647bc07cacc81615878d4210f947957280127fdc"
+                "reference": "647bc07cacc81615878d4210f947957280127fdc",
+                "shasum": null
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1316,7 +1321,8 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "d2794727046970ff3c6b1fe99840282787cfb8df"
+                "reference": "d2794727046970ff3c6b1fe99840282787cfb8df",
+                "shasum": null
             },
             "require": {
                 "php": ">=7.1.0",
