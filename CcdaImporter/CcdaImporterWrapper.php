@@ -23,8 +23,6 @@ use Illuminate\Support\Str;
 
 class CcdaImporterWrapper
 {
-    const TEMP_VAR_COMMONWEALTH_PRACTICE_NAME = 'commonwealth-pain-associates-pllc';
-
     /**
      * @var Ccda
      */
@@ -53,10 +51,6 @@ class CcdaImporterWrapper
      */
     public static function attemptToDecorateCcda(User $user, Ccda $ccda)
     {
-        if (self::TEMP_VAR_COMMONWEALTH_PRACTICE_NAME !== optional($user->primaryPractice)->name) {
-            return $ccda;
-        }
-
         if ($mr = MedicalRecordFactory::create($user, $ccda)) {
             if ( ! empty($mr)) {
                 $ccda->json = $mr->toJson();

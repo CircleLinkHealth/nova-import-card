@@ -15,6 +15,7 @@ use CircleLinkHealth\Eligibility\Decorators\PcmChargeableServices;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CommonwealthMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\PracticePullMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Str;
 
@@ -63,6 +64,11 @@ class MedicalRecordFactory
     public function createDefaultMedicalRecord(User $user, Ccda $ccda)
     {
         return new CcdaMedicalRecord(json_decode($ccda->json));
+    }
+
+    public function createToledoClinicMedicalRecord(User $user, Ccda $ccda)
+    {
+        return new PracticePullMedicalRecord($ccda->patient_mrn, $ccda->practice_id);
     }
 
     private function getEligibilityJobWithTargetPatient(User $user)
