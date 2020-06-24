@@ -89,6 +89,7 @@ const PusherNotifications = () => import(/* webpackChunkName: "chunk-pusher-noti
 const PusherSeeAllNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-see-all-notifications')
 const SendEmailToPatientComponent = () => import('./components/send-email-to-patient')
 const AttestCallConditionsModalComponent = () => import(/* webpackChunkName: "chunk-attest-call-conditions" */  './components/attest-call-conditions.modal');
+const CalendarDailyReport = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/CalendarDailyReport');
 
 
 Vue.component('attest-call-conditions-modal', AttestCallConditionsModalComponent);
@@ -145,6 +146,7 @@ Vue.component('nurse-schedule-calendar', NurseScheduleCalendar);
 Vue.component('calendar-loader', CalendarLoader);
 Vue.component('pusher-notifications', PusherNotifications);
 Vue.component('pusher-see-all-notifications', PusherSeeAllNotifications);
+Vue.component('calendar-daily-report', CalendarDailyReport);
 
 const App = new Vue({
     el: '#app',

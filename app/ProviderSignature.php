@@ -16,9 +16,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string                          $signature_src
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\ProviderSignature newModelQuery()
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\ProviderSignature newQuery()
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\ProviderSignature query()
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProviderSignature newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProviderSignature newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProviderSignature query()
  * @mixin \Eloquent
  */
 class ProviderSignature extends Model

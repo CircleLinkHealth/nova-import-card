@@ -81,6 +81,7 @@ class UpdateProvidersFromExcel implements ToCollection, WithStartRow
 
     /**
      * @param $practice
+     *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
      */
     private function getUserProvider(string $email, $practice)

@@ -1,4 +1,7 @@
 <?php
+
+use App\FullCalendar\NurseCalendarService;
+
 $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
 if (isset($patient)) {
     //$patient can be a User or Patient model.
@@ -228,7 +231,7 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                                             class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
                             </li>
 
-                                @if($hasCurrentWeekWindows)
+                                @if($hasNotCurrentWeekWindows)
                                         <li>
                                             <a href="{{ route('care.center.work.schedule.index') }}"
                                                class="text-white"
@@ -292,6 +295,15 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                         @endif
 
                         @include('partials.user-account-dropdown')
+
+                            @if(!empty($reportData))
+                                    <calendar-daily-report style="color: black; letter-spacing: 1px;"
+                                            :report-data="{{json_encode($reportData['data']['reportData'])}}"
+                                            :report-date="{{json_encode(\Carbon\Carbon::parse($reportData['data']['date'])->toDateString())}}"
+                                            :report-flags="{{json_encode($reportData['data']['reportFlags'])}}"
+                                            :pop-up-now={{true}}></calendar-daily-report>
+                            @endif
+
                     </ul>
                 </div>
             </div>

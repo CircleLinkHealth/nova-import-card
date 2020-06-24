@@ -21,19 +21,21 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property \Illuminate\Support\Carbon|null                                                             $created_at
  * @property \Illuminate\Support\Carbon|null                                                             $updated_at
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant newModelQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant newQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant query()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereAccountSid($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereCallSid($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereConferenceSid($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereCreatedAt($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereDuration($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereParticipantNumber($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereStatus($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereUpdatedAt($value)
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereAccountSid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereCallSid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereConferenceSid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereDuration($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereParticipantNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property int|null $revision_history_count
  */
 class TwilioConferenceCallParticipant extends BaseModel
