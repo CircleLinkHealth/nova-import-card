@@ -23,6 +23,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
@@ -438,7 +439,7 @@ class SelfEnrollmentTest extends TestCase
     {
         $enrollee       = $this->createEnrollees(1);
         $patient        = $enrollee->user;
-        $surveyInstance = $this->factory()->createSurveyConditionsAndGetSurveyInstance($patient->id, SelfEnrollmentController::ENROLLMENT_SURVEY_PENDING);
+        $surveyInstance = $this->createSurveyConditionsAndGetSurveyInstance($patient->id, SelfEnrollmentController::ENROLLMENT_SURVEY_PENDING);
         self::assertTrue(Helpers::awvUserSurveyQuery($patient, $surveyInstance)->exists());
     }
 
@@ -470,7 +471,7 @@ class SelfEnrollmentTest extends TestCase
     {
         $enrollee       = $this->createEnrollees(1);
         $patient        = $enrollee->user;
-        $surveyInstance = $this->factory()->createSurveyConditionsAndGetSurveyInstance($patient->id, SelfEnrollmentController::ENROLLMENT_SURVEY_COMPLETED);
+        $surveyInstance = $this->createSurveyConditionsAndGetSurveyInstance($patient->id, SelfEnrollmentController::ENROLLMENT_SURVEY_COMPLETED);
         self::assertTrue(SelfEnrollmentController::ENROLLMENT_SURVEY_COMPLETED === Helpers::awvUserSurveyQuery($patient, $surveyInstance)->first()->status);
     }
 
@@ -478,7 +479,7 @@ class SelfEnrollmentTest extends TestCase
     {
         $enrollee       = $this->createEnrollees(1);
         $patient        = $enrollee->user;
-        $surveyInstance = $this->factory()->createSurveyConditionsAndGetSurveyInstance($patient->id, SelfEnrollmentController::ENROLLMENT_SURVEY_IN_PROGRESS);
+        $surveyInstance = $this->createSurveyConditionsAndGetSurveyInstance($patient->id, SelfEnrollmentController::ENROLLMENT_SURVEY_IN_PROGRESS);
         self::assertTrue(SelfEnrollmentController::ENROLLMENT_SURVEY_IN_PROGRESS === Helpers::awvUserSurveyQuery($patient, $surveyInstance)->first()->status);
     }
 
@@ -515,6 +516,33 @@ class SelfEnrollmentTest extends TestCase
         return $coll;
     }
 
+    private function createSurveyConditions(int $userId, int $surveyInstanceId, int $surveyId, string $status)
+    {
+        DB::table('users_surveys')->insert(
+            [
+                'user_id'            => $userId,
+                'survey_instance_id' => $surveyInstanceId,
+                'survey_id'          => $surveyId,
+                'status'             => $status,
+                'start_date'         => Carbon::parse(now())->toDateTimeString(),
+            ]
+        );
+    }
+
+    private function createSurveyConditionsAndGetSurveyInstance(string $userId, string $status)
+    {
+        $surveyId = $this->firstOrCreateEnrollmentSurvey();
+
+        $surveyInstanceId = DB::table('survey_instances')->insertGetId([
+            'survey_id' => $surveyId,
+            'year'      => Carbon::now(),
+        ]);
+
+        self::createSurveyConditions($userId, $surveyInstanceId, $surveyId, $status);
+
+        return DB::table('survey_instances')->where('id', '=', $surveyInstanceId)->first();
+    }
+
     private function factory()
     {
         if (is_null($this->factory)) {
@@ -522,5 +550,26 @@ class SelfEnrollmentTest extends TestCase
         }
 
         return $this->factory;
+    }
+
+    private function firstOrCreateEnrollmentSurvey()
+    {
+        $surveyId = optional(DB::table('surveys')
+            ->where('name', SelfEnrollmentController::ENROLLEES_SURVEY_NAME)
+            ->first())->id;
+
+        if ( ! $surveyId) {
+            $surveyId = DB::table('surveys')
+                ->insertGetId([
+                    'name' => SelfEnrollmentController::ENROLLEES_SURVEY_NAME,
+                ]);
+        }
+
+        DB::table('survey_instances')->insertGetId([
+            'survey_id' => $surveyId,
+            'year'      => now()->year,
+        ]);
+
+        return $surveyId;
     }
 }
