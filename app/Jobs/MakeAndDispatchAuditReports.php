@@ -8,9 +8,12 @@ namespace App\Jobs;
 
 use App\Contracts\DirectMail;
 use App\Contracts\Efax;
+use App\Notifications\Channels\DirectMailChannel;
+use App\Notifications\Channels\FaxChannel;
+use App\Notifications\SendAuditReport;
 use App\Reports\PatientDailyAuditReport;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -93,26 +96,18 @@ class MakeAndDispatchAuditReports implements ShouldQueue
         if ($this->send) {
             $settings = $this->patient->primaryPractice->settings()->firstOrNew([]);
 
-            $sent = $this->patient->locations->map(function ($location) use ($path, $settings, $fileName) {
-                //Send DM mail
+            $this->patient->locations->each(function (Location $location) use ($path, $settings, $fileName) {
                 if ($settings->dm_audit_reports) {
-                    $this->directMail->send($location->emr_direct_address, $path, $fileName);
+                    $channels[] = DirectMailChannel::class;
                 }
 
-                //Send eFax
-                $fax = $location->fax;
-
-                if ($settings->efax_audit_reports && $fax) {
-                    $number = (new StringManipulation())->formatPhoneNumberE164($fax);
-                    $args = ['file' => $path];
-                    if (true === $this->batch) {
-                        $args['batch_delay'] = 60;
-                        $args['batch_collision_avoidance'] = true;
-                    }
-                    $this->eFax->createFaxFor($number)->send($args);
+                if ($settings->efax_audit_reports && $location->fax) {
+                    $channels[] = FaxChannel::class;
                 }
 
-                return $location;
+                if (isset($channels)) {
+                    $location->notify(new SendAuditReport($this->patient, $this->date, $channels, $this->batch));
+                }
             });
         }
 
