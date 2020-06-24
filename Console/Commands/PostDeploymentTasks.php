@@ -52,7 +52,7 @@ class PostDeploymentTasks extends Command
         ];
         if ( ! app()->environment(['review'])) {
             $arr[] = 'opcache:clear';
-            $arr[] = ' opcache:compile';
+            $arr[] = 'opcache:compile';
         }
         $arr = array_merge($arr, [
             'config:cache',
