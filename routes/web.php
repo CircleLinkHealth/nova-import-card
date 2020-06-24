@@ -2246,7 +2246,15 @@ Route::post('enrollee-login-viewed', [
     'as'   => 'enrollee.login.viewed',
 ])->middleware('guest');
 
-//Route::get('get-calendar-data', [
-//    'uses' => 'CareCenter\WorkScheduleController@calendarEvents',
-//    'as'   => 'care.center.work.schedule.getCalendarData',
-//]);
+Route::group([
+    'middleware' => [
+        'auth',
+        'permission:admin-access',
+    ],
+    'prefix' => 'admin/download',
+], function () {
+    Route::get('invoices', [
+        'uses' => 'InvoicesDownload\TestDownloadInvoice@collectInvoicesFor',
+        'as'   => 'collect.nurses.invoices',
+    ])->middleware('auth');
+});
