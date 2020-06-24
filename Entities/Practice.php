@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Traits\HasChargeableServices;
+use CircleLinkHealth\Customer\Traits\HasNotificationContactPreferences;
 use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\HasImportingHooks;
@@ -59,35 +60,37 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \App\CPRulesPCP[]|\Illuminate\Database\Eloquent\Collection                                          $pcp
  * @property \CircleLinkHealth\Customer\Entities\Settings[]|\Illuminate\Database\Eloquent\Collection             $settings
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                 $users
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice active()
- * @method   static                                                                                              bool|null forceDelete()
- * @method   static                                                                                              \Illuminate\Database\Query\Builder|Practice onlyTrashed()
- * @method   static                                                                                              bool|null restore()
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereActive($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereAutoApproveCareplans($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereBillToName($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereClhPppm($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereCreatedAt($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereDeletedAt($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereDisplayName($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereEhrId($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereExternalId($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereFederalTaxId($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereId($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereInvoiceRecipients($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereName($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereOutgoingPhoneNumber($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereSameClinicalContact($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereSameEhrLogin($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereSendAlerts($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereSmsMarketingNumber($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereTermDays($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereUpdatedAt($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereUserId($value)
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|Practice whereWeeklyReportRecipients($value)
- * @method   static                                                                                              \Illuminate\Database\Query\Builder|Practice withTrashed()
- * @method   static                                                                                              \Illuminate\Database\Query\Builder|Practice withoutTrashed()
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice active()
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|Practice onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereAutoApproveCareplans($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereBillToName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereClhPppm($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereDisplayName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereEhrId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereExternalId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereFederalTaxId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereInvoiceRecipients($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereOutgoingPhoneNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereSameClinicalContact($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereSameEhrLogin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereSendAlerts($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereSmsMarketingNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereTermDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereWeeklyReportRecipients($value)
+ * @method static \Illuminate\Database\Query\Builder|Practice withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Practice withoutTrashed()
  * @mixin \Eloquent
+ *
  * @property int|null                                                          $saas_account_id
  * @property \App\CareAmbassadorLog[]|\Illuminate\Database\Eloquent\Collection $careAmbassadorLogs
  * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection
@@ -100,7 +103,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *     $notifications
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\SaasAccount|null                                        $saasAccount
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice activeBillable()
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice activeBillable()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
  *     authUserCanAccess($softwareOnly = false)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
@@ -113,6 +117,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice query()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
  *     whereSaasAccountId($value)
+ *
  * @property int|null $care_ambassador_logs_count
  * @property int|null $careplan_count
  * @property int|null $chargeable_services_count
@@ -125,13 +130,17 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null $settings_count
  * @property int|null $users_count
  * @property int      $is_demo
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
  *     whereIsDemo($value)
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice opsDashboardQuery(\Carbon\Carbon $startOfMonth, \Carbon\Carbon $revisionsFromDate)
- * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Nova\Actions\ActionEvent[]                     $actions
- * @property int|null                                                                                         $actions_count
- * @property \Illuminate\Support\Collection|null                                                              $importing_hooks
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice whereImportingHooks($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice opsDashboardQuery(\Carbon\Carbon $startOfMonth, \Carbon\Carbon $revisionsFromDate)
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Nova\Actions\ActionEvent[] $actions
+ * @property int|null                                                                     $actions_count
+ * @property \Illuminate\Support\Collection|null                                          $importing_hooks
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice whereImportingHooks($value)
+ *
  * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $allChargeableServices
  * @property int|null                                                                                         $all_chargeable_services_count
  */
@@ -141,6 +150,7 @@ class Practice extends BaseModel implements HasMedia
     use HasChargeableServices;
     use HasImportingHooks;
     use HasMediaTrait;
+    use HasNotificationContactPreferences;
     use HasSettings;
     use Notifiable;
     use SaasAccountable;
