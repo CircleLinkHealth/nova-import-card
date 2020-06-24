@@ -143,8 +143,13 @@ class CreateSurveyOnlyUserFromEnrollee implements ShouldQueue
 
         $this->attachPhones($userCreatedFromEnrollee, $this->enrollee);
 
-        if ( ! empty($this->enrollee->provider)) {
-            $userCreatedFromEnrollee->setBillingProviderId($this->enrollee->provider->id);
+        if ($this->enrollee->provider_id) {
+            $id         = $this->enrollee->id;
+            $providerId = $this->enrollee->provider_id;
+            Log::debug("Setting provider for enrollee[$id]: $providerId");
+            $userCreatedFromEnrollee->setBillingProviderId($this->enrollee->provider_id);
+        } else {
+            Log::debug('provider_id not found. Will not set.');
         }
 
         $this->enrollee->update(
