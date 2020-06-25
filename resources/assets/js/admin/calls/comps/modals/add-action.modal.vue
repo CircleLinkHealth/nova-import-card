@@ -460,7 +460,7 @@
                 return Promise.resolve([])
             },
             isNonMatchingPatientNurseLanguage(patient, nurse) {
-                if (!patient.preferred_contact_language || patient.preferred_contact_language === 'EN') {
+                if (!patient.preferred_contact_language || patient.preferred_contact_language.toUpperCase() === 'EN') {
                     return false;
                 }
                 // nurse.spanish is one of [0,1]
