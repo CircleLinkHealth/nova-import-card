@@ -47,12 +47,12 @@ class CreateAuditReportForPatientForMonth implements ShouldQueue
      */
     public function handle()
     {
-        $fileName = (new PatientDailyAuditReport(
-            $this->patient,
-            $this->date->startOfMonth()
-        ))
-            ->renderPDF();
-
-        \File::delete(storage_path("download/${fileName}"));
+        \File::delete(
+            (new PatientDailyAuditReport(
+                $this->patient,
+                $this->date->startOfMonth()
+            ))
+                ->renderPDF()['path']
+        );
     }
 }
