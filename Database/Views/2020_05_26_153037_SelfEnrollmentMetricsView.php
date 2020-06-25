@@ -61,7 +61,7 @@ class SelfEnrollmentMetricsView extends BaseSqlView
        CAST(COUNT(DISTINCT us.user_id) as CHAR(50)) as total_seen_form,
        CONCAT(IFNULL(ROUND((SUM(case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end) * 100) / COUNT(l.user_id)), 0), '%') as percentage_seen_form,
        IFNULL(SUM(case when e.status = '$enrolled' AND us.status = 'completed' AND e.auto_enrollment_triggered = true then 1 else 0 end), 0) as total_enrolled,
-       CONCAT(IFNULL(ROUND((SUM(case when e.status = '$enrolled' AND us.status = 'completed' AND e.auto_enrollment_triggered = true then 1 else 0 end) * 100) / COUNT(DISTINCT case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end)),0), '%') as percentage_enrolled,
+       CONCAT(IFNULL(ROUND((SUM(case when e.status = '$enrolled' AND us.status = 'completed' AND e.auto_enrollment_triggered = true then 1 else 0 end) * 100) / SUM(case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end)),0), '%') as percentage_enrolled,
        CAST(SUM(case when e.status = '$toCall' AND erf.enrollable_id = e.id AND e.auto_enrollment_triggered = true then 1 else 0 end) as CHAR(50)) as total_call_requests,
        CONCAT(IFNULL(ROUND((SUM(case when e.status = '$toCall' AND erf.enrollable_id = e.id then 1 else 0 end) * 100) / COUNT(l.user_id)),0), '%') as percentage_call_requests
        
@@ -81,12 +81,17 @@ class SelfEnrollmentMetricsView extends BaseSqlView
        WHERE 0 = (SELECT COUNT(e2.id)
              FROM enrollees e2
              WHERE e.user_id = e2.user_id
-                AND e2.id < e.id)
+             AND e2.id < e.id)
                 
        AND 0 = (SELECT COUNT(l2.id)
              FROM login_logout_events l2
              WHERE l.user_id = l2.user_id
-                AND l2.id < l.id)
+             AND l2.id < l.id)
+                
+        AND 0 = (SELECT COUNT(us.survey_instance_id)
+             FROM users_surveys us2
+             WHERE us.user_id = us2.user_id
+             AND us2.id < us.id)
         AND
        p.is_demo = $showDemo
 
