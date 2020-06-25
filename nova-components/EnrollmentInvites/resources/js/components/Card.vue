@@ -12,7 +12,7 @@
                                name="amount"
                                v-model="amount"
                                :disabled="sendingInvites"
-                               style="border: 1px solid #5cc0dd; max-width: 100px; margin-left: 10px;" required>
+                               style="border: 1px solid #5cc0dd; max-width: 100px; max-height: 40px; margin-left: 10px;" required>
 
                          <label for="color" style="padding-left: 30px; padding-right: 15px;">
                              Choose invitation <br> button color:
@@ -20,7 +20,6 @@
 
                         <vue-select name="color"
                                     id="color"
-                                    style="border: solid 1px;"
                                     v-model="selectedButtonColor"
                                     :options="buttonColors"
                                     @change="setButtonBackgroundColor">
