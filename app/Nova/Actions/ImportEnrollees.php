@@ -18,7 +18,7 @@ use Laravel\Nova\Fields\File;
 use Laravel\Nova\Fields\Select;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ImportEnrolees extends Action
+class ImportEnrollees extends Action
 {
     use InteractsWithQueue;
     use Queueable;
@@ -89,6 +89,6 @@ class ImportEnrolees extends Action
 
     public function uriKey(): string
     {
-        return 'import-enrolee-datas';
+        return 'import-enrollees';
     }
 }

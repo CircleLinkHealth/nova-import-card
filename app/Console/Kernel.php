@@ -19,6 +19,7 @@ use App\Console\Commands\CreateApprovableBillablePatientsReport;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\EnrollmentFinalAction;
+use App\Console\Commands\FaxAuditReportsAtPracticePreferredDayTime;
 use App\Console\Commands\GenerateReportForScheduledPAM;
 use App\Console\Commands\NursesPerformanceDailyReport;
 use App\Console\Commands\OverwriteNBIImportedData;
@@ -81,6 +82,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(CheckEmrDirectInbox::class)
             ->everyMinute();
+
+        $schedule->command(FaxAuditReportsAtPracticePreferredDayTime::class)
+            ->everyFiveMinutes();
 
         $schedule->command(AutoApproveValidCarePlansAs::class, ['--reimport'])
             ->everyFiveMinutes()

@@ -136,6 +136,7 @@
                             <th>Unreachable</th>
                             <th>Paused</th>
                             <th>Withdrawn</th>
+                            <th>Deleted</th>
                             <th>DELTA</th>
                             <th>G0506 To Enroll</th>
                         </tr>
@@ -171,6 +172,14 @@
                                         @if($value['Withdrawn'] != 0)
                                             <td class="color-red">-{{$value['Withdrawn']}}</td>@else
                                             <td>{{$value['Withdrawn']}}</td>@endif
+                                        @if(isset($value['Deleted']))
+                                            @if($value['Deleted'] != 0)
+                                                <td class="color-red">-{{$value['Deleted']}}</td>
+                                            @else
+                                                <td>{{$value['Deleted']}}</td>@endif
+                                        @else
+                                            <td>N/A</td>
+                                        @endif
                                         <td>{{$value['Delta']}}</td>
                                         <td>{{$value['G0506 To Enroll']}}</td>
                                     </tr>
@@ -204,6 +213,14 @@
                                         @if($value['Withdrawn'] != 0)
                                             <td class="color-red">-{{$value['Withdrawn']}}</td>@else
                                             <td>{{$value['Withdrawn']}}</td>@endif
+                                        @if(isset($value['Deleted']))
+                                            @if($value['Deleted'] != 0)
+                                                <td class="color-red">-{{$value['Deleted']}}</td>
+                                            @else
+                                                <td>{{$value['Deleted']}}</td>@endif
+                                        @else
+                                            <td>N/A</td>
+                                        @endif
                                         <td @if(isset($value['lost_added_calculated_using_revisions']) && $value['lost_added_calculated_using_revisions']== true)
                                             title="Calculated using Revisions" @endif>{{$value['Delta']}}</td>
                                         <td>{{$value['G0506 To Enroll']}}</td>
