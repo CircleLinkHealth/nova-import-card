@@ -45,13 +45,13 @@ abstract class AbstractSelfEnrollableUserIterator implements ShouldQueue
     public function handle()
     {
         $this->query()->chunk($this->chunkSize(), function ($users) {
-            $users->each(function (User $user) {
+            foreach ($users as $user) {
                 $this->action($user);
 
                 if ( ! is_null($this->limit()) && ++$this->dispatched >= $this->limit()) {
                     return false;
                 }
-            });
+            }
         });
     }
 

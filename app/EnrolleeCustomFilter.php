@@ -18,15 +18,17 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon|null                                                         $created_at
  * @property \Illuminate\Support\Carbon|null                                                         $updated_at
  * @property \CircleLinkHealth\Customer\Entities\Practice[]|\Illuminate\Database\Eloquent\Collection $practices
- * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\EnrolleeCustomFilter newModelQuery()
- * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\EnrolleeCustomFilter newQuery()
- * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\EnrolleeCustomFilter query()
- * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\EnrolleeCustomFilter whereCreatedAt($value)
- * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\EnrolleeCustomFilter whereId($value)
- * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\EnrolleeCustomFilter whereName($value)
- * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\EnrolleeCustomFilter whereType($value)
- * @method   static                                                                                  \Illuminate\Database\Eloquent\Builder|\App\EnrolleeCustomFilter whereUpdatedAt($value)
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeCustomFilter newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeCustomFilter newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeCustomFilter query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeCustomFilter whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeCustomFilter whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeCustomFilter whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeCustomFilter whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeCustomFilter whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property int|null $practices_count
  */
 class EnrolleeCustomFilter extends Model

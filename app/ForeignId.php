@@ -25,19 +25,23 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \Carbon\Carbon                           $created_at
  * @property \Carbon\Carbon                           $updated_at
  * @property \CircleLinkHealth\Customer\Entities\User $user
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereCreatedAt($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereForeignId($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereId($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereLocationId($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereSystem($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereUpdatedAt($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereUserId($value)
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereForeignId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereLocationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereSystem($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereUserId($value)
  * @mixin \Eloquent
+ *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\ForeignId newModelQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\ForeignId newQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\ForeignId query()
- * @property int|null                                                                                    $revision_history_count
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId query()
+ *
+ * @property int|null $revision_history_count
  */
 class ForeignId extends \CircleLinkHealth\Core\Entities\BaseModel
 {

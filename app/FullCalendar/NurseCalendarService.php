@@ -6,6 +6,7 @@
 
 namespace App\FullCalendar;
 
+use App\LoginLogout;
 use App\Services\NursesPerformanceReportService;
 use App\Traits\ValidatesWorkScheduleCalendar;
 use Carbon\Carbon;
@@ -13,17 +14,25 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class NurseCalendarService
 {
     use ValidatesWorkScheduleCalendar;
     const COMPANY_HOLIDAY = 'companyHoliday';
 
-    const END      = 'end';
-    const SATURDAY = 6;
-    const START    = 'start';
-    const SUNDAY   = 0;
-    const TITLE    = 'title';
+    const END                = 'end';
+    const FIRST_LOGIN_OF_DAY = 1;
+    const SATURDAY           = 6;
+    const START              = 'start';
+    const SUNDAY             = 0;
+    const TITLE              = 'title';
+    /**
+     * @var string
+     */
+    private $cacheKey;
 
     /**
      * @param $diffRange
@@ -148,15 +157,60 @@ class NurseCalendarService
     }
 
     /**
+     * @param $auth
+     *
+     * @return array
+     */
+    public function dailyReportDataForCalendar($auth, array $dataReport, string $date)
+    {
+        $title = 'Daily Report';
+        //            @todo:This should have been false. Changed. Should set all true in CPM_config if not true already.
+        $showEfficiencyMetric       = false;
+        $enableDailyReportMetrics   = false;
+        $patientsCompletedRemaining = false;
+
+        if (showNurseMetricsInDailyEmailReport($auth->id, 'efficiency_metrics')) {
+            $showEfficiencyMetric = true;
+        }
+
+        if (showNurseMetricsInDailyEmailReport($auth->id, 'enable_daily_report_metrics')) {
+            $enableDailyReportMetrics = true;
+        }
+
+        if (showNurseMetricsInDailyEmailReport($auth->id, 'patients_completed_and_remaining')) {
+            $patientsCompletedRemaining = true;
+        }
+
+        return [
+            self::TITLE => $title,
+            self::START => $date,
+            'allDay'    => true,
+            'color'     => '#d79ef0',
+            'data'      => [
+                //                    'name' => $report['nurse_full_name'],
+                'date'        => $date,
+                'day'         => clhDayOfWeekToDayName(clhToCarbonDayOfWeek(Carbon::parse($date)->dayOfWeek)),
+                'eventType'   => 'dailyReport',
+                'reportData'  => $dataReport,
+                'reportFlags' => [
+                    'showEfficiencyMetrics'      => $showEfficiencyMetric,
+                    'enableDailyReportMetrics'   => $enableDailyReportMetrics,
+                    'patientsCompletedRemaining' => $patientsCompletedRemaining,
+                ],
+            ],
+        ];
+    }
+
+    /**
      * @param $authId
      *
      * @return array
      */
     public function dailyReportsForNurse($authId)
     {
-        $yesterday = now()->copy()->subDay(1);
-        $startDate = $yesterday->copy()->subDays(6);
-        $dates     = getDatesForRange($startDate, $yesterday);
+        $endDate   = now()->copy()->subDay(1);
+        $startDate = $endDate->copy()->subDays(6);
+        $dates     = getDatesForRange($startDate, $endDate);
 
         $service = new NursesPerformanceReportService();
 
@@ -275,6 +329,18 @@ class NurseCalendarService
     }
 
     /**
+     * @param $auth
+     */
+    public function getTotalVisits($auth, string $date)
+    {
+        return \Cache::remember("total_time_visits_for_{$auth->id}_$date", 2, function () use ($auth, $date) {
+            $invoice = $auth->nurseInfo->invoices()->where('month_year', Carbon::parse($date)->startOfMonth())->first();
+
+            return  $this->validatedInvoiceData($invoice, $auth);
+        });
+    }
+
+    /**
      * @param $eventDate
      * @param $repeatUntil
      * @param $repeatFrequency
@@ -302,6 +368,90 @@ class NurseCalendarService
     }
 
     /**
+     * @return int
+     */
+    public function loginActivityCountFor(int $userId, Carbon $date)
+    {
+        return LoginLogout::where('user_id', $userId)
+            ->whereBetween('login_time', [$date->copy()->startOfDay(), $date->copy()->endOfDay()])->count();
+    }
+
+    /**
+     * @return array
+     */
+    public function manipulateReportData(?array $nextUpcomingWindow, array $report)
+    {
+        return  [
+            'windowStart' => $nextUpcomingWindow
+                ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A')
+                : null,
+            'windowEnd' => $nextUpcomingWindow
+                ? Carbon::parse($nextUpcomingWindow['window_time_end'])->format('g:i A')
+                : null,
+
+            'nextUpcomingWindowDay' => $nextUpcomingWindow
+                ? Carbon::parse($nextUpcomingWindow['date'])->format('l')
+                : null,
+
+            'nextUpcomingWindowMonth' => $nextUpcomingWindow
+                ? Carbon::parse($nextUpcomingWindow['date'])->format('F d')
+                : null,
+
+            'deficitTextColor' => $report['surplusShortfallHours'] < 0
+                ? '#f44336'
+                : '#009688',
+
+            'deficitOrSurplusText' => $report['surplusShortfallHours'] < 0
+                ? 'Deficit'
+                : 'Surplus',
+        ];
+    }
+
+    /**
+     * @param $cacheKey
+     *
+     * @return \Collection|\Illuminate\Support\Collection
+     */
+    public function nurseDailyReportForDate(int $userId, Carbon $date, string $cacheKey)
+    {
+        $this->cacheKey     = $cacheKey;
+        $loginActivityCount = $this->loginActivityCountFor($userId, Carbon::now());
+        $cacheTime          = Carbon::now()->endOfDay();
+
+        if ($loginActivityCount <= self::FIRST_LOGIN_OF_DAY) {
+            Cache::put($cacheKey, "Daily Report $userId", $cacheTime);
+
+            try {
+                return $this->prepareDailyReportsForNurse(User::findOrFail($userId), $date);
+            } catch (\Exception $e) {
+                Log::error("User for $userId not found. Cannot prepare yesterday's daily report.");
+            }
+        }
+
+        return collect();
+    }
+
+    /**
+     * @param $authId
+     *
+     * @return array
+     */
+    public function nurseReportForDate($authId, Carbon $date)
+    {
+        $service      = new NursesPerformanceReportService();
+        $reportForDay = $service->getDailyReportJson($date);
+
+        $report = [];
+        if ( ! $reportForDay || ! is_json($reportForDay)) {
+            $report[$date->toDateString()] = [];
+        } else {
+            $report[$date->toDateString()] = collect(json_decode($reportForDay, true))->where('nurse_id', $authId)->first();
+        }
+
+        return $report;
+    }
+
+    /**
      * @param Collection $nurses
      * @param mixed      $startDate
      * @param mixed      $endDate
@@ -318,85 +468,40 @@ class NurseCalendarService
     }
 
     /**
-     * @param $auth
+     * @param mixed $auth
+     * @param null  $date
      *
-     * @return \Illuminate\Support\Collection
+     * @return \Collection|\Illuminate\Support\Collection
      */
-    public function prepareDailyReportsForNurse($auth)
+    public function prepareDailyReportsForNurse($auth, $date = null)
     {
         $reports = $this->dailyReportsForNurse($auth->id);
-        $title   = 'Daily Report';
+
+        if ($date && ! Cache::has($this->cacheKey)) {
+            $reports = $this->nurseReportForDate($auth->id, $date);
+        }
 
         $reportsForCalendarView = [];
         foreach ($reports as $date => $report) {
             if (empty($report)) {
                 continue;
             }
-            $showEfficiencyMetric       = true;
-            $enableDailyReportMetrics   = true;
-            $patientsCompletedRemaining = true;
-
-            if (showNurseMetricsInDailyEmailReport($auth->id, 'efficiency_metrics')) {
-                $showEfficiencyMetric = true;
-            }
-
-            if (showNurseMetricsInDailyEmailReport($auth->id, 'enable_daily_report_metrics')) {
-                $enableDailyReportMetrics = true;
-            }
-
-            if (showNurseMetricsInDailyEmailReport($auth->id, 'patients_completed_and_remaining')) {
-                $patientsCompletedRemaining = true;
-            }
-
             $nextUpcomingWindow = ! empty($report) ? $report['nextUpcomingWindow'] : false;
+            $reportCalculations = $this->manipulateReportData($nextUpcomingWindow, $report);
+            $dataReport         = array_merge($report, $reportCalculations);
+            $totalVisits        = $this->getTotalVisits($auth, $date);
 
-            $reportCalculations = [
-                'windowStart' => $nextUpcomingWindow
-                    ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A')
-                    : null,
-                'windowEnd' => $nextUpcomingWindow
-                    ? Carbon::parse($nextUpcomingWindow['window_time_end'])->format('g:i A')
-                    : null,
-
-                'nextUpcomingWindowDay' => $nextUpcomingWindow
-                    ? Carbon::parse($nextUpcomingWindow['date'])->format('l')
-                    : null,
-
-                'nextUpcomingWindowMonth' => $nextUpcomingWindow
-                    ? Carbon::parse($nextUpcomingWindow['date'])->format('F d')
-                    : null,
-
-                'deficitTextColor' => $report['surplusShortfallHours'] < 0
-                    ? '#f44336'
-                    : '#009688',
-
-                'deficitOrSurplusText' => $report['surplusShortfallHours'] < 0
-                    ? 'Deficit'
-                    : 'Surplus',
-            ];
-
-            $dataReport = array_merge($report, $reportCalculations);
+            if ( ! empty($totalVisits)) {
+                $dataReport = array_merge($dataReport, $totalVisits);
+            }
 
             if ( ! empty($report)) {
+                if (App::environment(['testing', 'review'])) {
+                    $reportsForCalendarView[] = $this->dailyReportDataForCalendar($auth, $dataReport, $date);
+                }
+
                 if (0 !== $report['systemTime'] && $auth->nurseInfo->hourly_rate > 1) {
-                    $reportsForCalendarView[] = [
-                        self::TITLE => $title,
-                        self::START => $date,
-                        'allDay'    => true,
-                        'color'     => '#d79ef0',
-                        'data'      => [
-                            //                    'name' => $report['nurse_full_name'],
-                            'date'        => $date,
-                            'day'         => clhDayOfWeekToDayName(clhToCarbonDayOfWeek(Carbon::parse($date)->dayOfWeek)),
-                            'eventType'   => 'dailyReport',
-                            'reportData'  => $dataReport,
-                            'reportFlags' => [
-                                'showEfficiencyMetrics'      => $showEfficiencyMetric,
-                                'enableDailyReportMetrics'   => $enableDailyReportMetrics,
-                                'patientsCompletedRemaining' => $patientsCompletedRemaining,
-                            ],
-                        ],
-                    ];
+                    $reportsForCalendarView[] = $this->dailyReportDataForCalendar($auth, $dataReport, $date);
                 }
             }
         }
@@ -510,5 +615,37 @@ class NurseCalendarService
                     ]
                 );
             });
+    }
+
+    /**
+     * @param $invoice
+     * @param $auth
+     *
+     * @return array
+     */
+    private function validatedInvoiceData($invoice, $auth)
+    {
+        if (empty($invoice)) {
+            Log::warning("Invoice for nurse with user id: [$auth->id] not found.");
+
+            return [];
+        }
+
+        if (empty($invoice->invoice_data)) {
+            Log::warning("Invoice data for nurse with user id: [$auth->id] not found.");
+
+            return [];
+        }
+
+        if (is_null($invoice->invoice_data['visitsCount'])) {
+            Log::warning("Total visits for nurse with user id: [$auth->id] not found.");
+
+            return [];
+        }
+
+        return [
+            'totalVisitsCount' => $invoice->invoice_data['visitsCount'],
+            'invoiceId'        => $invoice->id,
+        ];
     }
 }
