@@ -9,7 +9,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\DownloadMediaWithSignedRequest;
 use App\Http\Requests\DownloadPracticeAuditReports;
 use App\Http\Requests\DownloadZippedMediaWithSignedRequest;
-use App\Jobs\MakeAndDispatchAuditReports;
+use App\Jobs\CreateAuditReportForPatientForMonth;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\Media;
@@ -178,7 +178,7 @@ class DownloadController extends Controller
                 $delay = 5;
 
                 foreach ($patients as $patient) {
-                    MakeAndDispatchAuditReports::dispatch($patient, $date, false)
+                    CreateAuditReportForPatientForMonth::dispatch($patient, $date)
                         ->onQueue('low')->delay(now()->addSeconds($delay));
                     ++$delay;
                 }
