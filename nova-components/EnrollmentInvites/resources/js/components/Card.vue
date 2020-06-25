@@ -12,7 +12,19 @@
                                name="amount"
                                v-model="amount"
                                :disabled="sendingInvites"
-                               style="border: 1px solid #5cc0dd; max-width: 100px; margin-left: 10px;" required>
+                               style="border: 1px solid #5cc0dd; max-width: 100px; max-height: 40px; margin-left: 10px;" required>
+
+                         <label for="color" style="padding-left: 30px; padding-right: 15px;">
+                             Choose invitation <br> button color:
+                         </label>
+
+                        <vue-select name="color"
+                                    id="color"
+                                    v-model="selectedButtonColor"
+                                    :options="buttonColors"
+                                    @change="setButtonBackgroundColor">
+                        </vue-select>
+
                     </span>
             </div>
 
@@ -25,26 +37,16 @@
             </div>
 
           <div v-if="! this.card.use_redirect_button" class="invite-buttons">
-              <div v-if="! this.card.is_patient" class="button">
+              <div v-if="! this.card.is_patient && this.selectedButtonColor.length !== 0" class="button">
                   <a class="btn btn-default btn-primary ml-auto mt-auto"
                      :disabled="sendingInvites"
+                     :style="bgc"
                      style="cursor: pointer;
-                      background-color: #4baf50;
-                      white-space: nowrap;
-                      width: 275px;
-                      margin-right: 10px;"
-                     @click="sendInvites('#4baf50', amount)">
-                      Send SMS/Emails (Green Btn.)
-                  </a>
-
-                  <a class="btn btn-default btn-primary ml-auto mt-auto"
-                     :disabled="sendingInvites"
-                     style="cursor: pointer;
-                      background-color: #b1284c;
-                      white-space: nowrap;
-                      width: 275px;"
-                     @click="sendInvites('#b1284c', amount)">
-                      Send SMS/Emails (Red Btn.)
+                     white-space: nowrap;
+                     width: 275px;
+                     margin-right: 10px;"
+                     @click="sendInvites(bgc.backgroundColor, amount)">
+                      Send SMS/Emails
                   </a>
               </div>
 
@@ -64,6 +66,7 @@
 </template>
 
 <script>
+    import VueSelect from 'vue-select';
 export default {
     props: [
         'card',
@@ -74,15 +77,43 @@ export default {
         // 'resourceName',
     ],
 
+    components: {
+        'vue-select': VueSelect,
+    },
+
     data() {
         return {
             amount:'',
             errors:null,
             sendingInvites:false,
+            selectedButtonColor:[],
+            buttonColors:[
+                {
+                    label:'Green',
+                    value:'#4baf50'
+                },
+
+                {
+                    label:'Red',
+                    value:'#b1284c'
+                },
+
+                {
+                    label:'Blue',
+                    value:'#12a2c4'
+                }
+            ],
+
+            bgc:{
+               backgroundColor:'',
+           }
         };
     },
 
     methods: {
+        setButtonBackgroundColor(){
+          this.bgc.backgroundColor = this.selectedButtonColor.value;
+        },
         redirectToInvitesDashboard(){
             // tried to redirect using Action::push() or simple redirect in controller, but it doesnt work, no errors / feedback.
             // Keeping this solution temporarily
