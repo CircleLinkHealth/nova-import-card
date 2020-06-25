@@ -25,6 +25,7 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         'enrollment/sms/reply',
         '/sendgrid/status',
+        '/postmark/status',
         '/twilio/sms/status',
         '/admin/reports/monthly-billing/v2/updateApproved',
         '/admin/reports/monthly-billing/v2/updateRejected',

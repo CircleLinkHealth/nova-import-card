@@ -1949,6 +1949,15 @@ Route::group([
 });
 
 Route::group([
+    'prefix' => 'postmark',
+], function () {
+    Route::post('/status', [
+        'uses' => 'PostmarkController@statusCallback',
+        'as'   => 'sendgrid.status',
+    ]);
+});
+
+Route::group([
     'prefix'     => 'saas/admin',
     'middleware' => ['auth', 'role:saas-admin,administrator,saas-admin-view-only'],
 ], function () {
