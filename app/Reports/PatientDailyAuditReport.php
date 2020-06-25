@@ -31,7 +31,53 @@ class PatientDailyAuditReport
         $this->forMonth = $forMonth;
     }
 
-    public function renderData(): array
+    public static function mediaCollectionName(Carbon $date): string
+    {
+        return 'audit_report_'.$date->format('F, Y');
+    }
+
+    /**
+     * @return array
+     */
+    public function renderPDF()
+    {
+        $pdfService = app(PdfService::class);
+
+        $name = $this->user->id.'-'.Carbon::now()->timestamp;
+        $path = storage_path("download/${name}.pdf");
+
+        $this->renderData();
+
+        $pdf = $pdfService->createPdfFromView('wpUsers.patient.audit', ['data' => $this->data], $path);
+
+        $collName = self::mediaCollectionName($this->forMonth);
+
+        $media = $this->user->addMedia($path)->preservingOriginal()->toMediaCollection($collName);
+
+        $extension = 'pdf';
+
+        if ( ! is_readable($pathToPdf = storage_path("download/$name.$extension"))) {
+            throw new \Exception("File not found: {$pathToPdf}");
+        }
+
+        return [
+            'media'     => $media,
+            'path'      => $pathToPdf,
+            'file_name' => $name,
+            'extension' => $extension,
+        ];
+    }
+
+    private function formatMonthlyTime($seconds)
+    {
+        $H = floor($seconds / 3600);
+        $i = ($seconds / 60) % 60;
+        $s = $seconds % 60;
+
+        return sprintf('%02d:%02d:%02d', $H, $i, $s);
+    }
+
+    private function renderData(): array
     {
         $time = Activity::whereBetween('created_at', [
             $this->forMonth->startOfMonth()->toDateTimeString(),
@@ -41,7 +87,6 @@ class PatientDailyAuditReport
             ->sum('duration');
 
         $this->data['name']     = $this->user->getFullName();
-        $this->data['month']    = $this->forMonth->format('F, Y');
         $this->data['provider'] = $this->user->getBillingProviderName();
         $this->data['totalCCM'] = $this->formatMonthlyTime($time);
 
@@ -85,41 +130,5 @@ class PatientDailyAuditReport
         }
 
         return $this->data;
-    }
-
-    /**
-     * @return bool|string
-     */
-    public function renderPDF()
-    {
-        $pdfService = app(PdfService::class);
-
-        $name = $this->user->id.'-'.Carbon::now()->timestamp;
-        $path = storage_path("download/${name}.pdf");
-
-        $this->renderData();
-
-        try {
-            $pdf = $pdfService->createPdfFromView('wpUsers.patient.audit', ['data' => $this->data], $path);
-        } catch (\Exception $e) {
-            \Log::error($e->getMessage());
-
-            return false;
-        }
-
-        $collName = 'audit_report_'.$this->data['month'];
-
-        $this->user->addMedia($path)->preservingOriginal()->toMediaCollection($collName);
-
-        return "/${name}.pdf";
-    }
-
-    private function formatMonthlyTime($seconds)
-    {
-        $H = floor($seconds / 3600);
-        $i = ($seconds / 60) % 60;
-        $s = $seconds % 60;
-
-        return sprintf('%02d:%02d:%02d', $H, $i, $s);
     }
 }
