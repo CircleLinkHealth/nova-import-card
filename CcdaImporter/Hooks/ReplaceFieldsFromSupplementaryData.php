@@ -39,10 +39,10 @@ class ReplaceFieldsFromSupplementaryData extends BaseCcdaImportHook
         if ( ! $dataFromPractice) {
             sendNbiPatientMrnWarning($this->patient->id);
 
-            $recipients = AppConfig::where('config_key', '=', self::RECEIVES_NBI_EXCEPTIONS_NOTIFICATIONS)->get();
+            $recipients = AppConfig::pull(self::RECEIVES_NBI_EXCEPTIONS_NOTIFICATIONS, []);
 
             foreach ($recipients as $recipient) {
-                Notification::route('mail', $recipient->config_value)
+                Notification::route('mail', $recipient)
                     ->notify(new NBISupplementaryDataNotFound($this->patient));
             }
         }
