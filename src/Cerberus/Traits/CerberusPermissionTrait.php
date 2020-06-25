@@ -25,10 +25,8 @@ trait CerberusPermissionTrait
      *
      * @return bool|void
      */
-    public static function boot()
+    public static function bootCerberusPermissionTrait()
     {
-        parent::boot();
-
         static::deleting(function ($permission) {
             if ( ! method_exists(Config::get('cerberus.permission'), 'bootSoftDeletes')) {
                 $permission->roles()->sync([]);
