@@ -189,7 +189,7 @@
     "circlelinkhealth/raygun-module": "1.1",
     "circlelinkhealth/revisionable-module": "6.1.1",
     "circlelinkhealth/shared-models-module": "1.6.6",
-    "circlelinkhealth/sqlviews-module": "dev-ROAD-167_pam_show_patient_language",
+    "circlelinkhealth/sqlviews-module": "1.2.2",
     "circlelinkhealth/timetracking-module": "1.2.3",
     "circlelinkhealth/twofa-module": "1.2.0",
     "consoletvs/charts": "^6.5",
