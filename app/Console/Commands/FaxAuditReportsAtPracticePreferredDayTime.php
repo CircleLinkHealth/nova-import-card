@@ -59,13 +59,14 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
             ->where('is_enabled', true)
             ->chunkById(100, function ($preferences) {
                 foreach ($preferences as $preference) {
+                    /** @var CustomerNotificationContactTimePreference $preference */
                     $key = $preference->cacheKey(CustomerNotificationContactTimePreference::AUDIT_REPORTS_FAXES_PER_HOUR);
 
                     if (is_numeric($preference->max_per_hour) && $this->hourlyLimitReached($key, $preference->max_per_hour)) {
                         continue;
                     }
 
-                    $this->sendNotification($preference->contactable_type, $preference->contactable_id, $key, $this->forMonth());
+                    $this->sendNotification($key, $this->forMonth());
                 }
             });
     }
@@ -93,7 +94,7 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
         return \Cache::get($key);
     }
 
-    private function sendNotification(string $contactable_type, int $contactable_id, string $key, Carbon $date)
+    private function sendNotification(string $key, Carbon $date)
     {
         $user = User::ofType('participant')
             ->with([
@@ -136,8 +137,9 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
 
         $shouldBatch = (bool) $user->primaryPractice->cpmSettings()->batch_efax_audit_reports;
 
-        $user->locations->each(function (Location $location) use ($user, $date, $shouldBatch) {
+        $user->locations->each(function (Location $location) use ($user, $date, $shouldBatch, $key) {
             $location->notify(new SendAuditReport($user, $date, [FaxChannel::class], $shouldBatch));
+            \RedisManager::incr($key);
         });
     }
 }
