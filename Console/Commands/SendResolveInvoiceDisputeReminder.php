@@ -39,14 +39,10 @@ class SendResolveInvoiceDisputeReminder extends Command
 
     public function emailsToSendNotif()
     {
-        $getEmails = [];
-        AppConfig::where('config_key', '=', self::NURSE_DISPUTES_MANAGER)
-            ->select('config_value')->chunk(20, function ($emails) use (&$getEmails) {
-                foreach ($emails as $email) {
-                    $getEmails[] = $email->config_value;
-                    $this->info('Will email'.$email->config_value);
-                }
-            });
+        $getEmails = AppConfig::pull(self::NURSE_DISPUTES_MANAGER, []);
+        foreach ($getEmails as $email) {
+            $this->info('Will email'.$email);
+        }
 
         return $getEmails;
     }
