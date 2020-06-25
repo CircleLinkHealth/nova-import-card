@@ -59,7 +59,7 @@ class CustomerNotificationContactTimePreference extends BaseModel
             throw new \InvalidArgumentException("`$cacheKeyOption` is not a valid option. Valid options are ".json_encode(self::VALID_CACHE_KEY_OPTIONS));
         }
 
-        return $cacheKeyOption.$this->contactable_type.$this->contactable_id.now()->startOfHour()->format('Y-m-d H:i');
+        return sha1($cacheKeyOption.$this->contactable_type.$this->contactable_id.now()->startOfHour()->format('Y-m-d H:i'));
     }
 
     /**
