@@ -11,20 +11,20 @@ use App\Search\ProviderByName;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;
 
-class FaxMarillacAuditReports extends Command
+class FixToledoAddProviderToEnrollees extends Command
 {
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Fax last month\'s audit reports as per Marillac practice\'s preferences.';
+    protected $description = 'Add provider to Toledo Enrollees';
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'marillac:fax-audit-reports';
+    protected $signature = 'fix:toledo:add-provider-to-enrollees';
 
     /**
      * Create a new command instance.
@@ -48,7 +48,7 @@ class FaxMarillacAuditReports extends Command
                 ->from('enrollees')
                 ->where('practice_id', 235)
                 ->whereStatus(Enrollee::QUEUE_AUTO_ENROLLMENT.'_2');
-        })->chunkById(100, function ($q) {
+        })->chunkById(500, function ($q) {
             foreach ($q as $p) {
                 $this->warn("Updating $p->mrn");
                 $p->billing_provider_user_id = optional(ProviderByName::first($p->referring_provider_name))->id;
@@ -56,6 +56,7 @@ class FaxMarillacAuditReports extends Command
                 if (empty($p->billing_provider_user_id)) {
                     continue;
                 }
+
                 $p->save();
 
                 Enrollee::wherePracticeId(235)->whereMrn($p->mrn)->update([
