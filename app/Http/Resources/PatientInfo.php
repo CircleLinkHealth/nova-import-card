@@ -30,6 +30,7 @@ class PatientInfo extends JsonResource
             'last_contact_time'                   => $this->last_contact_time,
             'last_successful_contact_time'        => $this->last_successful_contact_time,
             'no_call_attempts_since_last_success' => $this->no_call_attempts_since_last_success,
+            'preferred_contact_language'          => $this->preferred_contact_language,
             'contact_windows'                     => PatientContactWindows::collection($this->whenLoaded('contactWindows')),
         ];
     }

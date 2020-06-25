@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "22eb5b32103991ea443d996b9924c89d",
+    "content-hash": "4509d95c1b6b06920d38cc260189dbd2",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1317,7 +1317,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-master",
+            "version": "dev-ROAD-151",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
@@ -1515,11 +1515,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v1.2.1",
+            "version": "v1.2.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "52f2df969f9cd73d2d640449b9528f3904fed222"
+                "reference": "31c0103c742d9c73c2d40500aa2b452fdb901b52"
             },
             "type": "laravel-module",
             "extra": {
@@ -1544,7 +1544,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-22T19:16:35+00:00"
+            "time": "2020-06-25T17:57:01+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
