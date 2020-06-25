@@ -28,10 +28,7 @@ class AddNewDefaultCarePlanTemplate extends Seeder
             'type'         => 'CLH Default',
         ]);
 
-        $config = AppConfig::updateOrCreate([
-            'config_key'   => 'default_care_plan_template_id',
-            'config_value' => $newCpt->id,
-        ]);
+        AppConfig::set('default_care_plan_template_id', $newCpt->id);
 
         $this->setupCpmProblems();
 
@@ -78,7 +75,7 @@ class AddNewDefaultCarePlanTemplate extends Seeder
 
 - Develop habits and routines that are easy to follow.
 
-- Plan activities that improve your thinking, such as puzzles, games, baking, or indoor gardening. 
+- Plan activities that improve your thinking, such as puzzles, games, baking, or indoor gardening.
 
 - Have someone nearby for any tasks that may have a risk of injury.
 ',
@@ -112,7 +109,7 @@ class AddNewDefaultCarePlanTemplate extends Seeder
         $problems['Afib'] = [
             'instructions' => '- If you are on a blood thinner, great! Please let us know any bleeding (e.g., gums)
 
-- If you are not on a blood thinner, we would recommend bringing up blood thinners at you next doctor’s visit, if not already discussed. 
+- If you are not on a blood thinner, we would recommend bringing up blood thinners at you next doctor’s visit, if not already discussed.
 
 - Tell your care team about any changes in the medication you take, including prescription and over-the-counter as well as any supplements. They interfere with some medications given for atrial fibrillation.
 
@@ -123,10 +120,6 @@ class AddNewDefaultCarePlanTemplate extends Seeder
         ];
 
         $problems['BPH'] = [
-            'instructions' => '',
-        ];
-
-        $problems['Cataract'] = [
             'instructions' => '',
         ];
 
@@ -197,7 +190,7 @@ class AddNewDefaultCarePlanTemplate extends Seeder
         ];
 
         $problems['CHF'] = [
-            'instructions' => '- Weigh yourself every day at the same time on the same scale.  
+            'instructions' => '- Weigh yourself every day at the same time on the same scale.
 
 - Call the care team if you gain more than 2lbs in two days (as a small medication adjustment may be needed to avoid hospitalization)
 
@@ -237,7 +230,7 @@ class AddNewDefaultCarePlanTemplate extends Seeder
 
 - Follow the DASH (Dietary Approaches to Stop Hypertension) eating plan. Try eating more raw nuts, vegetables, legumes (beans, peas, etc.), lean proteins (skinless chicken, fish, beef) and complex carbohydrates (brown rice, wholegrain bread), instead of processed foods.
 
-- Begin an exercise program. Ask your provider how to get started. The American Heart Association recommends aerobic exercise 3 to 4 times a week for an average of 40 minutes at a time, along with resistance exercise 2 days a week, with your provider’s approval. 
+- Begin an exercise program. Ask your provider how to get started. The American Heart Association recommends aerobic exercise 3 to 4 times a week for an average of 40 minutes at a time, along with resistance exercise 2 days a week, with your provider’s approval.
 ',
         ];
 
@@ -291,7 +284,7 @@ class AddNewDefaultCarePlanTemplate extends Seeder
 
 - Take quitting one day at a time, even one minute at a time—whatever you need to succeed.
 
-- Many people worry about gaining weight when they quit smoking.  Focus on stopping smoking, which is much worse for your health than gaining a few pounds. 
+- Many people worry about gaining weight when they quit smoking.  Focus on stopping smoking, which is much worse for your health than gaining a few pounds.
 
 - When you have the urge to smoke, do something active instead. Walk around the block. Head to the gym. Garden. Do housework. Walk the dog. Play with the kids.
 

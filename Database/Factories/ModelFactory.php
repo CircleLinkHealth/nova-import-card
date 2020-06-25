@@ -185,6 +185,7 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factor
             ->first();
 
         if ( ! $provider) {
+            // fixme: this will not work - need a user with role provider
             $provider = factory(\CircleLinkHealth\Customer\Entities\User::class)->create();
         }
     }

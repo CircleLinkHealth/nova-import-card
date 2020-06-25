@@ -19,9 +19,6 @@ class StandByNurseUser
 
     public static function id()
     {
-        return \Cache::remember(self::STAND_BY_NURSE_USER_ID_NOVA_KEY, 2, function () {
-            return optional(AppConfig::where('config_key', '=', self::STAND_BY_NURSE_USER_ID_NOVA_KEY)
-                ->first())->config_value;
-        });
+        return AppConfig::pull(self::STAND_BY_NURSE_USER_ID_NOVA_KEY, null);
     }
 }

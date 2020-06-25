@@ -14,9 +14,6 @@ class PatientSupportUser
 
     public static function id()
     {
-        return \Cache::remember(self::PATIENT_SUPPORT_USER_ID_NOVA_KEY, 2, function () {
-            return AppConfig::where('config_key', '=', self::PATIENT_SUPPORT_USER_ID_NOVA_KEY)
-                ->firstOrFail()->config_value;
-        });
+        return AppConfig::pull(self::PATIENT_SUPPORT_USER_ID_NOVA_KEY, null);
     }
 }
