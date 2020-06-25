@@ -19,14 +19,6 @@ class ReceiveAllForwardedNotes
 
     public static function emails()
     {
-        return \Cache::remember(self::RECEIVE_ALL_FORWARDED_NOTES, 2, function () {
-            return AppConfig::where('config_key', '=', self::RECEIVE_ALL_FORWARDED_NOTES)
-                ->get()
-                ->map(
-                    function ($practiceName) {
-                        return $practiceName->config_value;
-                    }
-                )->all();
-        });
+        return AppConfig::pull(self::RECEIVE_ALL_FORWARDED_NOTES, []);
     }
 }

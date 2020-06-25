@@ -38,14 +38,6 @@ class PracticesWithUPGG0506Workflow
 
     private function getAndCachePracticeNames()
     {
-        return \Cache::remember(self::UPG_G0506_WORKFLOW, 2, function () {
-            return AppConfig::where('config_key', '=', self::UPG_G0506_WORKFLOW)
-                ->get()
-                ->map(
-                    function ($practiceName) {
-                        return $practiceName->config_value;
-                    }
-                )->all();
-        });
+        return AppConfig::pull(self::UPG_G0506_WORKFLOW, []);
     }
 }
