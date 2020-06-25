@@ -141,8 +141,10 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice whereImportingHooks($value)
  *
- * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $allChargeableServices
- * @property int|null                                                                                         $all_chargeable_services_count
+ * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection                         $allChargeableServices
+ * @property int|null                                                                                                                 $all_chargeable_services_count
+ * @property \CircleLinkHealth\Customer\Entities\CustomerNotificationContactTimePreference[]|\Illuminate\Database\Eloquent\Collection $notificationContactPreferences
+ * @property int|null                                                                                                                 $notification_contact_preferences_count
  */
 class Practice extends BaseModel implements HasMedia
 {

@@ -144,7 +144,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\Patient withoutTrashed()
  * @mixin \Eloquent
  *
- * @property int $auto_enrollment_triggered
+ * @property int                                                                                                             $auto_enrollment_triggered
+ * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notificationsAboutThisPatient
+ * @property int|null                                                                                                        $notifications_about_this_patient_count
  */
 class Patient extends BaseModel
 {
