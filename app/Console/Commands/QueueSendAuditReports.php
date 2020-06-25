@@ -75,7 +75,7 @@ class QueueSendAuditReports extends Command
                     $this->warn("Creating audit report for $patient->id");
 
                     if ( ! $this->option('dry')) {
-                        MakeAndDispatchAuditReports::dispatch($patient, $date, true, (bool) $patient->primaryPractice->cpmSettings()->batch_efax_audit_reports)
+                        MakeAndDispatchAuditReports::dispatch($patient, $date, (bool) $patient->primaryPractice->cpmSettings()->batch_efax_audit_reports)
                             ->onQueue('high');
                     }
 
