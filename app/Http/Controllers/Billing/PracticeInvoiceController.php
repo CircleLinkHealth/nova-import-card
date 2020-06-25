@@ -117,7 +117,7 @@ class PracticeInvoiceController extends Controller
         $readyToBill = Practice::active()
             ->authUserCanAccess()
             ->get();
-        $invoice_no = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
+        $invoice_no = AppConfig::pull('billing_invoice_count', 0);
 
         return view('billing.practice.create', compact(
             [

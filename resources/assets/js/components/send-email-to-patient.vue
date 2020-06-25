@@ -5,7 +5,7 @@
             <label for="patient-email-body">
                 Compose Mail
             </label></div>
-        <div class="form-group" v-if="this.patient.email">To: {{this.patient.email}}</div>
+        <div class="form-group" v-if="this.patientEmail">To: {{this.patientEmail}}</div>
         <div class="form-group" v-else>
             <div style="padding-bottom: 10px"><span><strong>Patient email not found.</strong> Send to:</span><br></div>
             <div class="col-sm-4" style="padding-left: 0"><input class="form-control" type="email" id="custom-patient-email" name="custom-patient-email"
@@ -47,10 +47,12 @@
     export default {
         name: "send-email-to-patient",
         props: {
-            patient: {
-                type: Object,
+            patientId: {
                 required: true
             },
+            patientEmail: {
+                required: true
+            }
         },
         data() {
             return {
@@ -66,10 +68,10 @@
         },
         computed: {
             uploadUrl() {
-                return rootUrl('/patient-email/' + this.patient.id + '/upload-attachment');
+                return rootUrl('/patient-email/' + this.patientId + '/upload-attachment');
             },
             deleteUrl() {
-                return rootUrl('/patient-email/' + this.patient.id + '/delete-attachment');
+                return rootUrl('/patient-email/' + this.patientId + '/delete-attachment');
             },
         },
         methods: {

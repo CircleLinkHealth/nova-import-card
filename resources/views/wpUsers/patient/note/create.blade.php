@@ -507,7 +507,7 @@
                                     <div class="form-group">
                                         <div id="email-patient-div" class="col-md-12" style="display: none;">
                                             <send-email-to-patient
-                                                    :patient="{{$patient}}"
+                                                    patient-id="{{$patient->id}}" patient-email="{{$patient->email}}"
                                             ></send-email-to-patient>
                                         </div>
                                     </div>
