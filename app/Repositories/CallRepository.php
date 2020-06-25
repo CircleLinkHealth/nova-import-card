@@ -109,7 +109,12 @@ class CallRepository
         $users = User::ofType('participant')
             ->whereHas('patientInfo', function ($q) {
                 $q->enrolledOrPaused();
-            });
+            })
+            ->with([
+                'patientInfo' => function ($q) {
+                    return $q->select(['id', 'user_id', 'preferred_contact_language']);
+                },
+            ]);
         if ($practiceId) {
             $users = $users->ofPractice($practiceId);
         } else {

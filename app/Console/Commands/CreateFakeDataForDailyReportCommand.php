@@ -67,6 +67,7 @@ class CreateFakeDataForDailyReportCommand extends Command
      * Run the database seeds.
      *
      * @throws \CircleLinkHealth\Core\Exceptions\FileNotFoundException
+     *
      * @return void
      */
     public function createNurseFakeData(User $user)

@@ -117,6 +117,7 @@ class PracticeController extends Controller
                     'city'       => $nurse->city,
                     'state'      => $nurse->state,
                     'states'     => $states,
+                    'spanish'    => $info->spanish,
                 ];
             })
             ->toArray();
@@ -135,15 +136,16 @@ class PracticeController extends Controller
                 $fullName = trim(ucwords("${firstName} ${lastName} ${suffix}"));
 
                 return [
-                    'id'         => $patient->id,
-                    'first_name' => $firstName,
-                    'last_name'  => $lastName,
-                    'suffix'     => $suffix,
-                    'full_name'  => $fullName,
-                    'city'       => $patient->city,
-                    'state'      => $patient->state,
-                    'status'     => $patient->status,
-                    'ccm_status' => $patient->ccm_status,
+                    'id'                         => $patient->id,
+                    'first_name'                 => $firstName,
+                    'last_name'                  => $lastName,
+                    'suffix'                     => $suffix,
+                    'full_name'                  => $fullName,
+                    'city'                       => $patient->city,
+                    'state'                      => $patient->state,
+                    'status'                     => $patient->status,
+                    'ccm_status'                 => $patient->ccm_status,
+                    'preferred_contact_language' => $patient->preferred_contact_language,
                 ];
             })
             ->toArray();

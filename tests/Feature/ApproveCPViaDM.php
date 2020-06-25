@@ -315,12 +315,7 @@ class ApproveCPViaDM extends CustomerTestCase
 
     private function enableFeatureFlag(int $practiceId)
     {
-        AppConfig::create(
-            [
-                'config_key'   => DMDomainForAutoApproval::FLAG_NAME,
-                'config_value' => $practiceId.self::TEST_DM_DOMAIN,
-            ]
-        );
+        AppConfig::set(DMDomainForAutoApproval::FLAG_NAME, $practiceId.self::TEST_DM_DOMAIN);
     }
 
     private function fakeTask()

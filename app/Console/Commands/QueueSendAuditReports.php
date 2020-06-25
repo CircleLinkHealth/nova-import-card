@@ -56,6 +56,7 @@ class QueueSendAuditReports extends Command
             ->with('patientSummaries')
             ->with('primaryPractice')
             ->with('primaryPractice.settings')
+            ->doesntHave('primaryPractice.notificationContactPreferences')
             ->whereHas('primaryPractice', function ($query) {
                 $query->where('active', '=', true)
                     ->whereHas('settings', function ($query) {
@@ -74,7 +75,7 @@ class QueueSendAuditReports extends Command
                     $this->warn("Creating audit report for $patient->id");
 
                     if ( ! $this->option('dry')) {
-                        MakeAndDispatchAuditReports::dispatch($patient, $date, true, (bool) $patient->primaryPractice->cpmSettings()->batch_efax_audit_reports)
+                        MakeAndDispatchAuditReports::dispatch($patient, $date, (bool) $patient->primaryPractice->cpmSettings()->batch_efax_audit_reports)
                             ->onQueue('high');
                     }
 

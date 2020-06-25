@@ -8,6 +8,8 @@ namespace App\Http\Controllers;
 
 use App\FaxLog;
 use App\Http\Requests\PhaxioWebhookRequest;
+use CircleLinkHealth\Core\Entities\DatabaseNotification;
+use CircleLinkHealth\Core\Jobs\PhaxioNotificationStatusUpdateJob;
 
 class PhaxioWebhookController extends Controller
 {
@@ -25,6 +27,10 @@ class PhaxioWebhookController extends Controller
                 'response'   => $fax,
             ]
         );
+
+        if (array_key_exists('notification_id', $fax) && $notification = DatabaseNotification::find($fax['notification_id'])) {
+            PhaxioNotificationStatusUpdateJob::dispatch($notification, $log);
+        }
 
         return $this->ok();
     }

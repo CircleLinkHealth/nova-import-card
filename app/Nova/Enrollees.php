@@ -7,8 +7,8 @@
 namespace App\Nova;
 
 use App\Constants;
-use App\Nova\Actions\ImportEnrolees;
 use App\Nova\Actions\ImportEnrollee;
+use App\Nova\Actions\ImportEnrollees;
 use App\Nova\Actions\SelfEnrollmentManualInvite;
 use App\Nova\Filters\EnrolleeStatus;
 use App\Nova\Filters\PatientAutoEnrollmentStatus;
@@ -72,9 +72,9 @@ class Enrollees extends Resource
     {
         return [
             new ImportEnrollee(),
-            new ImportEnrolees(),
+            new ImportEnrollees(),
             new SelfEnrollmentManualInvite(),
-            //try to implement in a future date - coordinate with Zak
+            //try to implement in a future date - coordinate with Zach
             //            new MarkEnrolleesForAutoEnrollment(),
         ];
     }
@@ -87,7 +87,7 @@ class Enrollees extends Resource
     public function cards(Request $request)
     {
         //adds templates to new Actions
-        $cards = [
+        return [
             (new LinkableAway())
                 ->title('Create Patients CSV Template')
                 ->url('https://drive.google.com/file/d/1RgCl5AgyodKlIytemOVMXlAHgr9iGgm9/view?usp=sharing')
@@ -99,16 +99,6 @@ class Enrollees extends Resource
                 ->subtitle('Click to download.')
                 ->target('_self'),
         ];
-
-        if ( ! isProductionEnv()) {
-            $cards[] = (new LinkableAway())
-                ->title('Create Patients')
-                ->url(route('ca-director.test-enrollees'))
-                ->subtitle('(Creates 10 test patients)')
-                ->target('_blank');
-        }
-
-        return $cards;
     }
 
     /**
