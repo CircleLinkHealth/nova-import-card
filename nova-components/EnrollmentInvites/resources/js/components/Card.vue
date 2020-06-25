@@ -3,19 +3,20 @@
         <div class="px-3 py-3">
             <h4 class="text-left text-3xl text-80 font-light">{{this.title()}}</h4>
             <div class="py-2">
-                    <span v-if="! this.card.use_redirect_button"  class="flex">
-                       <label for="amount">
-                           Input number of patients to <br> send enrollment sms/emails to:
+                    <span v-if="! this.card.use_redirect_button" class="flex" style="text-align: center;">
+                       <label for="amount" class="label-amount">
+                           Input number of patients to send enrollment <br> sms/emails to:
                        </label>
                         <input type="number"
                                id="amount"
+                               class="amount-input"
                                name="amount"
                                v-model="amount"
                                :disabled="sendingInvites"
-                               style="border: 1px solid #5cc0dd; max-width: 100px; max-height: 40px; margin-left: 10px;" required>
+                                required>
 
-                         <label for="color" style="padding-left: 30px; padding-right: 15px;">
-                             Choose invitation <br> button color:
+                         <label for="color" class="color-label">
+                             Choose invitation button color:
                          </label>
 
                         <vue-select name="color"
@@ -24,8 +25,30 @@
                                     :options="buttonColors"
                                     @change="setButtonBackgroundColor">
                         </vue-select>
-
                     </span>
+
+                <div v-if="! this.card.use_redirect_button" class="invite-buttons">
+                    <div v-if="! this.card.is_patient && this.selectedButtonColor.length !== 0" class="button">
+                        <a class="btn btn-default btn-primary ml-auto mt-auto"
+                           :disabled="sendingInvites"
+                           :style="bgc"
+                           style="cursor: pointer; white-space: nowrap; width: 280px;"
+                           @click="sendInvites(bgc.backgroundColor, amount)">
+                            Send SMS/Emails
+                        </a>
+                    </div>
+
+                    <div v-if="this.card.is_patient" class="button"
+                         :disabled="sendingInvites">
+                        <a class="btn btn-default btn-primary ml-auto mt-auto"
+                           style="cursor: pointer; background-color: #4baf50" @click="sendInvites('#4baf50', amount)">Send Invite</a>
+                    </div>
+                </div>
+
+                <div v-else class="button">
+                    <a class="btn btn-default btn-primary ml-auto mt-auto"
+                       style="cursor: pointer; background-color: #4baf50" @click="redirectToInvitesDashboard()">Select Practice</a>
+                </div>
             </div>
 
             <loader v-if="sendingInvites" width="30">
@@ -36,31 +59,7 @@
                 </div>
             </div>
 
-          <div v-if="! this.card.use_redirect_button" class="invite-buttons">
-              <div v-if="! this.card.is_patient && this.selectedButtonColor.length !== 0" class="button">
-                  <a class="btn btn-default btn-primary ml-auto mt-auto"
-                     :disabled="sendingInvites"
-                     :style="bgc"
-                     style="cursor: pointer;
-                     white-space: nowrap;
-                     width: 275px;
-                     margin-right: 10px;"
-                     @click="sendInvites(bgc.backgroundColor, amount)">
-                      Send SMS/Emails
-                  </a>
-              </div>
 
-              <div v-if="this.card.is_patient" class="button"
-                   :disabled="sendingInvites">
-                  <a class="btn btn-default btn-primary ml-auto mt-auto"
-                     style="cursor: pointer; background-color: #4baf50" @click="sendInvites('#4baf50', amount)">Send Invite</a>
-              </div>
-          </div>
-
-                <div v-else class="button">
-                    <a class="btn btn-default btn-primary ml-auto mt-auto"
-                       style="cursor: pointer; background-color: #4baf50" @click="redirectToInvitesDashboard()">Select Practice</a>
-                </div>
         </div>
     </card>
 </template>
@@ -155,3 +154,28 @@ export default {
     },
 }
 </script>
+<style>
+    #color > div{
+        max-height: 36px;
+        min-width: 80px;
+    }
+    .label-amount{
+        font-size: 15px;
+        text-align: right;
+    }
+    .amount-input{
+        max-width:66px;
+        max-height: 29px;
+        border: 1px solid #5cc0dd;
+        margin-left: 9px;
+    }
+    .color-label{
+        padding-right: 15px;
+        font-size: 15px;
+        margin-left: auto;
+        text-align: right;
+    }
+    .invite-buttons{
+        text-align: center;
+    }
+</style>
