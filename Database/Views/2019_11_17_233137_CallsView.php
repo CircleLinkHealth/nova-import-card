@@ -55,7 +55,8 @@ class CallsView extends BaseSqlView
             u4.general_comment,
             u4.ccm_status,
             u9.patient_nurse_id,
-            u9.patient_nurse
+            u9.patient_nurse,
+            u4.preferred_contact_language
             
         FROM
             calls c
@@ -65,7 +66,7 @@ class CallsView extends BaseSqlView
 
             left join (select u.id as scheduler_id, u.display_name as `scheduler` from users u) as u3 on c.scheduler = u3.scheduler_id
 
-            left join (select pi.user_id as patient_id, pi.last_contact_time as last_call, pi.no_call_attempts_since_last_success, pi.general_comment, pi.ccm_status from patient_info pi where pi.ccm_status in ('enrolled', 'paused')) as u4 on c.inbound_cpm_id = u4.patient_id
+            left join (select pi.user_id as patient_id, pi.last_contact_time as last_call, pi.no_call_attempts_since_last_success, pi.general_comment, pi.ccm_status, pi.preferred_contact_language from patient_info pi where pi.ccm_status in ('enrolled', 'paused')) as u4 on c.inbound_cpm_id = u4.patient_id
 
             left join (select pms.patient_id, pms.ccm_time, pms.bhi_time, pms.no_of_successful_calls, pms.no_of_calls from patient_monthly_summaries pms where month_year = ${startOfMonthQuery}) u5 on c.inbound_cpm_id = u5.patient_id
 

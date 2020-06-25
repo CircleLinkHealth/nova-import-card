@@ -16,12 +16,12 @@ class PracticePatientsView extends BaseSqlView
         return \DB::statement("
         CREATE VIEW {$this->getViewName()}
         AS
-select u.id, u.first_name, u.last_name, u.suffix, u.display_name, u.city, u.state, u.program_id, pi.ccm_status, cp.status
+select u.id, u.first_name, u.last_name, u.suffix, u.display_name, u.city, u.state, u.program_id, pi.ccm_status, cp.status, pi.preferred_contact_language
 from users u
 inner join practice_role_user pru on u.id = pru.user_id and pru.program_id = u.program_id
 inner join patient_info pi on u.id = pi.user_id and pi.is_awv = 0
 left join care_plans cp on u.id = cp.user_id
-where pru.role_id = 2 and u.deleted_at is null;        
+where pru.role_id = 2 and u.deleted_at is null;
       ");
     }
 
