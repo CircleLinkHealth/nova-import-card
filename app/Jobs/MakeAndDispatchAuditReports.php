@@ -61,11 +61,9 @@ class MakeAndDispatchAuditReports implements ShouldQueue
      */
     public function __construct(User $patient, Carbon $date = null, bool $batch = true)
     {
-        $this->patient    = $patient;
-        $this->date       = $date ?? Carbon::now();
-        $this->directMail = app(DirectMail::class);
-        $this->eFax       = app(Efax::class);
-        $this->batch      = $batch;
+        $this->patient = $patient;
+        $this->date    = $date ?? Carbon::now();
+        $this->batch   = $batch;
     }
 
     /**

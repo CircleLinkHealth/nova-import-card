@@ -8,6 +8,7 @@ namespace App\Notifications;
 
 use App\Contracts\DirectMailableNotification;
 use App\Contracts\FaxableNotification;
+use App\Contracts\NotificationAboutPatient;
 use App\Reports\PatientDailyAuditReport;
 use App\ValueObjects\SimpleNotification;
 use Carbon\Carbon;
@@ -16,7 +17,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class SendAuditReport extends Notification implements FaxableNotification, DirectMailableNotification, ShouldQueue
+class SendAuditReport extends Notification implements FaxableNotification, DirectMailableNotification, ShouldQueue, NotificationAboutPatient
 {
     use Queueable;
 
@@ -89,18 +90,23 @@ class SendAuditReport extends Notification implements FaxableNotification, Direc
     public function getPdfPath()
     {
         if ( ! file_exists($this->pathToPdf)) {
-            $this->fileName = (new PatientDailyAuditReport(
+            $response = (new PatientDailyAuditReport(
                 $this->patient,
                 $this->date->startOfMonth()
             ))
                 ->renderPDF();
 
-            if ( ! is_readable($this->pathToPdf = storage_path("download/{$this->fileName}"))) {
-                throw new \Exception("File not found: {$this->pathToPdf}");
-            }
+            $this->fileName = $response['file_name'];
+
+            $this->pathToPdf = $response['path'];
         }
 
         return $this->pathToPdf;
+    }
+
+    public function notificationAboutPatientWithUserId(): int
+    {
+        return $this->patient->id;
     }
 
     /**
@@ -113,11 +119,12 @@ class SendAuditReport extends Notification implements FaxableNotification, Direc
     public function toArray($notifiable)
     {
         return [
-            'channels'          => $this->channels,
-            'directMailBody'    => $this->directMailBody($notifiable),
-            'directMailSubject' => $this->directMailSubject($notifiable),
-            'getPdfPath'        => $this->getPdfPath(),
-            'getPdfFilename'    => $this->getPdfFilename(),
+            'channels'              => $this->channels,
+            'directMailBody'        => $this->directMailBody($notifiable),
+            'directMailSubject'     => $this->directMailSubject($notifiable),
+            'getPdfPath'            => $this->getPdfPath(),
+            'getPdfFilename'        => $this->getPdfFilename(),
+            'media_collection_name' => PatientDailyAuditReport::mediaCollectionName($this->date),
         ];
     }
 
