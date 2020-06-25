@@ -56,6 +56,7 @@ class QueueSendAuditReports extends Command
             ->with('patientSummaries')
             ->with('primaryPractice')
             ->with('primaryPractice.settings')
+            ->doesntHave('primaryPractice.notificationContactPreferences')
             ->whereHas('primaryPractice', function ($query) {
                 $query->where('active', '=', true)
                     ->whereHas('settings', function ($query) {
