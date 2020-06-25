@@ -25,19 +25,18 @@ use Illuminate\Database\Eloquent\Model;
  * @property \CircleLinkHealth\TimeTracking\Entities\PageTimer[]|\Illuminate\Database\Eloquent\Collection $activities
  * @property int|null                                                                                     $activities_count
  * @property \CircleLinkHealth\Customer\Entities\User|null                                                $user
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LoginLogout newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LoginLogout newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LoginLogout query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LoginLogout whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LoginLogout whereDurationInSec($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LoginLogout whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LoginLogout whereIpAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LoginLogout whereLoginTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LoginLogout whereLogoutTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LoginLogout whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LoginLogout whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LoginLogout whereWasEdited($value)
+ * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|\App\LoginLogout newModelQuery()
+ * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|\App\LoginLogout newQuery()
+ * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|\App\LoginLogout query()
+ * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|\App\LoginLogout whereCreatedAt($value)
+ * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|\App\LoginLogout whereDurationInSec($value)
+ * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|\App\LoginLogout whereId($value)
+ * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|\App\LoginLogout whereIpAddress($value)
+ * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|\App\LoginLogout whereLoginTime($value)
+ * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|\App\LoginLogout whereLogoutTime($value)
+ * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|\App\LoginLogout whereUpdatedAt($value)
+ * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|\App\LoginLogout whereUserId($value)
+ * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|\App\LoginLogout whereWasEdited($value)
  * @mixin \Eloquent
  */
 class LoginLogout extends Model

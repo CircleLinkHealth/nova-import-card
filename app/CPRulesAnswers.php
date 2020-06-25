@@ -13,20 +13,16 @@ namespace App;
  * @property string      $value
  * @property string|null $alt_answers
  * @property int|null    $a_sort
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereASort($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereAid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereAltAnswers($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereValue($value)
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereASort($value)
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereAid($value)
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereAltAnswers($value)
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereValue($value)
  * @mixin \Eloquent
- *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers query()
- *
- * @property int|null $revision_history_count
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers query()
+ * @property int|null                                                                                    $revision_history_count
  */
 class CPRulesAnswers extends \CircleLinkHealth\Core\Entities\BaseModel
 {

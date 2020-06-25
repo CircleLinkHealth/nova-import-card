@@ -43,33 +43,35 @@ class FixToledoAddProviderToEnrollees extends Command
      */
     public function handle()
     {
-        Demographics::whereIn('mrn', function ($q) {
-            $q->select('mrn')
-                ->from('enrollees')
-                ->where('practice_id', 235)
-                ->whereStatus(Enrollee::QUEUE_AUTO_ENROLLMENT.'_2');
-        })->chunkById(500, function ($q) {
-            foreach ($q as $p) {
-                $this->warn("Updating $p->mrn");
-                $p->billing_provider_user_id = optional(ProviderByName::first($p->referring_provider_name))->id;
+        Enrollee::where('practice_id', 235)
+            ->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT.'_2')
+            ->inRandomOrder()
+            ->chunkById(300, function ($enrollees) {
+                foreach ($enrollees as $enrollee) {
+                    $p = Demographics::where('practice_id', $enrollee->practice_id)
+                        ->where('mrn', $enrollee->mrn)
+                        ->firstOrFail();
 
-                if (empty($p->billing_provider_user_id)) {
-                    continue;
+                    $this->warn("Updating $p->mrn");
+                    $p->billing_provider_user_id = optional(ProviderByName::first($p->referring_provider_name))->id;
+
+                    if (empty($p->billing_provider_user_id)) {
+                        continue;
+                    }
+
+                    $p->save();
+
+                    Enrollee::wherePracticeId(235)->whereMrn($p->mrn)->update([
+                        'provider_id' => $p->billing_provider_user_id,
+                        'status'      => Enrollee::QUEUE_AUTO_ENROLLMENT,
+                    ]);
+
+                    $enrollee = Enrollee::wherePracticeId(235)->whereMrn($p->mrn)->with('user')->has('user')->first();
+
+                    if ($enrollee) {
+                        $enrollee->user->setBillingProviderId($enrollee->provider_id);
+                    }
                 }
-
-                $p->save();
-
-                Enrollee::wherePracticeId(235)->whereMrn($p->mrn)->update([
-                    'provider_id' => $p->billing_provider_user_id,
-                    'status'      => Enrollee::QUEUE_AUTO_ENROLLMENT,
-                ]);
-
-                $enrollee = Enrollee::wherePracticeId(235)->whereMrn($p->mrn)->with('user')->has('user')->first();
-
-                if ($enrollee) {
-                    $enrollee->user->setBillingProviderId($enrollee->provider_id);
-                }
-            }
-        });
+            });
     }
 }
