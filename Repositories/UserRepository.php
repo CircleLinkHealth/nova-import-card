@@ -27,7 +27,6 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Storage;
@@ -35,43 +34,6 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UserRepository
 {
-    public function adminEmailNotify(
-        User $user,
-        $recipients
-    ) {
-        //   Template:
-//        From: CircleLink Health
-//        Sent: Tuesday, January 5, 10:11 PM
-//        Subject: [Site Name] New User Registration!
-//        To: Linda Warshavsky  lindaw@circlelinkhealth.com
-//
-        //New user registration on Dr Daniel A Miller, MD: Username: WHITE, MELDA JEAN [834] E-mail: test@gmail.com
-
-        $email_view = 'emails.newpatientnotify';
-        $program    = Practice::find($user->primaryProgramId());
-
-        if ( ! $program) {
-            return;
-        }
-
-        $program_name  = $program->display_name;
-        $email_subject = '['.$program_name.'] New User Registration!';
-        $data          = [
-            'patient_name'  => $user->getFullName(),
-            'patient_id'    => $user->id,
-            'patient_email' => $user->getEmailForPasswordReset(),
-            'program'       => $program_name,
-        ];
-
-        Mail::send($email_view, $data, function ($message) use (
-            $recipients,
-            $email_subject
-        ) {
-            $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
-            $message->to($recipients)->subject($email_subject);
-        });
-    }
-
     public function createNewUser(
         ParameterBag $params
     ) {
@@ -189,11 +151,6 @@ class UserRepository
             $this->forceEnable2fa($user->authyUser);
         }
 
-        //Add Email Notification
-        $sendTo = ['patientsupport@circlelinkhealth.com'];
-        if (isProductionEnv()) {
-            $this->adminEmailNotify($user, $sendTo);
-        }
         $user->push();
 
         return $user;
@@ -682,7 +639,8 @@ class UserRepository
     /**
      * Validate tht the patient does not already exist.
      *
-     * @param  mixed|null                    $mrn
+     * @param mixed|null $mrn
+     *
      * @throws PatientAlreadyExistsException
      */
     public static function validatePatientDoesNotAlreadyExist(int $practiceId, string $firstName, string $lastName, string $dob, $mrn = null)
