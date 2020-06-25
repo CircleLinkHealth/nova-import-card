@@ -23,6 +23,7 @@ class NursesPerformanceReportService
 
     const LAST_COMMITTED_DAYS_TO_GO_BACK = 10;
     const MAX_COMMITTED_DAYS_TO_GO_BACK  = 30;
+    const MIN_CALL                       = 1;
 
     protected $aggregatedTotalTimePerNurse;
 
