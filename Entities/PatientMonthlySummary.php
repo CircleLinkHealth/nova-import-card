@@ -387,7 +387,18 @@ class PatientMonthlySummary extends BaseModel
         $newSummary->attachChargeableServicesToFulfill($summary);
     }
 
-    public static function existsForCurrentMonthForPatient($patientId): bool
+    public static function existsForCurrentMonthForPatient(User $patient): bool
+    {
+        if ($patient->relationLoaded('patientSummaries')) {
+            return $patient->patientSummaries
+                ->where('month_year', Carbon::now()->startOfMonth())
+                ->isNotEmpty();
+        }
+
+        return self::existsForCurrentMonthForPatientId($patient->id);
+    }
+
+    public static function existsForCurrentMonthForPatientId($patientId): bool
     {
         return (new static())->where('patient_id', $patientId)
             ->where('month_year', Carbon::now()->startOfMonth())

@@ -19,8 +19,8 @@ class SeesAutoQAButton
 
     public static function userId(int $userId)
     {
-        return \Cache::remember(self::SEES_AUTO_QA_BUTTON, 2, function () use ($userId) {
-            return optional(AppConfig::where('config_key', '=', self::SEES_AUTO_QA_BUTTON)->where('config_value', '=', $userId)->first())->config_value;
-        });
+        $values = AppConfig::pull(self::SEES_AUTO_QA_BUTTON, []);
+
+        return in_array($userId, $values);
     }
 }

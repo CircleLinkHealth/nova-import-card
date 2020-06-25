@@ -26,14 +26,6 @@ class PracticesRequiringSpecialBhiConsent
      */
     public static function names()
     {
-        return \Cache::remember(self::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, 2, function () {
-            return AppConfig::where('config_key', '=', self::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY)
-                ->get()
-                ->map(
-                    function ($practiceName) {
-                        return $practiceName->config_value;
-                    }
-                )->all();
-        });
+        return AppConfig::pull(self::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, []);
     }
 }
