@@ -911,6 +911,7 @@ class NotesController extends Controller
      * 2. The json_decode is risky at the bottom and more error control is needed.
      *
      * @param $patientId
+     *
      * @return |null
      */
     private function getAnswerFromSelfEnrolmentSurvey($patientId)
