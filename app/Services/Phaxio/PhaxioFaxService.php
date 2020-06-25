@@ -80,7 +80,7 @@ class PhaxioFaxService implements Efax
             $options['tag[notification_id]'] = $notification->id;
         }
 
-        $fax = $this->send($options);
+        return $this->send($options);
     }
 
     public function setOption(string $name, $value): Efax
