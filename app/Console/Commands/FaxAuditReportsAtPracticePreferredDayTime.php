@@ -64,6 +64,7 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
                     $key = $preference->cacheKey(CustomerNotificationContactTimePreference::AUDIT_REPORTS_FAXES_PER_HOUR);
 
                     if (is_numeric($preference->max_per_hour) && $this->hourlyLimitReached($key, $preference->max_per_hour)) {
+                        $this->warn("Limit reached for CustomerNotificationContactTimePreference[$preference->id]");
                         continue;
                     }
 
