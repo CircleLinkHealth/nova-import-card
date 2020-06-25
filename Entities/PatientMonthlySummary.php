@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Customer\Entities;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Traits\HasChargeableServices;
+use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Support\Collection;
@@ -36,6 +37,7 @@ use Illuminate\Support\Facades\DB;
  * @property int                                         $total_time
  * @property \CircleLinkHealth\Customer\Entities\User    $actor
  * @property \CircleLinkHealth\Customer\Entities\Patient $patient_info
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
  *     getCurrent()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
@@ -71,6 +73,7 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
  *     whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property string|null                                          $closed_ccm_status
  * @property int|null                                             $problem_1
  * @property int|null                                             $problem_2
@@ -85,6 +88,7 @@ use Illuminate\Support\Facades\DB;
  * @property \CircleLinkHealth\Customer\Entities\User $patient
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection
  *     $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
  *     hasServiceCode($code)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
@@ -109,6 +113,7 @@ use Illuminate\Support\Facades\DB;
  *     whereProblem2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
  *     whereTotalTime($value)
+ *
  * @property int|null                                                                                         $billable_problems_count
  * @property int|null                                                                                         $chargeable_services_count
  * @property int|null                                                                                         $revision_history_count
@@ -214,26 +219,64 @@ class PatientMonthlySummary extends BaseModel
                 return;
             }
 
-            $patientProblems = $patient->ccdProblems;
+            $patientProblems = $patient->billableProblems()->get();
+
+            //temporary solution until we implement cpmProblems - chargeableServices relationship
+            //depression and dementia are both CCM and BHI. If patient has those, add relevant codes
+            $hasDepression = $patientProblems->contains('name', 'Depression');
+            $hasDementia   = $patientProblems->contains('name', 'Dementia');
 
             $practiceBhiCode = $practiceCodes->where('code', ChargeableService::BHI)->first();
 
-            //Attestation BHI rules have changed
-            //BHI attestation is no longer required so we can be loose with attaching to patient.
-            //also bhi attestation validation depends on bhi time, so we can consider it as a factor for attaching CS
-            $patientOnlyHasBhiProblems = $patientProblems->where('cpmProblem.is_behavioral', true)->count() === $patientProblems->count();
-            $pmsHasBhiTime             = $this->bhi_time > 0;
-            if (($pmsHasBhiTime || $patientOnlyHasBhiProblems) && $practiceBhiCode) {
+            //AUTO ATTACH BHI SECTION
+            $patientHasBhiProblems = $patientProblems->contains('cpmProblem.is_behavioral', true);
+            $pmsHasBhiTime         = $this->bhi_time > 0;
+            $patientIsBhiEligible  = $pmsHasBhiTime || $patientHasBhiProblems || $hasDementia || $hasDepression;
+            if ($patientIsBhiEligible && $practiceBhiCode) {
                 $this->chargeableServices()->attach($practiceBhiCode->id, ['is_fulfilled' => false]);
-            } else {
-                $practiceCcmCode = $practiceCodes->where('code', ChargeableService::CCM)->first();
-                if ($patientProblems->count() >= 2 && $practiceCcmCode) {
-                    $this->chargeableServices()->attach($practiceCcmCode->id, ['is_fulfilled' => false]);
-                }
             }
 
-            //only check for CCM and BHI here, since they are the only ones making a difference in validation
-            //all other codes fall under the default validation (at least 1 problem attested)
+            //AUTO ATTACH CCM SECTION
+            $practiceCcmCode         = $practiceCodes->where('code', ChargeableService::CCM)->first();
+            $patientCcmProblemsCount = $patientProblems->where('cpmProblem.is_behavioral', false)->count();
+
+            if ($hasDementia) {
+                ++$patientCcmProblemsCount;
+            }
+            if ($hasDepression) {
+                ++$patientCcmProblemsCount;
+            }
+
+            if ($patientCcmProblemsCount >= 2 && $practiceCcmCode) {
+                $this->chargeableServices()->attach($practiceCcmCode->id, ['is_fulfilled' => false]);
+            }
+
+            //AUTO ATTACH PCM SECTION
+            $practicePcmCode = $practiceCodes->where('code', ChargeableService::PCM)->first();
+
+            $icd10Codes = $patientProblems->map(function (Problem $p) {
+                return $p->icd10Code();
+            })->filter()->toArray();
+
+            $cpmProblemNames = $patientProblems->pluck('cpmProblem.name')->filter()->toArray();
+
+            $pcmEligible = PcmProblem::where('practice_id', $practice->id)
+                ->where(
+                    function ($q) use ($cpmProblemNames, $icd10Codes) {
+                        $q->whereIn(
+                            'code',
+                            $icd10Codes
+                        )->orWhereIn(
+                            'description',
+                            $cpmProblemNames
+                        );
+                    }
+                )->exists();
+
+            if ($practicePcmCode && $pcmEligible) {
+                $this->chargeableServices()->attach($practicePcmCode->id, ['is_fulfilled' => false]);
+            }
+
             return;
         }
 
@@ -274,7 +317,8 @@ class PatientMonthlySummary extends BaseModel
     }
 
     /**
-     * @param  bool              $includeUnfulfilledChargeableServices
+     * @param bool $includeUnfulfilledChargeableServices
+     *
      * @return Collection|static
      */
     public function bhiAttestedProblems($includeUnfulfilledChargeableServices = false)
@@ -317,7 +361,8 @@ class PatientMonthlySummary extends BaseModel
     }
 
     /**
-     * @param  bool                                                                      $includeUnfulfilledChargeableServices
+     * @param bool $includeUnfulfilledChargeableServices
+     *
      * @return \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection|static
      */
     public function ccmAttestedProblems($includeUnfulfilledChargeableServices = false)
