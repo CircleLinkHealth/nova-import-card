@@ -63,10 +63,8 @@ trait CerberusRoleTrait
      *
      * @return bool|void
      */
-    public static function boot()
+    public static function bootCerberusRoleTrait()
     {
-        parent::boot();
-
         static::deleting(function ($role) {
             if ( ! method_exists(Config::get('cerberus.role'), 'bootSoftDeletes')) {
                 $role->users()->sync([]);
