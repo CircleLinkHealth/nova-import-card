@@ -155,6 +155,7 @@ class SendInvitation implements ShouldQueue
         if ( ! in_array($this->color, [
             SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
             SelfEnrollmentController::RED_BUTTON_COLOR,
+            SelfEnrollmentController::BLUE_BUTTON_COLOR,
         ])) {
             throw new \InvalidArgumentException("Invalid color `{$this->color}`. Valid values are `".SelfEnrollmentController::RED_BUTTON_COLOR.'` and `'.SelfEnrollmentController::DEFAULT_BUTTON_COLOR.'`.');
         }
