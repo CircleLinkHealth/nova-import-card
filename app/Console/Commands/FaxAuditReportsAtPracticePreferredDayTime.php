@@ -15,6 +15,7 @@ use CircleLinkHealth\Customer\Entities\CustomerNotificationContactTimePreference
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 
 class FaxAuditReportsAtPracticePreferredDayTime extends Command
 {
@@ -53,8 +54,8 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
     public function handle()
     {
         CustomerNotificationContactTimePreference::where('day', now()->format('l'))
-            ->where('from', '>=', now()->startOfHour()->format('H:i'))
-            ->where('to', '<=', now()->endOfHour()->format('H:i'))
+            ->where('from', '<=', now()->startOfHour()->format('H:i'))
+            ->where('to', '>=', now()->format('H:i'))
             ->where('notification', SendAuditReport::class)
             ->where('is_enabled', true)
             ->chunkById(100, function ($preferences) {
@@ -69,6 +70,8 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
                     $this->sendNotification($key, $this->forMonth());
                 }
             });
+
+        $this->line('Command ran');
     }
 
     private function forMonth()
@@ -91,7 +94,7 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
 
     private function notificationsSentThisHour(string $key): int
     {
-        return \Cache::get($key);
+        return Cache::get($key) ?? 0;
     }
 
     private function sendNotification(string $key, Carbon $date)
@@ -110,8 +113,6 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
                 $query->where('active', '=', true)
                     ->whereHas('settings', function ($query) {
                         $query->where('efax_audit_reports', '=', true);
-                    })->when($this->argument('practiceId'), function ($q) {
-                        $q->where('id', '=', $this->argument('practiceId'));
                     });
             })
             ->whereHas('patientSummaries', function ($query) use ($date) {
@@ -138,8 +139,15 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
         $shouldBatch = (bool) $user->primaryPractice->cpmSettings()->batch_efax_audit_reports;
 
         $user->locations->each(function (Location $location) use ($user, $date, $shouldBatch, $key) {
-            $location->notify(new SendAuditReport($user, $date, [FaxChannel::class], $shouldBatch));
-            \RedisManager::incr($key);
+            if ( ! $this->option('dry')) {
+                $location->notify(new SendAuditReport($user, $date, [FaxChannel::class], $shouldBatch));
+            }
+
+            if ( ! Cache::has($key)) {
+                Cache::set($key, 0, now()->addHours(3));
+            }
+
+            Cache::increment($key);
         });
     }
 }
