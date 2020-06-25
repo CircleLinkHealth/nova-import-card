@@ -15,7 +15,6 @@ use App\Repositories\CareplanAssessmentRepository;
 use App\Repositories\NoteRepository;
 use App\View\MetaTag;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -387,21 +386,6 @@ class NoteService
     }
 
     //return bool of whether note was sent to a provider
-
-    public function getPatientCareTeamMembers($patientId)
-    {
-        $careteam_info = [];
-        $careteam_ids  = CarePerson
-            ::whereUserId($patientId)->pluck('member_user_id');
-
-        foreach ($careteam_ids as $id) {
-            if (User::find($id)) {
-                $careteam_info[$id] = User::find($id)->getFullName();
-            }
-        }
-
-        return $careteam_info;
-    }
 
     public function getSeenForwards(Note $note)
     {

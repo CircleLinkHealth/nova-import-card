@@ -159,10 +159,7 @@ class PatientAttestedConditionsTest extends TestCase
 
     public function test_attestation_validation_for_ccm_code()
     {
-        AppConfig::create([
-            'config_key'   => 'complex_attestation_requirements_for_practice',
-            'config_value' => $this->practice->id,
-        ]);
+        AppConfig::set('complex_attestation_requirements_for_practice', $this->practice->id);
 
         $charggeableServiceIds = ChargeableService::whereIn('code', [
             ChargeableService::CCM,
@@ -180,10 +177,7 @@ class PatientAttestedConditionsTest extends TestCase
 
     public function test_attestation_validation_for_complex_ccm_and_bhi_code()
     {
-        AppConfig::create([
-            'config_key'   => 'complex_attestation_requirements_for_practice',
-            'config_value' => $this->practice->id,
-        ]);
+        AppConfig::set('complex_attestation_requirements_for_practice', $this->practice->id);
 
         $charggeableServiceIds = ChargeableService::whereIn('code', [
             ChargeableService::BHI,
@@ -204,10 +198,7 @@ class PatientAttestedConditionsTest extends TestCase
 
     public function test_attestation_validation_for_complex_ccm_and_bhi_code_is_not_applicable_if_conditions_already_attested()
     {
-        AppConfig::create([
-            'config_key'   => 'complex_attestation_requirements_for_practice',
-            'config_value' => $this->practice->id,
-        ]);
+        AppConfig::set('complex_attestation_requirements_for_practice', $this->practice->id);
 
         $charggeableServiceIds = ChargeableService::whereIn('code', [
             ChargeableService::BHI,
@@ -241,10 +232,7 @@ class PatientAttestedConditionsTest extends TestCase
 
     public function test_complex_validation_rules_disabled_for_practice()
     {
-        AppConfig::create([
-            'config_key'   => 'complex_attestation_requirements_for_practice',
-            'config_value' => '',
-        ]);
+        AppConfig::set('complex_attestation_requirements_for_practice', '');
 
         $responseData = $this->actingAs($this->nurse)->call('GET', route('patient.note.create', ['patientId' => $this->patient->id]))
             ->assertOk()
@@ -255,10 +243,7 @@ class PatientAttestedConditionsTest extends TestCase
 
     public function test_patient_summaries_are_created_with_any_previous_months_services_from_notes_create_route()
     {
-        AppConfig::create([
-            'config_key'   => 'complex_attestation_requirements_for_practice',
-            'config_value' => $this->practice->id,
-        ]);
+        AppConfig::set('complex_attestation_requirements_for_practice', $this->practice->id);
 
         $charggeableServiceIds = ChargeableService::whereIn('code', [
             ChargeableService::CCM,
@@ -295,10 +280,7 @@ class PatientAttestedConditionsTest extends TestCase
 
     public function test_patient_summaries_are_created_with_last_months_services_from_notes_create_route()
     {
-        AppConfig::create([
-            'config_key'   => 'complex_attestation_requirements_for_practice',
-            'config_value' => $this->practice->id,
-        ]);
+        AppConfig::set('complex_attestation_requirements_for_practice', $this->practice->id);
 
         $charggeableServiceIds = ChargeableService::whereIn('code', [
             ChargeableService::CCM,
@@ -335,10 +317,7 @@ class PatientAttestedConditionsTest extends TestCase
 
     public function test_patient_summaries_have_services_according_to_practice_and_patient_problems_if_not_last_month_pms()
     {
-        AppConfig::create([
-            'config_key'   => 'complex_attestation_requirements_for_practice',
-            'config_value' => $this->practice->id,
-        ]);
+        AppConfig::set('complex_attestation_requirements_for_practice', $this->practice->id);
 
         $charggeableServiceIds = ChargeableService::whereIn('code', [
             ChargeableService::CCM,
@@ -380,10 +359,7 @@ class PatientAttestedConditionsTest extends TestCase
      */
     public function test_patient_summaries_have_services_according_to_practice_and_patient_problems_if_not_last_month_pms_and_existing_pms_no_services()
     {
-        AppConfig::create([
-            'config_key'   => 'complex_attestation_requirements_for_practice',
-            'config_value' => $this->practice->id,
-        ]);
+        AppConfig::set('complex_attestation_requirements_for_practice', $this->practice->id);
 
         $charggeableServiceIds = ChargeableService::whereIn('code', [
             ChargeableService::CCM,

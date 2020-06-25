@@ -9,18 +9,21 @@ namespace App\Services\CPM;
 use App\Contracts\Services\CpmModel;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Problem;
+use Illuminate\Support\Facades\Cache;
 
 class CpmProblemService implements CpmModel
 {
     public function all()
     {
-        return $this->noDiabetesFilter()->withLatestCpmInstruction()->withIcd10Codes()->get([
-            'id',
-            'name',
-            'default_icd_10_code',
-            'is_behavioral',
-        ])->map(function ($value) {
-            return $this->setupProblem($value);
+        return Cache::store('array')->rememberForever('CpmProblemService_all', function () {
+            return $this->noDiabetesFilter()->withLatestCpmInstruction()->withIcd10Codes()->get([
+                'id',
+                'name',
+                'default_icd_10_code',
+                'is_behavioral',
+            ])->map(function ($value) {
+                return $this->setupProblem($value);
+            });
         });
     }
 

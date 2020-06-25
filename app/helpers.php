@@ -871,37 +871,10 @@ if ( ! function_exists('authUserCanSendPatientEmail')) {
      */
     function authUserCanSendPatientEmail(): bool
     {
-        $key = 'enable_patient_email_for_user';
+        $key    = 'enable_patient_email_for_user';
+        $values = AppConfig::pull($key, []);
 
-        return \Cache::remember($key, 2, function () use ($key) {
-            return AppConfig::where('config_key', $key)
-                ->whereIn('config_value', [auth()->user()->id, 'all'])
-                ->exists();
-        });
-    }
-}
-if ( ! function_exists('setAppConfig')) {
-    /**
-     * Save an AppConfig key, value and then return it.
-     *
-     * @param mixed $value
-     *
-     * @return mixed
-     */
-    function setAppConfig(string $key, $value)
-    {
-        $conf = AppConfig::updateOrCreate(
-            [
-                'config_key' => $key,
-            ],
-            [
-                'config_value' => $value,
-            ]
-        );
-
-        return $conf
-            ? $conf->config_value
-            : null;
+        return in_array(auth()->user()->id, $values) || in_array('all', $values);
     }
 }
 
@@ -1422,17 +1395,14 @@ if ( ! function_exists('isTwoFaEnabledForPractice')) {
     function isTwoFaEnabledForPractice($practiceId): bool
     {
         $key = 'two_fa_enabled_practices';
+        $val = AppConfig::pull($key, null);
+        if (null === $val) {
+            AppConfig::set($key, '');
 
-        $twoFaEnabledPractices = \Cache::remember($key, 2, function () use ($key) {
-            $val = AppConfig::pull($key, null);
-            if (null === $val) {
-                setAppConfig($key, '');
-
-                return [];
-            }
-
-            return explode(',', $val);
-        });
+            $twoFaEnabledPractices = [];
+        } else {
+            $twoFaEnabledPractices = explode(',', $val);
+        }
 
         return in_array($practiceId, $twoFaEnabledPractices);
     }
@@ -1441,9 +1411,7 @@ if ( ! function_exists('isTwoFaEnabledForPractice')) {
 if ( ! function_exists('isSelfEnrollmentTestModeEnabled')) {
     function isSelfEnrollmentTestModeEnabled(): bool
     {
-        return Cache::remember($key = 'is_self_enrollment_test_mode_enabled', 2, function () use ($key) {
-            return filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN);
-        });
+        return filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN);
     }
 }
 
@@ -1591,7 +1559,7 @@ if ( ! function_exists('incrementInvoiceNo')) {
      */
     function incrementInvoiceNo()
     {
-        $num = AppConfig::firstOrCreate(['config_key' => 'billing_invoice_count'], ['config_value' => 0]);
+        $num = AppConfig::set('billing_invoice_count', 0);
 
         $current = $num->config_value;
 
@@ -1810,15 +1778,12 @@ if ( ! function_exists('isPatientCcmPlusBadgeEnabled')) {
     function isPatientCcmPlusBadgeEnabled(): bool
     {
         $key = 'enable_patient_ccm_plus_badge';
+        $val = AppConfig::pull($key, null);
+        if (null === $val) {
+            return AppConfig::set($key, false);
+        }
 
-        return \Cache::remember($key, 2, function () use ($key) {
-            $val = AppConfig::pull($key, null);
-            if (null === $val) {
-                return setAppConfig($key, false);
-            }
-
-            return $val;
-        });
+        return $val;
     }
 }
 
@@ -1830,15 +1795,12 @@ if ( ! function_exists('upg0506IsEnabled')) {
     function upg0506IsEnabled(): bool
     {
         $key = 'upg0506_is_enabled';
+        $val = AppConfig::pull($key, null);
+        if (null === $val) {
+            return 'true' === AppConfig::set($key, false);
+        }
 
-        return \Cache::remember($key, 2, function () use ($key) {
-            $val = AppConfig::pull($key, null);
-            if (null === $val) {
-                return 'true' === setAppConfig($key, false);
-            }
-
-            return 'true' === $val;
-        });
+        return 'true' === $val;
     }
 }
 
@@ -1851,17 +1813,10 @@ if ( ! function_exists('patientLoginIsEnabledForPractice')) {
      */
     function patientLoginIsEnabledForPractice(int $practiceId): bool
     {
-        $key = 'enable_patient_login_for_practice';
+        $key    = 'enable_patient_login_for_practice';
+        $values = AppConfig::pull($key, []);
 
-        return \Cache::remember(sha1("{$key}_{$practiceId}"), 2, function () use ($key, $practiceId) {
-            return AppConfig::where('config_key', $key)
-                //give the ability to enable for all practices at once
-                ->whereIn('config_value', [
-                    $practiceId,
-                    'all',
-                ])
-                ->exists();
-        });
+        return in_array($practiceId, $values) || in_array('all', $values);
     }
 }
 
@@ -1872,11 +1827,9 @@ if ( ! function_exists('reimportingPatientsIsEnabledForUser')) {
     function reimportingPatientsIsEnabledForUser(int $userId): bool
     {
         $key = 'enable_reimporting_for_user';
+        $val = AppConfig::pull($key, []);
 
-        return \Cache::remember(sha1("{$key}_{$userId}"), 2, function () use ($key, $userId) {
-            return AppConfig::where('config_key', $key)
-                ->where('config_value', $userId)->exists();
-        });
+        return in_array($userId, $val);
     }
 }
 
@@ -1887,13 +1840,9 @@ if ( ! function_exists('isDownloadingNotesEnabledForUser')) {
     function isDownloadingNotesEnabledForUser(int $userId): bool
     {
         $key = 'enable_downloading_notes_for_user';
+        $val = AppConfig::pull($key, []);
 
-        return \Cache::remember(sha1("{$key}_{$userId}"), 2, function () use ($key, $userId) {
-            return AppConfig::where('config_key', $key)
-                ->where(function ($q) use ($userId) {
-                    $q->where('config_value', $userId)->orWhere('config_value', 'all');
-                })->exists();
-        });
+        return in_array($userId, $val) || in_array('all', $val);
     }
 }
 
@@ -1908,11 +1857,15 @@ if ( ! function_exists('showNurseMetricsInDailyEmailReport')) {
             "enable_daily_report_metrics:$metric",
         ];
 
-        return AppConfig::whereIn('config_key', $options)
-            ->where(function ($q) use ($userId) {
-                $q->where('config_value', $userId)
-                    ->orWhere('config_value', 'all_nurses');
-            })->exists();
+        foreach ($options as $option) {
+            $val    = AppConfig::pull($option, []);
+            $result = in_array($userId, $val) || in_array('all_nurses', $val);
+            if ($result) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
 
@@ -2104,9 +2057,7 @@ if ( ! function_exists('suggestedFamilyMemberAcceptableRelevanceScore')) {
     {
         $key = 'suggested_family_members_relevance_score';
 
-        return \Cache::remember($key, 2, function () use ($key) {
-            return AppConfig::pull($key, 30);
-        });
+        return AppConfig::pull($key, 30);
     }
 }
 
@@ -2169,9 +2120,7 @@ if ( ! function_exists('minDaysPastForCareAmbassadorNextAttempt')) {
     {
         $key = 'min_days_past_for_care_ambassador_next_attempt';
 
-        return \Cache::remember($key, 2, function () use ($key) {
-            return (int) AppConfig::pull($key, 3);
-        });
+        return (int) AppConfig::pull($key, 3);
     }
 }
 if ( ! function_exists('complexAttestationRequirementsEnabledForPractice')) {
@@ -2182,16 +2131,14 @@ if ( ! function_exists('complexAttestationRequirementsEnabledForPractice')) {
     {
         $key = 'complex_attestation_requirements_for_practice';
 
-        $practiceIds = \Cache::remember($key, 2, function () use ($key) {
-            $val = AppConfig::pull($key, null);
-            if (null === $val) {
-                setAppConfig($key, '');
+        $val = AppConfig::pull($key, null);
+        if (null === $val) {
+            AppConfig::set($key, '');
 
-                return [];
-            }
-
-            return explode(',', $val);
-        });
+            $practiceIds = [];
+        } else {
+            $practiceIds = explode(',', $val);
+        }
 
         return in_array($practiceId, $practiceIds) || in_array('all', $practiceIds);
     }

@@ -175,9 +175,7 @@ class PatientLoginTest extends CustomerTestCase
      */
     private function disableFeatureForPatient()
     {
-        AppConfig::whereConfigKey('enable_patient_login_for_practice')
-            ->whereConfigValue($this->patient->program_id)
-            ->delete();
+        AppConfig::remove('enable_patient_login_for_practice', $this->patient->program_id);
     }
 
     /**
@@ -185,10 +183,7 @@ class PatientLoginTest extends CustomerTestCase
      */
     private function enableFeatureForPatient()
     {
-        AppConfig::create([
-            'config_key'   => 'enable_patient_login_for_practice',
-            'config_value' => $this->patient->program_id,
-        ]);
+        AppConfig::set('enable_patient_login_for_practice', $this->patient->program_id);
     }
 
     /**
@@ -196,9 +191,9 @@ class PatientLoginTest extends CustomerTestCase
      */
     private function featureIsEnabledForPatient()
     {
-        return AppConfig::whereConfigKey('enable_patient_login_for_practice')
-            ->whereConfigValue($this->patient->program_id)
-            ->exists();
+        $values = AppConfig::pull('enable_patient_login_for_practice', []);
+
+        return in_array($this->patient->program_id, $values);
     }
 
     /**
