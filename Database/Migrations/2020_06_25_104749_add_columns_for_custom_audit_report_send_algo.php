@@ -43,6 +43,12 @@ class AddColumnsForCustomAuditReportSendAlgo extends Migration
                 ->after('patient_id')
                 ->virtualAs('JSON_UNQUOTE(data->"$.media_collection_name")')
                 ->index();
+
+            $table->foreign('patient_id')
+                ->references('id')
+                ->on('users')
+                ->onUpdate('CASCADE')
+                ->onDelete('CASCADE');
         });
     }
 }
