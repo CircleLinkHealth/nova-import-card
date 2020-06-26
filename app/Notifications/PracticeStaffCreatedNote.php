@@ -11,13 +11,14 @@ use App\Contracts\LiveNotification;
 use App\Note;
 use App\Traits\ArrayableNotification;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PracticeStaffCreatedNote extends Notification implements LiveNotification, HasAttachment, ShouldQueue
+class PracticeStaffCreatedNote extends Notification implements LiveNotification, HasAttachment, ShouldQueue, ShouldBroadcast
 {
     use ArrayableNotification;
     use Queueable;
