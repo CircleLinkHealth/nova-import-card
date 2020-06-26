@@ -2,7 +2,7 @@
     "private": true,
     "scripts": {
         "build-cpm": "COMPOSER_MEMORY_LIMIT=-1 composer install && php artisan migrate && php artisan migrate:views && npm install && npm run bower_install",
-        "build-dev": "npm run build-cpm && npm run dev && sh ./scripts/install",
+        "build-dev": "npm run build-cpm && npm run dev && COMPOSER_MEMORY_LIMIT=-1 composer ide && sh ./scripts/install",
         "build-prod": "npm run build-cpm && npm run prod",
         "dev": "npm run development",
         "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
