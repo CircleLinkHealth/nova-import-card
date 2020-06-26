@@ -159,6 +159,6 @@ class SendAuditReport extends Notification implements FaxableNotification, Direc
      */
     public function via($notifiable)
     {
-        return $this->channels;
+        return array_merge(['database'], $this->channels);
     }
 }
