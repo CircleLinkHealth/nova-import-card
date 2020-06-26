@@ -1203,7 +1203,12 @@
                     })
                     .catch(err => {
                         console.log(err)
-                        App.$emit('enrollable:error', this.enrollable_id);
+                        let errorMessage = err.response.data.message;
+                        Logger.warn(`WARNING: CA Panel - action failed for patient ${this.enrollable_id}. Message: ${errorMessage}`, {meta: {'connection': 'warning'}});
+                        App.$emit('enrollable:error', {
+                            enrollable_id: this.enrollable_id,
+                            error_message: errorMessage
+                        });
                     });
             },
             submitPendingForm() {
