@@ -84,7 +84,7 @@ class NotesController extends Controller
                     'user' => function ($q) {
                         return $q->select(['id', 'first_name', 'last_name', 'suffix']);
                     },
-                ]);
+                ])->has('user');
             },
         ])->find($patientId);
         if ( ! $patient) {
