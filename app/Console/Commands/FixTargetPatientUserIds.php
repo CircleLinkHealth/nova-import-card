@@ -46,7 +46,7 @@ class FixTargetPatientUserIds extends Command
             ->has('user.patientInfo')
             ->where('id', '>=', $this->argument('minId'))
             ->orderBy('id')
-            ->chunkById(500, function ($tPs) {
+            ->chunkById(1000, function ($tPs) {
                 foreach ($tPs as $tP) {
                     $this->warn("Processing TargetPatient[$tP->id]");
                     if (in_array($tP->user->program_id, [232, 21, 110, 159, 172, 180, 221])

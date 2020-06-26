@@ -45,7 +45,7 @@ class FixSetPatientIdFromTargetPatient extends Command
             ->where('id', '>=', $this->argument('minId'))
             ->has('ccda')
             ->orderBy('id')
-            ->chunkById(500, function ($tPs) {
+            ->chunkById(1000, function ($tPs) {
                 foreach ($tPs as $tP) {
                     $this->warn("Processing TargetPatient[$tP->id]");
 
