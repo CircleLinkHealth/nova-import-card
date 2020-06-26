@@ -7,7 +7,6 @@
 namespace Tests\Unit;
 
 use App\Contracts\FaxableNotification;
-use App\Notifications\Channels\FaxChannel;
 use App\Notifications\SendSms;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use Illuminate\Bus\Queueable;
@@ -84,7 +83,7 @@ class PhaxioFakeTest extends CustomerTestCase
         Phaxio::fake();
 
         /** @var AnonymousNotifiable $anonymous */
-        $anonymous = NotificationFacade::route(FaxChannel::class, $to);
+        $anonymous = NotificationFacade::route('phaxio', $to);
         $anonymous->route('mail', 'test@test.com');
         $anonymous->notify(new FakeNotification($file, ['mail']));
 

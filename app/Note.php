@@ -9,7 +9,6 @@ namespace App;
 use App\Contracts\AttachableToNotification;
 use App\Contracts\PdfReport;
 use App\Notifications\Channels\DirectMailChannel;
-use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NoteForwarded;
 use App\Traits\Addendumable;
 use App\Traits\NotificationAttachable;
@@ -174,7 +173,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         $channelsForLocation = [];
 
         if ($cpmSettings->efax_pdf_notes) {
-            $channelsForLocation[] = FaxChannel::class;
+            $channelsForLocation[] = 'phaxio';
         }
 
         if ($cpmSettings->dm_pdf_notes) {
@@ -191,7 +190,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
             $channelsForUsers = [
                 'mail',
                 DirectMailChannel::class,
-                FaxChannel::class,
+                'phaxio',
             ];
         }
 
@@ -205,7 +204,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         if ($force && empty($channelsForLocation)) {
             $channelsForLocation = [
                 DirectMailChannel::class,
-                FaxChannel::class,
+                'phaxio',
             ];
         }
 

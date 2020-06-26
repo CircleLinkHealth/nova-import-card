@@ -21,7 +21,7 @@ class FaxChannel
         if ($fax = $notifiable->fax ?? null) {
             return $fax;
         }
-        if ($fax = $notifiable->routeNotificationFor(FaxChannel::class) ?? null) {
+        if ($fax = $notifiable->routeNotificationFor('phaxio') ?? null) {
             return $fax;
         }
         if ($fax = $notifiable->routeNotificationFor('phaxio') ?? null) {

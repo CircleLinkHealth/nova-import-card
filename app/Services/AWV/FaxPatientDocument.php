@@ -6,7 +6,6 @@
 
 namespace App\Services\AWV;
 
-use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NotificationStrategies\SendsNotification;
 use App\Notifications\SendCareDocument;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -47,7 +46,7 @@ class FaxPatientDocument extends SendsNotification
     public function getNotifiable()
     {
         return $notifiable = Location::whereFax($this->fax)->first()
-            ?: Notification::route(FaxChannel::class, $this->fax);
+            ?: Notification::route('phaxio', $this->fax);
     }
 
     /**
@@ -55,6 +54,6 @@ class FaxPatientDocument extends SendsNotification
      */
     public function getNotification(): \Illuminate\Notifications\Notification
     {
-        return new SendCareDocument($this->document, $this->patient, [FaxChannel::class]);
+        return new SendCareDocument($this->document, $this->patient, ['phaxio']);
     }
 }

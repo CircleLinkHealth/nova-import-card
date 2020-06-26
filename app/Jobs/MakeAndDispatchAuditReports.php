@@ -9,7 +9,6 @@ namespace App\Jobs;
 use App\Contracts\DirectMail;
 use App\Contracts\Efax;
 use App\Notifications\Channels\DirectMailChannel;
-use App\Notifications\Channels\FaxChannel;
 use App\Notifications\SendAuditReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -79,7 +78,7 @@ class MakeAndDispatchAuditReports implements ShouldQueue
             }
 
             if ($settings->efax_audit_reports && $location->fax) {
-                $channels[] = FaxChannel::class;
+                $channels[] = 'phaxio';
             }
 
             if (isset($channels)) {
