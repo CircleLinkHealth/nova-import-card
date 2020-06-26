@@ -8,6 +8,7 @@ namespace Tests\Concerns\PhaxioFake;
 
 use App\Contracts\Efax;
 use App\Contracts\FaxableNotification;
+use App\Notifications\Channels\FaxChannel;
 use Phaxio\Fax;
 use Psr\Log\LoggerInterface;
 
@@ -50,9 +51,17 @@ class PhaxioFakeLogDriver implements Efax
         return new Fax($this);
     }
 
-    public function sendNotification($notifiable, FaxableNotification &$notification, array $options = [])
+    public function sendNotification($notifiable, FaxableNotification $notification, array $options = [])
     {
         $this->sendNotificationMethodCalls[] = (object) func_get_args();
+
+        if ( ! array_key_exists('to', $options)) {
+            $options['to'] = FaxChannel::getFaxNumber($notifiable);
+        }
+
+        if ( ! array_key_exists('file', $options)) {
+            $options['file'] = $notification->filePath;
+        }
 
         $this->logger->info('Fax sent');
 

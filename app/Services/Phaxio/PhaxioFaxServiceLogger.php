@@ -55,7 +55,7 @@ class PhaxioFaxServiceLogger implements Efax
      *
      * @return mixed
      */
-    public function sendNotification($notifiable, FaxableNotification &$notification, array $options = [])
+    public function sendNotification($notifiable, FaxableNotification $notification, array $options = [])
     {
         return $this->efax->sendNotification($notifiable, $notification);
     }

@@ -90,7 +90,7 @@ class PhaxioFake implements Efax
         return call_user_func_array([$this->logger, 'send'], func_get_args());
     }
 
-    public function sendNotification($notifiable, FaxableNotification &$notification, array $options = [])
+    public function sendNotification($notifiable, FaxableNotification $notification, array $options = [])
     {
         return call_user_func_array([$this->logger, 'sendNotification'], func_get_args());
     }

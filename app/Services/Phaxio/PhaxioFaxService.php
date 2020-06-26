@@ -72,7 +72,7 @@ class PhaxioFaxService implements Efax
         return $this->fax->faxes()->create($options->all());
     }
 
-    public function sendNotification($notifiable, FaxableNotification &$notification, array $options = [])
+    public function sendNotification($notifiable, FaxableNotification $notification, array $options = [])
     {
         $options = array_merge($notification->toFax($notifiable), $options);
 

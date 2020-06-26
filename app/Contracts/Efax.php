@@ -28,7 +28,7 @@ interface Efax
      *
      * @return mixed
      */
-    public function sendNotification($notifiable, FaxableNotification &$notification, array $options = []);
+    public function sendNotification($notifiable, FaxableNotification $notification, array $options = []);
 
     public function setOption(string $string, $array): Efax;
 }
