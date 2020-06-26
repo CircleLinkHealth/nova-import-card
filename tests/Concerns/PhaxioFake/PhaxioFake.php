@@ -74,7 +74,7 @@ class PhaxioFake implements Efax
     {
         PHPUnit::assertTrue(
             $number === $count = count($this->logger->getFaxesSent()),
-            "Failed to send [{$number}] SMS files. [{$count}] were sent."
+            "Failed to send [{$number}] faxes. [{$count}] were sent."
         );
 
         return $this;
