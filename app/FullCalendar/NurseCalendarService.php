@@ -379,21 +379,21 @@ class NurseCalendarService
     /**
      * @return array
      */
-    public function manipulateReportData(?array $nextUpcomingWindow, array $report)
+    public function manipulateReportData(array $nextUpcomingWindow, array $report)
     {
         return  [
-            'windowStart' => $nextUpcomingWindow
+            'windowStart' => isset($nextUpcomingWindow['window_time_start'])
                 ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A')
                 : null,
-            'windowEnd' => $nextUpcomingWindow
+            'windowEnd' => isset($nextUpcomingWindow['window_time_start'])
                 ? Carbon::parse($nextUpcomingWindow['window_time_end'])->format('g:i A')
                 : null,
 
-            'nextUpcomingWindowDay' => $nextUpcomingWindow
+            'nextUpcomingWindowDay' => isset($nextUpcomingWindow['window_time_start'])
                 ? Carbon::parse($nextUpcomingWindow['date'])->format('l')
                 : null,
 
-            'nextUpcomingWindowMonth' => $nextUpcomingWindow
+            'nextUpcomingWindowMonth' => isset($nextUpcomingWindow['window_time_start'])
                 ? Carbon::parse($nextUpcomingWindow['date'])->format('F d')
                 : null,
 
@@ -486,7 +486,13 @@ class NurseCalendarService
             if (empty($report)) {
                 continue;
             }
-            $nextUpcomingWindow = ! empty($report) ? $report['nextUpcomingWindow'] : false;
+
+            $nextUpcomingWindow = [];
+
+            if (is_array($report['nextUpcomingWindow'])) {
+                $nextUpcomingWindow = $report['nextUpcomingWindow'];
+            }
+
             $reportCalculations = $this->manipulateReportData($nextUpcomingWindow, $report);
             $dataReport         = array_merge($report, $reportCalculations);
             $totalVisits        = $this->getTotalVisits($auth, $date);
