@@ -19,6 +19,7 @@ namespace CircleLinkHealth\Core\Entities;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\SendGridRawLog newQuery()
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\SendGridRawLog query()
  * @mixin \Eloquent
+ * @property array|null $event
  */
 class PostmarkRawLog extends BaseModel
 {

@@ -51,6 +51,10 @@ use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
  * @property string|null $twilio_account_sid
  * @property string|null $twilio_status
  * @property string|null $twilio_details
+ * @property int|null    $patient_id
+ * @property string|null $media_collection_name
+ * @property string|null $phaxio_event_type
+ * @property string|null $phaxio_event_status
  */
 class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotification
 {

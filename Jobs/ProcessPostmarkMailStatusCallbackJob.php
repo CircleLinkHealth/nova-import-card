@@ -55,21 +55,28 @@ class ProcessPostmarkMailStatusCallbackJob implements ShouldQueue
     public function handle()
     {
         $this->storeRawLogs();
-        $messageId = $this->input['MessageID'];
-        $status    = isset(self::RECORD_TYPE_MAP[$this->input['RecordType']]) ? self::RECORD_TYPE_MAP[$this->input['RecordType']] : 'unknown';
-        if ('open' === $status) {
+        if ( ! isset($this->input['Metadata']) || ! isset($this->input['Metadata']['smtp-id'])) {
+            Log::warning('could not find smtp-id in metadata');
+
+            return;
+        }
+        $smtpId = $this->input['Metadata']['smtp-id'];
+        $status = isset(self::RECORD_TYPE_MAP[$this->input['RecordType']]) ? self::RECORD_TYPE_MAP[$this->input['RecordType']] : 'unknown';
+        if ('opened' === $status) {
             //process only on first open
             if ( ! $this->input['FirstOpen']) {
                 return;
             }
         }
 
+        $email = $this->input['Email'] ?? ($this->input['Recipient'] ?? null);
         PostmarkNotificationStatusUpdateJob::dispatch(
-            $messageId,
+            $smtpId,
             [
-                'value'   => $status,
-                'details' => $this->input['Details'],
-                'email'   => $this->input['Email'],
+                'pm_message_id' => $this->input['MessageID'],
+                'value'         => $status,
+                'details'       => $this->input['Details'] ?? null,
+                'email'         => $email,
             ],
         );
     }
