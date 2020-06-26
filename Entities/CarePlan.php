@@ -12,7 +12,6 @@ use App\Contracts\ReportFormatter;
 use App\Note;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
-use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NotifyPatientCarePlanApproved;
 use App\Rules\DoesNotHaveBothTypesOfDiabetes;
 use App\Rules\HasEnoughProblems;
