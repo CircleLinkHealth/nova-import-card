@@ -7,7 +7,6 @@
 namespace Tests\Unit;
 
 use App\Contracts\FaxableNotification;
-use App\Notifications\Channels\FaxChannel;
 use App\Notifications\SendSms;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use Illuminate\Bus\Queueable;
@@ -84,9 +83,9 @@ class PhaxioFakeTest extends CustomerTestCase
         Phaxio::fake();
 
         /** @var AnonymousNotifiable $anonymous */
-        $anonymous = NotificationFacade::route(FaxChannel::class, $to);
+        $anonymous = NotificationFacade::route('phaxio', $to);
         $anonymous->route('mail', 'test@test.com');
-        $anonymous->notify(new FakeNotification($file, ['mail']));
+        $anonymous->notify(new FakePhaxioNotification($file, ['mail']));
 
         Phaxio::assertFaxNotSent($to, $file);
     }
@@ -97,7 +96,7 @@ class PhaxioFakeTest extends CustomerTestCase
         $to  = '+12349010035';
 
         Phaxio::fake();
-        NotificationFacade::route('phaxio', $to)->notify(new FakeNotification($msg, ['phaxio']));
+        NotificationFacade::route('phaxio', $to)->notify(new FakePhaxioNotification($msg, ['phaxio']));
         Phaxio::assertFaxSent($to, $msg);
     }
 
@@ -134,7 +133,7 @@ class PhaxioFakeTest extends CustomerTestCase
     }
 }
 
-class FakeNotification extends Notification implements FaxableNotification
+class FakePhaxioNotification extends Notification implements FaxableNotification
 {
     use Queueable;
 

@@ -16,7 +16,7 @@ class NoteObserver
 {
     public function created(Note $note)
     {
-        if (User::hasRole(Constants::PRACTICE_STAFF_ROLE_NAMES)->where('id', $note->author_id)->exists() && $nurse = PatientNurse::getPermanentNurse($note->patient_id)) {
+        if (User::ofType(Constants::PRACTICE_STAFF_ROLE_NAMES)->where('id', $note->author_id)->exists() && $nurse = PatientNurse::getPermanentNurse($note->patient_id)) {
             $nurse->notify(new PracticeStaffCreatedNote($note));
         }
     }

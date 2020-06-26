@@ -7,7 +7,6 @@
 namespace App\Jobs;
 
 use App\Notifications\CarePlanProviderApproved;
-use App\Notifications\Channels\FaxChannel;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Location;
 use Illuminate\Bus\Queueable;
@@ -51,7 +50,7 @@ class FaxPatientCarePlansToLocation implements ShouldQueue
 
         foreach ($this->patients as $patient) {
             $this->location->notify(
-                (new CarePlanProviderApproved($patient->carePlan, [FaxChannel::class]))
+                (new CarePlanProviderApproved($patient->carePlan, ['phaxio']))
                     ->setFaxOptions(
                         [
                             'batch_collision_avoidance' => true,

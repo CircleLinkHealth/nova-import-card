@@ -7,7 +7,6 @@
 namespace App\Jobs;
 
 use App\Notifications\Channels\DirectMailChannel;
-use App\Notifications\Channels\FaxChannel;
 use App\Notifications\SendCareDocument;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
@@ -111,7 +110,7 @@ class AwvNotifyBillingProviderOfCareDocument implements ShouldQueue
         }
 
         if ($settings->efax_awv_reports) {
-            $channels[] = FaxChannel::class;
+            $channels[] = 'phaxio';
         }
 
         if (empty($channels)) {

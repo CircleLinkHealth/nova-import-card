@@ -86,7 +86,7 @@ class TwilioFakeTest extends CustomerTestCase
         /** @var AnonymousNotifiable $anonymous */
         $anonymous = NotificationFacade::route('twilio', $to);
         $anonymous->route('mail', 'test@test.com');
-        $anonymous->notify(new FakeNotification($msg, ['mail']));
+        $anonymous->notify(new FakeTwilioNotification($msg, ['mail']));
 
         Twilio::assertMessageNotSent($to, $msg);
     }
@@ -97,7 +97,7 @@ class TwilioFakeTest extends CustomerTestCase
         $to  = '+12349010035';
 
         Twilio::fake();
-        NotificationFacade::route('twilio', $to)->notify(new FakeNotification($msg, ['twilio']));
+        NotificationFacade::route('twilio', $to)->notify(new FakeTwilioNotification($msg, ['twilio']));
         Twilio::assertMessageSent($to, $msg);
     }
 
@@ -135,7 +135,7 @@ class TwilioFakeTest extends CustomerTestCase
     }
 }
 
-class FakeNotification extends Notification
+class FakeTwilioNotification extends Notification
 {
     use Queueable;
 

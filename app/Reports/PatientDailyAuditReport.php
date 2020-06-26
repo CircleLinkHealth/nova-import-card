@@ -87,6 +87,7 @@ class PatientDailyAuditReport
             ->sum('duration');
 
         $this->data['name']     = $this->user->getFullName();
+        $this->data['month']    = $this->forMonth->format('F, Y');
         $this->data['provider'] = $this->user->getBillingProviderName();
         $this->data['totalCCM'] = $this->formatMonthlyTime($time);
 

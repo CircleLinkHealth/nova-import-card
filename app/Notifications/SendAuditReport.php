@@ -75,6 +75,8 @@ class SendAuditReport extends Notification implements FaxableNotification, Direc
                 'batch_collision_avoidance' => true,
             ];
         }
+
+        return [];
     }
 
     public function getPdfFilename()
@@ -157,6 +159,6 @@ class SendAuditReport extends Notification implements FaxableNotification, Direc
      */
     public function via($notifiable)
     {
-        return $this->channels;
+        return array_merge(['database'], $this->channels);
     }
 }
