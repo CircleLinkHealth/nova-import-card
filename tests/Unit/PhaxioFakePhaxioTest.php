@@ -85,7 +85,7 @@ class PhaxioFakeTest extends CustomerTestCase
         /** @var AnonymousNotifiable $anonymous */
         $anonymous = NotificationFacade::route('phaxio', $to);
         $anonymous->route('mail', 'test@test.com');
-        $anonymous->notify(new FakeNotification($file, ['mail']));
+        $anonymous->notify(new FakePhaxioNotification($file, ['mail']));
 
         Phaxio::assertFaxNotSent($to, $file);
     }
@@ -96,7 +96,7 @@ class PhaxioFakeTest extends CustomerTestCase
         $to  = '+12349010035';
 
         Phaxio::fake();
-        NotificationFacade::route('phaxio', $to)->notify(new FakeNotification($msg, ['phaxio']));
+        NotificationFacade::route('phaxio', $to)->notify(new FakePhaxioNotification($msg, ['phaxio']));
         Phaxio::assertFaxSent($to, $msg);
     }
 
@@ -133,7 +133,7 @@ class PhaxioFakeTest extends CustomerTestCase
     }
 }
 
-class FakeNotification extends Notification implements FaxableNotification
+class FakePhaxioNotification extends Notification implements FaxableNotification
 {
     use Queueable;
 
