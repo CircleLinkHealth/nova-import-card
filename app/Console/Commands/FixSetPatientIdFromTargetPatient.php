@@ -49,18 +49,22 @@ class FixSetPatientIdFromTargetPatient extends Command
                     $this->warn("Processing TargetPatient[$tP->id]");
 
                     if ($tP->ccda->practice_id != $tP->practice_id) {
-                        $this->warn("Setting practice TargetPatient[$tP->id]");
+                        $this->line("Setting practice TargetPatient[$tP->id]");
                         $tP->ccda->practice_id = $tP->practice_id;
                     }
                     if ($tP->ccda->patient_id != $tP->user_id) {
-                        $this->warn("Setting patient id TargetPatient[$tP->id]");
+                        $this->line("Setting patient id TargetPatient[$tP->id]");
                         $tP->ccda->patient_id = $tP->user_id;
                     }
                     if ($tP->ccda->isDirty()) {
-                        $this->warn("Saving TargetPatient[$tP->id]");
+                        $this->line("Saving TargetPatient[$tP->id]");
 
                         $tP->ccda->save();
+
+                        continue;
                     }
+
+                    $this->line("Nothing changed TargetPatient[$tP->id]");
                 }
             });
     }
