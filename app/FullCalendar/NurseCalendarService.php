@@ -379,7 +379,7 @@ class NurseCalendarService
     /**
      * @return array
      */
-    public function manipulateReportData(?array $nextUpcomingWindow, array $report)
+    public function manipulateReportData(array $nextUpcomingWindow, array $report)
     {
         return  [
             'windowStart' => $nextUpcomingWindow
@@ -486,7 +486,13 @@ class NurseCalendarService
             if (empty($report)) {
                 continue;
             }
-            $nextUpcomingWindow = ! empty($report) ? $report['nextUpcomingWindow'] : [];
+
+            $nextUpcomingWindow = [];
+
+            if ( ! empty($report) && is_array($report['nextUpcomingWindow'])) {
+                $nextUpcomingWindow = $report['nextUpcomingWindow'];
+            }
+
             $reportCalculations = $this->manipulateReportData($nextUpcomingWindow, $report);
             $dataReport         = array_merge($report, $reportCalculations);
             $totalVisits        = $this->getTotalVisits($auth, $date);
