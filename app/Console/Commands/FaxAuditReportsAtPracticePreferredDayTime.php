@@ -6,7 +6,6 @@
 
 namespace App\Console\Commands;
 
-use App\Notifications\Channels\FaxChannel;
 use App\Notifications\SendAuditReport;
 use App\Reports\PatientDailyAuditReport;
 use App\Services\Phaxio\PhaxioFaxService;
@@ -121,12 +120,10 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
                     ->where('month_year', $date);
             })
             ->whereDoesntHave('patientInfo.notificationsAboutThisPatient', function ($query) use ($date) {
-                $monthNotificationSent = $date->copy()->addMonth();
-
                 $query->where('type', SendAuditReport::class)
                     ->whereBetween('created_at', [
-                        $monthNotificationSent->startOfMonth(),
-                        $monthNotificationSent->endOfMonth(),
+                        $date->copy()->addMonth()->startOfMonth(),
+                        $date->copy()->addMonth()->endOfMonth(),
                     ])
                     ->where('media_collection_name', PatientDailyAuditReport::mediaCollectionName($date))
                     ->where('phaxio_event_status', PhaxioFaxService::EVENT_STATUS_SUCCESS)
@@ -152,7 +149,7 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
 
         $user->locations->each(function (Location $location) use ($user, $date, $shouldBatch, $key) {
             if ( ! $this->option('dry')) {
-                $location->notify(new SendAuditReport($user, $date, [FaxChannel::class], $shouldBatch));
+                $location->notify(new SendAuditReport($user, $date, ['phaxio'], $shouldBatch));
             }
 
             if ( ! Cache::has($key)) {
