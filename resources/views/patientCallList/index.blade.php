@@ -237,13 +237,17 @@ function formatTime($time)
                                         @if (count($calls) > 0)
                                             @foreach($calls as $key => $call)
                                                 <?php
-                                                $curTime   = \Carbon\Carbon::now();
-                                                $curDate   = $curTime->toDateString();
+                                                $curTime = \Carbon\Carbon::now();
+
                                                 $curTime   = $curTime->toTimeString();
                                                 $rowBg     = '';
                                                 $boldRow   = '';
                                                 $textBlack = '';
-                                                if ($call->scheduled_date == $curDate && $call->call_time_end < $curTime && 'addendum_response' !== $call->type) {
+                                                if ($call->scheduled_date == now()->toDateString()
+                                                    && now()
+                                                        ->setTimezone($call->timezone ?? config('app.timezone'))
+                                                        ->setTimeFromTimeString($call->call_time_end)->isPast()
+                                                    && 'addendum_response' !== $call->type) {
                                                     $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                 }
                                                 if (($call->asap || 'Call Back' === $call->type) && 'reached' !== $call->status && 'done' !== $call->status) {

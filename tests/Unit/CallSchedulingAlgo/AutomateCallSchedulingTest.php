@@ -7,6 +7,7 @@
 namespace Tests\Unit\CallSchedulingAlgo;
 
 use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -156,7 +157,7 @@ class AutomateCallSchedulingTest extends TestCase
         $practice = $this->createPractice(false);
 
         $nurse = $this->createUser($practice->id, 'care-center');
-        setAppConfig(StandByNurseUser::STAND_BY_NURSE_USER_ID_NOVA_KEY, $nurse->id);
+        AppConfig::set(StandByNurseUser::STAND_BY_NURSE_USER_ID_NOVA_KEY, $nurse->id);
 
         $patient = $this->createPatient($practice->id, false, false, false, false);
         $updated = CarePlan::where('user_id', $patient->id)->update([

@@ -62,7 +62,7 @@ class UserTotalTimeChecker
     {
         $val = AppConfig::pull(self::MAX_HOURS_ALLOWED_IN_DAY_KEY, null);
         if (null === $val) {
-            return setAppConfig(self::MAX_HOURS_ALLOWED_IN_DAY_KEY, self::MAX_HOURS_ALLOWED_IN_DAY_DEFAULT);
+            return AppConfig::set(self::MAX_HOURS_ALLOWED_IN_DAY_KEY, self::MAX_HOURS_ALLOWED_IN_DAY_DEFAULT);
         }
 
         return floatval($val);
@@ -72,7 +72,7 @@ class UserTotalTimeChecker
     {
         $val = AppConfig::pull(self::ALLOWED_THRESHOLD_FOR_WEEK_KEY, null);
         if (null === $val) {
-            return setAppConfig(self::ALLOWED_THRESHOLD_FOR_WEEK_KEY, self::ALLOWED_THRESHOLD_FOR_WEEK_DEFAULT);
+            return AppConfig::set(self::ALLOWED_THRESHOLD_FOR_WEEK_KEY, self::ALLOWED_THRESHOLD_FOR_WEEK_DEFAULT);
         }
 
         return floatval($val);

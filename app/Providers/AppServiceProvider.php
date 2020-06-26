@@ -8,6 +8,7 @@ namespace App\Providers;
 
 use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
+use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NotificationStrategies\SendsNotification;
 use App\Services\AWV\DirectPatientDocument;
 use App\Services\AWV\EmailPatientDocument;
@@ -109,6 +110,9 @@ class AppServiceProvider extends ServiceProvider
 
         /** @var ChannelManager $cm */
         $cm = $this->app->make(ChannelManager::class);
+        $cm->extend('phaxio', function (Application $app) {
+            return $app->make(FaxChannel::class);
+        });
         $cm->extend('twilio', function (Application $app) {
             return $app->make(CustomTwilioChannel::class);
         });

@@ -197,7 +197,7 @@
             return {
                 pagination: null,
                 selected: false,
-                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'State', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler', 'Patient\'s Care Coach'],
+                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'State', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler', 'Patient\'s Care Coach'],
                 tableData: [],
                 loaders: {
                     calls: false
@@ -234,8 +234,8 @@
                         'Patient ID': !this.isAdmin ? 'hidden' : '',
                         'Patient': this.patientNamesClass
                     },
-                    sortable: ['Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'State', 'Scheduler'],
-                    filterable: ['Type', 'Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'Practice', 'State', 'Billing Provider', 'Patient\'s Care Coach'],
+                    sortable: ['Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'State', 'Scheduler'],
+                    filterable: ['Type', 'Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'Practice', 'State', 'Billing Provider', 'Patient\'s Care Coach'],
                     filterByColumn: true,
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
@@ -248,6 +248,7 @@
                         Type: (ascending) => (a, b) => 0,
                         'Care Coach': (ascending) => (a, b) => 0,
                         'Patient': (ascending) => (a, b) => 0,
+                        'Language': (ascending) => (a, b) => 0,
                         'Patient ID': (ascending) => (a, b) => 0,
                         'Activity Day': (ascending) => (a, b) => 0,
                         'Last Call': (ascending) => (a, b) => 0,
@@ -278,6 +279,7 @@
                     'Type': 'type',
                     'Care Coach': 'nurse',
                     'Patient': 'patient',
+                    'Language': 'preferred_contact_language',
                     'Patient ID': 'patient_id',
                     'Activity Day': 'scheduled_date',
                     'Last Call': 'last_call',
@@ -490,6 +492,7 @@
                     'Care Coach': call.nurse,
                     NurseId: call.nurse_id,
                     Patient: call.patient,
+                    Language: call.preferred_contact_language,
                     Practice: call.practice,
                     State: call.state,
                     Scheduler: call.scheduler,
@@ -694,6 +697,7 @@
     .VueTables__sortable {
         min-width: 60px;
     }
+
     .VueTables__child-row-toggler {
         display: block;
         width: 20px;

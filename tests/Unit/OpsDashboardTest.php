@@ -83,7 +83,7 @@ class OpsDashboardTest extends \Tests\TestCase
         }
 
         //generate report for 1 day
-        $yesterday = Carbon::now()->subDay();
+        $yesterday = Carbon::now()->setTimeFromTimeString('23:30')->subDay();
         $this->runJobToGenerateDBDataForPractice($practice->id, $yesterday);
 
         $dbReport1 = OpsDashboardPracticeReport::where('practice_id', $practice->id)
@@ -115,19 +115,24 @@ class OpsDashboardTest extends \Tests\TestCase
         $patient0->patientInfo->ccm_status = Patient::PAUSED;
         $patient0->save();
 
-        $patient0                          = $patients[1];
-        $patient0->patientInfo->ccm_status = Patient::WITHDRAWN_1ST_CALL;
-        $patient0->save();
+        $patient1                          = $patients[1];
+        $patient1->patientInfo->ccm_status = Patient::WITHDRAWN_1ST_CALL;
+        $patient1->save();
 
-        $patient0                          = $patients[2];
-        $patient0->patientInfo->ccm_status = Patient::UNREACHABLE;
-        $patient0->save();
+        $patient2                          = $patients[2];
+        $patient2->patientInfo->ccm_status = Patient::UNREACHABLE;
+        $patient2->save();
+
+        $patient3             = $patients[3];
+        $patient3->first_name = 'Traxton';
+        $patient3->save();
+        $patient3->delete();
 
         //add new patient
         $this->setupPatient($practice);
 
         //generate report for next day
-        $today = Carbon::now();
+        $today = Carbon::now()->setTimeFromTimeString('23:30');
         $this->runJobToGenerateDBDataForPractice($practice->id, $today);
 
         //assert deltas are correct
@@ -152,7 +157,8 @@ class OpsDashboardTest extends \Tests\TestCase
         $this->assertTrue(1 === $dbReport2Data['Paused']);
         $this->assertTrue(1 === $dbReport2Data['Withdrawn']);
         $this->assertTrue(1 === $dbReport2Data['Unreachable']);
-        $this->assertTrue(-2 === $dbReport2Data['Delta']);
+        $this->assertTrue(1 === $dbReport2Data['Deleted']);
+        $this->assertTrue(-3 === $dbReport2Data['Delta']);
         $this->assertTrue($dbReport2Data['Prior Day totals'] === $dbReport1Data['Total']);
         $this->assertTrue($dbReport1Data['Total'] + $dbReport2Data['Delta'] === $dbReport2Data['Total']);
     }

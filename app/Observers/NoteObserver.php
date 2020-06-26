@@ -10,14 +10,13 @@ use App\Constants;
 use App\Note;
 use App\Notifications\PracticeStaffCreatedNote;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
+use CircleLinkHealth\Customer\Entities\User;
 
 class NoteObserver
 {
     public function created(Note $note)
     {
-        $note->loadMissing('author');
-
-        if ($note->author->hasRole(Constants::PRACTICE_STAFF_ROLE_NAMES) && $nurse = PatientNurse::getPermanentNurse($note->patient->id)) {
+        if (User::hasRole(Constants::PRACTICE_STAFF_ROLE_NAMES)->where('id', $note->author_id)->exists() && $nurse = PatientNurse::getPermanentNurse($note->patient_id)) {
             $nurse->notify(new PracticeStaffCreatedNote($note));
         }
     }

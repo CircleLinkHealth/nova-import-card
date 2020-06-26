@@ -70,9 +70,7 @@ class BHIReconsentTest extends CustomerTestCase
     {
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, true, false);
-        AppConfig::create([
-            'config_key'   => PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY,
-            'config_value' => $bhiPractice->name, ]);
+        AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
         $this->assertTrue($bhiPatient->isBhi());
     }
@@ -89,9 +87,7 @@ class BHIReconsentTest extends CustomerTestCase
     {
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, true, true);
-        AppConfig::create([
-            'config_key'   => PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY,
-            'config_value' => $bhiPractice->name, ]);
+        AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
         $this->assertTrue($bhiPatient->isBhi());
     }
@@ -100,9 +96,7 @@ class BHIReconsentTest extends CustomerTestCase
     {
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, false);
-        AppConfig::create([
-            'config_key'   => PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY,
-            'config_value' => $bhiPractice->name, ]);
+        AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
         $this->assertFalse($bhiPatient->isBhi());
     }
@@ -119,9 +113,7 @@ class BHIReconsentTest extends CustomerTestCase
     {
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, true);
-        AppConfig::create([
-            'config_key'   => PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY,
-            'config_value' => $bhiPractice->name, ]);
+        AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
         $this->assertFalse($bhiPatient->isBhi());
     }
@@ -161,9 +153,7 @@ class BHIReconsentTest extends CustomerTestCase
     public function test_it_retrieves_practices_that_require_consent()
     {
         $bhiPractice = $this->createPractice(true);
-        AppConfig::create([
-            'config_key'   => PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY,
-            'config_value' => $bhiPractice->name, ]);
+        AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
         $needConsent = PracticesRequiringSpecialBhiConsent::names();
 
