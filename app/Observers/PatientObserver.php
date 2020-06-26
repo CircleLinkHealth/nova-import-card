@@ -21,20 +21,23 @@ class PatientObserver
 
     public function attachTargetPatient(Patient $patient)
     {
-        $user = $patient->user;
+        $user       = $patient->user;
+        $practiceId = optional($user->primaryPractice)->id;
 
-        if ($user) {
+        if ($user && $practiceId) {
             $enrollee = Enrollee::where(
                 [
                     ['mrn', '=', $patient->mrn_number],
-                    ['practice_id', '=', optional($user->primaryPractice)->id],
+                    ['practice_id', '=', $practiceId],
                 ]
             )->first();
 
             if ($enrollee) {
                 //find target patient with matching ehr_patient_id, update or create TargetPatient
-                $targetPatient = TargetPatient::where('enrollee_id', $enrollee->id)
-                    ->orWhere('ehr_patient_id', $enrollee->mrn)
+                $targetPatient = TargetPatient::where('practice_id', $practiceId)->where(function ($q) use ($enrollee) {
+                    $q->where('enrollee_id', $enrollee->id)
+                        ->orWhere('ehr_patient_id', $enrollee->mrn);
+                })
                     ->first();
 
                 if ($targetPatient) {
