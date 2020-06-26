@@ -75,6 +75,8 @@ class SendAuditReport extends Notification implements FaxableNotification, Direc
                 'batch_collision_avoidance' => true,
             ];
         }
+
+        return [];
     }
 
     public function getPdfFilename()
