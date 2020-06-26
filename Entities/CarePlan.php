@@ -53,6 +53,7 @@ use Validator;
  * @property \CircleLinkHealth\Customer\Entities\User                                               $patient
  * @property \CircleLinkHealth\SharedModels\Entities\Pdf[]|\Illuminate\Database\Eloquent\Collection $pdfs
  * @property \CircleLinkHealth\Customer\Entities\User|null                                          $providerApproverUser
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
  *     whereCarePlanTemplateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
@@ -80,6 +81,7 @@ use Validator;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
  *     whereUserId($value)
  * @mixin \Eloquent
+ *
  * @property int|null                        $first_printed_by
  * @property \Illuminate\Support\Carbon|null $first_printed
  * @property string                          $provider_approver_name
@@ -87,6 +89,7 @@ use Validator;
  *     $notifications
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection
  *     $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
  *     newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan newQuery()
@@ -95,17 +98,19 @@ use Validator;
  *     whereFirstPrinted($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
  *     whereFirstPrintedBy($value)
+ *
  * @property int|null    $notifications_count
  * @property int|null    $pdfs_count
  * @property int|null    $revision_history_count
  * @property string|null $deleted_at
- * @method   static      bool|null forceDelete()
- * @method   static      \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan onlyTrashed()
- * @method   static      bool|null restore()
- * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereDeletedAt($value)
- * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withNurseApprovedVia()
- * @method   static      \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withTrashed()
- * @method   static      \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withoutTrashed()
+ *
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withNurseApprovedVia()
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withoutTrashed()
  */
 class CarePlan extends BaseModel implements PdfReport
 {
@@ -320,7 +325,7 @@ class CarePlan extends BaseModel implements PdfReport
         $cpmSettings = $this->patient->primaryPractice->cpmSettings();
 
         if ($cpmSettings->efax_pdf_careplan) {
-            $channels[] = FaxChannel::class;
+            $channels[] = 'phaxio';
         }
 
         if ($cpmSettings->dm_pdf_careplan) {
