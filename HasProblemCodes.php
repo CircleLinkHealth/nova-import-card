@@ -10,7 +10,7 @@ use CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem;
 
 trait HasProblemCodes
 {
-    private $problemCodeTypes = [];
+    private static $problemCodeTypes = [];
 
     public function codeMap()
     {
@@ -36,15 +36,15 @@ trait HasProblemCodes
 
     public function getProblemCodeTypeId(string $codeType)
     {
-        if (empty($this->problemCodeTypes)) {
-            $this->problemCodeTypes = ProblemCodeSystem::all(['id', 'name'])->keyBy('name')->toArray();
+        if (empty(self::$problemCodeTypes)) {
+            self::$problemCodeTypes = ProblemCodeSystem::all(['id', 'name'])->keyBy('name')->toArray();
         }
 
-        if ( ! isset($this->problemCodeTypes[$codeType])) {
+        if ( ! isset(self::$problemCodeTypes[$codeType])) {
             return null;
         }
 
-        return $this->problemCodeTypes[$codeType]['id'];
+        return self::$problemCodeTypes[$codeType]['id'];
     }
 
     public function icd10Codes()

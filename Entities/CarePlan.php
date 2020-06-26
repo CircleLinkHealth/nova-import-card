@@ -19,7 +19,7 @@ use App\Rules\HasEnoughProblems;
 use App\Services\Calls\SchedulerService;
 use App\Services\CareplanService;
 use CircleLinkHealth\Core\Entities\BaseModel;
-use CircleLinkHealth\Core\PdfService;
+use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -441,15 +441,22 @@ class CarePlan extends BaseModel implements PdfReport
             throw new \Exception("Could not get CarePlan info for CarePlan with ID: {$this->id}");
         }
 
+        $patient       = $this->patient;
+        $billingDoctor = $patient->billingProviderUser();
+        $regularDoctor = $patient->regularDoctorUser();
+
         return $pdfService->createPdfFromView(
             'wpUsers.patient.multiview',
             [
-                'careplans'    => [$this->patient->id => $careplan],
-                'isPdf'        => true,
-                'letter'       => false,
-                'problemNames' => $careplan['problem'],
-                'careTeam'     => $this->patient->careTeamMembers,
-                'data'         => $careplanService->careplan($this->patient->id),
+                'careplans'     => [$this->patient->id => $careplan],
+                'isPdf'         => true,
+                'letter'        => false,
+                'problemNames'  => $careplan['problem'],
+                'careTeam'      => $this->patient->careTeamMembers,
+                'data'          => $careplanService->careplan($this->patient->id),
+                'patient'       => $patient,
+                'billingDoctor' => $billingDoctor,
+                'regularDoctor' => $regularDoctor,
             ],
             null,
             Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
