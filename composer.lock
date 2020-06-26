@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8ef279ea9998b53b5edb02bd124a1036",
+    "content-hash": "6568abfc0b42888339a1de1e9eb0b5dc",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1072,11 +1072,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.6.7",
+            "version": "v1.6.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "8a3c7a3eb8ac317fb493ab2182365c2b6a656a7a"
+                "reference": "128f0a02a321166b75654c05260c4cdf6614093e"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1105,7 +1105,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-25T21:58:01+00:00"
+            "time": "2020-06-25T23:58:16+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1139,11 +1139,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.9.4",
+            "version": "v2.9.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "5e86550be5335af39a5c8c0972c8ee9ac5a7170c"
+                "reference": "8364e7f788e1ec60c5642e6516064e9f9123738b"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1177,7 +1177,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-25T22:04:07+00:00"
+            "time": "2020-06-25T23:58:16+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
