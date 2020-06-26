@@ -300,6 +300,7 @@
                     .get(url, errorData)
                     .then(response => new Promise(resolve => setTimeout(() => {
                         this.loading = false
+                        this.error = null
                         this.loading_modal.close()
 
                         let patientData = response.data.data;
