@@ -6,6 +6,7 @@
 
 namespace Tests\Unit;
 
+use App\Contracts\FaxableNotification;
 use App\Notifications\Channels\FaxChannel;
 use App\Notifications\SendSms;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
@@ -14,7 +15,6 @@ use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Notification as NotificationFacade;
-use NotificationChannels\Twilio\TwilioSmsMessage;
 use PHPUnit\Framework\ExpectationFailedException;
 use Tests\Concerns\PhaxioFake\Phaxio;
 use Tests\Concerns\PhaxioFake\WithPhaxioMock;
@@ -96,9 +96,9 @@ class PhaxioFakeTest extends CustomerTestCase
         $msg = 'fake message from mars';
         $to  = '+12349010035';
 
-        Twilio::fake();
-        NotificationFacade::route('twilio', $to)->notify(new FakeNotification($msg, ['twilio']));
-        Twilio::assertMessageSent($to, $msg);
+        Phaxio::fake();
+        NotificationFacade::route('phaxio', $to)->notify(new FakeNotification($msg, ['phaxio']));
+        Phaxio::assertFaxSent($to, $msg);
     }
 
     public function test_fake_works_with_notifications()
@@ -125,35 +125,34 @@ class PhaxioFakeTest extends CustomerTestCase
         $msg = 'fake message';
         $to  = '+12349010035';
 
-        $this->phaxio()->sendMessage(
-            (new TwilioSmsMessage())
-                ->content($msg),
-            $to
-        );
+        $this->phaxio()->send([
+            'to'   => $to,
+            'file' => $msg,
+        ]);
 
-        $this->phaxio()->assertMessageSent($to, $msg);
+        $this->phaxio()->assertFaxSent($to, $msg);
     }
 }
 
-class FakeNotification extends Notification
+class FakeNotification extends Notification implements FaxableNotification
 {
     use Queueable;
-
-    public $id = 'fake-id';
 
     /**
      * @var string
      */
-    public $message;
+    public $filePath;
+
+    public $id = 'fake-id';
     public $via;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(string $message, array $via = ['twilio'])
+    public function __construct(string $filePath, array $via = ['phaxio'])
     {
-        $this->message = $message;
-        $this->via     = $via;
+        $this->filePath = $filePath;
+        $this->via      = $via;
     }
 
     /**
@@ -169,6 +168,13 @@ class FakeNotification extends Notification
         ];
     }
 
+    public function toFax($notifiable = null): array
+    {
+        return [
+            'file' => $this->filePath,
+        ];
+    }
+
     /**
      * Get the mail representation of the notification.
      *
@@ -179,12 +185,6 @@ class FakeNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage())->from('hello@example.com')->subject('Hello');
-    }
-
-    public function toTwilio($notifiable)
-    {
-        return (new TwilioSmsMessage())
-            ->content($this->message);
     }
 
     /**
