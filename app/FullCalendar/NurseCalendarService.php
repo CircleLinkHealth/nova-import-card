@@ -486,7 +486,7 @@ class NurseCalendarService
             if (empty($report)) {
                 continue;
             }
-            $nextUpcomingWindow = ! empty($report) ? $report['nextUpcomingWindow'] : false;
+            $nextUpcomingWindow = ! empty($report) ? $report['nextUpcomingWindow'] : [];
             $reportCalculations = $this->manipulateReportData($nextUpcomingWindow, $report);
             $dataReport         = array_merge($report, $reportCalculations);
             $totalVisits        = $this->getTotalVisits($auth, $date);
