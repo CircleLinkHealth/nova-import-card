@@ -13,11 +13,11 @@ use Carbon\Carbon;
 class TestDownloadInvoice extends Controller
 {
 //    This will be a in nova controller. Just developing here for now.
-    public function collectData()
+    public function collectInvoicesFor()
     {
         $downloadFormat = 'pdf'; // Or CSV.
-        $practiceId     = [8]; // Select Practices From Nova Invoices
+        $practiceId     = 8; // Select Practices From Nova Invoices. Should be able to multi select?
         $month          = Carbon::now();
-        NurseInvoiceDownload::dispatch()->onQueue('low');
+        NurseInvoiceDownload::dispatch($practiceId, $downloadFormat, $month)->onQueue('low');
     }
 }

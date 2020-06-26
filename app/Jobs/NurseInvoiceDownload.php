@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -19,20 +20,26 @@ class NurseInvoiceDownload implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    /**
+     * @var string
+     */
+    private $downloadFormat;
 
     private $month;
 
     /**
-     * @var NurseInvoice
+     * @var int
      */
-    private $nurseInvoice;
+    private $practiceId;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(NurseInvoice $nurseInvoice)
+    public function __construct(int $practiceId, string $downloadFormat, Carbon $month)
     {
-        $this->nurseInvoice = $nurseInvoice;
+        $this->practiceId     = $practiceId;
+        $this->downloadFormat = $downloadFormat;
+        $this->month          = $month;
     }
 
     /**
@@ -45,7 +52,7 @@ class NurseInvoiceDownload implements ShouldQueue
         $startDate = $this->month->copy()->startOfMonth()->toDateString();
         $endDate   = $this->month->copy()->endOfMonth()->toDateString();
 
-        NurseInvoice::with([
+        $x = NurseInvoice::with([
             'nurseInfo' => function ($nurseInfo) use ($startDate, $endDate) {
                 $nurseInfo->with(
                     [
@@ -55,6 +62,7 @@ class NurseInvoiceDownload implements ShouldQueue
                     ]
                 );
             },
+            'nurseInfo.user',
             //            Need nurses that are currently active or used to be for selected month
         ])->whereHas(
             'nurseInfo',
@@ -64,13 +72,21 @@ class NurseInvoiceDownload implements ShouldQueue
                         $info->where('is_demo', false);
                     });
             }
-        )->orWhereHas('nurseInfo.user.pageTimersAsProvider', function ($user) use ($startDate, $endDate) {
-            $user->whereBetween('start_time', [$startDate, $endDate]);
-        })
+        )
+            ->whereHas('nurseInfo.user', function ($user) {
+                $user->where('program_id', $this->practiceId);
+            })
+            ->orWhereHas('nurseInfo.user.pageTimersAsProvider', function ($pageTimersAsProvider) use ($startDate, $endDate) {
+                $pageTimersAsProvider->whereBetween('start_time', [$startDate, $endDate]);
+            })
+//             The above should be fixed.
+                // 1. Where active , 2. Where $practice, 3. Or where PageTimer and $practice
             ->chunk(20, function ($invoices) use ($startDate, $endDate) {
                 foreach ($invoices as $invoice) {
-//                Download the invoice...
+                    //                PDF / CSV the invoice...
                 }
             });
+
+        $x = 1;
     }
 }
