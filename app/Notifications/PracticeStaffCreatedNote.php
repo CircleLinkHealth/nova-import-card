@@ -24,7 +24,7 @@ class PracticeStaffCreatedNote extends Notification implements LiveNotification,
     /**
      * @var Note
      */
-    protected $note;
+    public $note;
 
     /**
      * Create a new notification instance.
@@ -114,6 +114,6 @@ class PracticeStaffCreatedNote extends Notification implements LiveNotification,
      */
     public function via($notifiable)
     {
-        return ['database', 'broadcast'];
+        return ['database', 'broadcast', 'mail'];
     }
 }
