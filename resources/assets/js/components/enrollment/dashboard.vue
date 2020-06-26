@@ -335,7 +335,7 @@
                         let errorMessage = err.response.data.message;
                         Logger.warn(`WARNING: CA Panel - Patient retrieval failure. Message: ${errorMessage}`, {meta: {'connection': 'warning'}});
                         if (err.response.status === 404) {
-                            this.error = err.response.data.message;
+                            this.error = errorMessage;
                         } else {
                             this.error = 'Something went wrong while retrieving patient. Please contact CLH support.';
                         }
