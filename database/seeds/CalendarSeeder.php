@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use App\FullCalendar\NurseCalendarService;
 use App\Jobs\CreateCalendarRecurringEventsJob;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -18,7 +22,6 @@ class CalendarSeeder extends Seeder
 
     /**
      * CalendarSeeder constructor.
-     * @param NurseCalendarService $calendarService
      */
     public function __construct(NurseCalendarService $calendarService)
     {
@@ -28,8 +31,9 @@ class CalendarSeeder extends Seeder
     /**
      * Run the database seeds.
      *
-     * @return void
      * @throws Exception
+     *
+     * @return void
      */
     public function run()
     {
@@ -51,35 +55,35 @@ class CalendarSeeder extends Seeder
 
 //            $this->command->info("Users Created");
             foreach ($users as $user) {
-                $date = \Carbon\Carbon::parse(now())->copy()->subDays(random_int(1, 6))->toDateString();
+                $date      = \Carbon\Carbon::parse(now())->copy()->subDays(random_int(1, 6))->toDateString();
                 $dayOfWeek = \Carbon\Carbon::parse($date)->dayOfWeek;
                 $user->nurseInfo()->update(['status' => 'active']);
 
                 $window = $user->nurseInfo->windows()->create([
-                    'nurse_info_id' => $user->id,
-                    'date' => $date,
-                    'day_of_week' => $dayOfWeek,
+                    'nurse_info_id'     => $user->nurseInfo->id,
+                    'date'              => $date,
+                    'day_of_week'       => $dayOfWeek,
                     'window_time_start' => '10:00',
-                    'window_time_end' => '18:00',
-                    'repeat_start' => $date,
-                    'repeat_frequency' => null,
-                    'until' => null,
-                    'validated' => 'not_checked'
+                    'window_time_end'   => '18:00',
+                    'repeat_start'      => $date,
+                    'repeat_frequency'  => null,
+                    'until'             => null,
+                    'validated'         => 'not_checked',
                 ]);
 
-                $nurseInfoId = $user->nurseInfo->id;
-                $workWeekStart = Carbon::parse($date)->startOfWeek();
-                $workHoursCreate =  WorkHours::create(
+                $nurseInfoId     = $user->nurseInfo->id;
+                $workWeekStart   = Carbon::parse($date)->startOfWeek();
+                $workHoursCreate = WorkHours::create(
                     [
-                        'workhourable_type' => Nurse::class,
-                        'workhourable_id'   => $nurseInfoId,
-                        'work_week_start'   => Carbon::parse($workWeekStart)->toDateString(),
+                        'workhourable_type'                           => Nurse::class,
+                        'workhourable_id'                             => $nurseInfoId,
+                        'work_week_start'                             => Carbon::parse($workWeekStart)->toDateString(),
                         strtolower(clhDayOfWeekToDayName($dayOfWeek)) => 5,
                     ]
                 );
 
                 $eventDateToDayName = clhDayOfWeekToDayName($window->day_of_week);
-                $workHours = $window->nurse->workhourables->where('workhourable_id', $nurseInfoId)->pluck(lcfirst($eventDateToDayName))->first();
+                $workHours          = $window->nurse->workhourables->where('workhourable_id', $nurseInfoId)->pluck(lcfirst($eventDateToDayName))->first();
 
                 $windowData = [
                     'repeat_freq'       => $window->repeat_frequency,
@@ -90,7 +94,7 @@ class CalendarSeeder extends Seeder
                     'work_hours'        => $workHours,
                 ];
 
-                $recurringEventsToSave = $this->calendarService->createRecurringEvents($nurseInfoId, $window);
+                $recurringEventsToSave = $this->calendarService->createRecurringEvents($nurseInfoId, $windowData);
                 CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window, null, $windowData['work_hours'])->onQueue('low');
 //                $this->command->info("nurse id $nurseInfoId seeded");
             }

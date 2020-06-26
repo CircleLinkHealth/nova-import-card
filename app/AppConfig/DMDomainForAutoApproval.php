@@ -76,14 +76,6 @@ class DMDomainForAutoApproval
 
     private function getAndCacheDomains()
     {
-        return \Cache::remember(self::FLAG_NAME, 2, function () {
-            return AppConfig::where('config_key', '=', self::FLAG_NAME)
-                ->get()
-                ->map(
-                    function ($config) {
-                        return $config->config_value;
-                    }
-                )->all();
-        });
+        return AppConfig::pull(self::FLAG_NAME, []);
     }
 }

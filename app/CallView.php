@@ -82,6 +82,7 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CallView wherePatientNurseId($value)
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
+ * @property string|null                                                                                 $preferred_contact_language
  */
 class CallView extends SqlViewModel
 {

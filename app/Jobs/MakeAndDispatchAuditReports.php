@@ -11,7 +11,6 @@ use App\Contracts\Efax;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Notifications\SendAuditReport;
-use App\Reports\PatientDailyAuditReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;
@@ -54,24 +53,17 @@ class MakeAndDispatchAuditReports implements ShouldQueue
      * @var bool
      */
     private $batch;
-    /**
-     * @var bool
-     */
-    private $send;
 
     /**
      * Create a new job instance.
      *
      * @param Carbon $date
      */
-    public function __construct(User $patient, Carbon $date = null, bool $send = true, bool $batch = true)
+    public function __construct(User $patient, Carbon $date = null, bool $batch = true)
     {
-        $this->patient    = $patient;
-        $this->date       = $date ?? Carbon::now();
-        $this->directMail = app(DirectMail::class);
-        $this->eFax       = app(Efax::class);
-        $this->send       = $send;
-        $this->batch      = $batch;
+        $this->patient = $patient;
+        $this->date    = $date ?? Carbon::now();
+        $this->batch   = $batch;
     }
 
     /**
@@ -79,39 +71,21 @@ class MakeAndDispatchAuditReports implements ShouldQueue
      */
     public function handle()
     {
-        $fileName = (new PatientDailyAuditReport(
-            $this->patient,
-            $this->date->startOfMonth()
-        ))
-            ->renderPDF();
+        $settings = $this->patient->primaryPractice->settings()->firstOrNew([]);
 
-        $path = storage_path("download/${fileName}");
+        $this->patient->locations->each(function (Location $location) use ($settings) {
+            if ($settings->dm_audit_reports) {
+                $channels[] = DirectMailChannel::class;
+            }
 
-        if ( ! is_readable($path)) {
-            \Log::error("File not found: ${path}");
+            if ($settings->efax_audit_reports && $location->fax) {
+                $channels[] = FaxChannel::class;
+            }
 
-            return;
-        }
-
-        if ($this->send) {
-            $settings = $this->patient->primaryPractice->settings()->firstOrNew([]);
-
-            $this->patient->locations->each(function (Location $location) use ($path, $settings, $fileName) {
-                if ($settings->dm_audit_reports) {
-                    $channels[] = DirectMailChannel::class;
-                }
-
-                if ($settings->efax_audit_reports && $location->fax) {
-                    $channels[] = FaxChannel::class;
-                }
-
-                if (isset($channels)) {
-                    $location->notify(new SendAuditReport($this->patient, $this->date, $channels, $this->batch));
-                }
-            });
-        }
-
-        \File::delete($path);
+            if (isset($channels)) {
+                $location->notify(new SendAuditReport($this->patient, $this->date, $channels, $this->batch));
+            }
+        });
     }
 
     public function middleware()

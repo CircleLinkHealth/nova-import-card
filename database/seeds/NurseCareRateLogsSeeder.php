@@ -157,29 +157,15 @@ class NurseCareRateLogsSeeder extends Seeder
 
         $nurse->nurseInfo->save();
 
-        AppConfig::updateOrCreate(
-            [
-                'config_key' => NurseCcmPlusConfig::NURSE_CCM_PLUS_ENABLED_FOR_ALL,
-            ],
-            [
-                'config_value' => $enableCcmPlus
+        AppConfig::set(NurseCcmPlusConfig::NURSE_CCM_PLUS_ENABLED_FOR_ALL, $enableCcmPlus
                     ? 'true'
-                    : 'false',
-            ]
-        );
+                    : 'false');
 
         if ($enableCcmPlus && $visitFee) {
             $current = implode(',', NurseCcmPlusConfig::altAlgoEnabledForUserIds());
-            AppConfig::updateOrCreate(
-                [
-                    'config_key' => NurseCcmPlusConfig::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_USER_IDS,
-                ],
-                [
-                    'config_value' => $current.(empty($current)
+            AppConfig::set(NurseCcmPlusConfig::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_USER_IDS, $current.(empty($current)
                             ? ''
-                            : ',').$nurse->id,
-                ]
-            );
+                            : ',').$nurse->id);
         }
 
         return $nurse;

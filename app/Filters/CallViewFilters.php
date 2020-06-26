@@ -67,6 +67,11 @@ class CallViewFilters extends QueryFilters
         return $this->builder->where('practice', 'like', '%'.$practice.'%');
     }
 
+    public function preferred_contact_language($value)
+    {
+        return $this->builder->where('preferred_contact_language', '=', $value);
+    }
+
     public function scheduled()
     {
         return $this->builder->where('status', '=', 'scheduled');
@@ -124,6 +129,11 @@ class CallViewFilters extends QueryFilters
     public function sort_practice($term)
     {
         return $this->builder->orderBy('practice', $term);
+    }
+
+    public function sort_preferred_contact_language($term)
+    {
+        return $this->builder->orderBy('preferred_contact_language', $term);
     }
 
     public function sort_scheduled_date($term)
