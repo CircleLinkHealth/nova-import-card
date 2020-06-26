@@ -382,18 +382,18 @@ class NurseCalendarService
     public function manipulateReportData(array $nextUpcomingWindow, array $report)
     {
         return  [
-            'windowStart' => $nextUpcomingWindow
+            'windowStart' => isset($nextUpcomingWindow['window_time_start'])
                 ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A')
                 : null,
-            'windowEnd' => $nextUpcomingWindow
+            'windowEnd' => isset($nextUpcomingWindow['window_time_start'])
                 ? Carbon::parse($nextUpcomingWindow['window_time_end'])->format('g:i A')
                 : null,
 
-            'nextUpcomingWindowDay' => $nextUpcomingWindow
+            'nextUpcomingWindowDay' => isset($nextUpcomingWindow['window_time_start'])
                 ? Carbon::parse($nextUpcomingWindow['date'])->format('l')
                 : null,
 
-            'nextUpcomingWindowMonth' => $nextUpcomingWindow
+            'nextUpcomingWindowMonth' => isset($nextUpcomingWindow['window_time_start'])
                 ? Carbon::parse($nextUpcomingWindow['date'])->format('F d')
                 : null,
 
