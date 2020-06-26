@@ -263,7 +263,7 @@ class OpsDashboardPracticeReportData
             'total_withdrawn_count'   => $this->getTotalWithdrawnCount(),
 
             'prior_day_report_updated_at' => $this->priorDayReportUpdatedAt,
-            'report_updated_at'           => $this->reportUpdatedAt,
+            'report_updated_at'           => $this->getReportUpdatedAt(),
             //will help us produce accurate deltas when comparing last day with current day totals per status
             'enrolled_patient_ids' => $this->enrolledPatientIds,
             //adding to help us generate hours behind metric,
