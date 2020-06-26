@@ -7,7 +7,6 @@
 namespace App\Traits;
 
 use App\Services\NursesPerformanceReportService;
-use App\Services\OpsDashboardReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
@@ -466,6 +465,6 @@ AND patient_info.ccm_status = 'enrolled'"
     {
         return collect($patientsForMonth)
             ->where('patient_time', '>=', 20)
-            ->where('successful_calls', '>=', OpsDashboardReport::MIN_CALL);
+            ->where('successful_calls', '>=', NursesPerformanceReportService::MIN_CALL);
     }
 }
