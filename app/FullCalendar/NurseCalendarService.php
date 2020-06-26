@@ -489,7 +489,7 @@ class NurseCalendarService
 
             $nextUpcomingWindow = [];
 
-            if ( ! empty($report) && is_array($report['nextUpcomingWindow'])) {
+            if (is_array($report['nextUpcomingWindow'])) {
                 $nextUpcomingWindow = $report['nextUpcomingWindow'];
             }
 
