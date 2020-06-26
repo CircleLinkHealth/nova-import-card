@@ -22,7 +22,7 @@ class FixSetPatientIdFromTargetPatient extends Command
      *
      * @var string
      */
-    protected $signature = 'fix:ccdas:patient_id_from_target_patients';
+    protected $signature = 'fix:ccdas:patient_id_from_target_patients {minId=1}';
 
     /**
      * Create a new command instance.
@@ -42,6 +42,7 @@ class FixSetPatientIdFromTargetPatient extends Command
     public function handle()
     {
         TargetPatient::with('ccda')
+            ->where('id', '>=', $this->argument('minId'))
             ->has('ccda')
             ->orderBy('id')
             ->chunkById(500, function ($tPs) {

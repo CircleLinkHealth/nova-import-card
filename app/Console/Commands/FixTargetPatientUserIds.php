@@ -23,7 +23,7 @@ class FixTargetPatientUserIds extends Command
      *
      * @var string
      */
-    protected $signature = 'fix:target_patients';
+    protected $signature = 'fix:target_patients {minId=1}';
 
     /**
      * Create a new command instance.
@@ -44,6 +44,7 @@ class FixTargetPatientUserIds extends Command
     {
         TargetPatient::with('user.patientInfo')
             ->has('user.patientInfo')
+            ->where('id', '>=', $this->argument('minId'))
             ->orderBy('id')
             ->chunkById(500, function ($tPs) {
                 foreach ($tPs as $tP) {
@@ -60,8 +61,8 @@ class FixTargetPatientUserIds extends Command
                     $u = User::ofType('participant')
                         ->ofPractice($tP->practice_id)
                         ->whereHas('patientInfo', function ($q) use ($tP) {
-                        $q->whereNotNull('mrn_number')->where('mrn_number', $tP->ehr_patient_id);
-                    })->first();
+                            $q->whereNotNull('mrn_number')->where('mrn_number', $tP->ehr_patient_id);
+                        })->first();
 
                     if ($u && $tP->ccda->patient_last_name === $u->last_name) {
                         $this->line("User matching CCD found TargetPatient[$tP->id]");
