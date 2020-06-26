@@ -13,8 +13,10 @@ use Phaxio;
 
 class PhaxioFaxService implements Efax
 {
-    const EVENT_STATUS_SUCCESS     = 'success';
-    const EVENT_TYPE_FAX_COMPLETED = 'fax_completed';
+    const EVENT_STATUS_IN_PROGRESS     = 'inprogress';
+    const EVENT_STATUS_SUCCESS         = 'success';
+    const EVENT_TYPE_FAX_COMPLETED     = 'fax_completed';
+    const EVENT_TYPE_TRANSMITTING_PAGE = 'transmitting_page';
     /**
      * @var Phaxio
      */

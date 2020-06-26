@@ -131,7 +131,18 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
                     ->where('media_collection_name', PatientDailyAuditReport::mediaCollectionName($date))
                     ->where('phaxio_event_status', PhaxioFaxService::EVENT_STATUS_SUCCESS)
                     ->where('phaxio_event_type', PhaxioFaxService::EVENT_TYPE_FAX_COMPLETED);
-            })->first();
+            })
+            ->whereDoesntHave('patientInfo.notificationsAboutThisPatient', function ($query) use ($date) {
+                $query->where('type', SendAuditReport::class)
+                    ->whereBetween('created_at', [
+                        now()->subMinutes(30),
+                        now(),
+                    ])
+                    ->where('media_collection_name', PatientDailyAuditReport::mediaCollectionName($date))
+                    ->where('phaxio_event_status', PhaxioFaxService::EVENT_STATUS_IN_PROGRESS)
+                    ->where('phaxio_event_type', PhaxioFaxService::EVENT_TYPE_TRANSMITTING_PAGE);
+            })
+            ->first();
 
         if ( ! $user) {
             return;
