@@ -11,41 +11,11 @@ use App\Listeners\AssignPatientToStandByNurse;
 use App\Traits\UnreachablePatientsToCaPanel;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Illuminate\Support\Facades\Artisan;
 
 class PatientObserver
 {
     use UnreachablePatientsToCaPanel;
-
-    public function attachTargetPatient(Patient $patient)
-    {
-        $user       = $patient->user;
-        $practiceId = optional($user->primaryPractice)->id;
-
-        if ($user && $practiceId) {
-            $enrollee = Enrollee::where(
-                [
-                    ['mrn', '=', $patient->mrn_number],
-                    ['practice_id', '=', $practiceId],
-                ]
-            )->first();
-
-            if ($enrollee) {
-                //find target patient with matching ehr_patient_id, update or create TargetPatient
-                $targetPatient = TargetPatient::where('practice_id', $practiceId)->where(function ($q) use ($enrollee) {
-                    $q->where('enrollee_id', $enrollee->id)
-                        ->orWhere('ehr_patient_id', $enrollee->mrn);
-                })
-                    ->first();
-
-                if ($targetPatient) {
-                    $user->ehrInfo()->save($targetPatient);
-                }
-            }
-        }
-    }
 
     /**
      * Listen to the Patient created event.
@@ -87,10 +57,6 @@ class PatientObserver
 
     public function saving(Patient $patient)
     {
-        if ($patient->isDirty('mrn_number')) {
-            $this->attachTargetPatient($patient);
-        }
-
         if ($this->statusChangedToEnrolled($patient)) {
             $patient->no_call_attempts_since_last_success = 0;
         }
