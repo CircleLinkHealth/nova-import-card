@@ -22,6 +22,7 @@ class PracticeStaffCreatedNote extends Notification implements LiveNotification,
 {
     use ArrayableNotification;
     use Queueable;
+
     /**
      * @var Note
      */
