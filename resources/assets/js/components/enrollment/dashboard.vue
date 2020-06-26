@@ -106,6 +106,7 @@
     import TimeTrackerEventBus from '../../admin/time-tracker/comps/event-bus';
 
     import Loader from '../loader.vue';
+    import {Logger} from '../../logger-logdna';
 
     const userId = window.userId;
     const userFullName = window.userFullName;
@@ -159,6 +160,7 @@
                 next_attempt_at: null,
                 error_retrieve_next: false,
                 error_enrollee_id: null,
+                error_on_previous_submit: null
             };
         },
         mounted: function () {
@@ -224,10 +226,11 @@
                 this.loading_modal.open();
             });
 
-            App.$on('enrollable:error', (enrollableId) => {
+            App.$on('enrollable:error', (data) => {
                 this.patientData = null;
                 this.error_retrieve_next = true;
-                this.error_enrollee_id = enrollableId;
+                this.error_enrollee_id = data.enrollable_id;
+                this.error_on_previous_submit = data.error_message;
 
                 this.error = 'Something went wrong while saving patient details. We are investigating the issue. Please click on button to get next Patient.';
                 this.error_modal.open()
@@ -285,7 +288,8 @@
                 if (this.error_retrieve_next) {
                     errorData = {
                         params: {
-                            error_enrollable_id: this.error_enrollee_id
+                            error_enrollable_id: this.error_enrollee_id,
+                            error_on_previous_submit: this.error_on_previous_submit
                         }
                     }
                 }
@@ -296,6 +300,7 @@
                     .get(url, errorData)
                     .then(response => new Promise(resolve => setTimeout(() => {
                         this.loading = false
+                        this.error = null
                         this.loading_modal.close()
 
                         let patientData = response.data.data;
@@ -328,8 +333,10 @@
                         //to implement
                         this.loading = false;
                         this.loading_modal.close()
-                        if (err.response.status == 404) {
-                            this.error = err.response.data.message;
+                        let errorMessage = err.response.data.message;
+                        Logger.warn(`WARNING: CA Panel - Patient retrieval failure. Message: ${errorMessage}`, {meta: {'connection': 'warning'}});
+                        if (err.response.status === 404) {
+                            this.error = errorMessage;
                         } else {
                             this.error = 'Something went wrong while retrieving patient. Please contact CLH support.';
                         }

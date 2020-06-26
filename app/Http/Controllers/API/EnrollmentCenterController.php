@@ -141,19 +141,7 @@ class EnrollmentCenterController extends ApiController
 
     public function show(Request $request, $enrollableId = null)
     {
-        //make sure that enrollee that caused error is removed from queue
-        //so that CA can continue calling while we investigate
-        if ($request->has('error_enrollable_id')) {
-            $errorEnrollee = Enrollee::find($request->input('error_enrollable_id'));
-            if ($errorEnrollee) {
-                Log::critical("Something failed when performing CA action on enrollee {$errorEnrollee->id}.");
-                //Chose Ineligible because:
-                //It will remove from CA queue
-                //Can still be viewed by pressing button on CA Director page
-                $errorEnrollee->status = Enrollee::INELIGIBLE;
-                $errorEnrollee->save();
-            }
-        }
+        $this->handleErrorIfExists($request);
 
         if ($enrollableId) {
             $enrollable = Enrollee::withCaPanelRelationships()
@@ -210,5 +198,27 @@ class EnrollmentCenterController extends ApiController
         return response()->json([
             'status' => 200,
         ]);
+    }
+
+    private function handleErrorIfExists(Request $request)
+    {
+        if ( ! $request->has('error_enrollable_id') && ! $request->has('error_on_previous_submit')) {
+            return;
+        }
+        //make sure that enrollee that caused error is removed from queue
+        //so that CA can continue calling while we investigate
+        $errorEnrolleeId = $request->input('error_enrollable_id');
+        $errorEnrollee   = Enrollee::find($errorEnrolleeId);
+        //skip messing with consented/enrolled enrollees
+        if ($errorEnrollee && ! in_array($errorEnrollee->status, [Enrollee::CONSENTED, Enrollee::ENROLLED])) {
+            //Chose Ineligible because:
+            //It will remove from CA queue
+            //Can still be viewed by pressing button on CA Director page
+            //send slack message we will be able to investigate immediately
+            //and even restore previous status
+            $errorEnrollee->status = Enrollee::INELIGIBLE;
+            $errorEnrollee->save();
+        }
+        sendSlackMessage('#ca_panel_alerts', "Something went wrong while performing action on Enrollee with id: {$errorEnrolleeId}. \n Message: {$request->input('error_on_previous_submit')}", true);
     }
 }
