@@ -7,7 +7,9 @@
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 class FixRemoveNoEmailAtNoEmailDotCom extends Command
 {
@@ -44,9 +46,24 @@ class FixRemoveNoEmailAtNoEmailDotCom extends Command
         User::withTrashed()->where('email', 'like', '%@noemail.com%')->chunkById(500, function ($users) {
             foreach ($users as $user) {
                 $email = "u{$user->id}@careplanmanager.com";
-                $this->warn("Saving $email");
+
+                if (Str::contains($user->username, ['@']) && ! Str::contains($user->username, '@noemail')) {
+                    $email = $user->username;
+                }
+
+                $this->warn("Saving user[$user->id] $email");
                 $user->email = $email;
                 $user->save();
+            }
+        });
+
+        Enrollee::where('email', 'like', '%@noemail.com%')->chunkById(500, function ($enrollees) {
+            foreach ($enrollees as $enrollee) {
+                $email = "e{$enrollee->id}@careplanmanager.com";
+
+                $this->warn("Saving enrollee[$enrollee->id] $email");
+                $enrollee->email = $email;
+                $enrollee->save();
             }
         });
     }

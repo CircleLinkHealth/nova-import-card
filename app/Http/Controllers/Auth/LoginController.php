@@ -109,6 +109,10 @@ class LoginController extends Controller
             ? $this->passwordlessLogin($request, $request->route('token'))
             : $this->traitLogin($request);
 
+        if ('username' === $this->username) {
+            \Log::debug('User['.auth()->id().'] logged in using Username.');
+        }
+
         $agent = new Agent();
 
         $isClh = auth()->user()->hasRole(['care-center', 'administrator', 'developer']);
