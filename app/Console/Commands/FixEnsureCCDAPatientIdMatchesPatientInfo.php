@@ -95,7 +95,7 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
                         $ccd->blueButtonJson();
                     }
 
-                    if (strtolower(trim($ccd->patient_last_name)) == strtolower(trim($ccd->patient->last_name))
+                    if (extractLetters(strtolower(trim($ccd->patient_last_name))) == extractLetters(strtolower(trim($ccd->patient->last_name)))
                         && $ccd->practice_id == $ccd->patient->program_id
                     && $ccd->patient->patientInfo->birth_date->eq(\Carbon::parse($ccd->patient_dob))) {
                         $this->line("OK CCDA[$ccd->id] Different MRN, same last name and dob");
@@ -139,7 +139,11 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
 
                     $this->error("NOT OK CCDA[$ccd->id] User_ID[$ccd->patient_id]");
                     $ccd->patient_id = null;
-                    $ccd->save();
+                    //NBI sends us a followup list with the valid MRN and DOB
+                    //NBI DOB and MRN in CCD are not always correct
+                    if (201 != $ccd->practice_id) {
+                        $ccd->save();
+                    }
                 }
             });
     }
