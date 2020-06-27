@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
 
@@ -155,12 +156,59 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
                     if (201 != $ccd->practice_id) {
                         $this->error("NOT OK CCDA[$ccd->id] User_ID[$ccd->patient_id]");
 
-                        $answer = $this->choice('Should I save `$ccd->patient_id = null`?', ['y', 'n'], 'n');
+                        $u = User::ofType(['survey-only', 'participant'])
+                            ->when($ccd->practice_id, function ($q) use ($ccd) {
+                                $q->ofPractice($ccd->practice_id);
+                            })
+                            ->where('last_name', $ccd->patient_last_name)
+                            ->whereHas('patientInfo', function ($q) use ($ccd) {
+                                $q->where('birth_date', \Carbon::parse($ccd->patient_dob));
+                            })
+                            ->with('patientInfo')
+                            ->first();
 
-                        if ('y' === $answer) {
+                        $options = "This CCD has:
+                            
+                            FName $ccd->patient_first_name
+                            LName $ccd->patient_last_name
+                            MRN $ccd->patient_mrn
+                            DOB $ccd->patient_dob
+                            Practice $ccd->practice_id
+                        
+                            Choose an option: \n
+                            
+                            Option 'n':
+                            Save `ccd->patient_id = null`, \n";
+
+                        if ($u) {
+                            $options .= "\n
+                            Below seems like a potential match.
+                            
+                            FName $u->first_name
+                            LName $u->last_name
+                            MRN {$u->patientInfo->mrn_number}
+                            DOB {$u->patientInfo->birth_date->toDateString()}
+                            Practice $u->program_id
+                        
+                            Option 'r':
+                            Save `ccd->patient_id = $u->id`, \n\";
+                            ";
+                        }
+
+                        $answer = $this->choice($options, ['r', 'n'], 'n');
+
+                        if ('n' === $answer) {
                             $ccd->patient_id = null;
                             $ccd->save();
-                            $this->line("Saving CCDA[$ccd->id]");
+                            $this->line("Saving patient_id=null CCDA[$ccd->id]");
+
+                            continue;
+                        }
+
+                        if ('r' === $answer) {
+                            $ccd->patient_id = $u->id;
+                            $ccd->save();
+                            $this->line("Saving patient_id=$u->id CCDA[$ccd->id]");
 
                             continue;
                         }
