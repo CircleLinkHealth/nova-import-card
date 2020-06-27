@@ -23,7 +23,7 @@ class FixAddUserIdToTargetPatientsFromPatientInfo extends Command
      *
      * @var string
      */
-    protected $signature = 'fix:target_patients:user_id_from_patient_info';
+    protected $signature = 'fix:target_patients:user_id_from_patient_info {minId=1}';
 
     /**
      * Create a new command instance.
@@ -43,6 +43,8 @@ class FixAddUserIdToTargetPatientsFromPatientInfo extends Command
     public function handle()
     {
         User::withTrashed()
+            ->orderBy('id')
+            ->where('id', '>=', $this->argument('minId'))
             ->with('patientInfo')
             ->whereHas('patientInfo', function ($q) {
                 $q->whereNotNull('mrn_number');
