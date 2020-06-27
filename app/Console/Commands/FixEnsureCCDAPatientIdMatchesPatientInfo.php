@@ -7,6 +7,7 @@
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
 
@@ -64,6 +65,13 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
             ->whereHas('patient.patientInfo', function ($q) {
                 $q->whereNotNull('mrn_number');
             })
+            ->where(function ($q) {
+                $q
+                    ->whereNull('practice_id')
+                    ->orWhereHas('practice', function ($q) {
+                        $q->where('is_demo', false);
+                    });
+            })
             ->chunkById(200, function ($ccds) {
                 foreach ($ccds as $ccd) {
                     $this->warn("Processing CCDA[$ccd->id]");
@@ -96,9 +104,14 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
                         $ccd->blueButtonJson();
                     }
 
+                    $safeDob = ImportPatientInfo::parseDOBDate($ccd->bluebuttonJson()->demographics->dob);
+                    $data = $ccd->bluebuttonJson();
+                    $data->demographics->dob = $safeDob->toDateString();
+                    $ccd->json = json_encode($data);
+
                     if (extractLetters(strtolower(trim($ccd->patient_last_name))) == extractLetters(strtolower(trim($ccd->patient->last_name)))
                         && $ccd->practice_id == $ccd->patient->program_id
-                    && $ccd->patient->patientInfo->birth_date->isSameDay(\Carbon::parse($ccd->patient_dob))) {
+                    && $ccd->patient->patientInfo->birth_date->isSameDay($safeDob)) {
                         $this->line("OK CCDA[$ccd->id] Different MRN, same last name and dob");
                         continue;
                     }
@@ -107,7 +120,7 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
                         $ccd->patient_mrn == $ccd->patient->patientInfo->mrn_number
                         && $this->compare(strtolower(trim($ccd->patient_first_name.$ccd->patient_last_name)), strtolower(trim($ccd->patient->first_name.$ccd->patient->last_name)))
                         && $ccd->practice_id == $ccd->patient->program_id
-                        && $ccd->patient->patientInfo->birth_date->isSameDay(\Carbon::parse($ccd->patient_dob))
+                        && $ccd->patient->patientInfo->birth_date->isSameDay($safeDob)
                     ) {
                         $this->line("OK CCDA[$ccd->id] Different name, but with same characters");
 
@@ -118,7 +131,7 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
                         $ccd->bluebuttonJson()->demographics->mrn_number == $ccd->patient->patientInfo->mrn_number
                         && $this->compare(strtolower(trim(($ccd->bluebuttonJson()->demographics->name->given[0] ?? '').$ccd->bluebuttonJson()->demographics->name->family)), strtolower(trim($ccd->patient->first_name.$ccd->patient->last_name)))
                         && $ccd->practice_id == $ccd->patient->program_id
-                        && $ccd->patient->patientInfo->birth_date->isSameDay(\Carbon::parse($ccd->bluebuttonJson()->demographics->dob))
+                        && $ccd->patient->patientInfo->birth_date->isSameDay($safeDob)
                     ) {
                         $this->line("OK CCDA[$ccd->id] Different name, but with same characters");
 
@@ -129,7 +142,7 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
                         $ccd->patient_mrn == $ccd->patient->patientInfo->mrn_number
                         && 1 === levenshtein(extractLetters(strtolower(trim($ccd->patient_first_name.$ccd->patient_last_name))), extractLetters(strtolower(trim($ccd->patient->first_name.$ccd->patient->last_name))))
                         && $ccd->practice_id == $ccd->patient->program_id
-                        && $ccd->patient->patientInfo->birth_date->isSameDay(\Carbon::parse($ccd->patient_dob))
+                        && $ccd->patient->patientInfo->birth_date->isSameDay($safeDob)
                     ) {
                         $this->line("OK CCDA[$ccd->id] Different name, one contains middle initial");
 
@@ -141,10 +154,12 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
                         && 1 === levenshtein(extractLetters(strtolower(trim($ccd->patient_first_name.$ccd->patient_last_name))), extractLetters(strtolower(trim($ccd->patient->first_name.$ccd->patient->last_name))))
                         && $ccd->practice_id == $ccd->patient->program_id
                     ) {
-                        if (201 != $ccd->practice_id) {
-                            $this->line("OK CCDA[$ccd->id] Different DOB");
+                        $this->line("OK CCDA[$ccd->id] Different DOB");
 
-                            $ccd->patient->patientInfo->birth_date = \Carbon::parse($ccd->patient_dob);
+                        $answer = $this->choice('Should I save the CCD DOB to the PatientInfo?', ['y', 'n'], 'n');
+
+                        if ('y' == $answer) {
+                            $ccd->patient->patientInfo->birth_date = $safeDob;
                             $ccd->patient->patientInfo->save();
                         }
 
@@ -161,29 +176,35 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
                                 $q->ofPractice($ccd->practice_id);
                             })
                             ->where('last_name', $ccd->patient_last_name)
-                            ->whereHas('patientInfo', function ($q) use ($ccd) {
-                                $q->where('birth_date', \Carbon::parse($ccd->patient_dob));
+                            ->whereHas('patientInfo', function ($q) use ($safeDob) {
+                                $q->where('birth_date', $safeDob);
                             })
                             ->with('patientInfo')
                             ->first();
 
-                        $options = "This CCD has:
-                            
+                        $options = ['n'];
+                        $message = "
+                        An automatic action could not be taken.
+                        Choose an option: \n
+                        
+                        Type 'n' to save `ccd->patient_id = null`.
+                        
+                        CCD Data:
                             FName $ccd->patient_first_name
                             LName $ccd->patient_last_name
                             MRN $ccd->patient_mrn
-                            DOB $ccd->patient_dob
+                            Actual DOB $ccd->patient_dob
+                            Safe DOB {$safeDob->toDateString()}
                             Practice $ccd->practice_id
                             PatientId $ccd->patient_id
-                        
-                            Choose an option: \n
-                            
-                            Option 'n':
-                            Save `ccd->patient_id = null`, \n";
+                            CCDAId $ccd->id
+                            ";
 
                         if ($u) {
-                            $options .= "\n
-                            Below seems like a potential match.
+                            array_push($options, 'r');
+                            $message .= "
+                        Below seems like a potential match.
+                        Type 'r' save `ccd->patient_id = $u->id`.
                             
                             FName $u->first_name
                             LName $u->last_name
@@ -191,14 +212,11 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
                             DOB {$u->patientInfo->birth_date->toDateString()}
                             Practice $u->program_id
                             PatientId $u->id
-
-                        
-                            Option 'r':
-                            Save `ccd->patient_id = $u->id`, \n\";
+                       
                             ";
                         }
 
-                        $answer = $this->choice($options, ['r', 'n'], 'n');
+                        $answer = $this->choice($message, $options, 'n');
 
                         if ('n' === $answer) {
                             $ccd->patient_id = null;
