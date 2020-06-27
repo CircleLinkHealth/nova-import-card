@@ -154,8 +154,18 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
                     //NBI DOB and MRN in CCD are not always correct
                     if (201 != $ccd->practice_id) {
                         $this->error("NOT OK CCDA[$ccd->id] User_ID[$ccd->patient_id]");
-                        $ccd->patient_id = null;
-                        $ccd->save();
+
+                        $answer = $this->choice('Should I save `$ccd->patient_id = null`?', ['y', 'n'], 'n');
+
+                        if ('y' === $answer) {
+                            $ccd->patient_id = null;
+                            $ccd->save();
+                            $this->line("Saving CCDA[$ccd->id]");
+
+                            continue;
+                        }
+
+                        $this->line("Doing nothing for CCDA[$ccd->id]");
                     }
                 }
             });
