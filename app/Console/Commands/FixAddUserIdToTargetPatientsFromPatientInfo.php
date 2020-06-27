@@ -43,6 +43,7 @@ class FixAddUserIdToTargetPatientsFromPatientInfo extends Command
     public function handle()
     {
         User::withTrashed()
+            ->orderBy('id')
             ->where('id', '>=', $this->argument('minId'))
             ->with('patientInfo')
             ->whereHas('patientInfo', function ($q) {
