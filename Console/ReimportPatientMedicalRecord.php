@@ -99,7 +99,15 @@ class ReimportPatientMedicalRecord extends Command
     private function attemptCreateCcdaFromMrTemplate(User $user)
     {
         if (in_array($user->primaryPractice->name, ['diabetes-texas-pa'])) {
-            $ccda = Ccda::where('practice_id', $user->primaryPractice->id)->where('patient_first_name', $user->first_name)->where('patient_last_name', $user->last_name)->where('patient_mrn', 'like', "%{$user->getMRN()}")->first();
+            $ccda = Ccda::where('practice_id', $user->primaryPractice->id)
+                ->whereNotNull('practice_id')
+                ->where('patient_first_name', $user->first_name)
+                ->whereNotNull('patient_first_name')
+                ->where('patient_last_name', $user->last_name)
+                ->whereNotNull('patient_last_name')
+                ->where('patient_mrn', 'like', "%{$user->getMRN()}")
+                ->whereNotNull('patient_mrn')
+                ->first();
 
             if ($ccda) {
                 $ccda->patient_id = $user->id;
@@ -326,12 +334,19 @@ class ReimportPatientMedicalRecord extends Command
         }
 
         if ( ! $this->ccda) {
-            $this->ccda = Ccda::where('practice_id', $practiceId)->where(
-                function ($q) use ($mrn) {
-                    $q->where('patient_id', $this->argument('patientUserId'))
-                        ->orWhere('patient_mrn', $mrn);
-                }
-            )->first();
+            $this->ccda = Ccda::where('practice_id', $practiceId)
+                ->whereNotNull('practice_id')
+                ->whereNotNull('patient_mrn')
+                ->where(
+                    function ($q) use ($mrn) {
+                        $q->where([
+                            ['patient_id', '=', $this->argument('patientUserId')],
+                            ['patient_id', 'is not', null],
+                        ])
+                            ->orWhere('patient_mrn', $mrn);
+                    }
+                )
+                ->first();
         }
 
         return $this->ccda;
