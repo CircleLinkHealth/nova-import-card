@@ -236,10 +236,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
      */
     private static function correctCenturyIfNeeded(Carbon &$date)
     {
-        //If a DOB is after 2000 it's because at some point the date incorrectly assumed to be in the 2000's, when it was actually in the 1900's. For example, this date 10/05/04.
-        $cutoffDate = Carbon::createFromDate(2000, 1, 1);
-
-        if ($date->gte($cutoffDate)) {
+        if ($date->gte(now()->subYears(18))) {
             $date->subYears(100);
         }
 
