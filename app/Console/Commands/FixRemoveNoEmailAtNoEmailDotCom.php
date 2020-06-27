@@ -57,7 +57,7 @@ class FixRemoveNoEmailAtNoEmailDotCom extends Command
             }
         });
 
-        Enrollee::where('email', 'like', '%@noemail.com%')->chunkById(500, function ($enrollees) {
+        Enrollee::where('email', 'like', '%noemail%')->chunkById(500, function ($enrollees) {
             foreach ($enrollees as $enrollee) {
                 $email = "e{$enrollee->id}@careplanmanager.com";
 
