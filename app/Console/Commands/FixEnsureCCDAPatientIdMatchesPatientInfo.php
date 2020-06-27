@@ -174,6 +174,7 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
                             MRN $ccd->patient_mrn
                             DOB $ccd->patient_dob
                             Practice $ccd->practice_id
+                            PatientId $ccd->patient_id
                         
                             Choose an option: \n
                             
@@ -189,6 +190,8 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
                             MRN {$u->patientInfo->mrn_number}
                             DOB {$u->patientInfo->birth_date->toDateString()}
                             Practice $u->program_id
+                            PatientId $u->id
+
                         
                             Option 'r':
                             Save `ccd->patient_id = $u->id`, \n\";
