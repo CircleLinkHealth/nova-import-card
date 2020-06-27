@@ -140,19 +140,21 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
                         && 1 === levenshtein(extractLetters(strtolower(trim($ccd->patient_first_name.$ccd->patient_last_name))), extractLetters(strtolower(trim($ccd->patient->first_name.$ccd->patient->last_name))))
                         && $ccd->practice_id == $ccd->patient->program_id
                     ) {
-                        $this->line("OK CCDA[$ccd->id] Different DOB");
+                        if (201 != $ccd->practice_id) {
+                            $this->line("OK CCDA[$ccd->id] Different DOB");
 
-                        $ccd->patient->patientInfo->birth_date = \Carbon::parse($ccd->patient_dob);
-                        $ccd->patient->patientInfo->save();
+                            $ccd->patient->patientInfo->birth_date = \Carbon::parse($ccd->patient_dob);
+                            $ccd->patient->patientInfo->save();
+                        }
 
                         continue;
                     }
 
-                    $this->error("NOT OK CCDA[$ccd->id] User_ID[$ccd->patient_id]");
-                    $ccd->patient_id = null;
                     //NBI sends us a followup list with the valid MRN and DOB
                     //NBI DOB and MRN in CCD are not always correct
                     if (201 != $ccd->practice_id) {
+                        $this->error("NOT OK CCDA[$ccd->id] User_ID[$ccd->patient_id]");
+                        $ccd->patient_id = null;
                         $ccd->save();
                     }
                 }
