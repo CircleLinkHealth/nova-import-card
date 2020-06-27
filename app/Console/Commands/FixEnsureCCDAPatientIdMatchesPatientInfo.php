@@ -71,7 +71,7 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
                         $ccd->patient_mrn == $ccd->patient->patientInfo->mrn_number
                         && strtolower(trim($ccd->patient_last_name)) == strtolower(trim($ccd->patient->last_name))
                         && $ccd->practice_id == $ccd->patient->program_id
-                        && $ccd->patient->patientInfo->birth_date->eq(\Carbon::parse($ccd->patient_dob))
+                        && $ccd->patient->patientInfo->birth_date->isSameDay(\Carbon::parse($ccd->patient_dob))
                     ) {
                         $this->line("OK CCDA[$ccd->id]");
 
@@ -81,7 +81,7 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
                     if (is_null($ccd->practice_id)
                     && $ccd->patient_mrn == $ccd->patient->patientInfo->mrn_number
                         && strtolower(trim($ccd->patient_last_name)) == strtolower(trim($ccd->patient->last_name))
-                    && $ccd->patient->patientInfo->birth_date->eq(\Carbon::parse($ccd->patient_dob))
+                    && $ccd->patient->patientInfo->birth_date->isSameDay(\Carbon::parse($ccd->patient_dob))
                     ) {
                         $ccd->practice_id = $ccd->patient->program_id;
                         $ccd->save();
@@ -97,7 +97,7 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
 
                     if (extractLetters(strtolower(trim($ccd->patient_last_name))) == extractLetters(strtolower(trim($ccd->patient->last_name)))
                         && $ccd->practice_id == $ccd->patient->program_id
-                    && $ccd->patient->patientInfo->birth_date->eq(\Carbon::parse($ccd->patient_dob))) {
+                    && $ccd->patient->patientInfo->birth_date->isSameDay(\Carbon::parse($ccd->patient_dob))) {
                         $this->line("OK CCDA[$ccd->id] Different MRN, same last name and dob");
                         continue;
                     }
@@ -106,7 +106,18 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
                         $ccd->patient_mrn == $ccd->patient->patientInfo->mrn_number
                         && $this->compare(strtolower(trim($ccd->patient_first_name.$ccd->patient_last_name)), strtolower(trim($ccd->patient->first_name.$ccd->patient->last_name)))
                         && $ccd->practice_id == $ccd->patient->program_id
-                        && $ccd->patient->patientInfo->birth_date->eq(\Carbon::parse($ccd->patient_dob))
+                        && $ccd->patient->patientInfo->birth_date->isSameDay(\Carbon::parse($ccd->patient_dob))
+                    ) {
+                        $this->line("OK CCDA[$ccd->id] Different name, but with same characters");
+
+                        continue;
+                    }
+
+                    if (
+                        $ccd->bluebuttonJson()->demographics->mrn_number == $ccd->patient->patientInfo->mrn_number
+                        && $this->compare(strtolower(trim(($ccd->bluebuttonJson()->demographics->name->given[0] ?? '').$ccd->bluebuttonJson()->demographics->name->family)), strtolower(trim($ccd->patient->first_name.$ccd->patient->last_name)))
+                        && $ccd->practice_id == $ccd->patient->program_id
+                        && $ccd->patient->patientInfo->birth_date->isSameDay(\Carbon::parse($ccd->bluebuttonJson()->demographics->dob))
                     ) {
                         $this->line("OK CCDA[$ccd->id] Different name, but with same characters");
 
@@ -117,7 +128,7 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
                         $ccd->patient_mrn == $ccd->patient->patientInfo->mrn_number
                         && 1 === levenshtein(extractLetters(strtolower(trim($ccd->patient_first_name.$ccd->patient_last_name))), extractLetters(strtolower(trim($ccd->patient->first_name.$ccd->patient->last_name))))
                         && $ccd->practice_id == $ccd->patient->program_id
-                        && $ccd->patient->patientInfo->birth_date->eq(\Carbon::parse($ccd->patient_dob))
+                        && $ccd->patient->patientInfo->birth_date->isSameDay(\Carbon::parse($ccd->patient_dob))
                     ) {
                         $this->line("OK CCDA[$ccd->id] Different name, one contains middle initial");
 
