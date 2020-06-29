@@ -13,8 +13,10 @@ use Phaxio;
 
 class PhaxioFaxService implements Efax
 {
-    const EVENT_STATUS_SUCCESS     = 'success';
-    const EVENT_TYPE_FAX_COMPLETED = 'fax_completed';
+    const EVENT_STATUS_IN_PROGRESS     = 'inprogress';
+    const EVENT_STATUS_SUCCESS         = 'success';
+    const EVENT_TYPE_FAX_COMPLETED     = 'fax_completed';
+    const EVENT_TYPE_TRANSMITTING_PAGE = 'transmitting_page';
     /**
      * @var Phaxio
      */
@@ -72,7 +74,7 @@ class PhaxioFaxService implements Efax
         return $this->fax->faxes()->create($options->all());
     }
 
-    public function sendNotification($notifiable, FaxableNotification &$notification, array $options = [])
+    public function sendNotification($notifiable, FaxableNotification $notification, array $options = [])
     {
         $options = array_merge($notification->toFax($notifiable), $options);
 
@@ -80,7 +82,7 @@ class PhaxioFaxService implements Efax
             $options['tag[notification_id]'] = $notification->id;
         }
 
-        $fax = $this->send($options);
+        return $this->send($options);
     }
 
     public function setOption(string $name, $value): Efax

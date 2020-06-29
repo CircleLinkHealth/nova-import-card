@@ -9,6 +9,7 @@ namespace App\Notifications;
 use App\Contracts\DirectMailableNotification;
 use App\Contracts\FaxableNotification;
 use App\Contracts\HasAttachment;
+use App\Contracts\NotificationAboutPatient;
 use App\Note;
 use App\ValueObjects\SimpleNotification;
 use CircleLinkHealth\Customer\AppConfig\ReceiveAllForwardedNotes;
@@ -19,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, FaxableNotification, DirectMailableNotification
+class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, FaxableNotification, DirectMailableNotification, NotificationAboutPatient
 {
     use Queueable;
     public $attachment;
@@ -91,6 +92,11 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, 
         }
 
         return 'You have been forwarded a note from CarePlanManager';
+    }
+
+    public function notificationAboutPatientWithUserId(): int
+    {
+        return $this->note->patient_id;
     }
 
     /**

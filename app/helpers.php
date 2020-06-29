@@ -320,7 +320,7 @@ if ( ! function_exists('extractLetters')) {
      */
     function extractLetters($string)
     {
-        preg_match_all('/[^a-zA-Z]/', $string, $match);
+        preg_match_all('/[a-zA-Z]/', $string, $match);
 
         return implode($match[0]);
     }
@@ -1853,7 +1853,7 @@ if ( ! function_exists('showNurseMetricsInDailyEmailReport')) {
     function showNurseMetricsInDailyEmailReport(int $userId, $metric): bool
     {
         $options = [
-            'enable_daily_report_metrics', // all metrics for all nurses if 'config_value' = 'all'
+            'enable_daily_report_metrics', // all metrics for all nurses if 'config_value' = 'all_nurses'
             "enable_daily_report_metrics:$metric",
         ];
 

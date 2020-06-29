@@ -255,13 +255,6 @@ class OpsDashboardReport
             $patientId                  = $patient->id;
             $patientWasEnrolledPriorDay = $this->patientWasEnrolledPriorDay($patientId);
 
-            $wasDeleted = ! empty($patient->deleted_at);
-            if ($wasDeleted && $patientWasEnrolledPriorDay) {
-                $this->report->incrementDeletedCount();
-                $this->report->deletedIds[] = $patientId;
-                continue;
-            }
-
             if (Patient::ENROLLED == $patient->patientInfo->ccm_status) {
                 $this->report->incrementTotalCount();
                 $this->report->enrolledPatientIds[] = $patientId;

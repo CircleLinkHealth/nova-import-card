@@ -16,6 +16,21 @@ class FaxChannel
         $this->fax = $fax;
     }
 
+    public static function getFaxNumber($notifiable)
+    {
+        if ($fax = $notifiable->fax ?? null) {
+            return $fax;
+        }
+        if ($fax = $notifiable->routeNotificationFor('phaxio') ?? null) {
+            return $fax;
+        }
+        if ($fax = $notifiable->routeNotificationFor('phaxio') ?? null) {
+            return $fax;
+        }
+
+        return null;
+    }
+
     /**
      * Send the given notification.
      *
@@ -24,8 +39,8 @@ class FaxChannel
      */
     public function send($notifiable, FaxableNotification $notification)
     {
-        if ($notifiable->fax) {
-            $fax = $this->fax->createFaxFor($notifiable->fax);
+        if ($faxNumber = self::getFaxNumber($notifiable)) {
+            $fax = $this->fax->createFaxFor($faxNumber);
 
             if (method_exists($notification, 'getFaxOptions')) {
                 foreach ($notification->getFaxOptions() as $option => $value) {

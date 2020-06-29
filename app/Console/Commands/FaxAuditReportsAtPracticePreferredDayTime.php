@@ -6,7 +6,6 @@
 
 namespace App\Console\Commands;
 
-use App\Notifications\Channels\FaxChannel;
 use App\Notifications\SendAuditReport;
 use App\Reports\PatientDailyAuditReport;
 use App\Services\Phaxio\PhaxioFaxService;
@@ -15,6 +14,7 @@ use CircleLinkHealth\Customer\Entities\CustomerNotificationContactTimePreference
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 
 class FaxAuditReportsAtPracticePreferredDayTime extends Command
 {
@@ -53,21 +53,25 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
     public function handle()
     {
         CustomerNotificationContactTimePreference::where('day', now()->format('l'))
-            ->where('from', '>=', now()->startOfHour()->format('H:i'))
-            ->where('to', '<=', now()->endOfHour()->format('H:i'))
+            ->where('from', '<=', now()->startOfHour()->format('H:i'))
+            ->where('to', '>=', now()->format('H:i'))
             ->where('notification', SendAuditReport::class)
             ->where('is_enabled', true)
             ->chunkById(100, function ($preferences) {
                 foreach ($preferences as $preference) {
+                    /** @var CustomerNotificationContactTimePreference $preference */
                     $key = $preference->cacheKey(CustomerNotificationContactTimePreference::AUDIT_REPORTS_FAXES_PER_HOUR);
 
                     if (is_numeric($preference->max_per_hour) && $this->hourlyLimitReached($key, $preference->max_per_hour)) {
+                        $this->warn("Limit reached for CustomerNotificationContactTimePreference[$preference->id]");
                         continue;
                     }
 
-                    $this->sendNotification($preference->contactable_type, $preference->contactable_id, $key, $this->forMonth());
+                    $this->sendNotification($key, $this->forMonth());
                 }
             });
+
+        $this->line('Command ran');
     }
 
     private function forMonth()
@@ -90,10 +94,10 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
 
     private function notificationsSentThisHour(string $key): int
     {
-        return \Cache::get($key);
+        return Cache::get($key) ?? 0;
     }
 
-    private function sendNotification(string $contactable_type, int $contactable_id, string $key, Carbon $date)
+    private function sendNotification(string $key, Carbon $date)
     {
         $user = User::ofType('participant')
             ->with([
@@ -109,8 +113,6 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
                 $query->where('active', '=', true)
                     ->whereHas('settings', function ($query) {
                         $query->where('efax_audit_reports', '=', true);
-                    })->when($this->argument('practiceId'), function ($q) {
-                        $q->where('id', '=', $this->argument('practiceId'));
                     });
             })
             ->whereHas('patientSummaries', function ($query) use ($date) {
@@ -118,17 +120,26 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
                     ->where('month_year', $date);
             })
             ->whereDoesntHave('patientInfo.notificationsAboutThisPatient', function ($query) use ($date) {
-                $monthNotificationSent = $date->copy()->addMonth();
-
                 $query->where('type', SendAuditReport::class)
                     ->whereBetween('created_at', [
-                        $monthNotificationSent->startOfMonth(),
-                        $monthNotificationSent->endOfMonth(),
+                        $date->copy()->addMonth()->startOfMonth(),
+                        $date->copy()->addMonth()->endOfMonth(),
                     ])
                     ->where('media_collection_name', PatientDailyAuditReport::mediaCollectionName($date))
                     ->where('phaxio_event_status', PhaxioFaxService::EVENT_STATUS_SUCCESS)
                     ->where('phaxio_event_type', PhaxioFaxService::EVENT_TYPE_FAX_COMPLETED);
-            })->first();
+            })
+            ->whereDoesntHave('patientInfo.notificationsAboutThisPatient', function ($query) use ($date) {
+                $query->where('type', SendAuditReport::class)
+                    ->whereBetween('created_at', [
+                        now()->subMinutes(30),
+                        now(),
+                    ])
+                    ->where('media_collection_name', PatientDailyAuditReport::mediaCollectionName($date))
+                    ->where('phaxio_event_status', PhaxioFaxService::EVENT_STATUS_IN_PROGRESS)
+                    ->where('phaxio_event_type', PhaxioFaxService::EVENT_TYPE_TRANSMITTING_PAGE);
+            })
+            ->first();
 
         if ( ! $user) {
             return;
@@ -136,8 +147,16 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
 
         $shouldBatch = (bool) $user->primaryPractice->cpmSettings()->batch_efax_audit_reports;
 
-        $user->locations->each(function (Location $location) use ($user, $date, $shouldBatch) {
-            $location->notify(new SendAuditReport($user, $date, [FaxChannel::class], $shouldBatch));
+        $user->locations->each(function (Location $location) use ($user, $date, $shouldBatch, $key) {
+            if ( ! $this->option('dry')) {
+                $location->notify(new SendAuditReport($user, $date, ['phaxio'], $shouldBatch));
+            }
+
+            if ( ! Cache::has($key)) {
+                Cache::set($key, 0, now()->addHours(3));
+            }
+
+            Cache::increment($key);
         });
     }
 }
