@@ -58,6 +58,7 @@ use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Mail\MailManager;
 use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Notifications\Events\NotificationSent;
+use InvalidArgumentException;
 
 class CpmEventServiceProvider extends ServiceProvider
 {
@@ -150,10 +151,14 @@ class CpmEventServiceProvider extends ServiceProvider
         parent::boot();
 
         /** @var MailManager $manager */
-        $manager  = app(MailManager::class);
-        $pmMailer = $manager->mailer('postmark');
-        if ($pmMailer) {
-            $pmMailer->getSwiftMailer()->getTransport()->registerPlugin(new PostmarkAddSmtpIdOnHeader());
+        $manager = app(MailManager::class);
+        try {
+            $pmMailer = $manager->mailer('postmark');
+            if ($pmMailer) {
+                $pmMailer->getSwiftMailer()->getTransport()->registerPlugin(new PostmarkAddSmtpIdOnHeader());
+            }
+        } catch (InvalidArgumentException $e) {
+            // no need to do anything. we do not have config for postmark mailer
         }
     }
 }
