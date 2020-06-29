@@ -9,7 +9,6 @@ namespace CircleLinkHealth\Core\Notifications\Channels;
 use Illuminate\Contracts\Mail\Mailable;
 use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Events\NotificationFailed;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class CustomMailChannel extends MailChannel
@@ -43,23 +42,10 @@ class CustomMailChannel extends MailChannel
                 return $message->send($this->mailer);
             }
 
-            $callback = function ($mailMessage) use ($message, $notifiable, $notification) {
-                if ($this->isPostmark($message)) {
-                    // Message-ID and X-PM-KeepID (which is added automatically in wildbit/swiftmailer-postmark/src/Postmark/Transport.php)
-                    // did not work (as suggested from Postmark docs)
-                    // so, solution: add this in order to match the webhook with the notification in db
-                    $mailMessage->getSwiftMessage()->getHeaders()->addTextHeader('X-PM-Metadata-smtp-id', $mailMessage->getId());
-                }
-
-                $inception = $this->messageBuilder($notifiable, $notification, $message);
-
-                return $inception($mailMessage);
-            };
-
             $this->mailer->mailer($message->mailer ?? null)->send(
                 $this->buildView($message),
                 array_merge($message->data(), $this->additionalMessageData($notification)),
-                $callback
+                $this->messageBuilder($notifiable, $notification, $message)
             );
         } catch (\Exception $exception) {
             $event = new NotificationFailed($notifiable, $notification, 'mail', ['message' => $exception->getMessage()]);
@@ -70,10 +56,5 @@ class CustomMailChannel extends MailChannel
                 $this->events->fire($event);
             }
         }
-    }
-
-    private function isPostmark(MailMessage $message)
-    {
-        return 'postmark' === ($message->mailer ?? config('mail.default'));
     }
 }
