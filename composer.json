@@ -179,7 +179,7 @@
     "circlelinkhealth/core-module": "1.6.9",
     "circlelinkhealth/cpm-migrations-module": "2.1.1",
     "circlelinkhealth/customer-module": "2.9.6",
-    "circlelinkhealth/eligibility-module": "3.0.3",
+    "circlelinkhealth/eligibility-module": "3.0.4",
     "circlelinkhealth/enrollment-invites": "*",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/generate-success-stories-report": "*",

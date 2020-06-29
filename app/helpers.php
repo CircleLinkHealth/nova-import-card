@@ -320,7 +320,7 @@ if ( ! function_exists('extractLetters')) {
      */
     function extractLetters($string)
     {
-        preg_match_all('/[^a-zA-Z]/', $string, $match);
+        preg_match_all('/[a-zA-Z]/', $string, $match);
 
         return implode($match[0]);
     }
