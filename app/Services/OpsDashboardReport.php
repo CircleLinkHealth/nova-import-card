@@ -202,12 +202,12 @@ class OpsDashboardReport
             $alerts[]          = "Paused: Total using status: {$this->report->pausedCount} - Totals using revisions: {$this->report->revisionsPausedCount}. Revisionable User IDs: $pausedRevisionIds.";
         }
 
-        if ($this->report->withdrawnCountIsMatching()) {
+        if ( ! $this->report->withdrawnCountIsMatching()) {
             $withdrawnRevisionIds = implode(',', $this->report->revisionsPausedIds);
             $alerts[]             = "Withdrawn: Total using status: {$this->report->withdrawnCount} - Totals using revisions: {$this->report->revisionsWithdrawnCount}}. Revisionable User IDs: $withdrawnRevisionIds.";
         }
 
-        if ($this->report->unreachableCountIsMatching()) {
+        if ( ! $this->report->unreachableCountIsMatching()) {
             $unreachableRevisionIds = implode(',', $this->report->revisionsUnreachableIds);
             $alerts[]               = "Unreachable: Total using status: {$this->report->unreachableCount} - Totals using revisions: {$this->report->revisionsUnreachableCount}}. Revisionable User IDs: $unreachableRevisionIds.";
         }
@@ -215,7 +215,7 @@ class OpsDashboardReport
         if ( ! empty($alerts)) {
             $watchers = opsDashboardAlertWatchers();
             $message  = "$watchers Warning! The following discrepancies were found for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}'. \n".implode("\n", $alerts);
-            sendSlackMessage('#ops_dashboard_alers', $message);
+            sendSlackMessage('#ops_dashboard_alerts', $message);
         }
 
         return $this->report->toArray();
