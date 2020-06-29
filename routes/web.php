@@ -2258,19 +2258,6 @@ Route::post('enrollee-login-viewed', [
     'as'   => 'enrollee.login.viewed',
 ])->middleware('guest');
 
-Route::group([
-    'middleware' => [
-        'auth',
-        'permission:admin-access',
-    ],
-    'prefix' => 'admin/download',
-], function () {
-    Route::get('invoices', [
-        'uses' => 'InvoicesDownload\TestDownloadInvoice@collectInvoicesFor',
-        'as'   => 'collect.nurses.invoices',
-    ])->middleware('auth');
-});
-
 //TargetPatient::inRandomOrder()->whereDoesntHave('user', function ($q) {
 //    $q->whereIn('program_id', [232, 21, 110, 159, 172, 180, 221]);
 //})->whereHas('ccda', function ($q) {$q->whereNotNull('patient_mrn');})->with('ccda')->chunkById(500, function ($tPs) {
