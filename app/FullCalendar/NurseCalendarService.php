@@ -419,7 +419,7 @@ class NurseCalendarService
         $cacheTime          = Carbon::now()->endOfDay();
 
         if ($loginActivityCount <= self::FIRST_LOGIN_OF_DAY) {
-            Cache::put($cacheKey, "Daily Report $userId", $cacheTime);
+            Cache::put($cacheKey, $cacheKey, $cacheTime);
 
             try {
                 return $this->prepareDailyReportsForNurse(User::findOrFail($userId), $date);
@@ -476,8 +476,8 @@ class NurseCalendarService
     public function prepareDailyReportsForNurse($auth, $date = null)
     {
         $reports = $this->dailyReportsForNurse($auth->id);
-
-        if ($date && ! Cache::has($this->cacheKey)) {
+//        ! Cache::has($this->cacheKey) exists only when debug is ON.
+        if ($date) {
             $reports = $this->nurseReportForDate($auth->id, $date);
         }
 
