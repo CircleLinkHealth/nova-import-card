@@ -41,4 +41,17 @@ Route::prefix('nurseinvoices')->middleware(['auth'])->group(function () {
         'uses' => 'InvoiceReviewController@adminShow',
         'as'   => 'nurseinvoices.admin.show',
     ]);
+
+    Route::group([
+        'middleware' => [
+            'auth',
+            'permission:admin-access',
+        ],
+        'prefix' => 'admin/download',
+    ], function () {
+        Route::get('invoices', [
+            'uses' => 'InvoicesDownload\TestDownloadInvoice@collectInvoicesFor',
+            'as'   => 'collect.nurses.invoices',
+        ])->middleware('auth');
+    });
 });
