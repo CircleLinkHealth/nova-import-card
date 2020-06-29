@@ -1,10 +1,7 @@
 <?php
 
-/*
- * This file is part of CarePlan Manager by CircleLink Health.
- */
-
 return [
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Defaults
@@ -17,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard'     => 'web',
+        'guard' => 'web',
         'passwords' => 'users',
     ],
 
@@ -40,14 +37,14 @@ return [
 
     'guards' => [
         'web' => [
-            'driver'   => 'session',
+            'driver' => 'session',
             'provider' => 'users',
         ],
 
         'api' => [
-            'driver'   => 'token',
+            'driver' => 'token',
             'provider' => 'users',
-            'hash'     => false,
+            'hash' => false,
         ],
     ],
 
@@ -70,8 +67,8 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => 'awv',
-            'model'  => App\User::class,
+            'driver' => 'eloquent',
+            'model' => App\User::class,
         ],
 
         // 'users' => [
@@ -98,8 +95,8 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
-            'table'    => 'password_resets',
-            'expire'   => 60,
+            'table' => 'password_resets',
+            'expire' => 60,
             'throttle' => 60,
         ],
     ],
@@ -116,4 +113,5 @@ return [
     */
 
     'password_timeout' => 10800,
+
 ];
