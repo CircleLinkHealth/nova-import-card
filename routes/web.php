@@ -1956,7 +1956,7 @@ Route::group([
 ], function () {
     Route::post('/status', [
         'uses' => 'PostmarkController@statusCallback',
-        'as'   => 'sendgrid.status',
+        'as'   => 'postmark.status',
     ]);
 });
 
