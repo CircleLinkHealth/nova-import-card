@@ -8,7 +8,6 @@ namespace Tests\Unit;
 
 use App\Call;
 use App\Http\Controllers\NotesController;
-use App\Services\Calls\SchedulerService;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -26,6 +25,8 @@ class PatientWithdrawnTest extends TestCase
     use CarePlanHelpers;
     use MakesSafeRequests;
     use UserHelpers;
+
+    protected $admin;
 
     /**
      * @var Factory
@@ -64,6 +65,8 @@ class PatientWithdrawnTest extends TestCase
             'practice_id' => $this->practice->id,
         ]);
 
+        $this->admin = $this->createUser($this->practice->id, 'administrator');
+
         $this->provider = $this->createUser($this->practice->id);
         $this->nurse    = $this->createUser($this->practice->id, 'care-center');
 
@@ -90,6 +93,14 @@ class PatientWithdrawnTest extends TestCase
 
     public function test_withdrawn_from_all_users_page()
     {
+        $this->actingAs($this->nurse);
+
+        $this->assertTrue(Patient::ENROLLED == $this->patient->getCcmStatus());
+        $this->assertTrue($this->patient->onFirstCall());
+
+        $this->makeCallToUserController();
+
+        $this->assertTrue(Patient::WITHDRAWN_1ST_CALL == $this->patient->getCcmStatus());
     }
 
     /**
@@ -139,10 +150,18 @@ class PatientWithdrawnTest extends TestCase
         ]);
     }
 
+    private function getAllUsersActionInput()
+    {
+        return [
+            'action'           => 'withdraw',
+            'withdrawn_reason' => 'test',
+            'users'            => [$this->patient->id],
+        ];
+    }
+
     /**
      * Meant to be needed to call NotesController->store
-     * Currently failing because of SafeRequest
-     * Todo: make tests able to call controller actions expecting SafeRequests.
+     * Currently failing because of SafeRequest.
      *
      * @param  mixed $ccmStatus
      * @return array
@@ -171,19 +190,13 @@ class PatientWithdrawnTest extends TestCase
 
     private function makeCallToNotesController($status)
     {
-        //still not able to make a request to a controller that uses Safe Request with $this->call
-        //This is a workaround
-        $request = $this->safeRequest(
-            route('patient.note.store', ['patientId' => $this->patient->id]),
-            'POST',
-            $this->getStoreCallInput($status)
-        );
-
-        $controller = app(NotesController::class);
-
-        $controller->store($request, app(SchedulerService::class), $this->patient->id);
+        $this->actingAs($this->admin)->call('POST', route('admin.users.doAction'), $this->getAllUsersActionInput());
 
         $this->patient->load('patientInfo');
+    }
+
+    private function makeCallToUserController()
+    {
     }
 
     private function setupPatient()
