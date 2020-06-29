@@ -19,15 +19,16 @@ namespace CircleLinkHealth\Core\Entities;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\SendGridRawLog newQuery()
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\SendGridRawLog query()
  * @mixin \Eloquent
+ * @property array|null $event
  */
-class SendGridRawLog extends BaseModel
+class PostmarkRawLog extends BaseModel
 {
     protected $casts = [
-        'events' => 'array',
+        'event' => 'array',
     ];
 
     protected $fillable = [
-        'events',
+        'event',
     ];
-    protected $table = 'sendgrid_raw_logs';
+    protected $table = 'postmark_raw_logs';
 }
