@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "293ba2f76ff51aede6340a2e42f9f5d3",
+    "content-hash": "59455fd4a738d7afe8d2d693d005ec27",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1072,11 +1072,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "dev-ROAD-195_postmark_webhook",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "077c46aad65412e147efce1ecfa559788801eebd"
+                "reference": "834d6305233fa5b3275f43a6f28ee0fa26eb6183"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1105,15 +1105,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-29T09:11:43+00:00"
+            "time": "2020-06-29T12:42:44+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-ROAD-195_postmark_webhook",
+            "version": "v2.1.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "52d483dc837c3ed8af4b3b1c06c7a10bafb15cc6"
+                "reference": "7306b1ed3932e5b50ce26c1a768dafaa53141555"
             },
             "type": "laravel-module",
             "extra": {
@@ -1135,7 +1135,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-25T19:35:28+00:00"
+            "time": "2020-06-29T12:43:46+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1317,7 +1317,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-master",
+            "version": "dev-ROAD-151",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
@@ -15897,8 +15897,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/core-module": 20,
-        "circlelinkhealth/cpm-migrations-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "orangehill/iseed": 20
     },
