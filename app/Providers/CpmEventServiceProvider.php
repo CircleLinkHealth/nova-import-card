@@ -43,6 +43,7 @@ use CircleLinkHealth\Core\Listeners\LogFailedNotification;
 use CircleLinkHealth\Core\Listeners\LogMailSmtpId;
 use CircleLinkHealth\Core\Listeners\LogSentMailNotification;
 use CircleLinkHealth\Core\Listeners\LogSentNotification;
+use CircleLinkHealth\Core\Listeners\PostmarkAddSmtpIdOnHeader;
 use CircleLinkHealth\Customer\Events\PatientContactWindowUpdatedEvent;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use Illuminate\Auth\Events\Authenticated;
@@ -54,8 +55,10 @@ use Illuminate\Database\Events\MigrationsEnded;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Mail\Events\MessageSent;
+use Illuminate\Mail\MailManager;
 use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Notifications\Events\NotificationSent;
+use InvalidArgumentException;
 
 class CpmEventServiceProvider extends ServiceProvider
 {
@@ -146,5 +149,16 @@ class CpmEventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
+
+        /** @var MailManager $manager */
+        $manager = app(MailManager::class);
+        try {
+            $pmMailer = $manager->mailer('postmark');
+            if ($pmMailer) {
+                $pmMailer->getSwiftMailer()->getTransport()->registerPlugin(new PostmarkAddSmtpIdOnHeader());
+            }
+        } catch (InvalidArgumentException $e) {
+            // no need to do anything. we do not have config for postmark mailer
+        }
     }
 }

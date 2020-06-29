@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9758a0b15c609a77794780574d44c48e",
+    "content-hash": "59455fd4a738d7afe8d2d693d005ec27",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1070,11 +1070,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.6.9",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "19f6a737077daeaa8fb01d0b911a5e3326ff1b19"
+                "reference": "834d6305233fa5b3275f43a6f28ee0fa26eb6183"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1103,15 +1103,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-26T04:32:16+00:00"
+            "time": "2020-06-29T12:42:44+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.1.1",
+            "version": "v2.1.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "1116e3faaa99c23bfa819a7c6cc1e8ba545957b2"
+                "reference": "7306b1ed3932e5b50ce26c1a768dafaa53141555"
             },
             "type": "laravel-module",
             "extra": {
@@ -1133,7 +1133,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-25T22:07:14+00:00"
+            "time": "2020-06-29T12:43:46+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1312,7 +1312,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-master",
+            "version": "dev-ROAD-151",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
