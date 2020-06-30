@@ -42,9 +42,9 @@ class TestInvoiceDownloadCommand extends Command
      */
     public function handle()
     {
-        $downloadFormat = 'pdf'; // Or CSV.
-        $practiceId     = 8; // Select Practices From Nova Invoices. Should be able to multi select
+        $downloadFormat = 'csv'; // Or CSV.
+        $practiceIds    = [8, 24];
         $month          = Carbon::now();
-        CollectNursesWithInvoice::dispatch($practiceId, $downloadFormat, $month)->onQueue('low');
+        CollectNursesWithInvoice::dispatch($practiceIds, $downloadFormat, $month)->onQueue('low');
     }
 }

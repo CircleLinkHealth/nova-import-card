@@ -7,12 +7,14 @@
 namespace Modules\Nurseinvoices;
 
 use App\Services\AttachDisputesToTimePerDay;
+use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\NurseInvoices\Http\Controllers\InvoiceReviewController;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Excel;
 
 class GenerateInvoiceDownload
 {
@@ -37,13 +39,23 @@ class GenerateInvoiceDownload
         $this->date     = $date;
     }
 
+    public function generateInvoiceCsv()
+    {
+        $rows = [];
+        foreach ($this->invoices as $invoice) {
+            $rows[] = $this->makeRow($invoice);
+        }
+
+        $x = 1;
+    }
+
     /**
      * @return array
      */
     public function generateInvoicePdf()
     {
         $invoicesForMonth = Carbon::parse($this->date)->toDateString();
-        $downloadName     = trim("$invoicesForMonth").'-triggered'.'-'.now()->toDateString();
+        $downloadName     = trim("$invoicesForMonth").'-pdf'.'-'.now()->toDateString();
 
         $pdfInvoices = $this->makeInvoicesPdf($downloadName);
 
@@ -68,12 +80,32 @@ class GenerateInvoiceDownload
                 'shouldShowDisputeForm'    => false,
                 'isUserAuthToDailyDispute' => false,
                 'canBeDisputed'            => false,
-                //                    'disputeDeadline'        => $deadline->deadline()->setTimezone($auth->timezone),
-                //                    'disputeDeadlineWarning' => $deadline->warning(),
-                'monthInvoiceMap' => (new InvoiceReviewController(new AttachDisputesToTimePerDay()))->getNurseInvoiceMap($nurseUserId),
+                'monthInvoiceMap'          => (new InvoiceReviewController(new AttachDisputesToTimePerDay()))->getNurseInvoiceMap($nurseUserId),
             ],
             $invoice->invoice_data ?? [],
         );
+    }
+
+    private function makeInvoicesCsv(string $downloadName, object $invoice)
+    {
+        \Storage::disk('storage')
+            ->makeDirectory('download');
+
+        $path = storage_path("download/$downloadName");
+
+        $csv = new FromArray(
+            "$downloadName.csv",
+            $this->toCsvArray($invoice),
+            [
+                'extra time',
+                'bonus',
+            ]
+        );
+
+        return SaasAccount::whereSlug('circlelink-health')
+            ->first()
+            ->addMedia($path)
+            ->toMediaCollection("invoices_for_{$this->date->toDateString()}_xlsx");
     }
 
     /**
@@ -105,5 +137,33 @@ class GenerateInvoiceDownload
             ->first()
             ->addMedia($path)
             ->toMediaCollection("invoice_for_{$this->date->toDateString()}");
+    }
+
+    private function makeRow($invoice)
+    {
+        $invoicesForMonth = Carbon::parse($this->date)->toDateString();
+        $downloadName     = trim("$invoicesForMonth").'-csv'.'-'.now()->toDateString();
+
+        return $this->makeInvoicesCsv($downloadName, $invoice);
+    }
+
+    private function toCsvArray(object $invoice)
+    {
+        $invoiceData = $invoice->invoice_data;
+
+        if (empty($invoiceData)) {
+            throw new \Exception("Invoice data for invoice id {$invoice->id} not found");
+        }
+
+//        if ($invoiceData['variablePay']) {
+//            if (isset($invoiceData['altAlgoEnabled']) && ! $invoiceData['altAlgoEnabled']) {
+//
+//            }
+//        }
+
+        return [
+            'extra_time' => $invoiceData['addedTimeAmount'],
+            'bonus'      => $invoiceData['bonus'],
+        ];
     }
 }

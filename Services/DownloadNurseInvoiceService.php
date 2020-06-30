@@ -14,6 +14,7 @@ class DownloadNurseInvoiceService
 {
     /**
      * @param $date
+     * @param array $practiceIds
      *
      * @return array
      */
@@ -21,6 +22,10 @@ class DownloadNurseInvoiceService
     {
         if (NurseInvoice::PDF_DOWNLOAD_FORMAT === $downloadFormat) {
             return (new GenerateInvoiceDownload($invoices, $date))->generateInvoicePdf();
+        }
+
+        if (NurseInvoice::CSV_DOWNLOAD_FORMAT === $downloadFormat) {
+            return (new GenerateInvoiceDownload($invoices, $date))->generateInvoiceCsv();
         }
     }
 }

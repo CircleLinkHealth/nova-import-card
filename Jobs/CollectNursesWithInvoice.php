@@ -8,6 +8,7 @@ namespace CircleLinkHealth\NurseInvoices\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\NurseInvoices\Notifications\NurseInvoicesDownloaded;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -32,14 +33,14 @@ class CollectNursesWithInvoice implements ShouldQueue
     /**
      * @var int
      */
-    private $practiceId;
+    private $practiceIds;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(int $practiceId, string $downloadFormat, Carbon $month)
+    public function __construct(array $practiceIds, string $downloadFormat, Carbon $month)
     {
-        $this->practiceId     = $practiceId;
+        $this->practiceIds    = $practiceIds;
         $this->downloadFormat = $downloadFormat;
         $this->month          = $month;
     }
@@ -90,22 +91,25 @@ class CollectNursesWithInvoice implements ShouldQueue
                         $pageTimersAsProvider->whereBetween('start_time', [$startDate, $endDate]);
                     });
             })
-//            ->where('program_id', $this->practiceId)
-//                ->select('id')
+            ->whereIn('program_id', $this->practiceIds)
+            ->select('id', 'program_id')
             ->chunk(20, function ($users) use ($startDate, $endDate, &$invoices) {
                 foreach ($users as $user) {
                     $invoices[] = $user->nurseInfo->invoices;
                 }
             });
 
-        if (empty($invoices)) {
+        $invoicesFlatten = collect($invoices)->flatten();
+
+        if (empty($invoicesFlatten)) {
             Log::warning('Invoices to download not found');
 
             return;
         }
 
-        $invoiceDownloadLink = $downloadNurseInvoiceService->invoicesDownloadLink(collect($invoices)->flatten(), $this->downloadFormat, $startDate);
+        $invoiceDownloadLink = $downloadNurseInvoiceService->invoicesDownloadLink($invoicesFlatten, $this->downloadFormat, $startDate);
+        $x                   = 1;
 
-//        Notify ethan.
+        //        Notify user - admin. NurseInvoicesDownloaded
     }
 }
