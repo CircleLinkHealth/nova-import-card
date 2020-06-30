@@ -28,7 +28,10 @@ class PhaxioWebhookController extends Controller
             ]
         );
 
-        if (array_key_exists('notification_id', $fax) && $notification = DatabaseNotification::find($fax['notification_id'])) {
+        if (array_key_exists('tags', $fax)
+            && is_array($fax['tags'])
+            && array_key_exists('notification_id', $fax['tags'])
+            && $notification = DatabaseNotification::find($fax['tags']['notification_id'])) {
             PhaxioNotificationStatusUpdateJob::dispatch($notification, $log);
         }
 
