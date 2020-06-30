@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "59455fd4a738d7afe8d2d693d005ec27",
+    "content-hash": "c3e5e6b87a57e882d57daabbf52710c1",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -511,16 +511,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.143.2",
+            "version": "3.144.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "d44eac162f8ed1869d20c076adca9869c70a8ad9"
+                "reference": "6848e85b4a019e1012e65cf8c82888863fe9dad7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d44eac162f8ed1869d20c076adca9869c70a8ad9",
-                "reference": "d44eac162f8ed1869d20c076adca9869c70a8ad9",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6848e85b4a019e1012e65cf8c82888863fe9dad7",
+                "reference": "6848e85b4a019e1012e65cf8c82888863fe9dad7",
                 "shasum": ""
             },
             "require": {
@@ -592,7 +592,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-06-26T18:21:03+00:00"
+            "time": "2020-06-29T18:15:16+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1346,11 +1346,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.4.6",
+            "version": "dev-ROAD-148_Download_nurse_invoices",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "8469ef36c4ce6f2c42b7d613b2adada5354c6e9d"
+                "reference": "2b49ce2c4c165c9e2c811bbfd15ab0c04667123d"
             },
             "type": "laravel-module",
             "extra": {
@@ -1373,7 +1373,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-25T09:43:50+00:00"
+            "time": "2020-06-29T17:51:43+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -15891,6 +15891,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/nurseinvoices-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "orangehill/iseed": 20
     },
