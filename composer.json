@@ -135,7 +135,7 @@
         "circlelinkhealth/cerberus-gatekeeper-module": "3.1.6",
         "circlelinkhealth/core-module": "1.7.0",
         "circlelinkhealth/cpm-migrations-module": "2.1.2",
-        "circlelinkhealth/customer-module": "2.9.6",
+        "circlelinkhealth/customer-module": "2.9.7",
         "circlelinkhealth/eligibility-module": "3.0.4",
         "circlelinkhealth/revisionable-module": "6.1.1",
         "circlelinkhealth/shared-models-module": "1.6.8",
