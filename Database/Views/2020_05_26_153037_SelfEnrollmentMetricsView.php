@@ -4,13 +4,15 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Http\Controllers\Enrollment\SelfEnrollmentController;
-use App\SelfEnrollment\Helpers;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SqlViews\BaseSqlView;
 
 class SelfEnrollmentMetricsView extends BaseSqlView
 {
+    const DEFAULT_BUTTON_COLOR  = '#4baf50';
+    const ENROLLEES_SURVEY_NAME = 'Enrollees';
+    const RED_BUTTON_COLOR      = '#b1284c';
+
     /**
      * Create the sql view.
      *
@@ -22,12 +24,12 @@ class SelfEnrollmentMetricsView extends BaseSqlView
         $enrolled            = Enrollee::ENROLLED;
         $toCall              = Enrollee::TO_CALL;
         $queueAutoEnrollment = Enrollee::QUEUE_AUTO_ENROLLMENT;
-        $defaultBtnColor     = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
-        $red                 = SelfEnrollmentController::RED_BUTTON_COLOR;
+        $defaultBtnColor     = self::DEFAULT_BUTTON_COLOR;
+        $red                 = self::RED_BUTTON_COLOR;
         $manualInvite        = 'one-off_invitations';
         $green               = 'Green';
         $redString           = 'Red';
-        $survey              = Helpers::getEnrolleeSurvey();
+        $survey              = $this->enrolleesSurvey();
         $surveyInstance      = DB::table('survey_instances')
             ->where('survey_id', '=', $survey->id)
             ->first();
@@ -64,30 +66,30 @@ class SelfEnrollmentMetricsView extends BaseSqlView
        CONCAT(IFNULL(ROUND((SUM(case when e.status = '$enrolled' AND us.status = 'completed' AND e.auto_enrollment_triggered = true then 1 else 0 end) * 100) / SUM(case when us.survey_instance_id = $surveyInstance->id AND us.user_id = e.user_id then 1 else 0 end)),0), '%') as percentage_enrolled,
        CAST(SUM(case when e.status = '$toCall' AND erf.enrollable_id = e.id AND e.auto_enrollment_triggered = true then 1 else 0 end) as CHAR(50)) as total_call_requests,
        CONCAT(IFNULL(ROUND((SUM(case when e.status = '$toCall' AND erf.enrollable_id = e.id then 1 else 0 end) * 100) / COUNT(l.user_id)),0), '%') as percentage_call_requests
-       
+
        FROM
        enrollables_invitation_links i
-       
+
        left join enrollment_invitations_batches b on i.batch_id = b.id
        left join enrollees e on e.id = i.invitationable_id
        left join login_logout_events l on l.user_id = e.user_id
        left join practices p on b.practice_id = p.id
        left join users_surveys us on e.user_id = us.user_id
        left join enrollees_request_info erf on e.id = erf.enrollable_id
-       
+
        -- Tables joining to has multiple rows for a single row in other tables:
        -- DISTINCT wil not help:
-       
+
        WHERE 0 = (SELECT COUNT(e2.id)
              FROM enrollees e2
              WHERE e.user_id = e2.user_id
              AND e2.id < e.id)
-                
+
        AND 0 = (SELECT COUNT(l2.id)
              FROM login_logout_events l2
              WHERE l.user_id = l2.user_id
              AND l2.id < l.id)
-                
+
         AND 0 = (SELECT COUNT(us.survey_instance_id)
              FROM users_surveys us2
              WHERE us.user_id = us2.user_id
@@ -97,7 +99,7 @@ class SelfEnrollmentMetricsView extends BaseSqlView
 
        GROUP BY
        batch_id
-       
+
        ");
     }
 
@@ -116,13 +118,13 @@ class SelfEnrollmentMetricsView extends BaseSqlView
     {
         $survey = DB::table('surveys')->updateOrInsert(
             [
-                'name'        => SelfEnrollmentController::ENROLLEES_SURVEY_NAME,
+                'name'        => self::ENROLLEES_SURVEY_NAME,
                 'description' => 'Enrollees Survey',
             ]
         );
 
         if ( ! $survey) {
-            throw new \Exception('Could not create survey with name '.SelfEnrollmentController::ENROLLEES_SURVEY_NAME);
+            throw new \Exception('Could not create survey with name '.self::ENROLLEES_SURVEY_NAME);
         }
     }
 
@@ -163,11 +165,11 @@ class SelfEnrollmentMetricsView extends BaseSqlView
     private function enrolleesSurvey()
     {
         $survey = DB::table('surveys')
-            ->where('name', SelfEnrollmentController::ENROLLEES_SURVEY_NAME)
+            ->where('name', self::ENROLLEES_SURVEY_NAME)
             ->first();
 
         if (empty($survey)) {
-            throw new \Exception('Could not find survey with name '.SelfEnrollmentController::ENROLLEES_SURVEY_NAME);
+            throw new \Exception('Could not find survey with name '.self::ENROLLEES_SURVEY_NAME);
         }
 
         return $survey;
