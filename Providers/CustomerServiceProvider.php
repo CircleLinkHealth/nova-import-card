@@ -12,6 +12,7 @@ use CircleLinkHealth\Customer\Console\Commands\CreateOrReplacePatientAWVSurveyIn
 use CircleLinkHealth\Customer\Console\Commands\CreateRolesPermissionsMigration;
 use CircleLinkHealth\SqlViews\Providers\SqlViewsServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\HasDatabaseNotifications;
 use Illuminate\Notifications\Notifiable;
@@ -38,6 +39,11 @@ class CustomerServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
         $this->app->register(CpmMigrationsServiceProvider::class);
         $this->app->register(SqlViewsServiceProvider::class);
+        if (class_exists(\App\User::class)) {
+            Relation::morphMap([
+                \CircleLinkHealth\Customer\Entities\User::class => \App\User::class,
+            ]);
+        }
     }
 
     /**
