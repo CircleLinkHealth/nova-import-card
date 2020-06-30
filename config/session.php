@@ -1,9 +1,14 @@
 <?php
 
-use Illuminate\Support\Str;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+$sessionDomain = env('SESSION_DOMAIN', null);
+
+$sessionDomain = str_replace('${HEROKU_APP_NAME}', getenv('HEROKU_APP_NAME'), $sessionDomain);
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Default Session Driver
@@ -46,7 +51,7 @@ return [
     |
     */
 
-    'encrypt' => false,
+    'encrypt' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -92,11 +97,9 @@ return [
     | Session Cache Store
     |--------------------------------------------------------------------------
     |
-    | While using one of the framework's cache driven session backends you may
+    | When using the "apc", "memcached", or "dynamodb" session drivers you may
     | list a cache store that should be used for these sessions. This value
     | must match with one of the application's configured cache "stores".
-    |
-    | Affects: "apc", "dynamodb", "memcached", "redis"
     |
     */
 
@@ -128,7 +131,7 @@ return [
 
     'cookie' => env(
         'SESSION_COOKIE',
-        Str::slug(env('APP_NAME', 'laravel'), '_').'_session'
+        'cpm_'.env('APP_ENV').'_laravel_session'
     ),
 
     /*
@@ -155,7 +158,7 @@ return [
     |
     */
 
-    'domain' => env('SESSION_DOMAIN', null),
+    'domain' => $sessionDomain,
 
     /*
     |--------------------------------------------------------------------------
@@ -168,7 +171,7 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    'secure' => env('SESSION_SECURE_COOKIE', 'local' != env('APP_ENV')),
 
     /*
     |--------------------------------------------------------------------------
@@ -190,12 +193,11 @@ return [
     |
     | This option determines how your cookies behave when cross-site requests
     | take place, and can be used to mitigate CSRF attacks. By default, we
-    | will set this value to "lax" since this is a secure default value.
+    | do not enable this as other CSRF protection services are in place.
     |
-    | Supported: "lax", "strict", "none", null
+    | Supported: "lax", "strict"
     |
     */
 
-    'same_site' => 'lax',
-
+    'same_site' => null,
 ];

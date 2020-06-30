@@ -8,6 +8,7 @@ namespace App\Providers;
 
 use CircleLinkHealth\Core\Notifications\Channels\CustomMailChannel;
 use CircleLinkHealth\Core\Notifications\Channels\CustomTwilioChannel;
+use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Notifications\ChannelManager;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +39,11 @@ class AppServiceProvider extends ServiceProvider
         });
         $cm->extend('mail', function (Application $app) {
             return $app->make(CustomMailChannel::class);
+        });
+
+        // {@link EligibilityServiceProvider}
+        $this->app->singleton(AthenaApiImplementation::class, function () {
+            return null;
         });
 
         Auth::provider('awv', function ($app, array $config) {
