@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Jobs\CollectNursesWithInvoice;
 use Illuminate\Console\Command;
 
-class kolos extends Command
+class TestInvoiceDownloadCommand extends Command
 {
     /**
      * The console command description.
@@ -23,7 +23,7 @@ class kolos extends Command
      *
      * @var string
      */
-    protected $signature = 'command:kolos';
+    protected $signature = 'test:invoiceDownloadCommand';
 
     /**
      * Create a new command instance.
@@ -43,7 +43,7 @@ class kolos extends Command
     public function handle()
     {
         $downloadFormat = 'pdf'; // Or CSV.
-        $practiceId     = 8; // Select Practices From Nova Invoices. Should be able to multi select?
+        $practiceId     = 8; // Select Practices From Nova Invoices. Should be able to multi select
         $month          = Carbon::now();
         CollectNursesWithInvoice::dispatch($practiceId, $downloadFormat, $month)->onQueue('low');
     }

@@ -7,9 +7,9 @@
 namespace CircleLinkHealth\NurseInvoices\Providers;
 
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
-use CircleLinkHealth\NurseInvoices\Console\Commands\kolos;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
+use CircleLinkHealth\NurseInvoices\Console\Commands\TestInvoiceDownloadCommand;
 use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use Illuminate\Support\ServiceProvider;
 
@@ -34,7 +34,7 @@ class NurseInvoicesDeferredBindingsServiceProvider extends ServiceProvider
             SendMonthlyNurseInvoiceFAN::class,
             SendMonthlyNurseInvoiceLAN::class,
             SendResolveInvoiceDisputeReminder::class,
-            kolos::class,
+            TestInvoiceDownloadCommand::class,
         ];
     }
 
@@ -50,7 +50,7 @@ class NurseInvoicesDeferredBindingsServiceProvider extends ServiceProvider
                     SendMonthlyNurseInvoiceFAN::class,
                     SendMonthlyNurseInvoiceLAN::class,
                     SendResolveInvoiceDisputeReminder::class,
-                    kolos::class,
+                    TestInvoiceDownloadCommand::class,
                 ]
             );
         } else {

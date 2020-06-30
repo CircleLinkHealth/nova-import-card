@@ -6,16 +6,21 @@
 
 namespace Modules\Nurseinvoices;
 
+use App\Services\AttachDisputesToTimePerDay;
 use CircleLinkHealth\Core\Services\PdfService;
+use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
+use CircleLinkHealth\NurseInvoices\Http\Controllers\InvoiceReviewController;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 class GenerateInvoiceDownload
 {
     /**
-     * @var string
+     * @var
      */
-    private $downloadFormat;
+    private $date;
+
     /**
      * @var Collection
      */
@@ -23,25 +28,61 @@ class GenerateInvoiceDownload
 
     /**
      * GenerateInvoiceDownload constructor.
+     *
+     * @param $date
      */
-    public function __construct(Collection $invoices, string $downloadFormat)
+    public function __construct(Collection $invoices, $date)
     {
-        $this->invoices       = $invoices;
-        $this->downloadFormat = $downloadFormat;
+        $this->invoices = $invoices;
+        $this->date     = $date;
     }
 
+    /**
+     * @return array
+     */
     public function generateInvoicePdf()
     {
-        $downloadName = trim('kolos').'-'.now()->toDateString().'-invoice';
+        $invoicesForMonth = Carbon::parse($this->date)->toDateString();
+        $downloadName     = trim("$invoicesForMonth").'-triggered'.'-'.now()->toDateString();
 
-        $pdfInvoice = $this->makeInvoicesPdf($downloadName);
+        $pdfInvoices = $this->makeInvoicesPdf($downloadName);
 
         return [
-            'invoice_url' => $pdfInvoice->getUrl(),
-            'mediaIds'    => [$pdfInvoice->id],
+            'invoice_url' => $pdfInvoices->getUrl(),
+            'mediaIds'    => [$pdfInvoices->id],
         ];
     }
 
+    /**
+     * @param $invoice
+     *
+     * @return array
+     */
+    private function getInvoiceArgs($invoice, int $nurseUserId)
+    {
+        return array_merge(
+            [
+                'invoiceId'                => $invoice->id,
+                'disputes'                 => $invoice->disputes,
+                'invoice'                  => $invoice,
+                'shouldShowDisputeForm'    => false,
+                'isUserAuthToDailyDispute' => false,
+                'canBeDisputed'            => false,
+                //                    'disputeDeadline'        => $deadline->deadline()->setTimezone($auth->timezone),
+                //                    'disputeDeadlineWarning' => $deadline->warning(),
+                'monthInvoiceMap' => (new InvoiceReviewController(new AttachDisputesToTimePerDay()))->getNurseInvoiceMap($nurseUserId),
+            ],
+            $invoice->invoice_data ?? [],
+        );
+    }
+
+    /**
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\DiskDoesNotExist
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\FileDoesNotExist
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\FileIsTooBig
+     *
+     * @return \Spatie\MediaLibrary\Models\Media
+     */
     private function makeInvoicesPdf(string $downloadName)
     {
         $pdfService = app(PdfService::class);
@@ -49,29 +90,20 @@ class GenerateInvoiceDownload
         \Storage::disk('storage')
             ->makeDirectory('download');
 
-        $path = storage_path("download/${$downloadName}.pdf");
+        $path = storage_path("download/$downloadName.pdf");
 
+        $downloadableInvoices = [];
         foreach ($this->invoices as $invoice) {
-            $args = array_merge(
-                [
-                    'invoiceId'             => $invoice->id,
-                    'disputes'              => $invoice->disputes,
-                    'invoice'               => $invoice,
-                    'shouldShowDisputeForm' => false,
-                    //                    'disputeDeadline'        => $deadline->deadline()->setTimezone($auth->timezone),
-                    //                    'disputeDeadlineWarning' => $deadline->warning(),
-                    //                    'monthInvoiceMap' => $this->getNurseInvoiceMap($nurseUserId),
-                ],
-                $invoice->invoice_data ?? [],
-            );
-
-            $pdf = $pdfService->createPdfFromView('nurseinvoices::reviewInvoice', $args, $path);
+            $nurseUserId            = Nurse::findOrFail($invoice->nurse_info_id)->user_id;
+            $args                   = $this->getInvoiceArgs($invoice, $nurseUserId);
+            $downloadableInvoices[] = $pdfService->createPdfFromView('nurseinvoices::reviewInvoice', $args);
         }
-        $month = '2020-06-01';
+
+        $pdfService->mergeFiles($downloadableInvoices, $path);
 
         return SaasAccount::whereSlug('circlelink-health')
             ->first()
             ->addMedia($path)
-            ->toMediaCollection("invoice_for_{$month}");
+            ->toMediaCollection("invoice_for_{$this->date->toDateString()}");
     }
 }

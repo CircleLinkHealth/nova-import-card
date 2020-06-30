@@ -106,6 +106,11 @@ class InvoiceReviewController extends Controller
         return $this->ok();
     }
 
+    public function getNurseInvoiceMap(int $nurseUserId)
+    {
+        return NurseInvoice::ofNurses($nurseUserId)->orderBy('month_year')->pluck('month_year', 'id');
+    }
+
     /**
      * @return Factory|View
      */
@@ -172,11 +177,6 @@ class InvoiceReviewController extends Controller
         }
 
         return $this->nurseInvoiceDisputeDeadline;
-    }
-
-    private function getNurseInvoiceMap(int $nurseUserId)
-    {
-        return NurseInvoice::ofNurses($nurseUserId)->orderBy('month_year')->pluck('month_year', 'id');
     }
 
     /**

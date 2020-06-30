@@ -13,6 +13,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Modules\Nurseinvoices\Services\DownloadNurseInvoiceService;
 
 class CollectNursesWithInvoice implements ShouldQueue
 {
@@ -47,7 +49,7 @@ class CollectNursesWithInvoice implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(DownloadNurseInvoiceService $downloadNurseInvoiceService)
     {
         $startDate = $this->month->copy()->startOfMonth();
         $endDate   = $this->month->copy()->endOfMonth();
@@ -96,6 +98,14 @@ class CollectNursesWithInvoice implements ShouldQueue
                 }
             });
 
-        CreateDownlableInvoices::dispatchNow(collect($invoices)->flatten(), $this->downloadFormat);
+        if (empty($invoices)) {
+            Log::warning('Invoices to download not found');
+
+            return;
+        }
+
+        $invoiceDownloadLink = $downloadNurseInvoiceService->invoicesDownloadLink(collect($invoices)->flatten(), $this->downloadFormat, $startDate);
+
+//        Notify ethan.
     }
 }

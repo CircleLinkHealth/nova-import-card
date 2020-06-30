@@ -30,7 +30,7 @@
     <div class="container" style="padding-bottom: 10%;">
         @include('nurseinvoices::dispute-deadline-warning')
 
-        @if($monthInvoiceMap->isNotEmpty() && !auth()->user()->isAdmin())
+        @if($monthInvoiceMap->isNotEmpty() && /*!auth()->user()->isAdmin()*/ true)
             <div class="row" style="padding-top: 20px;">
                 <div class="col-md-12">
                     <div class="pull-right">
