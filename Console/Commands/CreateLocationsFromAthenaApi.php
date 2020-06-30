@@ -38,7 +38,7 @@ class CreateLocationsFromAthenaApi extends Command
      *
      * @return void
      */
-    public function __construct(AthenaApiImplementation $api)
+    public function __construct(?AthenaApiImplementation $api)
     {
         parent::__construct();
         $this->api = $api;
