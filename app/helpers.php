@@ -1559,15 +1559,10 @@ if ( ! function_exists('incrementInvoiceNo')) {
      */
     function incrementInvoiceNo()
     {
-        $num = AppConfig::set('billing_invoice_count', 0);
+        $num = AppConfig::pull('billing_invoice_count', 0);
+        AppConfig::set('billing_invoice_count', $num + 1);
 
-        $current = $num->config_value;
-
-        $num->config_value = $current + 1;
-
-        $num->save();
-
-        return $current;
+        return $num;
     }
 }
 
