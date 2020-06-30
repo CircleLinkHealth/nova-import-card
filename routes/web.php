@@ -62,7 +62,7 @@ Route::group([
 
     Route::get('{userId}/enroll', [
         'uses' => 'InvitationLinksController@showEnrollUserForm',
-        'as'   => 'patient.enroll',
+        'as'   => 'patient.enroll.show',
     ]);
 
     Route::post('{userId}/enroll', [
