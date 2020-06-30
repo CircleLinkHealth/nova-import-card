@@ -123,7 +123,7 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
                 $query->where('type', SendAuditReport::class)
                     ->whereBetween('created_at', [
                         $date->copy()->addMonth()->startOfMonth(),
-                        $date->copy()->addMonth()->endOfMonth(),
+                        now(),
                     ])
                     ->where('media_collection_name', PatientDailyAuditReport::mediaCollectionName($date))
                     ->where('phaxio_event_status', PhaxioFaxService::EVENT_STATUS_SUCCESS)
@@ -132,12 +132,10 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
             ->whereDoesntHave('patientInfo.notificationsAboutThisPatient', function ($query) use ($date) {
                 $query->where('type', SendAuditReport::class)
                     ->whereBetween('created_at', [
-                        now()->subMinutes(30),
+                        now()->subHour(),
                         now(),
                     ])
-                    ->where('media_collection_name', PatientDailyAuditReport::mediaCollectionName($date))
-                    ->where('phaxio_event_status', PhaxioFaxService::EVENT_STATUS_IN_PROGRESS)
-                    ->where('phaxio_event_type', PhaxioFaxService::EVENT_TYPE_TRANSMITTING_PAGE);
+                    ->where('media_collection_name', PatientDailyAuditReport::mediaCollectionName($date));
             })
             ->first();
 
