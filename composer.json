@@ -237,6 +237,7 @@
     "spatie/laravel-rate-limited-job-middleware": "^1.3",
     "spatie/laravel-view-models": "^1.3",
     "spatie/pdf-to-text": "^1.2",
+    "suenerds/nova-searchable-belongs-to-filter": "^1.0",
     "titasgailius/search-relations": "^1.0",
     "twilio/sdk": "~5.16",
     "vink/nova-cache-card": "^1.0",
