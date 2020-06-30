@@ -4,8 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
-
 return [
     /*
     |--------------------------------------------------------------------------
