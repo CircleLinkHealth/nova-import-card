@@ -5,6 +5,7 @@
  */
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -249,5 +250,12 @@ if ( ! function_exists('validateUsPhoneNumber')) {
         );
 
         return $validator->passes();
+    }
+}
+
+if ( ! function_exists('isSelfEnrollmentTestModeEnabled')) {
+    function isSelfEnrollmentTestModeEnabled(): bool
+    {
+        return filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN);
     }
 }
