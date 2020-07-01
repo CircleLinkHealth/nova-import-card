@@ -12,6 +12,7 @@ use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Http\Controllers\InvoiceReviewController;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -22,6 +23,7 @@ class GenerateInvoiceDownload
      * @var
      */
     private $date;
+    private $downloadFormat;
 
     /**
      * @var Collection
@@ -31,12 +33,25 @@ class GenerateInvoiceDownload
     /**
      * GenerateInvoiceDownload constructor.
      *
+     * @param $downloadFormat
      * @param $date
      */
-    public function __construct(Collection $invoices, $date)
+    public function __construct(Collection $invoices, $downloadFormat, $date)
     {
-        $this->invoices = $invoices;
-        $this->date     = $date;
+        $this->invoices       = $invoices;
+        $this->date           = $date;
+        $this->downloadFormat = $downloadFormat;
+    }
+
+    public function generateExportableInvoices()
+    {
+        if (NurseInvoice::PDF_DOWNLOAD_FORMAT === $this->downloadFormat) {
+            return $this->generateInvoicePdf();
+        }
+
+        if (NurseInvoice::CSV_DOWNLOAD_FORMAT === $this->downloadFormat) {
+            return $this->generateInvoiceCsv();
+        }
     }
 
     public function generateInvoiceCsv()

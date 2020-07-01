@@ -15,6 +15,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Modules\Nurseinvoices\GenerateInvoiceDownload;
 use Modules\Nurseinvoices\Services\DownloadNurseInvoiceService;
 
 class CollectNursesWithInvoice implements ShouldQueue
@@ -55,7 +56,7 @@ class CollectNursesWithInvoice implements ShouldQueue
      *
      * @return void
      */
-    public function handle(DownloadNurseInvoiceService $downloadNurseInvoiceService)
+    public function handle()
     {
         $startDate = $this->month->copy()->startOfMonth();
         $endDate   = $this->month->copy()->endOfMonth();
@@ -112,7 +113,7 @@ class CollectNursesWithInvoice implements ShouldQueue
             return;
         }
 
-        $invoiceDocument = $downloadNurseInvoiceService->invoicesDownloadLink($invoicesFlatten, $this->downloadFormat, $startDate);
+        $invoiceDocument = (new GenerateInvoiceDownload($invoicesFlatten, $this->downloadFormat, $startDate))->generateExportableInvoices();
 
         $this->auth->notify(new NurseInvoicesDownloaded([$invoiceDocument->id], $startDate));
         //        Notify user - admin. NurseInvoicesDownloaded
