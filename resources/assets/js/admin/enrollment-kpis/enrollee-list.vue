@@ -8,6 +8,9 @@
                     <span class="pad-10"></span>
                 </div>
             </div>
+            <div class="row col-sm-12">
+                <loader style="margin-top:20px; margin-left: 80px" v-if="loading"/>
+            </div>
             <v-server-table class="table" v-on:filter="listenTo" :url="getUrl()" :columns="columns" :options="options"
                             ref="table">
                 <template slot="status" slot-scope="props">
@@ -15,6 +18,19 @@
                         {{enrolleeStatusMap[props.row.status] || props.row.status}}
                     </div>
                 </template>
+                <div slot="filter__status">
+                    <vue-multiselect
+                            placeholder="Select Status"
+                            @input="refreshTable"
+                            label="text"
+                            :multiple="true"
+                            :searchable="false"
+                            track-by="text"
+                            openDirection="below"
+                            v-model="statusFilter"
+                            :options="statusOptions">
+                    </vue-multiselect>
+                </div>
                 <template slot="total_time_spent" slot-scope="props">
                     {{formatSecondsToHHMMSS(props.row.total_time_spent)}}
                 </template>
@@ -29,17 +45,21 @@
     import {Event} from 'vue-tables-2'
     import Loader from '../../components/loader';
     import Notifications from '../../components/notifications';
+    import Multiselect from 'vue-multiselect';
 
     export default {
         name: "enrollee-list",
         components: {
             'modal': Modal,
             'loader': Loader,
-            'notifications': Notifications
+            'notifications': Notifications,
+            'vue-multiselect': Multiselect
         },
         props: [],
         data() {
             return {
+                statusFilter: [
+                ],
                 exportCSVText: 'Export as CSV',
                 loaders: {
                     next: false,
@@ -49,19 +69,28 @@
                     call_queue: 'Call Queue',
                     consented: 'Consented',
                     soft_rejected: 'Soft Declined',
-                    hard_declined: 'Hard Declined',
+                    rejected: 'Hard Declined',
                     utc: 'Unreachable',
                     queue_auto_enrollment: 'Queued for Self-enrollment',
                 },
+                statusOptions: [
+                    {id: 'call_queue', text: 'Call Queue'},
+                    {id: 'consented', text: 'Consented'},
+                    {id: 'soft_rejected', text: 'Soft Declined'},
+                    {id: 'rejected', text: 'Hard Declined'},
+                    {id: 'utc', text: 'Unreachable'},
+                    {id: 'queue_auto_enrollment', text: 'Queued for Self-enrollment'},
+                ],
                 loading: false,
                 hideStatus: ['ineligible'],
-                columns: ['id', 'user_id', 'mrn', 'first_name', 'last_name', 'care_ambassador_name','status', 'source', 'enrollment_non_responsive', 'auto_enrollment_triggered', 'practice_name', 'provider_name', 'lang', 'requested_callback', 'total_time_spent', 'attempt_count', 'last_attempt_at',
+                columns: ['id', 'user_id', 'mrn', 'first_name', 'last_name', 'care_ambassador_name','status','source', 'enrollment_non_responsive', 'auto_enrollment_triggered', 'practice_name', 'provider_name', 'lang', 'requested_callback', 'total_time_spent', 'attempt_count', 'last_attempt_at',
                     'last_call_outcome', 'last_call_outcome_reason', 'address', 'address_2', 'city', 'state', 'zip', 'primary_phone','home_phone', 'cell_phone',  'other_phone', 'dob', 'preferred_days', 'preferred_window',
                     'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'has_copay', 'email', 'last_encounter', 'created_at', 'updated_at'],
                 options: {
                     requestAdapter(data) {
                         if (typeof (self) !== 'undefined') {
                             data.query.hideStatus = self.hideStatus;
+                            data.query.status = self.statusFilter;
                         }
                         return data;
                     },
@@ -77,23 +106,14 @@
                         'has-copay': 'min-width-50',
                         'user_id': 'min-width-80',
                         'mrn': 'min-width-80',
-                        'lang': 'min-width-80'
-                    },
-                    listColumns: {
-                        status: [
-                            {id: 'call_queue', text: 'Call Queue'},
-                            {id:'consented', text: 'Consented'},
-                            {id:'soft_rejected', text: 'Soft Declined'},
-                            {id: 'hard_declined', text: 'Hard Declined'},
-                            {id:'utc', text: 'Unreachable'},
-                            {id:'queue_auto_enrollment', text:'Queued for Self-enrollment'},
-                        ],
+                        'lang': 'min-width-80',
+                        'status': 'min-width-300'
                     },
                     perPage: 50,
                     perPageValues: [10, 25, 50, 100, 200],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
-                    filterable: ['hideStatus', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status','source', 'requested_callback', 'eligibility_job_id', 'enrollment_non_responsive', 'last_attempt_at', 'auto_enrollment_triggered','medical_record_id', 'practice_name', 'provider_name', 'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'attempt_count', 'primary_phone', 'home_phone', 'cell_phone', 'other_phone'],
+                    filterable: ['hideStatus', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'source', 'requested_callback', 'eligibility_job_id', 'enrollment_non_responsive', 'last_attempt_at', 'auto_enrollment_triggered','medical_record_id', 'practice_name', 'provider_name', 'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'attempt_count', 'primary_phone', 'home_phone', 'cell_phone', 'other_phone'],
                     sortable: ['id', 'user_id', 'first_name', 'last_name', 'practice_name', 'provider_name', 'primary_insurance', 'status', 'source', 'created_at', 'state', 'city','enrollment_non_responsive', 'auto_enrollment_triggered', 'last_attempt_at', 'care_ambassador_name', 'attempt_count', 'requested_callback'],
                 },
             }
@@ -179,6 +199,14 @@
         mounted() {
             Event.$on('refresh-table', this.refreshTable)
             console.info('mounted');
+
+            Event.$on('vue-tables.loading', function (data) {
+                self.loading = true;
+            });
+
+            Event.$on('vue-tables.loaded', function (data) {
+                self.loading = false;
+            });
         }
     }
 </script>
@@ -193,6 +221,14 @@
 
     .min-width-80 {
         min-width: 80px !important;
+    }
+
+    .min-width-200 {
+        min-width: 200px !important;
+    }
+
+    .min-width-300 {
+        min-width: 300px !important;
     }
 
 </style>
