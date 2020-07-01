@@ -7,6 +7,8 @@
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
+use Zwijn\Monolog\Formatter\LogdnaFormatter;
+use Zwijn\Monolog\Handler\LogdnaHandler;
 
 return [
     /*
