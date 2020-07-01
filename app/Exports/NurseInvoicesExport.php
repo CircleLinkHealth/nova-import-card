@@ -28,7 +28,8 @@ class NurseInvoicesExport
     public function collection()
     {
         return  $this->invoices->map(function ($invoice) {
-            if ( ! empty($invoice->invoice_data)) {
+            $invoice = $invoice->first();
+            if ( ! empty($invoice)) {
                 return [
                     'extra_time' => 0 === $invoice->invoice_data['addedTimeAmount'] ? '-' : $invoice->invoice_data['addedTimeAmount'],
                     'bonus'      => 0 === $invoice->invoice_data['bonus'] ? '-' : $invoice->invoice_data['bonus'],
