@@ -11,6 +11,7 @@ use App\Services\AttachDisputesToTimePerDay;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Http\Controllers\InvoiceReviewController;
@@ -28,19 +29,16 @@ class GenerateInvoiceDownload
     /**
      * @var Collection
      */
-    private $invoices;
+    private $invoicesPerPractice;
 
     /**
      * GenerateInvoiceDownload constructor.
-     *
-     * @param $downloadFormat
-     * @param $date
      */
-    public function __construct(Collection $invoices, $downloadFormat, $date)
+    public function __construct(Collection $invoicesPerPractice, string $downloadFormat, \Carbon\Carbon $date)
     {
-        $this->invoices       = $invoices;
-        $this->date           = $date;
-        $this->downloadFormat = $downloadFormat;
+        $this->invoicesPerPractice = $invoicesPerPractice;
+        $this->date                = $date;
+        $this->downloadFormat      = $downloadFormat;
     }
 
     public function generateExportableInvoices()
@@ -56,17 +54,22 @@ class GenerateInvoiceDownload
 
     public function generateInvoiceCsv()
     {
-        $month        = Carbon::parse($this->date)->toDateString();
-        $downloadName = trim("$month").'-'.now()->toDateString();
+        $month    = Carbon::parse($this->date)->toDateString();
+        $mediaIds = [];
+        foreach ($this->invoicesPerPractice as $practiceId => $invoices) {
+            $practice     = Practice::findOrFail($practiceId);
+            $downloadName = trim($practice->display_name).'-'.$month;
+            $mediaIds[]   = (new FromArray(
+                "$downloadName.csv",
+                (new NurseInvoicesExport(
+                    $invoices
+                ))->collection(),
+                [
+                ]
+            ))->storeAndAttachMediaTo($practice, "patient_report_for_{$month}");
+        }
 
-        return (new FromArray(
-            "$downloadName.csv",
-            (new NurseInvoicesExport(
-                $this->invoices
-            ))->collection(),
-            [
-            ]
-        ))->storeAndAttachMediaTo(SaasAccount::whereSlug('circlelink-health')->first(), "patient_report_for_{$month}");
+        return $mediaIds;
     }
 
     /**
@@ -123,7 +126,8 @@ class GenerateInvoiceDownload
         $path = storage_path("download/$downloadName.pdf");
 
         $downloadableInvoices = [];
-        foreach ($this->invoices as $invoice) {
+        foreach ($this->invoicesPerPractice as $invoice) {
+//            @todo:fix me
             $nurseUserId            = Nurse::findOrFail($invoice->nurse_info_id)->user_id;
             $args                   = $this->getInvoiceArgs($invoice, $nurseUserId);
             $downloadableInvoices[] = $pdfService->createPdfFromView('nurseinvoices::reviewInvoice', $args);

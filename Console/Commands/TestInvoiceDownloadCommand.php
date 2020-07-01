@@ -9,6 +9,7 @@ namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Jobs\CollectNursesWithInvoice;
+use CircleLinkHealth\NurseInvoices\Jobs\CollectPracticeInvoices;
 use Illuminate\Console\Command;
 
 class TestInvoiceDownloadCommand extends Command

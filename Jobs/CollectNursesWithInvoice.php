@@ -16,7 +16,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Modules\Nurseinvoices\GenerateInvoiceDownload;
-use Modules\Nurseinvoices\Services\DownloadNurseInvoiceService;
 
 class CollectNursesWithInvoice implements ShouldQueue
 {
@@ -61,8 +60,7 @@ class CollectNursesWithInvoice implements ShouldQueue
         $startDate = $this->month->copy()->startOfMonth();
         $endDate   = $this->month->copy()->endOfMonth();
 
-        $invoices = [];
-
+        $invoicesPerPractice = collect();
         User::with([
             'nurseInfo' => function ($nurseInfo) use ($startDate, $endDate) {
                 $nurseInfo->with(
@@ -76,6 +74,7 @@ class CollectNursesWithInvoice implements ShouldQueue
             'pageTimersAsProvider' => function ($pageTimer) use ($startDate, $endDate) {
                 $pageTimer->whereBetween('start_time', [$startDate, $endDate]);
             },
+            'primaryPractice',
         ])
             ->whereHas('nurseInfo.invoices', function ($invoice) use ($startDate, $endDate) {
                 $invoice->where('month_year', $startDate);
@@ -99,23 +98,23 @@ class CollectNursesWithInvoice implements ShouldQueue
             })
             ->whereIn('program_id', $this->practiceIds)
             ->select('id', 'program_id')
-            ->chunk(20, function ($users) use ($startDate, $endDate, &$invoices) {
-                foreach ($users as $user) {
-                    $invoices[] = $user->nurseInfo->invoices;
-                }
+            ->chunk(20, function ($users) use ($startDate, $endDate, &$invoicesPerPractice) {
+                $invoicesPerPractice = $users->mapToGroups(function ($user) {
+                    return [
+                        $user->primaryPractice->id => $user->nurseInfo->invoices,
+                    ];
+                });
             });
 
-        $invoicesFlatten = collect($invoices)->flatten();
-
-        if (empty($invoicesFlatten)) {
+        if (empty($invoicesPerPractice)) {
             Log::warning('Invoices to download not found');
 
             return;
         }
 
-        $invoiceDocument = (new GenerateInvoiceDownload($invoicesFlatten, $this->downloadFormat, $startDate))->generateExportableInvoices();
+        $invoiceDocument = (new GenerateInvoiceDownload($invoicesPerPractice, $this->downloadFormat, $startDate))->generateExportableInvoices();
 
-        $this->auth->notify(new NurseInvoicesDownloaded([$invoiceDocument->id], $startDate));
+        $this->auth->notify(new NurseInvoicesDownloaded(collect($invoiceDocument)->pluck('id')->toArray(), $startDate));
         //        Notify user - admin. NurseInvoicesDownloaded
     }
 }
