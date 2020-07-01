@@ -24,6 +24,10 @@ class CollectNursesWithInvoice implements ShouldQueue
     use Queueable;
     use SerializesModels;
     /**
+     * @var User
+     */
+    private $auth;
+    /**
      * @var string
      */
     private $downloadFormat;
@@ -38,11 +42,12 @@ class CollectNursesWithInvoice implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(array $practiceIds, string $downloadFormat, Carbon $month)
+    public function __construct(array $practiceIds, string $downloadFormat, Carbon $month, User $auth)
     {
         $this->practiceIds    = $practiceIds;
         $this->downloadFormat = $downloadFormat;
         $this->month          = $month;
+        $this->auth           = $auth;
     }
 
     /**
@@ -107,9 +112,9 @@ class CollectNursesWithInvoice implements ShouldQueue
             return;
         }
 
-        $invoiceDownloadLink = $downloadNurseInvoiceService->invoicesDownloadLink($invoicesFlatten, $this->downloadFormat, $startDate);
-        $x                   = 1;
+        $invoiceDocument = $downloadNurseInvoiceService->invoicesDownloadLink($invoicesFlatten, $this->downloadFormat, $startDate);
 
+        $this->auth->notify(new NurseInvoicesDownloaded([$invoiceDocument->id], $startDate));
         //        Notify user - admin. NurseInvoicesDownloaded
     }
 }

@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Jobs\CollectNursesWithInvoice;
 use Illuminate\Console\Command;
 
@@ -42,9 +43,10 @@ class TestInvoiceDownloadCommand extends Command
      */
     public function handle()
     {
+        $auth           = User::findOrFail(13246);
         $downloadFormat = 'csv'; // Or CSV.
         $practiceIds    = [8, 24];
         $month          = Carbon::now();
-        CollectNursesWithInvoice::dispatch($practiceIds, $downloadFormat, $month)->onQueue('low');
+        CollectNursesWithInvoice::dispatch($practiceIds, $downloadFormat, $month, $auth)->onQueue('low');
     }
 }

@@ -67,6 +67,7 @@ class NurseInvoice extends Model implements HasMedia, Pdfable
     use HasMediaTrait;
     use NotificationAttachable;
     use Nursable;
+    const CSV_DOWNLOAD_FORMAT = 'csv';
 
     const PDF_DOWNLOAD_FORMAT = 'pdf';
 

@@ -14,9 +14,8 @@ class DownloadNurseInvoiceService
 {
     /**
      * @param $date
-     * @param array $practiceIds
      *
-     * @return array
+     * @return array|\Spatie\MediaLibrary\Models\Media
      */
     public function invoicesDownloadLink(Collection $invoices, string $downloadFormat, $date)
     {

@@ -50,8 +50,13 @@ Route::prefix('nurseinvoices')->middleware(['auth'])->group(function () {
         'prefix' => 'admin/download',
     ], function () {
         Route::get('invoices', [
-            'uses' => 'InvoicesDownload\TestDownloadInvoice@collectInvoicesFor',
+            'uses' => 'TestDownloadInvoice@collectInvoicesFor',
             'as'   => 'collect.nurses.invoices',
         ])->middleware('auth');
     });
+
+    Route::get('download-zipped-invoices/{user_id}/{media_ids}', [
+        'uses' => 'InvoiceDownloadController@downloadZippedInvoices',
+        'as'   => 'download.zipped.invoices',
+    ])->middleware('signed');
 });

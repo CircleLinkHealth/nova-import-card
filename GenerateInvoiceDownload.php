@@ -6,6 +6,7 @@
 
 namespace Modules\Nurseinvoices;
 
+use App\Exports\NurseInvoicesExport;
 use App\Services\AttachDisputesToTimePerDay;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Core\Services\PdfService;
@@ -40,12 +41,17 @@ class GenerateInvoiceDownload
 
     public function generateInvoiceCsv()
     {
-        $rows = [];
-        foreach ($this->invoices as $invoice) {
-            $rows[] = $this->makeRow($invoice);
-        }
+        $month        = Carbon::parse($this->date)->toDateString();
+        $downloadName = trim("$month").'-'.now()->toDateString();
 
-        $x = 1;
+        return (new FromArray(
+            "$downloadName.csv",
+            (new NurseInvoicesExport(
+                $this->invoices
+            ))->collection(),
+            [
+            ]
+        ))->storeAndAttachMediaTo(SaasAccount::whereSlug('circlelink-health')->first(), "patient_report_for_{$month}");
     }
 
     /**
@@ -85,30 +91,6 @@ class GenerateInvoiceDownload
         );
     }
 
-    private function makeInvoicesCsv(string $downloadName, object $invoice)
-    {
-        \Storage::disk('storage')
-            ->makeDirectory('download');
-
-        $path = storage_path("download/$downloadName");
-
-        $csv = (new FromArray(
-            "$downloadName.csv",
-            (new NurseInvoiceCsvGenerator($invoice))->toCsvArray(),
-            [
-            ]
-        ));
-//        $x = 1;
-//
-//        \Excel::store($csv, $path, 's3');
-
-//
-//        return SaasAccount::whereSlug('circlelink-health')
-//            ->first()
-//            ->addMedia($path)
-//            ->toMediaCollection("invoices_for_{$this->date->toDateString()}_xlsx");
-    }
-
     /**
      * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\DiskDoesNotExist
      * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\FileDoesNotExist
@@ -137,34 +119,6 @@ class GenerateInvoiceDownload
         return SaasAccount::whereSlug('circlelink-health')
             ->first()
             ->addMedia($path)
-            ->toMediaCollection("invoice_for_{$this->date->toDateString()}");
-    }
-
-    private function makeRow($invoice)
-    {
-        $invoicesForMonth = Carbon::parse($this->date)->toDateString();
-        $downloadName     = trim("$invoicesForMonth").'-csv'.'-'.now()->toDateString();
-
-        return $this->makeInvoicesCsv($downloadName, $invoice);
-    }
-
-    private function toCsvArray(object $invoice)
-    {
-        $invoiceData = $invoice->invoice_data;
-
-        if (empty($invoiceData)) {
-            throw new \Exception("Invoice data for invoice id {$invoice->id} not found");
-        }
-
-//        if ($invoiceData['variablePay']) {
-//            if (isset($invoiceData['altAlgoEnabled']) && ! $invoiceData['altAlgoEnabled']) {
-//
-//            }
-//        }
-
-        return [
-            'extra_time' => $invoiceData['addedTimeAmount'],
-            'bonus'      => $invoiceData['bonus'],
-        ];
+            ->toMediaCollection("pdf_invoices_for_{$this->date->toDateString()}");
     }
 }
