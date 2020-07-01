@@ -8,6 +8,7 @@ namespace Tests\Unit;
 
 use App\Call;
 use App\Http\Controllers\NotesController;
+use App\Services\Calls\SchedulerService;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -98,7 +99,9 @@ class PatientWithdrawnTest extends TestCase
         $this->assertTrue(Patient::ENROLLED == $this->patient->getCcmStatus());
         $this->assertTrue($this->patient->onFirstCall());
 
-        $this->makeCallToUserController();
+        $this->actingAs($this->admin)->call('GET', route('admin.users.doAction'), $this->getAllUsersActionInput());
+
+        $this->patient->load('patientInfo');
 
         $this->assertTrue(Patient::WITHDRAWN_1ST_CALL == $this->patient->getCcmStatus());
     }
@@ -125,7 +128,16 @@ class PatientWithdrawnTest extends TestCase
 
     public function test_withdrawn_from_patient_profile_page()
     {
-        $this->assertTrue(true);
+        $this->actingAs($this->nurse);
+
+        $this->assertTrue(Patient::ENROLLED == $this->patient->getCcmStatus());
+        $this->assertTrue($this->patient->onFirstCall());
+
+        $this->actingAs($this->admin)->call('POST', route('patient.demographics.store'), $this->getPatientProfilePageInput());
+
+        $this->patient->load('patientInfo');
+
+        $this->assertTrue(Patient::WITHDRAWN_1ST_CALL == $this->patient->getCcmStatus());
     }
 
     private function createPatientCall($status = 'scheduled')
@@ -156,7 +168,32 @@ class PatientWithdrawnTest extends TestCase
             'action'           => 'withdraw',
             'withdrawn_reason' => 'test',
             'users'            => [$this->patient->id],
+            'withdrawn-reason' => 'test',
         ];
+    }
+
+    private function getPatientProfilePageInput()
+    {
+        $arrayWithPatientData = array_merge($this->patient->attributesToArray(), $this->patient->patientInfo->attributesToArray());
+
+        return array_merge($arrayWithPatientData, [
+            'ccm_status'              => 'withdrawn',
+            'daily_reminder_optin'    => 'Y',
+            'daily_reminder_time'     => '08:00',
+            'daily_reminder_areas'    => 'TBD',
+            'hospital_reminder_optin' => 'Y',
+            'hospital_reminder_time'  => '08:00',
+            'hospital_reminder_areas' => 'TBD',
+            'qualification'           => null,
+            'mrn_number'              => '12312312314',
+            'days'                    => ['1', '2'],
+            'window_start'            => '08:00:00',
+            'window_end'              => '16:00:00',
+            'frequency'               => '2',
+            'consent_date'            => '2019-06-06',
+            'gender'                  => 'F',
+            'home_phone_number'       => '888-888-8888',
+        ]);
     }
 
     /**
@@ -190,13 +227,19 @@ class PatientWithdrawnTest extends TestCase
 
     private function makeCallToNotesController($status)
     {
-        $this->actingAs($this->admin)->call('POST', route('admin.users.doAction'), $this->getAllUsersActionInput());
+        //still not able to make a request to a controller that uses Safe Request with $this->call
+        //This is a workaround
+        $request = $this->safeRequest(
+            route('patient.note.store', ['patientId' => $this->patient->id]),
+            'POST',
+            $this->getStoreCallInput($status)
+        );
+
+        $controller = app(NotesController::class);
+
+        $controller->store($request, app(SchedulerService::class), $this->patient->id);
 
         $this->patient->load('patientInfo');
-    }
-
-    private function makeCallToUserController()
-    {
     }
 
     private function setupPatient()
