@@ -14,7 +14,6 @@ use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\NurseInvoices\Http\Controllers\InvoiceReviewController;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Excel;
 
 class GenerateInvoiceDownload
 {
@@ -93,19 +92,21 @@ class GenerateInvoiceDownload
 
         $path = storage_path("download/$downloadName");
 
-        $csv = new FromArray(
+        $csv = (new FromArray(
             "$downloadName.csv",
-            $this->toCsvArray($invoice),
+            (new NurseInvoiceCsvGenerator($invoice))->toCsvArray(),
             [
-                'extra time',
-                'bonus',
             ]
-        );
+        ));
+//        $x = 1;
+//
+//        \Excel::store($csv, $path, 's3');
 
-        return SaasAccount::whereSlug('circlelink-health')
-            ->first()
-            ->addMedia($path)
-            ->toMediaCollection("invoices_for_{$this->date->toDateString()}_xlsx");
+//
+//        return SaasAccount::whereSlug('circlelink-health')
+//            ->first()
+//            ->addMedia($path)
+//            ->toMediaCollection("invoices_for_{$this->date->toDateString()}_xlsx");
     }
 
     /**
