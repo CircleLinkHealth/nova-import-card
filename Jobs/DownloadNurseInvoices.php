@@ -8,6 +8,7 @@ namespace CircleLinkHealth\NurseInvoices\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Notifications\NurseInvoicesDownloaded;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -15,9 +16,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Modules\Nurseinvoices\GenerateInvoiceDownload;
+use Modules\Nurseinvoices\GenerateInvoicesExport;
 
-class CollectNursesWithInvoice implements ShouldQueue
+class DownloadNurseInvoices implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -112,9 +113,14 @@ class CollectNursesWithInvoice implements ShouldQueue
             return;
         }
 
-        $invoiceDocument = (new GenerateInvoiceDownload($invoicesPerPractice, $this->downloadFormat, $startDate))->generateExportableInvoices();
+        if (NurseInvoice::PDF_DOWNLOAD_FORMAT === $this->downloadFormat) {
+            $invoiceDocument = (new GenerateInvoicesExport($invoicesPerPractice, $this->downloadFormat, $startDate))->generateInvoicePdf();
+            $this->auth->notify(new NurseInvoicesDownloaded(collect($invoiceDocument)->pluck('mediaIds')->flatten()->toArray(), $startDate));
+        }
 
-        $this->auth->notify(new NurseInvoicesDownloaded(collect($invoiceDocument)->pluck('id')->toArray(), $startDate));
-        //        Notify user - admin. NurseInvoicesDownloaded
+        if (NurseInvoice::CSV_DOWNLOAD_FORMAT === $this->downloadFormat) {
+            $invoiceDocument = (new GenerateInvoicesExport($invoicesPerPractice, $this->downloadFormat, $startDate))->generateInvoiceCsv();
+            $this->auth->notify(new NurseInvoicesDownloaded(collect($invoiceDocument)->pluck('id')->toArray(), $startDate));
+        }
     }
 }
