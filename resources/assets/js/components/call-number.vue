@@ -1,6 +1,6 @@
 <template>
     <div>
-        <loader v-if="waiting"></loader>
+        <loader v-if="waiting && device === null"></loader>
         <div v-if="debug">
             <button class="btn btn-circle" @click="togglePatientCallMessage('debug', true)"
                     :class="isCurrentlyOnPhone ? 'btn-danger': 'btn-success'">
@@ -29,7 +29,7 @@
         <div v-show="closeCountdown > 0">This window will close in <span
                 class="countdown-seconds">{{closeCountdown}}</span> seconds.
         </div>
-        <template v-if="!waiting">
+        <template v-if="!(waiting && device === null)">
             <div class="row">
                 <div class="col-xs-12">
                     <div class="col-xs-9 no-padding">
@@ -382,22 +382,28 @@
                             this.queuedNumbersForConference.push({number, isUnlisted, isCallToPatient});
                             this.createConference();
                         } else {
-                            this.log = 'Calling ' + number;
-                            this.connection = this.device.connect(this.getTwimlAppRequest(number, isUnlisted, isCallToPatient));
+                            this.initTwilio()
+                                .then(() => {
+                                    this.log = 'Calling ' + number;
+                                    this.connection = this.device.connect(this.getTwimlAppRequest(number, isUnlisted, isCallToPatient));
 
-                            this.connection.on('warning', (warningName) => {
-                                const temp = new Set(self.warningEvents);
-                                temp.add(warningName);
-                                self.warningEvents = Array.from(temp);
-                                Logger.warn(`WARNING: ${warningName}`, {meta: {'connection': 'warning'}});
-                            });
+                                    this.connection.on('warning', (warningName) => {
+                                        const temp = new Set(self.warningEvents);
+                                        temp.add(warningName);
+                                        self.warningEvents = Array.from(temp);
+                                        Logger.warn(`WARNING: ${warningName}`, {meta: {'connection': 'warning'}});
+                                    });
 
-                            this.connection.on('warning-cleared', (warningName) => {
-                                const temp = new Set(self.warningEvents);
-                                temp.delete(warningName);
-                                self.warningEvents = Array.from(temp);
-                                Logger.warn(`WARNING-CLEARED: ${warningName}`, {meta: {'connection': 'warning-cleared'}});
-                            });
+                                    this.connection.on('warning-cleared', (warningName) => {
+                                        const temp = new Set(self.warningEvents);
+                                        temp.delete(warningName);
+                                        self.warningEvents = Array.from(temp);
+                                        Logger.warn(`WARNING-CLEARED: ${warningName}`, {meta: {'connection': 'warning-cleared'}});
+                                    });
+                                })
+                                .catch(err => {
+
+                                });
                         }
                     }
 
@@ -699,64 +705,69 @@
                 self.log = "Fetching token from server";
                 self.ready = false;
                 self.waiting = true;
-                self.axios.get(url, {withCredentials: true})
-                    .then(response => {
-                        self.log = 'Initializing Twilio';
-                        self.device = new Device(response.data.token, {
-                            closeProtection: true, //show warning when closing the page with active call - NOT WORKING
-                            debug: true,
-                            warnings: true,
-                            edge: ['ashburn', 'roaming'],
+                return new Promise((resolve, reject) => {
+                    self.axios.get(url, {withCredentials: true})
+                        .then(response => {
+                            self.log = 'Initializing Twilio';
+                            self.device = new Device(response.data.token, {
+                                closeProtection: true, //show warning when closing the page with active call - NOT WORKING
+                                debug: true,
+                                warnings: true,
+                                edge: ['ashburn', 'roaming'],
+                            });
+
+                            self.device.on('disconnect', () => {
+                                //exit call mode when all calls are disconnected
+                                EventBus.$emit('tracker:call-mode:exit');
+                                console.log('twilio device: disconnect');
+
+                                self.reportWarnings();
+                                self.resetPhoneState();
+                                self.connection = null;
+                                self.log = 'Call ended.';
+
+                                self.closeWindow(self.endCallWindowCloseDelay, false);
+
+                                //make sure UI on the other page is up to date
+                                sendRequest('call_ended', {number: {value: '', muted: false}})
+                                    .then(() => {
+
+                                    })
+                                    .catch(err => console.error(err));
+
+                            });
+
+                            self.device.on('offline', () => {
+                                //this event can be raised on a temporary disconnection
+                                //we should disable any actions when this event is fired
+                                console.log('twilio device: offline');
+                                self.twilioOffline();
+                                self.log = 'Offline.';
+                            });
+
+                            self.device.on('error', (err) => {
+                                self.reportError(err.code, err.message);
+                                self.resetPhoneState();
+                                self.log = err.message;
+                            });
+
+                            self.device.on('ready', () => {
+                                console.log('twilio device: ready');
+                                self.log = 'Ready to make call';
+                                self.twilioOnline();
+                                resolve();
+                            });
+                        })
+                        .catch(error => {
+                            console.log(error);
+                            self.hasError = true;
+                            self.log = 'There was an error. Please refresh the page. If the issue persists please let CLH know via slack.';
+                            self.ready = false;
+                            self.waiting = false;
+                            reject(error);
                         });
+                });
 
-                        self.device.on('disconnect', () => {
-                            //exit call mode when all calls are disconnected
-                            EventBus.$emit('tracker:call-mode:exit');
-                            console.log('twilio device: disconnect');
-
-                            self.reportWarnings();
-                            self.resetPhoneState();
-                            self.connection = null;
-                            self.log = 'Call ended.';
-
-                            self.closeWindow(self.endCallWindowCloseDelay, false);
-
-                            //make sure UI on the other page is up to date
-                            sendRequest('call_ended', {number: {value: '', muted: false}})
-                                .then(() => {
-
-                                })
-                                .catch(err => console.error(err));
-
-                        });
-
-                        self.device.on('offline', () => {
-                            //this event can be raised on a temporary disconnection
-                            //we should disable any actions when this event is fired
-                            console.log('twilio device: offline');
-                            self.twilioOffline();
-                            self.log = 'Offline.';
-                        });
-
-                        self.device.on('error', (err) => {
-                            self.reportError(err.code, err.message);
-                            self.resetPhoneState();
-                            self.log = err.message;
-                        });
-
-                        self.device.on('ready', () => {
-                            console.log('twilio device: ready');
-                            self.log = 'Ready to make call';
-                            self.twilioOnline();
-                        });
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        self.hasError = true;
-                        self.log = 'There was an error. Please refresh the page. If the issue persists please let CLH know via slack.';
-                        self.ready = false;
-                        self.waiting = false;
-                    });
             },
             reportWarnings: function () {
                 if (self.warningEvents.length === 0) {

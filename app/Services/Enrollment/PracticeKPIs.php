@@ -122,7 +122,7 @@ class PracticeKPIs
             if ( ! $enroller) {
                 continue;
             }
-            $data['total_cost'] += number_format($enroller->hourly_rate * $time / 3600, 2);
+            $data['total_cost'] += $enroller->hourly_rate * $time / 3600;
         }
 
         if ($data['unique_patients_called'] > 0 && $data['consented'] > 0) {
@@ -152,7 +152,7 @@ class PracticeKPIs
             $data['labor_rate'] = 'N/A';
         }
 
-        $data['total_cost'] = '$'.$data['total_cost'];
+        $data['total_cost'] = '$'.number_format($data['total_cost'], 2);
 
         return $data;
     }

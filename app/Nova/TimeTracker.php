@@ -7,16 +7,19 @@
 namespace App\Nova;
 
 use App\Constants;
-use App\Nova\Filters\NurseFilter;
+use App\Nova\Filters\BillableTimeFilter;
+use App\Nova\Filters\PageTimerDurationFilter;
 use App\Nova\Filters\TimestampFilter;
 use Carbon\Carbon;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
+use Suenerds\NovaSearchableBelongsToFilter\NovaSearchableBelongsToFilter;
 use Titasgailius\SearchRelations\SearchesRelations;
 
 class TimeTracker extends Resource
@@ -136,7 +139,7 @@ class TimeTracker extends Resource
         return [
             ID::make()->sortable(),
 
-            Text::make('Logger (i.e. Care Coach, Provider, Admin)', 'logger.display_name')
+            BelongsTo::make('Logger', 'logger', User::class)
                 ->sortable()
                 ->readonly(true),
 
@@ -196,7 +199,11 @@ class TimeTracker extends Resource
     public function filters(Request $request)
     {
         return [
-            new NurseFilter('provider_id'),
+            new BillableTimeFilter(),
+            new PageTimerDurationFilter(),
+            (new NovaSearchableBelongsToFilter())
+                ->fieldAttribute('logger')
+                ->filterBy('provider_id'),
             new TimestampFilter('From', 'start_time', 'from', Carbon::now()->startOfMonth()),
             new TimestampFilter('To', 'start_time', 'to', Carbon::now()->endOfMonth()),
         ];
