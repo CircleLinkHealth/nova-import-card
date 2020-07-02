@@ -78,6 +78,20 @@ class UserTotalTimeChecker
         return floatval($val);
     }
 
+    private function addFromCollection(string $key, string $entryName, Collection $source, Collection $target)
+    {
+        $entry = $source->get($entryName, null);
+        if (null !== $entry) {
+            $current = $target->get($entryName);
+            if ( ! $current) {
+                $current = collect([$key => $entry]);
+            } else {
+                $current->put($key, $entry);
+            }
+            $target->put($entryName, $current);
+        }
+    }
+
     /**
      * Check time track for each user
      * Will return a collection of two entries:
@@ -95,27 +109,13 @@ class UserTotalTimeChecker
 
         $timePerUser->each(function ($item, $key) use ($alerts, $maxHoursForDay, $thresholdForWeek) {
             /** @var Collection $result */
-            $result = $this->checkTimeForUser($key, $item, $maxHoursForDay, $thresholdForWeek);
-            $daily = $result->get('daily', null);
-            if ($daily) {
-                $current = $alerts->get('daily');
-                if ( ! $current) {
-                    $current = collect([$key => $daily]);
-                } else {
-                    $current->put($key, $daily);
-                }
-                $alerts->put('daily', $current);
-            }
-            $weekly = $result->get('weekly', null);
-            if ($weekly) {
-                $current = $alerts->get('weekly');
-                if ( ! $current) {
-                    $current = collect([$key => $weekly]);
-                } else {
-                    $current->put($key, $weekly);
-                }
-                $alerts->put('weekly', $current);
-            }
+            $parts = explode('_', $key);
+            $userId = intval($parts[0]);
+            $result = $this->checkTimeForUser($userId, $item, $maxHoursForDay, $thresholdForWeek);
+            $this->addFromCollection($key, 'daily', $result, $alerts);
+            $this->addFromCollection($key, 'daily_committed', $result, $alerts);
+            $this->addFromCollection($key, 'weekly', $result, $alerts);
+            $this->addFromCollection($key, 'weekly_committed', $result, $alerts);
         });
 
         return $alerts;
@@ -134,19 +134,22 @@ class UserTotalTimeChecker
         if ($coll->isEmpty()) {
             return $result;
         }
-        $lastEntry      = $coll->last();
-        $lastEntryHours = $this->secondsToHours($lastEntry->duration);
-        if ($lastEntryHours > 0 && $lastEntryHours > $maxHoursForDay) {
-            $result->put('daily', $lastEntryHours);
-        }
-
-        if ( ! $this->checkAccumulatedTime) {
-            return $result;
-        }
 
         /** @var Nurse $nurse */
         $nurse = Nurse::whereUserId($userId)->first();
         if ( ! $nurse) {
+            return $result;
+        }
+
+        $lastEntry          = $coll->last();
+        $lastEntryHours     = $this->secondsToHours($lastEntry->duration);
+        $lastEntryCommitted = $nurse->getHoursCommittedForCarbonDate(Carbon::parse($lastEntry->date));
+        if ($lastEntryHours > 0 && $lastEntryHours > $maxHoursForDay) {
+            $result->put('daily_committed', $lastEntryCommitted);
+            $result->put('daily', $lastEntryHours);
+        }
+
+        if ( ! $this->checkAccumulatedTime) {
             return $result;
         }
 
@@ -169,6 +172,7 @@ class UserTotalTimeChecker
         $totalDurationOfWeekHours = $this->secondsToHours($totalDurationOfWeekSeconds);
 
         if ($maxHoursAllowed > 0 && $totalDurationOfWeekHours > $maxHoursAllowed) {
+            $result->put('weekly_committed', $totalCommittedHours);
             $result->put('weekly', $totalDurationOfWeekHours);
         }
 
@@ -232,19 +236,21 @@ class UserTotalTimeChecker
     private function getTimePerUser()
     {
         $result = collect();
-        if ($this->userId) {
-            $coll = $this->getTimePerDay($this->userId, $this->start, $this->end);
-            $result->put($this->userId, $coll);
-        } else {
-            User::ofType('care-center')
-                ->whereHas('nurseInfo', function ($q) {
+
+        User::ofType('care-center')
+            ->where(function ($q) {
+                if ($this->userId) {
+                    return $q->where('id', '=', $this->userId);
+                }
+
+                return $q->whereHas('nurseInfo', function ($q) {
                     $q->where('status', 'active');
-                })
-                ->each(function ($user) use ($result) {
-                    $coll = $this->getTimePerDay($user->id, $this->start, $this->end);
-                    $result->put($user->id, $coll);
                 });
-        }
+            })
+            ->each(function ($user) use ($result) {
+                $coll = $this->getTimePerDay($user->id, $this->start, $this->end);
+                $result->put("{$user->id}_{$user->display_name}", $coll);
+            });
 
         return $result;
     }

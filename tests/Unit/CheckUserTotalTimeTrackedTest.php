@@ -57,6 +57,7 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $checker = new UserTotalTimeChecker($start, $end, true, $nurse->id);
         $alerts  = $checker->check();
         $this->assertFalse($alerts->has('daily'));
+        $this->assertFalse($alerts->has('daily_committed'));
 //        $this->assertFalse($alerts->has('weekly'));
     }
 
@@ -76,6 +77,7 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $checker = new UserTotalTimeChecker($start, $end, false, $nurse->id);
         $alerts  = $checker->check();
         $this->assertFalse($alerts->has('daily'));
+        $this->assertFalse($alerts->has('daily_committed'));
     }
 
     public function test_it_raises_alert_for_total_time_over_8_hours_and_spanning_in_2_days()
@@ -96,7 +98,8 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $checker = new UserTotalTimeChecker($start, $end, false, $nurse->id);
         $alerts  = $checker->check();
         $this->assertTrue($alerts->has('daily'));
-        $this->assertTrue($alerts->get('daily')->has($nurse->id));
+        $this->assertTrue($alerts->get('daily')->has("{$nurse->id}_{$nurse->display_name}"));
+        $this->assertTrue($alerts->get('daily_committed')->has("{$nurse->id}_{$nurse->display_name}"));
     }
 
     public function test_it_raises_alert_for_total_time_over_8_hours_in_a_day()
@@ -117,7 +120,8 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $checker = new UserTotalTimeChecker($start, $end, false, $nurse->id);
         $alerts  = $checker->check();
         $this->assertTrue($alerts->has('daily'));
-        $this->assertTrue($alerts->get('daily')->has($nurse->id));
+        $this->assertTrue($alerts->get('daily')->has("{$nurse->id}_{$nurse->display_name}"));
+        $this->assertTrue($alerts->get('daily_committed')->has("{$nurse->id}_{$nurse->display_name}"));
     }
 
     public function test_it_raises_alert_for_total_time_over_max_in_last_7_days()
@@ -160,8 +164,9 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $alerts  = $checker->check();
         $this->assertFalse($alerts->has('daily'));
         $this->assertTrue($alerts->has('weekly'));
-        $this->assertTrue($alerts->get('weekly')->has($nurse->id));
-        $time = $alerts->get('weekly')->get($nurse->id);
+        $this->assertTrue($alerts->get('weekly')->has("{$nurse->id}_{$nurse->display_name}"));
+        $this->assertTrue($alerts->get('weekly_committed')->has("{$nurse->id}_{$nurse->display_name}"));
+        $time = $alerts->get('weekly')->get("{$nurse->id}_{$nurse->display_name}");
         $this->assertTrue($time > $maxAllowed);
     }
 }
