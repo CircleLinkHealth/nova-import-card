@@ -28,7 +28,7 @@ class ChangePatientMonthlySummariesApprovedColumnToBooleanType extends Migration
     {
         if (Schema::hasColumn('patient_monthly_summaries', 'approved')) {
             Schema::table('patient_monthly_summaries', function (Blueprint $table) {
-                $table->boolean('approved')->nullable(0)->default(0)->change();
+                $table->boolean('approved')->nullable(false)->default(0)->change();
             });
         }
     }
