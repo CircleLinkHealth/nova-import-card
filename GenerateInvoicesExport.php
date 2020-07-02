@@ -50,8 +50,9 @@ class GenerateInvoicesExport
                 (new InvoicesExportFormat(
                     $invoices
                 ))->toCsvArray(),
-                InvoicesExportFormat::headings()
-            ))->storeAndAttachMediaTo($practice, $downloadName);
+                [
+                ]
+            ))/*->storeAndAttachMediaTo($practice, $downloadName)*/;
         }
 
         return $medias;

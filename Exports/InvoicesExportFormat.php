@@ -41,14 +41,17 @@ class InvoicesExportFormat
         })->toArray();
     }
 
-    public static function headings(): array
-    {
-//        Keep the same order as toCsvArray() keys.
-        return [
-            'Extra Time',
-            'Bonus',
-        ];
-    }
+//    public static function headings(): array
+//    {
+    ////        Keep the same order as toCsvArray() keys.
+//        return [
+//            'Hour Total',
+//            'Visit/Hour Pay',
+//            'Extra Time',
+//            'Bonus',
+//            'Pay Total',
+//        ];
+//    }
 
     public function toCsvArray()
     {
@@ -56,8 +59,13 @@ class InvoicesExportFormat
             $invoice = $invoice->first();
             if ( ! empty($invoice)) {
                 return [
-                    'extra_time' => 0 === $invoice->invoice_data['addedTimeAmount'] ? '-' : $invoice->invoice_data['addedTimeAmount'],
-                    'bonus'      => 0 === $invoice->invoice_data['bonus'] ? '-' : $invoice->invoice_data['bonus'],
+                    'Hour Total'  => 0 === $invoice->invoice_data['formattedSystemTime'] ? '-' : $invoice->invoice_data['formattedSystemTime'],
+                    'Visit Total' => 0 === $invoice->invoice_data['visitsCount'] ? '-' : $invoice->invoice_data['visitsCount'],
+                    //                    'Pay Structure'  => 0 === $invoice->invoice_data['visitsCount'] ? '-' : $invoice->invoice_data['visitsCount'],
+                    'Visit Hour Pay' => 0 === $invoice->invoice_data['baseSalary'] ? '-' : $invoice->invoice_data['baseSalary'],
+                    'Extra Time'     => 0 === $invoice->invoice_data['addedTimeAmount'] ? '-' : $invoice->invoice_data['addedTimeAmount'],
+                    'Bonus'          => 0 === $invoice->invoice_data['bonus'] ? '-' : $invoice->invoice_data['bonus'],
+                    'Pay Total'      => 0 === $invoice->invoice_data['invoiceTotalAmount'] ? '-' : $invoice->invoice_data['invoiceTotalAmount'],
                 ];
             }
 
