@@ -94,7 +94,7 @@ class CheckUserTotalTimeTracked extends Command
                 $userId = $parts[0];
                 $userDisplayName = $parts[1];
                 $rounded = round($time, 2);
-                $result .= "$userDisplayName[$userId]: $rounded hrs spent in CPM yesterday\n";
+                $result .= "${userDisplayName}[${userId}]: $rounded hrs spent in CPM yesterday\n";
             });
         }
         $weekly = $alerts->get('weekly');
@@ -111,7 +111,7 @@ class CheckUserTotalTimeTracked extends Command
                 $userId = $parts[0];
                 $userDisplayName = $parts[1];
                 $committedHours = $committedColl = $committedColl->get($key);
-                $result .= "$userDisplayName[$userId]: $rounded hrs spent in CPM vs $committedHours hrs committed in the last 7 days\n";
+                $result .= "${userDisplayName}[${userId}]: $rounded hrs spent in CPM vs $committedHours hrs committed in the last 7 days\n";
             });
         }
 
