@@ -15,10 +15,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Modules\Nurseinvoices\GenerateInvoicesExport;
 
-class DownloadNurseInvoices implements ShouldQueue
+class ExportAndDispatchInvoices implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -108,11 +109,16 @@ class DownloadNurseInvoices implements ShouldQueue
             });
 
         if (empty($invoicesPerPractice)) {
-            Log::warning('Invoices to download not found');
+            Log::warning("Invoices to download for {$startDate} not found");
 
             return;
         }
 
+        $this->generateInvoicesFormatAndDispatch($invoicesPerPractice, $startDate);
+    }
+
+    private function generateInvoicesFormatAndDispatch(Collection $invoicesPerPractice, Carbon $startDate)
+    {
         if (NurseInvoice::PDF_DOWNLOAD_FORMAT === $this->downloadFormat) {
             $invoiceDocument = (new GenerateInvoicesExport($invoicesPerPractice, $this->downloadFormat, $startDate))->generateInvoicePdf();
             $this->auth->notify(new NurseInvoicesDownloaded(collect($invoiceDocument)->pluck('mediaIds')->flatten()->toArray(), $startDate));

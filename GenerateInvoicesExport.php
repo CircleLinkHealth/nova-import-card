@@ -40,22 +40,21 @@ class GenerateInvoicesExport
 
     public function generateInvoiceCsv()
     {
-        $month    = Carbon::parse($this->date)->toDateString();
-        $mediaIds = [];
+        $month  = Carbon::parse($this->date)->toDateString();
+        $medias = [];
         foreach ($this->invoicesPerPractice as $practiceId => $invoices) {
             $practice     = Practice::findOrFail($practiceId);
             $downloadName = trim($practice->display_name).'-'.$month;
-            $mediaIds[]   = (new FromArray(
+            $medias[]     = (new FromArray(
                 "$downloadName.csv",
                 (new InvoicesExportFormat(
                     $invoices
                 ))->toCsvArray(),
-                [
-                ]
-            ))->storeAndAttachMediaTo($practice, "patient_report_for_{$month}");
+                InvoicesExportFormat::headings()
+            ))->storeAndAttachMediaTo($practice, $downloadName);
         }
 
-        return $mediaIds;
+        return $medias;
     }
 
     /**
@@ -64,13 +63,14 @@ class GenerateInvoicesExport
     public function generateInvoicePdf()
     {
         $data = [];
+//        Export invoices to pdf grouped by practice.
         foreach ($this->invoicesPerPractice as $practiceId => $invoices) {
             $practice         = Practice::find($practiceId);
             $invoicesForMonth = Carbon::parse($this->date)->toDateString();
             $downloadName     = trim("$invoicesForMonth").'-pdf'.'-'.$practice->display_name;
+            $pdfInvoices      = $this->makeInvoicesPdf($downloadName, $practice, $invoices);
 
-            $pdfInvoices = $this->makeInvoicesPdf($downloadName, $practice, $invoices);
-            $data[]      = [
+            $data[] = [
                 'invoice_url' => $pdfInvoices->getUrl(),
                 'mediaIds'    => [$pdfInvoices->id],
             ];
@@ -91,10 +91,7 @@ class GenerateInvoicesExport
     private function makeInvoicesPdf(string $downloadName, Practice $practice, Collection $invoices)
     {
         $pdfService = app(PdfService::class);
-
-        \Storage::disk('storage')
-            ->makeDirectory('download');
-        $path = storage_path("download/$downloadName.pdf");
+        $path       = storage_path("download/$downloadName.pdf");
 
         $pdfInvoices = (new InvoicesExportFormat($invoices))->exportToPdf($pdfService);
         $pdfService->mergeFiles($pdfInvoices, $path);
