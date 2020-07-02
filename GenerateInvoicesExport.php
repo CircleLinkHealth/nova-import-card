@@ -99,6 +99,6 @@ class GenerateInvoicesExport
 
         return $practice
             ->addMedia($path)
-            ->toMediaCollection("pdf_invoices_for_{$practice->display_name}{$this->date->toDateString()}");
+            ->toMediaCollection("$downloadName");
     }
 }

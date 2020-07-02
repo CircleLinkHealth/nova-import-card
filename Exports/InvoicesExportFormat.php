@@ -37,7 +37,7 @@ class InvoicesExportFormat
             $nurseUserId = Nurse::findOrFail($invoice->nurse_info_id)->user_id;
             $args = $this->getInvoiceArgs($invoice, $nurseUserId);
 
-            return $pdfService->createPdfFromView('nurseinvoices::reviewInvoice', $args);
+            return $pdfService->createPdfFromView('nurseinvoices::invoice-v3', array_merge($args, ['isPdf' => true]));
         })->toArray();
     }
 

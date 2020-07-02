@@ -45,7 +45,7 @@ class TestInvoiceDownloadCommand extends Command
     public function handle()
     {
         $auth           = User::findOrFail(13246);
-        $downloadFormat = NurseInvoice::CSV_DOWNLOAD_FORMAT; // CSV or PDF.
+        $downloadFormat = NurseInvoice::PDF_DOWNLOAD_FORMAT; // CSV or PDF.
         $practiceIds    = [8, 24];
         $month          = Carbon::now(); // Set a limit
         ExportAndDispatchInvoices::dispatch($practiceIds, $downloadFormat, $month, $auth)->onQueue('low');
