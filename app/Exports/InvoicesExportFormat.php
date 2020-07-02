@@ -29,13 +29,6 @@ class InvoicesExportFormat
         $this->invoices = $invoices;
     }
 
-//    public function headings(): array
-//    {
-//        return [
-//            'Extra Time',
-//            'Bonus',
-//        ];
-//    }
     public function exportToPdf(PdfService $pdfService)
     {
         return  $this->invoices->map(function ($invoice) use ($pdfService) {
@@ -45,6 +38,15 @@ class InvoicesExportFormat
 
             return $pdfService->createPdfFromView('nurseinvoices::reviewInvoice', $args);
         })->toArray();
+    }
+
+    public static function headings(): array
+    {
+//        Keep the same order as toCsvArray() keys.
+        return [
+            'Extra Time',
+            'Bonus',
+        ];
     }
 
     public function toCsvArray()
