@@ -57,19 +57,23 @@ class InvoicesExportFormat
     {
         return  $this->invoices->map(function ($invoice) {
             $invoice = $invoice->first();
-            if ( ! empty($invoice)) {
+            if (isset($invoice->invoice_data)) {
+                $baseSalary = $invoice->invoice_data['baseSalary'];
+
                 return [
-                    'Hour Total'  => 0 === $invoice->invoice_data['formattedSystemTime'] ? '-' : $invoice->invoice_data['formattedSystemTime'],
+                    'Nurse'       => $invoice->invoice_data['nurseFullName'],
+                    'Hour Total'  => 0 === $invoice->invoice_data['systemTimeInHours'] ? '-' : $invoice->invoice_data['systemTimeInHours'],
                     'Visit Total' => 0 === $invoice->invoice_data['visitsCount'] ? '-' : $invoice->invoice_data['visitsCount'],
                     //                    'Pay Structure'  => 0 === $invoice->invoice_data['visitsCount'] ? '-' : $invoice->invoice_data['visitsCount'],
-                    'Visit Hour Pay' => 0 === $invoice->invoice_data['baseSalary'] ? '-' : $invoice->invoice_data['baseSalary'],
+                    'Visit Hour Pay' => 0 === $baseSalary ? '-' : "$$baseSalary",
                     'Extra Time'     => 0 === $invoice->invoice_data['addedTimeAmount'] ? '-' : $invoice->invoice_data['addedTimeAmount'],
                     'Bonus'          => 0 === $invoice->invoice_data['bonus'] ? '-' : $invoice->invoice_data['bonus'],
-                    'Pay Total'      => 0 === $invoice->invoice_data['invoiceTotalAmount'] ? '-' : $invoice->invoice_data['invoiceTotalAmount'],
+                    'Pay Total'      => 0 === $invoice->invoice_data['formattedInvoiceTotalAmount'] ? '-' : $invoice->invoice_data['formattedInvoiceTotalAmount'],
                 ];
             }
 
-            return [];
+            return [
+            ];
         })->toArray();
     }
 

@@ -52,7 +52,7 @@ class GenerateInvoicesExport
                 ))->toCsvArray(),
                 [
                 ]
-            ))/*->storeAndAttachMediaTo($practice, $downloadName)*/;
+            ))->storeAndAttachMediaTo($practice, $downloadName);
         }
 
         return $medias;
