@@ -6,10 +6,10 @@
 
 namespace Modules\Nurseinvoices;
 
-use App\Exports\InvoicesExportFormat;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\NurseInvoices\Exports\InvoicesExportFormat;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
