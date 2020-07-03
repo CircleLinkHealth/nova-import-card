@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "02d5a6b77a0a922502724e4098b86afa",
+    "content-hash": "f64cdd9ce598f6866e2d7378fa2a2c00",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1345,12 +1345,45 @@
             ]
         },
         {
+            "name": "circlelinkhealth/invoices-download",
+            "version": "dev-ROAD-148_download_invoices",
+            "dist": {
+                "type": "path",
+                "url": "./nova-components/InvoicesDownload",
+                "reference": "94203596bccb49bf965bc7dd2d58399e27db25d7"
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Circlelinkhealth\\InvoicesDownload\\CardServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Circlelinkhealth\\InvoicesDownload\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova card.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ]
+        },
+        {
             "name": "circlelinkhealth/nurseinvoices-module",
             "version": "dev-ROAD-148_Download_nurse_invoices",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "d7f3f53629ff887eb42b9fa4f39fcc188d1f99f8"
+                "reference": "81a242f5a4cbbc1394eceab35745c1161fc75aac"
             },
             "type": "laravel-module",
             "extra": {
@@ -1373,7 +1406,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-03T08:12:56+00:00"
+            "time": "2020-07-03T12:56:12+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
