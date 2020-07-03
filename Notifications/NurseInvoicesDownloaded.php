@@ -70,6 +70,7 @@ class NurseInvoicesDownloaded extends Notification
      */
     public function toMail($notifiable)
     {
+//       Should have different Mail Content.
         return (new MailMessage())
             ->action('Download Invoice Documents', $this->getSignedUrl($notifiable))
             ->line('For security reasons, this link will expire in 48 hours.')

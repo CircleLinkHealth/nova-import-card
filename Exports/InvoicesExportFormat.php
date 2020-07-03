@@ -41,18 +41,6 @@ class InvoicesExportFormat
         })->toArray();
     }
 
-//    public static function headings(): array
-//    {
-    ////        Keep the same order as toCsvArray() keys.
-//        return [
-//            'Hour Total',
-//            'Visit/Hour Pay',
-//            'Extra Time',
-//            'Bonus',
-//            'Pay Total',
-//        ];
-//    }
-
     public function toCsvArray()
     {
         return  $this->invoices->map(function ($invoice) {
