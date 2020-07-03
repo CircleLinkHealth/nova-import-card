@@ -62,8 +62,8 @@ class ExportAndDispatchInvoices implements ShouldQueue
         $startDate = $this->month->copy()->startOfMonth();
         $endDate   = $this->month->copy()->endOfMonth();
 
-        $invoicesPerPractice = collect();
-        User::with([
+//        $invoicesPerPractice = collect();
+        $invoicesPerPractice = User::with([
             'nurseInfo' => function ($nurseInfo) use ($startDate, $endDate) {
                 $nurseInfo->with(
                     [
@@ -100,13 +100,19 @@ class ExportAndDispatchInvoices implements ShouldQueue
             })
             ->whereIn('program_id', $this->practiceIds)
             ->select('id', 'program_id')
-            ->chunk(20, function ($users) use ($startDate, $endDate, &$invoicesPerPractice) {
-                $invoicesPerPractice = $users->mapToGroups(function ($user) {
-                    return [
-                        $user->primaryPractice->id => $user->nurseInfo->invoices,
-                    ];
-                });
+            ->get()
+            ->mapToGroups(function ($user) {
+                return [
+                    $user->primaryPractice->id => $user->nurseInfo->invoices,
+                ];
             });
+        // ->chunk(1, function ($users) use ($startDate, $endDate, &$invoicesPerPractice) {
+//                $invoicesPerPractice[] = $users->mapToGroups(function ($user) {
+//                    return [
+//                        $user->primaryPractice->id => $user->nurseInfo->invoices,
+//                    ];
+//                });
+        // });
 
         if (empty($invoicesPerPractice)) {
             Log::warning("Invoices to download for {$startDate} not found");
