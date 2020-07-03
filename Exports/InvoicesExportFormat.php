@@ -48,11 +48,18 @@ class InvoicesExportFormat
             if (isset($invoice->invoice_data)) {
                 $baseSalary = $invoice->invoice_data['baseSalary'];
 
+                $payStructure = 'visit';
+                if ($invoice->invoice_data['variablePay']) {
+                    if ($invoice->invoice_data['fixedRatePay'] > $invoice->invoice_data['variableRatePay']) {
+                        $payStructure = 'hourly';
+                    }
+                }
+
                 return [
-                    'Nurse'       => $invoice->invoice_data['nurseFullName'],
-                    'Hour Total'  => 0 === $invoice->invoice_data['systemTimeInHours'] ? '-' : $invoice->invoice_data['systemTimeInHours'],
-                    'Visit Total' => 0 === $invoice->invoice_data['visitsCount'] ? '-' : $invoice->invoice_data['visitsCount'],
-                    //                    'Pay Structure'  => 0 === $invoice->invoice_data['visitsCount'] ? '-' : $invoice->invoice_data['visitsCount'],
+                    'Nurse'          => $invoice->invoice_data['nurseFullName'],
+                    'Hour Total'     => 0 === $invoice->invoice_data['systemTimeInHours'] ? '-' : $invoice->invoice_data['systemTimeInHours'],
+                    'Visit Total'    => 0 === $invoice->invoice_data['visitsCount'] ? '-' : $invoice->invoice_data['visitsCount'],
+                    'Pay Structure'  => $payStructure,
                     'Visit Hour Pay' => 0 === $baseSalary ? '-' : "$$baseSalary",
                     'Extra Time'     => 0 === $invoice->invoice_data['addedTimeAmount'] ? '-' : $invoice->invoice_data['addedTimeAmount'],
                     'Bonus'          => 0 === $invoice->invoice_data['bonus'] ? '-' : $invoice->invoice_data['bonus'],
