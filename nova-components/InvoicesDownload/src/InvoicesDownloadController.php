@@ -42,12 +42,21 @@ class InvoicesDownloadController
         $month                 = Carbon::parse($date['value'])->startOfMonth();
 
         ExportAndDispatchInvoices::dispatch($practiceIds, $downloadFormatsValues, $month, $auth)->onQueue('low');
+
+        $idsArray = array_values($practiceIds);
+
+        return response()->json(
+            [
+                'message' => "We are exporting invoices for $month, for the following practices:$idsArray",
+            ],
+            200
+        );
     }
 
     public function handle()
     {
         return  Practice::active()
-            ->authUserCanAccess()
+//            ->authUserCanAccess()
             ->select('id', 'display_name')
             ->get()
             ->transform(function ($practice) {

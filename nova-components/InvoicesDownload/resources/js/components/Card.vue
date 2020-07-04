@@ -2,48 +2,53 @@
     <card class="flex flex-col items-center justify-center">
         <div class="px-3 py-3">
             <h4 class="text-center text-3xl text-80 font-light">Invoices Download</h4>
-        </div>
+            <div class="py-2">
+            <loader v-if="loading" width="30"></loader>
 
-            <div class="dropdown">
-                <vue-select name="practices"
-                            id="practices"
-                            multiple
-                            v-model="practicesSelected"
-                            :options="practices">
-                </vue-select>
+            <div style="display: inline-flex;">
+                <div class="dropdown" style="padding-right: 10px; padding-bottom: 10px;">
+                    <vue-select name="practices"
+                                id="practices"
+                                placeholder="Select Practices"
+                                multiple
+                                v-model="practicesSelected"
+                                :options="practices"
+                                @input="limiter">
+                    </vue-select>
+                </div>
+
+                <div class="dropdown" style="padding-right: 10px;">
+                    <vue-select name="months"
+                                id="months"
+                                placeholder="Select Month"
+                                v-model="monthSelected"
+                                :options="months">
+                    </vue-select>
+                </div>
+
+                <div class="dropdown">
+                    <vue-select name="downloadFormat"
+                                id="downloadFormat"
+                                placeholder="Download Format"
+                                multiple
+                                v-model="formatsSelected"
+                                :options="downloadFormats">
+                    </vue-select>
+                </div>
             </div>
-        <div class="dropdown">
-            <vue-select name="months"
-                        id="months"
-                        v-model="monthSelected"
-                        :options="months">
-            </vue-select>
-        </div>
-
-        <div class="dropdown">
-            <vue-select name="downloadFormat"
-                        id="downloadFormat"
-                        multiple
-                        v-model="formatsSelected"
-                        :options="downloadFormats">
-            </vue-select>
-        </div>
-
-        <br>
-
-        <div class="button">
-            <a class="btn btn-default btn-primary ml-auto mt-auto"
-               style="cursor: pointer; background-color: #4baf50" @click="downloadInvoices()">Download Invoices</a>
-        </div>
-
-        <br>
-
-        <loader v-if="loading" width="30"></loader>
-
-        <div class="flex">
-            <div v-if="errors">
-                <p class="text-danger mb-1" v-for="error in errors">{{error}}</p>
+            <div class="button" style="text-align: center;">
+                <a class="btn btn-default btn-primary ml-auto mt-auto"
+                   style="cursor: pointer; background-color: #4baf50" @click="downloadInvoices()">Download Invoices</a>
             </div>
+
+            <br>
+
+            <div class="flex">
+                <div v-if="errors">
+                    <p class="text-danger mb-1" v-for="error in errors">{{error}}</p>
+                </div>
+            </div>
+        </div>
         </div>
     </card>
 </template>
@@ -91,13 +96,22 @@ export default {
     },
 
     methods:{
+        limiter(e) {
+            if(e.length > 4) {
+             alert('You can only select 4 Practices')
+            }
+        },
+
         setPracticesForDropdown(){
             this.loading = true;
             Nova.request().get('/nova-vendor/invoices-download/dropdown-practices').then(response => {
                 this.practices = response.data
+                this.$toasted.success(response.data.message);
                 this.loading = false;
             }).catch(error => {
                 console.log(error);
+                this.$toasted.error(error.response.data);
+                this.loading = false;
             });
         },
 
@@ -108,10 +122,13 @@ export default {
                 downloadFormats:this.formatsSelected,
                 date:this.monthSelected
             }).then(response => {
-                console.log(response.data);
+                this.$toasted.success(response.data.message);
+                this.loading = false;
 
             }).catch(error => {
                 console.log(error);
+                this.$toasted.error(error.response.data);
+                this.loading = false;
             });
         },
 
@@ -143,6 +160,10 @@ export default {
     }
 
     #months > div{
+        min-width: 180px;
+    }
+
+    #downloadFormat > div{
         min-width: 180px;
     }
 </style>
