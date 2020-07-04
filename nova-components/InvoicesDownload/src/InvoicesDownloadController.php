@@ -8,7 +8,6 @@ namespace Circlelinkhealth\InvoicesDownload;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Jobs\ExportAndDispatchInvoices;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -16,12 +15,12 @@ class InvoicesDownloadController
 {
     public function downloadInvoices(NovaRequest $request)
     {
-//        $auth = auth()->user() ?? null;
-//        if (is_null($auth)) {
-//            throw new \Exception('Auth user not found');
-//        }
+        $auth = auth()->user() ?? null;
 
-        $auth            = User::findOrFail(13246);
+        if (is_null($auth)) {
+            throw new \Exception('Auth user not found');
+        }
+
         $downloadFormats = $request->input('downloadFormats');
         $practices       = $request->input('practices');
         $date            = $request->input('date');
