@@ -25,7 +25,7 @@ class TestInvoiceDownloadCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'test:invoiceDownloadCommand {forPractices} {downloadFormat} {forDate}';
+    protected $signature = 'test:invoiceDownloadCommand';
 
     /**
      * Create a new command instance.
@@ -44,12 +44,12 @@ class TestInvoiceDownloadCommand extends Command
      */
     public function handle()
     {
-        $forPractices   = $this->argument('forPractices') ?? null;
-        $downloadFormat = $this->argument('downloadFormat') ?? null;
-        $date           = $this->argument('forDate') ?? null;
+//        $forPractices   = $this->argument('forPractices') ?? null;
+//        $downloadFormat = $this->argument('downloadFormat') ?? null;
+//        $date           = $this->argument('forDate') ?? null;
 
         $auth           = User::findOrFail(13246);
-        $downloadFormat = NurseInvoice::CSV_DOWNLOAD_FORMAT; // CSV or PDF.
+        $downloadFormat = [NurseInvoice::CSV_DOWNLOAD_FORMAT]; // CSV or PDF.
         $practiceIds    = [8, 24];
         $month          = Carbon::now(); // Set a limit
         ExportAndDispatchInvoices::dispatch($practiceIds, $downloadFormat, $month, $auth)->onQueue('low');

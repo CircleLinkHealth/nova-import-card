@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 
 class NurseInvoicesDownloaded extends Notification
@@ -19,9 +20,13 @@ class NurseInvoicesDownloaded extends Notification
      * @var Carbon
      */
     private $date;
-
     /**
      * @var string
+     */
+    private $downloadFormat;
+
+    /**
+     * @var array
      */
     private $mediaIds;
     /**
@@ -32,10 +37,11 @@ class NurseInvoicesDownloaded extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(array $mediaIds, Carbon $date)
+    public function __construct(array $mediaIds, Carbon $date, string $downloadFormat)
     {
-        $this->mediaIds = implode(',', $mediaIds);
-        $this->date     = $date;
+        $this->mediaIds       = implode(',', $mediaIds);
+        $this->date           = $date;
+        $this->downloadFormat = $downloadFormat;
     }
 
     /**
@@ -70,11 +76,18 @@ class NurseInvoicesDownloaded extends Notification
      */
     public function toMail($notifiable)
     {
-//       Should have different Mail Content.
+        if (empty($this->mediaIds)) {
+            Log::warning("$this->downloadFormat invoices where not generated for $this->date");
+
+            return (new MailMessage())
+                ->line("No $this->downloadFormat were generated for $this->date.")
+                ->line('A developer will investigated asap!');
+        }
+
         return (new MailMessage())
-            ->action('Download Invoice Documents', $this->getSignedUrl($notifiable))
+            ->action("Download $this->downloadFormat Invoices", $this->getSignedUrl($notifiable))
             ->line('For security reasons, this link will expire in 48 hours.')
-            ->line('Thank you for using our CarePlan Manager!');
+            ->line('Thank you for using our CarePlan!');
     }
 
     /**
