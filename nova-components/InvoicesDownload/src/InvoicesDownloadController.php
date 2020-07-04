@@ -21,23 +21,34 @@ class InvoicesDownloadController
 //            throw new \Exception('Auth user not found');
 //        }
 
-        $auth           = User::findOrFail(13246);
-        $downloadFormat = $request->input('downloadFormat');
-        $practices      = $request->input('practices');
-        $month          = $request->input('date') ?? Carbon::now(); // Set a limit
+        $auth            = User::findOrFail(13246);
+        $downloadFormats = $request->input('downloadFormats');
+        $practices       = $request->input('practices');
+        $date            = $request->input('date');
 
         if (empty($practices)) {
             throw new \Exception('Practices field is required');
         }
 
-        $practiceIds = $this->getPracticesIds($practices);
+        if (empty($date)) {
+            throw new \Exception('Month to download invoices for is required');
+        }
 
-        ExportAndDispatchInvoices::dispatch($practiceIds, $downloadFormat, $month, $auth)->onQueue('low');
+        if (empty($downloadFormats)) {
+            throw new \Exception('Month to download invoices for is required');
+        }
+
+        $practiceIds           = $this->getPracticesIds($practices);
+        $downloadFormatsValues = $this->getDownloadFormats($downloadFormats);
+        $month                 = Carbon::parse($date['value'])->startOfMonth();
+
+        ExportAndDispatchInvoices::dispatch($practiceIds, $downloadFormatsValues, $month, $auth)->onQueue('low');
     }
 
     public function handle()
     {
         return  Practice::active()
+//            ->authUserCanAccess()
             ->select('id', 'display_name')
             ->get()
             ->transform(function ($practice) {
@@ -46,6 +57,16 @@ class InvoicesDownloadController
                     'value' => $practice->id,
                 ];
             });
+    }
+
+    private function getDownloadFormats(array $downloadFormats)
+    {
+        $formats = [];
+        foreach ($downloadFormats as $format) {
+            $formats[] = $format['value'];
+        }
+
+        return $formats;
     }
 
     /**
@@ -57,7 +78,7 @@ class InvoicesDownloadController
         $practiceIds = [];
 
         foreach ($practices as $practice) {
-            $practiceIds[] = $practice->value;
+            $practiceIds[] = $practice['value'];
         }
 
         return $practiceIds;

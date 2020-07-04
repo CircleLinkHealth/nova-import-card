@@ -12,6 +12,22 @@
                             :options="practices">
                 </vue-select>
             </div>
+        <div class="dropdown">
+            <vue-select name="months"
+                        id="months"
+                        v-model="monthSelected"
+                        :options="months">
+            </vue-select>
+        </div>
+
+        <div class="dropdown">
+            <vue-select name="downloadFormat"
+                        id="downloadFormat"
+                        multiple
+                        v-model="formatsSelected"
+                        :options="downloadFormats">
+            </vue-select>
+        </div>
 
         <br>
 
@@ -34,6 +50,8 @@
 
 <script>
     import VueSelect from 'vue-select';
+
+    const limitDate = '2020-05-01';
 export default {
     props: [
         'card',
@@ -53,17 +71,42 @@ export default {
             practicesSelected:[],
             practices:[],
             loading:false,
-            errors:null
+            errors:null,
+            months:[],
+            monthSelected:[],
+            formatsSelected:[],
+            downloadFormats:[
+                {
+                    label:'CSV',
+                    value:'csv'
+                },
+
+                {
+                    label:'PDF',
+                    value:'pdf'
+                }
+
+            ]
         };
     },
 
     methods:{
+        setPracticesForDropdown(){
+            this.loading = true;
+            Nova.request().get('/nova-vendor/invoices-download/dropdown-practices').then(response => {
+                this.practices = response.data
+                this.loading = false;
+            }).catch(error => {
+                console.log(error);
+            });
+        },
+
         downloadInvoices(){
             this.loading = true;
             Nova.request().post('/nova-vendor/invoices-download/download', {
                 practices:this.practicesSelected,
-                downloadFormat:'csv',
-                date:''
+                downloadFormats:this.formatsSelected,
+                date:this.monthSelected
             }).then(response => {
                 console.log(response.data);
 
@@ -71,21 +114,35 @@ export default {
                 console.log(error);
             });
         },
+
+        setMonthsForDropdown() {
+            let dateStart = moment(limitDate);
+            let dateEnd = moment();
+
+            while (dateEnd.diff(dateStart) >= 0) {
+                this.months.push(
+                    {
+                        label:dateStart.format('MMM YYYY'),
+                        value:dateStart
+                    }
+                );
+                dateStart.add(1, 'months');
+            }
+        },
     },
 
     mounted() {
-        this.loading = true;
-        Nova.request().get('/nova-vendor/invoices-download/dropdown-practices').then(response => {
-                this.practices = response.data
-                this.loading = false;
-            }).catch(error => {
-                console.log(error);
-            });
+        this.setPracticesForDropdown();
+        this.setMonthsForDropdown();
     },
 }
 </script>
 <style>
     #practices > div{
+        min-width: 180px;
+    }
+
+    #months > div{
         min-width: 180px;
     }
 </style>
