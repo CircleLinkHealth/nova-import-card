@@ -47,7 +47,7 @@ class InvoicesDownloadController
     public function handle()
     {
         return  Practice::active()
-//            ->authUserCanAccess()
+            ->authUserCanAccess()
             ->select('id', 'display_name')
             ->get()
             ->transform(function ($practice) {
