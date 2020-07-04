@@ -32,7 +32,7 @@ class ExportAndDispatchInvoices implements ShouldQueue
     /**
      * @var string
      */
-    private $downloadFormat;
+    private $downloadFormats;
 
     private $month;
 
@@ -43,13 +43,15 @@ class ExportAndDispatchInvoices implements ShouldQueue
 
     /**
      * Create a new job instance.
+     *
+     * @param string $downloadFormats
      */
-    public function __construct(array $practiceIds, string $downloadFormat, Carbon $month, User $auth)
+    public function __construct(array $practiceIds, array $downloadFormats, Carbon $month, User $auth)
     {
-        $this->practiceIds    = $practiceIds;
-        $this->downloadFormat = $downloadFormat;
-        $this->month          = $month;
-        $this->auth           = $auth;
+        $this->practiceIds     = $practiceIds;
+        $this->downloadFormats = $downloadFormats;
+        $this->month           = $month;
+        $this->auth            = $auth;
     }
 
     /**
@@ -116,7 +118,7 @@ class ExportAndDispatchInvoices implements ShouldQueue
 
         if (empty($invoicesPerPractice)) {
             Log::warning("Invoices to download for {$startDate} not found");
-
+            //@todo: Dispatch Notification with info that nothing was generated
             return;
         }
 
@@ -125,14 +127,16 @@ class ExportAndDispatchInvoices implements ShouldQueue
 
     private function generateInvoicesFormatAndDispatch(Collection $invoicesPerPractice, Carbon $startDate)
     {
-        if (NurseInvoice::PDF_DOWNLOAD_FORMAT === $this->downloadFormat) {
-            $invoiceDocument = (new GenerateInvoicesExport($invoicesPerPractice, $this->downloadFormat, $startDate))->generateInvoicePdf();
-            $this->auth->notify(new NurseInvoicesDownloaded(collect($invoiceDocument)->pluck('mediaIds')->flatten()->toArray(), $startDate));
-        }
+        foreach ($this->downloadFormats as $downloadFormat) {
+            if (NurseInvoice::PDF_DOWNLOAD_FORMAT === $downloadFormat) {
+                $invoiceDocument = (new GenerateInvoicesExport($invoicesPerPractice, $downloadFormat, $startDate))->generateInvoicePdf();
+                $this->auth->notify(new NurseInvoicesDownloaded(collect($invoiceDocument)->pluck('mediaIds')->flatten()->toArray(), $startDate));
+            }
 
-        if (NurseInvoice::CSV_DOWNLOAD_FORMAT === $this->downloadFormat) {
-            $invoiceDocument = (new GenerateInvoicesExport($invoicesPerPractice, $this->downloadFormat, $startDate))->generateInvoiceCsv();
-            $this->auth->notify(new NurseInvoicesDownloaded(collect($invoiceDocument)->pluck('id')->toArray(), $startDate));
+            if (NurseInvoice::CSV_DOWNLOAD_FORMAT === $downloadFormat) {
+                $invoiceDocument = (new GenerateInvoicesExport($invoicesPerPractice, $downloadFormat, $startDate))->generateInvoiceCsv();
+                $this->auth->notify(new NurseInvoicesDownloaded(collect($invoiceDocument)->pluck('id')->toArray(), $startDate));
+            }
         }
     }
 }
