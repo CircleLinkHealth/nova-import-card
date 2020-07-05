@@ -38,16 +38,16 @@ class InvoicesDownloadController
         }
 
         $practiceIds           = $this->getPracticesIds($practices);
+        $practiceNamesForUi    = implode(',', $this->getPracticesNames($practices));
         $downloadFormatsValues = $this->getDownloadFormats($downloadFormats);
         $month                 = Carbon::parse($date['value'])->startOfMonth();
+        $monthToString         = Carbon::parse($month)->toDateString();
 
         ExportAndDispatchInvoices::dispatch($practiceIds, $downloadFormatsValues, $month, $auth)->onQueue('low');
 
-        $idsArray = array_values($practiceIds);
-
         return response()->json(
             [
-                'message' => "We are exporting invoices for $month, for the following practices:$idsArray",
+                'message' => "We are exporting invoices for $monthToString, for the following practices:$practiceNamesForUi",
             ],
             200
         );
@@ -90,5 +90,16 @@ class InvoicesDownloadController
         }
 
         return $practiceIds;
+    }
+
+    private function getPracticesNames($practices)
+    {
+        $practiceNames = [];
+
+        foreach ($practices as $practice) {
+            $practiceNames[] = $practice['label'];
+        }
+
+        return $practiceNames;
     }
 }
