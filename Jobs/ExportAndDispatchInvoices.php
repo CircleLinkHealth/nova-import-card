@@ -103,7 +103,7 @@ class ExportAndDispatchInvoices implements ShouldQueue
             })
             ->whereIn('program_id', $this->practiceIds)
             ->select('id', 'program_id')
-            ->chunk(1, function ($users) use ($startDate, $endDate, &$invoices) {
+            ->chunk(20, function ($users) use ($startDate, $endDate, &$invoices) {
                 $invoices[] = $users->transform(function ($user) {
                     return [
                         'data'        => $user->nurseInfo->invoices,
