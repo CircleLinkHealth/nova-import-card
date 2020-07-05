@@ -65,21 +65,22 @@ class ExportAndDispatchInvoices implements ShouldQueue
         $endDate   = $this->month->copy()->endOfMonth();
 
         $invoices = collect();
-        User::with([
-            'nurseInfo' => function ($nurseInfo) use ($startDate, $endDate) {
-                $nurseInfo->with(
-                    [
-                        'invoices' => function ($invoice) use ($startDate) {
-                            $invoice->where('month_year', $startDate);
-                        },
-                    ]
-                );
-            },
-            'pageTimersAsProvider' => function ($pageTimer) use ($startDate, $endDate) {
-                $pageTimer->whereBetween('start_time', [$startDate, $endDate]);
-            },
-            'primaryPractice',
-        ])
+        User::ofType('care-center')
+            ->with([
+                'nurseInfo' => function ($nurseInfo) use ($startDate, $endDate) {
+                    $nurseInfo->with(
+                        [
+                            'invoices' => function ($invoice) use ($startDate) {
+                                $invoice->where('month_year', $startDate);
+                            },
+                        ]
+                    );
+                },
+                'pageTimersAsProvider' => function ($pageTimer) use ($startDate, $endDate) {
+                    $pageTimer->whereBetween('start_time', [$startDate, $endDate]);
+                },
+                'primaryPractice',
+            ])
             ->whereHas('nurseInfo.invoices', function ($invoice) use ($startDate, $endDate) {
                 $invoice->where('month_year', $startDate);
             })
