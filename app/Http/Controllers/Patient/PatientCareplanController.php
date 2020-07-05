@@ -581,10 +581,15 @@ class PatientCareplanController extends Controller
         );
         try {
             $newUser = $userRepo->createNewUser($params);
-        } catch (ValidationException|PatientAlreadyExistsException $e) {
+        } catch (PatientAlreadyExistsException $e) {
             return redirect()
                 ->back()
                 ->withErrors(['first_name' => $e->getMessage()])
+                ->withInput($request->input());
+        } catch (ValidationException $e) {
+            return redirect()
+                ->back()
+                ->withErrors($e->validator->errors())
                 ->withInput($request->input());
         }
 

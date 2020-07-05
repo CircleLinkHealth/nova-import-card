@@ -6,6 +6,7 @@
 
 namespace App\Nova\Metrics;
 
+use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -41,12 +42,15 @@ class SelfEnrolledButtonColor extends Partition
     public function calculate(NovaRequest $request)
     {
         return $this->count($request, $this->queryEnrolleesEnrolled(), 'button_color', \DB::raw('DISTINCT(invitationable_id)'))->colors([
-            'Green' => '#4baf50',
-            'Red'   => '#b1284c',
+            'Green' => SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
+            'Red'   => SelfEnrollmentController::RED_BUTTON_COLOR,
+            'Blue'  => SelfEnrollmentController::BLUE_BUTTON_COLOR,
         ])->label(function ($value) {
             switch ($value) {
-                case '#b1284c':
+                case SelfEnrollmentController::RED_BUTTON_COLOR:
                     return 'Red';
+                case SelfEnrollmentController::BLUE_BUTTON_COLOR:
+                    return 'Blue';
                 default:
                     return 'Green';
             }
