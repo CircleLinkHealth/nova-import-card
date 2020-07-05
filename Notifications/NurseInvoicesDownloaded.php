@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 
 class NurseInvoicesDownloaded extends Notification
@@ -76,12 +75,10 @@ class NurseInvoicesDownloaded extends Notification
      */
     public function toMail($notifiable)
     {
+        $dateForMessage = Carbon::parse($this->date)->toDateString();
         if (empty($this->mediaIds)) {
-            Log::warning("$this->downloadFormat invoices where not generated for $this->date");
-
             return (new MailMessage())
-                ->line("No $this->downloadFormat were generated for $this->date.")
-                ->line('A developer will investigated asap!');
+                ->line("No $this->downloadFormat were generated for $dateForMessage, for the selected practices");
         }
 
         return (new MailMessage())

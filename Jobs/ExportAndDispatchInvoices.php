@@ -118,9 +118,8 @@ class ExportAndDispatchInvoices implements ShouldQueue
         });
 
         if (empty($invoicesPerPractice)) {
+//            Code execution will continue. It will dispatch a Notification with info that nothing was generated.
             Log::warning("Invoices to download for {$startDate} not found");
-            //@todo: Dispatch Notification with info that nothing was generated
-            return;
         }
 
         $this->generateInvoicesFormatAndDispatch($invoicesPerPractice, $startDate);
