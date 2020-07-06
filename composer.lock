@@ -1383,7 +1383,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "2eecfd7610d76a7daea87a6f3597851fa3d73f3e"
+                "reference": "94f39b70f18f9d46abe0b368785d4d622b8ea2a5"
             },
             "type": "laravel-module",
             "extra": {
@@ -1406,7 +1406,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-05T15:33:42+00:00"
+            "time": "2020-07-06T12:23:48+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
