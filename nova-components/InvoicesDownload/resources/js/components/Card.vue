@@ -1,5 +1,5 @@
 <template>
-    <card class="flex flex-col items-center justify-center">
+    <card class="flex flex-col items-center justify-center" style="display: inline-block;">
         <div class="px-3 py-3">
             <h4 class="text-center text-3xl text-80 font-light">Invoices Download</h4>
             <div class="py-2">
