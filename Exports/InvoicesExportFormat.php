@@ -33,7 +33,7 @@ class InvoicesExportFormat
     public function exportToPdf(PdfService $pdfService)
     {
         return  $this->invoices->map(function ($invoice) use ($pdfService) {
-            $invoice = $invoice->first();
+            $invoice = $invoice['data']->first();
             $nurseUserId = Nurse::findOrFail($invoice->nurse_info_id)->user_id;
             $args = $this->getInvoiceArgs($invoice, $nurseUserId);
 
@@ -44,7 +44,7 @@ class InvoicesExportFormat
     public function toCsvArray()
     {
         return  $this->invoices->map(function ($invoice) {
-            $invoice = $invoice->first();
+            $invoice = $invoice['data']->first();
             if (isset($invoice->invoice_data)) {
                 $baseSalary = $invoice->invoice_data['baseSalary'];
 

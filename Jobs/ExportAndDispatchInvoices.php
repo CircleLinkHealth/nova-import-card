@@ -65,7 +65,7 @@ class ExportAndDispatchInvoices implements ShouldQueue
         $endDate   = $this->month->copy()->endOfMonth();
 
         $invoices = collect();
-        User::ofType('care-center')
+        User::careCoaches()
             ->with([
                 'nurseInfo' => function ($nurseInfo) use ($startDate, $endDate) {
                     $nurseInfo->with(
@@ -81,7 +81,7 @@ class ExportAndDispatchInvoices implements ShouldQueue
                 },
                 'primaryPractice',
             ])
-            ->whereHas('nurseInfo.invoices', function ($invoice) use ($startDate, $endDate) {
+            ->whereHas('nurseInfo.invoices', function ($invoice) use ($startDate) {
                 $invoice->where('month_year', $startDate);
             })
             //            Need nurses that are currently active or used to be for selected month
@@ -112,14 +112,10 @@ class ExportAndDispatchInvoices implements ShouldQueue
                 });
             });
 
-        $invoicesPerPractice = $invoices->mapToGroups(function ($invoice) {
-            return [
-                collect($invoice)->first()['practice_id'] => collect($invoice)->first()['data'][0],
-            ];
-        });
+        $invoicesPerPractice = $invoices->flatten(1)->groupBy('practice_id');
 
         if (empty($invoicesPerPractice)) {
-//            Code execution will continue. It will dispatch a Notification with info that nothing was generated.
+            //            Code execution will continue. It will dispatch a Notification with info that nothing was generated.
             Log::warning("Invoices to download for {$startDate} not found");
         }
 
