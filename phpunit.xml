@@ -13,7 +13,7 @@
          convertNoticesToExceptions="false"
          convertWarningsToExceptions="false"
          processIsolation="true"
-         stopOnFailure="false"
+         stopOnFailure="true"
          verbose="true">
     <testsuites>
         <testsuite name="Unit">
