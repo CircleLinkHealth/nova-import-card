@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "be392af2b835ac3b1018bbf49e004fb1",
+    "content-hash": "f198d2ebd0b0c0b741590ef4440a4bad",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1352,11 +1352,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.4.6",
+            "version": "v1.4.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "8469ef36c4ce6f2c42b7d613b2adada5354c6e9d"
+                "reference": "3f37437b1acf3ddca54eee53c19781996662e4dd"
             },
             "type": "laravel-module",
             "extra": {
@@ -1379,7 +1379,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-25T09:43:50+00:00"
+            "time": "2020-07-06T07:58:22+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -3928,6 +3928,12 @@
                 "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git",
                 "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0"
             },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CircleLinkHealth/laravel-module-installer/zipball/5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0",
+                "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0",
+                "shasum": ""
+            },
             "require": {
                 "composer-plugin-api": "^1.1",
                 "php": "^5.4|7.*"
@@ -3949,6 +3955,9 @@
             "license": [
                 "MIT"
             ],
+            "support": {
+                "source": "https://github.com/CircleLinkHealth/laravel-module-installer/tree/v0.1.5"
+            },
             "time": "2020-01-16T16:56:46+00:00"
         },
         {
