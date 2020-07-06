@@ -810,6 +810,10 @@ class EligibilityChecker
 
         $args['dob'] = $args['dob'] ?? $args['date_of_birth'] ?? $args['birth_date'];
 
+        if ( ! $args['dob'] instanceof Carbon) {
+            $args['dob'] = Carbon::parse($args['dob']);
+        }
+
         $enrolleeExists = Enrollee::where(
             [
                 [
