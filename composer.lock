@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6d437550431c18e0ae84bed7d58fb917",
+    "content-hash": "2d8b44885d3d46f1cb5d4190f6731126",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -972,8 +972,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
-                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8",
-                "shasum": null
+                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1006,8 +1005,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
-                "reference": "6ecab1c47b37727c17819ad31972bbd437c4a44a",
-                "shasum": null
+                "reference": "6ecab1c47b37727c17819ad31972bbd437c4a44a"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1218,8 +1216,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EnrollmentInvites",
-                "reference": "3d7e5ac1e98048bb2f469171feb8cb1532131c9c",
-                "shasum": null
+                "reference": "3d7e5ac1e98048bb2f469171feb8cb1532131c9c"
             },
             "require": {
                 "anaseqal/nova-import": "^0.0.3",
@@ -1253,8 +1250,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
-                "reference": "8b21629514943da628f3f5acb602c7610c2d9167",
-                "shasum": null
+                "reference": "8b21629514943da628f3f5acb602c7610c2d9167"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1287,8 +1283,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
-                "reference": "647bc07cacc81615878d4210f947957280127fdc",
-                "shasum": null
+                "reference": "647bc07cacc81615878d4210f947957280127fdc"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1321,8 +1316,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "d2794727046970ff3c6b1fe99840282787cfb8df",
-                "shasum": null
+                "reference": "d2794727046970ff3c6b1fe99840282787cfb8df"
             },
             "require": {
                 "php": ">=7.1.0",
@@ -13042,6 +13036,50 @@
             "time": "2016-01-20T08:20:44+00:00"
         },
         {
+            "name": "heroku/heroku-buildpack-php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/heroku/heroku-buildpack-php.git",
+                "reference": "fe7640eb4f46bfe00e31b77b3b6b809ab74ab5c7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/heroku/heroku-buildpack-php/zipball/fe7640eb4f46bfe00e31b77b3b6b809ab74ab5c7",
+                "reference": "fe7640eb4f46bfe00e31b77b3b6b809ab74ab5c7",
+                "shasum": ""
+            },
+            "bin": [
+                "bin/heroku-hhvm-apache2",
+                "bin/heroku-hhvm-nginx",
+                "bin/heroku-php-apache2",
+                "bin/heroku-php-nginx"
+            ],
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Zuelke",
+                    "email": "dz@heroku.com"
+                }
+            ],
+            "description": "Toolkit for starting a PHP application locally, with or without foreman, using the same config for PHP/HHVM and Apache2/Nginx as on Heroku",
+            "homepage": "https://github.com/heroku/heroku-buildpack-php",
+            "keywords": [
+                "apache",
+                "apache2",
+                "foreman",
+                "heroku",
+                "hhvm",
+                "nginx",
+                "php"
+            ],
+            "time": "2020-06-18T17:40:54+00:00"
+        },
+        {
             "name": "jkocik/laravel-profiler",
             "version": "1.3.1",
             "source": {
@@ -15960,6 +15998,7 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "daltcore/lara-pdf-merger": 20,
+        "heroku/heroku-buildpack-php": 20,
         "orangehill/iseed": 20
     },
     "prefer-stable": true,
@@ -15974,5 +16013,6 @@
         "ext-redis": "*",
         "ext-simplexml": "*"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }
