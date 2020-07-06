@@ -9,11 +9,11 @@ namespace CircleLinkHealth\NurseInvoices\Entities;
 use App\Contracts\Pdfable;
 use App\Traits\NotificationAttachable;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\NurseInvoices\Traits\Disputable;
 use CircleLinkHealth\NurseInvoices\Traits\Nursable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
@@ -58,8 +58,10 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                    $notifications_count
  * @property \CircleLinkHealth\NurseInvoices\Entities\Dispute[]|\Illuminate\Database\Eloquent\Collection $disputes
  * @property int|null                                                                                    $disputes_count
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ * @property int|null                                                                                    $revision_history_count
  */
-class NurseInvoice extends Model implements HasMedia, Pdfable
+class NurseInvoice extends BaseModel implements HasMedia, Pdfable
 {
     use Disputable;
     use HasMediaTrait;
