@@ -155,7 +155,7 @@
     }
   ],
   "require": {
-    "php": "~7.3.16",
+    "php": "~7.4",
     "ext-bcmath": "*",
     "ext-dom": "*",
     "ext-json": "*",

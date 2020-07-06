@@ -311,7 +311,7 @@
       <path value="$PROJECT_DIR$/vendor/suenerds/nova-searchable-belongs-to-filter" />
     </include_path>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="7.3" />
+  <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />
   <component name="PhpRuntimeConfiguration">
     <extensions>
       <extension name="Ev" enabled="false" />
